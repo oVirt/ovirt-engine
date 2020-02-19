@@ -156,7 +156,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                                     .importVMThatExistsInSystemMustClone());
                         }
 
-                        vmData.setNameExistsInTheSystem(existingNames.contains(vm.getName()));
+                        vmData.setNameExistsInSystem(existingNames.contains(vm.getName()));
 
                         vmDataList.add(vmData);
                     }

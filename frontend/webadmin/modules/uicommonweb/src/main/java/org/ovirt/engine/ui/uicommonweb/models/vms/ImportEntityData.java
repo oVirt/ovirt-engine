@@ -11,9 +11,12 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 public abstract class ImportEntityData<E> extends EntityModel<E> {
     boolean isExistsInSystem;
+    boolean nameExistsInSystem;
+
     private EntityModel<Boolean> clone;
     private ListModel<Cluster> cluster;
     private ListModel<Quota> clusterQuota;
+    private String error;
 
     public ImportEntityData() {
         setClone(new EntityModel<>(false));
@@ -27,6 +30,22 @@ public abstract class ImportEntityData<E> extends EntityModel<E> {
 
     public void setExistsInSystem(boolean isExistsInSystem) {
         this.isExistsInSystem = isExistsInSystem;
+    }
+
+    public boolean isNameExistsInSystem() {
+        return nameExistsInSystem;
+    }
+
+    public void setNameExistsInSystem(boolean nameExistsInSystem) {
+        this.nameExistsInSystem = nameExistsInSystem;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 
     public EntityModel<Boolean> getClone() {

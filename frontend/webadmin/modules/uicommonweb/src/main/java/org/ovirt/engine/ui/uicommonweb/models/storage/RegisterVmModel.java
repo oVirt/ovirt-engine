@@ -8,7 +8,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -17,10 +20,12 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.ErrorTranslator;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.RegisterVmData;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -144,6 +149,10 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
     }
 
     protected void onSave() {
+        if (!validate()) {
+            return;
+        }
+
         List<ActionParametersBase> parameters = prepareParameters();
         ActionType actionType = ActionType.ImportVmFromConfiguration;
         onSave(actionType, parameters);
@@ -178,5 +187,42 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
 
     protected List<VmNetworkInterface> getInterfaces(RegisterVmData importEntityData) {
         return importEntityData.getEntity().getInterfaces();
+    }
+
+    @Override
+    protected String createSearchPattern(Collection<RegisterVmData> entities) {
+        String vm_guidKey = "ID = "; //$NON-NLS-1$
+        String vm_nameKey = "NAME = "; //$NON-NLS-1$
+        String orKey = " or "; //$NON-NLS-1$
+        String prefix = "VM: "; //$NON-NLS-1$
+
+        StringJoiner sj = new StringJoiner(orKey, prefix, "");
+        entities.stream().map(ImportVmData::getVm).forEach(vm -> {
+            sj.add(vm_guidKey + vm.getId().toString());
+            sj.add(vm_nameKey + vm.getName());
+        });
+
+        return sj.toString();
+    }
+
+    @Override
+    protected SearchType getSearchType() {
+        return SearchType.VM;
+    }
+
+    @Override
+    protected void updateExistingEntities(List<VM> vms, Guid storagePoolId) {
+        Set<String> existingNames = vms
+                .stream()
+                .filter(vm -> vm.getStoragePoolId().equals(storagePoolId))
+                .map(VM::getName)
+                .collect(Collectors.toSet());
+
+        for (RegisterVmData vmData : getEntities().getItems()) {
+            if (vms.contains(vmData.getVm())) {
+                vmData.setExistsInSystem(true);
+            }
+            vmData.setNameExistsInSystem(existingNames.contains(vmData.getVm().getName()));
+        }
     }
 }

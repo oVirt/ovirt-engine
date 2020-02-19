@@ -110,6 +110,12 @@ public abstract class RegisterEntityPopupView<E, D extends ImportEntityData<E>, 
             }
         });
 
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args.propertyName.equals("InvalidVm")) { //$NON-NLS-1$
+                entityTable.redraw();
+            }
+        });
+
         model.getCluster().getItemsChangedEvent().addListener((ev, sender, args) -> createTables(model));
 
         model.getCluster().getSelectedItemChangedEvent().addListener((ev, sender, args) -> refreshEntityTable());

@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.RegisterVmData;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -67,7 +68,7 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
         entityTable.addColumn(new AbstractImageResourceColumn<RegisterVmData>() {
             @Override
             public ImageResource getValue(RegisterVmData registerVmData) {
-                if (registerVmData.getError() != null) {
+                if (registerVmData.getError() != null || registerVmData.isNameExistsInSystem()) {
                     return resources.errorImage();
                 }
                 if (registerVmData.getWarning() != null) {
@@ -80,6 +81,8 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
                 String problem;
                 if (registerVmData.getError() != null) {
                     problem = registerVmData.getError();
+                } else if (registerVmData.isNameExistsInSystem()) {
+                    problem = ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason();
                 } else {
                     problem = registerVmData.getWarning();
                 }
@@ -87,7 +90,7 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
                         ? null
                         : new SafeHtmlBuilder().appendEscapedLines(problem).toSafeHtml();
             }
-        }, constants.empty(), "20px"); //$NON-NLS-1$
+        }, constants.empty(), "30px"); //$NON-NLS-1$
         AbstractTextColumn<RegisterVmData> nameColumn = new AbstractTextColumn<RegisterVmData>() {
             @Override
             public String getValue(RegisterVmData registerVmData) {
@@ -261,5 +264,9 @@ public class RegisterVmPopupView extends RegisterEntityPopupView<VM, RegisterVmD
         public String getLabel() {
             return constants.reassignAllBadMacs();
         }
+    }
+
+    public RegisterVmInfoPanel getInfoPanel() {
+        return (RegisterVmInfoPanel) registerEntityInfoPanel;
     }
 }

@@ -11,8 +11,6 @@ public class ImportVmData extends ImportEntityData<VM> {
     private boolean templateExistsInSetup = true;
     private EntityModel<Boolean> collapseSnapshots;
     private String warning;
-    private String error;
-    private boolean nameExistsInTheSystem;
     private String vmName;
 
     public ImportVmData(VM vm) {
@@ -77,21 +75,5 @@ public class ImportVmData extends ImportEntityData<VM> {
 
     public void setWarning(String warning) {
         this.warning = warning;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-
-    public boolean isNameExistsInTheSystem() {
-        return nameExistsInTheSystem;
-    }
-
-    public void setNameExistsInTheSystem(boolean nameExistsInTheSystem) {
-        this.nameExistsInTheSystem = nameExistsInTheSystem;
     }
 }

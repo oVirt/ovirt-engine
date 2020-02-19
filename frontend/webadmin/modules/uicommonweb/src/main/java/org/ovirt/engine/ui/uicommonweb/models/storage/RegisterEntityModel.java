@@ -20,9 +20,12 @@ import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfile
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -34,7 +37,13 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.register.VnicProfileMappingModel;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> extends Model {
 
@@ -53,6 +62,7 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
     private Guid storageDomainId;
     private StoragePool storagePool;
     public boolean isMappingChangeConfirmed;
+    private List<T> entitiesFromDB;
 
     public RegisterEntityModel() {
         setEntities(new ListModel<E>());
@@ -65,6 +75,12 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
         setExternalVnicProfilesPerTargetCluster(new HashMap<>());
         setMappingChangeConfirmed(false);
     }
+
+    protected abstract SearchType getSearchType();
+
+    protected abstract String createSearchPattern(Collection<E> entities);
+
+    protected abstract void updateExistingEntities(List<T> entities, Guid storagePoolId);
 
     protected abstract void onSave();
 
@@ -90,8 +106,8 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
     public void initialize() {
         super.initialize();
         // Create and set commands
-        UICommand onSaveCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
-        getCommands().add(onSaveCommand);
+        UICommand saveCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
+        getCommands().add(saveCommand);
         getCommands().add(getCancelCommand());
 
         updateClusters();
@@ -106,7 +122,8 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
 
             AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(clusters -> {
                 for (ImportEntityData<T> entityData : entities.getItems()) {
-                    List<Cluster> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, entityData.getArchType());
+                    List<Cluster> filteredClusters =
+                            AsyncDataProvider.getInstance().filterByArchitecture(clusters, entityData.getArchType());
                     entityData.getCluster().setItems(filteredClusters);
                     entityData.getCluster().setSelectedItem(Linq.firstOrNull(filteredClusters));
                 }
@@ -116,9 +133,19 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
 
                 updateClusterQuota(clusters);
                 updateStorageQuota();
+                updateExistingEntitiesFromDB(storagePool.getId());
             }), storagePool.getId(), true, false);
 
         }), storageDomainId);
+    }
+
+    private void updateExistingEntitiesFromDB(Guid storagePoolId) {
+        Frontend.getInstance().runQuery(QueryType.Search,
+                new SearchParameters(createSearchPattern(entities.getItems()), getSearchType()),
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
+                    entitiesFromDB = returnValue.getReturnValue();
+                    updateExistingEntities(entitiesFromDB, storagePoolId);
+                }));
     }
 
     private void updateStorageQuota() {
@@ -197,6 +224,54 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
                 ((DiskImage) disk).setQuotaId(quota.getId());
             }
         }
+    }
+
+    protected boolean validate() {
+        updateExistingEntities(entitiesFromDB, storagePool.getId());
+        return validateNames();
+    }
+
+    private boolean validateNames() {
+        for (E entity : entities.getItems()) {
+            EntityModel<String> nameEntity = validateName(entity);
+            if (!nameEntity.getIsValid()) {
+                entity.setError(ConstantsManager.getInstance().getConstants().invalidName());
+                entity.setInvalidityReasons(nameEntity.getInvalidityReasons());
+                entity.setIsValid(nameEntity.getIsValid());
+                entities.setSelectedItem(entity);
+                onPropertyChanged(new PropertyChangedEventArgs("InvalidVm")); //$NON-NLS-1$
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private EntityModel<String> validateName(E entityData) {
+        final int maxNameLength = AsyncDataProvider.getInstance().getMaxVmNameLength();
+        EntityModel<String> name = new EntityModel<>(entityData.getName());
+        name.validateEntity(
+                new IValidation[] {
+                        new NotEmptyValidation(),
+                        new LengthValidation(maxNameLength),
+                        new I18NNameValidation(),
+                        uniqueNameValidation(entityData)
+                });
+
+        return name;
+    }
+
+    private IValidation uniqueNameValidation(E entityData) {
+        return value -> (entityData.isNameExistsInSystem() || !isNameUnique(entityData)) ?
+                ValidationResult.fail(ConstantsManager.getInstance()
+                        .getConstants()
+                        .nameMustBeUniqueInvalidReason())
+                : ValidationResult.ok();
+    }
+
+    private boolean isNameUnique(E data) {
+        return getEntities().getItems()
+                .stream()
+                .noneMatch(item -> data != item && data.getName().equals(item.getName()));
     }
 
     @Override

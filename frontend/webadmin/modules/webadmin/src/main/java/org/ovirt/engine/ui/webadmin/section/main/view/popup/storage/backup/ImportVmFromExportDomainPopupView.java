@@ -237,7 +237,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             @Override
             public ImageResource getValue(Object object) {
                 ImportVmData importVmData = (ImportVmData) object;
-                if (importVmData.getError() != null || importVmData.isNameExistsInTheSystem()) {
+                if (importVmData.getError() != null || importVmData.isNameExistsInSystem()) {
                     return resources.errorImage();
                 }
                 if (importVmData.getWarning() != null) {
@@ -253,7 +253,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 if (importVmData.getError() != null) {
                     problem = importVmData.getError();
                 } else {
-                    problem = importVmData.isNameExistsInTheSystem() ?
+                    problem = importVmData.isNameExistsInSystem() ?
                             ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason()
                             : importVmData.getWarning();
                 }
