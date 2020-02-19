@@ -443,7 +443,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         try {
             ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(256);
             client.executeCommand(Config.getValue(ConfigValues.GetVdsmIdByVdsmToolCommand), null, out, err);
-            return new String(out.toByteArray(), StandardCharsets.UTF_8);
+            return new String(out.toByteArray(), StandardCharsets.UTF_8).trim();
         } catch(Exception e) {
             log.warn(
                     "Failed to initiate vdsm-id request on host: {} with error: {}",
