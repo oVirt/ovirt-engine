@@ -78,4 +78,11 @@ public interface ActionButtonDefinition<E, T> extends HasInitializeHandlers {
      */
     int getIndex();
 
+    /**
+     * This function returns the sub menu actions.
+     *
+     * @return the sub menu actions
+     */
+    List<ActionButtonDefinition<E, T>> getSubActions();
+
 }

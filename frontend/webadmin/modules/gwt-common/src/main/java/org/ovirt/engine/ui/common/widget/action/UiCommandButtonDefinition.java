@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.action;
 
+import static java.util.Collections.emptyList;
+
 import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -30,12 +32,19 @@ public abstract class UiCommandButtonDefinition<E, T> extends AbstractButtonDefi
     private IEventListener<PropertyChangedEventArgs> propertyChangeListener;
 
     public UiCommandButtonDefinition(EventBus eventBus, String title, boolean subTitledAction) {
-        super(eventBus, title, subTitledAction);
-        update();
+        this(eventBus, title, subTitledAction, emptyList());
     }
 
     public UiCommandButtonDefinition(EventBus eventBus, String title) {
         this(eventBus, title, false);
+    }
+
+    public UiCommandButtonDefinition(EventBus eventBus,
+            String title,
+            boolean subTitledAction,
+            List<ActionButtonDefinition<E, T>> subActions) {
+        super(eventBus, title, subTitledAction, subActions);
+        update();
     }
 
     /**

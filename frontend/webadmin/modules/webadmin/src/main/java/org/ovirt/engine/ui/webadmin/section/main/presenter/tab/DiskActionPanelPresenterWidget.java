@@ -116,8 +116,8 @@ public class DiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
                 return getModel().getResumeUploadCommand();
             }
         });
-        addActionButton(new WebAdminMenuBarButtonDefinition<Void, Disk>(constants.uploadImage(),
-                uploadActions), uploadActions);
+        addDropdownActionButton(new WebAdminMenuBarButtonDefinition<Void, Disk>(constants.uploadImage(),
+                uploadActions));
 
         addActionButton(new WebAdminButtonDefinition<Void, Disk>(constants.downloadImage()) {
             @Override

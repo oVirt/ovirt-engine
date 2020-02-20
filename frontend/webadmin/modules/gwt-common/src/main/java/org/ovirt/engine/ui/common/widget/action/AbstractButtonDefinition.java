@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.action;
 
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,16 +25,27 @@ public abstract class AbstractButtonDefinition<E, T> implements ActionButtonDefi
 
     private final List<HandlerRegistration> handlerRegistrations = new ArrayList<>();
 
+    private final List<ActionButtonDefinition<E, T>> subActions;
+
     protected final SafeHtml title;
 
     // Indicates whether this action button has a title action
     private final boolean subTitledAction;
 
-    public AbstractButtonDefinition(EventBus eventBus, String title,
-            boolean subTitledAction) {
+    public AbstractButtonDefinition(EventBus eventBus,
+            String title,
+            boolean subTitledAction,
+            List<ActionButtonDefinition<E, T>> subActions) {
+        this.subActions = new ArrayList<>(subActions);
         this.eventBus = eventBus;
         this.title = SafeHtmlUtils.fromSafeConstant(title);
         this.subTitledAction = subTitledAction;
+    }
+
+    public AbstractButtonDefinition(EventBus eventBus,
+            String title,
+            boolean subTitledAction) {
+        this(eventBus, title, subTitledAction, emptyList());
     }
 
     public AbstractButtonDefinition(EventBus eventBus, String title) {
@@ -107,6 +120,15 @@ public abstract class AbstractButtonDefinition<E, T> implements ActionButtonDefi
     @Override
     public SafeHtml getMenuItemTooltip() {
         return null;
+    }
+
+    /**
+     * This function returns the sub menu actions
+     *
+     * @return the sub menu actions
+     */
+    public List<ActionButtonDefinition<E, T>> getSubActions() {
+        return new ArrayList<>(subActions);
     }
 
 }

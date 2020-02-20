@@ -156,8 +156,8 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
         });
 
         // Add management menu bar
-        addActionButton(new WebAdminMenuBarButtonDefinition<Void, VDS>(constants.management(),
-                managementSubActions), managementSubActions);
+        addDropdownActionButton(new WebAdminMenuBarButtonDefinition<Void, VDS>(constants.management(),
+                managementSubActions));
 
         // Installation operations drop down
         List<ActionButtonDefinition<Void, VDS>> moreSubActions = new LinkedList<>();
@@ -189,8 +189,7 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
                 return getModel().getUpgradeCommand();
             }
         });
-        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.installation(), moreSubActions),
-                moreSubActions);
+        addDropdownActionButton(new WebAdminMenuBarButtonDefinition<>(constants.installation(), moreSubActions));
 
         // Host Console (link to Cockpit)
         addActionButton(new WebAdminButtonDefinition<Void, VDS>(constants.hostConsole()) {

@@ -91,16 +91,16 @@ public class VolumeActionPanelPresenterWidget extends ActionPanelPresenterWidget
                 return getModel().getStopVolumeProfilingCommand();
             }
         });
-        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.volumeProfilingAction(),
-                volumeProfilingActions), volumeProfilingActions);
+        addDropdownActionButton(new WebAdminMenuBarButtonDefinition<>(constants.volumeProfilingAction(),
+                volumeProfilingActions));
 
         List<ActionButtonDefinition<Void, GlusterVolumeEntity>> volumeSnapshotActions = getVolumeSnapshotMenu();
-        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.volumeSnapshotMainViewTitle(),
-                volumeSnapshotActions), volumeSnapshotActions);
+        addDropdownActionButton(new WebAdminMenuBarButtonDefinition<>(constants.volumeSnapshotMainViewTitle(),
+                volumeSnapshotActions));
 
         List<ActionButtonDefinition<Void, GlusterVolumeEntity>> volumeGeoRepActions = getGeoRepCreateMenu(constants);
-        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.geoReplicationMainViewTitle(),
-                volumeGeoRepActions), volumeGeoRepActions);
+        addDropdownActionButton(new WebAdminMenuBarButtonDefinition<>(constants.geoReplicationMainViewTitle(),
+                volumeGeoRepActions));
     }
 
     private List<ActionButtonDefinition<Void, GlusterVolumeEntity>> getGeoRepCreateMenu(ApplicationConstants constants) {

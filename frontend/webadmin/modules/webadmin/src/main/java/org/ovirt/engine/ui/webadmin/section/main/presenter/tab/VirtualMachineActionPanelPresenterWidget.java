@@ -75,12 +75,12 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
                 return getModel().getRunOnceCommand();
             }
         });
-        addComboActionButton(new WebAdminImageButtonDefinition<Void, VM>(constants.runVm(), IconType.PLAY) {
+        addComboActionButton(new WebAdminImageButtonDefinition<Void, VM>(constants.runVm(), IconType.PLAY, runSubActions) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRunCommand();
             }
-        }, runSubActions);
+        });
         addActionButton(new WebAdminImageButtonDefinition<Void, VM>(constants.suspendVm(), IconType.MOON_O) {
             @Override
             protected UICommand resolveCommand() {
@@ -95,13 +95,13 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
                 return getModel().getStopCommand();
             }
         });
-        addComboActionButtonWithContexts(new WebAdminImageButtonDefinition<Void, VM>(constants.shutDownVm(), IconType.STOP
-                ) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getShutdownCommand();
-            }
-        }, shutdownSubActions);
+        addComboActionButtonWithContexts(
+                new WebAdminImageButtonDefinition<Void, VM>(constants.shutDownVm(), IconType.STOP, shutdownSubActions) {
+                    @Override
+                    protected UICommand resolveCommand() {
+                        return getModel().getShutdownCommand();
+                    }
+                });
 
         addActionButton(new WebAdminImageButtonDefinition<Void, VM>(constants.rebootVm(), IconType.REPEAT) {
             @Override
@@ -119,12 +119,12 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
             }
         });
 
-        addComboActionButton(new WebAdminImageButtonDefinition<Void, VM>(constants.consoleVm(), IconType.DESKTOP) {
+        addComboActionButton(new WebAdminImageButtonDefinition<Void, VM>(constants.consoleVm(), IconType.DESKTOP, consoleOptionsSubActions) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getConsoleConnectCommand();
             }
-        }, consoleOptionsSubActions);
+        });
 
         addActionButton(new WebAdminButtonDefinition<Void, VM>(constants.createSnapshotVM()) {
             @Override

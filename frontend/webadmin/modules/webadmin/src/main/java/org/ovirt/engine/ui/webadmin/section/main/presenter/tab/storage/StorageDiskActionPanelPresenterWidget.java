@@ -82,7 +82,7 @@ public class StorageDiskActionPanelPresenterWidget extends
                 return getDetailModel().getResumeUploadCommand();
             }
         });
-        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.uploadImage(), uploadActions), uploadActions);
+        addDropdownActionButton(new WebAdminMenuBarButtonDefinition<>(constants.uploadImage(), uploadActions));
 
         addActionButton(new WebAdminButtonDefinition<StorageDomain, Disk>(constants.downloadImage()) {
             @Override

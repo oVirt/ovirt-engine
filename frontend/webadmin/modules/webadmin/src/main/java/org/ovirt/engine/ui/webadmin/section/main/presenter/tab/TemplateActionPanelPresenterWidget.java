@@ -64,8 +64,8 @@ public class TemplateActionPanelPresenterWidget extends ActionPanelPresenterWidg
             }
         });
         // Add export menu bar
-        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.exportTemplate(),
-                exportSubActions), exportSubActions);
+        addDropdownActionButton(new WebAdminMenuBarButtonDefinition<>(constants.exportTemplate(),
+                exportSubActions));
 
         addActionButton(new WebAdminButtonDefinition<Void, VmTemplate>(constants.createVmFromTemplate()) {
             @Override
