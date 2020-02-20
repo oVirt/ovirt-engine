@@ -46,6 +46,7 @@ public class ClusterMonitoring {
     private KubevirtClusterMigrationMonitoring migrationMonitoring;
     private DisksMonitoring disksMonitoring;
     private TemplatesMonitoring templatesMonitoring;
+    private NetworksMonitoring networksMonitoring;
 
     @Inject
     private SharedInformerFactoryProducer sharedInformerFactoryProducer;
@@ -72,6 +73,9 @@ public class ClusterMonitoring {
 
     @Inject
     private TemplateUpdater templateUpdater;
+
+    @Inject
+    private NetworkUpdater networkUpdater;
 
     private KubevirtApi api;
     private ApiClient client;
@@ -144,6 +148,9 @@ public class ClusterMonitoring {
         clusterSyncer.sync(client, clusterId);
         nodesMonitoring = new NodesMonitoring(client, clusterId, vdsStaticDao, hostUpdater);
         nodesMonitoring.monitor(sharedInformerFactory);
+
+        networksMonitoring = new NetworksMonitoring(client, clusterId, networkUpdater);
+        networksMonitoring.monitor(sharedInformerFactory);
 
         vmsMonitoring = new VMsMonitoring(client, clusterId, vmUpdater);
         vmsMonitoring.monitor(sharedInformerFactory);

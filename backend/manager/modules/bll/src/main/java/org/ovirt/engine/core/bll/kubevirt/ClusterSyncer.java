@@ -1,15 +1,18 @@
 package org.ovirt.engine.core.bll.kubevirt;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,6 +20,7 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +31,9 @@ import io.kubernetes.client.models.V1Node;
 import io.kubernetes.client.models.V1NodeList;
 import io.kubernetes.client.models.V1PersistentVolumeClaim;
 import io.kubernetes.client.models.V1PersistentVolumeClaimList;
+import kubevirt.io.K8sCniCncfIoV1Api;
 import kubevirt.io.KubevirtApi;
+import kubevirt.io.V1NetworkAttachmentDefinitionList;
 import kubevirt.io.V1VirtualMachineList;
 
 /**
@@ -60,6 +66,12 @@ public class ClusterSyncer {
     @Inject
     private TemplateUpdater templateUpdater;
 
+    @Inject
+    private NetworkDao networkDao;
+
+    @Inject
+    private NetworkUpdater networkUpdater;
+
     /**
      * Sync act by the following sequence to maintain data integrity:
      * <li>Remove VMs that exist on engine and were not reported by kubevirt</li>
@@ -67,10 +79,8 @@ public class ClusterSyncer {
      * <li>Add Hosts that were reported by kubevirt and don't exist on engine</li>
      * <li>Add VMs that were reported by kubevirt and don't exist on engine</li>
      *
-     * @param client
-     *            The client object of kubevirt provider
-     * @param clusterId
-     *            The identifier of kubevirt cluster
+     * @param client    The client object of kubevirt provider
+     * @param clusterId The identifier of kubevirt cluster
      */
     public void sync(ApiClient client, Guid clusterId) {
         V1VirtualMachineList kubevirtVms = getKubevirtVms(client, clusterId);
@@ -87,6 +97,14 @@ public class ClusterSyncer {
         if (kubevirtDisks == null) {
             return;
         }
+
+        V1NetworkAttachmentDefinitionList kubevirtNetworks = getKubevirtNetworks(client, clusterId);
+        if (kubevirtNetworks == null) {
+            return;
+        }
+
+        List<Network> engineNetworks = networkDao.getAllForCluster(clusterId);
+        addMissingNetworks(kubevirtNetworks, engineNetworks, clusterId);
 
         List<DiskImage> engineDisks = diskImageDao.getAllForStorageDomain(clusterId);
         removeUnreportedDisks(kubevirtDisks, engineDisks);
@@ -106,6 +124,47 @@ public class ClusterSyncer {
         // pattern for hosts, VMs and disks above.
         List<VmTemplate> templates = templateDao.getAllForCluster(clusterId);
         templates.forEach(templateUpdater::removeFromDB);
+
+        removeUnreportedNetworks(kubevirtNetworks, engineNetworks, clusterId);
+    }
+
+    private void removeUnreportedNetworks(V1NetworkAttachmentDefinitionList kubevirtNetworks,
+            List<Network> engineNetworks,
+            Guid clusterId) {
+        Set<String> kubevirtNetworkNames =
+                kubevirtNetworks.getItems().stream().map(NetworkUpdater::getNetworkName).collect(Collectors.toSet());
+        engineNetworks.stream()
+                .filter(n -> !kubevirtNetworkNames.contains(n.getName()))
+                .forEach(n -> networkUpdater.removeNetwork(n.getName(), clusterId));
+    }
+
+    private void addMissingNetworks(V1NetworkAttachmentDefinitionList kubevirtNetworks,
+            List<Network> engineNetworks,
+            Guid clusterId) {
+        Map<String, Network> engineNetworksByName = Entities.entitiesByName(engineNetworks);
+        kubevirtNetworks.getItems()
+                .stream()
+                .filter(n -> !engineNetworksByName.containsKey(NetworkUpdater.getNetworkName(n)))
+                .forEach(n -> networkUpdater.addNetwork(n, clusterId));
+    }
+
+    private V1NetworkAttachmentDefinitionList getKubevirtNetworks(ApiClient client, Guid clusterId) {
+        K8sCniCncfIoV1Api cniApi = new K8sCniCncfIoV1Api(client);
+        try {
+            return cniApi.listV1NetworkAttachmentDefinitionForAllNamespaces(null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    Boolean.FALSE);
+        } catch (ApiException e) {
+            log.error("Failed to communicate with kubevirt cluster " + clusterId + " due to: " + e.getMessage());
+            log.debug("Exception", e);
+            return null;
+        }
     }
 
     private void addMissingVms(Guid clusterId, V1VirtualMachineList kubevirtVms, List<VmStatic> engineVms) {

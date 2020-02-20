@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.provider.cluster;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.kubevirt.ClusterMonitoring;
 import org.ovirt.engine.core.bll.kubevirt.KubevirtMonitoring;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -21,6 +23,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
+import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.UnmanagedStorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -30,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -39,6 +43,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -68,6 +74,15 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
 
     @Inject
     private ProviderDao providerDao;
+
+    @Inject
+    private NetworkDao networkDao;
+
+    @Inject
+    private NetworkClusterDao networkClusterDao;
+
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
 
     /**
      * command's context is required for internal backend actions that requires a user, i.e. creating data-center with
@@ -289,9 +304,23 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
     @Override
     public void onRemoval() {
         monitoring.get().unregister(provider.getId());
+        List<Network> networks = networkDao.getAllForCluster(provider.getId());
+        networks.stream()
+                .filter(n -> !managementNetworkUtil.getDefaultManagementNetworkName().equals(n.getName()))
+                .forEach(n -> deleteNetwork(n, provider.getId()));
+
         ClusterParametersBase parameters = new ClusterParametersBase(provider.getId());
         parameters.setForce(true);
         backend.runInternalAction(ActionType.RemoveCluster, parameters);
+    }
+
+    private void deleteNetwork(Network network, Guid clusterId) {
+        if (networkClusterDao.getAllForNetwork(network.getId())
+                .stream()
+                .filter(nc -> !nc.getClusterId().equals(clusterId))
+                .count() == 0) {
+            backend.runInternalAction(ActionType.RemoveNetwork, new RemoveNetworkParameters(network.getId()));
+        }
     }
 
     @Override
