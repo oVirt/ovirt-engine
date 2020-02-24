@@ -1922,10 +1922,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         }
 
-        // USB controllers must not be set with user-aliases (bz #1552127)
-        if (!VmDeviceType.USB.getName().equals(device.getDevice())) {
-            writeAlias(device);
-        }
+        writeAlias(device);
 
         writeAddress(device);
         writer.writeEndElement();

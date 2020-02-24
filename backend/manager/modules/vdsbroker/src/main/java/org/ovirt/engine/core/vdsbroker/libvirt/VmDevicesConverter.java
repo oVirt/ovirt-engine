@@ -136,8 +136,6 @@ public class VmDevicesConverter {
     }
 
     private List<Map<String, Object>> parseChannels(XmlDocument document, List<VmDevice> devices) {
-        List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.CHANNEL);
-
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.CHANNEL)) {
             String address = DomainXmlUtils.parseAddress(node);
@@ -151,16 +149,11 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Device, DomainXmlUtils.parseAttribute(node, TYPE)); // shouldn't it be VdsProperties.DeviceType?
             dev.put(VdsProperties.Address, address);
             dev.put(VdsProperties.Alias, parseAlias(node));
-
-            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
-
-            if (dbDev.isPresent()) {
-                dbDevices.remove(dbDev.get());
-                dev.put(VdsProperties.DeviceId, dbDev.get().getDeviceId().toString());
-                dev.put(VdsProperties.SpecParams, dbDev.get().getSpecParams());
-            } else {
-                dev.put(VdsProperties.DeviceId, Guid.newGuid().toString());
-            }
+            // Channel devices are not sent within the domain xml during VM launching.
+            // Therefore, unlike other devices there is no need to call the correlateWithUserAlias
+            // function here because there will not be a database channel device available.
+            // We just need to create a new channel device here.
+            dev.put(VdsProperties.DeviceId, Guid.newGuid().toString());
 
             result.add(dev);
         }
@@ -193,7 +186,14 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, address);
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
+            Optional<VmDevice> dbDev = Optional.empty();
+            // Controllers such as pci controllers that are not sent by the engine during initial loading,
+            // but are received from the dumpxml will not have the device id in the alias. To avoid a warning for
+            // these types of devices we first validate if the alias contains the user access prefix.
+            // If not the correlationWithUserAlias function is skipped.
+            if (dev.get(VdsProperties.Alias).toString().startsWith(DomainXmlUtils.USER_ALIAS_PREFIX)) {
+                dbDev = correlateWithUserAlias(dev, dbDevices);
+            }
 
             if (dbDev.isPresent()) {
                 dbDevices.remove(dbDev.get());
@@ -235,7 +235,7 @@ public class VmDevicesConverter {
                 continue;
             }
 
-            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
 
             if (dbDev.isPresent()) {
                 dbDevices.remove(dbDev.get());
@@ -283,7 +283,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Device, deviceType);
             dev.put(VdsProperties.SpecParams, hostAddress);
 
-            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
 
             dev.put(VdsProperties.DeviceId, dbDev.isPresent() ? dbDev.get().getDeviceId().toString() : Guid.newGuid().toString());
             result.add(dev);
@@ -323,7 +323,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
             dev.put(VdsProperties.Device, hostDevice.getDeviceName());
 
-            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
 
             if (!dbDev.isPresent()) {
                 log.warn("VM host device '{}' does not exist in the database, thus ignored",
@@ -350,7 +350,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
 
             if (dbDev.isPresent()) {
                 dbDevices.remove(dbDev.get());
@@ -378,7 +378,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             String path = DomainXmlUtils.parseDiskPath(node);
-            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
 
             if (!dbDev.isPresent()) {
                 log.warn("unmanaged disk with path '{}' is ignored", path);
@@ -454,7 +454,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
 
             if (!dbDev.isPresent()) {
                 String macAddress = DomainXmlUtils.parseMacAddress(node);
@@ -495,7 +495,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             // There is supposed to be one video device of each type (spice/vnc/..)
-            Optional<VmDevice> dbDev = correlate(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
 
             if (!dbDev.isPresent()) {
                 log.warn("unmanaged video device with address '{}' is ignored", dev.get(VdsProperties.Address));
@@ -661,7 +661,7 @@ public class VmDevicesConverter {
         return devices.stream().filter(d -> d.getType() == devType).findFirst().orElse(null);
     }
 
-    private Optional<VmDevice> correlate(Map<String, Object> device,
+    private Optional<VmDevice> correlateWithUserAlias(Map<String, Object> device,
             List<VmDevice> dbDevices) {
         String alias = (String) device.get(VdsProperties.Alias);
         try {
