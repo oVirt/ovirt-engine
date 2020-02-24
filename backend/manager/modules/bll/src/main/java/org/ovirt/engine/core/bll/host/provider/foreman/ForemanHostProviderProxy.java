@@ -407,8 +407,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
     @Override
     protected void afterReadResponse(HttpURLConnection connection, byte[] response) throws Exception {
-        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK
-                && connection.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP) {
+        if (isUnsuccessfulResponseCode(connection)) {
             ForemanErrorWrapper ferr = objectMapper.readValue(response, ForemanErrorWrapper.class);
             String err = StringUtils.join(ferr.getForemanError().getFullMessages(), ", ");
             throw new EngineException(EngineError.PROVIDER_FAILURE, err);

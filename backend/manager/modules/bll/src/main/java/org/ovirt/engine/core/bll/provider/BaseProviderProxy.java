@@ -83,10 +83,13 @@ public abstract class BaseProviderProxy implements ProviderProxy {
     }
 
     protected void beforeReadResponse(HttpURLConnection connection) throws Exception {
-        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK
-                && connection.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP) {
+        if (isUnsuccessfulResponseCode(connection)) {
             throw new EngineException(EngineError.PROVIDER_FAILURE);
         }
+    }
+
+    protected boolean isUnsuccessfulResponseCode(HttpURLConnection connection) throws IOException {
+        return connection.getResponseCode() < 200 || connection.getResponseCode() >= 400;
     }
 
     protected HttpURLConnection createConnection(String relativePath) {
