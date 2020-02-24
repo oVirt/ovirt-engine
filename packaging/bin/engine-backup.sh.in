@@ -94,10 +94,10 @@ def escape(s, chars):
 
 config.optionxform = str
 
-with open(props_file) as f:
+with io.open(props_file, mode='r', encoding='utf-8') as f:
     config.readfp(
         io.StringIO(
-          '[default]' + f.read().decode('utf-8')
+          '[default]\n' + f.read()
         )
     )
 
@@ -132,7 +132,7 @@ cinderlib_enabled() {
 }
 
 load_branding() {
-	for f in /etc/ovirt-engine/branding/*/external_resources.properties; do
+	for f in /etc/ovirt-engine/branding/*/branding-external-resources.properties; do
 		if [ -e "${f}" ]; then
 			eval $(get_java_props \
 				"${f}" \
