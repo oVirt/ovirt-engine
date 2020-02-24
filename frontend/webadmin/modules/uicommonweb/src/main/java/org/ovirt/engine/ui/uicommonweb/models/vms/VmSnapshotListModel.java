@@ -52,6 +52,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -61,6 +62,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     private static final String DATE_FORMAT = "yyyy-MM-dd, HH:mm"; //$NON-NLS-1$
 
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
+    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private UICommand newCommand;
 
@@ -187,7 +189,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     }
 
     public VmSnapshotListModel() {
-        setTitle(ConstantsManager.getInstance().getConstants().snapshotsTitle());
+        setTitle(constants.snapshotsTitle());
         setHelpTag(HelpTag.snapshots);
         setHashName("snapshots"); //$NON-NLS-1$
 
@@ -291,7 +293,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             Snapshot snapshot = getSelectedItem();
             ConfirmationModel model = new ConfirmationModel();
             setWindow(model);
-            model.setTitle(ConstantsManager.getInstance().getConstants().deleteSnapshotTitle());
+            model.setTitle(constants.deleteSnapshotTitle());
             model.setHelpTag(HelpTag.delete_snapshot);
             model.setHashName("delete_snapshot"); //$NON-NLS-1$
             StringBuilder stringBuilder = new StringBuilder();
@@ -325,7 +327,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                 .collect(Collectors.toList());
 
         if (backupEnabledDisksIds.isEmpty()) {
-            return ConstantsManager.getInstance().getConstants().emptyString();
+            return constants.emptyString();
         }
 
         // Get all disks names that support incremental backup and
@@ -403,8 +405,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                 setWindow(model);
 
                 model.setTitle(showPartialSnapshotWarning ?
-                        ConstantsManager.getInstance().getConstants().previewPartialSnapshotTitle() :
-                        ConstantsManager.getInstance().getConstants().previewSnapshotTitle());
+                        constants.previewPartialSnapshotTitle() :
+                        constants.previewSnapshotTitle());
                 model.setHelpTag(showPartialSnapshotWarning ? HelpTag.preview_partial_snapshot : HelpTag.preview_snapshot);
                 model.setHashName(showPartialSnapshotWarning ? "preview_partial_snapshot" : "preview_snapshot"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -454,7 +456,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         setWindow(model);
 
-        model.setTitle(ConstantsManager.getInstance().getConstants().customPreviewSnapshotTitle());
+        model.setTitle(constants.customPreviewSnapshotTitle());
         model.setHelpTag(HelpTag.custom_preview_snapshot);
         model.setHashName("custom_preview_snapshot"); //$NON-NLS-1$
 
@@ -541,7 +543,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
             ConfirmationModel model = new ConfirmationModel();
             setWindow(model);
-            model.setTitle(ConstantsManager.getInstance().getConstants().commitSnapshotTitle());
+            model.setTitle(constants.commitSnapshotTitle());
             model.setHelpTag(HelpTag.commit_snapshot);
             model.setHashName("commit_snapshot"); //$NON-NLS-1$
             model.setMessage(ConstantsManager.getInstance()
@@ -622,7 +624,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) model.getBehavior();
             behavior.setVm(vm);
 
-            model.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
+            model.setTitle(constants.newTemplateTitle());
             model.setHelpTag(HelpTag.clone_template_from_snapshot);
             model.setHashName("clone_template_from_snapshot"); //$NON-NLS-1$
             model.setIsNew(true);
@@ -632,7 +634,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             model.getIsHighlyAvailable().setEntity(vm.getStaticData().isAutoStartup());
             model.getCommands().add(
                     new UICommand("OnNewTemplate", VmSnapshotListModel.this) //$NON-NLS-1$
-                            .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                            .setTitle(constants.ok())
                             .setIsDefault(true));
 
             model.getCommands().add(UICommand.createCancelUiCommand("Cancel", VmSnapshotListModel.this)); //$NON-NLS-1$
@@ -743,7 +745,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             CloneVmFromSnapshotModelBehavior behavior = (CloneVmFromSnapshotModelBehavior) unitVmModel.getBehavior();
             behavior.setVm(vm);
 
-            unitVmModel.setTitle(ConstantsManager.getInstance().getConstants().cloneVmFromSnapshotTitle());
+            unitVmModel.setTitle(constants.cloneVmFromSnapshotTitle());
             unitVmModel.setHelpTag(HelpTag.clone_vm_from_snapshot);
             unitVmModel.setHashName("clone_vm_from_snapshot"); //$NON-NLS-1$
             unitVmModel.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
