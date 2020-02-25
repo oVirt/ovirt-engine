@@ -22,14 +22,18 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
 
     private boolean vnicProfilePublicUse;
 
+    private boolean async;
+
     public AddNetworkStoragePoolParameters() {
         vnicProfileRequired = true;
+        async = true;
     }
 
     public AddNetworkStoragePoolParameters(Guid storagePoolId, Network network) {
         super(storagePoolId);
         this.network = network;
         vnicProfileRequired = true;
+        async = true;
     }
 
     public Network getNetwork() {
@@ -58,5 +62,13 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
 
     public void setVnicProfilePublicUse(boolean vnicProfilePublicUse) {
         this.vnicProfilePublicUse = vnicProfilePublicUse;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    public void setAsync(boolean async) {
+        this.async = async;
     }
 }

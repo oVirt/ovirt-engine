@@ -97,9 +97,15 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         });
 
         // Run cluster attachment, AddVnicProfile and  auto-define in separated thread
-        ExecutionHandler.setAsyncJob(getExecutionContext(), true);
-        CompletableFuture.runAsync(this::runClusterAttachment, ThreadPoolUtil.getExecutorService())
-                .thenRunAsync(this::runAddVnicProfile).thenRunAsync(this::runAutodefine);
+        if (getParameters().isAsync()) {
+            ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+            CompletableFuture.runAsync(this::runClusterAttachment, ThreadPoolUtil.getExecutorService())
+                    .thenRunAsync(this::runAddVnicProfile).thenRunAsync(this::runAutodefine);
+        } else {
+            runClusterAttachment();
+            runAddVnicProfile();
+            runAutodefine();
+        }
 
         getReturnValue().setActionReturnValue(getNetwork().getId());
         setSucceeded(true);

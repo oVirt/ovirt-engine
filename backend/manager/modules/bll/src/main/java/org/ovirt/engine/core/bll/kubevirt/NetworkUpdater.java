@@ -67,6 +67,7 @@ public class NetworkUpdater {
             networkCluster.setClusterId(clusterId);
             networkCluster.setRequired(false);
             params.setNetworkClusterList(List.of(networkCluster));
+            params.setAsync(false);
             ActionReturnValue returnValue = backend.get().runInternalAction(ActionType.AddNetwork, params);
             dcNetworkId = returnValue.getActionReturnValue();
             dcNetwork.setId(dcNetworkId);
