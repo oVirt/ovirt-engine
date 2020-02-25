@@ -260,7 +260,7 @@ public class LibvirtVmXmlBuilderTest {
         underTest.writeClock();
         verify(writer, times(4)).writeStartElement("timer");
         verify(writer, times(1)).writeAttributeString("name", "tsc");
-        verify(writer, times(1)).writeAttributeString("frequency", "1234000000");
+        verify(writer, times(1)).writeAttributeString("frequency", "1234567980");
     }
 
     @Test
@@ -352,7 +352,7 @@ public class LibvirtVmXmlBuilderTest {
 
     private void setTscFreqSupplier(LibvirtVmXmlBuilder underTest) throws NoSuchFieldException {
         Field tscFrequencySupplier = LibvirtVmXmlBuilder.class.getDeclaredField("tscFrequencySupplier");
-        FieldSetter.setField(underTest, tscFrequencySupplier, new MemoizingSupplier<>(() -> "1234.567"));
+        FieldSetter.setField(underTest, tscFrequencySupplier, new MemoizingSupplier<>(() -> "1234567980"));
     }
 
     private void setCpuFlagsSupplier(LibvirtVmXmlBuilder underTest, String flags) throws NoSuchFieldException {
