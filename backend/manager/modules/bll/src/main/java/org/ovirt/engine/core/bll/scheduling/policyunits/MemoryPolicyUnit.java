@@ -51,7 +51,9 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
             return hosts;
         }
 
-        List<VDS> filteredList = new ArrayList<>();
+        boolean canDelay = false;
+        List<VDS> resultList = new ArrayList<>();
+
         for (VDS vds : hosts) {
             // Skip checks if the VM is currently running on the host
             List<VM> vmsNotRunningOnHost = vmsToCheck.stream()
@@ -59,8 +61,14 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
                     .collect(Collectors.toList());
 
             if (vmsNotRunningOnHost.isEmpty()) {
-                filteredList.add(vds);
+                resultList.add(vds);
                 continue;
+            }
+
+            // Only allow delay if there are pending VMs to run.
+            // Otherwise, pending memory will not change by waiting.
+            if (vds.getPendingVmemSize() > 0) {
+                canDelay = true;
             }
 
             // Check physical memory needed to start / receive the VM
@@ -69,40 +77,17 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
             int pendingRealMemory = PendingMemory.collectForHost(getPendingResourceManager(), vds.getId());
 
             if (!slaValidator.hasPhysMemoryToRunVmGroup(vds, vmsNotRunningOnHost, pendingRealMemory)) {
-                Long hostAvailableMem = vds.getMemFree() + vds.getSwapFree();
-                log.debug(
-                        "Host '{}' has insufficient memory to run the VM. Only {} MB of physical memory + swap are available.",
-                        vds.getName(),
-                        hostAvailableMem);
-
-                messages.addMessage(vds.getId(), String.format("$availableMem %1$d", hostAvailableMem));
-                messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
+                logInsufficientPhysicalMemory(vds, messages);
                 continue;
             }
-            filteredList.add(vds);
-        }
-
-        List<VDS> resultList = new ArrayList<>();
-        List<VDS> overcommitFailed = new ArrayList<>();
-
-        boolean canDelay = false;
-        for (VDS vds : filteredList) {
-            // Only delay if there are pending VMs to run.
-            // Otherwise, pending memory will not change by waiting.
-            if (vds.getPendingVmemSize() > 0) {
-                canDelay = true;
-            }
-
-            List<VM> vmsNotRunningOnHost = vmsToCheck.stream()
-                    .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
-                    .collect(Collectors.toList());
 
             // Check logical memory using overcommit, pending and guaranteed memory rules
-            if (slaValidator.hasOvercommitMemoryToRunVM(vds, vmsNotRunningOnHost)) {
-                resultList.add(vds);
-            } else {
-                overcommitFailed.add(vds);
+            if (!slaValidator.hasOvercommitMemoryToRunVM(vds, vmsNotRunningOnHost)) {
+                logInsufficientOvercommitMemory(vds, messages);
+                continue;
             }
+
+            resultList.add(vds);
         }
 
         // Wait a while and restart the scheduling
@@ -111,15 +96,26 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
             return Collections.emptyList();
         }
 
-        for (VDS vds : overcommitFailed) {
-            log.debug("Host '{}' is already too close to the memory overcommitment limit. It can only accept {} MB of additional memory load.",
-                    vds.getName(),
-                    vds.getMaxSchedulingMemory());
-
-            messages.addMessage(vds.getId(), String.format("$availableMem %1$.0f", vds.getMaxSchedulingMemory()));
-            messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
-        }
-
         return resultList;
+    }
+
+    private void logInsufficientPhysicalMemory(VDS vds, PerHostMessages messages) {
+        long hostAvailableMem = vds.getMemFree() + vds.getSwapFree();
+        log.debug(
+                "Host '{}' has insufficient memory to run the VM. Only {} MB of physical memory + swap are available.",
+                vds.getName(),
+                hostAvailableMem);
+
+        messages.addMessage(vds.getId(), String.format("$availableMem %1$d", hostAvailableMem));
+        messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
+    }
+
+    private void logInsufficientOvercommitMemory(VDS vds, PerHostMessages messages) {
+        log.debug("Host '{}' is already too close to the memory overcommitment limit. It can only accept {} MB of additional memory load.",
+                vds.getName(),
+                vds.getMaxSchedulingMemory());
+
+        messages.addMessage(vds.getId(), String.format("$availableMem %1$.0f", vds.getMaxSchedulingMemory()));
+        messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
     }
 }
