@@ -47,7 +47,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
                 .filter(vm -> vm.getStatus() != VMStatus.Paused)
                 .collect(Collectors.toList());
 
-        if (vmGroup.isEmpty()) {
+        if (vmsToCheck.isEmpty()) {
             return hosts;
         }
 
