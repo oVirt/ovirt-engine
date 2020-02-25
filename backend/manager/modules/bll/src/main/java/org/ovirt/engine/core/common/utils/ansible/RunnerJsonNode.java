@@ -141,6 +141,13 @@ public final class RunnerJsonNode {
     }
 
     /**
+     * Return true if the event is 'runner_on_unreachable', which means the host is unreachable
+     */
+    public static boolean isEventUnreachable(JsonNode node) {
+        return node.get("event").getTextValue().equals("runner_on_unreachable");
+    }
+
+    /**
      * Return true if the event is 'playbook_on_stats', which contains playbook statistics.
      */
     public static boolean playbookStats(JsonNode node) {

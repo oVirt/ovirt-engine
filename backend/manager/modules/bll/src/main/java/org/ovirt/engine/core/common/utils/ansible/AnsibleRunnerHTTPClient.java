@@ -181,6 +181,17 @@ public class AnsibleRunnerHTTPClient {
         return RunnerJsonNode.totalEvents(responseNode);
     }
 
+    public boolean isHostUnreachable(String playUuid){
+        JsonNode events = getEvents(playUuid);
+        Iterator<JsonNode> it = events.get("data").get("events").getElements();
+        while (it.hasNext()) {
+            if (RunnerJsonNode.isEventUnreachable(it.next())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public int processEvents(String playUuid, int lastEventId, BiConsumer<String, String> fn) {
         JsonNode responseNode = getEvents(playUuid);
         JsonNode eventNodes = RunnerJsonNode.eventNodes(responseNode);

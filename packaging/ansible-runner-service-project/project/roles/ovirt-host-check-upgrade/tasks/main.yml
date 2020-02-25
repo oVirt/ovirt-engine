@@ -26,4 +26,3 @@
   file:
     path: /tmp/yum_updates
     state: absent
-

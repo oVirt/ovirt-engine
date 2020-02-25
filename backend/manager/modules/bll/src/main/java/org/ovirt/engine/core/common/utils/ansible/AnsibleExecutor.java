@@ -110,6 +110,11 @@ public class AnsibleExecutor {
             // Run the playbook:
             playUuid = runnerClient.runPlaybook(command);
 
+            if (runnerClient.isHostUnreachable(playUuid)) {
+                ret.setAnsibleReturnCode(AnsibleReturnCode.UNREACHABLE);
+                return ret;
+            }
+
             // Process the events of the playbook:
             while (iteration < timeout * 60) {
                 Thread.sleep(POLL_INTERVAL);
@@ -118,7 +123,6 @@ public class AnsibleExecutor {
                 AnsibleRunnerHTTPClient.PlaybookStatus playbookStatus = runnerClient.getPlaybookStatus(playUuid);
                 String status = playbookStatus.getStatus();
                 String msg = playbookStatus.getMsg();
-
                 // Process the events if the playbook is running:
                 totalEvents = runnerClient.getTotalEvents(playUuid);
 
