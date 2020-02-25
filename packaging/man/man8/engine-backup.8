@@ -20,6 +20,8 @@ engine-backup - Backup and restore ovirt-engine environment.
 .br
 \fBdwhdb\fR     Data Warehouse database only.
 .br
+\fBcinderlibdb\fR     Cinderlib database only.
+.br
 .SH OPTIONS
 .PP
 \fB\-\-file\fR=\fIFILE\fR
@@ -204,6 +206,71 @@ Set a secured connection for the Data Warehouse database.
 Validate host for the Data Warehouse database.
 .RE
 .PP
+\fB\-\-cinderlib\-db\-compressor\fR=\fICOMPRESSOR\fR
+.RS 4
+Compress the Cinderlib database, same options as --archive-compressor.
+.RE
+.PP
+\fB\-\-cinderlib\-db\-dump\-format\fR=\fIFORMAT\fR
+.RS 4
+Cinderlib database dump format.
+.RE
+.PP
+\fB\-\-cinderlib\-db\-restore\-jobs\fR=\fIJOBS\fR
+.RS 4
+Number of restore jobs for the Cinderlib database.
+.RE
+.PP
+\fB\-\-provision\-cinderlib\-db\fR
+.RS 4
+Create a Cinderlib database for restore.
+.RE
+.PP
+\fB\-\-change\-cinderlib\-db\-credentials\fR
+.RS 4
+Activate the following options, to restore the Cinderlib database to a different location etc. If used, existing credentials are ignored.
+.RE
+.PP
+\fB\-\-cinderlib\-db\-host\fR=\fIHOST\fR
+.RS 4
+Set Cinderlib database host.
+.RE
+.PP
+\fB\-\-cinderlib\-db\-port\fR=\fIPORT\fR
+.RS 4
+Set Cinderlib database port.
+.RE
+.PP
+\fB\-\-cinderlib\-db\-user\fR=\fIUSER\fR
+.RS 4
+Set Cinderlib database user.
+.RE
+.PP
+\fB\-\-cinderlib\-db\-passfile\fR=\fIPASS_FILE\fR
+.RS 4
+Read Cinderlib database password from file.
+.RE
+.PP
+\fB\-\-cinderlib\-db\-password\fR=\fIPASSWORD\fR
+.RS 4
+Set Cinderlib database password. If \fIPASSWORD\fR is empty, the password is read interactively.
+.RE
+.PP
+\fB\-\-cinderlib\-db\-name\fR=\fINAME\fR
+.RS 4
+Set Cinderlib database name.
+.RE
+.PP
+\fB\-\-cinderlib\-db\-secured\fR
+.RS 4
+Set a secured connection for the Cinderlib database.
+.RE
+.PP
+\fB\-\-cinderlib\-db\-secured\-validation\fR
+.RS 4
+Validate host for the Cinderlib database.
+.RE
+.PP
 \fB\-\-no\-restore\-permissions\fR
 .RS 4
 Affects only the custom dump format. Will pass to pg_restore '--no-owner --no-privileges'.
@@ -316,7 +383,7 @@ Parent of temporary directory to create (using mktemp(1)).
 Database password as if provided by \fB\-\-db\-password\fR=\fIPASSWORD\fR option.
 .RE
 .SH NOTES
-See http://www.ovirt.org/Ovirt-engine-backup for more info.
+See https://www.ovirt.org/documentation/admin-guide/chap-Backups_and_Migration.html for more info.
 .PP
 \fBTo create a new user/database:\fR
 .PP
@@ -347,9 +414,24 @@ host    <database>      <user>          ::0/0                   md5
 .PP
 Replace <user>, <password>, <database> with appropriate values.
 
+.SH EXAMPLES
+.PP
+To do a full engine backup:
+.PP
+.RS 4
+engine-backup
+.RE
+.PP
+To restore a backup from FILE, where engine-setup was used to set up the original engine, and used the default (automatic provisioning of all databases):
+.PP
+.RS 4
+engine-backup --file=FILE --mode=restore --provision-all-databases
+.RE
+
 .SH BUGS
 Report bugs to <http://bugzilla.redhat.com>
 
 .SH COPYRIGHT
-Copyright 2010-2013 Red Hat, Inc.
+Copyright oVirt Authors
+.\" SPDX-License-Identifier: Apache-2.0
 
