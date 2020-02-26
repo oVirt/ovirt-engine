@@ -663,8 +663,12 @@ public class LibvirtVmXmlBuilder {
             writer.writeRaw("/usr/share/OVMF/OVMF_CODE.secboot.fd");
             writer.writeEndElement();
             writer.writeStartElement("nvram");
-            writer.writeAttributeString("template",
-                    String.format("/usr/share/OVMF/%s", secureBoot ? "OVMF_VARS.secboot.fd" : "OVMF_VARS.fd"));
+            String nvramTemplate = vmCustomProperties.get("nvram_template");
+            if (nvramTemplate == null) {
+                nvramTemplate = String.format("/usr/share/OVMF/%s",
+                        secureBoot ? "OVMF_VARS.secboot.fd" : "OVMF_VARS.fd");
+            }
+            writer.writeAttributeString("template", nvramTemplate);
             writer.writeRaw(String.format("/var/lib/libvirt/qemu/nvram/%s.fd", vm.getId()));
             writer.writeEndElement();
         }
