@@ -1,9 +1,13 @@
 package org.ovirt.engine.ui.common.widget.action;
 
 import static java.util.Collections.emptyList;
+import static org.ovirt.engine.ui.uicommonweb.models.SearchableListModel.MODEL_CHANGE_RELEVANT_FOR_ACTIONS;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.event.logical.shared.InitializeEvent;
@@ -31,6 +35,12 @@ public abstract class AbstractButtonDefinition<E, T> implements ActionButtonDefi
 
     // Indicates whether this action button has a title action
     private final boolean subTitledAction;
+
+    private IEventListener<? super PropertyChangedEventArgs> updateOnModelChangeRelevantForActionsListener = (ev, sender, args) -> {
+        if (args.propertyName.equals(MODEL_CHANGE_RELEVANT_FOR_ACTIONS)) {
+            update();
+        }
+    };
 
     public AbstractButtonDefinition(EventBus eventBus,
             String title,
@@ -131,4 +141,8 @@ public abstract class AbstractButtonDefinition<E, T> implements ActionButtonDefi
         return new ArrayList<>(subActions);
     }
 
+    @Override
+    public IEventListener<? super PropertyChangedEventArgs> getUpdateOnModelChangeRelevantForActionsListener() {
+        return updateOnModelChangeRelevantForActionsListener;
+    }
 }

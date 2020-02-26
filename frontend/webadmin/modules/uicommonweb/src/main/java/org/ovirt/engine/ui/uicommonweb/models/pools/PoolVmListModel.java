@@ -162,24 +162,9 @@ public class PoolVmListModel extends VmListModel<VmPool> {
     }
 
     @Override
-    protected void onSelectedItemChanged() {
-        super.onSelectedItemChanged();
+    protected void onModelChangeRelevantForActions() {
+        super.onModelChangeRelevantForActions();
         updateActionAvailability();
-    }
-
-    @Override
-    protected void selectedItemsChanged() {
-        super.selectedItemsChanged();
-        updateActionAvailability();
-    }
-
-    @Override
-    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
-        super.selectedItemPropertyChanged(sender, e);
-
-        if (e.propertyName.equals("status")) {//$NON-NLS-1$
-            updateActionAvailability();
-        }
     }
 
     private void updateActionAvailability() {

@@ -2,6 +2,9 @@ package org.ovirt.engine.ui.common.widget.action;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.event.logical.shared.HasInitializeHandlers;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -85,4 +88,8 @@ public interface ActionButtonDefinition<E, T> extends HasInitializeHandlers {
      */
     List<ActionButtonDefinition<E, T>> getSubActions();
 
+    /**
+     * @return  listener that updates button definition if the model change relevant for actions has occurred.
+     */
+    IEventListener<? super PropertyChangedEventArgs> getUpdateOnModelChangeRelevantForActionsListener();
 }

@@ -938,7 +938,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
             if (model.getIsNew()) {
                 setGuideContext(returnValue.getActionReturnValue());
-                updateActionAvailability();
+                fireModelChangeRelevantForActionsEvent();
                 getGuideCommand().execute();
             }
         }
@@ -1005,7 +1005,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         setGuideContext(null);
         setWindow(null);
 
-        updateActionAvailability();
+        fireModelChangeRelevantForActionsEvent();
     }
 
     public void cancelConfirmation() {
@@ -1015,12 +1015,18 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
     @Override
     protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
-        updateActionAvailability();
+        fireModelChangeRelevantForActionsEvent();
     }
 
     @Override
     protected void selectedItemsChanged() {
         super.selectedItemsChanged();
+        fireModelChangeRelevantForActionsEvent();
+    }
+
+    @Override
+    protected void onModelChangeRelevantForActions() {
+        super.onModelChangeRelevantForActions();
         updateActionAvailability();
     }
 

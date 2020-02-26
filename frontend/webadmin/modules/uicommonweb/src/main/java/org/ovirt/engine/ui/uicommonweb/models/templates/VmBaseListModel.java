@@ -100,7 +100,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
                 public void vnicCreated(Guid vmId, UnitVmModel unitVmModel) {
                     getWindow().stopProgress();
                     cancel();
-                    updateActionsAvailability();
+                    fireModelChangeRelevantForActionsEvent();
                     executeDiskModifications(vmId, unitVmModel);
                 }
 
@@ -382,6 +382,27 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
     }
 
     @Override
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
+        fireModelChangeRelevantForActionsEvent();
+    }
+
+    @Override
+    protected void selectedItemsChanged() {
+        super.selectedItemsChanged();
+        fireModelChangeRelevantForActionsEvent();
+    }
+
+    @Override
+    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
+        super.selectedItemPropertyChanged(sender, e);
+
+        if (e.propertyName.equals("status")) { //$NON-NLS-1$
+            fireModelChangeRelevantForActionsEvent();
+        }
+    }
+
+    @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
@@ -507,10 +528,6 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         // no-op by default. Override if needed.
     }
 
-    protected void updateActionsAvailability() {
-        // no-op by default. Override if needed.
-    }
-
     protected UnitVmModelNetworkAsyncCallback createUnitVmModelNetworkAsyncCallback(VM vm, UnitVmModel model) {
         if (!model.getIsClone() && vm.getVmtGuid().equals(Guid.Empty)) {
             return new UnitVmModelNetworkAsyncCallback(model, addVmFromBlankTemplateNetworkManager) {
@@ -520,7 +537,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
                     ActionReturnValue returnValue = result.getReturnValue();
                     if (returnValue != null && returnValue.getSucceeded()) {
                         setWindow(null);
-                        updateActionsAvailability();
+                        fireModelChangeRelevantForActionsEvent();
                     } else {
                         cancel();
                     }

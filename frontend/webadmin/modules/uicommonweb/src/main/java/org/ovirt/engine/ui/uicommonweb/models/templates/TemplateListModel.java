@@ -68,7 +68,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotInCollectionValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
@@ -830,28 +829,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
 
         setWindow(null);
 
-        updateActionsAvailability();
-    }
-
-    @Override
-    protected void onSelectedItemChanged() {
-        super.onSelectedItemChanged();
-        updateActionsAvailability();
-    }
-
-    @Override
-    protected void selectedItemsChanged() {
-        super.selectedItemsChanged();
-        updateActionsAvailability();
-    }
-
-    @Override
-    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
-        super.selectedItemPropertyChanged(sender, e);
-
-        if (e.propertyName.equals("status")) { //$NON-NLS-1$
-            updateActionsAvailability();
-        }
+        fireModelChangeRelevantForActionsEvent();
     }
 
     private boolean selectedItemsContainBlankTemplate() {
@@ -868,7 +846,12 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
     }
 
     @Override
-    protected void updateActionsAvailability() {
+    protected void onModelChangeRelevantForActions() {
+        super.onModelChangeRelevantForActions();
+        updateActionsAvailability();
+    }
+
+    private void updateActionsAvailability() {
         VmTemplate item = getSelectedItem();
         ArrayList items =
                 (getSelectedItems() != null) ? (ArrayList) getSelectedItems()

@@ -13,8 +13,6 @@ import org.ovirt.engine.ui.common.widget.action.ActionPanel;
 import org.ovirt.engine.ui.common.widget.action.DropdownActionButton;
 import org.ovirt.engine.ui.common.widget.action.DropdownActionButton.SelectedItemsProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -93,7 +91,7 @@ public abstract class ActionPanelPresenterWidget<E, T, M extends SearchableListM
     @Override
     public void addMenuListItem(final ActionButtonDefinition<E, T> menuItemDef) {
         ActionButton newActionMenuListItem = getView().addMenuListItem(menuItemDef);
-        registerSelectionChangeHandler(menuItemDef);
+        registerModelChangedHandler(menuItemDef);
         // Add menu item widget click handler
         registerHandler(newActionMenuListItem.addClickHandler(e -> {
             ((ActionButtonDefinition<E, T>) menuItemDef).onClick(getParentEntity(), getSelectedItems());
@@ -135,10 +133,32 @@ public abstract class ActionPanelPresenterWidget<E, T, M extends SearchableListM
         initActionButton((ActionButtonDefinition<E, T>) buttonDef, newButton);
     }
 
+    public void addComboActionButton(ActionButtonDefinition<E, T> buttonDef) {
+        ActionButton newButton = getView().addDropdownComboActionButton(buttonDef, buttonDef.getSubActions(), this);
+        actionButtonDefinitions.add(buttonDef);
+        initActionButton(buttonDef, newButton);
+    }
+
+    /**
+     * Adds subactions (1st level children only) in the right-click context menu i.e. after right-click on a selected
+     * row in the table
+     */
+    public void addComboActionButtonWithContexts(ActionButtonDefinition<E, T> buttonDef) {
+        addComboActionButton(buttonDef);
+        actionButtonDefinitions.addAll(buttonDef.getSubActions());
+    }
+
+    public void addDropdownActionButton(ActionButtonDefinition<E, T> buttonDef) {
+        ActionButton newButton = getView().addDropdownActionButton(buttonDef, buttonDef.getSubActions(), this);
+        initActionButton(buttonDef, newButton);
+    }
+
+    // TODO the same button definition can be used to create 2 view buttons(use case: vm list and vm details)
+    // this results in duplicating all listeners
     private void initActionButton(ActionButtonDefinition<E, T> rootButtonDef,
             ActionButton newButton) {
         // effectively used only by UI extensions
-        registerSelectionChangeHandler(rootButtonDef);
+        registerModelChangedHandler(rootButtonDef);
         // Add button widget click handler
         registerHandler(newButton.addClickHandler(event -> {
             rootButtonDef.onClick(getParentEntity(), getSelectedItems());
@@ -184,44 +204,22 @@ public abstract class ActionPanelPresenterWidget<E, T, M extends SearchableListM
         }
     }
 
-    public void addComboActionButton(ActionButtonDefinition<E, T> buttonDef) {
-        ActionButton newButton = getView().addDropdownComboActionButton(buttonDef, buttonDef.getSubActions(), this);
-        actionButtonDefinitions.add(buttonDef);
-        initActionButton(buttonDef, newButton);
-    }
-
     /**
-     * Adds subactions (1st level children only) in the right-click context menu i.e. after right-click on a selected
-     * row in the table
+     * Adds listener to update button definition whenever list model changes in a way that requires refreshing button
+     * state. It's up to the particular model to decide when refresh is needed. This path of triggering InitializeEvent
+     * is used mainly by buttons added via UI extensions. See
+     * {@link #registerToUpdateRootOnSubActionInitialize(ActionButtonDefinition, ActionButtonDefinition)}
      */
-    public void addComboActionButtonWithContexts(ActionButtonDefinition<E, T> buttonDef) {
-        addComboActionButton(buttonDef);
-        actionButtonDefinitions.addAll(buttonDef.getSubActions());
-    }
-
-    public void addDropdownActionButton(ActionButtonDefinition<E, T> buttonDef) {
-        ActionButton newButton = getView().addDropdownActionButton(buttonDef, buttonDef.getSubActions(), this);
-        initActionButton(buttonDef, newButton);
+    void registerModelChangedHandler(final ActionButtonDefinition<?, T> buttonDef) {
+        dataProvider.getModel()
+                .getPropertyChangedEvent()
+                .addListener(buttonDef.getUpdateOnModelChangeRelevantForActionsListener());
     }
 
     protected void updateActionButton(ActionButtonDefinition<E, T> buttonDef) {
         boolean isVisible = buttonDef.isAccessible(getParentEntity(), getSelectedItems()) && buttonDef.isVisible(getParentEntity(), getSelectedItems());
         boolean isEnabled = buttonDef.isEnabled(getParentEntity(), getSelectedItems());
         getView().updateActionButton(isVisible, isEnabled, buttonDef);
-    }
-
-    void registerSelectionChangeHandler(final ActionButtonDefinition<?, T> buttonDef) {
-        // Update button definition whenever list model item selection changes
-        addSelectionChangeListener((ev, sender, args) -> {
-            // Update action button on item selection change
-            buttonDef.update();
-        });
-    }
-
-    @SuppressWarnings("unchecked")
-    void addSelectionChangeListener(IEventListener<EventArgs> itemSelectionChangeHandler) {
-        dataProvider.getModel().getSelectedItemChangedEvent().addListener(itemSelectionChangeHandler);
-        dataProvider.getModel().getSelectedItemsChangedEvent().addListener(itemSelectionChangeHandler);
     }
 
     protected M getModel() {

@@ -541,12 +541,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().retrievingCDsTitle());
         getIsoImages().add(tempVar);
 
-        updateActionsAvailability();
-
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
 
         getItemsChangedEvent().addListener((ev, sender, args) -> vmAffinityLabelListModel.loadEntitiesNameMap());
+
+        updateActionsAvailability();
     }
 
     private void setDetailList() {
@@ -1942,34 +1942,16 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         setGuideContext(null);
         setWindow(null);
 
+        fireModelChangeRelevantForActionsEvent();
+    }
+
+    @Override
+    protected void onModelChangeRelevantForActions() {
+        super.onModelChangeRelevantForActions();
         updateActionsAvailability();
     }
 
-    @Override
-    protected void onSelectedItemChanged() {
-        super.onSelectedItemChanged();
-
-        updateActionsAvailability();
-    }
-
-    @Override
-    protected void selectedItemsChanged() {
-        super.selectedItemsChanged();
-
-        updateActionsAvailability();
-    }
-
-    @Override
-    protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
-        super.selectedItemPropertyChanged(sender, e);
-
-        if (e.propertyName.equals("status")) { //$NON-NLS-1$
-            updateActionsAvailability();
-        }
-    }
-
-    @Override
-    protected void updateActionsAvailability() {
+    private void updateActionsAvailability() {
         List items = getSelectedItems() != null && getSelectedItem() != null ? getSelectedItemsWithStatusForExclusiveLock() : new ArrayList();
 
         boolean singleVmSelected = items.size() == 1;

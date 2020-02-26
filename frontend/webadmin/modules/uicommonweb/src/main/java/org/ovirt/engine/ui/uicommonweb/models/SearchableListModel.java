@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -48,6 +49,13 @@ import com.google.gwt.event.shared.HandlerRegistration;
  */
 // TODO once all the children of this class will be refactored to use generics, change from <T> to <T extends Queryable>
 public abstract class SearchableListModel<E, T> extends SortedListModel<T> implements HasEntity<E>, GridController {
+    public static final String MODEL_CHANGE_RELEVANT_FOR_ACTIONS = "model_change_relevant_for_actions"; // $NON-NLS-1$
+    private IEventListener<? super PropertyChangedEventArgs> modelChangeRelevantForActionsListener = (ev, sender, args) -> {
+        if (args.propertyName.equals(MODEL_CHANGE_RELEVANT_FOR_ACTIONS)) {
+            onModelChangeRelevantForActions();
+        }
+    };
+
     private static final int UnknownInteger = -1;
     private static final Logger logger = Logger.getLogger(SearchableListModel.class.getName());
 
@@ -268,6 +276,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
                 SearchableListModel.this.entityChanging(newValue, oldValue);
             }
         };
+        getPropertyChangedEvent().addListener(modelChangeRelevantForActionsListener);
     }
 
     @Override
@@ -464,6 +473,13 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         if (!getIsTimerDisabled()) {
             startRefresh();
         }
+    }
+
+    /**
+     * Inform all buttons (including those added by UI extension) that they should update button availability.
+     */
+    protected void fireModelChangeRelevantForActionsEvent() {
+        getPropertyChangedEvent().raise(this, new PropertyChangedEventArgs(MODEL_CHANGE_RELEVANT_FOR_ACTIONS));
     }
 
     @Override
@@ -830,6 +846,10 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         if (command != null && command.isAutoRefresh()) {
             getTimer().fastForward();
         }
+    }
+
+    protected void onModelChangeRelevantForActions() {
+        // no-op by default. Override if needed.
     }
 
     public static final class PrivateAsyncCallback<E, T> {
