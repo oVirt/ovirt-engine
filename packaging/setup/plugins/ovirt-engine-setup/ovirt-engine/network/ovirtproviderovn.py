@@ -21,6 +21,7 @@
 import base64
 import errno
 import gettext
+import grp
 import os
 import random
 import stat
@@ -523,6 +524,10 @@ class Plugin(plugin.PluginBase):
 
     def _configure_ovndb_connection(self, ovn_db_config):
         if (ovn_db_config.protocol == self.CONNECTION_SSL):
+            self._sanitize_ovn_key_file_permissions(
+                ovn_db_config.key_file,
+                False
+            )
             self._execute_command(
                 (
                     ovn_db_config.command,
@@ -552,6 +557,47 @@ class Plugin(plugin.PluginBase):
                 name=ovn_db_config.name
             )
         )
+
+    def _sanitize_ovn_key_file_permissions(self, file_path, enable_logging):
+        current_permissions = stat.S_IMODE(
+            os.lstat(
+                file_path
+            ).st_mode
+        )
+        desired_permissions = stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP
+        if desired_permissions != current_permissions:
+            if enable_logging:
+                self.logger.info(_(
+                    'Setting permissions on {file} to enable OVN to read it.'
+                ).format(
+                    file=file_path
+                ))
+            # This is not reverted on rollback.
+            # This is ok, because older versions of OVN ran as root,
+            # and thus would still have access to the file
+            os.chmod(
+                file_path,
+                desired_permissions
+            )
+
+        desired_gid = grp.getgrnam('hugetlbfs').gr_gid
+        current_gid = os.stat(file_path).st_gid
+        if desired_gid != current_gid:
+            if enable_logging:
+                self.logger.info(_(
+                    'Setting group ownership on {file} '
+                    'to enable OVN to read it.'
+                ).format(
+                    file=file_path
+                ))
+            # This is not reverted on rollback.
+            # This is ok, because older versions of OVN ran as root,
+            # and thus would still have access to the file
+            os.chown(
+                file_path,
+                os.stat(file_path).st_uid,
+                desired_gid
+            )
 
     def _configure_ovndb_north_connection(self):
         self._configure_ovndb_connection(self.OVN_NORTH_DB_CONFIG)
@@ -891,6 +937,17 @@ class Plugin(plugin.PluginBase):
     )
     def _upgrade(self):
         self._sanitize_config_file_permissions()
+        self._update_ovn_key_file_permissions()
+
+    def _update_ovn_key_file_permissions(self):
+        for ovn_db_config in [
+            self.OVN_SOUTH_DB_CONFIG,
+            self.OVN_NORTH_DB_CONFIG
+        ]:
+            self._sanitize_ovn_key_file_permissions(
+                ovn_db_config.key_file,
+                True
+            )
 
     def _sanitize_config_file_permissions(self):
         try:
