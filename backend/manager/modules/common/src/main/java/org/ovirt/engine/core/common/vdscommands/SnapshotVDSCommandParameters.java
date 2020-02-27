@@ -15,6 +15,8 @@ public class SnapshotVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     /** A flag to indicate whether the VM has been frozen **/
     private boolean vmFrozen;
 
+    private int timeout;
+
     public SnapshotVDSCommandParameters(Guid vdsId, Guid vmId, List<DiskImage> images) {
         super(vdsId, vmId);
         this.images = images;
@@ -54,5 +56,13 @@ public class SnapshotVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     public void setMemoryConf(DiskImage memoryConf) {
         this.memoryConf = memoryConf;
+    }
+
+    public int getLiveSnapshotTimeout() {
+        return timeout;
+    }
+
+    public void setLiveSnapshotTimeout(int timeout) {
+        this.timeout = timeout;
     }
 }

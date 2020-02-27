@@ -250,11 +250,11 @@ public interface IVdsServer {
      */
     FutureTask<Map<String, Object>> timeBoundPollConfirmConnectivity(long timeout, TimeUnit unit);
 
-    StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String jobUUID);
+    StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String jobUUID, int timeout);
 
-    StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, String jobUUID);
+    StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, String jobUUID, int timeout);
 
-    StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen, String jobUUID);
+    StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen, String jobUUID, int timeout);
 
     ImageSizeReturn diskSizeExtend(String vmId, Map<String, String> diskParams, String newSize);
 

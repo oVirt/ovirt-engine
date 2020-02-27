@@ -34,6 +34,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.SnapshotVDSCommandParameters;
@@ -117,6 +119,9 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
         // so a freeze will not be issued by Vdsm
         parameters.setVmFrozen(shouldFreezeOrThawVm() ||
                 getParameters().getParentCommand() == ActionType.LiveMigrateDisk);
+
+        // Get the Live Snapshot timeout
+        parameters.setLiveSnapshotTimeout(Config.getValue(ConfigValues.LiveSnapshotTimeoutInMinutes));
 
         return parameters;
     }

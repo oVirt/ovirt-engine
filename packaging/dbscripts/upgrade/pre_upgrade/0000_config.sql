@@ -701,6 +701,9 @@ select fn_db_add_config_value_for_versions_up_to('CustomBondNameSupported', 'tru
 select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'true', '4.4');
 
+-- Live Snapshot
+select fn_db_add_config_value('LiveSnapshotTimeoutInMinutes', '30', 'general');
+
 -- vGPU placement
 select fn_db_add_config_value_for_versions_up_to('VgpuPlacementSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('VgpuPlacementSupported', 'true', '4.4');

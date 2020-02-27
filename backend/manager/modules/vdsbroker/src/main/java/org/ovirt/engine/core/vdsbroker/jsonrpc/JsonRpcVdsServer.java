@@ -1037,23 +1037,24 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String jobUUID) {
-        return snapshot(vmId, disks, null, false, jobUUID);
+    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String jobUUID, int timeout) {
+        return snapshot(vmId, disks, null, false, jobUUID, timeout);
     }
 
     @Override
-    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, String jobUUID) {
-        return snapshot(vmId, disks, memory, false, jobUUID);
+    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, String jobUUID, int timeout) {
+        return snapshot(vmId, disks, memory, false, jobUUID, timeout);
     }
 
     @Override
-    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen, String jobUUID) {
+    public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen, String jobUUID, int timeout) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.snapshot").withParameter("vmID", vmId)
                         .withParameter("snapDrives", new ArrayList<>(Arrays.asList(disks)))
                         .withOptionalParameter("snapMemory", memory)
                         .withParameter("frozen", frozen)
                         .withParameter("jobUUID", jobUUID)
+                        .withParameter("timeout", timeout)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
