@@ -75,6 +75,14 @@ public class GlusterUtil {
     private static final String HOST_NAME = "hostname";
     private static final String STATE = "state";
     private static final int PEER_IN_CLUSTER = 3;
+    private static final String FEATURES_SHARD = "features.shard";
+
+    private static final String PERFORMANCE_STRICT_O_DIRECT = "performance.strict-o-direct";
+
+    private static final String REMOTE_DIO = "remote-dio";
+
+    private static final String NETWORK_REMOTE_DIO = "network.remote-dio";
+
     @Inject
     private ResourceManager resourceManager;
     @Inject
@@ -492,6 +500,37 @@ public class GlusterUtil {
             }
         }
         return GlusterStatus.UNKNOWN;
+    }
+
+    public EngineMessage validateVolumeForStorageDomain(GlusterVolumeEntity glusterVolume) {
+        if (glusterVolume.getOptions() != null && !glusterVolume.getOptions().isEmpty()) {
+            String[] options = new String[]{"1", "on", "yes", "true", "enable"};
+            if (glusterVolume.getOption(PERFORMANCE_STRICT_O_DIRECT) == null ||
+                    !Arrays.stream(options).anyMatch(glusterVolume.getOption(PERFORMANCE_STRICT_O_DIRECT).getValue()::equals)) {
+                return EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_PERFORMANCE_O_DIRECT_DISABLE;
+            }
+
+            if (glusterVolume.getOption(FEATURES_SHARD) == null
+                    || !Arrays.stream(options).anyMatch(glusterVolume.getOption(FEATURES_SHARD).getValue()::equals)) {
+                return EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_SHARDING_DISABLE;
+            }
+
+            if (glusterVolume.getOption(REMOTE_DIO) == null
+                    && glusterVolume.getOption(NETWORK_REMOTE_DIO) == null) {
+                return EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_REMOTE_DIO_ON;
+            } else {
+                String remoteDioOption =
+                        glusterVolume.getOption(REMOTE_DIO) == null ? glusterVolume.getOption(NETWORK_REMOTE_DIO).getValue()
+                                : glusterVolume.getOption(REMOTE_DIO).getValue();
+                if (Arrays.stream(options).anyMatch(remoteDioOption::equals)) {
+                    return EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_REMOTE_DIO_ON;
+                }
+
+            }
+        } else {
+                return EngineMessage.ACTION_TYPE_FAILED_INVALID_GLUSTER_OPTIONS;
+        }
+        return null;
     }
 
 }

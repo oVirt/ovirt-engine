@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -47,6 +48,9 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
 
     @Inject
     private ISCSIStorageHelper iscsiStorageHelper;
+
+    @Inject
+    private GlusterUtil glusterUtil;
 
     public ConnectStorageToVdsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -157,6 +161,12 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
                     connection.setMountOptions(mountOptions);
                 }
             }
+
+            EngineMessage engineMessage = glusterUtil.validateVolumeForStorageDomain(glusterVolume);
+            if(engineMessage != null) {
+                return new ValidationResult(engineMessage);
+            }
+
         }
         return ValidationResult.VALID;
     }
