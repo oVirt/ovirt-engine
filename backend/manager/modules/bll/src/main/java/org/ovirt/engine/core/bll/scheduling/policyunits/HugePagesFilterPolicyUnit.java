@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,11 +50,12 @@ public class HugePagesFilterPolicyUnit extends PolicyUnitImpl {
             return new ArrayList<>(hosts);
         }
 
+        Map<Guid, Map<Integer, Integer>> vmHugePagesCache = new HashMap<>();
         List<VDS> newHosts = new ArrayList<>(hosts.size());
         for (VDS host: hosts) {
             Map<Integer, Integer> requiredPages = vmGroup.stream()
                     .filter(vm -> !host.getId().equals(vm.getRunOnVds()))
-                    .map(vm -> HugePageUtils.getHugePages(vm.getStaticData()))
+                    .map(vm -> getVmHugePages(vm, vmHugePagesCache))
                     .flatMap(m -> m.entrySet().stream())
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Integer::sum));
 
@@ -75,6 +77,15 @@ public class HugePagesFilterPolicyUnit extends PolicyUnitImpl {
         }
 
         return newHosts;
+    }
+
+    private Map<Integer, Integer> getVmHugePages(VM vm, Map<Guid, Map<Integer, Integer>> vmHugePagesCache) {
+        Map<Integer, Integer> hugePages = vmHugePagesCache.get(vm.getId());
+        if (hugePages == null) {
+            hugePages = HugePageUtils.getHugePages(vm.getStaticData());
+            vmHugePagesCache.put(vm.getId(), hugePages);
+        }
+        return hugePages;
     }
 
     private Map<Integer, Integer> freeHugePagesOnHost(VDS vds) {

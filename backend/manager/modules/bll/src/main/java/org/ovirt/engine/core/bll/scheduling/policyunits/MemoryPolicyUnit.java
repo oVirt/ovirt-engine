@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
+import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
 
         boolean canDelay = false;
         List<VDS> resultList = new ArrayList<>();
+        Map<Guid, Map<Integer, Integer>> vmHugePagesCache = new HashMap<>();
 
         for (VDS vds : hosts) {
             // Skip checks if the VM is currently running on the host
@@ -77,7 +79,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
 
             // Check static huge pages on the host
             Map<Integer, Integer> hostFreeHugePages = freeHugePagesOnHost(vds);
-            Map<Integer, Integer> neededHugePages = allHugePagesForVms(vmsNotRunningOnHost);
+            Map<Integer, Integer> neededHugePages = allHugePagesForVms(vmsNotRunningOnHost, vmHugePagesCache);
 
             // Satisfy requested VM hugepages with free host hugepages
             hostFreeHugePages.forEach((hostPageSize, hostPageCount) ->
@@ -130,13 +132,22 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         return hostFreeHugePages;
     }
 
-    private Map<Integer, Integer> allHugePagesForVms(List<VM> vms) {
+    private Map<Integer, Integer> allHugePagesForVms(List<VM> vms, Map<Guid, Map<Integer, Integer>> vmHugePagesCache) {
         Map<Integer, Integer> neededHugepages = new HashMap<>();
         for (VM vm : vms) {
-            HugePageUtils.getHugePages(vm.getStaticData())
+            getVmHugePages(vm, vmHugePagesCache)
                     .forEach((size, count) -> neededHugepages.merge(size, count, Integer::sum));
         }
         return neededHugepages;
+    }
+
+    private Map<Integer, Integer> getVmHugePages(VM vm, Map<Guid, Map<Integer, Integer>> vmHugePagesCache) {
+        Map<Integer, Integer> hugePages = vmHugePagesCache.get(vm.getId());
+        if (hugePages == null) {
+            hugePages = HugePageUtils.getHugePages(vm.getStaticData());
+            vmHugePagesCache.put(vm.getId(), hugePages);
+        }
+        return hugePages;
     }
 
     private void logInsufficientPhysicalMemory(VDS vds, PerHostMessages messages) {
