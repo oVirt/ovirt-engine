@@ -153,4 +153,16 @@ public class EntityModelWidgetWithInfo extends Composite implements HasValidatio
     public void setAddInfoIconStyleName(String styleName) {
         infoIcon.addStyleName(styleName);
     }
+
+    public void setLabel(String text) {
+        label.setText(text);
+    }
+
+    public void hideInfoIcon() {
+        infoIcon.setVisible(false);
+    }
+
+    public void showInfoIcon() {
+        infoIcon.setVisible(true);
+    }
 }

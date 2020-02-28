@@ -35,6 +35,8 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupW
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInitModel;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -68,7 +70,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         String customScript();
 
         String expanderContent();
-
     }
 
     public static interface Resources extends ClientBundle {
@@ -207,10 +208,13 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @WithElementId
     EntityModelCheckBoxEditor cloudInitPasswordSetEditor;
 
-    @UiField
     @Path(value = "cloudInitRootPassword.entity")
     @WithElementId
     StringEntityModelPasswordBoxEditor cloudInitRootPasswordEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    EntityModelWidgetWithInfo cloudInitRootPasswordEditorWithInfo;
 
     @UiField
     @Path(value = "cloudInitRootPasswordVerification.entity")
@@ -374,10 +378,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Ignore
     EntityModelWidgetWithInfo cloudInitProtocolEditorWithInfo;
 
-    @UiField(provided = true)
-    @Ignore
-    EntityModelWidgetWithInfo ignitionPasswordEditorWithInfo;
-
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
@@ -394,7 +394,11 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         initComboBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         sysprepScriptEditor.hideLabel();
+        sysprepScriptEditor.asValueBox().getElement().getStyle().setHeight(610, Unit.PX);
+        sysprepScriptEditor.asValueBox().getElement().getStyle().setWidth(100, Unit.PCT);
         customScriptEditor.hideLabel();
+        customScriptEditor.asValueBox().getElement().getStyle().setHeight(610, Unit.PX);
+        customScriptEditor.asValueBox().getElement().getStyle().setWidth(100, Unit.PCT);
         initAdvancedParameterExpanders();
 
         networkRemoveButton.setIcon(IconType.MINUS);
@@ -406,27 +410,27 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         driver.initialize(this);
     }
 
-    public void switchCloudInitToIgnition(){
+    private void showIgnitionFields(){
         timeZoneEnabledEditor.setVisible(false);
         timeZoneEditor.setVisible(false);
         networkExpander.setVisible(false);
-        networkExpanderContent.setVisible(false);
+        networkExpander.toggleExpander(false);
         regenerateKeysEnabledEditor.setVisible(false);
-        ignitionPasswordEditorWithInfo.setVisible(true);
-        cloudInitRootPasswordEditor.setVisible(false);
+        cloudInitRootPasswordEditorWithInfo.setLabel(constants.ignitionRootPasswordLabel());
+        cloudInitRootPasswordEditorWithInfo.showInfoIcon();
         customScriptInfoIcon.setText(templates.italicText(constants.ignitionScriptInfo()));
         customScriptExpander.setTitleWhenExpanded(constants.ignitionScriptLabel());
         customScriptExpander.setTitleWhenCollapsed(constants.ignitionScriptLabel());
     }
 
-    public void switchIgnitiontoCloudInit(){
+    private void showCloudInitFields(){
         timeZoneEnabledEditor.setVisible(true);
         timeZoneEditor.setVisible(true);
         networkExpander.setVisible(true);
-        networkExpanderContent.setVisible(true);
+        networkExpander.toggleExpander(false);
         regenerateKeysEnabledEditor.setVisible(true);
-        ignitionPasswordEditorWithInfo.setVisible(false);
-        cloudInitRootPasswordEditor.setVisible(true);
+        cloudInitRootPasswordEditorWithInfo.setLabel(constants.cloudInitRootPasswordLabel());
+        cloudInitRootPasswordEditorWithInfo.hideInfoIcon();
         customScriptInfoIcon.setText(templates.italicText(constants.customScriptInfo()));
         customScriptExpander.setTitleWhenExpanded(constants.customScriptLabel());
         customScriptExpander.setTitleWhenCollapsed(constants.customScriptLabel());
@@ -441,9 +445,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         windowsHostnameEditorWithInfo.setExplanation(templates.italicText(constants.windowsHostNameInfo()));
 
         cloudInitRootPasswordEditor = new StringEntityModelPasswordBoxEditor();
-        label.setText(constants.ignitionRootPasswordLabel());
-        ignitionPasswordEditorWithInfo = new EntityModelWidgetWithInfo(label, cloudInitRootPasswordEditor);
-        ignitionPasswordEditorWithInfo.setExplanation(templates.italicText(constants.ignitionPasswordInfo()));
+        cloudInitRootPasswordEditor.setLabelDisplay(Display.NONE);
+        cloudInitRootPasswordEditorWithInfo = new EntityModelWidgetWithInfo(new EnableableFormLabel(), cloudInitRootPasswordEditor);
+        cloudInitRootPasswordEditorWithInfo.setExplanation(templates.italicText(constants.ignitionPasswordInfo()));
     }
 
     private void initAdvancedParameterExpanders() {
@@ -512,7 +516,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         timeZoneEditor.setLabel(constants.cloudInitTimeZoneLabel());
         windowsSyspreptimeZoneEnabledEditor.setLabel(constants.cloudInitConfigureTimeZoneLabel());
         windowsSysprepTimeZoneEditor.setLabel(constants.cloudInitTimeZoneLabel());
-        cloudInitRootPasswordEditor.setLabel(constants.cloudInitRootPasswordLabel());
+        cloudInitRootPasswordEditorWithInfo.setLabel(constants.cloudInitRootPasswordLabel());
         cloudInitRootPasswordVerificationEditor.setLabel(constants.cloudInitRootPasswordVerificationLabel());
         sysprepAdminPasswordEditor.setLabel(constants.sysprepAdminPasswordLabel());
         sysprepAdminPasswordVerificationEditor.setLabel(constants.sysprepAdminPasswordVerificationLabel());
@@ -813,6 +817,16 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
     public void setCloudInitContentVisible(boolean visible) {
         cloudInitOptionsContent.setVisible(visible);
+        if (visible) {
+            showCloudInitFields();
+        }
+    }
+
+    public void setIgnitionContentVisible(boolean visible) {
+        cloudInitOptionsContent.setVisible(visible);
+        if (visible) {
+            showIgnitionFields();
+        }
     }
 
     public void setSyspepContentVisible(boolean visible) {

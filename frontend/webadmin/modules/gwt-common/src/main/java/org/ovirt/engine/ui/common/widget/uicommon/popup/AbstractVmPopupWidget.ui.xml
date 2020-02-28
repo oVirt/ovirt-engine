@@ -75,6 +75,10 @@
     .cpuPinningLabel {
         max-width: 93%;
     }
+
+    .bottomMargin {
+        margin-bottom: 15px;
+    }
     </ui:style>
 
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
@@ -274,10 +278,10 @@
                 <b:Container addStyleNames="{style.container}" fluid="true">
                   <b:Row>
                     <b:Column size="SM_12">
-                      <ge:EntityModelCheckBoxEditor ui:field="vmInitEnabledEditor" label="{constants.cloudInitOrSysprep}" removeFormGroup="true" usePatternFly="true" />
-                      <vm:VmPopupVmInitWidget ui:field="vmInitEditor" usePatternFly="true" />
+                      <ge:EntityModelCheckBoxEditor ui:field="vmInitEnabledEditor" label="{constants.cloudInit}" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.bottomMargin}"/>
                     </b:Column>
                   </b:Row>
+                  <vm:VmPopupVmInitWidget ui:field="vmInitEditor" usePatternFly="true" />
                 </b:Container>
               </t:content>
             </t:DialogTab>

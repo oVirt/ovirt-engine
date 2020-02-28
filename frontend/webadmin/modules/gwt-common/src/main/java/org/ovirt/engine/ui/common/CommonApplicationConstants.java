@@ -257,7 +257,9 @@ public interface CommonApplicationConstants extends Constants {
 
     String cloudInitAttachmentContentTextToolTip();
 
-    String cloudInitOrSysprep();
+    String cloudInit();
+
+    String sysprep();
 
     String ignition();
 

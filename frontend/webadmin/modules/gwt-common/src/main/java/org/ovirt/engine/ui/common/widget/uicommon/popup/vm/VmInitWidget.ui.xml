@@ -52,11 +52,13 @@
             display: none !important;
         }
 
-        .customScriptInfoIconStyle {
-            display: inline;
-            float: left;
+        .bottomMargin {
+            margin-bottom: 15px;
         }
 
+        .customScriptInfoIconStyle {
+            padding-top: 5px;
+        }
     </ui:style>
 
     <g:FlowPanel ui:field="mainPanel">
@@ -75,7 +77,7 @@
         </b:Row>
         <b:Row>
           <b:Column size="SM_12">
-            <ge:EntityModelCheckBoxEditor ui:field="windowsSyspreptimeZoneEnabledEditor" usePatternFly="true" removeFormGroup="true" />
+            <ge:EntityModelCheckBoxEditor ui:field="windowsSyspreptimeZoneEnabledEditor" usePatternFly="true" removeFormGroup="true" addStyleNames="{style.bottomMargin}" />
           </b:Column>
         </b:Row>
         <b:Row>
@@ -84,11 +86,11 @@
         <b:Row>
           <b:Column size="SM_12">
             <g:FlowPanel>
-              <d:AdvancedParametersExpander ui:field="sysprepPasswordExpander" addStyleNames="{style.verticalPanel}"/>
+              <d:AdvancedParametersExpander ui:field="sysprepPasswordExpander" addStyleNames="{style.verticalPanel} {style.bottomMargin}"/>
               <g:FlowPanel ui:field="sysprepPasswordExpanderContent" >
                 <b:Row>
                   <b:Column size="SM_12">
-                    <ge:EntityModelCheckBoxEditor ui:field="sysprepPasswordSetEditor" label="{constants.vmInitPasswordSetLabel}" removeFormGroup="true" usePatternFly="true" />
+                    <ge:EntityModelCheckBoxEditor ui:field="sysprepPasswordSetEditor" label="{constants.vmInitPasswordSetLabel}" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.bottomMargin}" />
                   </b:Column>
                 </b:Row>
                 <b:Row>
@@ -101,7 +103,7 @@
             </g:FlowPanel>
           </b:Column>
         </b:Row>
-            <d:AdvancedParametersExpander ui:field="sysprepInputsExpander" addStyleNames="{style.verticalPanel}"/>
+            <d:AdvancedParametersExpander ui:field="sysprepInputsExpander" addStyleNames="{style.verticalPanel} {style.bottomMargin}"/>
                 <g:FlowPanel ui:field="sysprepInputsExpanderContent" >
                   <b:Row>
                     <ge:StringEntityModelTextBoxEditor ui:field="inputLocaleEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
@@ -116,7 +118,7 @@
                     <ge:StringEntityModelTextBoxEditor ui:field="userLocaleEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                 </g:FlowPanel>
-            <d:AdvancedParametersExpander ui:field="sysprepScriptExpander" addStyleNames="{style.verticalPanel}" />
+            <d:AdvancedParametersExpander ui:field="sysprepScriptExpander" addStyleNames="{style.verticalPanel} {style.bottomMargin}" />
             <g:FlowPanel ui:field="sysprepScriptExpanderContent" >
               <b:Row>
                 <b:Column size="SM_12">
@@ -127,21 +129,19 @@
         </g:FlowPanel>
 
         <g:FlowPanel ui:field="cloudInitOptionsContent">
-            <g:FlowPanel>
-              <b:Row>
-                <ge:StringEntityModelTextBoxEditor ui:field="hostnameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-              </b:Row>
-              <b:Row>
-                <b:Column size="SM_12">
-                  <ge:EntityModelCheckBoxEditor ui:field="timeZoneEnabledEditor" label="{constants.cloudInitConfigureTimeZoneLabel}" removeFormGroup="true" usePatternFly="true" />
-                </b:Column>
-              </b:Row>
-              <b:Row>
-                <e:ListModelListBoxEditor ui:field="timeZoneEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-              </b:Row>
-            </g:FlowPanel>
+            <b:Row>
+              <ge:StringEntityModelTextBoxEditor ui:field="hostnameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+            </b:Row>
+            <b:Row>
+              <b:Column size="SM_12">
+                <ge:EntityModelCheckBoxEditor ui:field="timeZoneEnabledEditor" label="{constants.cloudInitConfigureTimeZoneLabel}" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.bottomMargin}"/>
+              </b:Column>
+            </b:Row>
+            <b:Row>
+              <e:ListModelListBoxEditor ui:field="timeZoneEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+            </b:Row>
 
-            <d:AdvancedParametersExpander ui:field="authenticationExpander"/>
+            <d:AdvancedParametersExpander ui:field="authenticationExpander" addStyleNames="{style.bottomMargin}"/>
 
             <g:FlowPanel ui:field="authenticationExpanderContent">
               <b:Row>
@@ -149,14 +149,11 @@
               </b:Row>
               <b:Row>
                 <b:Column size="SM_12">
-                  <ge:EntityModelCheckBoxEditor ui:field="cloudInitPasswordSetEditor" label="{constants.vmInitPasswordSetLabel}" removeFormGroup="true" usePatternFly="true" />
+                  <ge:EntityModelCheckBoxEditor ui:field="cloudInitPasswordSetEditor" label="{constants.vmInitPasswordSetLabel}" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.bottomMargin}" />
                 </b:Column>
               </b:Row>
               <b:Row>
-                <w:EntityModelWidgetWithInfo ui:field="ignitionPasswordEditorWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-              </b:Row>
-              <b:Row>
-                <ge:StringEntityModelPasswordBoxEditor ui:field="cloudInitRootPasswordEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                <w:EntityModelWidgetWithInfo ui:field="cloudInitRootPasswordEditorWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
                 <ge:StringEntityModelPasswordBoxEditor ui:field="cloudInitRootPasswordVerificationEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
@@ -166,12 +163,13 @@
               </b:Row>
               <b:Row>
                 <b:Column size="SM_12">
-                  <ge:EntityModelCheckBoxEditor ui:field="regenerateKeysEnabledEditor" label="{constants.cloudInitRegenerateKeysLabel}" removeFormGroup="true" usePatternFly="true" />
+                  <ge:EntityModelCheckBoxEditor ui:field="regenerateKeysEnabledEditor" label="{constants.cloudInitRegenerateKeysLabel}" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.bottomMargin}" />
                 </b:Column>
               </b:Row>
             </g:FlowPanel>
 
-            <d:AdvancedParametersExpander ui:field="networkExpander"/>
+            <d:AdvancedParametersExpander ui:field="networkExpander" addStyleNames="{style.bottomMargin}"/>
+
             <g:FlowPanel ui:field="networkExpanderContent" >
               <b:Row>
                   <w:EntityModelWidgetWithInfo ui:field="cloudInitProtocolEditorWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
@@ -184,7 +182,7 @@
               </b:Row>
               <b:Row>
                 <b:Column size="SM_6">
-                  <ge:EntityModelCheckBoxEditor ui:field="networkEnabledEditor" label="{constants.cloudInitNetworkLabel}"  usePatternFly="true" />
+                  <ge:EntityModelCheckBoxEditor ui:field="networkEnabledEditor" label="{constants.cloudInitNetworkLabel}"  usePatternFly="true" addStyleNames="{style.bottomMargin}" />
                 </b:Column>
                 <b:Column size="SM_6">
                   <w:ComboBox ui:field="networkComboBox" />
@@ -214,16 +212,20 @@
               </b:Row>
             </g:FlowPanel>
 
-            <d:AdvancedParametersExpander ui:field="customScriptExpander" addStyleNames="{style.verticalPanel}"/>
+            <b:Row>
+              <b:Column size="SM_12" addStyleNames="{style.floatLeft} {style.bottomMargin}">
+                <d:AdvancedParametersExpander ui:field="customScriptExpander" addStyleNames="{style.floatLeft}"/>
+                <d:InfoIcon ui:field="customScriptInfoIcon" addStyleNames="{style.customScriptInfoIconStyle}"/>
+              </b:Column>
+            </b:Row>
+
             <g:FlowPanel ui:field="customScriptExpanderContent" >
               <b:Row>
                 <b:Column size="SM_12">
-                  <d:InfoIcon ui:field="customScriptInfoIcon" addStyleNames="{style.customScriptInfoIconStyle}" />
                   <ge:StringEntityModelTextAreaEditor ui:field="customScriptEditor" usePatternFly="true" />
                 </b:Column>
               </b:Row>
             </g:FlowPanel>
-
         </g:FlowPanel>
     </g:FlowPanel>
 </ui:UiBinder>

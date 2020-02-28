@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -450,6 +451,15 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     public void hideLabel() {
         getFormLabel().asWidget().setVisible(false);
+    }
+
+    // sometimes hideLabel() results in broken layout, in that case setting Display.NONE could help
+    public void setLabelDisplay(Display display) {
+        getFormLabel().asWidget().getElement().getStyle().setDisplay(display);
+    }
+
+    public void clearLabelDisplay() {
+        getFormLabel().asWidget().getElement().getStyle().clearDisplay();
     }
 
     public VisibilityRenderer getRenderer() {

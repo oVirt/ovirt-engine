@@ -525,14 +525,13 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         boolean selected = model.getIsCloudInitEnabled().getEntity();
         boolean possible = model.getIsCloudInitPossible().getEntity();
 
-        vmInitWidget.setCloudInitContentVisible(selected && possible);
         runOnceModel.updateOSs();
         if(runOnceModel.getIsIgnition()){
-            cloudInitEnabledEditor.setLabel(constants.ignition());
-            vmInitWidget.switchCloudInitToIgnition();
+            cloudInitEnabledEditor.setLabel(constants.ignition() + " " + runOnceModel.getIgnitionVersion()); //$NON-NLS-1$
+            vmInitWidget.setIgnitionContentVisible(selected && possible);
         } else {
             cloudInitEnabledEditor.setLabel(constants.runOncePopupCloudInitLabel());
-            vmInitWidget.switchIgnitiontoCloudInit();
+            vmInitWidget.setCloudInitContentVisible(selected && possible);
         }
     }
 

@@ -388,6 +388,9 @@ public abstract class RunOnceModel extends Model {
         privateIsIgnition = value;
     }
 
+    public String getIgnitionVersion() {
+        return AsyncDataProvider.getInstance().getIgnitionVersion(vm.getVmOsId());
+    }
 
     private BootSequenceModel bootSequence;
 

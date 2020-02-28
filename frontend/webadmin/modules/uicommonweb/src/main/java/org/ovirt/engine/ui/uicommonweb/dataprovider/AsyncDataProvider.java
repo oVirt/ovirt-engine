@@ -2578,6 +2578,14 @@ public class AsyncDataProvider {
         return vmInitMap.containsKey(osId) && vmInitMap.get(osId).startsWith("ignition"); //$NON-NLS-1$
     }
 
+    public String getIgnitionVersion(Integer osId) {
+        if (isIgnition(osId)) {
+            return vmInitMap.get(osId).replace("ignition_", "");//$NON-NLS-1$
+        }
+
+        return "";//$NON-NLS-1$
+    }
+
     public void initWindowsOsTypes() {
         Frontend.getInstance().runQuery(QueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetWindowsOss),

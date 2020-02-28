@@ -1675,12 +1675,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 setupCustomPropertiesAvailability(object);
             } else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
                 addDiskAllocation(object);
-            } else if ("IsIgnition".equals(propName)) { //$NON-NLS-1$
-                if (getModel().getIsIgnition()) {
-                    vmInitEnabledEditor.setLabel(constants.ignition());
-                } else {
-                    vmInitEnabledEditor.setLabel(constants.cloudInitOrSysprep());
-                }
             }
         });
 
@@ -1728,17 +1722,34 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
+        object.getOSType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            Integer osType = object.getOSType().getSelectedItem();
+
+            boolean isIgnition = AsyncDataProvider.getInstance().isIgnition(osType);
+            if (isIgnition) {
+                String ignitionVersion = AsyncDataProvider.getInstance().getIgnitionVersion(osType);
+                vmInitEnabledEditor.setLabel(constants.ignition() + " " + ignitionVersion); //$NON-NLS-1$
+                return;
+            }
+
+            boolean isWindows = AsyncDataProvider.getInstance().isWindowsOsType(osType);
+            if (isWindows){
+                vmInitEnabledEditor.setLabel(constants.sysprep());
+                return;
+            }
+
+            vmInitEnabledEditor.setLabel(constants.cloudInit());
+        });
+
         object.getCloudInitEnabled().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if (object.getCloudInitEnabled().getEntity() != null) {
-                vmInitEditor.switchIgnitiontoCloudInit();
                 vmInitEditor.setCloudInitContentVisible(object.getCloudInitEnabled().getEntity());
             }
         });
 
         object.getIgnitionEnabled().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if (object.getIgnitionEnabled().getEntity() != null) {
-                vmInitEditor.switchCloudInitToIgnition();
-                vmInitEditor.setCloudInitContentVisible(object.getIgnitionEnabled().getEntity());
+                vmInitEditor.setIgnitionContentVisible(object.getIgnitionEnabled().getEntity());
             }
         });
 
