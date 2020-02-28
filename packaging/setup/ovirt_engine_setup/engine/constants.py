@@ -390,7 +390,6 @@ class Defaults(object):
     )
 
     DEFAULT_ADDITIONAL_PACKAGES = (
-        'ovirt-iso-uploader'
         ',ovirt-engine-ui-extensions'
         ',ovirt-web-ui'
     )

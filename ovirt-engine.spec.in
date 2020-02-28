@@ -315,7 +315,6 @@ Requires:	apache-commons-jxpath
 Requires:	java-11-openjdk-headless >= 11.0.4
 Requires:	javapackages-tools
 Requires:	objectweb-asm
-Requires:	ovirt-iso-uploader >= 4.1.0
 Requires:	%{required_python_lib_mod_wsgi} >= 4.6.4
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util

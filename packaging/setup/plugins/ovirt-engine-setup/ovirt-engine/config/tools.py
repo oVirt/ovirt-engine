@@ -33,10 +33,6 @@ class Plugin(plugin.PluginBase):
 
     TOOLS_CONFIG = [
         {
-            "dir": "{engine_sysconf}/isouploader.conf.d",
-            "section": "ISOUploader",
-        },
-        {
             "dir": "{engine_sysconf}/logcollector.conf.d",
             "section": "LogCollector",
         },

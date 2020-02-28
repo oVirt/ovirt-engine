@@ -115,7 +115,6 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         """
         Load files (iso, vfd) from existing rpms to the NFS ISO domain
-        TODO: use engine-iso-uploader when it will support local destinations
         """
         uninstall_files = []
         self.environment[

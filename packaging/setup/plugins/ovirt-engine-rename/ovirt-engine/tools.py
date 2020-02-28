@@ -35,10 +35,6 @@ class Plugin(plugin.PluginBase):
     # one day the code will be merged with the generation code
     TOOLS_CONFIG = (
         {
-            'dir': '{engine_sysconf}/isouploader.conf.d',
-            'section': 'ISOUploader',
-        },
-        {
             'dir': '{engine_sysconf}/logcollector.conf.d',
             'section': 'LogCollector',
         },
