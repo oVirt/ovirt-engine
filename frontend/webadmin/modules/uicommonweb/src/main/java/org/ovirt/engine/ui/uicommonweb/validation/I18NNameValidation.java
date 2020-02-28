@@ -27,8 +27,7 @@ public class I18NNameValidation extends BaseI18NValidation {
         return "^["; //$NON-NLS-1$
     }
 
-    // Disallow VM Names that end with a period, because libvirt does not support them.
     protected String end() {
-        return "]+$(?<!\\.)"; //$NON-NLS-1$
+        return "]+$"; //$NON-NLS-1$
     }
 }

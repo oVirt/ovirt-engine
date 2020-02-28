@@ -21,8 +21,9 @@ public class I18NRegexpTest {
     public static final String hungarianText = "körülröföghetetlenség_-";
     public static final String hebrewText = "שלוםעולם_-";
     public static final String chineseText = "你好世界_-";
+    public static final String dotSign = ".";
     public static List<String> correctStrings =
-            Arrays.asList(englishText, slovakText, hungarianText, hebrewText, chineseText);
+            Arrays.asList(englishText, slovakText, hungarianText, hebrewText, chineseText, dotSign);
 
     // Incorrect strings
     public static final String atSign = "@";
