@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
+import org.ovirt.engine.core.bll.host.provider.foreman.ContentHostIdentifier;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -30,7 +31,7 @@ public class GetErrataForVmQuery<P extends GetErrataCountsParameters> extends Qu
     @Override
     protected void executeQueryCommand() {
         VM vm = vmDao.get(getParameters().getId());
-        if (vm == null || vm.getDynamicData().getVmHost() == null) {
+        if (vm == null) {
             getQueryReturnValue().setReturnValue(ErrataData.emptyData());
             return;
         }
@@ -38,8 +39,14 @@ public class GetErrataForVmQuery<P extends GetErrataCountsParameters> extends Qu
         Provider<?> provider = providerDao.get(vm.getProviderId());
         if (provider != null) {
             HostProviderProxy proxy = providerProxyFactory.create(provider);
-            ErrataData errataForVm = proxy.getErrataForHost(vm.getDynamicData().getVmHost(),
-                    getParameters().getErrataFilter());
+
+            ContentHostIdentifier contentHostIdentifier = ContentHostIdentifier.builder()
+                    .withId(vm.getId())
+                    .withFqdn(vm.getDynamicData().getFqdn())
+                    .withName(vm.getName())
+                    .build();
+
+            ErrataData errataForVm = proxy.getErrataForHost(contentHostIdentifier, getParameters().getErrataFilter());
             getQueryReturnValue().setReturnValue(errataForVm);
         } else {
             getQueryReturnValue().setReturnValue(ErrataData.emptyData());

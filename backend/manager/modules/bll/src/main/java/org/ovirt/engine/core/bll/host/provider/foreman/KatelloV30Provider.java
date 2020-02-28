@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.ovirt.engine.core.bll.host.provider.ContentHostProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,9 @@ public class KatelloV30Provider extends KatelloProvider implements ContentHostPr
     }
 
     @Override
-    protected String getContentHostId(String hostName) {
-        ContentHostV30 contentHost = findContentHost(hostName);
-        return contentHost == null ? null : String.valueOf(findContentHost(hostName).getId());
+    protected String getContentHostId(ContentHostIdentifier contentHostIdentifier) {
+        ContentHostV30 contentHost = findContentHost(contentHostIdentifier);
+        return contentHost == null ? null : String.valueOf(contentHost.getId());
     }
 
     @Override
@@ -40,21 +41,39 @@ public class KatelloV30Provider extends KatelloProvider implements ContentHostPr
     }
 
     @Override
-    public boolean isContentHostExist(String hostName) {
-        return findContentHost(hostName) != null;
+    public boolean isContentHostExist(ContentHostIdentifier contentHostIdentifier) {
+        return findContentHost(contentHostIdentifier) != null;
     }
 
-    private ContentHostV30 findContentHost(String hostName) {
-        final String hostNameFact = "facts.network::hostname=" + hostName;
+    private ContentHostV30 findContentHost(ContentHostIdentifier contentHostIdentifier) {
+        ContentHostV30 host;
+        if (StringUtils.isNotBlank(contentHostIdentifier.getId())) {
+            host = findContentHostByGivenFact("facts.dmi::system::uuid=" + contentHostIdentifier.getId().toUpperCase());
+            if (host != null) {
+                return host;
+            }
+        }
+
+        if (StringUtils.isNotBlank(contentHostIdentifier.getFqdn())) {
+            host = findContentHostByGivenFact("facts.network::fqdn=" + contentHostIdentifier.getFqdn());
+            if (host != null) {
+                return host;
+            }
+        }
+
+        return findContentHostByGivenFact("facts.network::hostname=" + contentHostIdentifier.getName());
+    }
+
+    private ContentHostV30 findContentHostByGivenFact(String fact) {
         final List<ContentHostV30> contentHosts =
                 runContentHostListMethod(CONTENT_HOSTS_ENTRY_POINT
-                        + String.format(ForemanHostProviderProxy.SEARCH_QUERY_FORMAT, hostNameFact));
+                        + String.format(ForemanHostProviderProxy.SEARCH_QUERY_FORMAT, fact));
 
         if (contentHosts.isEmpty()) {
             return null;
         }
 
-        return  contentHosts.get(0);
+        return contentHosts.get(0);
     }
 
     private List<ContentHostV30> runContentHostListMethod(String relativeUrl) {

@@ -2,9 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
+import org.ovirt.engine.core.bll.host.provider.foreman.ContentHostIdentifier;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -44,13 +44,14 @@ public class GetErrataCountsForVmQuery<P extends GetErrataCountsParameters> exte
         }
 
         HostProviderProxy proxy = getHostProviderProxy(provider);
-        String vmHostName = vm.getDynamicData().getVmHost();
 
-        if (StringUtils.isBlank(vmHostName)) {
-            failWith(EngineMessage.NO_HOST_NAME_FOR_VM);
-        }
+        ContentHostIdentifier contentHostIdentifier = ContentHostIdentifier.builder()
+                .withId(vm.getId())
+                .withFqdn(vm.getDynamicData().getFqdn())
+                .withName(vm.getName())
+                .build();
 
-        ErrataData errataForVm = proxy.getErrataForHost(vmHostName, getParameters().getErrataFilter());
+        ErrataData errataForVm = proxy.getErrataForHost(contentHostIdentifier, getParameters().getErrataFilter());
         setReturnValue(errataForVm.getErrataCounts());
     }
 

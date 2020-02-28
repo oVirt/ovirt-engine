@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
+import org.ovirt.engine.core.bll.host.provider.foreman.ContentHostIdentifier;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -29,14 +30,21 @@ public class GetErratumByIdForVmQuery<P extends HostErratumQueryParameters> exte
     @Override
     protected void executeQueryCommand() {
         VM vm = vmDao.get(getParameters().getId());
-        if (vm == null || vm.getDynamicData().getVmHost() == null || vm.getProviderId() == null) {
+        if (vm == null || vm.getProviderId() == null) {
             return;
         }
 
         Provider<?> provider = providerDao.get(vm.getProviderId());
         if (provider != null) {
             HostProviderProxy proxy = providerProxyFactory.create(provider);
-            getQueryReturnValue().setReturnValue(proxy.getErratumForHost(vm.getDynamicData().getVmHost(), getParameters().getErratumId()));
+            ContentHostIdentifier contentHostIdentifier = ContentHostIdentifier.builder()
+                    .withId(vm.getId())
+                    .withFqdn(vm.getDynamicData().getFqdn())
+                    .withName(vm.getName())
+                    .build();
+
+            getQueryReturnValue()
+                    .setReturnValue(proxy.getErratumForHost(contentHostIdentifier, getParameters().getErratumId()));
         }
     }
 }

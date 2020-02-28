@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
+import org.ovirt.engine.core.bll.host.provider.foreman.ContentHostIdentifier;
 import org.ovirt.engine.core.bll.host.provider.foreman.EngineForemanProviderFinder;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 
@@ -20,7 +21,10 @@ public class GetErratumByIdForEngineQuery<P extends NameQueryParameters> extends
     protected void executeQueryCommand() {
         HostProviderProxy proxy = engineProviderFinder.findEngineProvider();
         if (proxy != null) {
-            setReturnValue(proxy.getErratumForHost(engineProviderFinder.getEngineHostName(), getParameters().getName()));
+            ContentHostIdentifier contentHostIdentifier = ContentHostIdentifier.builder()
+                    .withName(engineProviderFinder.getEngineHostName())
+                    .build();
+            setReturnValue(proxy.getErratumForHost(contentHostIdentifier, getParameters().getName()));
         }
     }
 }

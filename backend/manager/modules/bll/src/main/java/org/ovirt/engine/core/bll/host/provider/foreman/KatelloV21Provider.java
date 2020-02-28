@@ -24,8 +24,8 @@ public class KatelloV21Provider extends KatelloProvider implements ContentHostPr
     }
 
     @Override
-    protected String getContentHostId(String hostName) {
-        ContentHost contentHost = findContentHost(hostName);
+    protected String getContentHostId(ContentHostIdentifier contentHostIdentifier) {
+        ContentHost contentHost = findContentHost(contentHostIdentifier.getName());
         return contentHost == null ? null : contentHost.getUuid();
     }
 
@@ -39,8 +39,9 @@ public class KatelloV21Provider extends KatelloProvider implements ContentHostPr
         return CONTENT_HOST_ERRATUM_ENTRY_POINT;
     }
 
-    public boolean isContentHostExist(String hostName) {
-        return findContentHost(hostName) != null;
+    @Override
+    public boolean isContentHostExist(ContentHostIdentifier contentHostIdentifier) {
+        return findContentHost(contentHostIdentifier.getName()) != null;
     }
 
     private ContentHost findContentHost(String hostName) {

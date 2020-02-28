@@ -2811,8 +2811,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String NO_FOREMAN_PROVIDER_FOR_HOST();
 
-    String NO_HOST_NAME_FOR_VM();
-
     String ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST();
 
     String ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_AT_LEAST_ONE_HOST();

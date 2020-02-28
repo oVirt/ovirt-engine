@@ -37,12 +37,12 @@ public abstract class KatelloProvider  implements ContentHostProvider {
     }
 
     @Override
-    public Erratum getErratumForHost(String hostName, String erratumId) {
-        String contentHostId = getContentHostId(hostName);
+    public Erratum getErratumForHost(ContentHostIdentifier contentHostIdentifier, String erratumId) {
+        String contentHostId = getContentHostId(contentHostIdentifier);
         if (contentHostId == null) {
             log.error("Failed to find host on provider '{}' by host name '{}' ",
                     provider.getProvider().getName(),
-                    hostName);
+                    contentHostIdentifier.getName());
             return null;
         }
 
@@ -50,12 +50,12 @@ public abstract class KatelloProvider  implements ContentHostProvider {
     }
 
     @Override
-    public ErrataData getErrataForHost(String hostName, ErrataFilter errataFilter) {
-        String contentHostId = getContentHostId(hostName);
+    public ErrataData getErrataForHost(ContentHostIdentifier contentHostIdentifier, ErrataFilter errataFilter) {
+        String contentHostId = getContentHostId(contentHostIdentifier);
         if (contentHostId == null) {
             log.error("Failed to find host on provider '{}' by host name '{}' ",
                     provider.getProvider().getName(),
-                    hostName);
+                    contentHostIdentifier.getName());
             return ErrataData.emptyData();
         }
 
@@ -69,7 +69,7 @@ public abstract class KatelloProvider  implements ContentHostProvider {
         String relativeUrl =
                 FilteredErrataRelativeUrlBuilder.create(contentHostId, errataFilter, getContentHostErrataEntryPoint())
                         .build();
-        return runErrataListMethod(relativeUrl, hostName);
+        return runErrataListMethod(relativeUrl, contentHostIdentifier.getName());
     }
 
     protected ErrataData runErrataListMethod(String relativeUrl, String hostName) {
@@ -116,7 +116,7 @@ public abstract class KatelloProvider  implements ContentHostProvider {
         }
     }
 
-    protected abstract String getContentHostId(String hostName);
+    protected abstract String getContentHostId(ContentHostIdentifier contentHostIdentifier);
 
     protected abstract String getContentHostErrataEntryPoint();
 

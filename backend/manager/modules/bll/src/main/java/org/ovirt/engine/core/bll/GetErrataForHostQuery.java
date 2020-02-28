@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
+import org.ovirt.engine.core.bll.host.provider.foreman.ContentHostIdentifier;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -38,8 +39,13 @@ public class GetErrataForHostQuery<P extends GetErrataCountsParameters> extends 
         Provider<?> provider = providerDao.get(host.getHostProviderId());
         if (provider != null) {
             HostProviderProxy proxy = providerProxyFactory.create(provider);
-            ErrataData errataForHost = proxy.getErrataForHost(host.getHostName(),
-                    getParameters().getErrataFilter());
+
+            ContentHostIdentifier contentHostIdentifier = ContentHostIdentifier.builder()
+                    .withId(host.getUniqueID())
+                    .withName(host.getHostName())
+                    .build();
+
+            ErrataData errataForHost = proxy.getErrataForHost(contentHostIdentifier, getParameters().getErrataFilter());
             getQueryReturnValue().setReturnValue(errataForHost);
         } else {
             getQueryReturnValue().setReturnValue(ErrataData.emptyData());

@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
+import org.ovirt.engine.core.bll.host.provider.foreman.ContentHostIdentifier;
 import org.ovirt.engine.core.bll.host.provider.foreman.EngineForemanProviderFinder;
 import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -26,8 +27,12 @@ public class GetErrataForEngineQuery<P extends GetErrataCountsParameters> extend
             getQueryReturnValue().setExceptionString(EngineMessage.NO_FOREMAN_PROVIDER_FOR_ENGINE.name());
             getQueryReturnValue().setReturnValue(ErrataData.emptyData());
         } else {
-            ErrataData errataForEngine = proxy.getErrataForHost(engineProviderFinder.getEngineHostName(),
-                    getParameters().getErrataFilter());
+            ContentHostIdentifier contentHostIdentifier = ContentHostIdentifier.builder()
+                    .withName(engineProviderFinder.getEngineHostName())
+                    .build();
+
+            ErrataData errataForEngine =
+                    proxy.getErrataForHost(contentHostIdentifier, getParameters().getErrataFilter());
             setReturnValue(errataForEngine);
         }
     }
