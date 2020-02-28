@@ -8,6 +8,14 @@ else
     PACKAGER=dnf
 fi
 export PACKAGER
+ARCH="$(rpm --eval "%_arch")"
+
+on_exit() {
+    ${PACKAGER} --verbose clean all
+}
+
+trap on_exit EXIT
+
 ${PACKAGER} update -y
 
 # Get the MILESTONE from version.mak, so that we know if we build for a
@@ -247,4 +255,58 @@ fi
 if [[ "$(rpm --eval "%dist")" != ".fc30" ]]; then
 # On fc30 following fails, while investigating on it, keeping it working on the other distro
 rename .xml .junit.xml exported-artifacts/tests/* ||  [[ $? -eq 4 ]]
+fi
+
+if git show --name-only | grep ovirt-engine.spec.in; then
+pushd exported-artifacts
+    #Restoring sane yum environment
+    rm -f /etc/yum.conf
+    ${PACKAGER} reinstall -y system-release ${PACKAGER}
+    [[ -d /etc/dnf ]] && [[ -x /usr/bin/dnf ]] && dnf -y reinstall dnf-conf
+    [[ -d /etc/dnf ]] && sed -i -re 's#^(reposdir *= *).*$#\1/etc/yum.repos.d#' '/etc/dnf/dnf.conf'
+    [[ -e /etc/dnf/dnf.conf ]] && echo "deltarpm=False" >> /etc/dnf/dnf.conf
+    rm -f /etc/yum/yum.conf
+    if [[ "${DISTVER}" == "el7" ]]; then
+        #Enable CR repo
+        sed -i "s:enabled=0:enabled=1:" /etc/yum.repos.d/CentOS-CR.repo
+    fi
+
+    ${PACKAGER} repolist enabled
+    ${PACKAGER} clean all
+    ${PACKAGER} install -y http://resources.ovirt.org/pub/yum-repo/ovirt-release-master.rpm
+
+    if [[ "$(rpm --eval "%dist")" == ".fc31" ]]; then
+        # fc31 support is broken, just provide a hint on what's missing
+        # without causing the test to fail.
+        echo "fc31"
+    elif
+     [[ "$(rpm --eval "%dist")" == ".fc30" ]]; then
+        # fc30 support is broken, just provide a hint on what's missing
+        # without causing the test to fail.
+        ${PACKAGER} --downloadonly install *noarch.rpm || true
+        if [[ "${ARCH}" == "x86_64" ]]; then
+            echo "Reference installation from ovirt-release repo."
+            ${PACKAGER} --downloadonly install ovirt-engine ovirt-engine-setup-plugin-websocket-proxy || true
+        fi
+    elif
+     [[ "$(rpm --eval "%dist")" == ".el8" ]]; then
+        ${PACKAGER} --downloadonly install *noarch.rpm
+        if [[ "${ARCH}" == "x86_64" ]]; then
+            echo "Reference installation from ovirt-release repo."
+            ${PACKAGER} --downloadonly install ovirt-engine ovirt-engine-setup-plugin-websocket-proxy || true
+        fi
+    else
+        if [[ $(${PACKAGER} repolist enabled|grep -v ovirt|grep epel) ]] ; then
+            ${PACKAGER} --downloadonly --disablerepo=epel install *noarch.rpm
+            if [[ "${ARCH}" == "x86_64" ]]; then
+                ${PACKAGER} --downloadonly --disablerepo=epel install ovirt-engine ovirt-engine-setup-plugin-websocket-proxy
+            fi
+        else
+            ${PACKAGER} --downloadonly install *noarch.rpm
+            if [[ "${ARCH}" == "x86_64" ]]; then
+                ${PACKAGER} --downloadonly install ovirt-engine ovirt-engine-setup-plugin-websocket-proxy
+            fi
+        fi
+    fi
+popd
 fi
