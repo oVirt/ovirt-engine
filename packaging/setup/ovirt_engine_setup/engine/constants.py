@@ -390,7 +390,7 @@ class Defaults(object):
     )
 
     DEFAULT_ADDITIONAL_PACKAGES = (
-        ',ovirt-engine-ui-extensions'
+        'ovirt-engine-ui-extensions'
         ',ovirt-web-ui'
     )
 
