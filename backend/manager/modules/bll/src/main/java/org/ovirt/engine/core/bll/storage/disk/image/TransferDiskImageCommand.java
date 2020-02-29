@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,11 +37,11 @@ import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTicket;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBackend;
@@ -81,28 +78,16 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.JsonHelper;
-import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.uutils.crypto.ticket.TicketEncoder;
-import org.ovirt.engine.core.uutils.net.HttpURLConnectionBuilder;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 
 @NonTransactiveCommandAttribute
 public class TransferDiskImageCommand<T extends TransferDiskImageParameters> extends BaseImagesCommand<T> implements QuotaStorageDependent {
-    // Some token/"claim" names are from RFC 7519 on JWT
-    private static final String TOKEN_NOT_BEFORE = "nbf";
-    private static final String TOKEN_EXPIRATION = "exp";
-    private static final String TOKEN_ISSUED_AT = "iat";
-    private static final String TOKEN_IMAGED_HOST_URI = "imaged-uri";
-    private static final String TOKEN_TRANSFER_TICKET = "transfer-ticket";
-    private static final String TOKEN_TRANSFER_ID = "transfer-id";
     private static final boolean LEGAL_IMAGE = true;
     private static final boolean ILLEGAL_IMAGE = false;
+    private static final int PROXY_CONTROL_PORT = 54324;
     private static final String HTTP_SCHEME = "http://";
     private static final String HTTPS_SCHEME = "https://";
     private static final String IMAGES_PATH = "/images";
-    private static final String TICKETS_PATH = "/tickets/";
     private static final String FILE_URL_SCHEME = "file://";
     private static final String IMAGE_TYPE = "disk";
 
@@ -129,6 +114,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Inject
     @Typed(TransferImageCommandCallback.class)
     private Instance<TransferImageCommandCallback> callbackProvider;
+
+    private ImageioClient proxyClient;
 
     public TransferDiskImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -959,25 +946,21 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             return;
         }
         Guid imagedTicketId = Guid.newGuid();
-
-        // Create the signed ticket first because we can just throw it away if we fail to start the image
-        // transfer session.  The converse would require us to close the transfer session on failure.
-        String signedTicket = createSignedTicket(getVds(), imagedTicketId);
-        if (signedTicket == null) {
-            log.error("Failed to create a signed image ticket");
-            updateEntityPhaseToStoppedBySystem(
-                    AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
+        String imagePath;
+        try {
+            imagePath = prepareImage(getVdsId(), imagedTicketId);
+        } catch (Exception e) {
+            log.error("Failed to prepare image for transfer session: {}", e.getMessage(), e);
             return;
         }
 
-        long timeout = getHostTicketLifetime();
-        if (!addImageTicketToDaemon(imagedTicketId, timeout)) {
+        if (!addImageTicketToDaemon(imagedTicketId, imagePath)) {
             log.error("Failed to add image ticket to ovirt-imageio-daemon");
             updateEntityPhaseToStoppedBySystem(
                     AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_DAEMON);
             return;
         }
-        if (!addImageTicketToProxy(imagedTicketId, signedTicket)) {
+        if (!addImageTicketToProxy(imagedTicketId, getImageDaemonUri(getVds().getHostName()))) {
             log.error("Failed to add image ticket to ovirt-imageio-proxy");
             if (getParameters().isTransferringViaBrowser()) {
                 updateEntityPhaseToStoppedBySystem(
@@ -988,32 +971,27 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             auditLog(this, AuditLogType.TRANSFER_FAILED_TO_ADD_TICKET_TO_PROXY);
         }
 
+        log.info("Started transfer session with transfer id {}, timeout {} seconds",
+                getParameters().getCommandId().toString(), getClientTicketLifetime());
+
         ImageTransfer updates = new ImageTransfer();
         updates.setVdsId(getVdsId());
         updates.setImagedTicketId(imagedTicketId);
         updates.setProxyUri(getProxyUri() + IMAGES_PATH);
         updates.setDaemonUri(getImageDaemonUri(getVds().getHostName()) + IMAGES_PATH);
-        updates.setSignedTicket(signedTicket);
         updateEntity(updates);
 
-        setNewSessionExpiration(timeout);
+        setNewSessionExpiration(getClientTicketLifetime());
         updateEntityPhase(ImageTransferPhase.TRANSFERRING);
     }
 
-    private boolean addImageTicketToDaemon(Guid imagedTicketId, long timeout) {
-        String imagePath;
-        try {
-            imagePath = prepareImage(getVdsId(), imagedTicketId);
-        } catch (Exception e) {
-            log.error("Failed to prepare image for transfer session: {}", e);
-            return false;
-        }
-
+    private boolean addImageTicketToDaemon(Guid imagedTicketId, String imagePath) {
         if (getParameters().getTransferType() == TransferType.Upload &&
                 !setVolumeLegalityInStorage(ILLEGAL_IMAGE)) {
             return false;
         }
 
+        int timeout = getClientTicketLifetime();
         String[] transferOps = new String[] {getParameters().getTransferType().getAllowedOperation()};
         AddImageTicketVDSCommandParameters transferCommandParams = new AddImageTicketVDSCommandParameters(getVdsId(),
                 imagedTicketId,
@@ -1030,7 +1008,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         try {
             vdsRetVal = vdsBroker.runVdsCommand(VDSCommandType.AddImageTicket, transferCommandParams);
         } catch (RuntimeException e) {
-            log.error("Failed to start image transfer session: {}", e);
+            log.error("Failed to start image transfer session: {}", e.getMessage(), e);
             return false;
         }
 
@@ -1050,47 +1028,28 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getStorageDomain().getStorageType().isFileDomain();
     }
 
-    private boolean addImageTicketToProxy(Guid imagedTicketId, String signedTicket) {
+    private boolean addImageTicketToProxy(Guid imagedTicketId, String hostUri) {
+        // Create image ticket
+        ImageTicket imageTicket = new ImageTicket();
+        imageTicket.setId(imagedTicketId);
+        imageTicket.setTimeout(getClientTicketLifetime());
+        imageTicket.setSize(getParameters().getTransferSize());
+        imageTicket.setUrl(String.format( // ToDo: move formatting to an helper for reuse in ImageTransfer
+                "%s%s/%s", hostUri, IMAGES_PATH, imagedTicketId));
+        imageTicket.setTransferId(getParameters().getCommandId().toString());
+        imageTicket.setFilename(getParameters().getDownloadFilename());
+        imageTicket.setSparse(isSparseImage());
+        imageTicket.setOps(new String[] {getParameters().getTransferType().getAllowedOperation()});
+
         log.info("Adding image ticket to ovirt-imageio-proxy, id {}", imagedTicketId);
         try {
-            HttpURLConnection connection = getProxyConnection(getProxyUri() + TICKETS_PATH);
-            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-            connection.setRequestMethod("PUT");
-            // Send request
-            log.debug(String.format("Add image ticket to proxy request: %s", connection.toString()));
-            try (OutputStream outputStream = connection.getOutputStream()) {
-                outputStream.write(signedTicket.getBytes(StandardCharsets.UTF_8));
-                outputStream.flush();
-            }
-            int responseCode = connection.getResponseCode();
-            log.debug(String.format("Add image ticket to proxy response: code - %d, message - %s",
-                    connection.getResponseCode(), connection.getResponseMessage()));
-            if (responseCode != HttpURLConnection.HTTP_OK) {
-                throw new RuntimeException(String.format(
-                        "Request to imageio-proxy failed, response code: %s", responseCode));
-            }
-        } catch (Exception ex) {
-            log.error("Failed to add image ticket to ovirt-imageio-proxy", ex);
+            getProxyClient().putTicket(imageTicket);
+        } catch (RuntimeException e) {
+            log.error("Failed to add image ticket to ovirt-imageio-proxy: {}", e.getMessage(), e);
             return false;
         }
-        return true;
-    }
 
-    private HttpURLConnection getProxyConnection(String url) {
-        try {
-            HttpURLConnectionBuilder builder = new HttpURLConnectionBuilder().setURL(url);
-            // Set SSL details
-            builder.setTrustStore(EngineLocalConfig.getInstance().getHttpsPKITrustStore().getAbsolutePath())
-                    .setTrustStorePassword(EngineLocalConfig.getInstance().getHttpsPKITrustStorePassword())
-                    .setTrustStoreType(EngineLocalConfig.getInstance().getHttpsPKITrustStoreType())
-                    .setHttpsProtocol(Config.getValue(ConfigValues.ExternalCommunicationProtocol));
-            HttpURLConnection connection = builder.create();
-            connection.setDoOutput(true);
-            return connection;
-        } catch (Exception ex) {
-            throw new RuntimeException(String.format(
-                    "Failed to communicate with ovirt-imageio-proxy: %s", ex.getMessage()));
-        }
+        return true;
     }
 
     private boolean setVolumeLegalityInStorage(boolean legal) {
@@ -1128,11 +1087,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
         long timeout = getHostTicketLifetime();
         Guid resourceId = entity.getImagedTicketId();
-        ExtendImageTicketVDSCommandParameters
-                transferCommandParams = new ExtendImageTicketVDSCommandParameters(entity.getVdsId(),
-                entity.getImagedTicketId(), timeout);
 
-        // TODO This is called from doPolling(), we should run it async (runFutureVDSCommand?)
+        // Send extend ticket request to vdsm
+        ExtendImageTicketVDSCommandParameters transferCommandParams =
+                new ExtendImageTicketVDSCommandParameters(entity.getVdsId(), entity.getImagedTicketId(), timeout);
         VDSReturnValue vdsRetVal;
         try {
             vdsRetVal = vdsBroker.runVdsCommand(VDSCommandType.ExtendImageTicket, transferCommandParams);
@@ -1148,6 +1106,18 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
         log.info("Transfer session with ticket id {} extended, timeout {} seconds",
                 resourceId.toString(), timeout);
+
+        // Send extend ticket request to proxy
+        try {
+            getProxyClient().extendTicket(resourceId, timeout);
+        } catch (RuntimeException e) {
+            log.error("Failed to extent image ticket in ovirt-imageio-proxy: {}", e.getMessage(), e);
+            if (getParameters().isTransferringViaBrowser()) {
+                updateEntityPhaseToStoppedBySystem(
+                        AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
+                return false;
+            }
+        }
 
         setNewSessionExpiration(timeout);
         return true;
@@ -1198,57 +1168,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private boolean removeImageTicketFromProxy(Guid imagedTicketId) {
-        log.info("Removing image ticket from ovirt-imageio-proxy, id {}", imagedTicketId);
+        // Send DELETE request
         try {
-            HttpURLConnection connection = getProxyConnection(getProxyUri() + TICKETS_PATH + imagedTicketId);
-            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-            connection.setRequestMethod("DELETE");
-            connection.connect();
-            int responseCode = connection.getResponseCode();
-            if (responseCode != HttpURLConnection.HTTP_NO_CONTENT) {
-                throw new RuntimeException(String.format(
-                        "Request to imageio-proxy failed, response code: %s", responseCode));
-            }
-        } catch (Exception ex) {
-            log.error("Failed to remove image ticket from ovirt-imageio-proxy", ex.getMessage());
+            log.info("Removing image ticket from ovirt-imageio-proxy, id {}", imagedTicketId);
+            getProxyClient().deleteTicket(imagedTicketId);
+        } catch (RuntimeException e) {
+            log.error("Failed to remove image ticket from ovirt-imageio-proxy: {}", e.getMessage(), e);
             return false;
         }
         return true;
-    }
-
-    private String createSignedTicket(VDS vds, Guid transferToken) {
-        String ticket;
-
-        Map<String, Object> elements = new HashMap<>();
-        long ts = System.currentTimeMillis() / 1000;
-        elements.put(TOKEN_NOT_BEFORE, ts);
-        elements.put(TOKEN_ISSUED_AT, ts);
-        elements.put(TOKEN_EXPIRATION, ts + getClientTicketLifetime());
-        elements.put(TOKEN_IMAGED_HOST_URI, getImageDaemonUri(vds.getHostName()));
-        elements.put(TOKEN_TRANSFER_TICKET, transferToken.toString());
-        elements.put(TOKEN_TRANSFER_ID, getParameters().getCommandId().toString());
-
-        String payload;
-        try {
-            payload = JsonHelper.mapToJson(elements);
-        } catch (Exception e) {
-            log.error("Failed to create JSON payload for signed ticket", e);
-            return null;
-        }
-        log.debug("Signed ticket payload: {}", payload);
-
-        try {
-            ticket = new TicketEncoder(
-                    EngineEncryptionUtils.getPrivateKeyEntry().getCertificate(),
-                    EngineEncryptionUtils.getPrivateKeyEntry().getPrivateKey(),
-                    getClientTicketLifetime()
-            ).encode(payload);
-        } catch (Exception e) {
-            log.error("Failed to encode ticket for image transfer", e);
-            return null;
-        }
-
-        return ticket;
     }
 
     private void updateEntityPhase(ImageTransferPhase phase) {
@@ -1340,6 +1268,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getImageAlias(),
                 getDiskImage().getId(),
                 getDiskImage().getImageId());
+    }
+
+    private ImageioClient getProxyClient() {
+        if (proxyClient == null) {
+            proxyClient = new ImageioClient("localhost", PROXY_CONTROL_PORT);
+        }
+        return proxyClient;
     }
 
     public void onSucceeded() {
