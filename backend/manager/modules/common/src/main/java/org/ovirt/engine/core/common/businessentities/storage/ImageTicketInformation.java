@@ -18,6 +18,8 @@ public class ImageTicketInformation implements BusinessEntity<Guid> {
 
     private int timeout;
 
+    private int expires;
+
     private Collection<TransferType> transferTypes;
 
     private String fileName;
@@ -60,6 +62,14 @@ public class ImageTicketInformation implements BusinessEntity<Guid> {
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    public int getExpires() {
+        return expires;
+    }
+
+    public void setExpires(int expires) {
+        this.expires = expires;
     }
 
     public Collection<TransferType> getTransferTypes() {
@@ -118,6 +128,7 @@ public class ImageTicketInformation implements BusinessEntity<Guid> {
                 && Objects.equals(size, other.size)
                 && Objects.equals(url, other.url)
                 && Objects.equals(timeout, other.timeout)
+                && Objects.equals(expires, other.expires)
                 && Objects.equals(transferTypes, other.transferTypes)
                 && Objects.equals(fileName, other.fileName)
                 && Objects.equals(active, other.active)
@@ -132,6 +143,7 @@ public class ImageTicketInformation implements BusinessEntity<Guid> {
                 size,
                 url,
                 timeout,
+                expires,
                 transferTypes,
                 fileName,
                 active,
