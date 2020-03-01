@@ -80,6 +80,9 @@ public class BaseVmListModelTest extends BaseVmTest {
         ListModel<RepoImage> cdListModel = mockCdListModel();
         when(model.getCdImage()).thenReturn(cdListModel);
         when(model.getIsHighlyAvailable().getEntity()).thenReturn(true);
+        when(model.getInitrd_path().getEntity()).thenReturn(INITRD_PATH);
+        when(model.getKernel_path().getEntity()).thenReturn(KERNEL_PATH);
+        when(model.getKernel_parameters().getEntity()).thenReturn(KERNEL_PARAMS);
         when(model.getCustomPropertySheet().serialize()).thenReturn(CUSTOM_PROPERTIES);
         ListModel<Quota> quotaListModel = mockQuotaListModel();
         when(model.getQuota()).thenReturn(quotaListModel);
@@ -116,6 +119,9 @@ public class BaseVmListModelTest extends BaseVmTest {
 
     protected void setUpOrigVm(VM origVm) {
         origVm.setId(VM_ID);
+        origVm.setInitrdUrl(INITRD_PATH_2);
+        origVm.setKernelUrl(KERNEL_PATH_2);
+        origVm.setKernelParams(KERNEL_PARAMS_2);
     }
 
     /**
@@ -173,10 +179,20 @@ public class BaseVmListModelTest extends BaseVmTest {
     }
 
     /**
+     * Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsUnitToVmBaseBuilder}
+     */
+    protected void verifyBuiltKernelOptions(VmBase vm) {
+        assertEquals(INITRD_PATH, vm.getInitrdUrl());
+        assertEquals(KERNEL_PATH, vm.getKernelUrl());
+        assertEquals(KERNEL_PARAMS, vm.getKernelParams());
+    }
+
+    /**
      * Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder}
      */
     protected void verifyBuiltVmBase(VmBase vm) {
         verifyBuiltCommonVm(vm);
+        verifyBuiltKernelOptions(vm);
         verifyBuiltMigrationOptions(vm);
 
         assertEquals(HOST_ID, vm.getDedicatedVmForVdsList().get(0));
@@ -208,8 +224,19 @@ public class BaseVmListModelTest extends BaseVmTest {
     }
 
     protected void verifyBuiltOrigVm(VM origVm, VM vm) {
+        verifyOrigKernelParams(origVm, vm);
+
         assertEquals(VM_ID, vm.getId());
         assertEquals(origVm.getUsbPolicy(), vm.getUsbPolicy());
+    }
+
+    /**
+     * Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder}
+     */
+    protected void verifyOrigKernelParams(VM origVm, VM vm) {
+        assertEquals(origVm.getInitrdUrl(), vm.getInitrdUrl());
+        assertEquals(origVm.getKernelUrl(), vm.getKernelUrl());
+        assertEquals(origVm.getKernelParams(), vm.getKernelParams());
     }
 
     @SuppressWarnings("unchecked")

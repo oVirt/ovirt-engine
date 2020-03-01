@@ -706,6 +706,22 @@
                     <ge:EntityModelCheckBoxEditor ui:field="bootMenuEnabledEditor" label="{constants.bootMenuEnabled}" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
+                <g:FlowPanel ui:field="linuxBootOptionsPanel" visible="false">
+                  <b:Row>
+                    <b:Column size="SM_12">
+                      <g:Label addStyleNames="{style.sectionLabel}" text="{constants.linuxBootOptionsVmPopup}" />
+                    </b:Column>
+                  </b:Row>
+                  <b:Row>
+                    <ge:StringEntityModelTextBoxEditor ui:field="kernel_pathEditor" label="{constants.kernelPathVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                  </b:Row>
+                  <b:Row>
+                    <ge:StringEntityModelTextBoxEditor ui:field="initrd_pathEditor" label="{constants.initrdPathVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                  </b:Row>
+                  <b:Row>
+                    <ge:StringEntityModelTextBoxEditor ui:field="kernel_parametersEditor" label="{constants.kernelParamsVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                  </b:Row>
+                </g:FlowPanel>
               </b:Container>
             </t:content>
           </t:DialogTab>

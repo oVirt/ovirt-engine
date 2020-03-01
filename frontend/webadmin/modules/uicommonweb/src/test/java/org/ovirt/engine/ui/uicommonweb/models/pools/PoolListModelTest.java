@@ -33,6 +33,7 @@ public class PoolListModelTest extends BaseVmListModelTest {
 
     private void verifyBuiltPoolVm(VM vm) {
         verifyBuiltCoreVm(vm.getStaticData());
+        verifyBuiltKernelOptions(vm.getStaticData());
         verifyBuiltMigrationOptions(vm.getStaticData());
         verifyBuiltVmSpecific(vm);
 

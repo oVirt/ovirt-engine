@@ -944,6 +944,24 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("bootMenuEnabled")
     public EntityModelCheckBoxEditor bootMenuEnabledEditor;
 
+    @UiField
+    protected FlowPanel linuxBootOptionsPanel;
+
+    @UiField(provided = true)
+    @Path(value = "kernel_path.entity")
+    @WithElementId("kernelPath")
+    public StringEntityModelTextBoxEditor kernel_pathEditor;
+
+    @UiField(provided = true)
+    @Path(value = "initrd_path.entity")
+    @WithElementId("initrdPath")
+    public StringEntityModelTextBoxEditor initrd_pathEditor;
+
+    @UiField(provided = true)
+    @Path(value = "kernel_parameters.entity")
+    @WithElementId("kernelParameters")
+    public StringEntityModelTextBoxEditor kernel_parametersEditor;
+
     // ==Custom Properties Tab==
     @UiField
     protected DialogTab customPropertiesTab;
@@ -1235,6 +1253,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         numOfVmsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         cpuPinning = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         cpuSharesAmountEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        kernel_pathEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        initrd_pathEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        kernel_parametersEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         nameEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         nameEditor.hideLabel();
         prestartedVmsEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
@@ -1877,6 +1898,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         });
 
+        // TODO: Move to a more appropriate method
+        vm.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            String propName = args.propertyName;
+            if ("IsLinuxOS".equals(propName)) { //$NON-NLS-1$
+                changeApplicationLevelVisibility(linuxBootOptionsPanel, vm.getIsLinuxOS());
+            }
+        });
+
         defaultHostEditor.setEnabled(false);
         specificHost.asRadioButton().addValueChangeHandler(event -> {
             defaultHostEditor.setEnabled(specificHost.asRadioButton().getValue());
@@ -2091,6 +2120,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         cdAttachedEditor.setTabIndex(nextTabIndex++);
         cdImageEditor.setTabIndex(nextTabIndex++);
         bootMenuEnabledEditor.setTabIndex(nextTabIndex++);
+        kernel_pathEditor.setTabIndex(nextTabIndex++);
+        initrd_pathEditor.setTabIndex(nextTabIndex++);
+        kernel_parametersEditor.setTabIndex(nextTabIndex++);
 
         // ==Rng Tab==
         nextTabIndex = rngDeviceTab.setTabIndexes(nextTabIndex);
