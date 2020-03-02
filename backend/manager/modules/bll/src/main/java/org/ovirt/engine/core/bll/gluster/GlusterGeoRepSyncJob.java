@@ -15,6 +15,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.ovirt.engine.core.bll.scheduling.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
@@ -33,10 +34,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.gluster.GlusterSchedulerDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.core.utils.timer.DBSchedulerUtilQuartzImpl;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterGeoRepSyncJob.class);
 
     @Inject
-    private DBSchedulerUtilQuartzImpl schedulerUtil;
+    private GlusterSchedulerDao scheduleDao;
 
     private static final GeoRepSessionStatus[] overridableStatuses = { GeoRepSessionStatus.ACTIVE,
             GeoRepSessionStatus.INITIALIZING,
@@ -317,7 +317,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
                         session.getSessionKey(),
                         session.getMasterVolumeName());
                 if (storageDR.getJobId() != null) {
-                    schedulerUtil.deleteJob(storageDR.getJobId());
+                    scheduleDao.remove(storageDR.getJobId());
                 }
                 storageDomainDRDao.remove(storageDR.getStorageDomainId(), storageDR.getGeoRepSessionId());
                 StorageDomainStatic storageDomain = storageDomainStaticDao.get(storageDR.getStorageDomainId());

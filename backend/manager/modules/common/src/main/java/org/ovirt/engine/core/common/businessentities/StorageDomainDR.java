@@ -15,7 +15,7 @@ public class StorageDomainDR implements Serializable{
 
     private String scheduleCronExpression;
 
-    private String jobId;
+    private Guid jobId;
 
     public StorageDomainDR() {
         //require for GWT serialization
@@ -45,11 +45,11 @@ public class StorageDomainDR implements Serializable{
         this.scheduleCronExpression = syncScheduleExpression;
     }
 
-    public String getJobId() {
+    public Guid getJobId() {
         return jobId;
     }
 
-    public void setJobId(String jobId) {
+    public void setJobId(Guid jobId) {
         this.jobId = jobId;
     }
 

@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
+import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainDRDaoTest extends BaseDaoTestCase<StorageDomainDRDao> {
 
@@ -22,7 +23,7 @@ public class StorageDomainDRDaoTest extends BaseDaoTestCase<StorageDomainDRDao> 
         storageDomainDR.setStorageDomainId(FixturesTool.POSIX_STORAGE_DOMAIN_ID);
         storageDomainDR.setGeoRepSessionId(FixturesTool.GLUSTER_GEOREP_SESSION_ID2);
         storageDomainDR.setScheduleCronExpression("0 30 22 * * ? *");
-        storageDomainDR.setJobId("qrtzjob1");
+        storageDomainDR.setJobId(Guid.createGuidFromString("77569427-9fbe-41db-ae91-fb96fab17141"));
     }
 
     @Test
@@ -54,7 +55,7 @@ public class StorageDomainDRDaoTest extends BaseDaoTestCase<StorageDomainDRDao> 
 
     @Test
     public void testUpdate() {
-        storageDomainDR.setJobId("qrtzjob2");
+        storageDomainDR.setJobId(Guid.createGuidFromString("afce7a39-8e8c-4819-ba9c-796d316592e7"));
         dao.update(storageDomainDR);
         StorageDomainDR result = dao.get(FixturesTool.POSIX_STORAGE_DOMAIN_ID, FixturesTool.GLUSTER_GEOREP_SESSION_ID2);
         assertEquals(storageDomainDR, result);

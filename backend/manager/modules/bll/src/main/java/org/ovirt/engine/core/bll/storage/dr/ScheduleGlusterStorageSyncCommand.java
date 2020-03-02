@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.dr;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.scheduling.OvirtGlusterSchedulingService;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageSyncScheduleParameters;
@@ -21,15 +23,15 @@ import org.ovirt.engine.core.common.businessentities.gluster.StorageSyncSchedule
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDRDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
-import org.ovirt.engine.core.utils.timer.DBSchedulerUtilQuartzImpl;
 
 @NonTransactiveCommandAttribute
 public class ScheduleGlusterStorageSyncCommand<T extends StorageSyncScheduleParameters> extends CommandBase<T> {
 
     @Inject
-    private DBSchedulerUtilQuartzImpl schedulerUtil;
+    private OvirtGlusterSchedulingService schedulingService;
 
     @Inject
     private StorageDomainDRDao storageDomainDRDao;
@@ -86,15 +88,19 @@ public class ScheduleGlusterStorageSyncCommand<T extends StorageSyncSchedulePara
             storageDomainDR.setGeoRepSessionId(getParameters().getGeoRepSessionId());
         } else if (storageDomainDR.getJobId() != null) {
             // delete existing job
-            schedulerUtil.deleteJob(storageDomainDR.getJobId());
+            schedulingService.deleteScheduledJob(storageDomainDR.getJobId());
         }
         if (getParameters().getSchedule().getFrequency() != StorageSyncSchedule.Frequency.NONE) {
-            String jobId = schedulerUtil.scheduleACronJob(new GlusterStorageDomainDRSyncJob(),
+            Guid jobId = schedulingService.schedule(GlusterStorageDomainDRSyncJob.class.getName(),
+                    Guid.Empty,
                     "syncData",
-                    new Class[] { String.class, String.class },
-                    new Object[] { getParameters().getStorageDomainId().toString(),
-                            getParameters().getGeoRepSessionId().toString() },
-                    getParameters().getSchedule().toCronExpression());
+                    Arrays.asList(new String[] { String.class.getName(), String.class.getName() }),
+                    Arrays.asList(new String[] { getParameters().getStorageDomainId().toString(),
+                            getParameters().getGeoRepSessionId().toString() }),
+                    getParameters().getSchedule().toCronExpression(),
+                    null,
+                    null,
+                    null);
             storageDomainDR.setScheduleCronExpression(getParameters().getSchedule().toCronExpression());
             storageDomainDR.setJobId(jobId);
             storageDomainDRDao.saveOrUpdate(storageDomainDR);

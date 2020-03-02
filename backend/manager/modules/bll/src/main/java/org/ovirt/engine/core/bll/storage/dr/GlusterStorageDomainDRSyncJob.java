@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.dr;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.scheduling.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.GlusterStorageSyncCommandParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -10,7 +11,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -22,10 +22,10 @@ public class RescheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolum
         Guid volumeId = getGlusterVolumeId();
 
         GlusterVolumeSnapshotSchedule fetchedSchedule = glusterVolumeSnapshotScheduleDao.getByVolumeId(volumeId);
-        String jobId = fetchedSchedule.getJobId();
+        Guid jobId = fetchedSchedule.getJobId();
 
         // delete the existing job
-        getDbSchedulUtil().deleteJob(jobId);
+        getDbSchedulUtil().deleteScheduledJob(jobId);
 
         GlusterVolumeSnapshotSchedule schedule = getSchedule();
         if (schedule.getRecurrence() != null) {
@@ -33,7 +33,7 @@ public class RescheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolum
             Time originalExecutionTime = schedule.getExecutionTime();
 
             try {
-                String newJobId = scheduleJob();
+                Guid newJobId = scheduleJob();
                 setSucceeded(true);
                 schedule.setJobId(newJobId);
                 // reverting to original execution time in UI populated time zone

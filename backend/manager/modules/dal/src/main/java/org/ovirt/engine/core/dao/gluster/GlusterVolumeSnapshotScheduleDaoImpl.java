@@ -22,7 +22,7 @@ public class GlusterVolumeSnapshotScheduleDaoImpl extends BaseDao implements Glu
 
         schedule.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
         schedule.setVolumeId(getGuidDefaultEmpty(rs, "volume_id"));
-        schedule.setJobId(rs.getString("job_id"));
+        schedule.setJobId(Guid.createGuidFromString(rs.getString("job_id")));
         schedule.setSnapshotNamePrefix(rs.getString("snapshot_name_prefix"));
         schedule.setSnapshotDescription(rs.getString("snapshot_description"));
         schedule.setRecurrence(GlusterVolumeSnapshotScheduleRecurrence.from(rs.getString("recurrence")));

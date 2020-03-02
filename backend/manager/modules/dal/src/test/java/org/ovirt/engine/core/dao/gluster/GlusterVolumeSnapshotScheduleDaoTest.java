@@ -45,7 +45,7 @@ public class GlusterVolumeSnapshotScheduleDaoTest extends BaseDaoTestCase<Gluste
         GlusterVolumeSnapshotSchedule schedule = new GlusterVolumeSnapshotSchedule();
         schedule.setClusterId(CLUSTER_ID);
         schedule.setVolumeId(VOLUME_ID_2);
-        schedule.setJobId("test_job_id");
+        schedule.setJobId(Guid.createGuidFromString("77569427-9fbe-41db-ae91-fb96fab17141"));
         schedule.setSnapshotNamePrefix("prefix");
         schedule.setSnapshotDescription("desc");
         schedule.setInterval(0);

@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.scheduling.OvirtGlusterSchedulingService;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -44,7 +45,8 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class GlusterJob {
 
@@ -121,7 +123,9 @@ public abstract class GlusterJob {
     protected GlusterAuditLogUtil logUtil;
 
     @Inject
-    private SchedulerUtilQuartzImpl scheduler;
+    private OvirtGlusterSchedulingService scheduler;
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public abstract Collection<GlusterJobSchedulingDetails> getSchedulingDetails();
 

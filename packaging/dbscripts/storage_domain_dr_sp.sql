@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION InsertStorageDomainDR (
     v_storage_domain_id UUID,
     v_georep_session_id UUID,
     v_sync_schedule VARCHAR(256),
-    v_qrtz_job_id VARCHAR(256)
+    v_gluster_scheduler_job_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -13,13 +13,13 @@ BEGIN
         storage_domain_id,
         georep_session_id,
         sync_schedule,
-        qrtz_job_id
+        gluster_scheduler_job_id
         )
     VALUES (
         v_storage_domain_id,
         v_georep_session_id,
         v_sync_schedule,
-        v_qrtz_job_id
+        v_gluster_scheduler_job_id
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -28,13 +28,13 @@ CREATE OR REPLACE FUNCTION UpdateStorageDomainDR (
     v_storage_domain_id UUID,
     v_georep_session_id UUID,
     v_sync_schedule VARCHAR(256),
-    v_qrtz_job_id VARCHAR(256)
+    v_gluster_scheduler_job_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE storage_domain_dr
     set sync_schedule = v_sync_schedule,
-        qrtz_job_id = v_qrtz_job_id
+        gluster_scheduler_job_id = v_gluster_scheduler_job_id
     WHERE storage_domain_id = v_storage_domain_id
     AND georep_session_id = v_georep_session_id;
 END;$PROCEDURE$

@@ -2,10 +2,6 @@ package org.ovirt.engine.core.utils.timer;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
-import org.quartz.Scheduler;
-import org.quartz.Trigger;
-
 public interface SchedulerUtil {
 
     /**
@@ -61,19 +57,6 @@ public interface SchedulerUtil {
                                       TimeUnit timeUnit);
 
     /**
-     * Reschedule the job associated with the given old trigger with the new
-     * trigger.
-     *
-     * @param oldTriggerName
-     *            - the name of the trigger to remove.
-     * @param oldTriggerGroup
-     *            - the group of the trigger to remove.
-     * @param newTrigger
-     *            - the new Trigger to associate the job with
-     */
-    void rescheduleAJob(String oldTriggerName, String oldTriggerGroup, Trigger newTrigger);
-
-    /**
      * Pauses the job with the given jobId.
      *
      * @param jobId
@@ -115,11 +98,6 @@ public interface SchedulerUtil {
      * Starts the scheduler.
      */
     public void create();
-
-    /**
-     * @return the quartz scheduler wrapped by this SchedulerUtil
-     */
-    Scheduler getRawScheduler();
 
     /**
      * Schedules a cron job.

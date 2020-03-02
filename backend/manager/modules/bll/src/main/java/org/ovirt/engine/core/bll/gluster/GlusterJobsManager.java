@@ -5,6 +5,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.bll.scheduling.OvirtGlusterSchedulingService;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -20,6 +21,9 @@ public class GlusterJobsManager implements BackendService {
     @Inject
     private Instance<GlusterJob> jobs;
 
+    @Inject
+    private OvirtGlusterSchedulingService cronJobs;
+
     @PostConstruct
     public void init() {
         if (!glusterModeSupported()) {
@@ -30,6 +34,7 @@ public class GlusterJobsManager implements BackendService {
         log.debug("Initializing Gluster Jobs Manager");
 
         jobs.forEach(j-> j.schedule());
+        cronJobs.scheduleAllJobs();
     }
 
     private static boolean glusterModeSupported() {

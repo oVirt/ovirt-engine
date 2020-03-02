@@ -14,6 +14,7 @@ import java.util.concurrent.Callable;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.scheduling.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -25,7 +26,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

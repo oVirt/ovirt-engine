@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.sql.Time;
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.scheduling.OvirtGlusterSchedulingService;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.ScheduleGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -13,14 +15,16 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
-import org.ovirt.engine.core.utils.timer.DBSchedulerUtilQuartzImpl;
 
 public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends ScheduleGlusterVolumeSnapshotParameters> extends GlusterSnapshotCommandBase<T> {
     private GlusterVolumeSnapshotSchedule schedule;
     private boolean force;
+
     @Inject
-    private DBSchedulerUtilQuartzImpl schedulerUtil;
+    private OvirtGlusterSchedulingService cronjobService;
+
     @Inject
     protected GlusterVolumeSnapshotScheduleDao glusterVolumeSnapshotScheduleDao;
     @Inject
@@ -72,29 +76,30 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
         return true;
     }
 
-    protected String scheduleJob() {
+    protected Guid scheduleJob() {
         // convert the execution time to engine time zone
         if (schedule.getExecutionTime() != null) {
             Time convertedTime = glusterUtil.convertTime(schedule.getExecutionTime(), schedule.getTimeZone());
             schedule.setExecutionTime(convertedTime);
         }
-
-        // convert the start date and end by date to the given timezone
-        Date convertedStartDate = glusterUtil.convertDate(schedule.getStartDate(), schedule.getTimeZone());
-        Date convertedEndByDate = glusterUtil.convertDate(schedule.getEndByDate(), schedule.getTimeZone());
-
         String cronExpression = glusterUtil.getCronExpression(schedule);
         if (cronExpression == null) {
             throw new RuntimeException("Unable to form cron expression for schedule. Invalid scheduling details.");
         }
 
-        return getDbSchedulUtil().scheduleACronJob(new GlusterSnapshotScheduleJob(),
+        return getDbSchedulUtil().schedule(GlusterSnapshotScheduleJob.class.getName(),
+                Guid.Empty,
                 "onTimer",
-                new Class[] { String.class, String.class, String.class, String.class, Boolean.class },
-                new Object[] { upServer.getId().toString(), getGlusterVolumeId().toString(),
+                Arrays.asList(new String[] { String.class.getName(), String.class.getName(), String.class.getName(),
+                        String.class.getName(),
+                        String.class.getName() }),
+                Arrays.asList(new String[] { upServer.getId().toString(), getGlusterVolumeId().toString(),
                         schedule.getSnapshotNamePrefix(),
-                        schedule.getSnapshotDescription(), force },
-                cronExpression, convertedStartDate, convertedEndByDate);
+                        schedule.getSnapshotDescription(), String.valueOf(force) }),
+                cronExpression,
+                schedule.getStartDate(),
+                schedule.getEndByDate(),
+                schedule.getTimeZone());
     }
 
     protected GlusterVolumeSnapshotSchedule getSchedule() {
@@ -105,7 +110,7 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
         return force;
     }
 
-    protected DBSchedulerUtilQuartzImpl getDbSchedulUtil() {
-        return schedulerUtil;
+    protected OvirtGlusterSchedulingService getDbSchedulUtil() {
+        return cronjobService;
     }
 }

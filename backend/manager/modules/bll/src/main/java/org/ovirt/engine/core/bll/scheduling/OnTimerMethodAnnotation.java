@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils.timer;
+package org.ovirt.engine.core.bll.scheduling;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

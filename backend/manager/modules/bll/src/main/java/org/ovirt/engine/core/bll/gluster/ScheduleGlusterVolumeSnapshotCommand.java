@@ -16,13 +16,16 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeSnapshotCommandBase<ScheduleGlusterVolumeSnapshotParameters> {
 
     @Inject
     private GlusterVolumeDao glusterVolumeDao;
-
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     public ScheduleGlusterVolumeSnapshotCommand(ScheduleGlusterVolumeSnapshotParameters params,
             CommandContext commandContext) {
         super(params, commandContext);
@@ -30,18 +33,19 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
 
     @Override
     protected void executeCommand() {
+        log.debug("Executing ScheduleGlusterVolumeSnapshotCommand ");
         // Check and disable the gluster CLI based snapshot scheduling first
         if (!checkAndDisableCliScheduler()) {
             setSucceeded(false);
             return;
         }
 
-
         // Keep a copy of the execution time before conversion to engine time zone during scheduling
         Time originalExecutionTime = getSchedule().getExecutionTime();
+        log.debug("ScheduleGlusterVolumeSnapshotCommand--------originalExecutionTime {}", originalExecutionTime);
         // schedule the snapshot creation task
         try {
-            String jobId = scheduleJob();
+            Guid jobId = scheduleJob();
             setSucceeded(true);
             getSchedule().setJobId(jobId);
             // reverting to original execution time in UI populated time zone

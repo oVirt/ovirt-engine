@@ -11,7 +11,7 @@ public class GlusterVolumeSnapshotSchedule implements Queryable {
     private static final long serialVersionUID = 2L;
     private Guid clusterId;
     private Guid volumeId;
-    private String jobId;
+    private Guid jobId;
     private String snapshotNamePrefix;
     private String snapshotDescription;
     private GlusterVolumeSnapshotScheduleRecurrence recurrence;
@@ -38,11 +38,11 @@ public class GlusterVolumeSnapshotSchedule implements Queryable {
         this.volumeId = volumeId;
     }
 
-    public String getJobId() {
+    public Guid getJobId() {
         return this.jobId;
     }
 
-    public void setJobId(String id) {
+    public void setJobId(Guid id) {
         this.jobId = id;
     }
 

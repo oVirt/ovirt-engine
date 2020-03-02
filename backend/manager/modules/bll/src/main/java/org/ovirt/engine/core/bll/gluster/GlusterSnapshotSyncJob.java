@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.bll.scheduling.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -28,7 +29,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

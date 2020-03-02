@@ -27,7 +27,7 @@ public class StorageDomainDRDaoImpl extends BaseDao implements StorageDomainDRDa
         entity.setStorageDomainId(getGuidDefaultEmpty(rs, "storage_domain_id"));
         entity.setGeoRepSessionId(getGuidDefaultEmpty(rs, "georep_session_id"));
         entity.setScheduleCronExpression(rs.getString("sync_schedule"));
-        entity.setJobId(rs.getString("qrtz_job_id"));
+        entity.setJobId(Guid.createGuidFromString(rs.getString("gluster_scheduler_job_id")));
         return entity;
     };
 
@@ -35,7 +35,7 @@ public class StorageDomainDRDaoImpl extends BaseDao implements StorageDomainDRDa
         return getCustomMapSqlParameterSource().addValue("storage_domain_id", storageDomainDR.getStorageDomainId())
                 .addValue("georep_session_id", storageDomainDR.getGeoRepSessionId())
                 .addValue("sync_schedule", storageDomainDR.getScheduleCronExpression())
-                .addValue("qrtz_job_id", storageDomainDR.getJobId());
+                .addValue("gluster_scheduler_job_id", storageDomainDR.getJobId());
     }
 
     @Override
