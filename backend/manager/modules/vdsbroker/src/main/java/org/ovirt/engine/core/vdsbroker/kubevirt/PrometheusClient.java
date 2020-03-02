@@ -6,9 +6,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.cert.CertificateFactory;
@@ -25,6 +22,13 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.http.ParseException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -52,25 +56,28 @@ public class PrometheusClient {
     private static final ObjectMapper mapper = new ObjectMapper();
     private static Logger log = LoggerFactory.getLogger(PrometheusClient.class);
 
-    private HttpClient httpClient;
+    private CloseableHttpClient httpClient;
     private Provider<KubevirtProviderProperties> provider;
     private String promUrl;
 
     public PrometheusClient(Provider<KubevirtProviderProperties> provider, String promUrl) {
         this.provider = provider;
         this.promUrl = promUrl;
-        this.httpClient = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .build();
+        this.httpClient = newClient(null);
     }
 
     public PrometheusClient(Provider<KubevirtProviderProperties> provider, String promUrl, SSLContext sslContext) {
         this.provider = provider;
         this.promUrl = promUrl;
-        this.httpClient = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .sslContext(sslContext)
-                .build();
+        this.httpClient = newClient(sslContext);
+    }
+
+    private CloseableHttpClient newClient(SSLContext sslContext) {
+        HttpClientBuilder builder = HttpClientBuilder.create();
+        if (sslContext != null) {
+            builder.setSSLContext(sslContext);
+        }
+        return builder.build();
     }
 
     //
@@ -269,29 +276,38 @@ public class PrometheusClient {
             return retVal;
         }
 
-        HttpResponse<String> response = request(query);
-        if (response == null) {
-            return retVal;
-        }
-        if (response.statusCode() >= 300) {
-            log.warn("Failed to fetch metric {}: {}", query, response.body());
-            return retVal;
-        }
-        try {
-            JsonNode node = mapper.readTree(response.body().getBytes());
-            if (node.has("status")) {
-                if (node.get("status").asText().equals("success")) {
-                    JsonNode result = node.get("data").get("result");
-                    if (result.size() > 0) {
-                        JsonNode value = result.get(0).get("value");
-                        return new DoubleNode(Double.parseDouble(value.get(1).asText()));
-                    }
-                } else {
-                    log.warn("Query '{}' failed to execute: {} - {}", query, node.get("status"), node.get("error"));
-                }
+        try (CloseableHttpResponse response = request(query)) {
+            if (response == null) {
+                return retVal;
             }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            if (response.getStatusLine().getStatusCode() >= 300) {
+                String body;
+                try {
+                    body = EntityUtils.toString(response.getEntity());
+                    log.warn("Failed to fetch metric {}: {}", query, body);
+                } catch (ParseException | IOException e) {
+                    log.warn("Failed to parse failed fetch metric for {}", query);
+                }
+                return retVal;
+            }
+            try {
+                JsonNode node = mapper.readTree(EntityUtils.toByteArray(response.getEntity()));
+                if (node.has("status")) {
+                    if (node.get("status").asText().equals("success")) {
+                        JsonNode result = node.get("data").get("result");
+                        if (result.size() > 0) {
+                            JsonNode value = result.get(0).get("value");
+                            return new DoubleNode(Double.parseDouble(value.get(1).asText()));
+                        }
+                    } else {
+                        log.warn("Query '{}' failed to execute: {} - {}", query, node.get("status"), node.get("error"));
+                    }
+                }
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -299,19 +315,16 @@ public class PrometheusClient {
         return retVal;
     }
 
-    private HttpResponse<String> request(String query) {
-        HttpRequest request = HttpRequest.newBuilder()
-                .POST(ofFormData(Map.of("query", query)))
-                .uri(URI.create(String.format("%1$s/api/v1/query?", this.promUrl)))
-                .header("User-Agent", "oVirt Engine")
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .header("Authorization", String.format("Bearer %s", provider.getPassword()))
-                .build();
+    private CloseableHttpResponse request(String query) {
+        HttpPost request = new HttpPost(String.format("%1$s/api/v1/query?%2$s", this.promUrl, ofFormData(Map.of("query", query))));
+        request.addHeader("User-Agent", "oVirt Engine");
+        request.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        request.addHeader("Authorization", String.format("Bearer %s", provider.getPassword()));
 
         return send(request);
     }
 
-    private static HttpRequest.BodyPublisher ofFormData(Map<Object, Object> data) {
+    private static String ofFormData(Map<Object, Object> data) {
         var builder = new StringBuilder();
         for (Map.Entry<Object, Object> entry : data.entrySet()) {
             if (builder.length() > 0) {
@@ -321,13 +334,13 @@ public class PrometheusClient {
             builder.append("=");
             builder.append(URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8));
         }
-        return HttpRequest.BodyPublishers.ofString(builder.toString());
+        return builder.toString();
     }
 
-    private HttpResponse<String> send(HttpRequest request) {
+    private CloseableHttpResponse send(HttpUriRequest request) {
         try {
-            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException|InterruptedException e) {
+            return httpClient.execute(request);
+        } catch (IOException e) {
             log.error("Failed to contact the Prometheus server: {}", promUrl, e.getMessage());
             log.debug("Exception: ", e);
             return null;
