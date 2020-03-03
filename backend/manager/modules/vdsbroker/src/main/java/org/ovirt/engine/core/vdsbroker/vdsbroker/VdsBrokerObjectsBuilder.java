@@ -1025,6 +1025,7 @@ public class VdsBrokerObjectsBuilder {
         String[] nameServersAddresses = assignStringArrayValue(struct, VdsProperties.name_servers);
         if (nameServersAddresses != null) {
             List<NameServer> nameServers = Stream.of(nameServersAddresses)
+                    .distinct()
                     .map(NameServer::new)
                     .collect(Collectors.toList());
 
