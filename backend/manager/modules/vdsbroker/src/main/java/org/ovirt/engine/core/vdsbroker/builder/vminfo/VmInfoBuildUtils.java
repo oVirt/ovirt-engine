@@ -1234,8 +1234,8 @@ public class VmInfoBuildUtils {
         // if user didn't set specific NUMA conf
         // create a default one with one guest numa node
         // and assign also offline vCPUs to it when CPU
-        // hotplug is supported.
-        if (offlineCpus > 0) {
+        // hotplug or memory hotplug is supported.
+        if (offlineCpus > 0 || vm.getMaxMemorySizeMb() > vm.getMemSizeMb()) {
             VmNumaNode vmNode = new VmNumaNode();
             vmNode.setIndex(0);
             vmNode.setMemTotal(vm.getMemSizeMb());
