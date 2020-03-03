@@ -960,6 +960,7 @@ common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 
 %if 0%{?fedora} || 0%{?rhel} >= 8
 common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
+common/org/apache/sshd/main/sshd-common.jar apache-sshd/sshd-common.jar
 common/org/snmp4j/main/snmp4j.jar snmp4j.jar
 %endif
 %if 0%{?fedora}
