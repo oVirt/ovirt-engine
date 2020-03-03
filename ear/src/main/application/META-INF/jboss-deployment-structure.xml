@@ -32,8 +32,7 @@
       <module name="org.springframework" export="true"/>
       <module name="org.yaml.snakeyaml" export="true"/>
 
-      <module name="org.ovirt.java-client-kubevirt" export="true" optional="true"/>
-      <module name="com.fasterxml.jackson.core.jackson-core" export="true" optional="true"/>
+      <module name="com.fasterxml.jackson.core.jackson-core" export="true"/>
 
       <module name="org.ovirt.engine.api.ovirt-engine-extensions-api" export="true" meta-inf="import"/>
       <module name="org.ovirt.engine.core.aaa" export="true" meta-inf="import"/>
@@ -46,6 +45,7 @@
       <module name="org.ovirt.engine.core.utils" export="true" meta-inf="import"/>
       <module name="org.ovirt.engine.core.uutils" export="true" meta-inf="import"/>
       <module name="org.ovirt.engine.extensions.builtin" export="true" meta-inf="import"/>
+      <module name="org.ovirt.java-client-kubevirt" export="true" optional="true"/>
       <module name="org.ovirt.vdsm-jsonrpc-java" export="true"/>
     </dependencies>
   </deployment>

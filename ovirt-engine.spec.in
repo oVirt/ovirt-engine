@@ -940,7 +940,7 @@ common/org/apache/xmlrpc/main/xmlrpc-client.jar
 common/org/apache/xmlrpc/main/xmlrpc-common.jar
 common/org/ebaysf/web/cors-filter/main/cors-filter.jar ebay-cors-filter/cors-filter.jar
 common/org/ovirt/engine/api/ovirt-engine-extensions-api/main/ovirt-engine-extensions-api.jar ovirt-engine-extensions-api/ovirt-engine-extensions-api.jar
-common/org/ovirt/java-client-kubevirt/java-client-kubevirt.jar
+common/org/ovirt/java-client-kubevirt/main/java-client-kubevirt.jar java-client-kubevirt/java-client-kubevirt.jar
 common/org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
 tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
 tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
