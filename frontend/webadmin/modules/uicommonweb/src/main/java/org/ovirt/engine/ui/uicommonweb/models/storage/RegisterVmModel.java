@@ -169,6 +169,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
                     registerVmData.getReassignMacs().getEntity());
             params.setContainerId(vm.getId());
             params.setStorageDomainId(getStorageDomainId());
+            params.setName(vm.getName());
             params.setImagesExistOnTargetStorageDomain(true);
             params.setClusterId(cluster != null ? cluster.getId() : null);
             params.setAllowPartialImport(registerVmData.getAllowPartialImport().getEntity());

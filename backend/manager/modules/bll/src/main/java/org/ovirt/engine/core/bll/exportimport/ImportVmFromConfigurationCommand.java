@@ -236,6 +236,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
 
                 vmFromConfiguration.setClusterId(getParameters().getClusterId());
                 getParameters().setVm(vmFromConfiguration);
+                if (getParameters().getName() != null) {
+                    getParameters().getVm().setName(getParameters().getName());
+                }
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setUserToRoles(fullEntityOvfData.getUserToRoles());

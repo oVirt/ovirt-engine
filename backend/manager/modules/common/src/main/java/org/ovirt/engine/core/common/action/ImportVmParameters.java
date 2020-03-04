@@ -30,6 +30,7 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
     private Guid storageDomainId;
     private boolean importAsNewEntity;
     private boolean reassignBadMacs;
+    private String name;
 
     public ImportVmParameters() {
         this(false);
@@ -184,5 +185,13 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
 
     public void setReassignBadMacs(boolean reassignBadMacs) {
         this.reassignBadMacs = reassignBadMacs;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

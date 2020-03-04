@@ -114,6 +114,9 @@ public class BackendStorageDomainVmResource
         if (action.isSetAllowPartialImport()) {
             params.setAllowPartialImport(action.isAllowPartialImport());
         }
+        if (action.isSetName()) {
+            params.setName(action.getName());
+        }
         return doAction(ActionType.ImportVmFromConfiguration, params, action);
     }
 
