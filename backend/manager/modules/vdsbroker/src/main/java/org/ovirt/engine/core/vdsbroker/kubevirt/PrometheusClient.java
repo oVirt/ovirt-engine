@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.kubevirt;
 
 import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -47,7 +48,7 @@ import openshift.io.V1Route;
 import openshift.io.V1RouteList;
 
 
-public class PrometheusClient {
+public class PrometheusClient implements Closeable {
 
     public static final long BYTES_IN_KiB = 1024;
     public static final long BYTES_IN_MiB = BYTES_IN_KiB * BYTES_IN_KiB;
@@ -365,6 +366,13 @@ public class PrometheusClient {
         @Override
         public java.security.cert.X509Certificate[] getAcceptedIssuers() {
             return null;
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (httpClient != null) {
+            httpClient.close();
         }
     }
 }

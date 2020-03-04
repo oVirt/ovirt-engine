@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.monitoring.kubevirt;
 
+import java.io.IOException;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.HugePage;
@@ -85,5 +86,12 @@ public class KubevirtNodesMonitoring implements HostMonitoringInterface {
 
     @Override
     public void afterRefreshTreatment() {
+        try {
+            if (prometheusClient != null) {
+                prometheusClient.close();
+            }
+        } catch (IOException e) {
+            // ignore
+        }
     }
 }

@@ -375,4 +375,16 @@ public class KubevirtVmStatsRefresher extends PollVmStatsRefresher {
     protected Stream<VdsmVm> filterVmsToDevicesMonitoring(List<Pair<VmDynamic, VdsmVm>> polledVms) {
         return Stream.empty();
     }
+
+    @Override
+    public void stopMonitoring() {
+        super.stopMonitoring();
+        try {
+            if (prometheusClient != null) {
+                prometheusClient.close();
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+    }
 }
