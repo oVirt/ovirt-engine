@@ -524,10 +524,11 @@ class Plugin(plugin.PluginBase):
 
     def _configure_ovndb_connection(self, ovn_db_config):
         if (ovn_db_config.protocol == self.CONNECTION_SSL):
-            self._sanitize_ovn_key_file_permissions(
-                ovn_db_config.key_file,
-                False
-            )
+            if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+                self._sanitize_ovn_key_file_permissions(
+                    ovn_db_config.key_file,
+                    False
+                )
             self._execute_command(
                 (
                     ovn_db_config.command,
