@@ -192,7 +192,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %global required_python_lib_m2crypto python3-m2crypto >= 0.28
 %global required_package_manager %{required_python_lib_dnf}
-%global required_package_manager_versionlock (yum-plugin-versionlock if yum), %{required_python_lib dnf-plugins-extras-versionlock}
+%global required_package_manager_versionlock %{required_python_lib dnf-plugins-extras-versionlock}
 %global required_python_ssl python3-pyOpenSSL
 %else
 %global required_python_lib_m2crypto m2crypto
