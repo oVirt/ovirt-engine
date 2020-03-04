@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtUtils;
@@ -19,16 +20,18 @@ public class KubevirtNodesMonitoring implements HostMonitoringInterface {
     private ProviderDao providerDao;
     private VdsManager vdsManager;
     private PrometheusClient prometheusClient;
+    private AuditLogDirector auditLogDirector;
 
-    public KubevirtNodesMonitoring(VdsManager vdsManager, ProviderDao providerDao) {
+    public KubevirtNodesMonitoring(VdsManager vdsManager, ProviderDao providerDao, AuditLogDirector auditLogDirector) {
         this.vdsManager = vdsManager;
         this.providerDao = providerDao;
+        this.auditLogDirector = auditLogDirector;
     }
 
     private PrometheusClient getPrometheusClient() {
         if (prometheusClient == null) {
             Provider<?> provider = providerDao.get(vdsManager.getClusterId());
-            prometheusClient = KubevirtUtils.create(provider);
+            prometheusClient = KubevirtUtils.create(provider, auditLogDirector);
         }
         return prometheusClient;
     }

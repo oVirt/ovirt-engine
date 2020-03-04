@@ -1242,6 +1242,7 @@ public enum AuditLogType {
     PROVIDER_SYNCHRONIZED_PERFORMED(217),
     PROVIDER_SYNCHRONIZED_PERFORMED_FAILED(218, AuditLogSeverity.ERROR, AuditLogTimeInterval.DAY.getValue()),
     PROVIDER_SYNCHRONIZED_DISABLED(219, AuditLogSeverity.ERROR),
+    PROVIDER_AUTH_FAILED(220, AuditLogSeverity.ERROR, AuditLogTimeInterval.DAY.getValue()),
 
     // General
     ENTITY_RENAMED(1200),

@@ -39,6 +39,7 @@ import org.codehaus.jackson.node.NumericNode;
 import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,7 +214,8 @@ public class PrometheusClient implements Closeable {
         }
     }
 
-    public static String fetchPrometheusUrl(Provider<KubevirtProviderProperties> provider) {
+    public static String fetchPrometheusUrl(Provider<KubevirtProviderProperties> provider,
+            AuditLogDirector auditLogDirector) {
         OpenshiftApi api;
         Optional<V1Route> route = null;
         try {
@@ -238,6 +240,7 @@ public class PrometheusClient implements Closeable {
                     Boolean.FALSE);
             route = routes.getItems().stream().findAny();
         } catch (ApiException e) {
+            KubevirtAuditUtils.auditAuthorizationIssues(e, auditLogDirector, provider);
             log.error("failed to retrieve prometheus url for kubevirt provider (url = {}): {}",
                     provider.getUrl(),
                     ExceptionUtils.getRootCauseMessage(e));

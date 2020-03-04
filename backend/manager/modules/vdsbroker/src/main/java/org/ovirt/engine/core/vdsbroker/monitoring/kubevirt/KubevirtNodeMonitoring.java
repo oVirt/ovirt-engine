@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.monitoring.kubevirt;
 
+import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtAuditUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,14 +27,14 @@ public class KubevirtNodeMonitoring {
     private static Logger log = LoggerFactory.getLogger(KubevirtNodesMonitoring.class);
 
     private final VdsManager vdsManager;
-    private final ApiClient client;
+    private final Provider<KubevirtProviderProperties> provider;
     private final CoreV1Api api;
     private final KubevirtApi kubevirtApi;
     private final HostDynamicDataUpdater hostDynamicDataUpdater;
 
-    public KubevirtNodeMonitoring(VdsManager vdsManager, ApiClient client) {
+    public KubevirtNodeMonitoring(VdsManager vdsManager, ApiClient client, Provider<KubevirtProviderProperties> provider) {
         this.vdsManager = vdsManager;
-        this.client = client;
+        this.provider = provider;
         api = new CoreV1Api(client);
         kubevirtApi = new KubevirtApi(client);
         hostDynamicDataUpdater = new HostDynamicDataUpdater(vdsManager);
@@ -84,6 +87,7 @@ public class KubevirtNodeMonitoring {
             V1Node v1Node = api.readNode(vdsManager.getVdsHostname(), null, null, null);
             hostDynamicDataUpdater.updateHosDynamicData(v1Node);
         } catch (ApiException e) {
+            KubevirtAuditUtils.auditAuthorizationIssues(e, vdsManager.getAuditLogDirector(), provider);
             log.error("Failed to read status of node {}: {}", vdsManager.getVdsHostname(), e.getMessage());
             log.debug("Exception", e);
             VdsDynamic vdsDynamic = vdsManager.getCopyVds().getDynamicData();
@@ -158,6 +162,7 @@ public class KubevirtNodeMonitoring {
             dynamicData.setVmActive(vmis.getItems().size());
             vdsManager.updateDynamicData(dynamicData);
         } catch (ApiException e) {
+            KubevirtAuditUtils.auditAuthorizationIssues(e, vdsManager.getAuditLogDirector(), provider);
             log.error("Failed to update dynamic data for host {}: {}", vdsManager.getVdsName(), e.getMessage());
             log.debug("Exception", e);
         }

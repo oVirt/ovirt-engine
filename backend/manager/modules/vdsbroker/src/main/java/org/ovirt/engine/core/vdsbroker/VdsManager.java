@@ -317,7 +317,7 @@ public class VdsManager {
     private HostMonitoringInterface createHostMonitoring() {
         switch (cachedVds.getVdsType()) {
         case KubevirtNode:
-            return new KubevirtNodesMonitoring(this, providerDao);
+            return new KubevirtNodesMonitoring(this, providerDao, auditLogDirector);
         default:
             return new HostMonitoring(this,
                     cachedVds,
@@ -1172,6 +1172,10 @@ public class VdsManager {
 
     public Map<Guid, VMStatus> getLastVmsList() {
         return lastVmsList;
+    }
+
+    public AuditLogDirector getAuditLogDirector() {
+        return auditLogDirector;
     }
 
     /**

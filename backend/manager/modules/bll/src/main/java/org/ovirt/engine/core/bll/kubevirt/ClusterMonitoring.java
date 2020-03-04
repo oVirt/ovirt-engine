@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtAuditUtils;
 import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtUtils;
 import org.ovirt.engine.core.vdsbroker.monitoring.kubevirt.KubevirtClusterMigrationMonitoring;
 import org.ovirt.engine.core.vdsbroker.monitoring.kubevirt.KubevirtMigrationMonitoring;
@@ -92,8 +93,8 @@ public class ClusterMonitoring {
         }
     }
 
-    public static String fetchConsoleUrl(Provider<KubevirtProviderProperties> provider) throws IOException,
-            ApiException, URISyntaxException {
+    public static String fetchConsoleUrl(Provider<KubevirtProviderProperties> provider,
+            AuditLogDirector auditLogDirector) throws IOException, ApiException, URISyntaxException {
         OpenshiftApi api = KubevirtUtils.getOpenshiftApi(provider);
         Optional<V1Route> route;
         try {
@@ -108,6 +109,7 @@ public class ClusterMonitoring {
                     Boolean.FALSE);
             route = routes.getItems().stream().findAny();
         } catch (ApiException e) {
+            KubevirtAuditUtils.auditAuthorizationIssues(e, auditLogDirector, provider);
             log.error("failed to retrieve console url for kubevirt provider (url = {}): {}",
                     provider.getUrl(),
                     ExceptionUtils.getRootCauseMessage(e));
@@ -158,7 +160,7 @@ public class ClusterMonitoring {
         disksMonitoring = new DisksMonitoring(client, clusterId, diskUpdater);
         disksMonitoring.monitor(sharedInformerFactory);
 
-        migrationMonitoring = new KubevirtClusterMigrationMonitoring(client, auditLogDirector);
+        migrationMonitoring = new KubevirtClusterMigrationMonitoring(client, auditLogDirector, provider);
         migrationMonitoring.monitor(sharedInformerFactory);
         kubevirtMigrationMonitoring.register(clusterId, migrationMonitoring);
 
@@ -198,7 +200,7 @@ public class ClusterMonitoring {
         try {
             getKubevirtApi().createNamespacedVirtualMachine(vm, vm.getMetadata().getNamespace());
         } catch (ApiException e) {
-            throw new EngineException(EngineError.unexpected, "failed to interact with kubevirt start endpoint");
+            handleException(e, "failed to interact with kubevirt create namespaced virtual machine  endpoint");
         }
     }
 
@@ -206,7 +208,7 @@ public class ClusterMonitoring {
         try {
             getKubevirtApi().start(vm.getNamespace(), vm.getName());
         } catch (ApiException e) {
-            throw new EngineException(EngineError.unexpected, "failed to interact with kubevirt start endpoint");
+            handleException(e, "failed to interact with kubevirt start endpoint");
         }
     }
 
@@ -214,7 +216,7 @@ public class ClusterMonitoring {
         try {
             getKubevirtApi().stop(vm.getNamespace(), vm.getName());
         } catch (ApiException e) {
-            throw new EngineException(EngineError.unexpected, "failed to interact with kubevirt stop endpoint");
+            handleException(e, "failed to interact with kubevirt stop endpoint");
         }
     }
 
@@ -222,7 +224,7 @@ public class ClusterMonitoring {
         try {
             getKubevirtApi().migrate(vm.getNamespace(), vm.getName());
         } catch (ApiException e) {
-            throw new EngineException(EngineError.unexpected, "failed to interact with kubevirt migrate endpoint");
+            handleException(e, "failed to interact with kubevirt migrate endpoint");
         }
     }
 
@@ -231,7 +233,7 @@ public class ClusterMonitoring {
             V1DeleteOptions options = new V1DeleteOptions();
             getKubevirtApi().deleteNamespacedVirtualMachine(options, vm.getNamespace(), vm.getName(), null, null, null);
         } catch (ApiException e) {
-            throw new EngineException(EngineError.unexpected, "failed to interact with kubevirt delete endpoint");
+            handleException(e, "failed to interact with kubevirt delete endpoint");
         }
     }
 
@@ -239,7 +241,12 @@ public class ClusterMonitoring {
         try {
             getKubevirtApi().restart(vm.getNamespace(), vm.getName());
         } catch (ApiException e) {
-            throw new EngineException(EngineError.unexpected, "failed to interact with kubevirt restart endpoint");
+            handleException(e, "failed to interact with kubevirt restart endpoint");
         }
+    }
+
+    private void handleException(ApiException e, String message) throws EngineException {
+        KubevirtAuditUtils.auditAuthorizationIssues(e, auditLogDirector, provider);
+        throw new EngineException(EngineError.unexpected, message);
     }
 }

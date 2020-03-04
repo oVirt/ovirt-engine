@@ -25,10 +25,12 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.OsRepositoryImpl;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtAuditUtils;
 import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtUtils;
 import org.ovirt.engine.core.vdsbroker.kubevirt.PrometheusClient;
 import org.ovirt.engine.core.vdsbroker.monitoring.PollVmStatsRefresher;
@@ -57,6 +59,8 @@ public class KubevirtVmStatsRefresher extends PollVmStatsRefresher {
     private KubevirtMigrationMonitoring migrationMonitoring;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    private AuditLogDirector auditLogDirector;
     private KubevirtApi api;
     private PrometheusClient prometheusClient;
 
@@ -82,7 +86,7 @@ public class KubevirtVmStatsRefresher extends PollVmStatsRefresher {
     private PrometheusClient getPrometheusClient() {
         if (prometheusClient == null) {
             Provider provider = providerDao.get(vdsManager.getClusterId());
-            prometheusClient = KubevirtUtils.create(provider);
+            prometheusClient = KubevirtUtils.create(provider, auditLogDirector);
         }
         return prometheusClient;
     }
@@ -101,6 +105,10 @@ public class KubevirtVmStatsRefresher extends PollVmStatsRefresher {
             returnValue.setReturnValue(vms);
             returnValue.setSucceeded(true);
         } catch (Exception e) {
+            if (ApiException.class.isInstance(e)) {
+                KubevirtAuditUtils.auditAuthorizationIssues((ApiException) e, auditLogDirector,
+                        providerDao.get(vdsManager.getClusterId()));
+            }
             log.error("failed to retrieve kubevirt VMs for node {}: {}",
                     vdsManager.getVdsName(),
                     ExceptionUtils.getRootCauseMessage(e));
@@ -347,6 +355,7 @@ public class KubevirtVmStatsRefresher extends PollVmStatsRefresher {
                     null,
                     null);
         } catch (ApiException e) {
+            KubevirtAuditUtils.auditAuthorizationIssues(e, auditLogDirector, providerDao.get(vdsManager.getClusterId()));
             log.error("failed to query VM (name = {}, namespace = {}, cluster = {}): {}",
                     name,
                     namespace,

@@ -5,9 +5,12 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtAuditUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,11 +31,14 @@ public class KubevirtClusterMigrationMonitoring {
 
     private KubevirtApi api;
     private AuditLogDirector auditLogDirector;
+    private Provider<KubevirtProviderProperties> provider;
 
     private Map<KubeResourceId, V1VirtualMachineInstanceMigration> vmToMigration;
 
-    public KubevirtClusterMigrationMonitoring(ApiClient client, AuditLogDirector auditLogDirector) {
+    public KubevirtClusterMigrationMonitoring(ApiClient client, AuditLogDirector auditLogDirector,
+            Provider<KubevirtProviderProperties> provider) {
         this.auditLogDirector = auditLogDirector;
+        this.provider = provider;
         vmToMigration = new ConcurrentHashMap<>();
         api = new KubevirtApi(client);
     }
@@ -173,6 +179,7 @@ public class KubevirtClusterMigrationMonitoring {
                     null,
                     null);
         } catch (ApiException e) {
+            KubevirtAuditUtils.auditAuthorizationIssues(e, auditLogDirector, provider);
             log.error("failed to query VM {} (namespace {}): {}",
                     vmim.getSpec().getVmiName(),
                     vmim.getMetadata().getNamespace(),

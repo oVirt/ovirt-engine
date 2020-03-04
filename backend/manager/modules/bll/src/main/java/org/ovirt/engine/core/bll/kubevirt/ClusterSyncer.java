@@ -16,11 +16,14 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtAuditUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +74,12 @@ public class ClusterSyncer {
 
     @Inject
     private NetworkUpdater networkUpdater;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private ProviderDao providerDao;
 
     /**
      * Sync act by the following sequence to maintain data integrity:
@@ -161,8 +170,7 @@ public class ClusterSyncer {
                     null,
                     Boolean.FALSE);
         } catch (ApiException e) {
-            log.error("Failed to communicate with kubevirt cluster " + clusterId + " due to: " + e.getMessage());
-            log.debug("Exception", e);
+            handleException(e, clusterId);
             return null;
         }
     }
@@ -206,8 +214,7 @@ public class ClusterSyncer {
         try {
             return api.listNode(Boolean.FALSE.toString(), null, null, null, null, null, null, Boolean.FALSE);
         } catch (ApiException e) {
-            log.error("Failed to communicate with kubevirt cluster " + clusterId + " due to: " + e.getMessage());
-            log.debug("Exception", e);
+            handleException(e, clusterId);
             return null;
         }
     }
@@ -230,8 +237,7 @@ public class ClusterSyncer {
         try {
             return kubevirtApi.listVirtualMachineForAllNamespaces(null, null, null, null, null, null, null, null);
         } catch (ApiException e) {
-            log.error("Failed to communicate with kubevirt cluster " + clusterId + " due to: " + e.getMessage());
-            log.debug("Exception", e);
+            handleException(e, clusterId);
             return null;
         }
     }
@@ -241,8 +247,7 @@ public class ClusterSyncer {
         try {
             return api.listPersistentVolumeClaimForAllNamespaces(null, null, null, null, null, null, null, null);
         } catch (ApiException e) {
-            log.error("Failed to communicate with kubevirt cluster " + clusterId + " due to: " + e.getMessage());
-            log.debug("Exception", e);
+            handleException(e, clusterId);
             return null;
         }
     }
@@ -268,4 +273,9 @@ public class ClusterSyncer {
         disksToDelete.forEach(diskUpdater::removeFromDB);
     }
 
+    private void handleException(ApiException e, Guid clusterId) {
+        KubevirtAuditUtils.auditAuthorizationIssues(e, auditLogDirector, clusterId, providerDao);
+        log.error("Failed to communicate with kubevirt cluster " + clusterId + " due to: " + e.getMessage());
+        log.debug("Exception", e);
+    }
 }

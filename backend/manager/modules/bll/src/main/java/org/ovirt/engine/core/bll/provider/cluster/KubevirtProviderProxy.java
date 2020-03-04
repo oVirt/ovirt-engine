@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.vdscommands.AddVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -83,6 +84,9 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
 
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     /**
      * command's context is required for internal backend actions that requires a user, i.e. creating data-center with
@@ -209,7 +213,7 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
 
     private void updateConsoleUrl() {
         try {
-            String consoleUrl = ClusterMonitoring.fetchConsoleUrl(provider);
+            String consoleUrl = ClusterMonitoring.fetchConsoleUrl(provider, auditLogDirector);
             if (!Objects.equals(provider.getAdditionalProperties().getConsoleUrl(), consoleUrl)) {
                 TransactionSupport.executeInNewTransaction(() -> {
                     getContext().getCompensationContext().snapshotEntityUpdated(provider);

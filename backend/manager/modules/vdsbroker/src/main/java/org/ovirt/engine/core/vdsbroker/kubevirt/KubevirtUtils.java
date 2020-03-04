@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +28,10 @@ public class KubevirtUtils {
 
     private static Logger log = LoggerFactory.getLogger(KubevirtUtils.class);
 
-    public static PrometheusClient create(Provider provider) {
+    public static PrometheusClient create(Provider provider, AuditLogDirector auditLogDirector) {
         String promUrl = ((KubevirtProviderProperties)provider.getAdditionalProperties()).getPrometheusUrl();
         if (promUrl == null) {
-            promUrl = PrometheusClient.fetchPrometheusUrl(provider);
+            promUrl = PrometheusClient.fetchPrometheusUrl(provider, auditLogDirector);
             if (promUrl == null) {
                 log.error(
                     "No prometheus URL provided. Statistics won't be fetched for provider '{}'", provider.getName()

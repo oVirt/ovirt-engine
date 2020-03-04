@@ -40,7 +40,7 @@ public class KubevirtHostConnectionRefresher implements HostConnectionRefresherI
     }
 
     @Override public void start() {
-        KubevirtNodeMonitoring kubevirtNodeMonitoring = new KubevirtNodeMonitoring(vdsManager, client);
+        KubevirtNodeMonitoring kubevirtNodeMonitoring = new KubevirtNodeMonitoring(vdsManager, client, getProvider());
         kubevirtNodeMonitoring.monitorNodeUpdates(sharedInformerFactory);
         kubevirtNodeMonitoring.monitorNodeVmsUpdates(sharedInformerFactory);
         sharedInformerFactory.startAllRegisteredInformers();
@@ -52,11 +52,13 @@ public class KubevirtHostConnectionRefresher implements HostConnectionRefresherI
 
     private ApiClient getApiClient() {
         try {
-            Provider<KubevirtProviderProperties> provider =
-                    (Provider<KubevirtProviderProperties>) providerDao.get(vdsManager.getClusterId());
-            return KubevirtUtils.createApiClient(provider);
+            return KubevirtUtils.createApiClient(getProvider());
         } catch (IOException e) {
             throw new RuntimeException("Failed to connect to kubevirt of provider: " + vdsManager.getClusterId(), e);
         }
+    }
+
+    private Provider<KubevirtProviderProperties> getProvider() {
+        return (Provider<KubevirtProviderProperties>) providerDao.get(vdsManager.getClusterId());
     }
 }
