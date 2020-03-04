@@ -113,6 +113,12 @@
         <version>${javax.interceptor.api.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.jboss.spec.javax.xml.bind</groupId>
+        <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+        <version>2.0.0.Final</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
         <groupId>org.ovirt.java-client-kubevirt</groupId>
         <artifactId>java-client-kubevirt</artifactId>
         <version>${kubevirt-client.version}</version>
@@ -154,16 +160,13 @@
         <groupId>javax.xml.bind</groupId>
         <artifactId>jaxb-api</artifactId>
         <version>${jaxb-impl.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.glassfish.jaxb</groupId>
-        <artifactId>jaxb-core</artifactId>
-        <version>${jaxb-core.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>
         <version>${jaxb-impl.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.xmlrpc</groupId>

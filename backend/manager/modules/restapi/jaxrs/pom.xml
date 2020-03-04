@@ -114,20 +114,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.glassfish.jaxb</groupId>
-      <artifactId>jaxb-core</artifactId>
-      <version>${jaxb-core.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-      <version>${jaxb-impl.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-jaxrs</artifactId>
       <version>${jackson.version}</version>

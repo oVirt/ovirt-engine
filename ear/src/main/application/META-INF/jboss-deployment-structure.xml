@@ -9,6 +9,7 @@
       <module name="javax.interceptor.api"/>
       <module name="javax.mail.api" export="true"/>
       <module name="javax.validation.api"/>
+      <module name="javax.xml.bind.api"/>
 
       <module name="asm.asm" export="true"/>
       <module name="com.woorea.openstack.sdk" export="true" services="export"/>
