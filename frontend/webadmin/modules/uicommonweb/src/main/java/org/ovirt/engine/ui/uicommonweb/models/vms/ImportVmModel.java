@@ -211,10 +211,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
                         new NotEmptyValidation(),
                         new LengthValidation(maxNameLength),
                         new I18NNameValidation(),
-                        new UniqueNameValidator(data),
-                        value -> isNameExistsInTheSystem(vmName.getEntity()) ?
-                               ValidationResult.fail(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason())
-                               : ValidationResult.ok()
+                        uniqueNameValidation(data, vmName)
                 });
 
         data.setError(vmName.getIsValid() ? null : ConstantsManager.getInstance().getConstants().invalidName());
@@ -226,29 +223,15 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
         return vmName.getIsValid();
     }
 
-    private class UniqueNameValidator implements IValidation {
-        ImportVmData data;
+    private IValidation uniqueNameValidation(ImportVmData data, EntityModel<String> vmName) {
+        return value -> (isNameExistsInTheSystem(vmName.getEntity()) || !isVmNameUnique(data))?
+               ValidationResult.fail(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason())
+               : ValidationResult.ok();
+    }
 
-        UniqueNameValidator(ImportVmData data) {
-            this.data = data;
-        }
-
-        @Override
-        public ValidationResult validate(Object value) {
-            return !isVmNameUnique() ?
-                    ValidationResult.fail(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason())
-                    : ValidationResult.ok();
-        }
-
-        private boolean isVmNameUnique() {
-            for (Object item : getItems()) {
-                ImportVmData data = (ImportVmData) item;
-                if (this.data != data && this.data.getVm().getName().equals(data.getVm().getName())) {
-                    return false;
-                }
-            }
-            return true;
-        }
+    private boolean isVmNameUnique(ImportVmData data) {
+        return getItems().stream().noneMatch(item -> data != item &&
+                data.getVm().getName().equals(((ImportVmData) item).getVm().getName()));
     }
 
     protected int getMaxNameLength() {
