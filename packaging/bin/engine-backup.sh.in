@@ -179,6 +179,7 @@ load_branding() {
 BACKUP_PATHS="/etc/ovirt-engine
 /etc/ovirt-engine-dwh
 /etc/ovirt-provider-ovn/conf.d
+/etc/ovirt-provider-ovn/logger.conf
 /etc/ovirt-vmconsole
 /etc/pki/ovirt-engine
 /etc/pki/ovirt-vmconsole
