@@ -99,7 +99,7 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION DeleteAllVmCheckpointDiskMapByVmCheckpointId (v_backup_id UUID)
+CREATE OR REPLACE FUNCTION DeleteAllVmCheckpointDiskMapByVmCheckpointId (v_checkpoint_id UUID)
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     BEGIN
