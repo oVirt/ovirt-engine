@@ -204,6 +204,17 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         unlockDisks();
     }
 
+    private void removeCheckpointFromDb() {
+        Guid vmCheckpointId = getParameters().getVmBackup().getToCheckpointId();
+        log.info("Remove VmCheckpoint entity '{}'", vmCheckpointId);
+
+        TransactionSupport.executeInNewTransaction(() -> {
+            vmCheckpointDao.removeAllDisksFromCheckpoint(vmCheckpointId);
+            vmCheckpointDao.remove(vmCheckpointId);
+            return null;
+        });
+    }
+
     private Guid createVmBackup() {
         final VmBackup vmBackup = getParameters().getVmBackup();
         vmBackup.setId(getCommandId());
@@ -310,6 +321,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     @Override
     protected void endWithFailure() {
         finalizeVmBackup();
+        removeCheckpointFromDb();
         getReturnValue().setEndActionTryAgain(false);
         setSucceeded(true);
     }
