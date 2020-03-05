@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -529,18 +530,16 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                 return;
             }
 
-            Snapshot snapshot = getSelectedItem();
-            if (snapshot == null) {
-                snapshot = getItems().stream()
-                        .filter(s -> s.getStatus() == SnapshotStatus.IN_PREVIEW)
-                        .findFirst()
-                        .orElse(null);
-            }
+            Optional<Snapshot> inPreviewSnapshot =
+                    getItems().stream().filter(s -> s.getStatus() == SnapshotStatus.IN_PREVIEW).findFirst();
 
-            if (snapshot == null) {
+            if (!inPreviewSnapshot.isPresent()) {
+                // 'Commit' is only allowed when there is a snapshot in 'IN_PREVIEW' state,
+                // therefore a previewed snapshot should be present.
                 return;
             }
 
+            Snapshot snapshot = inPreviewSnapshot.get();
             ConfirmationModel model = new ConfirmationModel();
             setWindow(model);
             model.setTitle(constants.commitSnapshotTitle());
