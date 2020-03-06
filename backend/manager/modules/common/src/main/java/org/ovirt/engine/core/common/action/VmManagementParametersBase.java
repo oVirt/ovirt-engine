@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-@HostedEngineUpdate(groups = { UpdateEntity.class })
+@HostedEngineUpdate(groups = UpdateEntity.class)
 public class VmManagementParametersBase extends VmOperationParameterBase
         implements HasGraphicsDevices, HasVmIcon, HasRngDevice {
 

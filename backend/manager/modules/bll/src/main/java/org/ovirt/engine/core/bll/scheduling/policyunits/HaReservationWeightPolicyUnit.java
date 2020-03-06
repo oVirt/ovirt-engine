@@ -27,9 +27,7 @@ import org.slf4j.LoggerFactory;
         name = "OptimalForHaReservation",
         description = "Weights hosts according to their HA score regardless of hosted engine",
         type = PolicyUnitType.WEIGHT,
-        parameters = {
-                PolicyUnitParameter.SCALE_DOWN
-        }
+        parameters = PolicyUnitParameter.SCALE_DOWN
 )
 public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
 

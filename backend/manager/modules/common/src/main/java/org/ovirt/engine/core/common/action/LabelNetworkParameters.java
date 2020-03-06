@@ -11,7 +11,7 @@ public class LabelNetworkParameters extends UnlabelNetworkParameters {
     private static final long serialVersionUID = -6670273015570157109L;
 
     @NotNull
-    @ValidName(message = "NETWORK_LABEL_FORMAT_INVALID", groups = { CreateEntity.class })
+    @ValidName(message = "NETWORK_LABEL_FORMAT_INVALID", groups = CreateEntity.class)
     private String label;
 
     public LabelNetworkParameters() {

@@ -39,9 +39,7 @@ import org.ovirt.engine.core.dao.VmDao;
         description = "Reserve space for starting the hosted engine VM on different hosts in case "
                 + "the current one crashes.",
         type = PolicyUnitType.FILTER,
-        parameters = {
-                PolicyUnitParameter.HE_SPARES_COUNT
-        }
+        parameters = PolicyUnitParameter.HE_SPARES_COUNT
 )
 public class HostedEngineMemoryReservationFilterPolicyUnit extends PolicyUnitImpl {
 

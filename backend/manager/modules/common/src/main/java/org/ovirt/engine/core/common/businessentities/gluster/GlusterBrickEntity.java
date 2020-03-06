@@ -30,15 +30,15 @@ import org.ovirt.engine.core.compat.Guid;
 public class GlusterBrickEntity implements Queryable, BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport, Nameable {
     private static final long serialVersionUID = 7119439284741452278L;
 
-    @NotNull(message = "VALIDATION_GLUSTER_BRICK_ID_NOT_NULL", groups = { RemoveBrick.class })
+    @NotNull(message = "VALIDATION_GLUSTER_BRICK_ID_NOT_NULL", groups = RemoveBrick.class)
     private Guid id;
 
-    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_ID_NOT_NULL", groups = { AddBrick.class })
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_ID_NOT_NULL", groups = AddBrick.class)
     private Guid volumeId;
 
     private String volumeName;
 
-    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_BRICK_SERVER_ID_NOT_NULL", groups = { CreateEntity.class })
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_BRICK_SERVER_ID_NOT_NULL", groups = CreateEntity.class)
     private Guid serverId;
 
     private Guid networkId;
@@ -47,7 +47,7 @@ public class GlusterBrickEntity implements Queryable, BusinessEntityWithStatus<G
 
     private String serverName;
 
-    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_BRICK_BRICK_DIR_NOT_NULL", groups = { CreateEntity.class })
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_BRICK_BRICK_DIR_NOT_NULL", groups = CreateEntity.class)
     private String brickDirectory;
 
     private GlusterStatus status;

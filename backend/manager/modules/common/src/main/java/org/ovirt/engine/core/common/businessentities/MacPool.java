@@ -16,7 +16,7 @@ public class MacPool implements Queryable, BusinessEntity<Guid>, Nameable {
 
     private static final long serialVersionUID = -7952435653821354188L;
 
-    @NotNull(groups = { UpdateEntity.class })
+    @NotNull(groups = UpdateEntity.class)
     private Guid id;
 
     @NotEmpty(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY")

@@ -26,9 +26,7 @@ import org.slf4j.LoggerFactory;
         name = "Swap",
         description = "Filters out hosts that are swapping",
         type = PolicyUnitType.FILTER,
-        parameters = {
-                PolicyUnitParameter.MAX_ALLOWED_SWAP_USAGE
-        }
+        parameters = PolicyUnitParameter.MAX_ALLOWED_SWAP_USAGE
 )
 public class SwapFilterPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(SwapFilterPolicyUnit.class);

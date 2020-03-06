@@ -16,7 +16,7 @@ public class CreateSnapshotDiskParameters extends VmOperationParameterBase imple
 
     private static final long serialVersionUID = -1341054636243287904L;
 
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE, groups = { CreateEntity.class },
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE, groups = CreateEntity.class,
             message = "VALIDATION_DISK_IMAGE_DESCRIPTION_MAX")
     private String description;
     private Set<Guid> disks;

@@ -24,9 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
         guid = "3ba8c988-f779-42c0-90ce-caa8243edee7",
         name = "OptimalForEvenGuestDistribution",
         type = PolicyUnitType.WEIGHT,
-        parameters = {
-                PolicyUnitParameter.SPM_VM_GRACE
-        }
+        parameters = PolicyUnitParameter.SPM_VM_GRACE
 )
 public class EvenGuestDistributionWeightPolicyUnit extends PolicyUnitImpl {
     final int spmVmGrace;

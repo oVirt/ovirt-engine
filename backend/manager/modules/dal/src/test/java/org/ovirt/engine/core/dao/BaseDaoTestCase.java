@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @ExtendWith(SpringExtension.class)
 @TestExecutionListeners({ TransactionalTestExecutionListener.class, DependencyInjectionTestExecutionListener.class })
-@ContextConfiguration(locations = { "classpath:/test-beans.xml" })
+@ContextConfiguration(locations = "classpath:/test-beans.xml")
 @Transactional
 @Tag("dao")
 public abstract class BaseDaoTestCase<D extends Dao> {

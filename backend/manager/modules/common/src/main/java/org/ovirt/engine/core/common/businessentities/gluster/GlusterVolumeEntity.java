@@ -41,7 +41,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 public class GlusterVolumeEntity implements Queryable, BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport, Nameable {
     private static final long serialVersionUID = 2355384696827317277L;
 
-    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_ID_NOT_NULL", groups = { RemoveEntity.class })
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_ID_NOT_NULL", groups = RemoveEntity.class)
     private Guid id;
 
     @NotNull(message = "VALIDATION_GLUSTER_VOLUME_CLUSTER_ID_NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
@@ -55,10 +55,10 @@ public class GlusterVolumeEntity implements Queryable, BusinessEntityWithStatus<
     @NotNull(message = "VALIDATION_GLUSTER_VOLUME_TYPE_NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
     private GlusterVolumeType volumeType;
 
-    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_REPLICA_COUNT_NOT_NULL", groups = { CreateReplicatedVolume.class })
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_REPLICA_COUNT_NOT_NULL", groups = CreateReplicatedVolume.class)
     private Integer replicaCount;
 
-    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_STRIPE_COUNT_NOT_NULL", groups = { CreateStripedVolume.class })
+    @NotNull(message = "VALIDATION_GLUSTER_VOLUME_STRIPE_COUNT_NOT_NULL", groups = CreateStripedVolume.class)
     private Integer stripeCount;
 
     private Integer disperseCount;

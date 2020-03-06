@@ -8,9 +8,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.ovirt.engine.api.model.BaseResource;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Directory", propOrder = {
-    "domain"
-})
+@XmlType(name = "Directory", propOrder = "domain")
 public class Directory
     extends BaseResource {
 

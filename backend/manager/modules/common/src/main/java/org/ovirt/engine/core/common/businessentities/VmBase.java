@@ -175,7 +175,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @EditableVmTemplateField
     @Size(max = BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE)
     @Pattern(regexp = ValidationUtils.CUSTOM_CPU_NAME,
-            flags = {Pattern.Flag.CASE_INSENSITIVE},
+            flags = Pattern.Flag.CASE_INSENSITIVE,
             message = "ACTION_TYPE_FAILED_CPU_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS",
             groups = { CreateEntity.class, UpdateEntity.class })
     private String customCpuName; // overrides cluster cpu. (holds the actual vdsVerb)
@@ -258,7 +258,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @CopyOnNewVersion
     @EditableVmField
     @Pattern(regexp = ValidationUtils.ISO_SUFFIX_PATTERN + "|" + ValidationUtils.GUID,
-            flags = {Pattern.Flag.CASE_INSENSITIVE}, message = "ACTION_TYPE_FAILED_INVALID_CDROM_DISK_FORMAT")
+            flags = Pattern.Flag.CASE_INSENSITIVE, message = "ACTION_TYPE_FAILED_INVALID_CDROM_DISK_FORMAT")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String isoPath;
 

@@ -16,7 +16,7 @@ public class ExternalSubnet implements Queryable, Nameable {
 
     private static final long serialVersionUID = 7357288865938773402L;
 
-    @NotNull(groups = { RemoveEntity.class })
+    @NotNull(groups = RemoveEntity.class)
     private String id;
 
     private String name;
@@ -25,7 +25,7 @@ public class ExternalSubnet implements Queryable, Nameable {
 
     private IpVersion ipVersion;
 
-    @NotNull(groups = { RemoveEntity.class })
+    @NotNull(groups = RemoveEntity.class)
     private ProviderNetwork externalNetwork;
 
     private String gateway;

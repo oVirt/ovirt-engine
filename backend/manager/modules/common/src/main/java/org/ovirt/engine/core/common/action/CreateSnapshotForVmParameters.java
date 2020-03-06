@@ -19,10 +19,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class CreateSnapshotForVmParameters extends VmOperationParameterBase implements HostJobCommandParameters, Serializable {
     private static final long serialVersionUID = 847791941815264795L;
 
-    @NotEmpty(groups = { CreateEntity.class },
+    @NotEmpty(groups = CreateEntity.class,
             message = "VALIDATION_DISK_IMAGE_DESCRIPTION_NOT_EMPTY")
-    @ValidDescription(message = "VALIDATION_DISK_IMAGE_DESCRIPTION_INVALID", groups = { CreateEntity.class })
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE, groups = { CreateEntity.class },
+    @ValidDescription(message = "VALIDATION_DISK_IMAGE_DESCRIPTION_INVALID", groups = CreateEntity.class)
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE, groups = CreateEntity.class,
             message = "VALIDATION_DISK_IMAGE_DESCRIPTION_MAX")
     private String description;
 

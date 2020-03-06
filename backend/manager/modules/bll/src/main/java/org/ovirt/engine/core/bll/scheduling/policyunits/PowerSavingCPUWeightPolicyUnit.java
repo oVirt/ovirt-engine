@@ -22,9 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
         description = "Gives hosts with higher CPU usage, lower weight (means that hosts with higher CPU usage are"
                 + " more likely to be selected)",
         type = PolicyUnitType.WEIGHT,
-        parameters = {
-                PolicyUnitParameter.HIGH_UTILIZATION
-        }
+        parameters = PolicyUnitParameter.HIGH_UTILIZATION
 )
 public class PowerSavingCPUWeightPolicyUnit extends EvenDistributionCPUWeightPolicyUnit {
 

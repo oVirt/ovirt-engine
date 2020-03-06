@@ -19,7 +19,7 @@ public class NetworkAttachment implements Queryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -8052325342869681284L;
 
-    @NotNull(groups = { UpdateEntity.class }, message = "NETWORK_ATTACHMENTS_ID_MUST_BE_SET_FOR_UPDATE")
+    @NotNull(groups = UpdateEntity.class, message = "NETWORK_ATTACHMENTS_ID_MUST_BE_SET_FOR_UPDATE")
     private Guid id;
 
     private Guid networkId;

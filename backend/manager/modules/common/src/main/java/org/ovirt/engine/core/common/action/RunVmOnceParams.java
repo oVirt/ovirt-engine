@@ -37,7 +37,7 @@ public class RunVmOnceParams extends RunVmParams {
     private String customProperties;
 
     @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
-            groups = { StartEntity.class }, message = "VALIDATION_VM_INVALID_KEYBOARD_LAYOUT")
+            groups = StartEntity.class, message = "VALIDATION_VM_INVALID_KEYBOARD_LAYOUT")
     private String vncKeyboardLayout;
 
     private boolean volatileRun;
