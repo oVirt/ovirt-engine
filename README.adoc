@@ -12,9 +12,9 @@ Install the following system components:
 - unzip
 - openssl
 - bind-utils
-- postgresql-server >= 10.0 / rh-postgresql10-postgresql-server
-- postgresql >= 10.0 / rh-postgresql10-postgresql-server
-- postgresql-contrib >= 10.0 / rh-postgresql10-postgresql-contrib
+- postgresql-server >= 10.0
+- postgresql >= 10.0
+- postgresql-contrib >= 10.0
 - python-dateutil / dateutil
 - python-m2crypto / m2crypto
 - python-psycopg2 / psycopg
@@ -79,7 +79,6 @@ Fedora 30
 ```console
 $ sudo dnf module install maven
 ```
-Centos 7 - follow this https://www.softwarecollections.org/en/scls/rhscl/rh-maven35/
 
 - verify your `mvn` version:
 ```console
@@ -203,7 +202,6 @@ Locate `pg_hba.conf` within your distribution, common locations are:
 - `/var/lib/pgsql/data/pg_hba.conf`
 - `/etc/postgresql-*/pg_hba.conf`
 - `/etc/postgresql/*/main/pg_hba.conf`
-- `/var/opt/rh/rh-postgresql10/lib/pgsql/data/pg_hba.conf` (el7 with rh-postgresql10)
 
 Within `pg_hba.conf` set method to `password` for `127.0.0.1/32` and
 `::1/128` for IPv4 and IPv6 local connections correspondingly.
@@ -215,7 +213,6 @@ Locate `postgresql.conf` within your distribution, common locations are:
 
 - `/var/lib/pgsql/data`
 - `/etc/postgresql*`
-- `/var/opt/rh/rh-postgresql10/lib/pgsql/data/postgresql.conf` (el7 with rh-postgresql10)
 
 Within `postgresql.conf` make sure following values are set:
 
@@ -230,16 +227,14 @@ If you want to connect from the outside, set also:
 
   listen_addresses = '*'
 
-Enable and start (`systemctl enable rh-postgresql10-postgresql --now`) or restart the PostgreSQL service
-(`systemctl restart rh-postgresql10-postgresql` for the SCL one).
+Enable and start (`systemctl enable postgresql --now`).
 
 === Database creation
 
 Create database for ovirt-engine, usually the following sequence should
 work to create a user named `engine` that owns database named `engine`:
 
-  # su - postgres -c "psql -d template1" # if on fedora or
-  # su - postgres -c "scl enable rh-postgresql10 -- psql -d template1" # if on el7 with rh-postgresql10
+  # su - postgres -c "psql -d template1"
   template1=# create user engine password 'engine';
   template1=# drop database engine;
   template1=# create database engine owner engine template template0
@@ -248,8 +243,7 @@ work to create a user named `engine` that owns database named `engine`:
 
 Enable uuid-ossp extension for the database:
 
-  # su - postgres -c "psql -d engine" # if on fedora or
-  # su - postgres -c "scl enable rh-postgresql10 -- psql -d engine" # if on el7 with rh-postgresql10
+  # su - postgres -c "psql -d engine"
   engine=# CREATE EXTENSION "uuid-ossp";
   engine=# \q
 
@@ -302,9 +296,6 @@ directory execute the following command:
 
 NOTE: `${PREFIX}` should be replaced with the location in which you
 intend to install the environment.
-
-NOTE: Add DEV_BUILD_SCL_POSTGRESQL=1 in order to configure your local build
-for SCL rh-postgresql10.
 
 NOTE: Add SKIP_CHECKS=1 to disable tests.
 
@@ -362,10 +353,6 @@ Following changes are applied for draft builds:
 On local development environment, using GWT Super Dev Mode (see below)
 is preferred, as it automatically disables all optimizations and allows
 you to recompile the GWT application on the fly.
-
-DEV_BUILD_SCL_POSTGRESQL:: Configure your local development deployment
-to be used with SCL rh-postgresql10 instead of system PostgreSQL.
-Default value is `0`.
 +
 
 DEV_BUILD_GWT_SUPER_DEV_MODE:: Allows debugging GWT applications via
@@ -441,8 +428,7 @@ To setup the product use the following command:
 
   $ "${PREFIX}/bin/engine-setup"
 
-NOTE: [1] If on el7, make sure you run `scl enable rh-postgresql10 bash` first. +
-[2] otopi, and therefore engine-setup, now defaults to python3 except el7, use: +
+NOTE: otopi, and therefore engine-setup, now defaults to python3 except el7, use: +
 `$  OTOPI_PYTHON=/usr/bin/python2 "${PREFIX}/bin/engine-setup"` +
 to override.
 

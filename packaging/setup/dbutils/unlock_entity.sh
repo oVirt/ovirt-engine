@@ -269,10 +269,6 @@ if [ "${TYPE}" != "all" ]; then
     [ -n "${IDS}" -a -n "${QUERY}" ] && die "Please specify one ids or query"
 fi
 
-if [ -n "$sclenv" ]; then
-	. scl_source enable ${sclenv}
-fi
-
 generatePgPass
 DBFUNC_DB_PGPASSFILE="${MYPGPASS}"
 dbfunc_init

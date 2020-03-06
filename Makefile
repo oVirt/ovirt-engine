@@ -22,7 +22,6 @@ DEV_BUILD_GWT_DRAFT=0
 DEV_BUILD_GWT_SUPER_DEV_MODE=0
 DEV_EXTRA_BUILD_FLAGS=
 DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS=
-DEV_BUILD_SCL_POSTGRESQL=0
 VMCONSOLE_SYSCONF_DIR=/etc/ovirt-vmconsole
 VMCONSOLE_PKI_DIR=/etc/pki/ovirt-vmconsole
 
@@ -125,26 +124,6 @@ BUILD_FILE=tmp.built
 MAVEN_OUTPUT_DIR=.
 BUILD_TARGET=install
 
-# SCL rh-postgresql10 customization
-SCL_PG_BASE=rh-postgresql10
-define ENVFILEC
-RHPOSTGRESQLSCLROOT="/opt/rh/$(SCL_PG_BASE)/root"
-RHPOSTGRESQLSCLDATA="/var/opt/rh/$(SCL_PG_BASE)/lib/pgsql/data"
-if [ -e $${RHPOSTGRESQLSCLROOT}/usr/bin/postgresql-setup ]
-then
-  export sclenv="$(SCL_PG_BASE)"
-  export POSTGRESQLENV="COMMAND/pg_dump=str:$${RHPOSTGRESQLSCLROOT}/usr/bin/pg_dump \
-         COMMAND/psql=str:$${RHPOSTGRESQLSCLROOT}/usr/bin/psql \
-         COMMAND/pg_restore=str:$${RHPOSTGRESQLSCLROOT}/usr/bin/pg_restore \
-         COMMAND/postgresql-setup=str:$${RHPOSTGRESQLSCLROOT}/usr/bin/postgresql-setup \
-         OVESETUP_PROVISIONING/oldPostgresService=str:rh-postgresql95-postgresql \
-         OVESETUP_PROVISIONING/postgresService=str:$(SCL_PG_BASE)-postgresql \
-         OVESETUP_PROVISIONING/postgresConf=str:$${RHPOSTGRESQLSCLDATA}/postgresql.conf \
-         OVESETUP_PROVISIONING/postgresPgHba=str:$${RHPOSTGRESQLSCLDATA}/pg_hba.conf \
-         OVESETUP_PROVISIONING/postgresPgVersion=str:$${RHPOSTGRESQLSCLDATA}/PG_VERSION"
-fi
-endef
-export ENVFILEC
 
 # Don't use any of the bultin rules, in particular don't use the rule
 # for .sh files, as that means that we can't generate .sh files from
@@ -611,8 +590,3 @@ install-dev:	\
 		touch "$(DESTDIR)$(PKG_STATE_DIR)/jboss_runtime/deployments/engine.ear.deployed"; \
 	fi
 
-ifneq ($(DEV_BUILD_SCL_POSTGRESQL),0)
-	mkdir -p "$(PREFIX)/etc/ovirt-engine-setup.env.d"
-	echo "$$ENVFILEC" > "$(PREFIX)/etc/ovirt-engine-setup.env.d/10-setup-scl-postgres.env"
-	echo "sclenv=\"rh-postgresql10\"" > "$(PREFIX)/etc/ovirt-engine/engine.conf.d/10-scl-postgres.conf"
-endif

@@ -91,4 +91,4 @@ if ! python@PY_VERSION@ -c 'import psycopg2' > /dev/null 2>&1; then
 	exit 1
 fi
 
-otopi_scl_exec
+otopi_exec

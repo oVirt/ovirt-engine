@@ -49,10 +49,6 @@ parseArgs() {
     done
 }
 
-if [ -n "$sclenv" ]; then
-    . scl_source enable ${sclenv}
-fi
-
 # do this in function so we do not lose $@
 parseArgs "$@"
 

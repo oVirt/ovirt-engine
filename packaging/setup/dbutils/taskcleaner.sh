@@ -108,10 +108,6 @@ __EOF__
 	fi
 }
 
-if [ -n "$sclenv" ]; then
-	. scl_source enable ${sclenv}
-fi
-
 DBFUNC_DB_HOST="${ENGINE_DB_HOST}"
 DBFUNC_DB_PORT="${ENGINE_DB_PORT}"
 DBFUNC_DB_USER="${ENGINE_DB_USER}"

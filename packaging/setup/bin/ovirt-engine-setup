@@ -82,4 +82,4 @@ while [ -n "$1" ]; do
 	esac
 done
 
-otopi_scl_exec
+otopi_exec

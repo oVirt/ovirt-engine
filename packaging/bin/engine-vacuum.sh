@@ -41,10 +41,6 @@ while getopts ":aAft:v" opt; do
     esac
 done
 
-if ! [ -z "$sclenv" ]; then
-        . scl_source enable ${sclenv}
-fi
-
 # setups with 'trust' may have empty passwords
 [[ -n $ENGINE_DB_PASSWORD ]] && generatePgPass
 

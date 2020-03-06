@@ -1934,11 +1934,6 @@ output "scope: ${SCOPE}"
 output "archive file: ${FILE}"
 output "log file: ${LOG}"
 
-if ! [ -z "$sclenv" ]; then
-	log "Setting scl env for ${sclenv}"
-	. scl_source enable ${sclenv}
-fi
-
 generatePgPass
 do${MODE}
 output "Done."

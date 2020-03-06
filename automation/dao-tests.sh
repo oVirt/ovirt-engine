@@ -1,15 +1,8 @@
 #!/bin/bash -xe
 
-if [[ "$STD_CI_DISTRO" = "el7" ]]; then
-    # On EL7 we are now using SCL PG 10
-    PGENGINE=/opt/rh/rh-postgresql10/root/usr/bin
-    PGDATA=/var/opt/rh/rh-postgresql10/lib/pgsql/data
-    PGENV="/usr/bin/scl enable rh-postgresql10 --"
-else
-    PGENGINE=/usr/bin
-    PGDATA=/var/lib/pgsql/data
-    PGENV=""
-fi
+PGENGINE=/usr/bin
+PGDATA=/var/lib/pgsql/data
+PGENV=""
 
 HOST=localhost
 PORT=$(seq 65000 65535 | sort -R | head -n 1)
