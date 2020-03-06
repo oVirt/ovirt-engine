@@ -51,11 +51,9 @@
 %if 0%{?fedora} || 0%{?rhel} >= 8
 %global use_python_bytecompile 1
 %global _python_bytecompile_extra 0
-%global with_python2 0
 %else
 %global use_python_bytecompile 0
 %global _python_bytecompile_extra 1
-%global with_python2 1
 %endif
 
 # Do not repack .jar files, as it takes a long time and doesn't have a
@@ -167,44 +165,11 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 # If you pass -l, then macro expands to: {l value}{all arguments}
 # If you pass -r, then macro expands to: {all arguments}{r value}
 %if 0%{?fedora} || 0%{?rhel} >= 8
-%global with_python3 1
-%define required_python_lib(l:r:) python%{python3_pkgversion}-%{*}
 %define py_version 3
 %else
-%global with_python3 0
-%define required_python_lib(l:r:) %{-l*}%{*}%{-r*}
 %define py_version 2
 %endif
 
-%global required_python_lib_ovirt_engine_lib %{required_python_lib -l python2- %{name}-lib >= %{version}-%{release}}
-%global required_python_lib_jinja2 %{required_python_lib -l python- jinja2}
-%global required_python_lib_mod_wsgi %{required_python_lib -l python2- mod_wsgi}
-%global required_python_lib_ovirt_setup_lib %{required_python_lib ovirt-setup-lib >= 1.1.1}
-%global required_python_lib_libxml2 %{required_python_lib -r -python libxml2}
-%global required_python_lib_otopi %{required_python_lib -l python2- otopi >= 1.9.0}
-%global required_python_lib_otopi_devtools %{required_python_lib -l python2- otopi-devtools >= 1.9.0}
-%global required_python_lib_paramiko %{required_python_lib -l python- paramiko}
-%global required_python_lib_libselinux %{required_python_lib -r -python libselinux}
-%global required_python_lib_psycopg2 %{required_python_lib -l python- psycopg2}
-%global required_python_lib_pwquality %{required_python_lib -l python- pwquality}
-%global required_python_lib_dnf %{required_python_lib dnf}
-%global required_python_lib_dateutil %{required_python_lib -l python- dateutil}
-%global required_python_lib_netaddr %{required_python_lib -l python- netaddr}
-%global required_python_lib_six %{required_python_lib -l python- six}
-%global required_python_lib_numpy %{required_python_lib numpy}
-%global required_python_lib_websockify %{required_python_lib -l python- websockify >= 0.6.0}
-%global required_python_lib_websocket %{required_python_lib -l python- websocket-client}
-%if 0%{?fedora} || 0%{?rhel} >= 8
-%global required_python_lib_m2crypto python3-m2crypto >= 0.28
-%global required_package_manager %{required_python_lib_dnf}
-%global required_package_manager_versionlock %{required_python_lib dnf-plugins-extras-versionlock}
-%global required_python_ssl python3-pyOpenSSL
-%else
-%global required_python_lib_m2crypto m2crypto
-%global required_package_manager yum
-%global required_package_manager_versionlock yum-plugin-versionlock
-%global required_python_ssl pyOpenSSL
-%endif
 
 %global make_common_opts \\\
 	-j1 \\\
@@ -226,12 +191,8 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	DATAROOT_DIR=%{_datadir} \\\
 	MAN_DIR=%{_mandir} \\\
 	DOC_DIR=%{_docdir} \\\
-	WITH_PYTHON2=%{with_python2} \\\
-	WITH_PYTHON3=%{with_python3} \\\
-	%{?with_python2: PYTHON=%{__python2}} \\\
-	PYTHON_DIR=%{python2_sitelib} \\\
-	%{?with_python3: PYTHON3=%{__python3}} \\\
-	%{?with_python3: PYTHON3_DIR=%{python3_sitelib}} \\\
+	PYTHON_DIR=%{python3_sitelib} \\\
+	PYTHON=%{__python3}} \\\
 	PY_VERSION=%{py_version} \\\
 	JAVA_DIR=%{_javadir} \\\
 	MAVENPOM_DIR=%{_mavenpomdir} \\\
@@ -268,22 +229,9 @@ BuildRequires:	java-1.8.0-openjdk-headless >= 1:1.8.0
 BuildRequires:	java-11-openjdk-devel >= 11.0.4
 BuildRequires:	javapackages-tools
 BuildRequires:	make
-
-%if 0%{?rhel} && 0%{?rhel} < 8
-BuildRequires:	python
-BuildRequires:	rh-maven35-maven >= 3.5.0
-BuildRequires:  rh-maven35-maven-enforcer-plugin
-BuildRequires:	python
-BuildRequires:	python2-devel
-%else
-
 BuildRequires:	maven >= 3.5.0
 BuildRequires:  maven-enforcer-plugin
-%endif
-
-%if 0%{?with_python3}
 BuildRequires:	python3-devel
-%endif
 BuildRequires:	systemd
 BuildRequires:	unzip
 BuildRequires:	ovirt-jboss-modules-maven-plugin >= 2.0.1
@@ -319,7 +267,7 @@ Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
 Requires:	java-11-openjdk-headless >= 11.0.4
 Requires:	javapackages-tools
-Requires:	%{required_python_lib_mod_wsgi} >= 4.6.4
+Requires:	python3-mod_wsgi >= 4.6.4
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
@@ -355,10 +303,6 @@ Requires:	libestr
 Requires:	postgresql-jdbc >= 42.2.3
 %endif
 
-%if 0%{?rhel}
-Requires:	%{required_package_manager_versionlock}
-%endif
-
 %if %{ovirt_rh_postgresql}
 Requires:	%{scl_pg_base}-postgresql-server
 Requires:	%{scl_pg_base}-postgresql-contrib
@@ -379,7 +323,7 @@ Requires:	openstack-java-quantum-model >= %{openstack_java_version}
 Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 
 %if 0%{?fedora} || 0%{?rhel} >= 8
-Requires:	%{required_package_manager_versionlock}
+Requires:	python3-dnf-plugin-versionlock
 Requires:	apache-sshd
 
 # On Fedora slf4j package is split and we need also jdk14 and jcl-over-slf4j
@@ -405,7 +349,7 @@ Conflicts:	python3-ipaserver
 Obsoletes:	%{name}-userportal
 
 # OVS/OVN stuff
-Requires:	%{required_python_ssl}
+Requires:	python3-pyOpenSSL
 Requires:	ovirt-provider-ovn >= 1.2.1
 
 #JavaScript and CSS libraries are currently bundled
@@ -420,24 +364,6 @@ Provides:	bundled(js-patternfly-next) = 2.26.1
 system that provides advanced capabilities for managing the Open
 virtualization infrastructure for Servers and Desktops.
 
-%if 0%{with_python2}
-%package -n python2-%{name}-lib
-Summary:	%{ovirt_product_name_short} library
-Group:		%{ovirt_product_group}
-Requires:	m2crypto
-Requires:	python-dateutil
-Requires:	python-daemon
-Conflicts:	python-daemon = 2.1.0
-Provides:	%{name}-lib = %{version}-%{release}
-Obsoletes:	%{name}-lib < %{version}-%{release}
-
-%{?python_provide:%python_provide python2-%{name}-lib}
-
-%description -n python2-%{name}-lib
-%{ovirt_product_name_short} library for python2
-%endif
-
-%if 0%{with_python3}
 %package -n python%{python3_pkgversion}-%{name}-lib
 Summary:	%{ovirt_product_name_short} library
 Group:		%{ovirt_product_group}
@@ -449,7 +375,6 @@ Requires:	python3-daemon >= 2.1.2
 
 %description -n python%{python3_pkgversion}-%{name}-lib
 %{ovirt_product_name_short} library for python3
-%endif
 
 %package backend
 Summary:	Engine core of %{ovirt_product_name_short}
@@ -466,13 +391,13 @@ Requires:	logrotate
 Requires:	mailcap
 Requires:	mod_ssl
 Requires:	novnc >= 1.0.0
-Requires:	%{required_python_lib_ovirt_engine_lib}
+Requires:	python3-%{name}-lib >= %{version}-%{release}
 Requires:	openssh
 Requires:	vdsm-jsonrpc-java >= 1.5.4
 Requires:	java-client-kubevirt >= 0.5.0
 Requires:	openssl
 Requires:	ovirt-engine-extension-aaa-jdbc >= 1.2.0
-Requires:	%{required_python_lib_jinja2}
+Requires:	python3-jinja2
 Requires(pre):	shadow-utils
 Requires(post):		systemd
 Requires(preun):	systemd
@@ -504,14 +429,14 @@ The RESTful API for %{ovirt_product_name_short}
 %package setup-base
 Summary:	%{ovirt_product_name_short} suite base setup components.
 Group:		%{ovirt_product_group}
-Requires:	%{required_python_lib_ovirt_engine_lib}
-Requires:	%{required_python_lib_ovirt_setup_lib}
+Requires:	python3-%{name}-lib >= %{version}-%{release}
+Requires:	python3-ovirt-setup-lib >= 1.1.1
 Requires:	bind-utils
 Requires:	iproute
-Requires:	%{required_python_lib_libxml2}
+Requires:	python3-libxml2
 Requires:	logrotate
-Requires:	%{required_python_lib_otopi}
-Requires:	%{required_python_lib_paramiko}
+Requires:	python3-otopi >= 1.9.0
+Requires:	python3-paramiko
 Requires(pre):	shadow-utils
 Conflicts:	%{name}-dwh < 4.3.0
 Conflicts:	%{name}-dwh-setup < 4.4.0
@@ -579,15 +504,15 @@ Setup and upgrade specific plugins for %{ovirt_product_name_short}
 Summary:	Setup and upgrade common plugins for %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-base = %{version}-%{release}
-Requires:	%{required_python_lib_libselinux}
+Requires:	python3-libselinux
 Requires:	nfs-utils
 Requires:	%{policycoreutils_python_utils}
-Requires:	%{required_python_lib_psycopg2}
+Requires:	python3-psycopg2
 Requires(pre):	shadow-utils
 Requires:	java-11-openjdk-headless >= 11.0.4
-Requires:	%{required_python_lib_pwquality}
-Requires:	%{required_python_lib_m2crypto}
-Requires:	%{required_package_manager}
+Requires:	python3-pwquality
+Requires:	python3-m2crypto >= 0.28
+Requires:	python3-dnf
 
 # We can drop these conflicts when
 # we drop Requires: mod_ssl
@@ -623,15 +548,15 @@ The web administration interface to %{ovirt_product_name_short}
 Summary:	%{ovirt_product_name_short} Tools
 Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
-Requires:	%{required_python_lib_ovirt_engine_lib}
+Requires:	python3-%{name}-lib >= %{version}-%{release}
 Requires:	%{name}-tools-backup = %{version}-%{release}
 Requires:	ovirt-engine-metrics >= 1.3.4.1
 Requires:	java-11-openjdk-headless
 Requires:	logrotate
-Requires:	%{required_python_lib_dateutil}
-Requires:	%{required_python_lib_netaddr}
-Requires:	%{required_python_lib_psycopg2}
-Requires:	%{required_python_lib_six}
+Requires:	python3-dateutil
+Requires:	python3-netaddr
+Requires:	python3-psycopg2
+Requires:	python3-six
 Requires(pre):		shadow-utils
 Requires(post):		systemd
 Requires(preun):	systemd
@@ -662,7 +587,7 @@ Requires:	%{name}-setup-plugin-ovirt-engine-common >= %{version}-%{release}
 Requires:	tar
 Requires:	bzip2
 Requires:	xz
-Requires:	%{required_python_lib_otopi}
+Requires:	python3-otopi >= 1.9.0
 %if %{ovirt_rh_postgresql}
 Requires:	%{scl_pg_base}-postgresql
 %else
@@ -675,11 +600,11 @@ Requires:	postgresql >= 10.0
 %package websocket-proxy
 Summary:	%{ovirt_product_name_short} Websocket Proxy
 Group:		%{ovirt_product_group}
-Requires:	%{required_python_lib_ovirt_engine_lib}
-Requires:	%{required_python_lib_numpy}
-Requires:	%{required_python_lib_dateutil}
-Requires:	%{required_python_lib_websockify}
-Requires:	%{required_python_lib_websocket}
+Requires:	python3-%{name}-lib >= %{version}-%{release}
+Requires:	python3-numpy
+Requires:	python3-dateutil
+Requires:	python3-websockify
+Requires:	python3-websocket-client
 Requires:	%{name}-setup-plugin-websocket-proxy >= %{version}-%{release}
 Requires(pre):		shadow-utils
 Requires(post):		systemd
@@ -704,7 +629,7 @@ Requires(postun):	systemd
 %package setup-plugin-websocket-proxy
 Summary:	Setup and upgrade specific plugins for websocket-proxy
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
-Requires:	%{required_python_lib_six}
+Requires:	python3-six
 
 %description setup-plugin-websocket-proxy
 Setup and upgrade specific plugins for websocket-proxy
@@ -712,7 +637,7 @@ Setup and upgrade specific plugins for websocket-proxy
 %package vmconsole-proxy-helper
 Summary:	%{ovirt_product_name_short} VMconsole Proxy Helper
 Group:		%{ovirt_product_group}
-Requires:	%{required_python_lib_ovirt_engine_lib}
+Requires:	python3-%{name}-lib >= %{version}-%{release}
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper >= %{version}-%{release}
 Requires:	ovirt-vmconsole-proxy
 
@@ -734,7 +659,7 @@ Summary:	%{ovirt_product_name_short} health check bundler.
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-base = %{version}-%{release}
 Requires:	makeself >= 2.2
-Requires:	%{required_python_lib_otopi_devtools}
+Requires:	python3-otopi-devtools >= 1.9.0
 
 %description health-check-bundler
 A utility for creating a bundle script that runs a health check.
@@ -763,19 +688,6 @@ rm -fr "%{buildroot}"
 make %{make_common_opts} install DESTDIR="%{buildroot}"
 
 # Compile python files
-%if 0%{?with_python2}
-
-%if 0%{?use_python_bytecompile}
-%py_byte_compile %{__python2} %{buildroot}%{engine_data}/
-%py_byte_compile %{__python2} %{buildroot}%{_libexecdir}/
-%endif
-
-%{__python2} -m compileall -f -q -d "%{python2_sitelib}" "%{buildroot}%{python2_sitelib}"
-%{__python2} -O -m compileall -f -q -d "%{python2_sitelib}" "%{buildroot}%{python2_sitelib}"
-%endif
-
-%if 0%{?with_python3}
-
 %if 0%{?use_python_bytecompile}
 %py_byte_compile %{__python3} %{buildroot}%{_libexecdir}/
 %py_byte_compile %{__python3} %{buildroot}%{engine_data}/
@@ -783,7 +695,6 @@ make %{make_common_opts} install DESTDIR="%{buildroot}"
 
 %{__python3} -m compileall -f -q -d "%{python3_sitelib}" "%{buildroot}%{python3_sitelib}"
 %{__python3} -O -m compileall -f -q -d "%{python3_sitelib}" "%{buildroot}%{python3_sitelib}"
-%endif
 
 #
 # /var creation
@@ -1076,13 +987,8 @@ fi
 %if 0%{?use_python_bytecompile}
 %{engine_data}/cinderlib/cinderlib-client.*
 %{engine_data}/cinderlib/config.*
-%if 0%{with_python3}
 %{engine_data}/cinderlib/__pycache__/cinderlib-client.*
 %{engine_data}/cinderlib/__pycache__/config.*
-%endif
-%else
-%{engine_data}/cinderlib/cinderlib-client.py*
-%{engine_data}/cinderlib/config.py*
 %endif
 
 #
@@ -1094,19 +1000,10 @@ fi
 %{_javadir}/%{name}
 %endif
 
-%if 0%{with_python2}
-%files -n python2-%{name}-lib
-%license LICENSE
-%{engine_data}/bin/java-home
-%{python2_sitelib}/ovirt_engine/
-%endif
-
-%if 0%{with_python3}
 %files -n python%{python3_pkgversion}-%{name}-lib
 %license LICENSE
 %{engine_data}/bin/java-home
 %{python3_sitelib}/ovirt_engine/
-%endif
 
 %files backend -f .mfiles-backend
 %license LICENSE
@@ -1176,9 +1073,7 @@ fi
 #
 %if 0%{?use_python_bytecompile}
 %{engine_data}/bin/engine-host-update.*
-%if 0%{with_python3}
 %{engine_data}/bin/__pycache__/engine-host-update.*
-%endif
 %else
 %{engine_data}/bin/engine-host-update.py
 %endif
@@ -1209,9 +1104,7 @@ fi
 %{engine_data}/setup/ovirt_engine_setup/*.py*
 
 %if 0%{?use_python_bytecompile}
-%if 0%{with_python3}
 %{engine_data}/setup/ovirt_engine_setup/__pycache__/
-%endif
 %endif
 
 %{engine_data}/setup/plugins/*/base/
@@ -1371,9 +1264,7 @@ fi
 
 %if 0%{?use_python_bytecompile}
 %{engine_data}/bin/engine-migrate-he.*
-%if 0%{with_python3}
 %{engine_data}/bin/__pycache__/engine-migrate-he.*
-%endif
 %else
 %{engine_data}/bin/engine-migrate-he.py
 %endif

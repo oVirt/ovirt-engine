@@ -29,19 +29,10 @@ VMCONSOLE_PKI_DIR=/etc/pki/ovirt-vmconsole
 PACKAGE_NAME=ovirt-engine
 ENGINE_NAME=$(PACKAGE_NAME)
 MVN=mvn
-PYTHON=$(shell which python2 2> /dev/null)
-PYTHON3=$(shell which python3 2> /dev/null)
-WITH_PYTHON2=0
-WITH_PYTHON3=0
-ifneq ($(PYTHON),)
-WITH_PYTHON2=1
-endif
-ifneq ($(PYTHON3),)
-WITH_PYTHON3=1
-endif
+PYTHON=$(shell which python3 2> /dev/null)
 PYFLAKES=$(shell which pyflakes 2> /dev/null)
-PY_VERSION=$(if $(PYTHON3),3,2)
-PEP8=$(shell which pep8 2> /dev/null || which pycodestyle-3 2> /dev/null)
+PY_VERSION=3
+PEP8=$(which pycodestyle-3 2> /dev/null)
 ISORT=isort
 PREFIX=/usr/local
 LOCALSTATE_DIR=$(PREFIX)/var
@@ -71,9 +62,7 @@ PKG_TMP_DIR=$(LOCALSTATE_DIR)/tmp/$(ENGINE_NAME)
 JBOSS_HOME=/usr/share/ovirt-engine-wildfly
 JBOSS_RUNTIME=$(PKG_STATE_DIR)/jboss_runtime
 PYTHON_DIR=$(PYTHON_SYS_DIR)
-PYTHON3_DIR=$(PYTHON3_SYS_DIR)
 DEV_PYTHON_DIR=
-DEV_PYTHON3_DIR=
 DEV_SETUP_ENV_DIR=
 PKG_USER=ovirt
 PKG_GROUP=ovirt
@@ -129,12 +118,7 @@ BUILD_FLAGS:=$(BUILD_FLAGS) -D gwt.jvmArgs="$(BUILD_JAVA_OPTS_GWT)"
 endif
 BUILD_FLAGS:=$(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
 
-ifeq ($(WITH_PYTHON2),1)
 PYTHON_SYS_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
-endif
-ifeq ($(WITH_PYTHON3),1)
-PYTHON3_SYS_DIR:=$(shell $(PYTHON3) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
-endif
 TARBALL=$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
 ARCH=noarch
 BUILD_FILE=tmp.built
@@ -197,7 +181,6 @@ export ENVFILEC
 	-e "s|@SETUP_USR@|$(DATA_DIR)|g" \
 	-e "s|@SETUP_VAR@|$(PKG_STATE_DIR)|g" \
 	-e "s|@DEV_PYTHON_DIR@|$(DEV_PYTHON_DIR)|g" \
-	-e "s|@DEV_PYTHON3_DIR@|$(DEV_PYTHON3_DIR)|g" \
 	-e "s|@DEV_SETUP_ENV_DIR@|$(DEV_SETUP_ENV_DIR)|g" \
 	-e "s|@RPM_VERSION@|$(ENGINE_VERSION)|g" \
 	-e "s|@RPM_RELEASE@|$(RPM_RELEASE)|g" \
@@ -503,12 +486,7 @@ install-packaging-files: \
 		EXCLUDE_GEN="$(GENERATED)" \
 		EXCLUDE="$$(echo $$(find packaging/setup/tests)) packaging/setup/plugins/README"
 
-ifeq ($(WITH_PYTHON3),1)
-	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON3_DIR)" EXCLUDE_GEN="$(GENERATED)"
-endif
-ifeq ($(WITH_PYTHON2),1)
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON_DIR)" EXCLUDE_GEN="$(GENERATED)"
-endif
 
 	# we should avoid make these directories dirty
 	$(MAKE) copy-recursive SOURCEDIR=packaging/dbscripts TARGETDIR="$(DESTDIR)$(DATA_DIR)/dbscripts" \
@@ -585,7 +563,6 @@ all-dev:
 		all \
 		BUILD_DEV=1 \
 		DEV_PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
-		DEV_PYTHON3_DIR="$(PREFIX)$(PYTHON3_SYS_DIR)" \
 		DEV_SETUP_ENV_DIR="$(PREFIX)/etc/ovirt-engine-setup.env.d" \
 		VMCONSOLE_SYSCONF_DIR="$(PREFIX)/etc/ovirt-vmconsole" \
 		VMCONSOLE_PKI_DIR="$(PREFIX)/etc/pki/ovirt-vmconsole" \
@@ -611,7 +588,6 @@ install-dev:	\
 		BUILD_DEV=1 \
 		BUILD_VALIDATION=0 \
 		PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
-		PYTHON3_DIR="$(PREFIX)$(PYTHON3_SYS_DIR)" \
 		DEV_FLIST=tmp.dev.flist \
 		$(NULL)
 	cp tmp.dev.flist "$(DESTDIR)$(PREFIX)/dev.$(PACKAGE_NAME).flist"
