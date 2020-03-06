@@ -72,11 +72,24 @@
 
     <!-- Declaratively imporatnt to see its a linked (ordered) type -->
     <suppress checks="IllegalType" files="ReapedMap.java"/>
-    <suppress checks="IllegalType" files="CompensationContextBase"/>
+    <suppress checks="IllegalType" files="CompensationContextBase.java"/>
+
+    <!-- Extending HashMap -->
+    <suppress checks="IllegalType" files="DefaultValueMap.java"/>
+    <suppress checks="IllegalType" files="EntityLocationMap.java"/>
+    <suppress checks="IllegalType" files="PopupWidgetConfigMap.java"/>
+
+    <!-- Extending LinkedHashMap -->
+    <suppress checks="IllegalType" files="LocationByParentMap.java"/>
+
+    <!-- Extending HashSet -->
+    <suppress checks="IllegalType" files="UniquePermissionsSet.java"/>
 
     <!-- Test intended to check concrete types -->
-    <suppress checks="IllegalType" files="JsonImmutableSerializeDeserializeTest"/>
-    <suppress checks="IllegalType" files="TestCollectionsParams"/>
+    <suppress checks="IllegalType" files="JsonImmutableSerializeDeserializeTest.java"/>
+    <suppress checks="IllegalType" files="TestCollectionsParams.java"/>
+    <suppress checks="IllegalType" files="ConvergenceScheduleTest.java"/>
+    <suppress checks="IllegalType" files="AbstractBackendBaseTest.java"/>
 
     <!-- Most of the classes in the authentication package aren't used in the
          GWT client, and those that are used have special versions or custom
