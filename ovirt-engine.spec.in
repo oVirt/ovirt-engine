@@ -82,11 +82,6 @@
 %global ovirt_product_group Virtualization/Management
 %global ovirt_user_description oVirt Manager
 
-%if 0%{?fedora} || 0%{?rhel} >= 8
-%global policycoreutils_python_utils policycoreutils-python-utils
-%else
-%global policycoreutils_python_utils policycoreutils-python
-%endif
 
 %global engine_cache %{_localstatedir}/cache/%{engine_name}
 %global engine_data %{_datadir}/%{engine_name}
@@ -150,16 +145,6 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global wildfly_overlay_modules ""
 %endif
 
-# l,r are macro flags used to constract the correct python2 name
-# only one flag should be provided in normal usage
-# If you pass -l, then macro expands to: {l value}{all arguments}
-# If you pass -r, then macro expands to: {all arguments}{r value}
-%if 0%{?fedora} || 0%{?rhel} >= 8
-%define py_version 3
-%else
-%define py_version 2
-%endif
-
 
 %global make_common_opts \\\
 	-j1 \\\
@@ -183,7 +168,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	DOC_DIR=%{_docdir} \\\
 	PYTHON_DIR=%{python3_sitelib} \\\
 	PYTHON=%{__python3}} \\\
-	PY_VERSION=%{py_version} \\\
+	PY_VERSION=3 \\\
 	JAVA_DIR=%{_javadir} \\\
 	MAVENPOM_DIR=%{_mavenpomdir} \\\
 	PKG_SYSCONF_DIR=%{engine_etc} \\\
@@ -225,12 +210,7 @@ BuildRequires:	python3-devel
 BuildRequires:	systemd
 BuildRequires:	unzip
 BuildRequires:	ovirt-jboss-modules-maven-plugin >= 2.0.1
-
-# TODO Replace add_maven_depmap and then remove. See also:
-# https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/R3KZ7VI5DPCMCELFIVJQ4AXB2WQED35C/
-%if 0%{?fedora} || 0%{?rhel} >= 8
 BuildRequires:	javapackages-local
-%endif
 
 Requires(pre):	shadow-utils
 
@@ -286,12 +266,7 @@ Requires:	libfastjson
 Requires:	liblognorm
 Requires:	libestr
 
-%if 0%{?fedora} || 0%{?rhel} >= 8
-# On Fedora we need newer JDBC drivers to be able to connect to PostgreSQL 10.
-# Unfortunately this package is not available on EL7, so we are going to
-# bundle it within engine until available.
 Requires:	postgresql-jdbc >= 42.2.3
-%endif
 
 Requires:	postgresql-server >= 10.0
 Requires:	postgresql-contrib >= 10.0
@@ -306,17 +281,11 @@ Requires:	openstack-java-keystone-model >= %{openstack_java_version}
 Requires:	openstack-java-quantum-client >= %{openstack_java_version}
 Requires:	openstack-java-quantum-model >= %{openstack_java_version}
 Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
-
-%if 0%{?fedora} || 0%{?rhel} >= 8
 Requires:	python3-dnf-plugin-versionlock
 Requires:	apache-sshd
-
-# On Fedora slf4j package is split and we need also jdk14 and jcl-over-slf4j
-# parts
 Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 2.4.1
-%endif
 
 # We can't require exactly the same version and release of the
 # setup package because it needs to be updated independently as part
@@ -486,7 +455,7 @@ Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-base = %{version}-%{release}
 Requires:	python3-libselinux
 Requires:	nfs-utils
-Requires:	%{policycoreutils_python_utils}
+Requires:	policycoreutils-python-utils
 Requires:	python3-psycopg2
 Requires(pre):	shadow-utils
 Requires:	java-11-openjdk-headless >= 11.0.4
@@ -822,6 +791,8 @@ common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
 common/org/apache/commons/configuration/main/commons-configuration.jar
 common/org/apache/commons/jxpath/main/commons-jxpath.jar
+common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
+common/org/apache/sshd/main/sshd-common.jar apache-sshd/sshd-common.jar
 common/org/apache/ws/commons/main/ws-commons-util.jar
 common/org/apache/xmlrpc/main/xmlrpc-client.jar
 common/org/apache/xmlrpc/main/xmlrpc-common.jar
@@ -829,22 +800,11 @@ common/org/ebaysf/web/cors-filter/main/cors-filter.jar ebay-cors-filter/cors-fil
 common/org/ovirt/engine/api/ovirt-engine-extensions-api/main/ovirt-engine-extensions-api.jar ovirt-engine-extensions-api/ovirt-engine-extensions-api.jar
 common/org/ovirt/java-client-kubevirt/main/java-client-kubevirt.jar java-client-kubevirt/java-client-kubevirt.jar
 common/org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
+common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
+common/org/snmp4j/main/snmp4j.jar snmp4j.jar
 tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
 tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
 tools/org/slf4j/jcl-over-slf4j/main/jcl-over-slf4j.jar slf4j/jcl-over-slf4j.jar
-
-%if 0%{?fedora} || 0%{?rhel} >= 8
-# On Fedora we need newer JDBC drivers to be able to connect to PostgreSQL 10.
-# Unfortunately this package is not available on EL7, so we are going to
-# bundle it within engine until available.
-common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
-%endif
-
-%if 0%{?fedora} || 0%{?rhel} >= 8
-common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
-common/org/apache/sshd/main/sshd-common.jar apache-sshd/sshd-common.jar
-common/org/snmp4j/main/snmp4j.jar snmp4j.jar
-%endif
 __EOF__
 
 
