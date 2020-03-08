@@ -181,9 +181,13 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         switch (getParameters().getVmBackup().getPhase()) {
             case STARTING:
                 lockDisks();
-                Map<String, Object> disks = startVmBackup();
-                if (disks != null) {
-                    storeBackupsUrls(disks);
+                VmBackupInfo vmBackupInfo = startVmBackup();
+                if (vmBackupInfo != null && vmBackupInfo.getDisks() != null) {
+                    if (vmBackupInfo.getCheckpoint() != null) {
+                        vmCheckpointDao.updateCheckpointXml(getParameters().getVmBackup().getToCheckpointId(),
+                                vmBackupInfo.getCheckpoint());
+                    }
+                    storeBackupsUrls(vmBackupInfo.getDisks());
                 } else {
                     setCommandStatus(CommandStatus.FAILED);
                 }
@@ -279,7 +283,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         }
     }
 
-    private Map<String, Object> startVmBackup() {
+    private VmBackupInfo startVmBackup() {
         VDSReturnValue vdsRetVal;
         try {
             vdsRetVal = runVdsCommand(VDSCommandType.StartVmBackup,
@@ -290,7 +294,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 throw engineException;
             }
             VmBackupInfo vmBackupInfo = (VmBackupInfo) vdsRetVal.getReturnValue();
-            return vmBackupInfo.getDisks();
+            return vmBackupInfo;
         } catch (EngineException e) {
             log.error("Failed to execute VM.startBackup: {}", e);
             return null;

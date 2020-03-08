@@ -29,7 +29,8 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
         return createIdParameterMapper(entity.getId())
                 .addValue("vm_id", entity.getVmId())
                 .addValue("parent_id", entity.getParentId())
-                .addValue("_create_date", entity.getCreationDate());
+                .addValue("_create_date", entity.getCreationDate())
+                .addValue("checkpoint_xml", entity.getCheckpointXml());
     }
 
     @Override
@@ -46,6 +47,7 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
         entity.setId(getGuid(rs, "checkpoint_id"));
         entity.setParentId(getGuid(rs, "parent_id"));
         entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_create_date")));
+        entity.setCheckpointXml(rs.getString("checkpoint_xml"));
         return entity;
     };
 
@@ -53,6 +55,14 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
     public List<VmCheckpoint> getAllForVm(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_id", id);
         return getCallsHandler().executeReadList("GetVmCheckpointsByVmId", vmCheckpointRowMapper, parameterSource);
+    }
+
+    @Override
+    public void updateCheckpointXml(Guid checkpointId, String checkpointXml) {
+        getCallsHandler().executeModification("UpdateVmCheckpointXml",
+                getCustomMapSqlParameterSource()
+                        .addValue("checkpoint_id", checkpointId)
+                        .addValue("checkpoint_xml", checkpointXml));
     }
 
     @Override
