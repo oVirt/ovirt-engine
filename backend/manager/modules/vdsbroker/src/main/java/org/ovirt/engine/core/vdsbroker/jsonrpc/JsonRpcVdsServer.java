@@ -40,10 +40,10 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesHealInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturn;
-import org.ovirt.engine.core.vdsbroker.irsbroker.GetDisksListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DeviceInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DevicesVisibilityMapReturn;
@@ -2228,14 +2228,14 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public GetDisksListReturn startVmBackup(String vmId, Map<String, Object> backupConfig) {
+    public VmBackupInfo startVmBackup(String vmId, Map<String, Object> backupConfig) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.start_backup")
                         .withParameter("vmID", vmId)
                         .withParameter("config", backupConfig)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new GetDisksListReturn(response);
+        return new VmBackupInfo(response);
     }
 
     @Override
@@ -2250,14 +2250,14 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public GetDisksListReturn vmBackupInfo(String vmId, String backupId) {
+    public VmBackupInfo vmBackupInfo(String vmId, String backupId) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.backup_info")
                         .withParameter("vmID", vmId)
                         .withParameter("backup_id", backupId)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request).withResponseType(Object[].class);
-        return new GetDisksListReturn(response);
+        return new VmBackupInfo(response);
     }
 
     @Override

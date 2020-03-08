@@ -33,10 +33,10 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesHealInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturn;
-import org.ovirt.engine.core.vdsbroker.irsbroker.GetDisksListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 import org.ovirt.vdsm.jsonrpc.client.BrokerCommandCallback;
 
 @SuppressWarnings("rawtypes")
@@ -524,11 +524,11 @@ public interface IVdsServer {
 
     StatusOnlyReturn thaw(String vmId);
 
-    GetDisksListReturn startVmBackup(String vmId, Map<String, Object> backupConfig);
+    VmBackupInfo startVmBackup(String vmId, Map<String, Object> backupConfig);
 
     StatusOnlyReturn stopVmBackup(String vmId, String backupId);
 
-    GetDisksListReturn vmBackupInfo(String vmId, String backupId);
+    VmBackupInfo vmBackupInfo(String vmId, String backupId);
 
     StatusOnlyReturn redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints);
 

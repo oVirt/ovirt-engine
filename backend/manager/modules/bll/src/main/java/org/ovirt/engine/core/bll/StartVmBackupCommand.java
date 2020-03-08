@@ -52,6 +52,7 @@ import org.ovirt.engine.core.dao.VmCheckpointDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
@@ -288,7 +289,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 engineException.setVdsError(vdsRetVal.getVdsError());
                 throw engineException;
             }
-            return (Map<String, Object>) vdsRetVal.getReturnValue();
+            VmBackupInfo vmBackupInfo = (VmBackupInfo) vdsRetVal.getReturnValue();
+            return vmBackupInfo.getDisks();
         } catch (EngineException e) {
             log.error("Failed to execute VM.startBackup: {}", e);
             return null;

@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.VmBackupVDSParameters;
-import org.ovirt.engine.core.vdsbroker.irsbroker.GetDisksListReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 
 public class GetVmBackupInfoVDSCommand<P extends VmBackupVDSParameters> extends VdsBrokerCommand<P> {
 
-    private GetDisksListReturn disksListReturn;
+    private VmBackupInfo vmBackupInfo;
 
     public GetVmBackupInfoVDSCommand(P parameters) {
         super(parameters);
@@ -13,21 +13,21 @@ public class GetVmBackupInfoVDSCommand<P extends VmBackupVDSParameters> extends 
 
     @Override
     protected void executeVdsBrokerCommand() {
-        disksListReturn = getBroker().vmBackupInfo(
+        vmBackupInfo = getBroker().vmBackupInfo(
                 getParameters().getVmBackup().getVmId().toString(),
                 getParameters().getVmBackup().getId().toString());
         proceedProxyReturnValue();
-        setReturnValue(disksListReturn.getDisks());
+        setReturnValue(vmBackupInfo);
     }
 
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return disksListReturn;
+        return vmBackupInfo;
     }
 
     @Override
     protected Status getReturnStatus() {
-        return disksListReturn.getStatus();
+        return vmBackupInfo.getStatus();
     }
 }

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.vdscommands.VmBackupVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmCheckpointDao;
-import org.ovirt.engine.core.vdsbroker.irsbroker.GetDisksListReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 
 public class StartVmBackupVDSCommand<P extends VmBackupVDSParameters> extends VdsBrokerCommand<P> {
     @Inject
@@ -19,7 +19,7 @@ public class StartVmBackupVDSCommand<P extends VmBackupVDSParameters> extends Vd
 
     private Set<Guid> vmCheckpointDisksIds;
 
-    private GetDisksListReturn disksListReturn;
+    private VmBackupInfo vmBackupInfo;
 
     public StartVmBackupVDSCommand(P parameters) {
         super(parameters);
@@ -31,20 +31,20 @@ public class StartVmBackupVDSCommand<P extends VmBackupVDSParameters> extends Vd
         Guid toCheckpointId = getParameters().getVmBackup().getToCheckpointId();
 
         Map<String, Object> backupConfig = createBackupConfig(fromCheckpointId, toCheckpointId);
-        disksListReturn = getBroker().startVmBackup(getParameters().getVmBackup().getVmId().toString(), backupConfig);
+        vmBackupInfo = getBroker().startVmBackup(getParameters().getVmBackup().getVmId().toString(), backupConfig);
         proceedProxyReturnValue();
-        setReturnValue(disksListReturn.getDisks());
+        setReturnValue(vmBackupInfo);
     }
 
 
     @Override
     protected Object getReturnValueFromBroker() {
-        return disksListReturn;
+        return vmBackupInfo;
     }
 
     @Override
     protected Status getReturnStatus() {
-        return disksListReturn.getStatus();
+        return vmBackupInfo.getStatus();
     }
 
     private HashMap[] createDisksMap(Guid toCheckpointId) {

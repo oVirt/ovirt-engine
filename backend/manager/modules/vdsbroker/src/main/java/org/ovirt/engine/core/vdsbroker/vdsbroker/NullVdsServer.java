@@ -33,10 +33,10 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesHealInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturn;
-import org.ovirt.engine.core.vdsbroker.irsbroker.GetDisksListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 import org.ovirt.vdsm.jsonrpc.client.BrokerCommandCallback;
 
 public class NullVdsServer implements IVdsServer {
@@ -945,7 +945,7 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
-    @Override public GetDisksListReturn startVmBackup(String vmId, Map<String, Object> backupConfig) {
+    @Override public VmBackupInfo startVmBackup(String vmId, Map<String, Object> backupConfig) {
         return null;
     }
 
@@ -953,7 +953,7 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
-    @Override public GetDisksListReturn vmBackupInfo(String vmId, String backupId) {
+    @Override public VmBackupInfo vmBackupInfo(String vmId, String backupId) {
         return null;
     }
 
