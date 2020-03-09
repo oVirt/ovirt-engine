@@ -140,16 +140,20 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         // }
         // log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmId);
 
-        log.info("Creating VmCheckpoint entity for VM '{}'", vmBackup.getVmId());
-        Guid vmCheckpointId = createVmCheckpoint();
-        log.info("Created VmCheckpoint entity '{}'", vmCheckpointId);
+        if (!isBackupContainsRawDisksOnly()) {
+            log.info("Creating VmCheckpoint entity for VM '{}'", vmBackup.getVmId());
+            Guid vmCheckpointId = createVmCheckpoint();
+            log.info("Created VmCheckpoint entity '{}'", vmCheckpointId);
 
-        // Update the VmBackup to include the checkpoint ID.
-        vmBackup.setToCheckpointId(vmCheckpointId);
-        TransactionSupport.executeInNewTransaction(() -> {
-            vmBackupDao.update(vmBackup);
-            return null;
-        });
+            // Update the VmBackup to include the checkpoint ID.
+            vmBackup.setToCheckpointId(vmCheckpointId);
+            TransactionSupport.executeInNewTransaction(() -> {
+                vmBackupDao.update(vmBackup);
+                return null;
+            });
+        } else {
+            log.info("Backup contains RAW disks only, skip checkpoint creation for VM '{}'", vmBackup.getVmId());
+        }
 
         persistCommandIfNeeded();
         setActionReturnValue(vmBackupId);
@@ -257,6 +261,13 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         });
         persistCommandIfNeeded();
         return vmCheckpoint.getId();
+    }
+
+    private boolean isBackupContainsRawDisksOnly() {
+        return getParameters().getVmBackup()
+                .getDisks()
+                .stream()
+                .noneMatch(DiskImage::isQcowFormat);
     }
 
     private boolean redefineVmCheckpoints() {
