@@ -8,7 +8,6 @@ import java.util.Map;
 import org.ovirt.engine.ui.common.widget.HasAccess;
 import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.HasValidation;
-import org.ovirt.engine.ui.common.widget.editor.HasEditorValidityState;
 import org.ovirt.engine.ui.common.widget.editor.ListModelMultipleSelectListBox;
 import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueEditor;
 import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueListEditor;
@@ -142,18 +141,12 @@ public class UiCommonEditorVisitor extends EditorVisitor {
 
     private <T> void setInModel(final EditorContext<T> ctx, Object editor, T value) {
         if (ctx.canSetInModel()) {
-            boolean editorValid = true;
-            if (editor instanceof HasEditorValidityState) {
-                editorValid = ((HasEditorValidityState)editor).isStateValid();
-            }
-            if (editorValid) {
-                if (editor instanceof ListModelMultipleSelectListBox) {
-                    @SuppressWarnings("unchecked")
-                    T listValue = (T) ((ListModelMultipleSelectListBox<T>) editor).selectedItems();
-                    ctx.setInModel(listValue);
-                } else {
-                    ctx.setInModel(value);
-                }
+            if (editor instanceof ListModelMultipleSelectListBox) {
+                @SuppressWarnings("unchecked")
+                T listValue = (T) ((ListModelMultipleSelectListBox<T>) editor).selectedItems();
+                ctx.setInModel(listValue);
+            } else {
+                ctx.setInModel(value);
             }
         }
     }
@@ -216,13 +209,7 @@ public class UiCommonEditorVisitor extends EditorVisitor {
         if (model.getIsValid()) {
             editor.markAsValid();
         } else {
-            //The entity validator will mark the entity valid before running the validation
-            //this will cause the editor to be marked valid if it was invalid due to an entity validation
-            //error. Then if the validation is invalid again this will update the error message. So there is
-            //no possibility to go from one invalid reason to another without the editor message being updated.
-            if (editor.isValid()) {
-                editor.markAsInvalid(model.getInvalidityReasons());
-            }
+            editor.markAsInvalid(model.getInvalidityReasons());
         }
     }
 

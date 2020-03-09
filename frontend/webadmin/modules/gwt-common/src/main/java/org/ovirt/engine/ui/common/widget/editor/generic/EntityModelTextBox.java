@@ -54,4 +54,15 @@ public class EntityModelTextBox<T> extends ValueBox<T> implements EditorWidget<T
     public boolean isStateValid() {
         return isValid;
     }
+
+    @Override
+    public void setValue(T value) {
+        if (!isStateValid() && value == null) {
+            // invalid value is reported to model as null
+            // prevent replacing invalid user input with
+            // that null value coming back from the model
+            return;
+        }
+        super.setValue(value);
+    }
 }

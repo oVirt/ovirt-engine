@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget;
 
+import static java.util.Collections.emptyList;
+
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
@@ -355,15 +357,21 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     @Override
     public void markAsValid() {
-        if (editorStateValid) {
-            super.markAsValid();
+        if (!editorStateValid) {
+            // prevent overriding editor-level validation
+            return;
         }
+        super.markAsValid();
         label.setEnabled(true);
         contentWidgetContainerTooltip.setText(contentWidgetContainerConfiguredTooltip);
     }
 
     @Override
     public void markAsInvalid(List<String> validationHints) {
+        if (!editorStateValid) {
+            // if both editor-level and model-level validation failed then prefer editor-level
+            return;
+        }
         super.markAsInvalid(validationHints);
         String tooltipText = getValidationTooltipText(validationHints);
         label.disable(tooltipText);
@@ -478,19 +486,20 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         ValueChangeEvent.fire(getContentWidget(), getContentWidget().getValue());
     }
 
-    protected void handleInvalidState() {
-        editorStateValid = false;
+    protected List<String> getValidationHints() {
+        return emptyList();
     }
 
     private void addStateUpdateHandler() {
         this.getContentWidget().asWidget().addHandler(event -> {
             if (event.isValid()) {
-                //Mark the editor as valid.
+                // Mark the editor as valid.
                 editorStateValid = true;
                 markAsValid();
             } else {
-                //Mark the editor as invalid.
-                handleInvalidState();
+                // Mark the editor as invalid.
+                markAsInvalid(getValidationHints());
+                editorStateValid = false;
             }
         }, EditorStateUpdateEvent.getType());
     }

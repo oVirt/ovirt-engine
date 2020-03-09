@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
+
+import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -22,10 +24,7 @@ public class NumberEntityModelTextBoxEditor<T extends Number> extends EntityMode
     }
 
     @Override
-    protected void handleInvalidState() {
-        //Be sure to call super.handleInvalidstate to make sure the editor valid state is properly updated.
-        super.handleInvalidState();
-        markAsInvalid(Arrays.asList(ConstantsManager.getInstance().getConstants().thisFieldMustContainNumberInvalidReason()));
+    protected List<String> getValidationHints() {
+        return asList(ConstantsManager.getInstance().getConstants().thisFieldMustContainNumberInvalidReason());
     }
-
 }
