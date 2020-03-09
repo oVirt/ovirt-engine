@@ -399,6 +399,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
             networkAttachmentModel.getQosOverridden().setIsAvailable(true);
             networkAttachmentModel.getQosModel().setIsAvailable(true);
+            networkAttachmentModel.setIpv6AutoconfAvailable(!NetworkCommonUtils.isEl8(getEntity().getKernelVersion()));
 
             KeyValueModel customPropertiesModel = networkAttachmentModel.getCustomPropertiesModel();
             customPropertiesModel.setIsAvailable(true);

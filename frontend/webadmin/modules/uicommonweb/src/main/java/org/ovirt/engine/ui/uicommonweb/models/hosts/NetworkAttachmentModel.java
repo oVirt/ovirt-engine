@@ -44,6 +44,7 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
     private Ipv6BootProtocol ipv6BootProtocol = Ipv6BootProtocol.values()[0];
 
     private boolean bootProtocolsAvailable;
+    private boolean ipv6AutoconfAvailable;
     private EntityModel<Boolean> isToSync;
     private HostNetworkQosParametersModel qosModel;
     private DnsConfigurationModel dnsConfigurationModel;
@@ -77,6 +78,7 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
         setCustomPropertiesModel(new KeyValueModel());
         setIsToSync(new EntityModel<Boolean>());
         setBootProtocolsAvailable(true);
+        setIpv6AutoconfAvailable(true);
 
         getIpv4Gateway().setIsAvailable(true);
         getIpv4Address().setIsChangeable(false);
@@ -400,5 +402,13 @@ public class NetworkAttachmentModel extends Model implements HasValidatedTabs {
         return setTitle(ConstantsManager.getInstance()
                 .getMessages()
                 .editNetworkTitle(network.getName()));
+    }
+
+    public boolean getIpv6AutoconfAvailable() {
+        return ipv6AutoconfAvailable;
+    }
+
+    public void setIpv6AutoconfAvailable(boolean ipv6AutoconfAvailable) {
+        this.ipv6AutoconfAvailable = ipv6AutoconfAvailable;
     }
 }

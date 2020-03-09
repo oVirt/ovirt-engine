@@ -132,6 +132,9 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
     @WithElementId
     public DnsServersWidget dnsServersWidget;
 
+    @UiField(provided = true)
+    InfoIcon ipv6AutoconfAvailabilityInfo;
+
     @Inject
     public NetworkAttachmentPopupView(EventBus eventBus) {
 
@@ -146,7 +149,7 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
         isToSync = new EntityModelCheckBoxEditor(Align.RIGHT);
         isToSyncInfo = new InfoIcon(
                 templates.italicTwoLines(constants.syncNetworkInfoPart1(), constants.syncNetworkInfoPart2()));
-
+        ipv6AutoconfAvailabilityInfo = new InfoIcon(templates.italicText(constants.ipv6AutoconfAvailabilityInfo()));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         driver.initialize(this);
@@ -194,6 +197,8 @@ public class NetworkAttachmentPopupView extends AbstractTabbedModelBoundPopupVie
 
         ipv6BootProtocolLabel.setEnabled(bootProtocolsAvailable);
         ipv6BootProtocol.setEnabled(bootProtocolsAvailable);
+        ipv6BootProtocol.asWidget().setEnabled(Ipv6BootProtocol.AUTOCONF, model.getIpv6AutoconfAvailable());
+        ipv6AutoconfAvailabilityInfo.setVisible(!model.getIpv6AutoconfAvailable());
     }
 
     @Override

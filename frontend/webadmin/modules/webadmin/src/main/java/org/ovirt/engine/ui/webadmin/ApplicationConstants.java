@@ -3572,4 +3572,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String prometheusCertificateAuthority();
 
     String prometheusCertificateAuthorityHelpMessage();
+
+    String ipv6AutoconfAvailabilityInfo();
 }
