@@ -605,7 +605,7 @@ public class HostSetupNetworksValidatorTest {
     private void initMockNetworkAttachmentIpConfigurationValidator(EngineMessage engineMessage,
             Collection<String> replacements) {
         ValidationResult validationResult = new ValidationResult(engineMessage, replacements);
-        when(mockNetworkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(any(), any()))
+        when(mockNetworkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(any(), any(), eq(false)))
                 .thenReturn(validationResult);
     }
 

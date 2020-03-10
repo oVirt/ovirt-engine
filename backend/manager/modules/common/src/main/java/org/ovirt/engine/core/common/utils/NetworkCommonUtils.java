@@ -118,4 +118,8 @@ public class NetworkCommonUtils {
      public static boolean isVlan(VdsNetworkInterface nic) {
          return nic.getVlanId() != null;
      }
+
+    public static boolean isEl8(String kernelVersion) {
+        return kernelVersion != null && kernelVersion.toLowerCase().contains("el8"); //$NON-NLS-1$
+    }
 }

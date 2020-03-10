@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import static org.ovirt.engine.core.common.utils.NetworkCommonUtils.isEl8;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -705,7 +707,7 @@ public class HostSetupNetworksValidator {
 
             vr = skipValidation(vr) ? vr : validator.networkNotChanged(existingAttachmentsById.get(attachment.getId()));
             vr = skipValidation(vr) ? vr : networkAttachmentIpConfigurationValidator.validateNetworkAttachmentIpConfiguration(
-                params.getNetworkAttachments(), currentDefaultRouteNetworkAttachment);
+                params.getNetworkAttachments(), currentDefaultRouteNetworkAttachment, isEl8(host.getKernelVersion()));
 
             boolean attachmentUpdated = !isNewAttachment(attachment.getId());
             if (attachmentUpdated) {
