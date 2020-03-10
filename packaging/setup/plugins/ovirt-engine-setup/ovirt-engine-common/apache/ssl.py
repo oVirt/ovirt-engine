@@ -213,7 +213,10 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: (
             self.environment[oengcommcons.ApacheEnv.CONFIGURED] and
-            self._current_content != self._new_content
+            self._current_content != self._new_content and
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
+            ]
         ),
         before=(
             oengcommcons.Stages.DIALOG_TITLES_E_APACHE,
