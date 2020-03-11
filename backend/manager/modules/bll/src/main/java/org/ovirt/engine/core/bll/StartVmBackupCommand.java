@@ -247,11 +247,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         vmCheckpoint.setVmId(getParameters().getVmBackup().getVmId());
         vmCheckpoint.setCreationDate(new Date());
 
-        final List<VmCheckpoint> checkpoints = vmCheckpointDao.getAllForVm(getVmId());
-        if (!checkpoints.isEmpty()) {
-            vmCheckpoint.setParentId(checkpoints.get(checkpoints.size() - 1).getId());
-        }
-
         TransactionSupport.executeInNewTransaction(() -> {
             vmCheckpointDao.save(vmCheckpoint);
             getParameters().getVmBackup().getDisks().stream()
