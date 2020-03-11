@@ -284,7 +284,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @WithElementId("emulatedMachine")
     public ListModelTypeAheadChangeableListBoxEditor emulatedMachine;
 
-
     @UiField(provided = true)
     @Path(value = "customCpu.selectedItem")
     @WithElementId("customCpu")
@@ -407,10 +406,14 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
                     @Override
                     public String getDisplayStringNullSafe(String data) {
+                        if (data == null || data.trim().isEmpty()) {
+                            data = getDefaultEmulatedMachineLabel();
+                        }
                         return typeAheadNameTemplateNullSafe(data);
                     }
                 },
                 false);
+
         customCpu = new ListModelTypeAheadChangeableListBoxEditor(
                 new ListModelTypeAheadChangeableListBoxEditor.NullSafeSuggestBoxRenderer() {
 
@@ -441,6 +444,11 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         driver.edit(object);
         customPropertiesSheetEditor.edit(object.getCustomPropertySheet());
         runOnceModel = object;
+
+        emulatedMachine.setNullReplacementString(getDefaultEmulatedMachineLabel());
+        object.getClusterEmulatedMachine().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            emulatedMachine.setNullReplacementString(getDefaultEmulatedMachineLabel());
+        });
 
         object.getIsSysprepEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
             updateSysprepVisibility(object);
@@ -642,4 +650,12 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         }
     }
 
+    private String getDefaultEmulatedMachineLabel() {
+        String emulatedMachine = runOnceModel.getClusterEmulatedMachine().getEntity();
+        String newClusterEmulatedMachine = constants.clusterDefaultOption();
+        if (emulatedMachine != null) {
+            newClusterEmulatedMachine +=  "(" + emulatedMachine + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return newClusterEmulatedMachine;
+    }
 }

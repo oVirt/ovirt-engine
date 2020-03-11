@@ -443,6 +443,16 @@ public abstract class RunOnceModel extends Model {
         this.emulatedMachine = emulatedMachine;
     }
 
+    private EntityModel<String> clusterEmulatedMachine;
+
+    public EntityModel<String> getClusterEmulatedMachine() {
+        return clusterEmulatedMachine;
+    }
+
+    public void setClusterEmulatedMachine(EntityModel<String> clusterEmulatedMachine) {
+        this.clusterEmulatedMachine = clusterEmulatedMachine;
+    }
+
     private ListModel<String> customCpu;
 
     public ListModel<String> getCustomCpu() {
@@ -612,6 +622,7 @@ public abstract class RunOnceModel extends Model {
         // System tab
         setEmulatedMachine(new ListModel<String>());
         getEmulatedMachine().setSelectedItem(vm.getCustomEmulatedMachine());
+        setClusterEmulatedMachine(new EntityModel<>());
         setCustomCpu(new ListModel<String>());
         getCustomCpu().setSelectedItem(vm.getCustomCpuName());
 
@@ -949,17 +960,7 @@ public abstract class RunOnceModel extends Model {
         Guid clusterId = vm.getClusterId();
 
         if (clusterId != null) {
-
-            // update emulated machine list
-            AsyncDataProvider.getInstance().getEmulatedMachinesByClusterID(new AsyncQuery<>(
-                    emulatedSet -> {
-                        if (emulatedSet != null) {
-                            String oldVal = getEmulatedMachine().getSelectedItem();
-                            getEmulatedMachine().setItems(new TreeSet<>(emulatedSet));
-                            getEmulatedMachine().setSelectedItem(oldVal);// even if converted - needed as fallback
-                            convertEmulatedMachineField();
-                        }
-                    }), clusterId);
+            initEmulatedMachineFields(clusterId);
 
             AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
                     cluster -> {
@@ -989,24 +990,6 @@ public abstract class RunOnceModel extends Model {
                             }
                         }
                     }), clusterId);
-        }
-    }
-
-    // replace 'cluster emulated machine' with the explicit run-time value
-    private void convertEmulatedMachineField() {
-        if (StringHelper.isNullOrEmpty(getEmulatedMachine().getSelectedItem())) {
-            Guid clusterId = vm.getClusterId();
-            if (clusterId != null) {
-                AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
-                        cluster -> {
-                            if (cluster != null) {
-                                if (cluster.getEmulatedMachine() != null) {
-                                    getEmulatedMachine().setSelectedItem(cluster.getEmulatedMachine());
-                                }
-
-                            }
-                        }), clusterId);
-            }
         }
     }
 
@@ -1198,6 +1181,30 @@ public abstract class RunOnceModel extends Model {
         getVncKeyboardLayout().setIsChangeable(false);
     }
 
+    private void initEmulatedMachineFields(Guid clusterId) {
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(
+                cluster -> {
+                    if (cluster != null) {
+                        getClusterEmulatedMachine().setEntity(cluster.getEmulatedMachine());
+                    }
+                    loadEmulatedMachineList(clusterId);
+                }), clusterId);
+    }
+
+    private void loadEmulatedMachineList(Guid clusterId) {
+        // update emulated machine list
+        AsyncDataProvider.getInstance().getEmulatedMachinesByClusterID(new AsyncQuery<>(
+                emulatedSet -> {
+                    if (emulatedSet != null) {
+                        String oldVal = getEmulatedMachine().getSelectedItem();
+                        List<String> items = new ArrayList<>(new TreeSet<>(emulatedSet));
+                        items.add(0, "");//$NON-NLS-1$
+                        getEmulatedMachine().setItems(items);
+                        getEmulatedMachine().setSelectedItem(oldVal);
+                    }
+                }), clusterId);
+    }
+
     public void autoSetVmHostname() {
         getVmInitModel().autoSetHostname(vm.getName());
     }
@@ -1208,5 +1215,6 @@ public abstract class RunOnceModel extends Model {
             getVmInitModel().disableAutoSetHostname();
         }
     }
+
 
 }
