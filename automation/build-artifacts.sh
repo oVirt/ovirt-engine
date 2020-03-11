@@ -32,10 +32,11 @@ export BUILD_JAVA_OPTS_MAVEN="\
 # For milestone (non-release) builds, build permutations for chrome and firefox
 if [ -n "${MILESTONE}" ]; then
 	export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS \
+	    -T1C \
 	    -D gwt.userAgent=gecko1_8,safari \
 	"
 else
-	export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS"
+	export EXTRA_BUILD_FLAGS="-T1C -gs $MAVEN_SETTINGS"
 fi
 
 export BUILD_JAVA_OPTS_GWT="$JVM_MEM_OPTS"
