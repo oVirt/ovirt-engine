@@ -217,4 +217,14 @@ public class FeatureSupported {
     public static boolean isMeasureVolumeSupported(VDS vds) {
         return vds != null && Version.v4_4.lessOrEquals(vds.getClusterCompatibilityVersion());
     }
+
+    /**
+     * Check if incremental backup is supported.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if incremental backup is supported.
+     */
+    public static boolean isIncrementalBackupSupported(Version version) {
+        return supportedInConfig(ConfigValues.IsIncrementalBackupSupported, version);
+    }
 }

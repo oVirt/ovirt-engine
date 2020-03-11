@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskExistenceValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
@@ -97,6 +98,10 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
         // validate all disks support incremental backup
         if (getParameters().getVmBackup().getFromCheckpointId() != null) {
+            if (!FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_NOT_SUPPORTED);
+            }
+
             DiskImagesValidator diskImagesValidator = createDiskImagesValidator(getDisks());
             if (!validate(diskImagesValidator.incrementalBackupEnabled())) {
                 return false;
@@ -140,7 +145,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         // }
         // log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmId);
 
-        if (!isBackupContainsRawDisksOnly()) {
+        if (FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())
+                && !isBackupContainsRawDisksOnly()) {
             log.info("Creating VmCheckpoint entity for VM '{}'", vmBackup.getVmId());
             Guid vmCheckpointId = createVmCheckpoint();
             log.info("Created VmCheckpoint entity '{}'", vmCheckpointId);
@@ -152,7 +158,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 return null;
             });
         } else {
-            log.info("Backup contains RAW disks only, skip checkpoint creation for VM '{}'", vmBackup.getVmId());
+            log.info("Skip checkpoint creation for VM '{}'", vmBackup.getVmId());
         }
 
         persistCommandIfNeeded();

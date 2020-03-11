@@ -6,31 +6,46 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.validator.storage.DiskExistenceValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockConfigExtension;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith({ MockitoExtension.class, MockConfigExtension.class})
 public class StartVmBackupCommandTest extends BaseCommandTest {
+
+    public static Stream<MockConfigDescriptor<?>> mockConfigIsIncrementalBackupSupported() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.IsIncrementalBackupSupported, Version.getLast(), true));
+    }
 
     @Mock
     private VmDao vmDao;
@@ -63,12 +78,14 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
 
     @BeforeEach
     public void setUp() {
+        initCluster();
         mockDisksImages();
         doReturn(diskExistenceValidator).when(command).createDiskExistenceValidator(any());
         doReturn(diskImagesValidator).when(command).createDiskImagesValidator(any());
     }
 
     @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedDiskNotExists() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST))
                 .when(diskExistenceValidator).disksNotExist();
@@ -76,6 +93,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     }
 
     @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedVmNotQualifiedForBackup() {
         mockVm(VMStatus.Down);
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -83,6 +101,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     }
 
     @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedBackupAlreadyInProgress() {
         mockVm(VMStatus.Up);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(List.of(mockVmBackup()));
@@ -91,6 +110,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     }
 
     @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedVdsNotSupportBackup() {
         mockVds(false);
         mockVm(VMStatus.Up);
@@ -100,6 +120,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     }
 
     @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedNotAllDisksSupportsIncremental() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_DISABLED_FOR_DISKS))
                 .when(diskImagesValidator).incrementalBackupEnabled();
@@ -108,6 +129,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     }
 
     @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateVmQualifiedForBackup() {
         mockVds(true);
         mockVm(VMStatus.Up);
@@ -121,6 +143,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
         vmBackup.setDisks(diskImages);
         vmBackup.setVmId(vmId);
         vmBackup.setFromCheckpointId(fromCheckpointId);
+        vmBackup.setToCheckpointId(null);
         return vmBackup;
     }
 
@@ -135,6 +158,14 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
         disk.setId(Guid.newGuid());
         when(diskDao.get(guid)).thenReturn(disk);
         return disk;
+    }
+
+    private void initCluster() {
+        Cluster cluster = new Cluster();
+        cluster.setClusterId(Guid.newGuid());
+        cluster.setCompatibilityVersion(Version.getLast());
+        command.setClusterId(cluster.getId());
+        command.setCluster(cluster);
     }
 
     private void mockDisksImages() {
