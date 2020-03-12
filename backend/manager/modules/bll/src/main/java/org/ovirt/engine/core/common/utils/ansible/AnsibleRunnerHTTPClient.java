@@ -39,7 +39,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,15 +99,13 @@ public class AnsibleRunnerHTTPClient {
     }
 
     public String runPlaybook(AnsibleCommandConfig command) {
-        if (command.hosts() != null) {
-            for (VDS host : command.hosts()) {
-                addHost(host.getHostName(), host.getSshPort());
-            }
+        for (VDS host : command.hosts()) {
+            addHost(host.getHostName(), host.getSshPort());
         }
+
         URI uri = buildRunnerURI(
             String.format("playbooks/%1$s", command.playbook()),
-            command.hostnames() == null ? null :
-                    new BasicNameValuePair("limit", StringUtils.join(command.hostnames(), ",")),
+            new BasicNameValuePair("limit", StringUtils.join(command.hostnames(), ",")),
             new BasicNameValuePair("check", String.valueOf(command.isCheckMode()))
         );
 
@@ -118,15 +115,12 @@ public class AnsibleRunnerHTTPClient {
                 .entrySet()
                 .stream()
                 .map(e -> String.format(
-                    e.getValue() instanceof ArrayNode
-                        ? "\"%1$s\": %2$s"
-                        : "\"%1$s\": \"%2$s\"",
+                    "\"%1$s\": \"%2$s\"",
                     e.getKey(),
-                    // If value is ArrayNode it will format as JSON list
-                    e.getValue() instanceof ArrayNode
-                        ? e.getValue()
-                        // Replace to have proper formatting of JSON newlines/quotes
-                        : String.valueOf(e.getValue()).replaceAll("\n", "\\\\n").replaceAll("\"", "")
+                    // Replace to have proper formatting of JSON newlines/quotes
+                    String.valueOf(e.getValue())
+                        .replaceAll("\n", "\\\\n")
+                        .replaceAll("\"", "\\\\\"")
                     )
                 )
                 .collect(Collectors.joining(",")) +
@@ -347,7 +341,7 @@ public class AnsibleRunnerHTTPClient {
             URIBuilder uri = baseURI()
                 .setPath(v1path.toString());
             if (query != null && query.length > 0) {
-                uri.addParameters(Arrays.asList(query).stream().filter(Objects::nonNull).collect(Collectors.toList()));
+                uri.addParameters(Arrays.asList(query));
             }
             return uri.build();
         } catch (URISyntaxException ex) {

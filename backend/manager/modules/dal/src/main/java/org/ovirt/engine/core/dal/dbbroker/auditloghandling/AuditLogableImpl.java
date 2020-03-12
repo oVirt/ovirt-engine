@@ -463,15 +463,7 @@ public class AuditLogableImpl implements AuditLogable {
         logable.setClusterName(host.getClusterName());
         logable.setCorrelationId(correlationId);
         customValues.entrySet().stream()
-                .forEach(v -> logable.addCustomValue(v.getKey(), v.getValue()));
-        return logable;
-    }
-
-    public static AuditLogable createEvent(String correlationId, Map<String, String> customValues) {
-        AuditLogable logable = new AuditLogableImpl();
-        logable.setCorrelationId(correlationId);
-        customValues.entrySet().stream()
-                .forEach(v -> logable.addCustomValue(v.getKey(), v.getValue()));
+            .forEach(v -> logable.addCustomValue(v.getKey(), v.getValue()));
         return logable;
     }
 }
