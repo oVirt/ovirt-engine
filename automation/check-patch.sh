@@ -133,8 +133,7 @@ MAVEN_SETTINGS="/etc/maven/settings.xml"
 export BUILD_JAVA_OPTS_MAVEN="\
     -Dgwt.compiler.localWorkers=1 \
 "
-export EXTRA_BUILD_FLAGS="-T1C \
-    -gs $MAVEN_SETTINGS \
+export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS \
     -Dovirt.surefire.reportsDirectory=${PWD}/exported-artifacts/tests \
 "
 export BUILD_JAVA_OPTS_GWT="$JVM_MEM_OPTS"
