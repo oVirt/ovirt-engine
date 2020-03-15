@@ -20,8 +20,6 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -29,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
@@ -67,7 +64,6 @@ public class AddClusterCommand<T extends ClusterOperationParameters>
         Cluster cluster = getCluster();
         cluster.setArchitecture(getArchitecture());
         setCpuFlags();
-        setDefaultBiosType();
         setDefaultSwitchTypeIfNeeded();
         setDefaultFirewallTypeIfNeeded();
         setDefaultLogMaxMemoryUsedThresholdIfNeeded();
@@ -106,21 +102,6 @@ public class AddClusterCommand<T extends ClusterOperationParameters>
     private void setCpuFlags() {
         if (!StringUtils.isEmpty(getCluster().getCpuName())) {
             clusterCpuFlagsManager.updateCpuFlags(getCluster());
-        }
-    }
-
-    private void setDefaultBiosType() {
-        Cluster cluster = getCluster();
-        if (cluster.getBiosType() != null) {
-            return;
-        }
-        if (cluster.getCompatibilityVersion() != null
-                && cluster.getCompatibilityVersion().greaterOrEquals(Version.v4_4)
-                && cluster.getArchitecture() != null
-                && cluster.getArchitecture().getFamily() == ArchitectureType.x86) {
-            cluster.setBiosType(BiosType.Q35_SEA_BIOS);
-        } else {
-            cluster.setBiosType(BiosType.I440FX_SEA_BIOS);
         }
     }
 
