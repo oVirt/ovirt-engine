@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -63,22 +64,18 @@ public class ImportTemplateFromExportDomainModel extends ImportVmFromExportDomai
     }
 
     protected String createSearchPattern(Collection<VmTemplate> templates) {
-        String vmt_guidKey = "_VMT_ID ="; //$NON-NLS-1$
+        String vmt_guidKey = "_VMT_ID = "; //$NON-NLS-1$
         String orKey = " or "; //$NON-NLS-1$
-        StringBuilder searchPattern = new StringBuilder();
-        searchPattern.append("Template: "); //$NON-NLS-1$
+        String prefix = "Template: "; //$NON-NLS-1$
 
-        for (VmTemplate template : templates) {
-            searchPattern.append(vmt_guidKey);
-            searchPattern.append(template.getId().toString());
-            searchPattern.append(orKey);
+        StringJoiner sj = new StringJoiner(orKey, prefix, "");
 
-            searchPattern.append(vmt_guidKey);
-            searchPattern.append(template.getBaseTemplateId().toString());
-            searchPattern.append(orKey);
-        }
+        templates.forEach(template -> {
+            sj.add(vmt_guidKey + template.getId().toString());
+            sj.add(vmt_guidKey + template.getBaseTemplateId().toString());
+        });
 
-        return searchPattern.substring(0, searchPattern.length() - orKey.length());
+        return sj.toString();
     }
 
     public void init(final Collection<VmTemplate> externalTemplates, final Guid storageDomainId) {

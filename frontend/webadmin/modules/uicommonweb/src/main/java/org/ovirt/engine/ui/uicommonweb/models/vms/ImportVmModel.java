@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -170,22 +171,18 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     }
 
     private String createSearchPattern(Collection<VM> vms) {
-        String vm_guidKey = "ID ="; //$NON-NLS-1$
-        String vm_nameKey = "NAME ="; //$NON-NLS-1$
+        String vm_guidKey = "ID = "; //$NON-NLS-1$
+        String vm_nameKey = "NAME = "; //$NON-NLS-1$
         String orKey = " or "; //$NON-NLS-1$
-        StringBuilder searchPattern = new StringBuilder();
-        searchPattern.append("VM: "); //$NON-NLS-1$
+        String prefix = "VM: "; //$NON-NLS-1$
 
-        for (VM vm : vms) {
-            searchPattern.append(vm_guidKey);
-            searchPattern.append(vm.getId().toString());
-            searchPattern.append(orKey);
-            searchPattern.append(vm_nameKey);
-            searchPattern.append(vm.getName());
-            searchPattern.append(orKey);
-        }
+        StringJoiner sj = new StringJoiner(orKey, prefix, "");
+        vms.forEach(vm -> {
+            sj.add(vm_guidKey + vm.getId().toString());
+            sj.add(vm_nameKey + vm.getName());
+        });
 
-        return searchPattern.substring(0, searchPattern.length() - orKey.length());
+        return sj.toString();
     }
 
     protected boolean validateNames() {
