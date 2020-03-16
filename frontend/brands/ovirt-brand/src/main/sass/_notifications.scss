@@ -46,8 +46,9 @@ Notifications
 
 .notif_doNotDisturbDropDownMenu {
     position: absolute !important;
-    top: 35px !important;
+    top: -100px !important;
     left: 289px !important;
+    z-index: 2001;
 }
 
 .notif_buttonContainer {
@@ -55,14 +56,25 @@ Notifications
     text-align: right;
     background-image: linear-gradient(to bottom,#fafafa 0,#ededed 100%);
     border: 1px solid #bbbbbb;
+    position: fixed;
+    width: 450px;
+    bottom: 5px;
+    right: 10px;
+    z-index: 2001;
 }
+
 
 .notif_notificationsPanel {
     z-index: 2000;
     position: absolute;
-    top: 67px;
+    top: 400px;
     right: 10px;
     width: 450px;
+    min-height: calc(100% - 400px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 45px;
 }
 
 .notif_notificationsPanel .alert {

@@ -80,7 +80,7 @@ public class NotificationView extends AbstractView implements NotificationPresen
 
     @Override
     public void showNotification(ToastNotification notification) {
-        toastsContainer.add(notification);
+        toastsContainer.insert(notification, 0);
     }
 
     @Override
