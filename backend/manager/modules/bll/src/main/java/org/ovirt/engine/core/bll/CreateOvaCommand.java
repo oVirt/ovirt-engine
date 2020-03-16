@@ -196,7 +196,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                 .hosts(getVds())
                 .variable("target_directory", getParameters().getDirectory())
                 .variable("entity_type", getParameters().getEntityType().name().toLowerCase())
-                .variable("ova_size", String.valueOf(calcOvaSize(disks, genOvfParameterEncodedSize(ovf))))
+                .variable("ova_size", String.valueOf(calcOvaSize(disks, encodedOvf)))
                 .variable("ova_name", getParameters().getName())
                 .variable("ovirt_ova_pack_ovf", encodedOvf)
                 .variable("ovirt_ova_pack_disks", genDiskParameters(disks, diskIdToPath))
@@ -225,11 +225,6 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     }
 
     private String genOvfParameter(String ovf) {
-        // replace " characters with \\" inside the OVF another \ is added in AnsibleRunnerHTTPClient
-        return ovf.replaceAll("\"", "\\\\\\\\\\\"");
-    }
-
-    private String genOvfParameterEncodedSize(String ovf) {
         // replace " characters with \\\" inside the OVF
         return ovf.replaceAll("\"", "\\\\\\\\\\\\\"");
     }

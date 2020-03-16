@@ -39,6 +39,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.TextNode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,13 +101,16 @@ public class AnsibleRunnerHTTPClient {
     }
 
     public String runPlaybook(AnsibleCommandConfig command) {
-        for (VDS host : command.hosts()) {
-            addHost(host.getHostName(), host.getSshPort());
+        if (command.hosts() != null) {
+            for (VDS host : command.hosts()) {
+                addHost(host.getHostName(), host.getSshPort());
+            }
         }
 
         URI uri = buildRunnerURI(
             String.format("playbooks/%1$s", command.playbook()),
-            new BasicNameValuePair("limit", StringUtils.join(command.hostnames(), ",")),
+            command.hostnames() == null ? null :
+                new BasicNameValuePair("limit", StringUtils.join(command.hostnames(), ",")),
             new BasicNameValuePair("check", String.valueOf(command.isCheckMode()))
         );
 
@@ -115,12 +120,15 @@ public class AnsibleRunnerHTTPClient {
                 .entrySet()
                 .stream()
                 .map(e -> String.format(
-                    "\"%1$s\": \"%2$s\"",
+                    e.getValue() instanceof ArrayNode || e.getValue() instanceof TextNode
+                        ? "\"%1$s\": %2$s"
+                        : "\"%1$s\": \"%2$s\"",
                     e.getKey(),
-                    // Replace to have proper formatting of JSON newlines/quotes
-                    String.valueOf(e.getValue())
-                        .replaceAll("\n", "\\\\n")
-                        .replaceAll("\"", "\\\\\"")
+                    // If value is ArrayNode it will format as JSON list
+                    e.getValue() instanceof ArrayNode
+                        ? e.getValue()
+                        // Replace to have proper formatting of JSON newlines
+                        : String.valueOf(e.getValue()).replaceAll("\n", "\\\\n")
                     )
                 )
                 .collect(Collectors.joining(",")) +
@@ -341,7 +349,7 @@ public class AnsibleRunnerHTTPClient {
             URIBuilder uri = baseURI()
                 .setPath(v1path.toString());
             if (query != null && query.length > 0) {
-                uri.addParameters(Arrays.asList(query));
+                uri.addParameters(Arrays.asList(query).stream().filter(Objects::nonNull).collect(Collectors.toList()));
             }
             return uri.build();
         } catch (URISyntaxException ex) {
