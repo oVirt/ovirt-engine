@@ -8,6 +8,18 @@
         if ansible_distribution == 'Fedora'
         else 0 }}"
 
+- block:
+  - name: Reset configuration of advanced virtualization module
+    shell: dnf -y module reset virt
+    tags:
+      - skip_ansible_lint # E305
+
+  - name: Enable advanced virtualization module for relevant OS version
+    shell: "dnf -y module enable virt:{{ ansible_distribution_version }}"
+    tags:
+      - skip_ansible_lint # E305
+  when: host_deploy_origin_type != ovirt_origin_type
+
 - name: Install Python3 for CentOS/RHEL8 hosts
   yum:
     name: python3

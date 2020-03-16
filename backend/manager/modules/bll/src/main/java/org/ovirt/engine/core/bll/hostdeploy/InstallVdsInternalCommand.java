@@ -260,6 +260,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     .variable("hosted_engine_deploy_action", hostedEngineAction)
                     .variable("hosted_engine_tmp_cfg_file", hostedEngineTmpCfgFile)
                     .variable("hosted_engine_host_id", hostedEngineHelper.offerHostId(vds.getId()))
+                    .variable("host_deploy_origin_type", Config.getValue(ConfigValues.OriginType))
                     .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK)
                     // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
                     .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
