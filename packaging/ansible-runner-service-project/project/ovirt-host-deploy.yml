@@ -1,6 +1,15 @@
 - hosts: all
   remote_user: root
 
+  pre_tasks:
+    - name: Fail installation on EL8 hosts if cluster switch type is OVS
+      fail:
+        msg: "Cluster switch type OVS is not supported on EL8 hosts"
+      when:
+        - ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+        - ansible_distribution_major_version|int == 8
+        - host_deploy_bridge_type == 'OVS'
+
   roles:
     - role: ovirt-host-deploy
     - role: hc-gluster-cgroups
