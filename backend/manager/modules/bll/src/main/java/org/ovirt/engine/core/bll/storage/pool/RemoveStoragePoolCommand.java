@@ -260,6 +260,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             return false;
         }
 
+        if (!getStoragePool().isManaged()) {
+            return true;
+        }
+
         if (!validator.isNotInStatus(StoragePoolStatus.Up).isValid()) {
             return failValidation(EngineMessage.ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL);
         }

@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
+import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.UnmanagedStorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -42,6 +43,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -87,6 +89,9 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
 
     @Inject
     private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private ClusterDao clusterDao;
 
     /**
      * command's context is required for internal backend actions that requires a user, i.e. creating data-center with
@@ -251,9 +256,12 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
                         new AddVdsVDSCommandParameters(h.getId())));
     }
 
+    private Optional<StoragePool> findKubevirtDataCenter() {
+        return storagePoolDao.getAll().stream().filter(dc -> dc.getName().equals(KUBEVIRT_DC_NAME)).findFirst();
+    }
+
     private Guid findOrCreateKubevirtDataCenterId() {
-        Optional<StoragePool> kubevirtDc =
-                storagePoolDao.getAll().stream().filter(dc -> dc.getName().equals(KUBEVIRT_DC_NAME)).findFirst();
+        Optional<StoragePool> kubevirtDc = findKubevirtDataCenter();
 
         if (kubevirtDc.isPresent()) {
             return kubevirtDc.get().getId();
@@ -316,6 +324,16 @@ public class KubevirtProviderProxy implements ProviderProxy<ProviderValidator<Ku
         ClusterParametersBase parameters = new ClusterParametersBase(provider.getId());
         parameters.setForce(true);
         backend.runInternalAction(ActionType.RemoveCluster, parameters);
+
+        Optional<StoragePool> kubevirtDc = findKubevirtDataCenter();
+        if (kubevirtDc.isPresent()) {
+            Guid storagePoolId = kubevirtDc.get().getId();
+            List<Cluster> clusters = clusterDao.getAllForStoragePool(storagePoolId);
+            if (clusters.isEmpty()) {
+                StoragePoolParametersBase sp = new StoragePoolParametersBase(storagePoolId);
+                backend.runInternalAction(ActionType.RemoveStoragePool, sp);
+            }
+        }
     }
 
     private void deleteNetwork(Network network, Guid clusterId) {
