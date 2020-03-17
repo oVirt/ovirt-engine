@@ -1754,6 +1754,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                         tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
                         tempVar.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
                         tempVar.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
+                        tempVar.setMountOptions(nfsModel.getMountOptions().getEntity());
                     }
                 }
                 if (storageModel instanceof PosixStorageModel) {
