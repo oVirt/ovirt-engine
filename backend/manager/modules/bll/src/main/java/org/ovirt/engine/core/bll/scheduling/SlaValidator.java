@@ -106,7 +106,7 @@ public class SlaValidator {
                     .mapToLong(vm -> vmOverheadCalculator.getOverheadInMb(vm))
                     .sum();
 
-            log.debug("hasOvercommitMemoryToRunVM: host '{}'; max scheduling memory : {} MB; required memory is {} MB; Required dynamic hige-pages memory is {} MB; Guest overhead {} MB",
+            log.debug("hasOvercommitMemoryToRunVM: host '{}'; max scheduling memory : {} MB; required memory is {} MB; Required dynamic huge-pages memory is {} MB; Guest overhead {} MB",
                     curVds.getName(),
                     vdsMemLimit,
                     vmMemRequired,
