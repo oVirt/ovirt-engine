@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -71,6 +73,7 @@ import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandPa
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -115,6 +118,9 @@ public class RunVmValidator {
 
     @Inject
     private VmDeviceDao vmDeviceDao;
+
+    @Inject
+    private HostDeviceDao hostDeviceDao;
 
     @Inject
     private NetworkDao networkDao;
@@ -200,6 +206,7 @@ public class RunVmValidator {
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                 validate(validateDisksPassDiscard(vm), messages) &&
                 validate(validateMemorySize(vm), messages) &&
+                validate(validateHostBlockDevicePath(vm), messages) &&
                 !schedulingManager.prepareCall(cluster)
                         .hostBlackList(vdsBlackList)
                         .hostWhiteList(vdsWhiteList)
@@ -560,6 +567,29 @@ public class RunVmValidator {
                 : new ValidationResult(
                         EngineMessage.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK,
                         String.format("$networks %1$s", StringUtils.join(nonVmNetworkNames, ",")));
+    }
+
+    private ValidationResult validateHostBlockDevicePath(VM vm) {
+        String scsiHostdevProperty = getVmPropertiesUtils()
+                .getVMProperties(vm.getCompatibilityVersion(), vm.getStaticData()).get("scsi_hostdev");
+        if (scsiHostdevProperty == null || scsiHostdevProperty.equals("scsi_generic")) {
+            return ValidationResult.VALID;
+        }
+        List<Guid> pinnedHostIds = vm.getDedicatedVmForVdsList();
+        if (pinnedHostIds.isEmpty()) {
+            return ValidationResult.VALID;
+        }
+        // single dedicated host allowed
+        Guid hostId = pinnedHostIds.get(0);
+        boolean missingPath = hostDeviceDao.getVmExtendedHostDevicesByVmId(vm.getId()).stream()
+                .filter(h -> h.getHostId().equals(hostId))
+                .filter(HostDevice::isScsi)
+                .map(HostDevice::getBlockPath)
+                .anyMatch(Objects::isNull);
+        if (missingPath) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MISSING_HOST_BLOCK_DEVICE_PATH);
+        }
+        return ValidationResult.VALID;
     }
 
     ///////////////////////
