@@ -91,12 +91,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.quartz-scheduler</groupId>
-      <artifactId>quartz</artifactId>
-      <version>${quartz.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
       <version>${spring.version}</version>
@@ -316,12 +310,6 @@
                 <groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
                 <artifactId>vdsm-jsonrpc-java-client</artifactId>
                 <moduleName>org.ovirt.vdsm-jsonrpc-java</moduleName>
-              </module>
-
-              <module>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz</artifactId>
-                <moduleName>org.quartz</moduleName>
               </module>
 
               <module>

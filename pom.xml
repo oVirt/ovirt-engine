@@ -51,7 +51,6 @@
     <junit.version>5.3.1</junit.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-compress.version>1.5</commons-compress.version>
-    <quartz.version>2.1.2</quartz.version>
     <postgres.jdbc.version>42.2.3</postgres.jdbc.version>
     <javax.transaction>1.1</javax.transaction>
     <javax.activation.version>1.1</javax.activation.version>
@@ -122,11 +121,6 @@
         <groupId>org.ovirt.java-client-kubevirt</groupId>
         <artifactId>java-client-kubevirt</artifactId>
         <version>${kubevirt-client.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.quartz-scheduler</groupId>
-        <artifactId>quartz</artifactId>
-        <version>${quartz.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-collections</groupId>

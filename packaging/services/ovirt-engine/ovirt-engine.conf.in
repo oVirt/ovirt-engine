@@ -572,31 +572,6 @@ DASHBOARD_UTILIZATION_CACHE_UPDATE_INTERVAL=300
 DASHBOARD_INVENTORY_CACHE_UPDATE_INTERVAL=60
 
 #
-# Quartz thread pool pool class
-# We can use two pools:
-# - provided by quartz: org.quartz.simpl.SimpleThreadPool
-# - based on ThreadPoolExecutor: org.ovirt.engine.core.utils.timer.SchedulerThreadPool
-#
-ENGINE_SCHEDULER_POOL_CLASS=org.ovirt.engine.core.utils.timer.SchedulerThreadPool
-
-#
-# Number of threads used in quartz thread pool
-#
-ENGINE_SCHEDULER_POOL_THREAD_SIZE=100
-
-#
-# Size of the queue used by quartz thread pool
-#
-ENGINE_SCHEDULER_POOL_QUEUE_SIZE=350
-
-#
-# Define rejection policy for the pool when a task queue is full.
-# When 'false' is set it will block if the queue is full.
-# When 'true' is set it would reject the task.
-#
-ENGINE_SCHEDULER_POOL_REJECT_POLICY=false
-
-#
 # Specify the thread pool size for jboss managed executor services used by the command executor framework. This thread
 # pool is used to execute asynchronous commands like deleting a disk, live snapshot removal, remove vm or remove vm
 # pool or removing vm template. It is generally not necessary to increase the number of threads in this thread pool.

@@ -389,11 +389,6 @@ Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 2.4.1
 %endif
 
-%if 0%{?fedora}
-# quartz is not available on RHEL
-Requires:	quartz
-%endif
-
 # We can't require exactly the same version and release of the
 # setup package because it needs to be updated independently as part
 # of the update process implemented in the engine-upgrade script:
@@ -962,9 +957,6 @@ common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 common/org/apache/sshd/main/sshd-common.jar apache-sshd/sshd-common.jar
 common/org/snmp4j/main/snmp4j.jar snmp4j.jar
-%endif
-%if 0%{?fedora}
-common/org/quartz/main/quartz.jar
 %endif
 __EOF__
 
