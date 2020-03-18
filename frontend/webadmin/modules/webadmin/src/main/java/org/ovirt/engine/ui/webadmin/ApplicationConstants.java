@@ -612,6 +612,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String activateHostAfterInstallLabel();
 
+    String reconfigureGlusterLabel();
+
     String importVmGeneralSubTabLabel();
 
     String importVmNetworkIntefacesSubTabLabel();

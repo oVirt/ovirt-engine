@@ -24,6 +24,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
      */
     private boolean overrideFirewall = true;
     private boolean activateHost;
+    private boolean reconfigureGluster = false;
     private boolean enableSerialConsole;
     private AuthenticationMethod authMethod;
     private String networkMappings;
@@ -154,5 +155,13 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public void setAffinityLabels(List<Label> affinityLabels) {
         this.affinityLabels = affinityLabels;
+    }
+
+    public boolean getReconfigureGluster() {
+        return reconfigureGluster;
+    }
+
+    public void setReconfigureGluster(boolean reconfigureGluster){
+        this.reconfigureGluster = reconfigureGluster;
     }
 }

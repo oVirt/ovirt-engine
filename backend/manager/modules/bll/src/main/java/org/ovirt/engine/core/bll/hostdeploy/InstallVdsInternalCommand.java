@@ -144,7 +144,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
 
             runAnsibleHostDeployPlaybook();
             List<VDS> hostlist = vdsDao.getAllForCluster(getClusterId());
-            if(getVds().getClusterSupportsGlusterService() && (hostlist.size()) >= 3) {
+            if(getVds().getClusterSupportsGlusterService() && (hostlist.size()) >= 3 && getParameters().getReconfigureGluster()) {
                 String oldGlusterClusterNode = getVds().getName();
                 VDS vds = getVds();
                 hostlist.removeIf(host -> host.getHostName().equals(vds.getHostName()));

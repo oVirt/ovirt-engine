@@ -1333,6 +1333,11 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         model.getOverrideIpTables().setIsAvailable(true);
         model.getOverrideIpTables().setEntity(true);
         model.getActivateHostAfterInstall().setEntity(true);
+        if(host.getClusterSupportsGlusterService()) {
+            model.getReconfigureGluster().setIsAvailable(true);
+        } else {
+            model.getReconfigureGluster().setIsAvailable(false);
+        }
         addInstallCommands(model, host, false);
         getWindow().stopProgress();
     }
@@ -1363,6 +1368,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         param.setInstallHost(true);
         param.setoVirtIsoFile(null);
         param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
+        param.setReconfigureGluster(model.getReconfigureGluster().getEntity());
         param.setActivateHost(model.getActivateHostAfterInstall().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
         param.setFenceAgents(null);  // Explicitly set null, to be clear we don't want to update fence agents.

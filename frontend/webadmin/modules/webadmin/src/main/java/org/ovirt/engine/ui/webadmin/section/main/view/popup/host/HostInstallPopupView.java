@@ -70,6 +70,11 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     EntityModelCheckBoxEditor overrideIpTablesEditor;
 
     @UiField(provided = true)
+    @Path(value = "reconfigureGluster.entity")
+    @WithElementId("reconfigureGluster")
+    EntityModelCheckBoxEditor reconfigureGlusterEditor;
+
+    @UiField(provided = true)
     @Path(value = "activateHostAfterInstall.entity")
     @WithElementId("activateHostAfterInstall")
     EntityModelCheckBoxEditor activateHostAfterInstallEditor;
@@ -148,6 +153,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         publicKeyEditor = new StringEntityModelTextAreaLabelEditor();
         activateHostAfterInstallEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         overrideIpTablesEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        reconfigureGlusterEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void localize() {
@@ -155,6 +161,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         isoEditor.setLabel(constants.hostInstallIsoLabel());
         overrideIpTablesEditor.setLabel(constants.hostInstallOverrideIpTablesLabel());
         activateHostAfterInstallEditor.setLabel(constants.activateHostAfterInstallLabel());
+        reconfigureGlusterEditor.setLabel(constants.reconfigureGlusterLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
         userNameEditor.setLabel(constants.hostPopupUsernameLabel());
         publicKeyEditor.setTitle(constants.publicKeyUsage());

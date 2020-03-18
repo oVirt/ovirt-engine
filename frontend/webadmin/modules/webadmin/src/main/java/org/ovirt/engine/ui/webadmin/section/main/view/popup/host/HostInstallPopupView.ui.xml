@@ -107,6 +107,11 @@
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
+                                    <b:Column size="SM_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="reconfigureGlusterEditor" usePatternFly="true"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
                                     <ge:StringEntityModelLabelEditor ui:field="hostVersionEditor" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8"/>
                                 </b:Row>
                                 <b:Row>

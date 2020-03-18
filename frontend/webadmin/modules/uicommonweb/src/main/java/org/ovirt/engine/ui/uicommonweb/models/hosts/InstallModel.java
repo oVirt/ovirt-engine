@@ -54,6 +54,16 @@ public class InstallModel extends Model {
         activateHostAfterInstall = value;
     }
 
+    private  EntityModel<Boolean> reconfigureGluster;
+
+    private void setReconfigureGluster(EntityModel<Boolean> value) {
+        reconfigureGluster = value;
+    }
+
+    public EntityModel<Boolean> getReconfigureGluster(){
+        return reconfigureGluster;
+    }
+
     private EntityModel<String> hostVersion;
 
     public EntityModel<String> getHostVersion() {
@@ -130,8 +140,10 @@ public class InstallModel extends Model {
 
         setOverrideIpTables(new EntityModel<Boolean>());
         setActivateHostAfterInstall(new EntityModel<Boolean>());
+        setReconfigureGluster(new EntityModel<Boolean>());
         getOverrideIpTables().setEntity(false);
         getActivateHostAfterInstall().setEntity(false);
+        getReconfigureGluster().setEntity(true);
         setUserName(new EntityModel<String>());
         getUserName().setEntity(HostModel.RootUserName);
         // TODO: remove setIsChangeable when configured ssh username is enabled
