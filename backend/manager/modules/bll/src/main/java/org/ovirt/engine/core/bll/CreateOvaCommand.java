@@ -225,8 +225,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     }
 
     private String genOvfParameter(String ovf) {
-        // replace " characters with \\\" inside the OVF
-        return ovf.replaceAll("\"", "\\\\\\\\\\\\\"");
+        // replace " characters with \\\"  and \n string to save newlines inside the OVF
+        return ovf.replaceAll("\"", "\\\\\\\\\\\\\"").replaceAll("\\\\n", "\\\\\n");
     }
 
     private String genDiskParameters(Collection<DiskImage> disks, Map<Guid, String> diskIdToPath) {

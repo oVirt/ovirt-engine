@@ -104,6 +104,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         // do nothing
     }
 
+    private String escapeNewLines(String value){
+        return value.replaceAll("\n", "\\\\n");
+    }
+
     protected void writeVmInit() {
         if (vmBase.getVmInit() != null) {
             VmInit vmInit = vmBase.getVmInit();
@@ -118,7 +122,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                 _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "timeZone", vmInit.getTimeZone());
             }
             if (vmInit.getAuthorizedKeys() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "authorizedKeys", vmInit.getAuthorizedKeys());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "authorizedKeys", escapeNewLines(vmInit.getAuthorizedKeys()));
             }
             if (vmInit.getRegenerateKeys() != null) {
                 _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "regenerateKeys", vmInit.getRegenerateKeys().toString());
@@ -139,7 +143,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                 _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "rootPassword", vmInit.getRootPassword());
             }
             if (vmInit.getCustomScript() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "customScript", vmInit.getCustomScript());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "customScript", escapeNewLines(vmInit.getCustomScript()));
             }
             _writer.writeEndElement();
         }

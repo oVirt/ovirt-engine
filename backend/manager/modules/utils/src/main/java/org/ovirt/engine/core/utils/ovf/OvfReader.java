@@ -688,6 +688,10 @@ public abstract class OvfReader implements IOvfBuilder {
         }
     }
 
+    private String escapedNewLines(String value) {
+        return value.replaceAll("\\\\n", "\n");
+    }
+
     private void readVmInit(XmlNode content) {
         XmlNode node = selectSingleNode(content, "VmInit");
         if (node != null) {
@@ -705,7 +709,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 vmInit.setTimeZone(node.attributes.get("ovf:timeZone").getValue());
             }
             if (node.attributes.get("ovf:authorizedKeys") != null) {
-                vmInit.setAuthorizedKeys(node.attributes.get("ovf:authorizedKeys").getValue());
+                vmInit.setAuthorizedKeys(escapedNewLines(node.attributes.get("ovf:authorizedKeys").getValue()));
             }
             if (node.attributes.get("ovf:regenerateKeys") != null) {
                 vmInit.setRegenerateKeys(Boolean.parseBoolean(node.attributes.get("ovf:regenerateKeys").getValue()));
@@ -726,7 +730,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 vmInit.setRootPassword(node.attributes.get("ovf:rootPassword").getValue());
             }
             if (node.attributes.get("ovf:customScript") != null) {
-                vmInit.setCustomScript(node.attributes.get("ovf:customScript").getValue());
+                vmInit.setCustomScript(escapedNewLines(node.attributes.get("ovf:customScript").getValue()));
             }
         }
     }
