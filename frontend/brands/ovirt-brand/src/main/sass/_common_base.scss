@@ -6,10 +6,12 @@ landing page (welcome), login (sso), docs, 404, etc
 .login-pf body {
     background-color: #131822;
     background-image: none;
+    height: 100%;
 }
 
 .login-pf .ovirt-container {
     font-size: 13px;
+    height: 100%;
 }
 
 .login-pf .container {
@@ -55,6 +57,13 @@ landing page (welcome), login (sso), docs, 404, etc
     position: absolute;
     top: -76px;
     left: 100px;
+}
+
+.welcome-page #welcome-section {
+    position: static;
+    padding-left: 100px;
+    padding-bottom: 25px;
+    color: #fff;
 }
 
 #welcome-section-login {

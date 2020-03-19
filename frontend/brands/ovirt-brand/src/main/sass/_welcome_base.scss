@@ -65,6 +65,18 @@
     bottom: 13%;
 }
 
+.welcome-page .ovirt-container .container {
+    position: static;
+    margin-bottom: 13%
+}
+.welcome-page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    /** 45px is the combined height of obrand_ssoHeader **/
+    min-height: calc(100% - 45px);
+}
+
 .ovirt-container select {
     color: black;
 }

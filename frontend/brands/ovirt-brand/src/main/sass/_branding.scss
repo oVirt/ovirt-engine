@@ -27,6 +27,13 @@ over) by other installed brands.
     position: relative;
     text-align: center;
 }
+.welcome-page .obrand_loginPageLogoLink {
+    right: 64px;
+    top: 75px;
+    position: absolute;
+    text-align: center;
+    margin: 0;
+}
 
 @media (max-width: 768px) {
     .obrand_loginPageLogo {
