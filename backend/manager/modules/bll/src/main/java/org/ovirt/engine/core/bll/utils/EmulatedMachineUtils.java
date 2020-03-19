@@ -68,7 +68,8 @@ public class EmulatedMachineUtils {
     }
 
     private static boolean chipsetMatchesEmulatedMachine(ChipsetType chipsetType, String emulatedMachine) {
-        return chipsetType == ChipsetType.I440FX || chipsetType == ChipsetType.fromMachineType(emulatedMachine);
+        ChipsetType emChipsetType = ChipsetType.fromMachineType(emulatedMachine); // emChipsetType == null for non-x86
+        return (chipsetType == ChipsetType.I440FX && emChipsetType == null) || chipsetType == emChipsetType;
     }
 
 }
