@@ -41,21 +41,6 @@
 # CUSTOMIZATION-END
 #
 
-#
-# Automatic byte compiling outside of /usr/lib(64)?/pythonX.Y/ should be used
-# on Fedora 28+ and EL8 [1], but it would require too much work to support
-# on EL7, so it's turned off
-#
-# [1] https://fedoraproject.org/wiki/Changes/No_more_automagic_Python_bytecompilation#How_we_are_changing_it
-#
-%if 0%{?fedora} || 0%{?rhel} >= 8
-%global use_python_bytecompile 1
-%global _python_bytecompile_extra 0
-%else
-%global use_python_bytecompile 0
-%global _python_bytecompile_extra 1
-%endif
-
 # Do not repack .jar files, as it takes a long time and doesn't have a
 # real benefit:
 %global __jar_repack 0
@@ -633,10 +618,8 @@ rm -fr "%{buildroot}"
 make %{make_common_opts} install DESTDIR="%{buildroot}"
 
 # Compile python files
-%if 0%{?use_python_bytecompile}
 %py_byte_compile %{__python3} %{buildroot}%{_libexecdir}/
 %py_byte_compile %{__python3} %{buildroot}%{engine_data}/
-%endif
 
 %{__python3} -m compileall -f -q -d "%{python3_sitelib}" "%{buildroot}%{python3_sitelib}"
 %{__python3} -O -m compileall -f -q -d "%{python3_sitelib}" "%{buildroot}%{python3_sitelib}"
@@ -896,12 +879,10 @@ fi
 %config %{engine_data}/cinderlib/logger.conf
 %config %attr(0700,%{engine_user},%{engine_group}) %{engine_etc}/cinderlib/ssh_known_hosts
 
-%if 0%{?use_python_bytecompile}
 %{engine_data}/cinderlib/cinderlib-client.*
 %{engine_data}/cinderlib/config.*
 %{engine_data}/cinderlib/__pycache__/cinderlib-client.*
 %{engine_data}/cinderlib/__pycache__/config.*
-%endif
 
 #
 # ATTENTION:
@@ -983,12 +964,8 @@ fi
 #
 # engine-host-update.py tool
 #
-%if 0%{?use_python_bytecompile}
 %{engine_data}/bin/engine-host-update.*
 %{engine_data}/bin/__pycache__/engine-host-update.*
-%else
-%{engine_data}/bin/engine-host-update.py
-%endif
 
 %files setup-base
 %license LICENSE
@@ -1014,10 +991,7 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-setup
 %{engine_data}/setup/bin/ovirt-engine-setup.env
 %{engine_data}/setup/ovirt_engine_setup/*.py*
-
-%if 0%{?use_python_bytecompile}
 %{engine_data}/setup/ovirt_engine_setup/__pycache__/
-%endif
 
 %{engine_data}/setup/plugins/*/base/
 %{engine_state}/backups/
@@ -1169,12 +1143,8 @@ fi
 %{_mandir}/man8/engine-backup.*
 %{engine_data}/bin/engine-backup.sh
 
-%if 0%{?use_python_bytecompile}
 %{engine_data}/bin/engine-migrate-he.*
 %{engine_data}/bin/__pycache__/engine-migrate-he.*
-%else
-%{engine_data}/bin/engine-migrate-he.py
-%endif
 
 %{engine_backup_default_dir}
 %{engine_backup_log_default_dir}
