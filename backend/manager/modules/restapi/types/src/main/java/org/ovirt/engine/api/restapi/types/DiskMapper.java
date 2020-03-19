@@ -408,6 +408,8 @@ public class DiskMapper {
         switch (diskInterface) {
         case IDE:
             return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.IDE;
+        case SATA:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.SATA;
         case VIRTIO:
             return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO;
         case VIRTIO_SCSI:
@@ -426,6 +428,8 @@ public class DiskMapper {
         switch (diskInterface) {
         case IDE:
             return DiskInterface.IDE;
+        case SATA:
+            return DiskInterface.SATA;
         case VirtIO:
             return DiskInterface.VIRTIO;
         case VirtIO_SCSI:
