@@ -1,4 +1,5 @@
 autoconf
+dnf
 dnf-utils
 git
 java-11-openjdk-devel
@@ -6,6 +7,18 @@ java-1.8.0-openjdk-headless
 java-client-kubevirt
 make
 maven
-pyflakes
-python-devel
-python-pep8
+net-tools
+otopi
+postgresql-contrib
+postgresql-jdbc
+postgresql-server
+python3-ansible-lint
+python3-mock
+python3-pycodestyle
+python3-psycopg2
+python3-pytest
+python3-devel
+python3-isort
+python3-pyflakes
+python3-pyOpenSSL
+python3-dnf-plugin-versionlock

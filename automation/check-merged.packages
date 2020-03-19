@@ -1,16 +1,1 @@
-autoconf
-dnf-utils
-git
-java-11-openjdk-devel
-java-1.8.0-openjdk-headless
-java-client-kubevirt
-make
-maven
-net-tools
-postgresql-contrib
-postgresql-jdbc
-postgresql-server
-pyflakes
-python-devel
-python-pep8
-python3-ansible-lint
+build-artifacts.packages

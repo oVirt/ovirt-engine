@@ -1,12 +1,6 @@
 #!/bin/bash -xe
 
-# CI is not updating build root.
-DISTVER="$(rpm --eval "%dist"|cut -c2-4)"
-if [[ "${DISTVER}" == "el7" ]]; then
-    PACKAGER=yum
-else
-    PACKAGER=dnf
-fi
+PACKAGER=dnf
 export PACKAGER
 ARCH="$(rpm --eval "%_arch")"
 
@@ -266,10 +260,6 @@ pushd exported-artifacts
     [[ -d /etc/dnf ]] && sed -i -re 's#^(reposdir *= *).*$#\1/etc/yum.repos.d#' '/etc/dnf/dnf.conf'
     [[ -e /etc/dnf/dnf.conf ]] && echo "deltarpm=False" >> /etc/dnf/dnf.conf
     rm -f /etc/yum/yum.conf
-    if [[ "${DISTVER}" == "el7" ]]; then
-        #Enable CR repo
-        sed -i "s:enabled=0:enabled=1:" /etc/yum.repos.d/CentOS-CR.repo
-    fi
 
     ${PACKAGER} repolist enabled
     ${PACKAGER} clean all
