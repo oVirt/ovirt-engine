@@ -18,12 +18,12 @@ env:
   global:
     - secure: kgBwT3IHk1vg1PHD4KKqkIOFlv4MGkOA+IK+nsTbPRJEvWpzZSgpHLuL+/2YuB4tntNMMj3LHwPTSJmaGLRdxaSjjv0MfzQA/fudLqTJ+FL3MuA++YcLSfjj6wj1dlMRj+0vYgCQcBMKTktDhGMdE6gUh42AQBzywqe1IcnX5Qs=
 addons:
-  postgresql: "10"
+  postgresql: "12"
   apt:
     packages:
-      - postgresql-10
-      - postgresql-client-10
-      - postgresql-contrib-10
+      - postgresql-12
+      - postgresql-client-12
+      - postgresql-contrib-12
 cache:
   directories:
     - $HOME/.m2

@@ -44,7 +44,7 @@ PG_CONF_MSG = _(
     "'{pg_host}':\n"
     "{keys}\n"
     "postgresql.conf is usually in /var/lib/pgsql/data, "
-    "/var/opt/rh/rh-postgresql10/lib/pgsql/data, or "
+    " or "
     "somewhere under /etc/postgresql* . You have to restart PostgreSQL "
     "after making these changes."
 )
@@ -1583,17 +1583,9 @@ class OvirtUtils(base.Base):
         # Only fail if the command succeded but didn't include the expected
         # line. This way it should also work in developer mode, also probably
         # if selinux is disabled or permissive.
-        if rc == 0 and '/var/opt/rh/rh-postgresql10 = /var' not in stdout:
+        if rc == 0 and '/var/lib/pgsql = /var' not in stdout:
             self.logger.error(_(
                 'SELinux file context rules for PostgreSQL are missing\n'
-            ))
-            self.dialog.note(_(
-                'SELinux file context rules for PostgreSQL are missing.\n'
-                'For more information, see: '
-                'https://bugzilla.redhat.com/1518599 .\n'
-                'You can try fixing this by running this command:\n\n'
-                '# yum reinstall rh-postgresql10-runtime\n\n'
-                'Then you can try running Setup again.\n'
             ))
             raise RuntimeError(_(
                 'SELinux file context rules for PostgreSQL are missing'

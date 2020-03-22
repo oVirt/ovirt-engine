@@ -396,43 +396,6 @@ class Provisioning(base.Base):
                     service=service,
                 )
             )
-            # A workaround for rhbz#1518599.
-            # TODO remove this once it's fixed.
-            # Under certain conditions, selinux contexts are not set
-            # correctly. Re-run the postinstall scriptlet.
-            self.logger.debug(
-                'Re-running postinstall scriptlet of the postgresql runtime '
-                'package as a workaround for '
-                'https://bugzilla.redhat.com/1518599'
-            )
-            if service == 'rh-postgresql95-postgresql':
-                runtimerpm = 'rh-postgresql95-runtime'
-            elif service == 'rh-postgresql10-postgresql':
-                runtimerpm = 'rh-postgresql10-runtime'
-            else:
-                raise
-            rc, stdout, stderr = self._plugin.execute(
-                (
-                    self.command.get('rpm'),
-                    '-q',
-                    '--scripts',
-                    runtimerpm
-                )
-            )
-            if 'postinstall scriptlet' in stdout[0]:
-                lines = stdout[1:]
-                self._plugin.execute(
-                    (
-                        '/bin/sh',
-                        '-x',
-                    ),
-                    stdin=lines,
-                )
-            # Now try again
-            self.services.state(
-                name=service,
-                state=True,
-            )
 
     def restartPG(self):
         self.services.state(

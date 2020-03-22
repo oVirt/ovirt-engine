@@ -280,6 +280,8 @@ pushd exported-artifacts
         fi
     elif
      [[ "$(rpm --eval "%dist")" == ".el8" ]]; then
+        ${PACKAGER} module reset postgresql
+        ${PACKAGER} module enable pki-deps javapackages-tools postgresql:12
         ${PACKAGER} --downloadonly install *noarch.rpm
         if [[ "${ARCH}" == "x86_64" ]]; then
             echo "Reference installation from ovirt-release repo."

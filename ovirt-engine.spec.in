@@ -253,8 +253,8 @@ Requires:	libestr
 
 Requires:	postgresql-jdbc >= 42.2.3
 
-Requires:	postgresql-server >= 10.0
-Requires:	postgresql-contrib >= 10.0
+Requires:	postgresql-server >= 12.0
+Requires:	postgresql-contrib >= 12.0
 
 Requires:	openstack-java-cinder-client >= %{openstack_java_version}
 Requires:	openstack-java-cinder-model >= %{openstack_java_version}
@@ -417,8 +417,8 @@ Requires:	%{name}-setup-plugin-cinderlib = %{version}-%{release}
 Requires:	%{name}-dwh-setup >= 4.2
 Requires:	ovirt-engine-extension-aaa-jdbc >= 1.2.0
 Requires:	openssh
-Requires:       postgresql-server >= 10.0
-Requires:       postgresql-contrib >= 10.0
+Requires:       postgresql-server >= 12.0
+Requires:       postgresql-contrib >= 12.0
 Conflicts:	%{name} < 4.3.7
 # See rhbz# 1676461
 Requires:	ovirt-vmconsole >= 1.0.7
@@ -522,7 +522,7 @@ Requires:	tar
 Requires:	bzip2
 Requires:	xz
 Requires:	python3-otopi >= 1.9.0
-Requires:	postgresql >= 10.0
+Requires:	postgresql >= 12.0
 
 %description tools-backup
 %{ovirt_product_name_short} Tools (engine-backup)

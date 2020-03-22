@@ -12,9 +12,9 @@ Install the following system components:
 - unzip
 - openssl
 - bind-utils
-- postgresql-server >= 10.0
-- postgresql >= 10.0
-- postgresql-contrib >= 10.0
+- postgresql-server >= 12.0
+- postgresql >= 12.0
+- postgresql-contrib >= 12.0
 - python-dateutil / dateutil
 - python-m2crypto / m2crypto
 - python-psycopg2 / psycopg
