@@ -194,4 +194,9 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
         managedBlockStorageDiskUtil.unlockImage(getParameters().getDiskInfo().getId());
         super.endSuccessfully();
     }
+
+    @Override
+    protected void endWithFailure() {
+        endSuccessfully();
+    }
 }

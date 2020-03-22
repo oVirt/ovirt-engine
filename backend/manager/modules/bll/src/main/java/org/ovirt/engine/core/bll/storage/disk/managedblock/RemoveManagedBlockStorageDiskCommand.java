@@ -6,11 +6,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.disk.managedblock.util.ManagedBlockStorageDiskUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
@@ -54,6 +59,13 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
     @Inject
     private BaseDiskDao baseDiskDao;
 
+    @Inject
+    private ManagedBlockStorageDiskUtil managedBlockStorageDiskUtil;
+
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
+
     public RemoveManagedBlockStorageDiskCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -70,6 +82,11 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
         extraParams.add(getParameters().getDiskId().toString());
         CinderlibReturnValue returnValue;
 
+        TransactionSupport.executeInNewTransaction(() -> {
+            managedBlockStorageDiskUtil.lockImage(getParameters().getDiskId());
+            return null;
+        });
+
         try {
             CinderlibCommandParameters params =
                     new CinderlibCommandParameters(JsonHelper.mapToJson(managedBlockStorage.getAllDriverOptions(),
@@ -79,6 +96,7 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
             returnValue = cinderlibExecutor.runCommand(CinderlibExecutor.CinderlibCommand.DELETE_VOLUME, params);
         } catch (Exception e) {
             log.error("Failed to remove volume: {}", e);
+            getReturnValue().setActionReturnValue(false);
             return;
         }
 
@@ -87,7 +105,9 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
         }
 
         removeDiskFromDb();
+        getReturnValue().setActionReturnValue(true);
         setSucceeded(true);
+        persistCommandIfNeeded();
     }
 
     private void removeDiskFromDb() {
@@ -122,5 +142,21 @@ public class RemoveManagedBlockStorageDiskCommand<T extends RemoveDiskParameters
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return null;
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
+    }
+
+    @Override
+    protected void endSuccessfully() {
+        managedBlockStorageDiskUtil.unlockImage(getParameters().getDiskId());
+        super.endSuccessfully();
+    }
+
+    @Override
+    protected void endWithFailure() {
+        endSuccessfully();
     }
 }

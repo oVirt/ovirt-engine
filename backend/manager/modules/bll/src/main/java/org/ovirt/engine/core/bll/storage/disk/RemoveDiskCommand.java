@@ -451,9 +451,12 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private void removeManagedBlockStorageDisk() {
+        RemoveDiskParameters params = getParameters();
+        params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        params.setCommandId(null);
         Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.RemoveManagedBlockStorageDisk,
-                getParameters(),
+                params,
                 cloneContextAndDetachFromParent());
         try {
             setReturnValue(future.get());
