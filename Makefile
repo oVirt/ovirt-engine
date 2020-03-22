@@ -511,6 +511,7 @@ install-layout: \
 	install -d -m 755 "$(DESTDIR)$(PKG_PKI_DIR)/requests-qemu"
 	install -d -m 755 "$(DESTDIR)$(DATA_DIR)/ui-plugins"
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
+	install -d -m 750 "$(DESTDIR)$(PKG_STATE_DIR)"
 	install -d -m 750 "$(DESTDIR)$(PKG_STATE_DIR)/backups"
 	install -d -m 750 "$(DESTDIR)$(PKG_BACKUP_DEFAULT_DIR)"
 	install -d -m 750 "$(DESTDIR)$(PKG_BACKUP_LOG_DEFAULT_DIR)"

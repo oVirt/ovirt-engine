@@ -637,6 +637,7 @@ make %{make_common_opts} install DESTDIR="%{buildroot}"
 #
 # /var creation
 #
+install -dm 750 "%{buildroot}/%{engine_state}"
 install -dm 700 "%{buildroot}/%{engine_state}/.ssh"
 install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers}
 # see also relevant %%dir line to set permissions
