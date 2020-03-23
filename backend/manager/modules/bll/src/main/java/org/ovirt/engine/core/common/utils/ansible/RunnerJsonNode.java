@@ -259,7 +259,10 @@ public final class RunnerJsonNode {
      * Returns true if yum task contains results.
      */
     public static boolean hasUpdates(JsonNode node) {
-        return !node.get("ansible_facts").get("yum_result").toString().isEmpty();
+        if (node.get("ansible_facts") != null && node.get("ansible_facts").get("yum_result") != null) {
+            return !node.get("ansible_facts").get("yum_result").toString().equals("\"\"");
+        }
+        return false;
     }
 
     /**
