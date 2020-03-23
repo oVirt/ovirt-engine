@@ -130,7 +130,12 @@
 %global vdsm_uid 36
 %global vdsm_user vdsm
 
+%if 0%{?rhel} || 0%{?fedora} >= 31
 %global openstack_java_version 3.2.8
+%else
+# Needed only until we build for Fedora 30
+%global openstack_java_version 3.2.7
+%endif
 
 # Macro to create an user:
 #
