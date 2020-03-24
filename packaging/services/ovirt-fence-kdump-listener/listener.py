@@ -162,7 +162,7 @@ class FenceKdumpListener(base.Base):
                 entry['status'] = self.SESSION_STATE_CLOSED
 
     def _house_keeping_sessions(self):
-        for session in self._sessions.values():
+        for session in list(self._sessions.values()):
 
             if (
                 session['status'] == self.SESSION_STATE_DUMPING and
@@ -184,7 +184,7 @@ class FenceKdumpListener(base.Base):
         # remove finished sessions (engine will remove them from db)
         for address in (
             session['address']
-            for session in self._sessions.values()
+            for session in list(self._sessions.values())
             if session['status'] == self.SESSION_STATE_CLOSED
         ):
             del self._sessions[address]
@@ -203,7 +203,7 @@ class FenceKdumpListener(base.Base):
                 last=self._lastSessionSync
         ):
             # update db state for all updated sessions
-            for session in self._sessions.values():
+            for session in list(self._sessions.values()):
                 if (
                     session['dirty'] and
                     session['status'] != self.SESSION_STATE_CLOSED
