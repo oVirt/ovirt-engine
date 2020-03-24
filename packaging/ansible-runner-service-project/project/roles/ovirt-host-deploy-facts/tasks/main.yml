@@ -18,7 +18,9 @@
     shell: "dnf -y module enable virt:{{ ansible_distribution_version }}"
     tags:
       - skip_ansible_lint # E305
-  when: host_deploy_origin_type != ovirt_origin_type
+  when:
+    - host_deploy_origin_type != ovirt_origin_type
+    - el_ver|int >= 8
 
 - name: Install Python3 for CentOS/RHEL8 hosts
   yum:
