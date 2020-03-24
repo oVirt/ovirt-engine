@@ -1,3 +1,2 @@
-ovirt-snapshot,http://resources.ovirt.org/pub/ovirt-master-snapshot/rpm/$distro
-ovirt-snapshot-static,http://resources.ovirt.org/pub/ovirt-master-snapshot-static/rpm/$distro
+ovirt-master-tested,https://resources.ovirt.org/repos/ovirt/tested/master/rpm/$distro
 ci-tools,http://resources.ovirt.org/repos/ci-tools/$distro
