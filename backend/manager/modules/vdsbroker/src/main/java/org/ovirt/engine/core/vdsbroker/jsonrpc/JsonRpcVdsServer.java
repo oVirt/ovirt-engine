@@ -2256,7 +2256,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("vmID", vmId)
                         .withParameter("backup_id", backupId)
                         .build();
-        Map<String, Object> response = new FutureMap(this.client, request).withResponseType(Object[].class);
+        Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new VmBackupInfo(response);
     }
 
