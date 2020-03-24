@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
+import org.ovirt.engine.core.bll.provider.network.openstack.CustomizedRESTEasyConnector;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -58,7 +59,7 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
     @Override
     protected Cinder getClient() {
         if (client == null) {
-            client = new Cinder(getProvider().getUrl() + API_VERSION);
+            client = new Cinder(getProvider().getUrl() + API_VERSION, new CustomizedRESTEasyConnector());
             if (getProvider().isRequiringAuthentication()) {
                 setClientTokenProvider(client);
             }

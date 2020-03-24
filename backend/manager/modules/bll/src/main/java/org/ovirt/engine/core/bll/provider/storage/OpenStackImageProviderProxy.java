@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
+import org.ovirt.engine.core.bll.provider.network.openstack.CustomizedRESTEasyConnector;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -91,7 +92,7 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
     @Override
     protected Glance getClient() {
         if (client == null) {
-            client = new Glance(getProvider().getUrl() + API_VERSION);
+            client = new Glance(getProvider().getUrl() + API_VERSION,  new CustomizedRESTEasyConnector());
             if (getProvider().isRequiringAuthentication()) {
                 setClientTokenProvider(client);
             }
