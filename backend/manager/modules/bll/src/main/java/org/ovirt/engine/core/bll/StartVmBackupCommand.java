@@ -195,9 +195,24 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     private boolean runVmBackup() {
         lockDisks();
-        VmBackupInfo vmBackupInfo = startVmBackup();
+        VmBackupInfo vmBackupInfo = null;
+        if (!getParameters().isBackupInitiated()) {
+            getParameters().setBackupInitiated(true);
+            persistCommandIfNeeded();
+            vmBackupInfo = performVmBackupOperation(VDSCommandType.StartVmBackup);
+        }
+
         if (vmBackupInfo == null || vmBackupInfo.getDisks() == null) {
-            return false;
+            // Check if backup already started at the host
+            if (!getParameters().isBackupInitiated()) {
+                // backup operation didn't start yet, fail the operation
+                return false;
+            }
+
+            vmBackupInfo = recoverFromMissingBackupInfo();
+            if (vmBackupInfo == null) {
+                return false;
+            }
         }
 
         if (vmBackupInfo.getCheckpoint() != null) {
@@ -206,6 +221,18 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         }
         storeBackupsUrls(vmBackupInfo.getDisks());
         return true;
+    }
+
+    private VmBackupInfo recoverFromMissingBackupInfo() {
+        // Try to recover by fetching the backup info
+        VmBackupInfo vmBackupInfo = performVmBackupOperation(VDSCommandType.GetVmBackupInfo);
+        if (vmBackupInfo == null || vmBackupInfo.getDisks() == null) {
+            log.error("Failed to start VM '{}' backup '{}' on the host",
+                    getVmId(),
+                    getParameters().getVmBackup().getId());
+            return null;
+        }
+        return vmBackupInfo;
     }
 
     private void finalizeVmBackup() {
@@ -289,10 +316,10 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         }
     }
 
-    private VmBackupInfo startVmBackup() {
+    private VmBackupInfo performVmBackupOperation(VDSCommandType vdsCommandType) {
         VDSReturnValue vdsRetVal;
         try {
-            vdsRetVal = runVdsCommand(VDSCommandType.StartVmBackup,
+            vdsRetVal = runVdsCommand(vdsCommandType,
                     new VmBackupVDSParameters(getVdsId(), getParameters().getVmBackup()));
             if (!vdsRetVal.getSucceeded()) {
                 EngineException engineException = new EngineException();
@@ -302,7 +329,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             VmBackupInfo vmBackupInfo = (VmBackupInfo) vdsRetVal.getReturnValue();
             return vmBackupInfo;
         } catch (EngineException e) {
-            log.error("Failed to execute VM.startBackup: {}", e);
+            log.error("Failed to execute VM backup operation '{}': {}", vdsCommandType, e);
             return null;
         }
     }

@@ -14,6 +14,7 @@ public class VmBackupParameters extends VmOperationParameterBase implements Seri
     @Valid
     @NotNull
     private VmBackup vmBackup;
+    private boolean backupInitiated;
 
     public VmBackupParameters() {
     }
@@ -28,6 +29,14 @@ public class VmBackupParameters extends VmOperationParameterBase implements Seri
 
     public void setVmBackup(VmBackup value) {
         vmBackup = value;
+    }
+
+    public boolean isBackupInitiated() {
+        return backupInitiated;
+    }
+
+    public void setBackupInitiated(boolean backupInitiated) {
+        this.backupInitiated = backupInitiated;
     }
 
     @Override
