@@ -161,6 +161,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             log.info("Skip checkpoint creation for VM '{}'", vmBackup.getVmId());
         }
 
+        updateVmBackupPhase(VmBackupPhase.STARTING);
         persistCommandIfNeeded();
         setActionReturnValue(vmBackupId);
         setSucceeded(true);
@@ -171,47 +172,40 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         restoreCommandState();
 
         switch (getParameters().getVmBackup().getPhase()) {
-            case INITIALIZING:
-                updateVmBackupPhase(VmBackupPhase.STARTING);
-                break;
-
             case STARTING:
-                updateVmBackupPhase(VmBackupPhase.READY);
-                break;
-
-            case READY:
-                return true;
-        }
-        persistCommandIfNeeded();
-        executeNextOperation();
-        return true;
-    }
-
-    private void executeNextOperation() {
-        switch (getParameters().getVmBackup().getPhase()) {
-            case STARTING:
-                lockDisks();
-                VmBackupInfo vmBackupInfo = startVmBackup();
-                if (vmBackupInfo != null && vmBackupInfo.getDisks() != null) {
-                    if (vmBackupInfo.getCheckpoint() != null) {
-                        vmCheckpointDao.updateCheckpointXml(getParameters().getVmBackup().getToCheckpointId(),
-                                vmBackupInfo.getCheckpoint());
-                    }
-                    storeBackupsUrls(vmBackupInfo.getDisks());
+                if (runVmBackup()) {
+                    updateVmBackupPhase(VmBackupPhase.READY);
+                    log.info("Ready to start image transfers using backup URLs");
                 } else {
                     setCommandStatus(CommandStatus.FAILED);
                 }
                 break;
 
             case READY:
-                log.info("Ready to start image transfers using backup URLs");
-                break;
+                return true;
 
             case FINALIZING:
                 finalizeVmBackup();
                 setCommandStatus(CommandStatus.SUCCEEDED);
                 break;
         }
+        persistCommandIfNeeded();
+        return true;
+    }
+
+    private boolean runVmBackup() {
+        lockDisks();
+        VmBackupInfo vmBackupInfo = startVmBackup();
+        if (vmBackupInfo == null || vmBackupInfo.getDisks() == null) {
+            return false;
+        }
+
+        if (vmBackupInfo.getCheckpoint() != null) {
+            vmCheckpointDao.updateCheckpointXml(getParameters().getVmBackup().getToCheckpointId(),
+                    vmBackupInfo.getCheckpoint());
+        }
+        storeBackupsUrls(vmBackupInfo.getDisks());
+        return true;
     }
 
     private void finalizeVmBackup() {
