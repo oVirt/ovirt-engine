@@ -2250,11 +2250,12 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public VmBackupInfo vmBackupInfo(String vmId, String backupId) {
+    public VmBackupInfo vmBackupInfo(String vmId, String backupId, String checkpointId) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.backup_info")
                         .withParameter("vmID", vmId)
                         .withParameter("backup_id", backupId)
+                        .withParameter("checkpoint_id", checkpointId)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new VmBackupInfo(response);

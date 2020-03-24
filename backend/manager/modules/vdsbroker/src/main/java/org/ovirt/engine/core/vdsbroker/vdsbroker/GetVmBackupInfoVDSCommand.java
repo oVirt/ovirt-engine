@@ -15,7 +15,8 @@ public class GetVmBackupInfoVDSCommand<P extends VmBackupVDSParameters> extends 
     protected void executeVdsBrokerCommand() {
         vmBackupInfo = getBroker().vmBackupInfo(
                 getParameters().getVmBackup().getVmId().toString(),
-                getParameters().getVmBackup().getId().toString());
+                getParameters().getVmBackup().getId().toString(),
+                getParameters().getVmBackup().getToCheckpointId().toString());
         proceedProxyReturnValue();
         setReturnValue(vmBackupInfo);
     }

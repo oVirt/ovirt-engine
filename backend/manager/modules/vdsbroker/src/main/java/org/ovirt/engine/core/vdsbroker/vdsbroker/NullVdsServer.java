@@ -953,7 +953,7 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
-    @Override public VmBackupInfo vmBackupInfo(String vmId, String backupId) {
+    @Override public VmBackupInfo vmBackupInfo(String vmId, String backupId, String checkpointId) {
         return null;
     }
 

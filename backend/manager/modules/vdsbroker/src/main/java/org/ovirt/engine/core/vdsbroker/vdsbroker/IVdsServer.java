@@ -528,7 +528,7 @@ public interface IVdsServer {
 
     StatusOnlyReturn stopVmBackup(String vmId, String backupId);
 
-    VmBackupInfo vmBackupInfo(String vmId, String backupId);
+    VmBackupInfo vmBackupInfo(String vmId, String backupId, String checkpointId);
 
     StatusOnlyReturn redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints);
 
