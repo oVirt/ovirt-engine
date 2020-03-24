@@ -247,7 +247,7 @@ public class ProviderModel extends Model {
     }
 
     private boolean supportsAuthApiV3() {
-        return isTypeOpenStackNetwork();
+        return isTypeOpenStack();
     }
 
     private boolean isTypeOpenStack() {
