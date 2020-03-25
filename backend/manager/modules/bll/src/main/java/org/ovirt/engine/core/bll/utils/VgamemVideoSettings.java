@@ -20,8 +20,8 @@ public class VgamemVideoSettings {
     @Inject
     private OsRepository osRepository;
 
-    // Displays up to 4 Mpix fit into this; higher resolutions are currently
-    // not supported by the drivers.
+    // Displays up to 4 Mpix fit into this; higher resolutions are
+    // supported only on Windows 10, handled by vgamemMultiplier.
     private static final int BASE_RAM_SIZE = 16384; // KB
     private static final int DEFAULT_VRAM_SIZE = 8192; // KB
     private static final int RAM_MULTIPLIER = 4;
@@ -36,12 +36,13 @@ public class VgamemVideoSettings {
         // computation as simple as possible for now.
         Map<String, Integer> settings = new HashMap<>();
         int heads = vmBase.getSingleQxlPci() ? vmBase.getNumOfMonitors() : 1;
-        int vgamem = BASE_RAM_SIZE * heads;
+        int baseRam = BASE_RAM_SIZE * heads;
         int vramMultiplier = getVramMultiplier(vmBase);
-        int vram = vramMultiplier == 0 ? DEFAULT_VRAM_SIZE : vramMultiplier * vgamem;
+        int vram = vramMultiplier == 0 ? DEFAULT_VRAM_SIZE : vramMultiplier * baseRam;
+        int vgamem = getVgamemMultiplier(vmBase) * baseRam;
         settings.put(VdsProperties.VIDEO_HEADS, heads);
         settings.put(VdsProperties.VIDEO_VGAMEM, vgamem);
-        settings.put(VdsProperties.VIDEO_RAM, RAM_MULTIPLIER * vgamem);
+        settings.put(VdsProperties.VIDEO_RAM, RAM_MULTIPLIER * baseRam);
         settings.put(VdsProperties.VIDEO_VRAM, vram);
         return settings;
     }
@@ -61,5 +62,9 @@ public class VgamemVideoSettings {
 
     private int getVramMultiplier(VmBase vmBase) {
         return osRepository.getVramMultiplier(vmBase.getOsId());
+    }
+
+    private int getVgamemMultiplier(VmBase vmBase) {
+        return osRepository.getVgamemMultiplier(vmBase.getOsId());
     }
 }

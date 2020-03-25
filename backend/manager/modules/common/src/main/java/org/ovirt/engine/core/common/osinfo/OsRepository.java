@@ -115,6 +115,11 @@ public interface OsRepository {
      */
     int getVramMultiplier(int osId);
 
+     /**
+      * @return Multiplier to apply in `vgamem' video RAM parameter computation.  Defaults to 1 if unspecified.
+     */
+    int getVgamemMultiplier(int osId);
+
     /**
      * @return map (osId -> compatibility version -> Boolean) that indicates balloon disabled for all OSs and
      * compatibility versions

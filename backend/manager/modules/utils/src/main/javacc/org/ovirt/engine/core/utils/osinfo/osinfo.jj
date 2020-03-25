@@ -58,6 +58,7 @@ void devices() : {} {
     (
       ("display.protocols" displayValue())
     | ("display.vramMultiplier" intValue())
+    | ("display.vgamemMultiplier" intValue())
     | ("watchdog.models" watchdogValue())
     | ("network" networkValue())
     | ("network.hotplugSupport" booleanValue())
