@@ -26,6 +26,7 @@ public class AnsibleExecutor {
 
     private static Logger log = LoggerFactory.getLogger(AnsibleExecutor.class);
     private static final int POLL_INTERVAL = 3000;
+    private static final String SSH_TIMEOUT = "SSH timeout waiting for response";
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -149,6 +150,12 @@ public class AnsibleExecutor {
             throw new PlaybookExecutionException(
                 "Timeout exceed while waiting for playbook. ", command.playbook()
             );
+        } catch (InventoryException ex) {
+            String message = ex.getMessage();
+            log.error("Error executing playbook: {}", message);
+            log.debug("InventoryException: ", ex);
+            ret.setStderr(message);
+            ret.setAnsibleReturnCode(message.contains(SSH_TIMEOUT) ? AnsibleReturnCode.UNREACHABLE: AnsibleReturnCode.FAIL);
         } catch (Exception ex) {
             log.error("Exception: {}", ex.getMessage());
             log.debug("Exception: ", ex);
