@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -319,19 +318,12 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         } else if (oldCluster.getArchitecture() != getCluster().getArchitecture()) {
             // if architecture was changed, emulated machines must be updated when adding new host.
             // At this point the cluster is empty and have changed CPU name
-            // Also, along with the emulation machines, the Bios Type needs to be updated as well.
             getParameters().getCluster().setDetectEmulatedMachine(true);
             getParameters().getCluster().setEmulatedMachine(null);
-            getCluster().setBiosType(null);
         }
 
         if (getParameters().isForceResetEmulatedMachine()) {
             getParameters().getCluster().setDetectEmulatedMachine(true);
-        }
-
-        // Like the Emulation Machines, the Bios Type should also be reset if it is null.
-        if (getCluster().getBiosType() == null) {
-            setDefaultBiosType();
         }
 
         TransactionSupport.executeInNewTransaction(() -> {
@@ -649,19 +641,6 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     private void updateGlusterHosts() {
         allHostsForCluster.forEach(glusterCommandHelper::initGlusterHost);
     }
-
-    private void setDefaultBiosType() {
-        Cluster cluster = getCluster();
-        if (cluster.getCompatibilityVersion() != null
-                && cluster.getCompatibilityVersion().greaterOrEquals(Version.v4_4)
-                && cluster.getArchitecture() != null
-                && cluster.getArchitecture().getFamily() == ArchitectureType.x86) {
-            cluster.setBiosType(BiosType.Q35_SEA_BIOS);
-        } else {
-            cluster.setBiosType(BiosType.I440FX_SEA_BIOS);
-        }
-    }
-
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
