@@ -157,7 +157,9 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
     private HttpLocationInfo prepareRepoImageLocation() {
         return new HttpLocationInfo(
-                getProviderProxy().getImageUrl(getParameters().getSourceRepoImageId()),
+                getProviderProxy().getImageUrl(
+                        imagesHandler.getSpmCompatibilityVersion(getParameters().getStoragePoolId()),
+                        getParameters().getSourceRepoImageId()),
                 getProviderProxy().getDownloadHeaders());
     }
 

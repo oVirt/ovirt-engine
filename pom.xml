@@ -86,7 +86,7 @@
     <kubevirt-client.version>0.5.0</kubevirt-client.version>
     <resteasy.version>3.6.1.Final</resteasy.version>
     <!-- OpenStack -->
-    <openstack-client.version>3.2.8</openstack-client.version>
+    <openstack-client.version>3.2.9</openstack-client.version>
     <!-- libsass -->
     <libsass-maven-plugin.version>0.2.8-libsass_3.4.4</libsass-maven-plugin.version>
 

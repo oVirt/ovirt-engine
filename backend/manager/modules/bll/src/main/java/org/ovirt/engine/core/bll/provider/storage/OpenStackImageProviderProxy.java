@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.openstack.CustomizedRESTEasyConnector;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -21,16 +22,17 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
 
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.base.client.OpenStackResponseException;
-import com.woorea.openstack.glance.Glance;
-import com.woorea.openstack.glance.model.Image;
-import com.woorea.openstack.glance.model.ImageDownload;
-import com.woorea.openstack.glance.model.Images;
+import com.woorea.openstack.glance.model.v2.Image;
+import com.woorea.openstack.glance.model.v2.ImageDownload;
+import com.woorea.openstack.glance.model.v2.Images;
+import com.woorea.openstack.glance.v2.Glance;
 
 public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProviderProxy<Glance, OpenStackImageProviderProperties, GlanceProviderValidator> {
 
@@ -64,7 +66,11 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
         }
     }
 
-    private static final String API_VERSION = "/v1";
+    private static final String API_VERSION_V1 = "/v1";
+
+    private static final String API_VERSION_V2 = "/v2";
+
+    private static final String API_VERSION = API_VERSION_V2;
 
     private static final int QCOW2_SIGNATURE = 0x514649fb;
 
@@ -72,6 +78,11 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
 
     public OpenStackImageProviderProxy(Provider<OpenStackImageProviderProperties> provider) {
         this.provider = provider;
+    }
+
+    @Override
+    protected String getTestUrlPath() {
+        return "/images";
     }
 
     @Override
@@ -297,7 +308,22 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
     }
 
     public String getImageUrl(String id) {
-        return getProvider().getUrl() + API_VERSION  + "/images/" + id;
+        return getImageUrl(API_VERSION_V1, id);
+    }
+
+    public String getImageUrl(Version compatibilityVersion, String id) {
+        return getImageUrl(getOpenStackImageServiceApiVersion(compatibilityVersion), id);
+    }
+
+    private String getImageUrl(String apiVersion, String id) {
+        return getProvider().getUrl() + apiVersion  + "/images/" + id;
+    }
+
+    private String getOpenStackImageServiceApiVersion(Version compatibilityVersion) {
+        if (FeatureSupported.isOpenStackImageServiceApiV2Supported(compatibilityVersion)) {
+            return API_VERSION_V2;
+        }
+        return API_VERSION_V1;
     }
 
     @Override

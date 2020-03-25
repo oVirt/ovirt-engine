@@ -42,6 +42,11 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
     }
 
     @Override
+    protected String getTestUrlPath() {
+        return "/";
+    }
+
+    @Override
     public void onAddition() {
         Guid storageDomainId = addStorageDomain(StorageType.CINDER, StorageDomainType.Volume);
         Guid storagePoolId = provider.getAdditionalProperties().getStoragePoolId();

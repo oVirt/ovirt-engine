@@ -227,4 +227,15 @@ public class FeatureSupported {
     public static boolean isIncrementalBackupSupported(Version version) {
         return supportedInConfig(ConfigValues.IsIncrementalBackupSupported, version);
     }
+
+    /**
+     * Check if v2 of OpenStack Image Service API is supported.
+     * The API v2 is supported only in vdsm of oVirt >= 4.4
+     *
+     * @param version Compatibility version to check for.
+     * @return true if Image Service API v2 is supported.
+     */
+    public static boolean isOpenStackImageServiceApiV2Supported(Version version) {
+        return Version.v4_4.lessOrEquals(version);
+    }
 }

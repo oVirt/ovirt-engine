@@ -99,7 +99,7 @@
 %global vdsm_user vdsm
 
 %if 0%{?rhel} || 0%{?fedora} >= 31
-%global openstack_java_version 3.2.8
+%global openstack_java_version 3.2.9
 %else
 # Needed only until we build for Fedora 30
 %global openstack_java_version 3.2.7

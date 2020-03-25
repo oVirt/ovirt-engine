@@ -30,6 +30,8 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -73,6 +75,7 @@ import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -147,6 +150,9 @@ public class ImagesHandler {
 
     @Inject
     private VdsDao vdsDao;
+
+    @Inject
+    private StoragePoolDao storagePoolDao;
 
     /**
      * The following method will find all images and storages where they located for provide template and will fill an
@@ -1086,5 +1092,11 @@ public class ImagesHandler {
 
         return vdsCommandsHelper.getHostForExecution(storagePoolID,
                 vds -> FeatureSupported.isMeasureVolumeSupported(vds));
+    }
+
+    public Version getSpmCompatibilityVersion(Guid storagePoolId) {
+        StoragePool storagePool = storagePoolDao.get(storagePoolId);
+        VDS vds = vdsDao.get(storagePool.getSpmVdsId());
+        return vds.getClusterCompatibilityVersion();
     }
 }
