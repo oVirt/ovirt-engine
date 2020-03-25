@@ -139,6 +139,10 @@ public class AnsibleExecutor {
                     return ret;
                 } else if (status.equalsIgnoreCase("unknown")) {
                     // ignore and continue:
+                } else if (runnerClient.isHostUnreachable(playUuid)) {
+                    ret.setStderr(msg);
+                    ret.setAnsibleReturnCode(AnsibleReturnCode.UNREACHABLE);
+                    return ret;
                 } else {
                     // Playbook failed:
                     return ret;
