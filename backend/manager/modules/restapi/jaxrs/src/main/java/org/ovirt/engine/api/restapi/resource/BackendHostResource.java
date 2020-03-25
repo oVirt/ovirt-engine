@@ -60,6 +60,7 @@ import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -142,7 +143,13 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         VDS vds = getEntity();
         UpdateVdsActionParameters params = new UpdateVdsActionParameters(vds.getStaticData(), action.getRootPassword(), true);
         params.setFenceAgents(null);  // Explicitly set null, to be clear we don't want to update fence agents.
-        params.setHostedEngineDeployConfiguration(HostResourceParametersUtil.getHostedEngineDeployConfiguration(this));
+        if (action.isSetDeployHostedEngine() && action.isDeployHostedEngine()) {
+            params.setHostedEngineDeployConfiguration(
+                    new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY));
+        } else if (action.isSetUndeployHostedEngine() && action.isUndeployHostedEngine()) {
+            params.setHostedEngineDeployConfiguration(
+                    new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.UNDEPLOY));
+        }
         params = (UpdateVdsActionParameters) getMapper
                 (Action.class, VdsOperationActionParameters.class).map(action, params);
         if (vds.isOvirtVintageNode()) {
@@ -414,6 +421,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
                                            lookupClusterByName(host.getCluster().getName()).getId();
     }
 
+    @Override
     protected Cluster lookupClusterByName(String name) {
         return getEntity(Cluster.class,
                 QueryType.GetClusterByName,
@@ -726,6 +734,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return inject(new BackendHostDevicesResource(guid));
     }
 
+    @Override
     public StorageServerConnectionExtensionsResource getStorageConnectionExtensionsResource() {
         return inject(new BackendStorageServerConnectionExtensionsResource(guid));
     }
