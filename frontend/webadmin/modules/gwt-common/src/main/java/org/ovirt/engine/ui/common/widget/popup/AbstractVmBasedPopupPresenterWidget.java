@@ -150,7 +150,9 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
     }
 
     private void switchAccordingToCluster(final UnitVmModel model) {
-        getView().switchManaged(model.getDataCenterWithClustersList().getSelectedItem().getCluster().isManaged());
+        if (model.getDataCenterWithClustersList().getSelectedItem() != null) {
+            getView().switchManaged(model.getDataCenterWithClustersList().getSelectedItem().getCluster().isManaged());
+        }
     }
 
     private void storeAdvancedModeToLocalStorage(UnitVmModel model) {
