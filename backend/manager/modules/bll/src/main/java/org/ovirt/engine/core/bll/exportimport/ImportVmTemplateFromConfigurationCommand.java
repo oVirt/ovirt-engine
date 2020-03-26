@@ -293,6 +293,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         setClusterId(getParameters().getClusterId());
         if (getCluster() != null) {
             setStoragePoolId(getCluster().getStoragePoolId());
+            getParameters().setStoragePoolId(getStoragePoolId());
         }
         super.init();
     }

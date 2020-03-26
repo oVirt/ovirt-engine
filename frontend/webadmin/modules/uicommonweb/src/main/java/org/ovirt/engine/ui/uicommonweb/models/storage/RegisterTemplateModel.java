@@ -48,6 +48,7 @@ public class RegisterTemplateModel extends RegisterEntityModel<VmTemplate, Impor
             params.setStorageDomainId(getStorageDomainId());
             params.setImagesExistOnTargetStorageDomain(true);
             params.setClusterId(cluster != null ? cluster.getId() : null);
+            params.setStoragePoolId(cluster != null ? cluster.getStoragePoolId() : null);
 
             if (isQuotaEnabled()) {
                 Quota quota = entityData.getClusterQuota().getSelectedItem();
