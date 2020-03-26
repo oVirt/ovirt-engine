@@ -29,6 +29,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public static final String QUOTA = "QUOTA";
     public static final String ID = "ID";
     public static final String WIPE_AFTER_DELETE = "WIPE_AFTER_DELETE";
+    public static final String LAST_MODIFIED = "LAST_MODIFIED";
 
     public DiskConditionFieldAutoCompleter() {
         // Building the basic verbs set.
@@ -49,6 +50,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         verbs.add(QUOTA);
         verbs.add(ID);
         verbs.add(WIPE_AFTER_DELETE);
+        verbs.add(LAST_MODIFIED);
 
         // Building the autoCompletion dict.
         buildCompletions();
@@ -71,6 +73,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put(QUOTA, String.class);
         getTypeDictionary().put(ID, UUID.class);
         getTypeDictionary().put(WIPE_AFTER_DELETE, Boolean.class);
+        getTypeDictionary().put(LAST_MODIFIED, Date.class);
 
         // building the ColumnName dict. - the name of the column in db
         columnNameDict.put(ALIAS, "disk_alias");
@@ -90,6 +93,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         columnNameDict.put(QUOTA, "quota_name");
         columnNameDict.put(ID, "disk_id");
         columnNameDict.put(WIPE_AFTER_DELETE, "wipe_after_delete");
+        columnNameDict.put(LAST_MODIFIED, "lastModified");
 
         // Building the validation dict.
         buildBasicValidationTable();
@@ -97,9 +101,11 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        if (CREATION_DATE.equals(fieldName) || SIZE.equals(fieldName)
+        if (CREATION_DATE.equals(fieldName)
+                || SIZE.equals(fieldName)
                 || ACTUAL_SIZE.equals(fieldName)
-                || PROVISIONED_SIZE.equals(fieldName)) {
+                || PROVISIONED_SIZE.equals(fieldName)
+                || LAST_MODIFIED.equals(fieldName)) {
             return BiggerOrSmallerRelationAutoCompleter.INSTANCE;
         } else if (NUMBER_OF_VMS.equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
@@ -127,7 +133,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     @Override
     public void formatValue(String fieldName, Pair<String, String> pair, boolean caseSensitive) {
-        if (CREATION_DATE.equals(fieldName)) {
+        if (CREATION_DATE.equals(fieldName) || LAST_MODIFIED.equals(fieldName)) {
             Date tmp = new Date(Date.parse(StringHelper.trim(pair.getSecond(), '\'')));
             pair.setSecond(StringFormat.format("'%1$s'", tmp));
         } else {
