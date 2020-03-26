@@ -253,7 +253,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
         sizeColumn = DisksViewColumns.getSizeColumn(DiskConditionFieldAutoCompleter.PROVISIONED_SIZE);
         allocationColumn = DisksViewColumns.getAllocationColumn(null);
         dateCreatedColumn = DisksViewColumns.getDateCreatedColumn(DiskConditionFieldAutoCompleter.CREATION_DATE);
-        dateModifiedColumn = DisksViewColumns.getDateModifiedColumn(null);
+        dateModifiedColumn = DisksViewColumns.getDateModifiedColumn(DiskConditionFieldAutoCompleter.LAST_MODIFIED);
         statusColumn = DisksViewColumns.getStatusColumn(DiskConditionFieldAutoCompleter.STATUS);
         lunIdColumn = DisksViewColumns.getLunIdColumn(null);
         lunSerialColumn = DisksViewColumns.getLunSerialColumn(null);
