@@ -887,8 +887,8 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         name=oenginecons.Stages.OVN_SERVICES_RESTART,
         condition=lambda self: (
-            (self._enabled or self._provider_installed)
-            and not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
+            (self._enabled or self._provider_installed) and not
+            self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
         )
     )
     def _restart_ovn_services(self):
@@ -1049,8 +1049,8 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
         ),
         condition=lambda self: (
-            (self._enabled or self._provider_installed)
-            and self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
+            (self._enabled or self._provider_installed) and
+            self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
         )
     )
     def _print_restart_services_commands(self):
