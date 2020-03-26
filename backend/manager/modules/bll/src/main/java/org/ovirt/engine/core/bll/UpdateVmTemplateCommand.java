@@ -448,11 +448,13 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         getVmDeviceUtils().updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
         if (oldTemplate.getUsbPolicy() != getVmTemplate().getUsbPolicy() || oldTemplate.getVmType() != getVmTemplate().getVmType()) {
             Cluster newCluster = getCluster();
-            Cluster oldCluster;
-            if (oldTemplate.getClusterId().equals(newCluster.getId())) {
-                oldCluster = newCluster;
-            } else {
-                oldCluster = oldTemplate.getClusterId() != null ? clusterDao.get(oldTemplate.getClusterId()) : null;
+            Cluster oldCluster = null;
+            if (oldTemplate.getClusterId() != null) {
+                if (oldTemplate.getClusterId().equals(newCluster.getId())) {
+                    oldCluster = newCluster;
+                } else {
+                    oldCluster = oldTemplate.getClusterId() != null ? clusterDao.get(oldTemplate.getClusterId()) : null;
+                }
             }
             getVmDeviceUtils().updateUsbSlots(oldTemplate, oldCluster, getVmTemplate(), newCluster);
         }
