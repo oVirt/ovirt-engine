@@ -767,7 +767,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private void vmInitLoaded(VM vm) {
         UnitVmModel model = new UnitVmModel(new ExistingVmModelBehavior(vm), this);
-        model.getVmType().setSelectedItem(vm.getVmType());
         model.setVmAttachedToPool(vm.getVmPoolId() != null);
         model.setIsAdvancedModeLocalStorageKey(IS_ADVANCED_MODEL_LOCAL_STORAGE_KEY);
         setWindow(model);

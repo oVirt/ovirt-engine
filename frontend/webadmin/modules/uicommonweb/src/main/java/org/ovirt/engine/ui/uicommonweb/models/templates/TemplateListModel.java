@@ -547,7 +547,6 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         model.setTitle(ConstantsManager.getInstance().getConstants().editTemplateTitle());
         model.setHelpTag(HelpTag.edit_template);
         model.setHashName("edit_template"); //$NON-NLS-1$
-        model.getVmType().setSelectedItem(template.getVmType());
         model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
 
         model.initialize();
