@@ -2,6 +2,7 @@ distributions:
   - el8
   - fc30
 
+timeout: 6h
 release_branches:
   master:
     - ovirt-master
