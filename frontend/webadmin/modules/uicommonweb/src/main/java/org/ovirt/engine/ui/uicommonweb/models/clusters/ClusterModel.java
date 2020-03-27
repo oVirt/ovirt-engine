@@ -1876,6 +1876,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
                 AsyncDataProvider.getInstance().isClusterEmpty(new AsyncQuery<>(isEmpty -> {
                     if (isEmpty) {
+                        cpus.add(0, null);
                         populateCPUList(cpus, true);
                     } else {
                         ArrayList<ServerCpu> filteredCpus = new ArrayList<>();
@@ -2122,6 +2123,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             isCPUinitialized = true;
             getCPU().setSelectedItem(null);
             for (ServerCpu a : getCPU().getItems()) {
+                if (a == null) {
+                    continue;
+                }
                 if (Objects.equals(a.getCpuName(), getEntity().getCpuName())) {
                     getCPU().setSelectedItem(a);
                     break;
