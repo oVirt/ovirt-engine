@@ -1313,8 +1313,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
         vmStatic.setId(getVmId());
         vmStatic.setQuotaId(getQuotaId());
-        vmStatic.setCreationDate(new Date());
-        vmStatic.setCreatedByUserId(getUserId());
+        if (vmStatic.isManaged()) {
+            vmStatic.setCreationDate(new Date());
+            vmStatic.setCreatedByUserId(getUserId());
+            updateOriginalTemplate(vmStatic);
+        }
         setIconIds(vmStatic);
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields
@@ -1322,8 +1325,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 .separateCustomPropertiesToUserAndPredefined(
                         getEffectiveCompatibilityVersion(),
                         vmStatic);
-
-        updateOriginalTemplate(vmStatic);
 
         vmStaticDao.save(vmStatic);
         getCompensationContext().snapshotNewEntity(vmStatic);

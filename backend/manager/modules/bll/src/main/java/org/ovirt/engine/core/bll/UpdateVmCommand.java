@@ -1267,7 +1267,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST);
             }
 
-            if (provider.getType() != ProviderType.FOREMAN) {
+            if (provider.getType() != ProviderType.FOREMAN && provider.getType() != ProviderType.KUBEVIRT) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH);
             }
         }

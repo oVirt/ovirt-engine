@@ -56,8 +56,9 @@ public class VMsMonitoring {
 
                     @Override
                     public void onUpdate(V1VirtualMachine oldVm, V1VirtualMachine newVm) {
-                        log.debug("{} => {} vm updated!",
-                                oldVm.getMetadata().getName(), newVm.getMetadata().getName());
+                        if (vmUpdater.updateVM(oldVm, newVm, clusterId)) {
+                            log.info("vm {} updated!", newVm.getMetadata().getName());
+                        }
                     }
 
                     @Override

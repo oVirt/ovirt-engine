@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
+import org.joda.time.DateTime;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -33,6 +34,8 @@ public class EntityMapper {
         Guid vmId = new Guid(metadata.getUid());
         vmStatic.setId(vmId);
         vmStatic.setName(metadata.getName());
+        DateTime createTime = metadata.getCreationTimestamp();
+        vmStatic.setCreationDate(createTime.toDate());
         vmStatic.setClusterId(clusterId);
         // for kubevirt, cluster id and provider id are equals
         vmStatic.setProviderId(clusterId);

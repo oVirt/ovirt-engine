@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.kubevirt;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 
 import io.kubernetes.client.models.V1ObjectMeta;
 import kubevirt.io.V1VirtualMachine;
@@ -101,6 +104,20 @@ public class VmUpdater {
     public boolean removeVm(Guid vmId) {
         ActionReturnValue returnValue =
                 backend.get().runInternalAction(ActionType.RemoveVm, new RemoveVmParameters(vmId, true));
+        return returnValue.getSucceeded();
+    }
+
+    public boolean updateVM(V1VirtualMachine oldVm, V1VirtualMachine newVm, Guid clusterId) {
+        VmStatic oldStatic = EntityMapper.toOvirtVm(oldVm, clusterId);
+        VmStatic newStatic = EntityMapper.toOvirtVm(newVm, clusterId);
+
+        Set<String> fields = ObjectIdentityChecker.getChangedFields(oldStatic, newStatic);
+        if (fields.isEmpty()) {
+            return false;
+        }
+
+        ActionReturnValue returnValue =
+                backend.get().runInternalAction(ActionType.UpdateVm, new VmManagementParametersBase(newStatic));
         return returnValue.getSucceeded();
     }
 }
