@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +8,8 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.JsonNodeFactory;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -32,7 +33,6 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
-import org.ovirt.engine.core.utils.JsonHelper;
 
 public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
 
@@ -142,7 +142,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
 
     private void runAnsibleCreateBrickPlaybook() throws IOException, InterruptedException {
 
-        List<String> disks = new ArrayList<>();
+        ArrayNode disks = JsonNodeFactory.instance.arrayNode();
         Double totalSize = 0.0;
         for (StorageDevice device : getParameters().getDisks()) {
             disks.add(device.getDevPath());
@@ -167,7 +167,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("ssd", ssdDevice)
-                .variable("disks", JsonHelper.objectToJson(disks, false))
+                .variable("disks", disks)
                 .variable("vgname", "RHGS_vg_" + getParameters().getLvName())
                 .variable("size", totalSize.toString())
                 .variable("diskcount", diskCount)
