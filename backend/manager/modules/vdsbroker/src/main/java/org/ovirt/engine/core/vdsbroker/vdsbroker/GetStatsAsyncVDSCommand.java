@@ -15,6 +15,9 @@ public class GetStatsAsyncVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBa
     @Inject
     private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
 
+    @Inject
+    private MultipathHealthHandler multipathHealthHandler;
+
     public GetStatsAsyncVDSCommand(P parameters) {
         super(parameters, parameters.getVds());
     }
@@ -43,6 +46,7 @@ public class GetStatsAsyncVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBa
                 proceedProxyReturnValue();
                 vdsBrokerObjectsBuilder.updateVDSStatisticsData(getVds(), infoReturn.info);
                 vdsBrokerObjectsBuilder.checkTimeDrift(getVds(), infoReturn.info);
+                multipathHealthHandler.handleMultipathHealthReport(getVds(), infoReturn.info);
                 getParameters().getCallback().onResponse(Collections.singletonMap("result", getVDSReturnValue()));
             } catch (Exception ex) {
                 getParameters().getCallback().onFailure(ex);
