@@ -20,7 +20,7 @@ class TicketEncoder():
 
     def encode(self, data):
         d = {
-            'salt': base64.b64encode(Rand.rand_bytes(8)),
+            'salt': base64.b64encode(Rand.rand_bytes(8)).decode('ascii'),
             'digest': 'sha1',
             'validFrom': self._formatDate(datetime.datetime.utcnow()),
             'validTo': self._formatDate(
@@ -36,13 +36,14 @@ class TicketEncoder():
         fields = []
         for k, v in d.items():
             fields.append(k)
-            self._pkey.sign_update(v)
+            self._pkey.sign_update(v.encode('utf-8'))
 
         d['signedFields'] = ','.join(fields)
-        d['signature'] = base64.b64encode(self._pkey.sign_final())
-        d['certificate'] = self._x509.as_pem()
+        signature = self._pkey.sign_final()
+        d['signature'] = base64.b64encode(signature).decode('ascii')
+        d['certificate'] = self._x509.as_pem().decode('utf-8')
 
-        return base64.b64encode(json.dumps(d))
+        return base64.b64encode(json.dumps(d).encode('utf-8'))
 
 
 class TicketDecoder():
