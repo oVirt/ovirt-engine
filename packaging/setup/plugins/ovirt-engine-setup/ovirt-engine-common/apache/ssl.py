@@ -275,7 +275,10 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _misc(self):
-        self._read_and_process_file()  # Read again, in case it was updated
+        # Read the file again, in case it was updated. Reset _changed_lines,
+        # to not collect twice the changes we do.
+        self._changed_lines = []
+        self._read_and_process_file()
         self.environment[oengcommcons.ApacheEnv.NEED_RESTART] = True
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
