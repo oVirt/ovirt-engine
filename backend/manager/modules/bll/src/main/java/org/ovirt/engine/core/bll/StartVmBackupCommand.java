@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -213,6 +214,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             if (vmBackupInfo == null) {
                 return false;
             }
+        } else if (vmBackupInfo.getCheckpoint() == null && !isBackupContainsRawDisksOnly()) {
+            vmBackupInfo = recoverFromMissingCheckpointInfo();
+            if (vmBackupInfo == null) {
+                return false;
+            }
         }
 
         if (vmBackupInfo.getCheckpoint() != null) {
@@ -230,6 +236,21 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             log.error("Failed to start VM '{}' backup '{}' on the host",
                     getVmId(),
                     getParameters().getVmBackup().getId());
+            return null;
+        }
+        return vmBackupInfo;
+    }
+
+    private VmBackupInfo recoverFromMissingCheckpointInfo() {
+        // Try to fetch the checkpoint XML again
+        VmBackupInfo vmBackupInfo = performVmBackupOperation(VDSCommandType.GetVmBackupInfo);
+        if (vmBackupInfo == null || vmBackupInfo.getCheckpoint() == null) {
+            // Best effort - stop the backup
+            runInternalAction(ActionType.StopVmBackup, getParameters());
+            auditLogDirector.log(this, AuditLogType.VM_BACKUP_STOPPED);
+            log.error("Failed to fetch checkpoint id: '{}' XML from Libvirt, VM id: '{}' "
+                            + "backup chain cannot be used anymore and a full backup should be taken.",
+                    getParameters().getVmBackup().getToCheckpointId(), getVmId());
             return null;
         }
         return vmBackupInfo;

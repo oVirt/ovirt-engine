@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -60,8 +61,7 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
     private boolean stopVmBackup() {
         VDSReturnValue vdsRetVal;
         try {
-            getParameters().getVmBackup().setDisks(
-                    vmBackupDao.getDisksByBackupId(getVmId()));
+            getParameters().getVmBackup().setDisks(getDisks());
             vdsRetVal = runVdsCommand(VDSCommandType.StopVmBackup,
                     new VmBackupVDSParameters(getVdsId(), getParameters().getVmBackup()));
             if (!vdsRetVal.getSucceeded()) {
@@ -74,6 +74,12 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
             log.error("Failed to execute VM.stopBackup: {}", e);
             return false;
         }
+    }
+
+    private List<DiskImage> getDisks() {
+        return getParameters().getVmBackup().getDisks() == null ?
+                vmBackupDao.getDisksByBackupId(getParameters().getVmBackup().getId()) :
+                getParameters().getVmBackup().getDisks();
     }
 
     @Override
