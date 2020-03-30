@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -31,6 +32,7 @@ import io.kubernetes.client.ApiException;
 import io.kubernetes.client.informer.SharedInformerFactory;
 import kubevirt.io.KubevirtApi;
 import kubevirt.io.V1DeleteOptions;
+import kubevirt.io.V1Status;
 import kubevirt.io.V1VirtualMachine;
 import openshift.io.OpenshiftApi;
 import openshift.io.V1Route;
@@ -223,8 +225,19 @@ public class ClusterMonitoring {
     public void migrateVm(VM vm) {
         try {
             getKubevirtApi().migrate(vm.getNamespace(), vm.getName());
-        } catch (ApiException e) {
-            handleException(e, "failed to interact with kubevirt migrate endpoint");
+        } catch (ApiException ae) {
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            String msg = "";
+            try {
+                V1Status status = objectMapper.readValue(ae.getResponseBody(), V1Status.class);
+                msg = status.getMessage();
+            } catch (IOException e) {
+                // Not useful but in case of parsing failure
+                msg = ae.getMessage();
+            }
+
+            throw new EngineException(EngineError.migrateErr, msg);
         }
     }
 
