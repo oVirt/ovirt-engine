@@ -35,9 +35,9 @@ source automation/jvm-opts.sh
 MAVEN_OPTS="$MAVEN_OPTS $JVM_MEM_OPTS"
 export MAVEN_OPTS
 
-BUILD_UT=1
-RUN_DAO_TESTS=1
-BUILD_GWT=1
+BUILD_UT=0
+RUN_DAO_TESTS=0
+BUILD_GWT=0
 if [ -z "${MILESTONE}" ]; then
 	BUILD_UT=1
 	RUN_DAO_TESTS=1
@@ -206,12 +206,19 @@ rpmbuild \
     -D "_topmdir $PWD/rpmbuild" \
     ${SUFFIX:+-D "release_suffix ${SUFFIX}"} \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
+    ${MILESTONE:+-D "ovirt_build_quick 1"} \
     -ts ./*.gz
 
 # install any build requirements
 yum-builddep output/*src.rpm
 
+# create the rpms
+# default runs without GWT
+RPM_BUILD_MODE="ovirt_build_quick"
 
+if [[ $BUILD_GWT -eq 1 ]]; then
+    RPM_BUILD_MODE="ovirt_build_draft"
+fi
 
 rpmbuild \
     -D "_rpmdir $PWD/output" \
@@ -219,6 +226,7 @@ rpmbuild \
     ${SUFFIX:+-D "release_suffix ${SUFFIX}"} \
     -D "ovirt_build_ut $BUILD_UT" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
+    ${MILESTONE:+-D "${RPM_BUILD_MODE} 1"} \
     --rebuild output/*.src.rpm
 
 # Store any relevant artifacts in exported-artifacts for the ci system to
