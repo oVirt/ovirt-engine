@@ -232,7 +232,10 @@ class OvirtProxyRequestHandler(websockify.ProxyRequestHandler):
             self._proxy._ticketDecoder.decode(path[1:])))
         target_host = connection_data['host'].encode('utf8')
         target_port = connection_data['port'].encode('utf8')
-        path = connection_data['path']
+        try:
+            path = connection_data['path']
+        except KeyError:
+            path = None
         if path is not None:
             self.target_path = path.encode('utf8')
         token = connection_data['token']
