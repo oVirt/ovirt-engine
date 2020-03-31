@@ -53,6 +53,7 @@ def convert_disks(ova_path):
                                ova_path])
         loop = from_bytes(output.splitlines()[0])
         loop_stat = os.stat(loop)
+        call(['udevadm', 'settle'])
         vdsm_user = pwd.getpwnam('vdsm')
         os.chown(loop, vdsm_user.pw_uid, vdsm_user.pw_gid)
         try:
