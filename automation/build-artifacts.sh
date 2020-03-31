@@ -38,9 +38,6 @@ else
 	export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS"
 fi
 
-# this is beta build and we want full build:
-export EXTRA_BUILD_FLAGS="-gs $MAVEN_SETTINGS"
-
 export BUILD_JAVA_OPTS_GWT="$JVM_MEM_OPTS"
 
 # Set the location of the JDK that will be used for compilation:
@@ -94,9 +91,9 @@ rpmbuild \
 yum-builddep output/*src.rpm
 
 # build minimal rpms for CI, fuller ones for releases
-BUILD_UT=1
-BUILD_ALL_USER_AGENTS=1
-BUILD_LOCALES=1
+BUILD_UT=0
+BUILD_ALL_USER_AGENTS=0
+BUILD_LOCALES=0
 
 if [ -n "${MILESTONE}" ]; then
 	BUILD_UT=1
