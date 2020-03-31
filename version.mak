@@ -6,7 +6,7 @@
 # Set to empty on release builds:
 # MILESTONE=
 #
-MILESTONE=master
+MILESTONE=beta2
 
 # RPM_RELEASE_ON_RELEASE should be set to the rpm release to have on release (non-SNAPSHOT) builds.
 RPM_RELEASE_ON_RELEASE=1
