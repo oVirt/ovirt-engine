@@ -1593,6 +1593,17 @@ etc/httpd/conf.d/ovirt-engine-root-redirect.conf
 __EOF__
 	fi
 
+	# In 4.2 and 4.3 we had conf files pointing at SCL PG version
+	# to use. These are not needed and packaged in 4.4 anymore, but
+	# there is still code that uses them if exist. So exclude
+	# them if we didn't need SCL ourselves.
+	if [ -z "$sclenv" ]; then
+		cat >> "${excluded_files}" << __EOF__
+etc/ovirt-engine/engine.conf.d/10-scl-postgres.conf
+etc/ovirt-engine-dwh/ovirt-engine-dwhd.conf.d/10-scl-postgres.conf
+__EOF__
+	fi
+
 	# Restore!
 	tar -C / -pSsx --exclude-from "${excluded_files}" -f "${archive}" || \
 		logdie "Failed restoring ${paths}"
