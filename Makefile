@@ -41,7 +41,7 @@ WITH_PYTHON3=1
 endif
 PYFLAKES=$(shell which pyflakes 2> /dev/null)
 PY_VERSION=$(if $(PYTHON3),3,2)
-PEP8=pep8
+PEP8=$(shell which pep8 2> /dev/null || which pycodestyle-3 2> /dev/null)
 ISORT=isort
 PREFIX=/usr/local
 LOCALSTATE_DIR=$(PREFIX)/var

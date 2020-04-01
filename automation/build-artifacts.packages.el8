@@ -12,6 +12,7 @@ postgresql-contrib
 postgresql-jdbc
 postgresql-server
 python3-mock
+python3-pycodestyle
 python3-psycopg2
 python3-pytest
 python3-devel
