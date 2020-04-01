@@ -2262,6 +2262,10 @@ public class LibvirtVmXmlBuilder {
     private void writeGeneralDiskAttributes(VmDevice device, Disk disk, DiskVmElement dve) {
         writer.writeAttributeString("snapshot", "no");
 
+        if (vmInfoBuildUtils.isLegacyVirtio(vm.getVmOsId(), ChipsetType.fromMachineType(emulatedMachine), dve.getDiskInterface())) {
+            writer.writeAttributeString("model", "virtio-transitional");
+        }
+
         switch (disk.getDiskStorageType()) {
         case IMAGE:
             writer.writeAttributeString("type", this.vmInfoBuildUtils.getDiskType(this.vm, (DiskImage) disk, device));

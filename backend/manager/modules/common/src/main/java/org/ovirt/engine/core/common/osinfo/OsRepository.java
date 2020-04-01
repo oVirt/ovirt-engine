@@ -312,4 +312,11 @@ public interface OsRepository {
      * Checks if the operating system requires special memory block when hot-plugging memory
      */
     boolean requiresHotPlugSpecialBlock(int osId, Version version);
+
+    /**
+     * Checks if the operation system requires legacy virtio support
+     * @param osId operation system id
+     * @param chipset the VM's chipset
+     */
+    boolean requiresLegacyVirtio(int osId, ChipsetType chipset);
 }

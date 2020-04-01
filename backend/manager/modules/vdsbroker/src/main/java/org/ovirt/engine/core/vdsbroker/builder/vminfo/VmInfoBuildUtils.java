@@ -1290,6 +1290,17 @@ public class VmInfoBuildUtils {
         return osRepository.getCdInterface(osId, version, chipset);
     }
 
+    public boolean isLegacyVirtio(int osId, ChipsetType chipset, DiskInterface diskInterface) {
+        boolean legacyRequired = osRepository.requiresLegacyVirtio(osId, chipset);
+        switch(diskInterface) {
+            case VirtIO:
+            case VirtIO_SCSI:
+            case SPAPR_VSCSI:
+                return legacyRequired;
+        }
+        return false;
+    }
+
     public boolean isKASLRDumpEnabled(int osId) {
         return osRepository.isLinux(osId) && Config.<Boolean> getValue(ConfigValues.EnableKASLRDump);
     }

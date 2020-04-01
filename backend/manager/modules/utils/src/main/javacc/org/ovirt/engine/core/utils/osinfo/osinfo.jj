@@ -74,6 +74,7 @@ void devices() : {} {
     | ("usb.controller" usbControllerModelValue())
     | ("console.target.type" consoleTargetTypeValue())
     | ("memoryHotplug.specialBlock" booleanValue())
+    | ("legacyVirtio" booleanValue())
     )
 }
 

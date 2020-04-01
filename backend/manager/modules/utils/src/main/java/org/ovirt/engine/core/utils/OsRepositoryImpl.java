@@ -270,6 +270,14 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public boolean requiresLegacyVirtio(int osId, ChipsetType chipset) {
+        return ChipsetType.Q35 == chipset &&
+                getBoolean(getValueByVersion(idToUnameLookup.get(osId),
+                "devices.legacyVirtio",
+                null), false);
+    }
+
+    @Override
     public List<String> getNetworkDevices(int osId, Version version) {
         String devices =
                 getValueByVersion(idToUnameLookup.get(osId), "devices.network", version);
