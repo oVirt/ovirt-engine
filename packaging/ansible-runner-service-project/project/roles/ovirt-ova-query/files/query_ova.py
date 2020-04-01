@@ -5,7 +5,7 @@ import tarfile
 import six
 
 if len(sys.argv) < 4:
-    print ("Usage: query_ova.py <vm/template> ova_path list_directory")
+    print("Usage: query_ova.py <vm/template> ova_path list_directory")
     sys.exit(2)
 
 
@@ -80,4 +80,4 @@ else:
     templates = sys.argv[1] == "template"
     ovf = get_ovf_from_dir(ova_path, sys.argv[3], templates)
 
-print (ovf)
+print(ovf)

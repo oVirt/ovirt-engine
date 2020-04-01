@@ -27,6 +27,7 @@ from ovirt_engine_setup import constants as osetupcons
 def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
+
 _HASH_ALGORITHMS = ('sha256', 'md5')
 
 

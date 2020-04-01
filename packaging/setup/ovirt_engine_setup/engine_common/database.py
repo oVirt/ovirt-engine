@@ -266,7 +266,7 @@ class Statement(base.Base):
                         break
                     ret.append(dict(zip(cols, entry)))
 
-        except:
+        except Exception:
             if _connection is not None:
                 _connection.rollback()
             raise
@@ -808,12 +808,12 @@ class OvirtUtils(base.Base):
         'ERROR:  must be owner of extension plpgsql',
         # pg_restore
         (
-            'pg_restore: \[archiver \(db\)\] could not execute query: ERROR:  '
-            'must be owner of extension plpgsql'
+            'pg_restore: \\[archiver \\(db\\)\\] could not execute query: '
+            'ERROR:  must be owner of extension plpgsql'
         ),
         (
-            'pg_restore: \[archiver \(db\)\] could not execute query: ERROR:  '
-            'must be owner of extension uuid-ossp'
+            'pg_restore: \\[archiver \\(db\\)\\] could not execute query: '
+            'ERROR:  must be owner of extension uuid-ossp'
         ),
 
         # older versions of dwh used uuid-ossp, which requires
@@ -834,21 +834,21 @@ class OvirtUtils(base.Base):
         # Other stuff, added because if we want to support other
         # formats etc we must explicitely filter all existing output
         # and not just ERRORs.
-        'pg_restore: \[archiver \(db\)\] Error while PROCESSING TOC:',
+        'pg_restore: \\[archiver \\(db\\)\\] Error while PROCESSING TOC:',
         '    Command was: COMMENT ON EXTENSION',
         (
-            'pg_restore: \[archiver \(db\)\] Error from TOC entry \d+'
+            'pg_restore: \\[archiver \\(db\\)\\] Error from TOC entry \\d+'
             '; 0 0 COMMENT EXTENSION plpgsql'
         ),
         # Extensions with names containing special characters like dash need
         # to be surrounded with double quotes.
         (
-            'pg_restore: \[archiver \(db\)\] Error from TOC entry \d+'
+            'pg_restore: \\[archiver \\(db\\)\\] Error from TOC entry \\d+'
             '; 0 0 COMMENT EXTENSION "uuid-ossp"'
         ),
         (
-            'pg_restore: \[archiver \(db\)\] Error from TOC entry \d+'
-            '; \d+ \d+ PROCEDURAL LANGUAGE plpgsql'
+            'pg_restore: \\[archiver \\(db\\)\\] Error from TOC entry \\d+'
+            '; \\d+ \\d+ PROCEDURAL LANGUAGE plpgsql'
         ),
         'pg_restore: WARNING:',
         'WARNING: ',
@@ -1389,29 +1389,29 @@ class OvirtUtils(base.Base):
             self.environment[
                 self._dbenvkeys[DEK.NEW_DATABASE]
             ] = self.isNewDatabase()
-        except:
+        except Exception:
             self.logger.debug('database connection failed', exc_info=True)
 
         try:
             self.environment[
                 self._dbenvkeys[DEK.NEED_DBMSUPGRADE]
             ] = self.checkDBMSUpgrade()
-        except:
+        except Exception:
             self.logger.debug('database version check failed', exc_info=True)
 
         if not _ind_env(self, DEK.NEW_DATABASE):
-                invalid_config_items = self.validateDbConf(name, dbenv)
-                if (
-                    invalid_config_items and
-                    DEK.INVALID_CONFIG_ITEMS in self._dbenvkeys
-                ):
-                    # If DEK.INVALID_CONFIG_ITEMS is not in self._dbenvkeys,
-                    # it probably means that this component is not interested
-                    # in invalid items. This can be removed once all components
-                    # add it, currently dwh.
-                    self.environment[
-                        self._dbenvkeys[DEK.INVALID_CONFIG_ITEMS]
-                    ] = invalid_config_items
+            invalid_config_items = self.validateDbConf(name, dbenv)
+            if (
+                invalid_config_items and
+                DEK.INVALID_CONFIG_ITEMS in self._dbenvkeys
+            ):
+                # If DEK.INVALID_CONFIG_ITEMS is not in self._dbenvkeys,
+                # it probably means that this component is not interested
+                # in invalid items. This can be removed once all components
+                # add it, currently dwh.
+                self.environment[
+                    self._dbenvkeys[DEK.INVALID_CONFIG_ITEMS]
+                ] = invalid_config_items
 
     def replaced_localhost(self, replacement=None):
         return (

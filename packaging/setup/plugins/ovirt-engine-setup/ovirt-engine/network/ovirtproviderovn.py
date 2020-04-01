@@ -391,8 +391,8 @@ class Plugin(plugin.PluginBase):
             dialog=self.dialog,
             name='ovirt-provider-ovn',
             note=_(
-                'Configure ovirt-provider-ovn (Effective only for the Default cluster and new hosts) '
-                '(@VALUES@) [@DEFAULT@]: '
+                'Configure ovirt-provider-ovn (Effective only for the '
+                'Default cluster and new hosts) (@VALUES@) [@DEFAULT@]: '
             ),
             prompt=True,
             default=True

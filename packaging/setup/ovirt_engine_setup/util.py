@@ -30,10 +30,10 @@ def editConfigContent(
     params,
     keep_existing=False,
     changed_lines=None,
-    comment_re='[#]*\s*',
-    param_re='\w+',
+    comment_re='[#]*\\s*',
+    param_re='\\w+',
     new_comment_tpl='{spaces}# {original}',
-    separator_re='\s*=\s*',
+    separator_re='\\s*=\\s*',
     new_line_tpl='{spaces}{param} = {value}',
     added_params=None,
 ):

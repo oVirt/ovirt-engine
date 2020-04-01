@@ -63,7 +63,7 @@ def nti(s):
             s = nts(s, "ascii", "strict")
             n = int(s.strip() or "0", 8)
         except ValueError:
-            print ('invalid header')
+            print('invalid header')
             raise
     else:
         n = 0
@@ -111,7 +111,7 @@ def extract_disks(ova_path, image_paths, image_mappings):
 
 
 if len(sys.argv) < 4:
-    print ("Usage: extract_ova.py ova_path disks_paths image_mappings")
+    print("Usage: extract_ova.py ova_path disks_paths image_mappings")
     sys.exit(2)
 
 extract_disks(sys.argv[1], yaml.load(sys.argv[2]), yaml.load(sys.argv[3]))

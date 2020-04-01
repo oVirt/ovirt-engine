@@ -45,7 +45,7 @@ class Plugin(plugin.PluginBase):
         ):
             try:
                 os.chmod(f, 0o600)
-            except:
+            except Exception:
                 self.logger.debug(
                     "Cannot modify permission for '%s'",
                     f,

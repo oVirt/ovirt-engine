@@ -435,13 +435,13 @@ class Provisioning(base.Base):
             )
 
     def restartPG(self):
-            self.services.state(
-                name=self.environment[
-                    oengcommcons.ProvisioningEnv.POSTGRES_SERVICE
-                ],
-                state=False,
-            )
-            self.startPG()
+        self.services.state(
+            name=self.environment[
+                oengcommcons.ProvisioningEnv.POSTGRES_SERVICE
+            ],
+            state=False,
+        )
+        self.startPG()
 
     def _waitForDatabase(self, environment=None):
         dbovirtutils = database.OvirtUtils(

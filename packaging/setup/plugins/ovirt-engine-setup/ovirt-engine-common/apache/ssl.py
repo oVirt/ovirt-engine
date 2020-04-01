@@ -48,6 +48,7 @@ def _apply_logging(lines):
 def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
+
 _HTTPD_CONF_PARAMS_DB = (
     {
         'name': 'SSLCertificateFile',
@@ -100,7 +101,7 @@ class Plugin(plugin.PluginBase):
             content=_apply_logging(self._current_content),
             params=self._params,
             changed_lines=self._changed_lines,
-            separator_re='\s+',
+            separator_re='\\s+',
             new_line_tpl='{spaces}{param} {value}',
             added_params=self._missing_params,
         )

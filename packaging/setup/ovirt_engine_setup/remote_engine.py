@@ -255,7 +255,7 @@ class EnrollCert(base.Base):
                             base_touser=self._base_touser,
                         )
                     )
-            except:
+            except Exception:
                 self.logger.error(
                     _(
                         'Error while trying to sign {base_touser} certificate'
@@ -341,7 +341,7 @@ class EnrollCert(base.Base):
                             csr=self._csr_file.name,
                         )
                     )
-            except:
+            except Exception:
                 self.logger.error(
                     _(
                         'Error while reading or parsing {cert}. '
@@ -382,7 +382,7 @@ class EnrollCert(base.Base):
                 "     --name={remote_name} \\\n"
                 "     --subject=\""
                 "$(openssl x509 -in {engine_ca_cert_file} -noout "
-                "-subject | sed 's;subject= \(/C=[^/]*/O=[^/]*\)/.*;\\1;')"
+                "-subject | sed 's;subject= \\(/C=[^/]*/O=[^/]*\\)/.*;\\1;')"
                 "/CN={fqdn}\""
             ).format(
                 remote_name=self._remote_name,
