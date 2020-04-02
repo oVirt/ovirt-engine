@@ -8,6 +8,17 @@
         if ansible_distribution == 'Fedora'
         else 0 }}"
 
+- name: Parse operating system release
+  lineinfile:
+    path: /etc/os-release
+    line: 'VARIANT_ID="ovirt-node"'
+  check_mode: yes
+  register: ngn_presence
+
+- name: Detect if host is a prebuilt image
+  set_fact:
+    ngn_host: "{{ not ngn_presence.changed }}"
+
 - block:
   - name: Reset configuration of advanced virtualization module
     shell: dnf -y module reset virt
@@ -21,6 +32,7 @@
   when:
     - host_deploy_origin_type != ovirt_origin_type
     - el_ver|int >= 8
+    - not ngn_host|bool
 
 - name: Install Python3 for CentOS/RHEL8 hosts
   yum:
