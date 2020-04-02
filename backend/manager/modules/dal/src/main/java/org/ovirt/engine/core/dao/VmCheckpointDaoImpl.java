@@ -46,6 +46,7 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
         VmCheckpoint entity = new VmCheckpoint();
         entity.setId(getGuid(rs, "checkpoint_id"));
         entity.setParentId(getGuid(rs, "parent_id"));
+        entity.setVmId(getGuid(rs, "vm_id"));
         entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_create_date")));
         entity.setCheckpointXml(rs.getString("checkpoint_xml"));
         return entity;
