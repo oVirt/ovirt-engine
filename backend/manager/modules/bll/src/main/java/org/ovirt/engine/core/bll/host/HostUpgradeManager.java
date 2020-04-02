@@ -183,6 +183,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
             .variable("ovirt_qemu_ca_key",
                     PKIResources.getQemuCaCertificate()
                             .toString(PKIResources.Format.OPENSSH_PUBKEY)
-                            .replace("\n", ""));
+                            .replace("\n", ""))
+            .variable("host_deploy_origin_type", Config.getValue(ConfigValues.OriginType));
     }
 }
