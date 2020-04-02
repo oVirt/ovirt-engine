@@ -12,7 +12,7 @@ MILESTONE=master
 RPM_RELEASE_ON_RELEASE=1
 
 # AUTO_RPM_RELEASE is set to 0.0.something on SNAPSHOT builds, and to RPM_RELEASE_ON_RELEASE otherwise.
-AUTO_RPM_RELEASE=$(shell if cat pom.xml | head -n 20 | grep '<version>' | head -n 1 | sed -e 's/.*>\(.*\)<.*/\1/' | grep -q 'SNAPSHOT$$'; then echo 0.3.$(MILESTONE).$$(date -u +%Y%m%d%H%M%S); else echo $(RPM_RELEASE_ON_RELEASE); fi)
+AUTO_RPM_RELEASE=$(shell if cat pom.xml | head -n 20 | grep '<version>' | head -n 1 | sed -e 's/.*>\(.*\)<.*/\1/' | grep -q 'SNAPSHOT$$'; then echo 0.4.$(MILESTONE).$$(date -u +%Y%m%d%H%M%S); else echo $(RPM_RELEASE_ON_RELEASE); fi)
 
 # RPM release should be automatic. If needed to be set manually:
 # For pre-release:
