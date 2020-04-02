@@ -121,7 +121,10 @@ class Plugin(plugin.PluginBase):
                 _(
                     'Failed to clear zombie commands. '
                     'Please access support in attempt to resolve '
-                    'the problem'
+                    'the problem\n'
+                    'Error: {error}\n'
+                ).format(
+                    error=stderr
                 )
             )
 
@@ -137,7 +140,10 @@ class Plugin(plugin.PluginBase):
                 _(
                     'Failed to clear zombie tasks. '
                     'Please access support in attempt to resolve '
-                    'the problem'
+                    'the problem\n'
+                    'Error: {error}\n'
+                ).format(
+                    error=stderr
                 )
             )
 
@@ -345,7 +351,10 @@ class Plugin(plugin.PluginBase):
                 _(
                     'Failed to unlock entities. '
                     'Please access support in attempt to resolve '
-                    'the problem'
+                    'the problem\n'
+                    'Error: {error}\n'
+                ).format(
+                    error=stderr
                 )
             )
 
