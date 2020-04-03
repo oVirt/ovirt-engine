@@ -621,7 +621,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
             DiskImage oldDisk = (DiskImage) getOldDisk();
             DiskImage newDisk = (DiskImage) getNewDisk();
             if (!Objects.equals(oldDisk.getDiskProfileId(), newDisk.getDiskProfileId())) {
-                vmSlaPolicyUtils.refreshRunningVmsWithDiskProfile(newDisk.getDiskProfileId());
+                vmSlaPolicyUtils.refreshRunningVmsWithDiskImage(newDisk);
             }
         }
     }

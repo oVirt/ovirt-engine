@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -160,15 +162,17 @@ public class VmSlaPolicyUtils {
         if (newQos == null) {
             newQos = new StorageQos();
         }
+
+        List<ActionParametersBase> params = new ArrayList<>(vmDiskMap.size());
         for (Map.Entry<Guid, List<DiskImage>> entry : vmDiskMap.entrySet()) {
             VmSlaPolicyParameters cmdParams = new VmSlaPolicyParameters(entry.getKey());
-
             for (DiskImage img : entry.getValue()) {
                 cmdParams.getStorageQos().put(img, newQos);
             }
-
-            ThreadPoolUtil.execute(() -> backend.runInternalAction(ActionType.VmSlaPolicy, cmdParams));
+            params.add(cmdParams);
         }
+
+        ThreadPoolUtil.execute(() -> backend.runInternalMultipleActions(ActionType.VmSlaPolicy, params));
     }
 
     public void refreshRunningVmsWithStorageQos(Guid storageQosId, StorageQos newQos) {
@@ -180,5 +184,17 @@ public class VmSlaPolicyUtils {
                 getRunningVmDiskImageMapWithProfiles(Collections.singleton(diskProfileId)),
                 storageQosDao.getQosByDiskProfileId(diskProfileId)
         );
+    }
+
+    public void refreshRunningVmsWithDiskImage(DiskImage diskImage) {
+        Map<Guid, List<DiskImage>> vmDiskMap = vmDao.getVmsListForDisk(diskImage.getId(), false).stream()
+                .filter(vm -> vm.getStatus().isQualifiedForQosChange())
+                .map(VM::getId)
+                .collect(Collectors.toMap(
+                        vmId -> vmId,
+                        vmId -> Collections.singletonList(diskImage)
+                ));
+
+        refreshVmsStorageQos(vmDiskMap, storageQosDao.getQosByDiskProfileId(diskImage.getDiskProfileId()));
     }
 }
