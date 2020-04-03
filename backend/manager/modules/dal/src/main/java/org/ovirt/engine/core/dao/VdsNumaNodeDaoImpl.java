@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -64,6 +66,8 @@ public class VdsNumaNodeDaoImpl extends NumaNodeDaoBase<VdsNumaNode> implements 
         stat.setCpuUser(rs.getDouble("cpu_user"));
         stat.setCpuIdle(rs.getDouble("cpu_idle"));
         stat.setCpuUsagePercent(rs.getInt("usage_cpu_percent"));
+        stat.setHugePages(SerializationFactory.getDeserializer()
+                    .deserializeOrCreateNew(rs.getString("hugepages"), ArrayList.class));
         entity.setNumaNodeStatistics(stat);
         entity.setNumaNodeDistances(getDistanceMap(rs.getString("distance")));
         entity.setCpuIds(Arrays.asList((Integer[]) rs.getArray("cpu_core_ids").getArray()));
@@ -107,6 +111,8 @@ public class VdsNumaNodeDaoImpl extends NumaNodeDaoBase<VdsNumaNode> implements 
                 .addValue("cpu_sys", node.getNumaNodeStatistics().getCpuSys())
                 .addValue("cpu_user", node.getNumaNodeStatistics().getCpuUser())
                 .addValue("cpu_idle", node.getNumaNodeStatistics().getCpuIdle())
-                .addValue("usage_cpu_percent", node.getNumaNodeStatistics().getCpuUsagePercent());
+                .addValue("usage_cpu_percent", node.getNumaNodeStatistics().getCpuUsagePercent())
+                .addValue("hugepages", SerializationFactory.getSerializer().serialize(
+                        node.getNumaNodeStatistics().getHugePages()));
     }
 }

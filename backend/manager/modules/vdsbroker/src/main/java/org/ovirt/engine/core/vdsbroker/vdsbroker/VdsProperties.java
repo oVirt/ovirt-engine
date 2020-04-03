@@ -81,6 +81,8 @@ public final class VdsProperties {
     public static final String NUMA_NODE_CPU_LIST = "cpus";
     public static final String NUMA_NODE_TOTAL_MEM = "totalMemory";
     public static final String NUMA_NODE_FREE_MEM_STAT = "numaNodeMemFree";
+    public static final String NUMA_NODE_HUGEPAGES = "hugepages";
+    public static final String NUMA_NODE_HUGEPAGES_FREE = "freePages";
     public static final String CPU_STATS = "cpuStatistics";
     public static final String NUMA_NODE_FREE_MEM = "memFree";
     public static final String NUMA_NODE_MEM_PERCENT = "memPercent";

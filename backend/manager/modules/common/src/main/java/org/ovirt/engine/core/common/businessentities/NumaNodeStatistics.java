@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -23,6 +25,8 @@ public class NumaNodeStatistics implements Serializable {
 
     private int cpuUsagePercent;
 
+    private List<HugePage> hugePages;
+
     public NumaNodeStatistics() {
         memFree = 0L;
         cpuSys = 0.0;
@@ -30,6 +34,7 @@ public class NumaNodeStatistics implements Serializable {
         cpuIdle = 0.0;
         memUsagePercent = 0;
         cpuUsagePercent = 0;
+        hugePages = new ArrayList<>();
     }
 
     public long getMemFree() {
@@ -80,6 +85,14 @@ public class NumaNodeStatistics implements Serializable {
         this.cpuUsagePercent = cpuUsagePercent;
     }
 
+    public List<HugePage> getHugePages() {
+        return hugePages;
+    }
+
+    public void setHugePages(List<HugePage> hugePages) {
+        this.hugePages = hugePages;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -88,7 +101,8 @@ public class NumaNodeStatistics implements Serializable {
                 cpuUsagePercent,
                 cpuUser,
                 memFree,
-                memUsagePercent
+                memUsagePercent,
+                hugePages
         );
     }
 
@@ -106,7 +120,8 @@ public class NumaNodeStatistics implements Serializable {
                 && cpuUsagePercent == other.cpuUsagePercent
                 && Objects.equals(cpuUser, other.cpuUser)
                 && memFree == other.memFree
-                && memUsagePercent == other.memUsagePercent;
+                && memUsagePercent == other.memUsagePercent
+                && Objects.equals(hugePages, other.hugePages);
     }
 
 }

@@ -1,0 +1,1 @@
+select fn_db_add_column('numa_node', 'hugepages', 'text');

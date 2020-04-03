@@ -1472,6 +1472,22 @@ public class VdsBrokerObjectsBuilder {
                             VdsProperties.NUMA_NODE_FREE_MEM));
                     node.getNumaNodeStatistics().setMemUsagePercent(assignIntValue(item.getValue(),
                             VdsProperties.NUMA_NODE_MEM_PERCENT));
+
+                    Map<String, Map<String, Object>> hugepagesMap =
+                            (Map<String, Map<String, Object>>) item.getValue().get(VdsProperties.NUMA_NODE_HUGEPAGES);
+
+                    if (hugepagesMap == null) {
+                        continue;
+                    }
+
+                    List<HugePage> parsedHugePages = hugepagesMap.entrySet()
+                            .stream()
+                            .map(entry -> new HugePage(
+                                    Integer.parseInt(entry.getKey()),
+                                    assignIntValue(entry.getValue(), VdsProperties.NUMA_NODE_HUGEPAGES_FREE)))
+                            .collect(Collectors.toList());
+
+                    node.getNumaNodeStatistics().setHugePages(parsedHugePages);
                 }
             }
         }

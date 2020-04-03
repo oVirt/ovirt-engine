@@ -1407,7 +1407,8 @@ CREATE TABLE numa_node (
     cpu_user numeric(5,2),
     cpu_idle numeric(5,2),
     usage_cpu_percent integer,
-    distance text
+    distance text,
+    hugepages text
 );
 
 

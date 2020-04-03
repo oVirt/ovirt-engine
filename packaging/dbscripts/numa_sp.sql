@@ -16,7 +16,8 @@ CREATE OR REPLACE FUNCTION InsertNumaNode (
     v_cpu_user DECIMAL(5, 2),
     v_cpu_idle DECIMAL(5, 2),
     v_usage_cpu_percent INT,
-    v_distance TEXT
+    v_distance TEXT,
+    v_hugepages TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -34,7 +35,8 @@ BEGIN
             cpu_user,
             cpu_idle,
             usage_cpu_percent,
-            distance
+            distance,
+            hugepages
             )
         VALUES (
             v_numa_node_id,
@@ -49,7 +51,8 @@ BEGIN
             v_cpu_user,
             v_cpu_idle,
             v_usage_cpu_percent,
-            v_distance
+            v_distance,
+            v_hugepages
             );
     END;
 
@@ -62,7 +65,8 @@ CREATE OR REPLACE FUNCTION UpdateNumaNode (
     v_numa_node_index SMALLINT,
     v_mem_total BIGINT,
     v_cpu_count SMALLINT,
-    v_distance TEXT
+    v_distance TEXT,
+    v_hugepages TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -71,7 +75,8 @@ BEGIN
         SET numa_node_index = v_numa_node_index,
             mem_total = v_mem_total,
             cpu_count = v_cpu_count,
-            distance = v_distance
+            distance = v_distance,
+            hugepages = v_hugepages
         WHERE numa_node_id = v_numa_node_id;
     END;
 
@@ -86,7 +91,8 @@ CREATE OR REPLACE FUNCTION UpdateNumaNodeStatistics (
     v_cpu_sys DECIMAL(5, 2),
     v_cpu_user DECIMAL(5, 2),
     v_cpu_idle DECIMAL(5, 2),
-    v_usage_cpu_percent INT
+    v_usage_cpu_percent INT,
+    v_hugepages TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -97,7 +103,8 @@ BEGIN
             cpu_sys = v_cpu_sys,
             cpu_user = v_cpu_user,
             cpu_idle = v_cpu_idle,
-            usage_cpu_percent = v_usage_cpu_percent
+            usage_cpu_percent = v_usage_cpu_percent,
+            hugepages = v_hugepages
         WHERE numa_node_id = v_numa_node_id;
     END;
 

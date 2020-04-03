@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.ovirt.engine.core.common.businessentities.HugePage;
@@ -88,5 +89,14 @@ public class HugePageUtils {
                 .sum();
 
         return (int)((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
+    }
+
+    public static void updateHugePages(List<HugePage> hugePages, Integer sizeKb, Integer amount) {
+        for (HugePage hugePage : hugePages) {
+            if (Objects.equals(hugePage.getSizeKB(), sizeKb)) {
+                hugePage.setAmount(amount);
+                break;
+            }
+        }
     }
 }

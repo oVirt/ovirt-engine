@@ -55,6 +55,8 @@ import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.HugePage;
+import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -415,8 +417,11 @@ public class SchedulingManager implements BackendService {
                 }
 
                 VDS host = hostsMap.get(bestHostId);
-                Map<Guid, Map<Integer, Long>> numaConsumptionPerVm = vmNumaRequirements(vmGroup, host);
-                updateHostNumaNodes(host, numaConsumptionPerVm);
+                Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> numaConsumptionPerVm = vmNumaRequirements(vmGroup, host);
+                Map<Integer, NumaNodeMemoryConsumption> numaConsumption = numaConsumptionPerVm.values().stream()
+                        .flatMap(m -> m.entrySet().stream())
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, NumaNodeMemoryConsumption::merge));
+                updateHostNumaNodes(host, numaConsumption);
 
                 for (VM vm : vmsNotOnHost) {
                     addPendingResources(vm, bestHostId, numaConsumptionPerVm.getOrDefault(vm.getId(), Collections.emptyMap()));
@@ -479,28 +484,24 @@ public class SchedulingManager implements BackendService {
             host.setNumaNodeList(vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
 
             // Subtracting pending memory, so the scheduling units don't have to consider it
-            Map<Integer, Long> pendingNumaMemory = PendingNumaMemory.collectForHost(pendingResourceManager, host.getId());
-            for (VdsNumaNode node : host.getNumaNodeList()) {
-                long memFree = node.getNumaNodeStatistics().getMemFree();
-                long memPending = pendingNumaMemory.getOrDefault(node.getIndex(), 0L);
-                node.getNumaNodeStatistics().setMemFree(memFree - memPending);
+            Map<Integer, NumaNodeMemoryConsumption> pendingNumaMemory = PendingNumaMemory.collectForHost(pendingResourceManager, host.getId());
+            updateHostNumaNodes(host, pendingNumaMemory);
+        }
+    }
+
+    private void updateHostNumaNodes(VDS host, Map<Integer, NumaNodeMemoryConsumption> numaConsumption) {
+        for (VdsNumaNode node : host.getNumaNodeList()) {
+            NumaNodeMemoryConsumption consumption = numaConsumption.getOrDefault(node.getIndex(), new NumaNodeMemoryConsumption());
+            NumaNodeStatistics statistics = node.getNumaNodeStatistics();
+            statistics.setMemFree(statistics.getMemFree() - consumption.getMemoryMB());
+
+            for (HugePage hugePage : statistics.getHugePages()) {
+                hugePage.setAmount(hugePage.getAmount() - consumption.getHugePages().getOrDefault(hugePage.getSizeKB(), 0));
             }
         }
     }
 
-    private void updateHostNumaNodes(VDS host, Map<Guid, Map<Integer, Long>> numaConsumptionPerVm) {
-        Map<Integer, Long> numaConsumption = numaConsumptionPerVm.values().stream()
-                .flatMap(m -> m.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Long::sum));
-
-        for (VdsNumaNode node : host.getNumaNodeList()) {
-            long memFree = node.getNumaNodeStatistics().getMemFree();
-            long memNeeded = numaConsumption.getOrDefault(node.getIndex(), 0L);
-            node.getNumaNodeStatistics().setMemFree(memFree - memNeeded);
-        }
-    }
-
-    private void addPendingResources(VM vm, Guid hostId, Map<Integer, Long> numaConsumption) {
+    private void addPendingResources(VM vm, Guid hostId, Map<Integer, NumaNodeMemoryConsumption> numaConsumption) {
         getPendingResourceManager().addPending(new PendingCpuCores(hostId, vm, vm.getNumOfCpus()));
         getPendingResourceManager().addPending(new PendingMemory(hostId, vm, vmOverheadCalculator.getStaticOverheadInMb(vm)));
         getPendingResourceManager().addPending(new PendingOvercommitMemory(hostId, vm, vmOverheadCalculator.getTotalRequiredMemWithoutHugePagesMb(vm)));
@@ -534,7 +535,7 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private  Map<Guid, Map<Integer, Long>> vmNumaRequirements(List<VM> vmGroup, VDS host) {
+    private  Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> vmNumaRequirements(List<VM> vmGroup, VDS host) {
         List<VM> filteredVms = vmGroup.stream()
                 .filter(vm -> vm.getNumaTuneMode() != NumaTuneMode.PREFERRED)
                 .filter(vm -> !host.getId().equals(vm.getRunOnVds()))
@@ -557,13 +558,15 @@ public class SchedulingManager implements BackendService {
             return Collections.emptyMap();
         }
 
-        Map<Guid, Map<Integer, Long>> result = new HashMap<>();
+        Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> result = new HashMap<>();
         for (VM vm : filteredVms) {
             if (vm.getvNumaNodeList().isEmpty()) {
                 continue;
             }
 
-            Map<Integer, Long> hostNumaMemRequirements = new HashMap<>();
+            Map<Integer, NumaNodeMemoryConsumption> hostNumaMemRequirements = new HashMap<>();
+            Optional<Integer> hugePageSize = HugePageUtils.getHugePageSize(vm.getStaticData());
+
             for (VmNumaNode vmNode : vm.getvNumaNodeList()) {
                 Integer hostNodeIndex = nodeAssignment.get().get(vmNode.getId());
                 // Ignore unpinned numa nodes
@@ -571,7 +574,10 @@ public class SchedulingManager implements BackendService {
                     continue;
                 }
 
-                hostNumaMemRequirements.merge(hostNodeIndex, vmNode.getMemTotal(), Long::sum);
+                hostNumaMemRequirements.merge(
+                        hostNodeIndex,
+                        new NumaNodeMemoryConsumption(vmNode.getMemTotal(), hugePageSize),
+                        NumaNodeMemoryConsumption::merge);
             }
             result.put(vm.getId(), hostNumaMemRequirements);
         }
@@ -1411,7 +1417,6 @@ public class SchedulingManager implements BackendService {
     public void clearPendingVm(VmStatic vm) {
         getPendingResourceManager().clearVm(vm);
     }
-
 
     public class CallBuilder {
         private Cluster cluster;

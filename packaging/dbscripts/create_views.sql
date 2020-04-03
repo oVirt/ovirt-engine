@@ -3799,7 +3799,8 @@ SELECT vm_vds_numa_node_map.vm_numa_node_id AS assigned_vm_numa_node_id,
     vm_numa_node.cpu_user AS vm_numa_node_cpu_user,
     vm_numa_node.cpu_idle AS vm_numa_node_cpu_idle,
     vm_numa_node.usage_cpu_percent AS vm_numa_node_usage_cpu_percent,
-    vm_numa_node.distance AS vm_numa_node_distance
+    vm_numa_node.distance AS vm_numa_node_distance,
+    vm_numa_node.hugepages AS vm_numa_node_hugepages
 FROM vm_vds_numa_node_map
 LEFT JOIN numa_node AS vm_numa_node
     ON vm_vds_numa_node_map.vm_numa_node_id = vm_numa_node.numa_node_id;
@@ -3819,6 +3820,7 @@ SELECT vm_numa_node.numa_node_id AS vm_numa_node_id,
     vm_numa_node.cpu_idle AS vm_numa_node_cpu_idle,
     vm_numa_node.usage_cpu_percent AS vm_numa_node_usage_cpu_percent,
     vm_numa_node.distance AS vm_numa_node_distance,
+    vm_numa_node.hugepages AS vm_numa_node_hugepages,
     vm_static.cluster_id
 FROM numa_node AS vm_numa_node
 LEFT JOIN vm_static

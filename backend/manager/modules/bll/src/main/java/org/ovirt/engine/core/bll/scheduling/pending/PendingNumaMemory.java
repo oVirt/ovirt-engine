@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.bll.scheduling.NumaNodeMemoryConsumption;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -11,12 +12,12 @@ import org.ovirt.engine.core.compat.Guid;
 public class PendingNumaMemory extends PendingResource {
 
     private int nodeIndex;
-    private long memoryMB;
+    private NumaNodeMemoryConsumption memory;
 
-    public PendingNumaMemory(Guid host, VM vm, int nodeIndex, long memoryMB) {
+    public PendingNumaMemory(Guid host, VM vm, int nodeIndex, NumaNodeMemoryConsumption memory) {
         super(host, vm);
         this.nodeIndex = nodeIndex;
-        this.memoryMB = memoryMB;
+        this.memory = memory;
     }
 
     public int getNodeIndex() {
@@ -27,12 +28,12 @@ public class PendingNumaMemory extends PendingResource {
         this.nodeIndex = nodeIndex;
     }
 
-    public long getMemoryMB() {
-        return memoryMB;
+    public NumaNodeMemoryConsumption getMemoryConsumption() {
+        return memory;
     }
 
-    public void setMemoryMB(long memoryMB) {
-        this.memoryMB = memoryMB;
+    public void setMemoryConsumption(NumaNodeMemoryConsumption memory) {
+        this.memory = memory;
     }
 
     @Override
@@ -56,12 +57,12 @@ public class PendingNumaMemory extends PendingResource {
         return Objects.hash(getHost(), getVm(), nodeIndex);
     }
 
-    public static Map<Integer, Long> collectForHost(PendingResourceManager manager, Guid hostId) {
+    public static Map<Integer, NumaNodeMemoryConsumption> collectForHost(PendingResourceManager manager, Guid hostId) {
         return manager.pendingHostResources(hostId, PendingNumaMemory.class).stream()
                 .collect(Collectors.toMap(
                         PendingNumaMemory::getNodeIndex,
-                        PendingNumaMemory::getMemoryMB,
-                        Long::sum
+                        PendingNumaMemory::getMemoryConsumption,
+                        NumaNodeMemoryConsumption::merge
                 ));
     }
 }
