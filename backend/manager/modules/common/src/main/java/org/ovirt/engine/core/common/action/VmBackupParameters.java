@@ -15,6 +15,7 @@ public class VmBackupParameters extends VmOperationParameterBase implements Seri
     @NotNull
     private VmBackup vmBackup;
     private boolean backupInitiated;
+    private Guid toCheckpointId;
 
     public VmBackupParameters() {
     }
@@ -37,6 +38,14 @@ public class VmBackupParameters extends VmOperationParameterBase implements Seri
 
     public void setBackupInitiated(boolean backupInitiated) {
         this.backupInitiated = backupInitiated;
+    }
+
+    public Guid getToCheckpointId() {
+        return toCheckpointId;
+    }
+
+    public void setToCheckpointId(Guid toCheckpointId) {
+        this.toCheckpointId = toCheckpointId;
     }
 
     @Override

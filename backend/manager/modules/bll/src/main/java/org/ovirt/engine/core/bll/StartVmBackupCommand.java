@@ -152,12 +152,10 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             Guid vmCheckpointId = createVmCheckpoint();
             log.info("Created VmCheckpoint entity '{}'", vmCheckpointId);
 
-            // Update the VmBackup to include the checkpoint ID.
-            vmBackup.setToCheckpointId(vmCheckpointId);
-            TransactionSupport.executeInNewTransaction(() -> {
-                vmBackupDao.update(vmBackup);
-                return null;
-            });
+            // Set the the created checkpoint ID only in the parameters and not in the
+            // VM backup DB entity. The VM backup DB entity will be updated once the
+            // checkpoint will be created by the host.
+            getParameters().setToCheckpointId(vmCheckpointId);
         } else {
             log.info("Skip checkpoint creation for VM '{}'", vmBackup.getVmId());
         }
@@ -222,8 +220,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         }
 
         if (vmBackupInfo.getCheckpoint() != null) {
-            vmCheckpointDao.updateCheckpointXml(getParameters().getVmBackup().getToCheckpointId(),
-                    vmBackupInfo.getCheckpoint());
+            updateVmBackupCheckpoint(vmBackupInfo);
         }
         storeBackupsUrls(vmBackupInfo.getDisks());
         return true;
@@ -339,9 +336,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     private VmBackupInfo performVmBackupOperation(VDSCommandType vdsCommandType) {
         VDSReturnValue vdsRetVal;
+        // Add the created checkpoint ID
+        VmBackup vmBackup = getParameters().getVmBackup();
+        vmBackup.setToCheckpointId(getParameters().getToCheckpointId());
         try {
-            vdsRetVal = runVdsCommand(vdsCommandType,
-                    new VmBackupVDSParameters(getVdsId(), getParameters().getVmBackup()));
+            vdsRetVal = runVdsCommand(vdsCommandType, new VmBackupVDSParameters(getVdsId(), vmBackup));
             if (!vdsRetVal.getSucceeded()) {
                 EngineException engineException = new EngineException();
                 engineException.setVdsError(vdsRetVal.getVdsError());
@@ -371,6 +370,17 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     private void updateVmBackupPhase(VmBackupPhase phase) {
         getParameters().getVmBackup().setPhase(phase);
         vmBackupDao.update(getParameters().getVmBackup());
+    }
+
+    private void updateVmBackupCheckpoint(VmBackupInfo vmBackupInfo) {
+        TransactionSupport.executeInNewTransaction(() -> {
+            // Update the VmBackup to include the checkpoint ID
+            vmBackupDao.update(getParameters().getVmBackup());
+            // Update the vmCheckpoint to include the checkpoint XML
+            vmCheckpointDao.updateCheckpointXml(getParameters().getVmBackup().getToCheckpointId(),
+                    vmBackupInfo.getCheckpoint());
+            return null;
+        });
     }
 
      @Override
