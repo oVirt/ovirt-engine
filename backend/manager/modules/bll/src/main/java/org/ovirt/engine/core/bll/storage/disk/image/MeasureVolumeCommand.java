@@ -96,15 +96,19 @@ public class MeasureVolumeCommand<T extends MeasureVolumeParameters> extends Com
             getParameters().setShouldTeardown(true);
         }
 
-        long volumeSize = (long) vdsCommandsHelper.runVdsCommandWithFailover(
-                VDSCommandType.MeasureVolume,
+        MeasureVolumeVDSCommandParameters params =
                 new MeasureVolumeVDSCommandParameters(getParameters().getStoragePoolId(),
                         getParameters().getStorageDomainId(),
                         getParameters().getImageGroupId(),
                         getParameters().getImageId(),
-                        getParameters().getDstVolFormat()),
-                        getParameters().getStoragePoolId(),
-                        null)
+                        getParameters().getDstVolFormat());
+        params.setVdsId(getParameters().getVdsRunningOn());
+
+        long volumeSize = (long) vdsCommandsHelper.runVdsCommandWithoutFailover(
+                VDSCommandType.MeasureVolume,
+                params,
+                getParameters().getStoragePoolId(),
+                null)
                 .getReturnValue();
 
         persistCommandIfNeeded();
