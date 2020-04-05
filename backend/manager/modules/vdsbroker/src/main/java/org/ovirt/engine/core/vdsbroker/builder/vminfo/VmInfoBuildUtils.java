@@ -1294,8 +1294,6 @@ public class VmInfoBuildUtils {
         boolean legacyRequired = osRepository.requiresLegacyVirtio(osId, chipset);
         switch(diskInterface) {
             case VirtIO:
-            case VirtIO_SCSI:
-            case SPAPR_VSCSI:
                 return legacyRequired;
         }
         return false;
