@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -316,10 +317,15 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             reDetectDefaultsForDeprecatedCPUs();
 
         } else if (oldCluster.getArchitecture() != getCluster().getArchitecture()) {
-            // if architecture was changed, emulated machines must be updated when adding new host.
-            // At this point the cluster is empty and have changed CPU name
+            // if architecture was changed, emulated machines must be updated when adding a new host.
+            // At this point the cluster is empty and have a changed CPU name
+            // Also, along with the emulation machines, the Bios Type may need to be updated as well.
             getParameters().getCluster().setDetectEmulatedMachine(true);
             getParameters().getCluster().setEmulatedMachine(null);
+            if (getCluster().getArchitecture() != ArchitectureType.undefined &&
+                    getCluster().getBiosType() == BiosType.CLUSTER_DEFAULT) {
+                setDefaultBiosType();
+            }
         }
 
         if (getParameters().isForceResetEmulatedMachine()) {

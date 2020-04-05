@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
@@ -40,6 +41,7 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -177,6 +179,18 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
             return false;
         }
         return true;
+    }
+
+    protected void setDefaultBiosType() {
+        Cluster cluster = getCluster();
+        if (cluster.getCompatibilityVersion() != null
+                && cluster.getCompatibilityVersion().greaterOrEquals(Version.v4_4)
+                && cluster.getArchitecture() != null
+                && cluster.getArchitecture().getFamily() == ArchitectureType.x86) {
+            cluster.setBiosType(BiosType.Q35_SEA_BIOS);
+        } else {
+            cluster.setBiosType(BiosType.I440FX_SEA_BIOS);
+        }
     }
 
     private ClusterPolicy getClusterPolicy(final Cluster cluster) {
