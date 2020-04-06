@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -1503,14 +1502,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     private void initBiosType() {
-        ListModel<BiosType> biosType = getBiosType();
-
-        List<BiosType> biosTypeList = AsyncDataProvider.getInstance()
-                .getBiosTypeList()
-                .stream()
-                .filter(bt -> bt != BiosType.CLUSTER_DEFAULT)
-                .collect(Collectors.toList());
-        biosType.setItems(biosTypeList);
+        getBiosType().setItems(AsyncDataProvider.getInstance().getBiosTypeList());
         updateBiosType();
     }
 
@@ -1549,16 +1541,13 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getEffectiveVersion());
         }
         if (!getBiosType().getIsChangable()) {
-            getBiosType().setSelectedItem(BiosType.I440FX_SEA_BIOS);
+            getBiosType().setSelectedItem(BiosType.CLUSTER_DEFAULT);
             return;
         }
         if (getIsEdit() && architecture.equals(getEntity().getArchitecture())
                 && getEffectiveVersion().equals(getEntity().getCompatibilityVersion())) {
             getBiosType().setSelectedItem(getEntity().getBiosType());
             return;
-        }
-        if (getEffectiveVersion().greaterOrEquals(Version.v4_4)) {
-            getBiosType().setSelectedItem(BiosType.Q35_SEA_BIOS);
         }
     }
 

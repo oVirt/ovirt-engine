@@ -16,7 +16,8 @@ public class BiosTypeUtils {
         if (vmBase.getBiosType() != BiosType.CLUSTER_DEFAULT) {
             return vmBase.getBiosType();
         }
-        return cluster != null ? cluster.getBiosType() : BiosType.I440FX_SEA_BIOS;
+        return cluster != null && cluster.getBiosType() != BiosType.CLUSTER_DEFAULT
+                ? cluster.getBiosType() : BiosType.I440FX_SEA_BIOS;
     }
 
     public static BiosType getEffective(VmBase vmBase, Supplier<Cluster> clusterSupplier) {
@@ -24,7 +25,8 @@ public class BiosTypeUtils {
             return vmBase.getBiosType();
         }
         Cluster cluster = clusterSupplier != null ? clusterSupplier.get() : null;
-        return cluster != null ? cluster.getBiosType() : BiosType.I440FX_SEA_BIOS;
+        return cluster != null && cluster.getBiosType() != BiosType.CLUSTER_DEFAULT
+                ? cluster.getBiosType() : BiosType.I440FX_SEA_BIOS;
     }
 
 }

@@ -684,7 +684,6 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 && validate(clusterValidator.disableGluster())
                 && validate(clusterValidator.setTrustedAttestation())
                 && validate(clusterValidator.migrationOnError(getArchitecture()))
-                && validate(clusterValidator.invalidBiosType())
                 && validate(clusterValidator.nonDefaultBiosType())
                 && validateClusterPolicy(oldCluster)
                 && validateConfiguration();

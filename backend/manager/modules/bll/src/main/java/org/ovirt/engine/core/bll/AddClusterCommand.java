@@ -175,7 +175,6 @@ public class AddClusterCommand<T extends ClusterOperationParameters>
                 && validateClusterPolicy(null)
                 && validateManagementNetwork()
                 && validate(validator.memoryOptimizationConfiguration())
-                && validate(validator.invalidBiosType())
                 && validate(validator.nonDefaultBiosType())
                 && validateDefaultNetworkProvider();
     }

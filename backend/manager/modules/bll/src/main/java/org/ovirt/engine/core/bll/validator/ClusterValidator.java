@@ -416,12 +416,6 @@ public class ClusterValidator {
         return FeatureSupported.isMigrationSupported(arch, cluster.getCompatibilityVersion());
     }
 
-    public ValidationResult invalidBiosType() {
-        return ValidationResult.failWith(EngineMessage.BIOS_TYPE_INVALID_FOR_CLUSTER)
-                .when(newCluster != null && newCluster.getBiosType() == BiosType.CLUSTER_DEFAULT
-                        || cluster.getBiosType() == BiosType.CLUSTER_DEFAULT);
-    }
-
     public ValidationResult nonDefaultBiosType() {
         Cluster eCluster = newCluster != null ? newCluster : cluster;
         ArchitectureType architecture = getArchitecture();
@@ -430,7 +424,6 @@ public class ClusterValidator {
                     && eCluster.getBiosType() != null
                     && eCluster.getBiosType() != BiosType.CLUSTER_DEFAULT
                     && eCluster.getBiosType() != BiosType.I440FX_SEA_BIOS
-                    && architecture != ArchitectureType.undefined
                     && architecture.getFamily() != ArchitectureType.x86);
     }
 
