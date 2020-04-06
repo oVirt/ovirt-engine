@@ -13,7 +13,10 @@ public final class VmBackupInfo extends StatusReturn {
     public VmBackupInfo(Map<String, Object> innerMap) {
         super(innerMap);
         disks = (Map<String, Object>) innerMap.get(VdsProperties.vm_disks);
-        checkpoint = (String) innerMap.get(VdsProperties.CHECKPOINT);
+        Object tempObj = innerMap.get(VdsProperties.CHECKPOINT);
+        if (tempObj != null) {
+            checkpoint = (String) tempObj;
+        }
     }
 
     public Map<String, Object> getDisks() {
