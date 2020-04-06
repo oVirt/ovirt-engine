@@ -25,7 +25,7 @@ import org.ovirt.engine.core.sso.utils.openid.jwt.JWT;
 import org.ovirt.engine.core.sso.utils.openid.jwt.JWTException;
 
 @ApplicationScoped
-public final class OpenIdService{
+public class OpenIdService{
 
     public static final String OVIRT = "oVirt";
     static final Supplier<KeyPair> DEFAULT_RSA_KEY_PAIR_GENERATOR = () -> {
