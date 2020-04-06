@@ -265,7 +265,12 @@ as follows:
   port: 50001
   target_user: root
 
-Where `$PREFIX` is the prefix of your development environment, which you've specified during the compilation of the engine.
+Please replace `$PREFIX` with the real path of your development environment, which you've specified during
+the compilation of the engine, for example:
+
+  playbooks_root_dir: '/home/user/ovirt-engine/share/ovirt-engine/ansible-runner-service-project'
+  ssh_private_key: '/home/user/ovirt-engine/etc/pki/ovirt-engine/keys/engine_id_rsa'
+
 
 After edditing the file, make sure you've restarted the Ansible Runner Service service:
 
