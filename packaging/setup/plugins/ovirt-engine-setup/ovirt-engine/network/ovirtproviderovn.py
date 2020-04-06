@@ -989,8 +989,8 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         name=oenginecons.Stages.OVN_PROVIDER_SERVICE_RESTART,
         condition=lambda self: (
-            self._enabled and
-            not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
+            (self._enabled or self._provider_installed) and not
+            self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
         )
     )
     def _restart_provider_service(self):
