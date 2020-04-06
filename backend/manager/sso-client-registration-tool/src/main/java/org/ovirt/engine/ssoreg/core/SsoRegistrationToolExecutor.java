@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,21 +27,18 @@ import org.slf4j.LoggerFactory;
 
 public class SsoRegistrationToolExecutor {
 
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(SsoRegistrationToolExecutor.class);
+    private static final Logger OVIRT_LOGGER = Logger.getLogger("org.ovirt");
     private static String PROGRAM_NAME = System.getProperty("org.ovirt.engine.ssoreg.core.programName");
     private static String PACKAGE_NAME = System.getProperty("org.ovirt.engine.ssoreg.core.packageName");
     private static String PACKAGE_VERSION = System.getProperty("org.ovirt.engine.ssoreg.core.packageVersion");
     private static String PACKAGE_DISPLAY_NAME = System.getProperty("org.ovirt.engine.ssoreg.core.packageDisplayName");
     private static String ENGINE_ETC = System.getProperty("org.ovirt.engine.ssoreg.core.engineEtc");
-
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(SsoRegistrationToolExecutor.class);
-    private static final Logger OVIRT_LOGGER = Logger.getLogger("org.ovirt");
-
     private static SecureRandom secureRandom = new SecureRandom();
 
     public static void main(String... args) {
         int exitStatus = 1;
         List<String> cmdArgs = new ArrayList<>(Arrays.asList(args));
-
         try {
             final Map<String, String> contextSubstitutions = new HashMap<>();
             contextSubstitutions.put("@ENGINE_ETC@", ENGINE_ETC);
@@ -61,16 +59,16 @@ public class SsoRegistrationToolExecutor {
 
             log.debug("Version: {}-{} ({})", PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_DISPLAY_NAME);
 
-            if((Boolean)argMap.get("help")) {
+            if ((Boolean) argMap.get("help")) {
                 System.out.format("Usage: %s", parser.getUsage());
                 throw new ExitException("Help", 0);
-            } else if((Boolean)argMap.get("version")) {
+            } else if ((Boolean) argMap.get("version")) {
                 System.out.format("%s-%s (%s)%n", PACKAGE_NAME, PACKAGE_VERSION, PACKAGE_DISPLAY_NAME);
                 throw new ExitException("Version", 0);
             }
 
-            if(!parser.getErrors().isEmpty()) {
-                for(Throwable t : parser.getErrors()) {
+            if (!parser.getErrors().isEmpty()) {
+                for (Throwable t : parser.getErrors()) {
                     log.error(t.getMessage());
                     log.debug(t.getMessage(), t);
                 }
@@ -83,23 +81,38 @@ public class SsoRegistrationToolExecutor {
             log.info("================== oVirt Sso Client Registration Tool ===================");
             log.info("=========================================================================");
 
-            String clientId = getUserInput("Client Id: ");
-            String certificateFile = getUserInput("Client CA Certificate File Location: ");
-            while (!new File(certificateFile).exists()) {
-                System.out.format("%s is not a valid certificate, please enter path to an existing certificate.%n",
-                        certificateFile);
-                certificateFile = getUserInput("Enter Client CA Certificate File Location: ");
+            String clientId = getProvidedParameter(argMap,
+                    "client-id",
+                    id -> !id.isBlank(),
+                    "must not be null or blank");
+
+            String certificateFile = getProvidedParameter(argMap,
+                    "client-ca-location",
+                    location -> new File(location).exists(),
+                    "file not found at given path");
+
+            String callbackPrefix = getProvidedParameter(argMap,
+                    "callback-prefix-url",
+                    prefix -> prefix.startsWith("http") || prefix.startsWith("https"),
+                    "must start with either http or https");
+
+            String tmpConfFileName = null;
+            if (argMap.containsKey("conf-file-name")) {
+                tmpConfFileName = getProvidedParameter(argMap,
+                        "conf-file-name",
+                        name -> !name.isBlank(),
+                        "temporary configuration file name must not be blank");
             }
-            String callbackPrefix = getUserInput("Callback Prefix URL: ");
-            while (!callbackPrefix.startsWith("http") && !callbackPrefix.startsWith("https")) {
-                System.out.format("%s is not a valid URL, please enter a proper URL.%n", callbackPrefix);
-                callbackPrefix = getUserInput("Enter Callback Prefix URL: ");
-            }
+
             String clientSecret = generateClientSecret();
             String encodedClientSecret = encode(argMap, clientSecret);
             dbUtils.unregisterClient(clientId);
             dbUtils.registerClient(clientId, encodedClientSecret, certificateFile, callbackPrefix);
-            String tmpFile = createTmpSsoClientConfFile(clientId, clientSecret, certificateFile, callbackPrefix);
+            String tmpFile = createTmpSsoClientConfFile(clientId,
+                    clientSecret,
+                    certificateFile,
+                    callbackPrefix,
+                    tmpConfFileName);
             System.out.println("Client registration completed successfully");
             System.out.format("Client secret has been written to file %s%n", tmpFile);
             log.info("========================================================================");
@@ -107,42 +120,15 @@ public class SsoRegistrationToolExecutor {
             log.info("========================================================================");
 
             exitStatus = 0;
-        } catch(ExitException e) {
+        } catch (ExitException e) {
             log.debug(e.getMessage(), e);
             exitStatus = e.getExitCode();
         } catch (Throwable t) {
-            t.printStackTrace();
             log.error(t.getMessage() != null ? t.getMessage() : t.getClass().getName());
             log.debug("Exception:", t);
         }
         log.debug("Exiting with status '{}'", exitStatus);
         System.exit(exitStatus);
-    }
-
-    /**
-     * Read a line from the standard input.
-     */
-    private static String getUserInput(String question) {
-        System.out.print(question);
-        StringBuilder buffer = new StringBuilder();
-        for (;;) {
-            int character;
-            try {
-                character = System.in.read();
-            } catch (IOException exception) {
-                log.error(
-                        "Error while reading line from standard input. Will " +
-                                "consider it the end of the line and continue.",
-                        exception
-                );
-                break;
-            }
-            if (character == -1 || character == '\n') {
-                break;
-            }
-            buffer.append((char) character);
-        }
-        return buffer.toString();
     }
 
     private static String generateClientSecret() {
@@ -163,41 +149,57 @@ public class SsoRegistrationToolExecutor {
     private static void setupLogger() {
         String logLevel = System.getenv("OVIRT_LOGGING_LEVEL");
         OVIRT_LOGGER.setLevel(
-            logLevel != null ? Level.parse(logLevel) : Level.INFO
-        );
+                logLevel != null ? Level.parse(logLevel) : Level.INFO);
     }
 
     private static void setupLogger(Map<String, Object> args) throws IOException {
         Logger log = Logger.getLogger("");
-        String logfile = (String)args.get("log-file");
-        if(logfile != null) {
+        String logfile = (String) args.get("log-file");
+        if (logfile != null) {
             FileHandler fh = new FileHandler(
-                    new File(SsoLocalConfig.getInstance().getLogDir(), logfile).getAbsolutePath(), true);
+                    new File(SsoLocalConfig.getInstance().getLogDir(), logfile).getAbsolutePath(),
+                    true);
             fh.setFormatter(new SimpleFormatter());
             log.addHandler(fh);
         }
-        OVIRT_LOGGER.setLevel((Level)args.get("log-level"));
+        OVIRT_LOGGER.setLevel((Level) args.get("log-level"));
     }
 
     private static String createTmpSsoClientConfFile(String clientId,
-                                                     String clientSecret,
-                                                     String certificateFile,
-                                                     String callbackPrefix)
-            throws FileNotFoundException {
+            String clientSecret,
+            String certificateFile,
+            String callbackPrefix,
+            String tempConfigurationFileName) throws FileNotFoundException {
         File tmpDir = SsoLocalConfig.getInstance().getTmpDir();
         if (tmpDir.mkdirs()) {
             log.debug("Created ovirt temp directory: {}", tmpDir.getAbsolutePath());
         }
-        File tmpFile = new File(tmpDir,
-                String.format("99_sso_client_%s.conf", System.currentTimeMillis()));
-        try (
-                PrintWriter pw = new PrintWriter(new FileOutputStream(tmpFile))
-        ) {
+
+        File tmpFile = new File(tmpDir, tempConfigurationFileName);
+
+        try (PrintWriter pw = new PrintWriter(new FileOutputStream(tmpFile))) {
             pw.println(String.format("SSO_CLIENT_ID=%s", clientId));
             pw.println(String.format("SSO_CLIENT_SECRET=%s", clientSecret));
             pw.println(String.format("SSO_CLIENT_CERTIFICATE_FILE=%s", certificateFile));
             pw.println(String.format("SSO_CLIENT_CALLBACK_PREFIX=%s", callbackPrefix));
         }
         return tmpFile.getAbsolutePath();
+    }
+
+    private static String getProvidedParameter(Map<String, Object> argMap,
+            String paramName,
+            Predicate<String> isValidPredicate,
+            String invalidParamMessage) {
+
+        if (!argMap.containsKey(paramName)) {
+            throw new IllegalArgumentException("Parameter required but not found: " + paramName);
+        }
+
+        String paramValue = (String) argMap.get(paramName);
+        if (!isValidPredicate.test(paramValue)) {
+            throw new IllegalArgumentException(paramName + "=" + paramValue + ": " + invalidParamMessage);
+        }
+        log.info("Provided parameter: {}={}", paramName, paramValue);
+        return paramValue;
     }
 }
