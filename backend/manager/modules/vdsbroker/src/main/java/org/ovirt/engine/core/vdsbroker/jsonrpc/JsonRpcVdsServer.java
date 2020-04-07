@@ -46,6 +46,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DeviceInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DevicesVisibilityMapReturn;
@@ -2257,25 +2258,25 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturn redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints) {
+    public VmCheckpointInfo redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.redefine_checkpoints")
                         .withParameter("vmID", vmId)
                         .withParameter("checkpoints", checkpoints)
                         .build();
-        Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturn(response);
+        Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new VmCheckpointInfo(response);
     }
 
     @Override
-    public StatusOnlyReturn deleteVmCheckpoints(String vmId, String[] checkpointIds) {
+    public VmCheckpointInfo deleteVmCheckpoints(String vmId, String[] checkpointIds) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.delete_checkpoints")
                         .withParameter("vmID", vmId)
                         .withParameter("checkpoints", checkpointIds)
                         .build();
-        Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturn(response);
+        Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new VmCheckpointInfo(response);
     }
 
     @Override

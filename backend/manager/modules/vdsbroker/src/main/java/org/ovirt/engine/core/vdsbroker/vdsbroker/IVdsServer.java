@@ -39,6 +39,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
 import org.ovirt.vdsm.jsonrpc.client.BrokerCommandCallback;
 
 @SuppressWarnings("rawtypes")
@@ -533,9 +534,9 @@ public interface IVdsServer {
 
     VmBackupInfo vmBackupInfo(String vmId, String backupId, String checkpointId);
 
-    StatusOnlyReturn redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints);
+    VmCheckpointInfo redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints);
 
-    StatusOnlyReturn deleteVmCheckpoints(String vmId, String[] checkpointIds);
+    VmCheckpointInfo deleteVmCheckpoints(String vmId, String[] checkpointIds);
 
     NbdServerURLReturn startNbdServer(String serverId, Map<String, Object> nbdServerConfig);
 

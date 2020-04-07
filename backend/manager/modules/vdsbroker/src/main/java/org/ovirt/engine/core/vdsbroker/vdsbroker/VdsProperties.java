@@ -550,6 +550,7 @@ public final class VdsProperties {
     // incremental backup
     public static final String BACKUP_ENABLED = "backupEnabled";
     public static final String CHECKPOINT = "checkpoint";
+    public static final String CHECKPOINT_IDS = "checkpoint_ids";
 
     public static final String TSC_FREQUENCY = "tscFrequency";
 

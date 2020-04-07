@@ -56,6 +56,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
@@ -162,17 +163,14 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         Guid vmBackupId = createVmBackup();
         log.info("Created VmBackup entity '{}'", vmBackupId);
 
-        // TODO: currently skip redefining backup checkpoints.
-        // Will allow creating a full backup for a vm.
-        // Redefine checkpoints should be implemented and used when the
-        // API between the engine and vdsm will be re-designed.
-        //
-        // log.info("Redefine previous VM checkpoints for VM '{}'", vmId);
-        // if (!redefineVmCheckpoints()) {
-        //     setCommandStatus(CommandStatus.FAILED);
-        //     return;
-        // }
-        // log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmId);
+        if (vmBackup.getFromCheckpointId() != null) {
+            log.info("Redefine previous VM checkpoints for VM '{}'", vmBackup.getVmId());
+            if (!redefineVmCheckpoints()) {
+                setCommandStatus(CommandStatus.FAILED);
+                return;
+            }
+            log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmBackup.getVmId());
+        }
 
         if (FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())
                 && !isBackupContainsRawDisksOnly()) {
@@ -348,13 +346,17 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 return true;
             }
 
-            checkpoints.forEach(c -> c.setDisks(vmCheckpointDao.getDisksByCheckpointId(c.getId())));
-            vdsRetVal = runVdsCommand(VDSCommandType.RedefineVmCheckpoints,
-                    new VmCheckpointsVDSParameters(getVdsId(), getVmId(), checkpoints));
-            if (!vdsRetVal.getSucceeded()) {
-                EngineException engineException = new EngineException();
-                engineException.setVdsError(vdsRetVal.getVdsError());
-                throw engineException;
+            for (VmCheckpoint checkpoint : checkpoints) {
+                // Checkpoint can be redefined in bulks, currently redefine one checkpoint each time
+                vdsRetVal = runVdsCommand(VDSCommandType.RedefineVmCheckpoints,
+                        new VmCheckpointsVDSParameters(getVdsId(), getVmId(), List.of(checkpoint)));
+                VmCheckpointInfo vmCheckpointInfo = (VmCheckpointInfo) vdsRetVal.getReturnValue();
+                if (!vdsRetVal.getSucceeded() || vmCheckpointInfo.getError() != null) {
+                    EngineException engineException = new EngineException();
+                    engineException.setVdsError(vdsRetVal.getVdsError());
+                    engineException.setVdsReturnValue(vdsRetVal);
+                    throw engineException;
+                }
             }
             return true;
         } catch (EngineException e) {

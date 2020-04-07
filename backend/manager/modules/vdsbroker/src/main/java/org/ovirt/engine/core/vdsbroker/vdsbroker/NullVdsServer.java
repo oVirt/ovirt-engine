@@ -39,6 +39,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
 import org.ovirt.vdsm.jsonrpc.client.BrokerCommandCallback;
 
 public class NullVdsServer implements IVdsServer {
@@ -952,11 +953,11 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
-    @Override public StatusOnlyReturn redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints) {
+    @Override public VmCheckpointInfo redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints) {
         return null;
     }
 
-    @Override public StatusOnlyReturn deleteVmCheckpoints(String vmId, String[] checkpointIds) {
+    @Override public VmCheckpointInfo deleteVmCheckpoints(String vmId, String[] checkpointIds) {
         return null;
     }
 
