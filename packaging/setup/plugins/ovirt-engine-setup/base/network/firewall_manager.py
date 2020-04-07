@@ -116,8 +116,6 @@ class Plugin(plugin.PluginBase):
                         'on this system.\n'
                         'Note: automatic configuration of the firewall may '
                         'overwrite current settings.\n'
-                        'NOTICE: iptables is deprecated and will be removed '
-                        'in future releases\n'
                     ),
                 )
                 self.environment[

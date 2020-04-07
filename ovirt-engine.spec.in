@@ -816,6 +816,7 @@ install -d "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d"
 cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" << __EOF__
 [environment:default]
 OVESETUP_APACHE/configureRootRedirectionDefault=bool:True
+OVESETUP_CONFIG/validFirewallManagers=str:firewalld
 __EOF__
 
 %if %{ovirt_provides_jboss}
