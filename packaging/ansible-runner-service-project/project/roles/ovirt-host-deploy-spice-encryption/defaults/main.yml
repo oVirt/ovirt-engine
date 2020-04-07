@@ -1,1 +1,2 @@
 host_deploy_spice_cipher_string: 'kECDHE+FIPS:kDHE+FIPS:kRSA+FIPS:!eNULL:!aNULL'
+host_deploy_spice_protocol: 'ALL,-SSLv2,-SSLv3,-TLSv1,-TLSv1.1'
