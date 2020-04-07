@@ -1,11 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Vm;
@@ -48,16 +46,6 @@ public class BackendVmNicsResource extends AbstractBackendNicsResource implement
             new AddVmInterfaceParameters(vmId, map(nic)),
             new NicResolver(nic.getName())
         );
-    }
-
-    @Override
-    protected Nic deprecatedPopulate(Nic model, VmNetworkInterface entity) {
-        Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
-        BackendNicHelper.addReportedDevices(this, model, entity);
-        if (details.contains("statistics")) {
-            BackendNicHelper.addStatistics( model, entity);
-        }
-        return model;
     }
 
     @Override

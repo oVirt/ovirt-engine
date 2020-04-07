@@ -7,11 +7,9 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Vm;
@@ -41,6 +39,7 @@ public class BackendVmNicResource
         this.vmId = vmId;
     }
 
+    @Override
     public Nic get() {
         VmNetworkInterface nic = lookupNic(guid);
         if (nic != null) {
@@ -61,22 +60,6 @@ public class BackendVmNicResource
             }
         }
         return null;
-    }
-
-    @Override
-    protected Nic doPopulate(Nic model, VmNetworkInterface entity) {
-        BackendNicHelper.addReportedDevices(this, model, entity);
-        return model;
-    }
-
-    @Override
-    protected Nic deprecatedPopulate(Nic model, VmNetworkInterface entity) {
-        Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
-        BackendNicHelper.addReportedDevices(this, model, entity);
-        if (details.contains("statistics")) {
-            BackendNicHelper.addStatistics(model, entity);
-        }
-        return model;
     }
 
     @Override

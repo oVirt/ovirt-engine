@@ -74,29 +74,9 @@ public class BackendVmNicResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setAllContentHeaderExpectation();
         setUpEntityQueryExpectations(1);
-        setGetGuestAgentQueryExpectations(1);
-
         Nic nic = resource.get();
         verifyModelSpecific(nic, 1);
         verifyLinks(nic);
-    }
-
-    @Test
-    public void testGetIncludeStatistics() {
-        try {
-            accepts.add("application/xml; detail=statistics");
-            setUriInfo(setUpBasicUriExpectations());
-            setAllContentHeaderExpectation();
-            setUpEntityQueryExpectations(1);
-            setGetGuestAgentQueryExpectations(1);
-
-            Nic nic = resource.get();
-            assertTrue(nic.isSetStatistics());
-            verifyModelSpecific(nic, 1);
-            verifyLinks(nic);
-        } finally {
-            accepts.clear();
-        }
     }
 
     @Test
@@ -148,7 +128,6 @@ public class BackendVmNicResourceTest
     public void testRemove() {
         setUpEntityQueryExpectations(1);
         setAllContentHeaderExpectation();
-        setGetGuestAgentQueryExpectations(1);
         setUriInfo(
             setUpActionExpectations(
                 ActionType.RemoveVmInterface,
@@ -175,7 +154,6 @@ public class BackendVmNicResourceTest
     protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpEntityQueryExpectations(1);
         setAllContentHeaderExpectation();
-        setGetGuestAgentQueryExpectations(1);
         setUriInfo(
             setUpActionExpectations(
                 ActionType.RemoveVmInterface,
@@ -356,18 +334,6 @@ public class BackendVmNicResourceTest
             String[] names,
             Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
-    }
-
-    protected void setGetGuestAgentQueryExpectations(int times) {
-        while (times-- > 0) {
-            setUpEntityQueryExpectations(
-                QueryType.GetVmGuestAgentInterfacesByVmId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { VM_ID },
-                getListOfVmGuestAgentInterfaces()
-            );
-        }
     }
 
     @SuppressWarnings("serial")
