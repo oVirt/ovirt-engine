@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.MapType;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class JsonHelper {
     private JsonHelper() {
@@ -65,5 +69,35 @@ public class JsonHelper {
         CollectionType type = mapper.getTypeFactory().constructCollectionType(List.class, String.class);
         List<String> data = mapper.readValue(jsonString, type);
         return data;
+    }
+
+    public static void invokeIfExistsInt(JsonNode node, String fieldName, Consumer<Integer> consumer) {
+        if (node.has(fieldName)) {
+            consumer.accept(node.get(fieldName).asInt());
+        }
+    }
+
+    public static void invokeIfExistsLong(JsonNode node, String fieldName, Consumer<Long> consumer) {
+        if (node.has(fieldName)) {
+            consumer.accept(node.get(fieldName).asLong());
+        }
+    }
+
+    public static void invokeIfExistsBoolean(JsonNode node, String fieldName, Consumer<Boolean> consumer) {
+        if (node.has(fieldName)) {
+            consumer.accept(node.get(fieldName).asBoolean());
+        }
+    }
+
+    public static void invokeIfExistsString(JsonNode node, String fieldName, Consumer<String> consumer) {
+        if (node.has(fieldName)) {
+            consumer.accept(node.get(fieldName).asText());
+        }
+    }
+
+    public static <T> void invokeIfExistsStringTransformed(JsonNode node, String fieldName, Consumer<T> consumer, Function<String, T> transformer) {
+        if (node.has(fieldName)) {
+            consumer.accept(transformer.apply(node.get(fieldName).asText()));
+        }
     }
 }
