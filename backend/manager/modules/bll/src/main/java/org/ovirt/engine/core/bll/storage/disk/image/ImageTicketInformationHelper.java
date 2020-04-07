@@ -8,6 +8,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformation;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.JsonHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,36 +28,21 @@ public class ImageTicketInformationHelper {
             if (ticketJson == null) {
                 throw new RuntimeException();
             }
-            if (ticketJson.has("uuid")) {
-                ticketInfo.setId(Guid.createGuidFromString(ticketJson.get("uuid").asText()));
-            }
-            if (ticketJson.has("size")) {
-                ticketInfo.setSize(ticketJson.get("size").asLong());
-            }
-            if (ticketJson.has("url")) {
-                ticketInfo.setUrl(ticketJson.get("url").asText());
-            }
-            if (ticketJson.has("timeout")) {
-                ticketInfo.setTimeout(ticketJson.get("timeout").asInt());
-            }
+
+            JsonHelper.invokeIfExistsLong(ticketJson, "size", ticketInfo::setSize);
+            JsonHelper.invokeIfExistsString(ticketJson, "url", ticketInfo::setUrl);
+            JsonHelper.invokeIfExistsInt(ticketJson, "timeout", ticketInfo::setTimeout);
+            JsonHelper.invokeIfExistsString(ticketJson, "filename", ticketInfo::setFileName);
+            JsonHelper.invokeIfExistsBoolean(ticketJson, "active", ticketInfo::setActive);
+            JsonHelper.invokeIfExistsLong(ticketJson, "transferred", ticketInfo::setTransferred);
+            JsonHelper.invokeIfExistsInt(ticketJson, "idle_time", ticketInfo::setIdleTime);
+            JsonHelper.invokeIfExistsInt(ticketJson, "expires", ticketInfo::setExpires);
+            JsonHelper.invokeIfExistsStringTransformed(ticketJson, "uuid", ticketInfo::setId, Guid::createGuidFromString);
+
             if (ticketJson.has("ops")) {
                 ticketInfo.setTransferTypes(jsonToCollection(ticketJson.get("ops")));
             }
-            if (ticketJson.has("filename")) {
-                ticketInfo.setFileName(ticketJson.get("filename").asText());
-            }
-            if (ticketJson.has("active")) {
-                ticketInfo.setActive(ticketJson.get("active").asBoolean());
-            }
-            if (ticketJson.has("transferred")) {
-                ticketInfo.setTransferred(ticketJson.get("transferred").asLong());
-            }
-            if (ticketJson.has("idle_time")) {
-                ticketInfo.setIdleTime(ticketJson.get("idle_time").asInt());
-            }
-            if (ticketJson.has("expires")) {
-                ticketInfo.setExpires(ticketJson.get("expires").asInt());
-            }
+
         } catch (IOException e) {
             log.error("Exception parsing ImageTicketInformation json '{}': {}", json, e.getMessage());
         }
