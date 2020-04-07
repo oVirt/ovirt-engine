@@ -28,8 +28,8 @@ For testing, use following steps:
         ~/git/ovirt-engine/backend/manager/modules/bll/src/test/java/org/ovirt/engine/core/bll/storage/imageio/conf
  */
 class ImageioClientTest {
-    public static String IMAGEIO_HOSTNAME = "127.0.0.1";
-    public static int IMAGEIO_PORT = 54324;
+    public static final String IMAGEIO_HOSTNAME = "127.0.0.1";
+    public static final int IMAGEIO_PORT = 54324;
 
     private ImageioClient imageioClient = new ImageioClient(IMAGEIO_HOSTNAME, IMAGEIO_PORT);
     private ImageTicket imageTicket = getTestTicket();
