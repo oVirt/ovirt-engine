@@ -9,9 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.HttpMethod;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.entity.StringEntity;
@@ -41,7 +44,7 @@ public class ImageioClient {
     public ImageTicketInformation getTicket(Guid ticketUUID) {
         // Create request
         BasicHttpRequest request = new BasicHttpRequest(
-                "GET", TICKETS_URI + ticketUUID, HttpVersion.HTTP_1_1);
+                HttpMethod.GET, TICKETS_URI + ticketUUID, HttpVersion.HTTP_1_1);
         String responseContent;
 
         try (DefaultBHttpClientConnection conn = getConnection()) {
@@ -58,14 +61,14 @@ public class ImageioClient {
 
     public void putTicket(ImageTicket ticket) {
         BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest(
-                "PUT", TICKETS_URI + ticket.getId(), HttpVersion.HTTP_1_1);
+                HttpMethod.PUT, TICKETS_URI + ticket.getId(), HttpVersion.HTTP_1_1);
 
         try (DefaultBHttpClientConnection conn = getConnection()) {
             // Populate ticket in the request
             StringEntity entity = new StringEntity(
                     new ObjectMapper().writeValueAsString(ticket.toDict()), StandardCharsets.UTF_8);
             request.setEntity(entity);
-            request.setHeader("content-length", String.valueOf(entity.getContentLength()));
+            request.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(entity.getContentLength()));
             EntityUtils.consume(executeRequest(request, conn));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -74,7 +77,7 @@ public class ImageioClient {
 
     public void extendTicket(Guid ticketUUID, long timeout) {
         BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest(
-                "PATCH", TICKETS_URI + ticketUUID, HttpVersion.HTTP_1_1);
+                HttpMethod.PATCH, TICKETS_URI + ticketUUID, HttpVersion.HTTP_1_1);
 
         try (DefaultBHttpClientConnection conn = getConnection()) {
             // Populate timeout in the request
@@ -83,7 +86,7 @@ public class ImageioClient {
             StringEntity entity = new StringEntity(
                     new ObjectMapper().writeValueAsString(timeoutDict), StandardCharsets.UTF_8);
             request.setEntity(entity);
-            request.setHeader("content-length", String.valueOf(entity.getContentLength()));
+            request.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(entity.getContentLength()));
             EntityUtils.consume(executeRequest(request, conn));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -92,7 +95,7 @@ public class ImageioClient {
 
     public void deleteTicket(Guid ticketUUID) {
         BasicHttpRequest request = new BasicHttpRequest(
-                "DELETE", TICKETS_URI + ticketUUID, HttpVersion.HTTP_1_1);
+                HttpMethod.DELETE, TICKETS_URI + ticketUUID, HttpVersion.HTTP_1_1);
 
         try (DefaultBHttpClientConnection conn = getConnection()) {
             EntityUtils.consume(executeRequest(request, conn));
