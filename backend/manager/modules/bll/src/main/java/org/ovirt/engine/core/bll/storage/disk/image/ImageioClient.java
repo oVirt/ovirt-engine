@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -49,9 +50,7 @@ public class ImageioClient {
 
         try (DefaultBHttpClientConnection conn = getConnection()) {
             HttpEntity response = executeRequest(request, conn);
-            // Get content
-            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getContent()));
-            responseContent = reader.lines().collect(Collectors.joining());
+            responseContent = readContent(response.getContent());
             EntityUtils.consume(response);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -136,7 +135,7 @@ public class ImageioClient {
                         "ImageioClient request failed. Status: %s, Reason: %s, Error: %s.",
                         response.getStatusLine().getStatusCode(),
                         response.getStatusLine().getReasonPhrase(),
-                        readContent(response)));
+                        readContent(response.getEntity().getContent())));
             }
 
             HttpEntity entity = response.getEntity();
@@ -151,9 +150,8 @@ public class ImageioClient {
         }
     }
 
-    private String readContent(HttpResponse response) throws IOException {
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(response.getEntity().getContent()));
+    private String readContent(InputStream inputStream) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         return reader.lines().collect(Collectors.joining());
     }
 }
