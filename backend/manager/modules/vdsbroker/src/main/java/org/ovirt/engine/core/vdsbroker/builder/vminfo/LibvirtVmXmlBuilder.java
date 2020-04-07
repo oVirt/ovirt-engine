@@ -131,6 +131,7 @@ public class LibvirtVmXmlBuilder {
     private boolean volatileRun;
     private Map<Guid, String> passthroughVnicToVfMap;
     private Map<String, String> vmCustomProperties;
+    private boolean legacyVirtio;
 
     private VM vm;
     private int vdsCpuThreads;
@@ -259,6 +260,7 @@ public class LibvirtVmXmlBuilder {
         }
         vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
         mdevDisplayOn = isMdevDisplayOn(vmCustomProperties, vm);
+        legacyVirtio = vmInfoBuildUtils.isLegacyVirtio(vm.getVmOsId(), ChipsetType.fromMachineType(emulatedMachine));
     }
 
     public String buildCreateVm() {
@@ -1028,6 +1030,9 @@ public class LibvirtVmXmlBuilder {
             switch (device.getType()) {
             case BALLOON:
                 balloonExists = true;
+                if (legacyVirtio) {
+                    device.getSpecParams().put("model", "virtio-transitional");
+                }
                 writeBalloon(device);
                 break;
             case SMARTCARD:
@@ -1054,11 +1059,18 @@ public class LibvirtVmXmlBuilder {
                 case "virtio-serial":
                     device.getSpecParams().put("index", 0);
                     device.getSpecParams().put("ports", 16);
+                    if (legacyVirtio) {
+                        device.getSpecParams().put("model", "virtio-transitional");
+                    }
                     break;
                 case "virtio-scsi":
                     device.setDevice(VdsProperties.Scsi);
                     device.getSpecParams().put("index", virtioScsiIndex++);
-                    device.getSpecParams().put("model", "virtio-scsi");
+                    if (legacyVirtio) {
+                        device.getSpecParams().put("model", "virtio-transitional");
+                    } else {
+                        device.getSpecParams().put("model", "virtio-scsi");
+                    }
                     break;
                 case "pci":
                     if ("pcie-root".equals(device.getSpecParams().get("model"))) {
@@ -1571,6 +1583,10 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("disk");
         writer.writeAttributeString("type", "block");
+
+        if (SCSI_VIRTIO_BLK_PCI.equals(scsiHostdevProperty) && legacyVirtio) {
+            writer.writeAttributeString("model", "virtio-transitional");
+        }
         if (SCSI_BLOCK.equals(scsiHostdevProperty)) {
             writer.writeAttributeString("device", "lun");
             writer.writeAttributeString("rawio", "yes");
@@ -1740,7 +1756,11 @@ public class LibvirtVmXmlBuilder {
         //   <backend model='random'>/dev/random</backend>
         // </rng>
         writer.writeStartElement("rng");
-        writer.writeAttributeString("model", "virtio");
+        if (legacyVirtio) {
+            writer.writeAttributeString("model", "virtio-transitional");
+        } else {
+            writer.writeAttributeString("model", "virtio");
+        }
 
         Map<String, Object> specParams = device.getSpecParams();
         if (specParams.containsKey("bytes")) {
@@ -2262,7 +2282,7 @@ public class LibvirtVmXmlBuilder {
     private void writeGeneralDiskAttributes(VmDevice device, Disk disk, DiskVmElement dve) {
         writer.writeAttributeString("snapshot", "no");
 
-        if (vmInfoBuildUtils.isLegacyVirtio(vm.getVmOsId(), ChipsetType.fromMachineType(emulatedMachine), dve.getDiskInterface())) {
+        if (dve.getDiskInterface() == DiskInterface.VirtIO && legacyVirtio) {
             writer.writeAttributeString("model", "virtio-transitional");
         }
 
@@ -2489,6 +2509,9 @@ public class LibvirtVmXmlBuilder {
             String evaluatedIfaceType = vmInfoBuildUtils.evaluateInterfaceType(ifaceType, vm.getHasAgent());
             if ("pv".equals(evaluatedIfaceType)) {
                 evaluatedIfaceType = "virtio";
+                if (legacyVirtio) {
+                    evaluatedIfaceType = "virtio-transitional";
+                }
             }
             writer.writeAttributeString("type", evaluatedIfaceType);
             writer.writeEndElement();
