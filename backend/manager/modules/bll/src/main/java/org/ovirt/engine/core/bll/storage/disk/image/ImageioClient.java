@@ -30,8 +30,8 @@ public class ImageioClient {
     public static final String TICKETS_URI = "/tickets/";
     public static final int CLIENT_BUFFER_SIZE = 4 * 1024;
 
-    String hostname;
-    int port;
+    private String hostname;
+    private int port;
 
     public ImageioClient(String hostname, int port) {
         this.hostname = hostname;
