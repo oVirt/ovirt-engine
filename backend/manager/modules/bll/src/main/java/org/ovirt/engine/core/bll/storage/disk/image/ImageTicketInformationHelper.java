@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformation;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
@@ -51,10 +51,8 @@ public class ImageTicketInformationHelper {
     }
 
     private static Collection<TransferType> jsonToCollection(JsonNode arrNode) {
-        List<TransferType> transferTypes = new ArrayList<>();
-        for (final JsonNode objNode : arrNode) {
-            transferTypes.add(TransferType.getTransferType(objNode.asText()));
-        }
-        return transferTypes;
+        return StreamSupport.stream(arrNode.spliterator(), false)
+                .map(n -> TransferType.getTransferType(n.asText()))
+                .collect(Collectors.toList());
     }
 }
