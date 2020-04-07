@@ -15,6 +15,17 @@
     - updatecheck
     - skip_ansible_lint # E403
 
+- name: Import oVirt host facts
+  import_role:
+    name: ovirt-host-deploy-facts
+    tasks_from: host-os.yml
+
+- name: Prepare NGN host for upgrade
+  file:
+    path: /var/imgbased/.image-updated
+    state: absent
+  when: ngn_host|bool
+
 # Ignoring empty lines and the title "Obsoleting packages"
 - name: Upgrade packages
   yum:
@@ -28,3 +39,25 @@
   - skip_ansible_lint # E403
   register: updated_packages
   when: item and item != "Obsoleting"
+
+- name: Check if image was updated
+  set_fact:
+    image_pkg_updated: "{{ yum_result is search('image-update') }}"
+  when: ngn_host|bool
+
+- name: Check if image-updated file exists
+  stat:
+    path: /var/imgbased/.image-updated
+  register: image_updated_file
+  when:
+    - ngn_host|bool
+    - image_pkg_updated|bool
+
+- name: Verify image was updated successfully
+  fail:
+    msg: "NGN host upgrade failed"
+  when:
+    - ngn_host|bool
+    - image_pkg_updated|bool
+    - not image_updated_file.stat.exists
+    - host_deploy_cluster_version|float >= 4.4

@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHTTPClient;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -157,9 +158,11 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         long allowedExpirationDateInSeconds = TimeUnit.MILLISECONDS.toSeconds(
                 CertificationValidityChecker.computeFutureExpirationDate(daysAllowedUntilExpiration).getTimeInMillis());
         Cluster cluster = clusterDao.get(host.getClusterId());
+        Version clusterVersion = cluster.getCompatibilityVersion();
         command
             .variable("host_deploy_vnc_restart_services", host.getVdsType() == VDSType.VDS)
             .variable("host_deploy_vnc_tls", String.valueOf(cluster.isVncEncryptionEnabled()))
+            .variable("host_deploy_cluster_version", clusterVersion)
             // PKI variables:
             .variable("ovirt_pki_dir", config.getPKIDir())
             .variable("ovirt_vds_hostname", host.getHostName())

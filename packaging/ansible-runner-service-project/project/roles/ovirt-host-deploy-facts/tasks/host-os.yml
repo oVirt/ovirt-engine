@@ -1,0 +1,20 @@
+---
+- name: Detect host operating system
+  set_fact:
+    el_ver: "{{ ansible_distribution_major_version|int
+        if ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+        else 0 }}"
+    fc_ver: "{{ ansible_distribution_major_version|int
+        if ansible_distribution == 'Fedora'
+        else 0 }}"
+
+- name: Parse operating system release
+  lineinfile:
+    path: /etc/os-release
+    line: 'VARIANT_ID="ovirt-node"'
+  check_mode: yes
+  register: ngn_presence
+
+- name: Detect if host is a prebuilt image
+  set_fact:
+    ngn_host: "{{ not ngn_presence.changed }}"
