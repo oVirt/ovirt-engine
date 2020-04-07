@@ -27,8 +27,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ImageioClient {
 
-    public static String TICKETS_URI = "/tickets/";
-    public static int CLIENT_BUFFER_SIZE = 4 * 1024;
+    public static final String TICKETS_URI = "/tickets/";
+    public static final int CLIENT_BUFFER_SIZE = 4 * 1024;
 
     String hostname;
     int port;
