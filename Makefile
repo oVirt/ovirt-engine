@@ -22,6 +22,7 @@ DEV_BUILD_GWT_DRAFT=0
 DEV_BUILD_GWT_SUPER_DEV_MODE=0
 DEV_EXTRA_BUILD_FLAGS=
 DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS=
+IMAGEIO_SYSCONF_DIR=/etc/ovirt-imageio
 VMCONSOLE_SYSCONF_DIR=/etc/ovirt-vmconsole
 VMCONSOLE_PKI_DIR=/etc/pki/ovirt-vmconsole
 
@@ -182,6 +183,7 @@ BUILD_TARGET=install
 	-e "s|@VMCONSOLE_PROXY_HELPER_DEFAULTS@|$(DATA_DIR)/conf/ovirt-vmconsole-proxy-helper.conf|g" \
 	-e "s|@BIN_DIR@|$(BIN_DIR)|g" \
 	-e "s|@AAA_JDBC_USR@|$(DATAROOT_DIR)/ovirt-engine-extension-aaa-jdbc|g" \
+	-e "s|@IMAGEIO_SYSCONF_DIR@|$(IMAGEIO_SYSCONF_DIR)|g" \
 	-e "s|@GENERATED_FILE_LIST@|$${GENERATED_FILE_LIST}|g" \
 	$< > $@
 
@@ -241,6 +243,7 @@ GENERATED = \
 	packaging/setup/ovirt_engine_setup/config.py \
 	packaging/setup/ovirt_engine_setup/engine/config.py \
 	packaging/setup/ovirt_engine_setup/engine_common/config.py \
+	packaging/setup/ovirt_engine_setup/ovirt_imageio/config.py \
 	packaging/setup/ovirt_engine_setup/vmconsole_proxy_helper/config.py \
 	packaging/setup/ovirt_engine_setup/websocket_proxy/config.py \
 	packaging/sys-etc/logrotate.d/ovirt-engine \

@@ -222,6 +222,7 @@ Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
 Requires:	java-11-openjdk-headless >= 11.0.4
 Requires:	javapackages-tools
+Requires:	ovirt-imageio-daemon >= 2.0.4
 Requires:	python3-mod_wsgi >= 4.6.4
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
@@ -414,6 +415,7 @@ Requires:	%{name} >= 3.6.0
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
 Requires:	%{name}-setup-plugin-cinderlib = %{version}-%{release}
+Requires:	%{name}-setup-plugin-imageio = %{version}-%{release}
 Requires:	%{name}-dwh-setup >= 4.2
 Requires:	ovirt-engine-extension-aaa-jdbc >= 1.2.0
 Requires:	openssh
@@ -602,6 +604,14 @@ Requires:	openssh
 
 %description setup-plugin-cinderlib
 Setup and upgrade specific plugins for cinderlib integration database
+
+%package setup-plugin-imageio
+Summary:	Setup imageio service.
+Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
+Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
+
+%description setup-plugin-imageio
+Setup imageio service.
 
 %prep
 %setup -c -q
@@ -1045,6 +1055,12 @@ fi
 %license LICENSE
 %{engine_data}/setup/ovirt_engine_setup/cinderlib/
 %{engine_data}/setup/plugins/*/cinderlib
+
+%files setup-plugin-imageio
+%license LICENSE
+%{engine_data}/firewalld/ovirt-imageio/
+%{engine_data}/setup/ovirt_engine_setup/ovirt_imageio/
+%{engine_data}/setup/plugins/ovirt-engine-setup/ovirt_imageio/
 
 %files dbscripts
 %license LICENSE

@@ -1,0 +1,14 @@
+#
+# ovirt-engine-setup -- ovirt engine imageio setup
+#
+# Copyright oVirt Authors
+# SPDX-License-Identifier: Apache-2.0
+#
+#
+
+
+"""
+ovirt-imageio engine config
+"""
+
+OVIRT_IMAGEIO_CONFIG = "@IMAGEIO_SYSCONF_DIR@/daemon.conf"
