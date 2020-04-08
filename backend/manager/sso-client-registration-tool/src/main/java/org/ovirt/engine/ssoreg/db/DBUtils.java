@@ -16,7 +16,7 @@ public class DBUtils {
     public DBUtils() throws SQLException {
         ds = new StandaloneDataSource();
         unregisterClientSql = "select sso_oauth_unregister_client(?)";
-        registerClientSql = "select sso_oauth_register_client(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        registerClientSql = "select sso_oauth_register_client(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         scopes = "openid ovirt-app-portal ovirt-app-admin ovirt-app-api ovirt-ext=auth:identity " +
                 "ovirt-ext=token:password-access ovirt-ext=auth:sequence-priority ovirt-ext=token:login-on-behalf " +
                 "ovirt-ext=token-info:authz-search ovirt-ext=token-info:public-authz-search " +
@@ -33,7 +33,7 @@ public class DBUtils {
         }
     }
 
-    public void registerClient(String clientId, String clientSecret, String certificate, String callbackPrefix)
+    public void registerClient(String clientId, String clientSecret, String certificate, String callbackPrefix, boolean encryptedUserInfo)
             throws SQLException {
         try (
                 Connection connection = ds.getConnection();
@@ -46,11 +46,12 @@ public class DBUtils {
             prepareStatement.setString(5, callbackPrefix); //callback_prefix
             prepareStatement.setString(6, "oVirt Engine Client"); //description
             prepareStatement.setString(7, ""); //email
-            prepareStatement.setBoolean(8, Boolean.TRUE); //trusted
-            prepareStatement.setString(9, ""); //notification_callback
-            prepareStatement.setString(10, "TLS"); //notification_callback_host_protocol
-            prepareStatement.setBoolean(11, Boolean.FALSE); //notification_callback_host_verification
-            prepareStatement.setBoolean(12, Boolean.TRUE); //notification_callback_chain_validation
+            prepareStatement.setBoolean(8, encryptedUserInfo); //encrypted_userinfo
+            prepareStatement.setBoolean(9, Boolean.TRUE); //trusted
+            prepareStatement.setString(10, ""); //notification_callback
+            prepareStatement.setString(11, "TLS"); //notification_callback_host_protocol
+            prepareStatement.setBoolean(12, Boolean.FALSE); //notification_callback_host_verification
+            prepareStatement.setBoolean(13, Boolean.TRUE); //notification_callback_chain_validation
             prepareStatement.execute();
         }
     }

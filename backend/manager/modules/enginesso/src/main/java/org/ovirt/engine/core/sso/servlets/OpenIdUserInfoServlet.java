@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.ovirt.engine.core.sso.utils.AuthenticationException;
 import org.ovirt.engine.core.sso.utils.OAuthException;
 import org.ovirt.engine.core.sso.utils.SsoConstants;
+import org.ovirt.engine.core.sso.utils.SsoContext;
 import org.ovirt.engine.core.sso.utils.SsoSession;
 import org.ovirt.engine.core.sso.utils.SsoUtils;
 import org.ovirt.engine.core.sso.utils.openid.OpenIdService;
@@ -45,7 +46,13 @@ public class OpenIdUserInfoServlet extends HttpServlet {
                 throw new OAuthException(SsoConstants.ERR_CODE_INVALID_TOKEN,
                         SsoConstants.ERR_SESSION_EXPIRED_MSG);
             }
-            SsoUtils.sendJsonData(response, buildResponse(request, ssoSession), "application/jwt");
+
+            SsoContext ssoContext = SsoUtils.getSsoContext(request);
+            if (ssoContext.getClienInfo(ssoSession.getClientId()).isEncryptedUserInfo()){
+                SsoUtils.sendJsonData(response, buildEncodedJWTResponse(request, ssoSession), "application/jwt");
+            }else {
+                SsoUtils.sendJsonData(response, buildPlainJsonResponse(request, ssoSession));
+            }
         } catch(OAuthException ex) {
             SsoUtils.sendJsonDataWithMessage(request, response, ex);
         } catch(AuthenticationException ex) {
@@ -65,7 +72,10 @@ public class OpenIdUserInfoServlet extends HttpServlet {
         return token;
     }
 
-    private String buildResponse(HttpServletRequest request, SsoSession ssoSession) throws Exception {
+    private String buildEncodedJWTResponse(HttpServletRequest request, SsoSession ssoSession) throws Exception {
         return openIdService.get().createJWT(request, ssoSession, ssoSession.getClientId());
+    }
+    private String buildPlainJsonResponse(HttpServletRequest request, SsoSession ssoSession) throws Exception {
+        return openIdService.get().createUnencodedJWT(request, ssoSession, ssoSession.getClientId());
     }
 }

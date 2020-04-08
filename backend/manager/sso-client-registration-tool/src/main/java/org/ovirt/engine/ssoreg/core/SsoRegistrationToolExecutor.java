@@ -96,6 +96,11 @@ public class SsoRegistrationToolExecutor {
                     prefix -> prefix.startsWith("http") || prefix.startsWith("https"),
                     "must start with either http or https");
 
+            Boolean encryptedUserInfo = Boolean.TRUE;
+            if (argMap.containsKey("encrypted-userinfo")) {
+                encryptedUserInfo = getProvidedParameter(argMap, "encrypted-userinfo");
+            }
+
             String tmpConfFileName = null;
             if (argMap.containsKey("conf-file-name")) {
                 tmpConfFileName = getProvidedParameter(argMap,
@@ -107,11 +112,12 @@ public class SsoRegistrationToolExecutor {
             String clientSecret = generateClientSecret();
             String encodedClientSecret = encode(argMap, clientSecret);
             dbUtils.unregisterClient(clientId);
-            dbUtils.registerClient(clientId, encodedClientSecret, certificateFile, callbackPrefix);
+            dbUtils.registerClient(clientId, encodedClientSecret, certificateFile, callbackPrefix, encryptedUserInfo);
             String tmpFile = createTmpSsoClientConfFile(clientId,
                     clientSecret,
                     certificateFile,
                     callbackPrefix,
+                    encryptedUserInfo,
                     tmpConfFileName);
             System.out.println("Client registration completed successfully");
             System.out.format("Client secret has been written to file %s%n", tmpFile);
@@ -169,6 +175,7 @@ public class SsoRegistrationToolExecutor {
             String clientSecret,
             String certificateFile,
             String callbackPrefix,
+            Boolean encryptedUserInfo,
             String tempConfigurationFileName) throws FileNotFoundException {
         File tmpDir = SsoLocalConfig.getInstance().getTmpDir();
         if (tmpDir.mkdirs()) {
@@ -182,24 +189,29 @@ public class SsoRegistrationToolExecutor {
             pw.println(String.format("SSO_CLIENT_SECRET=%s", clientSecret));
             pw.println(String.format("SSO_CLIENT_CERTIFICATE_FILE=%s", certificateFile));
             pw.println(String.format("SSO_CLIENT_CALLBACK_PREFIX=%s", callbackPrefix));
+            pw.println(String.format("SSO_CLIENT_ENCRYPTED_USERINFO=%b", encryptedUserInfo));
         }
         return tmpFile.getAbsolutePath();
     }
 
-    private static String getProvidedParameter(Map<String, Object> argMap,
+    private static <T> T getProvidedParameter(Map<String, Object> argMap,
             String paramName,
-            Predicate<String> isValidPredicate,
+            Predicate<T> isValidPredicate,
             String invalidParamMessage) {
 
         if (!argMap.containsKey(paramName)) {
             throw new IllegalArgumentException("Parameter required but not found: " + paramName);
         }
 
-        String paramValue = (String) argMap.get(paramName);
+        T paramValue = (T) argMap.get(paramName);
         if (!isValidPredicate.test(paramValue)) {
             throw new IllegalArgumentException(paramName + "=" + paramValue + ": " + invalidParamMessage);
         }
         log.info("Provided parameter: {}={}", paramName, paramValue);
         return paramValue;
+    }
+
+    private static <T> T getProvidedParameter(Map<String, Object> argMap, String paramName) {
+        return getProvidedParameter(argMap, paramName, arg -> true, "");
     }
 }

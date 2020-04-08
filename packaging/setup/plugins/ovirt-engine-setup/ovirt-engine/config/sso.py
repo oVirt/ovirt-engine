@@ -134,6 +134,7 @@ class Plugin(plugin.PluginBase):
                     %(callback_prefix)s,
                     %(description)s,
                     %(email)s,
+                    %(encrypted_userinfo)s,
                     %(trusted)s,
                     %(notification_callback)s,
                     %(notification_callback_host_protocol)s,
@@ -170,6 +171,7 @@ class Plugin(plugin.PluginBase):
                 ),
                 description='oVirt Engine',
                 email='',
+                encrypted_userinfo=True,
                 trusted=True,
                 notification_callback=(
                     'https://%s:%s/ovirt-engine/'

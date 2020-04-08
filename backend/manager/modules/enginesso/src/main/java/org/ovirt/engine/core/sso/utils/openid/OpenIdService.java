@@ -71,7 +71,7 @@ public class OpenIdService{
      * @throws JWTException RuntimeException thrown when unable to build JWT
      */
     public String createJWT(HttpServletRequest request, SsoSession ssoSession, String clientId) throws JWTException {
-        String plainToken = buildUnencodedOpenIDJWT(request, ssoSession, clientId);
+        String plainToken = createUnencodedJWT(request, ssoSession, clientId);
         // Create RSA-signer with the private key
         return new JWSBuilder()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -87,7 +87,7 @@ public class OpenIdService{
      */
     public String createJWT(HttpServletRequest request, SsoSession ssoSession, String clientId, String clientSecret)
             throws JWTException {
-        String plainToken = buildUnencodedOpenIDJWT(request, ssoSession, clientId);
+        String plainToken = createUnencodedJWT(request, ssoSession, clientId);
 
         return new JWSBuilder()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +108,7 @@ public class OpenIdService{
      *
      * @throws JWTException RuntimeException thrown when unable to build JWT
      */
-    private String buildUnencodedOpenIDJWT(HttpServletRequest request, SsoSession ssoSession, String clientId)
+    public String createUnencodedJWT(HttpServletRequest request, SsoSession ssoSession, String clientId)
             throws JWTException {
         long expirationTime = ssoSession.getAuthTime().getTime() + 30000 * 60;
         String serverName = request.getServerName();

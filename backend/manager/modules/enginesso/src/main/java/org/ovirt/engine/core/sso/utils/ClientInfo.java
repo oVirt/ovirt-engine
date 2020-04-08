@@ -8,6 +8,7 @@ public class ClientInfo {
     private String certificateLocation;
     private String callbackPrefix;
     private String clientNotificationCallback;
+    private boolean encryptedUserInfo;
     private List<String> scope;
     private boolean trusted;
     private String notificationCallbackProtocol;
@@ -102,5 +103,13 @@ public class ClientInfo {
 
     public boolean isNotificationCallbackVerifyChain() {
         return notificationCallbackVerifyChain;
+    }
+
+    public boolean isEncryptedUserInfo() {
+        return encryptedUserInfo;
+    }
+    public ClientInfo withEncryptedUserInfo(boolean encryptedUserInfo){
+        this.encryptedUserInfo = encryptedUserInfo;
+        return this;
     }
 }

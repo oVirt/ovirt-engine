@@ -7,6 +7,7 @@ CREATE OR REPLACE FUNCTION sso_oauth_register_client (
     v_callback_prefix VARCHAR(1024) DEFAULT NULL,
     v_description TEXT DEFAULT 'oVirt Engine',
     v_email VARCHAR(256) DEFAULT '',
+    v_encrypted_userinfo BOOLEAN DEFAULT TRUE,
     v_trusted BOOLEAN DEFAULT TRUE,
     v_notification_callback VARCHAR(1024) DEFAULT NULL,
     v_notification_callback_protocol VARCHAR(32) DEFAULT 'TLSv1',
@@ -25,6 +26,7 @@ BEGIN
         callback_prefix,
         description,
         email,
+        encrypted_userinfo,
         trusted,
         notification_callback,
         notification_callback_protocol,
@@ -39,6 +41,7 @@ BEGIN
         v_callback_prefix,
         v_description,
         v_email,
+        v_encrypted_userinfo,
         v_trusted,
         v_notification_callback,
         v_notification_callback_protocol,
@@ -106,6 +109,7 @@ CREATE OR REPLACE FUNCTION update_oauth_client (
     v_callback_prefix VARCHAR(1024) DEFAULT NULL,
     v_description TEXT DEFAULT 'oVirt Engine',
     v_email VARCHAR(256) DEFAULT '',
+    v_encrypted_userinfo BOOLEAN DEFAULT TRUE,
     v_trusted BOOLEAN DEFAULT TRUE,
     v_notification_callback VARCHAR(1024) DEFAULT NULL
     )
@@ -118,6 +122,7 @@ BEGIN
         callback_prefix = v_callback_prefix,
         description = v_description,
         email = v_email,
+        encrypted_userinfo = v_encrypted_userinfo,
         trusted = v_trusted,
         notification_callback = v_notification_callback
     WHERE client_id = v_client_id;

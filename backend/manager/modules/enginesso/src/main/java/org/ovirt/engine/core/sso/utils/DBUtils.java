@@ -26,7 +26,7 @@ public class DBUtils {
                 throw new RuntimeException("Failed to obtain data source");
             }
             Map<String, ClientInfo> map = new HashMap<>();
-            String sql = "SELECT client_id, client_secret, certificate_location, callback_prefix, " +
+            String sql = "SELECT client_id, client_secret, certificate_location, callback_prefix, encrypted_userinfo, " +
                     "notification_callback, scope, trusted, notification_callback_protocol, " +
                     "notification_callback_verify_host, notification_callback_verify_chain from sso_clients";
             try (
@@ -40,6 +40,7 @@ public class DBUtils {
                                 .withClientSecret(rs.getString("client_secret"))
                                 .withCertificateLocation(rs.getString("certificate_location"))
                                 .withCallbackPrefix(rs.getString("callback_prefix"))
+                                .withEncryptedUserInfo(rs.getBoolean("encrypted_userinfo"))
                                 .withClientNotificationCallback(StringUtils.defaultIfEmpty(rs.getString("notification_callback"), ""))
                                 .withScope(SsoUtils.scopeAsList(rs.getString("scope")))
                                 .withIsTrusted(rs.getBoolean("trusted"))
