@@ -39,7 +39,7 @@ public enum ActionType {
     AddDisk(31, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     RegisterDisk(32, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     ExtractOva(33, QuotaDependency.NONE),
-    UpdateDisk(34, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.STORAGE),
+    UpdateDisk(34, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     ExportVmTemplateToOva(35, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     AttachDiskToVm(180, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
     DetachDiskFromVm(181, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),

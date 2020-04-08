@@ -22,6 +22,8 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmSlaPolicyUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -76,6 +78,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -83,6 +87,7 @@ import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandPa
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -662,7 +667,8 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
     }
 
     private void extendDiskImageSize() {
-        runInternalActionWithTasksContext(ActionType.ExtendImageSize, createExtendParameters());
+        runInternalAction(ActionType.ExtendImageSize, createExtendParameters(),
+                createStepsContext(StepEnum.EXTEND_IMAGE));
     }
 
     private void executeDiskExtend() {
@@ -774,6 +780,18 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
             jobProperties.put("diskalias", getDiskAlias());
         }
         return jobProperties;
+    }
+
+    private CommandContext createStepsContext(StepEnum step) {
+        Step addedStep = executionHandler.addSubStep(getExecutionContext(),
+                getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
+                step,
+                ExecutionMessageDirector.resolveStepMessage(step, Collections.emptyMap()));
+        ExecutionContext ctx = new ExecutionContext();
+        ctx.setStep(addedStep);
+        ctx.setMonitored(true);
+        return ExecutionHandler.createDefaultContextForTasks(getContext(), null)
+                .withExecutionContext(ctx);
     }
 
     @Override
