@@ -8,7 +8,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +33,7 @@ public class OAuthTokenInfoServlet extends HttpServlet {
     private SsoContext ssoContext;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) {
         ssoContext = SsoUtils.getSsoContext(config.getServletContext());
         for (DirectorySearch query : DirectorySearch.values()) {
             if (query.isPublicQuery()) {
@@ -46,8 +45,7 @@ public class OAuthTokenInfoServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("Entered OAuthTokenInfo QueryString: {}, Parameters : {}",
                 request.getQueryString(),
                 SsoUtils.getRequestParameters(request));
@@ -94,7 +92,7 @@ public class OAuthTokenInfoServlet extends HttpServlet {
         }
     }
 
-    private void validateQueryType(HttpServletRequest request) throws Exception {
+    private void validateQueryType(HttpServletRequest request) {
         String queryType = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_SEARCH_QUERY_TYPE);
         if (!directoryQueries.containsKey(queryType) && !directoryPublicQueries.containsKey(queryType)) {
             throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
@@ -124,7 +122,7 @@ public class OAuthTokenInfoServlet extends HttpServlet {
     }
 
 
-    private Map<String, Object> buildResponse(HttpServletRequest request, String clientId, String scope) throws Exception {
+    private Map<String, Object> buildResponse(HttpServletRequest request, String clientId, String scope) {
         String token = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
         SsoSession ssoSession = SsoUtils.getSsoSession(request, clientId, token, true);
         String password = null;

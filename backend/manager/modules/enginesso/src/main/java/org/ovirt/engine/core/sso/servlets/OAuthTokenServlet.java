@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,13 +39,12 @@ public class OAuthTokenServlet extends HttpServlet {
     protected SsoContext ssoContext;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) {
         ssoContext = SsoUtils.getSsoContext(config.getServletContext());
     }
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             log.debug("Entered OAuthTokenServlet Query String: {}, Parameters : {}",
                     maskPassword(request.getQueryString()),
@@ -114,7 +112,7 @@ public class OAuthTokenServlet extends HttpServlet {
     protected SsoSession handleIssueTokenForAuthCode(
             HttpServletRequest request,
             String clientId,
-            String scope) throws Exception {
+            String scope) {
         log.debug("Entered issueTokenForAuthCode");
         String authCode = SsoUtils.getRequestParameter(request,
                 SsoConstants.HTTP_PARAM_AUTHORIZATION_CODE,
@@ -190,7 +188,7 @@ public class OAuthTokenServlet extends HttpServlet {
         }
     }
 
-    protected Credentials getCredentials(HttpServletRequest request) throws Exception {
+    protected Credentials getCredentials(HttpServletRequest request) {
         return SsoUtils.translateUser(SsoUtils.getRequestParameter(request, "username"),
                 SsoUtils.getRequestParameter(request, "password"),
                 ssoContext);
