@@ -179,7 +179,7 @@ public class ReflectionHelper {
     private static Method getMethod(Object o, String name) {
         Method ret = null;
         for (Method m : o.getClass().getMethods()) {
-            if (m.getName().equals(name)) {
+            if (m.getName().equalsIgnoreCase(name)) {
                 ret = m;
                 break;
             }
