@@ -311,6 +311,9 @@ public class AsyncDataProvider {
     /** (CPU name, cluster compatibility version) -> {@link ServerCpu} */
     private Map<Pair<String, Version>, ServerCpu> cpuMap;
 
+    // cached ImageIO Proxy URI
+    private String imageioProxyUri;
+
     public String getDefaultConfigurationVersion() {
         return _defaultConfigurationVersion;
     }
@@ -354,6 +357,7 @@ public class AsyncDataProvider {
         initSoundDeviceSupportMap();
         initMigrationPolicies();
         initCpuMap();
+        initImageioProxyUri();
     }
 
     private void initMigrationPolicies() {
@@ -2715,6 +2719,16 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetDisplayTypes),
                 new AsyncQuery<QueryReturnValue>(returnValue -> graphicsAndDisplays = returnValue.getReturnValue()));
+    }
+
+    private void initImageioProxyUri() {
+        Frontend.getInstance().runQuery(QueryType.GetImageioProxyUri,
+                new QueryParametersBase(),
+                new AsyncQuery<QueryReturnValue>(returnValue -> imageioProxyUri = returnValue.getReturnValue()));
+    }
+
+    public String getImageioProxyUri() {
+        return imageioProxyUri;
     }
 
     public List<Integer> getOsIds(ArchitectureType architectureType) {

@@ -679,9 +679,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     OriginType,
 
-    @TypeConverterAttribute(String.class)
-    ImageProxyAddress,
-
     @TypeConverterAttribute(Boolean.class)
     ImageProxySSLEnabled,
 

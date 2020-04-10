@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -280,10 +279,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
     }
 
     private void onTest() {
-        String imageProxyAddress = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigValues.ImageProxyAddress);
-        String url = "https://" + imageProxyAddress + "/info/"; //$NON-NLS-1$ //$NON-NLS-2$
-
+        String url = AsyncDataProvider.getInstance().getImageioProxyUri() + "/info/"; //$NON-NLS-1$
         RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, url);
         try {
             requestBuilder.sendRequest(null, new RequestCallback() {

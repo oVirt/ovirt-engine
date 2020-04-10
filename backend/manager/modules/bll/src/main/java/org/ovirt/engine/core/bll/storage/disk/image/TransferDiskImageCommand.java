@@ -78,12 +78,14 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 
 @NonTransactiveCommandAttribute
 public class TransferDiskImageCommand<T extends TransferDiskImageParameters> extends BaseImagesCommand<T> implements QuotaStorageDependent {
     private static final boolean LEGAL_IMAGE = true;
     private static final boolean ILLEGAL_IMAGE = false;
+    private static final int PROXY_DATA_PORT = 54323;
     private static final int PROXY_CONTROL_PORT = 54324;
     private static final String HTTP_SCHEME = "http://";
     private static final String HTTPS_SCHEME = "https://";
@@ -1222,10 +1224,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return Config.<Integer>getValue(ConfigValues.TransferImageClientInactivityTimeoutInSeconds);
     }
 
-    private String getProxyUri() {
+    public static String getProxyUri() {
         String scheme = Config.<Boolean> getValue(ConfigValues.ImageProxySSLEnabled)?  HTTPS_SCHEME : HTTP_SCHEME;
-        String address = Config.getValue(ConfigValues.ImageProxyAddress);
-        return scheme + address;
+        return scheme + EngineLocalConfig.getInstance().getHost() + ":" + PROXY_DATA_PORT;
     }
 
     private String getImageDaemonUri(String daemonHostname) {

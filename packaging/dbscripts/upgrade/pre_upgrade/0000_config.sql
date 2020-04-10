@@ -42,7 +42,6 @@ select fn_db_rename_config_key('DefaultMtu', 'DefaultMTU', 'general');
 select fn_db_rename_config_key('ManagementNetwork', 'DefaultManagementNetwork', 'general');
 select fn_db_rename_config_key('FreeSpaceCriticalLowInGB','CriticalSpaceActionBlocker', 'general');
 select fn_db_rename_config_key('FreeSpaceLow', 'WarningLowSpaceIndicator', 'general');
-select fn_db_rename_config_key('ImageProxyURL', 'ImageProxyAddress', 'general');
 select fn_db_rename_config_key('MaxBlockDiskSize', 'MaxBlockDiskSizeInGibiBytes', 'general');
 select fn_db_rename_config_key('RetryToRunAutoStartVmIntervalInSeconds','RetryToRunAutoStartVmShortIntervalInSeconds','general');
 select fn_db_rename_config_key('MaxNumOfTriesToRunFailedAutoStartVm','NumOfTriesToRunFailedAutoStartVmInShortIntervals','general');
@@ -680,7 +679,6 @@ select fn_db_add_config_value('HostedEngineConfigDiskSizeInBytes','20480','gener
 select fn_db_add_config_value('HostedEngineConfigurationImageGuid','','general');
 
 -- Image IO
-select fn_db_add_config_value('ImageProxyAddress','localhost:54323','general');
 select fn_db_add_config_value('ImageProxySSLEnabled','true','general');
 select fn_db_add_config_value('ImageDaemonPort','54322','general');
 select fn_db_add_config_value('ImageTransferClientTicketValidityInSeconds','3600','general');
