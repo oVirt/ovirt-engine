@@ -2437,7 +2437,9 @@ public class LibvirtVmXmlBuilder {
 
             writer.writeStartElement("source");
             writer.writeAttributeString(isoOnBlockDomain ? "dev" : "file", cdPath);
-            writer.writeAttributeString("startupPolicy", "optional");
+            if (!isoOnBlockDomain) {
+                writer.writeAttributeString("startupPolicy", "optional");
+            }
             writeSeclabel();
             writer.writeEndElement();
 
