@@ -16,10 +16,8 @@ import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -50,8 +48,6 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
-    @Inject
-    private VdsCommandsHelper vdsCommandsHelper;
     @Inject
     private ImagesHandler imagesHandler;
 
@@ -191,8 +187,8 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
             Guid srcDomain) {
         // Check if we have a host in the DC capable of running the measure volume verb,
         // otherwise fallback to the legacy method
-        Guid hostId = vdsCommandsHelper.getHostForExecution(sourceImage.getStoragePoolId(),
-                vds -> FeatureSupported.isMeasureVolumeSupported(vds));
+        Guid hostId = imagesHandler.getHostForMeasurement(sourceImage.getStoragePoolId(),
+                sourceImage.getId());
         if (hostId == null) {
             return imagesHandler.determineTotalImageInitialSize(getDiskImage(),
                     getParameters().getDestinationFormat(),

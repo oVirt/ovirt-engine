@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,11 +23,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 /** A test case for {@link ImagesHandler} */
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +43,12 @@ public class ImagesHandlerTest {
 
     @Mock
     private StorageDomainDao storageDomainDaoMock;
+
+    @Mock
+    private VmDao vmDao;
+
+    @Mock
+    private VdsDao vdsDao;
 
     @InjectMocks
     private ImagesHandler imagesHandler = new ImagesHandler();
@@ -187,5 +202,30 @@ public class ImagesHandlerTest {
     public void testAggregateDiskImagesSnapshotsWithEmptyList() {
         Collection<DiskImage> result =  imagesHandler.aggregateDiskImagesSnapshots(Collections.emptyList());
         assertTrue(result.isEmpty(), "should return an empty list");
+    }
+
+    @Test
+    public void testGetHostForExecutionRunningVM() {
+        Guid storagePoolID = Guid.newGuid();
+        Guid imageGroupID = Guid.newGuid();
+
+        VDS vds1 = new VDS();
+        vds1.setId(Guid.newGuid());
+        vds1.setClusterCompatibilityVersion(Version.v4_4);
+        vds1.setStatus(VDSStatus.Up);
+
+        VM runningVM = new VM();
+        runningVM.setRunOnVds(vds1.getId());
+        runningVM.setStatus(VMStatus.Up);
+
+        disk1.setId(imageGroupID);
+        disk1.setActive(true);
+        Map<Boolean, List<VM>> pluggedVMs = new HashMap<>();
+        pluggedVMs.put(Boolean.TRUE, List.of(runningVM));
+
+        when(vmDao.getForDisk(imageGroupID, true)).thenReturn(pluggedVMs);
+        when(vdsDao.get(vds1.getId())).thenReturn(vds1);
+
+        assertEquals(imagesHandler.getHostForMeasurement(storagePoolID, imageGroupID), vds1.getId());
     }
 }

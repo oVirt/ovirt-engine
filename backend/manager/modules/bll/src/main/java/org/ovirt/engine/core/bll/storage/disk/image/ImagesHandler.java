@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -72,6 +73,8 @@ import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
@@ -137,6 +140,12 @@ public class ImagesHandler {
 
     @Inject
     private DiskProfileHelper diskProfileHelper;
+
+    @Inject
+    private VmDao vmDao;
+
+    @Inject
+    private VdsDao vdsDao;
 
     /**
      * The following method will find all images and storages where they located for provide template and will fill an
@@ -1059,5 +1068,22 @@ public class ImagesHandler {
         }
 
         return oldToNewChain;
+    }
+
+    public Guid getHostForMeasurement(Guid storagePoolID, Guid imageGroupID) {
+        Map<Boolean, List<VM>> vms = vmDao.getForDisk(imageGroupID, true);
+        if (vms != null && !vms.computeIfAbsent(Boolean.TRUE, b -> new ArrayList<>()).isEmpty()) {
+            Optional<VM> runningVM = vms.get(Boolean.TRUE)
+                    .stream()
+                    .filter(VM::isRunning)
+                    .findAny();
+            if (runningVM.isPresent()) {
+                Guid hostId = runningVM.get().getRunOnVds();
+                return FeatureSupported.isMeasureVolumeSupported(vdsDao.get(hostId)) ? hostId : null;
+            }
+        }
+
+        return vdsCommandsHelper.getHostForExecution(storagePoolID,
+                vds -> FeatureSupported.isMeasureVolumeSupported(vds));
     }
 }
