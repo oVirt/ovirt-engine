@@ -6,7 +6,6 @@ dependencies:
   - ovirt-host-deploy-libvirt-guests
   - ovirt-host-deploy-firewalld
   - ovirt-host-deploy-vnc-certificates
-  - ovirt-host-deploy-spice-encryption
   - ovirt-host-deploy-kernel
   - ovirt-host-deploy-vm-console
   - ovirt-host-deploy-iptables

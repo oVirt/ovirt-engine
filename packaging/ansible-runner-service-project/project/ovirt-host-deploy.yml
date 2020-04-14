@@ -16,6 +16,11 @@
       when: host_deploy_virt_enabled|bool and host_deploy_gluster_enabled|bool
     - role: ovirt-host-deploy-kdump
       when: host_deploy_kdump_integration|bool
+    - role: ovirt-host-deploy-spice-encryption
+      when:
+        - ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+        - ansible_distribution_major_version|int == 7
+
 
   tasks:
     - name: Gather the rpm package facts
