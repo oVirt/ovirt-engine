@@ -983,4 +983,13 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
                 }));
     }
 
+    @Override
+    public boolean isEntityPresent() {
+        return true;
+    }
+
+    @Override
+    public void setEntityPresent(boolean flag) {
+        // not used
+    }
 }

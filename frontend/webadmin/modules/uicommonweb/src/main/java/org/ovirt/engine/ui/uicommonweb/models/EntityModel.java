@@ -14,6 +14,7 @@ import com.google.gwt.event.shared.HasHandlers;
 public class EntityModel<T> extends Model implements HasHandlers, HasEntity<T> {
 
     private Event<EventArgs> privateEntityChangedEvent;
+    private boolean entityPresent = true;
 
     @Override
     public Event<EventArgs> getEntityChangedEvent() {
@@ -41,6 +42,16 @@ public class EntityModel<T> extends Model implements HasHandlers, HasEntity<T> {
             getEntityChangedEvent().raise(this, EventArgs.EMPTY);
             onPropertyChanged(new PropertyChangedEventArgs("Entity")); //$NON-NLS-1$
         }
+    }
+
+    @Override
+    public boolean isEntityPresent() {
+        return entityPresent;
+    }
+
+    @Override
+    public void setEntityPresent(boolean flag) {
+        this.entityPresent = flag;
     }
 
     @Override
@@ -122,6 +133,11 @@ public class EntityModel<T> extends Model implements HasHandlers, HasEntity<T> {
         setIsValid(true);
 
         if (!getIsAvailable() || !getIsChangable()) {
+            return;
+        }
+
+        if (!isEntityPresent()) {
+            setIsValid(false);
             return;
         }
 

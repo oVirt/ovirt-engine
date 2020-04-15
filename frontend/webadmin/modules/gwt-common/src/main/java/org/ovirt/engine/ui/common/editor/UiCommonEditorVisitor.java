@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.ui.common.widget.HasAccess;
 import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.HasValidation;
+import org.ovirt.engine.ui.common.widget.editor.HasEditorValidityState;
 import org.ovirt.engine.ui.common.widget.editor.ListModelMultipleSelectListBox;
 import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueEditor;
 import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueListEditor;
@@ -88,6 +89,17 @@ public class UiCommonEditorVisitor extends EditorVisitor {
                 updateListEditor((TakesConstrainedValueListEditor<T>) editor, (ListModel) ownerModel);
             } else if (editor instanceof TakesConstrainedValueEditor && ownerModel instanceof ListModel) {
                 updateListEditor((TakesConstrainedValueEditor<T>) editor, (ListModel) ownerModel);
+            }
+
+            if (editor instanceof HasValueChangeHandlers
+                    && ownerModel instanceof EntityModel) {
+                // check HasEntity.isEntityPresent() for details
+                ((HasValueChangeHandlers<T>) editor).addValueChangeHandler(event -> {
+                    if (event.getSource() instanceof HasEditorValidityState) {
+                        ((EntityModel) ownerModel)
+                                .setEntityPresent(((HasEditorValidityState) event.getSource()).isStateValid());
+                    }
+                });
             }
 
             if (functionalEditor != null) {
