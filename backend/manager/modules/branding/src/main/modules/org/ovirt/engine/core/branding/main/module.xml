@@ -5,7 +5,7 @@ Copyright oVirt Authors
 SPDX-License-Identifier: Apache-2.0
 -->
 
-<module xmlns="urn:jboss:module:1.1" name="org.ovirt.engine.core.branding">
+<module xmlns="urn:jboss:module:1.3" name="org.ovirt.engine.core.branding">
 
   <resources>
     <resource-root path="branding.jar"/>
@@ -14,6 +14,8 @@ SPDX-License-Identifier: Apache-2.0
   <dependencies>
     <module name="javax.api"/>
     <module name="javax.servlet.api"/>
+    <module name="javax.servlet.jsp.api"/>
+    <module name="javax.servlet.jstl.api"/>
     <module name="org.codehaus.jackson.jackson-core-asl"/>
     <module name="org.codehaus.jackson.jackson-mapper-asl"/>
     <module name="org.ovirt.engine.core.utils"/>
