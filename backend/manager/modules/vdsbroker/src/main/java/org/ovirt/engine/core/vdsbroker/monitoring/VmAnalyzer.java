@@ -575,7 +575,7 @@ public class VmAnalyzer {
 
         VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
 
-        if (!Objects.equals(vdsmVmDynamic.getClientIp(), dbVm.getClientIp())) {
+        if (dbVm.getClientIp() != null && !Objects.equals(vdsmVmDynamic.getClientIp(), dbVm.getClientIp())) {
             auditClientIpChange();
         }
 
