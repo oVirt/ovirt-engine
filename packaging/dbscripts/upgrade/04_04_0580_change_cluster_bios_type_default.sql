@@ -1,1 +1,0 @@
-ALTER TABLE cluster ALTER COLUMN bios_type SET DEFAULT 0;
