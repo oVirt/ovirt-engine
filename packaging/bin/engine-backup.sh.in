@@ -1339,22 +1339,14 @@ restoreDB() {
 	local pgrestorelog="${TEMP_FOLDER}/pg-restore-log"
 	local non_ignored_errors="${TEMP_FOLDER}/non-ignored-errors"
 	local failed_msg=
-	local tocfile="${TEMP_FOLDER}/toc.txt"
-
-	# Due to a bug, restoring from PG version <=10.x to PG version >=11.x generated attempt to create the public schema again
-	# Also comments on the public schema and extensions generated permission errors upon restore
-	# That forces us to generated a TOC file and manipulate it to throw public schema creation and use the new --no-comments flag
-	# for details please see PG bug discussion at https://www.postgresql.org/message-id/15466-0b90383ff69c6e4b%40postgresql.org
 
 	if [ "${format}" = "plain" ]; then
 		if [ -z "${compressor}" ]; then
-			sed -i '/CREATE SCHEMA public/d' "${backupfile}"
 			pg_cmd psql -f "${backupfile}" > "${pgrestorelog}"  2>&1 \
 				|| failed_msg="Database ${database} restore failed"
 		else
 			# Requires the compressor to support '-d'. All our current ones do.
 			"${compressor}" -d < "${backupfile}" | \
-				sed  '/CREATE SCHEMA public/d' | \
 				pg_cmd psql > "${pgrestorelog}"  2>&1 \
 				|| failed_msg="Database ${database} restore failed"
 		fi
@@ -1362,15 +1354,11 @@ restoreDB() {
 		local no_perms=
 		[ "${RESTORE_PERMISSIONS}" = "0" ] && no_perms='--no-owner --no-privileges'
 		if [ -z "${compressor}" ]; then
-			pg_restore --list --file "${tocfile}" "${backupfile}"
-			sed -i '/SCHEMA - public postgres/d' "${tocfile}"
-			pg_cmd pg_restore ${no_perms:-$no_perms} --no-comments -j "${jobsnum}" --use-list "${tocfile}" "${backupfile}" > "${pgrestorelog}"  2>&1
+			pg_cmd pg_restore ${no_perms:-$no_perms} -j "${jobsnum}" "${backupfile}" > "${pgrestorelog}"  2>&1
 		else
 			# Requires the compressor to support '-d'. All our current ones do.
-			"${compressor}" -d < "${backupfile}" | pg_restore --list --file "${tocfile}"
-			sed -i '/SCHEMA - public postgres/d' "${tocfile}"
 			"${compressor}" -d < "${backupfile}" | \
-				pg_cmd pg_restore ${no_perms:-$no_perms} --no-comments --use-list "${tocfile}" > "${pgrestorelog}"  2>&1
+				pg_cmd pg_restore ${no_perms:-$no_perms} > "${pgrestorelog}"  2>&1
 		fi
 	else
 		logdie "Unsupported format ${format}"
@@ -1386,6 +1374,10 @@ language "plpgsql" already exists
 must be owner of language plpgsql
 must be owner of extension plpgsql
 must be owner of extension uuid-ossp
+# PG 11 does not dump "public" schema creation, and emits errors
+# when restoring backups from older versions, that do include this
+schema "public" already exists
+must be owner of schema public
 #
 # engine uses uuid-ossp PG extension, which requires special privs,
 permission denied for language c
