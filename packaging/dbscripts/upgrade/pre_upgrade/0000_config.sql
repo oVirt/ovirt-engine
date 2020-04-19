@@ -1143,6 +1143,9 @@ select fn_db_update_default_config_value('ImageTransferClientTicketValidityInSec
 -- Lower default value of ImageTransferClientTicketValidityInSeconds
 select fn_db_update_default_config_value('ImageTransferClientTicketValidityInSeconds', '36000', '60', 'general', false);
 
+-- Increase default value of ImageTransferClientTicketValidityInSeconds
+select fn_db_update_default_config_value('ImageTransferClientTicketValidityInSeconds','60', '300', 'general', false);
+
 -- Increase default value of ImageTransferHostTicketRefreshAllowanceInSeconds
 select fn_db_update_default_config_value('ImageTransferHostTicketRefreshAllowanceInSeconds', '60', '240', 'general', false);
 
