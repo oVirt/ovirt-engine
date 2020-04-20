@@ -49,7 +49,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
-public abstract class SanStorageModelBase extends SearchableListModel implements IStorageModel {
+public abstract class SanStorageModelBase extends SearchableListModel implements IStorageModel, SanStoragePartialModel {
 
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 

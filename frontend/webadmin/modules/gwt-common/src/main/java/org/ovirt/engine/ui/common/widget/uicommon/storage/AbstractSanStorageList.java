@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStoragePartialModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -48,7 +48,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
     @UiField
     ScrollPanel treeContainer;
 
-    SanStorageModelBase model;
+    SanStoragePartialModel model;
 
     Tree tree;
 
@@ -58,11 +58,11 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
-    public AbstractSanStorageList(SanStorageModelBase model) {
+    public AbstractSanStorageList(SanStoragePartialModel model) {
         this(model, false, false);
     }
 
-    public AbstractSanStorageList(SanStorageModelBase model, boolean hideLeaf, boolean multiSelection) {
+    public AbstractSanStorageList(SanStoragePartialModel model, boolean hideLeaf, boolean multiSelection) {
         this.model = model;
         this.hideLeaf = hideLeaf;
         this.multiSelection = multiSelection;

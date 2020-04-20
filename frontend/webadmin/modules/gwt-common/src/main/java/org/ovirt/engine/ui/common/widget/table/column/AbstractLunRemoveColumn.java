@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractToggleButtonCell;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStoragePartialModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
@@ -17,7 +17,7 @@ public abstract class AbstractLunRemoveColumn extends AbstractColumn<LunModel, L
     private static final UIConstants uiConstants = ConstantsManager.getInstance().getConstants();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
-    public AbstractLunRemoveColumn(SanStorageModelBase model) {
+    public AbstractLunRemoveColumn(SanStoragePartialModel model) {
         super(new AbstractToggleButtonCell<LunModel>() {
             @Override
             public void onClickEvent(LunModel lunModel) {

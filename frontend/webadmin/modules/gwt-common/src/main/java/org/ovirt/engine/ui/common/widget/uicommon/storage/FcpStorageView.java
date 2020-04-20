@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasValidation;
+import org.ovirt.engine.ui.common.widget.PaginationControl;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
@@ -28,9 +29,10 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModelBase> imp
     @UiField
     ValidatedPanelWidget contentPanel;
 
-    private final Driver driver = GWT.create(Driver.class);
+    @UiField
+    PaginationControl paginationControl;
 
-    private SanStorageLunToTargetList sanStorageLunToTargetList;
+    private final Driver driver = GWT.create(Driver.class);
 
     private double panelHeight = 292;
 
@@ -101,10 +103,13 @@ public class FcpStorageView extends AbstractStorageView<SanStorageModelBase> imp
     public void focus() {
     }
 
-    protected void initLists(SanStorageModelBase object) {
-        // Create and update storage list
-        sanStorageLunToTargetList = new SanStorageLunToTargetList(object, true, multiSelection);
+    protected void initLists(SanStorageModelBase model) {
+        PageFilter pageFilter = new PageFilter(50);
+        SanStorageLunToTargetList sanStorageLunToTargetList =
+                new SanStorageLunToTargetList(PagingProxyModel.create(pageFilter, model), true, multiSelection);
         sanStorageLunToTargetList.activateItemsUpdate();
+        paginationControl.setDataProvider(StoragePagingDataProvider.create(pageFilter, sanStorageLunToTargetList));
+        model.getItemsChangedEvent().addListener((ev, sender, args) -> paginationControl.updateTableControls());
 
         // Update style
         sanStorageLunToTargetList.setTreeContainerHeight(listHeight);

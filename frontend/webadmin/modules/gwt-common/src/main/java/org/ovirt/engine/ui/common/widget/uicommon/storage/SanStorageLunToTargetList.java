@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStoragePartialModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -36,15 +36,15 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
-    public SanStorageLunToTargetList(SanStorageModelBase model) {
+    public SanStorageLunToTargetList(SanStoragePartialModel model) {
         super(model);
     }
 
-    public SanStorageLunToTargetList(SanStorageModelBase model, boolean hideLeaf) {
+    public SanStorageLunToTargetList(SanStoragePartialModel model, boolean hideLeaf) {
         super(model, hideLeaf, false);
     }
 
-    public SanStorageLunToTargetList(SanStorageModelBase model, boolean hideLeaf, boolean multiSelection) {
+    public SanStorageLunToTargetList(SanStoragePartialModel model, boolean hideLeaf, boolean multiSelection) {
         super(model, hideLeaf, multiSelection);
     }
 

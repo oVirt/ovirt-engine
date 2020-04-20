@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStoragePartialModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 
 import com.google.gwt.core.client.GWT;
@@ -45,15 +45,15 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     private LunModel selectedLunModel;
     protected int treeScrollPosition;
 
-    public SanStorageTargetToLunList(SanStorageModelBase model) {
+    public SanStorageTargetToLunList(SanStoragePartialModel model) {
         super(model);
     }
 
-    public SanStorageTargetToLunList(SanStorageModelBase model, boolean hideLeaf) {
+    public SanStorageTargetToLunList(SanStoragePartialModel model, boolean hideLeaf) {
         super(model, hideLeaf, false);
     }
 
-    public SanStorageTargetToLunList(SanStorageModelBase model, boolean hideLeaf, boolean multiSelection) {
+    public SanStorageTargetToLunList(SanStoragePartialModel model, boolean hideLeaf, boolean multiSelection) {
         super(model, hideLeaf, multiSelection);
     }
 
