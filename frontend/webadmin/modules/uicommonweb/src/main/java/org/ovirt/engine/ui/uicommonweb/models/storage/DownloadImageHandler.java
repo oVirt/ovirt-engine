@@ -65,7 +65,10 @@ public class DownloadImageHandler {
     }
 
     private void initiateDownload(ImageTransfer imageTransfer) {
-        String url = imageTransfer.getProxyUri() + "/" + imageTransfer.getImagedTicketId(); //$NON-NLS-1$
+        // Use close=y to inform proxy and daemon that we are done and the
+        // connection must be closed at the end of the download. Avoids failure
+        // in deactivaing a volume after download.
+        String url = imageTransfer.getProxyUri() + "/" + imageTransfer.getImagedTicketId() + "?close=y"; //$NON-NLS-1$ //$NON-NLS-2$
 
         log.info("Initiating download: " + url); //$NON-NLS-1$
 
