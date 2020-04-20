@@ -523,11 +523,14 @@ public class UploadImageHandler {
 
             var address = proxyUri + '/' + resourceId;
 
-            // On the last request we want to close the connection. This will
-            // close imageio backend so we can deactivate the volume on block
-            // storage.
+            // On the last request we want to close the connection and flush.
+            // This will close imageio backend so we can deactivate the volume
+            // on block storage. On all other requests we want to avoid
+            // flushing for better performance.
             if (bytesSent + bytesToSend === endByte) {
                 address += '?close=y';
+            } else {
+                address += '?flush=n';
             }
 
             var contentRange = 'bytes ' + bytesSent + '-' + (bytesSent + bytesToSend - 1) + '/' + endByte;
