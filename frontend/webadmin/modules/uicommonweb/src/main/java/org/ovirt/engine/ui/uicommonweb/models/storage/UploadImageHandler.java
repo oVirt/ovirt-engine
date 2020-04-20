@@ -522,6 +522,14 @@ public class UploadImageHandler {
             }
 
             var address = proxyUri + '/' + resourceId;
+
+            // On the last request we want to close the connection. This will
+            // close imageio backend so we can deactivate the volume on block
+            // storage.
+            if (bytesSent + bytesToSend === endByte) {
+                address += '?close=y';
+            }
+
             var contentRange = 'bytes ' + bytesSent + '-' + (bytesSent + bytesToSend - 1) + '/' + endByte;
 
             xhr.open('PUT', address);
