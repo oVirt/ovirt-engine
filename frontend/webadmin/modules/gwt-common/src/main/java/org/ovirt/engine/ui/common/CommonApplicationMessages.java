@@ -7,6 +7,10 @@ import com.google.gwt.i18n.client.Messages;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface CommonApplicationMessages extends Messages {
+    String fromIndexToIndex(int from, int to);
+
+    String fromIndexToIndexOfTotalCount(int from, int to, int totalCount);
+
     String asyncCallFailure(String reason);
 
     String uiCommonRunActionFailed(String reason);

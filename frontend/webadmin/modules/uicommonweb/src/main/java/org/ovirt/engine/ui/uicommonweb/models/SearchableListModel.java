@@ -218,18 +218,8 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return this.currentPageNumber;
     }
 
-    public String getItemsCountString() {
-        if (getItems() == null) {
-            return ""; //$NON-NLS-1$
-        }
-        int fromItemCount = getSearchPageSize() * (getSearchPageNumber() - 1) + 1;
-        int toItemCount = (fromItemCount - 1) + getItems().size();
-
-        if (toItemCount == 0 || fromItemCount > toItemCount) {
-            return ""; //$NON-NLS-1$
-        }
-
-        return fromItemCount + "-" + toItemCount; //$NON-NLS-1$
+    public int getTotalItemsCount() {
+        return -1;
     }
 
     public int getNextSearchPageNumber() {

@@ -11,29 +11,10 @@ import com.google.gwt.view.client.ProvidesKey;
  *
  * @see com.google.gwt.view.client.AbstractDataProvider
  */
-public interface ActionTableDataProvider<T> extends ProvidesKey<T>, HasPaging {
+public interface ActionTableDataProvider<T> extends ProvidesKey<T>, PagingDataProvider {
 
     /**
      * Adds a data display to this provider.
      */
     void addDataDisplay(HasData<T> display);
-
-    /**
-     * return the table items count
-     * @return String (1-40)
-     */
-    String getItemsCount();
-
-    /**
-     * Get the lower end count as a number
-     * @return The lower end of the total count
-     */
-    int getFromCount();
-
-    /**
-     * Get the higher end count as a number
-     * @return The higher end of the total count
-     */
-    int getToCount();
-
 }

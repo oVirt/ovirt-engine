@@ -5,7 +5,6 @@ import static org.ovirt.engine.ui.common.widget.table.AbstractActionTable.Column
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.AnchorListItem;
-import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Divider;
 import org.gwtbootstrap3.client.ui.DropDownHeader;
 import org.gwtbootstrap3.client.ui.DropDownMenu;
@@ -31,14 +30,12 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableRowElement;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortList;
 import com.google.gwt.user.cellview.client.DataGrid.Resources;
@@ -60,8 +57,6 @@ import com.google.gwt.view.client.SelectionModel;
  * <p>
  * Subclasses are free to style the UI, given that they declare:
  * <ul>
- * <li>{@link #prevPageButton} widget representing the "previous page" button
- * <li>{@link #nextPageButton} widget representing the "next page" button
  * <li>{@link #tableContainer} widget for displaying the actual table
  * </ul>
  *
@@ -92,14 +87,6 @@ public abstract class AbstractActionTable<E, T> extends AbstractActionPanel<T> i
     }
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
-
-    @UiField
-    @WithElementId
-    public Button prevPageButton;
-
-    @UiField
-    @WithElementId
-    public Button nextPageButton;
 
     @UiField
     public FlowPanel tableContainer;
@@ -261,13 +248,6 @@ public abstract class AbstractActionTable<E, T> extends AbstractActionPanel<T> i
     }
 
     protected void updateTableControls() {
-        prevPageButton.setEnabled(getDataProvider().canGoBack());
-        nextPageButton.setEnabled(getDataProvider().canGoForward());
-    }
-
-    public void showPagingButtons() {
-        prevPageButton.setVisible(true);
-        nextPageButton.setVisible(true);
     }
 
     public void showSelectionCountTooltip() {
@@ -399,16 +379,6 @@ public abstract class AbstractActionTable<E, T> extends AbstractActionPanel<T> i
 
     public void setWidth(String width) {
         table.setWidth(width);
-    }
-
-    @UiHandler("prevPageButton")
-    public void handlePrevPageButtonClick(ClickEvent event) {
-        getDataProvider().goBack();
-    }
-
-    @UiHandler("nextPageButton")
-    public void handleNextPageButtonClick(ClickEvent event) {
-        getDataProvider().goForward();
     }
 
     public void setColumnWidth(Column<T, ?> column, String width) {
@@ -579,7 +549,6 @@ public abstract class AbstractActionTable<E, T> extends AbstractActionPanel<T> i
      * Rebuilds context menu items to match the action button list.
      * @param dropDownMenu The menu bar to populate.
      * @param actions A list of {@code ActionButtonDefinition}s used to populate the {@code MenuBar}.
-     * @param popupPanel The pop-up panel containing the {@code MenuBar}.
      * @param removeOldItems A flag to indicate if we should remove old items.
      * @return A {@code MenuBar} containing all the action buttons as menu items.
      */

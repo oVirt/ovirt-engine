@@ -4,6 +4,7 @@ import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.widget.PaginationControl;
 import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
 import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
@@ -15,7 +16,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -36,10 +36,7 @@ public class SimpleActionTable<E, T> extends AbstractActionTable<E, T> {
     public RefreshPanel refreshPanel;
 
     @UiField
-    HTMLPanel fromCount;
-
-    @UiField
-    HTMLPanel toCount;
+    PaginationControl paginationControl;
 
     @UiField
     FlowPanel controlsContainer;
@@ -69,6 +66,7 @@ public class SimpleActionTable<E, T> extends AbstractActionTable<E, T> {
         this.refreshPanel = refreshManager.getRefreshPanel();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         refreshPanel.setVisible(false);
+        paginationControl.setDataProvider(dataProvider);
 
         refreshManager.setManualRefreshCallback(() -> {
             //Do any special refresh options.
@@ -84,18 +82,7 @@ public class SimpleActionTable<E, T> extends AbstractActionTable<E, T> {
     @Override
     protected void updateTableControls() {
         super.updateTableControls();
-
-        String from;
-        String to;
-        if (getDataProvider().getFromCount() == 1 && getDataProvider().getToCount() == 0) {
-            from = "0"; //$NON-NLS-1$
-            to = "0"; //$NON-NLS-1$
-        } else {
-            from = String.valueOf(getDataProvider().getFromCount());
-            to = String.valueOf(getDataProvider().getToCount());
-        }
-        fromCount.getElement().setInnerText(from);
-        toCount.getElement().setInnerText(to);
+        paginationControl.updateTableControls();
     }
 
     public int getTableControlsHeight() {

@@ -51,8 +51,6 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
     }
 
     void initTable() {
-        getTable().showPagingButtons();
-
         getTable().enableColumnResizing();
 
         VmStatusIconColumn<VM> statusIconColumn = new VmStatusIconColumn<>();

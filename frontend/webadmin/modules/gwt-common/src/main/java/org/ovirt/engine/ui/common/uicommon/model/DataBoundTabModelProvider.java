@@ -56,6 +56,7 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
     public SelectionModel<T> getSelectionModel() {
         return getModel().getSelectionModel();
     }
+
     /**
      * @return {@code true} when the ItemsChangedEvent of the model should trigger data update, {@code false} otherwise.
      */
@@ -106,18 +107,26 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
     }
 
     @Override
-    public String getItemsCount() {
-        return getModel().getItemsCountString();
+    public int getTotalItemsCount() {
+        return getModel().getTotalItemsCount();
     }
 
     @Override
-    public int getFromCount() {
-        return getModel().getSearchPageSize() * (getModel().getSearchPageNumber() - 1) + 1;
+    public int getFirstItemOnPage() {
+        if (getModel().getItems() == null
+                || getModel().getItems().isEmpty()
+                || getModel().getSearchPageSize() <= 0) {
+            return -1;
+        }
+        return getModel().getSearchPageSize() * (getModel().getSearchPageNumber() - 1);
     }
 
     @Override
-    public int getToCount() {
-        return (getFromCount() - 1) + (getModel().getItems() == null ? 0 : getModel().getItems().size());
+    public int getLastItemOnPage() {
+        if (getFirstItemOnPage() == -1) {
+            return -1;
+        }
+        return getFirstItemOnPage() - 1 + getModel().getItems().size();
     }
 
     /**

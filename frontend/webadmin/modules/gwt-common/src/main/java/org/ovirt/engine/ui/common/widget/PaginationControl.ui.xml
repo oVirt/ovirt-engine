@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui="urn:ui:com.google.gwt.uibinder"
+        xmlns:g="urn:import:com.google.gwt.user.client.ui"
+        xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources'/>
+
+    <ui:style>
+        .pagerButton>i {
+        font-size: 15px;
+        vertical-align: top;
+        margin: 2px 0;
+        }
+    </ui:style>
+
+    <g:FlowPanel>
+        <b:FormGroup>
+            <g:HTMLPanel tag="SPAN">
+                <g:HTMLPanel tag="SPAN" ui:field="itemsCurrent" addStyleNames="pagination-pf-items-current"/>
+            </g:HTMLPanel>
+            <b:ButtonGroup addStyleNames="pagination">
+                <b:Button icon="ANGLE_LEFT" ui:field="prevPageButton" addStyleNames="{style.pagerButton}"/>
+                <b:Button icon="ANGLE_RIGHT" ui:field="nextPageButton" addStyleNames="{style.pagerButton}"/>
+            </b:ButtonGroup>
+        </b:FormGroup>
+    </g:FlowPanel>
+
+</ui:UiBinder>

@@ -36,7 +36,6 @@ public abstract class AbstractMainTableView<T, M extends SearchableListModel> ex
                 ClientGinjectorProvider.getEventBus(), ClientGinjectorProvider.getClientStorage()) {
             {
                 showRefreshButton();
-                showPagingButtons();
                 showItemsCount();
                 showSelectionCountTooltip();
                 enableHeaderContextMenu();
