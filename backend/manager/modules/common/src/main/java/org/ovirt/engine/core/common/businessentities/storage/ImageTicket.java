@@ -28,6 +28,8 @@ public class ImageTicket implements BusinessEntity<Guid> {
 
     private String filename;
 
+    private boolean dirty;
+
     public ImageTicket() {
     }
 
@@ -97,6 +99,14 @@ public class ImageTicket implements BusinessEntity<Guid> {
         this.filename = filename;
     }
 
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
+
     public Map<String, Object> toDict() {
         Map<String, Object> ticketDict = new HashMap<>();
         ticketDict.put("uuid", id.toString());
@@ -106,6 +116,7 @@ public class ImageTicket implements BusinessEntity<Guid> {
         ticketDict.put("ops", ops);
         ticketDict.put("sparse", sparse);
         ticketDict.put("transfer_id", transferId);
+        ticketDict.put("dirty", dirty);
         // filename is null by default, and only specified by the UI
         if (filename != null) {
             ticketDict.put("filename", filename);
@@ -129,12 +140,13 @@ public class ImageTicket implements BusinessEntity<Guid> {
                 Objects.equals(url, that.url) &&
                 Arrays.equals(ops, that.ops) &&
                 Objects.equals(transferId, that.transferId) &&
-                Objects.equals(filename, that.filename);
+                Objects.equals(filename, that.filename) &&
+                dirty == that.dirty;
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, size, url, timeout, sparse, transferId, filename);
+        int result = Objects.hash(id, size, url, timeout, sparse, transferId, filename, dirty);
         result = 31 * result + Arrays.hashCode(ops);
         return result;
     }

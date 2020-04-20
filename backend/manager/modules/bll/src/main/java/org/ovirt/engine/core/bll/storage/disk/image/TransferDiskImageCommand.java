@@ -1003,7 +1003,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getParameters().getTransferSize(),
                 imagePath,
                 getParameters().getDownloadFilename(),
-                isSparseImage());
+                isSparseImage(),
+                isSupportsDirtyExtents());
 
         // TODO This is called from doPolling(), we should run it async (runFutureVDSCommand?)
         VDSReturnValue vdsRetVal;
@@ -1030,6 +1031,14 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getStorageDomain().getStorageType().isFileDomain();
     }
 
+    private boolean isSupportsDirtyExtents() {
+        if (getParameters().getBackupId() == null || getParameters().getTransferType() != TransferType.Download) {
+            return false;
+        }
+        VmBackup vmBackup = vmBackupDao.get(getParameters().getBackupId());
+        return vmBackup.isIncremental();
+    }
+
     private boolean addImageTicketToProxy(Guid imagedTicketId, String hostUri) {
         // Create image ticket
         ImageTicket imageTicket = new ImageTicket();
@@ -1041,6 +1050,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         imageTicket.setTransferId(getParameters().getCommandId().toString());
         imageTicket.setFilename(getParameters().getDownloadFilename());
         imageTicket.setSparse(isSparseImage());
+        imageTicket.setDirty(isSupportsDirtyExtents());
         imageTicket.setOps(new String[] {getParameters().getTransferType().getAllowedOperation()});
 
         log.info("Adding image ticket to ovirt-imageio-proxy, id {}", imagedTicketId);

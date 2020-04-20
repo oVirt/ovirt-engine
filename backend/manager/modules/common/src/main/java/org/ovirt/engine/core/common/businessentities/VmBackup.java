@@ -81,6 +81,10 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
         this.creationDate = creationDate;
     }
 
+    public boolean isIncremental() {
+        return fromCheckpointId != null;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(

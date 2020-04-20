@@ -1841,7 +1841,7 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @Override
     public StatusOnlyReturn add_image_ticket(String ticketId, String[] ops, long timeout,
-            long size, String url, String filename, boolean sparse, String transferId) {
+            long size, String url, String filename, boolean sparse, String transferId, boolean dirty) {
         Map<String, Object> ticketDict = new HashMap<>();
         ticketDict.put("uuid", ticketId);
         ticketDict.put("timeout", timeout);
@@ -1850,6 +1850,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         ticketDict.put("url", url);
         ticketDict.put("sparse", sparse);
         ticketDict.put("transfer_id", transferId);
+        ticketDict.put("dirty", dirty);
         // filename is null by default, and only specified by the UI
         if (filename != null) {
             ticketDict.put("filename", filename);

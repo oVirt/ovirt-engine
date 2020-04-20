@@ -146,7 +146,8 @@ public class NullVdsServer implements IVdsServer {
             String url,
             String filename,
             boolean sparse,
-            String transferId) {
+            String transferId,
+            boolean dirty) {
         return null;
     }
 

@@ -92,7 +92,7 @@ public interface IVdsServer {
     StatusOnlyReturn setHaMaintenanceMode(String mode, boolean enabled);
 
     StatusOnlyReturn add_image_ticket(String ticketId, String[] ops, long timeout, long size,
-                                      String url, String filename, boolean sparse, String transferId);
+            String url, String filename, boolean sparse, String transferId, boolean dirty);
 
     StatusOnlyReturn remove_image_ticket(String ticketId);
 
