@@ -8,6 +8,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTicket;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturn;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturn;
@@ -92,8 +93,7 @@ public interface IVdsServer {
 
     StatusOnlyReturn setHaMaintenanceMode(String mode, boolean enabled);
 
-    StatusOnlyReturn add_image_ticket(String ticketId, String[] ops, long timeout, long size,
-            String url, String filename, boolean sparse, String transferId, boolean dirty);
+    StatusOnlyReturn add_image_ticket(ImageTicket ticket);
 
     StatusOnlyReturn remove_image_ticket(String ticketId);
 

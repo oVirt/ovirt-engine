@@ -993,18 +993,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             return false;
         }
 
-        int timeout = getClientTicketLifetime();
-        String[] transferOps = new String[] {getParameters().getTransferType().getAllowedOperation()};
-        AddImageTicketVDSCommandParameters transferCommandParams = new AddImageTicketVDSCommandParameters(getVdsId(),
-                imagedTicketId,
-                getParameters().getCommandId(),
-                transferOps,
-                timeout,
-                getParameters().getTransferSize(),
-                imagePath,
-                getParameters().getDownloadFilename(),
-                isSparseImage(),
-                isSupportsDirtyExtents());
+        ImageTicket ticket = buildImageTicket(imagedTicketId, imagePath);
+        AddImageTicketVDSCommandParameters transferCommandParams =
+                new AddImageTicketVDSCommandParameters(getVdsId(), ticket);
 
         // TODO This is called from doPolling(), we should run it async (runFutureVDSCommand?)
         VDSReturnValue vdsRetVal;
@@ -1020,7 +1011,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             return false;
         }
         log.info("Started transfer session with ticket id {}, timeout {} seconds",
-                imagedTicketId.toString(), timeout);
+                imagedTicketId.toString(), ticket.getTimeout());
 
         return true;
     }
@@ -1040,18 +1031,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private boolean addImageTicketToProxy(Guid imagedTicketId, String hostUri) {
-        // Create image ticket
-        ImageTicket imageTicket = new ImageTicket();
-        imageTicket.setId(imagedTicketId);
-        imageTicket.setTimeout(getClientTicketLifetime());
-        imageTicket.setSize(getParameters().getTransferSize());
-        imageTicket.setUrl(String.format( // ToDo: move formatting to an helper for reuse in ImageTransfer
-                "%s%s/%s", hostUri, IMAGES_PATH, imagedTicketId));
-        imageTicket.setTransferId(getParameters().getCommandId().toString());
-        imageTicket.setFilename(getParameters().getDownloadFilename());
-        imageTicket.setSparse(isSparseImage());
-        imageTicket.setDirty(isSupportsDirtyExtents());
-        imageTicket.setOps(new String[] {getParameters().getTransferType().getAllowedOperation()});
+        // ToDo: move formatting to an helper for reuse in ImageTransfer
+        String url = String.format("%s%s/%s", hostUri, IMAGES_PATH, imagedTicketId);
+        ImageTicket imageTicket = buildImageTicket(imagedTicketId, url);
 
         log.info("Adding image ticket to ovirt-imageio-proxy, id {}", imagedTicketId);
         try {
@@ -1062,6 +1044,22 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
 
         return true;
+    }
+
+    private ImageTicket buildImageTicket(Guid ticketId, String ticketUrl) {
+        ImageTicket ticket = new ImageTicket();
+
+        ticket.setId(ticketId);
+        ticket.setTimeout(getClientTicketLifetime());
+        ticket.setSize(getParameters().getTransferSize());
+        ticket.setUrl(ticketUrl);
+        ticket.setTransferId(getParameters().getCommandId().toString());
+        ticket.setFilename(getParameters().getDownloadFilename());
+        ticket.setSparse(isSparseImage());
+        ticket.setDirty(isSupportsDirtyExtents());
+        ticket.setOps(new String[] {getParameters().getTransferType().getAllowedOperation()});
+
+        return ticket;
     }
 
     private boolean setVolumeLegalityInStorage(boolean legal) {

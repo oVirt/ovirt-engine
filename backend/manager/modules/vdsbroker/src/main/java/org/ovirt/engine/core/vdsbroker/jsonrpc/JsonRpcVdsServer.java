@@ -12,6 +12,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTicket;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.HttpUtils;
@@ -1847,25 +1848,11 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturn add_image_ticket(String ticketId, String[] ops, long timeout,
-            long size, String url, String filename, boolean sparse, String transferId, boolean dirty) {
-        Map<String, Object> ticketDict = new HashMap<>();
-        ticketDict.put("uuid", ticketId);
-        ticketDict.put("timeout", timeout);
-        ticketDict.put("ops", ops);
-        ticketDict.put("size", size);
-        ticketDict.put("url", url);
-        ticketDict.put("sparse", sparse);
-        ticketDict.put("transfer_id", transferId);
-        ticketDict.put("dirty", dirty);
-        // filename is null by default, and only specified by the UI
-        if (filename != null) {
-            ticketDict.put("filename", filename);
-        }
+    public StatusOnlyReturn add_image_ticket(ImageTicket ticket) {
 
         JsonRpcRequest request =
                 new RequestBuilder("Host.add_image_ticket")
-                        .withParameter("ticket", ticketDict)
+                        .withParameter("ticket", ticket.toDict())
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);

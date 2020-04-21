@@ -1,82 +1,38 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import org.ovirt.engine.core.common.businessentities.storage.ImageTicket;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 
 public class AddImageTicketVDSCommandParameters extends ImageTicketVDSCommandParametersBase {
-    private String[] operations;
-    private long size;
-    private String url;
-    private String filename;
-    private boolean sparse;
-    private Guid transferId;
-    private boolean dirty;
+    private ImageTicket ticket;
 
     public AddImageTicketVDSCommandParameters() {
     }
 
-    public AddImageTicketVDSCommandParameters(Guid vdsId,
-            Guid ticketId,
-            Guid transferId,
-            String[] operations,
-            long timeout,
-            long size,
-            String url,
-            String filename,
-            boolean sparse,
-            boolean dirty) {
-        super(vdsId, ticketId, timeout);
-        this.transferId = transferId;
-        this.operations = operations;
-        this.size = size;
-        this.url = url;
-        this.filename = filename;
-        this.sparse = sparse;
-        this.dirty = dirty;
+    public AddImageTicketVDSCommandParameters(Guid vdsId, ImageTicket ticket) {
+        super(vdsId, ticket.getId(), (long) ticket.getTimeout());
+        this.ticket = ticket;
     }
 
-    public String[] getOperations() {
-        return operations;
+    public ImageTicket getImageTicket() {
+        return ticket;
     }
 
-    public long getSize() {
-        return size;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public boolean isSparse() {
-        return sparse;
-    }
-
-    public void setSparse(boolean sparse) {
-        this.sparse = sparse;
-    }
-
-    public Guid getTransferId() {
-        return transferId;
-    }
-
-    public boolean isDirty() {
-        return dirty;
+    public void setImageTicket(ImageTicket ticket) {
+        this.ticket = ticket;
     }
 
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
-                .append("operations", getOperations())
-                .append("size", getSize())
-                .append("url", getUrl())
-                .append("filename", getFilename())
-                .append("sparse", isSparse())
-                .append("transferId", getTransferId())
-                .append("dirty", isDirty());
+                .append("operations", ticket.getOps())
+                .append("size", ticket.getSize())
+                .append("url", ticket.getUrl())
+                .append("filename", ticket.getFilename())
+                .append("sparse", ticket.isSparse())
+                .append("transferId", ticket.getTransferId())
+                .append("dirty", ticket.isDirty());
     }
 }
