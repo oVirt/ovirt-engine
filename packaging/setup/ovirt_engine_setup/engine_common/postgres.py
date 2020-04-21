@@ -381,30 +381,14 @@ class Provisioning(base.Base):
             ]
         )
 
-    def startPG(self):
-        service = self.environment[
-            oengcommcons.ProvisioningEnv.POSTGRES_SERVICE
-        ]
-        try:
-            self.services.state(
-                name=service,
-                state=True,
-            )
-        except RuntimeError:
-            self.logger.warn(
-                _('Failed to start {service}, trying a workaround').format(
-                    service=service,
-                )
-            )
-
     def restartPG(self):
-        self.services.state(
-            name=self.environment[
-                oengcommcons.ProvisioningEnv.POSTGRES_SERVICE
-            ],
-            state=False,
-        )
-        self.startPG()
+        for state in (False, True):
+            self.services.state(
+                name=self.environment[
+                    oengcommcons.ProvisioningEnv.POSTGRES_SERVICE
+                ],
+                state=state,
+            )
 
     def _waitForDatabase(self, environment=None):
         dbovirtutils = database.OvirtUtils(
