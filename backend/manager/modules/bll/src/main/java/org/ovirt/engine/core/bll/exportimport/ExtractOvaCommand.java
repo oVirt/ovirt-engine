@@ -107,7 +107,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                         getImageMappings().entrySet()
                                 .stream()
                                 .map(e -> String
-                                        .format("\"%s\": \"%s\"", e.getValue().toString(), e.getKey().toString()))
+                                        .format("\\\"%s\\\": \\\"%s\\\"", e.getValue().toString(), e.getKey().toString()))
                                 .collect(Collectors.joining(", ", "{", "}")))
                 // /var/log/ovirt-engine/ova/ovirt-import-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(IMPORT_OVA_LOG_DIRECTORY)

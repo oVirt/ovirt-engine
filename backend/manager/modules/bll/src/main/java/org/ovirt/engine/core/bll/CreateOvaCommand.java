@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.CreateOvaParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -84,7 +85,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         String ovf = createOvf(disks);
         log.debug("Exporting OVF: {}", ovf);
         boolean succeeded = runAnsiblePackOvaPlaybook(ovf, disks, diskIdToPath);
-        if (vmDao.get(getParameters().getEntityId()).isDown()) {
+        if (getParameters().getEntityType() == VmEntityType.TEMPLATE || vmDao.get(getParameters().getEntityId()).isDown()) {
             teardownImages(disks);
         }
         setSucceeded(succeeded);
