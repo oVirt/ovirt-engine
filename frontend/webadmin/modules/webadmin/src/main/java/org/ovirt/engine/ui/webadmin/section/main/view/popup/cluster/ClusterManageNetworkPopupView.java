@@ -89,7 +89,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
     private void initEntityModelCellTable() {
         boolean multiCluster = networks.asEditor().flush().isMultiCluster();
-
+        networks.enableColumnResizing();
         networks.addColumn(new NetworkNameTextColumnWithTooltip(), constants.nameNetwork(), "85px"); //$NON-NLS-1$
 
         networks.addColumn(
@@ -128,7 +128,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         networks.addColumn(
                 new DefaultRouteNetworkIndicatorCheckboxColumn(
                         multiCluster, new DefaultRouteNetworkIndicatorFieldUpdater()),
-                constants.defaultRouteNetwork(), "120px"); //$NON-NLS-1$
+                constants.defaultRouteNetwork(), "250px"); //$NON-NLS-1$
     }
 
     @Override
