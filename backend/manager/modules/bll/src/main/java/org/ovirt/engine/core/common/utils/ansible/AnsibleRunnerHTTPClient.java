@@ -128,7 +128,7 @@ public class AnsibleRunnerHTTPClient {
                     e.getValue() instanceof ArrayNode
                         ? e.getValue()
                         // Replace to have proper formatting of JSON newlines
-                        : String.valueOf(e.getValue()).replaceAll("\n", "\\\\\\\\n")
+                        : String.valueOf(e.getValue()).replaceAll("\n", "\\\\n")
                     )
                 )
                 .collect(Collectors.joining(",")) +
