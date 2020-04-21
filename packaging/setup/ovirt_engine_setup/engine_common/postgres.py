@@ -325,7 +325,7 @@ class Provisioning(base.Base):
             )
         )
 
-    def _addPgHbaDatabaseAccess(
+    def addPgHbaDatabaseAccess(
         self,
         transaction,
     ):
@@ -524,7 +524,7 @@ class Provisioning(base.Base):
             self._updatePostgresConf(
                 transaction=localtransaction,
             )
-            self._addPgHbaDatabaseAccess(
+            self.addPgHbaDatabaseAccess(
                 transaction=localtransaction,
             )
 
