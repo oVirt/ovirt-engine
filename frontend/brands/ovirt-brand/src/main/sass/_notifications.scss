@@ -63,9 +63,11 @@ Notifications
     z-index: 2001;
 }
 
+.notif_toastContainer {
+    z-index: 2000;
+}
 
 .notif_notificationsPanel {
-    z-index: 2000;
     position: absolute;
     top: 400px;
     right: 10px;

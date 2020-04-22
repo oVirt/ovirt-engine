@@ -30,7 +30,7 @@
                 <b:html.Span addStyleNames="fa fa-angle-down notif_angleIcon notif_span" />
             </g:FlowPanel>
         </g:FlowPanel>
-        <g:FlowPanel ui:field="toastsContainer" ></g:FlowPanel>
+        <g:FlowPanel ui:field="toastsContainer" addStyleNames="notif_toastContainer"></g:FlowPanel>
     </g:FlowPanel>
 
 </ui:UiBinder>
