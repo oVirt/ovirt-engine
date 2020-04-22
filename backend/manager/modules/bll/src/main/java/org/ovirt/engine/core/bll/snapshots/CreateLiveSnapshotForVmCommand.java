@@ -113,12 +113,7 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
             parameters.setMemoryDump((DiskImage) diskDao.get(snapshot.getMemoryDiskId()));
             parameters.setMemoryConf((DiskImage) diskDao.get(snapshot.getMetadataDiskId()));
         }
-
-        // In case the snapshot is auto-generated for live storage migration,
-        // we do not want to issue an FS freeze thus setting vmFrozen to true
-        // so a freeze will not be issued by Vdsm
-        parameters.setVmFrozen(shouldFreezeOrThawVm() ||
-                getParameters().getParentCommand() == ActionType.LiveMigrateDisk);
+        parameters.setVmFrozen(shouldFreezeOrThawVm());
 
         // Get the Live Snapshot timeout
         parameters.setLiveSnapshotTimeout(Config.getValue(ConfigValues.LiveSnapshotTimeoutInMinutes));
@@ -127,9 +122,9 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
     }
 
     private boolean shouldFreezeOrThawVm() {
-        return isLiveSnapshotApplicable() &&
+        return isLiveSnapshotApplicable() && (Config.<Boolean>getValue(ConfigValues.LiveSnapshotPerformFreezeInEngine) ||
                 (diskOfTypeExists(DiskStorageType.CINDER) || diskOfTypeExists(DiskStorageType.MANAGED_BLOCK_STORAGE)) &&
-                getParameters().getParentCommand() != ActionType.LiveMigrateDisk;
+                getParameters().getParentCommand() != ActionType.LiveMigrateDisk);
     }
 
     private boolean diskOfTypeExists(DiskStorageType type) {

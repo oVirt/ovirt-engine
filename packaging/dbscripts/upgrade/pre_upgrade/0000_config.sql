@@ -702,6 +702,7 @@ select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'true', '4
 -- Live Snapshot
 select fn_db_add_config_value('LiveSnapshotTimeoutInMinutes', '30', 'general');
 select fn_db_add_config_value('LiveSnapshotAllowInconsistent', 'true', 'general');
+select fn_db_add_config_value('LiveSnapshotPerformFreezeInEngine', 'false', 'general');
 
 -- vGPU placement
 select fn_db_add_config_value_for_versions_up_to('VgpuPlacementSupported', 'false', '4.2');

@@ -1542,6 +1542,9 @@ public enum ConfigValues {
     LiveSnapshotAllowInconsistent,
 
     @TypeConverterAttribute(Boolean.class)
+    LiveSnapshotPerformFreezeInEngine,
+
+    @TypeConverterAttribute(Boolean.class)
     IsIncrementalBackupSupported,
 
     Invalid;
