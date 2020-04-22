@@ -700,6 +700,71 @@ class Provisioning(base.Base):
                     transaction=False,
                 )
 
+    def grantReadOnlyAccessToUser(self):
+        with AlternateUser(
+            user=self.environment[
+                oengcommcons.SystemEnv.USER_POSTGRES
+            ],
+        ):
+            usockenv = {
+                self._dbenvkeys[DEK.HOST]: '',  # usock
+                self._dbenvkeys[DEK.PORT]: '',
+                self._dbenvkeys[DEK.SECURED]: False,
+                self._dbenvkeys[DEK.HOST_VALIDATION]: False,
+                self._dbenvkeys[DEK.USER]: 'postgres',
+                self._dbenvkeys[DEK.PASSWORD]: '',
+                self._dbenvkeys[DEK.DATABASE]: _ind_env(self, DEK.DATABASE)
+            }
+            self._waitForDatabase(
+                environment=usockenv,
+            )
+            dbstatement = database.Statement(
+                dbenvkeys=self._dbenvkeys,
+                environment=usockenv,
+            )
+            dbstatement.execute(
+                statement="""
+                    GRANT CONNECT ON DATABASE {database} TO {user}
+                """.format(
+                    user=_ind_env(self, DEK.USER),
+                    database=_ind_env(self, DEK.DATABASE),
+                ),
+                args=None,
+                ownConnection=True,
+                transaction=False,
+            )
+            dbstatement.execute(
+                statement="""
+                    GRANT USAGE ON SCHEMA public TO {user}
+                """.format(
+                    user=_ind_env(self, DEK.USER),
+                ),
+                args=None,
+                ownConnection=True,
+                transaction=False,
+            )
+            dbstatement.execute(
+                statement="""
+                    GRANT SELECT ON ALL TABLES IN SCHEMA public TO {user}
+                """.format(
+                    user=_ind_env(self, DEK.USER),
+                ),
+                args=None,
+                ownConnection=True,
+                transaction=False,
+            )
+            dbstatement.execute(
+                statement="""
+                    ALTER DEFAULT PRIVILEGES IN SCHEMA public
+                    GRANT SELECT ON TABLES TO {user}
+                """.format(
+                    user=_ind_env(self, DEK.USER),
+                ),
+                args=None,
+                ownConnection=True,
+                transaction=False,
+            )
+
     def getPostgresLocaleAndEncodingInitEnv(
         self,
     ):
