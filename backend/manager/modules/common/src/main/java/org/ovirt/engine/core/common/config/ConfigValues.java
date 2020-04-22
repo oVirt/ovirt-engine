@@ -1584,6 +1584,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     NumOfPciExpressPorts,
 
+    @TypeConverterAttribute(Boolean.class)
+    LiveSnapshotPerformFreezeInEngine,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

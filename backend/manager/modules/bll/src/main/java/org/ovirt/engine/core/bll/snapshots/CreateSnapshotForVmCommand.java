@@ -63,6 +63,8 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -574,12 +576,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             parameters.setMemoryDump((DiskImage) diskDao.get(snapshot.getMemoryDiskId()));
             parameters.setMemoryConf((DiskImage) diskDao.get(snapshot.getMetadataDiskId()));
         }
-
-        // In case the snapshot is auto-generated for live storage migration,
-        // we do not want to issue an FS freeze thus setting vmFrozen to true
-        // so a freeze will not be issued by Vdsm
-        parameters.setVmFrozen(shouldFreezeOrThawVm() ||
-                getParameters().getParentCommand() == ActionType.LiveMigrateDisk);
+        parameters.setVmFrozen(shouldFreezeOrThawVm());
 
         return parameters;
     }
@@ -614,7 +611,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     }
 
     /**
-     * Freezing the VM is needed for live snapshot with Cinder disks.
+     * Freezing the VM is needed for live snapshot with Cinder disks or when forced selected.
      */
     private void freezeVm() {
         if (!shouldFreezeOrThawVm()) {
@@ -657,10 +654,16 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         auditLogDirector.log(this, auditLogType);
     }
 
+    // In case the snapshot is auto-generated for live storage migration,
+    // we do not want to issue an FS freeze thus setting vmFrozen to true
+    // so a freeze will not be issued by Vdsm. LiveSnapshotPerformFreezeInEngine
+    // value will perform the freeze/thaw command in the engine in order to avoid
+    // possible data corruption. In case the freeze is stuck in VDSM and there is no
+    // reliable way to tell if the volume is used or not.
     private boolean shouldFreezeOrThawVm() {
-        return isLiveSnapshotApplicable() &&
+        return isLiveSnapshotApplicable() && (Config.<Boolean>getValue(ConfigValues.LiveSnapshotPerformFreezeInEngine) ||
                 (diskOfTypeExists(DiskStorageType.CINDER) || diskOfTypeExists(DiskStorageType.MANAGED_BLOCK_STORAGE)) &&
-                getParameters().getParentCommand() != ActionType.LiveMigrateDisk;
+                getParameters().getParentCommand() != ActionType.LiveMigrateDisk);
     }
 
     private boolean diskOfTypeExists(DiskStorageType type) {

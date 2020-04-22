@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -214,7 +215,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     }
 
     private boolean isSnapshotUsed(VM vm) {
-        if (vm.isRunning()) {
+        if (vm.isRunningOrPaused() && vm.getStatus() != VMStatus.WaitForLaunch) {
             Set<Guid> volumeChain = imagesHandler.getVolumeChain(vm.getId(),
                     vm.getRunOnVds(),
                     getDiskImage());

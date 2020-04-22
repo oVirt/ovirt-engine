@@ -733,6 +733,9 @@ select fn_db_add_config_value('HystrixMonitoringEnabled','false','general');
 select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'true', '4.3');
 
+-- Live Snapshot
+select fn_db_add_config_value('LiveSnapshotPerformFreezeInEngine', 'true', 'general');
+
 -- vGPU placement
 select fn_db_add_config_value_for_versions_up_to('VgpuPlacementSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('VgpuPlacementSupported', 'true', '4.3');
