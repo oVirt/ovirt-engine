@@ -115,9 +115,10 @@ public class VmUpdater {
         if (fields.isEmpty()) {
             return false;
         }
-
+        VmManagementParametersBase params = new VmManagementParametersBase(newStatic);
+        params.setApplyChangesLater(true);
         ActionReturnValue returnValue =
-                backend.get().runInternalAction(ActionType.UpdateVm, new VmManagementParametersBase(newStatic));
+                backend.get().runInternalAction(ActionType.UpdateVm, params);
         return returnValue.getSucceeded();
     }
 }

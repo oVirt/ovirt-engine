@@ -300,7 +300,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             newVmStatic.setCreationDate(new Date());
         }
 
-        if (getVm().isRunningOrPaused() && !getVm().isHostedEngine()) {
+        if (getVm().isRunningOrPaused() && !shouldUpdateForHostedEngineOrKubevirt()) {
             if (!vmHandler.copyNonEditableFieldsToDestination(
                     oldVm.getStaticData(),
                     newVmStatic,
@@ -312,7 +312,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
-        if ((getVm().isRunningOrPaused() || getVm().isPreviewSnapshot() || getVm().isSuspended()) && !getVm().isHostedEngine()) {
+        if ((getVm().isRunningOrPaused() || getVm().isPreviewSnapshot() || getVm().isSuspended()) && !shouldUpdateForHostedEngineOrKubevirt()) {
             if (getVm().getCustomCompatibilityVersion() == null && getParameters().getClusterLevelChangeFromVersion() != null) {
                 // For backward compatibility after cluster version change
                 // When running/paused: Set temporary custom compatibility version till the NextRun is applied (VM cold reboot)
@@ -341,9 +341,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
         resourceManager.getVmManager(getVmId()).update(newVmStatic);
 
-        // Hosted Engine doesn't use next-run snapshots. Instead it requires the configuration
+        // Hosted Engine and kubevirt doesn't use next-run snapshots. Instead it requires the configuration
         // for next run to be stored in vm_static table.
-        if (getVm().isNotRunning() || getVm().isHostedEngine()) {
+        if (getVm().isNotRunning() || shouldUpdateForHostedEngineOrKubevirt()) {
             updateVmPayload();
             getVmDeviceUtils().updateVmDevices(getParameters(), oldVm);
             updateWatchdog();
@@ -364,6 +364,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         compensationStateChanged();
 
         setSucceeded(true);
+    }
+
+    private boolean shouldUpdateForHostedEngineOrKubevirt() {
+        return getVm().isHostedEngine() || !getVm().isManaged();
     }
 
     private void logNameChange() {
@@ -560,7 +564,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         int currentMemory = getVm().getMemSizeMb();
         int newAmountOfMemory = newVm.getMemSizeMb();
 
-        if (getVm().getStatus().isNotRunning()) {
+        if (getVm().getStatus().isNotRunning() || !getVm().isManaged()) {
             newVmStatic.setMemSizeMb(newAmountOfMemory);
             return;
         }
@@ -1413,12 +1417,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     /**
-     * check if we need to use running-configuration. Hosted Engine VM always returns false.
+     * check if we need to use running-configuration. Hosted Engine VM and kubevirt always returns false.
      * @return true if vm is running and we change field that has @EditableOnVmStatusField annotation
      *          or runningConfiguration already exist
      */
     private boolean isRunningConfigurationNeeded() {
-        if (getVm().isHostedEngine()) {
+        if (getVm().isHostedEngine() || !getVm().isManaged()) {
             // Hosted Engine never uses the next run configuration
             return false;
         }
