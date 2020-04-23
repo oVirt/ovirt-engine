@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -1059,7 +1060,7 @@ public class ImagesHandler {
             DiskImage newImage = DiskImage.copyOf(diskImage);
             newImage.setParentId(nextParentId);
             newImage.setId(newImageGroupID);
-            newImage.setStorageIds(List.of(targetStorageDomainID));
+            newImage.setStorageIds(Arrays.asList(targetStorageDomainID));
             nextParentId = Guid.newGuid();
             newImage.setImageId(nextParentId);
             newImage.setVmSnapshotId(null);
