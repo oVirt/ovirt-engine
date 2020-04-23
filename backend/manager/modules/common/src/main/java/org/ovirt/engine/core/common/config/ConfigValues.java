@@ -1539,6 +1539,9 @@ public enum ConfigValues {
     LiveSnapshotTimeoutInMinutes,
 
     @TypeConverterAttribute(Boolean.class)
+    LiveSnapshotAllowInconsistent,
+
+    @TypeConverterAttribute(Boolean.class)
     IsIncrementalBackupSupported,
 
     Invalid;
