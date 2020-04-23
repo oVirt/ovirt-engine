@@ -1199,6 +1199,7 @@ class OvirtUtils(base.Base):
         show_create_msg=False,
         note=None,
         credsfile=None,
+        validateconf=True,
     ):
         interactive = None in (
             _ind_env(self, DEK.HOST),
@@ -1399,7 +1400,7 @@ class OvirtUtils(base.Base):
         except Exception:
             self.logger.debug('database version check failed', exc_info=True)
 
-        if not _ind_env(self, DEK.NEW_DATABASE):
+        if not _ind_env(self, DEK.NEW_DATABASE) and validateconf:
             invalid_config_items = self.validateDbConf(name, dbenv)
             if (
                 invalid_config_items and
