@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
-import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -28,13 +27,13 @@ public class DownloadImageHandler {
 
     private static final Logger log = Logger.getLogger(DownloadImageHandler.class.getName());
 
-    private DiskImage diskImage;
+    private Guid transferId;
 
-    public DownloadImageHandler(DiskImage diskImage) {
-        this.diskImage = diskImage;
+    public DownloadImageHandler(Guid transferId) {
+        this.transferId = transferId;
     }
 
-    private TransferDiskImageParameters createInitParams() {
+    static TransferDiskImageParameters createInitParams(DiskImage diskImage) {
         TransferDiskImageParameters parameters = new TransferDiskImageParameters();
         parameters.setTransferType(TransferType.Download);
         parameters.setImageGroupID(diskImage.getId());
@@ -48,20 +47,12 @@ public class DownloadImageHandler {
     }
 
     public void start() {
-        Frontend.getInstance().runAction(ActionType.TransferDiskImage,
-                createInitParams(),
-                result -> {
-                    if (result.getReturnValue().getSucceeded()) {
-                        Guid transferId = result.getReturnValue().getActionReturnValue();
-                        Frontend.getInstance().runQuery(QueryType.GetImageTransferById,
-                                new IdQueryParameters(transferId),
-                                new AsyncQuery<QueryReturnValue>(returnValue -> {
-                                    ImageTransfer imageTransfer = returnValue.getReturnValue();
-                                    initiateDownload(imageTransfer);
-                                }));
-                    }
-                },
-                this);
+        Frontend.getInstance().runQuery(QueryType.GetImageTransferById,
+                new IdQueryParameters(transferId),
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
+                ImageTransfer imageTransfer = returnValue.getReturnValue();
+                initiateDownload(imageTransfer);
+        }));
     }
 
     private void initiateDownload(ImageTransfer imageTransfer) {
