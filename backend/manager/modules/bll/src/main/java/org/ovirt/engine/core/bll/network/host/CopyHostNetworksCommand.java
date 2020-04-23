@@ -80,6 +80,12 @@ public class CopyHostNetworksCommand<T extends CopyHostNetworksParameters> exten
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR__ACTION__COPY_NETWORKS);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
+    }
+
+    @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getParameters().getVdsId(),
