@@ -831,7 +831,7 @@ public class QuotaManager implements BackendService {
 
         @Override
         public void apply() {
-            quotaStorage.setStorageSizeGBUsage(storageRequestGB);
+            quotaStorage.setStorageSizeGBUsage(quotaStorage.getStorageSizeGBUsage() + storageRequestGB);
         }
     }
 }
