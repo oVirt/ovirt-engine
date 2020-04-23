@@ -1587,6 +1587,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     LiveSnapshotPerformFreezeInEngine,
 
+    @TypeConverterAttribute(Boolean.class)
+    LiveSnapshotAllowInconsistent,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

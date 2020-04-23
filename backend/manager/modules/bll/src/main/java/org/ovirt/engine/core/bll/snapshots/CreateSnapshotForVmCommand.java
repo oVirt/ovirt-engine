@@ -486,15 +486,18 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             return;
         }
 
-        VDSReturnValue returnValue;
+        VDSReturnValue returnValue = null;
+        boolean allowInconsistent = Config.<Boolean>getValue(ConfigValues.LiveSnapshotAllowInconsistent);
         try {
             returnValue = runVdsCommand(VDSCommandType.Thaw, new VdsAndVmIDVDSParametersBase(
                     getVds().getId(), getVmId()));
         } catch (EngineException e) {
-            handleThawVmFailure(e);
-            return;
+            if (!allowInconsistent) {
+                handleThawVmFailure(e);
+                return;
+            }
         }
-        if (!returnValue.getSucceeded()) {
+        if (returnValue != null && !returnValue.getSucceeded() && !allowInconsistent) {
             handleThawVmFailure(new EngineException(EngineError.thawErr));
         }
     }
@@ -618,19 +621,28 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             return;
         }
 
-        VDSReturnValue returnValue;
+        VDSReturnValue returnValue = null;
+        boolean allowInconsistent = Config.<Boolean>getValue(ConfigValues.LiveSnapshotAllowInconsistent);
         try {
             auditLogDirector.log(this, AuditLogType.FREEZE_VM_INITIATED);
             returnValue = runVdsCommand(VDSCommandType.Freeze, new VdsAndVmIDVDSParametersBase(
                     getVds().getId(), getVmId()));
         } catch (EngineException e) {
-            handleFreezeVmFailure(e);
+            if (allowInconsistent) {
+                handleInconsistent();
+            } else {
+                handleFreezeVmFailure(e);
+            }
             return;
         }
-        if (returnValue.getSucceeded()) {
+        if (returnValue != null && returnValue.getSucceeded()) {
             auditLogDirector.log(this, AuditLogType.FREEZE_VM_SUCCESS);
         } else {
-            handleFreezeVmFailure(new EngineException(EngineError.freezeErr));
+            if (allowInconsistent) {
+                handleInconsistent();
+            } else {
+                handleFreezeVmFailure(new EngineException(EngineError.freezeErr));
+            }
         }
     }
 
@@ -644,6 +656,14 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         handleVmFailure(e, AuditLogType.FAILED_TO_THAW_VM,
                 "Could not thaw VM guest filesystems due to an error: {}");
     }
+
+    private void handleInconsistent() {
+        log.warn("Could not freeze VM guest filesystems, proceeding with an inconsistent snapshot.");
+        addCustomValue("SnapshotName", getSnapshotName());
+        addCustomValue("VmName", getVmName());
+        auditLogDirector.log(this, AuditLogType.FAILED_TO_FREEZE_VM);
+    }
+
 
     private void handleVmFailure(EngineException e, AuditLogType auditLogType, String warnMessage) {
         log.warn(warnMessage, e.getMessage());
