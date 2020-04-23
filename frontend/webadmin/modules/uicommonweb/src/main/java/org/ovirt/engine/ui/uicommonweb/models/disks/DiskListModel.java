@@ -534,7 +534,13 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         getPauseUploadCommand().setIsExecutionAllowed(UploadImageModel.isPauseAllowed(disks));
         getResumeUploadCommand().setIsExecutionAllowed(UploadImageModel.isResumeAllowed(disks));
         getDownloadCommand().setIsExecutionAllowed(DownloadImageHandler.isDownloadAllowed(disks));
+        getChangeQuotaCommand().setIsExecutionAllowed(isAssignQuotaAllowed());
         getRefreshLUNCommand().setIsExecutionAllowed(isRefreshLUNAllowed());
+    }
+
+    private boolean isAssignQuotaAllowed() {
+        List<Disk> disks = getSelectedItems();
+        return disks != null && !disks.isEmpty();
     }
 
     private boolean isRefreshLUNAllowed() {
