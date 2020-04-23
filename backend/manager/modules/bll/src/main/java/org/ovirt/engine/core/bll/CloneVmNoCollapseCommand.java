@@ -248,4 +248,18 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
         getReturnValue().setEndActionTryAgain(false);
         super.endWithFailure();
     }
+
+    @Override
+    protected void removeVmImages() {
+        TransactionSupport.executeInNewTransaction(() -> {
+            getParameters()
+                    .getSrcToDstChainMap()
+                    .values()
+                    .stream()
+                    .flatMap(m -> m.values().stream())
+                    .forEach(diskImage -> imagesHandler.removeDiskImage(diskImage,
+                            getParameters().getNewVmGuid()));
+            return null;
+        });
+    }
 }

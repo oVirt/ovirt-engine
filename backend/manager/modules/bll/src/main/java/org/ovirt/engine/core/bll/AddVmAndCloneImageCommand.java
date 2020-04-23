@@ -123,7 +123,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         super.removeVmRelatedEntitiesFromDb();
     }
 
-    private void removeVmImages() {
+    protected void removeVmImages() {
         // Remove vm images, in case they were not already removed by child commands
         List<ActionParametersBase> imageParams = getParameters().getImagesParameters();
         for (ActionParametersBase param : imageParams) {
