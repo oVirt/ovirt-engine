@@ -103,6 +103,7 @@ public class AnsibleExecutor {
         int totalEvents;
 
         String playUuid = null;
+        String msg = "";
         AnsibleRunnerHTTPClient runnerClient = null;
         try {
             runnerClient = ansibleClientFactory.create(command);
@@ -123,7 +124,7 @@ public class AnsibleExecutor {
                 // Get the current status of the playbook:
                 AnsibleRunnerHTTPClient.PlaybookStatus playbookStatus = runnerClient.getPlaybookStatus(playUuid);
                 String status = playbookStatus.getStatus();
-                String msg = playbookStatus.getMsg();
+                msg = playbookStatus.getMsg();
                 // Process the events if the playbook is running:
                 totalEvents = runnerClient.getTotalEvents(playUuid);
 
@@ -131,7 +132,7 @@ public class AnsibleExecutor {
                     msg.equalsIgnoreCase("running")
                     || (msg.equalsIgnoreCase("successful") && lastEventId < totalEvents)
                 ) {
-                    lastEventId = runnerClient.processEvents(playUuid, lastEventId, fn);
+                    lastEventId = runnerClient.processEvents(playUuid, lastEventId, fn, msg, ret.getLogFile());
                     iteration += POLL_INTERVAL / 1000;
                 } else if (msg.equalsIgnoreCase("successful")) {
                     // Exit the processing if playbook finished:
@@ -167,7 +168,7 @@ public class AnsibleExecutor {
         } finally {
             // Make sure all events are proccessed even in case of failure:
             if (playUuid != null && runnerClient != null) {
-                runnerClient.processEvents(playUuid, lastEventId, fn);
+                runnerClient.processEvents(playUuid, lastEventId, fn, msg, ret.getLogFile());
             }
         }
 

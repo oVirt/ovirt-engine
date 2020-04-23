@@ -5,6 +5,7 @@
 
 package org.ovirt.engine.core.common.utils.ansible;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -72,5 +73,11 @@ public class AnsibleReturnValue {
 
     public void setLogFile(Path logFile) {
         this.logFile = logFile;
+    }
+
+    public void setAnsibleRunnerServiceLogFile() {
+        if (!Files.exists(this.logFile)) {
+            this.logFile = AnsibleConstants.ANSIBLE_RUNNER_SERVICE_LOG;
+        }
     }
 }

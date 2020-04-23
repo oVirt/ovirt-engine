@@ -284,6 +284,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     (eventName, eventUrl) -> setVdsmId(eventName, eventUrl)
             );
             if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+                ansibleReturnValue.setAnsibleRunnerServiceLogFile();
                 throw new VdsInstallException(
                     VDSStatus.InstallFailed,
                     String.format(

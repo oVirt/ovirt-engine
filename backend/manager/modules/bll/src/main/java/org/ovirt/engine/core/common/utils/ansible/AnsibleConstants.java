@@ -89,4 +89,6 @@ public class AnsibleConstants {
     public static final String TASK_VDSM_ID = "Fetch vdsm id";
 
     public static final String HOST_DEPLOY_LOG_DIRECTORY = "host-deploy";
+
+    public static final Path ANSIBLE_RUNNER_SERVICE_LOG = Paths.get("/var/log/ovirt-engine/ansible-runner-service.log");
 }

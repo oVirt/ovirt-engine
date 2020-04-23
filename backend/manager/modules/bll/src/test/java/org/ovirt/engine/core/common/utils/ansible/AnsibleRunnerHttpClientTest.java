@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
@@ -156,7 +157,7 @@ public class AnsibleRunnerHttpClientTest {
             )
         );
 
-        assertThat(client.processEvents("123", 0, null), is(1));
+        assertThat(client.processEvents("123", 0, null, null, Path.of("")), is(1));
     }
 
     @Test
@@ -166,7 +167,7 @@ public class AnsibleRunnerHttpClientTest {
         );
 
         assertThrows(AnsibleRunnerCallException.class, () -> {
-            client.processEvents("123", 0, null);
+            client.processEvents("123", 0, null, null, Path.of(""));
         });
     }
 

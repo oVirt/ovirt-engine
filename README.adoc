@@ -25,7 +25,7 @@ Install the following system components:
 - ovirt-setup-lib
 - maven-3 >= 3.5
 - ansible >= 2.9.0
-- ansible-runner-service-dev >= 1.0.2
+- ansible-runner-service-dev >= 1.0.3
 - ovirt-ansible-roles >= 1.2.0
 - ovirt-engine-metrics
 - ovirt-imageio-daemon >= 2.0.6

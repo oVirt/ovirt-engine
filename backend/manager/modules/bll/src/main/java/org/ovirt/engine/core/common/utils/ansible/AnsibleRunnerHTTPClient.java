@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -200,7 +201,7 @@ public class AnsibleRunnerHTTPClient {
         return false;
     }
 
-    public int processEvents(String playUuid, int lastEventId, BiConsumer<String, String> fn) {
+    public int processEvents(String playUuid, int lastEventId, BiConsumer<String, String> fn, String msg, Path logFile) {
         JsonNode responseNode = getEvents(playUuid);
         JsonNode eventNodes = RunnerJsonNode.eventNodes(responseNode);
         Set<String> events = sortedEvents(eventNodes.getFieldNames(), lastEventId);
@@ -212,8 +213,8 @@ public class AnsibleRunnerHTTPClient {
                 task = taskNode.getTextValue();
             }
             if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.isEventOk(currentNode)
-                || RunnerJsonNode.playbookStats(currentNode) || RunnerJsonNode.isEventFailed(currentNode)
-                || RunnerJsonNode.isEventError(currentNode)
+                    || RunnerJsonNode.playbookStats(currentNode) || RunnerJsonNode.isEventFailed(currentNode)
+                    || RunnerJsonNode.isEventError(currentNode) || ("failed".equals(msg))
             ) {
                 JsonNode okNode = readUrl(String.format("jobs/%1$s/events/%2$s", playUuid, event));
                 JsonNode data = okNode.get("data");
@@ -236,7 +237,7 @@ public class AnsibleRunnerHTTPClient {
                     if (!RunnerJsonNode.ignore(eventNode)) {
                         runnerLogger.log(readUrl(String.format("jobs/%1$s/events/%2$s", playUuid, event)));
                         throw new AnsibleRunnerCallException(
-                            String.format("Task %1$s failed to execute: %2$s", task, "") // stdout, stderr?
+                                String.format("Task %1$s failed to execute. Please check logs for more details: %2$s", task, logFile)
                         );
                     }
                 }
@@ -359,7 +360,7 @@ public class AnsibleRunnerHTTPClient {
 
     private JsonNode readResponse(HttpResponse response) {
         if (response.getStatusLine().getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-            throw new AnsibleRunnerCallException("Internal server error, please check Ansible runner error log.");
+            throw new AnsibleRunnerCallException("Internal server error");
         }
 
         try {
