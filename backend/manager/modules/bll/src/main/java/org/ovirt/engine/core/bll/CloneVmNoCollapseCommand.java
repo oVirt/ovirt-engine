@@ -64,6 +64,12 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
     }
 
     @Override
+    protected void init() {
+        super.init();
+        setCompensationContext(createDefaultCompensationContext());
+    }
+
+    @Override
     protected void addVmImages() {
         getParameters()
                 .getSrcToDstChainMap()
