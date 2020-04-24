@@ -11,4 +11,5 @@
 ovirt-imageio engine config
 """
 
-OVIRT_IMAGEIO_CONFIG = "@IMAGEIO_SYSCONF_DIR@/daemon.conf"
+OVIRT_IMAGEIO_DAEMON_CONFIG = "@IMAGEIO_SYSCONF_DIR@/daemon.conf"
+OVIRT_IMAGEIO_LOGGER_CONFIG = "@IMAGEIO_SYSCONF_DIR@/logger.conf"

@@ -25,7 +25,8 @@ class ImageIO(object):
     SERVICE_NAME = 'ovirt-imageio'
     DATA_PORT = 54323
     CONTROL_PORT = 54324
-    CONFIG = oipconfig.OVIRT_IMAGEIO_CONFIG
+    DAEMON_CONFIG = oipconfig.OVIRT_IMAGEIO_DAEMON_CONFIG
+    LOGGER_CONFIG = oipconfig.OVIRT_IMAGEIO_LOGGER_CONFIG
     CONFIG_STAGE = "setup.config.imageio"
     CONFIG_TEMPLATE = """\
     # Configuration for ovirt-engine.
@@ -60,4 +61,29 @@ class ImageIO(object):
     # Engine currently support only communication over TCP.
     transport = tcp
     port = {control_port}
+    """
+    LOGGER = """\
+    # Logging configuration for development setup.
+
+    [loggers]
+    keys=root
+
+    [handlers]
+    keys=logfile
+
+    [formatters]
+    keys=long
+
+    [logger_root]
+    level=DEBUG
+    handlers=logfile
+    propagate=0
+
+    [handler_logfile]
+    class=logging.StreamHandler
+    level=DEBUG
+    formatter=long
+
+    [formatter_long]
+    format=%(asctime)s %(levelname)-7s (%(threadName)s) [%(name)s] %(message)s
     """

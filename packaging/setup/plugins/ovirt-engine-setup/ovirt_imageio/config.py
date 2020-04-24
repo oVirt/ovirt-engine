@@ -40,12 +40,23 @@ class Plugin(plugin.PluginBase):
         self._enabled = None
         self._new_filename = None
 
+    def _file_modified(self, path, new_content):
+        if os.path.exists(path):
+            with open(path) as f:
+                old_content = f.read()
+            return old_content != new_content
+        return False
+
     def _conffile_was_written_by_previous_setup(self, conffile):
         return self.environment[
             osetupcons.CoreEnv.UNINSTALL_FILES_INFO
         ].get(conffile) is not None
 
-    def _write_new_config(self, content):
+    def _format_new_filename(self, path):
+        timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        return "{}.new.{}".format(path, timestamp)
+
+    def _write_new_config(self, file_name, content):
         # If we are writing a new file, write it immediately.
         # Note that this will not be rolled back by engine-setup
         # if there is some failure.
@@ -53,7 +64,7 @@ class Plugin(plugin.PluginBase):
         with local_transaction:
             local_transaction.append(
                 filetransaction.FileTransaction(
-                    name=self._new_filename,
+                    name=file_name,
                     content=content,
                     modifiedList=self.environment[
                         otopicons.CoreEnv.MODIFIED_FILES
@@ -125,15 +136,15 @@ class Plugin(plugin.PluginBase):
         # If running on the engine machine, use key/cert created for httpd.
         # Only replace the config file if user didn't touch it since last
         # run of engine-setup. Otherwise, write a new file and notify the user.
-        conf_file = oipcons.ImageIO.CONFIG
+        conf_file = oipcons.ImageIO.DAEMON_CONFIG
         new_content = self._get_configuration()
-        old_content = ''
-        if os.path.exists(conf_file):
-            with open(conf_file) as f:
-                old_content = f.read()
 
         if self._conffile_was_written_by_previous_setup(conf_file):
-            if old_content == new_content:
+            if self._file_modified(conf_file, new_content):
+                # Write a new file, do not touch existing one that user
+                # changed.
+                self._new_filename = self._format_new_filename(conf_file)
+            else:
                 # We wrote the file in the past, the user changed it, but
                 # changed it to have the same content we already want to write.
                 # So output nothing to the user, but still re-write the file,
@@ -142,17 +153,29 @@ class Plugin(plugin.PluginBase):
                     'Rewriting %s in order to update uninstall info',
                     conf_file,
                 )
-            else:
-                # Write a new file, do not touch existing one that user
-                # changed.
-                timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-                self._new_filename = "{}.new.{}".format(conf_file, timestamp)
 
         if self._new_filename:
-            self._write_new_config(new_content)
+            self._write_new_config(self._new_filename, new_content)
         else:
             self._write_config(conf_file, new_content)
 
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: (
+                self.environment[
+                    osetupcons.CoreEnv.DEVELOPER_MODE
+                ] and self._enabled
+        ),
+    )
+    def _misc_dev_logger_config(self):
+        conf_file = oipcons.ImageIO.LOGGER_CONFIG
+        content = textwrap.dedent(oipcons.ImageIO.LOGGER)
+
+        if self._file_modified(conf_file, content):
+            new_filename = self._format_new_filename(conf_file)
+            self._write_new_config(new_filename, content)
+        else:
+            self._write_config(conf_file, content)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
@@ -170,7 +193,7 @@ class Plugin(plugin.PluginBase):
                 'Did not update {f} because it was changed manually. You '
                 'might want to compare it with {fnew} and edit as needed.'
             ).format(
-                f=oipcons.ImageIO.CONFIG,
+                f=oipcons.ImageIO.DAEMON_CONFIG,
                 fnew=self._new_filename,
             )
         )
