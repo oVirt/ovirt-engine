@@ -183,7 +183,7 @@ class Plugin(plugin.PluginBase):
                 ] and self._enabled
         ),
     )
-    def _closeup_resatrt_service(self):
+    def _closeup_restart_service(self):
         for state in (False, True):
             self.services.state(
                 name=oipcons.ImageIO.SERVICE_NAME,
