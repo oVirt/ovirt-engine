@@ -18,6 +18,10 @@
         .container {
             width: 100%;
         }
+
+        .errorLabel {
+            color: #CD2127;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="550px" height="400px">
@@ -29,6 +33,7 @@
                 <b:Row>
                     <b:Column size="SM_12">
                         <g:Label ui:field="snapshotConfigHeader" text="{constants.snapshotConfigHeaderLabel}" addStyleNames="{style.headerLabel}" />
+                        <g:Label ui:field="errorMessage" addStyleNames="{style.errorLabel}" />
                     </b:Column>
                 </b:Row>
                 <b:Row>

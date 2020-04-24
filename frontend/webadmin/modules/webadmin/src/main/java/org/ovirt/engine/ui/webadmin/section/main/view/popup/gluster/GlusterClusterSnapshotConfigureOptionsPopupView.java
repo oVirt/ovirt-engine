@@ -24,6 +24,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.inject.Inject;
 
@@ -51,6 +52,10 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends
     @Ignore
     @WithElementId
     EntityModelCellTable<ListModel<EntityModel<GlusterVolumeSnapshotConfig>>> configsTable;
+
+    @UiField
+    @Ignore
+    Label errorMessage;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -104,4 +109,11 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends
     public void cleanup() {
         driver.cleanup();
     }
+
+    @Override
+    public void setMessage(String message) {
+        super.setMessage(message);
+        errorMessage.setText(message);
+    }
+
 }

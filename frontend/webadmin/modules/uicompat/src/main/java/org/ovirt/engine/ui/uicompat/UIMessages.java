@@ -445,4 +445,6 @@ public interface UIMessages extends Messages {
             String storageDomainFormat, String dcVersion);
 
     String compareMultipleStorageFormatsToDataCenterWarningMessage(String dataCenterName, String storageDomainNames);
+
+    String clusterSnapshotOptionNotExist();
 }

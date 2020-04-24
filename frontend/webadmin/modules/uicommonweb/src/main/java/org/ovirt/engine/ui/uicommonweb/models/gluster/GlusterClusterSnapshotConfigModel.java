@@ -66,8 +66,12 @@ public class GlusterClusterSnapshotConfigModel extends Model {
     public boolean validate() {
         boolean isValid = true;
         setMessage(null);
-        Iterable<EntityModel<GlusterVolumeSnapshotConfig>> items1 = getClusterConfigOptions().getItems();
-        for (EntityModel<GlusterVolumeSnapshotConfig> model : items1) {
+        if(getClusterConfigOptions().getItems() == null || getClusterConfigOptions().getItems().isEmpty()) {
+            setMessage(ConstantsManager.getInstance().getMessages().clusterSnapshotOptionNotExist());
+            return false;
+        }
+
+        for (EntityModel<GlusterVolumeSnapshotConfig> model : getClusterConfigOptions().getItems()) {
             GlusterVolumeSnapshotConfig option = model.getEntity();
             if (option.getParamValue().trim().length() == 0) {
                 setMessage(ConstantsManager.getInstance()
