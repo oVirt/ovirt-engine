@@ -1104,6 +1104,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vdsDynamic.setOvsVersion(ovsVersion);
     }
 
+    public RpmVersion getNmstateVersion() {
+        return vdsDynamic.getNmstateVersion();
+    }
+
+    public void setNmstateVersion(RpmVersion nmstateVersion) {
+        vdsDynamic.setNmstateVersion(nmstateVersion);
+    }
+
     public String getKernelVersion() {
         return vdsDynamic.getKernelVersion();
     }

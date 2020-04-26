@@ -1152,6 +1152,10 @@ public class VdsBrokerObjectsBuilder {
                 Map<String, Object> ovs = (Map<String, Object>) packages.get(VdsProperties.OPENVSWITCH);
                 vds.setOvsVersion(getPackageRpmVersion(VdsProperties.OPENVSWITCH, ovs));
             }
+            if (packages.containsKey(VdsProperties.NMSTATE)) {
+                Map<String, Object> nmstate = (Map<String, Object>) packages.get(VdsProperties.NMSTATE);
+                vds.setNmstateVersion(getPackageRpmVersion(VdsProperties.NMSTATE, nmstate));
+            }
         }
     }
 

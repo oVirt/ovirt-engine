@@ -91,6 +91,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setLibrbdVersion(new RpmVersion(rs.getString("librbd1_version")));
         entity.setGlusterfsCliVersion(new RpmVersion(rs.getString("glusterfs_cli_version")));
         entity.setOvsVersion(new RpmVersion(rs.getString("openvswitch_version")));
+        entity.setNmstateVersion(new RpmVersion(rs.getString("nmstate_version")));
         entity.setKernelVersion(rs.getString("kernel_version"));
         entity.setIScsiInitiatorName(rs.getString("iscsi_initiator_name"));
         entity.setTransparentHugePagesState(VdsTransparentHugePagesState
@@ -294,6 +295,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("librbd1_version", vds.getLibrbdVersion().getRpmName())
                 .addValue("glusterfs_cli_version", vds.getGlusterfsCliVersion().getRpmName())
                 .addValue("openvswitch_version", vds.getOvsVersion().getRpmName())
+                .addValue("nmstate_version", vds.getNmstateVersion().getRpmName())
                 .addValue("kernel_version", vds.getKernelVersion())
                 .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())
                 .addValue("transparent_hugepages_state",

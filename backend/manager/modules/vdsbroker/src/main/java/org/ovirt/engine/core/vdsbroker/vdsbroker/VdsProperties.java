@@ -135,6 +135,7 @@ public final class VdsProperties {
     public static final String NETMASK = "netmask";
     public static final String ADDR = "addr";
     public static final String OPENVSWITCH = "openvswitch";
+    public static final String NMSTATE = "nmstate";
 
     // LLDP related properties
     public static final String LLDP_ENABLED = "enabled";

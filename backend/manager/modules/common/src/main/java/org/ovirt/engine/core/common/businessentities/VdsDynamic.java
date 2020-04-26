@@ -114,6 +114,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private RpmVersion ovsVersion;
 
+    private RpmVersion nmstateVersion;
+
     private String iScsiInitiatorName;
 
     private KdumpStatus kdumpStatus;
@@ -234,6 +236,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         librbdVersion = new RpmVersion();
         glusterfsCliVersion = new RpmVersion();
         ovsVersion = new RpmVersion();
+        nmstateVersion = new RpmVersion();
         status = VDSStatus.Unassigned;
         externalStatus = ExternalStatus.Ok;
         previousStatus = VDSStatus.Unassigned;
@@ -685,6 +688,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     public void setOvsVersion(RpmVersion ovsVersion) {
         this.ovsVersion = ovsVersion;
+    }
+
+    public RpmVersion getNmstateVersion() {
+        return nmstateVersion;
+    }
+
+    public void setNmstateVersion(RpmVersion nmstateVersion) {
+        this.nmstateVersion = nmstateVersion;
     }
 
     public String getBuildName() {
