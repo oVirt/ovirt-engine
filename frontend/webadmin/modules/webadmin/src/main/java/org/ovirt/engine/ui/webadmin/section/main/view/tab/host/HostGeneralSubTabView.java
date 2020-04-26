@@ -136,6 +136,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
     VersionValueLabel librbdVersion = new VersionValueLabel();
     StringValueLabel kernelFeatures = new StringValueLabel();
     VersionValueLabel ovsVersion = new VersionValueLabel();
+    VersionValueLabel nmstateVersion = new VersionValueLabel();
 
     @Ignore
     DetailsTextBoxLabel<ArrayList<ValueLabel<Integer>>, Integer> physicalMemoryDetails =
@@ -210,7 +211,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
         boolean glusterSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly);
 
         // Build a form using the FormBuilder
-        softwareFormBuilder = new FormBuilder(softwareFormPanel, 1, 13);
+        softwareFormBuilder = new FormBuilder(softwareFormPanel, 1, 14);
         softwareFormBuilder.setRelativeColumnWidth(0, 12);
         softwareFormBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0).withAutoPlacement(), 2, 10);
         softwareFormBuilder.addFormItem(new FormItem(constants.osPrettyName(), osPrettyName, 0).withAutoPlacement(), 2, 10);
@@ -229,6 +230,9 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
         softwareFormBuilder.addFormItem(new FormItem(constants.cephVersionHostGeneral(), librbdVersion, 0,
                 virtSupported).withAutoPlacement(), 2, 10);
         softwareFormBuilder.addFormItem(new FormItem(constants.ovsVersionGeneral(), ovsVersion, 0).withAutoPlacement(),
+                2,
+                10);
+        softwareFormBuilder.addFormItem(new FormItem(constants.nmstateVersionGeneral(), nmstateVersion, 0).withAutoPlacement(),
                 2,
                 10);
         softwareFormBuilder.addFormItem(new FormItem(constants.kernelFeatures(), kernelFeatures, 0, true)
@@ -332,6 +336,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
         vdsmVersion.setValue(model.getVdsmVersion());
         librbdVersion.setValue(model.getLibrbdVersion());
         ovsVersion.setValue(model.getOvsVersion());
+        nmstateVersion.setValue(model.getNmstateVersion());
     }
 
     private void updateHardwareFormPanel(VDS selectedItem) {

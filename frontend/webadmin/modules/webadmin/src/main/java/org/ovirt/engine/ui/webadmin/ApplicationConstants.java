@@ -3501,6 +3501,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String ovsVersionGeneral();
 
+    String nmstateVersionGeneral();
+
     String enabledVirtualFunctions();
 
     String freeVirtualFunctions();

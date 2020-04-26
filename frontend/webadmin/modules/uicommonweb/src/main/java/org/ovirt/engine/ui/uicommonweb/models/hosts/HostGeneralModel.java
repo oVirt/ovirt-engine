@@ -257,6 +257,20 @@ public class HostGeneralModel extends EntityModel<VDS> {
 
     }
 
+    private RpmVersion nmstateVersion;
+
+    public RpmVersion getNmstateVersion() {
+        return nmstateVersion;
+    }
+
+    public void setNmstateVersion(RpmVersion nmstateVersion) {
+        if (!Objects.equals(this.nmstateVersion, nmstateVersion)) {
+            this.nmstateVersion = nmstateVersion;
+            onPropertyChanged(new PropertyChangedEventArgs("NmstateVersion")); //$NON-NLS-1$
+        }
+
+    }
+
     private String iScsiInitiatorName;
 
     public String getIScsiInitiatorName() {
@@ -981,6 +995,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setGlusterVersion(vds.getGlusterVersion());
         setLibrbdVersion(vds.getLibrbdVersion());
         setOvsVersion(vds.getOvsVersion());
+        setNmstateVersion(vds.getNmstateVersion());
         setIScsiInitiatorName(vds.getIScsiInitiatorName());
 
         setHostName(vds.getHostName());
