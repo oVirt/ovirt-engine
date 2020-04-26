@@ -79,14 +79,14 @@ class VenCryptSocket(object):
     password authentication to ncVNC.
     """
     X509VNC = 261
-    PASSWORD_AUTHENTICATION = '\x01\x02'
-    PASSWORD_AUTHENTICATION_RESPONSE = '\x02'
-    VENCRYPT_AUTHENTICATION = '\x01\x13'
-    VENCRYPT_AUTHENTICATION_RESPONSE = '\x13'
-    VERSION_02 = '\x00\x02'
-    VERSION_ACK = '\x00'
-    CONNECTION_CLOSE = '\x00\x00'
-    METHOD_UNSUPPORTED = '\x00'
+    PASSWORD_AUTHENTICATION = b'\x01\x02'
+    PASSWORD_AUTHENTICATION_RESPONSE = b'\x02'
+    VENCRYPT_AUTHENTICATION = b'\x01\x13'
+    VENCRYPT_AUTHENTICATION_RESPONSE = b'\x13'
+    VERSION_02 = b'\x00\x02'
+    VERSION_ACK = b'\x00'
+    CONNECTION_CLOSE = b'\x00\x00'
+    METHOD_UNSUPPORTED = b'\x00'
 
     def __init__(self, sock, log):
         self.sock = sock
@@ -213,7 +213,7 @@ class VenCryptSocket(object):
 
 
 class OvirtProxyRequestHandler(websockify.ProxyRequestHandler):
-    RFB_HANDSHAKE = 'RFB 003.008\n'
+    RFB_HANDSHAKE = b'RFB 003.008\n'
 
     def __init__(self, retsock, address, proxy, *args, **kwargs):
         self._proxy = proxy
