@@ -578,15 +578,31 @@ class Provisioning(base.Base):
                 self._waitForDatabase(
                     environment=usockenv,
                 )
-                existing = self._userExists(
-                    environment=usockenv,
-                )
-                self._performDatabase(
-                    environment=usockenv,
+                perform_role_sql = (
+                    """
+                        {op} role {user}
+                        with
+                            login
+                            encrypted password %(password)s
+                    """
+                ).format(
                     op=(
-                        'alter' if existing
+                        'alter'
+                        if self._userExists(environment=usockenv)
                         else 'create'
                     ),
+                    user=_ind_env(self, DEK.USER),
+                )
+                database.Statement(
+                    dbenvkeys=self._dbenvkeys,
+                    environment=usockenv,
+                ).execute(
+                    statement=perform_role_sql,
+                    args=dict(
+                        password=_ind_env(self, DEK.PASSWORD),
+                    ),
+                    ownConnection=True,
+                    transaction=False,
                 )
         finally:
             # restore everything
