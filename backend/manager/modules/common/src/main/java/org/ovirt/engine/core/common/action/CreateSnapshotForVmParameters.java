@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,12 +55,23 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
 
     private Snapshot snapshot;
 
+    private boolean legacyFlow;
+
+    private List<DiskImage> cachedSelectedActiveDisks;
+
+    private boolean memorySnapshotSupported;
+
+    private boolean parentLiveMigrateDisk;
+
+    private boolean shouldFreezeOrThaw;
+
 
     public CreateSnapshotForVmParameters() {
         needsLocking = true;
         saveMemory = true;
         diskIdsToIgnoreInChecks = Collections.emptySet();
         diskImagesMap = Collections.emptyMap();
+        legacyFlow = false;
     }
 
     public CreateSnapshotForVmParameters(Guid vmId, String description) {
@@ -69,6 +81,7 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
         saveMemory = true;
         diskIdsToIgnoreInChecks = Collections.emptySet();
         diskImagesMap = Collections.emptyMap();
+        legacyFlow = false;
     }
 
     public CreateSnapshotForVmParameters(Guid vmId, String description, boolean saveMemory) {
@@ -183,6 +196,46 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
 
     public void setHostJobId(Guid hostJobId) {
         this.hostJobId = hostJobId;
+    }
+
+    public void setLegacyFlow(boolean legacyFlow) {
+        this.legacyFlow = legacyFlow;
+    }
+
+    public boolean isLegacyFlow() {
+        return legacyFlow;
+    }
+
+    public void setCachedSelectedActiveDisks(List<DiskImage> cachedSelectedActiveDisks) {
+        this.cachedSelectedActiveDisks = cachedSelectedActiveDisks;
+    }
+
+    public List<DiskImage> getCachedSelectedActiveDisks() {
+        return cachedSelectedActiveDisks;
+    }
+
+    public void setMemorySnapshotSupported(boolean memorySnapshotSupported) {
+        this.memorySnapshotSupported = memorySnapshotSupported;
+    }
+
+    public boolean isMemorySnapshotSupported() {
+        return memorySnapshotSupported;
+    }
+
+    public void setParentLiveMigrateDisk(boolean parentLiveMigrateDisk) {
+        this.parentLiveMigrateDisk = parentLiveMigrateDisk;
+    }
+
+    public boolean isParentLiveMigrateDisk() {
+        return parentLiveMigrateDisk;
+    }
+
+    public void setShouldFreezeOrThaw(boolean shouldFreezeOrThaw) {
+        this.shouldFreezeOrThaw = shouldFreezeOrThaw;
+    }
+
+    public boolean getShouldFreezeOrThaw() {
+        return shouldFreezeOrThaw;
     }
 
     public enum CreateSnapshotStage {

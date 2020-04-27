@@ -1,12 +1,9 @@
 package org.ovirt.engine.core.bll.snapshots;
 
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
-import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
@@ -16,24 +13,16 @@ import org.ovirt.engine.core.bll.HostJobCommand;
 import org.ovirt.engine.core.bll.VirtJobCallback;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -41,18 +30,16 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.SnapshotVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParameters> extends VmCommand<T>  implements HostJobCommand, QuotaStorageDependent {
-    private static final Logger log = LoggerFactory.getLogger(CreateLiveSnapshotForVmCommand.class);
-    private List<DiskImage> cachedSelectedActiveDisks;
-    private List<DiskImage> cachedImagesDisks;
-    private Snapshot snapshot;
+public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParameters> extends VmCommand<T> implements HostJobCommand {
+
     @Inject
     @Typed(VirtJobCallback.class)
     private Instance<VirtJobCallback> callbackProvider;
@@ -68,32 +55,37 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
     @Override
     protected void executeCommand() {
         boolean liveSnapshotRunning = false;
-        try {
-            VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.Snapshot, buildLiveSnapshotParameters(getParameters().getSnapshot()));
+        if (getParameters().isLegacyFlow()) {
+            performLiveSnapshotDeprecated();
+            thawVm();
+        } else {
+            try {
+                VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.Snapshot, buildLiveSnapshotParameters(getParameters().getSnapshot()));
 
-            if (vdsReturnValue.getSucceeded()) {
-                Guid jobId = (Guid) vdsReturnValue.getReturnValue();
-                getParameters().setHostJobId(jobId);
-                persistCommand(getParameters().getParentCommand(), true);
-                log.debug("Live snapshot started successfully");
-                liveSnapshotRunning = true;
-            } else {
-                log.error("Failed to start live snapshot on VDS");
-            }
-        } catch (EngineException e) {
-            log.error("Engine exception thrown while sending live snapshot command", e);
-            if (e.getErrorCode() == EngineError.imageErr || e.getErrorCode() == EngineError.SNAPSHOT_FAILED) {
-                // In this case, we are not certain whether merge is currently running or
-                // whether one of the relevant volumes already removed from the chain. In these cases,
-                // we want to verify the current state; therefore, we consider the merge to be running.
-                liveSnapshotRunning = true;
-            }
-        } finally {
-            if (liveSnapshotRunning) {
-                setSucceeded(true);
-            } else {
-                setCommandStatus(CommandStatus.FAILED);
-                handleVdsLiveSnapshotFailure(new EngineException(EngineError.SNAPSHOT_FAILED));
+                if (vdsReturnValue.getSucceeded()) {
+                    Guid jobId = (Guid) vdsReturnValue.getReturnValue();
+                    getParameters().setHostJobId(jobId);
+                    persistCommand(getParameters().getParentCommand(), true);
+                    log.debug("Live snapshot started successfully");
+                    liveSnapshotRunning = true;
+                } else {
+                    log.error("Failed to start live snapshot on VDS");
+                }
+            } catch (EngineException e) {
+                log.error("Engine exception thrown while sending live snapshot command", e);
+                if (e.getErrorCode() == EngineError.imageErr || e.getErrorCode() == EngineError.SNAPSHOT_FAILED) {
+                    // In this case, we are not certain whether merge is currently running or
+                    // whether one of the relevant volumes already removed from the chain. In these cases,
+                    // we want to verify the current state; therefore, we consider the merge to be running.
+                    liveSnapshotRunning = true;
+                }
+            } finally {
+                if (liveSnapshotRunning) {
+                    setSucceeded(true);
+                } else {
+                    setCommandStatus(CommandStatus.FAILED);
+                    handleVdsLiveSnapshotFailure(new EngineException(EngineError.SNAPSHOT_FAILED));
+                }
             }
         }
     }
@@ -104,104 +96,73 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
                 ONLY_SNAPABLE, ONLY_ACTIVE);
 
         // 'filteredPluggedDisks' should contain only disks from 'getDisksList()' that are plugged to the VM.
-        List<DiskImage> filteredPluggedDisks = ImagesHandler.imagesIntersection(filteredPluggedDisksForVm, getDisksList());
+        List<DiskImage> filteredPluggedDisks = ImagesHandler.imagesIntersection(filteredPluggedDisksForVm, getParameters().getCachedSelectedActiveDisks());
 
         SnapshotVDSCommandParameters parameters = new SnapshotVDSCommandParameters(
                 getVm().getRunOnVds(), getVm().getId(), filteredPluggedDisks);
 
-        if (isMemorySnapshotSupported() && snapshot.containsMemory()) {
+        if (getParameters().isMemorySnapshotSupported() && snapshot.containsMemory()) {
             parameters.setMemoryDump((DiskImage) diskDao.get(snapshot.getMemoryDiskId()));
             parameters.setMemoryConf((DiskImage) diskDao.get(snapshot.getMetadataDiskId()));
         }
-        parameters.setVmFrozen(shouldFreezeOrThawVm() ||
-                getParameters().getParentCommand() == ActionType.LiveMigrateDisk);
 
-        // Get the Live Snapshot timeout
-        parameters.setLiveSnapshotTimeout(Config.getValue(ConfigValues.LiveSnapshotTimeoutInMinutes));
+        // In case the snapshot is auto-generated for live storage migration,
+        // we do not want to issue an FS freeze thus setting vmFrozen to true
+        // so a freeze will not be issued by Vdsm
+        parameters.setVmFrozen(getParameters().getShouldFreezeOrThaw() || getParameters().isParentLiveMigrateDisk());
+
+        if (!getParameters().isLegacyFlow()) {
+            // Get the Live Snapshot timeout
+            parameters.setLiveSnapshotTimeout(Config.getValue(ConfigValues.LiveSnapshotTimeoutInMinutes));
+        }
 
         return parameters;
     }
 
-    private boolean shouldFreezeOrThawVm() {
-        if (!isLiveSnapshotApplicable()) {
-            return false; // only relevant for live snapshots
+    @Deprecated
+    private void performLiveSnapshotDeprecated() {
+        // Compatibility for  < 4.4 clusters.
+        try {
+            TransactionSupport.executeInScope(TransactionScopeOption.Suppress, () -> {
+                runVdsCommand(VDSCommandType.Snapshot, buildLiveSnapshotParameters(getParameters().getSnapshot()));
+                return null;
+            });
+        } catch (EngineException e) {
+            handleVdsLiveSnapshotFailure(e);
+            setSucceeded(false);
+            setCommandStatus(CommandStatus.FAILED);
+            return;
         }
-
-        if (isMemorySnapshotSupported() && getParameters().isSaveMemory()) {
-            return false; // irrelevant for snapshots that contain memory
-        }
-
-        if (getParameters().getParentCommand() == ActionType.LiveMigrateDisk) {
-            return false; // irrelevant for snapshot taken as part of live storage migration
-        }
-
-        if (Config.<Boolean>getValue(ConfigValues.LiveSnapshotPerformFreezeInEngine)) {
-            return true;
-        }
-
-        if (diskOfTypeExists(DiskStorageType.CINDER) || diskOfTypeExists(DiskStorageType.MANAGED_BLOCK_STORAGE)) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean diskOfTypeExists(DiskStorageType type) {
-        return getDisksList()
-                .stream()
-                .anyMatch(disk -> type.equals(disk.getDiskStorageType()));
+        setSucceeded(true);
     }
 
     /**
-     * Filter all allowed snapshot disks.
-     *
-     * @return list of disks to be snapshot.
+     * VM thaw is needed if the VM was frozen.
      */
-    protected List<DiskImage> getDisksList() {
-        if (cachedSelectedActiveDisks == null) {
-            List<DiskImage> imagesAndCinderForVm = getDiskImagesForVm();
+    private void thawVm() {
+        if (!getParameters().getShouldFreezeOrThaw()) {
+            return;
+        }
 
-            // Get disks from the specified parameters or according to the VM
-            if (getParameters().getDiskIds() == null) {
-                cachedSelectedActiveDisks = imagesAndCinderForVm;
-            } else {
-                // Get selected images from 'DiskImagesForVm' to ensure disks entities integrity
-                // (i.e. only images' IDs and Cinders' IDs are relevant).
-                cachedSelectedActiveDisks = getDiskImagesForVm().stream()
-                        .filter(d -> getParameters().getDiskIds().contains(d.getId()))
-                        .collect(Collectors.toList());
+        VDSReturnValue returnValue = null;
+        boolean allowInconsistent = Config.<Boolean>getValue(ConfigValues.LiveSnapshotAllowInconsistent);
+        try {
+            returnValue = runVdsCommand(VDSCommandType.Thaw, new VdsAndVmIDVDSParametersBase(
+                    getVds().getId(), getVmId()));
+        } catch (EngineException e) {
+            if (!allowInconsistent) {
+                handleThawVmFailure(e);
+                return;
             }
         }
-        return cachedSelectedActiveDisks;
-    }
-
-    protected List<DiskImage> getDiskImagesForVm() {
-        List<Disk> disks = diskDao.getAllForVm(getVmId());
-        List<DiskImage> allDisks = new ArrayList<>(getDiskImages(disks));
-        allDisks.addAll(imagesHandler.getCinderLeafImages(disks));
-        allDisks.addAll(imagesHandler.getManagedBlockStorageSnapshots(disks));
-        return allDisks;
-    }
-
-    private List<DiskImage> getDiskImages(List<Disk> disks) {
-        if (cachedImagesDisks == null) {
-            cachedImagesDisks = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE,
-                    ONLY_SNAPABLE, ONLY_ACTIVE);
+        if (returnValue != null && !returnValue.getSucceeded() && !allowInconsistent) {
+            handleThawVmFailure(new EngineException(EngineError.thawErr));
         }
-
-        return cachedImagesDisks;
     }
 
-    protected boolean isLiveSnapshotApplicable() {
-        return getParameters().getParentCommand() != ActionType.RunVm && getVm() != null
-                && (getVm().isRunning() || getVm().getStatus() == VMStatus.Paused) && getVm().getRunOnVds() != null;
-    }
-
-    /**
-     * Check if Memory Snapshot is supported
-     */
-    private boolean isMemorySnapshotSupported() {
-        return FeatureSupported.isMemorySnapshotSupportedByArchitecture(
-                getVm().getClusterArch(), getVm().getCompatibilityVersion());
+    private void handleThawVmFailure(EngineException e) {
+        handleVmFailure(e, AuditLogType.FAILED_TO_THAW_VM,
+                "Could not thaw VM guest filesystems due to an error: {}");
     }
 
     private void handleVdsLiveSnapshotFailure(EngineException e) {
@@ -221,30 +182,16 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
     }
 
     @Override
-    public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<>();
-        permissionList.add(new PermissionSubject(getParameters().getVmId(),
-                VdcObjectType.VM,
-                getActionType().getActionGroup()));
-        return permissionList;
-    }
-
-    @Override
-    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<>();
-        for (DiskImage disk : getDisksList()) {
-            list.add(new QuotaStorageConsumptionParameter(
-                    disk.getQuotaId(),
-                    QuotaConsumptionParameter.QuotaAction.CONSUME,
-                    disk.getStorageIds().get(0),
-                    disk.getActualSize()));
-        }
-
-        return list;
+    public ActionReturnValue endAction() {
+        thawVm();
+        return super.endAction();
     }
 
     @Override
     public CommandCallback getCallback() {
+        if (getParameters().isLegacyFlow()) {
+            return null;
+        }
         return callbackProvider.get();
     }
 

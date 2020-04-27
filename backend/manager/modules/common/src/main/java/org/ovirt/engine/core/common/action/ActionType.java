@@ -199,7 +199,7 @@ public enum ActionType {
     UpdateVolume(253, QuotaDependency.NONE),
     UpdateAllTemplateDisks(254, QuotaDependency.NONE),
     CreateSnapshotDisk(256, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.NONE),
-    CreateLiveSnapshotForVm(257, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.STORAGE),
+    CreateLiveSnapshotForVm(257, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.NONE),
 
     // VmPoolCommands
     AddVmPool(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),
