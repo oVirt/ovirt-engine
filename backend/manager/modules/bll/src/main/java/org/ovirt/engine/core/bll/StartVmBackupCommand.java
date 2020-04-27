@@ -212,7 +212,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             if (vmBackupInfo == null) {
                 return false;
             }
-        } else if (vmBackupInfo.getCheckpoint() == null && !isBackupContainsRawDisksOnly()) {
+        } else if (vmBackupInfo.getCheckpoint() == null && !isBackupContainsRawDisksOnly()
+                && FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())) {
             vmBackupInfo = recoverFromMissingCheckpointInfo();
             if (vmBackupInfo == null) {
                 return false;
