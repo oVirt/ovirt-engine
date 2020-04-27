@@ -22,7 +22,7 @@ DEV_BUILD_GWT_DRAFT=0
 DEV_BUILD_GWT_SUPER_DEV_MODE=0
 DEV_EXTRA_BUILD_FLAGS=
 DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS=
-IMAGEIO_SYSCONF_DIR=$(PREFIX)/etc/ovirt-imageio
+IMAGEIO_SYSCONF_DIR=/etc/ovirt-imageio
 VMCONSOLE_SYSCONF_DIR=/etc/ovirt-vmconsole
 VMCONSOLE_PKI_DIR=/etc/pki/ovirt-vmconsole
 
@@ -546,6 +546,7 @@ all-dev:
 		BUILD_DEV=1 \
 		DEV_PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
 		DEV_SETUP_ENV_DIR="$(PREFIX)/etc/ovirt-engine-setup.env.d" \
+		IMAGEIO_SYSCONF_DIR="$(PREFIX)/etc/ovirt-imageio" \
 		VMCONSOLE_SYSCONF_DIR="$(PREFIX)/etc/ovirt-vmconsole" \
 		VMCONSOLE_PKI_DIR="$(PREFIX)/etc/pki/ovirt-vmconsole" \
 		$(NULL)
