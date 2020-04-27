@@ -2671,8 +2671,11 @@ public class VdsBrokerObjectsBuilder {
 
     public Double removeNotifyTimeFromVmStatusEvent(Map<String, Object> struct) {
         Object notifyTime = struct.remove(VdsProperties.notify_time);
-        if (Long.class.isInstance(notifyTime)) {
-            return ((Long) notifyTime).doubleValue();
+        // notifyTime may be an integer value or long value, depennding on how
+        // much time the host is up, and the monotonic time source used by
+        // vdsm.
+        if (Number.class.isInstance(notifyTime)) {
+            return ((Number) notifyTime).doubleValue();
         }
         return null;
     }
