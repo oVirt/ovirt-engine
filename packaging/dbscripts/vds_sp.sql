@@ -1384,7 +1384,8 @@ BEGIN
             AND (
                 v_storage_pool_id IS NOT NULL
                 OR vds.status = 3
-                );-- if DC is unspecified return only hosts with status = UP
+                )-- if DC is unspecified return only hosts with status = UP
+       ORDER BY vds.vds_name;
     END;
 
     RETURN;
