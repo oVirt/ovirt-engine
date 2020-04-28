@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VmBackupVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VmCheckpointsVDSParameters;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -338,31 +340,79 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     private boolean redefineVmCheckpoints() {
-        VDSReturnValue vdsRetVal;
-        try {
-            List<VmCheckpoint> checkpoints = vmCheckpointDao.getAllForVm(getVmId());
-            if (checkpoints.isEmpty()) {
-                log.info("No previous VM checkpoints found for VM '{}', skip redefine VM checkpoints", getVmId());
-                return true;
-            }
-
-            for (VmCheckpoint checkpoint : checkpoints) {
-                // Checkpoint can be redefined in bulks, currently redefine one checkpoint each time
-                vdsRetVal = runVdsCommand(VDSCommandType.RedefineVmCheckpoints,
-                        new VmCheckpointsVDSParameters(getVdsId(), getVmId(), List.of(checkpoint)));
-                VmCheckpointInfo vmCheckpointInfo = (VmCheckpointInfo) vdsRetVal.getReturnValue();
-                if (!vdsRetVal.getSucceeded() || vmCheckpointInfo.getError() != null) {
-                    EngineException engineException = new EngineException();
-                    engineException.setVdsError(vdsRetVal.getVdsError());
-                    engineException.setVdsReturnValue(vdsRetVal);
-                    throw engineException;
-                }
-            }
+        List<VmCheckpoint> checkpoints = vmCheckpointDao.getAllForVm(getVmId());
+        if (checkpoints.isEmpty()) {
+            log.info("No previous VM checkpoints found for VM '{}', skip redefining VM checkpoints", getVmId());
             return true;
-        } catch (EngineException e) {
-            log.error("Failed to execute VM.redefineCheckpoints: {}", e);
+        }
+        List<VmCheckpoint> checkpointsToSync = getCheckpointIdsToSync(checkpoints);
+        if (checkpointsToSync != null && checkpointsToSync.isEmpty()) {
+            log.info("Checkpoints chain is already defined for VM '{}'", getVmId());
+            return true;
+        }
+
+        if (checkpointsToSync == null) {
+            log.info("Checkpoints chain for VM '{}' isn't synced with libvirt", getVmId());
+            // TODO: need to implement checkpoint deletion from the engine DB and libvirt
+
             return false;
         }
+
+        for (VmCheckpoint checkpoint : checkpointsToSync) {
+            // Checkpoint can be redefined in bulks, currently redefine one checkpoint each time
+            VDSReturnValue redefineVdsReturnValue = performVmCheckpointsOperation(VDSCommandType.RedefineVmCheckpoints,
+                    new VmCheckpointsVDSParameters(getVdsId(), getVmId(), List.of(checkpoint)));
+            VmCheckpointInfo vmCheckpointInfo = (VmCheckpointInfo) redefineVdsReturnValue.getReturnValue();
+            if (vmCheckpointInfo == null || vmCheckpointInfo.getError() != null
+                    || vmCheckpointInfo.getCheckpointsIds().size() == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private List<VmCheckpoint> getCheckpointIdsToSync(List<VmCheckpoint> vmCheckpoints) {
+        VDSReturnValue listVdsReturnValue = performVmCheckpointsOperation(VDSCommandType.ListVmCheckpoints,
+                new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
+        List<Guid> definedCheckpointsIds = (List<Guid>) listVdsReturnValue.getReturnValue();
+
+        if (definedCheckpointsIds.isEmpty()) {
+            // Need to redefine the entire chain
+            return vmCheckpoints;
+        }
+
+        Iterator<Guid> definedCheckpointsIterator = definedCheckpointsIds.listIterator();
+        for (int i = 0; i < vmCheckpoints.size(); i++) {
+            if (!definedCheckpointsIterator.hasNext()) {
+                // A part of the DB checkpoints chains should be redefined
+                return vmCheckpoints.subList(i, vmCheckpoints.size());
+            } else if (!vmCheckpoints.get(i).getId().equals(definedCheckpointsIterator.next())) {
+                // The checkpoint chains in the DB and in Libvirt aren't synced
+                return null;
+            }
+        }
+
+        // Checkpoints chain is synced
+        return Collections.emptyList();
+    }
+
+    private VDSReturnValue performVmCheckpointsOperation(VDSCommandType vdsCommandType,
+            VdsAndVmIDVDSParametersBase params) {
+        VDSReturnValue vdsRetVal;
+        try {
+            vdsRetVal = runVdsCommand(vdsCommandType, params);
+            if (!vdsRetVal.getSucceeded()) {
+                EngineException engineException = new EngineException();
+                engineException.setVdsError(vdsRetVal.getVdsError());
+                engineException.setVdsReturnValue(vdsRetVal);
+                throw engineException;
+            }
+        } catch (EngineException e) {
+            log.error("Failed to execute '{}': {}", vdsCommandType, e);
+            throw e;
+        }
+
+        return vdsRetVal;
     }
 
     private VmBackupInfo performVmBackupOperation(VDSCommandType vdsCommandType) {

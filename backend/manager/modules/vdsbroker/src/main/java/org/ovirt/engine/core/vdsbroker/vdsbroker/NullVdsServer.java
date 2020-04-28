@@ -38,6 +38,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
 import org.ovirt.vdsm.jsonrpc.client.BrokerCommandCallback;
@@ -958,6 +959,10 @@ public class NullVdsServer implements IVdsServer {
     }
 
     @Override public VmCheckpointInfo deleteVmCheckpoints(String vmId, String[] checkpointIds) {
+        return null;
+    }
+
+    @Override public UUIDListReturn listVmCheckpoints(String vmId) {
         return null;
     }
 
