@@ -568,7 +568,7 @@ public abstract class RunOnceModel extends Model {
             return InitializationType.Sysprep;
         } else if (getIsCloudInitEnabled().getEntity() != null
                 && getIsCloudInitEnabled().getEntity()) {
-            return InitializationType.CloudInit;
+            return getIsIgnition() ? InitializationType.Ignition : InitializationType.CloudInit;
         } else {
             return InitializationType.None;
         }
