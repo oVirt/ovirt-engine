@@ -113,6 +113,7 @@ public class EntityMapper {
         Gson gson = new Gson();
         JsonObject o = gson.toJsonTree(vmAsMap).getAsJsonObject();
         V1VirtualMachine vm = gson.fromJson(o, V1VirtualMachine.class);
+        vm.getMetadata().setCreationTimestamp(template.getMetadata().getCreationTimestamp());
 
         VmStatic vmStatic = toOvirtVm(vm, clusterId);
         vmStatic.setPredefinedProperties(new JSON().serialize(vm));
