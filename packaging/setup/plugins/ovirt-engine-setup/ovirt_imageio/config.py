@@ -38,7 +38,7 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._enabled = None
-        self._new_filename = None
+        self._notifications = []
 
     def _file_modified(self, path, new_content):
         if os.path.exists(path):
@@ -52,11 +52,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.UNINSTALL_FILES_INFO
         ].get(conffile) is not None
 
-    def _format_new_filename(self, path):
-        timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-        return "{}.new.{}".format(path, timestamp)
-
     def _write_new_config(self, file_name, content):
+        timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        new_file_name =  "{}.new.{}".format(file_name, timestamp)
+
         # If we are writing a new file, write it immediately.
         # Note that this will not be rolled back by engine-setup
         # if there is some failure.
@@ -64,13 +63,14 @@ class Plugin(plugin.PluginBase):
         with local_transaction:
             local_transaction.append(
                 filetransaction.FileTransaction(
-                    name=file_name,
+                    name=new_file_name,
                     content=content,
                     modifiedList=self.environment[
                         otopicons.CoreEnv.MODIFIED_FILES
                     ],
                 )
             )
+        self._notifications.append((file_name, new_file_name))
 
     def _write_config(self, file_name, content):
         # If updating the existing file (or writing it new), do this
@@ -85,6 +85,33 @@ class Plugin(plugin.PluginBase):
                 ],
             )
         )
+
+    def _update_config(self, path, content):
+        """
+        If we wrote the config in the past and user modified the file,
+        write a ".new.timestamp" file.
+        Otherwise rewrite the file so we have new hash in the
+        uninstall info.
+        """
+        if self._conffile_was_written_by_previous_setup(path):
+            if self._file_modified(path, content):
+                # Write a new file, do not touch existing one that user
+                # changed.
+                self._write_new_config(path, content)
+            else:
+                # We wrote the file in the past, the user changed it, but
+                # changed it to have the same content we already want to write.
+                # So output nothing to the user, but still re-write the file,
+                # so that we have the new hash in uninstall info.
+                self.logger.debug(
+                    'Rewriting %s in order to update uninstall info',
+                    path,
+                )
+                self._write_config(path, content)
+        else:
+            # We haven't written the file in the past. Write it now and if there
+            # is any such file, overwrite it.
+            self._write_config(path, content)
 
     def _get_configuration(self):
         return textwrap.dedent(oipcons.ImageIO.CONFIG_TEMPLATE).format(
@@ -133,31 +160,10 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _misc_config(self):
-        # If running on the engine machine, use key/cert created for httpd.
-        # Only replace the config file if user didn't touch it since last
-        # run of engine-setup. Otherwise, write a new file and notify the user.
-        conf_file = oipcons.ImageIO.DAEMON_CONFIG
-        new_content = self._get_configuration()
-
-        if self._conffile_was_written_by_previous_setup(conf_file):
-            if self._file_modified(conf_file, new_content):
-                # Write a new file, do not touch existing one that user
-                # changed.
-                self._new_filename = self._format_new_filename(conf_file)
-            else:
-                # We wrote the file in the past, the user changed it, but
-                # changed it to have the same content we already want to write.
-                # So output nothing to the user, but still re-write the file,
-                # so that we have the new hash in uninstall info.
-                self.logger.debug(
-                    'Rewriting %s in order to update uninstall info',
-                    conf_file,
-                )
-
-        if self._new_filename:
-            self._write_new_config(self._new_filename, new_content)
-        else:
-            self._write_config(conf_file, new_content)
+        self._update_config(
+            oipcons.ImageIO.DAEMON_CONFIG,
+            self._get_configuration()
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
@@ -168,14 +174,10 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _misc_dev_logger_config(self):
-        conf_file = oipcons.ImageIO.LOGGER_CONFIG
-        content = textwrap.dedent(oipcons.ImageIO.LOGGER)
-
-        if self._file_modified(conf_file, content):
-            new_filename = self._format_new_filename(conf_file)
-            self._write_new_config(new_filename, content)
-        else:
-            self._write_config(conf_file, content)
+        self._update_config(
+            oipcons.ImageIO.LOGGER_CONFIG,
+            textwrap.dedent(oipcons.ImageIO.LOGGER)
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
@@ -185,18 +187,16 @@ class Plugin(plugin.PluginBase):
         after=(
                 osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
         ),
-        condition=lambda self: self._new_filename,
+        condition=lambda self: self._notifications,
     )
     def _closeup_notify_new_config(self):
-        self.dialog.note(
-            _(
-                'Did not update {f} because it was changed manually. You '
-                'might want to compare it with {fnew} and edit as needed.'
-            ).format(
-                f=oipcons.ImageIO.DAEMON_CONFIG,
-                fnew=self._new_filename,
+        for cur_conf, new_conf in self._notifications:
+            self.dialog.note(
+                _(
+                    'Did not update {} because it was changed manually. You '
+                    'might want to compare it with {} and edit as needed.'
+                ).format(cur_conf, new_conf)
             )
-        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
