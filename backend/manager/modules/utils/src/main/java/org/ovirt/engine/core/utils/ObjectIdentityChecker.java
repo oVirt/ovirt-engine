@@ -173,7 +173,8 @@ public class ObjectIdentityChecker {
             return false;
         }
         Collection<String> changedFields = getChangedFields(source, destination);
-        return changedFields.stream().allMatch(this::isFieldUpdatable);
+        return changedFields.stream().allMatch(field ->
+                isFieldUpdatable(field) || isTransientField(field));
     }
 
     public final boolean isHostedEngineUpdateValid(Object source, Object destination) {
@@ -181,7 +182,8 @@ public class ObjectIdentityChecker {
             return false;
         }
         Collection<String> changedFields = getChangedFields(source, destination);
-        return changedFields.stream().allMatch(this::isHostedEngineFieldUpdatable);
+        return changedFields.stream().allMatch(field ->
+                isHostedEngineFieldUpdatable(field) || isTransientField(field));
     }
 
     public final boolean isUpdateValid(Object source, Object destination, Enum<?> status) {

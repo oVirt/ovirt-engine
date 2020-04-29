@@ -424,15 +424,15 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
 
     /** Transient field for GUI presentation purposes. */
-    @EditableVmField
+    @TransientField
     private String quotaName;
 
-    @EditableVmField
+    @TransientField
     /** Transient field for GUI presentation purposes. */
     private boolean quotaDefault;
 
     /** Transient field for GUI presentation purposes. */
-    @EditableVmField(onHostedEngine = true)
+    @TransientField
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
     @CopyOnNewVersion
