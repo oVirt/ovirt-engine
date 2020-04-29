@@ -166,7 +166,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         return isVersionChanged()
                 || isBiosTypeChanged()
                 || isCpuNameChanged()
-                || !Objects.equals(oldCluster.getArchitecture(), getCluster().getArchitecture());
+                || oldCluster.getArchitecture() != getArchitecture();
     }
 
     private boolean isVersionChanged() {
