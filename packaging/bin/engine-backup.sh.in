@@ -451,7 +451,9 @@ EXCLUDED_FILES_ON_RESTORE="etc/ovirt-engine/engine-config/engine-config.properti
 etc/ovirt-engine-setup.conf.d/*packaging*
 etc/pki/ovirt-engine/cacert.template.in
 etc/pki/ovirt-engine/cert.template.in
-etc/pki/ovirt-engine/openssl.conf"
+etc/pki/ovirt-engine/openssl.conf
+etc/ovirt-engine/engine.conf.d/20-branding-rhv.conf
+etc/ovirt-engine/branding/50-rhv-2.brand"
 
 # Hashers. Must support:
 # - No options, for creation of hash file
