@@ -888,6 +888,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public EntityModelDetachableWidget isMemoryBalloonDeviceEnabledDetachable;
 
     @UiField(provided = true)
+    @Path(value = "tpmEnabled.entity")
+    @WithElementId("tpmEnabled")
+    public EntityModelCheckBoxEditor tpmEnabledEditor;
+
+    @UiField(provided = true)
     @Path(value = "provisioningThin_IsSelected.entity")
     @WithElementId("provisioningThin")
     public EntityModelRadioButtonEditor provisioningThinEditor;
@@ -1072,6 +1077,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         rngBytesEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         rngSourceUrandom = new EntityModelRadioButtonEditor("rndBackendModel"); //$NON-NLS-1$
         rngSourceHwrng = new EntityModelRadioButtonEditor("rndBackendModel"); //$NON-NLS-1$
+        tpmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
 
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         bootMenuEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -2106,6 +2112,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         provisioningCloneEditor.setTabIndex(nextTabIndex++);
         cpuPinning.setTabIndex(nextTabIndex++);
         cpuSharesAmountEditor.setTabIndex(nextTabIndex++);
+        tpmEnabledEditor.setTabIndex(nextTabIndex++);
         numOfIoThreadsEditor.setTabIndex(nextTabIndex++);
         multiQueues.setTabIndex(nextTabIndex++);
         nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);

@@ -22,6 +22,7 @@ public class AddVmPoolParameters extends VmPoolOperationParameters implements Ha
     private int vmsCount;
     private Map<Guid, DiskImage> diskInfoDestinationMap;
     private Boolean soundDeviceEnabled;
+    private Boolean tpmEnabled;
     private Boolean consoleEnabled;
     private Boolean virtioScsiEnabled;
     private boolean balloonEnabled;
@@ -67,6 +68,13 @@ public class AddVmPoolParameters extends VmPoolOperationParameters implements Ha
         this.soundDeviceEnabled = soundDeviceEnabled;
     }
 
+    public Boolean isTpmEnabled() {
+        return tpmEnabled;
+    }
+
+    public void setTpmEnabled(boolean tpmEnabled) {
+        this.tpmEnabled = tpmEnabled;
+    }
 
     public Boolean isConsoleEnabled() {
         return consoleEnabled;

@@ -1618,6 +1618,8 @@ public enum EngineMessage {
     // soundcard on ppc
     SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH(ErrorType.NOT_SUPPORTED),
 
+    TPM_DEVICE_REQUESTED_ON_NOT_SUPPORTED_PLATFORM(ErrorType.NOT_SUPPORTED),
+
     // use host CPU passthrough on ppc
     USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH(ErrorType.NOT_SUPPORTED),
 

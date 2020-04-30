@@ -108,6 +108,15 @@ public class VmManagementParametersBase extends VmOperationParameterBase
     private Boolean soundDeviceEnabled;
 
     /*
+     * This parameter is used to decide if to create TPM device or not if it is null then:
+     * for add vm don't add TPM device
+     * for unsupported configuration don't add TPM device
+     * for other update the current configuration will remain
+     */
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.TPM, type = VmDeviceType.TPM, name="tpm")
+    private Boolean tpmEnabled;
+
+    /*
      * This parameter is used to decide if to create console device or not if it is null then: for add vm don't add
      * console device for update the current configuration will remain
      */
@@ -303,6 +312,14 @@ public class VmManagementParametersBase extends VmOperationParameterBase
 
     public void setSoundDeviceEnabled(boolean soundDeviceEnabled) {
         this.soundDeviceEnabled = soundDeviceEnabled;
+    }
+
+    public Boolean isTpmEnabled() {
+        return tpmEnabled;
+    }
+
+    public void setTpmEnabled(boolean tpmEnabled) {
+        this.tpmEnabled = tpmEnabled;
     }
 
     public boolean isCopyTemplatePermissions() {

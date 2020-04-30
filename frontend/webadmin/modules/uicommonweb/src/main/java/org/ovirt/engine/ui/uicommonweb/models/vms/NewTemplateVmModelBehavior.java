@@ -280,6 +280,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         buildModel(this.vm.getStaticData(), (source, destination) -> {
             updateSelectedCdImage(vm.getStaticData());
             updateTimeZone(vm.getTimeZone());
+            updateTpm(vm.getId());
             updateConsoleDevice(vm.getId());
 
             getModel().getStorageDomain().setIsChangeable(true);

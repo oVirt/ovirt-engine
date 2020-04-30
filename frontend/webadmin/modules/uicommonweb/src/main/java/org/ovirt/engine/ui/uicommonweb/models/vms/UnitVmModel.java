@@ -303,6 +303,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getNumOfSockets().setIsChangeable(false);
             getThreadsPerCore().setIsChangeable(false);
             getSerialNumberPolicy().setIsChangeable(false);
+            getTpmEnabled().setIsChangeable(false);
 
             getOSType().setIsChangeable(false);
             getIsStateless().setIsChangeable(false);
@@ -1309,6 +1310,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.tscFrequency = tscFrequency;
     }
 
+    private EntityModel<Boolean> tpmEnabled;
+
+    public EntityModel<Boolean> getTpmEnabled() {
+        return tpmEnabled;
+    }
+
+    public void setTpmEnabled(EntityModel<Boolean> tpmEnabled) {
+        this.tpmEnabled = tpmEnabled;
+    }
+
     private NotChangableForVmInPoolListModel<MigrationSupport> migrationMode;
 
     public ListModel<MigrationSupport> getMigrationMode() {
@@ -1719,7 +1730,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setDataCenterWithClustersList(new NotChangableForVmInPoolListModel<DataCenterWithCluster>());
         getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener(this);
 
+        setTpmEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
+
         setBiosType(new ListModelWithClusterDefault<>(BiosType.CLUSTER_DEFAULT));
+        getBiosType().getSelectedItemChangedEvent().addListener(this);
         getBiosType().setItems(AsyncDataProvider.getInstance().getBiosTypeList());
         getBiosType().setSelectedItem(BiosType.CLUSTER_DEFAULT);
 
@@ -2137,6 +2151,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 updateResumeBehavior();
             } else if (sender == getLease()) {
                 updateResumeBehavior();
+            } else if (sender == getBiosType()) {
+                updateTpmEnabled();
             }
         } else if (ev.matchesDefinition(ListModel.selectedItemsChangedEventDefinition)) {
             if (sender == getDefaultHost()) {
@@ -2196,6 +2212,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         updateMultiQueues();
         updateMigrateEncrypted();
         updateSerialNumberPolicy();
+        updateTpmEnabled();
     }
 
     private void updateMultiQueues() {
@@ -2463,6 +2480,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         updateSoundCard();
         updateResumeBehavior();
         updateBiosType();
+        updateTpmEnabled();
 
         getBehavior().updateOSValue(selectedOsId);
 
@@ -3736,7 +3754,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private BiosType getEffectiveBiosType(BiosType vmBiosType, Cluster cluster) {
-        return vmBiosType != BiosType.CLUSTER_DEFAULT ? vmBiosType : cluster.getBiosType();
+        return cluster == null || vmBiosType != BiosType.CLUSTER_DEFAULT ? vmBiosType : cluster.getBiosType();
     }
 
     public void needsChipsetDependentVmDeviceChanges(Runnable noChanges, Runnable needsChanges) {
@@ -3758,4 +3776,17 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         AsyncDataProvider.getInstance().isVmTemplateConflictsWithChipset(query, templateId, chipsetType);
     }
 
+    private void updateTpmEnabled() {
+        Cluster cluster = getSelectedCluster();
+        Version version = getCompatibilityVersion();
+        if (version != null && version.less(Version.v4_5)) {
+            getTpmEnabled().setIsChangeable(false, messages.availableInVersionOrHigher(Version.v4_5.toString()));
+            getTpmEnabled().setEntity(false);
+        } else if (!getEffectiveBiosType(getBiosType().getSelectedItem(), cluster).isOvmf()) {
+            getTpmEnabled().setIsChangeable(false, messages.uefiRequired());
+            getTpmEnabled().setEntity(false);
+        } else {
+            getTpmEnabled().setIsChangeable(true);
+        }
+    }
 }

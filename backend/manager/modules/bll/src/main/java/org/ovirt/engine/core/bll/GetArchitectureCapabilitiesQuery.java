@@ -64,6 +64,8 @@ public class GetArchitectureCapabilitiesQuery<P extends ArchCapabilitiesParamete
             return FeatureSupported.isSuspendSupportedByArchitecture(architecture, version);
         case GetMemoryHotUnplugSupport:
             return FeatureSupported.hotUnplugMemory(version, architecture);
+        case GetTpmDeviceSupport:
+            return FeatureSupported.isTpmDeviceSupported(version, architecture);
         }
         return false;
     }

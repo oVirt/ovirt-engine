@@ -632,6 +632,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
+        if (isTpmEnabled()
+                && !getVmDeviceUtils().isTpmDeviceSupported(getParameters().getVmStaticData(), getCluster())) {
+            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
+            return failValidation(EngineMessage.TPM_DEVICE_REQUESTED_ON_NOT_SUPPORTED_PLATFORM);
+        }
+
         if (!validateQuota(getParameters().getVmStaticData().getQuotaId())) {
             return false;
         }
@@ -1207,6 +1213,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 getVmId(),
                 getSrcDeviceIdToTargetDeviceIdMapping(),
                 isSoundDeviceEnabled(),
+                isTpmEnabled(),
                 getParameters().isConsoleEnabled(),
                 isVirtioScsiEnabled(),
                 isBalloonEnabled(),
@@ -1824,6 +1831,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return soundDeviceEnabled != null ? soundDeviceEnabled
                 : osRepository.isSoundDeviceEnabled(getParameters().getVmStaticData().getOsId(),
                         getEffectiveCompatibilityVersion());
+    }
+
+    protected boolean isTpmEnabled() {
+        Boolean tpmEnabled = getParameters().isTpmEnabled();
+        return tpmEnabled != null ? tpmEnabled : false;
     }
 
     private boolean hasWatchdog() {

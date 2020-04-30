@@ -1228,6 +1228,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
+        if (isTpmEnabled()
+                && !getVmDeviceUtils().isTpmDeviceSupported(getParameters().getVmStaticData(), getCluster())) {
+            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
+            return failValidation(EngineMessage.TPM_DEVICE_REQUESTED_ON_NOT_SUPPORTED_PLATFORM);
+        }
+
         if (!validate(getNumaValidator().checkVmNumaNodesIntegrity(
                 getParameters().getVm(),
                 getParameters().getVm().getvNumaNodeList()))) {
@@ -1628,6 +1634,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         Boolean soundDeviceEnabled = getParameters().isSoundDeviceEnabled();
         return soundDeviceEnabled != null ? soundDeviceEnabled :
                 getVmDeviceUtils().hasSoundDevice(getVmId());
+    }
+
+    protected boolean isTpmEnabled() {
+        Boolean tpmDeviceEnabled = getParameters().isTpmEnabled();
+        return tpmDeviceEnabled != null ? tpmDeviceEnabled :
+                getVmDeviceUtils().hasTpmDevice(getVmId());
     }
 
     protected boolean hasWatchdog() {

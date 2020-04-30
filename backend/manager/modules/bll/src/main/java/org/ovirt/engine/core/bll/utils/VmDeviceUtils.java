@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
@@ -624,6 +625,87 @@ public class VmDeviceUtils {
      */
     public void removeVideoDevices(Guid vmId) {
         removeVmDevices(getVideoDevices(vmId));
+    }
+
+    /*
+     * TPM device
+     */
+
+    /**
+     * Enable/disable Tpm device in the VM.
+     *
+     * @param newVm new configuration
+     * @param newVmCluster new cluster
+     * @param tpmEnabled whether to enable or disable the device; if null then remove the device
+              if it cannot be supported and leave it unchanged otherwise
+     */
+    public void updateTpmDevice(VmBase newVm, Cluster newVmCluster, Boolean tpmEnabled) {
+        final Guid vmId = newVm.getId();
+        if (!isTpmDeviceSupported(newVm, newVmCluster)) {
+            tpmEnabled = false;
+        }
+        if (tpmEnabled == null) {
+            return;
+        }
+
+        if (tpmEnabled) {
+            if (!hasTpmDevice(vmId)) {
+                addTpmDevice(vmId);
+            }
+        } else {
+            removeTpmDevices(vmId);
+        }
+    }
+
+    /**
+     * Add new TPM device to the VM.
+     */
+    public VmDevice addTpmDevice(Guid vmId) {
+        return addManagedDevice(
+                new VmDeviceId(Guid.newGuid(), vmId),
+                VmDeviceGeneralType.TPM,
+                VmDeviceType.TPM,
+                Collections.emptyMap(),
+                true,
+                true);
+    }
+
+    /**
+     * Get list of all TPM devices in the VM.
+     */
+    public List<VmDevice> getTpmDevices(Guid vmId) {
+        return vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.TPM);
+    }
+
+    /**
+     * Remove all TPM devices from the VM.
+     */
+    public void removeTpmDevices(Guid vmId) {
+        removeVmDevices(getTpmDevices(vmId));
+    }
+
+    /**
+     * Check if the VM has a TPM device.
+     */
+    public boolean hasTpmDevice(Guid vmId) {
+        return !getTpmDevices(vmId).isEmpty();
+    }
+
+    /**
+     * Check if a TPM device is supported for the given VM in the given cluster.
+     */
+    public boolean isTpmDeviceSupported(VmBase vm, Cluster vmCluster) {
+        final Version version = CompatibilityVersionUtils.getEffective(vm, vmCluster);
+
+        return (vmCluster == null || FeatureSupported.isTpmDeviceSupported(version, vmCluster.getArchitecture()))
+                && BiosTypeUtils.getEffective(vm, vmCluster).isOvmf();
+    }
+
+    /**
+     * Check if a TPM device should be enabled for the given VM in the given cluster.
+     */
+    public boolean isTpmDeviceEnabled(VmBase vm, Cluster vmCluster) {
+        return isTpmDeviceSupported(vm, vmCluster) && hasTpmDevice(vm.getId());
     }
 
     /*
@@ -1390,6 +1472,7 @@ public class VmDeviceUtils {
         updateMemoryBalloon(newVmBase.getId(), params.isBalloonEnabled());
         updateSoundDevice(oldVmBase, newVmBase, newVmCluster, oldVm.getCompatibilityVersion(),
                 params.isSoundDeviceEnabled());
+        updateTpmDevice(newVmBase, newVmCluster, params.isTpmEnabled());
         updateSmartcardDevice(oldVm, newVmBase);
         updateConsoleDevice(newVmBase.getId(), params.isConsoleEnabled());
         updateVirtioScsiController(newVmBase, params.isVirtioScsiEnabled());
@@ -1501,6 +1584,7 @@ public class VmDeviceUtils {
                               List<VmDevice> srcDevices,
                               Map<Guid, Guid> srcDeviceIdToDstDeviceIdMapping,
                               boolean isSoundEnabled,
+                              boolean isTpmEnabled,
                               Boolean isConsoleEnabled,
                               Boolean isVirtioScsiEnabled,
                               boolean isBalloonEnabled,
@@ -1516,6 +1600,7 @@ public class VmDeviceUtils {
         boolean dstIsVm = !(dstVmBase instanceof VmTemplate);
         boolean hasCd = hasCdDevice(dstVmBase.getId());
         boolean hasSound = false;
+        boolean hasTpm = false;
         boolean hasConsole = false;
         boolean hasVirtioScsi = false;
         boolean hasBalloon = false;
@@ -1650,6 +1735,13 @@ public class VmDeviceUtils {
                     hasSound = true;
                     break;
 
+                case TPM:
+                    if (!isTpmEnabled) {
+                        continue;
+                    }
+                    hasTpm = true;
+                    break;
+
                 case GRAPHICS:
                     GraphicsType type = GraphicsType.fromVmDeviceType(VmDeviceType.getByName(device.getDevice()));
                     // don't add device from the template if it should be skipped (i.e. it's overridden in params)
@@ -1688,6 +1780,10 @@ public class VmDeviceUtils {
             addSoundDevice(dstVmBase, () -> dstCluster);
         }
 
+        if (isTpmEnabled && !hasTpm) {
+            addTpmDevice(dstId);
+        }
+
         if (Boolean.TRUE.equals(isConsoleEnabled) && !hasConsole) {
             addConsoleDevice(dstId);
         }
@@ -1712,6 +1808,7 @@ public class VmDeviceUtils {
                                      Guid dstId,
                                      Map<Guid, Guid> srcDeviceIdToDstDeviceIdMapping,
                                      boolean isSoundEnabled,
+                                     boolean isTpmEnabled,
                                      Boolean isConsoleEnabled,
                                      Boolean isVirtioScsiEnabled,
                                      boolean isBalloonEnabled,
@@ -1724,8 +1821,8 @@ public class VmDeviceUtils {
         List<VmDevice> srcDevices = vmDeviceDao.getVmDeviceByVmId(srcId);
 
         copyVmDevices(srcId, dstId, srcVmBase, dstVmBase, srcDevices, srcDeviceIdToDstDeviceIdMapping,
-                isSoundEnabled, isConsoleEnabled, isVirtioScsiEnabled, isBalloonEnabled, graphicsToSkip,
-                copySnapshotDevices, canCopyHostDevices(srcVmBase, dstVmBase),
+                isSoundEnabled, isTpmEnabled, isConsoleEnabled, isVirtioScsiEnabled, isBalloonEnabled,
+                graphicsToSkip, copySnapshotDevices, canCopyHostDevices(srcVmBase, dstVmBase),
                 versionToUpdateRndDeviceWith);
     }
 

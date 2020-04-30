@@ -87,6 +87,11 @@ public enum VmDeviceGeneralType {
     MEMORY,
 
     /**
+     * A TPM device
+     */
+    TPM,
+
+    /**
      * Unknown device
      */
     UNKNOWN;
@@ -191,6 +196,10 @@ public enum VmDeviceGeneralType {
 
             case HOST_DEVICE:
                 type = HOSTDEV;
+                break;
+
+            case TPM:
+                type = TPM;
                 break;
 
             default:

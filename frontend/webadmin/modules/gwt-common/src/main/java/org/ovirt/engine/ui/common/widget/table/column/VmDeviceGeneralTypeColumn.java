@@ -48,6 +48,8 @@ public class VmDeviceGeneralTypeColumn<T> extends AbstractSafeHtmlColumn<T> {
                 return resources.rngDeviceGeneralTypeIcon();
             case SMARTCARD:
                 return resources.smartcardDeviceGeneralTypeIcon();
+            case TPM:
+                return resources.tpmDeviceGeneralTypeIcon();
             case WATCHDOG:
                 return resources.watchdogDeviceGeneralTypeIcon();
             case HOSTDEV:

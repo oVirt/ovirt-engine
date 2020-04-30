@@ -1557,6 +1557,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     InstanceId,
 
+    @TypeConverterAttribute(Map.class)
+    TpmDeviceSupported,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

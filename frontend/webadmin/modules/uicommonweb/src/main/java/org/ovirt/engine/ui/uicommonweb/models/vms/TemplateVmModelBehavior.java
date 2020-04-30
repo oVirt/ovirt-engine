@@ -187,6 +187,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 getModel().getDisplayType().setSelectedItem(displayType);
             }
 
+            updateTpm(template.getId());
             updateConsoleDevice(template.getId());
 
             toggleAutoSetVmHostname();

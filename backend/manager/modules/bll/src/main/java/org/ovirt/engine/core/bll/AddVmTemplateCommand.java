@@ -216,6 +216,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 getParameters().setSoundDeviceEnabled(false);
             }
 
+            if (getParameters().isTpmEnabled() == null) {
+                getParameters().setTpmEnabled(false);
+            }
             if (getParameters().isConsoleEnabled() == null) {
                 getParameters().setConsoleEnabled(false);
             }
@@ -370,6 +373,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getVmTemplateId(),
                         srcDeviceIdToTargetDeviceIdMapping,
                         getParameters().isSoundDeviceEnabled(),
+                        getParameters().isTpmEnabled(),
                         getParameters().isConsoleEnabled(),
                         getParameters().isVirtioScsiEnabled(),
                         getVmDeviceUtils().hasMemoryBalloon(getVmId()),
@@ -382,6 +386,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getVmTemplateId(),
                         srcDeviceIdToTargetDeviceIdMapping,
                         getParameters().isSoundDeviceEnabled(),
+                        getParameters().isTpmEnabled(),
                         getParameters().isConsoleEnabled(),
                         getParameters().isVirtioScsiEnabled(),
                         Boolean.TRUE.equals(getParameters().isBalloonEnabled()),

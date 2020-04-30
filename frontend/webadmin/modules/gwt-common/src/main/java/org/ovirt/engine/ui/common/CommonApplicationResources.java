@@ -329,6 +329,9 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/device_smartcard.png")
     ImageResource smartcardDeviceGeneralTypeIcon();
 
+    @Source("images/device_tpm.png")
+    ImageResource tpmDeviceGeneralTypeIcon();
+
     @Source("images/device_watchdog.png")
     ImageResource watchdogDeviceGeneralTypeIcon();
 

@@ -1363,6 +1363,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getCdAttached().setEntity(hasCd);
     }
 
+    protected void updateTpm(Guid vmId) {
+        Frontend.getInstance().runQuery(
+                QueryType.GetTpmDevices,
+                new IdQueryParameters(vmId),
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
+                    List<String> tpmDevices = returnValue.getReturnValue();
+                    getModel().getTpmEnabled().setEntity(!tpmDevices.isEmpty());
+                }));
+    }
+
     protected void updateConsoleDevice(Guid vmId) {
         Frontend.getInstance().runQuery(
                 QueryType.GetConsoleDevices,

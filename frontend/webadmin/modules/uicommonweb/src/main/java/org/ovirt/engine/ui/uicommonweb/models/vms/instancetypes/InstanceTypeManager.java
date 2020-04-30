@@ -305,7 +305,16 @@ public abstract class InstanceTypeManager {
                         List<String> consoleDevices = r.getReturnValue();
                         getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
                         activate();
-                        postDoUpdateManagedFieldsFrom(vmBase);
+
+                        Frontend.getInstance().runQuery(QueryType.GetTpmDevices, new IdQueryParameters(vmBase.getId()),
+                                new AsyncQuery<QueryReturnValue>(rr -> {
+                                    deactivate();
+                                    List<String> tpmDevices = rr.getReturnValue();
+                                    getModel().getTpmEnabled().setEntity(!tpmDevices.isEmpty());
+                                    activate();
+
+                                    postDoUpdateManagedFieldsFrom(vmBase);
+                                }));
                     }));
         }), vmBase.getId());
     }
@@ -315,6 +324,8 @@ public abstract class InstanceTypeManager {
             deactivate();
             getModel().getIsSoundcardEnabled().setEntity(
                     VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceGeneralType.SOUND));
+            getModel().getTpmEnabled().setEntity(
+                    VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.TPM));
             getModel().getIsConsoleDeviceEnabled().setEntity(
                     VmDeviceCommonUtils.isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.CONSOLE));
 

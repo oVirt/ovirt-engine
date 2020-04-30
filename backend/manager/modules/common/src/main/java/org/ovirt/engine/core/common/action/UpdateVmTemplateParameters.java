@@ -16,6 +16,12 @@ public class UpdateVmTemplateParameters extends VmTemplateManagementParameters i
     private Boolean soundDeviceEnabled;
 
     /*
+     * This parameter is used to decide if to create or remove TPM device
+     * if it is null then the current configuration will remain
+     */
+    private Boolean tpmEnabled;
+
+    /*
      * This parameter is used to decide if to create or remove console device
      * if it is null then the current configuration will remain
      */
@@ -62,6 +68,14 @@ public class UpdateVmTemplateParameters extends VmTemplateManagementParameters i
 
     public void setSoundDeviceEnabled(boolean soundDeviceEnabled) {
         this.soundDeviceEnabled = soundDeviceEnabled;
+    }
+
+    public Boolean isTpmEnabled() {
+        return tpmEnabled;
+    }
+
+    public void setTpmEnabled(boolean tpmEnabled) {
+        this.tpmEnabled = tpmEnabled;
     }
 
     public Boolean isConsoleEnabled() {

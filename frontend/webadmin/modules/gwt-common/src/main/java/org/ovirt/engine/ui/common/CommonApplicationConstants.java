@@ -579,6 +579,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String memAllocVmPopup();
 
+    String trustedPlatformModuleVmPopup();
+
     String multiQueuesVmPopup();
 
     String ioThreadsVmPopup();
@@ -1924,4 +1926,6 @@ public interface CommonApplicationConstants extends Constants {
     String ppcChipset();
 
     String s390xChipset();
+
+    String tpmDeviceLabel();
 }

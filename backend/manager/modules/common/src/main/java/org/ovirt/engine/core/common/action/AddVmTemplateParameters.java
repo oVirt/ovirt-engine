@@ -55,6 +55,7 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
      * create device for desktop type
      */
     private Boolean soundDeviceEnabled;
+    private Boolean tpmEnabled;
     private Boolean consoleEnabled;
 
     private Phase phase = Phase.CREATE_TEMPLATE;
@@ -194,6 +195,14 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
 
     public void setSoundDeviceEnabled(boolean soundDeviceEnabled) {
         this.soundDeviceEnabled = soundDeviceEnabled;
+    }
+
+    public Boolean isTpmEnabled() {
+        return tpmEnabled;
+    }
+
+    public void setTpmEnabled(boolean tpmEnabled) {
+        this.tpmEnabled = tpmEnabled;
     }
 
     public Boolean isConsoleEnabled() {

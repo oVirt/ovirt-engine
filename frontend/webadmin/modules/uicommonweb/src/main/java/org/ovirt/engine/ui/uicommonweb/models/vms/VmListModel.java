@@ -1877,6 +1877,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         setVmWatchdogToParams(model, params);
         params.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        params.setTpmEnabled(model.getTpmEnabled().getEntity());
         params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         params.setBalloonEnabled(balloonEnabled(model));
         params.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());

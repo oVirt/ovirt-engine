@@ -453,6 +453,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         parameters.setBalloonEnabled(balloonEnabled(model));
         parameters.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        parameters.setTpmEnabled(model.getTpmEnabled().getEntity());
         parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         parameters.setVmLargeIcon(IconUtils.filterPredefinedIcons(model.getIcon().getEntity().getIcon()));
         parameters.setAffinityGroups(model.getAffinityGroupList().getSelectedItems());

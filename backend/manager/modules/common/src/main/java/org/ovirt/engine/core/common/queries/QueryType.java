@@ -480,6 +480,7 @@ public enum QueryType implements Serializable {
     GetAllQosByType(QueryAuthType.User),
 
     GetWatchdog(QueryAuthType.User),
+    GetTpmDevices(QueryAuthType.User),
     GetConsoleDevices(QueryAuthType.User),
     GetRngDevice(QueryAuthType.User),
     GetGraphicsDevices(QueryAuthType.User),

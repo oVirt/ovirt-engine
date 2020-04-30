@@ -465,6 +465,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 devices,
                 getSrcDeviceIdToTargetDeviceIdMapping(),
                 isSoundDeviceEnabled(),
+                isTpmEnabled(),
                 getParameters().isConsoleEnabled(),
                 isVirtioScsiEnabled(),
                 isBalloonEnabled(),

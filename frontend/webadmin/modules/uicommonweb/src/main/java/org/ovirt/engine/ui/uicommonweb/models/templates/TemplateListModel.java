@@ -772,6 +772,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         setVmWatchdogToParams(model, parameters);
         BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        parameters.setTpmEnabled(model.getTpmEnabled().getEntity());
         setVmRngDeviceToParams(model, parameters);
         parameters.setBalloonEnabled(balloonEnabled(model));
         parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());

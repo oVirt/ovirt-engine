@@ -56,6 +56,7 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
         ));
 
         initSoundCard(entity.getId());
+        updateTpm(entity.getId());
         updateConsoleDevice(entity.getId());
         initPriority(entity.getPriority());
 

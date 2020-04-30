@@ -299,4 +299,14 @@ public class FeatureSupported {
     public static boolean isFipsModeSupported(Version version) {
         return Version.v4_4.lessOrEquals(version);
     }
+
+    /**
+     * Check if TPM device is supported.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if TPM device is supported.
+     */
+    public static boolean isTpmDeviceSupported(Version version, ArchitectureType arch) {
+        return supportedInConfig(ConfigValues.TpmDeviceSupported, version, arch);
+    }
 }

@@ -306,6 +306,9 @@ public class AsyncDataProvider {
     // cached architecture support for memory hot unplug
     private Map<ArchitectureType, Map<Version, Boolean>> memoryHotUnplugSupport;
 
+    // cached architecture support for tpm devices
+    private Map<ArchitectureType, Map<Version, Boolean>> tpmDeviceSupport;
+
     // cached custom properties
     private Map<Version, Map<String, String>> customPropertiesList;
 
@@ -354,6 +357,7 @@ public class AsyncDataProvider {
         initMemorySnapshotSupportMap();
         initSuspendSupportMap();
         initMemoryHotUnplugSupportMap();
+        initTpmDeviceSupportMap();
         initCustomPropertiesList();
         initSoundDeviceSupportMap();
         initMigrationPolicies();
@@ -499,6 +503,10 @@ public class AsyncDataProvider {
         return FeatureSupported.isFipsModeSupported(version);
     }
 
+    public Boolean isTpmDeviceSupportedByArchitecture(ArchitectureType architecture, Version version) {
+        return tpmDeviceSupport.get(architecture).get(version);
+    }
+
     private void initMigrationSupportMap() {
         Frontend.getInstance().runQuery(QueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMigrationSupport),
@@ -521,6 +529,12 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMemoryHotUnplugSupport),
                 new AsyncQuery<QueryReturnValue>(returnValue -> memoryHotUnplugSupport = returnValue.getReturnValue()));
+    }
+
+    private void initTpmDeviceSupportMap() {
+        Frontend.getInstance().runQuery(QueryType.GetArchitectureCapabilities,
+                new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetTpmDeviceSupport),
+                new AsyncQuery<QueryReturnValue>(returnValue -> tpmDeviceSupport = returnValue.getReturnValue()));
     }
 
     /**

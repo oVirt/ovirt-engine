@@ -604,6 +604,16 @@
                 </b:Row>
                 <b:Row>
                   <b:Column size="SM_12">
+                    <g:Label text="{constants.trustedPlatformModuleVmPopup}" addStyleNames="{style.sectionLabel}" />
+                  </b:Column>
+                </b:Row>
+                <b:Row>
+                  <b:Column size="SM_12">
+                    <ge:EntityModelCheckBoxEditor ui:field="tpmEnabledEditor" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.tpmDeviceLabel}" />
+                  </b:Column>
+                </b:Row>
+               <b:Row>
+                  <b:Column size="SM_12">
                     <g:Label text="{constants.ioThreadsVmPopup}" addStyleNames="{style.sectionLabel}" />
                   </b:Column>
                 </b:Row>

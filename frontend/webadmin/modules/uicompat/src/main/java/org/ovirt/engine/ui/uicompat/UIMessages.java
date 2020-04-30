@@ -451,4 +451,6 @@ public interface UIMessages extends Messages {
     String detachStorageDomainContainsEntitiesWithDisksOnMultipleSDsFromDC();
 
     String detachStorageDomainsContainEntitiesWithDisksOnMultipleSDs();
+
+    String uefiRequired();
 }

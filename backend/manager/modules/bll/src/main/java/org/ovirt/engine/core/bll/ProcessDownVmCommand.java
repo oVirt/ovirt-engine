@@ -265,6 +265,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
 
         VmManagementParametersBase updateVmParams = new VmManagementParametersBase(getVm());
         updateVmParams.setUpdateWatchdog(true);
+        updateVmParams.setTpmEnabled(false);
         updateVmParams.setSoundDeviceEnabled(false);
         updateVmParams.setBalloonEnabled(false);
         updateVmParams.setVirtioScsiEnabled(false);
@@ -305,6 +306,9 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
                 case GRAPHICS:
                     updateVmParams.getGraphicsDevices().put(GraphicsType.fromString(device.getDevice()),
                             new GraphicsDevice(device));
+                    break;
+                case TPM:
+                    updateVmParams.setTpmEnabled(true);
                     break;
                 default:
             }

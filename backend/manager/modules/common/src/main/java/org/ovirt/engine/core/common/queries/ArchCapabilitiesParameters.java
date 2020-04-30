@@ -22,6 +22,7 @@ public class ArchCapabilitiesParameters extends QueryParametersBase {
         GetMigrationSupport,
         GetMemorySnapshotSupport,
         GetSuspendSupport,
-        GetMemoryHotUnplugSupport
+        GetMemoryHotUnplugSupport,
+        GetTpmDeviceSupport
     }
 }

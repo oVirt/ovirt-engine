@@ -309,6 +309,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
+        boolean tpmEnabled = Boolean.TRUE.equals(getParameters().isTpmEnabled());
+        if (tpmEnabled && !getVmDeviceUtils().isTpmDeviceSupported(getVmTemplate(), getCluster())) {
+            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
+            return failValidation(EngineMessage.TPM_DEVICE_REQUESTED_ON_NOT_SUPPORTED_PLATFORM);
+        }
+
         return returnValue;
     }
 
@@ -445,6 +451,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 getVmTemplate().getCompatibilityVersion(),
                 getParameters().isSoundDeviceEnabled());
 
+        getVmDeviceUtils().updateTpmDevice(getVmTemplate(), getCluster(), getParameters().isTpmEnabled());
         getVmDeviceUtils().updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
         if (oldTemplate.getUsbPolicy() != getVmTemplate().getUsbPolicy() || oldTemplate.getVmType() != getVmTemplate().getVmType()) {
             Cluster newCluster = getCluster();

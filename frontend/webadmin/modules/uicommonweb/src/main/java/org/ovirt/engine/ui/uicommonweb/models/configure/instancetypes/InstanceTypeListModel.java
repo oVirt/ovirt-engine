@@ -222,6 +222,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         addInstanceTypeParameters.setPublicUse(true);
 
         addInstanceTypeParameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        addInstanceTypeParameters.setTpmEnabled(model.getTpmEnabled().getEntity());
         addInstanceTypeParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         addInstanceTypeParameters.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
         addInstanceTypeParameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
@@ -258,6 +259,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
                 new UpdateVmTemplateParameters(instanceType);
 
         updateInstanceTypeParameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        updateInstanceTypeParameters.setTpmEnabled(model.getTpmEnabled().getEntity());
         updateInstanceTypeParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         updateInstanceTypeParameters.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
         updateInstanceTypeParameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());

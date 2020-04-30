@@ -612,7 +612,9 @@ public class VmDevicesMonitoring {
      * Libvirt gives no address to some special devices, and we know it.
      */
     private static boolean deviceWithoutAddress(VmDevice device) {
-        return VmDeviceCommonUtils.isGraphics(device) || VmDeviceGeneralType.CONSOLE.equals(device.getType());
+        return VmDeviceCommonUtils.isGraphics(device)
+                || VmDeviceGeneralType.CONSOLE.equals(device.getType())
+                || VmDeviceGeneralType.TPM.equals(device.getType());
     }
 
     /**

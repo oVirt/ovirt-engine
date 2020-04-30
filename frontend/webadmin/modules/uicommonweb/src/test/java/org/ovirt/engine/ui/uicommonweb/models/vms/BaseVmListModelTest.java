@@ -113,6 +113,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getConsoleDisconnectAction().getSelectedItem()).thenReturn(ConsoleDisconnectAction.REBOOT);
         when(model.getCustomCompatibilityVersion().getSelectedItem()).thenReturn(Version.getLast());
         when(model.getLease().getSelectedItem()).thenReturn(null);
+        when(model.getTpmEnabled().getEntity()).thenReturn(true);
         // casting to object to prevent java.lang.ClassCastException:
         // class org.mockito.codegen.Object$MockitoMock$296545603 cannot be cast to class org.ovirt.engine.core.common.businessentities.BiosType
         when((Object) model.getBiosType().getSelectedItem()).thenReturn(BIOS_TYPE);

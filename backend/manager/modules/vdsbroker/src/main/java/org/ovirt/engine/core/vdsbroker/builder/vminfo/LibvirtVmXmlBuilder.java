@@ -1118,6 +1118,9 @@ public class LibvirtVmXmlBuilder {
             case RNG:
                 writeRng(device);
                 break;
+            case TPM:
+                writeTpm(device);
+                break;
             case CONSOLE:
                 writeConsole(device);
                 if ("serial".equals(device.getSpecParams().get("consoleType"))) {
@@ -1876,6 +1879,16 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
 
         writeAlias(device);
+        writer.writeEndElement();
+    }
+
+    private void writeTpm(VmDevice device) {
+        writer.writeStartElement("tpm");
+        writeAlias(device);
+        writer.writeStartElement("backend");
+        writer.writeAttributeString("type", "emulator");
+        writer.writeAttributeString("version", "2.0");
+        writer.writeEndElement();
         writer.writeEndElement();
     }
 

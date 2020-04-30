@@ -14,6 +14,7 @@ public class UnitToAddVmTemplateParametersBuilder<T extends AddVmTemplateParamet
         destination.setDiskInfoDestinationMap(
                 source.getDisksAllocationModel().getImageToDestinationDomainMap());
         destination.setSoundDeviceEnabled(source.getIsSoundcardEnabled().getEntity());
+        destination.setTpmEnabled(source.getTpmEnabled().getEntity());
         destination.setBalloonEnabled(BalloonEnabled.balloonEnabled(source));
         destination.setCopyVmPermissions(source.getCopyPermissions().getEntity());
         destination.setSealTemplate(source.getSealTemplate().getEntity());
