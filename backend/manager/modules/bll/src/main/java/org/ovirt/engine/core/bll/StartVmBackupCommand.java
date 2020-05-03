@@ -7,6 +7,7 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAP
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +108,15 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             if (!validate(diskImagesValidator.incrementalBackupEnabled())) {
                 return false;
             }
+
+            // Due to bz #1829829, Libvirt doesn't handle the case of mixing full and incremental
+            // backup under the same operation. This situation can happen when adding a new disk
+            // to a VM that already has a previous backup.
+            Set<Guid> diskIds = getDisksNotInPreviousCheckpoint();
+            if (!diskIds.isEmpty()) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_MIXED_INCREMENTAL_AND_FULL_BACKUP_NOT_SUPPORTED,
+                        String.format("$diskIds %s", diskIds));
+            }
         }
 
         if (!getVm().getStatus().isQualifiedForVmBackup()) {
@@ -120,6 +130,20 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                     String.format("$vdsName %s", getVdsName()));
         }
         return true;
+    }
+
+    public Set<Guid> getDisksNotInPreviousCheckpoint() {
+        List<DiskImage> checkpointDisks =
+                vmCheckpointDao.getDisksByCheckpointId(getParameters().getVmBackup().getFromCheckpointId());
+
+        Set<Guid> vmCheckpointDisksIds = checkpointDisks
+                .stream()
+                .map(DiskImage::getId)
+                .collect(Collectors.toCollection(HashSet::new));
+
+        return getDiskIds().stream()
+                .filter(diskId -> !vmCheckpointDisksIds.contains(diskId))
+                .collect(Collectors.toSet());
     }
 
     @Override
