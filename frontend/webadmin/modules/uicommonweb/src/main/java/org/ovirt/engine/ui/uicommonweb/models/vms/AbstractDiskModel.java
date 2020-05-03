@@ -684,9 +684,7 @@ public abstract class AbstractDiskModel extends DiskModel {
     }
 
     private boolean isHostAvailable(VDS host) {
-        boolean isStatusUp = host.getStatus() == VDSStatus.Up;
-
-        return isStatusUp;
+        return host.getStatus() == VDSStatus.Up && host.getClusterSupportsVirtService();
     }
 
     protected void diskStorageType_EntityChanged() {
