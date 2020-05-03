@@ -4,7 +4,7 @@
 --  VM Checkpoints Table
 ----------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION GetVmCheckpointByVmCheckpointId (v_checkpoint_id UUID)
-RETURNS SETOF vm_backups STABLE AS $PROCEDURE$
+RETURNS SETOF vm_checkpoints STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
