@@ -199,7 +199,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         for (VM vm : vms) {
             if (vm.isHostedEngine()) {
                 // Check if there are available Hosted Engine hosts for that VM
-                if (!HostedEngineHelper.haveHostsAvailableforHE(
+                if (!HostedEngineHelper.haveHostsAvailableForHE(
                         vdsDao.getAllForClusterWithStatus(vds.getClusterId(), VDSStatus.Up),
                         Collections.singletonList(vdsId))) {
                     return failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_NO_ALTERNATE_HOST_FOR_HOSTED_ENGINE);

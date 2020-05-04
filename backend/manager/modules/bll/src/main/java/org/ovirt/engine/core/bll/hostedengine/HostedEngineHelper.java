@@ -132,7 +132,7 @@ public class HostedEngineHelper {
      * @param vdses Guids of VDSes to be excluded from the candidates list.
      * @return True if there are any hosts for HE VM, False otherwise
      */
-    public static boolean haveHostsAvailableforHE(Collection<VDS> clusterVdses,  final Iterable<Guid> vdses) {
+    public static boolean haveHostsAvailableForHE(Collection<VDS> clusterVdses, final Iterable<Guid> vdses) {
         // It is really hard to query Iterable
         // especially when you have old commons-collections
         // So let's convert it to the set.

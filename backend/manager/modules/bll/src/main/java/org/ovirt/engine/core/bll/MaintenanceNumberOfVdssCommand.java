@@ -300,7 +300,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             if (vm.isHostedEngine()) {
                                 List<VDS> clusterVdses =
                                         vdsDao.getAllForClusterWithStatus(vds.getClusterId(), VDSStatus.Up);
-                                if (!HostedEngineHelper.haveHostsAvailableforHE(
+                                if (!HostedEngineHelper.haveHostsAvailableForHE(
                                         clusterVdses,
                                         getParameters().getVdsIdList())) {
                                     failValidation(
