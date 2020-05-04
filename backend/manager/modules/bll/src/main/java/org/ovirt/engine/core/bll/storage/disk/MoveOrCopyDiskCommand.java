@@ -505,7 +505,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     private MoveOrCopyImageGroupParameters prepareChildParameters() {
         MoveOrCopyImageGroupParameters parameters = new MoveOrCopyImageGroupParameters(getParameters());
         if (parameters.getOperation() == ImageOperation.Copy) {
-            parameters.setUseCopyCollapse(getParameters().getUseCopyCollapse());
+            // If we didn't get here from a parent command, assume we want to collapse the chain
+            parameters.setUseCopyCollapse(getParentParameters() == null ? true : getParameters().getUseCopyCollapse());
             parameters.setAddImageDomainMapping(isTemplate() ? true : getParameters().getAddImageDomainMapping());
             parameters.setShouldLockImageOnRevert(false);
             parameters.setDestImages(getParameters().getDestImages());
