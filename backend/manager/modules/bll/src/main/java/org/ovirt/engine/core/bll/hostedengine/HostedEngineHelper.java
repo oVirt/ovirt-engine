@@ -138,13 +138,11 @@ public class HostedEngineHelper {
         // So let's convert it to the set.
         Set<Guid> vdsIds = new HashSet<>();
         vdses.forEach(vdsIds::add);
-        return  clusterVdses.stream()
+        return clusterVdses.stream()
                 .filter(v -> !vdsIds.contains(v.getId())) // Remove other hosts in batch
                 .filter(VDS::getHighlyAvailableIsConfigured) // Remove non HE hosts
                 .filter(VDS::getHighlyAvailableIsActive) // Remove non-active HE hosts
                 .filter(v -> !v.getHighlyAvailableLocalMaintenance()) // Remove HE hosts under maintenance
-                .filter(v -> v.getHighlyAvailableScore() > 0) // Remove HE hosts not suitable for the engine VM
-                .findAny()
-                .isPresent();
+                .anyMatch(v -> v.getHighlyAvailableScore() > 0);
     }
 }
