@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBackend;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.utils.SizeConverter;
@@ -58,6 +59,7 @@ public class ImageTransferDaoTest extends BaseGenericDaoTestCase<Guid, ImageTran
         imageTransfer.setBytesTotal(SizeConverter.BYTES_IN_GB);
         imageTransfer.setImageFormat(VolumeFormat.COW);
         imageTransfer.setBackend(ImageTransferBackend.FILE);
+        imageTransfer.setTransferClientType(TransferClientType.UNKNOWN);
         return imageTransfer;
     }
 

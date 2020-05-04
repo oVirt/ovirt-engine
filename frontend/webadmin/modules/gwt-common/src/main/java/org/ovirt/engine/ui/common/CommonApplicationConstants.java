@@ -1147,6 +1147,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String imageTransferringViaBrowser();
 
+    String imageTransferring();
+
     String notAvailableLabel();
 
     String illegalStatus();

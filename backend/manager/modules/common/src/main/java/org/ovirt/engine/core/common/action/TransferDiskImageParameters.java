@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,7 +21,7 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
     private Integer clientInactivityTimeout;
     private VolumeFormat volumeFormat;
     private Guid backupId;
-    private boolean transferringViaBrowser;
+    private TransferClientType transferClientType = TransferClientType.UNKNOWN;
 
     public TransferDiskImageParameters() {}
 
@@ -117,11 +118,11 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
         this.backupId = backupId;
     }
 
-    public boolean isTransferringViaBrowser() {
-        return transferringViaBrowser;
+    public TransferClientType getTransferClientType() {
+        return transferClientType;
     }
 
-    public void setTransferringViaBrowser(boolean transferringViaBrowser) {
-        this.transferringViaBrowser = transferringViaBrowser;
+    public void setTransferClientType(TransferClientType transferClientType) {
+        this.transferClientType = transferClientType;
     }
 }

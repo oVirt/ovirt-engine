@@ -19,6 +19,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
     private Boolean active;
     private Date lastUpdated;
     private String message;
+    private TransferClientType transferClientType;
 
     private Guid vdsId;
     private Guid diskId;
@@ -200,6 +201,14 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
         this.backupId = backupId;
     }
 
+    public TransferClientType getTransferClientType() {
+        return transferClientType;
+    }
+
+    public void setTransferClientType(TransferClientType transferClientType) {
+        this.transferClientType = transferClientType;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -226,6 +235,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 && Objects.equals(bytesTotal, other.bytesTotal)
                 && Objects.equals(clientInactivityTimeout, other.clientInactivityTimeout)
                 && Objects.equals(imageFormat, other.imageFormat)
+                && Objects.equals(transferClientType, other.transferClientType)
                 && type == other.type;
     }
 
@@ -246,7 +256,8 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 bytesSent,
                 bytesTotal,
                 clientInactivityTimeout,
-                imageFormat
+                imageFormat,
+                transferClientType
         );
     }
 
@@ -268,6 +279,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 .append("bytesTotal", getBytesTotal())
                 .append("clientInactivityTimeout", getClientInactivityTimeout())
                 .append("imageFormat", getImageFormat())
+                .append("transferClientType", getTransferClientType())
                 .build();
     }
 

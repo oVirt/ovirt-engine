@@ -62,7 +62,7 @@ public class DiskTransferProgressColumn extends AbstractProgressBarColumn<Disk> 
             case TRANSFERRING:
                 if (disk.getImageTransferBytesTotal() != 0
                         && disk.getImageTransferBytesSent() == 0) {
-                    return constants.imageTransferringViaBrowser();
+                    return constants.imageTransferring();
                 } else if (disk.getImageTransferBytesTotal() == 0) {
                     return disk.getTransferType() == TransferType.Upload ?
                             constants.uploadingImageViaAPI() :

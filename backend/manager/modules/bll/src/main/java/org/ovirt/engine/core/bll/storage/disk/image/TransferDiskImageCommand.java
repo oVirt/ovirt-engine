@@ -403,6 +403,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         entity.setImageFormat(getTransferImageFormat());
         entity.setBackend(getTransferBackend());
         entity.setBackupId(getParameters().getBackupId());
+        entity.setTransferClientType(getParameters().getTransferClientType());
         imageTransferDao.save(entity);
 
         if (isImageProvided()) {
@@ -625,7 +626,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             throw new RuntimeException(String.format(
                     "Invalid volume format: %s", image.getVolumeFormat()));
         } else if (getParameters().getTransferType() == TransferType.Upload) {
-            if (getParameters().isTransferringViaBrowser()) {
+            if (getParameters().getTransferClientType().isBrowserTransfer()) {
                 return getParameters().getTransferSize();
             }
             if (image.getVolumeFormat() == VolumeFormat.RAW) {
@@ -973,7 +974,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
         if (!addImageTicketToProxy(imagedTicketId, getImageDaemonUri(getVds().getHostName()))) {
             log.error("Failed to add image ticket to ovirt-imageio-proxy");
-            if (getParameters().isTransferringViaBrowser()) {
+            if (getParameters().getTransferClientType().isBrowserTransfer()) {
                 updateEntityPhaseToStoppedBySystem(
                         AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
                 return;
@@ -1159,7 +1160,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             getProxyClient().extendTicket(resourceId, timeout);
         } catch (RuntimeException e) {
             log.error("Failed to extent image ticket in ovirt-imageio-proxy: {}", e.getMessage(), e);
-            if (getParameters().isTransferringViaBrowser()) {
+            if (getParameters().getTransferClientType().isBrowserTransfer()) {
                 updateEntityPhaseToStoppedBySystem(
                         AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
                 return false;
@@ -1187,7 +1188,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         if (!removeImageTicketFromProxy(entity.getImagedTicketId())) {
             // ignoring when we are not uploading using the browser which
             // always uses the proxy url.
-            return !getParameters().isTransferringViaBrowser();
+            return !getParameters().getTransferClientType().isBrowserTransfer();
         }
 
         ImageTransfer updates = new ImageTransfer();

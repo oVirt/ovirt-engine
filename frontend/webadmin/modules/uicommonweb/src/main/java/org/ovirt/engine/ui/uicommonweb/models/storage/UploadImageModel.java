@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
@@ -409,7 +410,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         parameters.setTransferSize(imageInfoModel.getActualSize());
         parameters.setVolumeFormat(imageInfoModel.getFormat());
         parameters.setVdsId(getDiskModel().getHost().getSelectedItem().getId());
-        parameters.setTransferringViaBrowser(true);
+        parameters.setTransferClientType(TransferClientType.TRANSFER_VIA_BROWSER);
 
         return parameters;
     }

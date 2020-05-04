@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBackend;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
@@ -95,6 +96,8 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
         mapper.addValue("image_format", entity.getImageFormat());
         mapper.addValue("backend", entity.getBackend());
         mapper.addValue("backup_id", entity.getBackupId());
+        mapper.addValue("client_type", entity.getTransferClientType() == null ?
+                TransferClientType.UNKNOWN.getValue() : entity.getTransferClientType().getValue());
         return mapper;
     }
 
@@ -121,6 +124,7 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
             entity.setImageFormat(VolumeFormat.forValue(rs.getInt("image_format")));
             entity.setBackend(ImageTransferBackend.forValue(rs.getInt("backend")));
             entity.setBackupId(getGuid(rs, "backup_id"));
+            entity.setTransferClientType(TransferClientType.forValue(rs.getInt("client_type")));
             return entity;
         };
     }

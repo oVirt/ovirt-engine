@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
+import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -41,7 +42,7 @@ public class DownloadImageHandler {
                 ".qcow2" : ".raw"; //$NON-NLS-1$ //$NON-NLS-2$
         parameters.setDownloadFilename(diskImage.getDiskAlias() + fileExtension); //$NON-NLS-1$
         parameters.setTransferSize(diskImage.getActualSizeInBytes());
-        parameters.setTransferringViaBrowser(true);
+        parameters.setTransferClientType(TransferClientType.TRANSFER_VIA_BROWSER);
 
         return parameters;
     }

@@ -84,7 +84,8 @@ CREATE OR REPLACE FUNCTION UpdateImageUploads(
     v_client_inactivity_timeout INTEGER,
     v_image_format INTEGER,
     v_backend INTEGER,
-    v_backup_id UUID
+    v_backup_id UUID,
+    v_client_type INTEGER
     )
 RETURNS VOID
 AS $PROCEDURE$
@@ -108,7 +109,8 @@ BEGIN
         client_inactivity_timeout = v_client_inactivity_timeout,
         image_format = v_image_format,
         backend = v_backend,
-        backup_id = v_backup_id
+        backup_id = v_backup_id,
+        client_type = v_client_type
     WHERE command_id = v_command_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -144,7 +146,8 @@ CREATE OR REPLACE FUNCTION InsertImageUploads(
     v_client_inactivity_timeout INTEGER,
     v_image_format INTEGER,
     v_backend INTEGER,
-    v_backup_id UUID
+    v_backup_id UUID,
+    v_client_type INTEGER
     )
 RETURNS VOID
 AS $PROCEDURE$
@@ -168,7 +171,8 @@ BEGIN
         client_inactivity_timeout,
         image_format,
         backend,
-        backup_id
+        backup_id,
+        client_type
         )
     VALUES (
         v_command_id,
@@ -189,7 +193,8 @@ BEGIN
         v_client_inactivity_timeout,
         v_image_format,
         v_backend,
-        v_backup_id
+        v_backup_id,
+        v_client_type
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
