@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION InsertUser (
     v_username VARCHAR(255),
     v_external_id TEXT,
     v_namespace VARCHAR(2048),
-    v_options TEXT
+    v_options JSONB
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -59,7 +59,7 @@ CREATE OR REPLACE FUNCTION UpdateUserImpl (
     v_username VARCHAR(255),
     v_external_id TEXT,
     v_namespace VARCHAR(2048),
-    v_options TEXT
+    v_options JSONB
     )
 RETURNS INT
     --The [users] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -100,7 +100,7 @@ CREATE OR REPLACE FUNCTION UpdateUser (
     v_last_admin_check_status BOOLEAN,
     v_external_id TEXT,
     v_namespace VARCHAR(2048),
-    v_options TEXT
+    v_options JSONB
     )
 RETURNS VOID
     --The [users] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -137,7 +137,7 @@ CREATE OR REPLACE FUNCTION InsertOrUpdateUser (
     v_username VARCHAR(255),
     v_external_id TEXT,
     v_namespace VARCHAR(2048),
-    v_options TEXT
+    v_options JSONB
     )
 RETURNS VOID AS $PROCEDURE$
 DECLARE updated_rows INT;

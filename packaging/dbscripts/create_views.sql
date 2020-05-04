@@ -2052,7 +2052,7 @@ SELECT 'group' AS user_group,
     NULL AS last_admin_check_status,
     ad_groups.external_id AS external_id,
     ad_groups.namespace AS namespace,
-    '{}' AS options
+    '{}'::jsonb AS options
 FROM ad_groups;
 
 -- create the new vdc_users_with_tags view with no use of the tag_permission_map

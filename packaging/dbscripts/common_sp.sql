@@ -1381,7 +1381,7 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 -- If value in v_table.v_column is jsonb compatible it's left untouched, otherwise it's replaced by v_default_value
--- Helper function for VARCHAR -> JSONB column type migration
+-- Helper function for VARCHAR|TEXT -> JSONB column type migration
 CREATE OR REPLACE FUNCTION fn_db_update_column_to_jsonb_compatible_values(
     v_table VARCHAR,
     v_column VARCHAR,
@@ -1398,7 +1398,7 @@ BEGIN
             WHERE table_schema = 'public'
                 AND table_name = v_table
                 AND column_name = v_column
-                AND data_type = 'character varying'
+                AND (data_type = 'character varying' OR data_type = 'text')
         )
     ) THEN
         BEGIN
