@@ -108,7 +108,7 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
                 return hostInterface.getName();
             }
         };
-        slavesTable.addColumn(name, constants.macInterface());
+        slavesTable.addColumn(name, constants.nameInterface());
 
         TextColumn<HostInterface> macAddress = new TextColumn<HostInterface>() {
             @Override
