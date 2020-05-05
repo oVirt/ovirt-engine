@@ -821,7 +821,7 @@ public class ImagesHandler {
         return diskDummies;
     }
 
-    protected DiskImage getVolumeInfoFromVdsm(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,
+    public DiskImage getVolumeInfoFromVdsm(Guid storagePoolId, Guid newStorageDomainID, Guid newImageGroupId,
                                       Guid newImageId) {
         return (DiskImage) vdsCommandsHelper.runVdsCommandWithFailover(
                 VDSCommandType.GetVolumeInfo,

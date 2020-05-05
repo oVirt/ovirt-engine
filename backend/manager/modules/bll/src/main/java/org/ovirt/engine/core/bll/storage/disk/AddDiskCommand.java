@@ -8,11 +8,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
@@ -114,8 +112,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Inject
     private VmStaticDao vmStaticDao;
     @Inject
-    @Typed(ConcurrentChildCommandsExecutionCallback.class)
-    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
+    private Instance<AddDiskCommandCallback> callbackProvider;
 
     @Inject
     private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
@@ -582,6 +579,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             DiskImage diskImage = tmpRetValue.getActionReturnValue();
             addDiskPermissions(diskImage);
             getReturnValue().setActionReturnValue(diskImage.getId());
+            getParameters().setDiskInfo(diskImage);
+            persistCommandIfNeeded();
         }
         getReturnValue().setFault(tmpRetValue.getFault());
         setSucceeded(tmpRetValue.getSucceeded());
