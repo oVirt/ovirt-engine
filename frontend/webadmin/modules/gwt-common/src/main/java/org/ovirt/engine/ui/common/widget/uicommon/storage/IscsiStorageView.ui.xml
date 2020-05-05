@@ -18,6 +18,7 @@
             width: 50px;
             top: 260px;
             height: 424px;
+            position: absolute;
         }
 
         .barNewDomain {
