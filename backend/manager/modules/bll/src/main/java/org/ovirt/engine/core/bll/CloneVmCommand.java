@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -290,6 +291,11 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     protected boolean validate() {
         if (!(getSourceVmFromDb().getStatus() == VMStatus.Suspended || getSourceVmFromDb().isDown())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+        }
+
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesFromConfiguration);
+        if (!validate(diskImagesValidator.diskImagesNotIllegal())) {
+            return false;
         }
 
         return super.validate();
