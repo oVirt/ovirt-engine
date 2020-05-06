@@ -1006,12 +1006,15 @@ verifyhash() {
 backupFiles() {
 	local paths="$1"
 	local target="$2"
-	echo "${paths}" | \
-		while read -r path; do
-			[ -e "${path}" ] && echo "${path}"
-		done | \
-		sed 's;^/;;' | \
-		tar -C / --files-from - -cpS"${FILES_COMPRESS_OPTION}"f "${target}" || logdie "Failed backing up ${paths}"
+	(
+		echo "${paths}" | \
+			while read -r path; do
+				[ -e "${path}" ] && echo "${path}"
+			done | \
+			sed 's;^/;;' | \
+			tar -C / --files-from - -cpS"${FILES_COMPRESS_OPTION}"f "${target}"
+	) 2>> "${LOG}" \
+		|| logdie "Failed backing up ${paths}"
 }
 
 backupDB() {
@@ -1086,7 +1089,7 @@ dorestore() {
 
 	output "- Unpacking file '${FILE}'"
 	log "Opening tarball ${FILE} to ${TEMP_FOLDER}"
-	tar -C "${TEMP_FOLDER}" -pSsxf "${FILE}" || logdie "cannot open ${TEMP_FOLDER}"
+	tar -C "${TEMP_FOLDER}" -pSsxf "${FILE}" 2>> "${LOG}" || logdie "cannot open ${TEMP_FOLDER}"
 	log "Verifying hash"
 	verifyhash "${TEMP_FOLDER}"
 	log "Verifying version"
@@ -1570,7 +1573,7 @@ restoreFiles() {
 	# Extract files to temp dir
 	local temp_files="${TEMP_FOLDER}/files.d"
 	mkdir -p "${temp_files}"
-	tar -C "${temp_files}" -pSsx -f "${archive}" || \
+	tar -C "${temp_files}" -pSsx -f "${archive}" 2>> "${LOG}" || \
 		logdie "Failed extracting ${archive}"
 
 	# Do not restore/overwrite some files
@@ -1600,7 +1603,7 @@ __EOF__
 	fi
 
 	# Restore!
-	tar -C / -pSsx --exclude-from "${excluded_files}" -f "${archive}" || \
+	tar -C / -pSsx --exclude-from "${excluded_files}" -f "${archive}" 2>> "${LOG}" || \
 		logdie "Failed restoring ${paths}"
 
 	# Make next engine-setup ask about apache
@@ -1888,7 +1891,7 @@ doverify() {
 
 	output "- Unpacking file '${FILE}'"
 	log "Opening tarball ${FILE} to ${TEMP_FOLDER}"
-	tar -C "${TEMP_FOLDER}" -pSsxf "${FILE}" || logdie "cannot open ${TEMP_FOLDER}"
+	tar -C "${TEMP_FOLDER}" -pSsxf "${FILE}" 2>> "${LOG}" || logdie "cannot open ${TEMP_FOLDER}"
 	log "Verifying hash"
 	verifyhash "${TEMP_FOLDER}"
 	log "Verifying version"
