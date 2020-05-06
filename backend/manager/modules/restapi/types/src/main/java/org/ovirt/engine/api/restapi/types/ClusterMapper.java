@@ -180,6 +180,10 @@ public class ClusterMapper {
                 entity.setDefaultNetworkProviderId(providerId == null ? null : GuidUtils.asGuid(providerId));
             }
         }
+
+        if (model.isSetVncEncryption()) {
+            entity.setVncEncryptionEnabled(model.isVncEncryption());
+        }
         return entity;
     }
 
@@ -231,6 +235,7 @@ public class ClusterMapper {
         model.setTrustedService(entity.supportsTrustedService());
         model.setHaReservation(entity.supportsHaReservation());
         model.setBallooningEnabled(entity.isEnableBallooning());
+        model.setVncEncryption(entity.isVncEncryptionEnabled());
         Ksm ksm = model.getKsm();
         if (ksm == null) {
             ksm = new Ksm();
