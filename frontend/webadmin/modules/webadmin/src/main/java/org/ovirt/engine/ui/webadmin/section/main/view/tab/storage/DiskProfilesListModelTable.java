@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
-import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.PermissionActionPanelPresenterWidget;
@@ -48,7 +47,7 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<St
             PermissionActionPanelPresenterWidget<DiskProfile, DiskProfileListModel, PermissionListModel<DiskProfile>> permissionActionPanel,
             DiskProfileActionPanelPresenterWidget actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, (DetailActionPanelPresenterWidget) permissionActionPanel, clientStorage, false);
+        super(modelProvider, eventBus, actionPanel, clientStorage, false);
         this.diskProfilePermissionModelProvider = diskProfilePermissionModelProvider;
         // Create disk profile table
         tableContainer.add(getContainer());
