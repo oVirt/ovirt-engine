@@ -456,7 +456,9 @@ etc/pki/ovirt-engine/cacert.template.in
 etc/pki/ovirt-engine/cert.template.in
 etc/pki/ovirt-engine/openssl.conf
 etc/ovirt-engine/engine.conf.d/20-branding-rhv.conf
-etc/ovirt-engine/branding/50-rhv-2.brand"
+etc/ovirt-engine/branding/50-rhv-2.brand
+ovirt-engine/engine.conf.d/10-scl-postgres.conf
+ovirt-engine-dwh/ovirt-engine-dwhd.conf.d/10-scl-postgres.conf"
 
 # Hashers. Must support:
 # - No options, for creation of hash file
