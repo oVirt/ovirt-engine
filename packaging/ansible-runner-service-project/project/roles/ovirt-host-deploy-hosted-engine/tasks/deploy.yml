@@ -16,10 +16,10 @@
   - ovirt-ha-broker.service
   when: "item in ansible_facts.services"
 
-- name: Get latest ovirt-hosted-engine-setup version
+- name: Install ovirt-hosted-engine-setup package
   yum:
     name: ovirt-hosted-engine-setup
-    state: latest
+    state: present
   tags:
     - skip_ansible_lint # E403
 

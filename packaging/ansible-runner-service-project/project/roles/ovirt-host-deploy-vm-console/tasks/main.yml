@@ -1,8 +1,8 @@
 ---
-- name: Install latest ovirt-vmconsole-host package
+- name: Install ovirt-vmconsole-host package
   yum:
     name: ovirt-vmconsole-host
-    state: latest
+    state: present
   tags:
     - skip_ansible_lint # E403
 

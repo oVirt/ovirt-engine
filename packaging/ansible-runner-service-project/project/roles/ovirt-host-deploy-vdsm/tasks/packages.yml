@@ -1,8 +1,8 @@
 ---
-- name: Install latest ovirt-host package
+- name: Install ovirt-host package
   yum:
     name: ovirt-host
-    state: latest
+    state: present
   tags:
     - skip_ansible_lint # E403
 
@@ -14,14 +14,6 @@
   fail:
     msg: "Minimum version required for vdsm is {{ host_deploy_vdsm_min_version }}"
   when: host_deploy_vdsm_min_version|float < ansible_facts.packages['vdsm'][0].version|float
-
-- name: Update existing hooks packages
-  yum:
-    name: vdsm-hook-*
-    state: latest
-    update_only: yes
-  tags:
-    - skip_ansible_lint # E403
 
 - name: Reconfigure vdsm tool
   shell: vdsm-tool configure --force

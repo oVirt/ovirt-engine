@@ -4,10 +4,10 @@
     manager: auto
 
 - block:
-    - name: Update vdsm-gluster package
+    - name: Install vdsm-gluster package
       yum:
         name: vdsm-gluster
-        state: latest
+        state: present
       tags:
       - skip_ansible_lint # E403
 
