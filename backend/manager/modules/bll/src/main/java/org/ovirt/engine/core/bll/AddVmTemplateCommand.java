@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -315,8 +316,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             if (!isVmStatusValid(vmDynamic.getStatus())) {
                 throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
             }
-
-            vmHandler.lockVm(vmDynamic, getCompensationContext());
+            lockOps(vmDynamic, getCompensationContext());
         }
         setActionReturnValue(Guid.Empty);
 
@@ -1063,11 +1063,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         updateVmsJobMap.remove(getParameters().getBaseTemplateId());
     }
 
-    private void endUnlockOps() {
+    protected void endUnlockOps() {
         if (isVmInDb) {
-            vmHandler.unLockVm(getVm());
+            unLockVm(getVm());
         }
         vmTemplateHandler.unlockVmTemplate(getVmTemplateId());
+    }
+
+    protected void lockOps(VmDynamic vmDynamic, CompensationContext context) {
+        vmHandler.lockVm(vmDynamic, context);
     }
 
     private VmTemplate reloadVmTemplateFromDB() {
@@ -1092,10 +1096,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         if (!getVmId().equals(Guid.Empty) && getVm() != null) {
-            vmHandler.unLockVm(getVm());
+            unLockVm(getVm());
         }
 
         setSucceeded(true);
+    }
+
+    protected void unLockVm(VM vm) {
+        vmHandler.unLockVm(vm);
     }
 
     /**

@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -244,6 +246,21 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
                     StringUtils.defaultString(getSnapshotName()));
         }
         return jobProperties;
+    }
+
+    @Override
+    protected void lockOps(VmDynamic vmDynamic, CompensationContext context) {
+        // do nothing
+    }
+
+    @Override
+    protected void unLockVm(VM vm) {
+        // do nothing
+    }
+
+    @Override
+    protected void endUnlockOps() {
+        vmTemplateHandler.unlockVmTemplate(getVmTemplateId());
     }
 
 }
