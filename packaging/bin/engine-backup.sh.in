@@ -1593,6 +1593,7 @@ verifyEngineDb() {
 	log "verifyEngineDb: backupfile ${backupfile} compressor ${compressor} format ${format}"
 	local pgrestorelog="${TEMP_FOLDER}/pg-restore-log"
 	local vdc_options_dump="${TEMP_FOLDER}/vdc_options_dump"
+	local pg_restore_errors="${TEMP_FOLDER}/pg_restore_errors"
 
 	# TODO perhaps refactor out the format/compressor logic and reuse in restoreDB
 	if [ "${format}" = "plain" ]; then
@@ -1623,6 +1624,14 @@ verifyEngineDb() {
 
 	[ -z "$(awk '$2=="DomainName" {print $3}' < ${vdc_options_dump})" ] || \
 		logdie "legacy kerberos/ldap directory integration was in use. Please migrate to ovirt-engine-extension-aaa-ldap and backup/restore again"
+
+	grep -i 'error: ' "${pgrestorelog}" > "${pg_restore_errors}" 2>&1
+	local numerrors=$(cat "${pg_restore_errors}" | wc -l)
+	if [ ${numerrors} -ne 0 ]; then
+		log "Errors in pg_restore log:"
+		cat "${pg_restore_errors}" >> "${LOG}"
+		logdie "Errors while running pg_restore ${database}"
+	fi
 }
 
 cleanDbTempData() {
