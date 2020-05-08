@@ -885,55 +885,14 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        name=oenginecons.Stages.OVN_SERVICES_RESTART,
-        condition=lambda self: (
-            (self._enabled or self._provider_installed) and not
-            self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
-        )
-    )
-    def _restart_ovn_services(self):
-        for service in OvnEnv.ENGINE_MACHINE_OVN_SERVICES:
-            self._restart_service(service)
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
         before=(
-            oenginecons.Stages.OVN_PROVIDER_SERVICE_RESTART,
-        ),
-        after=(
-            oenginecons.Stages.CA_AVAILABLE,
             oenginecons.Stages.OVN_SERVICES_RESTART,
         ),
-        condition=lambda self: self._enabled,
-    )
-    def _misc_configure_ovn_pki(self):
-        self._configure_ovndb_north_connection()
-        self._configure_ovndb_south_connection()
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
-        before=(
-            oenginecons.Stages.OVN_PROVIDER_SERVICE_RESTART,
-        ),
-        after=(
-            oenginecons.Stages.CA_AVAILABLE,
-            oenginecons.Stages.OVN_SERVICES_RESTART,
-        ),
-        condition=lambda self:
-            self._enabled
-    )
-    def _misc_configure_provider(self):
-        self._generate_client_secret()
-        self._configure_ovirt_provider_ovn()
-        self._upate_external_providers_keystore()
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
             self._provider_installed and
             not self.environment[
                 osetupcons.CoreEnv.DEVELOPER_MODE
-            ]
+                ]
         ),
     )
     def _upgrade(self):
@@ -980,10 +939,54 @@ class Plugin(plugin.PluginBase):
                 ).format(
                     file=oenginecons.OvnFileLocations.
                     OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
-                    )
+                )
                 )
             else:
                 raise
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        name=oenginecons.Stages.OVN_SERVICES_RESTART,
+        condition=lambda self: (
+            (self._enabled or self._provider_installed) and not
+            self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
+        )
+    )
+    def _restart_ovn_services(self):
+        for service in OvnEnv.ENGINE_MACHINE_OVN_SERVICES:
+            self._restart_service(service)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        before=(
+            oenginecons.Stages.OVN_PROVIDER_SERVICE_RESTART,
+        ),
+        after=(
+            oenginecons.Stages.CA_AVAILABLE,
+            oenginecons.Stages.OVN_SERVICES_RESTART,
+        ),
+        condition=lambda self: self._enabled,
+    )
+    def _misc_configure_ovn_pki(self):
+        self._configure_ovndb_north_connection()
+        self._configure_ovndb_south_connection()
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        before=(
+            oenginecons.Stages.OVN_PROVIDER_SERVICE_RESTART,
+        ),
+        after=(
+            oenginecons.Stages.CA_AVAILABLE,
+            oenginecons.Stages.OVN_SERVICES_RESTART,
+        ),
+        condition=lambda self:
+            self._enabled
+    )
+    def _misc_configure_provider(self):
+        self._generate_client_secret()
+        self._configure_ovirt_provider_ovn()
+        self._upate_external_providers_keystore()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
