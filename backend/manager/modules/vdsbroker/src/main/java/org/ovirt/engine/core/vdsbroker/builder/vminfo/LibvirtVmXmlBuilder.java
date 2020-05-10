@@ -558,7 +558,7 @@ public class LibvirtVmXmlBuilder {
                 writeEntryElement("sku", Config.getValue(ConfigValues.SkuToAVLevel, vm.getCompatibilityVersion().toString()));
             }
         }
-        writeEntryElement("serial", "HOST-SERIAL:");
+        writeEntryElement("serial", vmInfoBuildUtils.getVmSerialNumber(vm, "HOST-SERIAL:"));
         writeEntryElement("uuid", vm.getId().toString());
         writer.writeEndElement(); // system
 
