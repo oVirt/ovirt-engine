@@ -267,9 +267,15 @@ class EnrollCert(base.Base):
             tries_left -= 1
             if not goodcert and tries_left > 0:
                 self.dialog.note(
-                    text=_('Trying again...')
+                    text=_('Waiting a bit...')
                 )
                 time.sleep(10)
+                self.dialog.note(
+                    text=_('Trying again...')
+                )
+
+        if not goodcert:
+            raise RuntimeError(_('Failed to get or verify the certificate'))
 
         self.logger.info(
             _('{base_touser} certificate signed successfully').format(
