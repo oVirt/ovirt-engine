@@ -28,7 +28,7 @@ Install the following system components:
 - ansible-runner-service-dev >= 1.0.2
 - ovirt-ansible-roles >= 1.2.0
 - ovirt-engine-metrics
-- ovirt-imageio-daemon = 2.0.5
+- ovirt-imageio-daemon >= 2.0.6
 - python-ovirt-engine-sdk4
 - ansible-lint / python3-ansible-lint
 - python-flake8 / pyflakes (optional)
@@ -576,9 +576,26 @@ $ sudo chcon --type=bin_t "${PREFIX}/libexec/ovirt-vmconsole-proxy-helper/ovirt-
 After setup, you need to run ovirt-imageio manually if you want to upload/download images via
 browser. To run ovirt-imageio, run the following command:
 
-  $ ovirt-imageio --conf-dir $PREFIX/etc/ovirt-imageio/
+  $ ovirt-imageio --conf-dir $PREFIX/etc/ovirt-imageio
 
 This assumes you have installed `ovirt-imageio-daemon` and you have run `engine-setup`.
+
+In development mode, ovirt-imageio logs to stderr using DEBUG level. If you
+would like to log to a file create a log directory:
+
+  $ mkdir $PREFIX/var/log/ovirt-imageio
+
+And install a drop-in configuration file to override engine developement setup:
+
+  $ cat $PREFIX/etc/ovirt-imageio/conf.d/99-local.conf
+  [handlers]
+  keys = logfile
+
+  [logger_root]
+  handlers = logfile
+
+  [handler_logfile]
+  args = ('/home/username/ovirt-engine/log/ovirt-imageio/daemon.log',)
 
 == RPM packaging
 

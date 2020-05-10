@@ -25,13 +25,26 @@ class ImageIO(object):
     SERVICE_NAME = 'ovirt-imageio'
     DATA_PORT = 54323
     CONTROL_PORT = 54324
-    DAEMON_CONFIG = oipconfig.OVIRT_IMAGEIO_DAEMON_CONFIG
-    LOGGER_CONFIG = oipconfig.OVIRT_IMAGEIO_LOGGER_CONFIG
+    ENGINE_CONFIG = oipconfig.OVIRT_IMAGEIO_ENGINE_CONFIG
     CONFIG_STAGE = "setup.config.imageio"
     CONFIG_TEMPLATE = """\
-    # Configuration for ovirt-engine.
-    # This file is installed and owned by ovirt-engine,
-    # please do not modify.
+    # Configuration overrides for ovirt-engine.
+    #
+    # WARNING: This file owned by ovirt-engine. If you modify this file your
+    # changes will be overwritten in the next ovirt-engine upgrade.
+    #
+    # To change the configuration create a new drop-in file with higher prefix, so
+    # your setting will override ovirt-engine configuration:
+    #
+    # $ cat /etc/ovirt-imageio/conf.d/99-locl.conf
+    # [tls]
+    # ca_file =
+    #
+    # This example overrides ca_file to be empty string. This can be useful if
+    # the host certificates are signed by a trusted CA.
+
+
+    # Daemon configuration.
 
     [tls]
     # TLS is always enabled.
@@ -61,29 +74,14 @@ class ImageIO(object):
     # Engine currently support only communication over TCP.
     transport = tcp
     port = {control_port}
-    """
-    LOGGER = """\
-    # Logging configuration for development setup.
 
-    [loggers]
-    keys=root
+
+    # Logging configuration.
 
     [handlers]
-    keys=logfile
-
-    [formatters]
-    keys=long
+    keys = {logger_handler}
 
     [logger_root]
-    level=DEBUG
-    handlers=logfile
-    propagate=0
-
-    [handler_logfile]
-    class=logging.StreamHandler
-    level=DEBUG
-    formatter=long
-
-    [formatter_long]
-    format=%(asctime)s %(levelname)-7s (%(threadName)s) [%(name)s] %(message)s
+    handlers = {logger_handler}
+    level = {logger_level}
     """

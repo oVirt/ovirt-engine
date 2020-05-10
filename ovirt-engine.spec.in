@@ -222,7 +222,7 @@ Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
 Requires:	java-11-openjdk-headless >= 11.0.4
 Requires:	javapackages-tools
-Requires:	ovirt-imageio-daemon = 2.0.5
+Requires:	ovirt-imageio-daemon >= 2.0.6
 Requires:	python3-mod_wsgi >= 4.6.4
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
