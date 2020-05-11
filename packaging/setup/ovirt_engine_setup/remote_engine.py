@@ -291,7 +291,7 @@ class EnrollCert(base.Base):
             open(csr_fname, 'w') if csr_fname
             else tempfile.NamedTemporaryFile(mode='w', delete=False)
         ) as self._csr_file:
-            self._csr_file.write(self._csr)
+            self._csr_file.write(self._csr.decode())
         self.dialog.note(
             text=_(
                 "\n\nTo sign the {base_touser} certificate on the engine "
@@ -387,8 +387,8 @@ class EnrollCert(base.Base):
                 " /usr/share/ovirt-engine/bin/pki-enroll-request.sh \\\n"
                 "     --name={remote_name} \\\n"
                 "     --subject=\""
-                "$(openssl x509 -in {engine_ca_cert_file} -noout "
-                "-subject | sed 's;subject= \\(/C=[^/]*/O=[^/]*\\)/.*;\\1;')"
+                "$(openssl x509 -in {engine_ca_cert_file} -text "
+                "| sed -n 's; *DirName:\\(.*\\)/CN=.*;\\1;p')"
                 "/CN={fqdn}\""
             ).format(
                 remote_name=self._remote_name,
