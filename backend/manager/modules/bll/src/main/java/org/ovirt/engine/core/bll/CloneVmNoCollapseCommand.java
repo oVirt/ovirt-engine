@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,6 +12,8 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -27,7 +30,10 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -81,6 +87,18 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
         super.attachDisks();
     }
 
+    private CommandContext createStepsContext() {
+        Step addedStep = executionHandler.addSubStep(getExecutionContext(),
+                getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
+                StepEnum.COPY_IMAGE,
+                ExecutionMessageDirector.resolveStepMessage(StepEnum.COPY_IMAGE, Collections.emptyMap()));
+        ExecutionContext ctx = new ExecutionContext();
+        ctx.setStep(addedStep);
+        ctx.setMonitored(true);
+        return ExecutionHandler.createInternalJobContext(getContext(), null)
+                .withExecutionContext(ctx);
+    }
+
     @Override
     protected void executeVmCommand() {
         Collection<DiskImage> vmDisks = super.getAdjustedDiskImagesFromConfiguration();
@@ -88,7 +106,8 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
         for (DiskImage diskImage : vmDisks) {
             MoveOrCopyImageGroupParameters copyParams = createCopyParams(diskImage);
 
-            ActionReturnValue returnValue = runInternalAction(ActionType.CopyImageGroup, copyParams);
+            ActionReturnValue returnValue =
+                    runInternalAction(ActionType.CopyImageGroup, copyParams, createStepsContext());
             if (!returnValue.getSucceeded()) {
                 setSucceeded(false);
                 return;
