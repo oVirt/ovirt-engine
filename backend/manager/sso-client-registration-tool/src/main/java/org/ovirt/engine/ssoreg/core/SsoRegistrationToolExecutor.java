@@ -177,12 +177,7 @@ public class SsoRegistrationToolExecutor {
             String callbackPrefix,
             Boolean encryptedUserInfo,
             String tempConfigurationFileName) throws FileNotFoundException {
-        File tmpDir = SsoLocalConfig.getInstance().getTmpDir();
-        if (tmpDir.mkdirs()) {
-            log.debug("Created ovirt temp directory: {}", tmpDir.getAbsolutePath());
-        }
-
-        File tmpFile = new File(tmpDir, tempConfigurationFileName);
+        File tmpFile = new File(tempConfigurationFileName);
 
         try (PrintWriter pw = new PrintWriter(new FileOutputStream(tmpFile))) {
             pw.println(String.format("SSO_CLIENT_ID=%s", clientId));
