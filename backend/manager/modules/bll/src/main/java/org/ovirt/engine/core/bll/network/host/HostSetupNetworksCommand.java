@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import static org.ovirt.engine.core.common.AuditLogType.NETWORK_IPV4_GATEWAY_OUT_OF_RANGE;
 import static org.ovirt.engine.core.common.vdscommands.TimeBoundPollVDSCommandParameters.PollTechnique.CONFIRM_CONNECTIVITY;
 import static org.ovirt.engine.core.utils.NetworkUtils.areDifferentId;
 import static org.ovirt.engine.core.utils.NetworkUtils.hasIpv6StaticBootProto;
@@ -52,6 +53,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
+import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
+import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -73,6 +76,7 @@ import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.validation.CidrValidator;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
@@ -642,7 +646,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 HostNetworkQos hostNetworkQos = effectiveHostNetworkQos.getQos(attachment, network);
                 networkToConfigure.setQos(hostNetworkQos);
             }
-
+            auditIpConfiguration(attachment);
             networksToConfigure.add(networkToConfigure);
         }
 
@@ -999,5 +1003,27 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         event.setClusterName(getCluster().getName());
         event.addCustomValue("NetworkName", attachment.getNetworkName());
         return event;
+    }
+
+    private void auditIpConfiguration(NetworkAttachment attachment) {
+        List<IPv4Address> iPv4Addresses = attachment.getIpConfiguration().getIPv4Addresses();
+        iPv4Addresses.stream()
+                .filter(a -> a.getBootProtocol() == Ipv4BootProtocol.STATIC_IP)
+                .forEach(a -> {
+                    if (!CidrValidator.getInstance().isIpv4InSubnet(a.getAddress(), a.getNetmask(), a.getGateway())) {
+                        auditLog(auditEventIpv4GatewayOutOfRange(attachment, a), NETWORK_IPV4_GATEWAY_OUT_OF_RANGE);
+                    }
+                });
+    }
+
+    private AuditLogable auditEventIpv4GatewayOutOfRange(NetworkAttachment attachment, IPv4Address address) {
+        AuditLogable event = new AuditLogableImpl();
+        event.setVdsId(getVdsId());
+        event.setClusterName(getCluster().getName());
+        event.setVdsName(getVdsName());
+        event.addCustomValue("Interface", attachment.getNicName());
+        event.addCustomValue("Gateway", address.getGateway());
+        return event;
+
     }
 }
