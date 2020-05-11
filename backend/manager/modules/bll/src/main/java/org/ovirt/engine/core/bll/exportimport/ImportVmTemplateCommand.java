@@ -146,9 +146,6 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
             if (Guid.isNullOrEmpty(image.getStoragePoolId())) {
                 image.setStoragePoolId(getStoragePoolId());
             }
-            if (Guid.isNullOrEmpty(getParameters().getSourceDomainId())) {
-                getParameters().setSourceDomainId(storageDomainDao.getMasterStorageDomainIdForPool(image.getStoragePoolId()));
-            }
             updateDiskSizeByQcowImageInfo(image);
             if (getParameters().isImportAsNewEntity()) {
                 generateNewDiskId(image);
@@ -263,7 +260,11 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     }
 
     private void updateDiskSizeByQcowImageInfo(DiskImage diskImage) {
-        QemuImageInfo qemuImageInfo = getQemuImageInfo(diskImage, getParameters().getSourceDomainId());
+        updateDiskSizeByQcowImageInfo(diskImage, getParameters().getSourceDomainId());
+    }
+
+    protected void updateDiskSizeByQcowImageInfo(DiskImage diskImage, Guid storageId) {
+        QemuImageInfo qemuImageInfo = getQemuImageInfo(diskImage, storageId);
         if (qemuImageInfo != null) {
             diskImage.setSize(qemuImageInfo.getSize());
         }

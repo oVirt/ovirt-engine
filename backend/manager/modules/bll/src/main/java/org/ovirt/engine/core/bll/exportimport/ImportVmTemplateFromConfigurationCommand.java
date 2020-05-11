@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
@@ -76,6 +77,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private List<String> missingRoles = new ArrayList<>();
     private List<String> missingVnicMappings = new ArrayList<>();
     private Collection<DiskImage> templateDisksToAttach;
+    private Map<Guid, Guid> diskIdToStorageDomainId;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -146,7 +148,34 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     @Override
     protected boolean validateSourceStorageDomain() {
-        return templateDisksToAttach == null ? super.validateSourceStorageDomain() : true;
+        if (templateDisksToAttach == null) {
+            return super.validateSourceStorageDomain();
+        }
+        diskIdToStorageDomainId = new HashMap<>();
+        for (DiskImage disk : templateDisksToAttach) {
+            List<DiskImage> diskVolumes = diskImageDao.getAllSnapshotsForImageGroup(disk.getId());
+            Iterator<DiskImage> diskVolumesIterator = diskVolumes.iterator();
+            if (!diskVolumesIterator.hasNext()) {
+                log.error("failed to find an image of disk {} in the database", disk.getId());
+                return failValidation(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
+            }
+            // there should be a single volume for the disk as this is a template's disk
+            DiskImage imageInDatabase = diskVolumesIterator.next();
+            if (imageInDatabase.getImageStatus() != ImageStatus.OK) {
+                log.error("found an image ({}) whose status is {}",
+                        imageInDatabase.getImageId(), imageInDatabase.getImageStatus());
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DISK_STATUS_IS_NOT_VALID);
+            }
+            Iterator<Guid> storageIdsIterator = imageInDatabase.getStorageIds().iterator();
+            if (!storageIdsIterator.hasNext()) {
+                log.error("found an image with no storage domain {}", imageInDatabase.getImageId());
+                return failValidation(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
+            }
+            // theoretically, a template's disk may reside within several storage domains, however,
+            // it is unlikely to be the case here and anyway, we can just take the first storage domain
+            diskIdToStorageDomainId.put(disk.getId(), storageIdsIterator.next());
+        }
+        return true;
     }
 
     @Override
@@ -208,7 +237,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                     return failValidation(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
                 }
                 log.warn("Disk image '{}/{}' doesn't exist on any of its storage domains. " +
-                                "Ignoring since the 'Allow Partial' flag is on", imageGroupId, image.getImageId());
+                        "Ignoring since the 'Allow Partial' flag is on", imageGroupId, image.getImageId());
                 getImages().remove(image);
                 failedDisksToImportForAuditLog.putIfAbsent(image.getId(), image.getDiskAlias());
             }
@@ -591,6 +620,21 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.TEMPLATE_IMPORT_FROM_CONFIGURATION_SUCCESS :
-                AuditLogType.TEMPLATE_IMPORT_FROM_CONFIGURATION_FAILED;
+            AuditLogType.TEMPLATE_IMPORT_FROM_CONFIGURATION_FAILED;
+    }
+
+    @Override
+    protected void updateDiskSizeByQcowImageInfo(DiskImage diskImage, Guid storageId) {
+        if (!Guid.isNullOrEmpty(storageId)) {
+            super.updateDiskSizeByQcowImageInfo(diskImage, storageId);
+            return;
+        }
+        // otherwise, we have an image whose storage domain(s) is unknown at this point
+        // this may happen when getting here with a template that was read from an OVF
+        // and since the image id in the database may be different than the one specified
+        // within the OVF (e.g., when the image id is generate during upload image),
+        // let's take the storage domain of the disk's image that was queried
+        // from the database.
+        super.updateDiskSizeByQcowImageInfo(diskImage, diskIdToStorageDomainId.get(diskImage.getId()));
     }
 }
