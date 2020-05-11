@@ -2,14 +2,20 @@ package org.ovirt.engine.core.common.utils;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigInteger;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.ovirt.engine.core.common.utils.IPAddressConverter.Ipv4NetworkRange;
 
 public class IPAddressConverterTest {
-    private IPAddressConverter underTest = IPAddressConverter.getInstance();
+    private static IPAddressConverter underTest = IPAddressConverter.getInstance();
 
     @Test
     public void checkIpAddressConversionToLong() {
@@ -82,5 +88,36 @@ public class IPAddressConverterTest {
     @Test
     public void checkConvertPrefixWithTrailingSlashToIpv4Address(){
         runConvertPrefixToIpv4Address("255.255.0.0", "/16");
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testExpansionToAddresses(boolean expansionOk, String address, String netmask, Ipv4NetworkRange ipv4NetworkRange) {
+        assertEquals(expansionOk, ipv4NetworkRange.equals(underTest.createIpv4NetworkRange(address, netmask)));
+    }
+
+    public static Stream<Arguments> testExpansionToAddresses() {
+        final boolean EXPANSION_OK = true;
+        return Stream.of(
+            Arguments.of(EXPANSION_OK, "192.1.2.12", "255.255.255.0",
+                new Ipv4NetworkRange(underTest.convertIpAddressToBigInt("192.1.2.1"), underTest.convertIpAddressToBigInt("192.1.2.254"))),
+            Arguments.of(EXPANSION_OK, "10.10.45.55", "255.255.255.192",
+                new Ipv4NetworkRange(underTest.convertIpAddressToBigInt("10.10.45.1"), underTest.convertIpAddressToBigInt("10.10.45.62"))),
+            Arguments.of(EXPANSION_OK, "130.1.40.0", "255.255.248.0",
+                new Ipv4NetworkRange(underTest.convertIpAddressToBigInt("130.1.40.1"), underTest.convertIpAddressToBigInt("130.1.47.254"))),
+
+            Arguments.of(!EXPANSION_OK, "192.1.2.12", "255.255.255.0",
+                new Ipv4NetworkRange(underTest.convertIpAddressToBigInt("192.2.2.1"), underTest.convertIpAddressToBigInt("192.2.2.254"))),
+            Arguments.of(!EXPANSION_OK, "10.10.45.55", "255.255.255.192",
+                new Ipv4NetworkRange(underTest.convertIpAddressToBigInt("10.10.45.1"), underTest.convertIpAddressToBigInt("10.10.45.52"))),
+            Arguments.of(!EXPANSION_OK, "10.10.45.55", "255.255.255.192",
+                new Ipv4NetworkRange(underTest.convertIpAddressToBigInt("10.10.45.7"), underTest.convertIpAddressToBigInt("10.10.45.62"))),
+            Arguments.of(!EXPANSION_OK, "10.10.45.55", "255.255.255.192",
+                new Ipv4NetworkRange(underTest.convertIpAddressToBigInt("10.10.44.1"), underTest.convertIpAddressToBigInt("10.10.45.52"))),
+            Arguments.of(!EXPANSION_OK, "130.1.40.0", "255.255.248.0",
+                new Ipv4NetworkRange(underTest.convertIpAddressToBigInt("130.0.40.1"), underTest.convertIpAddressToBigInt("130.1.47.254"))),
+            Arguments.of(!EXPANSION_OK, "130.1.40.0", "255.255.248.0",
+                new Ipv4NetworkRange(underTest.convertIpAddressToBigInt("130.1.40.1"), underTest.convertIpAddressToBigInt("130.2.47.254")))
+        );
     }
 }

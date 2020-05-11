@@ -88,4 +88,31 @@ public class IPv4MaskValidatorTest {
 
         );
     }
+
+
+    @ParameterizedTest
+    @MethodSource
+    public void testOctetNetmask(String mask, String expected) {
+        assertEquals(IPv4MaskValidator.getInstance().getOctetNetmask(mask), expected);
+    }
+
+    public static Stream<Object[]> testOctetNetmask() {
+
+        return Stream.of(
+
+                new Object[] { "255.255.0.0", "255.255.0.0" }, //$NON-NLS-1$
+                new Object[] { "255.255.255.0", "255.255.255.0" }, //$NON-NLS-1$
+                new Object[] { "255.255.255.255", "255.255.255.255" }, //$NON-NLS-1$
+                new Object[] { "255.255.124.0", "255.255.124.0" }, //$NON-NLS-1$
+
+                new Object[] { "32", "255.255.255.255" }, //$NON-NLS-1$
+                new Object[] { "31", "255.255.255.254" }, //$NON-NLS-1$
+                new Object[] { "24", "255.255.255.0" }, //$NON-NLS-1$
+                new Object[] { "21", "255.255.248.0" }, //$NON-NLS-1$
+                new Object[] { "16", "255.255.0.0" }, //$NON-NLS-1$
+                new Object[] { "13", "255.248.0.0" }, //$NON-NLS-1$
+                new Object[] { "8", "255.0.0.0" }, //$NON-NLS-1$
+                new Object[] { "5", "248.0.0.0" } //$NON-NLS-1$
+        );
+    }
 }

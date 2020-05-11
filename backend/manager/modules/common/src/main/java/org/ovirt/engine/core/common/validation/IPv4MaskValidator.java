@@ -67,4 +67,21 @@ public class IPv4MaskValidator {
         return true;
     }
 
+    /**
+     * Mask in valid format. It is assumed that values passed to this function have been validated first with
+     * {@link IPv4MaskValidator#isValidNetmaskFormat(String)} or with {@link IPv4MaskValidator#isPrefixValid(String)}
+     * @param mask as octet-format netmask or as CIDR format prefix
+     * @return the octet-formatted netmask
+     * @apiNote Octet-format is a xxxx.xxxx.xxxx.xxxx style address where x belongs to [0,255]
+     * @apiNote CIDR format prefix is an integer in the range [0,32]
+     */
+    String getOctetNetmask(String mask) {
+        String netmask = "";
+        if (isPrefixValid(mask)) {
+            netmask = ipAddressConverter.convertPrefixToIPv4Netmask(mask);
+        } else if (isValidNetmaskFormat(mask)) {
+            netmask = mask;
+        }
+        return netmask;
+    }
 }

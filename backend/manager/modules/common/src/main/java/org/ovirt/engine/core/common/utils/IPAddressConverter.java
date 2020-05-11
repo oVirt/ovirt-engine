@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.utils;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,14 +14,71 @@ public class IPAddressConverter {
 
     private static IPAddressConverter INSTANCE = new IPAddressConverter();
 
+    private final BigInteger FULL_MASK_BIG_INT;
+
     private IPAddressConverter() {
+        FULL_MASK_BIG_INT = convertIpAddressToBigInt("255.255.255.255");
     }
 
     public static IPAddressConverter getInstance() {
         return INSTANCE;
     }
 
-    /***
+    /**
+     * All arguments should be ipv4 address strings in octet format: xxxx.xxxx.xxxx.xxxx
+     * @param subnetIp an ip to define a subnet along with the subnetMask.
+     * @param subnetMask a netmask to define a subnet along with the subnetIp.
+     * @return true if the ipToTest is one of the subnet addresses (not including the network or broadcast address)
+     */
+    public Ipv4NetworkRange createIpv4NetworkRange(String subnetIp, String subnetMask) {
+        BigInteger subnetIpInt = convertIpAddressToBigInt(subnetIp);
+        BigInteger subnetMaskInt = convertIpAddressToBigInt(subnetMask);
+        BigInteger networkAddressInt = subnetMaskInt.and(subnetIpInt);
+        BigInteger hostMin = networkAddressInt.add(BigInteger.ONE);
+
+        BigInteger wildcard = subnetMaskInt.xor(FULL_MASK_BIG_INT);
+        BigInteger broadcastAddressInt = networkAddressInt.add(wildcard);
+        BigInteger hostMax = broadcastAddressInt.subtract(BigInteger.ONE);
+
+        return new Ipv4NetworkRange(hostMin, hostMax);
+    }
+
+    public static class Ipv4NetworkRange {
+
+        private BigInteger hostMin;
+        private BigInteger hostMax;
+
+        Ipv4NetworkRange() {
+        }
+
+        Ipv4NetworkRange(BigInteger hostMin, BigInteger hostMax) {
+            this.hostMin = hostMin;
+            this.hostMax = hostMax;
+        }
+
+        public boolean isInRange(BigInteger ipToTest) {
+            return ipToTest.compareTo(hostMin) >= 0 && ipToTest.compareTo(hostMax) <= 0;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof Ipv4NetworkRange)) {
+                return false;
+            }
+            Ipv4NetworkRange that = (Ipv4NetworkRange) o;
+            return Objects.equals(hostMin, that.hostMin) && Objects.equals(hostMax, that.hostMax);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(hostMin, hostMax);
+        }
+    }
+
+        /***
      * convert a given valid IP address to BigInteger.
      *
      *
