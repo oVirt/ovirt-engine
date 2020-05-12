@@ -17,15 +17,21 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformat
 import org.ovirt.engine.core.compat.Guid;
 
 /*
-These are *functional* tests - skipped by default.
-Can be used when the imageio server is running.
+These are *functional* tests requiring a running ovirt-imageio daemon.
+
+If imageio daemon is not running, the tests are skipped.
+
 For testing, use following steps:
-- Clone ovirt-imageio:
-    $ git clone https://github.com/oVirt/ovirt-imageio.git
-    $ cd ovirt-imageio/daemon
-- Run ovirt-image with test conf folder
-    $ ./ovirt-imageio -c \
-        ~/git/ovirt-engine/backend/manager/modules/bll/src/test/java/org/ovirt/engine/core/bll/storage/imageio/conf
+
+1. Install ovirt-imageio-daemon:
+
+    $ sudo dnf install ovirt-imageio-daemon
+
+2. Run ovirt-image with test configuration:
+
+    $ ovirt-imageio -c \
+        ~/git/ovirt-engine/backend/manager/modules/bll/src/test/java/org/ovirt/engine/core/bll/storage/imageio
+
  */
 class ImageioClientTest {
     public static final String IMAGEIO_HOSTNAME = "127.0.0.1";
