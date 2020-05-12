@@ -59,13 +59,14 @@ class Plugin(plugin.PluginBase):
             name in ' '.join(stdout)
         )
 
-    def _createUser(self, toolArgs, toolEnv, name, id):
+    def _createUser(self, toolArgs, toolEnv, name, email, id):
         self.execute(
             args=toolArgs + (
                 'user',
                 'add',
                 name,
                 '--attribute=firstName=%s' % name,
+                '--attribute=email=%s' % email,
             ) + (
                 (
                     '--id=%s' % id,
@@ -85,6 +86,29 @@ class Plugin(plugin.PluginBase):
             envAppend=toolEnv,
         )
         return stdout[0]
+
+    def _getUserEmail(self, toolArgs, toolEnv, name):
+        rc, stdout, stderr = self.execute(
+            args=toolArgs + (
+                'user',
+                'show',
+                name,
+                '--attribute=email',
+            ),
+            envAppend=toolEnv,
+        )
+        return stdout[0]
+
+    def _setUserEmail(self, toolArgs, toolEnv, name, email):
+        rc, stdout, stderr = self.execute(
+            args=toolArgs + (
+                'user',
+                'edit',
+                name,
+                '--attribute=email=%s' % email,
+            ),
+            envAppend=toolEnv,
+        )
 
     def _setupSchema(self):
         self.logger.info(
@@ -269,6 +293,9 @@ class Plugin(plugin.PluginBase):
             oenginecons.ConfigEnv.ADMIN_USER
         ].rsplit('@', 1)[0]
 
+        # Should this be configurable? User can change it later.
+        adminEmail = 'root@localhost'
+
         if not self._userExists(
             toolArgs=toolArgs,
             toolEnv=toolEnv,
@@ -278,6 +305,7 @@ class Plugin(plugin.PluginBase):
                 toolArgs=toolArgs,
                 toolEnv=toolEnv,
                 name=adminUser,
+                email=adminEmail,
                 id=self.environment[oenginecons.ConfigEnv.ADMIN_USER_ID],
             )
 
@@ -291,6 +319,17 @@ class Plugin(plugin.PluginBase):
                     toolEnv=toolEnv,
                     name=adminUser,
                 )
+        elif '@' not in self._getUserEmail(
+            toolArgs=toolArgs,
+            toolEnv=toolEnv,
+            name=adminUser,
+        ):
+            self._setUserEmail(
+            toolArgs=toolArgs,
+            toolEnv=toolEnv,
+            name=adminUser,
+            email=adminEmail,
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
