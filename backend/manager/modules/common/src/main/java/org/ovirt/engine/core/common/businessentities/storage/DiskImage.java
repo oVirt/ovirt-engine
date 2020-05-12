@@ -19,6 +19,7 @@ public class DiskImage extends DiskImageBase {
     private List<String> storagesNames;
     private long actualSizeInBytes;
     private long apparentSizeInBytes;
+    private Long initialSizeInBytes;
     private int readRateFromDiskImageDynamic;
     private int writeRateFromDiskImageDynamic;
 
@@ -123,6 +124,14 @@ public class DiskImage extends DiskImageBase {
     public void setActualSizeInBytes(long size) {
         actualSizeInBytes = size;
         setActualSize(getActualSizeInBytes() * 1.0 / (1024 * 1024 * 1024));
+    }
+
+    public Long getInitialSizeInBytes() {
+        return initialSizeInBytes;
+    }
+
+    public void setInitialSizeInBytes(Long size) {
+        initialSizeInBytes = size;
     }
 
     public boolean hasActualSize() {
@@ -421,6 +430,7 @@ public class DiskImage extends DiskImageBase {
         di.setCreationDate(new Date(diskImage.getCreationDate().getTime()));
         di.setLastModifiedDate(new Date(diskImage.getLastModifiedDate().getTime()));
         di.actualSizeInBytes = diskImage.actualSizeInBytes;
+        di.initialSizeInBytes = diskImage.initialSizeInBytes;
         di.readRateFromDiskImageDynamic = diskImage.readRateFromDiskImageDynamic;
         di.writeRateFromDiskImageDynamic = diskImage.writeRateFromDiskImageDynamic;
         di.readLatency = diskImage.readLatency;
@@ -466,6 +476,7 @@ public class DiskImage extends DiskImageBase {
                 getImage(),
                 snapshots,
                 actualSizeInBytes,
+                initialSizeInBytes,
                 appList,
                 description,
                 readRateFromDiskImageDynamic,
@@ -494,6 +505,7 @@ public class DiskImage extends DiskImageBase {
                 && Objects.equals(getImage(), other.getImage())
                 && Objects.equals(snapshots, other.snapshots)
                 && actualSizeInBytes == other.actualSizeInBytes
+                && Objects.equals(initialSizeInBytes, other.initialSizeInBytes)
                 && Objects.equals(appList, other.appList)
                 && Objects.equals(description, other.description)
                 && readRateFromDiskImageDynamic == other.readRateFromDiskImageDynamic

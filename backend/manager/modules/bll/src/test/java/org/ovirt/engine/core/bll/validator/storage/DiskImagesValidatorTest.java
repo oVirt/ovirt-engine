@@ -313,8 +313,8 @@ public class DiskImagesValidatorTest {
     @Test
     public void testSnapshotAlreadyExists() {
         when(diskImageDao.getAllSnapshotsForImageGroup(disk1.getId())).thenReturn(Collections.singletonList(disk2));
-        Map<Guid, Guid> diskToImageIds = Collections.singletonMap(disk2.getId(), disk2.getImageId());
-        assertThat(validator.snapshotAlreadyExists(diskToImageIds),
+        Map<Guid, DiskImage> diskImagesMap = Collections.singletonMap(disk2.getId(), disk2);
+        assertThat(validator.snapshotAlreadyExists(diskImagesMap),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_IMAGE_ALREADY_EXISTS));
     }
 

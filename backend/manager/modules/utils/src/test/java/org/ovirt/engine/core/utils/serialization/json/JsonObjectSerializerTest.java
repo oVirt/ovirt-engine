@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -75,14 +76,14 @@ public class JsonObjectSerializerTest {
 
     @Test
     public void serializeCreateSnapshotForVmParametersMap() {
-        Map<Guid, Guid> diskToImageIds = new HashMap<>();
-        diskToImageIds.put(Guid.newGuid(), Guid.newGuid());
+        Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
+        diskImagesMap.put(Guid.newGuid(), new DiskImage());
         CreateSnapshotForVmParameters params = new CreateSnapshotForVmParameters(
                 Guid.newGuid(),
                 "Test",
                 false,
-                new TreeSet<>(diskToImageIds.keySet()));
-        params.setDiskToImageIds(diskToImageIds);
+                new TreeSet<>(diskImagesMap.keySet()));
+        params.setDiskImagesMap(diskImagesMap);
 
         JsonObjectSerializer serializer = new JsonObjectSerializer();
         String json = serializer.serialize(params);
@@ -96,14 +97,14 @@ public class JsonObjectSerializerTest {
 
     @Test
     public void serializeCreateSnapshotForVmParametersMapFailure() {
-        Map<Guid, Guid> diskToImageIds = new HashMap<>();
-        diskToImageIds.put(Guid.newGuid(), Guid.newGuid());
+        Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
+        diskImagesMap.put(Guid.newGuid(), new DiskImage());
         CreateSnapshotForVmParameters params = new CreateSnapshotForVmParameters(
                 Guid.newGuid(),
                 "Test",
                 false,
-                diskToImageIds.keySet());
-        params.setDiskToImageIds(diskToImageIds);
+                diskImagesMap.keySet());
+        params.setDiskImagesMap(diskImagesMap);
 
         JsonObjectSerializer serializer = new JsonObjectSerializer();
         String json = serializer.serialize(params);
@@ -115,14 +116,14 @@ public class JsonObjectSerializerTest {
 
     @Test
     public void objectMapperSerializeCreateSnapshotForVmParametersMapFailure() {
-        Map<Guid, Guid> diskToImageIds = new HashMap<>();
-        diskToImageIds.put(Guid.newGuid(), Guid.newGuid());
+        Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
+        diskImagesMap.put(Guid.newGuid(), new DiskImage());
         CreateSnapshotForVmParameters params = new CreateSnapshotForVmParameters(
                 Guid.newGuid(),
                 "Test",
                 false,
-                diskToImageIds.keySet());
-        params.setDiskToImageIds(diskToImageIds);
+                diskImagesMap.keySet());
+        params.setDiskImagesMap(diskImagesMap);
 
         try {
             String json = serialize(params);

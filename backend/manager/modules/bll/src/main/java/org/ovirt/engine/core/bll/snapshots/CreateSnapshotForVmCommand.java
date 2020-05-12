@@ -309,7 +309,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             if (!(validate(diskImagesValidator.diskImagesNotLocked())
                     && validate(diskImagesValidator.diskImagesNotIllegal())
                     && validate(vmValidator.vmWithoutLocalDiskUserProperty())
-                    && validate(diskImagesValidator.snapshotAlreadyExists(getParameters().getDiskToImageIds())))) {
+                    && validate(diskImagesValidator.snapshotAlreadyExists(getParameters().getDiskImagesMap())))) {
                 return false;
             }
         }
@@ -597,7 +597,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     private ActionReturnValue createSnapshotsForDisks() {
         CreateSnapshotDiskParameters parameters = new CreateSnapshotDiskParameters();
         parameters.setDiskIdsToIgnoreInChecks(getParameters().getDiskIdsToIgnoreInChecks());
-        parameters.setDiskToImageIds(getParameters().getDiskToImageIds());
+        parameters.setDiskImagesMap(getParameters().getDiskImagesMap());
         parameters.setNewActiveSnapshotId(newActiveSnapshotId);
         parameters.setSnapshotType(getParameters().getSnapshotType());
         parameters.setDiskIds(getParameters().getDiskIds());

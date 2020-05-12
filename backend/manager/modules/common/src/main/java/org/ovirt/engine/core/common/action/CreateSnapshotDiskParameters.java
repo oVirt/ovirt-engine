@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -21,7 +22,7 @@ public class CreateSnapshotDiskParameters extends VmOperationParameterBase imple
     private String description;
     private Set<Guid> disks;
     private Guid newActiveSnapshotId;
-    private Map<Guid, Guid> diskToImageIds;
+    private Map<Guid, DiskImage> diskImagesMap;
 
     @JsonIgnore
     private Set<Guid> diskIdsToIgnoreInChecks;
@@ -50,12 +51,12 @@ public class CreateSnapshotDiskParameters extends VmOperationParameterBase imple
         this.newActiveSnapshotId = newActiveSnapshotId;
     }
 
-    public Map<Guid, Guid> getDiskToImageIds() {
-        return diskToImageIds;
+    public Map<Guid, DiskImage> getDiskImagesMap() {
+        return diskImagesMap;
     }
 
-    public void setDiskToImageIds(Map<Guid, Guid> diskToImageIds) {
-        this.diskToImageIds = diskToImageIds;
+    public void setDiskImagesMap(Map<Guid, DiskImage> diskImagesMap) {
+        this.diskImagesMap = diskImagesMap;
     }
 
     public Set<Guid> getDiskIdsToIgnoreInChecks() {

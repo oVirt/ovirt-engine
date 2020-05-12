@@ -119,18 +119,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             VDSReturnValue vdsReturnValue =
                     runVdsCommand(
                             VDSCommandType.CreateVolume,
-                            new CreateVolumeVDSCommandParameters(getStoragePoolId(),
-                                    getDestinationStorageDomainId(),
-                                    getImageGroupId(),
-                                    getImage().getImageId(),
-                                    getDiskImage().getSize(),
-                                    newDiskImage.getVolumeType(),
-                                    newDiskImage.getVolumeFormat(),
-                                    getDiskImage().getId(),
-                                    getDestinationImageId(),
-                                    "",
-                                    getStoragePool().getCompatibilityVersion(),
-                                    getDiskImage().getContentType()));
+                            getCreateVDSCommandParameters());
 
             if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
                 getParameters().setVdsmTaskIds(new ArrayList<>());
@@ -157,6 +146,25 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         }
 
         return false;
+    }
+
+    private CreateVolumeVDSCommandParameters getCreateVDSCommandParameters() {
+        CreateVolumeVDSCommandParameters parameters = new CreateVolumeVDSCommandParameters(getStoragePoolId(),
+                getDestinationStorageDomainId(),
+                getImageGroupId(),
+                getImage().getImageId(),
+                getDiskImage().getSize(),
+                newDiskImage.getVolumeType(),
+                newDiskImage.getVolumeFormat(),
+                getDiskImage().getId(),
+                getDestinationImageId(),
+                "",
+                getStoragePool().getCompatibilityVersion(),
+                getDiskImage().getContentType());
+        if (getParameters().getInitialSizeInBytes() != null) {
+            parameters.setImageInitialSizeInBytes(getParameters().getInitialSizeInBytes());
+        }
+        return parameters;
     }
 
     @Override

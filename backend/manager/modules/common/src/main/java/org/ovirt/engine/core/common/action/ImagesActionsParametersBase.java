@@ -18,6 +18,7 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
     private Guid imageGroupID;
     private boolean importEntity;
     private boolean leaveLocked;
+    private Long initialSizeInBytes;
 
     public ImagesActionsParametersBase() {
         imageId = Guid.Empty;
@@ -131,5 +132,13 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
 
     public void setLeaveLocked(boolean leaveLocked) {
         this.leaveLocked = leaveLocked;
+    }
+
+    public void setInitialSizeInBytes(Long initialSizeInBytes) {
+        this.initialSizeInBytes = initialSizeInBytes;
+    }
+
+    public Long getInitialSizeInBytes() {
+        return initialSizeInBytes;
     }
 }

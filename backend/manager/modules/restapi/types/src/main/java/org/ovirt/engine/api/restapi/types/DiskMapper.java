@@ -131,6 +131,7 @@ public class DiskMapper {
         // TODO: relevant when adding disk, needs to be removed when the initial size will be passed in the parameters.
         if (disk.isSetInitialSize()) {
             diskImage.setActualSizeInBytes(disk.getInitialSize());
+            diskImage.setInitialSizeInBytes(disk.getInitialSize());
         }
         if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
                 && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {

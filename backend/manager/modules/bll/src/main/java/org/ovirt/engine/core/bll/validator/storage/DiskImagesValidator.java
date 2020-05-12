@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -322,12 +321,12 @@ public class DiskImagesValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult snapshotAlreadyExists(Map<Guid, Guid> diskToImageIds) {
+    public ValidationResult snapshotAlreadyExists(Map<Guid, DiskImage> diskImagesMap) {
         Set<Guid> diskIds = diskImages.stream()
                 .flatMap(diskImage -> getDiskImageDao().getAllSnapshotsForImageGroup(diskImage.getId()).stream())
                 .map(DiskImage::getImageId)
                 .collect(Collectors.toSet());
-        Set<Guid> providedImageIds = new HashSet(diskToImageIds.values());
+        Set<Guid> providedImageIds = diskImagesMap.values().stream().map(DiskImage::getImageId).collect(Collectors.toSet());
         Set<Guid> existingGuids = providedImageIds.stream().filter(diskIds::contains).collect(Collectors.toSet());
         if (!existingGuids.isEmpty()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_IMAGE_ALREADY_EXISTS,

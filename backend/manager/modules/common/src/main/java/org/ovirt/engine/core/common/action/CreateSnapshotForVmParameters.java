@@ -12,6 +12,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,7 +42,7 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
 
     private Set<Guid> disks;
 
-    private Map<Guid, Guid> diskToImageIds;
+    private Map<Guid, DiskImage> diskImagesMap;
 
     private boolean liveSnapshotRequired;
 
@@ -58,7 +59,7 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
         needsLocking = true;
         saveMemory = true;
         diskIdsToIgnoreInChecks = Collections.emptySet();
-        diskToImageIds = Collections.emptyMap();
+        diskImagesMap = Collections.emptyMap();
     }
 
     public CreateSnapshotForVmParameters(Guid vmId, String description) {
@@ -67,7 +68,7 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
         needsLocking = true;
         saveMemory = true;
         diskIdsToIgnoreInChecks = Collections.emptySet();
-        diskToImageIds = Collections.emptyMap();
+        diskImagesMap = Collections.emptyMap();
     }
 
     public CreateSnapshotForVmParameters(Guid vmId, String description, boolean saveMemory) {
@@ -135,12 +136,12 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
         this.createdSnapshotId = createdSnapshotId;
     }
 
-    public Map<Guid, Guid> getDiskToImageIds() {
-        return diskToImageIds;
+    public Map<Guid, DiskImage> getDiskImagesMap() {
+        return diskImagesMap;
     }
 
-    public void setDiskToImageIds(Map<Guid, Guid> diskToImageIds) {
-        this.diskToImageIds = diskToImageIds;
+    public void setDiskImagesMap(Map<Guid, DiskImage> diskImagesMap) {
+        this.diskImagesMap = diskImagesMap;
     }
 
     public CreateSnapshotStage getCreateSnapshotStage() {

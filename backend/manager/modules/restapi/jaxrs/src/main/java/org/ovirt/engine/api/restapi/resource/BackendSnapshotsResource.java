@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
@@ -62,9 +63,9 @@ public class BackendSnapshotsResource
             snapshotParams.setSaveMemory(snapshot.isPersistMemorystate());
         }
         if (snapshot.isSetDiskAttachments()) {
-            Map<Guid, Guid> diskToImageIds = mapDisks(snapshot.getDiskAttachments());
-            snapshotParams.setDiskIds(new TreeSet<>(diskToImageIds.keySet()));
-            snapshotParams.setDiskToImageIds(diskToImageIds);
+            Map<Guid, DiskImage> diskImagesMap = mapDisks(snapshot.getDiskAttachments());
+            snapshotParams.setDiskIds(new TreeSet<>(diskImagesMap.keySet()));
+            snapshotParams.setDiskImagesMap(diskImagesMap);
         }
         return performCreate(ActionType.CreateSnapshotForVm,
                                snapshotParams,
@@ -72,17 +73,17 @@ public class BackendSnapshotsResource
                                block);
     }
 
-    private Map<Guid, Guid> mapDisks(DiskAttachments diskAttachments) {
-        Map<Guid, Guid> diskToImageIds = null;
+    private Map<Guid, DiskImage> mapDisks(DiskAttachments diskAttachments) {
+        Map<Guid, DiskImage> diskImagesMap = null;
         if (diskAttachments.isSetDiskAttachments()) {
-            diskToImageIds =
+            diskImagesMap =
                     diskAttachments.getDiskAttachments().stream()
                             .map(DiskAttachment::getDisk)
                             .filter(Objects::nonNull)
                             .map(disk -> (DiskImage) DiskMapper.map(disk, null))
-                            .collect(Collectors.toMap(BaseDisk::getId, DiskImage::getImageId));
+                            .collect(Collectors.toMap(BaseDisk::getId, Function.identity()));
         }
-        return diskToImageIds;
+        return diskImagesMap;
     }
 
     List<DiskImage> mapDisks(Disks disks) {
