@@ -9,15 +9,9 @@
 """ovirt-imageio constants."""
 
 
-import gettext
-
 from otopi import util
 
 from . import config as oipconfig
-
-
-def _(m):
-    return gettext.dgettext(message=m, domain='ovirt-imageio-setup')
 
 
 @util.export
