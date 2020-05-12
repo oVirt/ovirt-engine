@@ -1572,7 +1572,8 @@ public class LibvirtVmXmlBuilder {
         );
 
         for (Pair<VmDevice, HostDevice> pair : hostDevDisks) {
-            String diskName = vmInfoBuildUtils.makeDiskName("scsi", ++sdIndex);
+            sdIndex = skipCdIndices(++sdIndex, DiskInterface.VirtIO_SCSI);
+            String diskName = vmInfoBuildUtils.makeDiskName("scsi", sdIndex);
 
             writeScsiHostDevAsDisk(new VmHostDevice(pair.getFirst()), pair.getSecond(), diskName);
         }

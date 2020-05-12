@@ -428,6 +428,7 @@ public class LibvirtVmXmlBuilderTest {
 
         setVm(underTest, vm);
         setProperties(underTest, properties);
+        setInterface(underTest, "sd");
         setWriter(underTest, writer);
         setMetadata(underTest, metadata);
         setVolumeLeases(underTest, new ArrayList<>());
@@ -456,5 +457,10 @@ public class LibvirtVmXmlBuilderTest {
     private void setVmInfoBuildUtils(LibvirtVmXmlBuilder underTest, VmInfoBuildUtils utils) throws NoSuchFieldException {
         Field vmInfoBuildUtilsField = LibvirtVmXmlBuilder.class.getDeclaredField("vmInfoBuildUtils");
         FieldSetter.setField(underTest, vmInfoBuildUtilsField, utils);
+    }
+
+    private void setInterface(LibvirtVmXmlBuilder underTest, String cdInterface) throws NoSuchFieldException {
+        Field cdInterfaceField = LibvirtVmXmlBuilder.class.getDeclaredField("cdInterface");
+        FieldSetter.setField(underTest, cdInterfaceField, cdInterface);
     }
 }
