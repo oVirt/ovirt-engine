@@ -1,0 +1,24 @@
+{
+  "agents": [
+    {
+      "arch": "x86",
+      "agent_version": "101.1.0-1",
+      "name": "Red Hat QEMU guest agent"
+    },
+    {
+      "arch": "amd64",
+      "agent_version": "101.1.0-1",
+      "name": "Red Hat QEMU guest agent"
+    },
+    {
+      "arch": "x86",
+      "agent_version": "0.10.0-2",
+      "name": "Red Hat SPICE VDA agent"
+    },
+    {
+      "arch": "amd64",
+      "agent_version": "0.10.0-2",
+      "name": "Red Hat SPICE VDA agent"
+    }
+  ]
+}

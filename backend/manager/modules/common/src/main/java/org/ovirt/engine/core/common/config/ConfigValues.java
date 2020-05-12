@@ -1544,6 +1544,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     IsIncrementalBackupSupported,
 
+    @TypeConverterAttribute(String.class)
+    VirtioWinIsoPath,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;
