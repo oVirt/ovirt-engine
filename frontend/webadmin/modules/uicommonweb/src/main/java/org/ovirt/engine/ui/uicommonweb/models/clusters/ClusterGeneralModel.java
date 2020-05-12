@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.utils.EmulatedMachineCommonUtils;
+import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -216,7 +216,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         setCpuThreads(cluster.getCountThreadsAsCores());
         setResiliencePolicy(cluster.getMigrateOnError());
         ChipsetType chipsetType = cluster.getBiosType() != null ? cluster.getBiosType().getChipsetType() : null;
-        String emulatedMachine = EmulatedMachineCommonUtils.replaceChipset(cluster.getEmulatedMachine(), chipsetType);
+        String emulatedMachine = ClusterEmulatedMachines.forChipset(cluster.getEmulatedMachine(), chipsetType);
         setEmulatedMachine(emulatedMachine);
         setCompatibilityVersion(cluster.getCompatibilityVersion().getValue());
         generateClusterType(cluster.supportsGlusterService(), cluster.supportsVirtService());

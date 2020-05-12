@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -62,7 +63,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
+import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
+import org.ovirt.engine.core.common.utils.EmulatedMachineCommonUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -611,11 +614,12 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     }
 
     private String getEmulatedMachineOfHostInCluster(VDS vds) {
-        Set<String> emulatedMachinesLookup =
-                new HashSet<>(Arrays.asList(vds.getSupportedEmulatedMachines().split(",")));
-        return Config.<List<String>>getValue(ConfigValues.ClusterEmulatedMachines,
-                        getParameters().getCluster().getCompatibilityVersion().getValue())
-                .stream().filter(emulatedMachinesLookup::contains).findFirst().orElse(null);
+        Set<String> supported = new HashSet<>(Arrays.asList(vds.getSupportedEmulatedMachines().split(",")));
+        Version version = getParameters().getCluster().getCompatibilityVersion();
+        List<String> available = Config.getValue(ConfigValues.ClusterEmulatedMachines, version.getValue());
+        return ClusterEmulatedMachines.build(
+                EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.I440FX, supported, available),
+                EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.Q35, supported, available));
     }
 
     private void addOrUpdateAddtionalClusterFeatures() {

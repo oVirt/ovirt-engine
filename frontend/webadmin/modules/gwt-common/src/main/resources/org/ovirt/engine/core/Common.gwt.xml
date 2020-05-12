@@ -354,6 +354,7 @@
         <include name="common/utils/CompatibilityVersionUtils.java"/>
         <include name="common/utils/MathUtils.java"/>
         <include name="common/utils/EmulatedMachineCommonUtils.java" />
+        <include name="common/utils/ClusterEmulatedMachines.java" />
 
         <!-- TODO: Remove when UI will be refactored to use FenceProxySourceType -->
         <include name="common/utils/pm/FenceProxySourceTypeHelper.java"/>

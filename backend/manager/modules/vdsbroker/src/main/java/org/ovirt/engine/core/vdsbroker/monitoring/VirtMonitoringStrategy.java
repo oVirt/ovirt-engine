@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -22,6 +23,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
+import org.ovirt.engine.core.common.utils.EmulatedMachineCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -209,25 +212,34 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
     }
 
     private boolean hostCompliesWithClusterEmulationMode(VDS vds, Cluster cluster) {
+        Set<String> supported = getSupportedEmulatedMachinesAsSet(vds);
+        List<String> available = Config.getValue(ConfigValues.ClusterEmulatedMachines,
+                vds.getClusterCompatibilityVersion().getValue());
 
         // the initial cluster emulated machine value is set by the first host that complies.
         if (cluster.isDetectEmulatedMachine()) {
-            return hostEmulationModeMatchesTheConfigValues(vds);
+            return hostEmulationModeMatchesTheConfigValues(vds, supported, available);
         } else {
             // the cluster has the emulated machine flag set. match the host against it.
-            return vds.getSupportedEmulatedMachines() != null ? Arrays.asList(vds.getSupportedEmulatedMachines().split(",")).contains(
-                    cluster.getEmulatedMachine()) : false;
+            if (vds.getSupportedEmulatedMachines() == null) {
+                return false;
+            }
+            if (!ClusterEmulatedMachines.isMultiple(cluster.getEmulatedMachine())) {
+                return supported.contains(cluster.getEmulatedMachine());
+            } else {
+                ClusterEmulatedMachines ems = ClusterEmulatedMachines.parse(cluster.getEmulatedMachine());
+                return supported.contains(ems.getI440fxType()) && supported.contains(ems.getQ35Type());
+            }
         }
     }
 
-    private boolean hostEmulationModeMatchesTheConfigValues(VDS vds) {
-        // match this host against the config flags by order
-        String matchedEmulatedMachine =
-                Config.<List<String>> getValue(ConfigValues.ClusterEmulatedMachines,
-                        vds.getClusterCompatibilityVersion().getValue())
-                .stream().filter(getSupportedEmulatedMachinesAsSet(vds)::contains).findFirst().orElse(null);
+    private boolean hostEmulationModeMatchesTheConfigValues(VDS vds, Set<String> supported, List<String> available) {
+        String matchedI440fx =
+                EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.I440FX, supported, available);
+        String matchedQ35 = EmulatedMachineCommonUtils.getSupportedByChipset(ChipsetType.Q35, supported, available);
+        String matchedEmulatedMachine = ClusterEmulatedMachines.build(matchedI440fx, matchedQ35);
 
-        if (matchedEmulatedMachine != null && !matchedEmulatedMachine.isEmpty()) {
+        if (!StringUtils.isEmpty(matchedEmulatedMachine)) {
             setClusterEmulatedMachine(vds, matchedEmulatedMachine);
             return true;
         }

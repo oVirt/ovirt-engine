@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
+import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -61,13 +62,15 @@ public class OvfManager {
         if (vm.isHostedEngine()) {
             Cluster cluster = clusterDao.get(vm.getClusterId());
             String cpuVerb = cluster.getCpuVerb();
+            String emulatedMachine = ClusterEmulatedMachines.forChipset(
+                    cluster.getEmulatedMachine(), vm.getBiosType().getChipsetType());
             vmWriter = new HostedEngineOvfWriter(vm,
                     fullEntityOvfData,
                     version,
-                    cluster.getEmulatedMachine(),
+                    emulatedMachine,
                     cpuVerb,
                     getOsRepository(),
-                    generateEngineXml(vm, cpuVerb, cluster.getEmulatedMachine()));
+                    generateEngineXml(vm, cpuVerb, emulatedMachine));
         } else {
             vmWriter = new OvfVmWriter(vm, fullEntityOvfData, version, getOsRepository(), getMemoryDiskForSnapshots(vm));
         }

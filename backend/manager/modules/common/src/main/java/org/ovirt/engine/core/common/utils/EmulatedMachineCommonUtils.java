@@ -1,33 +1,26 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 
 public class EmulatedMachineCommonUtils {
 
-    private static final String I440FX_CHIPSET_NAME = ChipsetType.I440FX.getChipsetName();
-    private static final String Q35_CHIPSET_NAME = ChipsetType.Q35.getChipsetName();
+    public static Predicate<String> chipsetMatches(ChipsetType chipsetType) {
+        return emulatedMachine -> {
+            ChipsetType emChipsetType = ChipsetType.fromMachineType(emulatedMachine); // emChipsetType == null for non-x86
+            return (chipsetType == ChipsetType.I440FX && emChipsetType == null) || chipsetType == emChipsetType;
+        };
+    }
 
-    public static String replaceChipset(String emulatedMachine, ChipsetType chipsetType) {
-        if (emulatedMachine == null || chipsetType == null) {
-            return emulatedMachine;
-        }
-        switch (chipsetType) {
-            case Q35:
-                if (emulatedMachine.contains(I440FX_CHIPSET_NAME)) {
-                    return emulatedMachine.replace(I440FX_CHIPSET_NAME, Q35_CHIPSET_NAME);
-                }
-                if (!emulatedMachine.contains(Q35_CHIPSET_NAME)) {
-                    return emulatedMachine.replace("pc-", "pc-" + Q35_CHIPSET_NAME + '-');
-                }
-                break;
-
-            case I440FX:
-                if (emulatedMachine.contains(Q35_CHIPSET_NAME)) {
-                    return emulatedMachine.replace(Q35_CHIPSET_NAME, I440FX_CHIPSET_NAME);
-                }
-                break;
-        }
-        return emulatedMachine;
+    public static String getSupportedByChipset(ChipsetType chipsetType, Set<String> supported, List<String> available) {
+        return available
+                .stream()
+                .filter(supported::contains)
+                .filter(chipsetMatches(chipsetType))
+                .findFirst().orElse(null);
     }
 
 }

@@ -78,7 +78,7 @@ public class EmulatedMachineUtilsTest {
     public void testFindBestMatchForEmulatedMachine() {
         String bestMatch = "pc-i440fx-rhel7.5.0";
         String desired = "pc-q35-rhel7.5.0";
-        List<String> candidates = Arrays.asList("pc-i440fx-2.1", bestMatch, "pseries-rhel7.2.0");
+        List<String> candidates = Arrays.asList("pc-i440fx-2.1", bestMatch, desired, "pseries-rhel7.2.0");
         assertEquals(desired,
                 EmulatedMachineUtils.findBestMatchForEmulatedMachine(ChipsetType.Q35, bestMatch, candidates));
 

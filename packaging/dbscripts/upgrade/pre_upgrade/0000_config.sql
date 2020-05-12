@@ -83,7 +83,7 @@ select fn_db_add_config_value('CipherSuite','DEFAULT','general');
 select fn_db_add_config_value('ConnectToServerTimeoutInSeconds','20','general');
 select fn_db_add_config_value_for_versions_up_to('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0,s390-ccw-virtio-2.8','4.2');
 select fn_db_add_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12','4.3');
-select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.1.0,pc-q35-4.1,pseries-rhel8.1.0,s390-ccw-virtio-2.12','4.4');
+select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.1.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.1.0,s390-ccw-virtio-2.12','4.4');
 select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
 --Handling Data directory for ENGINE
 select fn_db_add_config_value('DataDir','/usr/share/engine','general');
@@ -931,6 +931,7 @@ select fn_db_update_config_value('PostgresPagingSyntax','OFFSET (%1$s -1) LIMIT 
 select fn_db_update_config_value('PostgresSearchTemplate','SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
 select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.3.0,pc-i440fx-2.6,pseries-rhel7.5.0,s390-ccw-virtio-2.8','4.2');
 select fn_db_update_config_value('ClusterEmulatedMachines','pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel7.6.0-sxxm,s390-ccw-virtio-2.12','4.3');
+select fn_db_update_config_value('ClusterEmulatedMachines','pc-q35-rhel8.1.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.1.0,s390-ccw-virtio-2.12','4.4');
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
 select fn_db_update_config_value('SupportedClusterLevels','4.2,4.3,4.4','general');
 select fn_db_update_config_value('SupportedVDSMVersions','4.20,4.30,4.40','general');

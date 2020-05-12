@@ -143,6 +143,7 @@ public class VirtMonitoringStrategyTest {
 
     private VDS createBaseVds() {
         VDS vds = new VDS();
+        vds.setClusterCompatibilityVersion(Version.v4_4);
         vds.setSupportedEmulatedMachines("pc-1.0");
         vds.getSupportedRngSources().add(VmRngDevice.Source.URANDOM);
         vds.setStatus(VDSStatus.Up);

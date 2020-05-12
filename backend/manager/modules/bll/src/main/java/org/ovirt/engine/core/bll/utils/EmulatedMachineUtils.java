@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.BiosTypeUtils;
+import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.EmulatedMachineCommonUtils;
 import org.slf4j.Logger;
@@ -36,9 +37,9 @@ public class EmulatedMachineUtils {
         // The 'default' to be set
         Cluster cluster = clusterSupplier.get();
         BiosType biosType = BiosTypeUtils.getEffective(vmBase, cluster);
-        String recentClusterDefault = cluster.getEmulatedMachine();
-        if (vmBase.getCustomCompatibilityVersion() == null
-                && chipsetMatchesEmulatedMachine(biosType.getChipsetType(), recentClusterDefault)) {
+        String recentClusterDefault =
+                ClusterEmulatedMachines.forChipset(cluster.getEmulatedMachine(), biosType.getChipsetType());
+        if (vmBase.getCustomCompatibilityVersion() == null) {
             return recentClusterDefault;
         }
 
@@ -57,19 +58,14 @@ public class EmulatedMachineUtils {
             ChipsetType chipsetType,
             String currentEmulatedMachine,
             List<String> candidateEmulatedMachines) {
-        String bestMatch = candidateEmulatedMachines
+        return candidateEmulatedMachines
                 .stream()
+                .filter(EmulatedMachineCommonUtils.chipsetMatches(chipsetType))
                 .max(Comparator.comparingInt(s -> {
                     int index = StringUtils.indexOfDifference(currentEmulatedMachine, s);
                     return index < 0 ? Integer.MAX_VALUE : index;
                 }))
                 .orElse(currentEmulatedMachine);
-        return EmulatedMachineCommonUtils.replaceChipset(bestMatch, chipsetType);
-    }
-
-    private static boolean chipsetMatchesEmulatedMachine(ChipsetType chipsetType, String emulatedMachine) {
-        ChipsetType emChipsetType = ChipsetType.fromMachineType(emulatedMachine); // emChipsetType == null for non-x86
-        return (chipsetType == ChipsetType.I440FX && emChipsetType == null) || chipsetType == emChipsetType;
     }
 
 }
