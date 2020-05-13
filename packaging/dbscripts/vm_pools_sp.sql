@@ -148,7 +148,7 @@ BEGIN
         CREATE TEMPORARY TABLE tt_VM_POOL_GROUP (
             vm_pool_id UUID,
             assigned_vm_count INT
-            );
+            ) ON COMMIT DROP;
 
         exception when others then
 
@@ -171,7 +171,7 @@ BEGIN
         CREATE TEMPORARY TABLE tt_VM_POOL_RUNNING (
             vm_pool_id UUID,
             vm_running_count INT
-            );
+            ) ON COMMIT DROP;
 
         exception when others then
 
@@ -197,7 +197,7 @@ BEGIN
             vm_pool_id UUID,
             assigned_vm_count INT,
             vm_running_count INT
-            );
+            ) ON COMMIT DROP;
 
         exception when others then
 
@@ -238,7 +238,7 @@ BEGIN
             spice_proxy VARCHAR(255),
             is_being_destroyed BOOLEAN,
             is_auto_storage_select BOOLEAN
-            );
+            ) ON COMMIT DROP;
 
         exception when others then
 

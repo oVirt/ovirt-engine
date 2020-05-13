@@ -876,7 +876,7 @@ DECLARE v_ids UUID[];
 BEGIN
     BEGIN
         -- Creating a temporary table which will give all the images and the disks which resids on only the specified storage domain. (copied template disks on multiple storage domains will not be part of this table)
-        CREATE TEMPORARY TABLE STORAGE_DOMAIN_MAP_TABLE AS
+        CREATE TEMPORARY TABLE STORAGE_DOMAIN_MAP_TABLE ON COMMIT DROP AS
 
         SELECT image_guid AS image_id,
             disk_id
@@ -910,7 +910,7 @@ BEGIN
 
     BEGIN
         -- All the VMs/Templates which have disks both on the specified domain and other domains.
-        CREATE TEMPORARY TABLE ENTITY_IDS_ON_OTHER_STORAGE_DOMAINS_TEMPORARY_TABLE AS
+        CREATE TEMPORARY TABLE ENTITY_IDS_ON_OTHER_STORAGE_DOMAINS_TEMPORARY_TABLE ON COMMIT DROP AS
 
         SELECT DISTINCT vm_static.vm_guid
         FROM vm_static
@@ -973,7 +973,7 @@ BEGIN
 
     BEGIN
         -- Templates with any images residing on only the specified storage domain
-        CREATE TEMPORARY TABLE TEMPLATES_IDS_TEMPORARY_TABLE AS
+        CREATE TEMPORARY TABLE TEMPLATES_IDS_TEMPORARY_TABLE ON COMMIT DROP AS
 
         SELECT vm_device.vm_id AS vm_guid
         FROM images_storage_domain_view
@@ -1019,7 +1019,7 @@ BEGIN
 
     BEGIN
         -- Vms which resides on the storage domain
-        CREATE TEMPORARY TABLE VM_IDS_TEMPORARY_TABLE AS
+        CREATE TEMPORARY TABLE VM_IDS_TEMPORARY_TABLE ON COMMIT DROP AS
 
         SELECT vm_id,
             vm_images_view.entity_type AS entity_type
