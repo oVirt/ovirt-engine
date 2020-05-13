@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.vm;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.validator.VmNicFilterParameterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmNicFilterParameterParameters;
@@ -26,7 +27,9 @@ public class RemoveVmNicFilterParameterCommand<T extends RemoveVmNicFilterParame
     protected void executeVmCommand() {
         super.executeVmCommand();
 
-        vmNicFilterParameterDao.remove(getParameters().getFilterParameterId());
+        CompensationUtils.removeEntity(getParameters().getFilterParameterId(), vmNicFilterParameterDao,
+                getCompensationContextIfEnabledByCaller());
+
         setSucceeded(true);
     }
 

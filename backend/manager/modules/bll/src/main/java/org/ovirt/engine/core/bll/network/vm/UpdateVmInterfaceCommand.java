@@ -406,18 +406,21 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                         .anyMatch(saved -> Objects.equals(parameter.getId(), saved.getId()));
                 if (toUpdate) {
                     runInternalAction(ActionType.UpdateVmNicFilterParameter,
-                            new VmNicFilterParameterParameters(getParameters().getVmId(), parameter));
+                            new VmNicFilterParameterParameters(getParameters().getVmId(), parameter),
+                            cloneContextWithNoCleanupCompensation());
                 } else {
                     parameter.setVmInterfaceId(getInterface().getId());
                     runInternalAction(ActionType.AddVmNicFilterParameter,
-                            new VmNicFilterParameterParameters(getParameters().getVmId(), parameter));
+                            new VmNicFilterParameterParameters(getParameters().getVmId(), parameter),
+                            cloneContextWithNoCleanupCompensation());
                 }
             }
             for (VmNicFilterParameter parameter : savedParameters) {
                 if (newParameters.stream()
                         .noneMatch(newParameter -> Objects.equals(parameter.getId(), newParameter.getId()))) {
                     runInternalAction(ActionType.RemoveVmNicFilterParameter,
-                            new RemoveVmNicFilterParameterParameters(getParameters().getVmId(), parameter.getId()));
+                            new RemoveVmNicFilterParameterParameters(getParameters().getVmId(), parameter.getId()),
+                            cloneContextWithNoCleanupCompensation());
                 }
             }
         }

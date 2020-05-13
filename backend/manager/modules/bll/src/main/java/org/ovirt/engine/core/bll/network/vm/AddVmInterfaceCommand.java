@@ -229,7 +229,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             for (VmNicFilterParameter parameter : getParameters().getFilterParameters()) {
                 parameter.setVmInterfaceId(getInterface().getId());
                 runInternalAction(ActionType.AddVmNicFilterParameter,
-                        new VmNicFilterParameterParameters(getParameters().getVmId(), parameter));
+                        new VmNicFilterParameterParameters(getParameters().getVmId(), parameter),
+                        cloneContextWithNoCleanupCompensation());
             }
         }
     }

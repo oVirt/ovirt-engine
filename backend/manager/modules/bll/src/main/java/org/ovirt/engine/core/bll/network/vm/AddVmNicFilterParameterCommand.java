@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.ValidateSupportsTransaction;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.validator.VmNicFilterParameterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
@@ -37,7 +38,9 @@ public class AddVmNicFilterParameterCommand<T extends VmNicFilterParameterParame
 
         filterParameter.setId(Guid.newGuid());
 
-        vmNicFilterParameterDao.save(filterParameter);
+        CompensationUtils.saveEntity(filterParameter, vmNicFilterParameterDao,
+                getCompensationContextIfEnabledByCaller());
+
         getReturnValue().setActionReturnValue(filterParameter.getId());
         setSucceeded(true);
     }

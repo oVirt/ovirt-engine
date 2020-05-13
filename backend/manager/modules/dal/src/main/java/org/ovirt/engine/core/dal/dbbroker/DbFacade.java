@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
@@ -116,6 +117,7 @@ import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
@@ -182,6 +184,7 @@ public class DbFacade {
             put(SupportedAdditionalClusterFeature.class, ClusterFeatureDao.class);
             put(Cluster.class, ClusterDao.class);
             put(NetworkCluster.class, NetworkClusterDao.class);
+            put(VmNicFilterParameter.class, VmNicFilterParameterDao.class);
         }
     };
 

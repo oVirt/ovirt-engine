@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.validator.VmNicFilterParameterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
@@ -30,7 +31,9 @@ public class UpdateVmNicFilterParameterCommand<T extends VmNicFilterParameterPar
     protected void executeVmCommand() {
         super.executeVmCommand();
 
-        vmNicFilterParameterDao.update(getParameters().getFilterParameter());
+        CompensationUtils.updateEntity(getParameters().getFilterParameter(), vmNicFilterParameterDao,
+                getCompensationContextIfEnabledByCaller());
+
         setSucceeded(true);
     }
 
