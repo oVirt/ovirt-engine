@@ -718,7 +718,17 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     protected ActionType getChildActionType() {
-        return ActionType.AddImageFromScratch;
+        switch (getParameters().getDiskInfo().getDiskStorageType()) {
+        case IMAGE:
+        case KUBERNETES:
+            return ActionType.AddImageFromScratch;
+        case CINDER:
+            return ActionType.AddCinderDisk;
+        case MANAGED_BLOCK_STORAGE:
+            return ActionType.AddManagedBlockStorageDisk;
+        default:
+            return ActionType.Unknown;
+        }
     }
 
     @Override
