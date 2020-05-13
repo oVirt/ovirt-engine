@@ -98,7 +98,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             return false;
         }
 
-        // validate all disks support incremental backup
         if (getParameters().getVmBackup().getFromCheckpointId() != null) {
             if (!FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_NOT_SUPPORTED);
@@ -107,6 +106,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             DiskImagesValidator diskImagesValidator = createDiskImagesValidator(getDisks());
             if (!validate(diskImagesValidator.incrementalBackupEnabled())) {
                 return false;
+            }
+
+            if (vmCheckpointDao.get(getParameters().getVmBackup().getFromCheckpointId()) == null) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CHECKPOINT_NOT_EXIST,
+                        String.format("$checkpointId %s", getParameters().getVmBackup().getFromCheckpointId()));
             }
 
             // Due to bz #1829829, Libvirt doesn't handle the case of mixing full and incremental
