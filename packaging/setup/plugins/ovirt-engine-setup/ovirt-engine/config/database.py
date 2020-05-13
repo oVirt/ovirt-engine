@@ -37,6 +37,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
+        name=oengcommcons.Stages.DB_CREDENTIALS_WRITTEN,
         after=(
             oengcommcons.Stages.DB_SCHEMA,
         ),
@@ -59,6 +60,7 @@ class Plugin(plugin.PluginBase):
                 ).getDBConfig(
                     prefix="ENGINE"
                 ),
+                visibleButUnsafe=True,
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
                 ],
