@@ -354,7 +354,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     && validate(validator.passwordNotEmpty(params.isPending(),
                             params.getAuthMethod(),
                             params.getPassword()))
-                    && validate(validator.supportsDeployingHostedEngine(params.getHostedEngineDeployConfiguration()));
+                    && validate(validator.supportsDeployingHostedEngine(params.getHostedEngineDeployConfiguration(),
+                            getCluster(),
+                            false));
         }
 
         if (!(returnValue

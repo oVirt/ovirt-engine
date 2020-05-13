@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
@@ -44,6 +45,9 @@ public class UpdateVdsCommandTest {
 
     @Mock
     private AffinityValidator affinityValidator;
+
+    @Mock
+    private Cluster cluster;
 
     @InjectMocks
     private UpdateVdsCommand<UpdateVdsActionParameters> underTestCommand;

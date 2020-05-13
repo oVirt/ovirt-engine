@@ -13,15 +13,19 @@ import java.util.Collections;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
@@ -39,10 +43,12 @@ import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-@ExtendWith({MockitoExtension.class, MockConfigExtension.class})
+@ExtendWith({ MockitoExtension.class, MockConfigExtension.class })
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class HostValidatorTest {
 
     private static final int HOST_NAME_SIZE = 20;
+    private static final Guid DC_ID = new Guid("35822eef-2e7f-4d1a-bfd8-12e754ef7ef9");
 
     @Mock
     private VdsStaticDao hostStaticDao;
@@ -52,24 +58,29 @@ public class HostValidatorTest {
 
     @Mock
     private StoragePoolDao storagePoolDao;
+    @Mock
+    private Cluster cluster;
+    @Mock
+    private VDS host;
+    @Mock
+    private HostedEngineHelper hostedEngineHelper;
+    @Spy
+    @InjectMocks
+    private HostValidator validator = new HostValidator(host);
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.EncryptHostCommunication, true),
                 MockConfigDescriptor.of(ConfigValues.InstallVds, Boolean.TRUE),
-                MockConfigDescriptor.of(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE)
-        );
+                MockConfigDescriptor.of(ConfigValues.MaxVdsNameLength, HOST_NAME_SIZE));
     }
 
-    @Mock
-    private VDS host;
-
-    @Mock
-    private HostedEngineHelper hostedEngineHelper;
-
-    @Spy
-    @InjectMocks
-    private HostValidator validator = new HostValidator(host);
+    @BeforeEach
+    private void setUp() {
+        when(cluster.getStoragePoolId()).thenReturn(DC_ID);
+        when(host.getStoragePoolId()).thenReturn(Guid.Empty);
+        when(hostedEngineHelper.getStoragePoolId()).thenReturn(DC_ID);
+    }
 
     private void mockHostForActivation(VDSStatus status) {
         when(host.getStatus()).thenReturn(status);
@@ -247,19 +258,19 @@ public class HostValidatorTest {
     @Test
     public void testValidateStatusUpForActivation() {
         mockHostForActivation(VDSStatus.Up);
-        assertThat(validator.validateStatusForActivation(), failsWith( EngineMessage.VDS_ALREADY_UP));
+        assertThat(validator.validateStatusForActivation(), failsWith(EngineMessage.VDS_ALREADY_UP));
     }
 
     @Test
     public void testValidateStatusNonResponsiveForActivation() {
         mockHostForActivation(VDSStatus.NonResponsive);
-        assertThat(validator.validateStatusForActivation(), failsWith( EngineMessage.VDS_NON_RESPONSIVE));
+        assertThat(validator.validateStatusForActivation(), failsWith(EngineMessage.VDS_NON_RESPONSIVE));
     }
 
     @Test
     public void testValidateNoUniqueId() {
         when(host.getUniqueId()).thenReturn(StringUtils.EMPTY);
-        assertThat(validator.validateUniqueId(), failsWith( EngineMessage.VDS_NO_UUID));
+        assertThat(validator.validateUniqueId(), failsWith(EngineMessage.VDS_NO_UUID));
     }
 
     @Test
@@ -296,28 +307,61 @@ public class HostValidatorTest {
     @Test
     public void supportsHostedEngineDeploy() {
         when(hostedEngineHelper.isVmManaged()).thenReturn(true);
-        assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
+        assertThat(
+                validator.supportsDeployingHostedEngine(
+                        new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY),
+                        cluster,
+                        false),
                 isValid());
     }
 
     @Test
     public void supportsHostedEngineDeployInVersion36() {
         when(hostedEngineHelper.isVmManaged()).thenReturn(true);
-        assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
+        assertThat(
+                validator.supportsDeployingHostedEngine(
+                        new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY),
+                        cluster,
+                        false),
                 isValid());
     }
 
     @Test
     public void unsupportedHostedEngineDeployWhenNoHostedEngine() {
         when(hostedEngineHelper.isVmManaged()).thenReturn(false);
-        assertThat(validator.supportsDeployingHostedEngine(new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY)),
+        assertThat(
+                validator.supportsDeployingHostedEngine(
+                        new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY),
+                        cluster,
+                        false),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_UNMANAGED_HOSTED_ENGINE));
+    }
+
+    @Test
+    public void unsupportedHostedEngineDeployWhenHostInAnotherDC() {
+        when(hostedEngineHelper.isVmManaged()).thenReturn(true);
+        when(hostedEngineHelper.getStoragePoolId()).thenReturn(Guid.newGuid());
+        assertThat(
+                validator.supportsDeployingHostedEngine(
+                        new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.DEPLOY),
+                        cluster,
+                        false),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_HOST_IN_ANOTHER_DC));
+    }
+
+    @Test
+    public void unsupportedHostedEngineDeployWhenHostInAnotherDCAndHEAlreadyDeployed() {
+        when(hostedEngineHelper.isVmManaged()).thenReturn(true);
+        when(hostedEngineHelper.getStoragePoolId()).thenReturn(Guid.newGuid());
+        assertThat(
+                validator.supportsDeployingHostedEngine(null, cluster, true),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_HOST_IN_ANOTHER_DC));
     }
 
     @Test
     public void allow36HostWithoutDeployingHostedEngine() {
         HostedEngineDeployConfiguration heConfig =
                 new HostedEngineDeployConfiguration(HostedEngineDeployConfiguration.Action.NONE);
-        assertThat(validator.supportsDeployingHostedEngine(heConfig), isValid());
+        assertThat(validator.supportsDeployingHostedEngine(heConfig, cluster, false), isValid());
     }
 }

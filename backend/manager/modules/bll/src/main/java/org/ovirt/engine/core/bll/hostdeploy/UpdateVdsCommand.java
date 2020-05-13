@@ -152,8 +152,10 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                         getParameters().getFenceAgents(),
                         oldHost.getClusterCompatibilityVersion().toString(),
                         validateAgents)
-                && validate(validator.supportsDeployingHostedEngine(
-                        getParameters().getHostedEngineDeployConfiguration()))
+                && validate(
+                        validator.supportsDeployingHostedEngine(getParameters().getHostedEngineDeployConfiguration(),
+                                getCluster(),
+                                oldHost.isHostedEngineDeployed()))
                 && validate(validateAffinityGroups());
     }
 
