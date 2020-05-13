@@ -85,7 +85,6 @@ class Plugin(plugin.PluginBase):
             key_file=oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
             cert_file=oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
             ca_file=oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT,
-            host=self.environment[osetupcons.ConfigEnv.FQDN],
             data_port=oipcons.ImageIO.DATA_PORT,
             control_port=oipcons.ImageIO.CONTROL_PORT,
             logger_handler="stderr" if dev_mode else "logfile",

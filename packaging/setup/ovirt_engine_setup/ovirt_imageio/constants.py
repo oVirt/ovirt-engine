@@ -59,9 +59,7 @@ class ImageIO(object):
     ca_file = {ca_file}
 
     [remote]
-    # Hostname has to be hostname of the engine and port cannot be changed
-    # as it's currently hardcoded in engine code.
-    host = {host}
+    # Port cannot be changed as it's currently hardcoded in engine code.
     port = {data_port}
 
     [local]
