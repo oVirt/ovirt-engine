@@ -166,7 +166,8 @@ BACKUP_PATHS="/etc/ovirt-engine
 /var/lib/openvswitch"
 # Add /var/lib/ovirt-engine except a few
 VAR_LIB_EXCLUSIONS="/var/lib/ovirt-engine/backups
-/var/lib/ovirt-engine/jboss_runtime"
+/var/lib/ovirt-engine/jboss_runtime
+/var/lib/ovirt-engine/ansible-runner-service.log"
 for p in /var/lib/ovirt-engine/*; do
 	echo "${VAR_LIB_EXCLUSIONS}" | grep -q "^${p}\$" || BACKUP_PATHS="${BACKUP_PATHS}
 ${p}"
