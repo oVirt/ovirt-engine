@@ -61,3 +61,11 @@
 	nocreate
 	rotate 12
 }
+
+"@ENGINE_LOG@/ansible-runner-service.log" {
+	monthly
+	missingok
+	compress
+	nocreate
+	rotate 1
+}

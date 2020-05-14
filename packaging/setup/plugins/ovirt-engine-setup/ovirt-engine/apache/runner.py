@@ -60,6 +60,7 @@ class Plugin(plugin.PluginBase):
                     ssh_private_key: '{pki_path}'
                     port: {port}
                     target_user: root
+                    log_path: '/var/log/ovirt-engine'
                 ''').format(
                     playbooks_root_dir=project_dir,
                     pki_path=pki_path,
@@ -85,7 +86,6 @@ class Plugin(plugin.PluginBase):
                   WSGIDaemonProcess runner user={user} group={group} threads=4
                   WSGIProcessGroup runner
                   WSGIScriptAlias / {runner_wsgi_file}
-                  ErrorLog "logs/ansible_runner_error_log"
                 </VirtualHost>
                 ''').format(
                     runner_wsgi_file=runner_wsgi_file,
@@ -106,10 +106,14 @@ class Plugin(plugin.PluginBase):
                 #!/usr/bin/python
 
                 import runner_service.configuration as configuration
+                from runner_service.ansible_runner_service import setup_logging
                 from runner_service.app import create_app
 
                 # wsgi entry point is only for production servers
                 configuration.init(mode='prod')
+
+                # Setup log
+                setup_logging()
 
                 # The object to be managed by uwsgi
                 application = create_app()
