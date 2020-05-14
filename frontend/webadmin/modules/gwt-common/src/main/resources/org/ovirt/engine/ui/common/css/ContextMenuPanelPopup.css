@@ -1,0 +1,47 @@
+@external actionPanelPopupPanel;
+.actionPanelPopupPanel {
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #bbb;
+    border-radius: 1px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    min-width: 160px;
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    text-align: left;
+    z-index: 1000;
+}
+
+@external actionPanelPopupMenuBar;
+.actionPanelPopupMenuBar {
+    background-color: #fff;
+    padding: 3px 0 0 0;
+}
+
+@external menuItem;
+.menuItem {
+    background-color: #fff;
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: block;
+    padding: 3px 10px;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.66666667;
+    color: #363636;
+    white-space: nowrap;
+}
+
+@external menuItem-selected;
+.menuItem-selected {
+    background-color: #def3ff;
+    border: 1px solid #bee1f4;
+    text-decoration: none;
+}
+
+@external menuItem-disabled;
+.menuItem-disabled {
+    cursor: not-allowed;
+    color: #C0C0C0;
+    text-decoration: none;
+}

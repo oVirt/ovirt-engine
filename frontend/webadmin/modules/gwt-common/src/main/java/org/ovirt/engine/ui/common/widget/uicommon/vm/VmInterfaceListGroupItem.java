@@ -23,6 +23,8 @@ import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
+import org.ovirt.engine.ui.common.widget.action.ContextMenuPanelPopup;
 import org.ovirt.engine.ui.common.widget.listgroup.ExpandableListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
@@ -33,10 +35,13 @@ import org.ovirt.engine.ui.common.widget.uicommon.network.NetworkIcon;
 import com.google.gwt.dom.client.DListElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.MenuItem;
 
 public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkInterface> {
 
@@ -51,18 +56,22 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     private static final String VM_NIC_INFO_COLUMN = "vm-nic-info-column"; // $NON-NLS-1$
     private static final String VM_NIC_INFO_ROW = "vm-nic-info-row"; // $NON-NLS-1$
     private static final String NETWORK_LIST_ITEM = "network-list-item"; // $NON-NLS-1$
+    private static final String ELEMENT_ID = "id"; //$NON-NLS-1$
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final ContextMenuPanelPopup popup = new ContextMenuPanelPopup(true);
 
     private ExpandableListViewItem infoExpand;
     private final List<VmGuestAgentInterface> allGuestAgentData;
     private Container detailedInfoContainer;
     protected FlowPanel expansionLinkContainer = new FlowPanel();
+    private ContextMenuHandler contextMenuHandler;
 
     public VmInterfaceListGroupItem(VmNetworkInterface networkInterface, List<VmGuestAgentInterface> allGuestAgentData,
-            List<VmNicFilterParameter> networkFilterParameters) {
+                                    List<VmNicFilterParameter> networkFilterParameters,
+                                    List<ActionButtonDefinition<?, VmNetworkInterface>> actionButtons) {
         super(networkInterface.getName(), networkInterface);
         applyVmInterfaceSpecificStyles();
         this.allGuestAgentData = allGuestAgentData;
@@ -72,6 +81,41 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         infoExpand.setDetails(infoContainer);
         listGroupItem.add(infoContainer);
 
+        populatePopupMenu(actionButtons);
+        listGroupItem.addDomHandler(showContextMenu(), ContextMenuEvent.getType());
+    }
+
+    private ContextMenuHandler showContextMenu() {
+        if (contextMenuHandler == null) {
+            contextMenuHandler = event -> {
+                event.preventDefault();
+                event.stopPropagation();
+                popup.asPopupPanel().setPopupPosition(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());
+                popup.asPopupPanel().show();
+            };
+        }
+        return contextMenuHandler;
+    }
+
+    @Override
+    public void onUnload() {
+        super.onUnload();
+        contextMenuHandler = null;
+    }
+
+    private void populatePopupMenu(List<ActionButtonDefinition<?, VmNetworkInterface>> actionButtons) {
+        if (popup.getMenuBar().isEmpty() && actionButtons != null) {
+            actionButtons.forEach(button -> {
+                final MenuItem menuItem = new MenuItem(button.getText(), () -> {
+                    popup.asPopupPanel().hide();
+                    button.onClick(null, null);
+                });
+                menuItem.setEnabled(button.isEnabled(null, null));
+                // Update button whenever its definition gets re-initialized
+                button.addInitializeHandler(event -> menuItem.setEnabled(button.isEnabled(null, null)));
+                popup.getMenuBar().addItem(menuItem);
+            });
+        }
     }
 
     private void applyVmInterfaceSpecificStyles() {

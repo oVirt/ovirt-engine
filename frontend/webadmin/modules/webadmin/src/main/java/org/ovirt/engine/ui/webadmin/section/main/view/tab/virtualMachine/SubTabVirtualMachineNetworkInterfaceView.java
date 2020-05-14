@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -7,6 +9,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractDetailTabListView;
+import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.VmInterfaceActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListView;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
@@ -31,6 +34,8 @@ public class SubTabVirtualMachineNetworkInterfaceView extends
     }
 
     private PatternflyListView<VM, VmNetworkInterface, VmInterfaceListModel> interfaceListView;
+    private final List<ActionButtonDefinition<?, VmNetworkInterface>> actionButtons;
+
 
     @Inject
     public SubTabVirtualMachineNetworkInterfaceView(
@@ -44,6 +49,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends
         interfaceListView.setModel(modelProvider.getModel());
         getContentPanel().add(interfaceListView);
         initWidget(getContentPanel());
+        actionButtons = actionPanel.getActionButtons();
     }
 
     @Override
@@ -68,6 +74,6 @@ public class SubTabVirtualMachineNetworkInterfaceView extends
     @Override
     public PatternflyListViewItem<VmNetworkInterface> createListViewItem(VmNetworkInterface selectedItem) {
         return new VmInterfaceListGroupItem(selectedItem, getDetailModel().getGuestAgentData(),
-                getDetailModel().getMapNicFilterParameter().get(selectedItem.getId()));
+                getDetailModel().getMapNicFilterParameter().get(selectedItem.getId()), actionButtons);
     }
 }

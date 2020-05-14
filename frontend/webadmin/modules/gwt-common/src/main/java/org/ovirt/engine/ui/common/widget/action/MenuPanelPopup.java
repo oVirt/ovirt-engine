@@ -56,12 +56,24 @@ public class MenuPanelPopup extends Composite {
         panel.setWidget(menu);
         initWidget(new SimplePanel(panel));
 
-        resources.style().ensureInjected();
-        panel.setStylePrimaryName(resources.style().actionPanelPopupPanel());
-        menu.setStylePrimaryName(resources.style().actionPanelPopupMenuBar());
+        ensureStyleInjected();
+        panel.setStylePrimaryName(getPopupPanelStyle());
+        menu.setStylePrimaryName(getMenuBarStyle());
 
         NodeList<Element> table = menu.getElement().getElementsByTagName("table"); //$NON-NLS-1$
         table.getItem(0).getStyle().setProperty("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    protected void ensureStyleInjected() {
+        resources.style().ensureInjected();
+    }
+
+    protected String getMenuBarStyle() {
+        return resources.style().actionPanelPopupMenuBar();
+    }
+
+    protected String getPopupPanelStyle() {
+        return resources.style().actionPanelPopupPanel();
     }
 
     public PopupPanel asPopupPanel() {
