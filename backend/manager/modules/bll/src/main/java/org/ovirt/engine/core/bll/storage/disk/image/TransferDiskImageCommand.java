@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -118,6 +119,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private Instance<TransferImageCommandCallback> callbackProvider;
 
     private ImageioClient proxyClient;
+    private VmBackup vmBackup;
 
     public TransferDiskImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -179,7 +181,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private ValidationResult isVmBackupExists() {
-        VmBackup vmBackup = vmBackupDao.get(getParameters().getBackupId());
+        VmBackup vmBackup = getVmBackup();
         if (vmBackup == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_NOT_EXIST);
         }
@@ -316,6 +318,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             diskImage = (DiskImage) diskDao.get(getParameters().getImageGroupID());
         }
         return diskImage;
+    }
+
+    private VmBackup getVmBackup() {
+        if (vmBackup == null) {
+            vmBackup = vmBackupDao.get(getParameters().getBackupId());
+        }
+        return vmBackup;
     }
 
     @Override
@@ -987,6 +996,34 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         updateEntityPhase(ImageTransferPhase.TRANSFERRING);
     }
 
+    @Override
+    protected boolean initializeVds() {
+        // In case of downloading a backup disk, the host that runs the VM must handle the transfer
+        if (getParameters().getBackupId() != null && getParameters().getTransferType() == TransferType.Download) {
+            VmBackup vmBackup = getVmBackup();
+            if (vmBackup == null) {
+                log.warn("Cannot download disk id: '{}' backup id: '{}' not exist.",
+                        getDiskImage().getId(),
+                        getParameters().getBackupId());
+                return false;
+            }
+
+            VM vm = vmDao.get(vmBackup.getVmId());
+            VDS vds = vdsDao.get(vm.getRunOnVds());
+            if (vds == null) {
+                // Can happen when the VM crashed and Not running on any host.
+                log.warn("Cannot download disk id: '{}' backup id: '{}', the VM is down.",
+                        getDiskImage().getId(),
+                        getParameters().getBackupId());
+                return false;
+            }
+
+            setVds(vds);
+            return true;
+        }
+        return super.initializeVds();
+    }
+
     private boolean addImageTicketToDaemon(Guid imagedTicketId, String imagePath) {
         if (getParameters().getTransferType() == TransferType.Upload &&
                 !setVolumeLegalityInStorage(ILLEGAL_IMAGE)) {
@@ -1026,8 +1063,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         if (getParameters().getBackupId() == null || getParameters().getTransferType() != TransferType.Download) {
             return false;
         }
-        VmBackup vmBackup = vmBackupDao.get(getParameters().getBackupId());
-        return vmBackup.isIncremental();
+        VmBackup vmBackup = getVmBackup();
+        return vmBackup != null && vmBackup.isIncremental();
     }
 
     private boolean addImageTicketToProxy(Guid imagedTicketId, String hostUri) {
