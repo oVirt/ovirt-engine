@@ -75,6 +75,30 @@ class Plugin(plugin.PluginBase):
         ])
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        condition=lambda self: (
+                not self.environment[
+                    osetupcons.CoreEnv.DEVELOPER_MODE
+                ] and self._enabled
+        ),
+        before=(
+                osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
+        ),
+        after=(
+                osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
+                oipcons.ImageIO.CONFIG_STAGE,
+        ),
+    )
+    def _customization_resereve_ports(self):
+        # Reserve imageio ports to avoid failures during starup when port was
+        # assinged to some other process.
+        # See https://bugzilla.redhat.com/1517764
+        self.environment[osetupcons.SystemEnv.RESERVED_PORTS].update([
+            oipcons.ImageIO.DATA_PORT,
+            oipcons.ImageIO.CONTROL_PORT,
+        ])
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self._enabled,
     )
