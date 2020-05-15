@@ -75,7 +75,8 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
     @SuppressWarnings("unchecked")
     private void initCapabilities() {
         List<String> capabilities = (List<String>) AsyncDataProvider.getInstance()
-                .getConfigValuePreConverted(ConfigValues.HostDevicePassthroughCapabilities);
+                .getConfigValuePreConverted(ConfigValues.HostDevicePassthroughCapabilities,
+                                            getVm().getCompatibilityVersion().getValue());
         getCapability().setItems(capabilities);
     }
 

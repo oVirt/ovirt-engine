@@ -126,6 +126,7 @@ public class VmDevicesConverter {
         result.addAll(parseDisks(document, devices));
         result.addAll(parseRedirs(document, devices));
         result.addAll(parseMemories(document, devices));
+        result.addAll(parseNvdimms(document, devices, hostId));
         result.addAll(parseManagedHostDevices(document, devices, addressToHostDeviceSupplier));
         result.addAll(parseUnmanagedHostDevices(document, devices, addressToHostDeviceSupplier));
         return result.stream()
@@ -222,7 +223,7 @@ public class VmDevicesConverter {
         List<VmDevice> dbDevices= filterDevices(devices, VmDeviceGeneralType.MEMORY);
 
         List<Map<String, Object>> result = new ArrayList<>();
-        for (XmlNode node : selectNodes(document, VmDeviceGeneralType.MEMORY)) {
+        for (XmlNode node : document.selectNodes("//*/memory[@model != 'nvdimm']")) {
             Map<String, Object> dev = new HashMap<>();
             dev.put(VdsProperties.Type, VmDeviceGeneralType.MEMORY.getValue());
             dev.put(VdsProperties.Device, VmDeviceGeneralType.MEMORY.getValue());
@@ -247,6 +248,53 @@ public class VmDevicesConverter {
                 specParams.put(SPEC_PARAM_SIZE, kiloBytesToMegaBytes(target.selectSingleNode(SIZE).innerText));
                 dev.put(VdsProperties.SpecParams, specParams);
             }
+
+            result.add(dev);
+        }
+        return result;
+    }
+
+    private String getDevicePath(final HostDevice hostDevice) {
+        return (String)hostDevice.getSpecParams().get(VdsProperties.DEVICE_PATH);
+    }
+
+    private List<Map<String, Object>> parseNvdimms(XmlDocument document, List<VmDevice> devices, Guid hostId) {
+        List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.HOSTDEV);
+        MemoizingSupplier<Map<String, HostDevice>> pathToHostDeviceSupplier =
+                new MemoizingSupplier<>(() -> hostDeviceDao.getHostDevicesByHostId(hostId)
+                        .stream()
+                        .filter(device -> device.getCapability().equals("nvdimm"))
+                        .collect(Collectors.toMap(device -> getDevicePath(device), device -> device)));
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (XmlNode node : document.selectNodes("//*/memory[@model='nvdimm']")) {
+            XmlNode path = node.selectSingleNode("./source/path");
+            if (path == null) {
+                log.warn("No <path> found in NVDIMM device XML");
+                continue;
+            }
+            HostDevice hostDevice = pathToHostDeviceSupplier.get().get(path.innerText);
+            if (hostDevice == null) {
+                log.warn("NVDIMM device of '{}' could not be matched with any known device", path);
+                continue;
+            }
+
+            Map<String, Object> dev = new HashMap<>();
+            dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
+            dev.put(VdsProperties.Type, VmDeviceGeneralType.HOSTDEV.getValue());
+            dev.put(VdsProperties.Alias, parseAlias(node));
+            dev.put(VdsProperties.Device, hostDevice.getDeviceName());
+
+            Optional<VmDevice> dbDev = correlateWithAlias(dev, dbDevices);
+
+            if (!dbDev.isPresent()) {
+                log.warn("NVDIMM device '{}' does not exist in the database, thus ignored",
+                         hostDevice.getDeviceName());
+                continue;
+            }
+
+            dev.put(VdsProperties.DeviceId, dbDev.get().getDeviceId().toString());
+            dev.put(VdsProperties.SpecParams, dbDev.get().getSpecParams());
 
             result.add(dev);
         }

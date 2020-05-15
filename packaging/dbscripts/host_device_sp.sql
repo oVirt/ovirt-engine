@@ -17,7 +17,8 @@ CREATE OR REPLACE FUNCTION InsertHostDevice (
     v_is_assignable BOOLEAN,
     v_address VARCHAR(255),
     v_mdev_types TEXT,
-    v_block_path TEXT
+    v_block_path TEXT,
+    v_hostdev_spec_params TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -40,7 +41,8 @@ BEGIN
         is_assignable,
         address,
         mdev_types,
-        block_path
+        block_path,
+        hostdev_spec_params
         )
     VALUES (
         v_host_id,
@@ -59,7 +61,8 @@ BEGIN
         v_is_assignable,
         v_address,
         v_mdev_types,
-        v_block_path
+        v_block_path,
+        v_hostdev_spec_params
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -81,7 +84,8 @@ CREATE OR REPLACE FUNCTION UpdateHostDevice (
     v_is_assignable BOOLEAN,
     v_address VARCHAR(255),
     v_mdev_types TEXT,
-    v_block_path TEXT
+    v_block_path TEXT,
+    v_hostdev_spec_params TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -104,7 +108,8 @@ BEGIN
         is_assignable = v_is_assignable,
         address = v_address,
         mdev_types = v_mdev_types,
-        block_path = v_block_path
+        block_path = v_block_path,
+        hostdev_spec_params = v_hostdev_spec_params
     WHERE host_id = v_host_id
         AND device_name = v_device_name;
 END;$PROCEDURE$

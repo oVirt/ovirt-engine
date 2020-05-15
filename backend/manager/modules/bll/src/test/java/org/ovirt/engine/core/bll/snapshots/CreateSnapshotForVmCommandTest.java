@@ -200,6 +200,27 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void testSaveMemoryNvdimmFailure() {
+        cmd.getParameters().setSaveMemory(true);
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_NVDIMM_DEVICES))
+                .when(vmValidator)
+                .vmNotHavingNvdimmDevices();
+        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        ValidateTestUtils.runAndAssertValidateFailure
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_NVDIMM_DEVICES);
+    }
+
+    @Test
+    public void testNoMemoryNvdimSuccess() {
+        cmd.getParameters().setSaveMemory(false);
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_NVDIMM_DEVICES))
+                .when(vmValidator)
+                .vmNotHavingNvdimmDevices();
+        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
+    }
+
+    @Test
     public void testVmUsesMdevTypeHook() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USES_MDEV_TYPE_HOOK)).when(vmValidator)
                 .vmNotUsingMdevTypeHook();

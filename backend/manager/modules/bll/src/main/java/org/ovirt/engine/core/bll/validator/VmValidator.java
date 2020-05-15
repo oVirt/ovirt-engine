@@ -249,6 +249,13 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult vmNotHavingNvdimmDevices() {
+        if (getHostDeviceManager().checkVmNeedsNvdimmDevices(vm.getId())) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_NVDIMM_DEVICES);
+        }
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult vmNotUsingMdevTypeHook() {
         Map<String, String> properties = getVmPropertiesUtils().getVMProperties(
                 vm.getCompatibilityVersion(),

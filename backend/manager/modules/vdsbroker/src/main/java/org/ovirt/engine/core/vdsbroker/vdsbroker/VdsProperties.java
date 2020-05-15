@@ -487,6 +487,11 @@ public final class VdsProperties {
     public static final String NET_INTERFACE_NAME = "interface";
     public static final String HOST_DEVICE_PASSTHROUGH = "hostdevPassthrough";
     public static final String IS_ASSIGNABLE = "is_assignable";
+    public static final String DEVICE_PATH = "device_path";
+    public static final String NUMA_NODE = "numa_node";
+    public static final String MODE = "mode";
+    public static final String DEVICE_SIZE = "device_size";
+    public static final String ALIGN_SIZE = "align_size";
 
     // fencing policy parameters
     public static final String STORAGE_DOMAIN_HOST_ID_MAP = "storageDomainHostIdMap";

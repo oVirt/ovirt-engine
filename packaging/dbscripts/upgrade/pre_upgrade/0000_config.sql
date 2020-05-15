@@ -195,8 +195,6 @@ select fn_db_add_config_value('DefaultSysprepLocale','en_US','general');
 -- default requirement for rng sources (empty string by default, additional legal value is 'HWRNG')
 select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefault', '', '4.5');
 
-select fn_db_add_config_value('HostDevicePassthroughCapabilities', 'pci,scsi,usb_device', 'general');
-
 -- The internal between checking for new updates availability for the host
 select fn_db_add_config_value('HostPackagesUpdateTimeInHours','24','general');
 
@@ -1247,6 +1245,9 @@ select fn_db_update_config_value_for_versions_from_up_to('UseNativeIOForGluster'
 
 -- Gluster Tuned profile --
 select fn_db_split_config_value('GlusterTunedProfile', 'rhs-high-throughput,rhs-virtualization', 'virtual-host,rhgs-sequential-io,rhgs-random-io', '4.2');
+
+-- Host device capabilities
+select fn_db_split_config_value('HostDevicePassthroughCapabilities', 'pci,scsi,usb_device', 'pci,scsi,usb_device,nvdimm', '4.4');
 ------------------------------------------------------------------------------------
 --                  Simple direct updates section
 ------------------------------------------------------------------------------------

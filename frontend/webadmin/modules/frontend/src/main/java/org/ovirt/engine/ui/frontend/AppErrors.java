@@ -2671,6 +2671,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VM_NUMA_NODE_INVALID_CPU_ID();
 
+    String VM_NVDIMM_NUMA_UNAVAILABLE();
+
     String VAR__DETAIL__NOT_HE_HOST();
 
     String VAR__DETAIL__HE_HOST_NOT_POSITIVE_SCORE();
@@ -2918,6 +2920,8 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_VM_HAS_ATTACHED_PCI_HOST_DEVICES();
 
     String ACTION_TYPE_FAILED_VM_HAS_ATTACHED_SCSI_HOST_DEVICES();
+
+    String ACTION_TYPE_FAILED_VM_HAS_ATTACHED_NVDIMM_DEVICES();
 
     String ACTION_TYPE_FAILED_VM_USES_MDEV_TYPE_HOOK();
 

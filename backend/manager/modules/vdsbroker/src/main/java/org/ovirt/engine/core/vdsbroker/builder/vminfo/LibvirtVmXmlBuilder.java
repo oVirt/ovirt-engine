@@ -373,15 +373,18 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeMaxMemory() {
+        Long nvdimmSize = vmInfoBuildUtils.getNvdimmTotalSize(vm, hostDevicesSupplier);
+
         if (!FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())
                 // the next check is because QEMU fails if memory and maxMemory are the same
-                || vm.getVmMemSizeMb() == vm.getMaxMemorySizeMb()) {
+                || (vm.getVmMemSizeMb() == vm.getMaxMemorySizeMb()) && nvdimmSize == 0) {
                 return;
         }
 
+        long maxMemory = (long) vm.getMaxMemorySizeMb() * 1024 + nvdimmSize / 1024;
         writer.writeStartElement("maxMemory");
         writer.writeAttributeString("slots", Config.getValue(ConfigValues.MaxMemorySlots).toString());
-        writer.writeRaw(String.valueOf((long) vm.getMaxMemorySizeMb() * 1024));
+        writer.writeRaw(String.valueOf(maxMemory));
         writer.writeEndElement();
     }
 
@@ -578,16 +581,25 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeNumaTune() {
+    private Map<String, Object> getNumaTuneSetting() {
         NumaTuneMode numaTune = vm.getNumaTuneMode();
         if (numaTune == null) {
-            return;
+            return null;
         }
 
         Map<String, Object> numaTuneSetting = NumaSettingFactory.buildVmNumatuneSetting(
                 numaTune,
                 vmNumaNodesSupplier.get());
         if (numaTuneSetting.isEmpty()) {
+            return null;
+        }
+
+        return numaTuneSetting;
+    }
+
+    private void writeNumaTune() {
+        Map<String, Object> numaTuneSetting = getNumaTuneSetting();
+        if (numaTuneSetting == null) {
             return;
         }
 
@@ -1551,6 +1563,9 @@ public class LibvirtVmXmlBuilder {
                 writeScsiHostDevice(new VmHostDevice(device), hostDevice);
             }
             break;
+        case "nvdimm":
+            writeNvdimmHostDevice(new VmHostDevice(device), hostDevice);
+            break;
         default:
             log.warn("Skipping host device: {}", device.getDevice());
         }
@@ -1733,6 +1748,76 @@ public class LibvirtVmXmlBuilder {
         writeAddress(device);
         // TODO: boot
         writer.writeEndElement();
+    }
+
+    private void writeNvdimmHostDevice(VmHostDevice device, HostDevice hostDevice) {
+        Map<String, Object> specParams = hostDevice.getSpecParams();
+        String mode = (String)specParams.get(VdsProperties.MODE);
+        String numaNode = (String)specParams.get(VdsProperties.NUMA_NODE);
+        String targetNode = vmInfoBuildUtils.getMatchingNumaNode(vm, getNumaTuneSetting(), vmNumaNodesSupplier, numaNode);
+        if (targetNode == null) {
+            log.error("No NUMA node, cannot add NVDIMM devices");
+            return;
+        }
+        Long alignSize = (Long)specParams.get(VdsProperties.ALIGN_SIZE);
+        if (alignSize == null) {
+            // If we didn't specify alignsize, libvirt would select one based on memory page size.
+            // Better to set it ourselves, to the memory block size.
+            // See also VmInfoBuildUtils::getNvdimmAlignedSize().
+            alignSize = new Long(vm.getClusterArch().getHotplugMemorySizeFactorMb() * 1024 * 1024);
+        }
+        Long size = vmInfoBuildUtils.getNvdimmAlignedSize(vm, hostDevice);
+        if (size == null) {
+            log.error("Invalid alignment, cannot add NVDIMM device");
+            return;
+        }
+
+        // <memory model='nvdimm' access='shared'>
+        //   <source>
+        //     <path>/dev/pmem0</path>
+        //     <alignsize unit='KiB'>2048</alignsize>
+        //     <pmem/>
+        //   </source>
+        //   <target>
+        //     <size unit='KiB'>16646144</size>
+        //     <node>0</node>
+        //     <label>
+        //       <size unit='KiB'>128</size>
+        //     </label>
+        //   </target>
+        //   <alias name="ua-1234"/>
+        // </memory>
+        writer.writeStartElement("memory");
+        writer.writeAttributeString("model", "nvdimm");
+        writer.writeAttributeString("access", "shared");
+
+        writer.writeStartElement("source");
+        writer.writeElement("path", (String)specParams.get(VdsProperties.DEVICE_PATH));
+        writer.writeStartElement("alignsize");
+        writer.writeAttributeString("unit", "KiB");
+        writer.writeRaw(String.valueOf(alignSize / 1024));
+        writer.writeEndElement();  // alignsize
+        if (!"raw".equals(mode) && !"sector".equals(mode)) {
+            writer.writeElement("pmem");
+        }
+        writer.writeEndElement();  // source
+
+        writer.writeStartElement("target");
+        writer.writeStartElement("size");
+        writer.writeAttributeString("unit", "KiB");
+        writer.writeRaw(String.valueOf(size / 1024));
+        writer.writeEndElement();  // size
+        writer.writeElement("node", targetNode);
+        writer.writeStartElement("label");
+        writer.writeStartElement("size");
+        writer.writeAttributeString("unit", "KiB");
+        writer.writeRaw(String.valueOf(VmInfoBuildUtils.NVDIMM_LABEL_SIZE / 1024));
+        writer.writeEndElement();  // size
+        writer.writeEndElement();  // label
+        writer.writeEndElement();  // target
+
+        writeAlias(device);
+        writer.writeEndElement();  // memory
     }
 
     private void writeRedir(VmDevice device) {

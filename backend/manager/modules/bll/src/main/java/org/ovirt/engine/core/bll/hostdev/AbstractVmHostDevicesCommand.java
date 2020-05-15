@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
 public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParameters> extends VmCommand<P> {
 
@@ -28,6 +29,8 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
     private HostDeviceDao hostDeviceDao;
     @Inject
     private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VmInfoBuildUtils vmInfoBuildUtils;
 
     private List<HostDevice> hostDevices;
 
@@ -66,6 +69,15 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
 
         if (getHostDevices() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_FOUND);
+        }
+
+        for (HostDevice hostDevice : getAffectedHostDevices()) {
+            if (hostDevice.getCapability().equals("nvdimm")) {
+                if (vmInfoBuildUtils.getVmNumaNodes(getVm()).isEmpty()) {
+                    return failValidation(EngineMessage.VM_NVDIMM_NUMA_UNAVAILABLE);
+                }
+                break;
+            }
         }
 
         return true;

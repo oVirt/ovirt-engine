@@ -2629,6 +2629,24 @@ public class VdsBrokerObjectsBuilder {
                 device.setBlockPath(Objects.toString(params.get(VdsProperties.BlockPath), null));
             }
 
+            Map<String, Object> specParams = new HashMap<>();
+            if (params.containsKey(VdsProperties.DEVICE_PATH)) {
+                specParams.put(VdsProperties.DEVICE_PATH, params.get(VdsProperties.DEVICE_PATH).toString());
+            }
+            if (params.containsKey(VdsProperties.NUMA_NODE)) {
+                specParams.put(VdsProperties.NUMA_NODE, params.get(VdsProperties.NUMA_NODE).toString());
+            }
+            if (params.containsKey(VdsProperties.MODE)) {
+                specParams.put(VdsProperties.MODE, params.get(VdsProperties.MODE).toString());
+            }
+            if (params.containsKey(VdsProperties.DEVICE_SIZE)) {
+                specParams.put(VdsProperties.DEVICE_SIZE, assignLongValue(params, VdsProperties.DEVICE_SIZE));
+            }
+            if (params.containsKey(VdsProperties.ALIGN_SIZE)) {
+                specParams.put(VdsProperties.ALIGN_SIZE, assignLongValue(params, VdsProperties.ALIGN_SIZE));
+            }
+            device.setSpecParams(specParams);
+
             devices.add(device);
         }
 

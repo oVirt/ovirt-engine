@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
@@ -121,6 +122,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IgnitionHandler;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IoTuneUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NetworkQosMapper;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.NumaSettingFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VmSerialNumberBuilder;
 import org.slf4j.Logger;
@@ -174,6 +176,8 @@ public class VmInfoBuildUtils {
     private static final Pattern BLOCK_DOMAIN_MATCHER =
             Pattern.compile(String.format(BLOCK_DOMAIN_DISK_PATH, ValidationUtils.GUID,
                     ValidationUtils.GUID, ValidationUtils.GUID));
+
+    public static final int NVDIMM_LABEL_SIZE = 128 * 1024;
 
     @Inject
     VmInfoBuildUtils(
@@ -1328,6 +1332,31 @@ public class VmInfoBuildUtils {
         return true;
     }
 
+    public String getMatchingNumaNode(VM vm, Map<String, Object> numaTuneSetting, MemoizingSupplier<List<VmNumaNode>> vmNumaNodesSupplier, String preferredNode) {
+        String node = null;
+        NumaTuneMode numaTune = vm.getNumaTuneMode();
+        if (numaTuneSetting != null) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, String>> memNodes = (List<Map<String, String>>) numaTuneSetting.get(VdsProperties.NUMA_TUNE_MEMNODES);
+            if (memNodes != null) {
+                for (Map<String, String> memnode : memNodes) {
+                    if (memnode.get((String) VdsProperties.NUMA_TUNE_NODESET) == preferredNode) {
+                        node = (String) memnode.get(VdsProperties.NUMA_TUNE_VM_NODE_INDEX);
+                        break;
+                    }
+                }
+            }
+        }
+        if (node == null) {
+            // Matching node not found, use any other node.
+            List<Map<String, Object>> numaNodes = NumaSettingFactory.buildVmNumaNodeSetting(vmNumaNodesSupplier.get());
+            if (!numaNodes.isEmpty()) {
+                node = numaNodes.get(0).get(VdsProperties.NUMA_NODE_INDEX).toString();
+            }
+        }
+        return node;
+    }
+
     public List<VmDevice> getVmDevices(Guid vmId) {
         return vmDeviceDao.getVmDeviceByVmId(vmId);
     }
@@ -1577,5 +1606,50 @@ public class VmInfoBuildUtils {
 
     String getCpuFlags(Guid vdsGuid) {
         return vdsDynamicDao.get(vdsGuid).getCpuFlags();
+    }
+
+    private Long alignDown(Long size, Long alignment) {
+        return (size / alignment) * alignment;
+    }
+
+    public Long getNvdimmAlignedSize(VM vm, HostDevice hostDevice) {
+        // Beware: The sizes computed here cannot be changed otherwise data corruption/loss may happen!
+        Map<String, Object> specParams = hostDevice.getSpecParams();
+        final Long hotplugAlignment = new Long(vm.getClusterArch().getHotplugMemorySizeFactorMb() * 1024 * 1024);
+        final Long nvdimmAlignment = (Long)specParams.getOrDefault(VdsProperties.ALIGN_SIZE, hotplugAlignment);
+        // Libvirt performs size alignments, sometimes up rather than down, let's make an initial alignment down
+        // here to be safe.
+        Long size = alignDown((Long)specParams.get(VdsProperties.DEVICE_SIZE), hotplugAlignment);
+        // Libvirt subtracts label size on POWER before checking for alignments.
+        if (vm.getClusterArch().getFamily() == ArchitectureType.ppc) {
+            size += NVDIMM_LABEL_SIZE;
+        }
+        // After QEMU subtracts label size from the NVDIMM size and aligns it down to the align size,
+        // the resulting size must be aligned to hot plug memory size factor in order to make regular
+        // memory hot plug working.
+        // See https://github.com/qemu/qemu/blob/v5.0.0/hw/mem/nvdimm.c#L143 for the related QEMU computations.
+        final Long qemu_memory_size = alignDown(size - NVDIMM_LABEL_SIZE, nvdimmAlignment);
+        if (nvdimmAlignment != null && hotplugAlignment % nvdimmAlignment == 0) {
+            // Additional alignment on hot plug size needed
+            size -= qemu_memory_size % hotplugAlignment;
+        } else if (nvdimmAlignment != null && nvdimmAlignment % hotplugAlignment != 0) {
+            // We can't align this
+            log.error("Memory ({}) or NVDIMM ({}) alignment not a power of 2", hotplugAlignment, nvdimmAlignment);
+            return null;
+        }  // else: NVDIMM alignment aligned with hot plug alignment, no adjustment needed
+        return size;
+    }
+
+    public Long getNvdimmTotalSize(VM vm, MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier) {
+        long size = 0;
+        for (VmDevice device : getVmDevices(vm.getId())) {
+            if (device.isPlugged() && device.getType() == VmDeviceGeneralType.HOSTDEV) {
+                HostDevice hostDevice = hostDevicesSupplier.get().get(device.getDevice());
+                if (hostDevice.getCapability().equals("nvdimm")) {
+                    size += getNvdimmAlignedSize(vm, hostDevice);
+                }
+            }
+        }
+        return size;
     }
 }
