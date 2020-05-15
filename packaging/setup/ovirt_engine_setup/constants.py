@@ -379,6 +379,7 @@ class SystemEnv(object):
     SELINUX_PORTS = 'OVESETUP_SYSTEM/selinuxPorts'
 
     HOSTILE_SERVICES = 'OVESETUP_SYSTEM/hostileServices'
+    RESERVED_PORTS = 'OVESETUP_SYSTEM/reservedPorts'
 
 
 @util.export

@@ -65,7 +65,7 @@ class FileLocations(object):
     OVIRT_ENGINE_SYSCTL = os.path.join(
         SYSCONFDIR,
         'sysctl.d',
-        'ovirt-postgresql.conf',
+        'ovirt-engine.conf',
     )
     OVIRT_ENGINE_PKI_APACHE_CA_CERT = os.path.join(
         OVIRT_ENGINE_PKIDIR,

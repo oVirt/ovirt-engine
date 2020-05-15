@@ -33,7 +33,7 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-        self._enabled = False
+        self._settings = []
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -42,6 +42,11 @@ class Plugin(plugin.PluginBase):
         self.environment.setdefault(
             oengcommcons.SystemEnv.SHMMAX,
             oengcommcons.Defaults.DEFAULT_SYSTEM_SHMMAX
+        )
+        # Plugins that want to reserve a port should add the port to this set.
+        self.environment.setdefault(
+            osetupcons.SystemEnv.RESERVED_PORTS,
+            set()
         )
 
     @plugin.event(
@@ -53,11 +58,10 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
     )
-    def _validation(self):
-        self._content = (
-            "# ovirt-engine configuration.\n"
-            "kernel.shmmax = %s\n"
-        ) % self.environment[oengcommcons.SystemEnv.SHMMAX]
+    def _validate_shmmax(self):
+        content = "kernel.shmmax = {}\n".format(
+            self.environment[oengcommcons.SystemEnv.SHMMAX]
+        )
 
         interactive = self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
 
@@ -75,7 +79,7 @@ class Plugin(plugin.PluginBase):
                 )
 
                 if not interactive:
-                    self._enabled = True
+                    self._settings.append(content)
                     break
                 else:
                     self.logger.warning(_('Manual intervention is required'))
@@ -94,7 +98,7 @@ class Plugin(plugin.PluginBase):
                             file=(
                                 oengcommcons.FileLocations.OVIRT_ENGINE_SYSCTL
                             ),
-                            content=self._content,
+                            content=content,
                             sysctl=self.command.get('sysctl'),
                         )
                     )
@@ -115,15 +119,33 @@ class Plugin(plugin.PluginBase):
                         )
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+    )
+    def _validate_reserved_ports(self):
+        reserved_ports = self.environment[
+            osetupcons.SystemEnv.RESERVED_PORTS
+        ]
+        if reserved_ports:
+            self._settings.append(
+                "net.ipv4.ip_local_reserved_ports = {}\n".format(
+                    ",".join(str(port) for port in sorted(reserved_ports))
+                )
+            )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=osetupcons.Stages.SYSTEM_SYSCTL_CONFIG_AVAILABLE,
         priority=plugin.Stages.PRIORITY_HIGH,
     )
     def _misc(self):
-        if self._enabled:
+        if self._settings:
+            content = "".join(
+                ["# ovirt-engine configuration.\n"] + self._settings
+            )
+
             sysctl = filetransaction.FileTransaction(
                 name=oengcommcons.FileLocations.OVIRT_ENGINE_SYSCTL,
-                content=self._content,
+                content=content,
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
                 ],
