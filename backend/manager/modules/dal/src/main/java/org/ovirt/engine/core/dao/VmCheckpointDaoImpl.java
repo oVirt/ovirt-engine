@@ -86,4 +86,10 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
         getCallsHandler().executeModification("DeleteAllVmCheckpointDiskMapByVmCheckpointId",
                 getCustomMapSqlParameterSource().addValue("checkpoint_id", checkpointId));
     }
+
+    @Override
+    public void removeAllCheckpointsByVmId(Guid vmId) {
+        getCallsHandler().executeModification("DeleteAllCheckpointsByVmId",
+                getCustomMapSqlParameterSource().addValue("vm_id", vmId));
+    }
 }

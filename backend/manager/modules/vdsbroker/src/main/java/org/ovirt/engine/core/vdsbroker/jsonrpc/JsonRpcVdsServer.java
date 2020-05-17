@@ -2274,7 +2274,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         JsonRpcRequest request =
                 new RequestBuilder("VM.delete_checkpoints")
                         .withParameter("vmID", vmId)
-                        .withParameter("checkpoints", checkpointIds)
+                        .withParameter("checkpoint_ids", checkpointIds)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new VmCheckpointInfo(response);

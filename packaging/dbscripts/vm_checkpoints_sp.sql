@@ -90,6 +90,15 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION DeleteAllCheckpointsByVmId (v_vm_id UUID)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE
+    FROM vm_checkpoints
+    WHERE vm_id = v_vm_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 ----------------------------------------------------------------
 -- [vm_checkpoint_disk_map] Table
 ----------------------------------------------------------------------

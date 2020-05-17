@@ -350,16 +350,20 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             log.info("No previous VM checkpoints found for VM '{}', skip redefining VM checkpoints", getVmId());
             return true;
         }
-        List<VmCheckpoint> checkpointsToSync = getCheckpointIdsToSync(checkpoints);
+        VDSReturnValue listVdsReturnValue = performVmCheckpointsOperation(VDSCommandType.ListVmCheckpoints,
+                new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
+        List<Guid> definedCheckpointsIds = (List<Guid>) listVdsReturnValue.getReturnValue();
+        List<VmCheckpoint> checkpointsToSync = getCheckpointIdsToSync(checkpoints, definedCheckpointsIds);
+
         if (checkpointsToSync != null && checkpointsToSync.isEmpty()) {
             log.info("Checkpoints chain is already defined for VM '{}'", getVmId());
             return true;
         }
 
         if (checkpointsToSync == null) {
-            log.info("Checkpoints chain for VM '{}' isn't synced with libvirt", getVmId());
-            // TODO: need to implement checkpoint deletion from the engine DB and libvirt
-
+            log.info("Checkpoints chain for VM '{}' isn't synced with libvirt, remove the VM checkpoints chain",
+                    getVmId());
+            removeCheckpointChain(definedCheckpointsIds);
             return false;
         }
 
@@ -370,17 +374,17 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             VmCheckpointInfo vmCheckpointInfo = (VmCheckpointInfo) redefineVdsReturnValue.getReturnValue();
             if (vmCheckpointInfo == null || vmCheckpointInfo.getError() != null
                     || vmCheckpointInfo.getCheckpointsIds().size() == 0) {
+                log.info("Failed to redefine VM '{}' checkpoint '{}', remove the VM checkpoints chain",
+                        getVmId(),
+                        checkpoint.getId());
+                removeCheckpointChain(definedCheckpointsIds);
                 return false;
             }
         }
         return true;
     }
 
-    private List<VmCheckpoint> getCheckpointIdsToSync(List<VmCheckpoint> vmCheckpoints) {
-        VDSReturnValue listVdsReturnValue = performVmCheckpointsOperation(VDSCommandType.ListVmCheckpoints,
-                new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
-        List<Guid> definedCheckpointsIds = (List<Guid>) listVdsReturnValue.getReturnValue();
-
+    private List<VmCheckpoint> getCheckpointIdsToSync(List<VmCheckpoint> vmCheckpoints, List<Guid> definedCheckpointsIds) {
         if (definedCheckpointsIds.isEmpty()) {
             // Need to redefine the entire chain
             return vmCheckpoints;
@@ -399,6 +403,23 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
         // Checkpoints chain is synced
         return Collections.emptyList();
+    }
+
+    private void removeCheckpointChain(List<Guid> definedCheckpointsIds) {
+        for (Guid checkpointId : definedCheckpointsIds) {
+            // Best effort to remove all checkpoints in the chain from libvirt,
+            // starting from the oldest checkpoint to the leaf.
+            VmCheckpoint vmCheckpoint = new VmCheckpoint();
+            vmCheckpoint.setId(checkpointId);
+            performVmCheckpointsOperation(VDSCommandType.DeleteVmCheckpoints,
+                    new VmCheckpointsVDSParameters(getVdsId(), getVmId(), List.of(vmCheckpoint)));
+        }
+
+        // Removing all the checkpoints from the Engine database
+        TransactionSupport.executeInNewTransaction(() -> {
+            vmCheckpointDao.removeAllCheckpointsByVmId(getVmId());
+            return null;
+        });
     }
 
     private VDSReturnValue performVmCheckpointsOperation(VDSCommandType vdsCommandType,
