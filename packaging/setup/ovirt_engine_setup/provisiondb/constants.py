@@ -109,4 +109,13 @@ class ProvDBEnv(object):
     RESTORE_JOBS = 'OVESETUP_PROVISION_DB/restoreJobs'
 
 
+@util.export
+@util.codegen
+@osetupattrsclass
+class ConfigEnv(object):
+    PROVISION_DB = 'OVESETUP_PROVISIONDB_CONFIG/provisionDb'
+    PROVISION_USER = 'OVESETUP_PROVISIONDB_CONFIG/provisionUser'
+    ADD_TO_PG_HBA = 'OVESETUP_PROVISIONDB_CONFIG/addToPGHBA'
+    GRANT_READONLY = 'OVESETUP_PROVISIONDB_CONFIG/grantReadOnly'
+
 # vim: expandtab tabstop=4 shiftwidth=4

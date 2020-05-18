@@ -163,7 +163,9 @@ BACKUP_PATHS="/etc/ovirt-engine
 /etc/firewalld/services/ovirt-postgres.xml
 /etc/firewalld/services/ovirt-provider-ovn.xml
 /etc/firewalld/services/ovn-central-firewall-service.xml
-/var/lib/openvswitch"
+/var/lib/openvswitch
+/etc/grafana
+/var/lib/grafana"
 # Add /var/lib/ovirt-engine except a few
 VAR_LIB_EXCLUSIONS="/var/lib/ovirt-engine/backups
 /var/lib/ovirt-engine/jboss_runtime
@@ -1262,6 +1264,8 @@ provisionDB() {
 
 	cat << __EOF__ > "${answerfile}"
 [environment:default]
+OVESETUP_PROVISIONDB_CONFIG/provisionDb=bool:True
+OVESETUP_PROVISIONDB_CONFIG/provisionUser=bool:True
 OVESETUP_PROVISION_DB/host=str:localhost
 OVESETUP_PROVISION_DB/port=int:5432
 OVESETUP_PROVISION_DB/secured=bool:False
@@ -1316,8 +1320,32 @@ __EOF__
 				grep -Ev "^${user}\$|^postgres\$|^PUBLIC\$" > "${extra_users}"
 
 		for extrau in $(cat "${extra_users}"); do
-			output "- extra user '${extrau}' having grants on database ${database}, created with a random password"
-			/usr/share/ovirt-engine/setup/bin/ovirt-engine-provisiondb --otopi-environment="OVESETUP_PROVISION_DB/user=str:${extrau}" < /dev/null > "${pgprovisionlog}" 2>&1
+			cat << __EOF__ > "${answerfile}"
+[environment:default]
+OVESETUP_PROVISIONDB_CONFIG/provisionDb=bool:False
+OVESETUP_PROVISIONDB_CONFIG/provisionUser=bool:True
+OVESETUP_PROVISION_DB/host=str:localhost
+OVESETUP_PROVISION_DB/port=int:5432
+OVESETUP_PROVISION_DB/secured=bool:False
+OVESETUP_PROVISION_DB/securedHostValidation=bool:False
+OVESETUP_PROVISION_DB/database=str:${database}
+OVESETUP_PROVISION_DB/user=str:${extrau}
+OVESETUP_PROVISION_DB/dumper=str:pg_custom
+OVESETUP_PROVISION_DB/filter=none:None
+OVESETUP_PROVISION_DB/restoreJobs=int:2
+OVESETUP_CORE/engineStop=bool:False
+__EOF__
+			if [ "${extrau}" = "${GRAFANA_DB_USER}" -a "${database}" = "${DWH_DB_DATABASE}" ]; then
+				output "- user '${extrau}' on database '${database}'"
+				cat << __EOF__ >> "${answerfile}"
+OVESETUP_PROVISION_DB/password=str:${GRAFANA_DB_PASSWORD}
+OVESETUP_PROVISIONDB_CONFIG/addToPGHBA=bool:True
+OVESETUP_PROVISIONDB_CONFIG/grantReadOnly=bool:True
+__EOF__
+			else
+				output "- extra user '${extrau}' having grants on database ${database}, created with a random password"
+			fi
+			/usr/share/ovirt-engine/setup/bin/ovirt-engine-provisiondb --config-append="${answerfile}" < /dev/null > "${pgprovisionlog}" 2>&1
 			provrc=$?
 			cat "${pgprovisionlog}" >> "${LOG}"  2>&1 \
 				|| logdie "Failed to append pg provisioning log to restore log"
@@ -1384,6 +1412,7 @@ must be owner of extension uuid-ossp
 # when restoring backups from older versions, that do include this
 schema "public" already exists
 must be owner of schema public
+must be member of role "postgres"
 #
 # engine uses uuid-ossp PG extension, which requires special privs,
 permission denied for language c

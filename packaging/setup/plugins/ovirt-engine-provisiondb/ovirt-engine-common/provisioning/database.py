@@ -13,6 +13,7 @@
 import gettext
 
 from otopi import plugin
+from otopi import transaction
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
@@ -73,16 +74,10 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
     )
     def _misc(self):
-        if self.environment[oprovisioncons.ProvDBEnv.DATABASE]:
+        if self.environment.get(oprovisioncons.ConfigEnv.PROVISION_DB):
             self._provisioning.provision()
-        elif self.environment[oprovisioncons.ProvDBEnv.USER]:
+        if self.environment.get(oprovisioncons.ConfigEnv.PROVISION_USER):
             self._provisioning.createUser()
-        else:
-            self.logger.info(
-                _(
-                    "Neither database nor user provided, doing nothing"
-                )
-            )
         if self._provisioning.databaseRenamed:
             osetuputil.addExitCode(
                 environment=self.environment,
@@ -104,6 +99,14 @@ class Plugin(plugin.PluginBase):
                     ],
                 )
             )
+        if self.environment.get(oprovisioncons.ConfigEnv.ADD_TO_PG_HBA):
+            with transaction.Transaction() as localtransaction:
+                self._provisioning.addPgHbaDatabaseAccess(
+                    transaction=localtransaction,
+                )
+        if self.environment.get(oprovisioncons.ConfigEnv.GRANT_READONLY):
+            self._provisioning.grantReadOnlyAccessToUser()
+        self._provisioning.restartPG()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
