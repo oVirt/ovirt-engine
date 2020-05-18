@@ -101,12 +101,16 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             return false;
         }
 
+        DiskImagesValidator diskImagesValidator = createDiskImagesValidator(getDisks());
+        if (!validate(diskImagesValidator.diskImagesNotLocked())) {
+            return false;
+        }
+
         if (getParameters().getVmBackup().getFromCheckpointId() != null) {
             if (!FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_NOT_SUPPORTED);
             }
 
-            DiskImagesValidator diskImagesValidator = createDiskImagesValidator(getDisks());
             if (!validate(diskImagesValidator.incrementalBackupEnabled())) {
                 return false;
             }

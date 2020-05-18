@@ -100,6 +100,14 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
 
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
+    public void validateFailedDiskLocked() {
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED))
+                .when(diskImagesValidator).diskImagesNotLocked();
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
+    }
+
+    @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedVmNotQualifiedForBackup() {
         mockVm(VMStatus.Down);
         doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
