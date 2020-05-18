@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageBlockSize;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -43,6 +44,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
@@ -217,6 +220,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 if (getParameters().getActivate()) {
                     attemptToActivateDomain();
                 }
+                checkFreeSpace(getStorageDomain());
                 setSucceeded(true);
             }
         }
@@ -246,7 +250,28 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         setSucceeded(true);
     }
 
+    private void checkFreeSpace(StorageDomain storageDomain) {
+        AuditLogType type = AuditLogType.UNASSIGNED;
+        Integer freeDiskInGB = storageDomain.getStorageDynamicData().getAvailableDiskSize();
+        if (freeDiskInGB != null) {
+            double freePercent = storageDomain.getStorageDynamicData().getfreeDiskPercent();
+            if (freePercent < storageDomain.getWarningLowSpaceIndicator()) {
+                type = AuditLogType.IRS_DISK_SPACE_LOW;
+            }
+            if (freeDiskInGB < storageDomain.getCriticalSpaceActionBlocker()) {
+                // Note, if both conditions are met, only IRS_DISK_SPACE_LOW_ERROR will be shown
+                type = AuditLogType.IRS_DISK_SPACE_LOW_ERROR;
+            }
+        }
 
+        if (type != AuditLogType.UNASSIGNED) {
+            AuditLogable loggable = new AuditLogableImpl();
+            loggable.setStorageDomainId(storageDomain.getId());
+            loggable.setStorageDomainName(storageDomain.getStorageName());
+            loggable.addCustomValue("DiskSpace", storageDomain.getAvailableDiskSize().toString());
+            auditLogDirector.log(loggable, type, "", true);
+        }
+    }
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {

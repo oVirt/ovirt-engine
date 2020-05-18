@@ -25,8 +25,8 @@ public class EventFloodRegulator {
      *
      * @return should the action be logged again
      */
-    public boolean isLegal() {
-        if (useTimeout) {
+    public boolean isLegal(boolean ignoreTimeout) {
+        if (useTimeout && !ignoreTimeout) {
             String key = "".equals(timeoutObjectId) ? logType.toString() : timeoutObjectId;
             String oldValue = CacheManager.getTimeoutBaseCache().putIfAbsent(
                     key,

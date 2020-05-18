@@ -22,7 +22,11 @@ public class AuditLogDirector {
     private AuditLogDao auditLogDao;
 
     public void log(AuditLogable auditLogable, AuditLogType logType) {
-        log(auditLogable, logType, "");
+        log(auditLogable, logType, "", false);
+    }
+
+    public void log(AuditLogable auditLogable, AuditLogType logType, String message){
+        log(auditLogable, logType, message, false);
     }
 
     private AuditLogDirector() {
@@ -37,14 +41,16 @@ public class AuditLogDirector {
      *            the log type to be logged
      * @param message
      *            the message to be logged, which overrides the calculated message provided by the given auditLogable
+     * @param ignoreTimeout
+     *            the indication if ignore the time limit set for log or not in special cases
      */
-    public void log(AuditLogable auditLogable, AuditLogType logType, String message) {
+    public void log(AuditLogable auditLogable, AuditLogType logType, String message, boolean ignoreTimeout) {
         if (!logType.shouldBeLogged()) {
             return;
         }
 
         EventFloodRegulator eventFloodRegulator = new EventFloodRegulator(auditLogable, logType);
-        if (eventFloodRegulator.isLegal()) {
+        if (eventFloodRegulator.isLegal(ignoreTimeout)) {
             AuditLog savedAuditLog = saveToDb(auditLogable, logType, message);
             if (savedAuditLog == null) {
                 log.warn("Unable to create AuditLog");
