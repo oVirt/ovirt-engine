@@ -283,7 +283,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     private void finalizeVmBackup() {
-        vmBackupDao.removeAllDisksFromBackup(getParameters().getVmBackup().getId());
         unlockDisks();
     }
 
@@ -292,7 +291,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         log.info("Remove VmCheckpoint entity '{}'", vmCheckpointId);
 
         TransactionSupport.executeInNewTransaction(() -> {
-            vmCheckpointDao.removeAllDisksFromCheckpoint(vmCheckpointId);
             vmCheckpointDao.remove(vmCheckpointId);
             return null;
         });
