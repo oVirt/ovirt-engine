@@ -202,7 +202,7 @@ cleanup() {
 		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" -1 "Failed"
 	fi
 
-	[ -n "${TEMP_FOLDER}" ] && rm -rf "${TEMP_FOLDER}"
+	[ -n "${TEMP_FOLDER}" -a -z "${KEEP_TEMP_FOLDER}" ] && rm -rf "${TEMP_FOLDER}"
 }
 
 trap cleanup 0
