@@ -1302,11 +1302,11 @@ __EOF__
 		elif [ "${format}" = "custom" ]; then
 			local no_perms=
 			if [ -z "${compressor}" ]; then
-				pg_restore "${backupfile}" -s 2> "${pgrestorelog}"
+				pg_restore "${backupfile}" -s -f - 2> "${pgrestorelog}"
 			else
 				# Requires the compressor to support '-d'. All our current ones do.
 				"${compressor}" -d < "${backupfile}" | \
-					pg_restore -s 2> "${pgrestorelog}"
+					pg_restore -s -f - 2> "${pgrestorelog}"
 			fi
 		else
 			logdie "Unsupported format ${format}"
