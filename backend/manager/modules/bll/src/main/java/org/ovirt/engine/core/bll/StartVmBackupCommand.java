@@ -172,6 +172,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         if (vmBackup.getFromCheckpointId() != null) {
             log.info("Redefine previous VM checkpoints for VM '{}'", vmBackup.getVmId());
             if (!redefineVmCheckpoints()) {
+                addCustomValue("backupId", vmBackupId.toString());
+                auditLogDirector.log(this, AuditLogType.VM_INCREMENTAL_BACKUP_FAILED_FULL_VM_BACKUP_NEEDED);
                 setCommandStatus(CommandStatus.FAILED);
                 return;
             }
@@ -277,6 +279,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         if (vmBackupInfo == null || vmBackupInfo.getCheckpoint() == null) {
             // Best effort - stop the backup
             runInternalAction(ActionType.StopVmBackup, getParameters());
+            addCustomValue("backupId", getParameters().getVmBackup().getId().toString());
             auditLogDirector.log(this, AuditLogType.VM_BACKUP_STOPPED);
             log.error("Failed to fetch checkpoint id: '{}' XML from Libvirt, VM id: '{}' "
                             + "backup chain cannot be used anymore and a full backup should be taken.",
@@ -523,6 +526,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     @Override
     public AuditLogType getAuditLogTypeValue() {
         addCustomValue("VmName", getVm().getName());
+        addCustomValue("backupId", getParameters().getVmBackup().getId().toString());
         switch (getActionState()) {
             case EXECUTE:
                 return AuditLogType.VM_BACKUP_STARTED;
