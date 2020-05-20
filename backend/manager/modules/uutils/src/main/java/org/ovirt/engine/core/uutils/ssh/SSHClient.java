@@ -36,6 +36,7 @@ import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.client.session.ClientSession.ClientSessionEvent;
 import org.apache.sshd.common.NamedFactory;
+import org.apache.sshd.common.kex.extension.DefaultClientKexExtensionHandler;
 import org.apache.sshd.common.signature.BuiltinSignatures;
 import org.apache.sshd.common.signature.Signature;
 import org.slf4j.Logger;
@@ -77,7 +78,10 @@ public class SSHClient implements Closeable {
          * and perform host key verification by comparing received key with keys in our database.
          */
         sshClient.setSignatureFactories(Arrays.<NamedFactory<Signature>> asList(
+                BuiltinSignatures.rsaSHA512,
+                BuiltinSignatures.rsaSHA256,
                 BuiltinSignatures.rsa));
+        sshClient.setKexExtensionHandler(new DefaultClientKexExtensionHandler());
         return sshClient;
     }
 
