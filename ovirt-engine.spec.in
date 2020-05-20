@@ -268,7 +268,7 @@ Requires:	openstack-java-quantum-client >= %{openstack_java_version}
 Requires:	openstack-java-quantum-model >= %{openstack_java_version}
 Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 Requires:	python3-dnf-plugin-versionlock
-Requires:	apache-sshd
+Requires:	apache-sshd >= 2.5.0
 Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 2.4.1

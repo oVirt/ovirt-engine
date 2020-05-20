@@ -16,6 +16,7 @@ import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
+import org.apache.sshd.server.shell.ProcessShellCommandFactory;
 import org.apache.sshd.server.shell.ProcessShellFactory;
 
 public class SSHD {
@@ -93,12 +94,15 @@ public class SSHD {
                         "/bin/sh",
                         "-i"));
         sshd.setCommandFactory(
-                command -> new ProcessShellFactory(
-                        new String[] {
-                                "/bin/sh",
-                                "-c",
-                                command
-                        }).create());
+                (channelSession, command) -> new ProcessShellCommandFactory()
+                        .createCommand(
+                                channelSession,
+                                String.join(" ",
+                                        new String[] {
+                                                "/bin/sh",
+                                                "-c",
+                                                command
+                                        })));
     }
 
     public int getPort() {
