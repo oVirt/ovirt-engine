@@ -724,6 +724,8 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         cluster.setStoragePoolId(model.getDataCenter().getSelectedItem().getId());
         if (model.getCPU().getSelectedItem() != null) {
             cluster.setCpuName(model.getCPU().getSelectedItem().getCpuName());
+        } else {
+            cluster.setCpuName(null);
         }
         cluster.setBiosType(model.getBiosType().getSelectedItem());
         cluster.setMaxVdsMemoryOverCommit(model.getMemoryOverCommit());

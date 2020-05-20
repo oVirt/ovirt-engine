@@ -224,6 +224,11 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     }
 
     private void reDetectDefaultsForDeprecatedCPUs() {
+        // if the CPU has set Auto detect, do not change it
+        if (StringUtils.isEmpty(getCluster().getCpuName())) {
+            return;
+        }
+
         boolean oldCpuExists = cpuFlagsManagerHandler.checkIfCpusExist(oldCluster.getCpuName(),
                 getParameters().getCluster().getCompatibilityVersion());
         boolean newCpuExists = cpuFlagsManagerHandler.checkIfCpusExist(getParameters().getCluster().getCpuName(),
