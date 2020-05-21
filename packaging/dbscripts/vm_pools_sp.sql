@@ -149,7 +149,8 @@ BEGIN
             vm_pool_id UUID,
             assigned_vm_count INT
             )
-            WITH OIDS;
+            WITH OIDS
+            ON COMMIT DROP;
 
         exception when others then
 
@@ -173,7 +174,8 @@ BEGIN
             vm_pool_id UUID,
             vm_running_count INT
             )
-            WITH OIDS;
+            WITH OIDS
+            ON COMMIT DROP;
 
         exception when others then
 
@@ -200,7 +202,8 @@ BEGIN
             assigned_vm_count INT,
             vm_running_count INT
             )
-            WITH OIDS;
+            WITH OIDS
+            ON COMMIT DROP;
 
         exception when others then
 
@@ -242,7 +245,8 @@ BEGIN
             is_being_destroyed BOOLEAN,
             is_auto_storage_select BOOLEAN
             )
-            WITH OIDS;
+            WITH OIDS
+            ON COMMIT DROP;
 
         exception when others then
 
