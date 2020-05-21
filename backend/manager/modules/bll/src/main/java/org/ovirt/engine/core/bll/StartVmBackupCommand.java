@@ -350,15 +350,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             log.info("No previous VM checkpoints found for VM '{}', skip redefining VM checkpoints", getVmId());
             return true;
         }
+
         VDSReturnValue listVdsReturnValue = performVmCheckpointsOperation(VDSCommandType.ListVmCheckpoints,
                 new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
         List<Guid> definedCheckpointsIds = (List<Guid>) listVdsReturnValue.getReturnValue();
         List<VmCheckpoint> checkpointsToSync = getCheckpointIdsToSync(checkpoints, definedCheckpointsIds);
-
-        if (checkpointsToSync != null && checkpointsToSync.isEmpty()) {
-            log.info("Checkpoints chain is already defined for VM '{}'", getVmId());
-            return true;
-        }
 
         if (checkpointsToSync == null) {
             log.info("Checkpoints chain for VM '{}' isn't synced with libvirt, remove the VM checkpoints chain",
@@ -367,13 +363,18 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             return false;
         }
 
+        if (checkpointsToSync.isEmpty()) {
+            log.info("Checkpoints chain is already defined for VM '{}'", getVmId());
+            return true;
+        }
+
         for (VmCheckpoint checkpoint : checkpointsToSync) {
             // Checkpoint can be redefined in bulks, currently redefine one checkpoint each time
             VDSReturnValue redefineVdsReturnValue = performVmCheckpointsOperation(VDSCommandType.RedefineVmCheckpoints,
                     new VmCheckpointsVDSParameters(getVdsId(), getVmId(), List.of(checkpoint)));
             VmCheckpointInfo vmCheckpointInfo = (VmCheckpointInfo) redefineVdsReturnValue.getReturnValue();
             if (vmCheckpointInfo == null || vmCheckpointInfo.getError() != null
-                    || vmCheckpointInfo.getCheckpointsIds().size() == 0) {
+                    || vmCheckpointInfo.getCheckpointsIds().isEmpty()) {
                 log.info("Failed to redefine VM '{}' checkpoint '{}', remove the VM checkpoints chain",
                         getVmId(),
                         checkpoint.getId());
@@ -395,7 +396,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             if (!definedCheckpointsIterator.hasNext()) {
                 // A part of the DB checkpoints chains should be redefined
                 return vmCheckpoints.subList(i, vmCheckpoints.size());
-            } else if (!vmCheckpoints.get(i).getId().equals(definedCheckpointsIterator.next())) {
+            }
+            if (!vmCheckpoints.get(i).getId().equals(definedCheckpointsIterator.next())) {
                 // The checkpoint chains in the DB and in Libvirt aren't synced
                 return null;
             }
