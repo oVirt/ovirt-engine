@@ -154,7 +154,9 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 runAnsibleReconfigureGluster(oldGlusterClusterNode, firstGlusterClusterNode,
                     secondGlusterClusterNode, maintenanceVds);
             } else {
-                if(!getVds().getClusterSupportsGlusterService()) {
+                if(!getParameters().getReconfigureGluster()){
+                    log.info("Reconfigure gluster is disabled");
+                } else if(!getVds().getClusterSupportsGlusterService()) {
                     log.info("Skipping Reconfigure gluster since cluster does not support gluster");
                 } else if(vdsDao.getAllForCluster(getClusterId()).size()<3) {
                     log.info("Skipping Reconfigure gluster since minimum of three hosts are required in the same cluster");

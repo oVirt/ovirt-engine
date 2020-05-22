@@ -204,7 +204,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             tempVar.setAuthMethod(getParameters().getAuthMethod());
             tempVar.setActivateHost(getParameters().getActivateHost());
             tempVar.setHostedEngineDeployConfiguration(getParameters().getHostedEngineDeployConfiguration());
-            tempVar.setReconfigureGluster(getParameters().getReconfigureGluster());
+            tempVar.setReconfigureGluster(false);
 
             List<ActionReturnValue> resultList = runInternalMultipleActions(
                     actionType,

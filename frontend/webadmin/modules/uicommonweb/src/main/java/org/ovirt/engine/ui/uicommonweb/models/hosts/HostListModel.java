@@ -1333,11 +1333,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         model.getOverrideIpTables().setIsAvailable(true);
         model.getOverrideIpTables().setEntity(true);
         model.getActivateHostAfterInstall().setEntity(true);
-        if(host.getClusterSupportsGlusterService()) {
-            model.getReconfigureGluster().setIsAvailable(true);
-        } else {
-            model.getReconfigureGluster().setIsAvailable(false);
-        }
+        model.getReconfigureGluster().setIsAvailable(false);
         addInstallCommands(model, host, false);
         getWindow().stopProgress();
     }
