@@ -187,7 +187,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     }
 
     private void updateCpuTypeWarning(WidgetWithWarn widgetWithWarn) {
-        if (getModel().getConfiguredCpuType() == null) {
+        if (getModel().isHostedEngine() || getModel().getConfiguredCpuType() == null) {
             widgetWithWarn.setIconVisible(false);
             return;
         }

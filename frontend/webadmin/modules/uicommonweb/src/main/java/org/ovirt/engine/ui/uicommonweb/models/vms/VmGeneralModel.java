@@ -36,6 +36,8 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     public static final String CONFIGURED_CPU_TYPE_PROPERTY_CHANGE = "ConfiguredCpuType";//$NON-NLS-1$
 
+    public static final String IS_HOSTED_ENGINE = "IsHostedEngine";//$NON-NLS-1$
+
     public static final String STATUS = "Status";//$NON-NLS-1$
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
@@ -558,6 +560,19 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
     }
 
+    private boolean hostedEngine;
+
+    public boolean isHostedEngine() {
+        return hostedEngine;
+    }
+
+    public void setHostedEngine(boolean value) {
+        if (!Objects.equals(hostedEngine, value)) {
+            hostedEngine = value;
+            onPropertyChanged(new PropertyChangedEventArgs(IS_HOSTED_ENGINE));
+        }
+    }
+
     static {
         updateCompleteEventDefinition = new EventDefinition("UpdateComplete", VmGeneralModel.class); //$NON-NLS-1$
     }
@@ -720,26 +735,38 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
             setDefaultHost(ConstantsManager.getInstance().getConstants().anyHostInCluster());
         }
 
-        String guestCpuType = vm.getCpuName() != null
+        setHostedEngine(vm.isHostedEngine());
+        setGuestCpuType(calculateGuestCpuTypeText(vm));
+        setConfiguredCpuType(vm.getConfiguredCpuVerb());
+    }
+
+    private String calculateGuestCpuTypeText(VM vm) {
+        if (vm.isHostedEngine()) {
+            return constants.notAvailableLabel();
+        }
+
+        if (vm.isUseHostCpuFlags()) {
+            if (vm.getCpuName() != null && !vm.getCpuName().isEmpty()) {
+                String guestCpuType = vm.getCpuName();
+
+                // if cpu-pass through is enabled then guestCpuType includes a list of cpu flags and supported cpu
+                // models reported by the host.
+                // Need to filter out all supported CPU models from of the list and leave only all cpu flags that the vm
+                // is running with
+                guestCpuType = Stream.of(guestCpuType.split(",")) //$NON-NLS-1$
+                        .filter(flag -> !flag.contains("model_")) //$NON-NLS-1$
+                        .collect(Collectors.joining(", ")); //$NON-NLS-1$
+                return guestCpuType;
+            } else {
+                return constants.cpuPassthrough();
+            }
+        }
+
+        return vm.getCpuName() != null
                 ? vm.getCpuName()
                 : (vm.getCustomCpuName() != null
                         ? vm.getCustomCpuName()
                         : vm.getClusterCpuVerb());
-
-        if (vm.getCpuName() == null && vm.isUseHostCpuFlags()) {
-            guestCpuType = constants.cpuPassthrough();
-        }
-
-        // if cpu-pass through is enabled then guestCpuType includes a list of cpu flags and supported cpu models reported by the host.
-        // Need to filter out all supported CPU models from of the list and leave only all cpu flags that the vm is running with
-        if (guestCpuType != null && !guestCpuType.isEmpty() && vm.isUseHostCpuFlags()) {
-            guestCpuType = Stream.of(guestCpuType.split(",")) //$NON-NLS-1$
-                    .filter(flag -> !flag.contains("model_")) //$NON-NLS-1$
-                    .collect(Collectors.joining(", ")); //$NON-NLS-1$
-        }
-
-        setGuestCpuType(guestCpuType);
-        setConfiguredCpuType(vm.getConfiguredCpuVerb());
     }
 
     @Override

@@ -92,7 +92,9 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
     }
 
     private static boolean clusterCpuChanged(VM vm){
-        return vm.isRunningOrPaused()
+        return vm.isManaged()
+                && !vm.isHostedEngine()
+                && vm.isRunningOrPaused()
                 && vm.getCustomCpuName() == null
                 && !vm.isUsingCpuPassthrough()
                 && !Objects.equals(vm.getCpuName(), vm.getClusterCpuVerb());
