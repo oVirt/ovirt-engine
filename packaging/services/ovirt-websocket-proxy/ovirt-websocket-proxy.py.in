@@ -218,6 +218,7 @@ class OvirtProxyRequestHandler(websockify.ProxyRequestHandler):
     def __init__(self, retsock, address, proxy, *args, **kwargs):
         self._proxy = proxy
         self.target_path = None
+        self.target_token = None
         websockify.ProxyRequestHandler.__init__(self, retsock, address, proxy,
                                                 *args, **kwargs)
 
@@ -232,14 +233,11 @@ class OvirtProxyRequestHandler(websockify.ProxyRequestHandler):
             self._proxy._ticketDecoder.decode(path[1:])))
         target_host = connection_data['host'].encode('utf8')
         target_port = connection_data['port'].encode('utf8')
-        try:
-            path = connection_data['path']
-        except KeyError:
-            path = None
-        if path is not None:
+        path = connection_data.get('path')
+        if path:
             self.target_path = path.encode('utf8')
-        token = connection_data['token']
-        if token is not None:
+        token = connection_data.get('token')
+        if token:
             self.target_token = token.encode('utf8')
         self.server.ssl_target = connection_data['ssl_target']
         return (target_host, target_port)
