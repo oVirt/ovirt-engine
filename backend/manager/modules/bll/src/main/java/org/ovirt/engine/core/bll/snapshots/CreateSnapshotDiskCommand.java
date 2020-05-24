@@ -187,8 +187,10 @@ public class CreateSnapshotDiskCommand<T extends CreateSnapshotDiskParameters> e
         result.setParentCommand(getActionType());
         result.setParentParameters(getParameters());
         DiskImage diskImage = getParameters().getDiskImagesMap().get(image.getId());
-        result.setDestinationImageId(diskImage.getImageId());
-        result.setInitialSizeInBytes(diskImage.getInitialSizeInBytes());
+        if (diskImage != null) {
+            result.setDestinationImageId(diskImage.getImageId());
+            result.setInitialSizeInBytes(diskImage.getInitialSizeInBytes());
+        }
         if (getParameters().getDiskIdsToIgnoreInChecks().contains(image.getId())) {
             result.setLeaveLocked(true);
         }
