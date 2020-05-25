@@ -815,6 +815,10 @@ class OvirtUtils(base.Base):
             'pg_restore: \\[archiver \\(db\\)\\] could not execute query: '
             'ERROR:  must be owner of extension uuid-ossp'
         ),
+        (
+            'pg_restore: error: could not execute query: ERROR:  '
+            'must be owner of extension uuid-ossp'
+        ),
 
         # older versions of dwh used uuid-ossp, which requires
         # special privs, is not used anymore, and emits the following
@@ -835,7 +839,8 @@ class OvirtUtils(base.Base):
         # formats etc we must explicitely filter all existing output
         # and not just ERRORs.
         'pg_restore: \\[archiver \\(db\\)\\] Error while PROCESSING TOC:',
-        '    Command was: COMMENT ON EXTENSION',
+        'pg_restore: while PROCESSING TOC:',
+        ' *Command was: COMMENT ON EXTENSION.*',
         (
             'pg_restore: \\[archiver \\(db\\)\\] Error from TOC entry \\d+'
             '; 0 0 COMMENT EXTENSION plpgsql'
@@ -846,6 +851,7 @@ class OvirtUtils(base.Base):
             'pg_restore: \\[archiver \\(db\\)\\] Error from TOC entry \\d+'
             '; 0 0 COMMENT EXTENSION "uuid-ossp"'
         ),
+        'pg_restore: from TOC entry \\d+; 0 0 COMMENT EXTENSION "uuid-ossp"',
         (
             'pg_restore: \\[archiver \\(db\\)\\] Error from TOC entry \\d+'
             '; \\d+ \\d+ PROCEDURAL LANGUAGE plpgsql'
@@ -853,6 +859,7 @@ class OvirtUtils(base.Base):
         'pg_restore: WARNING:',
         'WARNING: ',
         'DETAIL:  ',
+        'pg_restore: warning: errors ignored on restore: \\d+',
     )
 
     _RE_IGNORED_ERRORS = re.compile(
