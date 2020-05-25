@@ -1,5 +1,9 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
@@ -16,11 +20,14 @@ import org.ovirt.engine.api.restapi.resource.BackendAssignedPermissionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedRolesResource;
 import org.ovirt.engine.api.restapi.resource.BackendEventSubscriptionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendUserTagsResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
+import org.ovirt.engine.core.common.action.UpdateUserParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * This resource corresponds to an user that has been added to the engine and
@@ -30,6 +37,22 @@ public class BackendUserResource
         extends AbstractBackendSubResource<User, DbUser>
         implements UserResource {
 
+    private static final String[] IMMUTABLE_FIELDS = {
+            "department",
+            "domainEntryId",
+            "email",
+            "lastName",
+            "loggedIn",
+            "namespace",
+            "password",
+            "principal",
+            "userName",
+            "domain",
+            "groups",
+            "permissions",
+            "roles",
+            "sshPublicKeys",
+            "tags"};
     private BackendUsersResource parent;
 
     public BackendUserResource(String id, BackendUsersResource parent) {
@@ -48,6 +71,29 @@ public class BackendUserResource
     @Override
     public User get() {
         return performGet(QueryType.GetDbUserByUserId, new IdQueryParameters(guid), BaseResource.class);
+    }
+
+    @Override
+    public User update(User user) {
+        return performUpdate(user,
+                new QueryIdResolver<Guid>(QueryType.GetDbUserByUserId, IdQueryParameters.class),
+                ActionType.UpdateUserOptions,
+                new UpdateParametersProvider());
+    }
+
+    public class UpdateParametersProvider implements ParametersProvider<User, DbUser> {
+        @Override
+        public ActionParametersBase getParameters(User model, DbUser entity) {
+            return new UpdateUserParameters(map(model, entity));
+        }
+    }
+
+    @Override
+    protected String[] getStrictlyImmutable() {
+        List<String> all = new ArrayList<>();
+        all.addAll(Arrays.asList(super.getStrictlyImmutable()));
+        all.addAll(Arrays.asList(IMMUTABLE_FIELDS));
+        return all.toArray(new String[] {});
     }
 
     @Override

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -59,6 +60,10 @@ public class DbUser implements Queryable, Nameable {
     @Size(max = BusinessEntitiesDefinitions.USER_NOTE_SIZE)
     private String note;
 
+    /**
+     * Expect (key,value) pairs where
+     * value is a string containing valid JSON node
+     */
     private Map<String, String> userOptions;
 
     /**
@@ -120,7 +125,7 @@ public class DbUser implements Queryable, Nameable {
             groupIds = new ArrayList<>(dbUser.getGroupIds());
             groupNames = new ArrayList<>(dbUser.getGroupNames());
             isAdmin = dbUser.isAdmin();
-            userOptions = new HashMap<>(dbUser.getUserOptions());
+            setUserOptions(dbUser.getUserOptions());
         }
     }
 
@@ -234,14 +239,15 @@ public class DbUser implements Queryable, Nameable {
     }
 
     public Map<String, String> getUserOptions() {
-        if (userOptions == null) {
-            userOptions = Collections.emptyMap();
-        }
-        return userOptions;
+        return Optional.ofNullable(userOptions)
+                .<Map<String, String>> map(HashMap::new)
+                .orElse(Collections.emptyMap());
     }
 
     public void setUserOptions(Map<String, String> userOptions) {
-        this.userOptions = userOptions;
+        this.userOptions = Optional.ofNullable(userOptions)
+                .<Map<String, String>> map(HashMap::new)
+                .orElse(Collections.emptyMap());
     }
 
     public Collection<Guid> getGroupIds() {
@@ -263,7 +269,8 @@ public class DbUser implements Queryable, Nameable {
                 firstName,
                 note,
                 lastName,
-                loginName
+                loginName,
+                userOptions
         );
     }
 
@@ -285,7 +292,8 @@ public class DbUser implements Queryable, Nameable {
                 && Objects.equals(note, other.note)
                 && Objects.equals(lastName, other.lastName)
                 && Objects.equals(loginName, other.loginName)
-                && Objects.equals(isAdmin, other.isAdmin);
+                && Objects.equals(isAdmin, other.isAdmin)
+                && Objects.equals(userOptions, other.userOptions);
 
     }
 

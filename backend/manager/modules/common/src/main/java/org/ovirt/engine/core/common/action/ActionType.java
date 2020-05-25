@@ -220,6 +220,7 @@ public enum ActionType {
     AddGroup(420, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     LoginOnBehalf(424, false, QuotaDependency.NONE),
     CreateUserSession(425, ActionGroup.LOGIN, false, QuotaDependency.NONE),
+    UpdateUserOptions(426, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
 
     // UserProfile
     AddUserProfile(421, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),

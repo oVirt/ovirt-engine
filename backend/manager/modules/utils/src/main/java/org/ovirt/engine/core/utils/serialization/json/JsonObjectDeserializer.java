@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.CollectionType;
@@ -92,6 +93,10 @@ public class JsonObjectDeserializer implements Deserializer {
      */
     public <T extends Serializable> T deserializeUnformattedJson(Object source, Class<T> type) throws SerializationException {
         return readJsonString(source, type, unformattedMapper);
+    }
+
+    public JsonNode deserializeUnformattedJson(String source) throws SerializationException {
+        return readJsonString(source, JsonNode.class, unformattedMapper);
     }
 
     public <T extends Serializable> List<T> deserializeUnformattedList(String source, Class<T> contentType) {

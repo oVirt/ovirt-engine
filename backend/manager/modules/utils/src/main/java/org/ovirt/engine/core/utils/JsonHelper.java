@@ -50,17 +50,25 @@ public class JsonHelper {
     }
 
     public static Map<String, Object> jsonToMapUnchecked(String jsonString) {
+        return jsonToMapUnchecked(jsonString, Object.class);
+    }
+
+    public static <T> Map<String, T> jsonToMapUnchecked(String jsonString, Class<T> clazz) {
         try {
-            return jsonToMap(jsonString);
+            return jsonToMap(jsonString, clazz);
         } catch (IOException e) {
             throw new RuntimeException(String.format("Json string \"%s\" cannot be parsed to a Map.", jsonString), e);
         }
     }
 
     public static Map<String, Object> jsonToMap(String jsonString) throws IOException {
+        return jsonToMap(jsonString, Object.class);
+    }
+
+    public static <T> Map<String, T> jsonToMap(String jsonString, Class<T> clazz) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        MapType type = mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class);
-        Map<String, Object> data = mapper.readValue(jsonString, type);
+        MapType type = mapper.getTypeFactory().constructMapType(Map.class, String.class, clazz);
+        Map<String, T> data = mapper.readValue(jsonString, type);
         return data;
     }
 

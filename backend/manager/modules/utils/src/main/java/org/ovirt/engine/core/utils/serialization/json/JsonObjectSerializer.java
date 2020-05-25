@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -95,6 +96,10 @@ public class JsonObjectSerializer implements Serializer {
      * @return The string value of the serialized object.
      */
     public String serializeUnformattedJson(Serializable payload) throws SerializationException {
+        return writeJsonAsString(payload, unformattedMapper);
+    }
+
+    public String serializeUnformattedJson(JsonNode payload) throws SerializationException {
         return writeJsonAsString(payload, unformattedMapper);
     }
 }
