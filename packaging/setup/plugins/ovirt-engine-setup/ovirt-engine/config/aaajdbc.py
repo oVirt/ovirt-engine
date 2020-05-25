@@ -325,11 +325,11 @@ class Plugin(plugin.PluginBase):
             name=adminUser,
         ):
             self._setUserEmail(
-            toolArgs=toolArgs,
-            toolEnv=toolEnv,
-            name=adminUser,
-            email=adminEmail,
-        )
+                toolArgs=toolArgs,
+                toolEnv=toolEnv,
+                name=adminUser,
+                email=adminEmail,
+            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,

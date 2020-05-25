@@ -919,7 +919,7 @@ class Plugin(plugin.PluginBase):
             current_premissions = stat.S_IMODE(
                 os.lstat(
                     oenginecons.OvnFileLocations.
-                        OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
+                    OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
                 ).st_mode
             )
             permissions_to_remove = stat.S_IRWXO | stat.S_IRWXG
@@ -929,12 +929,12 @@ class Plugin(plugin.PluginBase):
                     'Removing unnecessary permissions on {file}.'
                 ).format(
                     file=oenginecons.OvnFileLocations.
-                        OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
+                    OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
                 ))
                 # This is not reverted on rollback.
                 os.chmod(
                     oenginecons.OvnFileLocations.
-                        OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE,
+                    OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE,
                     desired_permissions
                 )
         except OSError as error:
@@ -943,7 +943,7 @@ class Plugin(plugin.PluginBase):
                     'Unable to ensure permissions on {file}'
                 ).format(
                     file=oenginecons.OvnFileLocations.
-                        OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
+                    OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
                 )
                 )
             else:

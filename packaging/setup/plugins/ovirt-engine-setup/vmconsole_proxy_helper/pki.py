@@ -278,16 +278,21 @@ class Plugin(plugin.PluginBase):
                     os.path.join(
                         ovmpcons.FileLocations.VMCONSOLE_PKI_DIR,
                         'proxy-ssh_host_rsa',
-                    ))
-                or
-                (os.stat(oenginecons.FileLocations.
-                         OVIRT_ENGINE_PKI_ENGINE_CA_CERT).st_mtime
-                 >
-                 os.stat(os.path.join(
-                     ovmpcons.FileLocations.VMCONSOLE_PKI_DIR,
-                     'proxy-ssh_host_rsa',
-                 )).st_mtime
-                ))
+                    )
+                ) or
+                (
+                    os.stat(
+                        oenginecons.FileLocations.
+                        OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+                    ).st_mtime >
+                    os.stat(
+                        os.path.join(
+                            ovmpcons.FileLocations.VMCONSOLE_PKI_DIR,
+                            'proxy-ssh_host_rsa',
+                        )
+                    ).st_mtime
+                )
+            )
         ),
     )
     def _miscPKIProxy(self):

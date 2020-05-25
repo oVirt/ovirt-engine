@@ -27,8 +27,8 @@ class ImageIO(object):
     # WARNING: This file owned by ovirt-engine. If you modify this file your
     # changes will be overwritten in the next ovirt-engine upgrade.
     #
-    # To change the configuration create a new drop-in file with higher prefix, so
-    # your setting will override ovirt-engine configuration:
+    # To change the configuration create a new drop-in file with higher prefix,
+    # so your setting will override ovirt-engine configuration:
     #
     # $ cat /etc/ovirt-imageio/conf.d/99-locl.conf
     # [tls]
