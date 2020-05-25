@@ -920,7 +920,16 @@ class OvirtUtils(base.Base):
                 stdin.close()
 
         rc = res['result'][-1]['rc']
-        stderr = res['result'][-1]['stderr'].splitlines()
+        stderr = res[
+            'result'
+        ][
+            -1
+        ][
+            'stderr'
+        ].decode(
+            'utf-8',
+            'replace'
+        ).splitlines()
 
         self.logger.debug('db restore rc %s stderr %s', rc, stderr)
 
