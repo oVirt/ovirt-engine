@@ -1540,7 +1540,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         } else {
             getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getEffectiveVersion());
         }
-        if (!getBiosType().getIsChangable()) {
+        if (!getBiosType().getIsChangable() && getBiosType().getSelectedItem() == null) {
             getBiosType().setSelectedItem(BiosType.CLUSTER_DEFAULT);
             return;
         }
