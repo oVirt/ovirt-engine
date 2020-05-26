@@ -214,7 +214,11 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
 
     @Override
     protected void executeVmCommand() {
-        lockImageInDb();
+        // Locking an image in DB is required for extending disks size,
+        // which doesn't apply for LUN disks.
+        if (getOldDisk().getDiskStorageType().isInternal()) {
+            lockImageInDb();
+        }
         List<UpdateDiskParameters.Phase> phaseList = new ArrayList<>();
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
         if (resizeDiskImageRequested()) {
@@ -744,13 +748,18 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
 
     @Override
     protected void endSuccessfully() {
-        unlockImageInDb();
-        setSucceeded(true);
+        endOperation();
     }
 
     @Override
     protected void endWithFailure() {
-        unlockImageInDb();
+        endOperation();
+    }
+
+    private void endOperation() {
+        if (getOldDisk().getDiskStorageType().isInternal()) {
+            unlockImageInDb();
+        }
         setSucceeded(true);
     }
 
@@ -1049,13 +1058,13 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
     public void lockImageInDb() {
         final DiskImage diskImage = (DiskImage) getOldDisk();
 
-         TransactionSupport.executeInNewTransaction(() -> {
-             getCompensationContext().snapshotEntityStatus(diskImage.getImage());
-             getCompensationContext().stateChanged();
-             diskImage.setImageStatus(ImageStatus.LOCKED);
-             imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
-             return null;
-         });
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().snapshotEntityStatus(diskImage.getImage());
+            getCompensationContext().stateChanged();
+            diskImage.setImageStatus(ImageStatus.LOCKED);
+            imagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
+            return null;
+        });
     }
 
     public void unlockImageInDb() {
