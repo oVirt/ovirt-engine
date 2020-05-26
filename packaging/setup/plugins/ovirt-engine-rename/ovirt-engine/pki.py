@@ -256,7 +256,7 @@ class Plugin(plugin.PluginBase):
         )[0].set_data(
             self.environment[
                 osetupcons.RenameEnv.FQDN
-            ]
+            ].encode('utf8')
         )
 
         self.execute(
