@@ -694,7 +694,6 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
     }
 
     private void extendCinderDiskSize() {
-        lockImageInDb();
         CinderDisk newCinderDisk = (CinderDisk) getNewDisk();
         Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.ExtendCinderDisk,
@@ -713,7 +712,6 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
     }
 
     private void extendManagedBlockDiskSize() {
-        lockImageInDb();
         ManagedBlockStorageDisk newManagedBlockDisk = (ManagedBlockStorageDisk) getNewDisk();
         Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.ExtendManagedBlockStorageDiskSize,
