@@ -113,7 +113,8 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
             parameters.setMemoryDump((DiskImage) diskDao.get(snapshot.getMemoryDiskId()));
             parameters.setMemoryConf((DiskImage) diskDao.get(snapshot.getMetadataDiskId()));
         }
-        parameters.setVmFrozen(shouldFreezeOrThawVm());
+        parameters.setVmFrozen(shouldFreezeOrThawVm() ||
+                getParameters().getParentCommand() == ActionType.LiveMigrateDisk);
 
         // Get the Live Snapshot timeout
         parameters.setLiveSnapshotTimeout(Config.getValue(ConfigValues.LiveSnapshotTimeoutInMinutes));
@@ -122,9 +123,26 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
     }
 
     private boolean shouldFreezeOrThawVm() {
-        return isLiveSnapshotApplicable() && (Config.<Boolean>getValue(ConfigValues.LiveSnapshotPerformFreezeInEngine) ||
-                (diskOfTypeExists(DiskStorageType.CINDER) || diskOfTypeExists(DiskStorageType.MANAGED_BLOCK_STORAGE)) &&
-                getParameters().getParentCommand() != ActionType.LiveMigrateDisk);
+        if (!isLiveSnapshotApplicable()) {
+            return false; // only relevant for live snapshots
+        }
+
+        if (isMemorySnapshotSupported() && getParameters().isSaveMemory()) {
+            return false; // irrelevant for snapshots that contain memory
+        }
+
+        if (getParameters().getParentCommand() == ActionType.LiveMigrateDisk) {
+            return false; // irrelevant for snapshot taken as part of live storage migration
+        }
+
+        if (Config.<Boolean>getValue(ConfigValues.LiveSnapshotPerformFreezeInEngine)) {
+            return true;
+        }
+
+        if (diskOfTypeExists(DiskStorageType.CINDER) || diskOfTypeExists(DiskStorageType.MANAGED_BLOCK_STORAGE)) {
+            return true;
+        }
+        return false;
     }
 
     private boolean diskOfTypeExists(DiskStorageType type) {
