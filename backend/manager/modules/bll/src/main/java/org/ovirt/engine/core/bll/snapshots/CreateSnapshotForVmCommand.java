@@ -579,7 +579,11 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             parameters.setMemoryDump((DiskImage) diskDao.get(snapshot.getMemoryDiskId()));
             parameters.setMemoryConf((DiskImage) diskDao.get(snapshot.getMetadataDiskId()));
         }
-        parameters.setVmFrozen(shouldFreezeOrThawVm());
+        // In case the snapshot is auto-generated for live storage migration,
+        // we do not want to issue an FS freeze thus setting vmFrozen to true
+        // so a freeze will not be issued by Vdsm.
+        parameters.setVmFrozen(shouldFreezeOrThawVm() ||
+                getParameters().getParentCommand() == ActionType.LiveMigrateDisk);
 
         return parameters;
     }
@@ -674,16 +678,30 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         auditLogDirector.log(this, auditLogType);
     }
 
-    // In case the snapshot is auto-generated for live storage migration,
-    // we do not want to issue an FS freeze thus setting vmFrozen to true
-    // so a freeze will not be issued by Vdsm. LiveSnapshotPerformFreezeInEngine
-    // value will perform the freeze/thaw command in the engine in order to avoid
-    // possible data corruption. In case the freeze is stuck in VDSM and there is no
-    // reliable way to tell if the volume is used or not.
+    // LiveSnapshotPerformFreezeInEngine value will perform the freeze/thaw command in the engine in order to avoid
+    // possible data corruption. This is relevant only for live snapshot without memory.
+    // In case the freeze is stuck in VDSM and there is no reliable way to tell if the volume is used or not.
     private boolean shouldFreezeOrThawVm() {
-        return isLiveSnapshotApplicable() && (Config.<Boolean>getValue(ConfigValues.LiveSnapshotPerformFreezeInEngine) ||
-                (diskOfTypeExists(DiskStorageType.CINDER) || diskOfTypeExists(DiskStorageType.MANAGED_BLOCK_STORAGE)) &&
-                getParameters().getParentCommand() != ActionType.LiveMigrateDisk);
+        if (!isLiveSnapshotApplicable()) {
+            return false; // only relevant for live snapshots
+        }
+
+        if (isMemorySnapshotSupported() && getParameters().isSaveMemory()) {
+            return false; // irrelevant for snapshots that contain memory
+        }
+
+        if (getParameters().getParentCommand() == ActionType.LiveMigrateDisk) {
+            return false; // irrelevant for snapshot taken as part of live storage migration
+        }
+
+        if (Config.<Boolean>getValue(ConfigValues.LiveSnapshotPerformFreezeInEngine)) {
+            return true;
+        }
+
+        if (diskOfTypeExists(DiskStorageType.CINDER) || diskOfTypeExists(DiskStorageType.MANAGED_BLOCK_STORAGE)) {
+            return true;
+        }
+        return false;
     }
 
     private boolean diskOfTypeExists(DiskStorageType type) {
