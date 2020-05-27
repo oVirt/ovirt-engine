@@ -24,6 +24,8 @@ public interface NextRunFieldMessages extends ConstantsWithLookup {
 
     String usbPolicy();
 
+    String smartcardEnabled();
+
     String defaultBootSequence();
 
     String cpuShares();

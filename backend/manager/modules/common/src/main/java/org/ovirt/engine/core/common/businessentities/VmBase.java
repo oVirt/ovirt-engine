@@ -252,7 +252,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     private long dbGeneration;
 
     @CopyOnNewVersion
-    @EditableVmField
+    @EditableVmField(onStatuses = VMStatus.Down)
     private boolean smartcardEnabled;
 
     @CopyOnNewVersion
