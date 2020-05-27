@@ -12,6 +12,7 @@ import os
 import tempfile
 import time
 
+from M2Crypto import BIO
 from M2Crypto import EVP
 from M2Crypto import RSA
 from M2Crypto import X509
@@ -67,9 +68,10 @@ class RemoteEngine(base.Base):
             text=text,
         )
 
-    def copy_from_engine(self, file_name):
+    def copy_from_engine(self, file_name, dialog_name=None):
         return self._style.copy_from_engine(
             file_name=file_name,
+            dialog_name=dialog_name,
         )
 
     def copy_to_engine(
@@ -209,11 +211,14 @@ class EnrollCert(base.Base):
         rsapem = rsa.as_pem(cipher=None)
         evp = EVP.PKey()
         evp.assign_rsa(rsa)
+        pub_bio = BIO.MemoryBuffer()
+        rsa.save_pub_key_bio(pub_bio)
+        pubkeypem = pub_bio.getvalue()
         rsa = None  # should not be freed here
         csr = X509.Request()
         csr.set_pubkey(evp)
         csr.sign(evp, 'sha1')
-        return rsapem, csr.as_pem(), csr.get_pubkey().as_pem(cipher=None)
+        return rsapem, csr.as_pem(), pubkeypem
 
     def _enroll_cert_auto_ssh(self):
         cert = None
@@ -243,9 +248,10 @@ class EnrollCert(base.Base):
                         remote_name=self._remote_name,
                     ),
                 )
-                goodcert = self._pubkey == X509.load_cert_string(
+                cert_pubkey = X509.load_cert_string(
                     cert
-                ).get_pubkey().as_pem(cipher=None)
+                ).get_pubkey().get_rsa().as_pem(cipher=None)
+                goodcert = self._pubkey == cert_pubkey
                 if not goodcert:
                     self.logger.error(
                         _(
@@ -334,9 +340,10 @@ class EnrollCert(base.Base):
             try:
                 with open(filename) as f:
                     cert = f.read()
-                goodcert = self._pubkey == X509.load_cert_string(
+                cert_pubkey = X509.load_cert_string(
                     cert
-                ).get_pubkey().as_pem(cipher=None)
+                ).get_pubkey().get_rsa().as_pem(cipher=None)
+                goodcert = self._pubkey == cert_pubkey
                 if not goodcert:
                     self.logger.error(
                         _(
@@ -441,6 +448,7 @@ class EnrollCert(base.Base):
                     owner=self.environment[osetupcons.SystemEnv.USER_ENGINE],
                     enforcePermissions=True,
                     content=self._key,
+                    binary=True,
                     modifiedList=uninstall_files,
                 )
             )
@@ -453,6 +461,7 @@ class EnrollCert(base.Base):
                     owner=self.environment[osetupcons.SystemEnv.USER_ENGINE],
                     enforcePermissions=True,
                     content=self._cert,
+                    binary=True,
                     modifiedList=uninstall_files,
                 )
             )

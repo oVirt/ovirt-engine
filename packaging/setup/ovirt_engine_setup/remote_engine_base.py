@@ -47,7 +47,7 @@ class RemoteEngineBase(base.Base):
     def execute_on_engine(self, cmd, timeout=60):
         pass
 
-    def copy_from_engine(self, file_name):
+    def copy_from_engine(self, file_name, dialog_name=None):
         pass
 
     def copy_to_engine(

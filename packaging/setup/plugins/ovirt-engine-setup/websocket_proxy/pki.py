@@ -197,6 +197,7 @@ class Plugin(plugin.PluginBase):
                     ],
                     enforcePermissions=True,
                     content=self._engine_cert,
+                    binary=True,
                     modifiedList=uninstall_files,
                 )
             )
