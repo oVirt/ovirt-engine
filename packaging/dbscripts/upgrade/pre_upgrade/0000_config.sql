@@ -542,8 +542,9 @@ select fn_db_add_config_value('vdsTimeout','180','general');
 select fn_db_add_config_value('WindowsGuestAgentUpdateCheckInternal', '180', 'general');
 --Handling Virtual Machine Domain Name
 select fn_db_add_config_value_for_versions_up_to('VM32BitMaxMemorySizeInMB','20480','4.4');
-select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','4194304','4.4');
-select fn_db_add_config_value_for_versions_up_to('VMPpc64BitMaxMemorySizeInMB', '1048576', '4.4');
+select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','6291456','4.4');
+select fn_db_add_config_value_for_versions_up_to('VMPpc64BitMaxMemorySizeInMB', '1048576', '4.3');
+select fn_db_add_config_value_for_versions_up_to('VMPpc64BitMaxMemorySizeInMB', '6291456', '4.4');
 select fn_db_add_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
 select fn_db_add_config_value('VmGracefulShutdownTimeout','30','general');
 --Number of subsequent failures in VM creation in a pool before giving up and stop creating new VMs
@@ -964,6 +965,10 @@ select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"
 select fn_db_update_config_value('HotUnplugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}','4.2');
 select fn_db_update_config_value('MaxNumOfVmCpus', '384', '4.2');
 select fn_db_update_config_value('MaxNumOfCpuPerSocket', '254', '4.2');
+select fn_db_update_config_value('VM64BitMaxMemorySizeInMB', '6291456', '4.2');
+select fn_db_update_config_value('VM64BitMaxMemorySizeInMB', '6291456', '4.3');
+select fn_db_update_config_value('VM64BitMaxMemorySizeInMB', '6291456', '4.4');
+select fn_db_update_config_value('VMPpc64BitMaxMemorySizeInMB', '6291456', '4.4');
 
 select fn_db_update_config_value('ServerCPUList',
     '3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; '
