@@ -79,6 +79,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     private CommandCoordinatorUtil commandCoordinatorUtil;
 
     private List<DiskImage> disksList;
+    private VmCheckpoint vmCheckpointsLeaf;
 
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
@@ -169,16 +170,14 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         Guid vmBackupId = createVmBackup();
         log.info("Created VmBackup entity '{}'", vmBackupId);
 
-        if (vmBackup.getFromCheckpointId() != null) {
-            log.info("Redefine previous VM checkpoints for VM '{}'", vmBackup.getVmId());
-            if (!redefineVmCheckpoints()) {
-                addCustomValue("backupId", vmBackupId.toString());
-                auditLogDirector.log(this, AuditLogType.VM_INCREMENTAL_BACKUP_FAILED_FULL_VM_BACKUP_NEEDED);
-                setCommandStatus(CommandStatus.FAILED);
-                return;
-            }
-            log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmBackup.getVmId());
+        log.info("Redefine previous VM checkpoints for VM '{}'", vmBackup.getVmId());
+        if (!redefineVmCheckpoints()) {
+            addCustomValue("backupId", vmBackupId.toString());
+            auditLogDirector.log(this, AuditLogType.VM_INCREMENTAL_BACKUP_FAILED_FULL_VM_BACKUP_NEEDED);
+            setCommandStatus(CommandStatus.FAILED);
+            return;
         }
+        log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmBackup.getVmId());
 
         if (FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())
                 && !isBackupContainsRawDisksOnly()) {
@@ -321,8 +320,12 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     private Guid createVmCheckpoint() {
         final VmCheckpoint vmCheckpoint = new VmCheckpoint();
+
         vmCheckpoint.setId(Guid.newGuid());
-        vmCheckpoint.setParentId(getParameters().getVmBackup().getFromCheckpointId());
+        VmCheckpoint checkpointsLeaf = getVmCheckpointsLeaf();
+        if (checkpointsLeaf != null) {
+            vmCheckpoint.setParentId(checkpointsLeaf.getId());
+        }
         vmCheckpoint.setVmId(getParameters().getVmBackup().getVmId());
         vmCheckpoint.setCreationDate(new Date());
 
@@ -333,6 +336,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                     .forEach(disk -> vmCheckpointDao.addDiskToCheckpoint(vmCheckpoint.getId(), disk.getId()));
             return null;
         });
+
         persistCommandIfNeeded();
         return vmCheckpoint.getId();
     }
@@ -606,4 +610,13 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         return disksList;
     }
 
+    public VmCheckpoint getVmCheckpointsLeaf() {
+        if (vmCheckpointsLeaf == null) {
+            List<VmCheckpoint> vmCheckpoints = vmCheckpointDao.getAllForVm(getVmId());
+            if (vmCheckpoints != null && !vmCheckpoints.isEmpty()) {
+                vmCheckpointsLeaf = vmCheckpoints.get(vmCheckpoints.size() - 1);
+            }
+        }
+        return vmCheckpointsLeaf;
+    }
 }

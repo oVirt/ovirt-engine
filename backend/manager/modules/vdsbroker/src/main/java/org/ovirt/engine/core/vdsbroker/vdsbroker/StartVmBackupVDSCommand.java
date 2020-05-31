@@ -64,6 +64,7 @@ public class StartVmBackupVDSCommand<P extends VmBackupVDSParameters> extends Vd
         backupConfig.put("disks", createDisksMap(toCheckpointId));
         backupConfig.put("from_checkpoint_id", fromCheckpointId != null ? fromCheckpointId.toString() : null);
         backupConfig.put("to_checkpoint_id", toCheckpointId != null ? toCheckpointId.toString() : null);
+        backupConfig.put("parent_checkpoint_id", getParentId());
 
         return backupConfig;
     }
@@ -79,5 +80,14 @@ public class StartVmBackupVDSCommand<P extends VmBackupVDSParameters> extends Vd
                     .collect(Collectors.toSet());
         }
         return vmCheckpointDisksIds;
+    }
+
+    private String getParentId() {
+        Guid toCheckpointId = getParameters().getVmBackup().getToCheckpointId();
+        if (toCheckpointId != null) {
+            Guid parentCheckpointId = vmCheckpointDao.get(toCheckpointId).getParentId();
+            return parentCheckpointId != null ? parentCheckpointId.toString() : null;
+        }
+        return null;
     }
 }
