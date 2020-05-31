@@ -1,10 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -734,9 +733,9 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         // if cpu-pass through is enabled then guestCpuType includes a list of cpu flags and supported cpu models reported by the host.
         // Need to filter out all supported CPU models from of the list and leave only all cpu flags that the vm is running with
         if (guestCpuType != null && !guestCpuType.isEmpty() && vm.isUseHostCpuFlags()) {
-            Set<String> excludedModelFlags = Arrays.stream(guestCpuType.split(",")) //$NON-NLS-1$
-                    .filter(flag -> !flag.contains("model_")).collect(Collectors.toSet()); //$NON-NLS-1$
-            guestCpuType = String.join(", ", excludedModelFlags); //$NON-NLS-1$
+            guestCpuType = Stream.of(guestCpuType.split(",")) //$NON-NLS-1$
+                    .filter(flag -> !flag.contains("model_")) //$NON-NLS-1$
+                    .collect(Collectors.joining(", ")); //$NON-NLS-1$
         }
 
         setGuestCpuType(guestCpuType);
