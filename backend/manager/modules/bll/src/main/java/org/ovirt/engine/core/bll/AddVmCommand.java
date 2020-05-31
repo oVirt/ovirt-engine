@@ -517,7 +517,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return new StorageDomainValidator(storageDomain);
     }
 
-    private boolean validateDomainsThreshold(StorageDomainValidator storageDomainValidator) {
+    protected boolean validateDomainsThreshold(StorageDomainValidator storageDomainValidator) {
         return validate(storageDomainValidator.isDomainWithinThresholds());
     }
 

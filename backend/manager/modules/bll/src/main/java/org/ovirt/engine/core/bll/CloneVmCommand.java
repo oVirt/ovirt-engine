@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -41,6 +44,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmInitDao;
@@ -57,6 +61,8 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     private VmDao vmDao;
     @Inject
     private VmInitDao vmInitDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     private Collection<DiskImage> diskImagesFromConfiguration;
 
@@ -104,6 +110,19 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
             returnValue.setActionReturnValue(getReturnValue().getActionReturnValue());
             setReturnValue(returnValue);
+        }
+    }
+
+    @Override
+    protected boolean validateSpaceRequirements() {
+        if (getParameters().getDestStorageDomainId() != null) {
+            StorageDomain destStorageDomain = storageDomainDao.get(getParameters().getDestStorageDomainId());
+            StorageDomainValidator storageDomainValidator = createStorageDomainValidator(destStorageDomain);
+            return validateDomainsThreshold(storageDomainValidator) &&
+                    validateFreeSpace(storageDomainValidator, storageToDisksMap.values().stream().
+                            flatMap(Collection::stream).collect(Collectors.toList()));
+        } else {
+            return super.validateSpaceRequirements();
         }
     }
 
