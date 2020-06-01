@@ -332,10 +332,10 @@ public class LoggedUtilsTest {
         when(log.isDebugEnabled()).thenReturn(true);
         when(log.isWarnEnabled()).thenReturn(true);
 
-        Exception e = new Exception();
+        Exception e = new Exception("Test");
         LoggedUtils.logError(log, id, new LoggedOverridingSubclass(), e);
         verify(log).warn(eq(LoggedUtils.ERROR_LOG), any(), any(), eq(id));
-        verify(log).error(eq("Exception"), eq(ExceptionUtils.getRootCauseMessage(e)));
+        verify(log).error(eq("Exception {}"), eq(ExceptionUtils.getRootCauseMessage(e)));
     }
 
     /* --- Helper methods --- */

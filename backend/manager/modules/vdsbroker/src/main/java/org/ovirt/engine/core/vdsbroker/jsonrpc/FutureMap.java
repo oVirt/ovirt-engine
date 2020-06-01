@@ -33,21 +33,22 @@ public class FutureMap implements Map<String, Object> {
     private static final String STATUS = "status";
     private static final String DEFAULT_KEY = "info";
     private static final long DEFAULT_RESPONSE_WAIT = 1;
-    private static Logger log = LoggerFactory.getLogger(FutureMap.class);
+    private static final Logger log = LoggerFactory.getLogger(FutureMap.class);
+    private final JsonRpcClient client;
     private final Lock lock = new ReentrantLock();
-    private Future<JsonRpcResponse> response;
+    private final Future<JsonRpcResponse> response;
     private Map<String, Object> responseMap = new HashMap<>();
     private String responseKey;
     private String subtypeKey;
-    private static final Map<String, Object> STATUS_DONE = new HashMap<String, Object>() {
+    private static final Map<String, Object> STATUS_DONE = new HashMap<>() {
         {
             super.put("message", "Done");
             super.put("code", 0);
         }
     };
-    private static final Map<String, Object> TIMEOUT_STATUS = new HashMap<String, Object>() {
+    private static final Map<String, Object> TIMEOUT_STATUS = new HashMap<>() {
         {
-            super.put("message", "Internal timeout occured");
+            super.put("message", "Internal timeout occurred");
             super.put("code", -1);
         }
     };
@@ -57,7 +58,6 @@ public class FutureMap implements Map<String, Object> {
     private long timeout = 0;
     private TimeUnit unit = TimeUnit.MILLISECONDS;
     private boolean cleanOnTimeout;
-    private JsonRpcClient client;
 
     /**
      * During creation request is sent and <code>Future</code> for a response is held.
@@ -113,7 +113,7 @@ public class FutureMap implements Map<String, Object> {
                         populate(this.response.get());
                     }
                 } catch (InterruptedException | ExecutionException e) {
-                    log.error("Exception occurred during response decomposition", ExceptionUtils.getRootCauseMessage(e));
+                    log.error("Exception occurred during response decomposition {}", ExceptionUtils.getRootCauseMessage(e));
                     log.debug("Exception", e);
                     throw new IllegalStateException(e);
                 } catch (TimeoutException e) {
@@ -174,9 +174,7 @@ public class FutureMap implements Map<String, Object> {
     }
 
     private void checkAndUpdateStatus() {
-        if (this.responseMap.get(STATUS) == null) {
-            this.responseMap.put(STATUS, STATUS_DONE);
-        }
+        this.responseMap.putIfAbsent(STATUS, STATUS_DONE);
     }
 
     @Override
