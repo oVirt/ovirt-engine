@@ -113,7 +113,7 @@ public class FutureMap implements Map<String, Object> {
                         populate(this.response.get());
                     }
                 } catch (InterruptedException | ExecutionException e) {
-                    log.error("Exception occurred during response decomposition", ExceptionUtils.getRootCauseMessage(e));
+                    log.error("Exception occurred during response decomposition {}", ExceptionUtils.getRootCauseMessage(e));
                     log.debug("Exception", e);
                     throw new IllegalStateException(e);
                 } catch (TimeoutException e) {

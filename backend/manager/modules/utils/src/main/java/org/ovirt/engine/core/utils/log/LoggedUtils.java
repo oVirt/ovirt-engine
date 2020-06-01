@@ -126,7 +126,7 @@ public class LoggedUtils {
         if (logged != null && isLogLevelOn(log, logged.errorLevel())) {
             log(log, logged.errorLevel(), ERROR_LOG, determineMessage(log, logged, obj),
                     t.getMessage(), id);
-            log.error("Exception", ExceptionUtils.getRootCauseMessage(t));
+            log.error("Exception {}", ExceptionUtils.getRootCauseMessage(t));
             log.debug("Exception", t);
         }
     }
@@ -173,7 +173,7 @@ public class LoggedUtils {
             }
         } catch (Throwable th) {
             try {
-                log.error("Cannot perform logging", ExceptionUtils.getRootCauseMessage(th));
+                log.error("Cannot perform logging {}", ExceptionUtils.getRootCauseMessage(th));
                 log.debug("Exception", th);
             } catch (Throwable th1) {
                 // Cannot really do any logging - better not try again, we have a serious logging problem
