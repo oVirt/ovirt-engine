@@ -13,3 +13,4 @@
     backup: yes
     content: |
       CipherString = {{ host_deploy_spice_cipher_string }}
+      Protocol = {{ host_deploy_spice_protocol }}
