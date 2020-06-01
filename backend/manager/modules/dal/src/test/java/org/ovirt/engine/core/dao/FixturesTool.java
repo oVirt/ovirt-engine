@@ -970,4 +970,8 @@ public class FixturesTool {
 
     public static final Guid PROVIDER_BINDING_HOST_ID_HOST_ID2 = new Guid("3001751e-549b-4e7a-aff6-12336856ce45");
 
+    public static final String IPV6_ADDR_EXISTS = "1::2";
+
+    public static final String IPV6_ADDR_NOT_EXIST = "2::3";
+
 }

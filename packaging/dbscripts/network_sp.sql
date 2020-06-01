@@ -796,7 +796,8 @@ BEGIN
     FROM vds_interface_view
     INNER JOIN vds_static
         ON vds_interface_view.vds_id = vds_static.vds_id
-    WHERE vds_interface_view.addr = v_addr
+    WHERE (vds_interface_view.addr = v_addr
+        OR vds_interface_view.ipv6_address = v_addr)
         AND vds_static.cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

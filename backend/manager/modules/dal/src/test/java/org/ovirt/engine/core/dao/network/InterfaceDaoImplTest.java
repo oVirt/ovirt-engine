@@ -365,6 +365,21 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase<InterfaceDao> {
     }
 
     @Test
+    public void testGetAllInterfacesWithIpv6AddressExist() {
+        List<VdsNetworkInterface> interfaces = dao.getAllInterfacesWithIpAddress(FixturesTool.CLUSTER, FixturesTool.IPV6_ADDR_EXISTS);
+        assertNotNull(interfaces);
+        assertEquals(1, interfaces.size());
+        assertGetAllForVdsCorrectResult(interfaces);
+    }
+
+    @Test
+    public void testGetAllInterfacesWithIpv6AddressNotExist() {
+        List<VdsNetworkInterface> interfaces = dao.getAllInterfacesWithIpAddress(FixturesTool.CLUSTER, FixturesTool.IPV6_ADDR_NOT_EXIST);
+        assertNotNull(interfaces);
+        assertTrue(interfaces.isEmpty());
+    }
+
+    @Test
     public void testGetAllInterfacesByClusterId() {
         List<VdsNetworkInterface> interfaces = dao.getAllInterfacesByClusterId(FixturesTool.CLUSTER);
         assertGetAllForVdsCorrectResult(interfaces);
