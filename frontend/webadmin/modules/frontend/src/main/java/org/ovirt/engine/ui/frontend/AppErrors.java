@@ -813,6 +813,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__ACTION__BACKUP();
 
+    String VAR__ACTION__CHECKPOINT();
+
     String VAR__ACTION__COPY_NETWORKS();
 
     String VAR__HOST_STATUS__UP();
