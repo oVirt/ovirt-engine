@@ -1051,8 +1051,7 @@ public class LibvirtVmXmlBuilder {
             case CONTROLLER:
                 switch(device.getDevice()) {
                 case "usb":
-                    if (device.getSpecParams().get("model") != null &&
-                            device.getSpecParams().get("model").equals("qemu-xhci")) {
+                    if ("qemu-xhci".equals(device.getSpecParams().get("model"))) {
                         device.getSpecParams().put("ports", 8);
                     }
                     break;
@@ -1073,9 +1072,10 @@ public class LibvirtVmXmlBuilder {
                     }
                     break;
                 case "pci":
-                    if ("pcie-root".equals(device.getSpecParams().get("model"))) {
+                    Object model = device.getSpecParams().get("model");
+                    if ("pcie-root".equals(model)) {
                         pciERootExists = true;
-                    } else if ("pcie-root-port".equals(device.getSpecParams().get("model"))) {
+                    } else if ("pcie-root-port".equals(model)) {
                         pciEPorts++;
                     }
                     break;
