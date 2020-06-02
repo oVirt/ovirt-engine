@@ -389,6 +389,8 @@ public enum QueryType implements Serializable {
     // Incremental Backup
     GetVmBackupById,
     GetAllVmBackupsByVmId,
+    GetVmCheckpointById,
+    GetAllVmCheckpointsByVmId,
 
     // Event Notification
     GetEventSubscribersBySubscriberIdGrouped,
