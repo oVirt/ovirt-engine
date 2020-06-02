@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -992,13 +991,23 @@ public class LibvirtVmXmlBuilder {
         devices = processPayload(devices);
         devices.stream().filter(d -> d.getSpecParams() == null).forEach(d -> d.setSpecParams(Collections.emptyMap()));
         ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new CreateAdditionalControllersForDomainXml(devices));
+        boolean hasUsbBus = devices
+                .stream()
+                .filter(d -> d.getDevice().equals("usb"))
+                .noneMatch(d -> d.getSpecParams().containsValue("none"));
 
         writer.writeStartElement("devices");
 
-        if (vm.getClusterArch() != ArchitectureType.s390x &&
-            !(vm.getClusterArch().getFamily() == ArchitectureType.ppc && vm.getVmType() == VmType.HighPerformance)) {
-            // no mouse or tablet for s390x and for HP VMS with ppc architecture type
+        switch(vm.getClusterArch().getFamily()) {
+        // No mouse or tablet for s390x and for headless HP VMS with ppc architecture type.
+        case x86:
             writeInput();
+            break;
+        case ppc:
+            if (hasUsbBus) {
+                writeInput();
+                break;
+            }
         }
 
         writeGuestAgentChannels();

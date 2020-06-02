@@ -805,11 +805,8 @@ public class VmDeviceUtils {
     }
 
     private void disableAnyUsb(VmBase oldVm, VmBase newVm) {
-        final List<VmDevice> usbControllers;
-
         if (UsbPolicy.DISABLED == oldVm.getUsbPolicy() && VmType.HighPerformance == oldVm.getVmType()
-                && (usbControllers = getUsbControllers(newVm.getId())) != null && usbControllers.size() == 1
-                && UsbControllerModel.NONE.libvirtName.equals(getUsbControllerModelName(usbControllers.get(0)))) {
+                && isUsbControllerDisabled(newVm.getId())) {
             return;
         }
 
@@ -823,8 +820,18 @@ public class VmDeviceUtils {
             break;
         }
 
+        addDisableUsbControllers(newVm.getId());
+    }
+
+    public boolean isUsbControllerDisabled(Guid vmId) {
+        final List<VmDevice> usbControllers = getUsbControllers(vmId);
+        return usbControllers != null && usbControllers.size() == 1
+                && UsbControllerModel.NONE.libvirtName.equals(getUsbControllerModelName(usbControllers.get(0)));
+    }
+
+    public void addDisableUsbControllers(Guid vmId) {
         addManagedDevice(
-                new VmDeviceId(Guid.newGuid(), newVm.getId()),
+                new VmDeviceId(Guid.newGuid(), vmId),
                 VmDeviceGeneralType.CONTROLLER,
                 VmDeviceType.USB,
                 createUsbControllerSpecParams(UsbControllerModel.NONE.libvirtName, 0),

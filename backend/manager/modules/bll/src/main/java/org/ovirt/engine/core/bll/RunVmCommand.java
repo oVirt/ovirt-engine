@@ -52,12 +52,14 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -68,6 +70,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
@@ -759,6 +762,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         fetchVmDisksFromDb();
         updateVmDevicesOnRun();
         updateGraphicsAndDisplayInfos();
+        updateUsbController();
 
         getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
 
@@ -809,6 +813,25 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected String getEffectiveEmulatedMachine() {
         return EmulatedMachineUtils.getEffective(getVm().getStaticData(), this::getCluster);
+    }
+
+    private void updateUsbController() {
+        if (getVm().getClusterArch().getFamily() == ArchitectureType.ppc
+                && getVm().getUsbPolicy() == UsbPolicy.DISABLED
+                && getVm().getVmType() == VmType.HighPerformance) {
+            if (getVm().getDefaultDisplayType() != DisplayType.none) {
+                // if the VM is set with a console, let libvirt add a corresponding usb controller needed
+                // for input devices (to make the console usable)
+                getVmDeviceUtils().removeUsbControllers(getVm().getId());
+                return;
+            }
+            // otherwise, make sure that headless VM is set with disabled USB controller
+            if (!getVmDeviceUtils().isUsbControllerDisabled(getVm().getId())) {
+                getVmDeviceUtils().removeUsbControllers(getVm().getId());
+                getVmDeviceUtils().addDisableUsbControllers(getVm().getId());
+                return;
+            }
+        }
     }
 
     /**

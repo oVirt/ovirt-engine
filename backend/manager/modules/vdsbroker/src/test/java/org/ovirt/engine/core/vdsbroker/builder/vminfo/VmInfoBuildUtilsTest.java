@@ -481,7 +481,7 @@ public class VmInfoBuildUtilsTest {
         vm.setVmType(VmType.HighPerformance);
         reset(osRepository);
         when(osRepository.getOsUsbControllerModel(anyInt(), any(), any())).thenReturn(UsbControllerModel.EHCI);
-        assertFalse(underTest.isTabletEnabled(vm));
+        assertTrue(underTest.isTabletEnabled(vm));
 
         // Adding SPICE
         m.put(GraphicsType.SPICE, new GraphicsInfo());
@@ -508,7 +508,7 @@ public class VmInfoBuildUtilsTest {
         vm.setVmType(VmType.HighPerformance);
         reset(osRepository);
         when(osRepository.getOsUsbControllerModel(anyInt(), any(), any())).thenReturn(UsbControllerModel.EHCI);
-        assertFalse(underTest.isTabletEnabled(vm));
+        assertTrue(underTest.isTabletEnabled(vm));
 
         // Just SPICE
         m.clear();

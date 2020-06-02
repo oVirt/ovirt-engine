@@ -1450,8 +1450,7 @@ public class VmInfoBuildUtils {
     }
 
     public boolean isTabletEnabled(VM vm) {
-        return vm.getVmType() != VmType.HighPerformance // avoid adding Tablet device for HP VMs since no USB devices are set
-                && getUsbControllerModelForVm(vm) != UsbControllerModel.NONE // or when there's no USB controller for this OS
+        return getUsbControllerModelForVm(vm) != UsbControllerModel.NONE // when there's no USB controller for this OS
                 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC); // and VNC is requested (VNC or SPICE+VNC)
     }
 
