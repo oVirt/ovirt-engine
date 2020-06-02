@@ -229,7 +229,7 @@ public class BackendVmResource
 
     @Override
     public VmCheckpointsResource getCheckpointsResource() {
-        return null;
+        return inject(new BackendVmCheckpointsResource(guid));
     }
 
     public VmDisksResource getDisksResource() {
