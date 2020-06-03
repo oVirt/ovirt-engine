@@ -541,12 +541,14 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                         cmdOut,
                         cmdErr);
                 log.debug("Exception", ex);
+                throw new RuntimeException(String.format("ssh-copy-id command failed: %1$s", ex.getMessage()));
             }
         } catch (IOException e) {
             log.error("Error opening SSH connection to '{}': {}",
                     host.getHostName(),
                     e.getMessage());
             log.debug("Exception", e);
+            throw new RuntimeException(String.format("Error opening SSH connection: %1$s", e.getMessage()));
         }
     }
 }
