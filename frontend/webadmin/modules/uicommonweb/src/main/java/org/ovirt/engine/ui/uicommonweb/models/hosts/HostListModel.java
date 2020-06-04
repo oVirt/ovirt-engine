@@ -1732,6 +1732,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     public void cancel() {
         cancelConfirm();
         setWindow(null);
+        fireModelChangeRelevantForActionsEvent();
     }
 
     public void cancelConfirm() {
@@ -1848,6 +1849,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         getNumaSupportCommand().setIsVisible(numaVisible);
 
         updateHaMaintenanceAvailability();
+        fireModelChangeRelevantForActionsEvent();
     }
 
     private boolean canCheckForHostUpgrade(VDS host) {
