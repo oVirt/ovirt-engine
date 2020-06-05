@@ -15,22 +15,22 @@ Install the following system components:
 - postgresql-server >= 12.0
 - postgresql >= 12.0
 - postgresql-contrib >= 12.0
-- python-dateutil / dateutil
-- python-m2crypto / m2crypto
-- python-psycopg2 / psycopg
-- python-jinja2 / Jinja2
-- libxml2-python / libxml2[python]
-- python-daemon
-- otopi >= 1.1.0
-- ovirt-setup-lib
+- python3-dateutil / dateutil
+- python3-m2crypto / m2crypto
+- python3-psycopg2 / psycopg
+- python3-jinja2 / Jinja2
+- python3-libxml2 / libxml2[python]
+- python3-daemon
+- python3-otopi >= 1.1.0
+- python3-ovirt-setup-lib
 - maven-3 >= 3.5
 - ansible >= 2.9.0
 - ansible-runner-service-dev >= 1.0.3
 - ovirt-ansible-roles >= 1.2.0
 - ovirt-engine-metrics
 - ovirt-imageio-daemon >= 2.0.6
-- python-ovirt-engine-sdk4
-- ansible-lint / python3-ansible-lint
+- python3-ovirt-engine-sdk4 (optional)
+- ansible-lint / python3-ansible-lint (optional)
 - python-flake8 / pyflakes (optional)
 - python-pep8 / pep8 (optional)
 - python-docker-py (optional)
