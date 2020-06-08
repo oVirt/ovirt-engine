@@ -168,6 +168,7 @@ public class GlusterVolumeSnapshotCreatePopupView extends
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
         daysOfWeekEditor.asCheckBoxGroup().clearAllSelections();
+        asWidget().setModal(false);
     }
 
     private void initEditors() {
