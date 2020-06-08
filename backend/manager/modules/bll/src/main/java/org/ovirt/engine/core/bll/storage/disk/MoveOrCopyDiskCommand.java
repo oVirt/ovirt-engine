@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -569,7 +570,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         // we call copy directly via UI/REST
         if (getParameters().getParentCommand() == ActionType.Unknown) {
-            parameters.setDestImages(List.of(image));
+            parameters.setDestImages(Arrays.asList(image));
         }
     }
 
