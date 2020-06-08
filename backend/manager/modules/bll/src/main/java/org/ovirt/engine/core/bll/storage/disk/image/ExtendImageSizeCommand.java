@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
             if (getParameters().getParentNotifiesCallback()) {
                 getReturnValue().getVdsmTaskIdList().add(taskId);
                 getReturnValue().getInternalVdsmTaskIdList().add(taskId);
-                getParameters().setVdsmTaskIds(new ArrayList<>(List.of(taskId)));
+                getParameters().setVdsmTaskIds(Arrays.asList(taskId));
                 persistCommand(getParameters().getParentCommand(), true);
             }
         } else {
