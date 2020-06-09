@@ -733,7 +733,9 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
                 newManagedBlockDisk);
         parameters.setStorageDomainId(newManagedBlockDisk.getStorageIds().get(0));
         parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());
-        parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        parameters.setEndProcedure(EndProcedure.PARENT_MANAGED);
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
         return parameters;
     }
 
