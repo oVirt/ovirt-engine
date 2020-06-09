@@ -13,7 +13,7 @@
       -> Login
 
     "User@Profile"
-      -> Sign Out
+      -> Log Out
       -> Switch User ...(if supported)
       -> Change Password ...(if supported)
 
