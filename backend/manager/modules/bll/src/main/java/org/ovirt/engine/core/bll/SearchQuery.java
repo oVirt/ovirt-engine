@@ -585,12 +585,23 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                                     :
                                     searchObj.getError().toString();
                     getQueryReturnValue().setExceptionString(error);
-                    log.info("ResourceManager::searchBusinessObjects - erroneous search text - ''{}'' error - ''{}''",
-                            searchText, error);
+                    if (!queriesCache.containsKey(searchKey)) {
+                        // log error only once
+                        log.info(
+                                "ResourceManager::searchBusinessObjects - erroneous search text - ''{}'' error - ''{}''",
+                                searchText,
+                                error);
+                        // add search to the cache in order not process it again in case that
+                        // this query is scheduled to be called repeatedly
+                        queriesCache.put(searchKey, null);
+                    }
                     return null;
                 }
                 if (!searchObj.getvalid()) {
-                    log.warn("ResourceManager::searchBusinessObjects - Invalid search text - ''{}''", searchText);
+                    if (!queriesCache.containsKey(searchKey)) {
+                        log.warn("ResourceManager::searchBusinessObjects - Invalid search text - ''{}''", searchText);
+                        queriesCache.put(searchKey, null);
+                    }
                     return null;
                 }
                 // find if this is a trivial search expression (like 'Vms:' etc).
@@ -609,14 +620,24 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 }
             }
         } catch (SearchEngineIllegalCharacterException e) {
-            log.error("Search expression can not end with ESCAPE character: {}", getParameters().getSearchPattern());
+            if (!queriesCache.containsKey(searchKey)) {
+                log.error("Search expression can not end with ESCAPE character: {}",
+                        getParameters().getSearchPattern());
+                queriesCache.put(searchKey, null);
+            }
             data = null;
         } catch (SqlInjectionException e) {
-            log.error("Sql Injection in search: {}", getParameters().getSearchPattern());
+            if (!queriesCache.containsKey(searchKey)) {
+                log.error("Sql Injection in search: {}", getParameters().getSearchPattern());
+                queriesCache.put(searchKey, null);
+            }
             data = null;
         } catch (RuntimeException ex) {
-            log.warn("Illegal search: {}: {}", getParameters().getSearchPattern(), ex.getMessage());
-            log.debug("Exception", ex);
+            if (!queriesCache.containsKey(searchKey)) {
+                log.warn("Illegal search: {}: {}", getParameters().getSearchPattern(), ex.getMessage());
+                log.debug("Exception", ex);
+                queriesCache.put(searchKey, null);
+            }
             throw ex;
         }
         return data;
