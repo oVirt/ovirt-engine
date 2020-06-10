@@ -725,29 +725,29 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         ArrayList<StoragePool> items =
                 getSelectedItems() != null ? new ArrayList<>(getSelectedItems()) : new ArrayList<StoragePool>();
 
-        boolean isAllDown = true;
-        for (StoragePool item : items) {
-            if (item.getStatus() == StoragePoolStatus.Up || item.getStatus() == StoragePoolStatus.Contend) {
-                isAllDown = false;
-                break;
-            }
-        }
-
-        getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && items.size() == 1);
-        getRemoveCommand().setIsExecutionAllowed(items.size() > 0 && isAllDown);
+        boolean isAllDown = items.stream().allMatch(item -> item.getStatus() != StoragePoolStatus.Up && item.getStatus() != StoragePoolStatus.Contend);
+        boolean isAllManaged = items.stream().allMatch(item -> item.isManaged());
 
         StoragePool storagePoolItem = getSelectedItem();
+        boolean oneSelected = storagePoolItem != null && items.size() == 1;
 
-        getForceRemoveCommand().setIsExecutionAllowed(storagePoolItem != null
-                && items.size() == 1
-                && storagePoolItem.getStatus() != StoragePoolStatus.Up);
+        getEditCommand().setIsExecutionAllowed(oneSelected
+                && storagePoolItem.isManaged());
+
+        getRemoveCommand().setIsExecutionAllowed(items.size() > 0 && isAllDown
+                && isAllManaged);
+
+        getForceRemoveCommand().setIsExecutionAllowed(oneSelected
+                && storagePoolItem.getStatus() != StoragePoolStatus.Up
+                && storagePoolItem.isManaged());
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
-                || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
+                || (oneSelected && storagePoolItem.isManaged()));
 
-        getRecoveryStorageCommand().setIsExecutionAllowed(storagePoolItem != null && items.size() == 1
+        getRecoveryStorageCommand().setIsExecutionAllowed(oneSelected
                 && !storagePoolItem.isLocal() && storagePoolItem.getStatus() != StoragePoolStatus.Uninitialized
-                && storagePoolItem.getStatus() != StoragePoolStatus.Up);
+                && storagePoolItem.getStatus() != StoragePoolStatus.Up
+                && storagePoolItem.isManaged());
 
         getNewCommand().setIsAvailable(true);
         getRemoveCommand().setIsAvailable(true);

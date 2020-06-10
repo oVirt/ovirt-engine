@@ -1033,25 +1033,26 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
     }
 
     private void updateActionAvailability() {
-        getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
-                && getSelectedItems().size() == 1);
+        boolean oneSelected = getSelectedItem() != null && getSelectedItems() != null
+                && getSelectedItems().size() == 1;
+
+        getEditCommand().setIsExecutionAllowed(oneSelected
+                && ActionUtils.canExecute(getSelectedItems(),
+                        ActionType.UpdateCluster,
+                        Cluster.class));
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
-                || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1)
+                || (oneSelected && getSelectedItem().isManaged()));
+
+        boolean moreSelected = getSelectedItems() != null && getSelectedItems().size() > 0;
+
+        getRemoveCommand().setIsExecutionAllowed(moreSelected
                 && ActionUtils.canExecute(getSelectedItems(),
                 ActionType.RemoveCluster,
                 Cluster.class));
 
-        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
-                && ActionUtils.canExecute(getSelectedItems(),
-                ActionType.RemoveCluster,
-                Cluster.class));
-
-        getResetEmulatedMachineCommand().setIsExecutionAllowed(
-                getSelectedItems() != null && getSelectedItems().size() > 0
-                        && ActionUtils.canExecute(getSelectedItems(),
-                        ActionType.RemoveCluster,
-                        Cluster.class));
+        getResetEmulatedMachineCommand().setIsExecutionAllowed(moreSelected
+                && getSelectedItems().stream().allMatch(Cluster::isManaged));
     }
 
     @Override

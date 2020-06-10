@@ -310,7 +310,8 @@ public final class ActionUtils {
                 VmTemplateStatus.Locked,
                 EnumSet.of(ActionType.RemoveVmTemplate,
                         ActionType.ExportVmTemplate,
-                        ActionType.ImportVmTemplate));
+                        ActionType.ImportVmTemplate,
+                        ActionType.UpdateVmTemplate));
         vmTemplateMatrix.put(
                 VmTemplateStatus.Illegal,
                 EnumSet.of(ActionType.ExportVmTemplate, ActionType.ImportVmTemplate));

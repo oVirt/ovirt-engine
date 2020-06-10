@@ -859,7 +859,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         boolean blankSelected = isBlankTemplateSelected();
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1 && item != null
-                && item.getStatus() != VmTemplateStatus.Locked);
+                && ActionUtils.canExecute(items, VmTemplate.class, ActionType.UpdateVmTemplate));
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
                 && ActionUtils.canExecute(items, VmTemplate.class, ActionType.RemoveVmTemplate));

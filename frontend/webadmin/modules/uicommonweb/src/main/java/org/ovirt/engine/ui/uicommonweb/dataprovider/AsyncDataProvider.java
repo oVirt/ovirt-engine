@@ -2960,7 +2960,7 @@ public class AsyncDataProvider {
         return defaultOSes.get(architectureType);
     }
 
-    public boolean isRebootCommandExecutionAllowed(List<VM> vms) {
+    public boolean isRebootCommandExecutionAllowed(List<VmWithStatusForExclusiveLock> vms) {
         if (vms.isEmpty()
                 || !ActionUtils.canExecutePartially(vms, VmWithStatusForExclusiveLock.class, ActionType.RebootVm)) {
             return false;

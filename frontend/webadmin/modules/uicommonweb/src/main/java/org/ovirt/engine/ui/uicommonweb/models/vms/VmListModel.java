@@ -1951,12 +1951,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     private void updateActionsAvailability() {
-        List items = getSelectedItems() != null && getSelectedItem() != null ? getSelectedItemsWithStatusForExclusiveLock() : new ArrayList();
+        List<VmWithStatusForExclusiveLock> items = getSelectedItems() != null && getSelectedItem() != null ? getSelectedItemsWithStatusForExclusiveLock() : new ArrayList<>();
 
         boolean singleVmSelected = items.size() == 1;
         boolean vmsSelected = items.size() > 0;
 
-        getEditCommand().setIsExecutionAllowed(isEditCommandExecutionAllowed(items));
+        getEditCommand().setIsExecutionAllowed(singleVmSelected
+                && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.UpdateVm));
         getRemoveCommand().setIsExecutionAllowed(vmsSelected && isRemovalEnabled()
                 && ActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.RemoveVm));
         getRunCommand().setIsExecutionAllowed(vmsSelected
@@ -1987,9 +1988,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.ChangeDisk));
         getChangeCdCommand().setIsExecutionAllowed(singleVmSelected
                 && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.ChangeDisk));
-        getAssignTagsCommand().setIsExecutionAllowed(vmsSelected);
+        getAssignTagsCommand().setIsExecutionAllowed(vmsSelected
+                && items.stream().allMatch(VM::isManaged));
 
-        getGuideCommand().setIsExecutionAllowed(getGuideContext() != null || singleVmSelected);
+        getGuideCommand().setIsExecutionAllowed(getGuideContext() != null || singleVmSelected
+                && items.get(0).isManaged());
 
         getConsoleConnectCommand().setIsExecutionAllowed(isConsoleCommandsExecutionAllowed());
         getEditConsoleCommand().setIsExecutionAllowed(singleVmSelected && isConsoleEditEnabled());
@@ -2038,19 +2041,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 .stream()
                 .map(consolesFactory::getVmConsolesForVm)
                 .anyMatch(VmConsoles::canConnectToConsole);
-    }
-
-    /**
-     * Return true if and only if one element is selected.
-     */
-    private boolean isEditCommandExecutionAllowed(List items) {
-        if (items == null) {
-            return false;
-        }
-        if (items.size() != 1) {
-            return false;
-        }
-        return true;
     }
 
     @Override
