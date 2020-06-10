@@ -55,9 +55,11 @@ public final class EntityObject extends JsMutableObjectWithProperties {
             obj.setValueAsString("name", ((StoragePool) businessEntity).getName()); //$NON-NLS-1$
         } else if (businessEntity instanceof Cluster) {
             obj.setValueAsString("name", ((Cluster) businessEntity).getName()); //$NON-NLS-1$
+            obj.setValueAsBoolean("managed", ((Cluster) businessEntity).isManaged()); //$NON-NLS-1$
         } else if (businessEntity instanceof VDS) {
             obj.setValueAsString("name", ((VDS) businessEntity).getName()); //$NON-NLS-1$
             obj.setValueAsString("hostname", ((VDS) businessEntity).getHostName()); //$NON-NLS-1$
+            obj.setValueAsBoolean("managed", ((VDS) businessEntity).isManaged()); //$NON-NLS-1$
         } else if (businessEntity instanceof Network) {
             obj.setValueAsString("name", ((Network) businessEntity).getName()); //$NON-NLS-1$
         } else if (businessEntity instanceof StorageDomain) {
@@ -68,6 +70,7 @@ public final class EntityObject extends JsMutableObjectWithProperties {
             obj.setValueAsString("name", ((VM) businessEntity).getName()); //$NON-NLS-1$
             obj.setValueAsString("ipaddress", ((VM) businessEntity).getIp()); //$NON-NLS-1$
             obj.setValueAsString("status", ((VM) businessEntity).getStatus().name()); //$NON-NLS-1$
+            obj.setValueAsBoolean("managed", ((VM) businessEntity).isManaged()); //$NON-NLS-1$
         } else if (businessEntity instanceof VmPool) {
             obj.setValueAsString("name", ((VmPool) businessEntity).getName()); //$NON-NLS-1$
         } else if (businessEntity instanceof VmTemplate) {
