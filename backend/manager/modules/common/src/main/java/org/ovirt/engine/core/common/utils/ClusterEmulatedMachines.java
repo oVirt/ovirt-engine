@@ -32,7 +32,7 @@ public class ClusterEmulatedMachines {
 
     public static ClusterEmulatedMachines parse(String emulatedMachine) {
         if (emulatedMachine == null) {
-            return null;
+            return new ClusterEmulatedMachines();
         }
         String[] em = emulatedMachine.split(";");
         if (em.length == 0) {
