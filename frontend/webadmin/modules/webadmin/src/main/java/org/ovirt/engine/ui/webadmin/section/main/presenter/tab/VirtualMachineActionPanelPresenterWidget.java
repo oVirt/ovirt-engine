@@ -55,12 +55,6 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
                 return getModel().getEditCommand();
             }
         });
-        addActionButton(new WebAdminButtonDefinition<Void, VM>(constants.removeVm()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getRemoveCommand();
-            }
-        });
         addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.cloneVm()) {
             @Override
             protected UICommand resolveCommand() {
@@ -134,6 +128,16 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
         });
 
         addDividerToKebab();
+
+        addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.removeVm()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getRemoveCommand();
+            }
+        });
+
+        addDividerToKebab();
+
         addMenuListItem(new WebAdminButtonDefinition<Void, VM>(constants.changeCdVm()) {
             @Override
             protected UICommand resolveCommand() {
