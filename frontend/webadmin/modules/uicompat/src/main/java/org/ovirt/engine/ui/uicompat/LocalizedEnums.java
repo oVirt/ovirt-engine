@@ -1493,6 +1493,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String OriginType___KVM();
 
+    String OriginType___KUBEVIRT();
+
     @Deprecated
     String VmInterfaceType___rtl8139_pv();
 
