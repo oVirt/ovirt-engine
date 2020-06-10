@@ -1478,6 +1478,7 @@ public enum AuditLogType {
     HOSTED_ENGINE_SD_NOT_ACTIVE(10459, AuditLogSeverity.WARNING, AuditLogTimeInterval.HOUR.getValue() * 2),
     HOSTED_ENGINE_DOMAIN_IMPORT_SUCCEEDED(10460, AuditLogSeverity.NORMAL, AuditLogTimeInterval.HOUR.getValue()),
     HOSTED_ENGINE_DOMAIN_IMPORT_FAILED(10461, AuditLogSeverity.ERROR, AuditLogTimeInterval.HOUR.getValue()),
+    HOSTED_ENGINE_CONFIGURED_HOST_IN_NON_HE_CLUSTER(10462, AuditLogSeverity.ERROR),
 
     // External scheduler
     EXTERNAL_SCHEDULER_PLUGIN_ERROR(10500, AuditLogSeverity.ERROR),

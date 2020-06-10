@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -79,6 +80,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     private ClusterDao clusterDao;
     @Inject
     private ClusterUtils clusterUtils;
+    @Inject
+    private HostedEngineHelper hostedEngineHelper;
 
     private StoragePool targetStoragePool;
 
@@ -161,7 +164,16 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_CLUSTER_DIFFERENT_MANAGEMENT_NETWORKS);
         }
 
+        if (isHeHostBeingMovedToAnotherDC(vds)) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_HOST_IN_ANOTHER_DC);
+        }
+
         return true;
+    }
+
+    private boolean isHeHostBeingMovedToAnotherDC(VDS vds) {
+        return hostedEngineHelper.isVmManaged() && vds.isHostedEngineDeployed()
+                && !getTargetCluster().getStoragePoolId().equals(hostedEngineHelper.getStoragePoolId());
     }
 
     private boolean isDetachedSourceCluster() {

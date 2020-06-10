@@ -122,6 +122,11 @@ public class AutoRecoveryManager implements BackendService {
                     Map<Guid, Network> networkMap = new HashMap<>();
                     Map<Guid, List<Network>> clusterNetworksMap = new HashMap<>();
                     for (VDS vds : list) {
+                        if (vds.getNonOperationalReason() == NonOperationalReason.HE_HOST_IN_NON_HE_CLUSTER) {
+                            // the host has been moved out of its original cluster for operational purpose. It must not
+                            // and will not be activated so that HE VM never migrated out of its cluster
+                            continue;
+                        }
                         if (vds.getNonOperationalReason() == NonOperationalReason.NETWORK_INTERFACE_IS_DOWN) {
                             resourceManager.runVdsCommand(VDSCommandType.GetStats,
                                     new VdsIdAndVdsVDSCommandParametersBase(vds));

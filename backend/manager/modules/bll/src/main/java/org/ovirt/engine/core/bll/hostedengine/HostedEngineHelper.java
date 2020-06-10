@@ -103,6 +103,10 @@ public class HostedEngineHelper {
         return hostedEngineVm.getStoragePoolId();
     }
 
+    public Guid getClusterId() {
+        return hostedEngineVm.getClusterId();
+    }
+
     /**
      * @return The Guid of Storage Domain of the engine VM
      */

@@ -55,6 +55,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageBundler;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
@@ -146,32 +148,38 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
         boolean initSucceeded = true;
 
-        // make sure the CPU flags are stored in the DB
-        vdsDynamicDao.updateCpuFlags(getVds().getId(), getVds().getCpuFlags());
-        clusterCpuFlagsManager.updateClusterCpuFlags(getCluster());
+        if (isHeHostBeingMovedToForeignCluster(getVds())) {
+            setNonOperational(NonOperationalReason.HE_HOST_IN_NON_HE_CLUSTER, null);
+            logHeHostInForeignClusterAudit(cluster);
+            initSucceeded = false;
+        } else {
+            // make sure the CPU flags are stored in the DB
+            vdsDynamicDao.updateCpuFlags(getVds().getId(), getVds().getCpuFlags());
+            clusterCpuFlagsManager.updateClusterCpuFlags(getCluster());
 
-        initHostKdumpDetectionStatus();
+            initHostKdumpDetectionStatus();
 
-        /* Host is UP, re-set the policy controlled power management flag */
-        getVds().setPowerManagementControlledByPolicy(true);
-        vdsDynamicDao.updateVdsDynamicPowerManagementPolicyFlag(
-                getVds().getId(),
-                getVds().isPowerManagementControlledByPolicy());
+            /* Host is UP, re-set the policy controlled power management flag */
+            getVds().setPowerManagementControlledByPolicy(true);
+            vdsDynamicDao.updateVdsDynamicPowerManagementPolicyFlag(
+                    getVds().getId(),
+                    getVds().isPowerManagementControlledByPolicy());
 
-        if (getVds().getHighlyAvailableIsConfigured()) {
-            haMaintenanceFailed = !hostedEngineHelper.updateHaLocalMaintenanceMode(getVds(), false);
-        }
+            if (getVds().getHighlyAvailableIsConfigured()) {
+                haMaintenanceFailed = !hostedEngineHelper.updateHaLocalMaintenanceMode(getVds(), false);
+            }
 
-        if (cluster.supportsTrustedService()) {
-            initSucceeded = initTrustedService();
-        }
+            if (cluster.supportsTrustedService()) {
+                initSucceeded = initTrustedService();
+            }
 
-        if (initSucceeded && cluster.supportsVirtService()) {
-            initSucceeded = initVirtResources();
-        }
+            if (initSucceeded && cluster.supportsVirtService()) {
+                initSucceeded = initVirtResources();
+            }
 
-        if (initSucceeded && cluster.supportsGlusterService()) {
-            initSucceeded = glusterCommandHelper.initGlusterHost(getVds());
+            if (initSucceeded && cluster.supportsGlusterService()) {
+                initSucceeded = glusterCommandHelper.initGlusterHost(getVds());
+            }
         }
 
         setSucceeded(initSucceeded);
@@ -180,6 +188,15 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             addCustomValue("HostStatus", getVds().getStatus().toString());
             auditLogDirector.log(this, AuditLogType.VDS_DETECTED);
         }
+    }
+
+    private void logHeHostInForeignClusterAudit(Cluster cluster) {
+        AuditLogable event = new AuditLogableImpl();
+        event.setVdsId(getVdsId());
+        event.setVdsName(getVdsName());
+        event.setClusterId(cluster.getId());
+        event.setClusterName(cluster.getName());
+        auditLogDirector.log(event, AuditLogType.HOSTED_ENGINE_CONFIGURED_HOST_IN_NON_HE_CLUSTER);
     }
 
     private boolean initVirtResources() {
@@ -238,6 +255,11 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         runInternalAction(ActionType.SetNonOperationalVds,
                 tempVar,
                 ExecutionHandler.createInternalJobContext(getContext()));
+    }
+
+    private boolean isHeHostBeingMovedToForeignCluster(VDS vds) {
+        return hostedEngineHelper.isVmManaged() && vds.isHostedEngineDeployed()
+                && (!hostedEngineHelper.getClusterId().equals(vds.getClusterId()));
     }
 
     private boolean initializeStorage() {
