@@ -799,71 +799,31 @@ class OvirtUtils(base.Base):
         return backupFile
 
     _IGNORED_ERRORS = (
-        # TODO: verify and get rid of all the '.*'s
-
-        '.*language "plpgsql" already exists',
-        ' *Command was: CREATE PROCEDURAL LANGUAGE plpgsql;',
-        '.*must be owner of language plpgsql',
-        # psql
-        'ERROR:  must be owner of extension plpgsql',
-        # pg_restore
-        (
-            'pg_restore: \\[archiver \\(db\\)\\] could not execute query: '
-            'ERROR:  must be owner of extension plpgsql'
-        ),
-        (
-            'pg_restore: \\[archiver \\(db\\)\\] could not execute query: '
-            'ERROR:  must be owner of extension uuid-ossp'
-        ),
-        (
-            'pg_restore: error: could not execute query: ERROR:  '
-            'must be owner of extension uuid-ossp'
-        ),
-
+        'language "plpgsql" already exists',
+        'must be owner of language plpgsql',
+        'must be owner of extension plpgsql',
+        'must be owner of extension uuid-ossp',
         # older versions of dwh used uuid-ossp, which requires
         # special privs, is not used anymore, and emits the following
         # errors for normal users.
-        '.*permission denied for language c',
-        '.*function public.uuid_generate_v1() does not exist',
-        '.*function public.uuid_generate_v1mc() does not exist',
-        '.*function public.uuid_generate_v3(uuid, text) does not exist',
-        '.*function public.uuid_generate_v4() does not exist',
-        '.*function public.uuid_generate_v5(uuid, text) does not exist',
-        '.*function public.uuid_nil() does not exist',
-        '.*function public.uuid_ns_dns() does not exist',
-        '.*function public.uuid_ns_oid() does not exist',
-        '.*function public.uuid_ns_url() does not exist',
-        '.*function public.uuid_ns_x500() does not exist',
-
-        # Other stuff, added because if we want to support other
-        # formats etc we must explicitely filter all existing output
-        # and not just ERRORs.
-        'pg_restore: \\[archiver \\(db\\)\\] Error while PROCESSING TOC:',
-        'pg_restore: while PROCESSING TOC:',
-        ' *Command was: COMMENT ON EXTENSION.*',
-        (
-            'pg_restore: \\[archiver \\(db\\)\\] Error from TOC entry \\d+'
-            '; 0 0 COMMENT EXTENSION plpgsql'
-        ),
-        # Extensions with names containing special characters like dash need
-        # to be surrounded with double quotes.
-        (
-            'pg_restore: \\[archiver \\(db\\)\\] Error from TOC entry \\d+'
-            '; 0 0 COMMENT EXTENSION "uuid-ossp"'
-        ),
-        'pg_restore: from TOC entry \\d+; 0 0 COMMENT EXTENSION "uuid-ossp"',
-        (
-            'pg_restore: \\[archiver \\(db\\)\\] Error from TOC entry \\d+'
-            '; \\d+ \\d+ PROCEDURAL LANGUAGE plpgsql'
-        ),
-        'pg_restore: WARNING:',
-        'WARNING: ',
-        'DETAIL:  ',
-        'pg_restore: warning: errors ignored on restore: \\d+',
+        'permission denied for language c',
+        'function public.uuid_generate_v1() does not exist',
+        'function public.uuid_generate_v1mc() does not exist',
+        'function public.uuid_generate_v3(uuid, text) does not exist',
+        'function public.uuid_generate_v4() does not exist',
+        'function public.uuid_generate_v5(uuid, text) does not exist',
+        'function public.uuid_nil() does not exist',
+        'function public.uuid_ns_dns() does not exist',
+        'function public.uuid_ns_oid() does not exist',
+        'function public.uuid_ns_url() does not exist',
+        'function public.uuid_ns_x500() does not exist',
     )
 
     _RE_IGNORED_ERRORS = re.compile(
-        pattern='|'.join(_IGNORED_ERRORS),
+        pattern='|'.join([
+            '.*ERROR: *{}'.format(err)
+            for err in _IGNORED_ERRORS
+        ])
     )
 
     def restore(
@@ -945,7 +905,9 @@ class OvirtUtils(base.Base):
         if stderr:
             errors = [
                 l for l in stderr
-                if l and not self._RE_IGNORED_ERRORS.match(l)
+                if l and
+                'ERROR:' in l and
+                not self._RE_IGNORED_ERRORS.match(l)
             ]
             if errors:
                 self.logger.error(
