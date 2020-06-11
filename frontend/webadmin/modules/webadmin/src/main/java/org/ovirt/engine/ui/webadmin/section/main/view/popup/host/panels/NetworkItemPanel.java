@@ -199,7 +199,9 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
     private void showContextMenu(NetworkItemPanel<?> panel, int clientX, int clientY) {
         if (!menu.isEmpty()){
             menuPopup.setWidget(menu);
-            menuPopup.setPopupPosition(clientX, clientY);
+
+            int y = panel.getAbsoluteTop() + panel.getOffsetHeight() / 2;
+            menuPopup.setPopupPosition(clientX, y);
             menuPopup.show();
         }
     }
