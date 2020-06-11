@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -308,6 +309,7 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
             entity.setTemplateVersionNumber(rs.getInt("template_version_number"));
             entity.setTemplateVersionName(rs.getString("template_version_name"));
             entity.setSealed(rs.getBoolean("is_template_sealed"));
+            entity.setClusterBiosType(BiosType.forValue(rs.getInt("cluster_bios_type")));
             return entity;
         }
     }

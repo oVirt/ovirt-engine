@@ -31,6 +31,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -139,6 +140,9 @@ public class OvfManagerTest {
         // Icons are actually not stored in snapshots, so they are excluded from comparison
         newVm.getStaticData().setSmallIconId(vm.getStaticData().getSmallIconId());
         newVm.getStaticData().setLargeIconId(vm.getStaticData().getLargeIconId());
+        if (vm.getBiosType() == BiosType.CLUSTER_DEFAULT) {
+            vm.setBiosType(vm.getEffectiveBiosType());
+        }
 
         assertEquals(vm.getStaticData(), newVm.getStaticData());
     }
@@ -256,6 +260,7 @@ public class OvfManagerTest {
         assertNotNull(xml);
 
         VM newVm = new VM();
+        newVm.setClusterBiosType(BiosType.Q35_SEA_BIOS);
         FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(newVm);
         manager.importVm(xml, newVm, fullEntityOvfData);
 
@@ -315,6 +320,8 @@ public class OvfManagerTest {
         vm.setSingleQxlPci(false);
         vm.setClusterArch(ArchitectureType.x86_64);
         vm.setVmOs(EXISTING_OS_ID);
+        vm.setClusterBiosType(BiosType.Q35_SEA_BIOS);
+        vm.setBiosType(BiosType.CLUSTER_DEFAULT);
         initInterfaces(vm);
         return vm;
     }
@@ -400,6 +407,8 @@ public class OvfManagerTest {
         template.setDbGeneration(2L);
         template.setClusterArch(ArchitectureType.x86_64);
         template.setOsId(EXISTING_OS_ID);
+        template.setClusterBiosType(BiosType.Q35_SEA_BIOS);
+        template.setBiosType(BiosType.CLUSTER_DEFAULT);
         return template;
     }
 
@@ -412,6 +421,8 @@ public class OvfManagerTest {
         vm.setVmtName(RandomUtils.instance().nextString(10));
         vm.setOrigin(OriginType.OVIRT);
         vm.setDbGeneration(1L);
+        vm.setClusterBiosType(BiosType.Q35_SEA_BIOS);
+        vm.setBiosType(BiosType.CLUSTER_DEFAULT);
         Guid vmSnapshotId = Guid.newGuid();
 
         DiskImage disk1 = addTestDisk(vm, vmSnapshotId);

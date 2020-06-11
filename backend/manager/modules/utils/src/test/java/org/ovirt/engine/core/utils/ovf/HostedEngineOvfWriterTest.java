@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
@@ -106,5 +107,7 @@ public class HostedEngineOvfWriterTest {
         vm.setVmOs(OsRepository.DEFAULT_X86_OS);
         vm.setCpuPerSocket(4);
         vm.setThreadsPerCpu(2);
+        vm.setClusterBiosType(BiosType.Q35_SEA_BIOS);
+        vm.setBiosType(BiosType.CLUSTER_DEFAULT);
     }
 }

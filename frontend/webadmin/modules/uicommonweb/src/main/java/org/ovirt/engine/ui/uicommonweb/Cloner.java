@@ -485,6 +485,7 @@ public final class Cloner {
         obj.setLeaseStorageDomainId(instance.getLeaseStorageDomainId());
         obj.setMultiQueuesEnabled(instance.isMultiQueuesEnabled());
         obj.setSealed(instance.isSealed());
+        obj.setClusterBiosType(instance.getClusterBiosType());
         return obj;
     }
 

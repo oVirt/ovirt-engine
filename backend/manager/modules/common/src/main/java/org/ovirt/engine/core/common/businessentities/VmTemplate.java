@@ -63,6 +63,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private double cachedActualSize = -1.0;
 
+    private BiosType clusterBiosType;
+
     public VmTemplate() {
         setNiceLevel(0);
         setCpuShares(0);
@@ -398,4 +400,17 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     public boolean isSealed() {
         return sealed;
     }
+
+    public BiosType getClusterBiosType() {
+        return clusterBiosType;
+    }
+
+    public void setClusterBiosType(BiosType clusterBiosType) {
+        this.clusterBiosType = clusterBiosType;
+    }
+
+    public BiosType getEffectiveBiosType() {
+        return getBiosType() != BiosType.CLUSTER_DEFAULT ? getBiosType() : getClusterBiosType();
+    }
+
 }

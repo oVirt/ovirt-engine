@@ -90,6 +90,11 @@ public class OvfVmWriter extends OvfOvirtWriter {
         writeAffinityLabels();
     }
 
+    @Override
+    protected void writeBiosType() {
+        writeBiosType(vm.getEffectiveBiosType());
+    }
+
     private void writeLogEvent(String name, String value) {
         StringBuilder fullNameSB = new StringBuilder(EXPORT_ONLY_PREFIX);
         fullNameSB.append(name);

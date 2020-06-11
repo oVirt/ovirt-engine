@@ -34,6 +34,11 @@ public class OvfOvaTemplateWriter extends OvfOvaWriter {
     }
 
     @Override
+    protected void writeBiosType() {
+        writeBiosType(template.getEffectiveBiosType());
+    }
+
+    @Override
     protected Integer maxNumOfVcpus() {
         return VmCpuCountHelper.calcMaxVCpu(template, getVersion());
     }

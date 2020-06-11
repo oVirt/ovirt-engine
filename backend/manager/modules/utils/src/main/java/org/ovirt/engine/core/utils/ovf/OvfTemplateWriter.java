@@ -39,6 +39,11 @@ public class OvfTemplateWriter extends OvfOvirtWriter {
     }
 
     @Override
+    protected void writeBiosType() {
+        writeBiosType(vmTemplate.getEffectiveBiosType());
+    }
+
+    @Override
     protected void writeAppList() {
     }
 
