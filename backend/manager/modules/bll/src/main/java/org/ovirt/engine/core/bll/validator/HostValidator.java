@@ -174,10 +174,13 @@ public class HostValidator {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_UNMANAGED_HOSTED_ENGINE);
         }
 
+        // TODO: Temporarily allow moving HE hosts until fixing BZ1702016 completely
+        /*
         if ((hostedEngineDeployed || hostedEngineDeployRequested)
                 && (!hostedEngineHelper.getStoragePoolId().equals(cluster.getStoragePoolId()))) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_HOST_IN_ANOTHER_DC);
         }
+        */
 
         return ValidationResult.VALID;
     }
