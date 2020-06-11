@@ -817,6 +817,9 @@ class OvirtUtils(base.Base):
         'function public.uuid_ns_oid() does not exist',
         'function public.uuid_ns_url() does not exist',
         'function public.uuid_ns_x500() does not exist',
+        # This happens because we do some GRANTs for grafana's user on dwh db,
+        # but dwh db user has no right to do them itself:
+        'must be member of role "postgres"',
     )
 
     _RE_IGNORED_ERRORS = re.compile(
