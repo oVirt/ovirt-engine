@@ -1,4 +1,4 @@
-package org.ovirt.engine.extensions.aaa.builtin.internal;
+package org.ovirt.engine.extension.aaa.builtin.internal;
 
 import java.util.Collection;
 import java.util.Collections;

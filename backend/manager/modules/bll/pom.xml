@@ -43,7 +43,7 @@
       <version>${ovirt-engine-extensions-api.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.ovirt.engine.extensions</groupId>
+      <groupId>org.ovirt.engine.extension.aaa</groupId>
       <artifactId>builtin</artifactId>
       <version>${engine.version}</version>
     </dependency>

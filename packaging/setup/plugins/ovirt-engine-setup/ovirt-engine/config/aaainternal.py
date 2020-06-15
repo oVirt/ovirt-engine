@@ -113,10 +113,10 @@ class Plugin(plugin.PluginBase):
                     'ovirt.engine.extension.bindings.method = jbossmodule\n'
 
                     'ovirt.engine.extension.binding.jbossmodule.module = '
-                    'org.ovirt.engine.extensions.builtin\n'
+                    'org.ovirt.engine.extension.aaa.builtin\n'
 
                     'ovirt.engine.extension.binding.jbossmodule.class = '
-                    'org.ovirt.engine.extensions.aaa.builtin.internal.'
+                    'org.ovirt.engine.extension.aaa.builtin.internal.'
                     'InternalAuthn\n'
 
                     'ovirt.engine.extension.provides = '
@@ -157,10 +157,10 @@ class Plugin(plugin.PluginBase):
                     'ovirt.engine.extension.bindings.method = jbossmodule\n'
 
                     'ovirt.engine.extension.binding.jbossmodule.module = '
-                    'org.ovirt.engine.extensions.builtin\n'
+                    'org.ovirt.engine.extension.aaa.builtin\n'
 
                     'ovirt.engine.extension.binding.jbossmodule.class = '
-                    'org.ovirt.engine.extensions.aaa.builtin.internal.'
+                    'org.ovirt.engine.extension.aaa.builtin.internal.'
                     'InternalAuthz\n'
 
                     'ovirt.engine.extension.provides = '

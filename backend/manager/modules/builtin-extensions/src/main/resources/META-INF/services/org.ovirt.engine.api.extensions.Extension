@@ -1,2 +1,2 @@
-org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthn
-org.ovirt.engine.extensions.aaa.builtin.internal.InternalAuthz
+org.ovirt.engine.extension.aaa.builtin.internal.InternalAuthn
+org.ovirt.engine.extension.aaa.builtin.internal.InternalAuthz
