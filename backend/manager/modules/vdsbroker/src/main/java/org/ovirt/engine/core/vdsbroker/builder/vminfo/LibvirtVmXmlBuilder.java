@@ -63,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
+import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -258,7 +259,7 @@ public class LibvirtVmXmlBuilder {
             incrementalBackupSupplier = new MemoizingSupplier<>(() -> false);
         }
         vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
-        mdevDisplayOn = isMdevDisplayOn(vmCustomProperties, vm);
+        mdevDisplayOn = MDevTypesUtils.isMdevDisplayOn(vm);
         legacyVirtio = vmInfoBuildUtils.isLegacyVirtio(vm.getVmOsId(), ChipsetType.fromMachineType(emulatedMachine));
     }
 
@@ -1262,61 +1263,46 @@ public class LibvirtVmXmlBuilder {
                 VmDeviceCommonUtils.extractDiskVmElements(vm));
     }
 
-    boolean isMdevDisplayOn(Map<String, String> vmCustomProperties, VM vm) {
-        String mdevTypes = vmCustomProperties.get("mdev_type");
-        if (mdevTypes == null) {
-            return false;
-        }
-        String[] mdevDevices = mdevTypes.split(",");
-        boolean hasNoDisplay = mdevDevices.length > 0 && mdevDevices[0].equals("nodisplay");
-
-        return vm.getCompatibilityVersion().greaterOrEquals(Version.v4_3) && !hasNoDisplay;
-    }
-
     void writeVGpu() {
-        String mdevTypes = vmCustomProperties.remove("mdev_type");
-        if (StringUtils.isNotEmpty(mdevTypes)) {
-            String[] mdevDevices = mdevTypes.split(",");
-            if (mdevDevices.length > 0 && mdevDevices[0].equals("nodisplay")) {
-                mdevDevices = Arrays.copyOfRange(mdevDevices, 1, mdevDevices.length);
+        for (String mdevType : MDevTypesUtils.getMDevTypes(vm)) {
+            writer.writeStartElement("hostdev");
+            writer.writeAttributeString("mode", "subsystem");
+            writer.writeAttributeString("type", "mdev");
+            writer.writeAttributeString("model", "vfio-pci");
+            if (mdevDisplayOn) {
+                // Nvidia vGPU VNC console is only supported on RHEL >= 7.6
+                // See https://bugzilla.redhat.com/show_bug.cgi?id=1633623 for details and discussion
+                writer.writeAttributeString("display", "on");
             }
-            for (String mdevType : mdevDevices) {
-                writer.writeStartElement("hostdev");
-                writer.writeAttributeString("mode", "subsystem");
-                writer.writeAttributeString("type", "mdev");
-                writer.writeAttributeString("model", "vfio-pci");
-                if (mdevDisplayOn) {
-                    // Nvidia vGPU VNC console is only supported on RHEL >= 7.6
-                    // See https://bugzilla.redhat.com/show_bug.cgi?id=1633623 for details and discussion
-                    writer.writeAttributeString("display", "on");
+
+            writer.writeStartElement("source");
+            String address = Guid.newGuid().toString();
+            writer.writeStartElement("address");
+            writer.writeAttributeString("uuid", address);
+            writer.writeEndElement();
+            writer.writeEndElement();
+
+            writer.writeEndElement();
+
+            String mdevTypeMeta = mdevType;
+            if (FeatureSupported.isVgpuPlacementSupported(vm.getCompatibilityVersion())) {
+                VgpuPlacement vgpuPlacement = hostVgpuPlacementSupplier.get();
+                String vgpuPlacementString;
+                if (vgpuPlacement == VgpuPlacement.CONSOLIDATED) {
+                    vgpuPlacementString = "compact";
+                } else if (vgpuPlacement == VgpuPlacement.SEPARATED) {
+                    vgpuPlacementString = "separate";
+                } else {
+                    log.warn("Unrecognized vGPU placement type (using `{}' instead): {}",
+                            VgpuPlacement.CONSOLIDATED,
+                            vgpuPlacement);
+                    vgpuPlacementString = "compact";
                 }
-
-                writer.writeStartElement("source");
-                String address = Guid.newGuid().toString();
-                writer.writeStartElement("address");
-                writer.writeAttributeString("uuid", address);
-                writer.writeEndElement();
-                writer.writeEndElement();
-
-                writer.writeEndElement();
-
-                String mdevTypeMeta = mdevType;
-                if (FeatureSupported.isVgpuPlacementSupported(vm.getCompatibilityVersion())) {
-                    VgpuPlacement vgpuPlacement = hostVgpuPlacementSupplier.get();
-                    String vgpuPlacementString;
-                    if (vgpuPlacement == VgpuPlacement.CONSOLIDATED) {
-                        vgpuPlacementString = "compact";
-                    } else if (vgpuPlacement == VgpuPlacement.SEPARATED) {
-                        vgpuPlacementString = "separate";
-                    } else {
-                        log.warn("Unrecognized vGPU placement type (using `{}' instead): {}",
-                                 VgpuPlacement.CONSOLIDATED, vgpuPlacement);
-                        vgpuPlacementString = "compact";
-                    }
-                    mdevTypeMeta = mdevTypeMeta + "|" + vgpuPlacementString;
-                }
-                mdevMetadata.put(address, Collections.singletonMap("mdevType", mdevTypeMeta));
+                mdevTypeMeta = mdevTypeMeta + "|" + vgpuPlacementString;
             }
+            // removing from custom properties since it will be processed separately
+            vmCustomProperties.remove("mdev_type");
+            mdevMetadata.put(address, Collections.singletonMap("mdevType", mdevTypeMeta));
         }
     }
 

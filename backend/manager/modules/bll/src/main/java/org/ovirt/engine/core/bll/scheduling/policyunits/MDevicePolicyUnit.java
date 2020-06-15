@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +20,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
-import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
+import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +45,7 @@ public class MDevicePolicyUnit extends PolicyUnitImpl {
 
     @Override
     public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
-        List<String> vmMDevs = getMDevsFromCustomProperties(vm);
+        List<String> vmMDevs = MDevTypesUtils.getMDevTypes(vm);
         if (vmMDevs.isEmpty()) {
             return hosts;
         }
@@ -78,17 +76,6 @@ public class MDevicePolicyUnit extends PolicyUnitImpl {
             list.add(host);
         }
         return list;
-    }
-
-    private List<String> getMDevsFromCustomProperties(VM vm) {
-        SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
-        Map<String, String> customProperties = util.convertProperties(vm.getCustomProperties());
-        String mDevCustomProperties = customProperties.get("mdev_type");
-
-        if (mDevCustomProperties == null) {
-            return Collections.emptyList();
-        }
-        return Arrays.asList(mDevCustomProperties.split(","));
     }
 
     private Map<String, List<MDevType>> getMDevsForHost(VDS host) {
