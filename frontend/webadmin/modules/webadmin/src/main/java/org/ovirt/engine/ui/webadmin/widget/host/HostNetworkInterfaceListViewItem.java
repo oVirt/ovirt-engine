@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxTotalRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractIconTypeColumn;
 import org.ovirt.engine.ui.common.widget.table.header.IconTypeHeader;
+import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.network.NetworkIcon;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.IconStatusPanel;
@@ -64,6 +65,11 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     private static final String NETWORK_DATA_ROW = "network-data-row"; // $NON-NLS-1$
     private static final String NETWORK_LIST_ITEM = "network-list-item"; // $NON-NLS-1$
     private static final String MAC_ADDRESS_WORD_BREAK = "break-word"; // $NON-NLS-1$
+    private static final SafeHtml UNMANAGED_TOOLTIP_SAFE_HTML = SafeHtmlUtils.fromSafeConstant(
+        constants.unmanagedNetworkItemInfo().concat(
+        constants.lineBreak()).concat(
+        constants.unmanagedNetworkDescriptionItemInfo())
+    );
 
     private ExpandableListViewItem logicalNetworkExpand;
 
@@ -242,6 +248,9 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         if (containsOutOfSync(logicalNetworks)) {
             icons.add(createNeedsSyncStatusPanel());
         }
+        if (containsUnmanaged(logicalNetworks)) {
+            icons.add(createUnmanagedStatusPanel());
+        }
         String logicalNetworksText = logicalNetworks.size() == 1 ? constants.logicalNetwork() :
             messages.logicalNetworks(logicalNetworks.size());
         logicalNetworkExpand = new ExpandableListViewItem(SafeHtmlUtils.fromString(logicalNetworksText), icons);
@@ -256,6 +265,10 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
 
     private boolean containsManagement(List<HostVLan> logicalNetworks) {
         return logicalNetworks.stream().anyMatch(this::isManagementNetwork);
+    }
+
+    private boolean containsUnmanaged(List<HostVLan> logicalNetworks) {
+        return logicalNetworks.stream().anyMatch(iface -> !this.isManaged(iface));
     }
 
     private List<HostVLan> calculateLogicalNetworks(HostInterfaceLineModel entity) {
@@ -331,6 +344,23 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         sync.getCell().setColor(SafeHtmlUtils.fromSafeConstant(RED));
         logicalNetworkTable.addColumn(sync, syncHeader);
         logicalNetworkTable.setColumnWidth(sync, "40px"); // $NON-NLS-1$
+
+        AbstractIconTypeColumn<HostVLan> unmanagedColumn = new AbstractIconTypeColumn<HostVLan>() {
+            @Override
+            public IconType getValue(HostVLan logicalNetwork) {
+                return isManaged(logicalNetwork) ? null : IconType.QUESTION;
+            }
+
+            @Override
+            public SafeHtml getTooltip(HostVLan logicalNetwork) {
+                return isManaged(logicalNetwork) ? null : UNMANAGED_TOOLTIP_SAFE_HTML;
+            }
+        };
+        SafeHtmlHeader unmanagedHeader = new SafeHtmlHeader(
+            SafeHtmlUtils.fromSafeConstant(constants.unmanagedNetworkItemTitle()), UNMANAGED_TOOLTIP_SAFE_HTML);
+        unmanagedColumn.getCell().setColor(SafeHtmlUtils.fromSafeConstant(ICON_COLOR));
+        logicalNetworkTable.addColumn(unmanagedColumn, unmanagedHeader);
+        logicalNetworkTable.setColumnWidth(unmanagedColumn, "90px"); // $NON-NLS-1$
 
         TextColumn<HostVLan> vlan = new TextColumn<HostVLan>() {
             @Override
@@ -409,6 +439,15 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         return managed && !sync;
     }
 
+    private boolean isManaged(HostVLan iface) {
+        return hasInternalInterface(iface) && hasNetworkImplementationDetails(iface) &&
+            iface.getInterface().getNetworkImplementationDetails().isManaged();
+    }
+
+    private boolean hasNetworkImplementationDetails(HostVLan iface) {
+        return iface.getInterface().getNetworkImplementationDetails() != null;
+    }
+
     private boolean hasInternalInterface(HostVLan iface) {
         return iface != null && iface.getInterface() != null;
     }
@@ -416,6 +455,12 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
     protected IsWidget createManagementStatusPanel() {
         WidgetTooltip tooltip = new WidgetTooltip(new IconStatusPanel(IconType.INSTITUTION));
         tooltip.setText(constants.managementNetworkLabel());
+        return tooltip;
+    }
+
+    protected IsWidget createUnmanagedStatusPanel() {
+        WidgetTooltip tooltip = new WidgetTooltip(new IconStatusPanel(IconType.QUESTION));
+        tooltip.setHtml(UNMANAGED_TOOLTIP_SAFE_HTML);
         return tooltip;
     }
 

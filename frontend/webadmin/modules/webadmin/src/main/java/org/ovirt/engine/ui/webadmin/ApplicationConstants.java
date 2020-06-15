@@ -2171,6 +2171,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String unmanagedNetworkDescriptionItemInfo();
 
+    String unmanagedNetworkItemTitle();
+
     String managementItemInfo();
 
     String mtuItemInfo();
