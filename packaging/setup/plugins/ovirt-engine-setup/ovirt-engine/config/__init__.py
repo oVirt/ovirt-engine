@@ -16,6 +16,7 @@ from . import aaa
 from . import aaainternal
 from . import aaajdbc
 from . import aaakerbldap
+from . import aaaupgrade
 from . import appmode
 from . import ca
 from . import database
@@ -39,6 +40,7 @@ def createPlugins(context):
     aaainternal.Plugin(context=context)
     aaajdbc.Plugin(context=context)
     aaakerbldap.Plugin(context=context)
+    aaaupgrade.Plugin(context=context)
     jboss.Plugin(context=context)
     java.Plugin(context=context)
     database.Plugin(context=context)

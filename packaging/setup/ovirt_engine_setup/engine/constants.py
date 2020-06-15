@@ -406,6 +406,9 @@ class Stages(object):
     SYSTEM_NFS_CONFIG_AVAILABLE = 'osetup.system.nfs.available'
 
     CONFIG_ISO_DOMAIN_AVAILABLE = 'osetup.config.iso_domain.available'
+
+    CONFIG_EXTENSIONS_UPGRADE = 'osetup.config.extensions.upgrade'
+
     CONFIG_AAA_ADMIN_USER_SETUP = 'osetup.config.aaa.adminuser.setup'
 
     CORE_ENABLE = 'osetup.engine.core.enable'

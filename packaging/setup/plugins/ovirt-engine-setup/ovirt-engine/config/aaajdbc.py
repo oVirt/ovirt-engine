@@ -397,6 +397,7 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DB_SCHEMA,
             oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
+            oenginecons.Stages.CONFIG_EXTENSIONS_UPGRADE,
         ),
         before=(
             oenginecons.Stages.CONFIG_AAA_ADMIN_USER_SETUP,
