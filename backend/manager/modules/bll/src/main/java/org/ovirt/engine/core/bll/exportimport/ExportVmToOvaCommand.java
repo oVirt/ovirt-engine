@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -235,6 +236,9 @@ public class ExportVmToOvaCommand<T extends ExportVmToOvaParameters> extends Exp
             cachedDisks = diskImageDao.getAllSnapshotsForVmSnapshot(getParameters().getSnapshotId());
             cachedDisks.forEach(disk -> disk.setDiskVmElements(Collections.singleton(
                     diskVmElementDao.get(new VmDeviceId(disk.getId(), getParameters().getEntityId())))));
+            for (DiskImage disk : cachedDisks) {
+                disk.getImage().setVolumeFormat(VolumeFormat.COW);
+            }
         }
         return cachedDisks;
     }

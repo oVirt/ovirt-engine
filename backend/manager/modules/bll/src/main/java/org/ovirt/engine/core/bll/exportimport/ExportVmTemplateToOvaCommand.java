@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -108,6 +109,9 @@ public class ExportVmTemplateToOvaCommand<T extends ExportOvaParameters> extends
             cachedDisks = DisksFilter.filterImageDisks(allDisks, ONLY_NOT_SHAREABLE, ONLY_ACTIVE);
             cachedDisks.forEach(disk -> disk.setDiskVmElements(Collections.singleton(
                     diskVmElementDao.get(new VmDeviceId(disk.getId(), getParameters().getEntityId())))));
+            for (DiskImage disk : cachedDisks) {
+                disk.getImage().setVolumeFormat(VolumeFormat.COW);
+            }
         }
         return cachedDisks;
     }
