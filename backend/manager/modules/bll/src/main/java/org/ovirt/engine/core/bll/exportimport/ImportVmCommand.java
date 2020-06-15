@@ -1240,16 +1240,31 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         getVm().getSnapshots().stream()
                 .filter(Snapshot::containsMemory)
                 .forEach(snapshot -> {
-                    addDisk(createMemoryDisk(snapshot));
-                    addDisk(createMetadataDisk(getVm(), snapshot));
+                    addDisk(getMemoryDisk(snapshot));
+                    addDisk(getMetadataDisk(getVm(), snapshot));
                 });
     }
 
-    private DiskImage createMemoryDisk(Snapshot snapshot) {
-        StorageDomainStatic sd =
-                validateStorageDomainExistsInDb(snapshot, memoryDiskDomainMap.get(snapshot.getMemoryDiskId()));
+    private DiskImage getMemoryDisk(Snapshot snapshot) {
         DiskImage disk = isMemoryDiskAlreadyExistsInDb(snapshot, snapshot.getMemoryDiskId());
-        if (sd == null || disk != null) {
+        if (disk == null) {
+            return createMemoryDisk(snapshot);
+        }
+        return disk;
+    }
+
+    private DiskImage getMetadataDisk(VM vm, Snapshot snapshot) {
+        DiskImage disk = isMemoryDiskAlreadyExistsInDb(snapshot, snapshot.getMetadataDiskId());
+        if (disk == null) {
+            return createMetadataDisk(vm, snapshot);
+        }
+        return disk;
+    }
+
+    private DiskImage createMemoryDisk(Snapshot snapshot) {
+        Guid sdId = getStorageIdForMemoryDisk(snapshot, snapshot.getMemoryDiskId());
+        StorageDomainStatic sd = validateStorageDomainExistsInDb(snapshot, sdId);
+        if (sd == null) {
             snapshot.setMetadataDiskId(null);
             snapshot.setMemoryDiskId(null);
             return null;
@@ -1270,10 +1285,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private DiskImage createMetadataDisk(VM vm, Snapshot snapshot) {
-        StorageDomainStatic sd =
-                validateStorageDomainExistsInDb(snapshot, memoryDiskDomainMap.get(snapshot.getMetadataDiskId()));
-        DiskImage disk = isMemoryDiskAlreadyExistsInDb(snapshot, snapshot.getMetadataDiskId());
-        if (sd == null || disk != null) {
+        Guid sdId = getStorageIdForMemoryDisk(snapshot, snapshot.getMetadataDiskId());
+        StorageDomainStatic sd = validateStorageDomainExistsInDb(snapshot, sdId);
+        if (sd == null) {
             return null;
         }
         DiskImage memoryDisk = MemoryUtils.createSnapshotMetadataDisk(vm.getName(),
@@ -1286,6 +1300,17 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         memoryDisk.setActive(true);
         memoryDisk.setWipeAfterDelete(vm.getDiskList().stream().anyMatch(DiskImage::isWipeAfterDelete));
         return memoryDisk;
+    }
+
+    private Guid getStorageIdForMemoryDisk(Snapshot snapshot, Guid diskId) {
+        // Get the SD associated with memory disks and dummies for VM import from an export domain.
+        if (memoryDiskDomainMap.containsKey(diskId)) {
+            return memoryDiskDomainMap.get(diskId);
+        } else if (snapshot.containsMemory()) {
+            // Get the target SD in case of VM registration.
+            return getParameters().getDestDomainId();
+        }
+        return null;
     }
 
     private DiskImage isMemoryDiskAlreadyExistsInDb(Snapshot snapshot, Guid diskId) {
@@ -1312,12 +1337,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private void addDisk(DiskImage disk) {
-        if (disk != null) {
+        if (disk == null) {
+            log.error("Memory metadata/dump disk could not be added");
+        } else if (diskDao.get(disk.getId()) == null) {
+            // Add disk to DB only if not already exists.
             saveImage(disk);
             saveBaseDisk(disk);
             saveDiskImageDynamic(disk);
-        } else {
-            log.error("Memory metadata/dump disk could not be added");
         }
     }
 
