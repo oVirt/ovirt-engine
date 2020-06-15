@@ -83,7 +83,7 @@ ${TABLES+$TABLES} \
 -w
 
 RET=$?
-if [ ${RET} -ne 0 ] && ${REMOTE}==1; then
+if [ "${RET}" -ne 0 -a -n "${REMOTE}" ]; then
 	echo "For remote vacuuming if you got errors like 'permission denied for schema pg_temp_XX' please do the following:
 	      1) log in into the remote database machine
 	      2) run
@@ -94,4 +94,4 @@ if [ ${RET} -ne 0 ] && ${REMOTE}==1; then
 	         psql  -U <db-admin-role> -f <temporary file>
               4) try to run engine-vacuum again"
 fi
-return ${RET}
+exit "${RET}"
