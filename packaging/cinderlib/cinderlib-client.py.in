@@ -13,11 +13,16 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
+import eventlet
 import json
 import logging
 import os
 import sys
 import traceback
+
+# We have to call this here to ensure the requests package
+# uses monkey patched objects
+eventlet.monkey_patch()
 
 import requests
 
