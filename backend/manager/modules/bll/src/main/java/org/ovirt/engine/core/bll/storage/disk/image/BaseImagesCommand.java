@@ -273,8 +273,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
       */
     protected void completeImageData(DiskImage fromIRS) {
         getDestinationDiskImage().setCreationDate(fromIRS.getCreationDate());
-        getDestinationDiskImage().setLastModifiedDate(fromIRS.getLastModifiedDate());
-        getDestinationDiskImage().setLastModified(getDestinationDiskImage().getLastModifiedDate());
         DiskImageDynamic destinationDiskDynamic = diskImageDynamicDao.get(getDestinationDiskImage().getImageId());
         if (destinationDiskDynamic != null) {
             destinationDiskDynamic.setActualSize(fromIRS.getActualSizeInBytes());

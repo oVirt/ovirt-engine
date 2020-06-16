@@ -79,10 +79,6 @@ public class GetVolumeInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters
                 long secsSinceEpoch = Long.parseLong(struct.get("ctime").toString());
                 newImage.setCreationDate(makeDTFromCTime(secsSinceEpoch));
             }
-            if (struct.containsKey("mtime")) {
-                long secsSinceEpoch = Long.parseLong(struct.get("mtime").toString());
-                newImage.setLastModifiedDate(makeDTFromCTime(secsSinceEpoch));
-            }
             if (struct.containsKey("domain")) {
                 newImage.setStorageIds(new ArrayList<>(Arrays.asList(new Guid(struct.get("domain").toString()))));
             }
