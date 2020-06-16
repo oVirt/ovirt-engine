@@ -7,13 +7,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.common.businessentities.Permission;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.dao.PermissionDao;
 
 @Named
 @Singleton
-final class IsSystemSuperUserPredicate implements Predicate<Guid> {
+final class IsSystemSuperUserPredicate implements Predicate<DbUser> {
 
     private final PermissionDao permissionDao;
 
@@ -25,13 +24,15 @@ final class IsSystemSuperUserPredicate implements Predicate<Guid> {
     }
 
     @Override
-    public boolean test(Guid userId) {
-        Permission superUserPermission = getPermissionDao()
-                        .getForRoleAndAdElementAndObjectWithGroupCheck(
-                                PredefinedRoles.SUPER_USER.getId(),
-                                userId,
-                                MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID);
-        return superUserPermission != null;
+    public boolean test(DbUser user) {
+        // TODO: Investigate how to inject admin@internal to CoCo for all scheduled jobs. Current user is populated
+        // only from logged-in user who executed a command from UI or RESTAPI. But for methods executed from
+        // scheduler we don't have any logged-in user
+        return user == null
+                || getPermissionDao().getForRoleAndAdElementAndObjectWithGroupCheck(
+                        PredefinedRoles.SUPER_USER.getId(),
+                        user.getId(),
+                        MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID) != null;
     }
 
     PermissionDao getPermissionDao() {

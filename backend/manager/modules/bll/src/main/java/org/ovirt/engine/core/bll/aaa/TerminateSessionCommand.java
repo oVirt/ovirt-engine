@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.TerminateSessionParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Terminates session of the user identified by its session database id. Only admins can execute this command.
@@ -25,7 +24,7 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
 
     @Named
     @Inject
-    private Predicate<Guid> isSystemSuperUserPredicate;
+    private Predicate<DbUser> isSystemSuperUserPredicate;
 
     @Inject
     private SessionDataContainer sessionDataContainer;
@@ -68,7 +67,7 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
 
     @Override
     protected boolean isUserAuthorizedToRunAction() {
-        if (isSystemSuperUserPredicate.test(getCurrentUser().getId())) {
+        if (isSystemSuperUserPredicate.test(getCurrentUser())) {
             return true;
         } else {
             addValidationMessage(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);

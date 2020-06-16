@@ -171,7 +171,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
 
     @Named
     @Inject
-    private Predicate<Guid> isSystemSuperUserPredicate;
+    private Predicate<DbUser> isSystemSuperUserPredicate;
 
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
@@ -1158,7 +1158,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     public boolean isSystemSuperUser() {
-        return isSystemSuperUserPredicate.test(getCurrentUser().getId());
+        return isSystemSuperUserPredicate.test(getCurrentUser());
     }
 
     private boolean executeWithoutTransaction() {
