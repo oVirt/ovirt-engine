@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -60,6 +61,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.TransientField;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -1329,7 +1331,28 @@ public class VmHandler implements BackendService {
         return false;
     }
 
+    private ValidationResult validateHostedEnginePhysicalMemory(VmBase vmBase) {
+        if (vmBase.isHostedEngine()) {
+            List<VDS> allHostsForCluster = vdsDao.getAllForCluster(vmBase.getClusterId());
+            Optional<Integer> min = allHostsForCluster.stream()
+                    .filter(v -> v.getStatus() == VDSStatus.Up && v.isHostedEngineHost())
+                    .map(VDS::getPhysicalMemMb)
+                    .min(Integer::compare);
+            if (min.get() > 0 && vmBase.getMemSizeMb() >= min.get()) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PHYSICAL_MEMORY_CANNOT_BE_SMALLER_THAN_MEMORY_SIZE,
+                        ReplacementUtils.createSetVariableString("physMemory", min.get()),
+                        ReplacementUtils.createSetVariableString("memory", vmBase.getMemSizeMb()));
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult validateMaxMemorySize(VmBase vmBase, Version effectiveCompatibilityVersion) {
+        ValidationResult validateResult = validateHostedEnginePhysicalMemory(vmBase);
+        if (!validateResult.isValid()) {
+            return validateResult;
+        }
+
         if (vmBase.getMaxMemorySizeMb() < vmBase.getMemSizeMb()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_MEMORY_CANNOT_BE_SMALLER_THAN_MEMORY_SIZE,
                     ReplacementUtils.createSetVariableString("maxMemory", vmBase.getMaxMemorySizeMb()),
