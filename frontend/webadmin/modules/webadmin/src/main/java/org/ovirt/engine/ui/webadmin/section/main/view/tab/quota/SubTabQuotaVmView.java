@@ -32,6 +32,7 @@ public class SubTabQuotaVmView extends AbstractSubTabTreeView<VMsTree<QuotaVmLis
         table.addColumn(new EmptyColumn(), constants.vSizeVm(), "110px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.actualSizeVm(), "110px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.creationDateVm(), "170px"); //$NON-NLS-1$
+        table.setHeight("27px"); // $NON-NLS-1$
     }
 
     @Override

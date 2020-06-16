@@ -30,6 +30,7 @@ public class SubTabQuotaTemplateView extends AbstractSubTabTreeView<TemplatesTre
         table.addColumn(new EmptyColumn(), constants.disksTemplate(), "110px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.actualSizeTemplate(), "110px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.creationDateTemplate(), "170px"); //$NON-NLS-1$
+        table.setHeight("27px"); // $NON-NLS-1$
     }
 
     @Override
