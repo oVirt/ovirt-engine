@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.sso.utils.SsoConstants;
 import org.ovirt.engine.core.sso.utils.SsoContext;
 import org.ovirt.engine.core.sso.utils.SsoSession;
@@ -53,8 +54,7 @@ public class OpenIdUserInfoServlet extends HttpServlet {
                 return;
             }
 
-            SsoContext ssoContext = SsoUtils.getSsoContext(request);
-            if (ssoContext.getClienInfo(ssoSession.getClientId()).isEncryptedUserInfo()) {
+            if (isEncryptedUserInfo(request, ssoSession)) {
                 SsoUtils.sendJsonData(response, buildEncodedJWTResponse(request, ssoSession), "application/jwt");
             } else {
                 SsoUtils.sendJsonData(response, buildPlainJsonResponse(request, ssoSession));
@@ -63,6 +63,15 @@ public class OpenIdUserInfoServlet extends HttpServlet {
             SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
 
+    }
+
+    private boolean isEncryptedUserInfo(HttpServletRequest request, SsoSession ssoSession) {
+        if (StringUtils.isBlank(ssoSession.getClientId())) {
+            // it should be encrypted by default
+            return true;
+        }
+        SsoContext ssoContext = SsoUtils.getSsoContext(request);
+        return ssoContext.getClienInfo(ssoSession.getClientId()).isEncryptedUserInfo();
     }
 
     private String getTokenFromHeader(HttpServletRequest request) {
