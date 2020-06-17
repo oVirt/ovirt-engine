@@ -1,9 +1,12 @@
 package org.ovirt.engine.api.restapi.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.Properties;
@@ -87,15 +90,27 @@ public class CustomPropertiesParser {
      * @return A newly-created map containing the key:value pairs.
      */
     public static Map<String, Object> toObjectsMap(Properties properties) {
-        Map<String, Object> res = new HashMap<>();
+        return toObjectsMap(properties, value -> value);
+    }
 
-        if (properties != null) {
-            for (Property property : properties.getProperties()) {
-                res.put(property.getName(), property.getValue());
-            }
+    /**
+     * Get a map containing the key:value pairs from the given Properties object.
+     * Where the value of property can be mapped into another object.
+     *
+     * @param properties
+     *            The key:value pairs.
+     * @param mapper
+     *            A mapper function accepting a string and returning an object.
+     * @return A newly-created map containing the key:value pairs.
+     */
+    public static Map<String, Object> toObjectsMap(Properties properties, Function<String, Object> mapper) {
+        if (properties == null) {
+            return Collections.emptyMap();
         }
 
-        return res;
+        return properties.getProperties()
+                .stream()
+                .collect(Collectors.toMap(k -> k.getName(), v -> mapper.apply(v.getValue())));
     }
 
     /**

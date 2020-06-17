@@ -3,11 +3,13 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.getLinksToExclude;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -551,7 +553,20 @@ public class BackendStorageDomainsResource
             Properties driverOptions,
             Properties driverSensitiveOptions) {
         AddManagedBlockStorageDomainParameters params = new AddManagedBlockStorageDomainParameters();
-        Map<String, Object> driverOptionsMap = new HashMap<>(CustomPropertiesParser.toObjectsMap(driverOptions));
+
+        // This assumes that every string passed wrapped in "[]" is an array, while there's a chance
+        // an evil driver will use "[]" to wrap a regular string, there's not much we can do as we do not
+        // know the types.
+        Function<String, Object> mapper = value -> {
+            if (value.startsWith("[") && value.endsWith("]")) {
+                String arrField = value.substring(1, value.length() - 1);
+                return Arrays.stream(arrField.split(",")).map(String::trim).toArray();
+            }
+
+            return value;
+        };
+
+        Map<String, Object> driverOptionsMap = new HashMap<>(CustomPropertiesParser.toObjectsMap(driverOptions, mapper));
         driverOptionsMap.put(AddManagedBlockStorageDomainParameters.VOLUME_BACKEND_NAME, entity.getName());
         params.setDriverOptions(driverOptionsMap);
         params.setSriverSensitiveOptions(CustomPropertiesParser.toObjectsMap(driverSensitiveOptions));
