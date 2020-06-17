@@ -19,6 +19,7 @@ public interface OvfProperties {
     String VMD_ALIAS = "Alias";
     String VMD_CUSTOM_PROP = "CustomProperties";
     String VMD_SNAPSHOT_PROP = "SnapshotId";
+    String VMD_ID = "rasd:InstanceId";
 
     String AUTO_STARTUP = "AutoStartup";
     String PRIORITY = "Priority";

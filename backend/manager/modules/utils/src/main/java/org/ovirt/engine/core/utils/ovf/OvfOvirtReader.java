@@ -239,7 +239,7 @@ public abstract class OvfOvirtReader extends OvfReader {
     @Override
     protected VmNetworkInterface getNetworkInterface(XmlNode node) {
         // prior to 3.0 the instanceId is int , in 3.1 and on this is Guid
-        String str = selectSingleNode(node, "rasd:InstanceId", _xmlNS).innerText;
+        String str = selectSingleNode(node, VMD_ID, _xmlNS).innerText;
         if (!StringUtils.isNumeric(str)) { // 3.1 and above OVF format
             final Guid guid = new Guid(str);
             VmNetworkInterface iface = interfaces.stream().filter(i -> i.getId().equals(guid)).findFirst().orElse(null);
@@ -303,7 +303,7 @@ public abstract class OvfOvirtReader extends OvfReader {
 
     @Override
     protected void readDiskImageItem(XmlNode node) {
-        final Guid guid = new Guid(selectSingleNode(node, "rasd:InstanceId", _xmlNS).innerText);
+        final Guid guid = new Guid(selectSingleNode(node, VMD_ID, _xmlNS).innerText);
         DiskImage image = _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().orElse(null);
         if (image == null) {
             return;

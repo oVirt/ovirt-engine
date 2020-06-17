@@ -373,7 +373,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 break;
 
             case OvfHardware.Graphics:
-                readManagedVmDevice(item, Guid.newGuid()); // so far graphics doesn't contain anything special
+                readManagedVmDevice(item, readDeviceId(item)); // so far graphics doesn't contain anything special
                 break;
 
             case OvfHardware.CD:
@@ -459,7 +459,7 @@ public abstract class OvfReader implements IOvfBuilder {
             vmBase.setSingleQxlPci(Boolean.parseBoolean(selectSingleNode(node, "rasd:SinglePciQxl", _xmlNS).innerText));
         }
 
-        readManagedVmDevice(node, Guid.newGuid());
+        readManagedVmDevice(node, readDeviceId(node));
     }
 
     protected void readCpuItem(XmlNode node) {
@@ -486,7 +486,7 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     private void readCdItem(XmlNode node) {
-        readManagedVmDevice(node, Guid.newGuid());
+        readManagedVmDevice(node, readDeviceId(node));
     }
 
     private void readNetworkItem(XmlNode node, int nicIdx) {
@@ -511,8 +511,16 @@ public abstract class OvfReader implements IOvfBuilder {
             managed = VmDeviceCommonUtils.isSpecialDevice(device, type);
         }
 
-        return managed ? readManagedVmDevice(node, Guid.newGuid())
+        return managed ? readManagedVmDevice(node, readDeviceId(node))
                 : readUnmanagedVmDevice(node, Guid.newGuid());
+    }
+
+    private Guid readDeviceId(XmlNode node) {
+        if (selectSingleNode(node, VMD_ID, _xmlNS) != null
+                && StringUtils.isNotEmpty(selectSingleNode(node, VMD_TYPE, _xmlNS).innerText)) {
+            return new Guid(String.valueOf(selectSingleNode(node, VMD_ID, _xmlNS).innerText));
+        }
+        return Guid.newGuid();
     }
 
     protected void readGeneralData(XmlNode content) {
