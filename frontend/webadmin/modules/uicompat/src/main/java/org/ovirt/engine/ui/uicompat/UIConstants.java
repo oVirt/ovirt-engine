@@ -1701,8 +1701,6 @@ public interface UIConstants extends Constants {
 
     String shareKsmInsideEachNumaNode();
 
-    String ballooningNotAvailable();
-
     String cloudInitRootPasswordMatchMessage();
 
     String cloudInitDnsServerListMessage();

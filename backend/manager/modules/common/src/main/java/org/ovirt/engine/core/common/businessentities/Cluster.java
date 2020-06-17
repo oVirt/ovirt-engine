@@ -192,6 +192,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         vncEncryptionEnabled = true;
         hostNamesOutOfSync = "";
         managed = true;
+        enableBallooning = true;
     }
 
     @Override

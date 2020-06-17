@@ -1231,7 +1231,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         });
 
         setEnableBallooning(new EntityModel<>());
-        getEnableBallooning().setEntity(false);
+        getEnableBallooning().setEntity(true);
         // Optimization methods:
         // default value =100;
         setDefaultMemoryOvercommit(AsyncDataProvider.getInstance().getClusterDefaultMemoryOverCommit());
@@ -1886,8 +1886,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }), version);
 
         getVersionSupportsCpuThreads().setEntity(true);
-        getEnableBallooning().setIsChangeable(true);
-        getEnableBallooning().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ballooningNotAvailable());
 
         setRngSourcesCheckboxes(version);
 
