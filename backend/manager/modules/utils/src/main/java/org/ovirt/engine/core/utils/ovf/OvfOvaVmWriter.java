@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils.ovf;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -63,8 +64,8 @@ public class OvfOvaVmWriter extends OvfOvaWriter {
     }
 
     @Override
-    protected void writeBiosType() {
-        writeBiosType(vm.getEffectiveBiosType());
+    protected BiosType getEffectiveBiosType() {
+        return vm.getEffectiveBiosType();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -39,8 +40,8 @@ public class OvfTemplateWriter extends OvfOvirtWriter {
     }
 
     @Override
-    protected void writeBiosType() {
-        writeBiosType(vmTemplate.getEffectiveBiosType());
+    protected BiosType getEffectiveBiosType() {
+        return vmTemplate.getEffectiveBiosType();
     }
 
     @Override
