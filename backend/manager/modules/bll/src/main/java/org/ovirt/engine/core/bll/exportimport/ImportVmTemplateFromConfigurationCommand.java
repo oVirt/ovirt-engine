@@ -78,6 +78,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private List<String> missingVnicMappings = new ArrayList<>();
     private Collection<DiskImage> templateDisksToAttach;
     private Map<Guid, Guid> diskIdToStorageDomainId;
+    private Guid invalidDiskIdToAttach;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -151,24 +152,21 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         if (templateDisksToAttach == null) {
             return super.validateSourceStorageDomain();
         }
+        if (invalidDiskIdToAttach != null) {
+            log.error("failed to find an image of disk {} in the database", invalidDiskIdToAttach);
+            return failValidation(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
+        }
         diskIdToStorageDomainId = new HashMap<>();
         for (DiskImage disk : templateDisksToAttach) {
-            List<DiskImage> diskVolumes = diskImageDao.getAllSnapshotsForImageGroup(disk.getId());
-            Iterator<DiskImage> diskVolumesIterator = diskVolumes.iterator();
-            if (!diskVolumesIterator.hasNext()) {
-                log.error("failed to find an image of disk {} in the database", disk.getId());
-                return failValidation(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
-            }
             // there should be a single volume for the disk as this is a template's disk
-            DiskImage imageInDatabase = diskVolumesIterator.next();
-            if (imageInDatabase.getImageStatus() != ImageStatus.OK) {
+            if (disk.getImageStatus() != ImageStatus.OK) {
                 log.error("found an image ({}) whose status is {}",
-                        imageInDatabase.getImageId(), imageInDatabase.getImageStatus());
+                        disk.getImageId(), disk.getImageStatus());
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DISK_STATUS_IS_NOT_VALID);
             }
-            Iterator<Guid> storageIdsIterator = imageInDatabase.getStorageIds().iterator();
+            Iterator<Guid> storageIdsIterator = disk.getStorageIds().iterator();
             if (!storageIdsIterator.hasNext()) {
-                log.error("found an image with no storage domain {}", imageInDatabase.getImageId());
+                log.error("found an image with no storage domain {}", disk.getImageId());
                 return failValidation(EngineMessage.TEMPLATE_IMAGE_NOT_EXIST);
             }
             // theoretically, a template's disk may reside within several storage domains, however,
@@ -331,6 +329,19 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         templateDisksToAttach = templateFromConfiguration.getDiskTemplateMap().values();
         clearVmDisks(templateFromConfiguration);
         getParameters().setCopyCollapse(true);
+        List<DiskImage> volumesFromDB;
+        for (DiskImage disk : templateDisksToAttach) {
+            volumesFromDB = diskImageDao.getAllSnapshotsForImageGroup(disk.getId());
+
+            if (volumesFromDB.isEmpty()) {
+                invalidDiskIdToAttach = disk.getId();
+                break;
+            }
+            DiskImage volumeFromDB = volumesFromDB.get(0);
+            disk.setImageId(volumeFromDB.getImageId());
+            disk.setStorageIds(volumeFromDB.getStorageIds());
+            disk.setStoragePoolId(volumeFromDB.getStoragePoolId());
+        }
     }
 
     private static void clearVmDisks(VmTemplate template) {
