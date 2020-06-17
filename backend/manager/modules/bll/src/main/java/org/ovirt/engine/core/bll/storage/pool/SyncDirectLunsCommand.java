@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,15 +21,19 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 /**
  * Synchronizes all the direct LUNs that are attached to VMs in a given data center.
@@ -45,7 +52,17 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
     @Inject
     private StoragePoolDao storagePoolDao;
 
+    @Inject
+    private VmDao vmDao;
+
+    @Inject
+    private DiskDao diskImageDao;
+
+    @Inject
+    private VdsDao vdsDao;
+
     private Map<String, Guid> lunToDiskIdsOfDirectLunsAttachedToVmsInPool;
+    private Map<Guid, Set<Guid>> lunsPerHost = new HashMap<>();
 
     public SyncDirectLunsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -53,17 +70,38 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
 
     @Override
     protected boolean validate() {
+        // To sync all the direct luns that are attached to VMs in
+        // the storage pool, a valid and active storage pool is required.
         if (getParameters().getDirectLunIds().isEmpty()) {
-            // To sync all the direct luns that are attached to VMs in
-            // the storage pool, a valid and active storage pool is required.
             return validate(createStoragePoolValidator().existsAndUp());
         }
         return canSyncDirectLun();
     }
 
     private boolean canSyncDirectLun() {
-        return validateVds() &&
-                directLunExists();
+        if (!directLunExists()) {
+            return false;
+        }
+        if (getParameters().getVdsId() != null) {
+            return validateVds();
+        }
+
+        lunsPerHost = getLunsToScanOnHost();
+        try {
+            for (Map.Entry<Guid, Set<Guid>> hostInfo : lunsPerHost.entrySet()) {
+                if (hostInfo.getValue().isEmpty()) {
+                    return false;
+                }
+                getParameters().setVdsId(hostInfo.getKey());
+                if (!validateVds()) {
+                    return false;
+                }
+            }
+        } finally {
+            //Rollback to the initial state for each VDS
+            getParameters().setVdsId(null);
+        }
+        return true;
     }
 
     private boolean directLunExists() {
@@ -123,24 +161,27 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
 
     protected Collection<LUNs> getLunsToUpdateInDb() {
         Map<String, Guid> lunToDirectLunIds;
-        if (!getParameters().getDirectLunIds().isEmpty()) {
+        if (getParameters().getDirectLunIds().isEmpty()) {
+            lunToDirectLunIds = getLunToDiskIdsOfDirectLunsAttachedToVmsInPool();
+            return getLunList(getParameters().getVdsId(), lunToDirectLunIds);
+        }
+
+        if (getParameters().getVdsId() != null || lunsPerHost.isEmpty()) {
             lunToDirectLunIds = getParameters().getDirectLunIds().stream()
                     .map(diskLunMapDao::getDiskLunMapByDiskId)
                     .collect(Collectors.toMap(DiskLunMap::getLunId, DiskLunMap::getDiskId));
-        } else {
-            lunToDirectLunIds = getLunToDiskIdsOfDirectLunsAttachedToVmsInPool();
+            return getLunList(getParameters().getVdsId(), lunToDirectLunIds);
         }
-        Set<String> lunsIds = lunToDirectLunIds.keySet();
-        return getDeviceList(lunsIds)
-                .stream()
-                .peek(lun -> {
-                    if (lunDao.get(lun.getId()).getVolumeGroupId().isEmpty()) {
-                        lun.setPhysicalVolumeId(null);
-                        lun.setVolumeGroupId("");
-                    }
-                })
-                .peek(lun -> lun.setDiskId(lunToDirectLunIds.get(lun.getLUNId())))
-                .collect(Collectors.toList());
+
+        Collection<LUNs> lunsToUpdate = new ArrayList<>();
+        for (Map.Entry<Guid, Set<Guid>> hostInfo : lunsPerHost.entrySet()) {
+            lunToDirectLunIds = hostInfo.getValue().stream()
+                    .map(diskLunMapDao::getDiskLunMapByDiskId)
+                    .collect(Collectors.toMap(DiskLunMap::getLunId, DiskLunMap::getDiskId));
+            Collection<LUNs> luns = getLunList(hostInfo.getKey(), lunToDirectLunIds);
+            lunsToUpdate.addAll(luns);
+        }
+        return lunsToUpdate;
     }
 
     protected Map<String, Guid> getLunToDiskIdsOfDirectLunsAttachedToVmsInPool() {
@@ -151,5 +192,38 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
                             .collect(Collectors.toMap(DiskLunMap::getLunId, DiskLunMap::getDiskId));
         }
         return lunToDiskIdsOfDirectLunsAttachedToVmsInPool;
+    }
+
+    private Map<Guid, Set<Guid>> getLunsToScanOnHost() {
+        Map<Guid, Set<Guid>> luns = new HashMap<>();
+
+        getParameters().getDirectLunIds().forEach(lun -> {
+            List<VM> pluggedVms = vmDao.getForDisk(lun, false).get(Boolean.TRUE);
+            if (pluggedVms != null && !pluggedVms.isEmpty()) {
+                Guid hostId = pluggedVms.get(0).getRunOnVds();
+                luns.putIfAbsent(hostId, new HashSet<>());
+                luns.get(hostId).add(lun);
+            }
+        });
+        return luns;
+    }
+
+    private Collection<LUNs> getLunList(Guid hostId, Map<String, Guid> lunToDirectLunIds) {
+        Set<String> lunsIds = lunToDirectLunIds.keySet();
+        try {
+            return getDeviceList(lunsIds, hostId).stream()
+                    .peek(lun -> {
+                        if (lunDao.get(lun.getId()).getVolumeGroupId().isEmpty()) {
+                            lun.setPhysicalVolumeId(null);
+                            lun.setVolumeGroupId("");
+                        }
+                    })
+                    .peek(lun -> lun.setDiskId(lunToDirectLunIds.get(lun.getLUNId())))
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            log.error("Failed to update LUNs, VDS connectivity error for LUNs IDs: {} on host: {}, error details {}",
+                    lunsIds, hostId, e.getMessage());
+            return new HashSet<>();
+        }
     }
 }

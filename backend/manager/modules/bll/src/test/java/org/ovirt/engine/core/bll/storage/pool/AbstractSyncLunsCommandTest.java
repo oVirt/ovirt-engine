@@ -112,7 +112,7 @@ public class AbstractSyncLunsCommandTest {
     @Test
     public void testGetDeviceListWithNoDeviceList() {
         List<LUNs> deviceList = new LinkedList<>(Collections.singletonList(new LUNs()));
-        doReturn(deviceList).when(command).runGetDeviceList(any());
+        doReturn(deviceList).when(command).runGetDeviceList(any(), any());
         assertEquals(deviceList, command.getDeviceList());
     }
 

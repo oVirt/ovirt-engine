@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -503,12 +501,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         Set<Guid> lunIds = getSelectedItems().stream()
                 .map(disk -> ((LunDisk) disk).getLun().getDiskId())
                 .collect(Collectors.toSet());
-        AsyncDataProvider.getInstance().getHostList(new AsyncQuery<>(hosts -> {
-            for (VDS host : hosts) {
-                Frontend.getInstance().runAction(ActionType.SyncDirectLuns,
-                        new SyncDirectLunsParameters(host.getId(), lunIds));
-            }
-        }));
+        Frontend.getInstance().runAction(ActionType.SyncDirectLuns,
+                    new SyncDirectLunsParameters(null, lunIds));
     }
 
     private List<DiskImage> getSelectedDiskImages() {

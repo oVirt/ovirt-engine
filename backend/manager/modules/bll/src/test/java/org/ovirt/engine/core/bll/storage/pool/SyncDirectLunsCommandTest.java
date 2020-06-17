@@ -6,8 +6,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -30,6 +35,7 @@ import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -47,10 +53,14 @@ public class SyncDirectLunsCommandTest {
     @Mock
     private LunDao lunDao;
 
+    @Mock
+    private VmDao vmDao;
+
     private LUNs lun1;
     private LUNs lun2;
     private LUNs lun3;
     private DiskLunMap disk1Lun1Map;
+    private Map<Boolean, List<VM>> lunsPerHost;
 
     @Spy
     @InjectMocks
@@ -76,6 +86,7 @@ public class SyncDirectLunsCommandTest {
         lun3.setVolumeGroupId("");
 
         mockLunDao();
+        mockVmDao();
     }
 
     @Test
@@ -104,7 +115,8 @@ public class SyncDirectLunsCommandTest {
 
     @Test
     public void validateWithDirectLunIdAndInvalidVds() {
-        command.getParameters().setDirectLunIds(Collections.singleton(Guid.newGuid()));
+        command.getParameters().setDirectLunIds(Collections.singleton(lun1.getDiskId()));
+        when(vmDao.getForDisk(lun1.getDiskId(), false)).thenReturn(lunsPerHost);
         doReturn(false).when(command).validateVds();
         assertFalse(command.validate());
     }
@@ -121,6 +133,7 @@ public class SyncDirectLunsCommandTest {
         command.getParameters().setDirectLunIds(Collections.singleton(lun1.getDiskId()));
         when(diskLunMapDao.getDiskLunMapByDiskId(any())).thenReturn(disk1Lun1Map);
         command.getParameters().setDirectLunIds(Collections.singleton(Guid.newGuid()));
+        command.getParameters().setVdsId(Guid.newGuid());
         doReturn(true).when(command).validateVds();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
@@ -132,5 +145,14 @@ public class SyncDirectLunsCommandTest {
 
     private void mockLunDao() {
         Stream.of(lun1, lun2, lun3).forEach(lun -> when(lunDao.get(lun.getId())).thenReturn(lun));
+    }
+
+    private void mockVmDao() {
+        lunsPerHost = new HashMap<>();
+        List<VM> vms = new ArrayList<>();
+        VM vm = new VM();
+        vm.setRunOnVds(Guid.newGuid());
+        vms.add(vm);
+        lunsPerHost.put(Boolean.TRUE, vms);
     }
 }
