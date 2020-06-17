@@ -316,7 +316,15 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
     }
 
     private String getImageUrl(String apiVersion, String id) {
-        return getProvider().getUrl() + apiVersion  + "/images/" + id;
+        return removeTrailingSlash(getProvider().getUrl()) + apiVersion  + "/images/" + id;
+    }
+
+    private String removeTrailingSlash(String s) {
+        if (s.endsWith("/")) {
+            return s.substring(0, s.length() - 1);
+        } else {
+            return s;
+        }
     }
 
     private String getOpenStackImageServiceApiVersion(Version compatibilityVersion) {
