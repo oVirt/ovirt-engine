@@ -47,8 +47,6 @@ public abstract class StorageRegisterEntityListModel<T extends Queryable, D exte
     }
 
     public StorageRegisterEntityListModel() {
-        setIsTimerDisabled(true);
-
         setImportCommand(new UICommand("Import", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
