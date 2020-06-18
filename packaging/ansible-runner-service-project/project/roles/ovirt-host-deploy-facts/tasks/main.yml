@@ -8,6 +8,10 @@
         if ansible_distribution == 'Fedora'
         else 0 }}"
 
+- name: Get packages
+  package_facts:
+    manager: auto
+
 - name: Parse operating system release
   lineinfile:
     path: /etc/os-release
@@ -17,7 +21,7 @@
 
 - name: Detect if host is a prebuilt image
   set_fact:
-    ngn_host: "{{ not ngn_presence.changed }}"
+    vdsm_installed: "{{ not ngn_presence.changed or 'vdsm' in ansible_facts.packages }}"
 
 - block:
   - name: Reset configuration of advanced virtualization module
@@ -32,7 +36,7 @@
   when:
     - host_deploy_origin_type != ovirt_origin_type
     - el_ver|int >= 8
-    - not ngn_host|bool
+    - not vdsm_installed|bool
 
 - name: Install Python3 for CentOS/RHEL8 hosts
   yum:
