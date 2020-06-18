@@ -75,6 +75,7 @@
     <jackson2.version>2.10.3</jackson2.version>
     <commons-configuration.version>1.6</commons-configuration.version>
     <commons-jxpath.version>1.3</commons-jxpath.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <jaxb-xjc.version>2.3</jaxb-xjc.version>
     <jaxb-impl.version>2.3.1</jaxb-impl.version>
     <jaxb-core.version>2.3.0</jaxb-core.version>
@@ -131,7 +132,7 @@
       <dependency>
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils</artifactId>
-        <version>1.9.3</version>
+        <version>${commons-beanutils.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.transaction</groupId>
