@@ -36,13 +36,13 @@ public class VmNicFilterParameterAnnotationTest {
                         "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_NAME"),
                 Arguments.of(INVALID_NAME1, VALID_VALUE, VALID_VM_INTERFACE_ID,
                         "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_NAME"),
-                Arguments.of(null, VALID_VALUE, VALID_VM_INTERFACE_ID, "may not be null"),
+                Arguments.of(null, VALID_VALUE, VALID_VM_INTERFACE_ID, "must not be null"),
                 Arguments.of(VALID_NAME, INVALID_VALUE0, VALID_VM_INTERFACE_ID,
                         "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_VALUE"),
                 Arguments.of(VALID_NAME, INVALID_VALUE1, VALID_VM_INTERFACE_ID,
                         "ACTION_TYPE_FAILED_INVALID_NIC_FILTER_PARAMETER_VALUE"),
-                Arguments.of(VALID_NAME, null, VALID_VM_INTERFACE_ID, "may not be null"),
-                Arguments.of(VALID_NAME, VALID_VALUE, null, "may not be null")
+                Arguments.of(VALID_NAME, null, VALID_VM_INTERFACE_ID, "must not be null"),
+                Arguments.of(VALID_NAME, VALID_VALUE, null, "must not be null")
         );
     }
 
