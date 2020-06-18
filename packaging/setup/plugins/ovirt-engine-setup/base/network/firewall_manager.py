@@ -112,7 +112,7 @@ class Plugin(plugin.PluginBase):
             else:
                 self.dialog.note(
                     text=_(
-                        'Setup can automatically configure the firewall '
+                        '\nSetup can automatically configure the firewall '
                         'on this system.\n'
                         'Note: automatic configuration of the firewall may '
                         'overwrite current settings.\n'

@@ -393,10 +393,11 @@ class Plugin(plugin.PluginBase):
             dialog=self.dialog,
             name='ovirt-provider-ovn',
             note=_(
-                'Configure ovirt-provider-ovn and set the Default '
-                'cluster\'s default network provider to ovirt-provider-ovn \n'
-                '(non-Default clusters may be configured with an OVN '
-                'provider after installation) (@VALUES@) [@DEFAULT@]: '
+                '\nConfiguring ovirt-provider-ovn also sets the Default '
+                'cluster\'s default network provider to ovirt-provider-ovn.\n'
+                'Non-Default clusters may be configured with an OVN after '
+                'installation.\n'
+                'Configure ovirt-provider-ovn (@VALUES@) [@DEFAULT@]: '
             ),
             prompt=True,
             default=True

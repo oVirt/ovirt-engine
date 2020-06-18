@@ -57,8 +57,8 @@ class Plugin(plugin.PluginBase):
                     dialog=self.dialog,
                     name='ovirt-cinderlib-enable',
                     note=_(
-                        'Set up Cinderlib integration\n'
-                        '(Currently in tech preview)\n'
+                        'Configure Cinderlib integration '
+                        '(Currently in tech preview) '
                         '(@VALUES@) [@DEFAULT@]: '
                     ),
                     prompt=True,

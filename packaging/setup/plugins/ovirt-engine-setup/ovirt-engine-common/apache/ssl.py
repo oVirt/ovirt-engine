@@ -176,7 +176,7 @@ class Plugin(plugin.PluginBase):
         ] is None:
             self.dialog.note(
                 _(
-                    'Setup can configure apache to use SSL using a '
+                    '\nSetup can configure apache to use SSL using a '
                     'certificate issued from the internal CA.'
                 )
             )
