@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -81,7 +82,7 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
         List<VfsConfigNetwork> vfsConfigNetworks = new ArrayList<>();
 
         Set<Guid> attachedNetworks = getEntity().getNetworks();
-        for (Network network : allClusterNetworks) {
+        for (Network network : nonExternalNetworks(allClusterNetworks)) {
             boolean isAttached = attachedNetworks.contains(network.getId());
             VfsConfigNetwork vfsConfigNetwork =
                     new VfsConfigNetwork(isAttached, labelsModel, network);
@@ -89,6 +90,10 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
         }
 
         networks.setItems(vfsConfigNetworks);
+    }
+
+    private List<Network> nonExternalNetworks(List<Network> networks) {
+        return networks.stream().filter(network -> !network.isExternal()).collect(Collectors.toList());
     }
 
     public boolean validate() {
