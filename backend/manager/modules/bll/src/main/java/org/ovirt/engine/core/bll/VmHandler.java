@@ -67,7 +67,6 @@ import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -593,21 +592,6 @@ public class VmHandler implements BackendService {
         VmManager vmManager = resourceManager.getVmManager(vm.getId(), false);
         if (vmManager != null) {
             vm.setStatisticsData(vmManager.getStatistics());
-        }
-    }
-
-    public void updateNextRunChangedFields(final VM currentVM, DbUser user, boolean isFiltered) {
-        if (currentVM.isNextRunConfigurationExists()) {
-            VM nextVM = getNextRunVmConfiguration(currentVM.getId(), user.getId(), isFiltered, true);
-            if (nextVM == null) {
-                return;
-            }
-            currentVM.setNextRunChangedFields(
-                getChangedFieldsForStatus(
-                    currentVM.getStaticData(),
-                    nextVM.getStaticData(),
-                    createVmManagementParametersBase(nextVM),
-                    VMStatus.Up));
         }
     }
 
@@ -1336,7 +1320,7 @@ public class VmHandler implements BackendService {
     public void createNextRunSnapshot(
             VM existingVm,
             VmStatic newVmStatic,
-            Object objectWithEditableDeviceFields,
+            VmManagementParametersBase objectWithEditableDeviceFields,
             CompensationContext compensationContext) {
         // first remove existing snapshot
         Snapshot runSnap = snapshotDao.get(existingVm.getId(), Snapshot.SnapshotType.NEXT_RUN);
@@ -1347,6 +1331,12 @@ public class VmHandler implements BackendService {
         final VM newVm = new VM();
         newVm.setStaticData(newVmStatic);
 
+        Set<String> changedFields = getChangedFieldsForStatus(
+                existingVm.getStaticData(),
+                newVm.getStaticData(),
+                objectWithEditableDeviceFields,
+                VMStatus.Up);
+
         // create new snapshot with new configuration
         snapshotsManager.addSnapshot(Guid.newGuid(),
                 "Next Run configuration snapshot",
@@ -1354,6 +1344,7 @@ public class VmHandler implements BackendService {
                 Snapshot.SnapshotType.NEXT_RUN,
                 newVm,
                 true,
+                changedFields,
                 null,
                 null,
                 null,

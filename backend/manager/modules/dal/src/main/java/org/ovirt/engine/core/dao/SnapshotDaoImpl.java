@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.inject.Named;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -48,7 +50,8 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
                 .addValue("vm_configuration", entity.getVmConfiguration())
                 .addValue("memory_dump_disk_id", entity.getMemoryDiskId())
                 .addValue("memory_metadata_disk_id", entity.getMetadataDiskId())
-                .addValue("vm_configuration_broken", entity.isVmConfigurationBroken());
+                .addValue("vm_configuration_broken", entity.isVmConfigurationBroken())
+                .addValue("changed_fields", SerializationFactory.getSerializer().serialize(entity.getChangedFields()));
     }
 
     @Override
@@ -190,6 +193,7 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
             snapshot.setMemoryDiskId(getGuid(rs, "memory_dump_disk_id"));
             snapshot.setMetadataDiskId(getGuid(rs, "memory_metadata_disk_id"));
             snapshot.setVmConfigurationBroken(rs.getBoolean("vm_configuration_broken"));
+            snapshot.setChangedFields(SerializationFactory.getDeserializer().deserialize(rs.getString("changed_fields"), HashSet.class));
 
             return snapshot;
         }

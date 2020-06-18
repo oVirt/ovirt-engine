@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.di.interceptor.InvocationLogger;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 
@@ -354,6 +356,7 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         entity.setVmPoolSpiceProxy(rs.getString("vm_pool_spice_proxy"));
         entity.setClusterSpiceProxy(rs.getString("cluster_spice_proxy"));
         entity.setNextRunConfigurationExists(rs.getBoolean("next_run_config_exists"));
+        entity.setNextRunChangedFields(SerializationFactory.getDeserializer().deserializeOrCreateNew(rs.getString("changed_fields"), HashSet.class));
         entity.setPreviewSnapshot(rs.getBoolean("is_previewing_snapshot"));
         entity.setHasIllegalImages(rs.getBoolean("has_illegal_images"));
         return entity;

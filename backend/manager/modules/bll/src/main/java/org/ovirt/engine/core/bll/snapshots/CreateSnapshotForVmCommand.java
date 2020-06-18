@@ -609,6 +609,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
                 getParameters().getSnapshotType(),
                 getVm(),
                 true,
+                null,
                 memoryImageBuilder.getMemoryDiskId(),
                 memoryImageBuilder.getMetadataDiskId(),
                 null,

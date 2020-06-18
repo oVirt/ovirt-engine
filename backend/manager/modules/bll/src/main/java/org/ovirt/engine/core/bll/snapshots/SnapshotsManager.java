@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
@@ -207,6 +208,7 @@ public class SnapshotsManager {
                 SnapshotType.ACTIVE,
                 vm,
                 false,
+                null,
                 memoryDumpDiskId,
                 memoryConfDiskId,
                 creationDate,
@@ -230,6 +232,8 @@ public class SnapshotsManager {
      *            The VM to link to & save configuration for (if necessary).
      * @param saveVmConfiguration
      *            Should VM configuration be generated and saved?
+     * @param Set<String> changedFields
+     *            Fields changed (applicable for next run)
      * @param memoryDumpDiskId
      *            The memory dump disk ID
      * @param memoryConfDiskId
@@ -242,6 +246,7 @@ public class SnapshotsManager {
      *            The devices contained in the snapshot
      * @param compensationContext
      *            In case compensation is needed.
+     *
      * @return the saved snapshot
      */
     public Snapshot addSnapshot(Guid snapshotId,
@@ -250,12 +255,14 @@ public class SnapshotsManager {
             SnapshotType snapshotType,
             VM vm,
             boolean saveVmConfiguration,
+            Set<String> changedFields,
             Guid memoryDumpDiskId,
             Guid memoryConfDiskId,
             Date creationDate,
             List<DiskImage> disks,
             Map<Guid, VmDevice> vmDevices,
-            final CompensationContext compensationContext) {
+            final CompensationContext compensationContext
+            ) {
         final Snapshot snapshot = new Snapshot(snapshotId,
                 snapshotStatus,
                 vm.getId(),
@@ -265,7 +272,8 @@ public class SnapshotsManager {
                 creationDate != null ? creationDate : new Date(),
                 vm.getAppList(),
                 memoryDumpDiskId,
-                memoryConfDiskId);
+                memoryConfDiskId,
+                changedFields);
 
         CompensationUtils.saveEntity(snapshot, snapshotDao, compensationContext);
         return snapshot;
