@@ -14,8 +14,9 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public static final String EXTERNAL_STATUS = "EXTERNAL_STATUS";
     public static final String DATACENTER = "DATACENTER";
     public static final String TYPE = "TYPE";
-    public static final String SIZE = "SIZE";
-    public static final String USED = "USED";
+    public static final String FREE_SIZE = "FREE_SIZE";
+    public static final String USED_SIZE = "USED_SIZE";
+    public static final String TOTAL_SIZE = "TOTAL_SIZE";
     public static final String COMMITTED = "COMMITTED";
     public static final String COMMENT = "COMMENT";
     public static final String DESCRIPTION = "DESCRIPTION";
@@ -33,8 +34,9 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         verbs.add(EXTERNAL_STATUS);
         verbs.add(DATACENTER);
         verbs.add(TYPE);
-        verbs.add(SIZE);
-        verbs.add(USED);
+        verbs.add(FREE_SIZE);
+        verbs.add(USED_SIZE);
+        verbs.add(TOTAL_SIZE);
         verbs.add(COMMITTED);
         verbs.add(COMMENT);
         verbs.add(DESCRIPTION);
@@ -53,8 +55,9 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put(EXTERNAL_STATUS, ExternalStatus.class);
         getTypeDictionary().put(DATACENTER, String.class);
         getTypeDictionary().put(TYPE, StorageType.class);
-        getTypeDictionary().put(SIZE, Integer.class);
-        getTypeDictionary().put(USED, Integer.class);
+        getTypeDictionary().put(FREE_SIZE, Integer.class);
+        getTypeDictionary().put(USED_SIZE, Integer.class);
+        getTypeDictionary().put(TOTAL_SIZE, Integer.class);
         getTypeDictionary().put(COMMITTED, Integer.class);
         getTypeDictionary().put(COMMENT, String.class);
         getTypeDictionary().put(DESCRIPTION, String.class);
@@ -71,8 +74,9 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         columnNameDict.put(EXTERNAL_STATUS, "external_status");
         columnNameDict.put(DATACENTER, "storage_pool_name::text");
         columnNameDict.put(TYPE, "storage_type");
-        columnNameDict.put(SIZE, "available_disk_size");
-        columnNameDict.put(USED, "used_disk_size");
+        columnNameDict.put(FREE_SIZE, "available_disk_size");
+        columnNameDict.put(USED_SIZE, "used_disk_size");
+        columnNameDict.put(TOTAL_SIZE, "total_disk_size");
         columnNameDict.put(COMMITTED, "commited_disk_size");
         columnNameDict.put(COMMENT, "storage_comment");
         columnNameDict.put(DESCRIPTION, "storage_description");
@@ -88,8 +92,8 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        if (SIZE.equals(fieldName) || USED.equals(fieldName)
-                || COMMITTED.equals(fieldName)) {
+        if (FREE_SIZE.equals(fieldName) || USED_SIZE.equals(fieldName)
+                || COMMITTED.equals(fieldName) || TOTAL_SIZE.equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
         } else {
             return StringConditionRelationAutoCompleter.INSTANCE;

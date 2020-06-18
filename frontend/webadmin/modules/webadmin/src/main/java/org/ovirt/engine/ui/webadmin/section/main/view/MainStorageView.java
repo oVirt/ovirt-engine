@@ -139,7 +139,7 @@ public class MainStorageView extends AbstractMainWithDetailsTableView<StorageDom
                 return availableDiskSize == null ? null : Long.valueOf(availableDiskSize);
             }
         };
-        freeSpaceColumn.makeSortable(StorageDomainFieldAutoCompleter.SIZE);
+        freeSpaceColumn.makeSortable(StorageDomainFieldAutoCompleter.FREE_SIZE);
         getTable().addColumn(freeSpaceColumn, constants.freeSpaceStorage(), "130px"); //$NON-NLS-1$
 
         AbstractStorageSizeColumn<StorageDomain> confirmedFreeSpaceColumn = new AbstractStorageSizeColumn<StorageDomain>() {

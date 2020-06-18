@@ -15,9 +15,9 @@ public class StorageDomainFieldAutoCompleterTest {
     @Test
     public void testValidate() {
         StorageDomainFieldAutoCompleter comp = new StorageDomainFieldAutoCompleter();
-        assertTrue(comp.validateFieldValue("SIZE", "1"), "1");
-        assertTrue(comp.validateFieldValue("SIZE", "123"), "123");
-        assertFalse(comp.validateFieldValue("SIZE", "JarJar"), "JarJar");
+        assertTrue(comp.validateFieldValue("FREE_SIZE", "1"), "1");
+        assertTrue(comp.validateFieldValue("FREE_SIZE", "123"), "123");
+        assertFalse(comp.validateFieldValue("FREE_SIZE", "JarJar"), "JarJar");
     }
 
 }
