@@ -190,7 +190,9 @@ class Stages(object):
 @util.export
 @util.codegen
 class Const(object):
-    HTTPD_SSL_PROTOCOLS = 'all -SSLv3 -TLSv1'
+    # Enable only TLSv1.2 protocol. More information at
+    # https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslprotocol
+    HTTPD_SSL_PROTOCOLS = '-all +TLSv1.2'
 
 
 @util.export
