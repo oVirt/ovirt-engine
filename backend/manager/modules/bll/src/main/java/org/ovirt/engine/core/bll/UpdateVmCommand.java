@@ -511,15 +511,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void updateDeviceAddresses() {
         if (isEmulatedMachineChanged() || isChipsetChanged()) {
-            // Currently, compensation is only used when this command is called from UpdateClusterCommand,
-            // and it does not change emulated machine or chipset.
-            // TODO - Add compensation support if needed.
-            throwIfCompensationEnabled();
-
             log.info("Emulated machine or BIOS chipset type has changed for VM: {} ({}), clearing device addresses.",
                     getVm().getName(),
                     getVm().getId());
-            vmDeviceDao.clearAllDeviceAddressesByVmId(getVmId());
+            getVmDeviceUtils().removeVmDevicesAddress(vmDeviceDao.getVmDeviceByVmId(getVmId()));
 
             VmDevicesMonitoring.Change change = vmDevicesMonitoring.createChange(System.nanoTime());
             change.updateVm(getVmId(), VmDevicesMonitoring.EMPTY_HASH);

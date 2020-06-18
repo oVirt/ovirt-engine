@@ -1317,6 +1317,17 @@ public class VmDeviceUtils {
     }
 
     /**
+     * Remove all devices addresses in the list.
+     */
+    public void removeVmDevicesAddress(List<VmDevice> devices) {
+        for (VmDevice device : devices) {
+            CompensationUtils.<VmDeviceId, VmDevice>updateEntity(device, dev -> {
+                device.setAddress("");
+            }, vmDeviceDao, compensationContext);
+        }
+    }
+
+    /**
      * Remove the given number of devices starting from the end of the list.
      */
     public void removeVmDevices(List<VmDevice> devices, int numberOfDevicesToRemove) {
