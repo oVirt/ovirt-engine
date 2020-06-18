@@ -173,6 +173,7 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
                 true,
                 null,
                 null,
+                null,
                 snapshot.getCreationDate(),
                 newDiskImages,
                 oldVm.getManagedVmDeviceMap(),

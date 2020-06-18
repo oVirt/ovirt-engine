@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -91,6 +92,12 @@ public class Snapshot implements Queryable, BusinessEntityWithStatus<Guid, Snaps
      */
     private List<DiskImage> diskImages;
 
+    /**
+     * Changed fields between current and next run configuration
+     * (applicable only for NEXT_RUN snapshot type)
+     */
+    private Set<String> changedFields;
+
     public Snapshot() {
         this(true);
     }
@@ -129,10 +136,12 @@ public class Snapshot implements Queryable, BusinessEntityWithStatus<Guid, Snaps
             Date creationDate,
             String appList,
             Guid memoryDiskId,
-            Guid metadataDiskId) {
+            Guid metadataDiskId,
+            Set<String> changedFields) {
         this(id, status, vmId, vmConfiguration, type, description, creationDate, appList);
         setMemoryDiskId(memoryDiskId);
         setMetadataDiskId(metadataDiskId);
+        setChangedFields(changedFields);
     }
 
     @Override
@@ -248,6 +257,14 @@ public class Snapshot implements Queryable, BusinessEntityWithStatus<Guid, Snaps
         this.diskImages = diskImages;
     }
 
+    public Set<String> getChangedFields() {
+        return changedFields;
+    }
+
+    public void setChangedFields(Set<String> changedFields) {
+        this.changedFields = changedFields;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -261,7 +278,8 @@ public class Snapshot implements Queryable, BusinessEntityWithStatus<Guid, Snaps
                 vmConfiguration,
                 vmId,
                 diskImages,
-                vmConfigurationBroken
+                vmConfigurationBroken,
+                changedFields
         );
     }
 
@@ -284,7 +302,8 @@ public class Snapshot implements Queryable, BusinessEntityWithStatus<Guid, Snaps
                 && Objects.equals(vmConfiguration, other.vmConfiguration)
                 && Objects.equals(vmId, other.vmId)
                 && Objects.equals(diskImages, other.diskImages)
-                && vmConfigurationBroken == other.vmConfigurationBroken;
+                && vmConfigurationBroken == other.vmConfigurationBroken
+                && Objects.equals(changedFields, other.changedFields);
     }
 
     public enum SnapshotStatus {

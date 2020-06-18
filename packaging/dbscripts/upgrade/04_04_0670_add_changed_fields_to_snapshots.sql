@@ -1,0 +1,1 @@
+select fn_db_add_column('snapshots', 'changed_fields', 'text');

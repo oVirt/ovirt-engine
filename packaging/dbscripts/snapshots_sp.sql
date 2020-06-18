@@ -13,7 +13,8 @@ CREATE OR REPLACE FUNCTION InsertSnapshot (
     v_app_list TEXT,
     v_vm_configuration TEXT,
     v_memory_dump_disk_id UUID,
-    v_memory_metadata_disk_id UUID
+    v_memory_metadata_disk_id UUID,
+    v_changed_fields TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -27,7 +28,8 @@ BEGIN
         app_list,
         vm_configuration,
         memory_dump_disk_id,
-        memory_metadata_disk_id
+        memory_metadata_disk_id,
+        changed_fields
         )
     VALUES(
         v_snapshot_id,
@@ -39,7 +41,8 @@ BEGIN
         v_app_list,
         v_vm_configuration,
         v_memory_dump_disk_id,
-        v_memory_metadata_disk_id
+        v_memory_metadata_disk_id,
+        v_changed_fields
         );
 END; $PROCEDURE$
 LANGUAGE plpgsql;
@@ -55,7 +58,8 @@ CREATE OR REPLACE FUNCTION UpdateSnapshot (
     v_vm_configuration TEXT,
     v_memory_dump_disk_id UUID,
     v_memory_metadata_disk_id UUID,
-    v_vm_configuration_broken BOOLEAN
+    v_vm_configuration_broken BOOLEAN,
+    v_changed_fields TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -70,6 +74,7 @@ BEGIN
         memory_dump_disk_id = v_memory_dump_disk_id,
         memory_metadata_disk_id = v_memory_metadata_disk_id,
         vm_configuration_broken = v_vm_configuration_broken,
+        changed_fields = v_changed_fields,
         _update_date = NOW()
     WHERE snapshot_id = v_snapshot_id;
 END;$PROCEDURE$
@@ -207,7 +212,8 @@ CREATE TYPE GetAllFromSnapshotsByVmId_rs AS (
         memory_metadata_disk_id UUID,
         vm_configuration TEXT,
         vm_configuration_available BOOLEAN,
-        vm_configuration_broken BOOLEAN
+        vm_configuration_broken BOOLEAN,
+        changed_fields TEXT
         );
 
 CREATE OR REPLACE FUNCTION GetAllFromSnapshotsByVmId (
@@ -236,7 +242,8 @@ BEGIN
             END,
         vm_configuration IS NOT NULL
         AND LENGTH(vm_configuration) > 0,
-        vm_configuration_broken
+        vm_configuration_broken,
+        changed_fields
     FROM snapshots
     WHERE vm_id = v_vm_id
         AND (

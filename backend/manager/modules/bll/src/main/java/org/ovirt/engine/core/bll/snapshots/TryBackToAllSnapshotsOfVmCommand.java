@@ -275,6 +275,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                     SnapshotType.PREVIEW,
                     getVm(),
                     true,
+                    null,
                     previousActiveSnapshot.getMemoryDiskId(),
                     previousActiveSnapshot.getMetadataDiskId(),
                     null,
