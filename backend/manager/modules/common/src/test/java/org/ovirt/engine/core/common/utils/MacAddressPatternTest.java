@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 import java.util.stream.Stream;
@@ -31,10 +30,7 @@ public class MacAddressPatternTest {
                 validator.validate(createVmNic(address), groups);
         assertEquals(validMacAddress, validate.isEmpty());
 
-        if (validMacAddress) {
-            assertTrue(validate.isEmpty());
-        } else {
-            assertEquals(1, validate.size());
+        if (!validMacAddress) {
             assertEquals(message, validate.iterator().next().getMessage());
         }
     }
