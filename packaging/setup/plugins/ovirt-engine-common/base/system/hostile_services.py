@@ -68,6 +68,7 @@ class Plugin(plugin.PluginBase):
                 if self.services.status(
                     name=service,
                 ):
+                    self.logger.info(_('Stopping service: %s'), service)
                     self._toStart.append(service)
                     self.services.state(
                         name=service,
@@ -90,6 +91,7 @@ class Plugin(plugin.PluginBase):
         """
         for service in self._toStart:
             if self.services.exists(service):
+                self.logger.info(_('Starting service: %s'), service)
                 self.services.state(
                     name=service,
                     state=True
