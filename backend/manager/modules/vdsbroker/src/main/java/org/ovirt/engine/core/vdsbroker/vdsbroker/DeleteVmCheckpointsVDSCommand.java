@@ -2,10 +2,10 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.VmCheckpointsVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointIds;
 
 public class DeleteVmCheckpointsVDSCommand<P extends VmCheckpointsVDSParameters> extends VdsBrokerCommand<P> {
-    VmCheckpointInfo vmCheckpointInfo;
+    VmCheckpointIds vmCheckpointIds;
 
     public DeleteVmCheckpointsVDSCommand(P parameters) {
         super(parameters);
@@ -13,17 +13,17 @@ public class DeleteVmCheckpointsVDSCommand<P extends VmCheckpointsVDSParameters>
 
     @Override
     protected void executeVdsBrokerCommand() {
-        vmCheckpointInfo = getBroker().deleteVmCheckpoints(
+        vmCheckpointIds = getBroker().deleteVmCheckpoints(
                 getParameters().getVmId().toString(),
                 getParameters().getCheckpointsIds().stream()
                         .map(Guid::toString).toArray(String[]::new));
         proceedProxyReturnValue();
 
-        setReturnValue(vmCheckpointInfo);
+        setReturnValue(vmCheckpointIds);
     }
 
     @Override
     protected Status getReturnStatus() {
-        return vmCheckpointInfo.getStatus();
+        return vmCheckpointIds.getStatus();
     }
 }

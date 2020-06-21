@@ -251,6 +251,7 @@ public enum VDSCommandType {
     RedefineVmCheckpoints("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     DeleteVmCheckpoints("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ListVmCheckpoints("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GetVmCheckpointXML("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     StartNbdServer("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     StopNbdServer("org.ovirt.engine.core.vdsbroker.vdsbroker"),
 

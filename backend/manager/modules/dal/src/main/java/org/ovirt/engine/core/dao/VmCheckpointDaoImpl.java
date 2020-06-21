@@ -53,6 +53,16 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
     };
 
     @Override
+    public void update(VmCheckpoint entity) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("checkpoint_id", entity.getId())
+                .addValue("vm_id", entity.getVmId())
+                .addValue("parent_id", entity.getParentId())
+                .addValue("checkpoint_xml", entity.getCheckpointXml());
+        getCallsHandler().executeModification("UpdateVmCheckpoint", parameterSource);
+    }
+
+    @Override
     public List<VmCheckpoint> getAllForVm(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_id", id);
         return getCallsHandler().executeReadList("GetVmCheckpointsByVmId", vmCheckpointRowMapper, parameterSource);

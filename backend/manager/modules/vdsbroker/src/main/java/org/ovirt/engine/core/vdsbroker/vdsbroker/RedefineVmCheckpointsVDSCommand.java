@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.vdscommands.VmCheckpointsVDSParameters;
-import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointIds;
 
 public class RedefineVmCheckpointsVDSCommand<P extends VmCheckpointsVDSParameters> extends VdsBrokerCommand<P> {
-    VmCheckpointInfo vmCheckpointInfo;
+    VmCheckpointIds vmCheckpointIds;
 
     public RedefineVmCheckpointsVDSCommand(P parameters) {
         super(parameters);
@@ -15,11 +15,11 @@ public class RedefineVmCheckpointsVDSCommand<P extends VmCheckpointsVDSParameter
 
     @Override
     protected void executeVdsBrokerCommand() {
-        vmCheckpointInfo = getBroker().redefineVmCheckpoints(
+        vmCheckpointIds = getBroker().redefineVmCheckpoints(
                 getParameters().getVmId().toString(), createCheckpointsMap());
         proceedProxyReturnValue();
 
-        setReturnValue(vmCheckpointInfo);
+        setReturnValue(vmCheckpointIds);
     }
 
     private HashMap[] createCheckpointsMap() {
@@ -33,6 +33,6 @@ public class RedefineVmCheckpointsVDSCommand<P extends VmCheckpointsVDSParameter
 
     @Override
     protected Status getReturnStatus() {
-        return vmCheckpointInfo.getStatus();
+        return vmCheckpointIds.getStatus();
     }
 }

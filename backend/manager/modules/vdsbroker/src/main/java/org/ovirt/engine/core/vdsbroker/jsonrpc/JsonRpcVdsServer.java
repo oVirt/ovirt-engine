@@ -47,6 +47,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointIds;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DeviceInfoReturn;
@@ -2259,25 +2260,25 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public VmCheckpointInfo redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints) {
+    public VmCheckpointIds redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.redefine_checkpoints")
                         .withParameter("vmID", vmId)
                         .withParameter("checkpoints", checkpoints)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new VmCheckpointInfo(response);
+        return new VmCheckpointIds(response);
     }
 
     @Override
-    public VmCheckpointInfo deleteVmCheckpoints(String vmId, String[] checkpointIds) {
+    public VmCheckpointIds deleteVmCheckpoints(String vmId, String[] checkpointIds) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.delete_checkpoints")
                         .withParameter("vmID", vmId)
                         .withParameter("checkpoint_ids", checkpointIds)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new VmCheckpointInfo(response);
+        return new VmCheckpointIds(response);
     }
 
     @Override
@@ -2289,6 +2290,17 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request).withResponseKey("uuidlist")
                 .withResponseType(Object[].class);
         return new UUIDListReturn(response);
+    }
+
+    @Override
+    public VmCheckpointInfo getVmCheckpointsXML(String vmId, String checkpointId) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.dump_checkpoint")
+                        .withParameter("vmID", vmId)
+                        .withParameter("checkpoint_id", checkpointId)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new VmCheckpointInfo(response);
     }
 
     @Override

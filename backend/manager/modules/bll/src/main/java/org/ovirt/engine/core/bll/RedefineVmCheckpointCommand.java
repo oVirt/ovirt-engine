@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.vdscommands.VmCheckpointsVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmCheckpointDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointIds;
 
 @InternalCommandAttribute
 public class RedefineVmCheckpointCommand<T extends VmBackupParameters> extends VmCommand<T> {
@@ -70,9 +70,9 @@ public class RedefineVmCheckpointCommand<T extends VmBackupParameters> extends V
             // Checkpoint can be redefined in bulks, currently redefine one checkpoint at a time
             VDSReturnValue redefineVdsReturnValue = performVmCheckpointsOperation(VDSCommandType.RedefineVmCheckpoints,
                     new VmCheckpointsVDSParameters(getVdsId(), getVmId(), List.of(checkpoint)));
-            VmCheckpointInfo vmCheckpointInfo = (VmCheckpointInfo) redefineVdsReturnValue.getReturnValue();
-            if (vmCheckpointInfo == null || vmCheckpointInfo.getError() != null ||
-                    vmCheckpointInfo.getCheckpointsIds().isEmpty()) {
+            VmCheckpointIds vmCheckpointIds = (VmCheckpointIds) redefineVdsReturnValue.getReturnValue();
+            if (vmCheckpointIds == null || vmCheckpointIds.getError() != null ||
+                    vmCheckpointIds.getCheckpointIds().isEmpty()) {
                 log.error("Failed to redefine VM '{}' checkpoint '{}', removing the VM checkpoints chain",
                         getVmId(),
                         checkpoint.getId());
