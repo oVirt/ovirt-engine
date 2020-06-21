@@ -37,8 +37,9 @@ public class MDevTypesUtils {
      * @return true if the mdev display is supported and configured
      */
     public static boolean isMdevDisplayOn(VM vm) {
-        return isMdevDisplayOnSupported(vm.getCompatibilityVersion())
-                && !containsNoDisplay(parseCustomProperties(vm));
+        List<String> parsedMDevs = parseCustomProperties(vm);
+        return !parsedMDevs.isEmpty() && isMdevDisplayOnSupported(vm.getCompatibilityVersion())
+                && !containsNoDisplay(parsedMDevs);
     }
 
     private static boolean isMdevDisplayOnSupported(Version version) {

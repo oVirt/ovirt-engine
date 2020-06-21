@@ -28,12 +28,12 @@ public class MDevTypesUtilsTest {
 
     @Test
     public void isMdevDisplayOnEmptyMDevs() {
-        isMdevDisplayOn("", true);
+        isMdevDisplayOn("", false);
     }
 
     @Test
     public void isMdevDisplayOnNoMDevs() {
-        isMdevDisplayOn(null, true);
+        isMdevDisplayOn(null, false);
     }
 
     @Test
