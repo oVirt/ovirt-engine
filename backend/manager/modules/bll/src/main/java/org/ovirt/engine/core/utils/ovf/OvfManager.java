@@ -63,7 +63,7 @@ public class OvfManager {
             Cluster cluster = clusterDao.get(vm.getClusterId());
             String cpuVerb = cluster.getCpuVerb();
             String emulatedMachine = ClusterEmulatedMachines.forChipset(
-                    cluster.getEmulatedMachine(), vm.getBiosType().getChipsetType());
+                    cluster.getEmulatedMachine(), vm.getEffectiveBiosType().getChipsetType());
             vmWriter = new HostedEngineOvfWriter(vm,
                     fullEntityOvfData,
                     version,
