@@ -308,8 +308,6 @@ class EnrollCert(base.Base):
                 "{enroll_command}\n\n"
                 "3. Copy {enginecert} from the engine server to some file "
                 "here. Provide the file name below.\n\n"
-                "See {url} for more details, including using an external "
-                "certificate authority."
             ).format(
                 base_touser=self._base_touser,
                 tmpcsr=self._csr_file.name,
@@ -322,7 +320,6 @@ class EnrollCert(base.Base):
                     pkicertdir=self._engine_pki_certs_dir,
                     remote_name=self._remote_name,
                 ),
-                url=self._url,
             ),
         )
         goodcert = False
