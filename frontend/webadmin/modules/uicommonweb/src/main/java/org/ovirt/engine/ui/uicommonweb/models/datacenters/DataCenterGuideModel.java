@@ -1277,6 +1277,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         if (model.getUserPassword().getEntity() != null) {
             addVdsParams.setPassword(model.getUserPassword().getEntity());
         }
+        addVdsParams.setAuthMethod(model.getAuthenticationMethod());
         addVdsParams.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         addVdsParams.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
         model.startProgress();
