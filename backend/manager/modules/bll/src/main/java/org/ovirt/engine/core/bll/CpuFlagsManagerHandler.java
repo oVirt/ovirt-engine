@@ -235,7 +235,7 @@ public class CpuFlagsManagerHandler implements BackendService {
             s390CpuByNameDictionary.clear();
             allCpuList.clear();
 
-            String[] cpus = Config.<String> getValue(ConfigValues.ServerCPUList, ver.toString()).split("[;]", -1);
+            String[] cpus = Config.<String> getValue(ConfigValues.ServerCPUList, ver.toString()).trim().split("[;]", -1);
             for (String cpu : cpus) {
 
                 if (!StringUtils.isEmpty(cpu)) {
