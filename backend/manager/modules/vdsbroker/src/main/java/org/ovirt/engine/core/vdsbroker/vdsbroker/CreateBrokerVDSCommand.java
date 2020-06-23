@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,13 +47,11 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     }
 
     private Map<String, Object> createInfo() {
-        String engineXml = generateDomainXml();
-        if (getParameters().getMemoryDumpImage() == null) {
-            return Collections.singletonMap(VdsProperties.engineXml, engineXml);
-        } else {
-            Map<String, Object> createInfo = new HashMap<>(4);
-            createInfo.put(VdsProperties.engineXml, engineXml);
+        Map<String, Object> createInfo = new HashMap<>();
+        createInfo.put(VdsProperties.vm_guid, vm.getId().toString()); // deprecated: can be removed once we stop support 4.3
+        createInfo.put(VdsProperties.engineXml, generateDomainXml());
 
+        if (getParameters().getMemoryDumpImage() != null) {
             DiskImage memoryDump = getParameters().getMemoryDumpImage();
             Map<String, String> memoryDumpPDIV = PDIVMapBuilder.create()
                     .setPoolId(memoryDump.getStoragePoolId())
@@ -73,8 +70,9 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
 
             createInfo.put("memoryDumpVolume", memoryDumpPDIV);
             createInfo.put("memoryConfVolume", memoryConfPDIV);
-            return createInfo;
         }
+
+        return createInfo;
     }
 
     private String generateDomainXml() {
