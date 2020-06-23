@@ -10,6 +10,7 @@
 
 
 import gettext
+import os
 
 from otopi import constants as otopicons
 from otopi import filetransaction
@@ -35,9 +36,12 @@ class Plugin(plugin.PluginBase):
             oenginecons.OvnFileLocations.
             OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE
         )
+        self._service = oenginecons.OvnEnv.OVIRT_PROVIDER_OVN_SERVICE
+        self._service_was_up = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
+        condition=lambda self: os.path.exists(self._config),
     )
     def _setup(self):
         self.environment[
@@ -45,7 +49,20 @@ class Plugin(plugin.PluginBase):
         ].append(self._config)
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_TRANSACTION_BEGIN,
+    )
+    def _transaction_begin_ovn(self):
+        if self.services.status(self._service):
+            self.logger.info("Stopping {}".format(self._service))
+            self._service_was_up = True
+            self.services.state(
+                name=self._service,
+                state=False,
+            )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: os.path.exists(self._config),
     )
     def _misc(self):
         uninstall_files = []
@@ -87,6 +104,17 @@ class Plugin(plugin.PluginBase):
                 content=content,
                 modifiedList=uninstall_files,
             )
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CLOSEUP,
+        condition=lambda self: self._service_was_up,
+    )
+    def _closeup_ovn(self):
+        self.logger.info("Starting {}".format(self._service))
+        self.services.state(
+            name=self._service,
+            state=True,
         )
 
 
