@@ -50,12 +50,4 @@ public interface VmBackupDao extends GenericDao<VmBackup, Guid> {
      * @return the list of associated disks.
      */
     List<DiskImage> getDisksByBackupId(Guid backupId);
-
-    /**
-     * Remove all disks from VM backup
-     *
-     * @param backupId the VM backup id
-     */
-    void removeAllDisksFromBackup(Guid backupId);
-
 }

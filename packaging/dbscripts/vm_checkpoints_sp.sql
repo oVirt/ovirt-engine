@@ -123,19 +123,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION DeleteAllVmCheckpointDiskMapByVmCheckpointId (v_checkpoint_id UUID)
-RETURNS VOID AS $PROCEDURE$
-BEGIN
-    BEGIN
-        DELETE
-        FROM vm_checkpoint_disk_map
-        WHERE checkpoint_id = v_checkpoint_id;
-    END;
-
-    RETURN;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION GetDisksByVmCheckpointId (v_checkpoint_id UUID)
 RETURNS SETOF images_storage_domain_view STABLE AS $PROCEDURE$
 BEGIN

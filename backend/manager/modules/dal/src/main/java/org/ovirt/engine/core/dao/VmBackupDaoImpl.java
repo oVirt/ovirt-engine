@@ -107,11 +107,4 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
                 DiskImageDaoImpl.DiskImageRowMapper.instance,
                 getCustomMapSqlParameterSource().addValue("backup_id", backupId));
     }
-
-    @Override
-    public void removeAllDisksFromBackup(Guid backupId) {
-        getCallsHandler().executeModification("DeleteAllVmBackupDiskMapByVmBackupId",
-                getCustomMapSqlParameterSource().addValue("backup_id", backupId));
-    }
-
 }

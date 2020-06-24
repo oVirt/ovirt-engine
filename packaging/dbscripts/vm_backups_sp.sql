@@ -132,19 +132,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION DeleteAllVmBackupDiskMapByVmBackupId (v_backup_id UUID)
-RETURNS VOID AS $PROCEDURE$
-BEGIN
-    BEGIN
-        DELETE
-        FROM vm_backup_disk_map
-        WHERE backup_id = v_backup_id;
-    END;
-
-    RETURN;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION GetDisksByVmBackupId (v_backup_id UUID)
 RETURNS SETOF images_storage_domain_view STABLE AS $PROCEDURE$
 BEGIN
