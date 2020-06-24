@@ -19,3 +19,18 @@
   shell: vdsm-tool configure --force
   tags:
     - skip_ansible_lint # E305
+
+- name: Configure LVM filter
+  shell: vdsm-tool config-lvm-filter -y
+  tags:
+    - skip_ansible_lint # E305
+  register: lvm_filter_result
+  when: el_ver|int >= 8
+  ignore_errors: true
+
+- name: Error configuring LVM filter
+  debug:
+    msg: "Cannot configure LVM filter on host, please run: vdsm-tool config-lvm-filter"
+  when:
+    - el_ver|int >= 8
+    - lvm_filter_result.rc != 0
