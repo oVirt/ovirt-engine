@@ -284,3 +284,17 @@ BEGIN
     WHERE vm_device.type = 'hostdev';
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetUsedScsiDevicesByHostId (v_host_id UUID)
+RETURNS SETOF host_device_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT hdv1.* FROM host_device_view hdv
+        INNER JOIN luns
+            ON hdv.device_name LIKE '%'||luns.lun_id
+        INNER JOIN host_device_view hdv1
+            ON hdv1.device_name = hdv.parent_device_name
+        WHERE hdv1.host_id = v_host_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;

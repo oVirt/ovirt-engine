@@ -132,6 +132,13 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
     }
 
     @Override
+    public List<HostDeviceView> getUsedScsiDevicesByHostId(Guid hostId) {
+        return getCallsHandler().executeReadList("GetUsedScsiDevicesByHostId",
+                ExtendedHostDeviceRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("host_id", hostId));
+    }
+
+    @Override
     public void cleanDownVms() {
         getCallsHandler().executeModification("CleanDownVms",
                 getCustomMapSqlParameterSource());

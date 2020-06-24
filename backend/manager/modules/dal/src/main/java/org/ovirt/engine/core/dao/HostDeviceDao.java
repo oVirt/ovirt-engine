@@ -20,6 +20,8 @@ public interface HostDeviceDao extends GenericDao<HostDevice, HostDeviceId>, Mas
 
     List<HostDeviceView> getExtendedHostDevicesByHostId(Guid hostId);
 
+    List<HostDeviceView> getUsedScsiDevicesByHostId(Guid hostId);
+
     HostDevice getHostDeviceByHostIdAndDeviceName(Guid hostId, String deviceName);
 
     boolean checkVmHostDeviceAvailability(Guid vmId, Guid hostId);

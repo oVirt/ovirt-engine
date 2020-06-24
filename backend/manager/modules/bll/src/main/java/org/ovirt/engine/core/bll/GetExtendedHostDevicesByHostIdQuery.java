@@ -20,7 +20,10 @@ public class GetExtendedHostDevicesByHostIdQuery<P extends IdQueryParameters> ex
 
     @Override
     protected void executeQueryCommand() {
-        List<HostDeviceView> hostDeviceList = hostDeviceDao.getExtendedHostDevicesByHostId(getParameters().getId());
-        getQueryReturnValue().setReturnValue(hostDeviceList);
+        List<HostDeviceView> hostDevices = hostDeviceDao.getExtendedHostDevicesByHostId(getParameters().getId());
+        // Mark used SCSI host devices as un-assignable.
+        List<HostDeviceView> usedScsiDevices = hostDeviceDao.getUsedScsiDevicesByHostId(getParameters().getId());
+        hostDevices.stream().filter(usedScsiDevices::contains).forEach(device -> device.setAssignable(false));
+        getQueryReturnValue().setReturnValue(hostDevices);
     }
 }
