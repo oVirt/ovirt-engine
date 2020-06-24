@@ -183,4 +183,9 @@ public abstract class OvfOvaWriter extends OvfWriter {
     protected String getDriveHostResource(DiskImage image) {
         return String.format("ovf:/disk/%s", image.getId());
     }
+
+    @Override
+    protected String getInstaceIdTag() {
+        return "InstanceID";
+    }
 }

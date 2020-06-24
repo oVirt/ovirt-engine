@@ -227,4 +227,9 @@ public abstract class OvfOvirtWriter extends OvfWriter {
             return super.adjustHardwareResourceType(resourceType);
         }
     }
+
+    @Override
+    protected String getInstaceIdTag() {
+        return "InstanceId";
+    }
 }

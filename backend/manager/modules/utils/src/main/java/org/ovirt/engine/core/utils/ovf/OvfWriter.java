@@ -335,6 +335,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected abstract BiosType getEffectiveBiosType();
+    protected abstract String getInstaceIdTag();
 
     protected void writeCustomCpuName() {
         _writer.writeElement(CUSTOM_CPU_NAME, vmBase.getCustomCpuName());
@@ -406,7 +407,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         for (VmDevice vmDevice : devices) {
             _writer.writeStartElement("Item");
             _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.OTHER);
-            _writer.writeElement(RASD_URI, "InstanceId", vmDevice.getId().getDeviceId().toString());
+            _writer.writeElement(RASD_URI, getInstaceIdTag(), vmDevice.getId().getDeviceId().toString());
             writeVmDeviceInfo(vmDevice);
             _writer.writeEndElement(); // item
         }
@@ -420,7 +421,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             if (vmDevice.getType() == VmDeviceGeneralType.VIDEO) {
                 _writer.writeStartElement("Item");
                 _writer.writeElement(RASD_URI, "Caption", "Graphical Controller");
-                _writer.writeElement(RASD_URI, "InstanceId", vmDevice.getId().getDeviceId().toString());
+                _writer.writeElement(RASD_URI, getInstaceIdTag(), vmDevice.getId().getDeviceId().toString());
                 _writer.writeElement(RASD_URI, "ResourceType", adjustHardwareResourceType(OvfHardware.Monitor));
                 // we should write number of monitors for each entry for backward compatibility
                 _writer.writeElement(RASD_URI, "VirtualQuantity", String.valueOf(numOfMonitors));
@@ -440,7 +441,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             if (vmDevice.getType() == VmDeviceGeneralType.GRAPHICS) {
                 _writer.writeStartElement("Item");
                 _writer.writeElement(RASD_URI, "Caption", "Graphical Framebuffer");
-                _writer.writeElement(RASD_URI, "InstanceId", vmDevice.getId().getDeviceId().toString());
+                _writer.writeElement(RASD_URI, getInstaceIdTag(), vmDevice.getId().getDeviceId().toString());
                 _writer.writeElement(RASD_URI, "ResourceType", adjustHardwareResourceType(OvfHardware.Graphics));
                 writeVmDeviceInfo(vmDevice);
                 _writer.writeEndElement(); // item
@@ -458,7 +459,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             if (vmDevice.getDevice().equals(VmDeviceType.CDROM.getName())) {
                 _writer.writeStartElement("Item");
                 _writer.writeElement(RASD_URI, "Caption", "CDROM");
-                _writer.writeElement(RASD_URI, "InstanceId", vmDevice.getId().getDeviceId().toString());
+                _writer.writeElement(RASD_URI, getInstaceIdTag(), vmDevice.getId().getDeviceId().toString());
                 _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.CD);
                 writeVmDeviceInfo(vmDevice);
                 _writer.writeEndElement(); // item
@@ -518,7 +519,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeStartElement("Item");
         _writer.writeElement(RASD_URI, "Caption", String.format("%1$s virtual cpu", vmBase.getNumOfCpus()));
         _writer.writeElement(RASD_URI, "Description", "Number of virtual CPU");
-        _writer.writeElement(RASD_URI, "InstanceId", String.valueOf(++_instanceId));
+        _writer.writeElement(RASD_URI, getInstaceIdTag(), String.valueOf(++_instanceId));
         _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.CPU);
         _writer.writeElement(RASD_URI, "num_of_sockets", String.valueOf(vmBase.getNumOfSockets()));
         _writer.writeElement(RASD_URI, "cpu_per_socket", String.valueOf(vmBase.getCpuPerSocket()));
@@ -534,7 +535,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeStartElement("Item");
         _writer.writeElement(RASD_URI, "Caption", String.format("%1$s MB of memory", vmBase.getMemSizeMb()));
         _writer.writeElement(RASD_URI, "Description", "Memory Size");
-        _writer.writeElement(RASD_URI, "InstanceId", String.valueOf(++_instanceId));
+        _writer.writeElement(RASD_URI, getInstaceIdTag(), String.valueOf(++_instanceId));
         _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.Memory);
         _writer.writeElement(RASD_URI, "AllocationUnits", "MegaBytes");
         _writer.writeElement(RASD_URI, "VirtualQuantity", String.valueOf(vmBase.getMemSizeMb()));
@@ -545,7 +546,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         for (DiskImage image : _images) {
             _writer.writeStartElement("Item");
             _writer.writeElement(RASD_URI, "Caption", image.getDiskAlias());
-            _writer.writeElement(RASD_URI, "InstanceId", image.getImageId().toString());
+            _writer.writeElement(RASD_URI, getInstaceIdTag(), image.getImageId().toString());
             _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.DiskImage);
             _writer.writeElement(RASD_URI, "HostResource", getDriveHostResource(image));
             _writer.writeElement(RASD_URI, "Parent", image.getParentId().toString());
@@ -573,7 +574,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     private void writeUsb() {
         _writer.writeStartElement("Item");
         _writer.writeElement(RASD_URI, "Caption", "USB Controller");
-        _writer.writeElement(RASD_URI, "InstanceId", String.valueOf(++_instanceId));
+        _writer.writeElement(RASD_URI, getInstaceIdTag(), String.valueOf(++_instanceId));
         _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.USB);
         _writer.writeElement(RASD_URI,
                 "UsbPolicy",
@@ -588,7 +589,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             String networkName = iface.getNetworkName() != null ? iface.getNetworkName() : "[No Network]";
             _writer.writeRaw("Ethernet adapter on " + networkName);
             _writer.writeEndElement();
-            _writer.writeStartElement(RASD_URI, "InstanceId");
+            _writer.writeStartElement(RASD_URI, getInstaceIdTag());
             _writer.writeRaw(iface.getId().toString());
             _writer.writeEndElement();
             _writer.writeStartElement(RASD_URI, "ResourceType");
