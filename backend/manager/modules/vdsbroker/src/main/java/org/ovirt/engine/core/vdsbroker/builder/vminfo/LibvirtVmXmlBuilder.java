@@ -2621,6 +2621,12 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("bridge", !networkless ? network.getVdsmName() : ";vdsmdummy;");
             writer.writeEndElement();
 
+            if (!networkless && network.isPortIsolation()) {
+                writer.writeStartElement("port");
+                writer.writeAttributeString("isolated", "yes");
+                writer.writeEndElement();
+            }
+
             String queues = null;
             if (vnicProfile != null) {
                 queues = vnicProfile.getCustomProperties().remove("queues");
