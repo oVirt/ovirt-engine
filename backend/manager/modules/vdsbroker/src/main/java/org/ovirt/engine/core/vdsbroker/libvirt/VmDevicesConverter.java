@@ -150,7 +150,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, address);
             dev.put(VdsProperties.Alias, parseAlias(node));
             // Channel devices are not sent within the domain xml during VM launching.
-            // Therefore, unlike other devices there is no need to call the correlateWithUserAlias
+            // Therefore, unlike other devices there is no need to call the correlateWithAlias
             // function here because there will not be a database channel device available.
             // We just need to create a new channel device here.
             dev.put(VdsProperties.DeviceId, Guid.newGuid().toString());
@@ -187,12 +187,13 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             Optional<VmDevice> dbDev = Optional.empty();
-            // Controllers such as pci controllers that are not sent by the engine during initial loading,
-            // but are received from the dumpxml will not have the device id in the alias. To avoid a warning for
-            // these types of devices we first validate if the alias contains the user access prefix.
+            // Controllers such as pci controllers that are not sent by the engine during initial loading, but are
+            // received from the dumpxml will not have the device id in the alias. To avoid a warning for these types
+            // of devices we first validate if the alias contains the user access prefix and the device is unmanged.
             // If not the correlationWithUserAlias function is skipped.
-            if (dev.get(VdsProperties.Alias).toString().startsWith(DomainXmlUtils.USER_ALIAS_PREFIX)) {
-                dbDev = correlateWithUserAlias(dev, dbDevices);
+            if (dev.get(VdsProperties.Alias).toString().startsWith(DomainXmlUtils.USER_ALIAS_PREFIX)
+                    || dbDevices.stream().anyMatch(d -> d.isManaged() && devType.equals(d.getDevice()))) {
+                dbDev = correlateWithAlias(dev, dbDevices);
             }
 
             if (dbDev.isPresent()) {
@@ -235,7 +236,7 @@ public class VmDevicesConverter {
                 continue;
             }
 
-            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithAlias(dev, dbDevices);
 
             if (dbDev.isPresent()) {
                 dbDevices.remove(dbDev.get());
@@ -283,7 +284,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Device, deviceType);
             dev.put(VdsProperties.SpecParams, hostAddress);
 
-            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithAlias(dev, dbDevices);
 
             dev.put(VdsProperties.DeviceId, dbDev.isPresent() ? dbDev.get().getDeviceId().toString() : Guid.newGuid().toString());
             result.add(dev);
@@ -323,7 +324,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
             dev.put(VdsProperties.Device, hostDevice.getDeviceName());
 
-            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithAlias(dev, dbDevices);
 
             if (!dbDev.isPresent()) {
                 log.warn("VM host device '{}' does not exist in the database, thus ignored",
@@ -350,7 +351,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithAlias(dev, dbDevices);
 
             if (dbDev.isPresent()) {
                 dbDevices.remove(dbDev.get());
@@ -378,7 +379,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             String path = DomainXmlUtils.parseDiskPath(node);
-            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithAlias(dev, dbDevices);
 
             if (!dbDev.isPresent()) {
                 log.warn("unmanaged disk with path '{}' is ignored", path);
@@ -454,7 +455,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Address, DomainXmlUtils.parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
-            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithAlias(dev, dbDevices);
 
             if (!dbDev.isPresent()) {
                 String macAddress = DomainXmlUtils.parseMacAddress(node);
@@ -495,7 +496,7 @@ public class VmDevicesConverter {
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             // There is supposed to be one video device of each type (spice/vnc/..)
-            Optional<VmDevice> dbDev = correlateWithUserAlias(dev, dbDevices);
+            Optional<VmDevice> dbDev = correlateWithAlias(dev, dbDevices);
 
             if (!dbDev.isPresent()) {
                 log.warn("unmanaged video device with address '{}' is ignored", dev.get(VdsProperties.Address));
@@ -661,17 +662,28 @@ public class VmDevicesConverter {
         return devices.stream().filter(d -> d.getType() == devType).findFirst().orElse(null);
     }
 
-    private Optional<VmDevice> correlateWithUserAlias(Map<String, Object> device,
-            List<VmDevice> dbDevices) {
+    private Optional<VmDevice> correlateWithAlias(Map<String, Object> device, List<VmDevice> dbDevices) {
         String alias = (String) device.get(VdsProperties.Alias);
         try {
             Guid deviceId = Guid.createGuidFromString(alias.substring(DomainXmlUtils.USER_ALIAS_PREFIX.length()));
-            return dbDevices.stream()
+            Optional<VmDevice> result = dbDevices.stream()
                     .filter(dev -> deviceId.equals(dev.getDeviceId()))
                     .findFirst();
+            if (result.isPresent()) {
+                return result;
+            }
         } catch(Exception e) {
-            log.warn("Received unexpected user-alias: {}", alias);
-            return Optional.empty();
+            log.debug("Received unexpected user-alias: {}", alias);
         }
+        // We need it in case the user have a VM running from old versions(4.1) without shutting it down as a backward
+        // compatibility.
+        Optional<VmDevice> result = dbDevices.stream()
+                .filter(dev -> alias.equals(dev.getAlias()))
+                .findFirst();
+        if (result.isPresent()) {
+            return result;
+        }
+        log.warn("The alias wasn't found in the database, {}", alias);
+        return Optional.empty();
     }
 }
