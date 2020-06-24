@@ -48,18 +48,19 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
         }
 
         ImageTransfer updates = getParameters().getUpdates();
-        if (updates != null) {
-            if (updates.getPhase() == ImageTransferPhase.RESUMING && !entity.getPhase().isPaused()) {
+        if (updates != null && entity != null && updates.getPhase() != null) {
+            ImageTransferPhase imageTransferPhaseUpdate = updates.getPhase();
+
+            if (imageTransferPhaseUpdate == ImageTransferPhase.RESUMING && !entity.getPhase().isPaused()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESUME_IMAGE_TRANSFER);
             }
 
-            if (entity != null && !entity.getTransferClientType().canBeCanceled() &&
-                    updates.getPhase() == ImageTransferPhase.CANCELLED_USER) {
+            if (!entity.getTransferClientType().canBeCanceled()
+                    && imageTransferPhaseUpdate == ImageTransferPhase.CANCELLED_USER) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CANCEL_TRANSFER);
             }
 
-            if (entity != null && entity.getType() == TransferType.Download &&
-                    updates.getPhase() != null && getParameters().getUpdates().getPhase().isPaused()) {
+            if (entity.getType() == TransferType.Download && imageTransferPhaseUpdate.isPaused()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_PAUSE_IMAGE_DOWNLOAD);
             }
         }
