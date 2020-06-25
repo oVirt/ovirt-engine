@@ -1,16 +1,26 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
+import java.util.Collections;
+import java.util.Map;
+
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.CertificateUtils;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -30,6 +40,13 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
 
     public HostEnrollCertificateInternalCommand(VdsActionParameters parameters, CommandContext context) {
         super(parameters, context);
+    }
+
+    @Override
+    public boolean validate() {
+        HostValidator hostValidator = HostValidator.createInstance(getVds());
+        return validate(hostValidator.hostExists())
+                && validate(hostValidator.validateStatusForEnrollCertificate());
     }
 
     @Override
@@ -57,14 +74,16 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
                                 .toString(PKIResources.Format.OPENSSH_PUBKEY)
                                 .replace("\n", ""))
                 .playbook(AnsibleConstants.HOST_ENROLL_CERTIFICATE);
-        setVdsStatus(VDSStatus.Maintenance);
-        setSucceeded(true);
-        if (ansibleExecutor.runCommand(command).getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+        AnsibleReturnCode ansibleReturnCode = ansibleExecutor.runCommand(command).getAnsibleReturnCode();
+        setSucceeded(ansibleReturnCode == AnsibleReturnCode.OK);
+        if (ansibleReturnCode != AnsibleReturnCode.OK) {
             log.error(
                     "Failed to enroll certificate for host '{}': please check log for more details: {}",
                     getVds().getName(),
                     command.logFile());
             setVdsStatus(VDSStatus.InstallFailed);
+        } else {
+            setVdsStatus(VDSStatus.Maintenance);
         }
     }
 
@@ -73,4 +92,23 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
         return getSucceeded() ? AuditLogType.HOST_CERTIFICATION_ENROLLMENT_FINISHED
                 : AuditLogType.HOST_CERTIFICATION_ENROLLMENT_FAILED;
     }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getVdsId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS,
+                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR__ACTION__ENROLL_CERTIFICATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__HOST);
+    }
+
 }
