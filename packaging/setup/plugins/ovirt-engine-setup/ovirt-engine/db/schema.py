@@ -527,7 +527,7 @@ class Plugin(plugin.PluginBase):
                 os.path.basename(
                     oenginecons.FileLocations.OVIRT_ENGINE_DB_SCHMA_TOOL
                 ),
-                stderr[-1]
+                stderr[-1] if stderr else "exited with non-zero return code."
             )
             raise RuntimeError(_('Engine schema refresh failed'))
 
