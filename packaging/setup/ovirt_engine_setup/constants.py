@@ -536,6 +536,7 @@ class RenameEnv(object):
     FORCE_OVERWRITE = 'OSETUP_RENAME/forceOverwrite'
     FORCE_IGNORE_AIA_IN_CA = 'OSETUP_RENAME/forceIgnoreAIAInCA'
     FILES_TO_BE_MODIFIED = 'OVESETUP_CORE/filesToBeModified'
+    PKI_ENTITIES = 'OSETUP_RENAME/pkiEntities'
 
 
 @util.export
