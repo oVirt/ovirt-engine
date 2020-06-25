@@ -77,7 +77,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
             command.cleanup();
         }
 
-        invalidTabs.clear();
+        clearTabsValidity();
     }
 
     protected void cleanupEvents(Event<?>... events) {
@@ -598,6 +598,10 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         } else {
             invalidTabs.add(tab);
         }
+    }
+
+    public void clearTabsValidity() {
+        invalidTabs.clear();
     }
 
     public boolean isValidTab(TabName tab) {

@@ -3169,17 +3169,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void resetTabsValidity() {
-        setValidTab(TabName.HOST_TAB, true);
+        clearTabsValidity();
         setIsCustomPropertiesTabAvailable(true);
-
-        setValidTab(TabName.TAB_RNG, true);
-        setValidTab(TabName.CUSTOM_PROPERTIES_TAB, true);
-        setValidTab(TabName.BOOT_OPTIONS_TAB, true);
-        setValidTab(TabName.RESOURCE_ALLOCATION_TAB, true);
-        setValidTab(TabName.CONSOLE_TAB, true);
-        setValidTab(TabName.INITIAL_RUN_TAB, true);
-        setValidTab(TabName.GENERAL_TAB, true);
-        setValidTab(TabName.ICON_TAB, true);
         getValid().setEntity(true);
     }
 
