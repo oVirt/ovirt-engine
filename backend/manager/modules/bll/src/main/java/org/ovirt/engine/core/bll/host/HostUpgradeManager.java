@@ -28,7 +28,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.PKIResources;
 import org.slf4j.Logger;
@@ -60,15 +59,14 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         AnsibleReturnValue ansibleReturnValue = null;
         try {
             AnsibleCommandConfig command = new AnsibleCommandConfig()
-                .hosts(host)
+                    .hosts(host)
 
-                // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-check-{hostname}-{correlationid}-{timestamp}.log
-                .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
-                .logFilePrefix("ovirt-host-mgmt-ansible-check")
-                .logFileName(host.getHostName())
-                .logFileSuffix(CorrelationIdTracker.getCorrelationId())
-                .playbook(AnsibleConstants.HOST_CHECK_UPGRADE_PLAYBOOK)
-                .playAction(String.format("Check for update of host %1$s", host.getName()));
+                    // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-check-{hostname}-{correlationid}-{timestamp}.log
+                    .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
+                    .logFilePrefix("ovirt-host-mgmt-ansible-check")
+                    .logFileName(host.getHostName())
+                    .playbook(AnsibleConstants.HOST_CHECK_UPGRADE_PLAYBOOK)
+                    .playAction(String.format("Check for update of host %1$s", host.getName()));
             setAnsibleCommandConfigVars(command, host);
 
             List<String> availablePackages = new ArrayList<>();
@@ -138,7 +136,6 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                 .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-mgmt-ansible")
                 .logFileName(host.getHostName())
-                .logFileSuffix(CorrelationIdTracker.getCorrelationId())
                 .playbook(AnsibleConstants.HOST_UPGRADE_PLAYBOOK)
                 .playAction(String.format("Update of host %1$s", host.getName()));
         setAnsibleCommandConfigVars(commandConfig, host);

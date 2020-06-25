@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 
 public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
 
@@ -35,6 +36,9 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
     public AnsibleCommandConfig() {
         this.playAction = "Ansible Runner.";
         this.variables = new HashMap<>();
+        // By default we want to pass correlationId to Ansible playbook to allow tracking of the whole process
+        this.correlationId = CorrelationIdTracker.getCorrelationId();
+        this.logFileSuffix = this.correlationId;
     }
 
     @Override
@@ -170,6 +174,17 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
 
     public AnsibleCommandConfig correlationId(String correlationId) {
         this.correlationId = correlationId;
+        return this;
+    }
+
+    public AnsibleCommandConfig withoutCorrelationId() {
+        if (correlationId != null) {
+            // By default we set correlationId to logFileSuffix, so we should clear it when we clear correlationId
+            if (correlationId.equals(logFileSuffix)) {
+                this.logFileSuffix = null;
+            }
+            correlationId = null;
+        }
         return this;
     }
 

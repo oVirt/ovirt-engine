@@ -48,16 +48,16 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
     private String runAnsibleQueryOvaInfoPlaybook() {
         VDS host = vdsDao.get(getParameters().getVdsId());
         AnsibleCommandConfig command = new AnsibleCommandConfig()
-            .hosts(host)
-            .variable("ovirt_query_ova_path", getParameters().getPath())
-            .variable("list_directory", getParameters().isListDirectory() ? "True" : "False")
-            .variable("entity_type", getEntityType().name().toLowerCase())
-            // /var/log/ovirt-engine/ova/ovirt-query-ova-ansible-{hostname}-{timestamp}.log
-            .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)
-            .logFilePrefix("ovirt-query-ova-ansible")
-            .logFileName(host.getHostName())
-            .playAction("Query OVA info")
-            .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK);
+                .hosts(host)
+                .variable("ovirt_query_ova_path", getParameters().getPath())
+                .variable("list_directory", getParameters().isListDirectory() ? "True" : "False")
+                .variable("entity_type", getEntityType().name().toLowerCase())
+                // /var/log/ovirt-engine/ova/ovirt-query-ova-ansible-{hostname}-{timestamp}.log
+                .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-query-ova-ansible")
+                .logFileName(host.getHostName())
+                .playAction("Query OVA info")
+                .playbook(AnsibleConstants.QUERY_OVA_PLAYBOOK);
 
         StringBuilder stdout = new StringBuilder();
         AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(

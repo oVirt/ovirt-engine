@@ -113,7 +113,6 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 .logFileDirectory(IMPORT_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-import-ova-ansible")
                 .logFileName(getVds().getHostName())
-                .logFileSuffix(getCorrelationId())
                 .playAction("Import OVA")
                 .playbook(AnsibleConstants.IMPORT_OVA_PLAYBOOK);
 

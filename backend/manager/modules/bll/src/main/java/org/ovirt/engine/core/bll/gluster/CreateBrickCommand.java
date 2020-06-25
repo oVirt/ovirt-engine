@@ -185,7 +185,6 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
                 .logFileDirectory(CreateBrickCommand.CREATE_BRICK_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-gluster-brick-ansible")
                 .logFileName(getVds().getHostName())
-                .logFileSuffix(getCorrelationId())
                 .playAction("Create Brick")
                 .playbook(AnsibleConstants.CREATE_BRICK_PLAYBOOK);
 

@@ -161,15 +161,14 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
 
     private String runAnsibleImageMeasurePlaybook(String path) {
         AnsibleCommandConfig command = new AnsibleCommandConfig()
-            .hosts(getVds())
-            .variable("image_path", path)
-            .playAction("Image measure")
-            // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
-            .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
-            .logFilePrefix("ovirt-image-measure-ansible")
-            .logFileName(getVds().getHostName())
-            .logFileSuffix(getCorrelationId())
-            .playbook(AnsibleConstants.IMAGE_MEASURE_PLAYBOOK);
+                .hosts(getVds())
+                .variable("image_path", path)
+                .playAction("Image measure")
+                // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
+                .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-image-measure-ansible")
+                .logFileName(getVds().getHostName())
+                .playbook(AnsibleConstants.IMAGE_MEASURE_PLAYBOOK);
 
         StringBuilder stdout = new StringBuilder();
         AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(
@@ -205,7 +204,6 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
                 .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-export-ova-ansible")
                 .logFileName(getVds().getHostName())
-                .logFileSuffix(getCorrelationId())
                 .playAction("Pack OVA")
                 .playbook(AnsibleConstants.EXPORT_OVA_PLAYBOOK);
 

@@ -269,8 +269,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                     .logFilePrefix("ovirt-host-deploy-ansible")
                     .logFileName(vds.getHostName())
-                    .logFileSuffix(getCorrelationId())
-                    .correlationId(getCorrelationId())
                     .playAction(String.format("Installing Host %s", vds.getName()))
                     .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK);
 
@@ -325,8 +323,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-replace-glusterd-ansible")
                 .logFileName("replace-glusterd-host")
-                .logFileSuffix(getCorrelationId())
-                .correlationId(getCorrelationId())
                 .playAction(String.format("Installing Host %s", vds.getName()))
                 .playbook(AnsibleConstants.REPLACE_GLUSTER_PLAYBOOK);
 
@@ -360,8 +356,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-deploy-ansible")
                 .logFileName(vds.getHostName())
-                .logFileSuffix(getCorrelationId())
-                .correlationId(getCorrelationId())
                 .playAction(String.format("Fetching HE configuration from %s", vds.getName()))
                 .playbook(AnsibleConstants.FETCH_HE_CONFIG_FILE_PLAYBOOK);
 

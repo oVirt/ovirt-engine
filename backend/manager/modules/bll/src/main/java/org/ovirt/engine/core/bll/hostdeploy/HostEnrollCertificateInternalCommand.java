@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
-import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.PKIResources;
 
@@ -78,7 +77,6 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
                 .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-enroll-certs-ansible")
                 .logFileName(getVds().getHostName())
-                .logFileSuffix(CorrelationIdTracker.getCorrelationId())
                 .playbook(AnsibleConstants.HOST_ENROLL_CERTIFICATE);
         AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
         setSucceeded(ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK);
