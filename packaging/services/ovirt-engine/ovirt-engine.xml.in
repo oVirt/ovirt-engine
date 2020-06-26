@@ -6,7 +6,7 @@
 {% set HTTPS_PORT = config.getinteger('ENGINE_HTTPS_PORT') %}
 {% endif %}
 
-<server xmlns="urn:jboss:domain:4.0">
+<server xmlns="urn:jboss:domain:11.0">
 
   <extensions>
     <extension module="org.jboss.as.clustering.infinispan"/>
@@ -80,7 +80,8 @@
       <native-interface security-realm="management">
         <socket-binding native="management-native"/>
       </native-interface>
-      <http-interface security-realm="management" http-upgrade-enabled="true">
+      <http-interface security-realm="management">
+        <http-upgrade enabled="true"/>
         <socket-binding http="management"/>
       </http-interface>
     </management-interfaces>
@@ -459,7 +460,7 @@
       <buffer-pool name="default"/>
     </subsystem>
 
-    <subsystem xmlns="urn:jboss:domain:infinispan:4.0">
+    <subsystem xmlns="urn:jboss:domain:infinispan:9.0">
       <cache-container name="server" default-cache="default" module="org.wildfly.clustering.server">
         <local-cache name="default">
           <transaction mode="BATCH"/>
@@ -494,7 +495,17 @@
           default-cache="timeout-base">
         <local-cache name="timeout-base">
           <transaction mode="NONE"/>
-          <eviction max-entries="10000"/>
+          <object-memory size="10000"/>
+          <expiration interval="60000"/>
+        </local-cache>
+        <local-cache name="dashboard">
+          <transaction mode="NONE"/>
+          <object-memory size="10000"/>
+          <expiration interval="60000"/>
+        </local-cache>
+        <local-cache name="inventory">
+          <transaction mode="NONE"/>
+          <object-memory size="10000"/>
           <expiration interval="60000"/>
         </local-cache>
       </cache-container>
@@ -529,9 +540,9 @@
 
     <subsystem xmlns="urn:jboss:domain:naming:2.0"/>
 
-    <subsystem xmlns="urn:jboss:domain:remoting:3.0">
+    <subsystem xmlns="urn:jboss:domain:remoting:4.0">
       <endpoint worker="default"/>
-      <http-connector name="http-remoting-connector" connector-ref="default" security-realm="ApplicationRealm"/>
+      <http-connector name="http-remoting-connector" connector-ref="https" security-realm="ApplicationRealm"/>
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:resource-adapters:4.0"/>

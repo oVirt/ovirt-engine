@@ -22,7 +22,6 @@ import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.infinispan.Cache;
-import org.infinispan.manager.CacheContainer;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.ui.frontend.server.dashboard.fake.FakeDataGenerator;
 import org.slf4j.Logger;
@@ -38,8 +37,6 @@ public class DashboardDataServlet extends HttpServlet {
 
     private static final String CONTENT_TYPE = "application/json"; //$NON-NLS-1$
     private static final String ENCODING = "UTF-8"; //$NON-NLS-1$
-    private static final String DASHBOARD = "dashboard"; //$NON-NLS-1$
-    private static final String INVENTORY = "inventory"; //$NON-NLS-1$
     private static final String UTILIZATION_KEY = "utilization_key"; //$NON-NLS-1$
     private static final String INVENTORY_KEY = "inventory_key"; //$NON-NLS-1$
     private static final Object UTILIZATION_LOCK = new Object();
@@ -64,10 +61,9 @@ public class DashboardDataServlet extends HttpServlet {
     private boolean dwhAvailable = false;
     private boolean enableBackgroundCacheUpdate = false;
 
-    @Resource(lookup = "java:jboss/infinispan/container/ovirt-engine")
-    private CacheContainer cacheContainer;
-
+    @Resource(lookup = "java:jboss/infinispan/cache/ovirt-engine/dashboard")
     private Cache<String, Dashboard> dashboardCache;
+    @Resource(lookup = "java:jboss/infinispan/cache/ovirt-engine/inventory")
     private Cache<String, Inventory> inventoryCache;
 
     @Resource
@@ -78,9 +74,6 @@ public class DashboardDataServlet extends HttpServlet {
 
     @PostConstruct
     private void initCache() {
-        dashboardCache = cacheContainer.getCache(DASHBOARD);
-        inventoryCache = cacheContainer.getCache(INVENTORY);
-
         dwhAvailable = checkDwhConfigInEngine() && checkDwhDataSource();
 
         EngineLocalConfig config = EngineLocalConfig.getInstance();
