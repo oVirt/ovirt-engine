@@ -221,7 +221,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         nbdServerVDSParameters.setStorageDomainId(getParameters().getStorageDomainId());
         nbdServerVDSParameters.setImageId(getDiskImage().getId());
         nbdServerVDSParameters.setVolumeId(getDiskImage().getImageId());
-        nbdServerVDSParameters.setReadonly(false);
+        nbdServerVDSParameters.setReadonly(getParameters().getTransferType() == TransferType.Download);
         nbdServerVDSParameters.setDiscard(isSparseImage());
         return nbdServerVDSParameters;
     }
