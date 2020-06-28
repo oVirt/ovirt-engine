@@ -253,6 +253,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     @CopyOnNewVersion
     @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmTemplateField
     private boolean smartcardEnabled;
 
     @CopyOnNewVersion
