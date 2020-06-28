@@ -37,7 +37,9 @@ public enum TransferClientType implements Identifiable {
     }
 
     public boolean canBeCanceled() {
-        return isBrowserTransfer();
+        // This temporary quick fix to restore cancellaion form API. The real
+        // fix is to remove this method validate requests elsewhere.
+        return true;
     }
 
     public boolean isBrowserTransfer() {
