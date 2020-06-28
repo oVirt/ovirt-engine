@@ -20,8 +20,6 @@ import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -124,12 +122,12 @@ public class VmDevicesConverter {
         result.addAll(parseChannels(document, devices));
         result.addAll(parseControllers(document, devices));
         result.addAll(parseVideos(document, devices));
-        result.addAll(parseInterfaces(document, devices, vmId, addressToHostDeviceSupplier));
+        result.addAll(parseInterfaces(document, devices, addressToHostDeviceSupplier));
         result.addAll(parseDisks(document, devices));
         result.addAll(parseRedirs(document, devices));
         result.addAll(parseMemories(document, devices));
-        result.addAll(parseManagedHostDevices(document, devices, hostId, addressToHostDeviceSupplier));
-        result.addAll(parseUnmanagedHostDevices(document, devices, hostId, addressToHostDeviceSupplier));
+        result.addAll(parseManagedHostDevices(document, devices, addressToHostDeviceSupplier));
+        result.addAll(parseUnmanagedHostDevices(document, devices, addressToHostDeviceSupplier));
         return result.stream()
                 .filter(map -> !map.isEmpty())
                 .toArray(Map[]::new);
@@ -261,7 +259,7 @@ public class VmDevicesConverter {
     }
 
     private List<Map<String, Object>> parseUnmanagedHostDevices(XmlDocument document, List<VmDevice> devices,
-            Guid hostId, MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier) {
+            MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier) {
         List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.HOSTDEV);
 
         List<Map<String, Object>> result = new ArrayList<>();
@@ -298,7 +296,7 @@ public class VmDevicesConverter {
      * with one of the devices of the host. Host devices that were designed to be added as
      * unmanaged devices, like mdev devices, are handled separately.
      */
-    private List<Map<String, Object>> parseManagedHostDevices(XmlDocument document, List<VmDevice> devices, Guid hostId,
+    private List<Map<String, Object>> parseManagedHostDevices(XmlDocument document, List<VmDevice> devices,
             MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier) {
         List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.HOSTDEV);
         if (dbDevices.isEmpty()) {
@@ -402,42 +400,7 @@ public class VmDevicesConverter {
         return result;
     }
 
-    private VmDevice findDiskDeviceInDbByPath(List<VmDevice> dbDevices, String diskType, String path,
-            MemoizingSupplier<Map<Guid, String>> diskToLunSupplier) {
-        return dbDevices.stream()
-                .filter(d -> {
-                    switch(diskType) {
-                    case "cdrom":
-                        if (!diskType.equals(d.getDevice())) {
-                            return false;
-                        }
-                        // payload and vm-init reside in /var/run/vdsm/payload while other images
-                        // are mounted as the primary, single and managed, CD-ROM device of the VM
-                        boolean payload = VmPayload.isPayload(d.getSpecParams());
-                        return !path.startsWith("/var/run/vdsm/payload/") ? d.isManaged() && !payload : payload;
-                    case "floppy":
-                        return diskType.equals(d.getDevice());
-                    default:
-                        if (d.getSnapshotId() != null && path.contains(VdsProperties.Transient)) {
-                            DiskImage diskImage =  diskImageDao.getDiskSnapshotForVmSnapshot(d.getDeviceId(), d.getSnapshotId());
-                            return diskImage != null && path.contains(diskImage.getImageId().toString());
-                        }
-                        Guid diskId = d.getDeviceId();
-                        return path.contains(diskId.toString()) ||
-                                isPathContainsLunIdOfDisk(path, diskId, diskToLunSupplier);
-                    }
-                })
-                .findFirst()
-                .orElse(null);
-    }
-
-    private boolean isPathContainsLunIdOfDisk(String path, Guid diskId,
-            MemoizingSupplier<Map<Guid, String>> diskToLunSupplier) {
-        String lunId = diskToLunSupplier.get().get(diskId);
-        return lunId != null && path.contains(lunId);
-    }
-
-    private List<Map<String, Object>> parseInterfaces(XmlDocument document, List<VmDevice> devices, Guid vmId,
+    private List<Map<String, Object>> parseInterfaces(XmlDocument document, List<VmDevice> devices,
             MemoizingSupplier<Map<Map<String, String>, HostDevice>> addressToHostDeviceSupplier) {
         List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.INTERFACE);
 
@@ -510,24 +473,6 @@ public class VmDevicesConverter {
         }
 
         return result;
-    }
-
-    /** This function is called when a video device has not been correlated by its alias.
-     * Select the video device if libvirt sent video of type none but the VM needs a video device.
-     *
-     * @param device Libvirt device
-     * @param allDevices All devices in the DB
-     * @return true if "none" video device needs to be included
-     */
-    private boolean isNoneVideoDeviceValid(Map<String, Object> device, List<VmDevice> allDevices) {
-        // Video device is needed when there is a graphics console, even if the device is not plugged in.
-        // If not included, libvirt will add a default video device.
-        boolean videoNeeded = allDevices.stream().anyMatch(vmDevice -> vmDevice.getType() == VmDeviceGeneralType.GRAPHICS);
-
-        // When a vGPU is used as a display device, libvirt removes alias from VIDEO element. Tricks need to be
-        // used to correctly correlate the device.
-        // See https://bugzilla.redhat.com/show_bug.cgi?id=1720612
-        return device.get(VdsProperties.Device).equals("none") && videoNeeded;
     }
 
     /**
