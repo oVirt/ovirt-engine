@@ -40,6 +40,23 @@ class Plugin(plugin.PluginBase):
         self._service_was_up = False
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+        condition=lambda self: os.path.exists(self._config),
+    )
+    def _init(self):
+        self.environment[
+            osetupcons.RenameEnv.PKI_ENTITIES
+        ].append(
+            {
+                'name': 'ovirt-provider-ovn',
+                'display_name': 'ovirt-provider-ovn',
+                'ca_cert': None,
+                'extract_key': True,
+                'extra_action': None,
+            }
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
         condition=lambda self: os.path.exists(self._config),
     )
