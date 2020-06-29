@@ -124,6 +124,36 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        after=(
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
+        ),
+        condition=lambda self: self.environment.get(
+            oenginecons.OvnEnv.OVIRT_PROVIDER_ID
+        ),
+    )
+    def _rename_ovn_provider(self):
+        self.logger.info(_('Update OVN provider'))
+        fqdn = self.environment[osetupcons.RenameEnv.FQDN]
+        self.environment[
+            oenginecons.EngineDBEnv.STATEMENT
+        ].execute(
+            statement="""
+                UPDATE providers
+                SET
+                    url=%(url)s,
+                    auth_url=%(auth_url)s
+                WHERE
+                    id=%(id)s
+            """,
+            args=dict(
+                url='https://{}:9696'.format(fqdn),
+                auth_url='https://{}:35357/v2.0/'.format(fqdn),
+                id=self.environment[oenginecons.OvnEnv.OVIRT_PROVIDER_ID],
+            ),
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         condition=lambda self: self._service_was_up,
     )
