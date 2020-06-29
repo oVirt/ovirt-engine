@@ -36,8 +36,7 @@ jobs:
     - name: Build
       shell: bash
       run: |
-       sudo ln -sf /bin/bash /bin/sh
-       make all
+       make BUILD_ENV_VALIDATION=0 all
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
