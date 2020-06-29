@@ -11,6 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Nameable {
 
     private static final String CAPABILITY_PCI = "pci";
+    private static final String CAPABILITY_SCSI = "scsi";
 
     private Guid hostId;
     private String deviceName;
@@ -182,6 +183,10 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
 
     public boolean isPci() {
         return CAPABILITY_PCI.equals(getCapability());
+    }
+
+    public boolean isScsi() {
+        return CAPABILITY_SCSI.equals(getCapability());
     }
 
     public List<MDevType> getMdevTypes() {

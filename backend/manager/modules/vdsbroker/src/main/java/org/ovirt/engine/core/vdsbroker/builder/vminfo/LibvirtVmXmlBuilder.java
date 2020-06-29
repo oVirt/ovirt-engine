@@ -1579,6 +1579,9 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("disk");
         writer.writeAttributeString("type", "block");
+        // Adding snapshot='no' attribute to prevent libvirt from adding this disk from the domxml. This will prevent
+        // libvirt from selecting this disk as a target to snapshot. Snapshots of passthrough disks are not allowed.
+        writer.writeAttributeString("snapshot", "no");
 
         if (SCSI_VIRTIO_BLK_PCI.equals(scsiHostdevProperty) && legacyVirtio) {
             writer.writeAttributeString("model", "virtio-transitional");
@@ -2276,6 +2279,9 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeGeneralDiskAttributes(VmDevice device, Disk disk, DiskVmElement dve) {
+        // Adding snapshot='no' attribute to prevent from libvirt adding this disk from the domxml. This will prevent
+        // libvirt from selecting this disk as a target to snapshot. When we do execute snapshot, we specify the disks
+        // we wish to take a snapshot for explicitly.
         writer.writeAttributeString("snapshot", "no");
 
         if (dve.getDiskInterface() == DiskInterface.VirtIO && legacyVirtio) {

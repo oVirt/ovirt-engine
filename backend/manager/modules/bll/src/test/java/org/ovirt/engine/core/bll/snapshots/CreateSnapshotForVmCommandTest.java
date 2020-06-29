@@ -179,6 +179,27 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void testSaveMemoryScsiPassthroughFailure() {
+        cmd.getParameters().setSaveMemory(true);
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_SCSI_HOST_DEVICES))
+                .when(vmValidator)
+                .vmNotHavingScsiPassthroughDevices();
+        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        ValidateTestUtils.runAndAssertValidateFailure
+                (cmd, EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_SCSI_HOST_DEVICES);
+    }
+
+    @Test
+    public void testNoMemoryScsiPassthroughSuccess() {
+        cmd.getParameters().setSaveMemory(false);
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_SCSI_HOST_DEVICES))
+                .when(vmValidator)
+                .vmNotHavingScsiPassthroughDevices();
+        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
+    }
+
+    @Test
     public void testVmUsesMdevTypeHook() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USES_MDEV_TYPE_HOOK)).when(vmValidator)
                 .vmNotUsingMdevTypeHook();

@@ -242,6 +242,13 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult vmNotHavingScsiPassthroughDevices() {
+        if (getHostDeviceManager().checkVmNeedsScsiDevices(vm.getId())) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_ATTACHED_SCSI_HOST_DEVICES);
+        }
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult vmNotUsingMdevTypeHook() {
         Map<String, String> properties = getVmPropertiesUtils().getVMProperties(
                 vm.getCompatibilityVersion(),

@@ -84,6 +84,16 @@ public class HostDeviceManager implements BackendService {
                 .anyMatch(HostDevice::isPci);
     }
 
+    /**
+     * Checks whether one of host devices attached to given VM is of 'scsi' capability.
+     */
+    public boolean checkVmNeedsScsiDevices(Guid vmId) {
+        return hostDeviceDao
+                .getVmExtendedHostDevicesByVmId(vmId)
+                .stream()
+                .anyMatch(HostDevice::isScsi);
+    }
+
     private boolean checkVmNeedsDirectPassthrough(Guid vmId) {
         return vmDeviceDao.existsVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.HOSTDEV);
     }
