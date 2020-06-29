@@ -536,7 +536,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     private Boolean migrateEncrypted;
 
     @CopyOnNewVersion
-    @EditableVmField
+    @EditableVmField(onHostedEngine = true)
     private Guid migrationPolicyId;
 
     @CopyOnNewVersion
