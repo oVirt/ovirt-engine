@@ -191,6 +191,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 jobRepository.closeCompletedJobSteps(job.getId(), JobExecutionStatus.FAILED);
             }
         }
+        // Re-initiate the VM configuration in order to persist it on re-run attempts.
+        init();
         executeAction();
     }
 
