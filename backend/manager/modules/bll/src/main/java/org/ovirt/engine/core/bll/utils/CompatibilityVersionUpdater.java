@@ -4,8 +4,10 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -18,8 +20,10 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
+import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Version;
@@ -33,7 +37,8 @@ public class CompatibilityVersionUpdater {
         MIGRATION_POLICY("migration policy"),
         BIOS_TYPE("BIOS type"),
         DEFAULT_DISPLAY_TYPE("default display type"),
-        RNG_DEVICE("RNG device");
+        RNG_DEVICE("RNG device"),
+        CHIPSET("Chipset");
 
         private String displayName;
 
@@ -51,7 +56,16 @@ public class CompatibilityVersionUpdater {
      */
     public EnumSet<Update> updateVmCompatibilityVersion(VM vm, Version newVersion, Cluster cluster) {
         vm.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
-        return updateVmBaseCompatibilityVersion(vm.getStaticData(), newVersion, cluster);
+        ChipsetType oldChipsetType =
+                BiosTypeUtils.getEffective(vm.getBiosType(), cluster.getBiosType()).getChipsetType();
+        updateDefaultBiosType(vm, newVersion);
+        return updateVmBaseCompatibilityVersion(vm.getStaticData(), newVersion, oldChipsetType, cluster);
+    }
+
+    private void updateDefaultBiosType(VM vm, Version newVersion) {
+        if (newVersion.greaterOrEquals(Version.v4_3)) {
+            vm.setBiosType(BiosType.CLUSTER_DEFAULT);
+        }
     }
 
     /**
@@ -63,6 +77,11 @@ public class CompatibilityVersionUpdater {
     }
 
     public EnumSet<Update> updateVmBaseCompatibilityVersion(VmBase vmBase, Version newVersion, Cluster cluster) {
+        return updateVmBaseCompatibilityVersion(vmBase, newVersion, null, cluster);
+    }
+
+    private EnumSet<Update> updateVmBaseCompatibilityVersion(VmBase vmBase, Version newVersion,
+                                                            ChipsetType oldChipsetType, Cluster cluster) {
         if (newVersion.equals(getSourceVersion(vmBase))) {
             return EnumSet.noneOf(Update.class);
         }
@@ -86,6 +105,9 @@ public class CompatibilityVersionUpdater {
         }
         if (updateBiosType(vmBase, newVersion)) {
             updates.add(Update.BIOS_TYPE);
+        }
+        if (updateChipset(vmBase, oldChipsetType, cluster)) {
+            updates.add(Update.CHIPSET);
         }
         if (updateDefaultDisplayType(vmBase, newVersion)) {
             updates.add(Update.DEFAULT_DISPLAY_TYPE);
@@ -224,6 +246,38 @@ public class CompatibilityVersionUpdater {
             return oldBiosType != BiosType.CLUSTER_DEFAULT;
         }
         return false;
+    }
+
+    private boolean updateChipset(VmBase vmBase, ChipsetType oldChipsetType, Cluster cluster) {
+        if (oldChipsetType == null) {
+            return false;
+        }
+        ChipsetType newChipsetType = BiosTypeUtils.getEffective(vmBase, cluster).getChipsetType();
+        if (oldChipsetType == newChipsetType) {
+            return false;
+        }
+
+        boolean updated = false;
+        for (VmDevice device : vmBase.getManagedDeviceMap().values()) {
+            if (device.getType() == VmDeviceGeneralType.CONTROLLER) {
+                if (VmDeviceType.IDE.getName().equals(device.getDevice())) {
+                    if (ChipsetType.Q35.equals(newChipsetType)) {
+                        device.setDevice(VmDeviceType.SATA.getName());
+                        updated = true;
+                    }
+                } else if (VmDeviceType.SATA.getName().equals(device.getDevice())) {
+                    if (ChipsetType.I440FX.equals(newChipsetType)) {
+                        device.setDevice(VmDeviceType.IDE.getName());
+                        updated = true;
+                    }
+                }
+            }
+            if (!StringUtils.isEmpty(device.getAddress())) {
+                device.setAddress("");
+                updated = true;
+            }
+        }
+        return updated;
     }
 
     private boolean updateDefaultDisplayType(VmBase vmBase, Version newVersion) {

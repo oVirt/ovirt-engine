@@ -88,6 +88,7 @@ public class CompatibilityVersionUpdaterTest {
         cluster.setId(Guid.newGuid());
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setCompatibilityVersion(Version.getLast());
+        cluster.setBiosType(BiosType.Q35_SEA_BIOS);
 
         vm = createVm();
 
