@@ -31,11 +31,11 @@ jobs:
       # with:
       #   languages: go, javascript, csharp, python, cpp, java
 
-
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 https://git.io/JvXDl
-
-    - run: |
+    - name: Build
+      shell: bash
+      run: |
        make all
 
     - name: Perform CodeQL Analysis
