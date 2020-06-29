@@ -36,7 +36,7 @@ jobs:
     - name: Build
       shell: bash
       run: |
-       ln -sf /bin/bash /bin/sh
+       sudo ln -sf /bin/bash /bin/sh
        make all
 
     - name: Perform CodeQL Analysis
