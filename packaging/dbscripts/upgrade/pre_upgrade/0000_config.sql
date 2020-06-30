@@ -941,10 +941,8 @@ select fn_db_update_config_value('VdcVersion','4.4.0.0','general');
 -- ProductRPMVersion is automatically updated by engine-setup,
 -- but it doesn't harm to keep it up to date here as well.
 select fn_db_update_config_value('ProductRPMVersion','4.4.0.0','general');
-select fn_db_update_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;redfish:port=ipport,secure=ssl;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port', '4.2');
-select fn_db_update_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;redfish:port=ipport,secure=ssl;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port', '4.3');
-select fn_db_update_config_value('VdsFenceType', 'apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,redfish,rsa,rsb,wti','4.2');
-select fn_db_update_config_value('VdsFenceType', 'apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,redfish,rsa,rsb,wti','4.3');
+select fn_db_update_config_value_for_versions_from_up_to('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;redfish:port=ipport,secure=ssl;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port', '4.2', '4.3');
+select fn_db_update_config_value_for_versions_from_up_to('VdsFenceType', 'apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,redfish,rsa,rsb,wti','4.2','4.3');
 select fn_db_update_config_value('VdsRefreshRate','3','general');
 select fn_db_update_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
 select fn_db_update_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-guest-agent','general');
@@ -968,9 +966,7 @@ select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"
 select fn_db_update_config_value('HotUnplugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}','4.2');
 select fn_db_update_config_value('MaxNumOfVmCpus', '384', '4.2');
 select fn_db_update_config_value('MaxNumOfCpuPerSocket', '254', '4.2');
-select fn_db_update_config_value('VM64BitMaxMemorySizeInMB', '6291456', '4.2');
-select fn_db_update_config_value('VM64BitMaxMemorySizeInMB', '6291456', '4.3');
-select fn_db_update_config_value('VM64BitMaxMemorySizeInMB', '6291456', '4.4');
+select fn_db_update_config_value_for_versions_from_up_to('VM64BitMaxMemorySizeInMB', '6291456', '4.2','4.4');
 select fn_db_update_config_value('VMPpc64BitMaxMemorySizeInMB', '6291456', '4.4');
 
 select fn_db_update_config_value('ServerCPUList',
@@ -1173,9 +1169,7 @@ select fn_db_update_default_config_value('GlusterRefreshRateHeavy', '300', '900'
 select fn_db_update_default_config_value('GlusterDefaultBrickMountPoint', '/gluster-bricks', '/gluster_bricks', 'general', false);
 
 -- update to use aio=threads for gluster
-select fn_db_update_config_value('UseNativeIOForGluster','false','4.2');
-select fn_db_update_config_value('UseNativeIOForGluster','false','4.3');
-select fn_db_update_config_value('UseNativeIOForGluster','false','4.4');
+select fn_db_update_config_value_for_versions_from_up_to('UseNativeIOForGluster','false','4.2','4.4');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

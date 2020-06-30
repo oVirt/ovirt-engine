@@ -1370,6 +1370,33 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION fn_db_update_config_value_for_versions_from_up_to (
+    v_option_name VARCHAR(100),
+    v_val VARCHAR(4000),
+    v_from_version VARCHAR(40),
+    v_to_version VARCHAR(40)
+    )
+RETURNS void AS $PROCEDURE$
+DECLARE i INT;
+
+arr VARCHAR [] := array ['4.2', '4.3', '4.4'];
+
+BEGIN
+    found := false;
+    FOR i IN array_lower(arr, 1)..array_upper(arr, 1) LOOP
+	IF  arr [i] != v_from_version THEN
+	    IF NOT found THEN
+	        CONTINUE;
+	    END IF;
+        END IF;
+	found := true;
+	PERFORM fn_db_update_config_value(v_option_name, v_val, arr [i]);
+        EXIT WHEN arr [i] = v_to_version;
+    END LOOP;
+
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION fn_db_varchar_to_jsonb(v_text VARCHAR, v_default_value JSONB)
 RETURNS JSONB IMMUTABLE AS $PROCEDURE$
 BEGIN
