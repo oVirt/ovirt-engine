@@ -12,15 +12,9 @@ xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
     <ui:style type="org.ovirt.engine.ui.common.view.popup.ConsolePopupView.Style">
-        .explanationLabel {
-            font-style: italic;
-            margin-left: 40px;
-            margin-bottom: 10px;
-            width: 300px;
-        }
-
-        .fullWidth {
+        .mainPanel {
             width: 100%;
+            padding-left: 20px;
         }
 
         .labelStyle {
@@ -36,6 +30,7 @@ xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
         .protocolRadioButton {
             float: left;
             display: inline;
+            padding-left: 0px;
         }
 
         .protocolPanel {
@@ -50,7 +45,7 @@ xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
 
     <d:SimpleDialogPanel width="500px" height="420px">
         <d:content>
-            <g:FlowPanel addStyleNames="{style.fullWidth}">
+            <g:FlowPanel addStyleNames="{style.mainPanel}">
                 <g:FlowPanel addStyleNames="{style.protocolPanel}">
                     <g:Label ui:field="consoleTitle" addStyleNames="{style.labelStyle}" />
                     <g:FlowPanel>
