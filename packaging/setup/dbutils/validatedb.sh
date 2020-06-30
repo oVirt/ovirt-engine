@@ -75,6 +75,10 @@ while [ -n "$1" ]; do
 	esac
 done
 
+if [ -n "$sclenv" ]; then
+	. scl_source enable ${sclenv}
+fi
+
 validationlist="fkvalidator.sh"
 
 error=0
