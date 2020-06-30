@@ -31,6 +31,7 @@ import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmBackupsResource;
 import org.ovirt.engine.api.resource.VmCdromsResource;
+import org.ovirt.engine.api.resource.VmCheckpointsResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
 import org.ovirt.engine.api.resource.VmHostDevicesResource;
@@ -224,6 +225,11 @@ public class BackendVmResource
     @Override
     public VmBackupsResource getBackupsResource() {
         return inject(new BackendVmBackupsResource(guid));
+    }
+
+    @Override
+    public VmCheckpointsResource getCheckpointsResource() {
+        return null;
     }
 
     public VmDisksResource getDisksResource() {
