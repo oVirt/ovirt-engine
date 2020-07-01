@@ -271,6 +271,14 @@ public class EngineLocalConfig extends ShellLikeConfd {
         return getProperty("ENGINE_SSO_ENGINE_STORE_EKU");
     }
 
+    public String getEngineGrafanaFqdn() {
+        return getProperty("ENGINE_GRAFANA_FQDN");
+    }
+
+    public String getEngineGrafanaBaseUrl() {
+        return getProperty("ENGINE_GRAFANA_BASE_URL");
+    }
+
     /**
      * Returns the directory for custom/3rd party extension configuration files
      */

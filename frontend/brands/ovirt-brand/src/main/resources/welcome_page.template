@@ -4,6 +4,7 @@
             <div class="welcome-section-title">{portal_title}</div>
             <div class="welcome-link"><a id="WelcomePage_webadmin" href="webadmin/?locale={userLocale}">{portal_admin}</a></div>
             <div class="welcome-link"><a id="WelcomePage_userportal_webui" href="web-ui/?locale={userLocale}">{portal_webui}</a></div>
+            <div class="welcome-link"><a id="WelcomePage_monitoring_grafana" href={portal_monitoring_url}>{portal_monitoring}</a></div>
         </div>
         <div class="col-sm-4 col-md-4 col-lg-3">
             <div class="welcome-section-title">{downloads_title}</div>
