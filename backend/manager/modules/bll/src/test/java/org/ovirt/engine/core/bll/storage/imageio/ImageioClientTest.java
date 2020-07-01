@@ -34,7 +34,7 @@ For testing, use following steps:
 
  */
 class ImageioClientTest {
-    public static final String IMAGEIO_HOSTNAME = "127.0.0.1";
+    public static final String IMAGEIO_HOSTNAME = "localhost";
     public static final int IMAGEIO_PORT = 54324;
 
     private ImageioClient imageioClient = new ImageioClient(IMAGEIO_HOSTNAME, IMAGEIO_PORT);
