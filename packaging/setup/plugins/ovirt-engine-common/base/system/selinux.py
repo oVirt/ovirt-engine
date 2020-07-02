@@ -89,6 +89,11 @@ class Plugin(plugin.PluginBase):
         for f in listdir(selinux_dir):
             file_path = join(selinux_dir, f)
             if isfile(file_path):
+                self.logger.info(
+                    _(
+                        'Install selinux module {}'.format(file_path)
+                    )
+                )
                 rc, stdout, stderr = self.execute(
                     (
                         self.command.get('semodule'),
