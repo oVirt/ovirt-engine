@@ -575,10 +575,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
-        if (getParameters().getVm().getOrigin() == OriginType.KUBEVIRT) {
+        if (!getVmTemplate().isManaged()) {
             if (!isInternalExecution() && getParameters().getDisksToAttach().isEmpty()) {
-                // TODO: change message
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED);
             }
             if (!setAndValidateCpuProfile()) {
                 return false;
