@@ -144,6 +144,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         }
 
         if (oldCluster == null || isCpuNameChanged() || isVersionChanged()) {
+            log.info("Updating cluster CPU flags and verb according to the configuration of the " + getCluster().getCpuName() + " cpu");
             clusterCpuFlagsManager.updateCpuFlags(getCluster());
         } else {
             getCluster().setCpuFlags(oldCluster.getCpuFlags());

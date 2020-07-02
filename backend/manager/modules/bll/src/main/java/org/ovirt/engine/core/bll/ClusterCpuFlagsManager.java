@@ -44,6 +44,7 @@ public class ClusterCpuFlagsManager implements BackendService {
     public void updateClusterCpuFlags(Cluster cluster) {
         try {
             if (shouldUpdateFlags(cluster)) {
+                log.info("Updating cluster CPU flags and verb according to the configuration of the " + cluster.getCpuName() + " cpu");
                 updateCpuFlags(cluster);
                 clusterDao.update(cluster);
             }
