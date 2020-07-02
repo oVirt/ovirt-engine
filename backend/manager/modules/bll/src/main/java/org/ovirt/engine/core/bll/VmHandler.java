@@ -1333,14 +1333,13 @@ public class VmHandler implements BackendService {
 
     private ValidationResult validateHostedEnginePhysicalMemory(VmBase vmBase) {
         if (vmBase.isHostedEngine()) {
-            List<VDS> allHostsForCluster = vdsDao.getAllForCluster(vmBase.getClusterId());
-            Optional<Integer> min = allHostsForCluster.stream()
+            Optional<Integer> minPhysicalMem = vdsDao.getAllForCluster(vmBase.getClusterId()).stream()
                     .filter(v -> v.getStatus() == VDSStatus.Up && v.isHostedEngineHost())
                     .map(VDS::getPhysicalMemMb)
                     .min(Integer::compare);
-            if (min.get() > 0 && vmBase.getMemSizeMb() >= min.get()) {
+            if (minPhysicalMem.isPresent() && vmBase.getMemSizeMb() >= minPhysicalMem.get()) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PHYSICAL_MEMORY_CANNOT_BE_SMALLER_THAN_MEMORY_SIZE,
-                        ReplacementUtils.createSetVariableString("physMemory", min.get()),
+                        ReplacementUtils.createSetVariableString("physMemory", minPhysicalMem.get()),
                         ReplacementUtils.createSetVariableString("memory", vmBase.getMemSizeMb()));
             }
         }
