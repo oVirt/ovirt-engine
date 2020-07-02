@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -219,6 +220,10 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
         if (getStorageDomainId() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
+        }
+        VmValidator vmValidator = new VmValidator(getVm());
+        if (!validate(vmValidator.vmNotHavingScsiPassthroughDevices())) {
+            return false;
         }
 
         return true;
