@@ -8,13 +8,21 @@
         if ansible_distribution == 'Fedora'
         else 0 }}"
 
+- name: Fetch installed packages
+  package_facts:
+    manager: auto
+
+- name: Check if vdsm is preinstalled
+  set_fact:
+    vdsm_preinstalled: "{{ 'vdsm' in ansible_facts.packages }}"
+
 - name: Parse operating system release
   lineinfile:
     path: /etc/os-release
     line: 'VARIANT_ID="ovirt-node"'
   check_mode: yes
-  register: ngn_presence
+  register: node_presence
 
 - name: Detect if host is a prebuilt image
   set_fact:
-    ngn_host: "{{ not ngn_presence.changed }}"
+    node_host: "{{ not node_presence.changed }}"

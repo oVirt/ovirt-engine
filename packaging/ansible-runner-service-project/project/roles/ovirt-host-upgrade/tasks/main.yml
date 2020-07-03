@@ -24,7 +24,7 @@
   file:
     path: /var/imgbased/.image-updated
     state: absent
-  when: ngn_host|bool
+  when: node_host|bool
 
 # Ignoring empty lines and the title "Obsoleting packages"
 - name: Upgrade packages
@@ -43,21 +43,21 @@
 - name: Check if image was updated
   set_fact:
     image_pkg_updated: "{{ yum_result is search('image-update') }}"
-  when: ngn_host|bool
+  when: node_host|bool
 
 - name: Check if image-updated file exists
   stat:
     path: /var/imgbased/.image-updated
   register: image_updated_file
   when:
-    - ngn_host|bool
+    - node_host|bool
     - image_pkg_updated|bool
 
 - name: Verify image was updated successfully
   fail:
-    msg: "NGN host upgrade failed"
+    msg: "Node image upgrade failed"
   when:
-    - ngn_host|bool
+    - node_host|bool
     - image_pkg_updated|bool
     - not image_updated_file.stat.exists
     - host_deploy_cluster_version|float >= 4.4

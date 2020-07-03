@@ -14,7 +14,8 @@
   when:
     - host_deploy_origin_type != ovirt_origin_type
     - el_ver|int >= 8
-    - not vdsm_installed|bool
+    - not node_host|bool
+    - not vdsm_preinstalled|bool
 
 - name: Install Python3 for CentOS/RHEL8 hosts
   yum:
