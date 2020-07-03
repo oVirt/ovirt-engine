@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 CA_DAYS="3650"
 KEYTOOL="${JAVA_HOME:-/usr}/bin/keytool"
