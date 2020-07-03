@@ -4,6 +4,8 @@ import org.ovirt.engine.ui.common.widget.parser.generic.ToStringEntityModelParse
 
 public class StringEntityModelPasswordBoxEditor extends EntityModelPasswordBoxEditor<String> {
 
+    public static final String AUTOCOMPLETE_NEW_PASSWORD = "new-password"; //$NON-NLS-1$
+
     public StringEntityModelPasswordBoxEditor() {
         super(new ToStringEntityModelRenderer<String>(), new ToStringEntityModelParser());
     }

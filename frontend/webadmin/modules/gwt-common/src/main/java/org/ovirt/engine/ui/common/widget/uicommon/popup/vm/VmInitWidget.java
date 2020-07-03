@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import static org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor.AUTOCOMPLETE_NEW_PASSWORD;
+
 import java.util.Map;
 
 import org.gwtbootstrap3.client.ui.Button;
@@ -517,9 +519,13 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         windowsSyspreptimeZoneEnabledEditor.setLabel(constants.cloudInitConfigureTimeZoneLabel());
         windowsSysprepTimeZoneEditor.setLabel(constants.cloudInitTimeZoneLabel());
         cloudInitRootPasswordEditorWithInfo.setLabel(constants.cloudInitRootPasswordLabel());
+        cloudInitRootPasswordEditor.setAutocomplete(AUTOCOMPLETE_NEW_PASSWORD);
         cloudInitRootPasswordVerificationEditor.setLabel(constants.cloudInitRootPasswordVerificationLabel());
+        cloudInitRootPasswordVerificationEditor.setAutocomplete(AUTOCOMPLETE_NEW_PASSWORD);
         sysprepAdminPasswordEditor.setLabel(constants.sysprepAdminPasswordLabel());
+        sysprepAdminPasswordEditor.setAutocomplete(AUTOCOMPLETE_NEW_PASSWORD);
         sysprepAdminPasswordVerificationEditor.setLabel(constants.sysprepAdminPasswordVerificationLabel());
+        sysprepAdminPasswordVerificationEditor.setAutocomplete(AUTOCOMPLETE_NEW_PASSWORD);
 
         String sep = "|"; //$NON-NLS-1$
         // sequence is: <select label> | [+] <add label> | [-] <remove label>
