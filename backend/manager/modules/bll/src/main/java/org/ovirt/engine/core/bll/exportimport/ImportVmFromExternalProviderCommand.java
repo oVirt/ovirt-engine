@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -348,11 +349,13 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
                 && getStorageDomain() != null
                 && getStorageDomain().getStorageType().isBlockDomain()) {
             getVm().getImages().forEach(image -> {
-                image.setActualSizeInBytes(image.getSize());
-                image.setVolumeType(VolumeType.Preallocated);
+                if (image.getVolumeFormat() == VolumeFormat.RAW) {
+                    image.setActualSizeInBytes(image.getSize());
+                    image.setVolumeType(VolumeType.Preallocated);
+                }
             });
 
-            log.info("Block Storage Domains do not support Sparseness. The Importing of VM: '{}'({}) is defaulting to Preallocated.",
+            log.info("Block Storage Domains do not support Sparseness for RAW files. The Importing of VM: '{}'({}) may default to Preallocated.",
                     getVm().getName(), getVm().getId());
         }
     }
