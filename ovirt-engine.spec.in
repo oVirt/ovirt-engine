@@ -204,7 +204,7 @@ Requires(pre):	shadow-utils
 # bump the requirement (otherwise we would need to pass wildfly,
 # wildfly-overlay and ovirt-engine through the change queue at once)
 %if %{ovirt_provides_jboss}
-Requires:	ovirt-engine-wildfly-overlay >= 17.0.1
+Requires:	ovirt-engine-wildfly-overlay >= 18
 %endif
 
 Requires:	%{name}-backend = %{version}-%{release}
@@ -378,7 +378,7 @@ Requires:	logrotate
 Requires:	python3-otopi >= 1.9.0
 Requires:	python3-paramiko
 Requires(pre):	shadow-utils
-Conflicts:	%{name}-dwh < 4.3.0
+Conflicts:	%{name}-dwh < 4.4.0
 Conflicts:	%{name}-dwh-setup < 4.4.0
 
 %description setup-base
@@ -411,17 +411,17 @@ rm -f %{engine_setup_rpm_state_flag_file}
 %package setup-plugin-ovirt-engine
 Summary:	Setup and upgrade specific plugins for %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
-Requires:	%{name} >= 3.6.0
+Requires:	%{name} >= 4.4.0
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
 Requires:	%{name}-setup-plugin-cinderlib = %{version}-%{release}
 Requires:	%{name}-setup-plugin-imageio = %{version}-%{release}
-Requires:	%{name}-dwh-setup >= 4.2
+Requires:	%{name}-dwh-setup >= 4.4.1.2
 Requires:	ovirt-engine-extension-aaa-jdbc >= 1.2.0
 Requires:	openssh
 Requires:       postgresql-server >= 12.0
 Requires:       postgresql-contrib >= 12.0
-Conflicts:	%{name} < 4.3.7
+Conflicts:	%{name} < 4.4.0
 # See rhbz# 1676461
 Requires:	ovirt-vmconsole >= 1.0.7
 
