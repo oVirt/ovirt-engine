@@ -178,7 +178,13 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
         // Get the checkpoint chain before removing the root checkpoint from it,
         // the chain is fetched from the DB and ordered from the new root to the leaf.
         List<VmCheckpoint> vmCheckpoints = vmCheckpointDao.getAllForVm(getParameters().getVmId());
+
         if (vmCheckpoints.size() == 1) {
+            // No need to update the new root checkpoint XML
+            TransactionSupport.executeInNewTransaction(() -> {
+                vmCheckpointDao.remove(vmCheckpoint.getId());
+                return null;
+            });
             return true;
         }
 
