@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -14,15 +15,30 @@ import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public class AddVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmHostDevicesParameters> {
 
     @Inject
     private VmDeviceDao vmDeviceDao;
+    @Inject
+    private HostDeviceDao hostDeviceDao;
 
     public AddVmHostDevicesCommand(VmHostDevicesParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected boolean validate() {
+        if (!super.validate()) {
+            return false;
+        }
+
+        if (isUsedScsiDeviceRequested()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_DEVICE_ALREADY_IN_USE);
+        }
+        return true;
     }
 
     @Override
@@ -74,6 +90,17 @@ public class AddVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmHost
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__ADD);
         addValidationMessage(EngineMessage.VAR__TYPE__HOST_DEVICES);
+    }
+
+    private boolean isUsedScsiDeviceRequested() {
+        // Find used SCSI host devices
+        List<HostDevice> usedScsiDevices =
+                hostDeviceDao.getUsedScsiDevicesByHostId(getVm().getDedicatedVmForVdsList().get(0))
+                        .stream()
+                        .map(deviceView -> (HostDevice) deviceView)
+                        .collect(Collectors.toList());
+
+        return getHostDevices().stream().anyMatch(usedScsiDevices::contains);
     }
 }
 

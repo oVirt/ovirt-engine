@@ -75,7 +75,7 @@ public abstract class AbstractVmHostDevicesCommand<P extends VmHostDevicesParame
         return primaryDeviceNames;
     }
 
-    private List<HostDevice> getHostDevices() {
+    protected List<HostDevice> getHostDevices() {
         if (hostDevices == null) {
             hostDevices = getParameters().getDeviceNames()
                     .stream()
