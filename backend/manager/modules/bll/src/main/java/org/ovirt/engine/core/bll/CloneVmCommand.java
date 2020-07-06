@@ -327,6 +327,13 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         vmStatic.setVmtGuid(getVm().getVmtGuid());
     }
 
+    @Override
+    protected Guid getDestStorageDomain(Guid diskImageID){
+        return getParameters().getDestStorageDomainId() != null ?
+                getParameters().getDestStorageDomainId() :
+                super.getDestStorageDomain(diskImageID);
+    }
+
     private VmManagementParametersBase createUpdateVmParameters() {
         editedVM.setId(getVmId());
         editedVM.setVmCreationDate(getVm().getVmCreationDate());

@@ -417,7 +417,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                             default:
                                 copyDiskImage(diskImage,
                                         diskImage.getStorageIds().get(0),
-                                        diskInfoDestinationMap.get(diskImage.getId()).getStorageIds().get(0),
+                                        getDestStorageDomain(diskImage.getId()),
                                         diskInfoDestinationMap.get(diskImage.getId()).getDiskProfileId(),
                                         getActionType());
                                 numberOfStartedCopyTasks++;
@@ -479,6 +479,10 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     }
 
     protected abstract VM getVmFromConfiguration();
+
+    protected Guid getDestStorageDomain(Guid diskImageID){
+        return diskInfoDestinationMap.get(diskImageID).getStorageIds().get(0);
+    }
 
     @Override
     protected abstract Guid getSourceVmId();
