@@ -113,19 +113,17 @@ public class VMConsoleProxyServlet extends HttpServlet {
                     List<VmDynamic> vms = retVms.getReturnValue();
                     for (VmDynamic vm : vms) {
                         Map<String, String> jsonVm = new HashMap<>();
-                        if (vm.getRunOnVds() != null) {
-                            // TODO: avoid one query per loop. Bulk query?
-                            QueryReturnValue retValue = backend.runInternalQuery(QueryType.GetVdsByVdsId,
-                                    new IdQueryParameters(vm.getRunOnVds()));
-                            if (retValue != null && retValue.getReturnValue() != null) {
-                                VDS vds = retValue.getReturnValue();
-                                jsonVm.put("vmid", vm.getId().toString());
-                                jsonVm.put("vmname", resourceManager.getVmManager(vm.getId()).getName());
-                                jsonVm.put("host", vds.getHostName());
-                                /* there is only one serial console, no need and no way to distinguish them */
-                                jsonVm.put("console", "default");
-                                jsonVms.add(jsonVm);
-                            }
+                        // TODO: avoid one query per loop. Bulk query?
+                        QueryReturnValue retValue = backend.runInternalQuery(QueryType.GetVdsByVdsId,
+                                new IdQueryParameters(vm.getRunOnVds()));
+                        if (retValue != null && retValue.getReturnValue() != null) {
+                            VDS vds = retValue.getReturnValue();
+                            jsonVm.put("vmid", vm.getId().toString());
+                            jsonVm.put("vmname", resourceManager.getVmManager(vm.getId()).getName());
+                            jsonVm.put("host", vds.getHostName());
+                            /* there is only one serial console, no need and no way to distinguish them */
+                            jsonVm.put("console", "default");
+                            jsonVms.add(jsonVm);
                         }
                     }
                 }

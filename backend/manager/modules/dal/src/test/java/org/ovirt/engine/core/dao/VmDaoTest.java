@@ -192,7 +192,7 @@ public class VmDaoTest extends BaseDaoTestCase<VmDao> {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(6, result.size());
+        assertEquals(3, result.size());
     }
 
     /**

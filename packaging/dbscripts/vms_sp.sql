@@ -1451,8 +1451,8 @@ Create or replace FUNCTION GetAllFromVmsForUserAndActionGroup(v_user_id UUID, v_
 BEGIN
 RETURN QUERY SELECT DISTINCT vm_dynamic.*
       FROM vm_dynamic, vm_permissions_view, permissions_view, engine_session_user_flat_groups
-      WHERE vm_dynamic.vm_guid = vm_permissions_view.entity_id
-
+      WHERE vm_dynamic.run_on_vds IS NOT NULL
+          AND   vm_dynamic.vm_guid = vm_permissions_view.entity_id
           AND   vm_permissions_view.user_id = v_user_id
           AND   engine_session_user_flat_groups.user_id = vm_permissions_view.user_id
           -- check the user has permission on any parent for this vm id and Object type 2 (vm)
