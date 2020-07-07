@@ -4,10 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.security.GeneralSecurityException;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -88,9 +92,6 @@ public class VMConsoleProxyServlet extends HttpServlet {
     }
 
     private List<Map<String, String>> availableConsoles(String userIdAsString) {
-
-        List<Map<String, String>> jsonVms = new ArrayList<>();
-
         Guid userGuid = null;
 
         try {
@@ -114,32 +115,47 @@ public class VMConsoleProxyServlet extends HttpServlet {
                         new EngineContext().withSessionId(engineSessionId));
                 if (retVms != null) {
                     List<VmDynamic> vms = retVms.getReturnValue();
-                    List<Guid> vdsIds= vms.stream()
-                            .map(VmDynamic::getRunOnVds)
-                            .distinct()
-                            .collect(Collectors.toList());
-                    Map<Guid, String> vdsIdToHostname = vdsStaticDao.getByIds(vdsIds)
-                            .stream()
-                            .collect(Collectors.toMap(VdsStatic::getId, VdsStatic::getHostName));
-                    for (VmDynamic vm : vms) {
-                        Map<String, String> jsonVm = new HashMap<>();
+                    List<Guid> vdsIds = getRunOnVdsList(vms);
+                    Map<Guid, String> vdsIdToHostname = getVdsIdToHostname(vdsIds);
+                    Function<VmDynamic, SimpleEntry<VmDynamic, String>> vmToVmAndHostname = vm -> {
                         String hostname = vdsIdToHostname.get(vm.getRunOnVds());
-                        if (hostname != null) {
-                            jsonVm.put("vmid", vm.getId().toString());
-                            jsonVm.put("vmname", resourceManager.getVmManager(vm.getId()).getName());
-                            jsonVm.put("host", hostname);
-                            /* there is only one serial console, no need and no way to distinguish them */
-                            jsonVm.put("console", "default");
-                            jsonVms.add(jsonVm);
-                        }
-                    }
+                        return hostname != null ? new SimpleEntry<>(vm, hostname) : null;
+                    };
+                    return vms.stream()
+                            .map(vmToVmAndHostname)
+                            .filter(Objects::nonNull)
+                            .map(this::toJsonVm)
+                            .collect(Collectors.toList());
                 }
             } finally {
                 backend.runInternalAction(ActionType.LogoutSession, new ActionParametersBase(engineSessionId));
             }
         }
 
-        return jsonVms;
+        return Collections.emptyList();
+    }
+
+    private List<Guid> getRunOnVdsList(List<VmDynamic> vms) {
+        return vms.stream()
+                .map(VmDynamic::getRunOnVds)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private Map<Guid, String> getVdsIdToHostname(List<Guid> vdsIds) {
+        return vdsStaticDao.getByIds(vdsIds).stream()
+                .collect(Collectors.toMap(VdsStatic::getId, VdsStatic::getHostName));
+    }
+
+    private Map<String, String> toJsonVm(Map.Entry<VmDynamic, String> vmToHostname) {
+        Guid vmId = vmToHostname.getKey().getId();
+        Map<String, String> jsonVm = new HashMap<>();
+        jsonVm.put("vmid", vmId.toString());
+        jsonVm.put("vmname", resourceManager.getVmManager(vmId).getName());
+        jsonVm.put("host", vmToHostname.getValue());
+        /* there is only one serial console, no need and no way to distinguish them */
+        jsonVm.put("console", "default");
+        return jsonVm;
     }
 
     // Caller must ensure to close the #body to avoid resource leaking.

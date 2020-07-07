@@ -188,7 +188,7 @@ public class VmDaoTest extends BaseDaoTestCase<VmDao> {
      */
     @Test
     public void testGetAllForUserAndActionGroup() {
-        List<VmDynamic> result = dao.getAllForUserAndActionGroup(PRIVILEGED_USER_ID, ActionGroup.CONNECT_TO_SERIAL_CONSOLE);
+        List<VmDynamic> result = dao.getAllRunningForUserAndActionGroup(PRIVILEGED_USER_ID, ActionGroup.CONNECT_TO_SERIAL_CONSOLE);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -200,7 +200,7 @@ public class VmDaoTest extends BaseDaoTestCase<VmDao> {
      */
     @Test
     public void testGetAllForUnPrivilegedUserAndActionGroup() {
-        List<VmDynamic> result = dao.getAllForUserAndActionGroup(UNPRIVILEGED_USER_ID, ActionGroup.CONNECT_TO_SERIAL_CONSOLE);
+        List<VmDynamic> result = dao.getAllRunningForUserAndActionGroup(UNPRIVILEGED_USER_ID, ActionGroup.CONNECT_TO_SERIAL_CONSOLE);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

@@ -113,7 +113,7 @@ public interface VmDao extends Dao {
      *             the actionGroup
      * @return the list of VmDynamics
      */
-    List<VmDynamic> getAllForUserAndActionGroup(Guid userID, ActionGroup actionGroup);
+    List<VmDynamic> getAllRunningForUserAndActionGroup(Guid userID, ActionGroup actionGroup);
 
     /**
      * Finds all VMs for the specified user.

@@ -237,7 +237,7 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
-    public List<VmDynamic> getAllForUserAndActionGroup(Guid userID, ActionGroup actionGroup) {
+    public List<VmDynamic> getAllRunningForUserAndActionGroup(Guid userID, ActionGroup actionGroup) {
         return getCallsHandler().executeReadList("GetAllFromVmsForUserAndActionGroup",
                 VmDynamicDaoImpl.getRowMapper(),
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("action_group_id", actionGroup.getId()));

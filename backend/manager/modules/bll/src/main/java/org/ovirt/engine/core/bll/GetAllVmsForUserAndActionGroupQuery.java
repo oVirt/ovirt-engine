@@ -19,7 +19,7 @@ public class GetAllVmsForUserAndActionGroupQuery<P extends GetEntitiesWithPermit
 
     @Override
     protected void executeQueryCommand() {
-         List<VmDynamic> vms = vmDao.getAllForUserAndActionGroup(getUserID(), getParameters().getActionGroup());
+         List<VmDynamic> vms = vmDao.getAllRunningForUserAndActionGroup(getUserID(), getParameters().getActionGroup());
          getQueryReturnValue().setReturnValue(vms);
     }
 }
