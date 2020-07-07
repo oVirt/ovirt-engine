@@ -26,16 +26,16 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LoginOnBehalfParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
-import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.uutils.crypto.ticket.TicketDecoder;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -49,6 +49,8 @@ public class VMConsoleProxyServlet extends HttpServlet {
     private BackendInternal backend;
     @Inject
     private ResourceManager resourceManager;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
 
     private static final String VM_CONSOLE_PROXY_EKU = "1.3.6.1.4.1.2312.13.1.2.1.1";
 
@@ -114,10 +116,8 @@ public class VMConsoleProxyServlet extends HttpServlet {
                     for (VmDynamic vm : vms) {
                         Map<String, String> jsonVm = new HashMap<>();
                         // TODO: avoid one query per loop. Bulk query?
-                        QueryReturnValue retValue = backend.runInternalQuery(QueryType.GetVdsByVdsId,
-                                new IdQueryParameters(vm.getRunOnVds()));
-                        if (retValue != null && retValue.getReturnValue() != null) {
-                            VDS vds = retValue.getReturnValue();
+                        VdsStatic vds = vdsStaticDao.get(vm.getRunOnVds());
+                        if (vds != null) {
                             jsonVm.put("vmid", vm.getId().toString());
                             jsonVm.put("vmname", resourceManager.getVmManager(vm.getId()).getName());
                             jsonVm.put("host", vds.getHostName());
