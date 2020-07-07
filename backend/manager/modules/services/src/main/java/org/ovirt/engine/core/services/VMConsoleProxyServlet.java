@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -113,14 +114,20 @@ public class VMConsoleProxyServlet extends HttpServlet {
                         new EngineContext().withSessionId(engineSessionId));
                 if (retVms != null) {
                     List<VmDynamic> vms = retVms.getReturnValue();
+                    List<Guid> vdsIds= vms.stream()
+                            .map(VmDynamic::getRunOnVds)
+                            .distinct()
+                            .collect(Collectors.toList());
+                    Map<Guid, String> vdsIdToHostname = vdsStaticDao.getByIds(vdsIds)
+                            .stream()
+                            .collect(Collectors.toMap(VdsStatic::getId, VdsStatic::getHostName));
                     for (VmDynamic vm : vms) {
                         Map<String, String> jsonVm = new HashMap<>();
-                        // TODO: avoid one query per loop. Bulk query?
-                        VdsStatic vds = vdsStaticDao.get(vm.getRunOnVds());
-                        if (vds != null) {
+                        String hostname = vdsIdToHostname.get(vm.getRunOnVds());
+                        if (hostname != null) {
                             jsonVm.put("vmid", vm.getId().toString());
                             jsonVm.put("vmname", resourceManager.getVmManager(vm.getId()).getName());
-                            jsonVm.put("host", vds.getHostName());
+                            jsonVm.put("host", hostname);
                             /* there is only one serial console, no need and no way to distinguish them */
                             jsonVm.put("console", "default");
                             jsonVms.add(jsonVm);
