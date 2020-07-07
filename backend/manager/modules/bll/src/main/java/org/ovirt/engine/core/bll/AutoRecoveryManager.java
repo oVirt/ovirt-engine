@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
@@ -13,6 +15,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.network.NetworkVdsmNameMapper;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -21,6 +24,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -33,9 +37,11 @@ import org.ovirt.engine.core.dao.AutoRecoverDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.vdsbroker.monitoring.NetworkMonitoringHelper;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +53,7 @@ import org.slf4j.LoggerFactory;
 public class AutoRecoveryManager implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(AutoRecoveryManager.class);
+    private static NetworkMonitoringHelper networkMonitoringHelper = new NetworkMonitoringHelper();
 
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
@@ -57,6 +64,15 @@ public class AutoRecoveryManager implements BackendService {
 
     @Inject
     private VDSBrokerFrontend resourceManager;
+
+    @Inject
+    private NetworkAttachmentDao networkAttachmentDao;
+
+    @Inject
+    private NetworkVdsmNameMapper vdsmNameMapper;
+
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
 
     @Inject
     private VdsDao vdsDao;
@@ -102,7 +118,9 @@ public class AutoRecoveryManager implements BackendService {
                 }, list -> {
                     List<VDS> filtered = new ArrayList<>(list.size());
                     List<VdsNetworkInterface> nics;
-
+                    List<Network> clusterNetworks = new ArrayList<>();
+                    Map<Guid, Network> networkMap = new HashMap<>();
+                    Map<Guid, List<Network>> clusterNetworksMap = new HashMap<>();
                     for (VDS vds : list) {
                         if (vds.getNonOperationalReason() == NonOperationalReason.NETWORK_INTERFACE_IS_DOWN) {
                             resourceManager.runVdsCommand(VDSCommandType.GetStats,
@@ -111,13 +129,39 @@ public class AutoRecoveryManager implements BackendService {
                         } else {
                             nics = interfaceDao.getAllInterfacesForVds(vds.getId());
                         }
-
-                        Map<String, Set<String>> problematicNics =
-                                NetworkMonitoringHelper.determineProblematicNics(nics,
-                                        networkDao.getAllForCluster(vds.getClusterId()));
-                        if (problematicNics.isEmpty()) {
-                            filtered.add(vds);
+                        Guid clusterId = vds.getClusterId();
+                        if (!clusterNetworksMap.containsKey(clusterId)) {
+                            clusterNetworks = networkDao.getAllForCluster(vds.getClusterId());
+                            clusterNetworksMap.put(clusterId, clusterNetworks);
+                            networkMap.putAll(
+                                    clusterNetworks.stream().collect(Collectors.toMap(Network::getId, network -> network)));
                         }
+                        Map<String, Set<String>> problematicNics =
+                                networkMonitoringHelper.determineProblematicNics(nics,
+                                        clusterNetworksMap.get(clusterId));
+
+                        if (!problematicNics.isEmpty()) {
+                            continue;
+                        }
+                        // here we check if the host networks match it's cluster networks
+                        Set<String> attachedNetworkNames = networkAttachmentDao
+                                .getAllForHost(vds.getId())
+                                .stream()
+                                .map(networkAttachment -> networkMap.get(networkAttachment.getNetworkId()).getName())
+                                .collect(Collectors.toSet());
+                        String missingOperationalClusterNetworks =
+                                networkMonitoringHelper.getMissingOperationalClusterNetworks(attachedNetworkNames,
+                                        clusterNetworks);
+                        if (missingOperationalClusterNetworks.length() > 0) {
+                            continue;
+                        }
+                        // Check that VM networks are implemented above a bridge.
+                        String vmNetworksImplementedAsBridgeless =
+                                networkMonitoringHelper.getVmNetworksImplementedAsBridgeless(vds, clusterNetworks);
+                        if (vmNetworksImplementedAsBridgeless.length() > 0) {
+                            continue;
+                        }
+                        filtered.add(vds);
                     }
                     return filtered;
         }, "hosts");

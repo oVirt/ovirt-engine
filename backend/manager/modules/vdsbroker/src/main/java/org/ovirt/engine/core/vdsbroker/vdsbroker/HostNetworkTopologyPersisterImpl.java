@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import static org.ovirt.engine.core.common.businessentities.network.NetworkStatus.OPERATIONAL;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,10 +34,10 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.provider.HostProviderBindingDao;
-import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.monitoring.NetworkMonitoringHelper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.DisplayInterfaceEqualityPredicate;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.IsNetworkOnInterfacePredicate;
 
@@ -111,6 +109,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                                                           boolean skipManagementNetwork,
                                                           List<Network> clusterNetworks) {
         if (host.getStatus() != VDSStatus.Maintenance) {
+            NetworkMonitoringHelper networkMonitoringHelper = new NetworkMonitoringHelper();
             if (skipManagementNetwork) {
                 skipManagementNetworkCheck(host.getInterfaces(), clusterNetworks, host.getClusterId());
             }
@@ -118,7 +117,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
             Map<String, String> customLogValues;
 
             // here we check if the host networks match it's cluster networks
-            String networks = getMissingOperationalClusterNetworks(host, clusterNetworks);
+            String networks = networkMonitoringHelper.getMissingOperationalClusterNetworks(host.getNetworkNames(), clusterNetworks);
             if (networks.length() > 0) {
                 customLogValues = new HashMap<>();
                 customLogValues.put("Networks", networks);
@@ -128,7 +127,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
             }
 
             // Check that VM networks are implemented above a bridge.
-            networks = getVmNetworksImplementedAsBridgeless(host, clusterNetworks);
+            networks = networkMonitoringHelper.getVmNetworksImplementedAsBridgeless(host, clusterNetworks);
             if (networks.length() > 0) {
                 customLogValues = new HashMap<>();
                 customLogValues.put("Networks", networks);
@@ -311,35 +310,6 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                 userConfiguredData.getNetworkAttachments(),
                 userConfiguredData.getRemovedNetworkAttachments(),
                 clusterNetworks);
-    }
-
-    private String getVmNetworksImplementedAsBridgeless(VDS host, List<Network> clusterNetworks) {
-        Map<String, VdsNetworkInterface> interfacesByNetworkName =
-                NetworkUtils.hostInterfacesByNetworkName(host.getInterfaces());
-        List<String> networkNames = new ArrayList<>();
-
-        for (Network net : clusterNetworks) {
-            if (net.isVmNetwork()
-                && interfacesByNetworkName.containsKey(net.getName())
-                && !interfacesByNetworkName.get(net.getName()).isBridged()) {
-                networkNames.add(net.getName());
-            }
-        }
-
-        return StringUtils.join(networkNames, ",");
-    }
-
-    private String getMissingOperationalClusterNetworks(VDS host, List<Network> clusterNetworks) {
-        List<String> networkNames = new ArrayList<>();
-
-        for (Network net : clusterNetworks) {
-            if (net.getCluster().getStatus() == OPERATIONAL &&
-                net.getCluster().isRequired() &&
-                !host.getNetworkNames().contains(net.getName())) {
-                networkNames.add(net.getName());
-            }
-        }
-        return StringUtils.join(networkNames, ",");
     }
 
     private void setNonOperational(VDS host, NonOperationalReason reason, Map<String, String> customLogValues) {

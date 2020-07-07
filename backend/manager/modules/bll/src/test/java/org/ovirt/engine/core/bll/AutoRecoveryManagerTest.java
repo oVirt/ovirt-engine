@@ -22,18 +22,23 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.network.NetworkVdsmNameMapper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerObjectsBuilder;
 
 @ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -50,6 +55,15 @@ public class AutoRecoveryManagerTest {
     private BackendInternal backendMock;
 
     @Mock
+    private NetworkVdsmNameMapper vdsmNameMapper;
+
+    @Mock
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
+
+    @Mock
+    private VDSBrokerFrontend resourceManager;
+
+    @Mock
     private VdsDao vdsDaoMock;
 
     @Mock
@@ -61,6 +75,9 @@ public class AutoRecoveryManagerTest {
     @Mock
     private NetworkDao networkDaoMock;
 
+    @Mock
+    private NetworkAttachmentDao networkAttachmentDao;
+
     // Entities needing recovery
     private List<VDS> vdss = new ArrayList<>();
     private List<StorageDomain> storageDomains = new ArrayList<>();
@@ -68,6 +85,9 @@ public class AutoRecoveryManagerTest {
     @BeforeEach
     public void setup() {
         final VDS vds = new VDS();
+        VDSReturnValue value = new VDSReturnValue();
+        value.setSucceeded(true);
+
         vdss.add(vds);
         when(vdsDaoMock.listFailedAutorecoverables()).thenReturn(vdss);
 
@@ -75,6 +95,7 @@ public class AutoRecoveryManagerTest {
         domain.setStoragePoolId(Guid.newGuid());
         storageDomains.add(domain);
         when(storageDomainDaoMock.listFailedAutorecoverables()).thenReturn(storageDomains);
+        when(resourceManager.runVdsCommand(any(), any())).thenReturn(value);
     }
 
     @Test

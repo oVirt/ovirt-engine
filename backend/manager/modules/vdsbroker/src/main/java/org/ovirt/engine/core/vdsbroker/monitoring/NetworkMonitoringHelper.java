@@ -1,11 +1,16 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
+import static org.ovirt.engine.core.common.businessentities.network.NetworkStatus.OPERATIONAL;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
@@ -25,7 +30,7 @@ public class NetworkMonitoringHelper {
      * @return A pair of a list of the names of the NICs which are problematic, and a list of the names of the networks
      *         which are required by these NICs.
      */
-    public static Map<String, Set<String>> determineProblematicNics(List<VdsNetworkInterface> interfaces,
+    public Map<String, Set<String>> determineProblematicNics(List<VdsNetworkInterface> interfaces,
             List<Network> clusterNetworks) {
         Map<String, Set<String>> brokenNicsToNetworks = new HashMap<>();
 
@@ -46,6 +51,35 @@ public class NetworkMonitoringHelper {
         }
 
         return brokenNicsToNetworks;
+    }
+
+    public String getVmNetworksImplementedAsBridgeless(VDS host, List<Network> clusterNetworks) {
+        Map<String, VdsNetworkInterface> interfacesByNetworkName =
+                NetworkUtils.hostInterfacesByNetworkName(host.getInterfaces());
+        List<String> networkNames = new ArrayList<>();
+
+        for (Network net : clusterNetworks) {
+            if (net.isVmNetwork()
+                    && interfacesByNetworkName.containsKey(net.getName())
+                    && !interfacesByNetworkName.get(net.getName()).isBridged()) {
+                networkNames.add(net.getName());
+            }
+        }
+
+        return StringUtils.join(networkNames, ",");
+    }
+
+    public String getMissingOperationalClusterNetworks(Set<String> vdsNetworkNames, List<Network> clusterNetworks) {
+        List<String> missingOperationalClusterNetworks = new ArrayList<>();
+
+        for (Network net : clusterNetworks) {
+            if (net.getCluster().getStatus() == OPERATIONAL &&
+                    net.getCluster().isRequired() &&
+                    !vdsNetworkNames.contains(net.getName())) {
+                missingOperationalClusterNetworks.add(net.getName());
+            }
+        }
+        return StringUtils.join(missingOperationalClusterNetworks, ",");
     }
 
     /**
