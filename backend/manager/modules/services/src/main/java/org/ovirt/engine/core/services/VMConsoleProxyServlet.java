@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.action.LoginOnBehalfParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.uutils.crypto.ticket.TicketDecoder;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,8 @@ public class VMConsoleProxyServlet extends HttpServlet {
 
     @Inject
     private BackendInternal backend;
+    @Inject
+    private ResourceManager resourceManager;
 
     private static final String VM_CONSOLE_PROXY_EKU = "1.3.6.1.4.1.2312.13.1.2.1.1";
 
@@ -107,8 +110,8 @@ public class VMConsoleProxyServlet extends HttpServlet {
                         new GetEntitiesWithPermittedActionParameters(ActionGroup.CONNECT_TO_SERIAL_CONSOLE),
                         new EngineContext().withSessionId(engineSessionId));
                 if (retVms != null) {
-                    List<VM> vmsList = retVms.getReturnValue();
-                    for (VM vm : vmsList) {
+                    List<VmDynamic> vms = retVms.getReturnValue();
+                    for (VmDynamic vm : vms) {
                         Map<String, String> jsonVm = new HashMap<>();
                         if (vm.getRunOnVds() != null) {
                             // TODO: avoid one query per loop. Bulk query?
@@ -117,9 +120,9 @@ public class VMConsoleProxyServlet extends HttpServlet {
                             if (retValue != null && retValue.getReturnValue() != null) {
                                 VDS vds = retValue.getReturnValue();
                                 jsonVm.put("vmid", vm.getId().toString());
-                                jsonVm.put("vmname", vm.getName());
+                                jsonVm.put("vmname", resourceManager.getVmManager(vm.getId()).getName());
                                 jsonVm.put("host", vds.getHostName());
-                        /* there is only one serial console, no need and no way to distinguish them */
+                                /* there is only one serial console, no need and no way to distinguish them */
                                 jsonVm.put("console", "default");
                                 jsonVms.add(jsonVm);
                             }

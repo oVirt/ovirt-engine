@@ -2,17 +2,24 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
+import javax.inject.Inject;
 
-public class GetAllVmsForUserAndActionGroupQuery<P extends GetEntitiesWithPermittedActionParameters> extends GetAllVmsQueryBase<P> {
+import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
+import org.ovirt.engine.core.dao.VmDao;
+
+public class GetAllVmsForUserAndActionGroupQuery<P extends GetEntitiesWithPermittedActionParameters> extends QueriesCommandBase<P> {
+    @Inject
+    private VmDao vmDao;
+
     public GetAllVmsForUserAndActionGroupQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
 
     @Override
-    protected List<VM> getVMs() {
-        return vmDao.getAllForUserAndActionGroup(getUserID(), getParameters().getActionGroup());
+    protected void executeQueryCommand() {
+         List<VmDynamic> vms = vmDao.getAllForUserAndActionGroup(getUserID(), getParameters().getActionGroup());
+         getQueryReturnValue().setReturnValue(vms);
     }
 }

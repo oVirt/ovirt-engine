@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.di.interceptor.InvocationLogger;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -236,9 +237,9 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
-    public List<VM> getAllForUserAndActionGroup(Guid userID, ActionGroup actionGroup) {
+    public List<VmDynamic> getAllForUserAndActionGroup(Guid userID, ActionGroup actionGroup) {
         return getCallsHandler().executeReadList("GetAllFromVmsForUserAndActionGroup",
-                vmRowMapper,
+                VmDynamicDaoImpl.getRowMapper(),
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("action_group_id", actionGroup.getId()));
     }
 
