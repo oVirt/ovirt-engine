@@ -998,6 +998,17 @@ public class GlusterSyncJob extends GlusterJob {
                     brick.getBrickDetails().setBrickProperties(brickProperties);
                     brickPropertiesToUpdate.add(brick);
                 }
+            } else {
+                /**
+                 * brickProperties Returns data from vds Command
+                 * When Gluster service is down or peer is disconnected then
+                 * the bricks coming from host were not visible in vds output.
+                 * The status for these bricks are skipped and reflect the last queried status.
+                 * This else part will update the status of these brick to Unknown status.
+                 */
+                logBrickStatusChange(volume, brick, GlusterStatus.UNKNOWN);
+                brick.setStatus(GlusterStatus.UNKNOWN);
+                bricksToUpdate.add(brick);
             }
         }
 
