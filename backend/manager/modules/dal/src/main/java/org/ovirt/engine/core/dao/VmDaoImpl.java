@@ -10,14 +10,12 @@ import java.util.stream.Collectors;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.di.interceptor.InvocationLogger;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -234,13 +232,6 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         return getCallsHandler().executeReadList("GetAllFromVms",
                 vmRowMapper,
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered));
-    }
-
-    @Override
-    public List<VmDynamic> getAllRunningForUserAndActionGroup(Guid userID, ActionGroup actionGroup) {
-        return getCallsHandler().executeReadList("GetAllFromVmsForUserAndActionGroup",
-                VmDynamicDaoImpl.getRowMapper(),
-                getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("action_group_id", actionGroup.getId()));
     }
 
     @Override

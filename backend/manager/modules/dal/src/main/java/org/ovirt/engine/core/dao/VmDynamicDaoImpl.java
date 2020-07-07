@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -155,6 +156,13 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 getCustomMapSqlParameterSource()
                         .addValue("vm_guid", vmId)
                         .addValue("lease_info", SerializationFactory.getSerializer().serialize(leaseInfo)));
+    }
+
+    @Override
+    public List<VmDynamic> getAllRunningForUserAndActionGroup(Guid userID, ActionGroup actionGroup) {
+        return getCallsHandler().executeReadList("GetAllRunningVmsForUserAndActionGroup",
+                VmDynamicDaoImpl.getRowMapper(),
+                getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("action_group_id", actionGroup.getId()));
     }
 
     @Override

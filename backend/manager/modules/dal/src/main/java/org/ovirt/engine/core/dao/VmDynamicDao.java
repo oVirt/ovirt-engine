@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -139,4 +140,15 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
      * @return the VM IDs with with the specified ISO disk attached as a CDROM
      */
     List<Guid> getAllIdsWithSpecificIsoAttached(Guid isoDiskId);
+
+    /**
+     * Retrieve all running VMs for which the user with the specified role has direct or indirect
+     * permissions on
+     * @param userID
+     *             the user id
+     * @param actionGroup
+     *             the actionGroup
+     * @return the list of VmDynamics
+     */
+    List<VmDynamic> getAllRunningForUserAndActionGroup(Guid userID, ActionGroup actionGroup);
 }

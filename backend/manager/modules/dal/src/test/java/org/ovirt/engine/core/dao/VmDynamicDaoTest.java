@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -154,4 +155,28 @@ public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, Vm
         assertEquals(VMStatus.Unknown, dao.get(existingVm2.getId()).getStatus());
         assertNotEquals(VMStatus.Unknown, dao.get(existingVm3.getId()).getStatus());
     }
+
+    /**
+     * Ensures that getting all VmDynamics with run_on_vds set for specific action group works as expected.
+     */
+    @Test
+    public void testGetAllRunningForUserAndActionGroup() {
+        List<VmDynamic> result = dao.getAllRunningForUserAndActionGroup(PRIVILEGED_USER_ID, ActionGroup.CONNECT_TO_SERIAL_CONSOLE);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(3, result.size());
+    }
+
+    /**
+     * Ensures that getting all VmDynamics for unprivileged specific action group works as expected.
+     */
+    @Test
+    public void testGetAllRunningForUnPrivilegedUserAndActionGroup() {
+        List<VmDynamic> result = dao.getAllRunningForUserAndActionGroup(UNPRIVILEGED_USER_ID, ActionGroup.CONNECT_TO_SERIAL_CONSOLE);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
 }

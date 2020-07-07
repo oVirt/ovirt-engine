@@ -18,7 +18,6 @@ import javax.inject.Inject;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -181,29 +180,6 @@ public class VmDaoTest extends BaseDaoTestCase<VmDao> {
         List<VM> result = dao.getAll();
 
         assertCorrectGetAllResult(result);
-    }
-
-    /**
-     * Ensures that getting all VmDynamics for specific action group works as expected.
-     */
-    @Test
-    public void testGetAllForUserAndActionGroup() {
-        List<VmDynamic> result = dao.getAllRunningForUserAndActionGroup(PRIVILEGED_USER_ID, ActionGroup.CONNECT_TO_SERIAL_CONSOLE);
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(3, result.size());
-    }
-
-    /**
-     * Ensures that getting all VmDynamics for unprivileged specific action group works as expected.
-     */
-    @Test
-    public void testGetAllForUnPrivilegedUserAndActionGroup() {
-        List<VmDynamic> result = dao.getAllRunningForUserAndActionGroup(UNPRIVILEGED_USER_ID, ActionGroup.CONNECT_TO_SERIAL_CONSOLE);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
     }
 
     @Test

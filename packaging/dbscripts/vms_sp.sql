@@ -1446,7 +1446,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVmsForUserAndActionGroup(v_user_id UUID, v_action_group_id INTEGER) RETURNS SETOF vm_dynamic STABLE
+Create or replace FUNCTION GetAllRunningVmsForUserAndActionGroup(v_user_id UUID, v_action_group_id INTEGER) RETURNS SETOF vm_dynamic STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT DISTINCT vm_dynamic.*
