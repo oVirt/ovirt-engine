@@ -27,9 +27,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.kubevirt.EntityMapper;
-import org.ovirt.engine.core.bll.kubevirt.KubevirtMonitoring;
-import org.ovirt.engine.core.bll.kubevirt.PVCDisk;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -234,9 +231,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Inject
     private IconUtils iconUtils;
-
-    @Inject
-    private KubevirtMonitoring kubevirtMonitoring;
 
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
@@ -573,16 +567,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (getVmTemplate() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
-        }
-
-        if (!getVmTemplate().isManaged()) {
-            if (!isInternalExecution() && getParameters().getDisksToAttach().isEmpty()) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED);
-            }
-            if (!setAndValidateCpuProfile()) {
-                return false;
-            }
-            return true;
         }
 
         if (getVmTemplate().isDisabled()) {
@@ -1036,12 +1020,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     protected void executeVmCommand() {
-        if (!isInternalExecution() && !getVmTemplate().isManaged()) {
-            postUnmanagedVm();
-            setSucceeded(true);
-            return;
-        }
-
         vmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getEffectiveCompatibilityVersion());
 
         if (getActionType() != ActionType.CloneVmNoCollapse && !canAddVm(destStorages.values())) {
@@ -1092,20 +1070,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
         setActionReturnValue(getVm().getId());
         setSucceeded(true);
-    }
-
-    private void postUnmanagedVm() {
-        VmStatic vm = getParameters().getVmStaticData();
-
-        Guid rootDiskId = getParameters().getDisksToAttach()
-                .stream()
-                .filter(DiskVmElement::isBoot)
-                .findFirst()
-                .orElse(getParameters().getDisksToAttach().get(0))
-                .getDiskId();
-        PVCDisk rootDisk = new PVCDisk(diskImageDao.getAllSnapshotsForImageGroup(rootDiskId).get(0));
-
-        kubevirtMonitoring.create(vm.getClusterId(), EntityMapper.toKubevirtVm(getVmTemplate(), vm, rootDisk));
     }
 
     /**
@@ -1317,6 +1281,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             vmStatic.setCreatedByUserId(getUserId());
             updateOriginalTemplate(vmStatic);
         }
+
         setIconIds(vmStatic);
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields

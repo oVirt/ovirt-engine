@@ -1577,6 +1577,10 @@ public enum AuditLogType {
 
     DEPRECATED_IPTABLES_FIREWALL(13001, AuditLogSeverity.WARNING),
 
+    // KubeVirt related
+    USER_ADD_VM_TO_KUBEVIRT_REQUEST(13500),
+    USER_ADD_VM_TO_KUBEVIRT_REQUEST_FAILED(13501),
+
     // A generic error message to log validation failure events
     GENERIC_ERROR_MESSAGE(14001, AuditLogSeverity.ERROR);
 

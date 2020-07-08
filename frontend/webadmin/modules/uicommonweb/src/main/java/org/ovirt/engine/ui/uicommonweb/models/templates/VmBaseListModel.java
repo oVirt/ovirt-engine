@@ -475,7 +475,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
 
     private void addVm(UnitVmModel model, AddVmParameters parameters, VM vm) {
         if (!model.getSelectedCluster().isManaged()) {
-            addVmOnUnmanagedCluster(model, parameters, vm);
+            addVmToKubevirt(model, parameters, vm);
             return;
         }
         Frontend.getInstance().runAction(
@@ -485,7 +485,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
                         this);
     }
 
-    private void addVmOnUnmanagedCluster(UnitVmModel model, AddVmParameters parameters, VM vm) {
+    private void addVmToKubevirt(UnitVmModel model, AddVmParameters parameters, VM vm) {
         InstanceImagesModel instanceImagesModel = model.getInstanceImages();
         List<DiskVmElement> disksToAttach = new ArrayList<>();
         instanceImagesModel.getItems().forEach(instanceImageLineModel -> {
@@ -504,7 +504,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
 
         Frontend.getInstance()
                 .runAction(
-                        ActionType.AddVm,
+                        ActionType.AddVmToKubevirt,
                         parameters,
                         result -> {
                             model.stopProgress();

@@ -618,7 +618,10 @@ public enum ActionType {
     RunAsyncAction(7000, QuotaDependency.NONE),
 
     // API:
-    AddDeprecatedApiEvent(8000, false, QuotaDependency.NONE);
+    AddDeprecatedApiEvent(8000, false, QuotaDependency.NONE),
+
+    // KubeVirt
+    AddVmToKubevirt(9000, ActionGroup.CREATE_VM, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

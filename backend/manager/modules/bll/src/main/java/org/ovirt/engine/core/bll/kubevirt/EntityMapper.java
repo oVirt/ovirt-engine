@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
-import org.joda.time.DateTime;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -30,77 +29,10 @@ public class EntityMapper {
 
     public static VmStatic toOvirtVm(V1VirtualMachine source, Guid clusterId) {
         VmStatic vmStatic = new VmStatic();
-        V1ObjectMeta metadata = source.getMetadata();
-        Guid vmId = new Guid(metadata.getUid());
-        vmStatic.setId(vmId);
-        vmStatic.setName(metadata.getName());
-        DateTime createTime = metadata.getCreationTimestamp();
-        vmStatic.setCreationDate(createTime.toDate());
-        vmStatic.setClusterId(clusterId);
-        // for kubevirt, cluster id and provider id are equals
-        vmStatic.setProviderId(clusterId);
-        Map<String, String> annotations = source.getMetadata().getAnnotations();
-        if (annotations != null) {
-            String description = annotations.get(KubevirtUtils.DESCRIPTION_ANNOTATION);
-            if (description != null) {
-                vmStatic.setDescription(description);
-            }
-            String comment = annotations.get(KubevirtUtils.COMMENT_ANNOTATION);
-            if (comment != null) {
-                vmStatic.setComment(comment);
-            }
-        }
-
-        Integer memoryRequest = null;
-        Integer memoryLimit = null;
-        V1ResourceRequirements resources = source.getSpec().getTemplate().getSpec().getDomain().getResources();
-        if (resources != null) {
-            Map<String, String> requests = resources.getRequests();
-            if (requests != null) {
-                memoryRequest = Units.parse(requests.get("memory"));
-            }
-            Map<String, String> limits = resources.getLimits();
-            if (limits != null) {
-                memoryLimit = Units.parse(limits.get("memory"));
-            }
-        }
-
-        V1Memory memory = source.getSpec().getTemplate().getSpec().getDomain().getMemory();
-        Integer guestMemory = memory != null ? Units.parse(memory.getGuest()) : null;
-
-        vmStatic.setMemSizeMb(Objects.requireNonNullElse(guestMemory, memoryRequest));
-        vmStatic.setMinAllocatedMem(Objects.requireNonNullElse(memoryRequest, guestMemory));
-        vmStatic.setMaxMemorySizeMb(Objects.requireNonNullElse(memoryLimit, vmStatic.getMemSizeMb()));
-        // TODO: when only memory limits are defined
-
-        V1CPU cpuTopology = source.getSpec().getTemplate().getSpec().getDomain().getCpu();
-        if (cpuTopology != null) {
-            Integer value;
-            if ((value = cpuTopology.getSockets()) != null) {
-                vmStatic.setNumOfSockets(value);
-            }
-            if ((value = cpuTopology.getCores()) != null) {
-                vmStatic.setCpuPerSocket(value);
-            }
-            if ((value = cpuTopology.getThreads()) != null) {
-                vmStatic.setThreadsPerCpu(value);
-            }
-        }
-        // TODO if CPU topology is not defined, it should be set according to resource requests/limits
-
-        vmStatic.setDefaultDisplayType(DisplayType.none);
-        if (!Boolean.FALSE.equals(source.getSpec()
-                .getTemplate()
-                .getSpec()
-                .getDomain()
-                .getDevices()
-                .isAutoattachGraphicsDevice())) {
-            vmStatic.setDefaultDisplayType(DisplayType.vga);
-        }
-
-        vmStatic.setSingleQxlPci(false);
-        vmStatic.setOrigin(OriginType.KUBEVIRT);
-        vmStatic.setNamespace(metadata.getNamespace());
+        mapGenericData(vmStatic, source, clusterId);
+        mapMemory(vmStatic, source);
+        mapCPU(vmStatic, source);
+        mapDisplayType(vmStatic, source);
         return vmStatic;
     }
 
@@ -169,5 +101,87 @@ public class EntityMapper {
         result.getSpec().getTemplate().getSpec().getDomain().setResources(resources);
 
         return result;
+    }
+
+    private static void mapGenericData(VmStatic vmStatic, V1VirtualMachine source, Guid clusterId) {
+        V1ObjectMeta metadata = source.getMetadata();
+
+        vmStatic.setId(new Guid(metadata.getUid()));
+        vmStatic.setName(metadata.getName());
+        vmStatic.setCreationDate(metadata.getCreationTimestamp().toDate());
+        vmStatic.setClusterId(clusterId);
+        // for kubevirt, cluster id and provider id are equals
+        vmStatic.setProviderId(clusterId);
+        vmStatic.setSingleQxlPci(false);
+        vmStatic.setOrigin(OriginType.KUBEVIRT);
+        vmStatic.setOriginalTemplateName(source.getSpec().getTemplate().getMetadata().getName());
+        vmStatic.setNamespace(metadata.getNamespace());
+
+
+        Map<String, String> annotations = metadata.getAnnotations();
+        if (annotations != null) {
+            String description = annotations.get(KubevirtUtils.DESCRIPTION_ANNOTATION);
+            if (description != null) {
+                vmStatic.setDescription(description);
+            }
+            String comment = annotations.get(KubevirtUtils.COMMENT_ANNOTATION);
+            if (comment != null) {
+                vmStatic.setComment(comment);
+            }
+        }
+    }
+
+    private static void mapMemory(VmStatic vmStatic, V1VirtualMachine source) {
+        Integer memoryRequest = null;
+        Integer memoryLimit = null;
+        V1ResourceRequirements resources = source.getSpec().getTemplate().getSpec().getDomain().getResources();
+        if (resources != null) {
+            Map<String, String> requests = resources.getRequests();
+            if (requests != null) {
+                memoryRequest = Units.parse(requests.get("memory"));
+            }
+            Map<String, String> limits = resources.getLimits();
+            if (limits != null) {
+                memoryLimit = Units.parse(limits.get("memory"));
+            }
+        }
+
+        V1Memory memory = source.getSpec().getTemplate().getSpec().getDomain().getMemory();
+        Integer guestMemory = memory != null ? Units.parse(memory.getGuest()) : null;
+
+        vmStatic.setMemSizeMb(Objects.requireNonNullElse(guestMemory, memoryRequest));
+        vmStatic.setMinAllocatedMem(Objects.requireNonNullElse(memoryRequest, guestMemory));
+        vmStatic.setMaxMemorySizeMb(Objects.requireNonNullElse(memoryLimit, vmStatic.getMemSizeMb()));
+        // TODO: when only memory limits are defined
+    }
+
+    private static void mapCPU(VmStatic vmStatic, V1VirtualMachine source) {
+        V1CPU cpuTopology = source.getSpec().getTemplate().getSpec().getDomain().getCpu();
+        if (cpuTopology != null) {
+            Integer value;
+            if ((value = cpuTopology.getSockets()) != null) {
+                vmStatic.setNumOfSockets(value);
+            }
+            if ((value = cpuTopology.getCores()) != null) {
+                vmStatic.setCpuPerSocket(value);
+            }
+            if ((value = cpuTopology.getThreads()) != null) {
+                vmStatic.setThreadsPerCpu(value);
+            }
+            vmStatic.setCustomCpuName(cpuTopology.getModel());
+        }
+        // TODO if CPU topology is not defined, it should be set according to resource requests/limits
+    }
+
+    private static void mapDisplayType(VmStatic vmStatic, V1VirtualMachine source) {
+        vmStatic.setDefaultDisplayType(DisplayType.none);
+        if (!Boolean.FALSE.equals(source.getSpec()
+                .getTemplate()
+                .getSpec()
+                .getDomain()
+                .getDevices()
+                .isAutoattachGraphicsDevice())) {
+            vmStatic.setDefaultDisplayType(DisplayType.vga);
+        }
     }
 }

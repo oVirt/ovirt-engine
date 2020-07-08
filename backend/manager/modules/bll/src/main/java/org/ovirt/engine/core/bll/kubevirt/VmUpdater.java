@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -52,8 +53,15 @@ public class VmUpdater {
         }
 
         VmStatic vmStatic = EntityMapper.toOvirtVm(vm, clusterId);
+        vmStatic.setBiosType(BiosType.Q35_SEA_BIOS);
+
+        AddVmParameters params = new AddVmParameters(vmStatic);
+        params.setSoundDeviceEnabled(false);
+        params.setBalloonEnabled(false);
+        params.setVirtioScsiEnabled(false);
+
         // at some point we may want to call AddUnmanagedVm
-        ActionReturnValue retVal = backend.get().runInternalAction(ActionType.AddVm, new AddVmParameters(vmStatic));
+        ActionReturnValue retVal = backend.get().runInternalAction(ActionType.AddVm, params);
         if (!retVal.getSucceeded()) {
             return false;
         }
