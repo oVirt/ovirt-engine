@@ -507,12 +507,8 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
                         ActionType.AddVm,
                         parameters,
                         result -> {
-                            ActionReturnValue retVal = result.getReturnValue();
-                            VmBaseListModel<?, ?> state = (VmBaseListModel<?, ?>) result.getState();
-                            state.stopProgress();
-                            if (retVal != null && retVal.getSucceeded()) {
-                                cancel();
-                            }
+                            model.stopProgress();
+                            cancel();
                         },
                         this);
     }
