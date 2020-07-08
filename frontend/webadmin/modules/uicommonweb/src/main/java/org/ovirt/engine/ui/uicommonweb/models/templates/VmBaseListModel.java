@@ -502,8 +502,9 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         });
         parameters.setDisksToAttach(disksToAttach);
 
-        Frontend.getInstance().runAction(
-                model.getProvisioning().getEntity() ? ActionType.AddVmFromTemplate : ActionType.AddVm,
+        Frontend.getInstance()
+                .runAction(
+                        ActionType.AddVm,
                         parameters,
                         result -> {
                             ActionReturnValue retVal = result.getReturnValue();

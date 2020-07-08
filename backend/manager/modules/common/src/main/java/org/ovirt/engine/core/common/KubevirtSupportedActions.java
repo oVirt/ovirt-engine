@@ -10,7 +10,7 @@ public final class KubevirtSupportedActions {
 
     private static Set<ActionType> SUPPORTED_ACTIONS = EnumSet.of(
             ActionType.AddVm,
-            ActionType.AddVmFromTemplate,
+//            ActionType.AddVmFromTemplate,
             ActionType.AddVmFromScratch,
             ActionType.AddUnmanagedVms,
             ActionType.RemoveVm,
