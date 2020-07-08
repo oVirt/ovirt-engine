@@ -407,10 +407,6 @@ class Daemon(base.Base):
             s.connect(e)
             s.sendall(b'READY=1')
 
-    def _daemonReady(self):
-        if self._options.systemd == 'notify':
-            self._sd_notify_ready()
-
     def _daemon(self):
 
         self.logger.debug('daemon entry pid=%s', os.getpid())
@@ -418,9 +414,10 @@ class Daemon(base.Base):
 
         os.umask(0o022)
 
-        self.daemonSetup()
+        if self._options.systemd == 'notify':
+            self._sd_notify_ready()
 
-        self._daemonReady()
+        self.daemonSetup()
 
         stdout, stderr = (sys.stdout, sys.stderr)
         if self._options.redirectOutput:
