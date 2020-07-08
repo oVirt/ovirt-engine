@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
-
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsInterfaceType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -44,6 +46,9 @@ class CopyHostNetworksCommandTest extends BaseCommandTest {
     @Mock
     NetworkAttachmentDao networkAttachmentDao;
 
+    @Mock
+    AuditLogDirector auditLogDirector;
+
     @InjectMocks
     CopyHostNetworksCommand<CopyHostNetworksParameters> command = new CopyHostNetworksCommand<>(
             new CopyHostNetworksParameters(sourceHostId, destinationHostId), null);
@@ -70,6 +75,7 @@ class CopyHostNetworksCommandTest extends BaseCommandTest {
     void invalidNicCount() {
         setupHosts(HostValid.VALID, HostValid.VALID);
         setupNics(VdsInterfaceType.NONE, VdsInterfaceType.MANAGEMENT);
+        doNothing().when(auditLogDirector).log(any(), any());
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.INTERFACE_COUNT_DOES_NOT_MATCH);
     }
 

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
+import static org.ovirt.engine.core.common.AuditLogType.NETWORK_COPY_HOST_NETWORKS_INVALID_IFACE_COUNT;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,8 @@ import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -139,9 +143,13 @@ public class CopyHostNetworksCommand<T extends CopyHostNetworksParameters> exten
     }
 
     private boolean validateInterfaceCount() {
-        return validate(ValidationResult.failWith(EngineMessage.INTERFACE_COUNT_DOES_NOT_MATCH)
+        boolean valid = validate(ValidationResult.failWith(EngineMessage.INTERFACE_COUNT_DOES_NOT_MATCH)
                 .when(getCopyHostNetworksHelper().getSourceNicsCount()
                         > getCopyHostNetworksHelper().getDestinationNicsCount()));
+        if (!valid) {
+            auditLog(auditEventMismatchingInterfaceCount(), NETWORK_COPY_HOST_NETWORKS_INVALID_IFACE_COUNT);
+        }
+        return valid;
     }
 
     private VdsStatic getSourceHost() {
@@ -171,4 +179,14 @@ public class CopyHostNetworksCommand<T extends CopyHostNetworksParameters> exten
         }
         return copyHostNetworksHelper;
     }
+
+    private AuditLogable auditEventMismatchingInterfaceCount() {
+        AuditLogable event = new AuditLogableImpl();
+        event.setVdsId(getVdsId());
+        event.addCustomValue(SOURCE_HOST, getSourceHost().getName());
+        event.addCustomValue(DESTINATION_HOST, getDestinationHost().getName());
+        return event;
+
+    }
+
 }
