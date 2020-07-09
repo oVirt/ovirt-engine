@@ -14,6 +14,10 @@ public class SetHaMaintenanceParameters extends VdsActionParameters {
         this.enabled = enabled;
     }
 
+    public SetHaMaintenanceParameters(HaMaintenanceMode mode, boolean enabled) {
+        this(null, mode, enabled);
+    }
+
     public SetHaMaintenanceParameters() {
     }
 

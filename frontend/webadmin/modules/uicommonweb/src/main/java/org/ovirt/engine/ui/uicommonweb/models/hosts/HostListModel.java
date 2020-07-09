@@ -1676,12 +1676,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     private void setGlobalHaMaintenance(boolean enabled) {
-        VDS vds = getSelectedItem();
-        if (vds == null || !vds.getHighlyAvailableIsConfigured()) {
-            return;
-        }
-
-        SetHaMaintenanceParameters params = new SetHaMaintenanceParameters(vds.getId(), HaMaintenanceMode.GLOBAL, enabled);
+        SetHaMaintenanceParameters params = new SetHaMaintenanceParameters(HaMaintenanceMode.GLOBAL, enabled);
         Frontend.getInstance().runAction(ActionType.SetHaMaintenance, params);
     }
 
