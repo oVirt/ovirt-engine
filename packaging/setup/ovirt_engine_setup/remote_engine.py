@@ -338,7 +338,7 @@ class EnrollCert(base.Base):
                 prompt=True,
             )
             try:
-                with open(filename) as f:
+                with open(filename, 'rb') as f:
                     cert = f.read()
                 cert_pubkey = X509.load_cert_string(
                     cert
