@@ -31,6 +31,9 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     @Inject
     private DiskImageDynamicDao diskImageDynamicDao;
 
+    @Inject
+    private ImagesHandler imagesHandler;
+
     public AddImageFromScratchCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         setVmId(getParameters().getMasterVmId());
@@ -134,7 +137,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                                 .getStorageDomainId(), getImageGroupId(), getParameters().getDiskInfo().getSize(),
                         getParameters().getDiskInfo().getVolumeType(), getParameters().getDiskInfo()
                         .getVolumeFormat(), getDestinationImageId(),
-                        getJsonDiskDescription(getParameters().getDiskInfo()), getStoragePool().getCompatibilityVersion(),
+                        imagesHandler.getJsonDiskDescription(getParameters().getDiskInfo()), getStoragePool().getCompatibilityVersion(),
                         getParameters().getDiskInfo().getContentType());
 
         parameters.setImageInitialSizeInBytes(Optional.ofNullable(getInitialSize()).orElse(0L));

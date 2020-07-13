@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -153,6 +154,9 @@ public class ImagesHandler {
 
     @Inject
     private StoragePoolDao storagePoolDao;
+
+    @Inject
+    private MetadataDiskDescriptionHandler metadataDiskDescriptionHandler;
 
     /**
      * The following method will find all images and storages where they located for provide template and will fill an
@@ -1098,5 +1102,14 @@ public class ImagesHandler {
         StoragePool storagePool = storagePoolDao.get(storagePoolId);
         VDS vds = vdsDao.get(storagePool.getSpmVdsId());
         return vds.getClusterCompatibilityVersion();
+    }
+
+    public String getJsonDiskDescription(Disk disk) {
+        try {
+            return metadataDiskDescriptionHandler.generateJsonDiskDescription(disk);
+        } catch (IOException e) {
+            log.error("Exception while generating json for disk. ERROR: '{}'", e.getMessage());
+            return StringUtils.EMPTY;
+        }
     }
 }

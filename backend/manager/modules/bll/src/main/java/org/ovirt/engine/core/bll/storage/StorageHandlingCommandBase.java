@@ -722,15 +722,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return Objects.toString(map.get(OvfInfoFileConstants.Domains), "").contains(storageDomainId.toString());
     }
 
-    protected String getJsonDiskDescription(Disk disk) {
-        try {
-            return metadataDiskDescriptionHandler.generateJsonDiskDescription(disk);
-        } catch (IOException e) {
-            log.error("Exception while generating json for disk. ERROR: '{}'", e);
-            return StringUtils.EMPTY;
-        }
-    }
-
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.singletonList(new PermissionSubject(getStoragePoolId(),

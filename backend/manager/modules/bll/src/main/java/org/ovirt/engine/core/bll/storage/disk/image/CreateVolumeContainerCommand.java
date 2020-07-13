@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
@@ -28,6 +31,9 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommandParameters> extends
         CommandBase<T> {
+
+    @Inject
+    private ImagesHandler imagesHandler;
 
     public CreateVolumeContainerCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -50,6 +56,10 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
     }
 
     private CreateImageVDSCommandParameters getCreateVDSCommandParameters() {
+        DiskImage diskImageDescription = new DiskImage();
+        diskImageDescription.setDiskAlias(getParameters().getDiskAlias());
+        diskImageDescription.setDiskDescription(getParameters().getDescription());
+
         CreateVolumeVDSCommandParameters parameters =
                 new CreateVolumeVDSCommandParameters(getParameters().getStoragePoolId(),
                         getParameters().getStorageDomainId(),
@@ -60,7 +70,7 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
                         getParameters().getVolumeFormat(),
                         getParameters().getSrcImageGroupId(),
                         getParameters().getImageId(),
-                        getParameters().getDescription(),
+                        imagesHandler.getJsonDiskDescription(diskImageDescription),
                         getStoragePool().getCompatibilityVersion(),
                         DiskContentType.DATA);
         if (getType() != VolumeType.Preallocated && getStorageDomain().getStorageType().isBlockDomain()) {

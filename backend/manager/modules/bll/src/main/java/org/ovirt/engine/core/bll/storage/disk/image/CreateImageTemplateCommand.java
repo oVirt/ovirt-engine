@@ -92,7 +92,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                 postDeleteActionHandler.fixParameters(
                         new CopyImageVDSCommandParameters(storagePoolId, getParameters().getStorageDomainId(),
                                 getParameters().getVmId(), imageGroupId, snapshotId, destinationImageGroupID,
-                                getDestinationImageId(), getJsonDiskDescription(newImage),
+                                getDestinationImageId(), imagesHandler.getJsonDiskDescription(newImage),
                                 getParameters().getDestinationStorageDomainId(), getParameters().getCopyVolumeType(),
                                 targetFormat, newImage.getVolumeType(), getDiskImage().isWipeAfterDelete(),
                                 storageDomainDao.get(getParameters().getDestinationStorageDomainId())

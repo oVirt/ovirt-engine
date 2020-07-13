@@ -530,6 +530,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         parameters.setVolumeFormat(getDiskImage().getVolumeFormat());
         parameters.setVolumeType(getDiskImage().getVolumeType());
+        parameters.setDiskAlias(getDiskAlias());
         if (isTemplate()) {
             parameters.setCopyVolumeType(CopyVolumeType.SharedVol);
         } else {
@@ -564,7 +565,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         image.setVmSnapshotId(null);
         image.setParentId(Guid.Empty);
         image.setImageTemplateId(Guid.Empty);
-
+        image.setDiskDescription(getDiskImage().getDiskDescription());
         parameters.setDestinationImageId(newImageId);
         parameters.setDestImageGroupId(newId);
 

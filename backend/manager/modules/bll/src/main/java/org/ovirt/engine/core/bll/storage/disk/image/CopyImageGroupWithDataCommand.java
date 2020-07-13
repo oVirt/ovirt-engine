@@ -137,7 +137,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                 determineTotalImageInitialSize(getDiskImage(),
                         getParameters().getDestinationFormat(),
                         getParameters().getSrcDomain()));
-
+        parameters.setDiskAlias(getParameters().getDiskAlias());
         parameters.setJobWeight(getParameters().getOperationsJobWeight().get(CopyStage.DEST_CREATION.name()));
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
