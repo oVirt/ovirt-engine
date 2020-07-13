@@ -167,9 +167,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     }
 
     private Widget createGuestCpuTypeWidget() {
-        WidgetWithWarn guestCpuTypeWithWarn = new WidgetWithWarn(guestCpuType,
-                messages.vmGuestCpuTypeWarning(
-                        getModel().getConfiguredCpuType()));
+        WidgetWithWarn guestCpuTypeWithWarn = new WidgetWithWarn(guestCpuType);
 
         updateCpuTypeWarning(guestCpuTypeWithWarn);
 
@@ -193,5 +191,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         }
 
         widgetWithWarn.setIconVisible(!getModel().getConfiguredCpuType().equals(getModel().getGuestCpuType()));
+        widgetWithWarn.setIconTooltipText(messages.vmGuestCpuTypeWarning(
+                        getModel().getConfiguredCpuType()));
     }
 }
