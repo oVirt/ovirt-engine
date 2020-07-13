@@ -24,13 +24,13 @@ class ImageIO(object):
     CONFIG_TEMPLATE = """\
     # Configuration overrides for ovirt-engine.
     #
-    # WARNING: This file owned by ovirt-engine. If you modify this file your
+    # WARNING: This file is owned by ovirt-engine. If you modify this file your
     # changes will be overwritten in the next ovirt-engine upgrade.
     #
     # To change the configuration create a new drop-in file with higher prefix,
     # so your setting will override ovirt-engine configuration:
     #
-    # $ cat /etc/ovirt-imageio/conf.d/99-locl.conf
+    # $ cat /etc/ovirt-imageio/conf.d/99-local.conf
     # [tls]
     # ca_file =
     #
@@ -53,7 +53,7 @@ class ImageIO(object):
     ca_file = {ca_file}
 
     [remote]
-    # Port cannot be changed as it's currently hardcoded in engine code.
+    # Port cannot be changed as it's currently hard-coded in engine code.
     port = {data_port}
 
     [local]
