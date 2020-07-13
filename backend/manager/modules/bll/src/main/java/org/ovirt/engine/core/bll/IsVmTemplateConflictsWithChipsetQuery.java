@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -42,6 +43,7 @@ public class IsVmTemplateConflictsWithChipsetQuery<P extends IdAndChipsetQueryPa
         }
         var cdDevice = vmDeviceUtils.getFirstDeviceWithType(devices, VmDeviceGeneralType.DISK, VmDeviceType.CDROM);
         if (cdDevice != null
+                && !StringUtils.isEmpty(cdDevice.getAddress())
                 && !cdDevice.getAddress().contains("unit=0")
                 && !cdDevice.getAddress().contains("unit=1")) {
             return true;
@@ -55,7 +57,9 @@ public class IsVmTemplateConflictsWithChipsetQuery<P extends IdAndChipsetQueryPa
             return true;
         }
         var cdDevice = vmDeviceUtils.getFirstDeviceWithType(devices, VmDeviceGeneralType.DISK, VmDeviceType.CDROM);
-        if (cdDevice != null && !cdDevice.getAddress().contains("bus=0")) {
+        if (cdDevice != null
+                && !StringUtils.isEmpty(cdDevice.getAddress())
+                && !cdDevice.getAddress().contains("bus=0")) {
             return true;
         }
         return false;
