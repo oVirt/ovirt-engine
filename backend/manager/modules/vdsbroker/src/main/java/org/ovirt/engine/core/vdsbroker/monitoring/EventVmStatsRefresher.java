@@ -2,11 +2,13 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -58,6 +60,7 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                     printEventInDebug(map);
                     List<Pair<VmDynamic, VdsmVm>> vms = convertEvent(map);
                     if (!vms.isEmpty()) {
+                        addVmsToVdsManager(vms); // Prevent missing VMs on VdsManager::lastVmsList
                         getVmsMonitoring().perform(vms, fetchTime, vdsManager, false);
                         processDevices(vms.stream().map(Pair::getSecond), fetchTime);
                     }
@@ -111,6 +114,18 @@ public class EventVmStatsRefresher extends VmStatsRefresher {
                 return new VdsmVm(notifyTime)
                         .setVmDynamic(clonedVmDynamic)
                         .setDevicesHash(vdsBrokerObjectsBuilder.getVmDevicesHash(struct));
+            }
+
+            private void addVmsToVdsManager(List<Pair<VmDynamic, VdsmVm>> vms) {
+                // We can assume that it's the first time the VMs will be on list in PoweringUp status.
+                Map<Guid, VMStatus> poweringUpVms = vms
+                        .stream()
+                        .map(Pair::getSecond)
+                        .filter(Objects::nonNull)
+                        .map(VdsmVm::getVmDynamic)
+                        .filter(v -> v.getStatus() == VMStatus.PoweringUp)
+                        .collect(Collectors.toMap(VmDynamic::getId, VmDynamic::getStatus));
+                vdsManager.addVmsToLastVmsList(poweringUpVms);
             }
 
             @Override

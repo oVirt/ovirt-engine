@@ -1185,6 +1185,16 @@ public class VdsManager {
         this.lastVmsList = lastVmsList;
     }
 
+    public void addVmsToLastVmsList(Map<Guid, VMStatus> additionalVmsList) {
+        try {
+            this.lastVmsList.putAll(additionalVmsList);
+        } catch (UnsupportedOperationException e) {
+            // lastVmsList is an emptyMap collection.
+            // It can happen if the event happens before polling on engine start.
+            this.lastVmsList = additionalVmsList;
+        }
+    }
+
     public boolean isInServerRebootTimeout() {
         return inServerRebootTimeout;
     }
