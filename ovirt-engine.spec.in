@@ -216,7 +216,7 @@ Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
 Requires:	%{name}-ui-extensions >= 1.0.4
 Requires:	ansible >= 2.9.0, ansible < 2.10.0
-Requires:	ansible-runner-service >= 1.0.2
+Requires:	ansible-runner-service >= 1.0.4
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
