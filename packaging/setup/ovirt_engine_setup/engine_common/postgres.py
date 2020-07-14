@@ -389,6 +389,25 @@ class Provisioning(base.Base):
                 ],
                 state=state,
             )
+        # If using systemd, reset its service-restart counter, so that
+        # we do not fail if restarting PG too much - which can happen
+        # e.g. during engine-backup --mode=restore with lots of db entities
+        # provisioned.
+        systemctl = self.command.get(
+            command='systemctl',
+            optional=True
+        )
+        if systemctl is not None:
+            self._plugin.execute(
+                args=(
+                    systemctl,
+                    'reset-failed',
+                    self.environment[
+                        oengcommcons.ProvisioningEnv.POSTGRES_SERVICE
+                    ],
+                ),
+                raiseOnError=False,
+            )
 
     def _waitForDatabase(self, environment=None):
         dbovirtutils = database.OvirtUtils(
