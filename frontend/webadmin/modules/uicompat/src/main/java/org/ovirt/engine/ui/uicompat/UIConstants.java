@@ -401,6 +401,8 @@ public interface UIConstants extends Constants {
 
     String areYouSureTitle();
 
+    String removeConfirmationPopupMessage();
+
     String editHostTitle();
 
     String removeHostsTitle();

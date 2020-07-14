@@ -52,6 +52,7 @@ public class StorageRegisterTemplateListModel extends StorageRegisterEntityListM
     ConfirmationModel createRemoveEntityModel() {
         ConfirmationModel confirmationModel = new ConfirmationModel();
         confirmationModel.setTitle(ConstantsManager.getInstance().getConstants().removeUnregisteredTemplatesTitle());
+        confirmationModel.setMessage(ConstantsManager.getInstance().getConstants().removeConfirmationPopupMessage());
         confirmationModel.setHelpTag(HelpTag.remove_unregistered_template);
         confirmationModel.setHashName("remove_unregistered_templates"); //$NON-NLS-1$
         return confirmationModel;

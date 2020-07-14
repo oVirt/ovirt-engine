@@ -37,6 +37,7 @@ public class StorageRegisterVmListModel extends StorageRegisterEntityListModel<V
     ConfirmationModel createRemoveEntityModel() {
         ConfirmationModel confirmationModel = new ConfirmationModel();
         confirmationModel.setTitle(ConstantsManager.getInstance().getConstants().removeUnregisteredVirtualMachineTitle());
+        confirmationModel.setMessage(ConstantsManager.getInstance().getConstants().removeConfirmationPopupMessage());
         confirmationModel.setHelpTag(HelpTag.remove_unregistered_virtual_machine);
         confirmationModel.setHashName("remove_unregistered_vms"); //$NON-NLS-1$
         return confirmationModel;

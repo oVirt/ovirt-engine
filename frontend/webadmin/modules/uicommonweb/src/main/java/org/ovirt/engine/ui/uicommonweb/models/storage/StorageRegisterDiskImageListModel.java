@@ -147,6 +147,7 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
         ConfirmationModel window = new ConfirmationModel();
         setWindow(window);
         window.setTitle(ConstantsManager.getInstance().getConstants().removeUnregisteredDisksTitle());
+        window.setMessage(ConstantsManager.getInstance().getConstants().removeConfirmationPopupMessage());
         window.setHelpTag(HelpTag.remove_unregistered_disk);
         window.setHashName("remove_unregistered_disks"); //$NON-NLS-1$
 
