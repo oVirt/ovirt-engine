@@ -285,7 +285,7 @@ public class LibvirtVmXmlBuilderTest {
         verify(writer, times(1)).writeAttributeString("type", "block");
         verify(writer, times(1)).writeAttributeString("device", "disk");
         verify(writer, times(1)).writeStartElement("blockio");
-        verify(writer, times(3)).writeStartElement("target"); // 2 for guest agents
+        verify(writer, times(2)).writeStartElement("target"); // 1 for qemu guest agent
         verify(writer, times(1)).writeAttributeString("bus", "scsi");
         verify(writer, times(1)).writeStartElement("address");
         verify(writer, times(1)).writeAttributeString("type", "drive");
@@ -300,7 +300,7 @@ public class LibvirtVmXmlBuilderTest {
         verify(writer, times(1)).writeAttributeString("type", "block");
         verify(writer, times(1)).writeAttributeString("device", "lun");
         verify(writer, times(1)).writeAttributeString("rawio", "yes");
-        verify(writer, times(3)).writeStartElement("target"); // 2 for guest agents
+        verify(writer, times(2)).writeStartElement("target"); // 1 for qemu guest agent
         verify(writer, times(1)).writeAttributeString("bus", "scsi");
         verify(writer, times(1)).writeStartElement("address");
         verify(writer, times(1)).writeAttributeString("type", "drive");
@@ -314,7 +314,7 @@ public class LibvirtVmXmlBuilderTest {
         verify(writer, times(1)).writeStartElement("disk");
         verify(writer, times(1)).writeAttributeString("type", "block");
         verify(writer, times(1)).writeAttributeString("device", "disk");
-        verify(writer, times(3)).writeStartElement("target"); // 2 for guest agents
+        verify(writer, times(2)).writeStartElement("target"); // 1 for qemu guest agent
         verify(writer, times(1)).writeAttributeString("bus", "virtio");
         verify(writer, times(0)).writeStartElement("address");
 
@@ -324,7 +324,7 @@ public class LibvirtVmXmlBuilderTest {
         verify(writer, times(1)).writeStartElement("disk");
         verify(writer, times(1)).writeAttributeString("type", "block");
         verify(writer, times(1)).writeAttributeString("device", "disk");
-        verify(writer, times(3)).writeStartElement("target"); // 2 for guest agents
+        verify(writer, times(2)).writeStartElement("target"); // 1 for qemu guest agent
         verify(writer, times(1)).writeAttributeString("bus", "virtio");
         verify(writer, times(1)).writeStartElement("address");
         verify(writer, times(1)).writeAttributeString("type", "pci");

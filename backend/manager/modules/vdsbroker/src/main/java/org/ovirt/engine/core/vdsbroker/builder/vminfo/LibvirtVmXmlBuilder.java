@@ -1467,20 +1467,22 @@ public class LibvirtVmXmlBuilder {
         //   <target type='virtio' name='org.linux-kvm.port.0'/>
         //   <source mode='bind' path='/tmp/socket'/>
         // </channel>
-        writer.writeStartElement("channel");
-        writer.writeAttributeString("type", "unix");
+        if (vmInfoBuildUtils.isOvirtGuestAgent(vm.getVmOsId())) {
+            writer.writeStartElement("channel");
+            writer.writeAttributeString("type", "unix");
 
-        writer.writeStartElement("target");
-        writer.writeAttributeString("type", "virtio");
-        writer.writeAttributeString("name", "ovirt-guest-agent.0");
-        writer.writeEndElement();
+            writer.writeStartElement("target");
+            writer.writeAttributeString("type", "virtio");
+            writer.writeAttributeString("name", "ovirt-guest-agent.0");
+            writer.writeEndElement();
 
-        writer.writeStartElement("source");
-        writer.writeAttributeString("mode", "bind");
-        writer.writeAttributeString("path", String.format("/var/lib/libvirt/qemu/channels/%s.ovirt-guest-agent.0", vm.getId()));
-        writer.writeEndElement();
+            writer.writeStartElement("source");
+            writer.writeAttributeString("mode", "bind");
+            writer.writeAttributeString("path", String.format("/var/lib/libvirt/qemu/channels/%s.ovirt-guest-agent.0", vm.getId()));
+            writer.writeEndElement();
 
-        writer.writeEndElement();
+            writer.writeEndElement();
+        }
 
         writer.writeStartElement("channel");
         writer.writeAttributeString("type", "unix");

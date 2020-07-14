@@ -538,4 +538,19 @@ public class VmInfoBuildUtilsTest {
         when(osRepository.getOsUsbControllerModel(anyInt(), any(), any())).thenReturn(UsbControllerModel.EHCI);
         assertFalse(underTest.isTabletEnabled(vm));
     }
+
+    @Test
+    public void testIsOvirtChannelEnabled() {
+        VM vm = new VM();
+
+        reset(osRepository);
+        when(osRepository.requiresOvirtGuestAgentChannel(anyInt())).thenReturn(false);
+        when(osRepository.requiresOvirtGuestAgentChannel(0)).thenReturn(true);
+
+        vm.setVmOs(0); // Other OS
+        assertTrue(underTest.isOvirtGuestAgent(vm.getVmOsId()));
+
+        vm.setVmOs(30); // RHEL 8 OS
+        assertFalse(underTest.isOvirtGuestAgent(vm.getVmOsId()));
+    }
 }

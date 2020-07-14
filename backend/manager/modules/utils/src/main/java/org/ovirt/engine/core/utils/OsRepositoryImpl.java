@@ -278,6 +278,13 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public boolean requiresOvirtGuestAgentChannel(int osId) {
+        return getBoolean(getValueByVersion(idToUnameLookup.get(osId),
+                        "devices.ovirtGuestAgentChannel",
+                        null), true);
+    }
+
+    @Override
     public List<String> getNetworkDevices(int osId, Version version) {
         String devices =
                 getValueByVersion(idToUnameLookup.get(osId), "devices.network", version);

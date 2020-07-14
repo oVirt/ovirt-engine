@@ -319,4 +319,10 @@ public interface OsRepository {
      * @param chipset the VM's chipset
      */
     boolean requiresLegacyVirtio(int osId, ChipsetType chipset);
+
+    /**
+     * Checks if the operation system requires a channel for ovirt guest agent support.
+     * @param osId operation system id
+     */
+    boolean requiresOvirtGuestAgentChannel(int osId);
 }

@@ -1294,6 +1294,10 @@ public class VmInfoBuildUtils {
         return osRepository.requiresLegacyVirtio(osId, chipset);
     }
 
+    public boolean isOvirtGuestAgent(int osId) {
+        return osRepository.requiresOvirtGuestAgentChannel(osId);
+    }
+
     public boolean isKASLRDumpEnabled(int osId) {
         return osRepository.isLinux(osId) && Config.<Boolean> getValue(ConfigValues.EnableKASLRDump);
     }

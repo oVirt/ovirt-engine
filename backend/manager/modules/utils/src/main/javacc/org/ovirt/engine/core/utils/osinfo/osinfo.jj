@@ -75,6 +75,7 @@ void devices() : {} {
     | ("console.target.type" consoleTargetTypeValue())
     | ("memoryHotplug.specialBlock" booleanValue())
     | ("legacyVirtio" booleanValue())
+    | ("ovirtGuestAgentChannel" booleanValue())
     )
 }
 
