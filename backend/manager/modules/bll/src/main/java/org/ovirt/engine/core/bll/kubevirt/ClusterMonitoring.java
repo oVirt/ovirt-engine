@@ -89,7 +89,29 @@ public class ClusterMonitoring {
         try {
             api.checkHealth();
         } catch (ApiException e) {
-            log.error("failed to check health of kubevirt provider (url = {}): {}", provider.getUrl(), ExceptionUtils.getRootCauseMessage(e));
+            log.error("failed to check health of kubevirt provider (url = {}): {}",
+                    provider.getUrl(),
+                    ExceptionUtils.getRootCauseMessage(e));
+            log.debug("Exception", e);
+            throw new IOException(e);
+        }
+        OpenshiftApi ocpApi = KubevirtUtils.getOpenshiftApi(provider);
+        try {
+            // just a sample call
+            // don't care about the results - there only must not be any exceptions thrown
+            ocpApi.listNamespacedRoute("openshift-console",
+                    null,
+                    "metadata.name=console",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    Boolean.FALSE);
+        } catch (ApiException e) {
+            log.error("failed to check OpenShift health of kubevirt provider (url = {}): {}",
+                    provider.getUrl(),
+                    ExceptionUtils.getRootCauseMessage(e));
             log.debug("Exception", e);
             throw new IOException(e);
         }
