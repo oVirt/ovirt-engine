@@ -834,7 +834,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         providerSearchFilterLabel.setText(constants.hostPopupProviderSearchFilter());
         nameEditor.setFocus(true);
 
-        hostedEngineTab.setVisible(object.getIsHeSystem() && object.getIsNew());
+        hostedEngineTab.setVisible(object.getIsHeSystem() || object.getIsNew());
 
         affinityGroupSelectionWidget.init(object.getAffinityGroupList());
         affinityLabelSelectionWidget.init(object.getLabelList());
