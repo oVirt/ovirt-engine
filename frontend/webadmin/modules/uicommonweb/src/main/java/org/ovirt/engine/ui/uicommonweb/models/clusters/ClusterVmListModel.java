@@ -49,6 +49,8 @@ public class ClusterVmListModel extends VmListModel<Cluster> {
                 permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel,
                 importVmsModelProvider, vmHostDeviceListModel, vmDevicesListModel,
                 vmAffinityLabelListModel, vmErrataCountModel, vmGuestContainerListModel);
+        getSearchNextPageCommand().setIsAvailable(false);
+        getSearchPreviousPageCommand().setIsAvailable(false);
     }
 
     @Override

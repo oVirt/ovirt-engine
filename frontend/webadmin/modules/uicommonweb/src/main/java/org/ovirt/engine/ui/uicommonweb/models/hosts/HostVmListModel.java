@@ -50,6 +50,8 @@ public class HostVmListModel extends VmListModel<VDS> {
                 permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel,
                 importVmsModelProvider, vmHostDeviceListModel, vmDevicesListModel,
                 vmAffinityLabelListModel, vmErrataCountModel, vmGuestContainerListModel);
+        getSearchNextPageCommand().setIsAvailable(false);
+        getSearchPreviousPageCommand().setIsAvailable(false);
     }
 
     @Override
