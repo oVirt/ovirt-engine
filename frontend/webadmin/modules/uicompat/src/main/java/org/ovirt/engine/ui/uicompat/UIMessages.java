@@ -447,4 +447,8 @@ public interface UIMessages extends Messages {
     String compareMultipleStorageFormatsToDataCenterWarningMessage(String dataCenterName, String storageDomainNames);
 
     String clusterSnapshotOptionNotExist();
+
+    String detachStorageDomainContainsEntitiesWithDisksOnMultipleSDsFromDC();
+
+    String detachStorageDomainsContainEntitiesWithDisksOnMultipleSDs();
 }

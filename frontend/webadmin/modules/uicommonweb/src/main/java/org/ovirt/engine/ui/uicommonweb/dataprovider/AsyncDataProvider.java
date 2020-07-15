@@ -2047,6 +2047,14 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    public void doesStorageDomainContainEntityWithDisksOnMultipleSDs(AsyncQuery<Boolean> aQuery, Guid sdId) {
+        aQuery.converterCallback = new DefaultValueConverter<>(Boolean.FALSE);
+
+        Frontend.getInstance().runQuery(QueryType.DoesStorageDomainContainEntityWithDisksOnMultipleSDs,
+                new IdQueryParameters(sdId),
+                aQuery);
+    }
+
     public void getVmsFromExternalServer(AsyncQuery aQuery,
             Guid dataCenterId,
             Guid vdsId,

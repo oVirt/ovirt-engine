@@ -443,7 +443,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         model.setTitle(ConstantsManager.getInstance().getConstants().detachStorageTitle());
         model.setHelpTag(HelpTag.detach_storage);
         model.setHashName("detach_storage"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachStorageFromDcsMsg());
+        setMsgOnDetach(model);
 
         ArrayList<String> items = new ArrayList<>();
         boolean shouldAddressWarnning = false;
@@ -472,6 +472,18 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         model.getCommands().add(tempVar);
         UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
+    }
+
+    private void setMsgOnDetach(ConfirmationModel model) {
+        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachStorageFromDcsMsg());
+
+        AsyncDataProvider.getInstance().doesStorageDomainContainEntityWithDisksOnMultipleSDs(
+                new AsyncQuery<>(returnValue -> {
+                    if (returnValue) {
+                        model.setMessage(ConstantsManager.getInstance().getMessages()
+                                .detachStorageDomainContainsEntitiesWithDisksOnMultipleSDsFromDC());
+                    }
+                }), getEntity().getId());
     }
 
     private String getLocalStoragesFormattedString() {

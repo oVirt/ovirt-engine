@@ -378,6 +378,7 @@ public enum QueryType implements Serializable {
     GetStorageDomainDefaultWipeAfterDelete,
     GetStorageDomainDR,
     GetImageioProxyUri,
+    DoesStorageDomainContainEntityWithDisksOnMultipleSDs,
 
     // Cinder
     GetCinderVolumeTypesByStorageDomainId(QueryAuthType.User),

@@ -22,6 +22,8 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -450,7 +452,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         model.setTitle(ConstantsManager.getInstance().getConstants().detachStorageTitle());
         model.setHelpTag(HelpTag.detach_storage);
         model.setHashName("detach_storage"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachFollowingStoragesMsg());
+        setMsgOnDetach(model);
 
         List<String> list = new ArrayList<>();
         boolean shouldAddressWarnning = false;
@@ -533,6 +535,24 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         } else {
             postDetach(confirmModel);
         }
+    }
+
+    private void setMsgOnDetach(ConfirmationModel model) {
+        List<QueryType> queries = new ArrayList<>();
+        List<QueryParametersBase> params = new ArrayList<>();
+
+        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachFollowingStoragesMsg());
+        getSelectedItems().forEach(sd -> {
+            queries.add(QueryType.DoesStorageDomainContainEntityWithDisksOnMultipleSDs);
+            params.add(new IdQueryParameters(sd.getId()));
+        });
+
+        Frontend.getInstance().runMultipleQueries(queries, params, result -> {
+            if (result.getReturnValues().stream().anyMatch(QueryReturnValue::getReturnValue)) {
+                model.setMessage(ConstantsManager.getInstance().getMessages()
+                        .detachStorageDomainsContainEntitiesWithDisksOnMultipleSDs());
+            }
+        });
     }
 
     private void postDetach(Model model) {
