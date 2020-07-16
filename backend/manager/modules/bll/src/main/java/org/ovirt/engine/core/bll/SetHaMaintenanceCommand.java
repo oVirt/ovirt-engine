@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 
 @NonTransactiveCommandAttribute
@@ -34,7 +35,7 @@ public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParamete
 
     @Override
     protected void init() {
-        if (getVdsId() == null) {
+        if (getVdsId().equals(Guid.Empty)) {
             List<OriginType> hostedEngineOriginTypes = Arrays.asList(
                     OriginType.HOSTED_ENGINE,
                     OriginType.MANAGED_HOSTED_ENGINE);
@@ -44,6 +45,7 @@ public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParamete
                     .filter(Objects::nonNull)
                     .findFirst()
                     .orElse(null));
+            log.info("setting host to the one the hosted engine VM runs on: {}", getVdsId());
         }
     }
 
@@ -82,7 +84,7 @@ public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParamete
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getParameters().getVdsId(),
+        return Collections.singletonList(new PermissionSubject(getVdsId(),
                 VdcObjectType.VDS, getActionType().getActionGroup()));
     }
 
