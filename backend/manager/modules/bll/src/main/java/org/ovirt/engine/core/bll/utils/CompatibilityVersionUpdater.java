@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.utils;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
@@ -257,16 +258,22 @@ public class CompatibilityVersionUpdater {
             return false;
         }
 
+        boolean managedUpdated = updateDevicesForChipset(vmBase.getManagedDeviceMap().values(), newChipsetType);
+        boolean unmanagedUpdated = updateDevicesForChipset(vmBase.getUnmanagedDeviceList(), newChipsetType);
+        return managedUpdated || unmanagedUpdated;
+    }
+
+    private boolean updateDevicesForChipset(Collection<VmDevice> devices, ChipsetType chipsetType) {
         boolean updated = false;
-        for (VmDevice device : vmBase.getManagedDeviceMap().values()) {
+        for (VmDevice device : devices) {
             if (device.getType() == VmDeviceGeneralType.CONTROLLER) {
                 if (VmDeviceType.IDE.getName().equals(device.getDevice())) {
-                    if (ChipsetType.Q35.equals(newChipsetType)) {
+                    if (ChipsetType.Q35.equals(chipsetType)) {
                         device.setDevice(VmDeviceType.SATA.getName());
                         updated = true;
                     }
                 } else if (VmDeviceType.SATA.getName().equals(device.getDevice())) {
-                    if (ChipsetType.I440FX.equals(newChipsetType)) {
+                    if (ChipsetType.I440FX.equals(chipsetType)) {
                         device.setDevice(VmDeviceType.IDE.getName());
                         updated = true;
                     }
