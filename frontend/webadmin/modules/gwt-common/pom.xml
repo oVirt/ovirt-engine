@@ -59,7 +59,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.google.gwt.inject</groupId>
+      <groupId>io.github.gwtplus.gin</groupId>
       <artifactId>gin</artifactId>
       <version>${gin.version}</version>
       <scope>provided</scope>
@@ -130,9 +130,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
-        <configuration>
-          <jvm>/lib/jvm/jre-1.8.0-openjdk/bin/java</jvm>
-        </configuration>
         <executions>
           <execution>
             <goals>

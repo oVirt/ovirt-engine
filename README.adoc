@@ -7,7 +7,6 @@
 Install the following system components:
 
 - java-11-openjdk-devel
-- java-1.8.0-openjdk-headless
 - mime-types or mailcap
 - unzip
 - openssl
@@ -39,12 +38,8 @@ Install the following system components:
 === Note on Java versions
 
 The project is built and run using java 11. 4.3 branches and earlier are excluded.
-The only exception is GWT code, which still needs to be compiled using jdk-8,
-and that it because the gwt version doesn't support the language syntax, and solid
-support for it is not imminent. That's why jdk-8 is needed only for build-time
-, and only for GWT, specifically the javac command.
 
-=== Prepare your dev envrionment for java 11
+=== Prepare your dev environment for java 11
 
 - Use `alternatives` command to configure `java` and `javac` to version 11:
 ```console
@@ -358,7 +353,7 @@ you to recompile the GWT application on the fly.
 
 DEV_BUILD_GWT_SUPER_DEV_MODE:: Allows debugging GWT applications via
 Super Dev Mode, using web browser's JavaScript development tooling.
-Default value is `0`.
+Default value is `1`.
 +
 Do a local Engine development build as you normally would. Then, start
 the Super Dev Mode code server as following:
@@ -525,20 +520,6 @@ By default JMX access is available only to localhost, to open JMX to
 world, add `${PREFIX}/etc/ovirt-engine/engine.conf.d/20-setup-jmx-debug.conf` with:
 
   ENGINE_JMX_INTERFACE=public
-
-== GWT debug
-
-  $ make install-dev PREFIX="${PREFIX}"
-  $ make gwt-debug
-
-Debug port is 8000, detailed instructions for GWT debugging are
-http://wiki.ovirt.org/DebugFrontend[here].
-
-GWT debug URL, provided components running on same machine:
-
-http://127.0.0.1:8080/ovirt-engine/webadmin/WebAdmin.html?gwt.codesvr=127.0.0.1:9997
-
-Note that `gwt.codesvr` parameter does not apply when using Super Dev Mode.
 
 == DAO tests
 

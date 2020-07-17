@@ -3,7 +3,6 @@ dnf
 dnf-utils
 git
 java-11-openjdk-devel
-java-1.8.0-openjdk-headless
 java-client-kubevirt
 make
 maven

@@ -185,7 +185,6 @@ Source0:	http://resources.ovirt.org/pub/ovirt-master-snapshot/src/@PACKAGE_NAME@
 BuildArch:	noarch
 
 BuildRequires:	assertj-core >= 2.2.0
-BuildRequires:	java-1.8.0-openjdk-headless >= 1:1.8.0
 BuildRequires:	java-11-openjdk-devel >= 11.0.4
 BuildRequires:	javapackages-tools
 BuildRequires:	make

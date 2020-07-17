@@ -23,8 +23,8 @@
   <properties>
     <aspectj.version>1.9.3.RC1</aspectj.version>
     <gwtp.version>1.6</gwtp.version>
-    <guice.version>4.1.0</guice.version>
-    <gin.version>2.1.2</gin.version>
+    <guice.version>4.2.3</guice.version>
+    <gin.version>3.0.0</gin.version>
     <!-- gwtbootstrap3 version -->
     <gwtbootstrap3.version>0.9.4</gwtbootstrap3.version>
     <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
@@ -65,7 +65,7 @@
     <dependencies>
       <!-- Exclude Guice dependencies from GIN -->
       <dependency>
-        <groupId>com.google.gwt.inject</groupId>
+        <groupId>io.github.gwtplus.gin</groupId>
         <artifactId>gin</artifactId>
         <version>${gin.version}</version>
         <exclusions>
@@ -218,7 +218,6 @@
               <groupId>org.codehaus.mojo</groupId>
               <artifactId>gwt-maven-plugin</artifactId>
               <configuration>
-                <jvm>/lib/jvm/jre-1.8.0-openjdk/bin/java</jvm>
                 <style>DETAILED</style>
                 <draftCompile>true</draftCompile>
                 <!--
