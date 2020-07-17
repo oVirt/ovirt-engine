@@ -152,7 +152,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	MAN_DIR=%{_mandir} \\\
 	DOC_DIR=%{_docdir} \\\
 	PYTHON_DIR=%{python3_sitelib} \\\
-	PYTHON=%{__python3}} \\\
+	PYTHON=%{__python3} \\\
 	PY_VERSION=3 \\\
 	JAVA_DIR=%{_javadir} \\\
 	MAVENPOM_DIR=%{_mavenpomdir} \\\
