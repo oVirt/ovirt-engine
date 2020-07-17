@@ -173,6 +173,8 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	WILDFLY_OVERLAY_MODULES=%{wildfly_overlay_modules} \\\
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"}
 
+%global ovirt_dependencies_slot 4.4
+
 Name:		@PACKAGE_NAME@
 Version:	@RPM_VERSION@
 Release:	@RPM_RELEASE@%{?release_suffix}%{?dist}
@@ -271,6 +273,7 @@ Requires:	apache-sshd >= 2.5.0
 Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 2.4.1
+Requires:	ovirt-dependencies >= 4.4.2
 
 # We can't require exactly the same version and release of the
 # setup package because it needs to be updated independently as part
@@ -798,6 +801,17 @@ common/org/snmp4j/main/snmp4j.jar snmp4j.jar
 tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
 tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
 tools/org/slf4j/jcl-over-slf4j/main/jcl-over-slf4j.jar slf4j/jcl-over-slf4j.jar
+
+../engine.ear/webadmin.war/WEB-INF/lib/gwt-servlet.jar ovirt-dependencies/%{ovirt_dependencies_slot}/gwt-servlet.jar
+common/org/springframework/main/spring-aop.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-aop.jar
+common/org/springframework/main/spring-asm.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-asm.jar
+common/org/springframework/main/spring-beans.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-beans.jar
+common/org/springframework/main/spring-context.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-context.jar
+common/org/springframework/main/spring-core.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-core.jar
+common/org/springframework/main/spring-expression.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-expression.jar
+common/org/springframework/main/spring-instrument.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-instrument.jar
+common/org/springframework/main/spring-jdbc.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-jdbc.jar
+common/org/springframework/main/spring-tx.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-tx.jar
 __EOF__
 
 
