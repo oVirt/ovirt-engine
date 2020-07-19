@@ -109,6 +109,6 @@ public class CopyImageGroupWithDataCommandParameters extends ImagesActionsParame
     }
 
     public enum CopyStage {
-        DEST_CREATION, DATA_COPY
+        DEST_CREATION, DATA_COPY, UPDATE_VOLUME
     }
 }

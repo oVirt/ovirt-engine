@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParamete
 import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters.CopyStage;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.action.MeasureVolumeParameters;
+import org.ovirt.engine.core.common.action.UpdateVolumeCommandParameters;
 import org.ovirt.engine.core.common.businessentities.LocationInfo;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -178,7 +179,38 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                 runInternalAction(ActionType.CopyImageGroupVolumesData, p);
             }
             return true;
+        } else if (getParameters().getStage() == CopyStage.DATA_COPY) {
+            updateStage(CopyStage.UPDATE_VOLUME);
+
+            // There is no need to update the volume if we are creating a cloned VM from template
+            if (!isTemplate(getDiskImage()) || getParameters().getParentCommand() == ActionType.CreateCloneOfTemplate) {
+                return true;
+            }
+
+            UpdateVolumeCommandParameters parameters = new UpdateVolumeCommandParameters(
+                    getParameters().getStoragePoolId(),
+                    // vol_info
+                    (VdsmImageLocationInfo) buildImageLocationInfo(getParameters().getDestDomain(),
+                            getParameters().getDestImageGroupId(),
+                            getParameters().getDestinationImageId()),
+                    // legality
+                    null,
+                    // description
+                    null,
+                    // generation
+                    null,
+                    // VolumeRole, true will set the volume as SHARED
+                    Boolean.TRUE);
+
+            parameters.setParentCommand(getActionType());
+            parameters.setParentParameters(getParameters());
+            parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+
+            runInternalActionWithTasksContext(ActionType.UpdateVolume, parameters);
+
+            return true;
         }
+
         return false;
     }
 
@@ -224,6 +256,10 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
 
     private LocationInfo buildImageLocationInfo(Guid domId, Guid imageGroupId, Guid imageId) {
         return new VdsmImageLocationInfo(domId, imageGroupId, imageId, null);
+    }
+
+    private boolean isTemplate(DiskImage diskImage) {
+        return diskImage.getVmEntityType() != null && diskImage.getVmEntityType().isTemplateType();
     }
 
     private DiskImage getDiskImage() {
