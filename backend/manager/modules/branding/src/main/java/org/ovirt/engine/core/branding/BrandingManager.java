@@ -360,14 +360,14 @@ public class BrandingManager {
             String grafanabaseUrlVal = EngineLocalConfig.getInstance().getEngineGrafanaBaseUrl();
 
             if (grafanaFqdnVal.isEmpty() || grafanabaseUrlVal.isEmpty()) {
-                log.warn("Unable to load properties values for Grafana access engine conf file"); //$NON-NLS-1$
+                log.warn("Unable to load properties values for Grafana access engine conf file (not all properties have a value)"); //$NON-NLS-1$
                 return;
             }
             grafanaAccessUrl = grafanabaseUrlVal;
 
         } catch (Exception e) {
             // Unable to load Grafana access conf file, leave grafanaAccessUrl empty.
-            log.warn("Unable to load Grafana access engine conf file", e); //$NON-NLS-1$
+            log.debug("Unable to load Grafana access engine conf file"); //$NON-NLS-1$
         }
     }
 }
