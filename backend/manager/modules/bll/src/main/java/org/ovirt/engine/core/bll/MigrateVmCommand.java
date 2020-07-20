@@ -779,6 +779,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     protected AuditLogType getAuditLogForMigrationFailure() {
+        if (getVm().getOrigin() == OriginType.KUBEVIRT) {
+            return AuditLogType.VM_MIGRATION_FAILED;
+        }
+
         if (getDestinationVds() == null) {
             auditLogDirector.log(this, AuditLogType.VM_MIGRATION_NO_VDS_TO_MIGRATE_TO);
         }
