@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections.IteratorUtils;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils.AffinityGroupConflicts;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -69,8 +69,7 @@ public class AffinityRulesEnforcer {
     public Iterator<VM> chooseVmsToMigrate(Cluster cluster) {
         List<AffinityGroup> allAffinityGroups = affinityGroupDao.getAllAffinityGroupsWithFlatLabelsByClusterId(cluster.getId());
 
-        // Affinity groups from labels are only considered for Version 4.3 or less
-        if (cluster.getCompatibilityVersion().lessOrEquals(Version.v4_3)) {
+        if (FeatureSupported.isImplicitAffinityGroupSupported(cluster.getCompatibilityVersion())) {
             List<Label> allAffinityLabels = labelDao.getAllByClusterId(cluster.getId());
             allAffinityGroups.addAll(AffinityRulesUtils.affinityGroupsFromLabels(allAffinityLabels, cluster.getId()));
         }

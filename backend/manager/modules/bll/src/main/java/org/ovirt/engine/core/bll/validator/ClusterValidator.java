@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
@@ -32,6 +33,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -54,6 +56,7 @@ public class ClusterValidator {
     private SupportedHostFeatureDao hostFeatureDao;
 
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
+    private LabelDao labelDao;
     private Cluster newCluster;
 
     private int compareCompatibilityVersions;
@@ -84,7 +87,8 @@ public class ClusterValidator {
                             VmDao vmDao,
                             GlusterVolumeDao glusterVolumeDao,
                             ClusterFeatureDao clusterFeatureDao,
-                            SupportedHostFeatureDao hostFeatureDao) {
+                            SupportedHostFeatureDao hostFeatureDao,
+                            LabelDao labelDao) {
         this.cluster = cluster;
         this.clusterDao = clusterDao;
         this.dataCenterDao = dataCenterDao;
@@ -93,6 +97,7 @@ public class ClusterValidator {
         this.glusterVolumeDao = glusterVolumeDao;
         this.clusterFeatureDao = clusterFeatureDao;
         this.hostFeatureDao = hostFeatureDao;
+        this.labelDao = labelDao;
 
         allHostsForCluster = new MemoizingSupplier<>(() -> vdsDao.getAllForCluster(cluster.getId()));
         allVmsForCluster = new MemoizingSupplier<>(() -> vmDao.getAllForCluster(cluster.getId()));
@@ -410,6 +415,12 @@ public class ClusterValidator {
         return ValidationResult.failWith(EngineMessage.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED)
                 .when(!FeatureSupported.isMigrationSupported(architectureType, newCluster.getCompatibilityVersion())
                         && newCluster.getMigrateOnError() != MigrateOnErrorOptions.NO);
+    }
+
+    public ValidationResult implicitAffinityGroup() {
+        return ValidationResult.failWith(EngineMessage.CLUSTER_IMPLICIT_AFFINITY_GROUP_IS_NOT_SUPPORTED)
+                .when(!FeatureSupported.isImplicitAffinityGroupSupported(newCluster.getCompatibilityVersion())
+                        && labelDao.getAllByClusterId(newCluster.getId()).stream().anyMatch(Label::isImplicitAffinityGroup));
     }
 
     protected boolean migrationSupportedForArch(ArchitectureType arch) {

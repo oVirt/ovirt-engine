@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
@@ -56,8 +56,7 @@ public class VmToHostAffinityFilterPolicyUnit extends PolicyUnitImpl {
                 .filter(ag -> ag.isVdsEnforcing() && ag.isVdsAffinityEnabled())
                 .collect(Collectors.toList());
 
-        // Affinity groups from labels are only considered for Version 4.3 or less
-        if (context.getCluster().getCompatibilityVersion().lessOrEquals(Version.v4_3)) {
+        if (FeatureSupported.isImplicitAffinityGroupSupported(context.getCluster().getCompatibilityVersion()) ) {
             List<Label> labels = labelDao.getAllByEntityIds(Collections.singleton(vm.getId()));
             affinityGroups.addAll(AffinityRulesUtils.affinityGroupsFromLabels(labels, context.getCluster().getId()));
         }

@@ -238,4 +238,14 @@ public class FeatureSupported {
     public static boolean isOpenStackImageServiceApiV2Supported(Version version) {
         return Version.v4_4.lessOrEquals(version);
     }
+
+    /**
+     * Check if the implicit affinity group is supported
+     *
+     * @param version Compatibility version to check for.
+     * @return true if the implicit affinity group is supported.
+     */
+    public static boolean isImplicitAffinityGroupSupported(Version version) {
+        return Version.v4_4.greater(version);
+    }
 }
