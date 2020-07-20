@@ -1173,6 +1173,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Mon Jul 20 2020 Lev Veyde <lveyde@redhat.com> - 4.4.1.10
+- Bump version to 4.4.1.10
+
 * Thu Jul 16 2020 Sandro Bonazzola <sbonazzo@redhat.com> - 4.4.1.9
 - Bump version to 4.4.1.9
 
