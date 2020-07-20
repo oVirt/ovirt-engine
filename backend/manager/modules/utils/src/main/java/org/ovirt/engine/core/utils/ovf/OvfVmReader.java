@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -142,6 +143,27 @@ public class OvfVmReader extends OvfOvirtReader {
         }
         return null;
     }
+
+
+    protected void readNumaNodeListSection(XmlNode section) {
+        XmlNodeList list = selectNodes(section, "NumaNode");
+        List<VmNumaNode> vmNumaNodes = new ArrayList<>();
+        _vm.setvNumaNodeList(vmNumaNodes);
+
+        for (XmlNode node : list) {
+            VmNumaNode vmNumaNode = new VmNumaNode();
+            XmlNode id = selectSingleNode(node, "id", _xmlNS);
+            if (id != null) {
+                vmNumaNode.setId(new Guid(id.innerText));
+            }
+            vmNumaNode.setIndex(Integer.valueOf(selectSingleNode(node, "Index", _xmlNS).innerText));
+            vmNumaNode.setCpuIds(readIntegerList(node, "cpuIdList"));
+            vmNumaNode.setVdsNumaNodeList(readIntegerList(node, "vdsNumaNodeList"));
+            vmNumaNode.setMemTotal(Long.valueOf(selectSingleNode(node, "MemTotal", _xmlNS).innerText));
+            vmNumaNodes.add(vmNumaNode);
+        }
+    }
+
 
     @Override
     protected void readSnapshotsSection(XmlNode section) {

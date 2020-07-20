@@ -270,6 +270,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         updateVmParams.setVirtioScsiEnabled(false);
         updateVmParams.setClearPayload(true);
         updateVmParams.setUpdateRngDevice(true);
+        updateVmParams.setUpdateNuma(true);
         for (GraphicsType graphicsType : GraphicsType.values()) {
             updateVmParams.getGraphicsDevices().put(graphicsType, null);
         }

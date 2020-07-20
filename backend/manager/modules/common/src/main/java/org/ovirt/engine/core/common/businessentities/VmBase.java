@@ -338,7 +338,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @EditableVmField
     private NumaTuneMode numaTuneMode;
 
-    @EditableVmField
+    @EditableVmField(onStatuses = VMStatus.Down)
     private List<VmNumaNode> vNumaNodeList;
 
     @CopyOnNewVersion

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.ovf;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -231,5 +232,12 @@ public abstract class OvfOvirtWriter extends OvfWriter {
     @Override
     protected String getInstaceIdTag() {
         return "InstanceId";
+    }
+
+    protected void writeIntegerList(String label, List<Integer> list) {
+        if (list != null && !list.isEmpty()) {
+            String writeList = list.stream().map(i -> i.toString()).collect(Collectors.joining(","));
+            _writer.writeElement(label, writeList);
+        }
     }
 }

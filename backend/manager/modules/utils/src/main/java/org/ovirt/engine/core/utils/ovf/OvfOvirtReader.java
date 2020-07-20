@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -95,6 +96,11 @@ public abstract class OvfOvirtReader extends OvfReader {
             if (node != null) {
                 readUserDomainsSection(node);
             }
+
+            node = getNode(list, "xsi:type", "ovf:NumaNodeSection_Type");
+            if (node != null) {
+                readNumaNodeListSection(node);
+            }
         }
 
         readGeneralData(virtualSystem);
@@ -104,6 +110,19 @@ public abstract class OvfOvirtReader extends OvfReader {
         super.readGeneralData(content);
         consumeReadProperty(content, CLUSTER_NAME, val -> fullEntityOvfData.setClusterName(val));
     }
+
+    protected List<Integer> readIntegerList(XmlNode node, String label) {
+        String  valueList =  selectSingleNode(node, label, _xmlNS).innerText;
+        List<Integer> integerList = new ArrayList<>();
+        if (valueList != null && !valueList.isEmpty()) {
+            String[] values = valueList.split(",");
+            for (String value : values) {
+                integerList.add(Integer.valueOf(value));
+            }
+        }
+        return integerList;
+    }
+
 
     @Override
     protected void readLunDisk(XmlNode node, LunDisk lun) {
@@ -150,6 +169,11 @@ public abstract class OvfOvirtReader extends OvfReader {
     protected void readAffinityLabelsSection(@SuppressWarnings("unused") XmlNode section) {
         // The affinity label section only has meaning for VMs, and is overridden in OvfVmReader.
     }
+
+    protected void readNumaNodeListSection(@SuppressWarnings("unused") XmlNode section) {
+        // The numa node list label section only has meaning for VMs, and is overridden in OvfVmReader.
+    }
+
 
     protected void readUserDomainsSection(@SuppressWarnings("unused") XmlNode section) {
         XmlNodeList list = selectNodes(section, OvfProperties.USER);

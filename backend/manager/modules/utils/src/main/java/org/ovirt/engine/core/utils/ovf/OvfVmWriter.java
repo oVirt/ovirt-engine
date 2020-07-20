@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
@@ -89,6 +90,7 @@ public class OvfVmWriter extends OvfOvirtWriter {
 
         writeAffinityGroups();
         writeAffinityLabels();
+        writeNumaNodeList();
     }
 
     @Override
@@ -111,6 +113,33 @@ public class OvfVmWriter extends OvfOvirtWriter {
     protected void writeHardware() {
         super.writeHardware();
         writeSnapshotsSection();
+    }
+
+    /**
+     * Write the numa nodes of the VM.<br>
+     * If no numa nodes were set to be written, this section will not be written.
+     */
+    private void writeNumaNodeList() {
+        List<VmNumaNode> vmNumaNodes = vm.getvNumaNodeList();
+
+        if (vmNumaNodes == null || vmNumaNodes.isEmpty()) {
+            return;
+        }
+        _writer.writeStartElement("Section");
+        _writer.writeAttributeString(XSI_URI, "type", "ovf:NumaNodeSection_Type");
+
+        for (VmNumaNode vmNumaNode : vmNumaNodes) {
+            _writer.writeStartElement("NumaNode");
+            if (vmNumaNode.getId() != null) {
+                _writer.writeElement("id", String.valueOf(vmNumaNode.getId()));
+            }
+            _writer.writeElement("Index", String.valueOf(vmNumaNode.getIndex()));
+            writeIntegerList("cpuIdList", vmNumaNode.getCpuIds());
+            writeIntegerList("vdsNumaNodeList", vmNumaNode.getVdsNumaNodeList());
+            _writer.writeElement("MemTotal", String.valueOf(vmNumaNode.getMemTotal()));
+            _writer.writeEndElement();
+        }
+        _writer.writeEndElement();
     }
 
     /**

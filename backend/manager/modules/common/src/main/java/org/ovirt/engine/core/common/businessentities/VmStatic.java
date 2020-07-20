@@ -23,7 +23,7 @@ public class VmStatic extends VmBase {
 
     private Guid originalTemplateGuid;
 
-    @EditableVmField
+    @EditableVmField(onStatuses = VMStatus.Down)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String cpuPinning;
 

@@ -84,13 +84,18 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             instanceTypeManager.setAlwaysEnabledFieldUpdate(true);
         }
 
-        Frontend.getInstance().runQuery(QueryType.GetVmNumaNodesByVmId,
-                new IdQueryParameters(vm.getId()),
-                new AsyncQuery<QueryReturnValue>(returnValue -> {
-                    List<VmNumaNode> nodes = returnValue.getReturnValue();
-                    getModel().setVmNumaNodes(nodes);
-                    getModel().updateNodeCount(nodes.size());
-                }));
+        if (vm.isNextRunConfigurationExists()) {
+            getModel().setVmNumaNodes(vm.getvNumaNodeList());
+            getModel().updateNodeCount(vm.getvNumaNodeList().size());
+        } else {
+            Frontend.getInstance().runQuery(QueryType.GetVmNumaNodesByVmId,
+                    new IdQueryParameters(vm.getId()),
+                    new AsyncQuery<QueryReturnValue>(returnValue -> {
+                        List<VmNumaNode> nodes = returnValue.getReturnValue();
+                        getModel().setVmNumaNodes(nodes);
+                        getModel().updateNodeCount(nodes.size());
+                    }));
+        }
         // load dedicated host names into host names list
         if (getVm().getDedicatedVmForVdsList().size() > 0) {
             Frontend.getInstance().runQuery(QueryType.GetAllHostNamesPinnedToVmById,
