@@ -856,29 +856,32 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         } else {
             log.info("Cleaning up after cancelled transfer. {}", getTransferDescription());
         }
-        stopImageTransferSession(context.entity);
 
-        // Stopping NBD server if necessary
-        if (getTransferBackend() == ImageTransferBackend.NBD) {
-            stopNbdServer(context.entity.getVdsId(), context.entity.getImagedTicketId());
-        }
+        // If stopping the session did not succeed, don't change the transfer state.
+        // TODO: refactor to reuse similar logic in handleFinalizingSuccess
+        if (stopImageTransferSession(context.entity)) {
+            // Stopping NBD server if necessary
+            if (getTransferBackend() == ImageTransferBackend.NBD) {
+                stopNbdServer(context.entity.getVdsId(), context.entity.getImagedTicketId());
+            }
 
-        // Setting disk status to ILLEGAL only on upload failure
-        // (only if not disk snapshot)
-        if (!Guid.isNullOrEmpty(getParameters().getImageGroupID())) {
-            setImageStatus(getParameters().getTransferType() == TransferType.Upload ?
-                    ImageStatus.ILLEGAL : ImageStatus.OK);
-        }
-        Guid vdsId = context.entity.getVdsId() != null ? context.entity.getVdsId() : getVdsId();
-        // Teardown is required for all scenarios as we call prepareImage when
-        // starting a new session.
-        tearDownImage(vdsId, context.entity.getBackupId());
-        if (failure) {
-            updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
-            setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_FAILURE);
-        } else {
-            updateEntityPhase(ImageTransferPhase.FINISHED_CLEANUP);
-            setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_CLEANUP);
+            // Setting disk status to ILLEGAL only on upload failure
+            // (only if not disk snapshot)
+            if (!Guid.isNullOrEmpty(getParameters().getImageGroupID())) {
+                setImageStatus(getParameters().getTransferType() == TransferType.Upload ?
+                        ImageStatus.ILLEGAL : ImageStatus.OK);
+            }
+            Guid vdsId = context.entity.getVdsId() != null ? context.entity.getVdsId() : getVdsId();
+            // Teardown is required for all scenarios as we call prepareImage when
+            // starting a new session.
+            tearDownImage(vdsId, context.entity.getBackupId());
+            if (failure) {
+                updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
+                setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_FAILURE);
+            } else {
+                updateEntityPhase(ImageTransferPhase.FINISHED_CLEANUP);
+                setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_CLEANUP);
+            }
         }
     }
 
