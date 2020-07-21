@@ -199,6 +199,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             ActionReturnValue createResult) {
         Q created = resolveCreated(createResult, entityResolver);
         R model = mapEntity(suggestedParentType, created);
+        modifyCreatedEntity(model);
         Response response = null;
         if (createResult.getHasAsyncTasks()) {
             if (block) {
@@ -235,6 +236,16 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             return handleError(e, false);
         }
         return createResult;
+    }
+
+    /**
+     * In rare cases, after entity creation there is a need to make modifications
+     * to the created entity. Such changes should be done here
+     *
+     * @param model the entity
+     */
+    protected void modifyCreatedEntity(R model) {
+        // do nothing by default
     }
 
     private R mapEntity(Class<? extends BaseResource> suggestedParentType, Q created) {

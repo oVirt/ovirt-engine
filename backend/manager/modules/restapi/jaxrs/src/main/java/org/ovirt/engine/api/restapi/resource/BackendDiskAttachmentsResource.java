@@ -83,6 +83,18 @@ public class BackendDiskAttachmentsResource
         return inject(new BackendDiskAttachmentResource(vmId, id));
     }
 
+    @Override
+    protected void modifyCreatedEntity(DiskAttachment diskAttachment) {
+        /*
+         * Href of the diskattachment must be fixed manually due to a bug (https://bugzilla.redhat.com/1647018). The bug
+         * is the result of an exceptional case where the same entity (disk-attachment) has the same parent (vm) in 2
+         * different locations in the API, causing ambiguity in the link generation process. Enhancing the
+         * infrastructure to deal with such cases in a generic way is complex and is not justified by this single
+         * occurrence, hence the hardly-typed solution.
+         */
+        diskAttachment.setHref(diskAttachment.getHref().replace("/null/", "/diskattachments/"));
+    }
+
     protected Response attachDiskToVm(AbstractBackendCollectionResource resource, DiskAttachment attachment, IResolver entityResolver) {
         Guid diskId = Guid.createGuidFromStringDefaultEmpty(attachment.getDisk().getId());
 
