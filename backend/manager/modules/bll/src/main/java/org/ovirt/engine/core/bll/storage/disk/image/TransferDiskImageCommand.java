@@ -787,12 +787,6 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         // If stopping the session did not succeed, don't change the transfer state.
         if (stopImageTransferSession(context.entity)) {
             Guid transferingVdsId = context.entity.getVdsId();
-            Guid imageTicketId = context.entity.getImagedTicketId();
-
-            // Stopping NBD server if necessary
-            if (getTransferBackend() == ImageTransferBackend.NBD) {
-                stopNbdServer(transferingVdsId, imageTicketId);
-            }
 
             // Verify image is relevant only on upload
             if (getParameters().getTransferType() == TransferType.Download) {
@@ -860,11 +854,6 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         // If stopping the session did not succeed, don't change the transfer state.
         // TODO: refactor to reuse similar logic in handleFinalizingSuccess
         if (stopImageTransferSession(context.entity)) {
-            // Stopping NBD server if necessary
-            if (getTransferBackend() == ImageTransferBackend.NBD) {
-                stopNbdServer(context.entity.getVdsId(), context.entity.getImagedTicketId());
-            }
-
             // Setting disk status to ILLEGAL only on upload failure
             // (only if not disk snapshot)
             if (!Guid.isNullOrEmpty(getParameters().getImageGroupID())) {
@@ -1192,6 +1181,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             // ignoring when we are not uploading using the browser which
             // always uses the proxy url.
             return !getParameters().getTransferClientType().isBrowserTransfer();
+        }
+
+        // Stopping NBD server if necessary
+        if (getTransferBackend() == ImageTransferBackend.NBD) {
+            stopNbdServer(entity.getVdsId(), entity.getImagedTicketId());
         }
 
         ImageTransfer updates = new ImageTransfer();
