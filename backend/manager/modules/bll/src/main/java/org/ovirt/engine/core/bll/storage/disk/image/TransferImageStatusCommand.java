@@ -55,11 +55,6 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_RESUME_IMAGE_TRANSFER);
             }
 
-            if (!entity.getTransferClientType().canBeCanceled()
-                    && imageTransferPhaseUpdate == ImageTransferPhase.CANCELLED_USER) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CANCEL_TRANSFER);
-            }
-
             if (entity.getType() == TransferType.Download && imageTransferPhaseUpdate.isPaused()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_PAUSE_IMAGE_DOWNLOAD);
             }
