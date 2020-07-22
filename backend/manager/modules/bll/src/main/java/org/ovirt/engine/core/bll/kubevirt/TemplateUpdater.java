@@ -31,8 +31,11 @@ public class TemplateUpdater {
     public boolean addVmTemplate(V1Template template, Guid clusterId) {
         VmStatic vm = EntityMapper.toOvirtVm(template, clusterId);
         // at some point we may want to call AddUnmanagedVm
+        AddVmTemplateParameters params = new AddVmTemplateParameters(vm, template.getMetadata().getName(), "");
+        params.setPublicUse(true);
+        params.setCopyVmPermissions(false);
         ActionReturnValue retVal = backend.get().runInternalAction(ActionType.AddVmTemplate,
-                new AddVmTemplateParameters(vm, template.getMetadata().getName(), ""));
+                params);
         return retVal.getSucceeded();
     }
 

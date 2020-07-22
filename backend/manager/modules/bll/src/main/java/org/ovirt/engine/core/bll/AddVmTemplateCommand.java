@@ -349,6 +349,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         });
 
         if (!getParameters().getMasterVm().isManaged()) {
+            TransactionSupport.executeInNewTransaction(() -> {
+                addPermission();
+                return null;
+            });
             endSuccessfullySynchronous();
             return;
         }
@@ -1158,7 +1162,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (getCurrentUser() == null) {
             setCurrentUser(getParameters().getParametersCurrentUser());
         }
-        addPermissionForTemplate(permissionsToAdd, getCurrentUser().getId(), PredefinedRoles.TEMPLATE_OWNER);
+
+        // current user can be null for KubeVirt templates added internally by TemplatesMonitoring
+        if (getCurrentUser() != null) {
+            addPermissionForTemplate(permissionsToAdd, getCurrentUser().getId(), PredefinedRoles.TEMPLATE_OWNER);
+        }
+
         // if the template is for public use, set EVERYONE as a TEMPLATE_USER.
         if (getParameters().isPublicUse()) {
             addPermissionForTemplate(permissionsToAdd, MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID, PredefinedRoles.TEMPLATE_USER);
