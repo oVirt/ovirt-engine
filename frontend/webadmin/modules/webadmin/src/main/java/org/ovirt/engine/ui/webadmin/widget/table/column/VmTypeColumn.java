@@ -81,6 +81,10 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
             res.put(getImageSafeHtml(resources.mgmtNetwork()), SafeHtmlUtils.fromString(constants.isHostedEngineVmTooltip()));
         }
 
+        if (!vm.isManaged()) {
+            res.put(getImageSafeHtml(resources.container()), SafeHtmlUtils.fromString(constants.isRunningInContainer()));
+        }
+
         if (configurationWillChangeAfterRestart(vm)) {
             Set<String> nextRunFields = vm.getNextRunChangedFields() != null ? vm.getNextRunChangedFields() : new HashSet<>();
             if (clusterCpuChanged(vm) && !nextRunFields.contains("customCpuName")){ //$NON-NLS-1$
@@ -154,6 +158,10 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
 
         if (vm.isHostedEngine()) {
             images.add(getImageSafeHtml(resources.mgmtNetwork()));
+        }
+
+        if (!vm.isManaged()) {
+            images.add(getImageSafeHtml(resources.container()));
         }
 
         return images.isEmpty() ? null : MultiImageColumnHelper.getValue(images);

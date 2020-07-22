@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.TemplateAdditionalStatusColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -46,6 +47,11 @@ public class MainTemplateView extends AbstractMainWithDetailsTableView<VmTemplat
 
     void initTable() {
         getTable().enableColumnResizing();
+
+        TemplateAdditionalStatusColumn additionalStatusColumn = new TemplateAdditionalStatusColumn();
+        additionalStatusColumn.setContextMenuTitle(constants.additionalStatusTemplate());
+        getTable().addColumn(additionalStatusColumn, constants.statusTemplate(), "75px"); //$NON-NLS-1$
+        getTable().table.setColumnVisible(additionalStatusColumn, false);
 
         AbstractTextColumn<VmTemplate> nameColumn = new AbstractLinkColumn<VmTemplate>(
                 new FieldUpdater<VmTemplate, String>() {

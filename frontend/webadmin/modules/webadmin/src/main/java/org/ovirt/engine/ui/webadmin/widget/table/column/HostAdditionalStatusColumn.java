@@ -62,6 +62,9 @@ public class HostAdditionalStatusColumn extends EntityAdditionalStatusColumn<VDS
             }
         }
 
+        if (!host.isManaged()) {
+            imagesToText.put(getImageSafeHtml(resources.container()), constants.isRunninVmsInContainer());
+        }
         return imagesToText;
     }
 

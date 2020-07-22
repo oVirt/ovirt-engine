@@ -3,29 +3,49 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 public class DcAdditionalStatusColumn extends EntityAdditionalStatusColumn<StoragePool> {
 
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public SafeHtml getEntityValue(StoragePool object) {
+        SafeHtmlBuilder images = new SafeHtmlBuilder();
+
         if (object.isStoragePoolCompatibilityLevelUpgradeNeeded()) {
-            return getImageSafeHtml(IconType.EXCLAMATION);
+            images.append(getImageSafeHtml(IconType.EXCLAMATION));
         }
-        return null;
+        if (!object.isManaged()) {
+            images.append(getImageSafeHtml(resources.container()));
+        }
+        return templates.image(images.toSafeHtml());
     }
 
     @Override
     public SafeHtml getEntityTooltip(StoragePool object) {
+        SafeHtmlBuilder tooltip = new SafeHtmlBuilder();
+        boolean addLineBreaks = false;
+
         if (object.isStoragePoolCompatibilityLevelUpgradeNeeded()) {
-            return SafeHtmlUtils.fromTrustedString(constants.clusterLevelUpgradeNeeded());
+            tooltip.appendHtmlConstant(constants.clusterLevelUpgradeNeeded());
+            addLineBreaks = true;
         }
-        return null;
+
+        if (!object.isManaged()) {
+            if (addLineBreaks) {
+                tooltip.appendHtmlConstant(constants.lineBreak());
+                tooltip.appendHtmlConstant(constants.lineBreak());
+            }
+            tooltip.appendHtmlConstant(constants.supportsContainerPlatform());
+            addLineBreaks = true;
+        }
+        return tooltip.toSafeHtml();
     }
 
     @Override

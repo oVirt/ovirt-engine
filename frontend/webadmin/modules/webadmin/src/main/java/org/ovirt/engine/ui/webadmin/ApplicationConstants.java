@@ -1350,6 +1350,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String additionalStatusStorage();
 
+    String additionalStatusTemplate();
+
     String domainNameStorage();
 
     String domainDescriptionStorage();
@@ -3420,6 +3422,16 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String haActiveZeroHaScoreTooltip();
 
     String isHostedEngineVmTooltip();
+
+    String isRunningInContainer();
+
+    String isRunninVmsInContainer();
+
+    String providedByContainerPlatform();
+
+    String integratedWithContainerPlatform();
+
+    String supportsContainerPlatform();
 
     String arbiterVolume();
 

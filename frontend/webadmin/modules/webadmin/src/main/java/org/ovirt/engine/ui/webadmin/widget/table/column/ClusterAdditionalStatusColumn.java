@@ -65,6 +65,12 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
             }
             images.append(templates.brokenLinkRed());
         }
+        if (!object.isManaged()) {
+            if (addSpace) {
+                images.appendHtmlConstant(constants.space());
+            }
+            images.append(getImageSafeHtml(resources.container()));
+        }
         return templates.image(images.toSafeHtml());
     }
 
@@ -107,6 +113,14 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
             tooltip.appendHtmlConstant(constants.space());
             tooltip.appendEscaped(constants.clusterHasHostWithMissingCpuFlagsWarning());
             addLineBreaks = true;
+        }
+
+        if (!object.isManaged()) {
+            if (addLineBreaks) {
+                tooltip.appendHtmlConstant(constants.lineBreak());
+                tooltip.appendHtmlConstant(constants.lineBreak());
+            }
+            tooltip.appendHtmlConstant(constants.integratedWithContainerPlatform());
         }
         return tooltip.toSafeHtml();
     }
