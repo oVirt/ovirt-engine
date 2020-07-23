@@ -1,14 +1,11 @@
 package org.ovirt.engine.core.bll.utils;
 
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.BiosType;
-import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -21,46 +18,21 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
-import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Version;
 
 public class CompatibilityVersionUpdater {
-    public enum Update {
-        MEMORY("memory"),
-        CPU_TOPOLOGY("CPU topology"),
-        PROPERTIES("properties"),
-        MIGRATION_SUPPORT("migration support"),
-        MIGRATION_POLICY("migration policy"),
-        BIOS_TYPE("BIOS type"),
-        DEFAULT_DISPLAY_TYPE("default display type"),
-        RNG_DEVICE("RNG device"),
-        CHIPSET("Chipset");
-
-        private String displayName;
-
-        Update(String displayName) {
-            this.displayName = displayName;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-    }
 
     /**
      * Update VM fields so that it is valid for specified compatibility version.
      */
-    public EnumSet<Update> updateVmCompatibilityVersion(VM vm, Version newVersion, Cluster cluster) {
+    public EnumSet<VmUpdateType> updateVmCompatibilityVersion(VM vm, Version newVersion, Cluster cluster) {
         vm.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
-        ChipsetType oldChipsetType =
-                BiosTypeUtils.getEffective(vm.getBiosType(), cluster.getBiosType()).getChipsetType();
         updateDefaultBiosType(vm, newVersion);
-        return updateVmBaseCompatibilityVersion(vm.getStaticData(), newVersion, oldChipsetType, cluster);
+        return updateVmBaseCompatibilityVersion(vm.getStaticData(), newVersion, cluster);
     }
 
     private void updateDefaultBiosType(VM vm, Version newVersion) {
@@ -72,49 +44,42 @@ public class CompatibilityVersionUpdater {
     /**
      * Update VmTemplate fields so that it is valid for specified compatibility version.
      */
-    public EnumSet<Update> updateTemplateCompatibilityVersion(VmTemplate template, Version newVersion, Cluster cluster) {
+    public EnumSet<VmUpdateType> updateTemplateCompatibilityVersion(VmTemplate template, Version newVersion,
+                                                                    Cluster cluster) {
         template.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
         return updateVmBaseCompatibilityVersion(template, newVersion, cluster);
     }
 
-    public EnumSet<Update> updateVmBaseCompatibilityVersion(VmBase vmBase, Version newVersion, Cluster cluster) {
-        return updateVmBaseCompatibilityVersion(vmBase, newVersion, null, cluster);
-    }
-
-    private EnumSet<Update> updateVmBaseCompatibilityVersion(VmBase vmBase, Version newVersion,
-                                                            ChipsetType oldChipsetType, Cluster cluster) {
+    public EnumSet<VmUpdateType> updateVmBaseCompatibilityVersion(VmBase vmBase, Version newVersion, Cluster cluster) {
         if (newVersion.equals(getSourceVersion(vmBase))) {
-            return EnumSet.noneOf(Update.class);
+            return EnumSet.noneOf(VmUpdateType.class);
         }
 
-        EnumSet<Update> updates = EnumSet.noneOf(Update.class);
+        EnumSet<VmUpdateType> updates = EnumSet.noneOf(VmUpdateType.class);
 
         if (updateMemory(vmBase, newVersion)) {
-            updates.add(Update.MEMORY);
+            updates.add(VmUpdateType.MEMORY);
         }
         if (updateCpuTopology(vmBase, newVersion, cluster)) {
-            updates.add(Update.CPU_TOPOLOGY);
+            updates.add(VmUpdateType.CPU_TOPOLOGY);
         }
         if (updateProperties(vmBase, newVersion)) {
-            updates.add(Update.PROPERTIES);
+            updates.add(VmUpdateType.PROPERTIES);
         }
         if (updateMigrationSupport(vmBase, newVersion, cluster)) {
-            updates.add(Update.MIGRATION_SUPPORT);
+            updates.add(VmUpdateType.MIGRATION_SUPPORT);
         }
         if (updateMigrationPolicy(vmBase, newVersion, cluster)) {
-            updates.add(Update.MIGRATION_POLICY);
+            updates.add(VmUpdateType.MIGRATION_POLICY);
         }
         if (updateBiosType(vmBase, newVersion)) {
-            updates.add(Update.BIOS_TYPE);
-        }
-        if (updateChipset(vmBase, oldChipsetType, cluster)) {
-            updates.add(Update.CHIPSET);
+            updates.add(VmUpdateType.BIOS_TYPE);
         }
         if (updateDefaultDisplayType(vmBase, newVersion)) {
-            updates.add(Update.DEFAULT_DISPLAY_TYPE);
+            updates.add(VmUpdateType.DEFAULT_DISPLAY_TYPE);
         }
         if (updateRngDevice(vmBase, newVersion)) {
-            updates.add(Update.RNG_DEVICE);
+            updates.add(VmUpdateType.RNG_DEVICE);
         }
 
         // Update custom compatibility only if needed
@@ -247,44 +212,6 @@ public class CompatibilityVersionUpdater {
             return oldBiosType != BiosType.CLUSTER_DEFAULT;
         }
         return false;
-    }
-
-    private boolean updateChipset(VmBase vmBase, ChipsetType oldChipsetType, Cluster cluster) {
-        if (oldChipsetType == null) {
-            return false;
-        }
-        ChipsetType newChipsetType = BiosTypeUtils.getEffective(vmBase, cluster).getChipsetType();
-        if (oldChipsetType == newChipsetType) {
-            return false;
-        }
-
-        boolean managedUpdated = updateDevicesForChipset(vmBase.getManagedDeviceMap().values(), newChipsetType);
-        boolean unmanagedUpdated = updateDevicesForChipset(vmBase.getUnmanagedDeviceList(), newChipsetType);
-        return managedUpdated || unmanagedUpdated;
-    }
-
-    private boolean updateDevicesForChipset(Collection<VmDevice> devices, ChipsetType chipsetType) {
-        boolean updated = false;
-        for (VmDevice device : devices) {
-            if (device.getType() == VmDeviceGeneralType.CONTROLLER) {
-                if (VmDeviceType.IDE.getName().equals(device.getDevice())) {
-                    if (ChipsetType.Q35.equals(chipsetType)) {
-                        device.setDevice(VmDeviceType.SATA.getName());
-                        updated = true;
-                    }
-                } else if (VmDeviceType.SATA.getName().equals(device.getDevice())) {
-                    if (ChipsetType.I440FX.equals(chipsetType)) {
-                        device.setDevice(VmDeviceType.IDE.getName());
-                        updated = true;
-                    }
-                }
-            }
-            if (!StringUtils.isEmpty(device.getAddress())) {
-                device.setAddress("");
-                updated = true;
-            }
-        }
-        return updated;
     }
 
     private boolean updateDefaultDisplayType(VmBase vmBase, Version newVersion) {

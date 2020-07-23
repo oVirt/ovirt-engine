@@ -111,7 +111,7 @@ public class CompatibilityVersionUpdaterTest {
 
         var updates = performUpdate();
 
-        assertThat(updates).containsOnly(CompatibilityVersionUpdater.Update.MEMORY);
+        assertThat(updates).containsOnly(VmUpdateType.MEMORY);
         assertThat(vm.getVmMemSizeMb()).isEqualTo(MAX_MEM);
         assertThat(vm.getMaxMemorySizeMb()).isEqualTo(MAX_MEM);
         assertThat(vm.getMinAllocatedMem()).isEqualTo(minMem);
@@ -125,7 +125,7 @@ public class CompatibilityVersionUpdaterTest {
 
         var updates = performUpdate();
 
-        assertThat(updates).containsOnly(CompatibilityVersionUpdater.Update.CPU_TOPOLOGY);
+        assertThat(updates).containsOnly(VmUpdateType.CPU_TOPOLOGY);
         assertThat(vm.getNumOfSockets()).isEqualTo(3);
         assertThat(vm.getCpuPerSocket()).isEqualTo(16);
         assertThat(vm.getThreadsPerCpu()).isEqualTo(4);
@@ -139,7 +139,7 @@ public class CompatibilityVersionUpdaterTest {
 
         var updates = performUpdate();
 
-        assertThat(updates).containsOnly(CompatibilityVersionUpdater.Update.CPU_TOPOLOGY);
+        assertThat(updates).containsOnly(VmUpdateType.CPU_TOPOLOGY);
         assertThat(vm.getNumOfSockets()).isEqualTo(1);
         assertThat(vm.getCpuPerSocket()).isEqualTo(48);
         assertThat(vm.getThreadsPerCpu()).isEqualTo(8);
@@ -150,7 +150,7 @@ public class CompatibilityVersionUpdaterTest {
         vm.setCustomProperties("prop_1=false;prop_2=incorrect;nonexistent=123");
         var updates = performUpdate();
 
-        assertThat(updates).containsOnly(CompatibilityVersionUpdater.Update.PROPERTIES);
+        assertThat(updates).containsOnly(VmUpdateType.PROPERTIES);
         assertThat(vm.getCustomProperties()).isEqualTo("prop_1=false");
     }
 
@@ -160,7 +160,7 @@ public class CompatibilityVersionUpdaterTest {
         vm.setMigrationPolicyId(NoMigrationPolicy.ID);
         var updates = performUpdate();
 
-        assertThat(updates).containsOnly(CompatibilityVersionUpdater.Update.MIGRATION_POLICY);
+        assertThat(updates).containsOnly(VmUpdateType.MIGRATION_POLICY);
         assertThat(vm.getMigrationPolicyId()).isEqualTo(cluster.getMigrationPolicyId());
     }
 
@@ -168,11 +168,11 @@ public class CompatibilityVersionUpdaterTest {
     public void testUpdateDisplaytype() {
         vm.setDefaultDisplayType(DisplayType.cirrus);
         var updates = performUpdate();
-        assertThat(updates).containsOnly(CompatibilityVersionUpdater.Update.DEFAULT_DISPLAY_TYPE);
+        assertThat(updates).containsOnly(VmUpdateType.DEFAULT_DISPLAY_TYPE);
         assertThat(vm.getDefaultDisplayType()).isEqualTo(DisplayType.vga);
     }
 
-    private Set<CompatibilityVersionUpdater.Update> performUpdate() {
+    private Set<VmUpdateType> performUpdate() {
         return versionUpdater.updateVmCompatibilityVersion(vm, Version.getLast(), cluster);
     }
 

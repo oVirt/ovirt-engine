@@ -31,8 +31,10 @@ import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
+import org.ovirt.engine.core.bll.utils.ChipsetUpdater;
 import org.ovirt.engine.core.bll.utils.CompatibilityVersionUpdater;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmUpdateType;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -41,6 +43,8 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -59,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -377,13 +382,20 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             }
         }
 
-        var updates = new CompatibilityVersionUpdater()
-                .updateVmCompatibilityVersion(getVm(), newVersion, getCluster());
+        BiosType oldClusterBiosType = getVm().getClusterBiosTypeOrigin() != null
+                ? getVm().getClusterBiosTypeOrigin()
+                : BiosType.I440FX_SEA_BIOS;
+        ChipsetType oldChipsetType =
+                BiosTypeUtils.getEffective(getVm().getBiosType(), oldClusterBiosType).getChipsetType();
+        var updates = new CompatibilityVersionUpdater().updateVmCompatibilityVersion(getVm(), newVersion, getCluster());
+        if (ChipsetUpdater.updateChipset(getVm().getStaticData(), oldChipsetType, getCluster())) {
+            updates.add(VmUpdateType.CHIPSET);
+        }
 
         if (!updates.isEmpty()) {
             logOnExecuteEnd(() -> {
                 String updatesString = updates.stream()
-                        .map(update -> update.getDisplayName())
+                        .map(VmUpdateType::getDisplayName)
                         .collect(Collectors.joining(", "));
 
                 addCustomValue("Updates", updatesString);
