@@ -2,13 +2,19 @@ package org.ovirt.engine.core.utils.virtiowin;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.VirtioWinLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,40 +23,58 @@ public class VirtioWinReader implements VirtioWinLoader {
 
     private final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
-    private Logger log = LoggerFactory.getLogger(VirtioWinReader.class);
+    private static Logger log = LoggerFactory.getLogger(VirtioWinReader.class);
+    private static Path directoryPath = FileSystems.getDefault().getPath(Config.<String>getValue(ConfigValues.VirtioWinIsoPath));
+    private static final Pattern VIRTIO_REGEX = Pattern.compile("virtio-win-(?<version>([0-9]+\\.){1,2}([0-9]+))[.\\w]*.[i|I][s|S][o|O]$");
     private List<Map<String, String>> fullAgentList;
     private String agentVersion;
-
-    public void init(Path directoryPath) {
-        try {
-            load(directoryPath);
-        } catch (IOException e) {
-            log.error("Couldn't read VirtIO-Win drivers");
-        }
-    }
+    private Version lastVirtioVersion;
+    private String virtioIsoName;
 
     @Override
-    public void load(Path directoryPath) throws IOException {
-        File dir = directoryPath.toFile();
-        if (dir.exists()) {
-            File[] files = dir.listFiles((dir1, name) -> name.endsWith(".json"));
-
-            if (files != null) {
-                for (File file : files) {
-                    log.info("Loading file '{}'", file.getPath());
-
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    // convert JSON file to map
-                    Map<?, ?> map = objectMapper.readValue(file, Map.class);
-                    if (file.getName().equals("agents.json")) {
-                        fullAgentList = (List<Map<String, String>>) map.get("agents");
+    public void load() {
+        try {
+            File dir = directoryPath.toFile();
+            if (!dir.exists()) {
+                log.error("Directory '{}' doesn't exist.", dir.getPath());
+            } else {
+                File[] files = dir.listFiles();
+                if (files == null || files.length <= 0) {
+                    return;
+                } else {
+                    Version newVirtioVersion = null;
+                    for (File file : files) {
+                        Matcher m = VIRTIO_REGEX.matcher(file.getName().toLowerCase());
+                        if (m.find() && m.groupCount() > 0) {
+                            newVirtioVersion = new Version(m.group(1));
+                            virtioIsoName = file.getName();
+                            break;
+                        }
+                    }
+                    if (newVirtioVersion == null || lastVirtioVersion != null && newVirtioVersion.lessOrEquals(lastVirtioVersion)) {
+                        return;
+                    } else {
+                        lastVirtioVersion = newVirtioVersion;
+                        log.info("New VirtIO-Win ISO was found.");
                     }
                 }
-            } else {
-                log.warn("No manifest file was found for VirtIO-Win");
+
+                for (File file : files) {
+                    if (file.getName().equals("agents.json")) {
+                        log.info("Loading file '{}'", file.getPath());
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        // convert JSON file to map
+                        Map<?, ?> map = objectMapper.readValue(file, Map.class);
+                        fullAgentList = (List<Map<String, String>>) map.get("agents");
+                        break;
+                    }
+                }
+                if (fullAgentList == null) {
+                    log.warn("No manifest file was found for VirtIO-Win");
+                }
             }
-        } else {
-            log.error("Directory '{}' doesn't exist.", dir.getPath());
+        } catch (IOException e) {
+            log.error("Couldn't read VirtIO-Win drivers");
         }
     }
 
@@ -78,5 +102,9 @@ public class VirtioWinReader implements VirtioWinLoader {
                 }
             }
         }
+    }
+
+    public String getVirtioIsoName() {
+        return virtioIsoName;
     }
 }

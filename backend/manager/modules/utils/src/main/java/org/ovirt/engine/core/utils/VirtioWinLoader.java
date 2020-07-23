@@ -1,16 +1,11 @@
 package org.ovirt.engine.core.utils;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
 public interface VirtioWinLoader {
 
     /**
      * This reading and loading from JSON file function.
-     * @param directoryPath the path to the JSON file.
-     * @throws IOException in case there is an error reading the JSON.
      */
-    void load(Path directoryPath) throws IOException;
+    void load();
 
     /**
      * This function will retrieve the available QEMU agent version
@@ -19,4 +14,10 @@ public interface VirtioWinLoader {
      * @return String of the QEMU guest agent version.
      */
     String getAgentVersionByOsName(int osId);
+
+    /**
+     * Used in case we want to get the ISO name of VirtIO-Win.
+     * @return The string of the ISO name containing the VirtIO-Win drivers.
+     */
+    String getVirtioIsoName();
 }
