@@ -241,10 +241,23 @@ public class VmHandlerTest {
         isoNames.add("Rhev-toolSsetup_4.2_5.iso");
 
         // When
-        String latestVersion = vmHandler.getLatestGuestToolsVersion(isoNames);
+        String latestVersion = vmHandler.getLatestGuestToolsVersion(isoNames, isoDomainListSynchronizer.getRegexToolPattern());
 
         // Then
         assertEquals(latestVersion, "4.2.8");
+    }
+
+    @Test
+    public void testGetLatestGuestVirtioVersion() {
+        Set<String> isoNames = new HashSet<>();
+        isoNames.add("virtio-win-0.1.185.iso");
+        isoNames.add("virtio-win-1.9.12.iso");
+
+        // When
+        String latestVersion = vmHandler.getLatestGuestToolsVersion(isoNames, vmHandler.getRegexVirtIoIsoPattern());
+
+        // Then
+        assertEquals(latestVersion, "1.9.12");
     }
 
     @Test

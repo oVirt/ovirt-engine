@@ -604,7 +604,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         updateCdPath();
         // set the path for windows guest tools secondary cd-rom
         if (getParameters().isAttachWgt()) {
-            getVm().setWgtCdPath(cdPathWindowsToLinux(guestToolsVersionTreatment(getRegexVirtIoPattern())));
+            getVm().setWgtCdPath(cdPathWindowsToLinux(guestToolsVersionTreatment(vmHandler.getRegexVirtIoIsoPattern())));
         }
 
         if (!StringUtils.isEmpty(getParameters().getFloppyPath())) {
@@ -737,13 +737,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // false':
             return AuditLogType.UNASSIGNED;
         }
-    }
-
-    private String getRegexVirtIoPattern() {
-        return String.format("%1$s(?<%2$s>[0-9]{1,}.[0-9])\\.(?<%3$s>[0-9]{1,})[.\\w]*.[i|I][s|S][o|O]$",
-                "virtio-win-",
-                IsoDomainListSynchronizer.TOOL_CLUSTER_LEVEL,
-                IsoDomainListSynchronizer.TOOL_VERSION);
     }
 
     protected boolean isVmRunningOnNonDefaultVds() {

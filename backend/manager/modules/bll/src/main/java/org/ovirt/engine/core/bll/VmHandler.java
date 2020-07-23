@@ -40,6 +40,7 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -124,6 +125,7 @@ import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.ReplacementUtils;
+import org.ovirt.engine.core.utils.VirtioWinLoader;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -205,6 +207,9 @@ public class VmHandler implements BackendService {
 
     @Inject
     private OsRepository osRepository;
+
+    @Inject
+    private VirtioWinLoader virtioWinLoader;
 
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
@@ -1056,6 +1061,7 @@ public class VmHandler implements BackendService {
 
     private static final Pattern TOOLS_PATTERN_1 = Pattern.compile("rhev-tools\\s+([\\d\\.]+)");
     private static final Pattern TOOLS_PATTERN_2 = Pattern.compile("ovirt guest tools\\s+([\\d\\.-]+)");
+    private static final Pattern QEMU_GA_PATTERN_VER = Pattern.compile("qemu-guest-agent-([\\d\\.-]+)");
     private static final Pattern QEMU_GA_PATTERN = Pattern.compile("(?i:qemu-guest-agent-|QEMU guest agent)");
 
     private void updateOvirtGuestAgentStatus(VM vm, GuestAgentStatus ovirtGuestAgentStatus) {
@@ -1085,14 +1091,28 @@ public class VmHandler implements BackendService {
         Set<String> isoNamesAsSet = diskImageDao.getIsoDisksForStoragePoolAsRepoImages(poolId).stream()
                 .map(RepoImage::getRepoImageName).collect(Collectors.toSet());
         isoNamesAsSet.addAll(isoList);
-        String latestVersion = getLatestGuestToolsVersion(isoNamesAsSet);
-        if (latestVersion == null) {
+        String latestVersionWGT = getLatestGuestToolsVersion(isoNamesAsSet, isoDomainListSynchronizer.getRegexToolPattern());
+        String latestVersionVIO = getLatestGuestToolsVersion(isoNamesAsSet, getRegexVirtIoIsoPattern());
+        if (latestVersionWGT == null && latestVersionVIO == null) {
             return;
         }
 
         List<VM> vms = vmDao.getAllForStoragePool(poolId);
         for (VM vm : vms) {
-            maybeUpdateOvirtGuestAgentStatus(latestVersion, vm);
+            if (osRepository.isWindows(vm.getVmOsId())) {
+                if (!FeatureSupported.isWindowsGuestToolsSupported(vm.getClusterCompatibilityVersion())) {
+                    virtioWinLoader.load();
+                    if (getLatestGuestToolsVersion(Set.of(virtioWinLoader.getVirtioIsoName()), getRegexVirtIoIsoPattern())
+                            .equals(latestVersionVIO)) {
+                        String availableAgent = virtioWinLoader.getAgentVersionByOsName(vm.getVmOsId());
+                        if (availableAgent != null) {
+                            maybeUpdateOvirtGuestAgentStatus(availableAgent, vm);
+                        }
+                    }
+                } else {
+                    maybeUpdateOvirtGuestAgentStatus(latestVersionWGT, vm);
+                }
+            }
             updateQemuGuestAgentStatus(vm, isQemuAgentInAppsList(vm.getAppList()));
         }
     }
@@ -1100,7 +1120,7 @@ public class VmHandler implements BackendService {
     private void maybeUpdateOvirtGuestAgentStatus(String latestVersion, VM vm) {
         String toolsVersion = currentOvirtGuestAgentVersion(vm);
         if (toolsVersion != null) {
-            if (toolsVersion.compareTo(latestVersion) < 0) {
+            if (new Version(toolsVersion).less(new Version(latestVersion))) {
                 updateOvirtGuestAgentStatus(vm, GuestAgentStatus.UpdateNeeded);
             } else {
                 updateOvirtGuestAgentStatus(vm, GuestAgentStatus.Exists);
@@ -1112,7 +1132,19 @@ public class VmHandler implements BackendService {
 
     public String currentOvirtGuestAgentVersion(VM vm) {
         if (vm.getAppList() != null){
-            if (vm.getAppList().toLowerCase().contains("rhev-tools")) {
+            if (!FeatureSupported.isWindowsGuestToolsSupported(vm.getCompatibilityVersion())) {
+                if (vm.getAppList().toLowerCase().contains("qemu-guest-agent")) {
+                    Matcher m = QEMU_GA_PATTERN_VER.matcher(vm.getAppList().toLowerCase());
+                    if (m.find() && m.groupCount() > 0) {
+                        return m.group(1);
+                    }
+                } else {
+                    // Check if old WGT are installed and we need to sign it as need update.
+                    if (isQemuAgentInAppsList(vm.getAppList()) == GuestAgentStatus.Exists) {
+                        return "0.0.0";
+                    }
+                }
+            } else if (vm.getAppList().toLowerCase().contains("rhev-tools")) {
                 Matcher m = TOOLS_PATTERN_1.matcher(vm.getAppList().toLowerCase());
                 if (m.find() && m.groupCount() > 0) {
                     return m.group(1);
@@ -1142,15 +1174,16 @@ public class VmHandler implements BackendService {
 
     /**
      * iso file name that we are looking for: RHEV_toolsSetup_x.x_x.iso or RHV_toolsSetup_x.x_x.iso
-     * returning latest version only: x.x.x (ie 3.1.2)
+     * in old clusters. Since 4.4 we are looking for virtio-win-x.x.x.iso.
+     * Returning latest version only: x.x.x (ie 3.1.2)
      *
-     * @param isoList
-     *            list of iso file names
+     * @param isoList list of iso file names.
+     * @param pattern the pattern we search with.
      * @return latest iso version or null if no iso tools was found
      */
-    protected String getLatestGuestToolsVersion(Set<String> isoList) {
+    protected String getLatestGuestToolsVersion(Set<String> isoList, String pattern) {
         Version latestVersion = null;
-        Pattern toolsPattern = Pattern.compile(isoDomainListSynchronizer.getRegexToolPattern());
+        Pattern toolsPattern = Pattern.compile(pattern);
         for (String iso: isoList) {
             Matcher m = toolsPattern.matcher(iso.toLowerCase());
             if (m.find()) {
@@ -1165,6 +1198,13 @@ public class VmHandler implements BackendService {
             }
         }
         return latestVersion != null ? latestVersion.toString() : null;
+    }
+
+    public String getRegexVirtIoIsoPattern() {
+        return String.format("%1$s(?<%2$s>[0-9]{1,}.[0-9])\\.(?<%3$s>[0-9]{1,})[.\\w]*.[i|I][s|S][o|O]$",
+                "virtio-win-",
+                IsoDomainListSynchronizer.TOOL_CLUSTER_LEVEL,
+                IsoDomainListSynchronizer.TOOL_VERSION);
     }
 
     /**
