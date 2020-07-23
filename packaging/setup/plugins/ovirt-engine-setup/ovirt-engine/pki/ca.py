@@ -696,7 +696,10 @@ class Plugin(plugin.PluginBase):
 
         if self.environment[oenginecons.PKIEnv.RENEW]:
             for ca_file in self._CA_FILES:
-                if self._expired(self._x509_load_cert(ca_file)):
+                if (
+                    os.path.exists(ca_file) and
+                    self._expired(self._x509_load_cert(ca_file))
+                ):
                     self._renewed_ca_files.add(ca_file)
                     self.logger.info(_('Renewing CA: %s'), ca_file)
                     args = (
