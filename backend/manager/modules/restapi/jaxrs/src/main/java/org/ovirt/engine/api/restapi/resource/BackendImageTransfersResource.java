@@ -14,6 +14,7 @@ import org.ovirt.engine.api.restapi.types.ImageTransferMapper;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
+import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -67,6 +68,7 @@ public class BackendImageTransfersResource
         if (imageTransfer.isSetBackup() && imageTransfer.getBackup().isSetId()) {
             params.setBackupId(Guid.createGuidFromString(imageTransfer.getBackup().getId()));
         }
+        params.setTransferClientType(TransferClientType.TRANSFER_VIA_API);
         return performCreate(ActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(QueryType.GetImageTransferById,
                 IdQueryParameters.class));
     }
