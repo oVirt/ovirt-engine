@@ -374,12 +374,10 @@ public class RunVmValidator {
      * Check isValid only if VM is not HA VM
      */
     private ValidationResult validateImagesForRunVm(VM vm, List<DiskImage> vmDisks) {
-        if (vmDisks.isEmpty()) {
+        if (vmDisks.isEmpty() || (vm.isAutoStartup() && isInternalExecution)) {
             return ValidationResult.VALID;
         }
-
-        return !vm.isAutoStartup() ?
-                new DiskImagesValidator(vmDisks).diskImagesNotLocked() : ValidationResult.VALID;
+        return new DiskImagesValidator(vmDisks).diskImagesNotLocked();
     }
 
     protected ValidationResult validateDisksPassDiscard(VM vm) {
@@ -522,10 +520,9 @@ public class RunVmValidator {
     }
 
     private ValidationResult validateStoragePoolUp(VM vm, StoragePool storagePool, List<DiskImage> vmImages) {
-        if (vmImages.isEmpty() || vm.isAutoStartup()) {
+        if (vmImages.isEmpty() || (vm.isAutoStartup() && isInternalExecution)) {
             return ValidationResult.VALID;
         }
-
         return new StoragePoolValidator(storagePool).existsAndUp();
     }
 
