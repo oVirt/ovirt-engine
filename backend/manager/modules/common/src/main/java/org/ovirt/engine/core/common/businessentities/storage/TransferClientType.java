@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.Identifiable;
 public enum TransferClientType implements Identifiable {
     UNKNOWN(0, "Unknown"),
     TRANSFER_VIA_BROWSER(1, "Transfer via browser"),
-    TRANSFER_VIA_SDK(2, "Transfer via sdk");
+    TRANSFER_VIA_API(2, "Transfer via API");
 
     private int value;
     private String description;
