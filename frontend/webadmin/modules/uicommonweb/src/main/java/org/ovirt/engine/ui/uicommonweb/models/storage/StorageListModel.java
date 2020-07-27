@@ -1828,6 +1828,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         storageDomain = sdsToAdd;
         saveBaseStorageProperties((StorageModel) getWindow());
 
+        // clearing cached storage domains
+        storageDomainsToAdd = null;
+
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
         params.setVdsId(hostId);
         Frontend.getInstance().runAction(ActionType.AddExistingFileStorageDomain, params, result -> {
@@ -1900,9 +1903,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             UICommand okCommand = UICommand.createDefaultOkUiCommand(okCommandName, this);
             okCommand.execute();
         }
-
-        // Clearing cached domains
-        storageDomainsToAdd = null;
     }
 
     private void checkDomainAttachedToDc(String commandName, List<StorageDomain> storageDomains,
