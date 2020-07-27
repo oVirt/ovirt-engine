@@ -98,6 +98,11 @@ public class OvfVmWriter extends OvfOvirtWriter {
         return vm.getEffectiveBiosType();
     }
 
+    @Override
+    protected boolean isCustomBiosType() {
+        return vm.getBiosType() != BiosType.CLUSTER_DEFAULT;
+    }
+
     private void writeLogEvent(String name, String value) {
         StringBuilder fullNameSB = new StringBuilder(EXPORT_ONLY_PREFIX);
         fullNameSB.append(name);

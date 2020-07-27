@@ -69,6 +69,11 @@ public class OvfOvaVmWriter extends OvfOvaWriter {
     }
 
     @Override
+    protected boolean isCustomBiosType() {
+        return vm.getBiosType() != BiosType.CLUSTER_DEFAULT;
+    }
+
+    @Override
     protected Integer maxNumOfVcpus() {
         return VmCpuCountHelper.calcMaxVCpu(vm, getVersion());
     }

@@ -62,6 +62,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     private boolean trustedService;
     private boolean hasIllegalImages;
     private BiosType clusterBiosType;
+    private BiosType clusterBiosTypeOrigin;
 
     public VM() {
         this(new VmStatic(), new VmDynamic(), new VmStatistics());
@@ -1871,6 +1872,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
 
     public BiosType getEffectiveBiosType() {
         return getBiosType() != BiosType.CLUSTER_DEFAULT ? getBiosType() : getClusterBiosType();
+    }
+
+    public BiosType getClusterBiosTypeOrigin() {
+        return clusterBiosTypeOrigin;
+    }
+
+    public void setClusterBiosTypeOrigin(BiosType clusterBiosTypeOrigin) {
+        this.clusterBiosTypeOrigin = clusterBiosTypeOrigin;
     }
 
     public boolean getUseTscFrequency() {

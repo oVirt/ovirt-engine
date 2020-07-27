@@ -65,6 +65,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private BiosType clusterBiosType;
 
+    private BiosType clusterBiosTypeOrigin;
+
     public VmTemplate() {
         setNiceLevel(0);
         setCpuShares(0);
@@ -411,6 +413,14 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     public BiosType getEffectiveBiosType() {
         return getBiosType() != BiosType.CLUSTER_DEFAULT ? getBiosType() : getClusterBiosType();
+    }
+
+    public BiosType getClusterBiosTypeOrigin() {
+        return clusterBiosTypeOrigin;
+    }
+
+    public void setClusterBiosTypeOrigin(BiosType clusterBiosTypeOrigin) {
+        this.clusterBiosTypeOrigin = clusterBiosTypeOrigin;
     }
 
 }

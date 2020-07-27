@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -257,5 +258,10 @@ public class OvfVmReader extends OvfOvirtReader {
 
     protected void setClusterArch(ArchitectureType arch) {
         _vm.setClusterArch(arch);
+    }
+
+    @Override
+    protected void assignClusterBiosTypeOrigin(BiosType biosType) {
+        _vm.setClusterBiosTypeOrigin(biosType);
     }
 }

@@ -161,6 +161,7 @@ public final class Cloner {
         vm.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());
         vm.setBiosType(instance.getBiosType());
         vm.setClusterBiosType(instance.getClusterBiosType());
+        vm.setClusterBiosTypeOrigin(instance.getClusterBiosTypeOrigin());
         vm.setCustomCpuName(instance.getCustomCpuName());
         vm.setCustomCompatibilityVersion(instance.getCustomCompatibilityVersion());
         vm.setId(instance.getId());
@@ -486,6 +487,7 @@ public final class Cloner {
         obj.setMultiQueuesEnabled(instance.isMultiQueuesEnabled());
         obj.setSealed(instance.isSealed());
         obj.setClusterBiosType(instance.getClusterBiosType());
+        obj.setClusterBiosTypeOrigin(instance.getClusterBiosTypeOrigin());
         return obj;
     }
 

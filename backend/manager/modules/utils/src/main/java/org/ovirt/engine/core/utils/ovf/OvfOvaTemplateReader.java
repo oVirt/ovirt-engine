@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils.ovf;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
@@ -43,4 +44,10 @@ public class OvfOvaTemplateReader extends OvfOvaReader {
     protected void setClusterArch(ArchitectureType arch) {
         template.setClusterArch(arch);
     }
+
+    @Override
+    protected void assignClusterBiosTypeOrigin(BiosType biosType) {
+        template.setClusterBiosTypeOrigin(biosType);
+    }
+
 }

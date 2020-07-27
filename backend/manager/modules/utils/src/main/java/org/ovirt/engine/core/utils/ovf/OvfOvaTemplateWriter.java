@@ -40,6 +40,11 @@ public class OvfOvaTemplateWriter extends OvfOvaWriter {
     }
 
     @Override
+    protected boolean isCustomBiosType() {
+        return template.getBiosType() != BiosType.CLUSTER_DEFAULT;
+    }
+
+    @Override
     protected Integer maxNumOfVcpus() {
         return VmCpuCountHelper.calcMaxVCpu(template, getVersion());
     }
