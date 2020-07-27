@@ -581,8 +581,13 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             DiskImage diskImage = tmpRetValue.getActionReturnValue();
             addDiskPermissions(diskImage);
             getReturnValue().setActionReturnValue(diskImage.getId());
-            getParameters().setDiskInfo(diskImage);
-            persistCommandIfNeeded();
+
+            // We do not want PVCDisk to trigger callbacks, so updating and persisting
+            // the parameters is not needed
+            if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
+                getParameters().setDiskInfo(diskImage);
+                persistCommandIfNeeded();
+            }
         }
         getReturnValue().setFault(tmpRetValue.getFault());
         setSucceeded(tmpRetValue.getSucceeded());
