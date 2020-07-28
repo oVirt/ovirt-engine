@@ -6,7 +6,9 @@ import tarfile
 import time
 
 
+from subprocess import CalledProcessError
 from subprocess import call
+from subprocess import check_call
 from subprocess import check_output
 
 import six
@@ -59,7 +61,10 @@ def convert_disks(ova_path):
         try:
             qemu_cmd = ("qemu-img convert -p -T none -O qcow2 '%s' '%s'"
                         % (path, loop))
-            call(['su', '-p', '-c', qemu_cmd, 'vdsm'])
+            check_call(['su', '-p', '-c', qemu_cmd, 'vdsm'])
+        except CalledProcessError as exc:
+            print("qemu-img conversion failed with error: ", exc.returncode)
+            raise
         finally:
             os.chown(loop, loop_stat.st_uid, loop_stat.st_gid)
             call(['losetup', '-d', loop])
