@@ -46,6 +46,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
         }
         setDisks(disks);
         initStorageDomains();
+        getTargetStorageDomains().setIsAvailable(getDiskImages().size() > 1);
     }
 
     @Override

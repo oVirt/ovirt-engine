@@ -4,23 +4,32 @@
     xmlns:ui="urn:ui:com.google.gwt.uibinder"
     xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
     xmlns:s="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
     <ui:style>
         .container {
             width: 100%;
+            margin-top: 5px;
         }
         .addMargin {
             margin-bottom: 5px;
+            margin: 5px;
         }
     </ui:style>
 
     <d:SimpleDialogPanel width="575px" height="410px">
         <d:content>
             <b:Container addStyleNames="{style.container}">
+                <b:Row>
+                    <b:Column size="SM_12">
+                        <e:ListModelListBoxEditor ui:field="targetStorageListEditor" label="{constants.targetStorageDomain}" visible="false" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    </b:Column>
+                </b:Row>
                 <b:Row>
                     <b:Column size="SM_12">
                         <s:DisksAllocationView ui:field="disksAllocationView" listWidth="100%" showSource="true" usePatternFly="true" addStyleNames="{style.addMargin}" />

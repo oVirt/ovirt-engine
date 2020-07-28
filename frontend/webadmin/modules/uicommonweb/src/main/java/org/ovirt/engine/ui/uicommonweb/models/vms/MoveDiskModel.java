@@ -65,6 +65,8 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
             updateMoveWarning(disks);
             initStorageDomains();
         });
+
+        getTargetStorageDomains().setIsAvailable(getDiskImages().size() > 1);
     }
 
     private void updateMoveWarning(ArrayList<DiskModel> disks) {

@@ -1900,4 +1900,6 @@ public interface CommonApplicationConstants extends Constants {
     String vmCustomSerialNumber();
 
     String k8s_namespace();
+
+    String targetStorageDomain();
 }

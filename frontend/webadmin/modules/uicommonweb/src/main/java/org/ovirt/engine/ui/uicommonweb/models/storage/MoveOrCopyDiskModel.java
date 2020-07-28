@@ -173,6 +173,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
         sortDisks();
         postCopyOrMoveInit();
+        updateTargetStorageDomains();
     }
 
     private ArrayList<StorageDomain> getDestinationDomains(ArrayList<StorageDomain> activeStorageDomains,

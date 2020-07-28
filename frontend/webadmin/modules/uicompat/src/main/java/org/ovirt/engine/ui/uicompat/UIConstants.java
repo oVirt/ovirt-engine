@@ -2184,4 +2184,6 @@ public interface UIConstants extends Constants {
     String chipsetDependentVmDeviceChangesTitle();
 
     String chipsetDependentVmDeviceChangesMessage();
+
+    String mixedTargetDomains();
 }

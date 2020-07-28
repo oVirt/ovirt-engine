@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -31,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -46,6 +50,9 @@ public class DisksAllocationModel extends EntityModel {
     private static final String THIN_PROVISIONING = "THIN_PROVISIONING";  //$NON-NLS-1$
 
     private final IEventListener<EventArgs> storageDomainEventListener = (ev, sender, args) -> updateDisks(sender);
+
+    // A dummy domain with "Mixed" title
+    private final StorageDomain mixedStorageDomain = new StorageDomain();
 
     private List<DiskModel> disks;
 
@@ -71,6 +78,16 @@ public class DisksAllocationModel extends EntityModel {
 
     public void setDiskAllocationTargetEnabled(EntityModel<Boolean> enabled) {
         this.diskAllocationTargetEnabled = enabled;
+    }
+
+    private ListModel<StorageDomain> targetStorageDomains;
+
+    public ListModel<StorageDomain> getTargetStorageDomains() {
+        return targetStorageDomains;
+    }
+
+    public void setTargetStorageDomains(ListModel<StorageDomain> targetStorageDomains) {
+        this.targetStorageDomains = targetStorageDomains;
     }
 
     public void setDisks(List<DiskModel> value) {
@@ -167,11 +184,16 @@ public class DisksAllocationModel extends EntityModel {
     public DisksAllocationModel() {
         setImageToDestinationDomainMap(new HashMap<>());
 
+        setTargetStorageDomains(new ListModel<>());
+        getTargetStorageDomains().setIsAvailable(false);
+
         setDynamicWarning(new EntityModel<>());
         getDynamicWarning().setIsAvailable(false);
 
         setDiskAllocationTargetEnabled(new EntityModel<>(false));
         getDiskAllocationTargetEnabled().setIsAvailable(false);
+
+        mixedStorageDomain.setStorageName(constants.mixedTargetDomains());
     }
 
     private void updateQuota(Guid storageDomainId, final ListModel<Quota> isItem, final Guid diskQuotaId) {
@@ -346,7 +368,59 @@ public class DisksAllocationModel extends EntityModel {
                     break;
                 }
             }
+            updateSelectedTargetStorage();
         }
+    }
+
+    protected List<DiskModel> getDisksToOperate() {
+        return disks.stream()
+                .filter(d -> d.getStorageDomain().getIsChangable())
+                .collect(Collectors.toList());
+    }
+
+    protected void updateTargetStorageDomains() {
+        // Add the intersection of disks target domains to targetStorageDomains
+        List<DiskModel> disksToOperate = getDisksToOperate();
+        if (disksToOperate == null || disksToOperate.isEmpty()) {
+            return;
+        }
+
+        Set<StorageDomain> commonSDs = new HashSet<>(disksToOperate.get(0).getStorageDomain().getItems());
+        disksToOperate.stream()
+                .map(diskModel -> diskModel.getStorageDomain().getItems())
+                .forEach(commonSDs::retainAll);
+
+        commonSDs.add(mixedStorageDomain);
+        targetStorageDomains.setItems(commonSDs);
+        targetStorageDomains.setSelectedItem(mixedStorageDomain);
+
+        // Add event listener to update disk models
+        Event<EventArgs> selectedItemChangedEvent = targetStorageDomains.getSelectedItemChangedEvent();
+        selectedItemChangedEvent.addListener((ev, sender, args) -> {
+            StorageDomain selectedSD = targetStorageDomains.getSelectedItem();
+            if (targetStorageDomains.getItems() == null || selectedSD == mixedStorageDomain) {
+                return;
+            }
+
+            // Set disks target domain according to the selected storage domain
+            disksToOperate.forEach(diskModel -> diskModel.getStorageDomain().setSelectedItem(selectedSD));
+        });
+    }
+
+    private void updateSelectedTargetStorage() {
+        List<DiskModel> disksToOperate = getDisksToOperate();
+        if (!targetStorageDomains.getIsAvailable() || targetStorageDomains.getItems() == null) {
+            return;
+        }
+
+        boolean sameTargetDomainForAllDisks =
+                disksToOperate.stream().map(d -> d.getStorageDomain().getSelectedItem())
+                        .distinct()
+                        .count() == 1;
+
+        targetStorageDomains.setSelectedItem(sameTargetDomainForAllDisks ?
+                disksToOperate.get(0).getStorageDomain().getSelectedItem() :
+                mixedStorageDomain);
     }
 
     @Override

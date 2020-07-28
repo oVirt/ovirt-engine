@@ -1,9 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.AlertWithIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
@@ -37,6 +40,10 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     AlertWithIcon dynamicWarningMessage;
 
     @UiField(provided = true)
+    @Path(value = "targetStorageDomains.selectedItem")
+    ListModelListBoxEditor<StorageDomain> targetStorageListEditor;
+
+    @UiField(provided = true)
     @Ignore
     DisksAllocationView disksAllocationView;
 
@@ -46,6 +53,7 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     public DisksAllocationPopupView(EventBus eventBus) {
         super(eventBus);
 
+        targetStorageListEditor = new ListModelListBoxEditor<>(new NameRenderer<>());
         disksAllocationView = new DisksAllocationView();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         disksAllocationView.setUsePatternFly(true);
