@@ -33,9 +33,6 @@ public class KubevirtUtils {
         if (promUrl == null) {
             promUrl = PrometheusClient.fetchPrometheusUrl(provider, auditLogDirector);
             if (promUrl == null) {
-                log.error(
-                    "No prometheus URL provided. Statistics won't be fetched for provider '{}'", provider.getName()
-                );
                 return null;
             }
         }
