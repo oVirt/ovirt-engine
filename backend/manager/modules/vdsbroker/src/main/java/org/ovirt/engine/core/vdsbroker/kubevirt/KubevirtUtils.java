@@ -11,9 +11,6 @@ import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.apis.CoreV1Api;
@@ -25,23 +22,6 @@ import openshift.io.OpenshiftApi;
 public class KubevirtUtils {
     public static String COMMENT_ANNOTATION = "kubevirt.io/comment";
     public static String DESCRIPTION_ANNOTATION = "kubevirt.io/description";
-
-    private static Logger log = LoggerFactory.getLogger(KubevirtUtils.class);
-
-    public static PrometheusClient create(Provider provider, AuditLogDirector auditLogDirector) {
-        String promUrl = ((KubevirtProviderProperties)provider.getAdditionalProperties()).getPrometheusUrl();
-        if (promUrl == null) {
-            promUrl = PrometheusClient.fetchPrometheusUrl(provider, auditLogDirector);
-            if (promUrl == null) {
-                return null;
-            }
-        }
-        if (promUrl.startsWith("https")) {
-            return new PrometheusClient(provider, promUrl, PrometheusClient.getContext(provider));
-        } else {
-            return new PrometheusClient(provider, promUrl);
-        }
-    }
 
     public static CoreV1Api getCoreApi(Provider<?> provider) throws IOException {
         ApiClient client = createApiClient(provider);

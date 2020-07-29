@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Seconds;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtAuditUtils;
 import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtUtils;
 import org.ovirt.engine.core.vdsbroker.kubevirt.PrometheusClient;
+import org.ovirt.engine.core.vdsbroker.kubevirt.PrometheusUrlResolver;
 import org.ovirt.engine.core.vdsbroker.monitoring.PollVmStatsRefresher;
 import org.ovirt.engine.core.vdsbroker.monitoring.VdsmVm;
 import org.slf4j.Logger;
@@ -61,6 +63,9 @@ public class KubevirtVmStatsRefresher extends PollVmStatsRefresher {
     private VmStaticDao vmStaticDao;
     @Inject
     private AuditLogDirector auditLogDirector;
+    @Inject
+    private PrometheusUrlResolver prometheusUrlResolver;
+
     private KubevirtApi api;
     private PrometheusClient prometheusClient;
 
@@ -85,8 +90,9 @@ public class KubevirtVmStatsRefresher extends PollVmStatsRefresher {
 
     private PrometheusClient getPrometheusClient() {
         if (prometheusClient == null) {
-            Provider provider = providerDao.get(vdsManager.getClusterId());
-            prometheusClient = KubevirtUtils.create(provider, auditLogDirector);
+            Provider<KubevirtProviderProperties> provider =
+                    (Provider<KubevirtProviderProperties>) providerDao.get(vdsManager.getClusterId());
+            prometheusClient = PrometheusClient.create(provider, prometheusUrlResolver);
         }
         return prometheusClient;
     }

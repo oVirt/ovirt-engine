@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.HugePage;
+import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
-import org.ovirt.engine.core.vdsbroker.kubevirt.KubevirtUtils;
 import org.ovirt.engine.core.vdsbroker.kubevirt.PrometheusClient;
+import org.ovirt.engine.core.vdsbroker.kubevirt.PrometheusUrlResolver;
 import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoringInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,19 +19,22 @@ public class KubevirtNodesMonitoring implements HostMonitoringInterface {
     private static Logger log = LoggerFactory.getLogger(KubevirtNodesMonitoring.class);
     private ProviderDao providerDao;
     private VdsManager vdsManager;
+    private PrometheusUrlResolver prometheusUrlResolver;
     private PrometheusClient prometheusClient;
-    private AuditLogDirector auditLogDirector;
 
-    public KubevirtNodesMonitoring(VdsManager vdsManager, ProviderDao providerDao, AuditLogDirector auditLogDirector) {
+    public KubevirtNodesMonitoring(VdsManager vdsManager,
+                                   ProviderDao providerDao,
+                                   PrometheusUrlResolver prometheusUrlResolver) {
         this.vdsManager = vdsManager;
         this.providerDao = providerDao;
-        this.auditLogDirector = auditLogDirector;
+        this.prometheusUrlResolver = prometheusUrlResolver;
     }
 
     private PrometheusClient getPrometheusClient() {
         if (prometheusClient == null) {
-            Provider<?> provider = providerDao.get(vdsManager.getClusterId());
-            prometheusClient = KubevirtUtils.create(provider, auditLogDirector);
+            Provider<KubevirtProviderProperties> provider =
+                    (Provider<KubevirtProviderProperties>) providerDao.get(vdsManager.getClusterId());
+            prometheusClient = PrometheusClient.create(provider, prometheusUrlResolver);
         }
         return prometheusClient;
     }
@@ -61,10 +64,10 @@ public class KubevirtNodesMonitoring implements HostMonitoringInterface {
                 // huge pages
                 stat.setAnonymousHugePages(promClient.getNodeAnonHugePages(name));
                 stat.setHugePages(
-                        promClient.getNodeHugePages(name).stream()
+                        promClient.getNodeHugePages(name)
+                                .stream()
                                 .map(k -> new HugePage(k.getFirst(), k.getSecond()))
-                                .collect(Collectors.toList())
-                );
+                                .collect(Collectors.toList()));
 
                 // boot time
                 stat.setBootTime(promClient.getNodeBootTime(name));

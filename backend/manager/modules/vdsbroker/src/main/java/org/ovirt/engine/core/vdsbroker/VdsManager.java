@@ -68,6 +68,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxy;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxyManager;
+import org.ovirt.engine.core.vdsbroker.kubevirt.PrometheusUrlResolver;
 import org.ovirt.engine.core.vdsbroker.monitoring.HostConnectionRefresherInterface;
 import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoring;
 import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoringInterface;
@@ -141,6 +142,10 @@ public class VdsManager {
 
     @Inject
     private Instance<IrsProxyManager> irsProxyManager;
+
+    @Inject
+    private PrometheusUrlResolver prometheusUrlResolver;
+
     private final AtomicInteger unrespondedAttempts;
     private final Guid vdsId;
     private final VdsMonitor vdsMonitor = new VdsMonitor();
@@ -317,7 +322,7 @@ public class VdsManager {
     private HostMonitoringInterface createHostMonitoring() {
         switch (cachedVds.getVdsType()) {
         case KubevirtNode:
-            return new KubevirtNodesMonitoring(this, providerDao, auditLogDirector);
+            return new KubevirtNodesMonitoring(this, providerDao, prometheusUrlResolver);
         default:
             return new HostMonitoring(this,
                     cachedVds,

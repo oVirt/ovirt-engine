@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.kubevirt;
 
+import static org.ovirt.engine.core.vdsbroker.kubevirt.PrometheusUrlResolver.NOT_LOGGED_UNTIL_FAILED_AGAIN_MSG;
+
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
@@ -17,11 +17,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -44,14 +41,10 @@ import org.codehaus.jackson.node.NumericNode;
 import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.kubernetes.client.ApiException;
-import openshift.io.OpenshiftApi;
-import openshift.io.V1Route;
-import openshift.io.V1RouteList;
+import com.google.common.annotations.VisibleForTesting;
 
 public class PrometheusClient implements Closeable {
 
@@ -61,11 +54,6 @@ public class PrometheusClient implements Closeable {
     private static final Logger log = LoggerFactory.getLogger(PrometheusClient.class);
     private static final NoCaTrustManager noCaTrustManager = new NoCaTrustManager();
     private static final ObjectMapper mapper = new ObjectMapper();
-    private static final ConcurrentMap<String, LocalDateTime> openshiftConnectFailures = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<String, LocalDateTime> prometheusUrlRetrieveFailures =
-            new ConcurrentHashMap<>();
-    private static final ConcurrentMap<String, LocalDateTime> prometheusUrlByRouteRetrieveFailures =
-            new ConcurrentHashMap<>();
     private static final ConcurrentMap<PrometheusQueryId, LocalDateTime> metricsQueriesFailures =
             new ConcurrentHashMap<>();
 
@@ -73,16 +61,23 @@ public class PrometheusClient implements Closeable {
     private Provider<KubevirtProviderProperties> provider;
     private String promUrl;
 
-    public PrometheusClient(Provider<KubevirtProviderProperties> provider, String promUrl) {
-        this.provider = provider;
-        this.promUrl = promUrl;
-        this.httpClient = newClient(null);
-    }
-
-    public PrometheusClient(Provider<KubevirtProviderProperties> provider, String promUrl, SSLContext sslContext) {
+    private PrometheusClient(Provider<KubevirtProviderProperties> provider, String promUrl, SSLContext sslContext) {
         this.provider = provider;
         this.promUrl = promUrl;
         this.httpClient = newClient(sslContext);
+    }
+
+    public static PrometheusClient create(Provider<KubevirtProviderProperties> provider,
+            PrometheusUrlResolver prometheusUrlResolver) {
+        String promUrl = prometheusUrlResolver.fetchPrometheusUrl(provider);
+        if (promUrl == null) {
+            return null;
+        }
+        if (promUrl.startsWith("https")) {
+            return new PrometheusClient(provider, promUrl, PrometheusClient.getContext(provider));
+        } else {
+            return new PrometheusClient(provider, promUrl, null);
+        }
     }
 
     private CloseableHttpClient newClient(SSLContext sslContext) {
@@ -224,132 +219,6 @@ public class PrometheusClient implements Closeable {
         }
     }
 
-    public static String fetchPrometheusUrl(Provider<KubevirtProviderProperties> provider,
-            AuditLogDirector auditLogDirector) {
-        OpenshiftApi api;
-        Optional<V1Route> route = Optional.empty();
-        try {
-            api = KubevirtUtils.getOpenshiftApi(provider);
-            if (openshiftConnectFailures.remove(provider.getUrl()) != null) {
-                log.info("Successfully re-connected to openshift for kubevirt provider (url = {})", provider.getUrl());
-            }
-        } catch (IOException e) {
-            handleFailureConnectingOpenshift(provider, e);
-            return null;
-        }
-
-        try {
-            V1RouteList routes = api.listNamespacedRoute("openshift-monitoring",
-                    null,
-                    "metadata.name=prometheus-k8s",
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    Boolean.FALSE);
-            route = routes.getItems().stream().findAny();
-            if (prometheusUrlRetrieveFailures.remove(provider.getUrl()) != null) {
-                log.info("Prometheus url successfully retrieved for kubevirt provider (url = {})", provider.getUrl());
-            }
-        } catch (ApiException e) {
-            KubevirtAuditUtils.auditAuthorizationIssues(e, auditLogDirector, provider);
-            handleFailureFetchingPrometheusUrl(provider, e);
-        }
-
-        if (route.isPresent()) {
-            String host = route.get().getSpec().getHost();
-            try {
-                // TODO: Test if it's up and running before returning:
-                log.debug("Found Prometheus route '{}'", host);
-                String url = new URI("https", host, null, null).toString();
-                if (prometheusUrlByRouteRetrieveFailures.remove(provider.getUrl()) != null) {
-                    log.info("Prometheus url successfully retrieved for kubevirt provider (host = {}, url = {})",
-                            host,
-                            provider.getUrl());
-                }
-                return url;
-            } catch (URISyntaxException e) {
-                handleFailureFetchingPrometheusUrlForHost(provider, host, e);
-            }
-        } else {
-            log.error("No prometheus URL provided. Statistics won't be fetched for provider '{}'", provider.getName());
-        }
-        return null;
-    }
-
-    private static void handleFailureConnectingOpenshift(Provider<KubevirtProviderProperties> provider,
-            IOException cause) {
-        handleFailure(provider::getUrl,
-                openshiftConnectFailures,
-                cause,
-                ignored -> log.error("Failed to connect to openshift for kubevirt provider (url = {}): {}. " +
-                                "This error will not be logged again " +
-                                "until connectivity is broken again after being successfully restored",
-                        provider.getUrl(),
-                        ExceptionUtils.getRootCauseMessage(cause)),
-                firstFailure -> log.debug(
-                        "Still failed to connect to openshift for kubevirt provider (url= {}): {}), first failure: {}",
-                        provider.getUrl(),
-                        cause,
-                        firstFailure));
-    }
-
-    private static void handleFailureFetchingPrometheusUrl(Provider<KubevirtProviderProperties> provider,
-            ApiException cause) {
-        handleFailure(provider::getUrl,
-                prometheusUrlRetrieveFailures,
-                cause,
-                ignored -> log.error("Failed to retrieve prometheus url for kubevirt provider (url = {}): {}. " +
-                                "This error will not be logged again " +
-                                "until connectivity is broken again after being successfully restored",
-                        provider.getUrl(),
-                        ExceptionUtils.getRootCauseMessage(cause)),
-                firstFailure -> log.debug(
-                        "Still failed to retrieve prometheus url for kubevirt provider (url= {}): {}), first failure: {}",
-                        provider.getUrl(),
-                        cause,
-                        firstFailure));
-    }
-
-    private static void handleFailureFetchingPrometheusUrlForHost(Provider<KubevirtProviderProperties> provider,
-            String host,
-            URISyntaxException cause) {
-        handleFailure(() -> provider.getUrl() + "|" + host,
-                prometheusUrlByRouteRetrieveFailures,
-                cause,
-                ignored -> log.error(
-                        "Failed to retrieve prometheus url for kubevirt provider (host = {}, url = {}): {}. " +
-                                "This error will not be logged again " +
-                                "until connectivity is broken again after being successfully restored",
-                        host,
-                        provider.getUrl(),
-                        ExceptionUtils.getRootCauseMessage(cause)),
-                firstFailure -> log.debug(
-                        "Still failed to retrieve prometheus url for kubevirt provider (host = {}, url= {}): {}), first failure: {}",
-                        host,
-                        provider.getUrl(),
-                        cause,
-                        firstFailure));
-    }
-
-    private static void handleFailure(Supplier<String> idSupplier,
-            ConcurrentMap<String, LocalDateTime> failures,
-            Throwable cause,
-            Consumer<Void> errorLoggingStatement,
-            Consumer<LocalDateTime> continuingErrorLoggingStatement) {
-
-        LocalDateTime firstFailure = failures.putIfAbsent(idSupplier.get(), LocalDateTime.now());
-        if (firstFailure == null) {
-            if (log.isErrorEnabled()) {
-                errorLoggingStatement.accept(null);
-                log.debug("Exception", cause);
-            }
-        } else {
-            continuingErrorLoggingStatement.accept(firstFailure);
-        }
-    }
-
     private Long bToMb(Long bytes) {
         return bytes / BYTES_IN_MiB;
     }
@@ -404,8 +273,7 @@ public class PrometheusClient implements Closeable {
                 if (log.isWarnEnabled()) {
                     log.warn(
                             "Failed to fetch metrics from {} for query: {}. " +
-                                    "This error will not be logged again " +
-                                    "until connectivity is broken again after being successfully restored",
+                                    NOT_LOGGED_UNTIL_FAILED_AGAIN_MSG,
                             queryId.prometheusUrl,
                             queryId.query);
                     try {
@@ -421,7 +289,7 @@ public class PrometheusClient implements Closeable {
                     }
                 }
             } else {
-                log.debug("Still failed to fetched metrics from {} for query: {}, since: {}",
+                log.debug("Continuation of: Failed to fetch metrics from {} for query: {}.  First failure: {}",
                         queryId.prometheusUrl,
                         queryId.query,
                         firstFailureTime);
@@ -446,7 +314,7 @@ public class PrometheusClient implements Closeable {
         return send(request);
     }
 
-    private static String ofFormData(Map<Object, Object> data) {
+    static String ofFormData(Map<Object, Object> data) {
         var builder = new StringBuilder();
         for (Map.Entry<Object, Object> entry : data.entrySet()) {
             if (builder.length() > 0) {
@@ -467,6 +335,11 @@ public class PrometheusClient implements Closeable {
             log.debug("Exception: ", e);
             return null;
         }
+    }
+
+    @VisibleForTesting
+    void setHttpClient(CloseableHttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 
     private static class NoCaTrustManager implements X509TrustManager {
