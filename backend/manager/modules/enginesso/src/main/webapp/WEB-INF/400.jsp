@@ -36,7 +36,7 @@
 
             <div class="pf-l-stack obrand_errorPageSection">
                 <div class="pf-l-stack__item obrand_errorPageSectionTitle">
-                    ${requestScope['javax.servlet.error.message']}
+                    <c:out value="${requestScope['javax.servlet.error.message']}"/>
                 </div>
                 <div class="pf-l-stack__item obrand_errorPageSectionAction">
                     <a href="${pageContext.request.contextPath}/"><fmt:message key="badrequestpage.link" bundle="${badrequestpage}" /></a>

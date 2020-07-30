@@ -60,7 +60,7 @@
                                 <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
                             </div>
                             <h4 class="pf-c-alert__title">
-                                <span class="pf-screen-reader">Warning alert:</span>${sessionScope.error_description}
+                                <span class="pf-screen-reader">Warning alert:</span><c:out value="${sessionScope.error_description}"/>
                             </h4>
                             <div class="pf-c-alert__action">
                                 <button class="pf-c-button pf-m-plain" type="button" aria-label="Close warning alert">

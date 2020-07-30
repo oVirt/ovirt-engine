@@ -66,7 +66,7 @@
                         <p class="pf-c-form__helper-text pf-m-error">
                             <c:if test="${ssoSession.changePasswdMessage != null && ssoSession.changePasswdMessage != ''}">
                                 <i class="fas fa-exclamation-circle pf-c-form__helper-text-icon"></i>
-                                ${ssoSession.changePasswdMessage}
+                                <c:out value="${ssoSession.changePasswdMessage}"/>
                                 <c:set target="${ssoSession}" property="changePasswdMessage" value="" />
                             </c:if>
                         </p>

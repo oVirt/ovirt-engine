@@ -66,7 +66,7 @@
                         <p class="pf-c-form__helper-text pf-m-error">
                             <c:if test="${ssoSession.loginMessage != null && ssoSession.loginMessage != '' }">
                                 <i class="fas fa-exclamation-circle pf-c-form__helper-text-icon"></i>
-                                ${ssoSession.loginMessage}
+                                <c:out value="${ssoSession.loginMessage}"/>
                                 <c:set target="${ssoSession}" property="loginMessage" value="" />
                             </c:if>
                         </p>
