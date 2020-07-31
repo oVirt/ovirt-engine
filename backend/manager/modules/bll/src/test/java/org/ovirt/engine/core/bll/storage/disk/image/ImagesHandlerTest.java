@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,11 +31,14 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 /** A test case for {@link ImagesHandler} */
 @ExtendWith(MockitoExtension.class)
@@ -60,6 +64,12 @@ public class ImagesHandlerTest {
     private DiskImage disk1;
     private DiskImage disk2;
     private DiskImage disk3;
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+        );
+    }
 
     @BeforeEach
     public void setUp() {
@@ -169,6 +179,7 @@ public class ImagesHandlerTest {
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testAggregateDiskImagesSnapshots() {
         disk1.setId(Guid.newGuid());
         disk1.setActive(true);

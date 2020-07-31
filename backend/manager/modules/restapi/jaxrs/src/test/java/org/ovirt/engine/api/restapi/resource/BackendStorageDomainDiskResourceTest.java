@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -24,9 +25,12 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendStorageDomainDiskResourceTest
@@ -39,7 +43,12 @@ public class BackendStorageDomainDiskResourceTest
         super(new BackendStorageDomainDiskResource(STORAGE_DOMAIN_ID, DISK_ID.toString()));
     }
 
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false));
+    }
+
     @Test
+    @MockedConfig("mockConfiguration")
     public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
@@ -55,6 +64,7 @@ public class BackendStorageDomainDiskResourceTest
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
@@ -68,6 +78,7 @@ public class BackendStorageDomainDiskResourceTest
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testExport() {
         setUriInfo(setUpActionExpectations(ActionType.ExportRepoImage,
                 ExportRepoImageParameters.class,
@@ -86,12 +97,14 @@ public class BackendStorageDomainDiskResourceTest
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testBadGuid() {
         verifyNotFoundException(
                 assertThrows(WebApplicationException.class, () -> new BackendStorageDomainVmResource(null, "foo")));
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testIncompleteExport() {
         setUriInfo(setUpBasicUriExpectations());
         verifyIncompleteException(

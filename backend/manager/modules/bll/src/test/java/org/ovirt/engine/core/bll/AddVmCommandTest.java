@@ -37,6 +37,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
+import  org.ovirt.engine.core.utils.MockedConfig;
+
 
 @ExtendWith(MockConfigExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -64,7 +66,8 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
                 MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels,
                         new HashSet<>(Collections.singletonList(new Version(3, 0)))),
                 MockConfigDescriptor.of(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
-                MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, Version.getLast(), migrationMap)
+                MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, Version.getLast(), migrationMap),
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
         );
     }
 
@@ -96,6 +99,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void validateSpaceAndThreshold() {
         assertTrue(cmd.validateSpaceRequirements());
         verify(storageDomainValidator, times(TOTAL_NUM_DOMAINS)).hasSpaceForNewDisks(any());
@@ -103,6 +107,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void validateSpaceNotEnough() {
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForNewDisks(any());

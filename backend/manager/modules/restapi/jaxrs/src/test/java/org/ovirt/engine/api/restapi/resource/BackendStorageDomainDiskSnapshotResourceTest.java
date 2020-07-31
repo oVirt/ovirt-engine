@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -12,9 +13,12 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendStorageDomainDiskSnapshotResourceTest
@@ -29,7 +33,12 @@ public class BackendStorageDomainDiskSnapshotResourceTest
                 new BackendStorageDomainDiskSnapshotsResource(DOMAIN_ID)));
     }
 
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false));
+    }
+
     @Test
+    @MockedConfig("mockConfiguration")
     public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetDiskSnapshotByImageId, IdQueryParameters.class,
@@ -41,6 +50,7 @@ public class BackendStorageDomainDiskSnapshotResourceTest
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testRemove() {
         // setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetDiskSnapshotByImageId, IdQueryParameters.class,

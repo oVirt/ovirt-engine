@@ -5,11 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.Serializable;
+import java.util.stream.Stream;
 
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 public abstract class BaseGenericDaoTestCase<ID extends Serializable, T extends BusinessEntity<ID>,
 D extends GenericDao<T, ID>> extends BaseReadDaoTestCase<ID, T, D> {
@@ -17,10 +21,18 @@ D extends GenericDao<T, ID>> extends BaseReadDaoTestCase<ID, T, D> {
         super();
     }
 
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+             MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+        );
+    }
+
+
     /**
      * Ensures that saving a disk image works as expected.
      */
     @Test
+    @MockedConfig("mockConfiguration")
     public void testSave() {
         T newEntity = generateNewEntity();
         dao.save(newEntity);
@@ -36,6 +48,7 @@ D extends GenericDao<T, ID>> extends BaseReadDaoTestCase<ID, T, D> {
     * Ensures that updating a disk image works as expected.
     */
     @Test
+    @MockedConfig("mockConfiguration")
     public void testUpdate() {
         updateExistingEntity();
 

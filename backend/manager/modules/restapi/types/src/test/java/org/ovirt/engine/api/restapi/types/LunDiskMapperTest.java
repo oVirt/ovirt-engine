@@ -4,17 +4,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.HostStorage;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDisk, LunDisk> {
 
     public LunDiskMapperTest() {
         super(Disk.class, LunDisk.class, LunDisk.class);
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+        );
     }
 
     @Override
@@ -34,6 +45,7 @@ public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDi
         assertEquals(model.isShareable(), transform.isShareable(), "unexpected shareable");
     }
 
+    @MockedConfig("mockConfiguration")
     @Test
     @Override
     public void testRoundtrip() throws Exception {

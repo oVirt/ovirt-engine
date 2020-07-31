@@ -16,6 +16,8 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.ProgressEntity;
 import org.ovirt.engine.core.common.businessentities.Queryable;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -147,6 +149,9 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
     }
 
     public PropagateErrors getPropagateErrors() {
+        if ((Boolean)(Config.getValue(ConfigValues.PropagateDiskErrors))) {
+            return PropagateErrors.On;
+        }
         return propagateErrors;
     }
 

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.validation.ConstraintViolation;
 
@@ -58,6 +59,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -65,6 +67,8 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import  org.ovirt.engine.core.utils.MockedConfig;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
@@ -97,6 +101,13 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     @Mock
     private CloudInitHandler cloudInitHandler;
+
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+        );
+    }
 
     @BeforeEach
     public void setUpOsRepository() {
@@ -406,6 +417,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
      * Checking that managed device are sync with the new Guids of disk
      */
     @Test
+    @MockedConfig("mockConfiguration")
     public void testManagedDeviceSyncWithNewDiskId() {
         cmd.init();
         List<DiskImage> diskList = new ArrayList<>();

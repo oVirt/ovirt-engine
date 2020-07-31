@@ -137,7 +137,8 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, Version.getLast(), true)
+                MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, Version.getLast(), true),
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
         );
     }
     /**
@@ -322,6 +323,7 @@ public class RunVmCommandTest extends BaseCommandTest {
     }
 
     @BeforeEach
+    @MockedConfig("mockConfiguration")
     public void setUp() {
         mockCpuFlagsManagerHandler();
         when(osRepository.isWindows(anyInt())).thenReturn(false);

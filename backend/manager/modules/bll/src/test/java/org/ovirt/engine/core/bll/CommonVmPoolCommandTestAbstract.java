@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,6 +50,8 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import  org.ovirt.engine.core.utils.MockedConfig;
 
 public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     private final Guid clusterId = Guid.newGuid();
@@ -100,16 +103,24 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     @Mock
     private VmHandler vmHandler;
 
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+        );
+    }
+
     /**
      * The command under test.
      */
     @Spy
     @InjectMocks
+    @MockedConfig("mockConfiguration")
     protected CommonVmPoolCommand<AddVmPoolParameters> command = createCommand();
 
     protected abstract CommonVmPoolCommand<AddVmPoolParameters> createCommand();
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void validateSufficientSpaceOnDestinationDomains() {
         setupForStorageTests();
         command.ensureDestinationImageMap();
@@ -119,6 +130,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void validateInsufficientSpaceOnDomains() {
         setupForStorageTests();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
@@ -132,6 +144,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void validateDomainNotWithinThreshold() {
         setupForStorageTests();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
@@ -145,6 +158,7 @@ public abstract class CommonVmPoolCommandTestAbstract extends BaseCommandTest {
     }
 
     @BeforeEach
+    @MockedConfig("mockConfiguration")
     public void setupMocks() {
         setUpCommand();
         mockGetStorageDomainList();

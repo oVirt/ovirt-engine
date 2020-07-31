@@ -3,13 +3,24 @@ package org.ovirt.engine.core.bll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class UpdateVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+        );
+    }
 
     @Override
     protected UpdateVmPoolCommand<AddVmPoolParameters> createCommand() {
@@ -19,6 +30,7 @@ public class UpdateVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void validate() {
         mockVMPoolDao();
         mockVMDao();

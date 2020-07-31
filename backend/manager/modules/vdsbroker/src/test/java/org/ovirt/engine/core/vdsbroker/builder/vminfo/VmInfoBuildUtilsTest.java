@@ -161,17 +161,19 @@ public class VmInfoBuildUtilsTest {
 
     private VmDevice vmDevice;
 
-    private DiskImage diskImage = new DiskImage();
+    private DiskImage diskImage;
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.LibgfApiSupported, Version.v4_2, false),
-                MockConfigDescriptor.of(ConfigValues.LibgfApiSupported, Version.v4_3, true)
+                MockConfigDescriptor.of(ConfigValues.LibgfApiSupported, Version.v4_3, true),
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
         );
     }
 
     @BeforeEach
     public void setUp() {
+        diskImage = new DiskImage();
         diskImage.setDiskProfileId(Guid.newGuid());
 
         qos = new StorageQos();

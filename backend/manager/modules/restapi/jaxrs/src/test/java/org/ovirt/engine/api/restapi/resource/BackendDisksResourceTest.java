@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.ws.rs.core.Response;
 
@@ -28,16 +29,23 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendDisksResourceTest extends AbstractBackendCollectionResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendDisksResource> {
 
     public BackendDisksResourceTest() {
         super(new BackendDisksResource(), SearchType.Disk, "Disks : ");
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false));
     }
 
     @Override
@@ -66,6 +74,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testAdd() {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
@@ -102,6 +111,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testAddIdentifyStorageDomainByName() {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");

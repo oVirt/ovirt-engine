@@ -1547,6 +1547,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     VirtioWinIsoPath,
 
+    @Reloadable
+    @TypeConverterAttribute(Boolean.class)
+    PropagateDiskErrors,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

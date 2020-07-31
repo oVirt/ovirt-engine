@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -12,9 +13,13 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
+
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class BackendStorageDomainDiskSnapshotsResourceTest extends
@@ -22,6 +27,12 @@ public class BackendStorageDomainDiskSnapshotsResourceTest extends
 
     protected static final Guid DOMAIN_ID = GUIDS[2];
     protected static final Guid DISK_ID = GUIDS[3];
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+        );
+    }
 
     public BackendStorageDomainDiskSnapshotsResourceTest() {
         super(new BackendStorageDomainDiskSnapshotsResource(DOMAIN_ID), null, null);
@@ -48,6 +59,7 @@ public class BackendStorageDomainDiskSnapshotsResourceTest extends
 
     @Test
     @Override
+    @MockedConfig("mockConfiguration")
     public void testList() throws Exception {
         collection.setUriInfo(setUpBasicUriExpectations());
 

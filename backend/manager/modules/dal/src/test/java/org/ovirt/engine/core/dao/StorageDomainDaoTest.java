@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -31,8 +32,11 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class StorageDomainDaoTest extends BaseDaoTestCase<StorageDomainDao> {
@@ -58,6 +62,13 @@ public class StorageDomainDaoTest extends BaseDaoTestCase<StorageDomainDao> {
     private VmStaticDao vmStaticDao;
 
     private StorageDomain existingDomain;
+
+     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+         return Stream.of(
+                 MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+         );
+     }
+
 
     @BeforeEach
     @Override
@@ -513,6 +524,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase<StorageDomainDao> {
      * that the existing domain is removed along with the VM and VM Templates
      */
     @Test
+    @MockedConfig("mockConfiguration")
     public void testRemoveEntitesFromStorageDomain() {
         List<VM> vms = vmDao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
         List<VmTemplate> templates = vmTemplateDao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
@@ -557,6 +569,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase<StorageDomainDao> {
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testIsHostedEngineStorage() {
         // create hosted engine vm
         VmStatic vm = new VmStatic();

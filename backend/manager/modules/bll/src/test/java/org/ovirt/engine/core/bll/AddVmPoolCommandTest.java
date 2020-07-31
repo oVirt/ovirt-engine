@@ -22,7 +22,8 @@ public class AddVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.MaxIoThreadsPerVm, 127),
-                MockConfigDescriptor.of(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4"))
+                MockConfigDescriptor.of(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
         );
     }
 

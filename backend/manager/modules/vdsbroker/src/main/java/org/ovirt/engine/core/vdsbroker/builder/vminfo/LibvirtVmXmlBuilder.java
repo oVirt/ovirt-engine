@@ -2145,7 +2145,16 @@ public class LibvirtVmXmlBuilder {
         if (pinTo > 0) {
             writer.writeAttributeString("iothread", String.valueOf(pinTo));
         }
-
+        /**
+        When the disk propagate error is set to On, we need to ensure that the proper
+        error policy is set.
+        For IMAGE, we need to use enospace since image may be thin provisioned and requires
+        handling of enospace in vdsm. Using report will break the thin provisioning.
+        For LUN and Cinder, enospace is incorrect since the system cannot handle this value. This
+        must be handled by the guest. For these reasons, report is the right value.
+        Here is link to the thread in Ovirt Development -
+        https://lists.ovirt.org/archives/list/devel@ovirt.org/thread/YY56B5LCNO6ROSUPDWWHGKGUQVOLHCAR/
+        **/
         boolean nativeIO = false;
         switch (disk.getDiskStorageType()) {
         case IMAGE:
@@ -2160,14 +2169,14 @@ public class LibvirtVmXmlBuilder {
             nativeIO = true;
             writer.writeAttributeString("io", "native");
             writer.writeAttributeString("type", "raw");
-            writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
+            writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "report" : "stop");
             break;
 
         case CINDER:
             // case RBD
             writer.writeAttributeString("io", "threads");
             writer.writeAttributeString("type", "raw");
-            writer.writeAttributeString("error_policy", "stop");
+            writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "report" : "stop");
             break;
         }
 

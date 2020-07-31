@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskSnapshot;
@@ -11,11 +13,20 @@ import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 public class DiskSnapshotMapperTest extends AbstractInvertibleMappingTest<DiskSnapshot, DiskImage, DiskImage> {
 
     public DiskSnapshotMapperTest() {
         super(DiskSnapshot.class, DiskImage.class, DiskImage.class);
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+        );
     }
 
     @Override
@@ -42,6 +53,8 @@ public class DiskSnapshotMapperTest extends AbstractInvertibleMappingTest<DiskSn
         assertEquals(model.isShareable(), transform.isShareable(), "unexpected shareable");
     }
 
+
+    @MockedConfig("mockConfiguration")
     @Test
     @Override
     public void testRoundtrip() throws Exception {

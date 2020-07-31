@@ -134,6 +134,8 @@ select fn_db_add_config_value('FindFenceProxyDelayBetweenRetriesInSec','30','gen
 select fn_db_add_config_value('FindFenceProxyRetries','3','general');
 select fn_db_add_config_value('CriticalSpaceActionBlocker','5','general');
 select fn_db_add_config_value('WarningLowSpaceIndicator','10','general');
+--Handling how io disk errors propagated
+select fn_db_add_config_value('PropagateDiskErrors','false','general');
 
 -- Gluster related
 select fn_db_add_config_value('GlusterRefreshRateHooks', '7200', 'general');

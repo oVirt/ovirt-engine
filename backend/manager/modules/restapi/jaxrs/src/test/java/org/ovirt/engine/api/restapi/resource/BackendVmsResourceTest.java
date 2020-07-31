@@ -81,6 +81,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
+import  org.ovirt.engine.core.utils.MockedConfig;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockConfigExtension.class)
@@ -98,7 +99,9 @@ public class BackendVmsResourceTest
     }
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(MockConfigDescriptor.of(ConfigValues.OrganizationName, "ORG"));
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.OrganizationName, "ORG"),
+                         MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+        );
     }
 
     @Override
@@ -110,6 +113,7 @@ public class BackendVmsResourceTest
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testListIncludeStatistics() throws Exception {
         try {
             accepts.add("application/xml; detail=statistics");
@@ -144,16 +148,19 @@ public class BackendVmsResourceTest
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testAddAsyncPending() {
         doTestAddAsync(AsyncTaskStatusEnum.init, CreationStatus.PENDING);
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testAddAsyncInProgress() {
         doTestAddAsync(AsyncTaskStatusEnum.running, CreationStatus.IN_PROGRESS);
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testAddAsyncFinished() {
         doTestAddAsync(AsyncTaskStatusEnum.finished, CreationStatus.COMPLETE);
     }

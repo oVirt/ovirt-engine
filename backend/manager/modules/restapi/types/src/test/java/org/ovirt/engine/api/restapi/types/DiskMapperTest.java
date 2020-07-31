@@ -3,7 +3,10 @@ package org.ovirt.engine.api.restapi.types;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
+
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.api.model.Disk;
@@ -12,11 +15,26 @@ import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.DiskStorageType;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImage, DiskImage> {
 
     public DiskMapperTest() {
         super(Disk.class, DiskImage.class, DiskImage.class);
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+        );
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfigurationPropagateErrors() {
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, true)
+        );
     }
 
     @Override
@@ -61,6 +79,24 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         verify(model, transform);
     }
 
+    @MockedConfig("mockConfigurationPropagateErrors")
+    @Test
+    public void testPropagateErrors() throws Exception {
+
+        Disk model = Disk.class.cast(populate(Disk.class));
+        model = postPopulate(model);
+        model.setPropagateErrors(false);
+        Mapper<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> out =
+                getMappingLocator().getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);
+        Mapper<org.ovirt.engine.core.common.businessentities.storage.Disk, Disk> back =
+                getMappingLocator().getMapper(org.ovirt.engine.core.common.businessentities.storage.Disk.class, Disk.class);
+        DiskImage to = (DiskImage) out.map(model, null);
+        Disk transform = back.map(to, null);
+
+        assertTrue(transform.isPropagateErrors(), "Disk propagate errors is not on");
+    }
+
+    @MockedConfig("mockConfiguration")
     @Test
     public void testInitialSize() {
         Long initalSize = 54321L;

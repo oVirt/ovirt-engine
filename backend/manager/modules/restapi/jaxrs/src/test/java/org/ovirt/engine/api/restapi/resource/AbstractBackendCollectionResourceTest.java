@@ -15,6 +15,7 @@ import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqSearchParams;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -39,6 +41,9 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockedConfig;
+
 
 public abstract class AbstractBackendCollectionResourceTest<R extends BaseResource, Q /* extends Queryable */, C extends AbstractBackendCollectionResource<R, Q>>
         extends AbstractBackendResourceTest<R, Q> {
@@ -58,12 +63,16 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
 
     protected abstract List<R> getCollection();
 
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false));
+    }
     @Override
     protected void init() {
         initResource(collection);
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
 
@@ -73,6 +82,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testQuery() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(QUERY);
 
