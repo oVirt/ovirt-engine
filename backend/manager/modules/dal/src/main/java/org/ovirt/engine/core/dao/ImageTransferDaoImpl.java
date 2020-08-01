@@ -89,7 +89,6 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
         mapper.addValue("imaged_ticket_id", entity.getImagedTicketId() == null ? null : entity.getImagedTicketId().toString());
         mapper.addValue("proxy_uri", entity.getProxyUri());
         mapper.addValue("daemon_uri", entity.getDaemonUri());
-        mapper.addValue("signed_ticket", entity.getSignedTicket());
         mapper.addValue("bytes_sent", entity.getBytesSent());
         mapper.addValue("bytes_total", entity.getBytesTotal());
         mapper.addValue("client_inactivity_timeout", entity.getClientInactivityTimeout());
@@ -117,7 +116,6 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
             entity.setImagedTicketId(getGuid(rs, "imaged_ticket_id"));
             entity.setProxyUri(rs.getString("proxy_uri"));
             entity.setDaemonUri(rs.getString("daemon_uri"));
-            entity.setSignedTicket(rs.getString("signed_ticket"));
             entity.setBytesSent(rs.getLong("bytes_sent"));
             entity.setBytesTotal(rs.getLong("bytes_total"));
             entity.setClientInactivityTimeout((Integer) rs.getObject("client_inactivity_timeout"));

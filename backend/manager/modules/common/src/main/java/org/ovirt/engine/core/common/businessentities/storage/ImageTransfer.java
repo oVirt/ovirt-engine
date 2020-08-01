@@ -26,7 +26,6 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
     private Guid imagedTicketId;
     private String proxyUri;
     private String daemonUri;
-    private String signedTicket;
     private Guid backupId;
 
     private Long bytesSent;
@@ -137,14 +136,6 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
         this.daemonUri = daemonUri;
     }
 
-    public String getSignedTicket() {
-        return signedTicket;
-    }
-
-    public void setSignedTicket(String signedTicket) {
-        this.signedTicket = signedTicket;
-    }
-
     public Long getBytesSent() {
         return bytesSent;
     }
@@ -230,7 +221,6 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 && Objects.equals(diskId, other.diskId)
                 && Objects.equals(imagedTicketId, other.imagedTicketId)
                 && Objects.equals(proxyUri, other.proxyUri)
-                && Objects.equals(signedTicket, other.signedTicket)
                 && Objects.equals(bytesSent, other.bytesSent)
                 && Objects.equals(bytesTotal, other.bytesTotal)
                 && Objects.equals(clientInactivityTimeout, other.clientInactivityTimeout)
@@ -252,7 +242,6 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 diskId,
                 imagedTicketId,
                 proxyUri,
-                signedTicket,
                 bytesSent,
                 bytesTotal,
                 clientInactivityTimeout,
@@ -274,7 +263,6 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 .append("diskId", getDiskId())
                 .append("imagedTicketId", getImagedTicketId())
                 .append("proxyUri", getProxyUri())
-                .append("signedTicket", getSignedTicket())
                 .append("bytesSent", getBytesSent())
                 .append("bytesTotal", getBytesTotal())
                 .append("clientInactivityTimeout", getClientInactivityTimeout())

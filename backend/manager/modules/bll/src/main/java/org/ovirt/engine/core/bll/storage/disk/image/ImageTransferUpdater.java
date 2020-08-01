@@ -86,9 +86,6 @@ public class ImageTransferUpdater {
                 if (updates.getDaemonUri() != null) {
                     entity.setDaemonUri(updates.getDaemonUri());
                 }
-                if (updates.getSignedTicket() != null) {
-                    entity.setSignedTicket(updates.getSignedTicket());
-                }
 
                 if (updates.getBytesSent() != null) {
                     entity.setBytesSent(updates.getBytesSent());
