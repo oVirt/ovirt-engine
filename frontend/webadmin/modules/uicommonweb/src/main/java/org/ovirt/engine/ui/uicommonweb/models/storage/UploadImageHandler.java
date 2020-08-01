@@ -38,8 +38,7 @@ import com.google.gwt.dom.client.Element;
  *   and uses a callback on the response to drive its own state machine driven
  *   by the entity state.
  * - The engine command creates the disk, starts the upload session with vdsm
- *   and vdsm-imaged, creates a signed ticket for us to send to the proxy, and
- *   updates the entity phase to TRANSFERRING.
+ *   and vdsm-imaged, and updates the entity phase to TRANSFERRING.
  * - The model responds by initiating the upload, passing control to the
  *   JavaScript code.  The progress of the JS is shared with the Java in a
  *   variable called uploadState.
@@ -300,7 +299,6 @@ public class UploadImageHandler {
                         setDiskId(rv.getDiskId());
                         setImageTicketId(rv.getImagedTicketId());
                         String proxyURI = rv.getProxyUri();
-                        String signedTicket = rv.getSignedTicket();
 
                         int chunkSizeKB = AsyncDataProvider.getInstance().getUploadImageChunkSizeKB();
                         int xhrTimeoutSec = AsyncDataProvider.getInstance().getUploadImageXhrTimeoutInSeconds();
@@ -310,9 +308,8 @@ public class UploadImageHandler {
                         // Start upload task
                         setUploadState(UploadState.INITIALIZING);
                         setProgressStr("Uploading from byte " + getBytesSent()); //$NON-NLS-1$
-                        startUpload(getFileUploadElement(), proxyURI,
-                                getImageTicketId().toString(), getBytesSent(), getBytesEndOffset(), signedTicket,
-                                chunkSizeKB, xhrTimeoutSec, xhrRetryIntervalSec, maxRetries);
+                        startUpload(getFileUploadElement(), proxyURI, getImageTicketId().toString(), getBytesSent(),
+                                getBytesEndOffset(), chunkSizeKB, xhrTimeoutSec, xhrRetryIntervalSec, maxRetries);
                     }
                     break;
 
@@ -438,9 +435,9 @@ public class UploadImageHandler {
         log.severe(txt);
     }
 
-    private native void startUpload(Element fileUploadElement, String proxyUri,
-                                    String resourceId, double startByte, double endByte, String signedTicket,
-                                    int chunkSizeKB, int xhrTimeoutSec, int xhrRetryIntervalSec, int maxRetries) /*-{
+    private native void startUpload(Element fileUploadElement, String proxyUri, String resourceId, double startByte,
+                                    double endByte, int chunkSizeKB, int xhrTimeoutSec, int xhrRetryIntervalSec,
+                                    int maxRetries) /*-{
 
         var bytesPerMB = 1024 * 1024;
 
@@ -472,8 +469,7 @@ public class UploadImageHandler {
         };
 
         log.INFO("Starting upload to " + proxyUri
-            + "\nWith imaged ticket: " + resourceId
-            + "\nWith proxy ticket: " + signedTicket);
+            + "\nWith imaged ticket: " + resourceId);
         setProgressStr("Transferring - init");
 
         doUpload(startByte);

@@ -58,9 +58,6 @@ public class ImageTransferMapper {
         if (entity.getDaemonUri() != null && entity.getImagedTicketId() != null) {
             model.setTransferUrl(entity.getDaemonURLForTransfer());
         }
-        if (entity.getSignedTicket() != null) {
-            model.setSignedTicket(entity.getSignedTicket());
-        }
         if (entity.getPhase() != null) {
             model.setPhase(mapPhase(entity.getPhase()));
         }
