@@ -34,6 +34,7 @@
 
         .optionsPanel {
             margin-top: 5px;
+            padding-left: 8px;
         }
         .optionsPanel>* {
             margin-top: 15px;
@@ -52,6 +53,14 @@
 
         .fileUploadLabel {
             margin: 3px 10px;
+        }
+
+        .leftPadding {
+            padding-left: 20px;
+        }
+
+        .marginFix {
+            margin: -15px;
         }
     </ui:style>
 
@@ -78,10 +87,10 @@
                         <g:Label ui:field="diskOptionsLabel" />
                     </b:PanelHeader>
                     <b:PanelBody>
-                        <vm:VmDiskPopupWidget ui:field="vmDiskPopupWidget" />
+                        <vm:VmDiskPopupWidget ui:field="vmDiskPopupWidget" addStyleNames="{style.marginFix}" />
                     </b:PanelBody>
                 </b:Panel>
-                <w:UiCommandButton ui:field="testButton" label="{constants.testImageIOProxyConnection}" />
+                <w:UiCommandButton ui:field="testButton" label="{constants.testImageIOProxyConnection}" addStyleNames="{style.leftPadding}" />
                 <p:AlertPanel ui:field="messagePanel" addStyleNames="col-sm-11 {style.messagePanel}" visible="false" />
             </g:FlowPanel>
         </d:content>

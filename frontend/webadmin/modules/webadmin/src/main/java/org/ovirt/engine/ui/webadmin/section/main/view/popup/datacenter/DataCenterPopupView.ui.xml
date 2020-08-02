@@ -15,6 +15,7 @@
 
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterPopupView.Style">
         .contentStyle {
+            padding-top: 20px;
         }
     </ui:style>
 

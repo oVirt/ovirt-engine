@@ -19,10 +19,6 @@
             padding-top: 15px;
         }
 
-        .nopadding {
-            padding: 0px;
-        }
-
         .narrowColumns .col-sm-3, .narrowColumns .col-sm-9 {
             padding-left: 5px;
             padding-right: 5px;
@@ -77,11 +73,15 @@
         .graceLabel {
             background-color: #4E9FDD;
         }
+
+        .paddingTop {
+            padding-top: 20px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="750px" height="750px">
         <d:content>
-            <b:Container fluid="true">
+            <b:Container fluid="true" addStyleNames="{style.paddingTop}">
                 <b:Row>
                     <b:Column size="SM_6">
                         <b:Row addStyleNames="{style.narrowColumns}">
@@ -112,7 +112,7 @@
                 </b:Row>
 
                 <b:Row addStyleNames="{style.topDecorator}">
-                    <b:Column size="SM_12" addStyleNames="{style.nopadding}">
+                    <b:Column size="SM_12">
                         <g:Label addStyleNames="{style.labelStyle}" text="{constants.memAndCpuQuotaPopup}" />
                     </b:Column>
                 </b:Row>
@@ -135,7 +135,7 @@
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="SM_12" addStyleNames="{style.nopadding}">
+                    <b:Column size="SM_12">
                         <g:FlowPanel addStyleNames="{style.flexRow}">
                             <ge:EntityModelRadioButtonEditor ui:field="globalClusterQuotaRadioButtonEditor" group="cluster" label="{constants.ultQuotaForAllClustersQuotaPopup}" usePatternFly="true" />
                             <ge:EntityModelRadioButtonEditor ui:field="specificClusterQuotaRadioButtonEditor" group="cluster" label="{constants.useQuotaSpecificClusterQuotaPopup}" usePatternFly="true" />
@@ -143,13 +143,13 @@
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="SM_12" addStyleNames="{style.nopadding}">
+                    <b:Column size="SM_12">
                         <g:ScrollPanel ui:field="clusterQuotaTableContainer" addStyleNames="{style.tableContainer}"/>
                     </b:Column>
                 </b:Row>
 
                 <b:Row addStyleNames="{style.topDecorator}">
-                    <b:Column size="SM_12" addStyleNames="{style.nopadding}">
+                    <b:Column size="SM_12">
                         <g:Label addStyleNames="{style.labelStyle}" text="{constants.storageQuotaPopup}" />
                     </b:Column>
                 </b:Row>
@@ -172,7 +172,7 @@
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="SM_12" addStyleNames="{style.nopadding}">
+                    <b:Column size="SM_12">
                         <g:FlowPanel addStyleNames="{style.flexRow}">
                             <ge:EntityModelRadioButtonEditor ui:field="globalStorageQuotaRadioButtonEditor" group="storage" label="{constants.utlQuotaAllStoragesQuotaPopup}" usePatternFly="true" />
                             <ge:EntityModelRadioButtonEditor ui:field="specificStorageQuotaRadioButtonEditor" group="storage" label="{constants.usedQuotaSpecStoragesQuotaPopup}" usePatternFly="true" />
@@ -180,7 +180,7 @@
                     </b:Column>
                 </b:Row>
                 <b:Row>
-                    <b:Column size="SM_12" addStyleNames="{style.nopadding}">
+                    <b:Column size="SM_12">
                         <g:ScrollPanel ui:field="storageQuotaTableContainer" addStyleNames="{style.tableContainer}"/>
                     </b:Column>
                 </b:Row>
