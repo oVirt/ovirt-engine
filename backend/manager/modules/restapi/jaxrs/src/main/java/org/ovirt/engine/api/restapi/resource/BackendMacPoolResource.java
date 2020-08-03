@@ -5,10 +5,12 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.MacPoolResource;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveMacPoolByIdParameters;
+import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 
@@ -46,7 +48,12 @@ public class BackendMacPoolResource extends AbstractBackendSubResource<MacPool,
         return performAction(ActionType.RemoveMacPool, new RemoveMacPoolByIdParameters(guid));
     }
 
+    @Override
     public AssignedPermissionsResource getPermissionsResource() {
-        return null;
+        return inject(new BackendAssignedPermissionsResource(guid,
+                QueryType.GetPermissionsForObject,
+                new GetPermissionsForObjectParameters(guid),
+                MacPool.class,
+                VdcObjectType.MacPool));
     }
 }
