@@ -1458,9 +1458,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Long.class)
     CinderlibCommandTimeoutInMinutes,
 
-    @TypeConverterAttribute(Boolean.class)
-    IsDeferringFileVolumePreallocationSupported,
-
     /**
      * Timeout in seconds for the completion of calls to external network providers.
      */

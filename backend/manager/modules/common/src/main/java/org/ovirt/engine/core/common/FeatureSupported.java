@@ -133,16 +133,6 @@ public class FeatureSupported {
     }
 
     /**
-     * Checks if deferring file-based volume pre-allocation supported is supported by cluster version
-     *
-     * @param version
-     *            Compatibility version to check for.
-     */
-    public static boolean isDeferringFileVolumePreallocationSupported(Version version) {
-        return supportedInConfig(ConfigValues.IsDeferringFileVolumePreallocationSupported, version);
-    }
-
-    /**
      * Firewalld is supported for host if it supports cluster version 4.2.
      *
      * @param vds the host we are insterested in

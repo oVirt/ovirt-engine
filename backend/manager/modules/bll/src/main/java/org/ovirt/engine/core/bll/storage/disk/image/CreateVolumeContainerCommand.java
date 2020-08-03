@@ -12,7 +12,6 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -75,22 +74,8 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
                         DiskContentType.DATA);
         if (getType() != VolumeType.Preallocated && getStorageDomain().getStorageType().isBlockDomain()) {
             parameters.setImageInitialSizeInBytes(Optional.ofNullable(getParameters().getInitialSize()).orElse(0L));
-        } else if (supportsDeferredPrallocation()) {
-            // In case of move/copy of preallocated disk on file storage domain,
-            // the initial volume will be created with the minimum initial size in order
-            // to reduce volume creation time.
-            // Later, the engine starts copy_data job on VDSM that invoke qemuimg.convert()
-            // with preallocation="falloc" and allocates the entire volume size.
-            parameters.setImageInitialSizeInBytes(1L);
         }
         return parameters;
-    }
-
-    private boolean supportsDeferredPrallocation() {
-        return getStorageDomain().getStorageType().isFileDomain() &&
-                getType() == VolumeType.Preallocated &&
-                FeatureSupported.isDeferringFileVolumePreallocationSupported(
-                        getStoragePool().getCompatibilityVersion());
     }
 
     private VolumeType getType() {
