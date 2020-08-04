@@ -117,10 +117,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 managedBlockStorageCommandUtil.saveDevices(managedBlockStorageDisk, getVds(), vmDevice);
             }
         }
-        Map<String, String> diskAddressMap = getDiskAddressMap(vmDevice, getDiskVmElement().getDiskInterface());
+        getDiskAddressMap(vmDevice, getDiskVmElement().getDiskInterface());
         disk.setDiskVmElements(Collections.singleton(getDiskVmElement()));
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
-                getVm(), disk, vmDevice, diskAddressMap, getDiskVmElement().getDiskInterface(),
+                getVm(), disk, vmDevice, getDiskVmElement().getDiskInterface(),
                 getDiskVmElement().isPassDiscard()));
     }
 

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import java.util.Map;
-
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -14,20 +12,18 @@ public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
     private Disk disk;
     private VmDevice vmDevice;
     private VM vm;
-    private Map<String, String> addressMap;
     private DiskInterface diskInterface;
     private boolean passDiscard;
 
     public HotPlugDiskVDSParameters() {
     }
 
-    public HotPlugDiskVDSParameters(Guid vdsId, VM vm, Disk disk, VmDevice vmDevice, Map<String, String> addressMap,
-            DiskInterface diskInterface, boolean passDiscard) {
+    public HotPlugDiskVDSParameters(Guid vdsId, VM vm, Disk disk, VmDevice vmDevice, DiskInterface diskInterface,
+            boolean passDiscard) {
         super(vdsId, vm.getId());
         this.disk = disk;
         this.vmDevice = vmDevice;
         this.vm = vm;
-        this.addressMap = addressMap;
         this.diskInterface = diskInterface;
         this.passDiscard = passDiscard;
     }
@@ -56,14 +52,6 @@ public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
         this.vm = vm;
     }
 
-    public Map<String, String> getAddressMap() {
-        return addressMap;
-    }
-
-    public void setAddressMap(Map<String, String> addressMap) {
-        this.addressMap = addressMap;
-    }
-
     public DiskInterface getDiskInterface() {
         return diskInterface;
     }
@@ -83,7 +71,6 @@ public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
-                .append("diskId", disk.getId())
-                .append("addressMap", addressMap);
+                .append("diskId", disk.getId());
     }
 }
