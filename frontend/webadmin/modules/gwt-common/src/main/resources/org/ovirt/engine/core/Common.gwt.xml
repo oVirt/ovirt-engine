@@ -405,6 +405,7 @@
         <include name="common/interfaces/ITagsHandler.java" />
         <!-- UiCommon -->
         <include name="common/ActionUtils.java" />
+        <include name="common/FeatureSupported.java" />
         <include name="common/KubevirtSupportedActions.java" />
 
         <!-- Backend Validation framework -->

@@ -236,6 +236,7 @@ public class LibvirtVmXmlBuilderTest {
         when(vm.getUseTscFrequency()).thenReturn(true);
 
         setUpTscTest(underTest, vm, writer, properties);
+        setTscFreqSupplier(underTest);
         setCpuFlagsSupplier(underTest, "tsc,constant_tsc,nonstop_tsc");
 
         underTest.writeCpu(false);

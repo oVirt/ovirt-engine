@@ -2382,7 +2382,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        boolean isChangeable = ArchitectureType.x86.equals(getSelectedCluster().getArchitecture().getFamily())
+        boolean isChangeable = AsyncDataProvider.getInstance().isTscSupportedByVersion(getSelectedCluster().getCompatibilityVersion())
+                && ArchitectureType.x86.equals(getSelectedCluster().getArchitecture().getFamily())
                 && VmType.HighPerformance.equals(getVmType().getSelectedItem())
                 && (MigrationSupport.MIGRATABLE.equals(getMigrationMode().getSelectedItem())
                  || MigrationSupport.IMPLICITLY_NON_MIGRATABLE.equals(getMigrationMode().getSelectedItem()));

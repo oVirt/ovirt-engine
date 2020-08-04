@@ -254,7 +254,7 @@ public class LibvirtVmXmlBuilder {
             hostStatisticsSupplier = new MemoizingSupplier<>(() -> null);
             hostNumaNodesSupplier = new MemoizingSupplier<>(() -> Collections.emptyList());
             hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> null);
-            tscFrequencySupplier = new MemoizingSupplier<>(() -> "");
+            tscFrequencySupplier = new MemoizingSupplier<>(() -> null);
             cpuFlagsSupplier = new MemoizingSupplier<>(() -> "");
             incrementalBackupSupplier = new MemoizingSupplier<>(() -> false);
         }
@@ -402,7 +402,7 @@ public class LibvirtVmXmlBuilder {
         if (vm.isUseHostCpuFlags()){
             cpuType = "hostPassthrough";
         }
-        if (vm.getUseTscFrequency()) {
+        if (vm.getUseTscFrequency() && tscFrequencySupplier.get() != null) {
             cpuType += ",+invtsc";
         }
 
@@ -727,7 +727,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("present", "no");
             writer.writeEndElement();
         }
-        if (vm.getUseTscFrequency()) {
+        if (vm.getUseTscFrequency() && tscFrequencySupplier.get() != null) {
             writer.writeStartElement("timer");
             writer.writeAttributeString("name", "tsc");
             writer.writeAttributeString("frequency", tscFrequencySupplier.get());

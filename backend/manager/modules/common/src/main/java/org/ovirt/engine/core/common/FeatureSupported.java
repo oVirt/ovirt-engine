@@ -238,4 +238,14 @@ public class FeatureSupported {
     public static boolean isImplicitAffinityGroupSupported(Version version) {
         return Version.v4_4.greater(version);
     }
+
+    /**
+     * Check if TSC frequency is supported
+     *
+     * @param version Compatibility version to check for.
+     * @return true if TSC frequency is supported.
+     */
+    public static boolean isTscFrequencySupported(Version version) {
+        return Version.v4_4.lessOrEquals(version);
+    }
 }

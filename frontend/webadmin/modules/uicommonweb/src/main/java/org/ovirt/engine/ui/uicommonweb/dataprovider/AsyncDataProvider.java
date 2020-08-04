@@ -20,6 +20,7 @@ import org.ovirt.engine.core.aaa.ProfileEntry;
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -488,6 +489,10 @@ public class AsyncDataProvider {
 
     public Boolean isMemoryHotUnplugSupportedByArchitecture(ArchitectureType architecture, Version version) {
         return memoryHotUnplugSupport.get(architecture).get(version);
+    }
+
+    public Boolean isTscSupportedByVersion(Version version) {
+        return FeatureSupported.isTscFrequencySupported(version);
     }
 
     private void initMigrationSupportMap() {
