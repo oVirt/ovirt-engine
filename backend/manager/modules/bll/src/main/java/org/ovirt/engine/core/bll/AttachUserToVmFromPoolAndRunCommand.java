@@ -229,9 +229,10 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
         runVmParams.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         runVmParams.setRunAsStateless(!getVmPool().isStateful());
         ExecutionContext runVmContext = createRunVmContext();
+        EngineLock runVmLock = vmPoolHandler.createLock(getVmId());
         ActionReturnValue actionReturnValue = runInternalAction(ActionType.RunVm,
                 runVmParams,
-                cloneContext().withExecutionContext(runVmContext).withCompensationContext(null));
+                cloneContext().withExecutionContext(runVmContext).withoutCompensationContext().withLock(runVmLock));
 
         getTaskIdList().addAll(actionReturnValue.getInternalVdsmTaskIdList());
         return actionReturnValue;
