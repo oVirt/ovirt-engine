@@ -8,7 +8,6 @@
 
 """ovirt-imageio constants."""
 
-
 from otopi import util
 
 from . import config as oipconfig
@@ -51,6 +50,11 @@ class ImageIO(object):
     key_file = {key_file}
     cert_file = {cert_file}
     ca_file = {ca_file}
+
+    [backend_http]
+    # CA file used by HTTP backend client to verify imageio server certificate.
+    # Do not change, oVirt host pki setup is based on this CA.
+    ca_file = {engine_ca_file}
 
     [remote]
     # Port cannot be changed as it's currently hard-coded in engine code.

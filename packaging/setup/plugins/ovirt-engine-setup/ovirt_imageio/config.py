@@ -106,9 +106,15 @@ class Plugin(plugin.PluginBase):
         dev_mode = self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
 
         content = textwrap.dedent(oipcons.ImageIO.CONFIG_TEMPLATE).format(
+            # Engine PKI, users can change this PKI.
             key_file=oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
             cert_file=oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,
             ca_file=oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT,
+            # Host PKI setup is based on this CA, users must not change it.
+            engine_ca_file=(
+                oenginecons.FileLocations.
+                OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            ),
             data_port=oipcons.ImageIO.DATA_PORT,
             control_port=oipcons.ImageIO.CONTROL_PORT,
             logger_handler="stderr" if dev_mode else "logfile",
