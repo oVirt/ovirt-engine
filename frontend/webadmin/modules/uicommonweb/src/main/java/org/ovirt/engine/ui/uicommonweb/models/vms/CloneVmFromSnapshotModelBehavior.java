@@ -48,7 +48,7 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior {
         }
         getModel().setDisks(disks);
         getModel().getDisksAllocationModel().setIsVolumeTypeAvailable(true);
-        getModel().getDisksAllocationModel().setIsVolumeTypeChangable(true);
+        getModel().getDisksAllocationModel().setIsVolumeTypeChangeable(true);
         updateIsDisksAvailable();
     }
 

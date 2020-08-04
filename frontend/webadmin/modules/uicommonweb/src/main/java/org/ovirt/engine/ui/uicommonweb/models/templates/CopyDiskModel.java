@@ -27,7 +27,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
     @Override
     public void init(ArrayList<DiskImage> disksImages) {
         if (disksImages.size() > 0) {
-            setIsAliasChangable(!isTemplateDisk(disksImages.get(0)));
+            setIsAliasChangeable(!isTemplateDisk(disksImages.get(0)));
         }
 
         setDiskImages(disksImages);

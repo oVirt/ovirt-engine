@@ -74,7 +74,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
         disksAllocationModel.setIsVolumeFormatAvailable(true);
         disksAllocationModel.setIsVolumeFormatChangeable(true);
-        disksAllocationModel.setIsAliasChangable(true);
+        disksAllocationModel.setIsAliasChangeable(true);
         disksAllocationModel.setContainer(getModel());
         disksAllocationModel.setIsThinProvisioning(false);
 

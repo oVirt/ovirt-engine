@@ -55,12 +55,23 @@ public class DisksAllocationModel extends EntityModel {
     private final StorageDomain mixedStorageDomain = new StorageDomain();
 
     private List<DiskModel> disks;
-
-    public List<DiskModel> getDisks() {
-        return disks;
-    }
-
     private Model container;
+    private EntityModel<Boolean> diskAllocationTargetEnabled;
+    private ListModel<StorageDomain> targetStorageDomains;
+    private Map<Guid, DiskImage> imageToDestinationDomainMap;
+    private ArrayList<StorageDomain> activeStorageDomains;
+    private QuotaEnforcementTypeEnum quotaEnforcementType;
+    private EntityModel<String> dynamicWarning;
+
+    private boolean isVolumeFormatAvailable;
+    private boolean isVolumeFormatChangeable;
+    private boolean isVolumeTypeAvailable;
+    private boolean isVolumeTypeChangeable;
+    private boolean isThinProvisioning;
+    private boolean isAliasChangeable;
+    private boolean isSourceStorageDomainAvailable;
+    private boolean isSourceStorageDomainNameAvailable;
+    private boolean isTargetAvailable = true;
 
     public Model getContainer() {
         return container;
@@ -70,8 +81,6 @@ public class DisksAllocationModel extends EntityModel {
         this.container = container;
     }
 
-    private EntityModel<Boolean> diskAllocationTargetEnabled;
-
     public EntityModel<Boolean> getDiskAllocationTargetEnabled() {
         return diskAllocationTargetEnabled;
     }
@@ -80,14 +89,90 @@ public class DisksAllocationModel extends EntityModel {
         this.diskAllocationTargetEnabled = enabled;
     }
 
-    private ListModel<StorageDomain> targetStorageDomains;
-
     public ListModel<StorageDomain> getTargetStorageDomains() {
         return targetStorageDomains;
     }
 
     public void setTargetStorageDomains(ListModel<StorageDomain> targetStorageDomains) {
         this.targetStorageDomains = targetStorageDomains;
+    }
+
+    public Map<Guid, DiskImage> getImageToDestinationDomainMap() {
+        updateImageToDestinationDomainMap();
+        return imageToDestinationDomainMap;
+    }
+
+    public void setImageToDestinationDomainMap(Map<Guid, DiskImage> imageToDestinationDomainMap) {
+        this.imageToDestinationDomainMap = imageToDestinationDomainMap;
+    }
+
+    public ArrayList<StorageDomain> getActiveStorageDomains() {
+        return activeStorageDomains;
+    }
+
+    public void setActiveStorageDomains(ArrayList<StorageDomain> activeStorageDomains) {
+        this.activeStorageDomains = activeStorageDomains;
+    }
+
+    public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
+        return quotaEnforcementType;
+    }
+
+    public void setQuotaEnforcementType(QuotaEnforcementTypeEnum value) {
+        this.quotaEnforcementType = value;
+        onPropertyChanged(new PropertyChangedEventArgs("QuotaEnforcmentType")); //$NON-NLS-1$
+    }
+
+    public EntityModel<String> getDynamicWarning() {
+        return dynamicWarning;
+    }
+
+    public void setDynamicWarning(EntityModel<String> value) {
+        dynamicWarning = value;
+    }
+
+    public boolean isTargetAvailable() {
+        return isTargetAvailable;
+    }
+
+    public void setTargetAvailable(boolean targetAvailable) {
+        isTargetAvailable = targetAvailable;
+    }
+
+    public boolean getIsVolumeTypeAvailable() {
+        return isVolumeTypeAvailable;
+    }
+
+    public void setIsVolumeTypeAvailable(boolean isVolumeFormatAvailable) {
+        this.isVolumeTypeAvailable = isVolumeFormatAvailable;
+    }
+
+    public boolean getIsVolumeFormatAvailable() {
+        return isVolumeFormatAvailable;
+    }
+
+    public void setIsVolumeFormatAvailable(boolean isVolumeFormatAvailable) {
+        this.isVolumeFormatAvailable = isVolumeFormatAvailable;
+    }
+
+    public boolean getIsAliasChangeable() {
+        return isAliasChangeable;
+    }
+
+    public void setIsAliasChangeable(boolean isAliasChangeable) {
+        this.isAliasChangeable = isAliasChangeable;
+    }
+
+    public void setIsSourceStorageDomainAvailable(boolean isSourceStorageDomainAvailable) {
+        this.isSourceStorageDomainAvailable = isSourceStorageDomainAvailable;
+    }
+
+    public void setIsSourceStorageDomainNameAvailable(boolean isSourceStorageDomainNameAvailable) {
+        this.isSourceStorageDomainNameAvailable = isSourceStorageDomainNameAvailable;
+    }
+
+    public List<DiskModel> getDisks() {
+        return disks;
     }
 
     public void setDisks(List<DiskModel> value) {
@@ -138,48 +223,6 @@ public class DisksAllocationModel extends EntityModel {
             onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
         }
     }
-
-    private Map<Guid, DiskImage> imageToDestinationDomainMap;
-
-    public Map<Guid, DiskImage> getImageToDestinationDomainMap() {
-        updateImageToDestinationDomainMap();
-        return imageToDestinationDomainMap;
-    }
-
-    public void setImageToDestinationDomainMap(Map<Guid, DiskImage> imageToDestinationDomainMap) {
-        this.imageToDestinationDomainMap = imageToDestinationDomainMap;
-    }
-
-    private ArrayList<StorageDomain> activeStorageDomains;
-
-    public ArrayList<StorageDomain> getActiveStorageDomains() {
-        return activeStorageDomains;
-    }
-
-    public void setActiveStorageDomains(ArrayList<StorageDomain> activeStorageDomains) {
-        this.activeStorageDomains = activeStorageDomains;
-    }
-
-    private QuotaEnforcementTypeEnum quotaEnforcementType;
-
-    public void setQuotaEnforcementType(QuotaEnforcementTypeEnum value) {
-        this.quotaEnforcementType = value;
-        onPropertyChanged(new PropertyChangedEventArgs("QuotaEnforcmentType")); //$NON-NLS-1$
-    }
-
-    public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
-        return quotaEnforcementType;
-    }
-
-    private boolean isVolumeFormatAvailable;
-    private boolean isVolumeFormatChangeable;
-    private boolean isVolumeTypeAvailable;
-    private boolean isVolumeTypeChangable;
-    private boolean isThinProvisioning;
-    private boolean isAliasChangable;
-    private boolean isSourceStorageDomainAvailable;
-    private boolean isSourceStorageDomainNameAvailable;
-    private boolean isTargetAvailable = true;
 
     public DisksAllocationModel() {
         setImageToDestinationDomainMap(new HashMap<>());
@@ -284,10 +327,10 @@ public class DisksAllocationModel extends EntityModel {
             diskModel.getSourceStorageDomainName().setIsAvailable(isSourceStorageDomainNameAvailable);
             diskModel.getStorageDomain().setIsAvailable(isTargetAvailable);
             diskModel.getVolumeType().setIsAvailable(isVolumeTypeAvailable);
-            diskModel.getVolumeType().setIsChangeable(isVolumeTypeChangable);
+            diskModel.getVolumeType().setIsChangeable(isVolumeTypeChangeable);
             diskModel.getVolumeFormat().setIsAvailable(isVolumeFormatAvailable);
             diskModel.getVolumeFormat().setIsChangeable(isVolumeFormatChangeable);
-            diskModel.getAlias().setIsChangeable(isAliasChangable);
+            diskModel.getAlias().setIsChangeable(isAliasChangeable);
 
             boolean isCinder = diskModel.getDisk().getDiskStorageType() == DiskStorageType.CINDER;
             if (isCinder) {
@@ -440,35 +483,14 @@ public class DisksAllocationModel extends EntityModel {
                 diskModel.getStorageDomain().setIsValid(false);
                 isModelValid = false;
             }
-            diskModel.getAlias().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation(),
-                    new LengthValidation(255)});
+            diskModel.getAlias().validateEntity(new IValidation[] {
+                    new NotEmptyValidation(),
+                    new I18NNameValidation(),
+                    new LengthValidation(255)
+            });
             isModelValid = isModelValid && diskModel.getAlias().getIsValid();
         }
         setIsValid(isModelValid);
-    }
-
-    public void setIsVolumeTypeAvailable(boolean isVolumeFormatAvailable) {
-        this.isVolumeTypeAvailable = isVolumeFormatAvailable;
-    }
-
-    public boolean getIsVolumeTypeAvailable() {
-        return isVolumeTypeAvailable;
-    }
-
-    public void setIsVolumeFormatAvailable(boolean isVolumeFormatAvailable) {
-        this.isVolumeFormatAvailable = isVolumeFormatAvailable;
-    }
-
-    public boolean getIsVolumeFormatAvailable() {
-        return isVolumeFormatAvailable;
-    }
-
-    public boolean getIsAliasChangable() {
-        return isAliasChangable;
-    }
-
-    public void setIsAliasChangable(boolean isAliasChangable) {
-        this.isAliasChangable = isAliasChangable;
     }
 
     public void setIsThinProvisioning(boolean isThinProvisioning) {
@@ -478,9 +500,9 @@ public class DisksAllocationModel extends EntityModel {
         }
     }
 
-    public void setIsVolumeTypeChangable(boolean isVolumeTypeChangable) {
-        if (this.isVolumeTypeChangable != isVolumeTypeChangable) {
-            this.isVolumeTypeChangable = isVolumeTypeChangable;
+    public void setIsVolumeTypeChangeable(boolean isVolumeTypeChangeable) {
+        if (this.isVolumeTypeChangeable != isVolumeTypeChangeable) {
+            this.isVolumeTypeChangeable = isVolumeTypeChangeable;
             onPropertyChanged(new PropertyChangedEventArgs(VOLUME_TYPE));
         }
     }
@@ -492,34 +514,8 @@ public class DisksAllocationModel extends EntityModel {
         }
     }
 
-    public void setIsSourceStorageDomainAvailable(boolean isSourceStorageDomainAvailable) {
-        this.isSourceStorageDomainAvailable = isSourceStorageDomainAvailable;
-    }
-
-    public void setIsSourceStorageDomainNameAvailable(boolean isSourceStorageDomainNameAvailable) {
-        this.isSourceStorageDomainNameAvailable = isSourceStorageDomainNameAvailable;
-    }
-
-    private EntityModel<String> dynamicWarning;
-
-    public EntityModel<String> getDynamicWarning() {
-        return dynamicWarning;
-    }
-
-    public void setDynamicWarning(EntityModel<String> value) {
-        dynamicWarning = value;
-    }
-
     public boolean isSourceAvailable() {
         return isSourceStorageDomainAvailable || isSourceStorageDomainNameAvailable;
-    }
-
-    public boolean isTargetAvailable() {
-        return isTargetAvailable;
-    }
-
-    public void setTargetAvailable(boolean targetAvailable) {
-        isTargetAvailable = targetAvailable;
     }
 
     public void initializeAutoSelectTarget(boolean changeable, boolean value) {
@@ -527,7 +523,8 @@ public class DisksAllocationModel extends EntityModel {
         getDiskAllocationTargetEnabled().setIsChangeable(changeable);
         getDiskAllocationTargetEnabled().setEntity(value);
         updateTargetChangeable(changeable);
-        getDiskAllocationTargetEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> updateTargetChangeable(!getDiskAllocationTargetEnabled().getEntity()));
+        getDiskAllocationTargetEnabled().getEntityChangedEvent()
+                .addListener((ev, sender, args) -> updateTargetChangeable(!getDiskAllocationTargetEnabled().getEntity()));
     }
 
     @Override

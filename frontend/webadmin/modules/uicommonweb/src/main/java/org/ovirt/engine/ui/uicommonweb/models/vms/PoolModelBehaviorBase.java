@@ -47,7 +47,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(true);
         getModel().getDisksAllocationModel().setIsThinProvisioning(true);
-        getModel().getDisksAllocationModel().setIsAliasChangable(true);
+        getModel().getDisksAllocationModel().setIsAliasChangeable(true);
 
         getModel().getProvisioning().setIsAvailable(false);
         getModel().getProvisioning().setEntity(false);

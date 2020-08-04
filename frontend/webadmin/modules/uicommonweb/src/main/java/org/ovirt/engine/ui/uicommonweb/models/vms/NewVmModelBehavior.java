@@ -268,7 +268,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(true);
         getModel().getDisksAllocationModel().setIsVolumeFormatChangeable(provisioning);
         getModel().getDisksAllocationModel().setIsThinProvisioning(!provisioning);
-        getModel().getDisksAllocationModel().setIsAliasChangable(true);
+        getModel().getDisksAllocationModel().setIsAliasChangeable(true);
 
         initStorageDomains();
     }
