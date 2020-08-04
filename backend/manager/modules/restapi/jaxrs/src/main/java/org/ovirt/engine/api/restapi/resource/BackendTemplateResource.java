@@ -108,7 +108,7 @@ public class BackendTemplateResource
         params.setDirectory(action.getDirectory());
         params.setName(action.getFilename());
 
-        return doAction(ActionType.ExportVmTemplateToOva, params, action);
+        return doAction(ActionType.ExportVmTemplateToOva, params, action, PollingType.JOB);
     }
 
     @Override
