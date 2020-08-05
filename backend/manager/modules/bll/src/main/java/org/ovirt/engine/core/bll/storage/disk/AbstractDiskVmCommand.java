@@ -121,7 +121,13 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         default:
         }
 
-        getDiskAddressMap(vmDevice, getDiskVmElement().getDiskInterface());
+        if (commandType == VDSCommandType.HotPlugDisk) {
+            var address = getDiskAddress(vmDevice, getDiskVmElement().getDiskInterface());
+            // Updating device's address immediately (instead of waiting to VmsMonitoring)
+            // to prevent a duplicate unit value (i.e. ensuring a unique unit value).
+            updateVmDeviceAddress(address, vmDevice);
+        }
+
         disk.setDiskVmElements(Collections.singleton(getDiskVmElement()));
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
                 getVm(), disk, vmDevice, getDiskVmElement().getDiskInterface(),
@@ -261,12 +267,11 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     /**
-     * Returns disk's address map by specified VmDevice and DiskInterface
-     * (note: for VirtIO_SCSI/SPAPR_VSCSI interfaces, the method updates the VM device's address accordingly).
-     * @return disk's address map
+     * Returns an PCI address for the specified disk's device and interface
+     * @return an address allocated to the given disk
      */
-    public Map<String, String> getDiskAddressMap(VmDevice vmDevice, DiskInterface diskInterface) {
-        String address = vmDevice.getAddress();
+    public String getDiskAddress(VmDevice vmDevice, DiskInterface diskInterface) {
+        final String currentAddress = vmDevice.getAddress();
 
         switch(diskInterface) {
         case VirtIO_SCSI:
@@ -280,22 +285,18 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 case VirtIO_SCSI:
                     var vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(getVm());
                     var vmDeviceUnitMapForController = vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap, diskInterface);
-                    return getAddressMapForScsiDisk(address, vmDeviceUnitMapForController, vmDevice, controllerIndex, false, false);
+                    var addressMap = getAddressMapForScsiDisk(currentAddress, vmDeviceUnitMapForController, controllerIndex, false, false);
+                    return addressMap.toString();
                 case SPAPR_VSCSI:
                     vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
                     vmDeviceUnitMapForController = vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap, diskInterface);
-                    return getAddressMapForScsiDisk(address, vmDeviceUnitMapForController, vmDevice, controllerIndex, true, true);
+                    addressMap = getAddressMapForScsiDisk(currentAddress, vmDeviceUnitMapForController, controllerIndex, true, true);
+                    return addressMap.toString();
                 }
             }
-            break;
-
         default:
-            if (StringUtils.isNotBlank(address)) {
-                return StringMapUtils.string2Map(address);
-            }
+            return currentAddress;
         }
-
-        return null;
     }
 
     private Map<VmDevice, Integer> vmDeviceUnitMapForController(VmDevice vmDevice,
@@ -311,33 +312,29 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     private Map<String, String> getAddressMapForScsiDisk(String address,
                                        Map<VmDevice, Integer> vmDeviceUnitMap,
-                                       VmDevice vmDevice,
                                        int controllerIndex,
                                        boolean reserveFirstAddress,
                                        boolean reserveForScsiCd) {
-        Map<String, String> addressMap;
-        int availableUnit = vmInfoBuildUtils.getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstAddress, reserveForScsiCd && controllerIndex == 0);
-
         // If address has been already set before, verify its uniqueness;
         // Otherwise, set address according to the next available unit.
         if (StringUtils.isNotBlank(address)) {
-            addressMap = StringMapUtils.string2Map(address);
+            var addressMap = StringMapUtils.string2Map(address);
             int unit = Integer.parseInt(addressMap.get(VdsProperties.Unit));
             if (vmDeviceUnitMap.containsValue(unit)) {
+                int availableUnit = vmInfoBuildUtils.getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstAddress, reserveForScsiCd && controllerIndex == 0);
                 addressMap = vmInfoBuildUtils.createAddressForScsiDisk(controllerIndex, availableUnit);
             }
+            return addressMap;
         } else {
-            addressMap = vmInfoBuildUtils.createAddressForScsiDisk(controllerIndex, availableUnit);
+            int availableUnit = vmInfoBuildUtils.getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstAddress, reserveForScsiCd && controllerIndex == 0);
+            return vmInfoBuildUtils.createAddressForScsiDisk(controllerIndex, availableUnit);
         }
-
-        // Updating device's address immediately (instead of waiting to VmsMonitoring)
-        // to prevent a duplicate unit value (i.e. ensuring a unique unit value).
-        updateVmDeviceAddress(addressMap.toString(), vmDevice);
-
-        return addressMap;
     }
 
     protected void updateVmDeviceAddress(final String address, final VmDevice vmDevice) {
+        if (vmDevice.getAddress().equals(address)) {
+            return;
+        }
         vmDevice.setAddress(address);
         getCompensationContext().snapshotEntity(vmDevice);
         getCompensationContext().stateChanged();
