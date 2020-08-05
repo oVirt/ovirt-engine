@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -61,6 +62,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -81,6 +83,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     private OvfManager ovfManager;
     @Inject
     private DiskImageDao diskImageDao;
+    @Inject
+    private ImageDao imageDao;
     @Inject
     private DiskDao diskDao;
     @Inject
@@ -208,7 +212,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     private void removeImages() {
         List<CinderDisk> cinderDisks = new ArrayList<>();
         List <ManagedBlockStorageDisk> managedBlockDisks = new ArrayList<>();
+        List<Guid> imageIdsToUnlock = new ArrayList<>();
         for (final DiskImage source : getSourceImages()) {
+            imageIdsToUnlock.add(source.getId());
+
             if (source.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
                 managedBlockDisks.add((ManagedBlockStorageDisk) source);
                 continue;
@@ -252,6 +259,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         }
 
         managedBlockDisks.forEach(this::removeManagedBlockSnapshot);
+        getParameters().setImageGroupIds(imageIdsToUnlock);
     }
 
     private void removeManagedBlockSnapshot(ManagedBlockStorageDisk disk) {
@@ -278,6 +286,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             getCompensationContext().snapshotEntityStatus(snapshot);
             snapshotDao.updateStatus(getParameters().getSnapshotId(), SnapshotStatus.LOCKED);
             getCompensationContext().stateChanged();
+            if (getParameters().isNeedsLocking()) {
+                getSourceImages().forEach(diskImage ->
+                        imageDao.updateStatusOfImagesByImageGroupId(diskImage.getId(), ImageStatus.LOCKED));
+            }
             return null;
         });
     }
@@ -594,5 +606,27 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             return callbackProvider.get();
         }
         return null;
+    }
+
+    @Override
+    public void endWithFailure() {
+        // Some Live Merge failure cases leave a subset of images illegal;
+        // They should remain illegal while the other images on the chain are unlocked.
+        getSourceImages().stream()
+                .map(disk -> diskImageDao.getAllSnapshotsForImageGroup(disk.getId()))
+                .forEach(snapshotDisks -> {
+                    snapshotDisks.stream()
+                            .filter(snapshotDisk -> snapshotDisk.getImageStatus() == ImageStatus.LOCKED)
+                            .forEach(snapshotDisk -> imageDao.updateStatus(snapshotDisk.getImageId(), ImageStatus.OK));
+                });
+        super.endWithFailure();
+    }
+
+    @Override
+    public void endSuccessfully() {
+        getParameters().getImageGroupIds().forEach(id -> {
+            imageDao.updateStatusOfImagesByImageGroupId(id, ImageStatus.OK);
+        });
+        super.endSuccessfully();
     }
 }
