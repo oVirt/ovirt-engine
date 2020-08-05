@@ -559,17 +559,16 @@ public class VmInfoBuildUtils {
             DiskInterface scsiInterface,
             boolean reserveFirstTwoLuns,
             boolean reserveForScsiCd) {
-        List<Disk> disks = getSortedDisks(vm);
         Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap = new HashMap<>();
         LinkedList<VmDevice> vmDeviceList = new LinkedList<>();
 
-        for (Disk disk : disks) {
+        for (Disk disk : getSortedDisks(vm)) {
             DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
             if (dve.getDiskInterface() == scsiInterface) {
                 VmDevice vmDevice = getVmDeviceByDiskId(disk.getId(), vm.getId());
                 Map<String, String> address = StringMapUtils.string2Map(vmDevice.getAddress());
-                String unitStr = address.get(VdsProperties.Unit);
-                String controllerStr = address.get(VdsProperties.Controller);
+                final String unitStr = address.get(VdsProperties.Unit);
+                final String controllerStr = address.get(VdsProperties.Controller);
 
                 // If unit property is available adding to 'vmDeviceUnitMap';
                 // Otherwise, adding to 'vmDeviceList' for setting the unit property later.
@@ -581,9 +580,7 @@ public class VmInfoBuildUtils {
 
                     if ((ioThreadsEnabled && !controllerOutOfRange) ||
                             (controllerInt == getDefaultVirtioScsiIndex(vm, dve.getDiskInterface()))) {
-                        if (!vmDeviceUnitMap.containsKey(controllerInt)) {
-                            vmDeviceUnitMap.put(controllerInt, new HashMap<>());
-                        }
+                        vmDeviceUnitMap.computeIfAbsent(controllerInt, i -> new HashMap<>());
                         vmDeviceUnitMap.get(controllerInt).put(vmDevice, Integer.valueOf(unitStr));
                     } else {
                         // controller id not correct, generate the address again later
@@ -602,11 +599,7 @@ public class VmInfoBuildUtils {
             // TODO: consider changing this so that it will search for the next available and
             // less used controller instead of always starting from index.
             int controller = getControllerForScsiDisk(vmDevice, vm, scsiInterface, index);
-
-            if (!vmDeviceUnitMap.containsKey(controller)) {
-                vmDeviceUnitMap.put(controller, new HashMap<>());
-            }
-
+            vmDeviceUnitMap.computeIfAbsent(controller, i -> new HashMap<>());
             int unit = getAvailableUnitForScsiDisk(vmDeviceUnitMap.get(controller), reserveFirstTwoLuns, reserveForScsiCd && controller == 0);
             vmDeviceUnitMap.get(controller).put(vmDevice, unit);
         });
@@ -1361,16 +1354,16 @@ public class VmInfoBuildUtils {
                 ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
         int defaultSpaprVscsiControllerIndex = controllerIndexMap.get(DiskInterface.SPAPR_VSCSI);
         int defaultVirtioScsiControllerIndex = controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
-        Integer unitIndex = null;
 
         switch (disk.getDiskVmElementForVm(vm.getId()).getDiskInterface()) {
         case SPAPR_VSCSI:
             if (StringUtils.isEmpty(device.getAddress())) {
-                unitIndex = vmDeviceSpaprVscsiUnitMap.get(defaultSpaprVscsiControllerIndex).get(device);
+                Integer unitIndex = vmDeviceSpaprVscsiUnitMap.get(defaultSpaprVscsiControllerIndex).get(device);
                 device.setAddress(createAddressForScsiDisk(defaultSpaprVscsiControllerIndex, unitIndex).toString());
             }
             break;
         case VirtIO_SCSI:
+            Integer unitIndex = null;
             int controllerIndex = defaultVirtioScsiControllerIndex;
             VmDevice deviceFromMap = device;
             for (Map.Entry<Integer, Map<VmDevice, Integer>> controllerToDevices : vmDeviceVirtioScsiUnitMap.entrySet()) {
@@ -1394,6 +1387,7 @@ public class VmInfoBuildUtils {
                 device.setAddress(createAddressForScsiDisk(controllerIndex, unitIndex).toString());
             }
             break;
+        default:
         }
     }
 

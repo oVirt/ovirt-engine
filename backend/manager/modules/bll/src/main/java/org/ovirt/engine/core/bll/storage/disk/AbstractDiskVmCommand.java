@@ -25,7 +25,6 @@ import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainVali
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -33,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
@@ -49,7 +47,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.StringMapUtils;
@@ -75,8 +72,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     @Inject
     private VmDeviceDao vmDeviceDao;
     @Inject
-    private VmDao vmDao;
-    @Inject
     private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
     @Inject
     private StorageHelperDirector storageHelperDirector;
@@ -91,7 +86,8 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected void performPlugCommand(VDSCommandType commandType,
                                       Disk disk, VmDevice vmDevice) {
-        if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+        switch(disk.getDiskStorageType()) {
+        case LUN:
             LunDisk lunDisk = (LunDisk) disk;
             if (commandType == VDSCommandType.HotPlugDisk) {
                 LUNs lun = lunDisk.getLun();
@@ -106,17 +102,25 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                     }
                 });
             }
-        } else if (disk.getDiskStorageType() == DiskStorageType.CINDER) {
+            break;
+
+        case CINDER:
             CinderDisk cinderDisk = (CinderDisk) disk;
             setStorageDomainId(cinderDisk.getStorageIds().get(0));
             getCinderBroker().updateConnectionInfoForDisk(cinderDisk);
-        } else if (disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE) {
+            break;
+
+        case MANAGED_BLOCK_STORAGE:
             if (commandType == VDSCommandType.HotPlugDisk) {
                 ManagedBlockStorageDisk managedBlockStorageDisk = (ManagedBlockStorageDisk) disk;
                 setStorageDomainId(managedBlockStorageDisk.getStorageIds().get(0));
                 managedBlockStorageCommandUtil.saveDevices(managedBlockStorageDisk, getVds(), vmDevice);
             }
+            break;
+
+        default:
         }
+
         getDiskAddressMap(vmDevice, getDiskVmElement().getDiskInterface());
         disk.setDiskVmElements(Collections.singleton(getDiskVmElement()));
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
@@ -263,32 +267,34 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
      */
     public Map<String, String> getDiskAddressMap(VmDevice vmDevice, DiskInterface diskInterface) {
         String address = vmDevice.getAddress();
-        if (diskInterface != DiskInterface.VirtIO_SCSI && diskInterface != DiskInterface.SPAPR_VSCSI) {
+
+        switch(diskInterface) {
+        case VirtIO_SCSI:
+        case SPAPR_VSCSI:
+            int controllerIndex = ArchStrategyFactory.getStrategy(getVm().getClusterArch())
+                    .run(new GetControllerIndices())
+                    .returnValue()
+                    .get(diskInterface);
+            try (EngineLock vmDiskHotPlugEngineLock = lockVmDiskHotPlugWithWait()) {
+                switch(diskInterface) {
+                case VirtIO_SCSI:
+                    var vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(getVm());
+                    var vmDeviceUnitMapForController = vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap, diskInterface);
+                    return getAddressMapForScsiDisk(address, vmDeviceUnitMapForController, vmDevice, controllerIndex, false, false);
+                case SPAPR_VSCSI:
+                    vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
+                    vmDeviceUnitMapForController = vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap, diskInterface);
+                    return getAddressMapForScsiDisk(address, vmDeviceUnitMapForController, vmDevice, controllerIndex, true, true);
+                }
+            }
+            break;
+
+        default:
             if (StringUtils.isNotBlank(address)) {
                 return StringMapUtils.string2Map(address);
             }
-        } else {
-            EngineLock vmDiskHotPlugEngineLock = null;
-            try {
-                vmDiskHotPlugEngineLock = lockVmDiskHotPlugWithWait();
-                VM vm = vmDao.get(getParameters().getVmId());
-                Map<DiskInterface, Integer> controllerIndexMap =
-                        ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
-
-                int virtioScsiIndex = controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
-                int sPaprVscsiIndex = controllerIndexMap.get(DiskInterface.SPAPR_VSCSI);
-
-                if (diskInterface == DiskInterface.VirtIO_SCSI) {
-                    Map<Integer, Map<VmDevice, Integer>>  vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(getVm());
-                    return getAddressMapForScsiDisk(address, vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap, diskInterface), vmDevice, virtioScsiIndex, false, false);
-                } else if (diskInterface == DiskInterface.SPAPR_VSCSI) {
-                    Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
-                    return getAddressMapForScsiDisk(address, vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap, diskInterface), vmDevice, sPaprVscsiIndex, true, true);
-                }
-            } finally {
-                lockManager.releaseLock(vmDiskHotPlugEngineLock);
-            }
         }
+
         return null;
     }
 
