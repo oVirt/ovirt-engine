@@ -1428,6 +1428,9 @@ function public.uuid_ns_dns\(\) does not exist
 function public.uuid_ns_oid\(\) does not exist
 function public.uuid_ns_url\(\) does not exist
 function public.uuid_ns_x500\(\) does not exist
+# Ignore errors caused by custom extensions in backed up db
+permission denied to create extension
+extension .* does not exist
 __EOF
 )
 	grep 'ERROR: ' "${pgrestorelog}" | grep -Ev "${IGNORED_ERRORS}" > "${non_ignored_errors}" 2>&1
