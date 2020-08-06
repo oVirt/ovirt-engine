@@ -248,4 +248,15 @@ public class FeatureSupported {
     public static boolean isTscFrequencySupported(Version version) {
         return Version.v4_4.lessOrEquals(version);
     }
+
+    /**
+     * Check if Windows Guest Tools ISO is supported.
+     * The RPM is fully supported only until oVirt < 4.4
+     *
+     * @param version Compatibility version to check for.
+     * @return true if WGT is supported.
+     */
+    public static boolean isWindowsGuestToolsSupported(Version version) {
+        return version.less(Version.v4_4);
+    }
 }

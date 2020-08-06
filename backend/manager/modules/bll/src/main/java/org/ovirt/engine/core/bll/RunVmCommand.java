@@ -505,9 +505,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return getVm().getIsoPath();
         }
 
-        String guestToolPath = guestToolsVersionTreatment(isoDomainListSynchronizer.getRegexToolPattern());
-        if (guestToolPath != null) {
-            return guestToolPath;
+        if (FeatureSupported.isWindowsGuestToolsSupported(getVm().getCompatibilityVersion())) {
+            // Auto-attaching WGT is removed since 4.4.
+            String guestToolPath = guestToolsVersionTreatment(isoDomainListSynchronizer.getRegexToolPattern());
+
+            if (guestToolPath != null) {
+                return guestToolPath;
+            }
         }
 
         return getVm().getIsoPath();
