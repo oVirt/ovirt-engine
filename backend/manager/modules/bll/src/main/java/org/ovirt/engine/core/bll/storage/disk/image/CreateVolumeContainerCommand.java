@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
-import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.CreateVolumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -54,7 +53,7 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
         return Collections.emptyList();
     }
 
-    private CreateImageVDSCommandParameters getCreateVDSCommandParameters() {
+    private CreateVolumeVDSCommandParameters getCreateVDSCommandParameters() {
         DiskImage diskImageDescription = new DiskImage();
         diskImageDescription.setDiskAlias(getParameters().getDiskAlias());
         diskImageDescription.setDiskDescription(getParameters().getDescription());

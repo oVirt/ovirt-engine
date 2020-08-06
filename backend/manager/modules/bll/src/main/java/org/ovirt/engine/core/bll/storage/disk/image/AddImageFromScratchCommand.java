@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.CreateVolumeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -100,8 +100,8 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             return true;
         }
         Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
-        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateImage,
-                getCreateImageVDSCommandParameters());
+        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateVolume,
+                getCreateVolumeVDSCommandParameters());
         if (vdsReturnValue.getSucceeded()) {
             getParameters().setVdsmTaskIds(new ArrayList<>());
             getParameters().getVdsmTaskIds().add(
@@ -130,15 +130,22 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         return initialSize;
     }
 
-    private CreateImageVDSCommandParameters getCreateImageVDSCommandParameters() {
-        CreateImageVDSCommandParameters parameters =
-                new CreateImageVDSCommandParameters(getParameters().getStoragePoolId(),
-                        getParameters()
-                                .getStorageDomainId(), getImageGroupId(), getParameters().getDiskInfo().getSize(),
-                        getParameters().getDiskInfo().getVolumeType(), getParameters().getDiskInfo()
-                        .getVolumeFormat(), getDestinationImageId(),
-                        imagesHandler.getJsonDiskDescription(getParameters().getDiskInfo()), getStoragePool().getCompatibilityVersion(),
-                        getParameters().getDiskInfo().getContentType());
+    private CreateVolumeVDSCommandParameters getCreateVolumeVDSCommandParameters() {
+        CreateVolumeVDSCommandParameters parameters =
+                new CreateVolumeVDSCommandParameters(
+                        getParameters().getStoragePoolId(),
+                        getParameters().getStorageDomainId(),
+                        getImageGroupId(),
+                        Guid.Empty,
+                        getParameters().getDiskInfo().getSize(),
+                        getParameters().getDiskInfo().getVolumeType(),
+                        getParameters().getDiskInfo().getVolumeFormat(),
+                        Guid.Empty,
+                        getDestinationImageId(),
+                        imagesHandler.getJsonDiskDescription(getParameters().getDiskInfo()),
+                        getStoragePool().getCompatibilityVersion(),
+                        getParameters().getDiskInfo().getContentType()
+                );
 
         parameters.setImageInitialSizeInBytes(Optional.ofNullable(getInitialSize()).orElse(0L));
         return parameters;
