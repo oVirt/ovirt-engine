@@ -2,6 +2,7 @@ package org.ovirt.engine.core.aaa.servlet;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.CreateUserSessionsError;
+import org.ovirt.engine.core.aaa.SsoUtils;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -58,7 +60,7 @@ public class SsoPostLoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("Entered SsoPostLoginServlet");
         String username = null;
         String profile = null;
@@ -73,12 +75,18 @@ public class SsoPostLoginServlet extends HttpServlet {
             if (StringUtils.isEmpty(code)){
                 throw new RuntimeException("No authorization code found in request");
             }
+            //appUrl not encoded
             String appUrl = request.getParameter("app_url");
+
             log.debug("Received app_url '{}'", appUrl);
+            if (!SsoUtils.isDomainValid(appUrl)) {
+                throw new RuntimeException(
+                        "app_url domain differs from SSO_ENGINE_URL or SSO_ALTERNATE_ENGINE_FQDN domains");
+            }
             Map<String, Object> jsonResponse = FiltersHelper.getPayloadForAuthCode(
                     code,
                     "ovirt-app-admin ovirt-app-portal ovirt-app-api",
-                    URLEncoder.encode(postActionUrl, "UTF-8"));
+                    URLEncoder.encode(postActionUrl, StandardCharsets.UTF_8));
             Map<String, Object> payload = (Map<String, Object>) jsonResponse.get("ovirt");
 
             username = (String) jsonResponse.get("user_id");

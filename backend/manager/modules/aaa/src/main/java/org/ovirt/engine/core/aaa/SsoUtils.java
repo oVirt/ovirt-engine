@@ -1,9 +1,14 @@
 package org.ovirt.engine.core.aaa;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -116,6 +121,32 @@ public class SsoUtils {
             password = null;
         }
         return password;
+    }
+
+    public static boolean isDomainValid(String appUrl) {
+        if (StringUtils.isBlank(appUrl)) {
+            return true;
+        }
+        Set<String> allowedDomains = new HashSet<>();
+        String engineUrl = EngineLocalConfig.getInstance().getProperty("SSO_ENGINE_URL");
+        allowedDomains.add(parseHostFromUrl(engineUrl, "SSO_ENGINE_URL"));
+
+        var alternateFqdnString = EngineLocalConfig.getInstance().getProperty("SSO_ALTERNATE_ENGINE_FQDNS", true);
+        if (StringUtils.isNotBlank(alternateFqdnString)) {
+            Arrays.stream(alternateFqdnString.trim().split("\\s *"))
+                    .filter(StringUtils::isNotBlank)
+                    .forEach(allowedDomains::add);
+        }
+
+        return allowedDomains.contains(parseHostFromUrl(appUrl, "appUrl"));
+    }
+
+    private static String parseHostFromUrl(String url, String urlPropertyName) {
+        try {
+            return new URI(url).getHost();
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(urlPropertyName + " not a valid URI: " + url);
+        }
     }
 
 }
