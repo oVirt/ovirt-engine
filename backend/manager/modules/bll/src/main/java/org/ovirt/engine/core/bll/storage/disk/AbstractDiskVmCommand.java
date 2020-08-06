@@ -122,7 +122,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         }
 
         if (commandType == VDSCommandType.HotPlugDisk) {
-            var address = getDiskAddress(vmDevice, getDiskVmElement().getDiskInterface());
+            var address = getDiskAddress(vmDevice.getAddress(), getDiskVmElement().getDiskInterface());
             // Updating device's address immediately (instead of waiting to VmsMonitoring)
             // to prevent a duplicate unit value (i.e. ensuring a unique unit value).
             updateVmDeviceAddress(address, vmDevice);
@@ -267,12 +267,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     /**
-     * Returns an PCI address for the specified disk's device and interface
+     * Returns a possibly new PCI address allocated for a disk that is set the specified address and interface
      * @return an address allocated to the given disk
      */
-    public String getDiskAddress(VmDevice vmDevice, DiskInterface diskInterface) {
-        final String currentAddress = vmDevice.getAddress();
-
+    public String getDiskAddress(final String currentAddress, DiskInterface diskInterface) {
         switch(diskInterface) {
         case VirtIO_SCSI:
         case SPAPR_VSCSI:
@@ -284,12 +282,12 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 switch(diskInterface) {
                 case VirtIO_SCSI:
                     var vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(getVm());
-                    var vmDeviceUnitMapForController = vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap, diskInterface);
+                    var vmDeviceUnitMapForController = vmDeviceUnitMapForController(currentAddress, vmDeviceUnitMap, diskInterface);
                     var addressMap = getAddressMapForScsiDisk(currentAddress, vmDeviceUnitMapForController, controllerIndex, false, false);
                     return addressMap.toString();
                 case SPAPR_VSCSI:
                     vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
-                    vmDeviceUnitMapForController = vmDeviceUnitMapForController(vmDevice, vmDeviceUnitMap, diskInterface);
+                    vmDeviceUnitMapForController = vmDeviceUnitMapForController(currentAddress, vmDeviceUnitMap, diskInterface);
                     addressMap = getAddressMapForScsiDisk(currentAddress, vmDeviceUnitMapForController, controllerIndex, true, true);
                     return addressMap.toString();
                 }
@@ -299,11 +297,11 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         }
     }
 
-    private Map<VmDevice, Integer> vmDeviceUnitMapForController(VmDevice vmDevice,
+    private Map<VmDevice, Integer> vmDeviceUnitMapForController(String address,
             Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap,
             DiskInterface diskInterface) {
         int numOfDisks = getVm().getDiskMap().values().size();
-        int controllerId = vmInfoBuildUtils.getControllerForScsiDisk(vmDevice, getVm(), diskInterface, numOfDisks);
+        int controllerId = vmInfoBuildUtils.getControllerForScsiDisk(address, getVm(), diskInterface, numOfDisks);
         if (!vmDeviceUnitMap.containsKey(controllerId)) {
             return new HashMap<>();
         }

@@ -598,7 +598,7 @@ public class VmInfoBuildUtils {
             VmDevice vmDevice = vmDeviceList.get(index);
             // TODO: consider changing this so that it will search for the next available and
             // less used controller instead of always starting from index.
-            int controller = getControllerForScsiDisk(vmDevice, vm, scsiInterface, index);
+            int controller = getControllerForScsiDisk(vmDevice.getAddress(), vm, scsiInterface, index);
             vmDeviceUnitMap.computeIfAbsent(controller, i -> new HashMap<>());
             int unit = getAvailableUnitForScsiDisk(vmDeviceUnitMap.get(controller), reserveFirstTwoLuns, reserveForScsiCd && controller == 0);
             vmDeviceUnitMap.get(controller).put(vmDevice, unit);
@@ -621,15 +621,15 @@ public class VmInfoBuildUtils {
      * Generates the next controller id using round robin.
      * If the disk already has an controller id, returns it.
      *
-     * @param disk the disk for which the controller id has to be generated
+     * @param address the PCI address of the disk for which the controller id has to be generated
      * @param vm a VM to which this disk is attached
      * @param diskInterface the interface type of the disk
      * @param increment a number from 0..N to let the round robin cycle
      * @return a controller id
      */
-    public int getControllerForScsiDisk(VmDevice disk, VM vm, DiskInterface diskInterface, int increment) {
-        Map<String, String> address = StringMapUtils.string2Map(disk.getAddress());
-        String controllerStr = address.get(VdsProperties.Controller);
+    public int getControllerForScsiDisk(String address, VM vm, DiskInterface diskInterface, int increment) {
+        Map<String, String> addressMap = StringMapUtils.string2Map(address);
+        String controllerStr = addressMap.get(VdsProperties.Controller);
 
         int defaultIndex = getDefaultVirtioScsiIndex(vm, diskInterface);
 
