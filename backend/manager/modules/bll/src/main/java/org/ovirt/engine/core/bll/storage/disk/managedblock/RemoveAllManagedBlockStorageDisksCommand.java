@@ -17,16 +17,13 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveAllManagedBlockStorageDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 
 @InternalCommandAttribute
@@ -50,7 +47,7 @@ public class RemoveAllManagedBlockStorageDisksCommand<T extends RemoveAllManaged
         Collection<ManagedBlockStorageDisk> failedRemoving = new LinkedList<>();
         for (final ManagedBlockStorageDisk managedBlockDisk : getManagedBlockDisksToBeRemoved()) {
             if (Boolean.TRUE.equals(managedBlockDisk.getActive())) {
-                ActionReturnValue actionReturnValuernValue = removeManagedBlockDisk(managedBlockDisk.getId());
+                ActionReturnValue actionReturnValuernValue = removeManagedBlockDisk(managedBlockDisk);
                 if (actionReturnValuernValue == null || !actionReturnValuernValue.getSucceeded()) {
                     failedRemoving.add(managedBlockDisk);
                     logRemoveManagedBlockDiskError(managedBlockDisk, actionReturnValuernValue);
@@ -70,10 +67,10 @@ public class RemoveAllManagedBlockStorageDisksCommand<T extends RemoveAllManaged
                 actionReturnValue != null ? actionReturnValue.getFault().getMessage() : "");
     }
 
-    private ActionReturnValue removeManagedBlockDisk(Guid managedBlockDiskId) {
+    private ActionReturnValue removeManagedBlockDisk(ManagedBlockStorageDisk managedBlockDisk) {
         Future<ActionReturnValue> future = commandCoordinatorUtil.executeAsyncCommand(
                 ActionType.RemoveManagedBlockStorageDisk,
-                buildChildCommandParameters(managedBlockDiskId),
+                buildChildCommandParameters(managedBlockDisk),
                 cloneContextAndDetachFromParent());
         try {
             return future.get();
@@ -83,9 +80,9 @@ public class RemoveAllManagedBlockStorageDisksCommand<T extends RemoveAllManaged
         return null;
     }
 
-    private RemoveDiskParameters buildChildCommandParameters(Guid managedBlockDiskId) {
-        RemoveDiskParameters removeDiskParams = new RemoveDiskParameters(managedBlockDiskId);
-        removeDiskParams.setStorageDomainId(getStorageDomainId());
+    private RemoveDiskParameters buildChildCommandParameters(ManagedBlockStorageDisk managedBlockDisk) {
+        RemoveDiskParameters removeDiskParams = new RemoveDiskParameters(managedBlockDisk.getId());
+        removeDiskParams.setStorageDomainId(managedBlockDisk.getStorageIds().get(0));
         removeDiskParams.setParentCommand(getActionType());
         removeDiskParams.setParentParameters(getParameters());
         removeDiskParams.setShouldBeLogged(false);
@@ -122,11 +119,6 @@ public class RemoveAllManagedBlockStorageDisksCommand<T extends RemoveAllManaged
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         return Collections.emptyMap();
-    }
-
-    @Override
-    protected Collection<SubjectEntity> getSubjectEntities() {
-        return Collections.singleton(new SubjectEntity(VdcObjectType.Storage, getStorageDomainId()));
     }
 
     @Override public List<PermissionSubject> getPermissionCheckSubjects() {
