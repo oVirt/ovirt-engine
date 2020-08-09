@@ -992,10 +992,6 @@ public class LibvirtVmXmlBuilder {
         devices = processPayload(devices);
         devices.stream().filter(d -> d.getSpecParams() == null).forEach(d -> d.setSpecParams(Collections.emptyMap()));
         ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new CreateAdditionalControllersForDomainXml(devices));
-        boolean hasUsbBus = devices
-                .stream()
-                .filter(d -> d.getDevice().equals("usb"))
-                .noneMatch(d -> d.getSpecParams().containsValue("none"));
 
         writer.writeStartElement("devices");
 
@@ -1005,7 +1001,7 @@ public class LibvirtVmXmlBuilder {
             writeInput();
             break;
         case ppc:
-            if (hasUsbBus) {
+            if (vmInfoBuildUtils.hasUsbController(vm)) {
                 writeInput();
                 break;
             }

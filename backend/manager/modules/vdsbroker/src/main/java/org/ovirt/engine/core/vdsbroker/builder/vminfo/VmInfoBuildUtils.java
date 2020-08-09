@@ -1446,6 +1446,15 @@ public class VmInfoBuildUtils {
         return multiQueueUtils.isInterfaceQueuable(vmDevice, vmNic);
     }
 
+    public boolean hasUsbController(VM vm) {
+        List<VmDevice> vmUsbDevicesList = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
+                vm.getId(),
+                VmDeviceGeneralType.CONTROLLER,
+                VmDeviceType.USB);
+        return !(vmUsbDevicesList.size() == 1
+                && UsbControllerModel.NONE.libvirtName.equals(vmUsbDevicesList.get(0).getSpecParams().get(VdsProperties.Model)));
+    }
+
     private UsbControllerModel getUsbControllerModelForVm(VM vm) {
         return osRepository.getOsUsbControllerModel(
                 vm.getVmOsId(),
@@ -1454,7 +1463,8 @@ public class VmInfoBuildUtils {
     }
 
     public boolean isTabletEnabled(VM vm) {
-        return getUsbControllerModelForVm(vm) != UsbControllerModel.NONE // when there's no USB controller for this OS
+        return hasUsbController(vm) // when we have USB controller
+                && getUsbControllerModelForVm(vm) != UsbControllerModel.NONE // when there is USB controller for this OS
                 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC); // and VNC is requested (VNC or SPICE+VNC)
     }
 
