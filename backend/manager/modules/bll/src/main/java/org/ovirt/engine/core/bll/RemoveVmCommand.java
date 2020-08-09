@@ -177,7 +177,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return null;
         });
 
-        Collection<DiskImage> unremovedDisks = Collections.emptyList();
+        Collection<DiskImage> unremovedDisks = new ArrayList<>();
         if (getParameters().isRemoveDisks()) {
             if (!diskImages.isEmpty()) {
                 unremovedDisks = removeVmImages(diskImages).getActionReturnValue();
