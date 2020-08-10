@@ -6,12 +6,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -55,6 +59,9 @@ public class CloneSingleManagedBlockDiskCommand<T extends ImagesContainterParame
     private ImageStorageDomainMapDao imageStorageDomainMapDao;
     @Inject
     private ImagesHandler imagesHandler;
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public CloneSingleManagedBlockDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -143,6 +150,7 @@ public class CloneSingleManagedBlockDiskCommand<T extends ImagesContainterParame
 
     @Override
     protected void endWithFailure() {
+        unlockImage();
         setSucceeded(true);
     }
 
@@ -165,4 +173,11 @@ public class CloneSingleManagedBlockDiskCommand<T extends ImagesContainterParame
     protected Collection<SubjectEntity> getSubjectEntities() {
         return Collections.singleton(new SubjectEntity(VdcObjectType.Storage, getParameters().getStorageDomainId()));
     }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
+    }
+
+
 }
