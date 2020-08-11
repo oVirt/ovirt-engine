@@ -427,7 +427,7 @@ public interface CommonApplicationConstants extends Constants {
 
     String biosTypeGeneral();
 
-    String biosTypeLabel();
+    String customBiosTypeLabel();
 
     String emulatedMachineLabel();
 
