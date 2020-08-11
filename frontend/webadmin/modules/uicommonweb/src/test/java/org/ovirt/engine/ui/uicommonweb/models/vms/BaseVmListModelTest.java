@@ -115,6 +115,9 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getConsoleDisconnectAction().getSelectedItem()).thenReturn(ConsoleDisconnectAction.REBOOT);
         when(model.getCustomCompatibilityVersion().getSelectedItem()).thenReturn(Version.getLast());
         when(model.getLease().getSelectedItem()).thenReturn(null);
+        // casting to object to prevent java.lang.ClassCastException:
+        // class org.mockito.codegen.Object$MockitoMock$296545603 cannot be cast to class org.ovirt.engine.core.common.businessentities.BiosType
+        when((Object) model.getBiosType().getSelectedItem()).thenReturn(BIOS_TYPE);
     }
 
     protected void setUpOrigVm(VM origVm) {
@@ -198,6 +201,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         assertEquals(HOST_ID, vm.getDedicatedVmForVdsList().get(0));
         assertEquals(VM_NAME, vm.getName());
         assertEquals(USB_POLICY, vm.getUsbPolicy());
+        assertEquals(BIOS_TYPE, vm.getBiosType());
 
     }
 

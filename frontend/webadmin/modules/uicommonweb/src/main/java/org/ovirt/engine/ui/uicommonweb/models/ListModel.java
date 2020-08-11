@@ -371,4 +371,13 @@ public class ListModel<T> extends Model {
             }
         }
     }
+
+    /**
+     * Firing this event causes the model to redraw in the UI - useful when using special rendering
+     * (e. g. displaying cluster defaults)
+     */
+    public void fireItemsChangedEvent() {
+        getItemsChangedEvent().raise(this, EventArgs.EMPTY);
+        onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
+    }
 }

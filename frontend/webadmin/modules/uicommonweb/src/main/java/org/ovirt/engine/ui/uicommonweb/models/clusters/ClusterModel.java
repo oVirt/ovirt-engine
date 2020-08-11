@@ -2355,5 +2355,4 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             return description;
         }
     }
-
 }

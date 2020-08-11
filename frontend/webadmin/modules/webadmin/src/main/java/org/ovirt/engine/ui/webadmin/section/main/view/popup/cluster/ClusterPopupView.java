@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswor
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
+import org.ovirt.engine.ui.common.widget.renderer.BiosTypeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
@@ -129,6 +130,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Path(value = "CPU.selectedItem")
     @WithElementId
     ListModelListBoxEditor<ServerCpu> cpuEditor;
+
+    BiosTypeRenderer biosTypeRenderer;
 
     @UiField(provided = true)
     @Path(value = "biosType.selectedItem")
@@ -644,7 +647,16 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             }
         });
 
-        biosTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<BiosType>());
+        biosTypeRenderer = new BiosTypeRenderer() {
+            @Override
+            public String render(BiosType biosType) {
+                if (BiosType.CLUSTER_DEFAULT.equals(biosType)) {
+                    return constants.autoDetect();
+                }
+                return super.render(biosType);
+            }
+        };
+        biosTypeEditor = new ListModelListBoxEditor<>(biosTypeRenderer);
 
         versionEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Version>() {
             @Override
@@ -886,6 +898,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             } else {
                 migrationPolicyDetails.setText(""); //$NON-NLS-1$
             }
+        });
+
+        object.getArchitecture().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            biosTypeRenderer.setArchitectureType(object.getArchitecture().getSelectedItem());
+            object.getBiosType().fireItemsChangedEvent();
         });
     }
 

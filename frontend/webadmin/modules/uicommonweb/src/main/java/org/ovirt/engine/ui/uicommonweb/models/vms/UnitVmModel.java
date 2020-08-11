@@ -510,13 +510,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         privateName = value;
     }
 
-    private ListModel<BiosType> biosType;
+    private ListModelWithClusterDefault<BiosType> biosType;
 
-    public ListModel<BiosType> getBiosType() {
+    public ListModelWithClusterDefault<BiosType> getBiosType() {
         return biosType;
     }
 
-    private void setBiosType(ListModel<BiosType> value) {
+    private void setBiosType(ListModelWithClusterDefault<BiosType> value) {
         biosType = value;
     }
 
@@ -1731,7 +1731,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setDataCenterWithClustersList(new NotChangableForVmInPoolListModel<DataCenterWithCluster>());
         getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener(this);
 
-        setBiosType(new NotChangableForVmInPoolListModel<>());
+        setBiosType(new ListModelWithClusterDefault<>(BiosType.CLUSTER_DEFAULT));
         getBiosType().setItems(AsyncDataProvider.getInstance().getBiosTypeList());
         getBiosType().setSelectedItem(BiosType.CLUSTER_DEFAULT);
 
@@ -3383,7 +3383,19 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         public static final String CLUSTER_VALUE_EVENT = "ClusterValue";//$NON-NLS-1$
 
+        // item that should be added to the items list to represent the cluster value,
+        // it is usually null but e.g. for BiosType it is a special enum value
+        private T clusterValuePlaceholder;
+
         private T clusterValue;
+
+        public ListModelWithClusterDefault() {
+            this(null);
+        }
+
+        public ListModelWithClusterDefault(T clusterValuePlaceholder) {
+            this.clusterValuePlaceholder = clusterValuePlaceholder;
+        }
 
         @Override
         public void setItems(Collection<T> value) {
@@ -3393,15 +3405,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         @Override
         public void setItems(Collection<T> value, T selectedItem) {
             List<T> items = value == null ? new ArrayList<>() : new ArrayList<>(value);
-            if (items.isEmpty() || items.get(0) != null) {
-                items.add(0, null);
+            if (!containsPlaceholder(items)) {
+                items.add(0, clusterValuePlaceholder);
             }
-            super.setItems(items, selectedItem);
-        }
 
-        public void fireItemsChangedEvent() {
-            getItemsChangedEvent().raise(this, EventArgs.EMPTY);
-            onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
+            super.setItems(items, selectedItem);
         }
 
         public void setClusterValue(T clusterValue) {
@@ -3411,6 +3419,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         public T getClusterValue() {
             return clusterValue;
+        }
+
+        private boolean containsPlaceholder(List<T> items) {
+            if (items.isEmpty()) {
+                return false;
+            }
+
+            return Objects.equals(items.get(0), clusterValuePlaceholder);
         }
     }
 
@@ -3697,6 +3713,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (cluster == null) {
             return;
         }
+
+        getBiosType().setClusterValue(cluster.getBiosType());
         if (cluster.getArchitecture().getFamily() != ArchitectureType.x86) {
             getBiosType().setIsChangeable(false, ConstantsManager.getInstance().getMessages().biosTypeSupportedForX86Only());
         } else {

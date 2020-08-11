@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -81,6 +82,7 @@ public class BaseVmTest {
     protected static final IconCacheModelVmBaseMock REVERSE_ICON_CACHE = new IconCacheModelVmBaseMock()
             .put(LARGE_ICON_DATA, LARGE_ICON_ID);
     protected static final Version CLUSTER_VERSION = Version.getLast();
+    protected static final BiosType BIOS_TYPE = BiosType.Q35_OVMF;
     protected AsyncDataProvider adp;
 
     @BeforeEach

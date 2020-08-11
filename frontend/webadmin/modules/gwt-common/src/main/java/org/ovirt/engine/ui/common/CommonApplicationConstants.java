@@ -1902,4 +1902,8 @@ public interface CommonApplicationConstants extends Constants {
     String k8s_namespace();
 
     String targetStorageDomain();
+
+    String ppcChipset();
+
+    String s390xChipset();
 }

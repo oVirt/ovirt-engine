@@ -92,6 +92,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.profile.ProfilesInstanceTypeEditor;
+import org.ovirt.engine.ui.common.widget.renderer.BiosTypeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.ClusterDefaultRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -307,6 +308,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     public EntityModelDetachableWidgetWithInfo threadsPerCoreEditorWithInfoIcon;
+
+    private BiosTypeRenderer biosTypeRenderer;
+
+    private ClusterDefaultRenderer<BiosType> biosTypeClusterDefaultRenderer;
 
     @UiField(provided = true)
     @Path(value = "biosType.selectedItem")
@@ -1590,7 +1595,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider<OpenstackNetworkProviderProperties>>());
         providersEditor.setLabel(constants.providerLabel());
 
-        biosTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<BiosType>(), new ModeSwitchingVisibilityRenderer());
+        biosTypeRenderer = new BiosTypeRenderer();
+        biosTypeClusterDefaultRenderer = new ClusterDefaultRenderer(biosTypeRenderer, BiosType.CLUSTER_DEFAULT);
+        biosTypeEditor = new ListModelListBoxEditor<>(biosTypeClusterDefaultRenderer, new ModeSwitchingVisibilityRenderer());
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
@@ -1636,15 +1643,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     private <T> void initClusterDefaultValueListener(ClusterDefaultRenderer<T> renderer, ListModel<T> model) {
-        if (! (model instanceof ListModelWithClusterDefault)) {
-            return;
-        }
         model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if (CLUSTER_VALUE_EVENT.equals(((PropertyChangedEventArgs) args).propertyName)) {
                 renderer.setDefaultValue(((ListModelWithClusterDefault<T>) model).getClusterValue());
                 // if the cluster default value has changed we need to redraw the items, thus firing
                 // the "Items" change event.
-                ((ListModelWithClusterDefault<T>) model).fireItemsChangedEvent();
+                model.fireItemsChangedEvent();
             }
         });
     }
@@ -1786,6 +1790,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             emulatedMachine.setNullReplacementString(getDefaultEmulatedMachineLabel());
             customCpu.setNullReplacementString(getDefaultCpuTypeLabel());
             updateUrandomLabel(object);
+            biosTypeRenderer.setArchitectureType(getModel().getSelectedCluster() == null ? null : getModel().getSelectedCluster().getArchitecture());
+            getModel().getBiosType().fireItemsChangedEvent();
         });
 
         object.getCpuPinning().getPropertyChangedEvent().addListener((ev, sender, args) -> {
@@ -1831,6 +1837,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initClusterDefaultValueListener(autoConvergeRenderer, getModel().getAutoConverge());
         initClusterDefaultValueListener(migrateCompressedRenderer, getModel().getMigrateCompressed());
         initClusterDefaultValueListener(migrationPolicyRenderer, getModel().getMigrationPolicies());
+        initClusterDefaultValueListener(biosTypeClusterDefaultRenderer, getModel().getBiosType());
     }
 
     private void updateUrandomLabel(UnitVmModel model) {

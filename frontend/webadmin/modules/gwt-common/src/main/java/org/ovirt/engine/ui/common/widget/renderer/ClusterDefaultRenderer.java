@@ -18,6 +18,10 @@ public class ClusterDefaultRenderer<T> extends AbstractDefaultValueRenderer<T> {
         super(renderer);
     }
 
+    public ClusterDefaultRenderer(AbstractRenderer<T> renderer, T defaultValuePlaceholder) {
+        super(renderer, defaultValuePlaceholder);
+    }
+
     @Override
     protected String getDefaultValueLabel() {
         return constants.clusterDefaultOption();
