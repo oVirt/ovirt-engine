@@ -179,7 +179,9 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
             return false;
         }
 
-        if (getParameters().getVirtioIsoName() != null && getActiveIsoDomainId() == null) {
+        if (getVm().getOrigin() != OriginType.KVM &&
+                getParameters().getVirtioIsoName() != null &&
+                getActiveIsoDomainId() == null) {
             return failValidation(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
         }
 
