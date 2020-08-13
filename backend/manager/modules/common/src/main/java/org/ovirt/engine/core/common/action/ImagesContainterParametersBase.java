@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class ImagesContainterParametersBase extends ImagesActionsParametersBase {
+public class ImagesContainterParametersBase extends CreateSnapshotParameters {
     private static final long serialVersionUID = -5293411452987894523L;
     private boolean wipeAfterDelete;
     private Guid containerid;

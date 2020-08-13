@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.action.CreateManagedBlockStorageDiskSnapshotParameters;
 import org.ovirt.engine.core.common.action.CreateSnapshotDiskParameters;
-import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
+import org.ovirt.engine.core.common.action.CreateSnapshotParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -176,8 +176,8 @@ public class CreateSnapshotDiskCommand<T extends CreateSnapshotDiskParameters> e
         return cachedImagesDisks;
     }
 
-    private ImagesActionsParametersBase buildCreateSnapshotParameters(DiskImage image) {
-        ImagesActionsParametersBase result = new ImagesActionsParametersBase(image.getImageId());
+    private CreateSnapshotParameters buildCreateSnapshotParameters(DiskImage image) {
+        CreateSnapshotParameters result = new CreateSnapshotParameters(image.getImageId());
         result.setDescription(getParameters().getDescription());
         result.setSessionId(getParameters().getSessionId());
         result.setQuotaId(image.getQuotaId());
@@ -186,6 +186,7 @@ public class CreateSnapshotDiskCommand<T extends CreateSnapshotDiskParameters> e
         result.setEntityInfo(getParameters().getEntityInfo());
         result.setParentCommand(getActionType());
         result.setParentParameters(getParameters());
+        result.setLiveSnapshot(getParameters().isLiveSnapshot());
         DiskImage diskImage = getParameters().getDiskImagesMap().get(image.getId());
         if (diskImage != null) {
             result.setDestinationImageId(diskImage.getImageId());

@@ -229,6 +229,16 @@ public class FeatureSupported {
     }
 
     /**
+     * Check if bitmaps operations are supported.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if bitmaps operations are supported.
+     */
+    public static boolean isBitmapsOperationsSupported(Version version) {
+        return Version.v4_5.lessOrEquals(version);
+    }
+
+    /**
      * Check if v2 of OpenStack Image Service API is supported.
      * The API v2 is supported only in vdsm of oVirt >= 4.4
      *

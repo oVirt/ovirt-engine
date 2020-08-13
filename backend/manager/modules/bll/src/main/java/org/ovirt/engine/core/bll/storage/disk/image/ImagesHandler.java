@@ -79,6 +79,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VmCheckpointDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -154,6 +155,9 @@ public class ImagesHandler {
 
     @Inject
     private StoragePoolDao storagePoolDao;
+
+    @Inject
+    private VmCheckpointDao vmCheckpointDao;
 
     @Inject
     private MetadataDiskDescriptionHandler metadataDiskDescriptionHandler;
@@ -1111,5 +1115,10 @@ public class ImagesHandler {
             log.error("Exception while generating json for disk. ERROR: '{}'", e.getMessage());
             return StringUtils.EMPTY;
         }
+    }
+
+    public boolean shouldUseDiskBitmaps(Version version, Guid diskId) {
+        return FeatureSupported.isBitmapsOperationsSupported(version) &&
+                vmCheckpointDao.isDiskIncludedInCheckpoint(diskId);
     }
 }

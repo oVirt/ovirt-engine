@@ -48,7 +48,8 @@ public class JsonRpcIIrsServer implements IIrsServer {
             String descr,
             String srcImgGUID,
             String srcVolUUID,
-            String initialSize) {
+            String initialSize,
+            boolean shouldAddBitmaps) {
         JsonRpcRequest request =
                 new RequestBuilder("Volume.create").withParameter("volumeID", volUUID)
                         .withParameter("storagepoolID", spUUID)
@@ -62,6 +63,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .withParameter("srcImgUUID", srcImgGUID)
                         .withParameter("srcVolUUID", srcVolUUID)
                         .withOptionalParameter("initialSize", initialSize)
+                        .withOptionalParameter("addBitmaps", shouldAddBitmaps)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");

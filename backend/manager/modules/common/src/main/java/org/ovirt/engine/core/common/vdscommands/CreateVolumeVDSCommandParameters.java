@@ -14,6 +14,7 @@ public class CreateVolumeVDSCommandParameters extends StoragePoolDomainAndGroupI
     private long _imageSizeInBytes;
     private VolumeType _imageType;
     private long imageInitialSizeInBytes;
+    private boolean shouldAddBitmaps;
 
     // Initialize with Guid.Empty for creating a new image.
     private Guid _imageId;
@@ -125,6 +126,14 @@ public class CreateVolumeVDSCommandParameters extends StoragePoolDomainAndGroupI
         privateSourceImageGroupId = value;
     }
 
+    public boolean shouldAddBitmaps() {
+        return shouldAddBitmaps;
+    }
+
+    public void setShouldAddBitmaps(boolean shouldAddBitmaps) {
+        this.shouldAddBitmaps = shouldAddBitmaps;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
@@ -135,6 +144,7 @@ public class CreateVolumeVDSCommandParameters extends StoragePoolDomainAndGroupI
                 .append("newImageDescription", getNewImageDescription())
                 .append("imageInitialSizeInBytes", getImageInitialSizeInBytes())
                 .append("imageId", getImageId())
-                .append("sourceImageGroupId", getSourceImageGroupId());
+                .append("sourceImageGroupId", getSourceImageGroupId())
+                .append("shouldAddBitmaps", shouldAddBitmaps());
     }
 }

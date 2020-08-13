@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class CreateSnapshotFromTemplateParameters extends ImagesActionsParametersBase {
+public class CreateSnapshotFromTemplateParameters extends CreateSnapshotParameters {
     private static final long serialVersionUID = -3841623510039174546L;
 
     private Guid privateVmId;

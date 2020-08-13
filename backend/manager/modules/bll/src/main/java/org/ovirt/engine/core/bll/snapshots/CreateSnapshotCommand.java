@@ -18,8 +18,8 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.CreateSnapshotParameters;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
-import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -47,7 +47,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
-public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extends BaseImagesCommand<T> {
+public class CreateSnapshotCommand<T extends CreateSnapshotParameters> extends BaseImagesCommand<T> {
 
     @Inject
     private ImageDao imageDao;
@@ -163,6 +163,11 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                 getDiskImage().getContentType());
         if (getParameters().getInitialSizeInBytes() != null) {
             parameters.setImageInitialSizeInBytes(getParameters().getInitialSizeInBytes());
+        }
+
+        if (imagesHandler.shouldUseDiskBitmaps(getStoragePool().getCompatibilityVersion(), getImageGroupId())
+                && !getParameters().isLiveSnapshot()) {
+            parameters.setShouldAddBitmaps(true);
         }
         return parameters;
     }

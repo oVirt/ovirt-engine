@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddImageFromScratchParameters extends ImagesActionsParametersBase {
+public class AddImageFromScratchParameters extends CreateSnapshotParameters {
 
     private static final long serialVersionUID = 8249273209551108387L;
     private Guid masterVmId;

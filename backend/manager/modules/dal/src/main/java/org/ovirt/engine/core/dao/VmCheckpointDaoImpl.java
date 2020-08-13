@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
@@ -95,5 +96,13 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
     public void removeAllCheckpointsByVmId(Guid vmId) {
         getCallsHandler().executeModification("DeleteAllCheckpointsByVmId",
                 getCustomMapSqlParameterSource().addValue("vm_id", vmId));
+    }
+
+    @Override
+    public boolean isDiskIncludedInCheckpoint(Guid diskId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("disk_id", diskId);
+        return getCallsHandler().executeRead("IsDiskIncludedInCheckpoint",
+                SingleColumnRowMapper.newInstance(Boolean.class),
+                parameterSource);
     }
 }

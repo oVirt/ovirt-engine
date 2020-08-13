@@ -151,3 +151,17 @@ BEGIN
     WHERE  images_storage_domain_view.active AND vm_checkpoint_disk_map.checkpoint_id = v_checkpoint_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION IsDiskIncludedInCheckpoint (v_disk_id UUID)
+RETURNS SETOF booleanResultType STABLE
+    AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT EXISTS (
+            SELECT 1
+            FROM vm_checkpoint_disk_map
+            WHERE disk_id = v_disk_id
+           );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
