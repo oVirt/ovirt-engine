@@ -816,8 +816,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
-                && vmFromParams.getBiosType() != BiosType.CLUSTER_DEFAULT
-                && vmFromParams.getBiosType() != BiosType.I440FX_SEA_BIOS
+                && vmFromParams.getCustomBiosType() != BiosType.CLUSTER_DEFAULT
+                && vmFromParams.getCustomBiosType() != BiosType.I440FX_SEA_BIOS
                 && getCluster().getArchitecture() != ArchitectureType.undefined
                 && getCluster().getArchitecture().getFamily() != ArchitectureType.x86) {
             return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);

@@ -1459,7 +1459,7 @@ public class VmInfoBuildUtils {
         return osRepository.getOsUsbControllerModel(
                 vm.getVmOsId(),
                 vm.getCompatibilityVersion(),
-                vm.getBiosType().getChipsetType());
+                vm.getCustomBiosType().getChipsetType());
     }
 
     public boolean isTabletEnabled(VM vm) {

@@ -159,7 +159,7 @@ public final class Cloner {
         vm.setVmDescription(instance.getVmDescription());
         vm.setComment(instance.getComment());
         vm.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());
-        vm.setBiosType(instance.getBiosType());
+        vm.setCustomBiosType(instance.getCustomBiosType());
         vm.setClusterBiosType(instance.getClusterBiosType());
         vm.setClusterBiosTypeOrigin(instance.getClusterBiosTypeOrigin());
         vm.setCustomCpuName(instance.getCustomCpuName());
@@ -444,7 +444,7 @@ public final class Cloner {
         obj.setDefaultBootSequence(instance.getDefaultBootSequence());
         obj.setComment(instance.getComment());
         obj.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());
-        obj.setBiosType(instance.getBiosType());
+        obj.setCustomBiosType(instance.getCustomBiosType());
         obj.setCustomCpuName(instance.getCustomCpuName());
         obj.setCustomCompatibilityVersion(instance.getCustomCompatibilityVersion());
         obj.setStateless(instance.isStateless());
@@ -508,7 +508,7 @@ public final class Cloner {
         obj.setDescription(instance.getDescription());
         obj.setComment(instance.getComment());
         obj.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());
-        obj.setBiosType(instance.getBiosType());
+        obj.setCustomBiosType(instance.getCustomBiosType());
         obj.setCustomCpuName(instance.getCustomCpuName());
         obj.setCustomCompatibilityVersion(instance.getCustomCompatibilityVersion());
         obj.setInitialized(instance.isInitialized());

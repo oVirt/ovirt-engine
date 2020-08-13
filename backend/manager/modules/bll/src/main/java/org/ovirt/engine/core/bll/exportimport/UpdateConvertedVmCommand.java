@@ -104,8 +104,8 @@ public class UpdateConvertedVmCommand<T extends ConvertVmParameters> extends VmC
 
     private void addExtraData(VM vm) {
         VmStatic vmStatic = getVm().getStaticData();
-        if (!vmStatic.getBiosType().equals(vm.getBiosType())) {
-            vmStatic.setBiosType(vm.getBiosType());
+        if (!vmStatic.getCustomBiosType().equals(vm.getCustomBiosType())) {
+            vmStatic.setCustomBiosType(vm.getCustomBiosType());
             getVmManager().update(vmStatic);
         }
     }

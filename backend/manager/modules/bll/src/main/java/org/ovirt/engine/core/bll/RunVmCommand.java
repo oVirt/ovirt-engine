@@ -1131,8 +1131,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         if (FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
-                && getVm().getBiosType() != BiosType.CLUSTER_DEFAULT
-                && getVm().getBiosType() != BiosType.I440FX_SEA_BIOS
+                && getVm().getCustomBiosType() != BiosType.CLUSTER_DEFAULT
+                && getVm().getCustomBiosType() != BiosType.I440FX_SEA_BIOS
                 && getCluster().getArchitecture().getFamily() != ArchitectureType.x86) {
             return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
         }

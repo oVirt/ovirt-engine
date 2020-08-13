@@ -230,8 +230,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
                     vmFromConfiguration.setClusterBiosType(getCluster().getBiosType());
                 }
 
-                if (vmFromConfiguration.getBiosType() == null) {
-                    vmFromConfiguration.setBiosType(BiosType.CLUSTER_DEFAULT);
+                if (vmFromConfiguration.getCustomBiosType() == null) {
+                    vmFromConfiguration.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
                 }
 
                 vmFromConfiguration.setClusterId(getParameters().getClusterId());

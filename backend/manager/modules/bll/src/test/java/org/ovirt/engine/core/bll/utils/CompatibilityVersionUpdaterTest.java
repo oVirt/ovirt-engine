@@ -181,7 +181,7 @@ public class CompatibilityVersionUpdaterTest {
         vm.setId(Guid.newGuid());
         vm.setClusterArch(cluster.getArchitecture());
         vm.setMigrationPolicyId(Guid.newGuid());
-        vm.setBiosType(BiosType.CLUSTER_DEFAULT);
+        vm.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
         vm.setDefaultDisplayType(DisplayType.vga);
         vm.setVmOs(OS_ID);
 

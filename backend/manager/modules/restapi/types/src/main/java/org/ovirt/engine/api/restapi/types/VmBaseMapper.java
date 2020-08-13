@@ -190,7 +190,7 @@ public class VmBaseMapper {
                 entity.setBootMenuEnabled(model.getBios().getBootMenu().isEnabled());
             }
             if (model.getBios().isSetType()) {
-                entity.setBiosType(map(model.getBios().getType(), null));
+                entity.setCustomBiosType(map(model.getBios().getType(), null));
             }
         }
         if (model.isSetCpuShares()) {
@@ -398,8 +398,8 @@ public class VmBaseMapper {
         model.getBios().setBootMenu(new BootMenu());
         model.getBios().getBootMenu().setEnabled(entity.isBootMenuEnabled());
 
-        if (entity.getBiosType() != null) {
-            model.getBios().setType(map(entity.getBiosType(), null));
+        if (entity.getCustomBiosType() != null) {
+            model.getBios().setType(map(entity.getCustomBiosType(), null));
         }
 
         if(entity.getTimeZone() != null) {

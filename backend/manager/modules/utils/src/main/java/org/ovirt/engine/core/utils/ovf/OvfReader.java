@@ -696,23 +696,23 @@ public abstract class OvfReader implements IOvfBuilder {
         // For compatibility with oVirt 4.3, use values of BiosType constants that existed before
         // introduction of CLUSTER_DEFAULT:  0 == I440FX_SEA_BIOS and so on
         acceptNode(
-                val -> vmBase.setBiosType(BiosType.forValue(Integer.parseInt(val) + 1)),
+                val -> vmBase.setCustomBiosType(BiosType.forValue(Integer.parseInt(val) + 1)),
                 () -> {
                     assignClusterBiosTypeOrigin(BiosType.I440FX_SEA_BIOS);
-                    vmBase.setBiosType(BiosType.CLUSTER_DEFAULT);
+                    vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
                 },
                 biosTypeNode);
         if (biosTypeNode != null) {
             consumeReadXmlAttribute(biosTypeNode, "ovf:custom",
                     val -> {
                         if (!Boolean.parseBoolean(val)) {
-                            assignClusterBiosTypeOrigin(vmBase.getBiosType());
-                            vmBase.setBiosType(BiosType.CLUSTER_DEFAULT);
+                            assignClusterBiosTypeOrigin(vmBase.getCustomBiosType());
+                            vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
                         }
                     },
                     () -> {
-                        assignClusterBiosTypeOrigin(vmBase.getBiosType());
-                        vmBase.setBiosType(BiosType.CLUSTER_DEFAULT);
+                        assignClusterBiosTypeOrigin(vmBase.getCustomBiosType());
+                        vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
                     });
         }
     }

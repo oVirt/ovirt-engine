@@ -46,7 +46,7 @@ public class OvfTemplateWriter extends OvfOvirtWriter {
 
     @Override
     protected boolean isCustomBiosType() {
-        return vmTemplate.getBiosType() != BiosType.CLUSTER_DEFAULT;
+        return vmTemplate.getCustomBiosType() != BiosType.CLUSTER_DEFAULT;
     }
 
     @Override

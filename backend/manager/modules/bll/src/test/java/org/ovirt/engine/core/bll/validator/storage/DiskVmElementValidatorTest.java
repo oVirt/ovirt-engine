@@ -151,7 +151,7 @@ public class DiskVmElementValidatorTest {
         vm.setStatus(VMStatus.Down);
         vm.setId(Guid.newGuid());
         vm.setVmOs(vmOs);
-        vm.setBiosType(BiosType.CLUSTER_DEFAULT);
+        vm.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
         vm.setClusterBiosType(BiosType.I440FX_SEA_BIOS);
         return vm;
     }

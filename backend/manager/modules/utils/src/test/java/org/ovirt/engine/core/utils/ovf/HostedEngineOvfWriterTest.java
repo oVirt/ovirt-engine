@@ -108,6 +108,6 @@ public class HostedEngineOvfWriterTest {
         vm.setCpuPerSocket(4);
         vm.setThreadsPerCpu(2);
         vm.setClusterBiosType(BiosType.Q35_SEA_BIOS);
-        vm.setBiosType(BiosType.CLUSTER_DEFAULT);
+        vm.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
     }
 }

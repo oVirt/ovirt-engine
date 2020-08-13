@@ -53,7 +53,7 @@ public class VmUpdater {
         }
 
         VmStatic vmStatic = EntityMapper.toOvirtVm(vm, clusterId);
-        vmStatic.setBiosType(BiosType.Q35_SEA_BIOS);
+        vmStatic.setCustomBiosType(BiosType.Q35_SEA_BIOS);
 
         AddVmParameters params = new AddVmParameters(vmStatic);
         params.setSoundDeviceEnabled(false);

@@ -245,12 +245,12 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         this.vmStatic.setCustomEmulatedMachine(value);
     }
 
-    public BiosType getBiosType() {
-        return this.vmStatic.getBiosType();
+    public BiosType getCustomBiosType() {
+        return this.vmStatic.getCustomBiosType();
     }
 
-    public void setBiosType(BiosType biosType) {
-        this.vmStatic.setBiosType(biosType);
+    public void setCustomBiosType(BiosType biosType) {
+        this.vmStatic.setCustomBiosType(biosType);
     }
 
     public String getStopReason() {
@@ -1871,7 +1871,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     }
 
     public BiosType getEffectiveBiosType() {
-        return getBiosType() != BiosType.CLUSTER_DEFAULT ? getBiosType() : getClusterBiosType();
+        return getCustomBiosType() != BiosType.CLUSTER_DEFAULT ? getCustomBiosType() : getClusterBiosType();
     }
 
     public BiosType getClusterBiosTypeOrigin() {

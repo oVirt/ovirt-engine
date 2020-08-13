@@ -40,7 +40,7 @@ public class CompatibilityVersionUpdater {
         if (newVersion.greaterOrEquals(Version.v4_3)) {
             BiosType oldBiosType = getBiosTypeOrigin(vm);
             if (oldBiosType == BiosType.Q35_SECURE_BOOT) {
-                vm.setBiosType(BiosType.Q35_SECURE_BOOT);
+                vm.setCustomBiosType(BiosType.Q35_SECURE_BOOT);
             }
         }
     }
@@ -48,7 +48,7 @@ public class CompatibilityVersionUpdater {
     public static BiosType getBiosTypeOrigin(VM vm) {
         BiosType clusterBiosType =
                 vm.getClusterBiosTypeOrigin() != null ? vm.getClusterBiosTypeOrigin() : BiosType.I440FX_SEA_BIOS;
-        return BiosTypeUtils.getEffective(vm.getBiosType(), clusterBiosType);
+        return BiosTypeUtils.getEffective(vm.getCustomBiosType(), clusterBiosType);
     }
 
     /**
@@ -214,10 +214,10 @@ public class CompatibilityVersionUpdater {
 
     private boolean updateBiosType(VmBase vmBase, Version newVersion) {
         if (!FeatureSupported.isBiosTypeSupported(newVersion) &&
-                vmBase.getBiosType() != BiosType.CLUSTER_DEFAULT &&
-                vmBase.getBiosType() != BiosType.I440FX_SEA_BIOS) {
-            var oldBiosType = vmBase.getBiosType();
-            vmBase.setBiosType(BiosType.CLUSTER_DEFAULT);
+                vmBase.getCustomBiosType() != BiosType.CLUSTER_DEFAULT &&
+                vmBase.getCustomBiosType() != BiosType.I440FX_SEA_BIOS) {
+            var oldBiosType = vmBase.getCustomBiosType();
+            vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
 
             return oldBiosType != BiosType.CLUSTER_DEFAULT;
         }
