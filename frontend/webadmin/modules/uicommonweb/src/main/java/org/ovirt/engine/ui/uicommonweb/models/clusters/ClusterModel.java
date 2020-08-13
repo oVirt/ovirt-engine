@@ -1501,8 +1501,12 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         return null;
     }
 
-    private void initBiosType() {
+    public void initBiosType() {
+        boolean allowClusterDefault = getEntity() == null || BiosType.CLUSTER_DEFAULT == getEntity().getBiosType();
         getBiosType().setItems(AsyncDataProvider.getInstance().getBiosTypeList());
+        if (!allowClusterDefault) {
+            getBiosType().getItems().remove(BiosType.CLUSTER_DEFAULT);
+        }
         updateBiosType();
     }
 
@@ -1540,7 +1544,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         } else {
             getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getEffectiveVersion());
         }
-        if (!getBiosType().getIsChangable() && getBiosType().getSelectedItem() == null) {
+        if (architecture == ArchitectureType.undefined || (!getBiosType().getIsChangable() && getBiosType().getSelectedItem() == null)) {
             getBiosType().setSelectedItem(BiosType.CLUSTER_DEFAULT);
             return;
         }

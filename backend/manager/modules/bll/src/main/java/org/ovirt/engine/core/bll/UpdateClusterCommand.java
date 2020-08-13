@@ -331,10 +331,11 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             // Also, along with the emulation machines, the Bios Type may need to be updated as well.
             getParameters().getCluster().setDetectEmulatedMachine(true);
             getParameters().getCluster().setEmulatedMachine(null);
-            if (getCluster().getArchitecture() != ArchitectureType.undefined &&
-                    getCluster().getBiosType() == BiosType.CLUSTER_DEFAULT) {
-                setDefaultBiosType();
-            }
+        }
+
+        if (getCluster().getArchitecture() != ArchitectureType.undefined &&
+                getCluster().getBiosType() == BiosType.CLUSTER_DEFAULT) {
+            setDefaultBiosType();
         }
 
         if (getParameters().isForceResetEmulatedMachine()) {
