@@ -88,6 +88,7 @@
   copy:
     src: "{{ item }}"
     dest: "{{ glusterd_libdir }}/peers/"
+    mode: preserve
   with_fileglob:
     - /tmp/peers/*
   delegate_to: "{{ gluster_maintenance_new_node }}"

@@ -28,6 +28,7 @@
     copy:
       content: "{{ csr.stdout }}"
       dest: "{{ ovirt_pki_dir }}/requests/{{ ovirt_vds_hostname }}-ssh.req"
+      mode: 0644
     delegate_to: localhost
 
   - name: Run PKI enroll request for vmconsole
@@ -53,12 +54,14 @@
     copy:
       content: "{{ ovirt_ca_key }}"
       dest: "{{ ovirt_vmconsole_ca_file }}"
+      mode: 0644
 
   - name: Add cert files
     copy:
       src: "{{ ovirt_pki_dir }}/certs/{{ ovirt_vds_hostname }}-ssh-cert.pub"
       dest: "{{ ovirt_vmconsole_cert_file }}"
       remote_src: no
+      mode: preserve
 
   - name: Set vmconsole key path
     set_fact:
