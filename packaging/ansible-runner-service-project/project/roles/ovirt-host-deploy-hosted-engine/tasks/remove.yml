@@ -1,15 +1,4 @@
 ---
-- name: Verify hosted engine conf file exists
-  stat:
-    path: "{{ hosted_engine_conf }}"
-  register: stat_results
-
-- name: Remove hosted engine configuration
-  copy:
-    dest: hosted_engine_conf
-    content: ''
-  when: stat_results.stat.exists|bool
-
 - name: Remove hosted engine conf file
   file:
     path: "{{ hosted_engine_conf }}"

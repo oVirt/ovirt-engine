@@ -72,6 +72,7 @@
     content: "{{ vdsm_id }}"
     dest: "{{ vdsm_id_file }}"
     owner: root
+    mode: 0644
 
 # Important: Do not rename this task!
 # The name of the task is used by the runner parser
@@ -99,3 +100,4 @@
     content: "{{ vdsm_config_prefix }}"
     dest: "{{ vdsm_config_file }}"
     owner: root
+    mode: 0644

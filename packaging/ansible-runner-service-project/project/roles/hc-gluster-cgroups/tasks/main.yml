@@ -8,6 +8,7 @@
   copy:
     src: 99-cpu.conf
     dest: /etc/systemd/system/glusterd.service.d/99-cpu.conf
+    mode: preserve
   notify:
     - Restart glusterd
 

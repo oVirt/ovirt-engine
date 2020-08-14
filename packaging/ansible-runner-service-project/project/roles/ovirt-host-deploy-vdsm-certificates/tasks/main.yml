@@ -31,6 +31,7 @@
     copy:
       content: "{{ item.stdout }}"
       dest: "{{ ovirt_pki_dir }}/{{ item.item.item.req_dir }}/{{ ovirt_vds_hostname }}.req"
+      mode: 0644
     loop: '{{ csrs.results }}'
     delegate_to: localhost
 
@@ -93,6 +94,8 @@
       content: "{{ ovirt_qemu_ca_cert }}"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_ca_file }}"
       owner: 'root'
+      group: 'kvm'
+      mode: 0644
 
   - name: Add vdsm cert files
     copy:
@@ -114,7 +117,9 @@
       src: "{{ ovirt_pki_dir }}/certs-qemu/{{ ovirt_vds_hostname }}.cer"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_cert_file }}"
       owner: 'root'
+      group: 'kvm'
       remote_src: no
+      mode: preserve
 
   - name: Set vdsm key path
     set_fact:

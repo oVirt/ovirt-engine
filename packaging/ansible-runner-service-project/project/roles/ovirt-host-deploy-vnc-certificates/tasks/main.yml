@@ -10,11 +10,21 @@
       src: "{{ host_deploy_spice_tls_x509_cert_dir }}/{{ item }}"
       dest: "{{ host_deploy_vnc_tls_x509_cert_dir }}/{{ item }}"
       force: no
+      group: kvm
+      owner: root
       remote_src: yes
+      mode: preserve
     with_items:
       - "ca-cert.pem"
       - "server-cert.pem"
       - "server-key.pem"
+
+  - name: Set server-key permissions
+    file:
+      path: "{{ host_deploy_vnc_tls_x509_cert_dir }}/server-key.pem"
+      owner: vdsm
+      group: kvm
+      mode: 0440
 
   - name: Modify qemu config file - enable TLS
     blockinfile:
