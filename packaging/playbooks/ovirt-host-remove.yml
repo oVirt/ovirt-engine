@@ -32,6 +32,7 @@
         remote_src: yes
         src: "{{ hosted_engine_config_file }}"
         dest: "{{ hosted_engine_config_file }}.undeployed"
+        mode: preserve
       when: conf_file.stat.exists
 
     - name: Remove old hosted engine configuration file

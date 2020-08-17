@@ -11,6 +11,7 @@
   copy:
     dest: '/etc/pki/tls/spice.cnf'
     backup: yes
+    mode: 0644
     content: |
       CipherString = {{ host_deploy_spice_cipher_string }}
       Protocol = {{ host_deploy_spice_protocol }}
