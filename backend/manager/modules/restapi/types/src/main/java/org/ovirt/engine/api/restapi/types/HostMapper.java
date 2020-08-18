@@ -347,6 +347,8 @@ public class HostMapper {
             model.getCertificate().setOrganization(subject.split(",")[0].replace("O=", ""));
         }
 
+        model.setReinstallationRequired(entity.getStaticData().isReinstallRequired());
+
         return model;
     }
 
