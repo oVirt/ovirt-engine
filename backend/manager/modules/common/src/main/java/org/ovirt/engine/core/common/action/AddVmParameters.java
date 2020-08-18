@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -20,6 +21,7 @@ public class AddVmParameters extends VmManagementParametersBase {
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
     // Declare which disks should be attached (AttachDiskToVm is called separately)
     private List<DiskVmElement> disksToAttach = new ArrayList<>();
+    private AutoPinningPolicy autoPinningPolicy;
 
     public AddVmParameters() {
     }
@@ -78,5 +80,13 @@ public class AddVmParameters extends VmManagementParametersBase {
 
     public void setDisksToAttach(List<DiskVmElement> disksToAttach) {
         this.disksToAttach = disksToAttach;
+    }
+
+    public void setAutoPinningPolicy(AutoPinningPolicy autoPinningPolicy) {
+        this.autoPinningPolicy = autoPinningPolicy;
+    }
+
+    public AutoPinningPolicy getAutoPinningPolicy() {
+        return autoPinningPolicy;
     }
 }

@@ -21,6 +21,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
+import org.ovirt.engine.api.model.AutoPinningPolicy;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.Disk;
@@ -93,6 +94,7 @@ public class BackendVmsResource extends
     public static final String CLONE = "clone";
     public static final String CLONE_PERMISSIONS = "clone_permissions";
     public static final String OVF_AS_OVA = "ovf_as_ova";
+    public static final String AUTO_PINNING_POLICY = "auto_pinning_policy";
     private static final String LEGAL_CLUSTER_COMPATIBILITY_VERSIONS =
             Version.ALL.stream().map(Version::toString).collect(Collectors.joining(", "));
 
@@ -431,6 +433,7 @@ public class BackendVmsResource extends
         IconHelper.setIconToParams(vm, params);
 
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
+        addAutoPinningPolicy(params);
         setupCloneTemplatePermissions(params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
@@ -573,6 +576,7 @@ public class BackendVmsResource extends
         params.setStorageDomainId(storageDomainId);
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDiskAttachments(), template.getId()));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
+        addAutoPinningPolicy(params);
         setupCloneTemplatePermissions(params);
         addDevicesToParams(params, vm, template, instanceType, staticVm, cluster);
         IconHelper.setIconToParams(vm, params);
@@ -594,6 +598,7 @@ public class BackendVmsResource extends
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setVmPayload(getPayload(vm));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
+        addAutoPinningPolicy(params);
         addDevicesToParams(params, vm, null, instanceType, staticVm, cluster);
         IconHelper.setIconToParams(vm, params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
@@ -608,6 +613,26 @@ public class BackendVmsResource extends
             return disks.getDisks().stream().map(d -> (DiskImage)DiskMapper.map(d, null)).collect(Collectors.toList());
         }
         return null;
+    }
+
+    private void addAutoPinningPolicy(AddVmParameters params) {
+        String autoPinningPolicy = ParametersHelper.getParameter(httpHeaders, uriInfo, AUTO_PINNING_POLICY);
+        if (autoPinningPolicy != null && !autoPinningPolicy.isEmpty()) {
+            try {
+                switch (AutoPinningPolicy.fromValue(autoPinningPolicy)) {
+                    case DISABLED:
+                        return;
+                    case EXISTING:
+                        params.setAutoPinningPolicy(org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.EXISTING);
+                        return;
+                    case ADJUST:
+                        params.setAutoPinningPolicy(org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.ADJUST);
+                        return;
+                }
+            } catch (Exception e) {
+                throw new WebFaultException(null, localize(Messages.INVALID_ENUM_REASON), Response.Status.BAD_REQUEST);
+            }
+        }
     }
 
     private void addInlineStatistics(Vm vm) {

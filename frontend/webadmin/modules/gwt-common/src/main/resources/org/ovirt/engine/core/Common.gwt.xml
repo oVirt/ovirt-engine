@@ -80,6 +80,7 @@
         <include name="common/businessentities/HugePage.java" />
         <include name="common/businessentities/ConsoleTargetType.java" />
         <include name="common/businessentities/BiosType.java" />
+        <include name="common/businessentities/AutoPinningPolicy.java" />
 
         <!-- Network business entities -->
         <include name="common/businessentities/network/VdsNetworkInterface.java" />
@@ -356,6 +357,7 @@
         <include name="common/utils/NetworkCommonUtils.java"/>
         <include name="common/utils/CompatibilityVersionUtils.java"/>
         <include name="common/utils/MathUtils.java"/>
+        <include name="common/utils/NumaUtils.java"/>
         <include name="common/utils/EmulatedMachineCommonUtils.java" />
         <include name="common/utils/ClusterEmulatedMachines.java" />
 

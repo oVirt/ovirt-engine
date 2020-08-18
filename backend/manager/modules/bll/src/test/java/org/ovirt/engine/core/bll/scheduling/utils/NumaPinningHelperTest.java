@@ -8,11 +8,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.utils.NumaTestUtils;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
@@ -98,6 +101,65 @@ class NumaPinningHelperTest {
         );
     }
 
+    @Test
+    public void testCpuPinningLowCpus() {
+        VM vm = new VM();
+        vm.setNumOfSockets(1);
+        vm.setThreadsPerCpu(1);
+        vm.setCpuPerSocket(1);
+
+        VDS host = createVDS();
+
+        List<VdsNumaNode> hostNodes = Arrays.asList(
+                createHostNumaNodeWithCpus(0, 1500, IntStream.rangeClosed(0, 32).boxed().collect(Collectors.toList())),
+                createHostNumaNodeWithCpus(1, 1500, IntStream.rangeClosed(0, 32).boxed().collect(Collectors.toList()))
+        );
+
+        assertThat(NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes)).isNull();
+    }
+
+    @Test
+    public void testCpuPinningPartial() {
+        VM vm = new VM();
+        vm.setNumOfSockets(8);
+        vm.setThreadsPerCpu(1);
+        vm.setCpuPerSocket(1);
+
+        VDS host = createVDS();
+
+        List<VdsNumaNode> hostNodes = Arrays.asList(
+                createHostNumaNodeWithCpus(0, 1500, IntStream.rangeClosed(0, 32).boxed().collect(Collectors.toList())),
+                createHostNumaNodeWithCpus(1, 1500, IntStream.rangeClosed(0, 32).boxed().collect(Collectors.toList()))
+        );
+        vm.setCpuPinning(NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes));
+
+        assertThat(vm.getCpuPinning().equals("0#1,33_1#1,33_2#2,34_3#2,34_4#17,49_5#17,49_6#18,50_7#18,50"));
+    }
+
+    @Test
+    public void testCpuPinningFull() {
+        VM vm = new VM();
+        vm.setNumOfSockets(2);
+        vm.setThreadsPerCpu(2);
+        vm.setCpuPerSocket(16);
+
+        VDS host = createVDS();
+
+        List<VdsNumaNode> hostNodes = Arrays.asList(
+                createHostNumaNodeWithCpus(0, 1500, IntStream.rangeClosed(0, 32).boxed().collect(Collectors.toList())),
+                createHostNumaNodeWithCpus(1, 1500, IntStream.rangeClosed(0, 32).boxed().collect(Collectors.toList()))
+        );
+
+        String output = NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes);
+        assert output != null;
+        assertThat(output.equals("0#1,33_1#1,33_2#2,34_" +
+                "3#2,34_4#3,35_5#3,35_6#4,36_7#4,36_8#5,37_9#5,37_10#6,38_11#6,38_12#7,39_13#7,39_14#8,40_15#8,40_" +
+                "16#9,41_17#9,41_18#10,42_19#10,42_20#11,43_21#11,43_22#12,44_23#12,44_24#13,45_25#13,45_26#14,46_" +
+                "27#14,46_28#15,47_29#15,47_30#17,49_31#17,49_32#18,50_33#18,50_34#19,51_35#19,51_36#20,52_37#20,52_" +
+                "38#21,53_39#21,53_40#22,54_41#22,54_42#23,55_43#23,55_44#24,56_45#24,56_46#25,57_47#25,57_48#26,58_" +
+                "49#26,58_50#27,59_51#27,59_52#28,60_53#28,60_54#29,61_55#29,61_56#30,62_57#30,62_58#31,63_59#31,63"));
+    }
+
     // TODO - add tests for multiple VMs
 
     private VmNumaNode createVmNumaNode(int index, List<Integer> hostNodeIndices) {
@@ -121,4 +183,17 @@ class NumaPinningHelperTest {
 
         return Collections.singletonList(vm);
     }
+
+    private VDS createVDS() {
+        VDS host = new VDS();
+        host.setCpuSockets(2);
+        host.setCpuThreads(64);
+        host.setCpuCores(32);
+        return host;
+    }
+     private VdsNumaNode createHostNumaNodeWithCpus(int index, long freeMem, List<Integer> cpus) {
+        VdsNumaNode vdsNumaNode= createHostNumaNode(index, freeMem);
+        vdsNumaNode.setCpuIds(cpus);
+        return vdsNumaNode;
+     }
 }

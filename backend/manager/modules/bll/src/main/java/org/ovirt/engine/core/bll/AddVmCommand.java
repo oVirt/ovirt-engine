@@ -35,6 +35,7 @@ import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
@@ -68,6 +69,7 @@ import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -76,14 +78,17 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -115,6 +120,8 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.utils.HugePageUtils;
+import org.ovirt.engine.core.common.utils.NumaUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -131,6 +138,7 @@ import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmInitDao;
@@ -176,6 +184,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Inject
     private AffinityValidator affinityValidator;
+
+    @Inject
+    private VdsNumaNodeDao vdsNumaNodeDao;
 
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
@@ -827,6 +838,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
+        if ((getParameters().getVmStaticData().getDedicatedVmForVdsList() == null
+                || getParameters().getVmStaticData().getDedicatedVmForVdsList().isEmpty())
+                && getParameters().getAutoPinningPolicy() != null) {
+            return failValidation(EngineMessage.ACTION_TYPE_CANNOT_PIN_WITHOUT_HOST);
+        }
+
         return true;
     }
 
@@ -1031,6 +1048,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (!addVmLease(getParameters().getVm().getLeaseStorageDomainId(), getVmId(), false)) {
             return;
         }
+        addCpuAndNumaPinning();
 
         TransactionSupport.executeInNewTransaction(() -> {
             addVmStatic();
@@ -1088,6 +1106,32 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected Guid getSourceVmId() {
         return getVmTemplateId();
+    }
+
+    private void addCpuAndNumaPinning() {
+        if (getParameters().getAutoPinningPolicy() == null) {
+            return;
+        }
+
+        // We assume identical topology of all assigned hosts
+        VDS host = vdsDao.get(getParameters().getVmStaticData().getDedicatedVmForVdsList().get(0));
+        if (getParameters().getAutoPinningPolicy() == AutoPinningPolicy.ADJUST) {
+            getParameters().getVm().setNumOfSockets(host.getCpuSockets());
+            getParameters().getVm().setCpuPerSocket((host.getCpuCores() / host.getCpuSockets()) - 1);
+            getParameters().getVm().setThreadsPerCpu(host.getCpuThreads() / host.getCpuCores());
+        }
+
+        List<VdsNumaNode> hostNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId());
+        List<VmNumaNode> vmNumaNodes = NumaPinningHelper.initVmNumaNode(getParameters().getVm().getNumOfCpus(), hostNodes);
+        getParameters().getVm().setCpuPinning(NumaPinningHelper.getSapHanaCpuPinning(getParameters().getVm(),
+                host,
+                hostNodes));
+        NumaUtils.setNumaListConfiguration(vmNumaNodes,
+                getParameters().getVm().getMemSizeMb(),
+                HugePageUtils.getHugePageSize(getParameters().getVm().getStaticData()),
+                getParameters().getVm().getNumOfCpus());
+        getParameters().getVm().setvNumaNodeList(vmNumaNodes);
+        getParameters().getVm().setNumaTuneMode(NumaTuneMode.STRICT);
     }
 
     private void addGraphicsDevice() {

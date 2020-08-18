@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.NumaNode;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
@@ -198,6 +200,58 @@ public class NumaPinningHelper {
         }
 
         return true;
+    }
+
+    public static String getSapHanaCpuPinning(VM vm, VDS host, List<VdsNumaNode> numaNodes) {
+        StringBuilder sb = new StringBuilder();
+        int hostSockets = host.getCpuSockets();
+        int hostThreads = host.getCpuThreads() / host.getCpuCores();
+        int vmCpu = vm.getNumOfCpus();
+        int maxCpuNumaThread = vmCpu / hostSockets / hostThreads;
+        if (maxCpuNumaThread != 0) {
+            maxCpuNumaThread++;
+        } else {
+            return null;
+        }
+        int currentCpu = 0;
+        for (VdsNumaNode vdsNumaNode : numaNodes) {
+            List<Integer> cpusInNuma = vdsNumaNode.getCpuIds();
+            int numCore = vdsNumaNode.getCpuIds().size() / hostThreads;
+            if (maxCpuNumaThread == 0) {
+                maxCpuNumaThread = numCore;
+            }
+            for (int i = 1; i < maxCpuNumaThread; i++) {
+                for (int t = 0; t < hostThreads; t++) {
+                    if (i == numCore) {
+                        sb.append(currentCpu++).append("#").append(cpusInNuma.get(numCore)).append("_");
+                    } else {
+                        sb.append(currentCpu++)
+                                .append("#")
+                                .append(cpusInNuma.get(i))
+                                .append(",")
+                                .append(cpusInNuma.get(i + numCore))
+                                .append("_");
+                    }
+                }
+            }
+        }
+        sb.deleteCharAt(sb.lastIndexOf("_"));
+        return sb.toString();
+    }
+
+    public static List<VmNumaNode> initVmNumaNode(int numCpus, List<VdsNumaNode> hostNodes) {
+        List<VmNumaNode> vmNumaNodes = new ArrayList<>(numCpus);
+        int index = 0;
+        for (VdsNumaNode hostNode : hostNodes) {
+            if (numCpus <= index) {
+                break;
+            }
+            VmNumaNode vmNumaNode = new VmNumaNode();
+            vmNumaNode.setVdsNumaNodeList(Arrays.asList(hostNode.getIndex()));
+            vmNumaNode.setIndex(index++);
+            vmNumaNodes.add(vmNumaNode);
+        }
+        return vmNumaNodes;
     }
 
     private static class HostNumaNodeData {
