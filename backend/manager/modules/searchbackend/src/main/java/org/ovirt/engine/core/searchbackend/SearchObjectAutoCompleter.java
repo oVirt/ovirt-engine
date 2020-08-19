@@ -55,6 +55,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         verbs.add(SearchObjects.JOB_OBJ_NAME);
 
         requiresFullTable.put(SearchObjects.VDC_USER_ROLE_SEARCH, true);
+        requiresFullTable.put(SearchObjects.VDC_VM_CLUSTER_SEARCH, true);
 
         // vms - vds
         addJoin(SearchObjects.VM_OBJ_NAME,
