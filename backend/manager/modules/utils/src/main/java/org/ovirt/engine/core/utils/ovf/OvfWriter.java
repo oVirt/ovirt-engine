@@ -327,7 +327,7 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     protected void writeBiosType() {
         BiosType effectiveBiosType = getEffectiveBiosType();
-        if (effectiveBiosType != BiosType.CLUSTER_DEFAULT) {
+        if (effectiveBiosType != null && effectiveBiosType != BiosType.CLUSTER_DEFAULT) {
             // For compatibility with oVirt 4.3, use values of BiosType constants that existed before
             // introduction of CLUSTER_DEFAULT:  0 == I440FX_SEA_BIOS and so on
             _writer.writeStartElement(BIOS_TYPE);

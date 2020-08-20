@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -63,7 +62,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -382,11 +380,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             }
         }
 
-        BiosType oldClusterBiosType = getVm().getClusterBiosTypeOrigin() != null
-                ? getVm().getClusterBiosTypeOrigin()
-                : BiosType.I440FX_SEA_BIOS;
-        ChipsetType oldChipsetType =
-                BiosTypeUtils.getEffective(getVm().getBiosType(), oldClusterBiosType).getChipsetType();
+        ChipsetType oldChipsetType = CompatibilityVersionUpdater.getBiosTypeOrigin(getVm()).getChipsetType();
         var updates = new CompatibilityVersionUpdater().updateVmCompatibilityVersion(getVm(), newVersion, getCluster());
         if (ChipsetUpdater.updateChipset(getVm().getStaticData(), oldChipsetType, getCluster())) {
             updates.add(VmUpdateType.CHIPSET);

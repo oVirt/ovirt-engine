@@ -703,12 +703,17 @@ public abstract class OvfReader implements IOvfBuilder {
                 },
                 biosTypeNode);
         if (biosTypeNode != null) {
-            consumeReadXmlAttribute(biosTypeNode, "ovf:custom", val -> {
-                if (!Boolean.parseBoolean(val)) {
-                    assignClusterBiosTypeOrigin(vmBase.getBiosType());
-                    vmBase.setBiosType(BiosType.CLUSTER_DEFAULT);
-                }
-            });
+            consumeReadXmlAttribute(biosTypeNode, "ovf:custom",
+                    val -> {
+                        if (!Boolean.parseBoolean(val)) {
+                            assignClusterBiosTypeOrigin(vmBase.getBiosType());
+                            vmBase.setBiosType(BiosType.CLUSTER_DEFAULT);
+                        }
+                    },
+                    () -> {
+                        assignClusterBiosTypeOrigin(vmBase.getBiosType());
+                        vmBase.setBiosType(BiosType.CLUSTER_DEFAULT);
+                    });
         }
     }
 

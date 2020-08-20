@@ -140,9 +140,6 @@ public class OvfManagerTest {
         // Icons are actually not stored in snapshots, so they are excluded from comparison
         newVm.getStaticData().setSmallIconId(vm.getStaticData().getSmallIconId());
         newVm.getStaticData().setLargeIconId(vm.getStaticData().getLargeIconId());
-        if (vm.getBiosType() == BiosType.CLUSTER_DEFAULT) {
-            vm.setBiosType(vm.getEffectiveBiosType());
-        }
 
         assertEquals(vm.getStaticData(), newVm.getStaticData());
     }
