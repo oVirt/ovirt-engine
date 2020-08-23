@@ -558,7 +558,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         getParameters().setStorageDomainId(domainId);
         getParameters().setDestinationImageId(image.getImageId());
 
-        // ovirt-imageio-daemon must know the boundaries of the target image for writing permissions.
+        // imageio server limits access to range 0-size.
         getParameters().setTransferSize(getTransferSize());
 
         persistCommand(getParameters().getParentCommand(), true);
@@ -959,13 +959,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
 
         if (!addImageTicketToDaemon(imagedTicketId, imagePath)) {
-            log.error("Failed to add image ticket to ovirt-imageio-daemon");
+            log.error("Failed to add host image ticket");
             updateEntityPhaseToStoppedBySystem(
                     AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_DAEMON);
             return;
         }
         if (!addImageTicketToProxy(imagedTicketId, getImageDaemonUri(getVds().getHostName()))) {
-            log.error("Failed to add image ticket to ovirt-imageio-proxy");
+            log.error("Failed to add proxy image ticket");
             if (getParameters().getTransferClientType().isBrowserTransfer()) {
                 updateEntityPhaseToStoppedBySystem(
                         AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
@@ -1065,11 +1065,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         String url = String.format("%s%s/%s", hostUri, IMAGES_PATH, imagedTicketId);
         ImageTicket imageTicket = buildImageTicket(imagedTicketId, url);
 
-        log.info("Adding image ticket to ovirt-imageio-proxy, id {}", imagedTicketId);
+        log.info("Adding proxy image ticket, id {}", imagedTicketId);
         try {
             getProxyClient().putTicket(imageTicket);
         } catch (RuntimeException e) {
-            log.error("Failed to add image ticket to ovirt-imageio-proxy: {}", e.getMessage(), e);
+            log.error("Failed to add proxy image ticket: {}", e.getMessage(), e);
             return false;
         }
 
@@ -1135,7 +1135,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         try {
             vdsRetVal = vdsBroker.runVdsCommand(VDSCommandType.ExtendImageTicket, transferCommandParams);
         } catch (RuntimeException e) {
-            log.error("Failed to extend image transfer session for ticket '{}': {}",
+            log.error("Failed to extend host image ticket '{}': {}",
                     resourceId.toString(), e);
             return false;
         }
@@ -1151,7 +1151,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         try {
             getProxyClient().extendTicket(resourceId, timeout);
         } catch (RuntimeException e) {
-            log.error("Failed to extent image ticket in ovirt-imageio-proxy: {}", e.getMessage(), e);
+            log.error("Failed to extend proxy image ticket: {}", e.getMessage(), e);
             if (getParameters().getTransferClientType().isBrowserTransfer()) {
                 updateEntityPhaseToStoppedBySystem(
                         AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
@@ -1215,10 +1215,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private boolean removeImageTicketFromProxy(Guid imagedTicketId) {
         // Send DELETE request
         try {
-            log.info("Removing image ticket from ovirt-imageio-proxy, id {}", imagedTicketId);
+            log.info("Removing proxy image ticket, id {}", imagedTicketId);
             getProxyClient().deleteTicket(imagedTicketId);
         } catch (RuntimeException e) {
-            log.error("Failed to remove image ticket from ovirt-imageio-proxy: {}", e.getMessage(), e);
+            log.error("Failed to remove proxy image ticket: {}", e.getMessage(), e);
             return false;
         }
         return true;

@@ -428,8 +428,9 @@ NOTE: otopi, and therefore engine-setup, now defaults to python3 except el7, use
 `$  OTOPI_PYTHON=/usr/bin/python2 "${PREFIX}/bin/engine-setup"` +
 to override.
 
-During engine setup, a certificate has to be issued and you will be asked for a hostname. If you want to use
-imageio-proxy along with the engine, it has to be the name by which your machine is accessible from the outside.
+During engine setup, a certificate has to be issued and you will be asked for a
+hostname. If you want to upload and download images from administration portal,
+it has to be the name by which your machine is accessible from the outside.
 
 == JBoss
 
@@ -554,8 +555,9 @@ $ sudo chcon --type=bin_t "${PREFIX}/libexec/ovirt-vmconsole-proxy-helper/ovirt-
 
 == ovirt-imageio
 
-After setup, you need to run ovirt-imageio manually if you want to upload/download images via
-browser. To run ovirt-imageio, run the following command:
+After setup, you need to run ovirt-imageio manually if you want to upload and
+download images via the administration portal. To run ovirt-imageio, run the
+following command:
 
   $ ovirt-imageio --conf-dir $PREFIX/etc/ovirt-imageio
 
