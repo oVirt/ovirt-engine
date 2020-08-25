@@ -88,7 +88,6 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private static final boolean ILLEGAL_IMAGE = false;
     private static final int PROXY_DATA_PORT = 54323;
     private static final int PROXY_CONTROL_PORT = 54324;
-    private static final String HTTP_SCHEME = "http://";
     private static final String HTTPS_SCHEME = "https://";
     private static final String IMAGES_PATH = "/images";
     private static final String FILE_URL_SCHEME = "file://";
@@ -1270,8 +1269,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     public static String getProxyUri() {
-        String scheme = Config.<Boolean> getValue(ConfigValues.ImageProxySSLEnabled)?  HTTPS_SCHEME : HTTP_SCHEME;
-        return scheme + EngineLocalConfig.getInstance().getHost() + ":" + PROXY_DATA_PORT;
+        return HTTPS_SCHEME + EngineLocalConfig.getInstance().getHost() + ":" + PROXY_DATA_PORT;
     }
 
     private String getImageDaemonUri(String daemonHostname) {

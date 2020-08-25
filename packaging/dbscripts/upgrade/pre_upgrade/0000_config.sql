@@ -680,7 +680,6 @@ select fn_db_add_config_value('HostedEngineConfigDiskSizeInBytes','20480','gener
 select fn_db_add_config_value('HostedEngineConfigurationImageGuid','','general');
 
 -- Image IO
-select fn_db_add_config_value('ImageProxySSLEnabled','true','general');
 select fn_db_add_config_value('ImageDaemonPort','54322','general');
 select fn_db_add_config_value('ImageTransferClientTicketValidityInSeconds','3600','general');
 select fn_db_add_config_value('ImageTransferHostTicketValidityInSeconds','300','general');
