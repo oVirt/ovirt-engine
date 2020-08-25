@@ -1174,14 +1174,16 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             return false;
         }
 
+        // If we failed to remove the ticket from the daemon, we must fail and
+        // retry the operation again.
         if (!removeImageTicketFromDaemon(entity.getImagedTicketId(), entity.getVdsId())) {
             return false;
         }
-        if (!removeImageTicketFromProxy(entity.getImagedTicketId())) {
-            // ignoring when we are not uploading using the browser which
-            // always uses the proxy url.
-            return !getParameters().getTransferClientType().isBrowserTransfer();
-        }
+
+        // Do not fail if removing proxy ticket fails. Once we remove the host
+        // ticket, the proxy ticket cannot be used anyway. In the worst case we
+        // are left with proxy ticket that allow access to non-existing URL.
+        removeImageTicketFromProxy(entity.getImagedTicketId());
 
         // Stopping NBD server if necessary
         if (getTransferBackend() == ImageTransferBackend.NBD) {
