@@ -388,7 +388,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     @Override
     protected void executeCommand() {
-        log.info("Creating ImageTransfer entity for command '{}'", getCommandId());
+        log.info("Creating ImageTransfer entity for command '{}', proxyEnabled: {}", getCommandId(), proxyEnabled());
         ImageTransfer entity = new ImageTransfer(getCommandId());
         entity.setCommandType(getActionType());
         entity.setPhase(ImageTransferPhase.INITIALIZING);
@@ -963,15 +963,18 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                     AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_DAEMON);
             return;
         }
-        if (!addImageTicketToProxy(imagedTicketId, getImageDaemonUri(getVds().getHostName()))) {
-            log.error("Failed to add proxy image ticket");
-            if (getParameters().getTransferClientType().isBrowserTransfer()) {
-                updateEntityPhaseToStoppedBySystem(
-                        AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
-                return;
+
+        if (proxyEnabled()) {
+            if (!addImageTicketToProxy(imagedTicketId, getImageDaemonUri(getVds().getHostName()))) {
+                log.error("Failed to add proxy image ticket");
+                if (getParameters().getTransferClientType().isBrowserTransfer()) {
+                    updateEntityPhaseToStoppedBySystem(
+                            AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
+                    return;
+                }
+                // No need to stop the transfer - API client can use the daemon url directly.
+                auditLog(this, AuditLogType.TRANSFER_FAILED_TO_ADD_TICKET_TO_PROXY);
             }
-            // No need to stop the transfer - API client can use the daemon url directly.
-            auditLog(this, AuditLogType.TRANSFER_FAILED_TO_ADD_TICKET_TO_PROXY);
         }
 
         log.info("Started transfer session with transfer id {}, timeout {} seconds",
@@ -986,6 +989,21 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
         setNewSessionExpiration(getClientTicketLifetime());
         updateEntityPhase(ImageTransferPhase.TRANSFERRING);
+    }
+
+    private static boolean proxyEnabled() {
+        // We always use the proxy in normal deployment, but some users are
+        // still using the old unsupported all-in-one configuration, running
+        // engine and vdsm on the same host. In this configuration, the proxy
+        // must be disabled.
+        //
+        // When we don't use the proxy:
+        // - We don't add, extend or remove proxy image tickets.
+        // - ImageTransfer's proxy_url is same as transfer_url, both use the
+        //   daemon port.
+        // - The administration portal is transferring images directly to the
+        //   daemon.
+        return Config.<Boolean>getValue(ConfigValues.ImageTransferProxyEnabled);
     }
 
     @Override
@@ -1147,14 +1165,16 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 resourceId.toString(), timeout);
 
         // Send extend ticket request to proxy
-        try {
-            getProxyClient().extendTicket(resourceId, timeout);
-        } catch (RuntimeException e) {
-            log.error("Failed to extend proxy image ticket: {}", e.getMessage(), e);
-            if (getParameters().getTransferClientType().isBrowserTransfer()) {
-                updateEntityPhaseToStoppedBySystem(
-                        AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
-                return false;
+        if (proxyEnabled()) {
+            try {
+                getProxyClient().extendTicket(resourceId, timeout);
+            } catch (RuntimeException e) {
+                log.error("Failed to extend proxy image ticket: {}", e.getMessage(), e);
+                if (getParameters().getTransferClientType().isBrowserTransfer()) {
+                    updateEntityPhaseToStoppedBySystem(
+                            AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
+                    return false;
+                }
             }
         }
 
@@ -1182,7 +1202,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         // Do not fail if removing proxy ticket fails. Once we remove the host
         // ticket, the proxy ticket cannot be used anyway. In the worst case we
         // are left with proxy ticket that allow access to non-existing URL.
-        removeImageTicketFromProxy(entity.getImagedTicketId());
+        if (proxyEnabled()) {
+            removeImageTicketFromProxy(entity.getImagedTicketId());
+        }
 
         // Stopping NBD server if necessary
         if (getTransferBackend() == ImageTransferBackend.NBD) {
@@ -1269,10 +1291,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     public static String getProxyUri() {
-        return HTTPS_SCHEME + EngineLocalConfig.getInstance().getHost() + ":" + PROXY_DATA_PORT;
+        String engineHost = EngineLocalConfig.getInstance().getHost();
+        if (proxyEnabled()) {
+            return HTTPS_SCHEME + engineHost + ":" + PROXY_DATA_PORT;
+        } else {
+            return getImageDaemonUri(engineHost);
+        }
     }
 
-    private String getImageDaemonUri(String daemonHostname) {
+    private static String getImageDaemonUri(String daemonHostname) {
         String port = Config.getValue(ConfigValues.ImageDaemonPort);
         return HTTPS_SCHEME + daemonHostname + ":" + port;
     }

@@ -682,6 +682,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     ImageDaemonPort,
 
+    // For supporting legacy All-In-One deployment.
+    @TypeConverterAttribute(Boolean.class)
+    ImageTransferProxyEnabled,
 
     @TypeConverterAttribute(Integer.class)
     ImageTransferClientTicketValidityInSeconds,

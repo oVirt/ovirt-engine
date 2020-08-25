@@ -82,7 +82,9 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
             new TransferDiskImageCommand<>(new TransferDiskImageParameters(), null);
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(MockConfigDescriptor.of(ConfigValues.TransferImageClientInactivityTimeoutInSeconds, 600));
+        return Stream.of(
+            MockConfigDescriptor.of(ConfigValues.TransferImageClientInactivityTimeoutInSeconds, 600),
+            MockConfigDescriptor.of(ConfigValues.ImageTransferProxyEnabled, Boolean.TRUE));
     }
 
     @BeforeEach

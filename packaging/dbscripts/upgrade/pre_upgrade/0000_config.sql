@@ -681,6 +681,7 @@ select fn_db_add_config_value('HostedEngineConfigurationImageGuid','','general')
 
 -- Image IO
 select fn_db_add_config_value('ImageDaemonPort','54322','general');
+select fn_db_add_config_value('ImageTransferProxyEnabled','true','general');
 select fn_db_add_config_value('ImageTransferClientTicketValidityInSeconds','3600','general');
 select fn_db_add_config_value('ImageTransferHostTicketValidityInSeconds','300','general');
 select fn_db_add_config_value('ImageTransferHostTicketRefreshAllowanceInSeconds','60','general');
