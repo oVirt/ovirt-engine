@@ -16,7 +16,8 @@ from . import config as oipconfig
 @util.export
 class ImageIO(object):
     SERVICE_NAME = 'ovirt-imageio'
-    DATA_PORT = 54323
+    DAEMON_PORT = 54322
+    PROXY_PORT = 54323
     CONTROL_PORT = 54324
     ENGINE_CONFIG = oipconfig.OVIRT_IMAGEIO_ENGINE_CONFIG
     CONFIG_STAGE = "setup.config.imageio"
@@ -58,7 +59,7 @@ class ImageIO(object):
 
     [remote]
     # Port cannot be changed as it's currently hard-coded in engine code.
-    port = {data_port}
+    port = {remote_port}
 
     [local]
     # Local service is used to access images and runs on hosts, which

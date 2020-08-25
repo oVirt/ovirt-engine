@@ -611,6 +611,8 @@ Setup and upgrade specific plugins for cinderlib integration database
 Summary:	Setup imageio service.
 Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
+# For --show-config, needed during upgrade.
+Requires:	ovirt-imageio-daemon >= 2.0.10-1
 
 %description setup-plugin-imageio
 Setup imageio service.

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <service>
-  <short>ovirt-imageio</short>
-  <description>oVirt ImageIO service</description>
+  <short>ovirt-imageio-proxy</short>
+  <description>ovirt-imageio proxy port</description>
   <port protocol="tcp" port="54323"/>
 </service>
