@@ -386,7 +386,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
     private void initiateSilentResumeUpload() {
         TransferImageStatusParameters parameters = new TransferImageStatusParameters();
         parameters.setDiskId(getDiskModel().getDisk().getId());
-        parameters.setStorageDomainId(getDiskModel().getStorageDomain().getSelectedItem().getId());
         UploadImageManager.getInstance().resumeUpload(null, parameters, getProxyLocation(),
                 new AsyncQuery<>(errorMessage -> {
                     if (errorMessage != null) {
