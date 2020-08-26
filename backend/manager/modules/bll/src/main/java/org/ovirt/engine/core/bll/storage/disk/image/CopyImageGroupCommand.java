@@ -180,8 +180,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                                     getParameters().getDestImageGroupId(),
                                     getParameters().getDestinationImageId());
 
-            runInternalAction(ActionType.CopyImageGroupWithData, p);
-            return true;
+            return runInternalAction(ActionType.CopyImageGroupWithData, p).getSucceeded();
         } else {
             VDSReturnValue vdsReturnValue;
             Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
