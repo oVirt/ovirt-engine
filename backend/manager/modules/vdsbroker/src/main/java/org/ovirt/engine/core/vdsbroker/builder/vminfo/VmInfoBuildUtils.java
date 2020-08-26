@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
+import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
@@ -84,13 +85,13 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
-import org.ovirt.engine.core.dao.CinderStorageDao;
 import org.ovirt.engine.core.dao.ClusterFeatureDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.HostDeviceDao;
@@ -134,8 +135,14 @@ public class VmInfoBuildUtils {
     private static final Base64 BASE_64 = new Base64(0, null);
     private static final int DEFAULT_HUGEPAGESIZE_X86_64 = 2048;
     private static final int DEFAULT_HUGEPAGESIZE_PPC64LE = 16384;
+    private static final List<String> SCSI_HOST_DEV_WITH_PREDETERMINED_ADDRESS;
 
     public static final String VDSM_LIBGF_CAP_NAME = "libgfapi_supported";
+
+    static {
+        SCSI_HOST_DEV_WITH_PREDETERMINED_ADDRESS = new ArrayList<>(LibvirtVmXmlBuilder.SCSI_HOST_DEV_DRIVERS);
+        SCSI_HOST_DEV_WITH_PREDETERMINED_ADDRESS.remove(LibvirtVmXmlBuilder.SCSI_VIRTIO_BLK_PCI);
+    }
 
     private final NetworkClusterDao networkClusterDao;
     private final NetworkDao networkDao;
@@ -157,7 +164,6 @@ public class VmInfoBuildUtils {
     private final VdsStatisticsDao vdsStatisticsDao;
     private final HostDeviceDao hostDeviceDao;
     private final DiskVmElementDao diskVmElementDao;
-    private final CinderStorageDao cinderStorageDao;
     private final VmDevicesMonitoring vmDevicesMonitoring;
     private final VmSerialNumberBuilder vmSerialNumberBuilder;
     private final MultiQueueUtils multiQueueUtils;
@@ -193,8 +199,7 @@ public class VmInfoBuildUtils {
             VmSerialNumberBuilder vmSerialNumberBuilder,
             DiskVmElementDao diskVmElementDao,
             VmDevicesMonitoring vmDevicesMonitoring,
-            MultiQueueUtils multiQueueUtils,
-            CinderStorageDao cinderStorageDao) {
+            MultiQueueUtils multiQueueUtils) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
@@ -218,7 +223,6 @@ public class VmInfoBuildUtils {
         this.diskVmElementDao = Objects.requireNonNull(diskVmElementDao);
         this.vmDevicesMonitoring = Objects.requireNonNull(vmDevicesMonitoring);
         this.multiQueueUtils = Objects.requireNonNull(multiQueueUtils);
-        this.cinderStorageDao = Objects.requireNonNull(cinderStorageDao);
     }
 
     @SuppressWarnings("unchecked")
@@ -560,8 +564,9 @@ public class VmInfoBuildUtils {
             boolean reserveFirstTwoLuns,
             boolean reserveForScsiCd) {
         Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap = new HashMap<>();
-        LinkedList<VmDevice> vmDeviceList = new LinkedList<>();
+        vmDeviceUnitMap.putAll(getVmDeviceUnitMapForHostdevScsiDisks(vm));
 
+        LinkedList<VmDevice> vmDeviceList = new LinkedList<>();
         for (Disk disk : getSortedDisks(vm)) {
             DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
             if (dve.getDiskInterface() == scsiInterface) {
@@ -593,7 +598,7 @@ public class VmInfoBuildUtils {
             }
         }
 
-        // Find available unit (disk's index in VirtIO-SCSI controller) for disks with empty address\
+        // Find available unit (disk's index in VirtIO-SCSI controller) for disks with empty address
         IntStream.range(0, vmDeviceList.size()).forEach(index -> {
             VmDevice vmDevice = vmDeviceList.get(index);
             // TODO: consider changing this so that it will search for the next available and
@@ -607,6 +612,62 @@ public class VmInfoBuildUtils {
         return vmDeviceUnitMap;
     }
 
+    private Map<Integer, Map<VmDevice, Integer>> getVmDeviceUnitMapForHostdevScsiDisks(VM vm) {
+        List<HostDeviceView> hostDevices = hostDeviceDao.getVmExtendedHostDevicesByVmId(vm.getId());
+        List<HostDeviceView> hostScsiDevices = hostDevices.stream()
+                .filter(dev -> "scsi".equals(dev.getCapability()))
+                .collect(Collectors.toList());
+        if (hostScsiDevices.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, String> vmCustomProperties = VmPropertiesUtils.getInstance().getVMProperties(
+                vm.getCompatibilityVersion(),
+                vm.getStaticData());
+        String scsiHostdevProperty = vmCustomProperties.get("scsi_hostdev");
+
+        var vmHostDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.HOSTDEV);
+        var nameToHostScsiDevice = hostScsiDevices.stream().collect(Collectors.toMap(HostDevice::getDeviceName, d -> d));
+
+        return !SCSI_HOST_DEV_WITH_PREDETERMINED_ADDRESS.contains(scsiHostdevProperty) ?
+                // if the address of the vm's host device is dynamically allocated by libvirt, take it from the vm device
+                getHostScsiDeviceAddressByVmHostDevice(vmHostDevices, nameToHostScsiDevice)
+                // otherwise, the address is determined according to the corresponding host device
+                : getHostScsiDeviceAddressByHostDevice(vmHostDevices, nameToHostScsiDevice);
+    }
+
+    private Map<Integer, Map<VmDevice, Integer>> getHostScsiDeviceAddressByVmHostDevice(
+            List<VmDevice> vmHostDevices, Map<String, HostDeviceView> nameToHostScsiDevice) {
+        Map<Integer, Map<VmDevice, Integer>> hostDeviceUnitMap = new HashMap<>();
+        vmHostDevices.stream().filter(dev -> nameToHostScsiDevice.containsKey(dev.getDevice())).forEach(dev -> {
+            Map<String, String> address = StringMapUtils.string2Map(dev.getAddress());
+            String unitStr = address.get(VdsProperties.Unit);
+            String controllerStr = address.get(VdsProperties.Controller);
+            if (StringUtils.isNotEmpty(unitStr) && StringUtils.isNotEmpty(controllerStr)) {
+                int controller = Integer.parseInt(controllerStr);
+                hostDeviceUnitMap.computeIfAbsent(controller, i -> new HashMap<>());
+                hostDeviceUnitMap.get(controller).put(dev, Integer.parseInt(unitStr));
+            }
+        });
+        return hostDeviceUnitMap;
+    }
+
+    private Map<Integer, Map<VmDevice, Integer>> getHostScsiDeviceAddressByHostDevice(
+            List<VmDevice> vmHostDevices, Map<String, HostDeviceView> nameToHostScsiDevice) {
+        Map<Integer, Map<VmDevice, Integer>> hostDeviceUnitMap = new HashMap<>();
+        vmHostDevices.stream().filter(dev -> nameToHostScsiDevice.containsKey(dev.getDevice())).forEach(dev -> {
+            var hostDev = nameToHostScsiDevice.get(dev.getDevice());
+            Map<String, String> address = hostDev.getAddress();
+            String unitStr = address.get("lun");
+            String controllerStr = address.get("host");
+            if (StringUtils.isNotEmpty(unitStr) && StringUtils.isNotEmpty(controllerStr)) {
+                int controller = Integer.parseInt(controllerStr);
+                hostDeviceUnitMap.computeIfAbsent(controller, i -> new HashMap<>());
+                hostDeviceUnitMap.get(controller).put(dev, Integer.parseInt(unitStr));
+            }
+        });
+        return hostDeviceUnitMap;
+    }
 
     private int getDefaultVirtioScsiIndex(VM vm, DiskInterface diskInterface) {
         Map<DiskInterface, Integer> controllerIndexMap =

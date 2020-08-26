@@ -114,8 +114,8 @@ public class LibvirtVmXmlBuilder {
             "main", "display", "inputs", "cursor", "playback", "record", "smartcard", "usbredir"));
     private static final String SCSI_HD = "scsi_hd";
     private static final String SCSI_BLOCK = "scsi_block";
-    private static final String SCSI_VIRTIO_BLK_PCI = "virtio_blk_pci";
-    private static final List<String> scsiHostDevDrivers = Arrays.asList(SCSI_HD, SCSI_BLOCK, SCSI_VIRTIO_BLK_PCI);
+    public static final String SCSI_VIRTIO_BLK_PCI = "virtio_blk_pci";
+    public static final List<String> SCSI_HOST_DEV_DRIVERS = Arrays.asList(SCSI_HD, SCSI_BLOCK, SCSI_VIRTIO_BLK_PCI);
 
     private VmInfoBuildUtils vmInfoBuildUtils;
 
@@ -1545,7 +1545,7 @@ public class LibvirtVmXmlBuilder {
             writeUsbHostDevice(new VmHostDevice(device), hostDevice);
             break;
         case "scsi":
-            if (scsiHostDevDrivers.contains(vmCustomProperties.get("scsi_hostdev"))) {
+            if (SCSI_HOST_DEV_DRIVERS.contains(vmCustomProperties.get("scsi_hostdev"))) {
                 hostDevDisks.add(new Pair<>(device, hostDevice));
             } else {
                 writeScsiHostDevice(new VmHostDevice(device), hostDevice);

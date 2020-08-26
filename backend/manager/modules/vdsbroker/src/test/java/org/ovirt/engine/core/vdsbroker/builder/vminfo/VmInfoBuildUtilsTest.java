@@ -188,6 +188,7 @@ public class VmInfoBuildUtilsTest {
         when(networkFilterDao.getNetworkFilterById(NETWORK_FILTER_ID)).thenReturn(networkFilter);
 
         when(vmNicFilterParameterDao.getAllForVmNic(VM_NIC_ID)).thenReturn(createVmNicFilterParameters());
+        when(hostDeviceDao.getVmExtendedHostDevicesByVmId(VM_ID)).thenReturn(Collections.emptyList());
     }
 
     List<VmNicFilterParameter> createVmNicFilterParameters() {
