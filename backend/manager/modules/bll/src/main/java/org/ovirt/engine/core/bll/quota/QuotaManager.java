@@ -419,7 +419,7 @@ public class QuotaManager implements BackendService {
     }
 
     public Guid getFirstQuotaForUserId(Guid storagePoolId, Guid adElementId) {
-        List<Quota> quotas = getQuotaDao().getQuotaByAdElementId(adElementId, storagePoolId, false);
+        List<Quota> quotas = getQuotaDao().getQuotaByAdElementId(adElementId, storagePoolId, true);
         Guid defaultQuotaId = getDefaultQuotaId(storagePoolId);
         if (quotas.isEmpty()) {
             return defaultQuotaId;
