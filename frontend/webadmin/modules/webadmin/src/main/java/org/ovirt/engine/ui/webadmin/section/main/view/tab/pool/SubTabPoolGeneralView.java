@@ -1,21 +1,31 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.pool;
 
+import static org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel.ARCHITECTURE;
+import static org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel.BIOS_TYPE;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
+import org.ovirt.engine.ui.common.widget.FormWidgetWithWarn;
+import org.ovirt.engine.ui.common.widget.WidgetWithWarn;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
+import org.ovirt.engine.ui.common.widget.label.BiosTypeLabel;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
+import org.ovirt.engine.ui.common.widget.renderer.BiosTypeRenderer;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolGeneralPresenter;
@@ -40,6 +50,8 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     interface Driver extends UiCommonEditorDriver<PoolGeneralModel, SubTabPoolGeneralView> {
     }
 
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
+
     StringValueLabel cpuInfo = new StringValueLabel();
     StringValueLabel graphicsType = new StringValueLabel();
     StringValueLabel defaultDisplayType = new StringValueLabel();
@@ -52,6 +64,9 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     StringValueLabel origin = new StringValueLabel();
     @Ignore
     StringValueLabel oS = new StringValueLabel();
+    BiosTypeRenderer biosTypeRenderer = new BiosTypeRenderer();
+    BiosTypeLabel biosType = new BiosTypeLabel(biosTypeRenderer);
+    FormWidgetWithWarn biosTypeWithWarn = new FormWidgetWithWarn(biosType);
     StringValueLabel template = new StringValueLabel();
     StringValueLabel timeZone = new StringValueLabel();
     StringValueLabel usbPolicy = new StringValueLabel();
@@ -87,19 +102,17 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         generateIds();
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 3, 8);
-        formBuilder.setRelativeColumnWidth(0, 3);
-        formBuilder.setRelativeColumnWidth(1, 4);
-        formBuilder.setRelativeColumnWidth(2, 5);
+        formBuilder = new FormBuilder(formPanel, 3, 9);
 
         formBuilder.addFormItem(new FormItem(constants.namePoolGeneral(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionPoolGeneral(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.templatePoolGeneral(), template, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.osPoolGeneral(), oS, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 4, 0));
-        formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 5, 0));
-        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 6, 0));
-        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 7, 0));
+        formBuilder.addFormItem(new FormItem(constants.biosTypeGeneral(), biosTypeWithWarn, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 5, 0));
+        formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 6, 0));
+        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 7, 0));
+        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 8, 0));
 
         formBuilder.addFormItem(new FormItem(constants.definedMemPoolGeneral(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGaurPoolGeneral(), minAllocatedMemory, 1, 1));
@@ -142,6 +155,39 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         oS.setValue(AsyncDataProvider.getInstance().getOsName(getDetailModel().getOS()));
 
         formBuilder.update(getDetailModel());
+
+        updateBiosTypeWidget(biosTypeWithWarn);
+
+        getDetailModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args instanceof PropertyChangedEventArgs) {
+                String key = ((PropertyChangedEventArgs) args).propertyName;
+                if (key.equals(BIOS_TYPE)) {
+                    updateBiosTypeWidget(biosTypeWithWarn);
+                }
+            }
+        });
+
+        getDetailModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args instanceof PropertyChangedEventArgs) {
+                String key = ((PropertyChangedEventArgs) args).propertyName;
+                if (key.equals(ARCHITECTURE)) {
+                    updateBiosTypeWidget(biosTypeWithWarn);
+                    // change of the architecture changes the bios type rendering so we need to trigger the redraw
+                    getDetailModel().onPropertyChanged(EntityModel.ENTITY);
+                }
+            }
+        });
     }
 
+    private void updateBiosTypeWidget(WidgetWithWarn widgetWithWarn) {
+        if (getDetailModel() == null || getDetailModel().getvm() == null) {
+            widgetWithWarn.setIconVisible(false);
+            return;
+        }
+        biosTypeRenderer.setArchitectureType(getDetailModel().getArchitecture());
+        widgetWithWarn.setIconVisible(
+                getDetailModel().getvm().getEffectiveBiosType() != getDetailModel().getvm().getClusterBiosType());
+        widgetWithWarn.setIconTooltipText(messages.biosTypeWarning(
+                biosTypeRenderer.render(getDetailModel().getvm().getClusterBiosType())));
+    }
 }

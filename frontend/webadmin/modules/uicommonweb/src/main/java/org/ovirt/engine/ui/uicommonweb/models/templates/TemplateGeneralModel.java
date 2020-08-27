@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -13,6 +15,10 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
 
 public class TemplateGeneralModel extends AbstractGeneralModel<VmTemplate> {
+
+    public static final String ARCHITECTURE = "VmTemplateArchitecture";//$NON-NLS-1$
+
+    public static final String BIOS_TYPE = "VmTemplateBiosType";//$NON-NLS-1$
 
     private String name;
 
@@ -122,6 +128,32 @@ public class TemplateGeneralModel extends AbstractGeneralModel<VmTemplate> {
         if (!Objects.equals(os, value)) {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
+        }
+    }
+
+    private ArchitectureType architecture;
+
+    public ArchitectureType getArchitecture() {
+        return architecture;
+    }
+
+    public void setArchitecture(ArchitectureType value) {
+        if (!Objects.equals(architecture, value)) {
+            architecture = value;
+            onPropertyChanged(new PropertyChangedEventArgs(ARCHITECTURE));
+        }
+    }
+
+    private BiosType biosType;
+
+    public BiosType getBiosType() {
+        return biosType;
+    }
+
+    public void setBiosType(BiosType value) {
+        if (!Objects.equals(biosType, value)) {
+            biosType = value;
+            onPropertyChanged(new PropertyChangedEventArgs(BIOS_TYPE));
         }
     }
 
@@ -350,6 +382,8 @@ public class TemplateGeneralModel extends AbstractGeneralModel<VmTemplate> {
         setName(template.getName());
         setTemplateId(template.getId().toString());
         setDescription(template.getDescription());
+        setArchitecture(template.getClusterArch());
+        setBiosType(template.getEffectiveBiosType());
         setQuotaName(template.getQuotaName() != null ? template.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(template.getQuotaEnforcementType() != null
                 && !template.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));

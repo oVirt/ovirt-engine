@@ -12,6 +12,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.action.gluster.RemoveGlusterServerParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
@@ -40,6 +42,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class ClusterGeneralModel extends EntityModel<Cluster> {
 
     public static final String CONFIGURED_CPU_VERB_PROPERTY_CHANGE = "configuredCpuVerb";//$NON-NLS-1$
+
+    public static final String ARCHITECTURE_PROPERTY_CHANGE = "architecture";//$NON-NLS-1$
 
     private Integer noOfVolumesTotal;
     private Integer noOfVolumesUp;
@@ -152,6 +156,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
 
     private String name;
     private String description;
+    private ArchitectureType architecture;
     private String cpuType;
     private String cpuVerb;
     private String dataCenterName;
@@ -161,6 +166,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
     private boolean cpuThreads;
     private ClusterType clusterType;
     private String emulatedMachine;
+    private BiosType biosType;
 
     public void setConsoleAddressPartiallyOverridden(Boolean consoleAddressPartiallyOverridden) {
         if (isConsoleAddressPartiallyOverridden().booleanValue() !=
@@ -209,6 +215,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
 
         setName(cluster.getName());
         setDescription(cluster.getDescription());
+        setArchitecture(cluster.getArchitecture());
         setCpuType(cluster.getCpuName());
         setCpuVerb(cluster.getConfiguredCpuVerb());
         setDataCenterName(cluster.getStoragePoolName());
@@ -218,6 +225,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         ChipsetType chipsetType = cluster.getBiosType() != null ? cluster.getBiosType().getChipsetType() : null;
         String emulatedMachine = ClusterEmulatedMachines.forChipset(cluster.getEmulatedMachine(), chipsetType);
         setEmulatedMachine(emulatedMachine);
+        setBiosType(cluster.getBiosType());
         setCompatibilityVersion(cluster.getCompatibilityVersion().getValue());
         generateClusterType(cluster.supportsGlusterService(), cluster.supportsVirtService());
         AsyncDataProvider.getInstance().getNumberOfVmsInCluster(new AsyncQuery<>(
@@ -607,6 +615,17 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         this.name = name;
     }
 
+    public ArchitectureType getArchitecture() {
+        return architecture;
+    }
+
+    public void setArchitecture(ArchitectureType value) {
+        if (architecture != value) {
+            architecture = value;
+            onPropertyChanged(ARCHITECTURE_PROPERTY_CHANGE);
+        }
+    }
+
     public String getDescription() {
         return description;
     }
@@ -630,7 +649,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
     public void setCpuVerb(String cpuVerb) {
         if (!Objects.equals(this.cpuVerb, cpuVerb)) {
             this.cpuVerb = cpuVerb;
-            onPropertyChanged(new PropertyChangedEventArgs(CONFIGURED_CPU_VERB_PROPERTY_CHANGE));
+            onPropertyChanged(CONFIGURED_CPU_VERB_PROPERTY_CHANGE);
         }
     }
 
@@ -707,5 +726,13 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
 
     public void setEmulatedMachine(String emulatedMachine) {
         this.emulatedMachine = emulatedMachine;
+    }
+
+    public BiosType getBiosType() {
+        return biosType;
+    }
+
+    public void setBiosType(BiosType biosType) {
+        this.biosType = biosType;
     }
 }

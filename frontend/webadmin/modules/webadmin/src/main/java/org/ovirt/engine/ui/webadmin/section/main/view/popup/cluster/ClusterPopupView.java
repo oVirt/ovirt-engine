@@ -647,15 +647,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             }
         });
 
-        biosTypeRenderer = new BiosTypeRenderer() {
-            @Override
-            public String render(BiosType biosType) {
-                if (BiosType.CLUSTER_DEFAULT.equals(biosType)) {
-                    return constants.autoDetect();
-                }
-                return super.render(biosType);
-            }
-        };
+        biosTypeRenderer = new BiosTypeRenderer(constants.autoDetect());
         biosTypeEditor = new ListModelListBoxEditor<>(biosTypeRenderer);
 
         versionEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Version>() {

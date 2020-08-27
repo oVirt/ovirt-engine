@@ -13,6 +13,7 @@ import com.google.gwt.event.shared.HasHandlers;
 
 public class EntityModel<T> extends Model implements HasHandlers, HasEntity<T> {
 
+    public static final String ENTITY = "Entity"; //$NON-NLS-1$
     private Event<EventArgs> privateEntityChangedEvent;
     private boolean entityPresent = true;
 
@@ -40,7 +41,7 @@ public class EntityModel<T> extends Model implements HasHandlers, HasEntity<T> {
             onEntityChanged();
             // EntityChanged(this, EventArgs.Empty);
             getEntityChangedEvent().raise(this, EventArgs.EMPTY);
-            onPropertyChanged(new PropertyChangedEventArgs("Entity")); //$NON-NLS-1$
+            onPropertyChanged(ENTITY);
         }
     }
 

@@ -199,5 +199,7 @@ public interface CommonApplicationMessages extends Messages {
     String ovaPathInfo();
 
     String vmGuestCpuTypeWarning(String cpuType);
+
+    String biosTypeWarning(String bioType);
 }
 

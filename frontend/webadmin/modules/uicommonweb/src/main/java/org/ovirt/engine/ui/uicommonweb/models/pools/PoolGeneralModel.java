@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.pools;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -26,6 +28,10 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
 
 public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
+
+    public static final String ARCHITECTURE = "VmPoolArchitecture";//$NON-NLS-1$
+
+    public static final String BIOS_TYPE = "VmPoolBiosType";//$NON-NLS-1$
 
     public static final EventDefinition updateCompleteEventDefinition;
     private Event<EventArgs> privateUpdateCompleteEvent;
@@ -86,6 +92,32 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
         if (os != value) {
             os = value;
             onPropertyChanged(new PropertyChangedEventArgs("OS")); //$NON-NLS-1$
+        }
+    }
+
+    private ArchitectureType architecture;
+
+    public ArchitectureType getArchitecture() {
+        return architecture;
+    }
+
+    public void setArchitecture(ArchitectureType value) {
+        if (!Objects.equals(architecture, value)) {
+            architecture = value;
+            onPropertyChanged(new PropertyChangedEventArgs(ARCHITECTURE));
+        }
+    }
+
+    private BiosType biosType;
+
+    public BiosType getBiosType() {
+        return biosType;
+    }
+
+    public void setBiosType(BiosType value) {
+        if (!Objects.equals(biosType, value)) {
+            biosType = value;
+            onPropertyChanged(new PropertyChangedEventArgs(BIOS_TYPE));
         }
     }
 
@@ -377,6 +409,8 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                             setMonitorCount(getvm().getNumOfMonitors());
 
                             setOS(getvm().getVmOsId());
+                            setArchitecture(getvm().getClusterArch());
+                            setBiosType(getvm().getEffectiveBiosType());
 
                             setDefinedMemory(getvm().getVmMemSizeMb() + " MB"); //$NON-NLS-1$
                             setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB"); //$NON-NLS-1$

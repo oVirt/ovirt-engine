@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -39,6 +41,10 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
     public static final String IS_HOSTED_ENGINE = "IsHostedEngine";//$NON-NLS-1$
 
     public static final String STATUS = "Status";//$NON-NLS-1$
+
+    public static final String ARCHITECTURE = "VmArchitecture";//$NON-NLS-1$
+
+    public static final String BIOS_TYPE = "VmBiosType";//$NON-NLS-1$
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
@@ -173,16 +179,29 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
     }
 
-    private String biosType;
+    private ArchitectureType architecture;
 
-    public String getBiosType() {
+    public ArchitectureType getArchitecture() {
+        return architecture;
+    }
+
+    public void setArchitecture(ArchitectureType value) {
+        if (!Objects.equals(architecture, value)) {
+            architecture = value;
+            onPropertyChanged(new PropertyChangedEventArgs(ARCHITECTURE));
+        }
+    }
+
+    private BiosType biosType;
+
+    public BiosType getBiosType() {
         return biosType;
     }
 
-    public void setBiosType(String value) {
+    public void setBiosType(BiosType value) {
         if (!Objects.equals(biosType, value)) {
             biosType = value;
-            onPropertyChanged(new PropertyChangedEventArgs("BiosType")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs(BIOS_TYPE));
         }
     }
 
@@ -630,7 +649,10 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setOS(AsyncDataProvider.getInstance().getOsName(vm.getVmOsId()));
 
         EnumTranslator translator = EnumTranslator.getInstance();
-        setBiosType(translator.translate(vm.getBiosType()));
+
+        setArchitecture(vm.getClusterArch());
+
+        setBiosType(vm.getEffectiveBiosType());
 
         setDefaultDisplayType(translator.translate(vm.getDefaultDisplayType()));
 

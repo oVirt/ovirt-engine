@@ -17,8 +17,21 @@ public class BiosTypeRenderer extends EnumRenderer<BiosType> {
 
     private ArchitectureType architectureType;
 
+    private String defaultString;
+
+    public BiosTypeRenderer() {
+    }
+
+    public BiosTypeRenderer(String defaultString) {
+        this.defaultString = defaultString;
+    }
+
     @Override
     public String render(BiosType biosType) {
+        if (biosType == BiosType.CLUSTER_DEFAULT && defaultString != null) {
+            return defaultString;
+        }
+
         if (architectureType != null && BiosType.I440FX_SEA_BIOS.equals(biosType)) {
             if (ArchitectureType.ppc.equals(architectureType.getFamily())) {
                 return constants.ppcChipset();
@@ -31,5 +44,9 @@ public class BiosTypeRenderer extends EnumRenderer<BiosType> {
 
     public void setArchitectureType(ArchitectureType architectureType) {
         this.architectureType = architectureType;
+    }
+
+    public ArchitectureType getArchitectureType() {
+        return architectureType;
     }
 }

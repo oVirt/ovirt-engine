@@ -1,15 +1,25 @@
 package org.ovirt.engine.ui.common.widget.uicommon.template;
 
+import static org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel.ARCHITECTURE;
+import static org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel.BIOS_TYPE;
+
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
+import org.ovirt.engine.ui.common.widget.FormWidgetWithWarn;
+import org.ovirt.engine.ui.common.widget.WidgetWithWarn;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
+import org.ovirt.engine.ui.common.widget.label.BiosTypeLabel;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
+import org.ovirt.engine.ui.common.widget.renderer.BiosTypeRenderer;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -19,12 +29,17 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     interface Driver extends UiCommonEditorDriver<TemplateGeneralModel, TemplateGeneralModelForm> {
     }
 
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
+
     StringValueLabel name = new StringValueLabel();
     StringValueLabel description = new StringValueLabel();
     StringValueLabel hostCluster = new StringValueLabel();
     StringValueLabel definedMemory = new StringValueLabel();
     @Path("OS")
     StringValueLabel oS = new StringValueLabel();
+    BiosTypeRenderer biosTypeRenderer = new BiosTypeRenderer();
+    BiosTypeLabel biosType = new BiosTypeLabel(biosTypeRenderer);
+    FormWidgetWithWarn biosTypeWithWarn = new FormWidgetWithWarn(biosType);
     StringValueLabel cpuInfo = new StringValueLabel();
     StringValueLabel graphicsType = new StringValueLabel();
     StringValueLabel defaultDisplayType = new StringValueLabel();
@@ -49,7 +64,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     private final Driver driver = GWT.create(Driver.class);
 
     public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider) {
-        super(modelProvider, 3, 7);
+        super(modelProvider, 3, 8);
     }
 
     /**
@@ -66,9 +81,10 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         formBuilder.addFormItem(new FormItem(constants.descriptionTemplateGeneral(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.hostClusterTemplateGeneral(), hostCluster, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.osTemplateGeneral(), oS, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 4, 0));
-        formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 5, 0));
-        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 6, 0));
+        formBuilder.addFormItem(new FormItem(constants.biosTypeGeneral(), biosTypeWithWarn, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 5, 0));
+        formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 6, 0));
+        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 7, 0));
 
         formBuilder.addFormItem(new FormItem(constants.definedMemTemplateGeneral(), definedMemory, 0, 1));
 
@@ -118,6 +134,28 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         // Required because of type conversion
         monitorCount.setValue(Integer.toString(getModel().getMonitorCount()));
         isStateless.setValue(Boolean.toString(getModel().getIsStateless()));
+
+        updateBiosTypeWidget(biosTypeWithWarn);
+
+        getModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args instanceof PropertyChangedEventArgs) {
+                String key = ((PropertyChangedEventArgs) args).propertyName;
+                if (key.equals(BIOS_TYPE)) {
+                    updateBiosTypeWidget(biosTypeWithWarn);
+                }
+            }
+        });
+
+        getModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (args instanceof PropertyChangedEventArgs) {
+                String key = ((PropertyChangedEventArgs) args).propertyName;
+                if (key.equals(ARCHITECTURE)) {
+                    updateBiosTypeWidget(biosTypeWithWarn);
+                    // change of the architecture changes the bios type rendering so we need to trigger the redraw
+                    getModel().onPropertyChanged(EntityModel.ENTITY);
+                }
+            }
+        });
     }
 
     @Override
@@ -125,4 +163,11 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         driver.cleanup();
     }
 
+    private void updateBiosTypeWidget(WidgetWithWarn widgetWithWarn) {
+        biosTypeRenderer.setArchitectureType(getModel().getArchitecture());
+        widgetWithWarn.setIconVisible(
+                getModel().getEntity().getEffectiveBiosType() != getModel().getEntity().getClusterBiosType());
+        widgetWithWarn.setIconTooltipText(messages.biosTypeWarning(
+                biosTypeRenderer.render(getModel().getEntity().getClusterBiosType())));
+    }
 }

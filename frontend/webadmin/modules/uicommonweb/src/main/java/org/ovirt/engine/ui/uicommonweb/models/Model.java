@@ -467,6 +467,11 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     protected void onIsAvailableChanged() {
     }
 
+    // public modifier so that the view can force redraw by firing this event
+    public void onPropertyChanged(String name) {
+        onPropertyChanged(new PropertyChangedEventArgs(name));
+    }
+
     protected void onPropertyChanged(PropertyChangedEventArgs e) {
         getPropertyChangedEvent().raise(this, e);
     }
