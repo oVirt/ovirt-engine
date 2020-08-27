@@ -200,7 +200,10 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             }
         }, constants.networkVm(), "120px"); //$NON-NLS-1$
 
-        VmStatusColumn statusColumn = new VmStatusColumn(() -> getDetailModel().getEntity().getId());
+        VmStatusColumn statusColumn = new VmStatusColumn(() ->  {
+            VDS host = getDetailModel().getEntity();
+            return host != null ? host.getId() : null;
+        });
         statusColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusColumn, constants.statusVm(), "130px"); //$NON-NLS-1$
 
