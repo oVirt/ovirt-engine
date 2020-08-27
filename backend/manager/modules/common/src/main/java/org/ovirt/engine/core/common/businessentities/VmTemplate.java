@@ -63,8 +63,10 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private double cachedActualSize = -1.0;
 
+    @TransientField
     private BiosType clusterBiosType;
 
+    @TransientField
     private BiosType clusterBiosTypeOrigin;
 
     public VmTemplate() {
