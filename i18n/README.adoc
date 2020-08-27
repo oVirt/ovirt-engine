@@ -1,0 +1,115 @@
+= Internationalization and Localization
+
+== Introduction
+
+This project has the ability to render in different languages. Internally, frontend GWT
+components, backend components and services use different techniques for accessing and
+formatting messages.  However, in both cases, localizable keys are stored in various
+properties files.  These files are listed in both `documents.yml` and `zanata.xml`.
+
+The locale to be used by the various formatting functions is provided to the application
+via URL parameter.  Typically, a user selects their desired language locale on the welcome
+page.
+
+We use the http://zanata.org/[Zanata] tool to manage translations.
+
+== Multiple locale support
+
+=== for webadmin and any plugins
+
+To enable any GWT app to use a locale, a separate permutation must be
+compiled.  Since adding each permutation can greatly increase compile times, both the
+standard developer build, and the standard CI builds of ovirt-engine ONLY compiles English
+support.  Also note, GWT will automatically route a URL specified locale to the most
+specific locale that has a compiled permutation.  The fallback locale is 'en'.  Regardless
+of what locale a user selects on the welcome page, the default developer built webadmin
+will force the locale to 'en'.  All webadmin plugins will also be forced to the 'en'
+locale.
+
+Developers may compile for ALL supported locales by specifying `BUILD_LOCALES=1`
+on their make command.  You'll need to update your `nofile` `ulimit` to run the compile
+this way (see main project README for details).  For example:
+
+   make clean install-dev \
+     PREFIX=$HOME/ovirt-engine \
+     BUILD_LOCALES=1
+
+Developers may compile for specific locales.  For example, the following command builds
+English and German:
+
+   make clean install-dev \
+     PREFIX=$HOME/ovirt-engine \
+     DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS="-Dgwt.locale=en_US,de_DE"
+
+=== for the welcome and login pages
+
+The **welcome** and **login** will work with all locales without any
+compile time considerations.
+
+=== APIs
+
+The APIs currently do not offer error messages in other languages.
+
+We do not have a way to set the desired locale for error messages when making
+REST or SDK calls.
+
+== Translation work flow
+
+Generally, the project is localized and translated following the work-flow:
+
+* Developers add messages as needed to the various properties files (see `documents.yml`)
+* Developers access the messages through the appropriate backend or frontend layer
+* When the strings are stable, push the messages to Zanata
+* Translators do their work for each supported language within the corresponding
+  https://zanata.phx.ovirt.org/project/view/ovirt-engine[Zanata project]
+* When translations are complete, pull the localized strings from Zanata
+* Normalize translations  (keys sorted, etc) and generate a gerrit patch
+* Rebuilding the project will make the updated translations available for use
+
+**Note**: We welcome and encourage translations by community members.  Inquire
+on the mail lists on how to get setup.
+
+== Zanata setup
+
+Setup your Zanata configurations in the usual way. See
+http://docs.zanata.org/en/release/client/[Zanata client setup documentation] for details.
+
+**Note**: Zanata is no longer maintained, the zanata-cli packages are old, and needs
+Java 8 to run.  The Makefile use the maven plugin, which is current, and sets up the
+JAVA_HOME environment variable to use Java 8 when running the tools.
+
+== Commands
+
+**Note**: These commands are only supported in ovirt-engine version 4.4.3 and later.
+
+=== Push current English source strings to Zanata
+
+Pushing the current English sources will update the project on Zanata.  Any strings that have
+been added, changed or deleted in any given file will be shown as such in the Zanata UI.  Even
+a change in casing in the English source text will invalidate the translations.
+
+**Note**: If a file is added, it needs to be added to `zanata.xml` and `documents.yml`.
+
+**Note**: If a file is moved or renamed, a manual process is required to migrate the translations
+to the new name or location in Zanata.  Without this, existing translations will be lost.
+
+To push the changes:
+
+ % make push
+
+=== Pull updated translations from Zanata
+
+We use a temporary directory as the target for the Zanata pull.  Once the translations have
+been pulled from Zanata, the normalization process updates those files to be as consistently
+organized as possible.  The process also makes it easy to automatically diff the pulled
+translations against the ones already in the repo.  This allows for sane diffs in gerrit.
+Only translation files with actual updates will be copied to their repo location.
+
+To pull the translations and update only the changed files:
+
+ % make pull
+
+**Note**: The tool's output reports what normalization processes applied to each file/key.
+Typically, a failure is most likely to be in the Zanata pull step.  The work done in the
+temp directory can be largely ignored.  Verify the updates by looking at the changed files
+in the main repo.

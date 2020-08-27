@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns="http://zanata.org/namespace/config/">
+    <url>https://zanata.phx.ovirt.org/</url>
+    <project>ovirt-engine</project>
+    <project-version>ovirt-4.4</project-version>
+    <project-type>properties</project-type>
+
+    <src-dir>target/zanata</src-dir>
+    <trans-dir>target/zanata</trans-dir>
+
+    <!--
+        Source Language: en_US
+        Translated locales: es_ES, fr_FR, ja_JP, pt_BR, zh_CN, de_DE, ko_KR
+        Community translated locales: it_IT, cs, ru
+
+        NOTE: Language to Java locale aliases are defined on the project+version
+              on the zanata server itself.  No aliases need to be defined in this
+              config file.
+    -->
+
+    <!-- Zanata documents for >=4.3 -->
+    <includes>
+    backend/manager/modules/enginesso/src/main/resources/AppMessages.properties,
+    backend/manager/modules/enginesso/src/main/resources/sso-messages.properties,
+    backend/manager/modules/welcome/src/main/resources/welcome-messages.properties,
+    frontend/brands/ovirt-brand/src/main/resources/messages.properties,
+    frontend/webadmin/modules/frontend/src/main/resources/org/ovirt/engine/ui/frontend/AppErrors.properties,
+    frontend/webadmin/modules/gwt-common/src/main/resources/org/ovirt/engine/ui/common/CommonApplicationConstants.properties,
+    frontend/webadmin/modules/gwt-common/src/main/resources/org/ovirt/engine/ui/common/CommonApplicationMessages.properties,
+    frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/LocalizedEnums.properties,
+    frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/NextRunFieldMessages.properties,
+    frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/SpiceRedKeys.properties,
+    frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/UIConstants.properties,
+    frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/UIMessages.properties,
+    frontend/webadmin/modules/webadmin/src/main/resources/org/ovirt/engine/ui/frontend/ConsoleErrors.properties,
+    frontend/webadmin/modules/webadmin/src/main/resources/org/ovirt/engine/ui/frontend/VdsmErrors.properties,
+    frontend/webadmin/modules/webadmin/src/main/resources/org/ovirt/engine/ui/webadmin/ApplicationConstants.properties,
+    frontend/webadmin/modules/webadmin/src/main/resources/org/ovirt/engine/ui/webadmin/ApplicationMessages.properties
+    </includes>
+
+</config>
