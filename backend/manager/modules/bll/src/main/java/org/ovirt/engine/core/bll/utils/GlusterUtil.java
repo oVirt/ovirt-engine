@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.TimeZone;
@@ -37,6 +38,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
@@ -55,6 +58,7 @@ import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.XmlUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -105,6 +109,9 @@ public class GlusterUtil {
 
     @Inject
     private AlertDirector alertDirector;
+
+    @Inject
+    private InterfaceDao interfaceDao;
 
     /**
      * Returns a server that is in {@link VDSStatus#Up} status.<br>
@@ -215,6 +222,53 @@ public class GlusterUtil {
             log.debug("Could not connect to server '{}': {}", serverName, e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    private String getIpAddressForHost(Guid vdsId, String networkName) {
+        Optional<VdsNetworkInterface> nic =
+                getGlusterIpaddressUtil(vdsId).stream().filter(v -> v.getNetworkName().equals(networkName)).findFirst();
+        if (nic.isEmpty()) {
+            return null;
+        }
+        return nic.get().getIpv4Address() != null && nic.get().getIpv4Address().length() > 1 ?
+                nic.get().getIpv4Address() :
+                nic.get().getIpv6Address() != null && nic.get().getIpv6Address().length() > 1 ?
+                        nic.get().getIpv6Address() : null;
+    }
+
+    public Map<VDS, String> getGlusterIpaddressAsMap(Map<String, Network> networkNameObjectMap,
+                                                     VDS currentHostVds, List<VDS> hostlist) {
+
+        Map<VDS, String> hostGlusterIpMap = new HashMap<>();
+        String networkName = StringUtils.EMPTY;
+
+        Optional<Map.Entry<String, Network>> result =
+              networkNameObjectMap.entrySet().stream().filter(v -> v.getValue().getCluster().isGluster()).findFirst();
+
+        if(result.isPresent()) {
+            networkName = result.get().getKey();
+
+        } else {
+          return null;
+        }
+        hostGlusterIpMap.put(currentHostVds, getIpAddressForHost(currentHostVds.getId(),
+                networkName));
+        hostGlusterIpMap.put(hostlist.get(0), getIpAddressForHost(hostlist.get(0).getId(),
+                networkName));
+        hostGlusterIpMap.put(hostlist.get(1), getIpAddressForHost(hostlist.get(1).getId(),
+                networkName));
+
+        Optional<Map.Entry<VDS, String>> hostGlusterIpresult =
+                hostGlusterIpMap.entrySet().stream().filter(x -> x.getValue().equals(null)).findAny();
+
+        if(hostGlusterIpresult.isPresent()) {
+            return null;
+        }
+        return hostGlusterIpMap;
+    }
+
+    public List<VdsNetworkInterface> getGlusterIpaddressUtil(Guid hostId){
+        return interfaceDao.getAllInterfacesForVds(hostId);
     }
 
     protected void authenticate(SSHClient client) throws AuthenticationException {

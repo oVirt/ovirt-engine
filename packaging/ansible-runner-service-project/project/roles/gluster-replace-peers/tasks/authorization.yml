@@ -1,0 +1,13 @@
+- name: Make sure authorized_keys file is present
+  stat:
+    path: "/root/.ssh/authorized_keys"
+  register: authkey
+
+- name: Copy the authorized_keys from the active host to the new host
+  synchronize:
+    src: "/root/.ssh/authorized_keys"
+    dest: "/root/.ssh/authorized_keys"
+    mode: pull
+  delegate_to: "{{ gluster_new_node | mandatory }}"
+  connection: ssh
+  when: authkey.stat.isreg is defined

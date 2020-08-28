@@ -9,6 +9,8 @@ import com.google.inject.Inject;
 public class HostInstallPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<InstallModel, HostInstallPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<InstallModel> {
+        public void updateVisibilities(InstallModel object);
+
     }
 
     @Inject
@@ -16,4 +18,12 @@ public class HostInstallPopupPresenterWidget extends AbstractModelBoundPopupPres
         super(eventBus, view);
     }
 
+    @Override
+    public void init(final InstallModel model) {
+        super.init(model);
+
+        model.getReplaceHostModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            getView().updateVisibilities(model);
+        });
+    }
 }

@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ReplaceHostConfiguration;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -786,6 +787,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             hostModel.setIsHeSystem(isHeSystem());
             hostModel.setHostsWithHeDeployed(getHostsWithHeDeployed());
             hostModel.setHostedEngineHostModel(new HostedEngineHostModel());
+            hostModel.setReplaceHostModel(new ReplaceHostModel());
 
             setWindow(hostModel);
 
@@ -938,6 +940,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
             parameters.setHostedEngineDeployConfiguration(
                     new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
+            parameters.setReplaceHostConfiguration(
+                    new ReplaceHostConfiguration(model.getReplaceHostModel().getSelectedItem()));
             parameters.setAffinityGroups(model.getAffinityGroupList().getSelectedItems());
             parameters.setAffinityLabels(model.getLabelList().getSelectedItems());
             parameters.setActivateHost(model.getActivateHostAfterInstall().getEntity());
@@ -1365,11 +1369,14 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         param.setoVirtIsoFile(null);
         param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         param.setReconfigureGluster(model.getReconfigureGluster().getEntity());
+        param.setFqdnBox(model.getFqdnBox().getEntity());
         param.setActivateHost(model.getActivateHostAfterInstall().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
         param.setFenceAgents(null);  // Explicitly set null, to be clear we don't want to update fence agents.
         param.setHostedEngineDeployConfiguration(
                 new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
+        param.setReplaceHostConfiguration(
+                new ReplaceHostConfiguration(model.getReplaceHostModel().getSelectedItem()));
 
         AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(returnValue -> Frontend.getInstance().runAction(
                 ActionType.InstallVds,

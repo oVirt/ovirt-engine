@@ -695,6 +695,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     private HostedEngineHostModel hostedEngineHostModel;
 
+    private ReplaceHostModel replaceHostModel;
+
     private ListModel<AffinityGroup> affinityGroupList;
 
     public ListModel<AffinityGroup> getAffinityGroupList() {
@@ -863,6 +865,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         setCurrentKernelCmdLine(new EntityModel<>(""));
         setHostedEngineHostModel(new HostedEngineHostModel());
         setAffinityGroupList(new ListModel<>());
+        setReplaceHostModel(new ReplaceHostModel());
         setLabelList(new ListModel<Label>());
         updateAffinityLists();
 
@@ -1591,6 +1594,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 delegate.eventRaised(ev, sender, args);
             }
         }
+    }
+
+    public ReplaceHostModel getReplaceHostModel() {
+        return  replaceHostModel;
+    }
+
+    public void setReplaceHostModel (final ReplaceHostModel replaceHostModel) {
+        this.replaceHostModel = replaceHostModel;
+
+
     }
 
     public HostedEngineHostModel getHostedEngineHostModel() {

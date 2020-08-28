@@ -1,0 +1,45 @@
+---
+# Set up the volume management
+- name: Fetch the directory and volume details
+  block:
+    - name: Get the list of volumes on the machine
+      shell: ls "{{ glusterd_libdir }}/vols"
+      register: dir_list
+      tags:
+        - skip_ansible_lint # E301
+
+    - name: Setting Facts for Volume
+      set_fact:
+        volumes: "{{ dir_list.stdout.split() }}"
+
+    # Find the list of bricks on the machine
+    - name: Get the list of bricks corresponding to volume
+      shell: >
+        gluster vol info {{ item }} |
+        grep {{ gluster_maintenance_old_node }} |
+        cut -d' ' -f2 |
+        awk -F: '{ print $2 }'
+      with_items: "{{ volumes }}"
+      register: brick_list
+      tags:
+        - skip_ansible_lint # E301
+  delegate_to: "{{ gluster_cluster_node }}"
+  connection: ssh
+  tags:
+    - skip_ansible_lint # E301
+
+- name: Run replace-brick commit on the brick
+  connection: ssh
+  shell: >
+    [ ! -d {{ item.1 }} ] && gluster volume replace-brick {{ item.0.item }}
+    {{ gluster_old_node }}:{{ item.1 }}
+    {{ gluster_new_node }}:{{ item.1 }}
+    commit force
+  register: ret
+  failed_when: ret.rc >=2
+  with_subelements:
+    - "{{ brick_list.results }}"
+    - stdout_lines
+  delegate_to: "{{ gluster_new_node }}"
+  tags:
+    - skip_ansible_lint # E301
