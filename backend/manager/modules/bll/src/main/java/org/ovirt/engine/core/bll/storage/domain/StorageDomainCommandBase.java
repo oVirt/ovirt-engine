@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -97,7 +96,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         super(parameters, cmdContext);
     }
 
-
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -137,12 +135,12 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected boolean isCinderStorageHasNoDisks() {
-        if (getStorageDomain().getStorageType() == StorageType.CINDER) {
-            return validate(OpenStackVolumeProviderProxy.getFromStorageDomainId(getStorageDomainId(), providerProxyFactory)
-                    .getProviderValidator()
-                    .isCinderHasNoImages());
+        if (getStorageDomain().getStorageType() != StorageType.CINDER) {
+            return true;
         }
-        return true;
+        return validate(OpenStackVolumeProviderProxy.getFromStorageDomainId(getStorageDomainId(), providerProxyFactory)
+                .getProviderValidator()
+                .isCinderHasNoImages());
     }
 
     private boolean isMaster() {
@@ -157,8 +155,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     protected boolean checkStorageDomainNameLengthValid() {
         boolean result = true;
         if (StringUtils.isNotEmpty(getStorageDomain().getStorageName()) &&
-                getStorageDomain().getStorageName().length() > Config
-                .<Integer> getValue(ConfigValues.StorageDomainNameSizeLimit)) {
+                getStorageDomain().getStorageName().length() >
+                        Config.<Integer>getValue(ConfigValues.StorageDomainNameSizeLimit)) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
             result = false;
         }
@@ -213,7 +211,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     protected void setStorageDomainStatus(StorageDomainStatus status, CompensationContext context) {
         if (getStorageDomain() != null && getStorageDomain().getStoragePoolId() != null) {
             StoragePoolIsoMap map = getStorageDomain().getStoragePoolIsoMapData();
-            if(context != null) {
+            if (context != null) {
                 context.snapshotEntityStatus(map);
             }
             getStorageDomain().setStatus(status);
@@ -248,7 +246,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             addValidationMessageVariable("lunIds", lunsUsedByDisks.toString());
         }
 
-       return lunsUsedBySDs.length() != 0 || lunsUsedByDisks.length() != 0;
+        return lunsUsedBySDs.length() != 0 || lunsUsedByDisks.length() != 0;
     }
 
     protected void addFormattedLunId(StringBuilder sb, String lunId, String entityName) {
@@ -305,11 +303,14 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     /**
-     *  The new master is a data domain which is preferred to be in Active/Unknown status, if selectInactiveWhenNoActiveUnknownDomains
+     * The new master is a data domain which is preferred to be in Active/Unknown status, if selectInactiveWhenNoActiveUnknownDomains
      * is set to True, an Inactive domain will be returned in case that no domain in Active/Unknown status was found.
+     *
      * @return an elected master domain or null
      */
-    protected StorageDomain electNewMaster(boolean duringReconstruct, boolean selectInactiveWhenNoActiveUnknownDomains, boolean canChooseCurrentMasterAsNewMaster) {
+    protected StorageDomain electNewMaster(boolean duringReconstruct,
+            boolean selectInactiveWhenNoActiveUnknownDomains,
+            boolean canChooseCurrentMasterAsNewMaster) {
         if (getStoragePool() == null) {
             log.warn("Cannot elect new master: storage pool not found");
             return null;
@@ -322,24 +323,24 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             return null;
         }
 
-        Collections.sort(storageDomains,
-                Comparator.comparing(StorageDomain::getLastTimeUsedAsMaster)
-                        .thenComparing(Comparator.comparing(StorageDomain::isLocal)));
+        storageDomains.sort(Comparator.comparing(StorageDomain::getLastTimeUsedAsMaster)
+                .thenComparing(StorageDomain::isLocal));
 
         StorageDomain newMaster = null;
         StorageDomain storageDomain = getStorageDomain();
 
         for (StorageDomain dbStorageDomain : storageDomains) {
-            if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId()
-                    .equals(storageDomain.getId())))
+            if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId().equals(storageDomain.getId())))
                     && ((dbStorageDomain.getStorageDomainType() == StorageDomainType.Data && !dbStorageDomain.isBackup())
                             || (canChooseCurrentMasterAsNewMaster
-                                    && dbStorageDomain.getStorageDomainType() == StorageDomainType.Master))) {
+                            && dbStorageDomain.getStorageDomainType() == StorageDomainType.Master))) {
                 if (dbStorageDomain.getStatus() == StorageDomainStatus.Active
                         || dbStorageDomain.getStatus() == StorageDomainStatus.Unknown) {
                     newMaster = dbStorageDomain;
                     break;
-                } else if (selectInactiveWhenNoActiveUnknownDomains && newMaster == null
+                }
+
+                if (selectInactiveWhenNoActiveUnknownDomains && newMaster == null
                         && dbStorageDomain.getStatus() == StorageDomainStatus.Inactive) {
                     // if the found domain is inactive, we don't break to continue and look for
                     // active/unknown domain.
@@ -353,6 +354,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     /**
      * returns new master domain which is in Active/Unknown status
+     *
      * @return an elected master domain or null
      */
     protected StorageDomain electNewMaster() {
@@ -403,8 +405,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected List<VM> getVmsOnlyOnStorageDomain() {
-        List<VM> allVmsRelatedToSD = vmDao.getAllForStorageDomain(getStorageDomainId());
-        List<VM> vmsWithDisksOnMultipleStorageDomain = vmDao.getAllVMsWithDisksOnOtherStorageDomain(getStorageDomainId());
+        Guid storageDomainId = getStorageDomainId();
+        List<VM> allVmsRelatedToSD = vmDao.getAllForStorageDomain(storageDomainId);
+        List<VM> vmsWithDisksOnMultipleStorageDomain = vmDao.getAllVMsWithDisksOnOtherStorageDomain(storageDomainId);
         allVmsRelatedToSD.removeAll(vmsWithDisksOnMultipleStorageDomain);
         return allVmsRelatedToSD;
     }
@@ -482,7 +485,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 new GetStorageDomainStatsVDSCommandParameters(
                         getVds().getId(),
                         getStorageDomain().getId()))
-                                .getReturnValue()).getStorageDynamicData();
+                .getReturnValue()).getStorageDynamicData();
     }
 
     @SuppressWarnings("unchecked")
@@ -492,6 +495,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 new HSMGetStorageDomainInfoVDSCommandParameters(
                         getVds().getId(),
                         getStorageDomain().getId()))
-                                .getReturnValue()).getFirst();
+                .getReturnValue()).getFirst();
     }
 }
