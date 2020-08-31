@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
-import org.ovirt.engine.core.common.businessentities.ReplaceHostConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -18,7 +17,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEd
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.InstallModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -100,11 +98,6 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @WithElementId("userName")
     StringEntityModelTextBoxEditor userNameEditor;
 
-    @UiField
-    @Path(value = "fqdnBox.entity")
-    @WithElementId("fqdnBox")
-    StringEntityModelTextBoxEditor fqdnEditor;
-
     @UiField(provided = true)
     @Path(value = "publicKey.entity")
     @WithElementId("publicKey")
@@ -113,10 +106,6 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @UiField
     @Path(value = "hostedEngineHostModel.selectedItem")
     ListModelListBoxEditor<HostedEngineDeployConfiguration.Action> hostedEngineDeployActionsEditor;
-
-    @UiField
-    @Path(value = "replaceHostModel.selectedItem")
-    ListModelListBoxEditor<ReplaceHostConfiguration.Action> replaceHostEditor;
 
     @UiField
     @Ignore
@@ -129,10 +118,6 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @UiField
     @Ignore
     DialogTab hostedEngineTab;
-
-    @UiField
-    @Ignore
-    DialogTab replaceHostTab;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -169,8 +154,6 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         activateHostAfterInstallEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         overrideIpTablesEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         reconfigureGlusterEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        replaceHostEditor = new ListModelListBoxEditor<>(new EnumRenderer<ReplaceHostConfiguration.Action>());
-        fqdnEditor = new StringEntityModelTextBoxEditor();
     }
 
     void localize() {
@@ -181,7 +164,6 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         reconfigureGlusterEditor.setLabel(constants.reconfigureGlusterLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
         userNameEditor.setLabel(constants.hostPopupUsernameLabel());
-        fqdnEditor.setLabel(constants.hostPopupFqdnLabel());
         publicKeyEditor.setTitle(constants.publicKeyUsage());
     }
 
@@ -198,14 +180,11 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
                 }
             }
         });
-
-        updateVisibilities(model);
         boolean installedFailed = model.getVds().getStatus() == VDSStatus.InstallFailed;
         model.setAuthenticationMethod(installedFailed ? AuthenticationMethod.Password: AuthenticationMethod.PublicKey);
         displayPasswordField(installedFailed);
         rbPassword.setValue(installedFailed);
         rbPublicKey.setValue(!installedFailed);
-
 
         rbPassword.addValueChangeHandler(event -> {
             model.setAuthenticationMethod(AuthenticationMethod.Password);
@@ -228,15 +207,6 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
             passwordEditor.getElement().getStyle().setVisibility(Visibility.HIDDEN);
             publicKeyEditor.getElement().getStyle().setVisibility(Visibility.VISIBLE);
         }
-    }
-
-
-    @Override
-    public void updateVisibilities(InstallModel object) {
-        ReplaceHostConfiguration.Action replaceHostOption = object
-                .getReplaceHostModel().getSelectedItem();
-
-        fqdnEditor.setVisible(replaceHostOption == ReplaceHostConfiguration.Action.DIFFERENTFQDN);
     }
 
     @Override

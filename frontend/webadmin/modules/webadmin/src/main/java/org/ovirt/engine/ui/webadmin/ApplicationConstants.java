@@ -506,8 +506,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostPopupUsernameLabel();
 
-    String hostPopupFqdnLabel();
-
     String hostPopupDefaultUsername();
 
     String hostPopupPublicKeyLabel();

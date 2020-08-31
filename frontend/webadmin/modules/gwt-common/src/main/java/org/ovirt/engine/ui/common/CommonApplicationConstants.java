@@ -1767,11 +1767,7 @@ public interface CommonApplicationConstants extends Constants {
 
     String hostedEngineLabel();
 
-    String replaceHostLabel();
-
     String hostedEngineDeploymentAction();
-
-    String replaceHostAction();
 
     String hostRestartAfterUpgrade();
 

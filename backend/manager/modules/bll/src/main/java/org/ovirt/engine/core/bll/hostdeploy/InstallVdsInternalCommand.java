@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
-import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -33,11 +32,9 @@ import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfigura
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
-import org.ovirt.engine.core.common.businessentities.ReplaceHostConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -57,8 +54,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
-import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -84,12 +79,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     private VdsDao vdsDao;
     @Inject
     private HostedEngineHelper hostedEngineHelper;
-    @Inject
-    private NetworkDao networkDao;
-    @Inject
-    private InterfaceDao interfaceDao;
-    @Inject
-    private GlusterUtil glusterUtil;
 
     @Inject
     private AnsibleExecutor ansibleExecutor;
@@ -155,45 +144,22 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
 
             runAnsibleHostDeployPlaybook();
             List<VDS> hostlist = vdsDao.getAllForCluster(getClusterId());
-            hostlist =  getOnlyActiveHosts(hostlist);
-            if(getVds().getClusterSupportsGlusterService() && getParameters().getReplaceHostConfiguration().getDeployAction() !=
-                    ReplaceHostConfiguration.Action.NONE && hostlist.size() >= 2) {
-
+            if(getVds().getClusterSupportsGlusterService() && (hostlist.size()) >= 3 && getParameters().getReconfigureGluster()) {
+                String oldGlusterClusterNode = getVds().getName();
+                VDS vds = getVds();
+                hostlist.removeIf(host -> host.getHostName().equals(vds.getHostName()));
                 String firstGlusterClusterNode = hostlist.get(0).getName();
                 String secondGlusterClusterNode = hostlist.get(1).getName();
-                String oldGlusterClusterNode = getVds().getName();
-                String newGlusterClusterNode = StringUtils.EMPTY;
-
-                Map<String, Network> stringNetworkMap = networkDao.getNetworksForCluster(getClusterId());
-                Map<VDS, String> map = glusterUtil.getGlusterIpaddressAsMap(stringNetworkMap,
-                        getVds(), hostlist);
-
-                if(map != null){
-
-                    oldGlusterClusterNode = map.get(getVds());
-                    firstGlusterClusterNode = map.get(hostlist.get(0));
-                    secondGlusterClusterNode = map.get(hostlist.get(1));
-                }
-
-                if(getParameters().getReplaceHostConfiguration().getDeployAction() == ReplaceHostConfiguration.Action.DIFFERENTFQDN) {
-
-                    newGlusterClusterNode = getParameters().getFqdnBox(); //put the editor value here
-
-                } else if (getParameters().getReplaceHostConfiguration().getDeployAction() == ReplaceHostConfiguration.Action.SAMEFQDN) {
-                    newGlusterClusterNode = oldGlusterClusterNode; //same fqdn
-                }
-
                 VDS maintenanceVds = hostlist.get(0);
                 runAnsibleReconfigureGluster(oldGlusterClusterNode, firstGlusterClusterNode,
-                    secondGlusterClusterNode, newGlusterClusterNode, maintenanceVds);
+                    secondGlusterClusterNode, maintenanceVds);
             } else {
-                if(getParameters().getReplaceHostConfiguration().getDeployAction() ==
-                        ReplaceHostConfiguration.Action.NONE){
-                    log.info("Replace host is disabled");
+                if(!getParameters().getReconfigureGluster()){
+                    log.info("Reconfigure gluster is disabled");
                 } else if(!getVds().getClusterSupportsGlusterService()) {
-                    log.info("Skipping Replace host since cluster does not support gluster");
+                    log.info("Skipping Reconfigure gluster since cluster does not support gluster");
                 } else if(vdsDao.getAllForCluster(getClusterId()).size()<3) {
-                    log.info("Skipping Replace host  since minimum of three hosts are required in the same cluster");
+                    log.info("Skipping Reconfigure gluster since minimum of three hosts are required in the same cluster");
                 }
             }
 
@@ -216,7 +182,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     }
 
     private void runAnsibleHostDeployPlaybook() {
-        String hostedEngineAction = StringUtils.EMPTY;
+        String hostedEngineAction = "";
         File hostedEngineTmpCfgFile = null;
         if (getParameters().getHostedEngineDeployConfiguration() != null) {
             hostedEngineAction =
@@ -344,14 +310,13 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     }
 
     private void runAnsibleReconfigureGluster(String oldGlusterClusterNode, String firstGlusterClusterNode,
-                                              String secondGlusterClusterNode,
-                                              String newGlusterClusterNode, VDS maintenanceVds) {
-        log.info("Started Replace Host playbook");
+                                              String secondGlusterClusterNode, VDS maintenanceVds) {
+        log.info("Started Ansible Installation for reconfigure gluster");
         VDS vds = getVds();
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(maintenanceVds)
                 .variable("gluster_maintenance_old_node", oldGlusterClusterNode)
-                .variable("gluster_maintenance_new_node", newGlusterClusterNode)
+                .variable("gluster_maintenance_new_node", oldGlusterClusterNode)    //since here old_node and new_node have the same hostname
                 .variable("gluster_maintenance_cluster_node", firstGlusterClusterNode)
                 .variable("gluster_maintenance_cluster_node_2", secondGlusterClusterNode)
                 .playbook(AnsibleConstants.REPLACE_GLUSTER_PLAYBOOK)
@@ -380,15 +345,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                             "Failed to execute Ansible replace gluster role. Please check logs for more details: %1$s",
                             ansibleReturnValue.getLogFile()));
         }
-    }
-
-    private List<VDS> getOnlyActiveHosts(List<VDS> hostlist) {
-
-        hostlist.removeIf(host -> host.getHostName().equals(getVds().getHostName()));
-        hostlist.removeIf(host -> host.getStatus() == VDSStatus.Maintenance); // remove other hosts which are in
-        // maintainance mode
-
-        return hostlist;
     }
 
     private void fetchHostedEngineConfigFile(String tmpHEConfigFileName) {

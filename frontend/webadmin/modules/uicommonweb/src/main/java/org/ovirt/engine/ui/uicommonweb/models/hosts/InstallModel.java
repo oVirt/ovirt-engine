@@ -1,9 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import java.util.Arrays;
-
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
-import org.ovirt.engine.core.common.businessentities.ReplaceHostConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -77,16 +74,6 @@ public class InstallModel extends Model {
         hostVersion = value;
     }
 
-    private  EntityModel<String> fqdnBox;
-
-    public  EntityModel<String> getFqdnBox() {
-        return fqdnBox;
-    }
-
-    private void setFqdnBox(EntityModel<String> value) {
-        fqdnBox = value;
-    }
-
     private EntityModel<String> privateUserName;
 
     public EntityModel<String> getUserName() {
@@ -136,17 +123,6 @@ public class InstallModel extends Model {
         onPropertyChanged(new PropertyChangedEventArgs("ValidationFailed")); //$NON-NLS-1$
     }
 
-    private ListModel<ReplaceHostConfiguration.Action> replaceHostModel;
-
-    public ListModel<ReplaceHostConfiguration.Action> getReplaceHostModel() {
-        return replaceHostModel;
-    }
-
-    public void setReplaceHostModel(ListModel<ReplaceHostConfiguration.Action> replaceHostModel) {
-        this.replaceHostModel = replaceHostModel;
-
-    }
-
     private HostedEngineHostModel hostedEngineHostModel;
 
     public HostedEngineHostModel getHostedEngineHostModel() {
@@ -161,26 +137,22 @@ public class InstallModel extends Model {
         setUserPassword(new EntityModel<String>());
         setOVirtISO(new ListModel<RpmVersion>());
         setHostVersion(new EntityModel<String>());
+
         setOverrideIpTables(new EntityModel<Boolean>());
         setActivateHostAfterInstall(new EntityModel<Boolean>());
         setReconfigureGluster(new EntityModel<Boolean>());
-        setFqdnBox(new EntityModel<String>());
         getOverrideIpTables().setEntity(false);
         getActivateHostAfterInstall().setEntity(false);
         getReconfigureGluster().setEntity(true);
-        getFqdnBox().setIsAvailable(true);
-        getFqdnBox().setIsChangeable(true);
         setUserName(new EntityModel<String>());
-        getFqdnBox().setEntity("Enter FQDN Here"); //$NON-NLS-1$
         getUserName().setEntity(HostModel.RootUserName);
         // TODO: remove setIsChangeable when configured ssh username is enabled
         getUserName().setIsChangeable(false);
         setPublicKey(new EntityModel<String>());
+        getPublicKey().setEntity(""); //$NON-NLS-1$
         setValidationFailed(new EntityModel<Boolean>());
         fetchEngineSshPublicKey();
         setHostedEngineHostModel(new HostedEngineHostModel());
-        setReplaceHostModel(new ListModel<ReplaceHostConfiguration.Action>());
-        replaceHostModel.setItems(Arrays.asList(ReplaceHostConfiguration.Action.values()));
     }
 
     public boolean validate(boolean isOVirt) {
@@ -197,8 +169,7 @@ public class InstallModel extends Model {
 
         return getUserPassword().getIsValid()
                 && getOVirtISO().getIsValid()
-                && getHostedEngineHostModel().getIsValid()
-                && getReplaceHostModel().getIsValid();
+                && getHostedEngineHostModel().getIsValid();
     }
 
     public void fetchEngineSshPublicKey() {
