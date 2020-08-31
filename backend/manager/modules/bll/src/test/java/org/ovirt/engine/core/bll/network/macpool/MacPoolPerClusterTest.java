@@ -142,6 +142,7 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
         mockCluster(cluster);
         mockGettingAllMacPools(macPool);
         macPoolPerCluster.initialize();
+        macPoolPerCluster.getMacPoolById(macPool.getId()).getMacsStorage().setSkipAllocationPredicate(any -> false);
 
         assertThat(getMacPool(cluster.getId()).addMac(MAC_FROM), is(true));
         assertThat(getMacPool(cluster.getId()).addMac(MAC_FROM), is(false));

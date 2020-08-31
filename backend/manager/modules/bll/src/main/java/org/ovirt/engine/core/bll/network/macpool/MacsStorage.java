@@ -1,23 +1,38 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang.Validate;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.di.Injector;
 
 class MacsStorage {
     private final boolean allowDuplicates;
     private List<Range> ranges = new LinkedList<>();
     private ObjectCounter<Long> customMacs;
     private int startIndexForEmptyRangeSearch = 0;
+    private Predicate<String> skipAllocationPredicate;
 
     public MacsStorage(boolean allowDuplicates) {
+        this(allowDuplicates, new MacAddressGlobalUsageTester(allowDuplicates));
+    }
+
+    MacsStorage(boolean allowDuplicates, Predicate<String> skipAllocationPredicate) {
         this.allowDuplicates = allowDuplicates;
         customMacs = new ObjectCounter<>(this.allowDuplicates);
+        this.skipAllocationPredicate = skipAllocationPredicate;
+    }
+
+    void setSkipAllocationPredicate(Predicate<String> skipAllocationPredicate) {
+        this.skipAllocationPredicate = skipAllocationPredicate;
     }
 
     Range addRange(Range range) {
@@ -65,24 +80,37 @@ class MacsStorage {
             throw new EngineException(EngineError.MAC_POOL_NO_MACS_LEFT);
         }
 
-        final List<Long> result = new ArrayList<>(numberOfMacs);
-        int remainingMacs = numberOfMacs;
-        while (remainingMacs > 0) {
+        final List<Long> result = new LinkedList<>();
+        int remainingMacs = allocateAvailableMacs(result, numberOfMacs, this.skipAllocationPredicate);
+        if (remainingMacs > 0) {
+            auditAllocatingMacsInUse(remainingMacs);
+            allocateAvailableMacs(result, remainingMacs, any -> false);
+        }
+
+        return result;
+    }
+
+    private int allocateAvailableMacs(List<Long> allocatedMacs, int numberOfMacs, Predicate<String> skipAllocationPredicate) {
+        int remainingRanges = ranges.size();
+        int reminaingMacs = numberOfMacs;
+        while (reminaingMacs > 0 && remainingRanges > 0) {
             final Range rangeWithAvailableMac = getRangeWithAvailableMac();
             Validate.notNull(rangeWithAvailableMac);
 
             final int availableMacsCount = rangeWithAvailableMac.getAvailableCount();
-            int allocatingMacsCount = availableMacsCount < remainingMacs
-                    ? availableMacsCount
-                    : remainingMacs;
+            int allocatingMacsCount = Math.min(availableMacsCount, reminaingMacs);
 
-            final List<Long> allocatedMacs = rangeWithAvailableMac.allocateMacs(allocatingMacsCount);
+            final List<Long> allocatedMacsForRange = rangeWithAvailableMac.allocateMacs(
+                allocatingMacsCount, skipAllocationPredicate
+            );
 
-            remainingMacs -= allocatedMacs.size();
-            result.addAll(allocatedMacs);
+            if (allocatedMacsForRange.size() > 0) {
+                reminaingMacs -= allocatedMacsForRange.size();
+                allocatedMacs.addAll(allocatedMacsForRange);
+            }
+            remainingRanges -= 1;
         }
-
-        return result;
+        return reminaingMacs;
     }
 
     Range getRangeWithAvailableMac() {
@@ -152,5 +180,11 @@ class MacsStorage {
 
     boolean overlaps(MacsStorage other) {
         return other.getRanges().stream().anyMatch(this::overlaps);
+    }
+
+    void auditAllocatingMacsInUse(int countMacsInUse) {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.addCustomValue("NumberOfMacs", Integer.toString(countMacsInUse));
+        Injector.get(AuditLogDirector.class).log(logable, AuditLogType.MAC_ADDRESS_IN_USE_ALLOCATED);
     }
 }
