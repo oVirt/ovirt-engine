@@ -24,7 +24,8 @@ CREATE OR REPLACE FUNCTION Insertnetwork (
     v_provider_physical_network_id UUID,
     v_qos_id UUID,
     v_label TEXT,
-    v_dns_resolver_configuration_id UUID
+    v_dns_resolver_configuration_id UUID,
+    v_port_isolation BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -48,7 +49,8 @@ BEGIN
         provider_physical_network_id,
         qos_id,
         label,
-        dns_resolver_configuration_id
+        dns_resolver_configuration_id,
+        port_isolation
         )
     VALUES (
         v_addr,
@@ -70,7 +72,8 @@ BEGIN
         v_provider_physical_network_id,
         v_qos_id,
         v_label,
-        v_dns_resolver_configuration_id
+        v_dns_resolver_configuration_id,
+        v_port_isolation
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -95,7 +98,8 @@ CREATE OR REPLACE FUNCTION Updatenetwork (
     v_provider_physical_network_id UUID,
     v_qos_id UUID,
     v_label TEXT,
-    v_dns_resolver_configuration_id UUID
+    v_dns_resolver_configuration_id UUID,
+    v_port_isolation BOOLEAN
     )
 RETURNS VOID
     --The [network] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -120,7 +124,8 @@ BEGIN
         provider_physical_network_id = v_provider_physical_network_id,
         qos_id = v_qos_id,
         label = v_label,
-        dns_resolver_configuration_id = v_dns_resolver_configuration_id
+        dns_resolver_configuration_id = v_dns_resolver_configuration_id,
+        port_isolation = v_port_isolation
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -314,6 +319,7 @@ CREATE TYPE networkViewClusterType AS (
         provider_physical_network_id UUID,
         qos_id UUID,
         dns_resolver_configuration_id UUID,
+        port_isolation BOOLEAN,
         network_id UUID,
         cluster_id UUID,
         status INT,
@@ -354,6 +360,7 @@ BEGIN
         network.provider_physical_network_id,
         network.qos_id,
         network.dns_resolver_configuration_id,
+        network.port_isolation,
         network_cluster.network_id,
         network_cluster.cluster_id,
         network_cluster.status,

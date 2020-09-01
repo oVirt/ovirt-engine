@@ -258,7 +258,8 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
                         network.getProvidedBy() == null ? null : network.getProvidedBy().getPhysicalNetworkId())
                 .addValue("qos_id", network.getQosId())
                 .addValue("label", network.getLabel())
-                .addValue("dns_resolver_configuration_id", getDnsResolverConfigurationId(network));
+                .addValue("dns_resolver_configuration_id", getDnsResolverConfigurationId(network))
+                .addValue("port_isolation", network.isPortIsolation());
     }
 
     private Guid getDnsResolverConfigurationId(Network network) {
@@ -336,6 +337,7 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
 
             Guid dnsResolverConfigurationId = getGuid(rs, "dns_resolver_configuration_id");
             entity.setDnsResolverConfiguration(dnsResolverConfigurationDao.get(dnsResolverConfigurationId));
+            entity.setPortIsolation(rs.getBoolean("port_isolation"));
 
             return entity;
         }

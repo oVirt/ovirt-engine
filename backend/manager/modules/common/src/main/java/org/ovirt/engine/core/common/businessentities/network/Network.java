@@ -80,6 +80,8 @@ public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Comme
     @Valid
     private DnsResolverConfiguration dnsResolverConfiguration;
 
+    private boolean portIsolation;
+
     public Network() {
         vmNetwork = true;
         name = "";
@@ -248,6 +250,14 @@ public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Comme
         this.label = label;
     }
 
+    public boolean isPortIsolation() {
+        return portIsolation;
+    }
+
+    public void setPortIsolation(boolean portIsolation) {
+        this.portIsolation = portIsolation;
+    }
+
     @Override
     public Object getQueryableId() {
         return getId();
@@ -273,6 +283,7 @@ public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Comme
                 .append("label", getLabel())
                 .append("qosId", getQosId())
                 .append("dnsResolverConfiguration", dnsResolverConfiguration)
+                .append("portIsolation", isPortIsolation())
                 .build();
     }
 
@@ -297,7 +308,8 @@ public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Comme
                 providedBy,
                 label,
                 qosId,
-                dnsResolverConfiguration
+                dnsResolverConfiguration,
+                portIsolation
         );
     }
 
@@ -328,7 +340,8 @@ public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Comme
                 && Objects.equals(providedBy, other.providedBy)
                 && Objects.equals(label, other.label)
                 && Objects.equals(qosId, other.qosId)
-                && Objects.equals(dnsResolverConfiguration, other.dnsResolverConfiguration);
+                && Objects.equals(dnsResolverConfiguration, other.dnsResolverConfiguration)
+                && portIsolation == other.portIsolation;
     }
 
     public int getMtu() {
