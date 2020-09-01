@@ -105,7 +105,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     private String escapeNewLines(String value){
-        return value.replaceAll("\n", "\\\\n");
+        return value.replaceAll("\n", "&#10;");
     }
 
     protected void writeVmInit() {
