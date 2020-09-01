@@ -11,8 +11,8 @@ public class ForceSelectSPMParameters extends ActionParametersBase {
     public ForceSelectSPMParameters() {
     }
 
-    public ForceSelectSPMParameters(Guid prefferedSPMId) {
-        setPreferredSPMId(prefferedSPMId);
+    public ForceSelectSPMParameters(Guid preferredSPMId) {
+        setPreferredSPMId(preferredSPMId);
     }
 
     public Guid getPreferredSPMId() {
