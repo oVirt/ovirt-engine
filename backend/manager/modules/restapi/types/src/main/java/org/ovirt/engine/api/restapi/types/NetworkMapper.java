@@ -96,6 +96,10 @@ public class NetworkMapper {
             entity.setProvidedBy(providerNetwork);
         }
 
+        if (model.isSetPortIsolation()) {
+            entity.setPortIsolation(model.isPortIsolation());
+        }
+
         return entity;
     }
 
@@ -179,6 +183,8 @@ public class NetworkMapper {
                 model.setExternalProviderPhysicalNetwork(providerPhysicalNetwork);
             }
         }
+
+        model.setPortIsolation(entity.isPortIsolation());
 
         return model;
     }
