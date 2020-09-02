@@ -305,8 +305,13 @@ public class OvfUtils {
                 }
             }
             if (selectedSection != null) {
-                int osId = osRepository.getOsIdByUniqueName(selectedSection.innerText);
-                archType = osRepository.getArchitectureFromOS(osId);
+                XmlNode node = selectedSection.selectSingleNode("Description");
+                if (node != null) {
+                    int osId = osRepository.getOsIdByUniqueName(node.innerText);
+                    archType = osRepository.getArchitectureFromOS(osId);
+                } else {
+                    archType = ArchitectureType.undefined;
+                }
             }
         }
         return archType;
