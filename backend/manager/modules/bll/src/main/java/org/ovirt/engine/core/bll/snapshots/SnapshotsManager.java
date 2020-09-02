@@ -426,7 +426,13 @@ public class SnapshotsManager {
 
         vm.setAppList(snapshot.getAppList());
         vmDynamicDao.update(vm.getDynamicData());
-        synchronizeDisksFromSnapshot(vm.getId(), snapshot.getId(), activeSnapshotId, vm.getImages(), vm.getName());
+
+        List<DiskImage> imagesToExclude = diskImageDao.getAttachedDiskSnapshotsToVm(vm.getId(), Boolean.TRUE);
+
+        List<DiskImage> diskImagesToSyncFromSnapshot = (images == null || imagesToExclude.isEmpty()) ?
+                vm.getImages() : images;
+        synchronizeDisksFromSnapshot(vm.getId(), snapshot.getId(), activeSnapshotId,
+                diskImagesToSyncFromSnapshot, vm.getName());
 
         if (vmUpdatedFromConfiguration) {
             vmStaticDao.update(vm.getStaticData());
