@@ -138,6 +138,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     private static final String GRID_COLUMN_WIDTH_PREFIX = "GridColumnWidth"; //$NON-NLS-1$
 
     private static final String GRID_SWAPPED_COLUMN_LIST = "GridSwappedColumns"; //$NON-NLS-1$
+    // Legacy way of hiding columns - preserved for reading legacy column width data from storage
     // This is 1px instead of 0px as zero-size columns seem to confuse the cell table.
     private static final String HIDDEN_WIDTH = "1px"; //$NON-NLS-1$
 
@@ -466,8 +467,6 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
         if (columnVisible) {
             columnWidthMap.put(column, width);
-        } else {
-            width = HIDDEN_WIDTH;
         }
 
         // Update header cell visibility
@@ -476,13 +475,6 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
             headerCell.getStyle().setVisibility(columnVisible ? Visibility.VISIBLE : Visibility.HIDDEN);
         }
 
-        // Prevent resizing of "hidden" (1px wide) columns
-        if (columnResizingEnabled) {
-            Header<?> header = getHeader(getColumnIndex(column));
-            if (header instanceof ResizableHeader) {
-                ((ResizableHeader<?>) header).setResizeEnabled(columnVisible);
-            }
-        }
         if (columnResizePersistenceEnabled && !overridePersist && columnVisible) {
             String persistedWidth = readColumnWidth(column);
             if (persistedWidth != null) {
@@ -715,7 +707,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     @Override
     public void resizeColumn(Column<T, ?> column, int newWidth) {
-        setColumnWidth(column, newWidth + "px", true); //$NON-NLS-1$
+        setColumnWidth(column, toPixelString(newWidth), true);
     }
 
     @Override
@@ -786,14 +778,17 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     }
 
     protected String getHiddenPersistedColumnWidth(Column<T, ?> column) {
-        String result = null;
-        if (columnResizePersistenceEnabled) {
-            String key = getHiddenColumnWidthKey(column);
-            if (key != null) {
-                result = clientStorage.getLocalItem(key);
-            }
+        if (!columnResizePersistenceEnabled) {
+            return null;
         }
-        return result;
+        String result = null;
+        String key = getHiddenColumnWidthKey(column);
+        if (key != null) {
+            result = clientStorage.getLocalItem(key);
+        }
+        // hidden width is not used/persisted anymore if present in legacy storage it needs to be replaced
+        // as it makes difficult to resize the column to reasonable size
+        return HIDDEN_WIDTH.equals(result) ? toPixelString(DEFAULT_MINIMUM_COLUMN_WIDTH) : result;
     }
 
     @Override
@@ -991,6 +986,10 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         }
         super.setRowData(start, values);
         updateGridSize(calculateGridHeight(values.size()));
+    }
+
+    private static String toPixelString(int width) {
+        return width + "px"; // $NON-NLS-1$
     }
 
 }
