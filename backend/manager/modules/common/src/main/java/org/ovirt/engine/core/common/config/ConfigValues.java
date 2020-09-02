@@ -1544,6 +1544,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     IsIncrementalBackupSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    IsPortIsolationSupported,
+
     @TypeConverterAttribute(String.class)
     VirtioWinIsoPath,
 

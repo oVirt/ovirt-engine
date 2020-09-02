@@ -830,6 +830,8 @@ select fn_db_add_config_value_for_versions_up_to('HyperVSynicStimerSupported', '
 select fn_db_add_config_value_for_versions_up_to('IsDeferringFileVolumePreallocationSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('IsDeferringFileVolumePreallocationSupported', 'true', '4.5');
 select fn_db_add_config_value_for_versions_up_to('IsIncrementalBackupSupported', 'false', '4.5');
+select fn_db_add_config_value_for_versions_up_to('IsPortIsolationSupported', 'false', '4.4');
+select fn_db_add_config_value_for_versions_up_to('IsPortIsolationSupported', 'true', '4.5');
 
 -- Managed block storage
 select fn_db_add_config_value('CinderlibCommandTimeoutInMinutes','2','general');

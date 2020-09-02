@@ -219,6 +219,16 @@ public class FeatureSupported {
     }
 
     /**
+     * Check if isolated port is supported.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if isolated port is supported.
+     */
+    public static boolean isPortIsolationSupported(Version version) {
+        return supportedInConfig(ConfigValues.IsPortIsolationSupported, version);
+    }
+
+    /**
      * Check if v2 of OpenStack Image Service API is supported.
      * The API v2 is supported only in vdsm of oVirt >= 4.4
      *

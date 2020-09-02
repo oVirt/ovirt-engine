@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.IsRoleNetworkIpConfigurationValid;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -167,5 +168,11 @@ public abstract class NetworkClusterValidatorBase {
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REQUIRED,
                         String.format(NETWORK_NAME_REPLACEMENT, networkName))
                 : ValidationResult.VALID;
+    }
+
+    public ValidationResult portIsolationCompatibleClusterLevel(Cluster cluster, Network network) {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PORT_ISOLATION_UNSUPPORTED_CLUSTER_LEVEL).
+                when(network.isPortIsolation()
+                        && !FeatureSupported.isPortIsolationSupported(cluster.getCompatibilityVersion()));
     }
 }
