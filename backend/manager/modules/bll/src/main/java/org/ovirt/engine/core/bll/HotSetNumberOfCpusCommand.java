@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HotSetNumberOfCpusParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -69,6 +70,8 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
         if (getParameters().getPlugAction() == PlugAction.PLUG) {
             if (!FeatureSupported.hotPlugCpu(getVm().getCompatibilityVersion(), getVm().getClusterArch())) {
                 valid = failValidation(EngineMessage.HOT_PLUG_CPU_IS_NOT_SUPPORTED);
+            } else if (!validateChipset()) { // TODO remove this validation once BZ 1834250 resolved.
+                valid = failValidation(EngineMessage.HOT_PLUG_CPU_IS_NOT_SUPPORTED_FOR_UEFI);
             } else if (!osRepository.isCpuHotplugSupported(getVm().getVmOsId())) {
                 valid = failValidation(
                         EngineMessage.HOT_PLUG_CPU_IS_NOT_SUPPORTED_FOR_GUEST_OS,
@@ -85,6 +88,11 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
         }
 
         return valid;
+    }
+
+    private boolean validateChipset() {
+        BiosType biosType = getVm().getEffectiveBiosType();
+        return biosType != BiosType.Q35_OVMF && biosType != BiosType.Q35_SECURE_BOOT;
     }
 
     /**
