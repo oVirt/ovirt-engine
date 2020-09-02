@@ -326,6 +326,12 @@ public interface CommonApplicationConstants extends Constants {
 
     String permanentlyRemoveLabel();
 
+    String persistGridSettingsOnServer();
+
+    String hideDisplayColumns();
+
+    String swapColumns();
+
     String approveOperation();
 
     String forceRemove();
@@ -1263,6 +1269,8 @@ public interface CommonApplicationConstants extends Constants {
     String browserPlugin();
 
     String noVnc();
+
+    String userSettingsLabel();
 
     String usbAutoshare();
 

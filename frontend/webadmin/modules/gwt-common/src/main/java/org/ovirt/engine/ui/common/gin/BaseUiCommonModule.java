@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.gin;
 
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.common.uicommon.LoggerImpl;
@@ -13,6 +14,7 @@ import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.LocalStorage;
 import org.ovirt.engine.ui.uicommonweb.models.OptionsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.INoVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpNative;
@@ -35,6 +37,7 @@ public abstract class BaseUiCommonModule extends AbstractGinModule {
         bind(ILogger.class).to(LoggerImpl.class).in(Singleton.class);
 
         // User Options
+        bind(LocalStorage.class).to(ClientStorage.class);
         bind(OptionsModel.class).in(Singleton.class);
 
         bindCommonModelProviders();

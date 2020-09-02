@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.common.system;
 
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.ui.frontend.UserSettings;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.LocalStorage;
+
 /**
  * Provides client-side key-value storage service.
  * <p>
@@ -13,7 +17,7 @@ package org.ovirt.engine.ui.common.system;
  * <li>HTML5 <b>session storage</b> is transient and accessible only to one browser window/tab
  * </ul>
  */
-public interface ClientStorage {
+public interface ClientStorage extends LocalStorage {
 
     /**
      * Returns {@code true} if the browser supports HTML5 Web Storage
@@ -33,10 +37,31 @@ public interface ClientStorage {
     void setLocalItem(String key, String value);
 
     /**
+     * Set the value for the given key using both remote and local (persistent) storage.
+     * If remote storage is disabled behaves the same as {@linkplain #setLocalItem(String, String)}
+     * Note that remote persistance is best-effort only.
+     */
+    void setRemoteItem(String key, String value);
+
+
+    /**
+     * Remove the value for the given key from both remote and local (persistent) storage.
+     * If remote storage is disabled behaves the same as {@linkplain #removeLocalItem(String)}
+     * Note that remote persistance is best-effort only.
+     */
+    void removeRemoteItem(String key);
+
+    /**
      * Remove the value for the given key from the local (persistent) storage.
      * @param key The key of the value to remove.
      */
     void removeLocalItem(String key);
+
+    /**
+     * Applies all supported keys from remote storage to local storage.
+     * Existing keys are overridden. Unsupported keys are ignored.
+     */
+    void storeAllUserSettingsInLocalStorage(DbUser upToDateUser, UserSettings userSettings);
 
     /**
      * Returns the value for the given key from session (transient) storage,

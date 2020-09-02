@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.refresh;
 
+import static org.ovirt.engine.ui.common.system.StorageKeyUtils.GRID_REFRESH_RATE_KEY;
+
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -28,9 +30,6 @@ public abstract class AbstractRefreshManager<T extends RefreshPanel> implements 
         void onManualRefresh();
 
     }
-
-    // Key used to store refresh rate of all data grids
-    private static final String GRID_REFRESH_RATE_KEY = "GridRefreshRate"; //$NON-NLS-1$
 
     private static final Integer DEFAULT_REFRESH_RATE = GridTimer.DEFAULT_NORMAL_RATE;
     private static final Integer OUT_OF_FOCUS_REFRESH_RATE = Integer.valueOf(60000);

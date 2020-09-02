@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.logging.ApplicationLogManager;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
@@ -26,6 +27,7 @@ import com.google.inject.Provider;
 public class ApplicationInit extends BaseApplicationInit<LoginModel> implements PluginsReadyCallback {
 
     private final ApplicationDynamicMessages dynamicMessages;
+    private final ClientStorage clientStorage;
 
     private boolean pluginsReady = false;
 
@@ -41,12 +43,21 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> implements 
             AlertManager alertManager,
             ApplicationDynamicMessages dynamicMessages,
             CurrentUserRole currentUserRole,
-            PluginManager pluginManager) {
+            PluginManager pluginManager,
+            ClientStorage clientStorage) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user,
                 loginModelProvider, lockInteractionManager, frontend, currentUserRole,
                 applicationLogManager, alertManager);
         this.dynamicMessages = dynamicMessages;
         pluginManager.setPluginsReadyCallback(this);
+        this.clientStorage = clientStorage;
+    }
+
+    @Override
+    protected void afterLogin() {
+        super.afterLogin();
+        clientStorage.storeAllUserSettingsInLocalStorage(Frontend.getInstance().getLoggedInUser(),
+                Frontend.getInstance().getUserSettings());
     }
 
     @Override

@@ -24,6 +24,10 @@
             padding-right: 5px;
         }
 
+        .overrideClearBoth {
+            float: left;
+        }
+
         .noBottomMargin {
             margin-bottom: 0;
         }
@@ -52,6 +56,21 @@
                 <b:Row addStyleNames="{style.verticalSpacing}">
                     <b:Column size="SM_12" addStyleNames="{style.indentation}">
                         <ge:StringEntityModelTextArea ui:field="publicKeyEditor" addStyleNames="{style.publicKeyEditor}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row addStyleNames="{style.verticalSpacing}">
+                    <b:Column size="SM_12">
+                        <g:Label ui:field="userSettingsLabel" text="{constants.userSettingsLabel}" addStyleNames="{style.inlineBlock}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row addStyleNames="{style.verticalSpacing}">
+                    <b:Column size="SM_12" addStyleNames="{style.indentation}">
+                        <ge:EntityModelCheckBoxEditor ui:field="localStoragePersistedOnServerCheckBox"
+                                                      label="{constants.persistGridSettingsOnServer}"
+                                                      removeFormGroup="true"
+                                                      usePatternFly="true"
+                                                      addStyleNames="{style.overrideClearBoth}"/>
+                        <d:InfoIcon ui:field="localStoragePersistedOnServerInfoIcon" addStyleNames="{style.inlineBlock} {style.infoIcon}"/>
                     </b:Column>
                 </b:Row>
             </b:Container>

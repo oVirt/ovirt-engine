@@ -1,24 +1,51 @@
 package org.ovirt.engine.ui.common.system;
 
+import static org.ovirt.engine.ui.common.system.StorageKeyUtils.GRID_HIDDEN_COLUMN_WIDTH_PREFIX;
+import static org.ovirt.engine.ui.common.system.StorageKeyUtils.GRID_SWAPPED_COLUMN_LIST_SUFFIX;
+import static org.ovirt.engine.ui.common.system.StorageKeyUtils.GRID_VISIBLE;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.UserSettings;
 
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Timer;
 
 /**
  * Default implementation of {@link ClientStorage} interface.
  * <p>
- * Applies an application-specific {@linkplain ClientStorageKeyPrefix prefix} to all key names.
+ * Applies an application-specific {@linkplain #CLIENT_STORAGE_KEY_PREFIX prefix} to all key names.
  */
 public class ClientStorageImpl implements ClientStorage {
 
+    private static final Logger logger = Logger.getLogger(ClientStorageImpl.class.getName());
+
     static final String CLIENT_STORAGE_KEY_PREFIX = "ENGINE_WebAdmin_"; //$NON-NLS-1$
+    private static final String[] REMOTE_SUPPORTED_PREFIXES = {
+            GRID_HIDDEN_COLUMN_WIDTH_PREFIX,
+            GRID_VISIBLE
+    };
+
+    private static final String[] REMOTE_SUPPORTED_SUFFIXES = { GRID_SWAPPED_COLUMN_LIST_SUFFIX };
 
     // Fifty years, in milliseconds
     private static final long PERSISTENT_COOKIE_EXPIRATION = 50L * 365L * 24L * 60L * 60L * 1000L;
 
     private static Storage localStorage;
     private static Storage sessionStorage;
+
+    private final SyncTimer syncTimer = new SyncTimer();
+    private final ActivationTimer activationTimer = new ActivationTimer();
+    private long lastUserSync = 0L;
 
     public ClientStorageImpl() {
         initStorage();
@@ -31,6 +58,10 @@ public class ClientStorageImpl implements ClientStorage {
 
     String getPrefixedKey(String key) {
         return CLIENT_STORAGE_KEY_PREFIX + key;
+    }
+
+    boolean isPrefixed(String key) {
+        return key != null && key.startsWith(CLIENT_STORAGE_KEY_PREFIX);
     }
 
     @Override
@@ -69,6 +100,240 @@ public class ClientStorageImpl implements ClientStorage {
     @Override
     public void setLocalItem(String key, String value) {
         setLocalItemImpl(getPrefixedKey(key), value);
+    }
+
+    private boolean shouldSaveOnServer() {
+        return Frontend.getInstance().getUserSettings().isLocalStoragePersistedOnServer();
+    }
+
+    @Override
+    public void setRemoteItem(String key, String value) {
+        setLocalItemImpl(getPrefixedKey(key), value);
+        if (shouldSaveOnServer()) {
+            logger.finest("Remote save item:" + key + " | " + value); //$NON-NLS-1$ //$NON-NLS-2$
+            syncTimer.trigger();
+        }
+    }
+
+    @Override
+    public void removeRemoteItem(String key) {
+        removeLocalItem(key);
+        if (shouldSaveOnServer()) {
+            logger.finest("Remote remove item:" + key); //$NON-NLS-1$
+            syncTimer.trigger();
+        }
+    }
+
+    private void uploadUserSettings(DbUser upToDateUser) {
+        Frontend.getInstance().uploadUserSettings(upToDateUser, result -> {
+            syncTimer.activate();
+        }, null);
+    }
+
+    private class ActivationTimer extends Timer {
+
+        private int WAIT_DURATION = 30 * 1000;
+
+        @Override
+        public void run() {
+            syncTimer.activate();
+            syncTimer.trigger();
+        }
+
+        public void delaySync() {
+            cancel();
+            schedule(WAIT_DURATION);
+        }
+    }
+
+    private class SyncTimer extends Timer {
+
+        // do not trigger request immediately but wait for follow-up events
+        // this allows to group subsequent updates and send them in one request
+        private static final int OPTION_SYNC_DELAY = 2 * 1000;
+        // time after user options are considered outdated (stale)
+        private static final long MAX_OPTION_AGE = 60L * 1000L;
+        // safety valve if the lock was not released due to request failures
+        private static final long MAX_LOCK_DURATION = 2L * 60L * 1000L;
+
+        private boolean active = true;
+        private long deactivationTime = 0L;
+
+        public void deactivate() {
+            active = false;
+            deactivationTime = new Date().getTime();
+            logger.finest("Deactivated at:" + deactivationTime); //$NON-NLS-1$
+        }
+
+        public void activate() {
+            logger.finest("Activated"); //$NON-NLS-1$
+            active = true;
+        }
+
+        @Override
+        public void run() {
+            long now = new Date().getTime();
+            long lockExpirationTime = deactivationTime + MAX_LOCK_DURATION;
+            if (!active && lockExpirationTime > now) {
+                logger.finest("Sync in progress. Delay next sync."); //$NON-NLS-1$
+                activationTimer.delaySync();
+                return;
+            }
+
+            if (!active && lockExpirationTime <= now) {
+                logger.warning("Sync lock has expired after[ms]: " + (now - deactivationTime)); //$NON-NLS-1$
+            }
+
+            deactivate();
+
+            long optionExpirationTime = lastUserSync + MAX_OPTION_AGE;
+            if (optionExpirationTime > now) {
+                // assume that:
+                // getLoggedInUser() returns correct/fully initialized instance fetched via request
+                // user settings are fresh-enough
+                doUpload();
+                logger.finest("Upload to the server started."); //$NON-NLS-1$
+                return;
+            }
+
+            logger.finest("Options are outdated. Reload user."); //$NON-NLS-1$
+
+            Frontend.getInstance().reloadUser(fetchedUser -> {
+                lastUserSync = new Date().getTime();
+                doUpload();
+            }, null);
+            return;
+        }
+
+        private void doUpload() {
+            DbUser user = Frontend.getInstance().getLoggedInUser();
+            UserSettings settings = Frontend.getInstance().getUserSettings();
+            if (!settings.isLocalStoragePersistedOnServer()) {
+                // multi-browser scenario: 2nd browser disabled persistence
+                logger.info("Storage persistence disabled from other browser.Skip upload."); //$NON-NLS-1$
+                return;
+            }
+            Map<String, String> updated = getAllSupportedMappingsFromLocalStorage();
+            if (settings.getLocalStoragePersistedOnServer().equals(updated)) {
+                logger.finest("Options are already up-to-date.Skip upload."); //$NON-NLS-1$
+                return;
+            }
+            Map<String, String> encodedOptions = UserSettings.Builder.create()
+                    .fromSettings(settings)
+                    .withStorage(updated)
+                    .build()
+                    .encode();
+            user.setUserOptions(encodedOptions);
+            uploadUserSettings(user);
+
+        }
+
+        public void trigger() {
+            this.cancel();
+            this.schedule(OPTION_SYNC_DELAY);
+        }
+
+    }
+
+    @Override
+    public void storeAllUserSettingsInLocalStorage(DbUser user, UserSettings userSettings) {
+        if (user == null || userSettings == null) {
+            logger.warning("Null user/settings. Nothing to store."); //$NON-NLS-1$
+            return;
+        }
+
+        if (!userSettings.isLocalStoragePersistedOnServer()) {
+            logger.info("Uploading settings from local storage to the server is disabled."); //$NON-NLS-1$
+            return;
+        }
+
+        if (userSettings.getLocalStoragePersistenceVersion() == null) {
+            logger.warning("Starting migration to user settings V1."); //$NON-NLS-1$
+            migrateToV1(userSettings);
+            return;
+        }
+
+        for (Map.Entry<String, String> entry : userSettings.getLocalStoragePersistedOnServer().entrySet()) {
+            setLocalItem(entry.getKey(), entry.getValue());
+        }
+
+        // remove local keys not present on the server
+        getAllKeysWithoutPrefix().stream()
+                .filter(this::isSupported)
+                .filter(key -> !userSettings.getLocalStoragePersistedOnServer().containsKey(key))
+                .forEach(this::removeLocalItem);
+
+        logger.finest("Finished initial sync server -> local"); //$NON-NLS-1$
+    }
+
+    public Map<String, String> getAllSupportedMappingsFromLocalStorage() {
+        return getAllKeysWithoutPrefix().stream()
+                .filter(this::isSupported)
+                .collect(
+                        Collectors.toMap(
+                                key -> key,
+                                key -> getLocalItem(key)
+                        )
+                );
+    }
+
+    private void migrateToV1(UserSettings settings) {
+        Map<String, String> migrated = getAllSupportedMappingsFromLocalStorage();
+        Map<String, String> encodedOptions = UserSettings.Builder.create()
+                .fromSettings(settings)
+                .withStorage(migrated)
+                .withLocalStoragePersistence(true)
+                .withCurrentVersion()
+                .build()
+                .encode();
+
+        syncTimer.deactivate();
+
+        Frontend.getInstance().reloadUser(fetchedUser -> {
+            lastUserSync = new Date().getTime();
+            fetchedUser.setUserOptions(encodedOptions);
+            uploadUserSettings(fetchedUser);
+        }, null);
+    }
+
+    private boolean isSupported(String key) {
+        for (String prefix : REMOTE_SUPPORTED_PREFIXES) {
+            if (key.startsWith(prefix)) {
+                return true;
+            }
+        }
+
+        for (String suffix : REMOTE_SUPPORTED_SUFFIXES) {
+            if (key.endsWith(suffix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Collection<String> getAllKeysWithoutPrefix() {
+        Collection<String> allKeys = localStorage == null ? Cookies.getCookieNames() : getAllKeysFromLocalStorage();
+
+        return allKeys.stream()
+                .filter(this::isPrefixed)
+                .map(this::removePrefix)
+                .collect(Collectors.toList());
+    }
+
+    private Collection<String> getAllKeysFromLocalStorage() {
+        if (localStorage == null) {
+            return Collections.emptyList();
+        }
+
+        ArrayList<String> allKeys = new ArrayList<>();
+        for (int index = 0; index < localStorage.getLength(); index++) {
+            allKeys.add(localStorage.key(index));
+        }
+        return allKeys;
+    }
+
+    private String removePrefix(String prefixedKey) {
+        return prefixedKey.substring(CLIENT_STORAGE_KEY_PREFIX.length());
     }
 
     void setLocalItemImpl(String key, String value) {

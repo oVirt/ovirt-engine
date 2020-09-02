@@ -1,13 +1,20 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.UserSettings;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.LocalStorage;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
+import com.google.inject.Inject;
 
 public class OptionsModel extends EntityModel<EditOptionsModel> {
 
@@ -16,8 +23,11 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
     private UICommand editCommand;
 
     private UserProfile userProfile;
+    private LocalStorage localStorage;
 
-    public OptionsModel() {
+    @Inject
+    public OptionsModel(LocalStorage localStorage) {
+        this.localStorage = localStorage;
         setEditCommand(new UICommand(constants.edit(), this));
     }
 
@@ -47,6 +57,8 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
 
         UICommand okCommand = UICommand.createDefaultOkUiCommand(constants.ok(), this);
         model.getCommands().add(okCommand);
+        // enable if values are edited
+        okCommand.setIsExecutionAllowed(false);
         UICommand cancelCommand = UICommand.createCancelUiCommand(constants.cancel(), this);
         model.getCommands().add(cancelCommand);
 
@@ -54,9 +66,19 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
             UserProfile profile = returnValue.getReturnValue();
             if (profile != null) {
                 setUserProfile(profile);
+                model.getOriginalPublicKey().setEntity(profile.getSshPublicKey());
                 model.getPublicKey().setEntity(profile.getSshPublicKey());
             }
         }));
+
+        Frontend.getInstance().reloadUser(user -> {
+            model.getOriginalStoragePersistedOnServer().setEntity(isLocalStoragePersistedOnServer());
+            model.getLocalStoragePersistedOnServer().setEntity(isLocalStoragePersistedOnServer());
+        }, model);
+    }
+
+    private boolean isLocalStoragePersistedOnServer() {
+        return Frontend.getInstance().getUserSettings().isLocalStoragePersistedOnServer();
     }
 
     private void onSave() {
@@ -68,11 +90,32 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
             params.setUserProfile(getUserProfile());
         }
         params.getUserProfile().setSshPublicKey(model.getPublicKey().getEntity());
-        model.startProgress(null);
         Frontend.getInstance().runAction(action, params, result -> {
-            EditOptionsModel editOptionsModel = (EditOptionsModel) result.getState();
-            editOptionsModel.stopProgress();
-            cancel();
+            model.setSshUploadSucceeded(result.getReturnValue().getSucceeded());
+            if (model.isUploadComplete()) {
+                cancel();
+            }
+        }, model);
+
+        Frontend.getInstance().reloadUser(fetchedUser -> {
+            Map<String, String> storage = Collections.emptyMap();
+            if (model.getLocalStoragePersistedOnServer().getEntity()) {
+                storage = localStorage.getAllSupportedMappingsFromLocalStorage();
+            }
+            fetchedUser.setUserOptions(UserSettings.Builder.create()
+                    .fromUser(fetchedUser)
+                    .withLocalStoragePersistence(model.getLocalStoragePersistedOnServer().getEntity())
+                    // clear the storage on the server when persistence gets disabled
+                    // upload local state to the server otherwise
+                    .withStorage(storage)
+                    .build()
+                    .encode());
+            Frontend.getInstance().uploadUserSettings(fetchedUser, result -> {
+                model.setOptionsUploadSucceeded(result.getReturnValue().getSucceeded());
+                if (model.isUploadComplete()) {
+                    cancel();
+                }
+            }, model);
         }, model);
     }
 

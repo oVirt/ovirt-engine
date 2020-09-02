@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.common.widget.table;
 
+import static org.ovirt.engine.ui.common.system.StorageKeyUtils.GRID_COLUMN_WIDTH_PREFIX;
+import static org.ovirt.engine.ui.common.system.StorageKeyUtils.GRID_HIDDEN_COLUMN_WIDTH_PREFIX;
+import static org.ovirt.engine.ui.common.system.StorageKeyUtils.GRID_SWAPPED_COLUMN_LIST_SUFFIX;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,6 +23,7 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.system.StorageKeyUtils;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.model.DefaultModelItemComparator;
 import org.ovirt.engine.ui.common.utils.JqueryUtils;
@@ -78,8 +83,8 @@ import com.google.gwt.view.client.ProvidesKey;
 public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizableColumns<T>, ColumnController<T>,
     HasCleanup {
 
-    private static final String GRID_HIDDEN = "grid-hidden"; // $NON-NLS-1$
-    private static final String GRID_VISIBLE = "grid-visible"; // $NON-NLS-1$
+    private static final String GRID_HIDDEN = StorageKeyUtils.GRID_HIDDEN;
+    private static final String GRID_VISIBLE = StorageKeyUtils.GRID_VISIBLE;
     private static final String HIDE_ONE_ROW_SCROLL = "hide-one-row-scroll"; // $NON-NLS-1$
 
     private static final int CHROME_HEIGHT_ADJUST = 2;
@@ -139,7 +144,6 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     // Prefix for keys used to store widths of individual columns
     private static final String GRID_COLUMN_WIDTH_PREFIX = "GridColumnWidth"; //$NON-NLS-1$
 
-    private static final String GRID_SWAPPED_COLUMN_LIST = "GridSwappedColumns"; //$NON-NLS-1$
     // Legacy way of hiding columns - preserved for reading legacy column width data from storage
     // This is 1px instead of 0px as zero-size columns seem to confuse the cell table.
     private static final String HIDDEN_WIDTH = "1px"; //$NON-NLS-1$
@@ -588,7 +592,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         }
 
         if(toBeStored.isEmpty()) {
-            clientStorage.removeLocalItem(key);
+            clientStorage.removeRemoteItem(key);
             return;
         }
 
@@ -600,7 +604,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));  //$NON-NLS-1$
 
-        clientStorage.setLocalItem(key, encodedList);
+        clientStorage.setRemoteItem(key, encodedList);
     }
 
     private void removeFromVisibleByUserRequest(Column<T, ?> column) {
@@ -753,7 +757,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         if (value != null && !"".equals(value)) { // $NON-NLS-1$
             String swappedColumnKey = getSwappedColumnListKey();
             if (swappedColumnKey != null) {
-                clientStorage.setLocalItem(swappedColumnKey, value);
+                clientStorage.setRemoteItem(swappedColumnKey, value);
             }
         }
     }
@@ -853,7 +857,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     protected String getHiddenColumnWidthKey(Column<T, ?> column) {
         if (columnResizePersistenceEnabled) {
-            return GRID_HIDDEN + "_" + GRID_COLUMN_WIDTH_PREFIX + "_" + getGridElementId() //$NON-NLS-1$ //$NON-NLS-2$
+            return GRID_HIDDEN_COLUMN_WIDTH_PREFIX + getGridElementId() //$NON-NLS-1$ //$NON-NLS-2$
                 + "_" + determineOriginalIndex(getColumnIndex(column)); //$NON-NLS-1$
         }
         return null;
@@ -861,7 +865,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     protected String getSwappedColumnListKey() {
         if (columnResizePersistenceEnabled) {
-            return getGridElementId() + "_" + GRID_SWAPPED_COLUMN_LIST; //$NON-NLS-1$
+            return getGridElementId() + "_" + GRID_SWAPPED_COLUMN_LIST_SUFFIX; //$NON-NLS-1$
         }
         return null;
     }
@@ -917,11 +921,11 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
             } else {
                 // Store the width of the column before hiding it, so we can restore it.
                 // TODO: width is stored 2x: under this key and getColumnWidthKey()
-                clientStorage.setLocalItem(key, getColumnWidth(column));
+                clientStorage.setRemoteItem(key, getColumnWidth(column));
             }
         } else {
             // column just recently made hidden-by-default might have already grid-hidden keys
-            clientStorage.removeLocalItem(key);
+            clientStorage.removeRemoteItem(key);
             if (isHiddenByDefault(column)) {
                 addToVisibleByUserRequest(column);
             }
@@ -1115,12 +1119,12 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     }
 
     private void clearPersistedSettings() {
-        clientStorage.removeLocalItem(getSwappedColumnListKey());
-        clientStorage.removeLocalItem(getVisibleByUserRequestListKey());
+        clientStorage.removeRemoteItem(getSwappedColumnListKey());
+        clientStorage.removeRemoteItem(getVisibleByUserRequestListKey());
 
         for(Column column : getAllColumns().values()) {
             clientStorage.removeLocalItem(getColumnWidthKey(column));
-            clientStorage.removeLocalItem(getHiddenColumnWidthKey(column));
+            clientStorage.removeRemoteItem(getHiddenColumnWidthKey(column));
         }
     }
 

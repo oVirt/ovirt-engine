@@ -6,6 +6,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
@@ -16,10 +18,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.BooleanNode;
 import org.codehaus.jackson.node.ObjectNode;
+import org.codehaus.jackson.node.TextNode;
 import org.ovirt.engine.core.branding.BrandingFilter;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -270,7 +274,24 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         obj.put("domain", loggedInUser.getDomain()); //$NON-NLS-1$
         obj.put("isAdmin", loggedInUser.isAdmin()); //$NON-NLS-1$
         obj.put("ssoToken", ssoToken); //$NON-NLS-1$
+        obj.put("userOptions", serializeOptions(loggedInUser.getUserOptions())); //$NON-NLS-1$
         return obj;
+    }
+
+    /**
+     * Serialize Java structure (string key, value as json string) into JSON structure.
+     * The values are not parsed - the resulting JSON will include them as strings (double encoded).
+     */
+    private ObjectNode serializeOptions(Map<String, String> userOptions) {
+        Map<String, JsonNode> options =  userOptions.entrySet().stream().collect(
+                        Collectors.toMap(
+                                e -> e.getKey(),
+                                e -> new TextNode(e.getValue())
+                        )
+                );
+        ObjectNode optionNode = createObjectNode();
+        optionNode.putAll(options);
+        return optionNode;
     }
 
     protected String getMd5Sum(HttpServletRequest request) throws NoSuchAlgorithmException,
