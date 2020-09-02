@@ -393,7 +393,8 @@ class EnrollCert(base.Base):
                 "     --subject=\""
                 "$(openssl x509 -in {engine_ca_cert_file} -text "
                 "| sed -n 's; *DirName:\\(.*\\)/CN=.*;\\1;p')"
-                "/CN={fqdn}\""
+                "/CN={fqdn}\" \\\n"
+                "     --san=DNS:{fqdn}"
             ).format(
                 remote_name=self._remote_name,
                 engine_ca_cert_file=self._engine_ca_cert_file,
