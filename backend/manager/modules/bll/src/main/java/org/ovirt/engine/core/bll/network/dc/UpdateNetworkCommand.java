@@ -164,6 +164,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(validatorOld.nonVmNetworkNotUsedByVms(getNetwork()))
                 && validate(validatorOld.nonVmNetworkNotUsedByTemplates(getNetwork()))
                 && validate(validatorNew.portIsolationForVmNetworkOnly())
+                && validate(validatorOld.portIsolationUnchanged(getNetwork()))
                 && validate(validatorOld.notRenamingUsedNetwork(getNetworkName()))
                 && validate(validatorOld.notRenamingLabel(getNetwork().getLabel()))
                 && (oldAndNewNetworkIsNotExternal()
@@ -195,7 +196,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 Objects.equals(oldNetwork.getProvidedBy(), newNetwork.getProvidedBy()) &&
                 Objects.equals(oldNetwork.getStp(), newNetwork.getStp()) &&
                 Objects.equals(oldNetwork.getVlanId(), newNetwork.getVlanId()) &&
-                Objects.equals(oldNetwork.isVmNetwork(), newNetwork.isVmNetwork());
+                Objects.equals(oldNetwork.isVmNetwork(), newNetwork.isVmNetwork()) &&
+                Objects.equals(oldNetwork.isPortIsolation(), newNetwork.isPortIsolation());
     }
 
     private boolean oldAndNewNetworkIsNotExternal() {
@@ -332,6 +334,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             final Guid oldDataCenterId = network.getDataCenterId();
             return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_DATA_CENTER_ID_CANNOT_BE_CHANGED)
                     .when(!oldDataCenterId.equals(dataCenterId));
+        }
+
+        public ValidationResult portIsolationUnchanged(Network newNetwork) {
+            return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_PORT_ISOLATION_CANNOT_BE_CHANGED)
+                    .when(network.isPortIsolation() != newNetwork.isPortIsolation());
         }
     }
 

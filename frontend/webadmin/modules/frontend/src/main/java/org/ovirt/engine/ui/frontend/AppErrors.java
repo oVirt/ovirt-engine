@@ -2805,6 +2805,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_DATA_CENTER_ID_CANNOT_BE_CHANGED();
 
+    String ACTION_TYPE_FAILED_NETWORK_PORT_ISOLATION_CANNOT_BE_CHANGED();
+
     String CIDR_NOT_NETWORK_ADDRESS();
 
     String BAD_CIDR_FORMAT();
