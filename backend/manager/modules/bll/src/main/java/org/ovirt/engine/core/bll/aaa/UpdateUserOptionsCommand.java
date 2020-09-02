@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.aaa;
 
-import static org.ovirt.engine.core.common.AuditLogType.USER_FAILED_UPDATE_ADUSER;
-import static org.ovirt.engine.core.common.AuditLogType.USER_UPDATE;
+import static org.ovirt.engine.core.common.AuditLogType.USER_OPTIONS_FAILED_UPDATE;
+import static org.ovirt.engine.core.common.AuditLogType.USER_OPTIONS_UPDATE;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_USER_NOT_EXISTS;
 
 import java.util.Collections;
@@ -21,6 +21,9 @@ import org.ovirt.engine.core.dao.DbUserDao;
 
 public class UpdateUserOptionsCommand<T extends UpdateUserParameters> extends CommandBase<T> {
 
+    private static final String ID_OF_USER_TO_UPDATE = "IdOfUserToUpdate";
+    private static final String NAME_OF_USER_TO_UPDATE = "NameOfUserToUpdate";
+
     @Inject
     private DbUserDao dbUserDao;
 
@@ -30,7 +33,9 @@ public class UpdateUserOptionsCommand<T extends UpdateUserParameters> extends Co
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? USER_UPDATE : USER_FAILED_UPDATE_ADUSER;
+        addCustomValue(ID_OF_USER_TO_UPDATE, String.valueOf(getParameters().getUserToUpdate().getId()));
+        addCustomValue(NAME_OF_USER_TO_UPDATE, String.valueOf(getParameters().getUserToUpdate().getName()));
+        return getSucceeded() ? USER_OPTIONS_UPDATE : USER_OPTIONS_FAILED_UPDATE;
     }
 
     @Override
