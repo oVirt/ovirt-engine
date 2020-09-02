@@ -66,6 +66,11 @@ public class NetworkValidator {
                 .unless(network.isVmNetwork() || !network.getStp());
     }
 
+    public ValidationResult portIsolationForVmNetworkOnly() {
+        return ValidationResult.failWith(EngineMessage.NON_VM_NETWORK_CANNOT_SUPPORT_PORT_ISOLATION)
+                .when(network.isPortIsolation() && !network.isVmNetwork());
+    }
+
     /**
      * @return An error iff network is named as if it were a bond.
      */

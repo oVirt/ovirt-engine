@@ -163,6 +163,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(validatorNew.networkNameNotUsedAsVdsmName())
                 && validate(validatorOld.nonVmNetworkNotUsedByVms(getNetwork()))
                 && validate(validatorOld.nonVmNetworkNotUsedByTemplates(getNetwork()))
+                && validate(validatorNew.portIsolationForVmNetworkOnly())
                 && validate(validatorOld.notRenamingUsedNetwork(getNetworkName()))
                 && validate(validatorOld.notRenamingLabel(getNetwork().getLabel()))
                 && (oldAndNewNetworkIsNotExternal()

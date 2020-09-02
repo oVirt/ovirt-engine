@@ -1375,6 +1375,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String NON_VM_NETWORK_CANNOT_SUPPORT_STP();
 
+    String NON_VM_NETWORK_CANNOT_SUPPORT_PORT_ISOLATION();
+
     String NETWORK_MTU_DIFFERENCES();
 
     String ACTION_TYPE_FAILED_NETWORK_FROM_DIFFERENT_DC();
