@@ -135,6 +135,7 @@ public class SsoUtils {
         if (StringUtils.isNotBlank(alternateFqdnString)) {
             Arrays.stream(alternateFqdnString.trim().split("\\s *"))
                     .filter(StringUtils::isNotBlank)
+                    .map(String::toLowerCase)
                     .forEach(allowedDomains::add);
         }
 
@@ -143,7 +144,7 @@ public class SsoUtils {
 
     private static String parseHostFromUrl(String url, String urlPropertyName) {
         try {
-            return new URI(url).getHost();
+            return new URI(url).getHost().toLowerCase();
         } catch (URISyntaxException e) {
             throw new IllegalStateException(urlPropertyName + " not a valid URI: " + url);
         }

@@ -38,6 +38,23 @@ class SsoUtilsTest {
     }
 
     @Test
+    public void shouldMatchAppUrlDomainOnAlternateSSOEngineUrlRegardlessUpperCase() {
+        // given
+        EngineLocalConfig.getInstance(new HashMap<>() {
+            {
+                put("SSO_ENGINE_URL", "https://engine.example.com:8221/ovirt-engine");
+                put("SSO_ALTERNATE_ENGINE_FQDNS", "engine1.example.com ALTERNATE-engine.example.com");
+            }
+        });
+
+        // when
+        boolean valid = SsoUtils.isDomainValid("https://alternate-engine.EXAMPLE.com:20001/somerest/api_v9");
+
+        // then
+        Assertions.assertTrue(valid);
+    }
+
+    @Test
     public void shouldAllowBlankAppUrl() {
         // given
         EngineLocalConfig.getInstance(new HashMap<>() {
@@ -83,6 +100,23 @@ class SsoUtilsTest {
 
         // when
         boolean valid = SsoUtils.isDomainValid("https://engine.example.com:20001/somerest/api_v9");
+
+        // then
+        Assertions.assertTrue(valid);
+    }
+
+    @Test
+    public void shouldMatchAppUrlDomainOnSSOEngineUrlRegardlessUpperCase() {
+        // given
+        EngineLocalConfig.getInstance(new HashMap<>() {
+            {
+                put("SSO_ENGINE_URL", "https://engine.EXAMPLE.com:30003/ovirt-engine");
+                put("SSO_ALTERNATE_ENGINE_FQDNS", "alternate-engine.example.com");
+            }
+        });
+
+        // when
+        boolean valid = SsoUtils.isDomainValid("https://ENGINE.example.com:20001/somerest/api_v9");
 
         // then
         Assertions.assertTrue(valid);
