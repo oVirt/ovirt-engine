@@ -10,7 +10,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +26,11 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.compat.Guid;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -40,6 +47,14 @@ public class GlusterUtilTest {
                     +
                     "<peer><uuid>85c42b0d-c2b7-424a-ae72-5174c25da40b</uuid><hostname>testserver2</hostname><connected>1</connected><state>3</state></peer></peerStatus></cliOutput>";
     private static final String OUTPUT_XML_NO_PEERS = "<cliOutput><peerStatus/></cliOutput>";
+    private static final String expectedIp = "10.70.42.91";
+    private static final String expectedIp2 = "10.70.42.92";
+    private static final String expectedIp3 = "10.70.42.93";
+    private static final String expectedIpv6 = " 0:0:0:0:0:ffff:a46:2a5b";
+    private static final String expectedIpv62 = "0:0:0:0:0:ffff:a46:2a5c";
+    private static final String expectedIpv63 = "0:0:0:0:0:ffff:a46:2a5d";
+
+    private static final String networkName = "gluster_net";
 
     @Mock
     private EngineSSHClient client;
@@ -98,5 +113,112 @@ public class GlusterUtilTest {
     public void testHasPeersFalse() {
         doReturn(OUTPUT_XML_NO_PEERS).when(glusterUtil).executePeerStatusCommand(client);
         assertTrue(glusterUtil.getPeers(client).isEmpty());
+    }
+
+    @Test
+    public void testGetGlusterIpv4address() {
+
+        Map<String, Network> map = new HashMap<>();
+
+        VdsNetworkInterface vdsNetworkInterfaceOldHost = new VdsNetworkInterface();
+        VdsNetworkInterface vdsNetworkInterfaceClusterHost = new VdsNetworkInterface();
+        VdsNetworkInterface vdsNetworkInterfaceClusterHost2 = new VdsNetworkInterface();
+        List<VdsNetworkInterface> vdsNetworkInterfaceOldHostList = new ArrayList<>();
+        List<VdsNetworkInterface> vdsNetworkInterfaceClusterHostList= new ArrayList<>();
+        List<VdsNetworkInterface> vdsNetworkInterfaceClusterHost2List = new ArrayList<>();
+
+        VDS vds1 = new VDS();
+        VDS vds2 = new VDS();
+        VDS vds3 = new VDS();
+
+        Map<VDS, String> expectedMap = new HashMap<>();
+
+        List<VDS> hostlist = new ArrayList<>();
+        vds1.setId(new Guid("00000000-0000-0000-0000-000000000000"));
+        vds2.setId(new Guid("11111111-1111-1111-1111-111111111111"));
+        vds3.setId(new Guid("22222222-2222-2222-2222-222222222222"));
+        expectedMap.put(vds1, expectedIp);
+        expectedMap.put(vds2, expectedIp2);
+        expectedMap.put(vds3, expectedIp3);
+        hostlist.add(vds2);
+        hostlist.add(vds3);
+        vdsNetworkInterfaceOldHost.setNetworkName(networkName);
+        vdsNetworkInterfaceClusterHost.setNetworkName(networkName);
+        vdsNetworkInterfaceClusterHost2.setNetworkName(networkName);
+        vdsNetworkInterfaceOldHost.setIpv4Address(expectedIp);
+        vdsNetworkInterfaceClusterHost.setIpv4Address(expectedIp2);
+        vdsNetworkInterfaceClusterHost2.setIpv4Address(expectedIp3);
+        vdsNetworkInterfaceOldHostList.add(vdsNetworkInterfaceOldHost);
+        vdsNetworkInterfaceClusterHostList.add(vdsNetworkInterfaceClusterHost);
+        vdsNetworkInterfaceClusterHost2List.add(vdsNetworkInterfaceClusterHost2);
+        NetworkCluster networkCluster = new NetworkCluster();
+        networkCluster.setManagement(false);
+        Network network = new Network();
+        network.setName("network_name");
+        network.setCluster(networkCluster);
+        network.getCluster().setGluster(true);
+        map.put(networkName, network);
+
+        doReturn(vdsNetworkInterfaceOldHostList).when(glusterUtil).getGlusterIpaddressUtil(vds1.getId());
+        doReturn(vdsNetworkInterfaceClusterHostList).when(glusterUtil).getGlusterIpaddressUtil(vds2.getId());
+        doReturn(vdsNetworkInterfaceClusterHost2List).when(glusterUtil).getGlusterIpaddressUtil(vds3.getId());
+        Map<VDS, String> actualMap = glusterUtil.getGlusterIpaddressAsMap(map, vds1, hostlist);
+        assertEquals(expectedMap, actualMap);
+    }
+
+    @Test
+    public void testGetGlusterIpv6address() {
+
+        Map<String, Network> map = new HashMap<>();
+
+
+        VdsNetworkInterface vdsNetworkInterfaceOldHostIpv6 = new VdsNetworkInterface();
+        VdsNetworkInterface vdsNetworkInterfaceClusterHostIpv6 = new VdsNetworkInterface();
+        VdsNetworkInterface vdsNetworkInterfaceClusterHost2Ipv6 = new VdsNetworkInterface();
+        List<VdsNetworkInterface> vdsNetworkInterfaceOldHostListIpv6 = new ArrayList<>();
+        List<VdsNetworkInterface> vdsNetworkInterfaceClusterHostListIpv6= new ArrayList<>();
+        List<VdsNetworkInterface> vdsNetworkInterfaceClusterHost2ListIpv6 = new ArrayList<>();
+
+        VDS vds1 = new VDS();
+        VDS vds2 = new VDS();
+        VDS vds3 = new VDS();
+
+        Map<VDS, String> expectedMap = new HashMap<>();
+
+        List<VDS> hostlist = new ArrayList<>();
+        vds1.setId(new Guid("00000000-0000-0000-0000-000000000000"));
+        vds2.setId(new Guid("11111111-1111-1111-1111-111111111111"));
+        vds3.setId(new Guid("22222222-2222-2222-2222-222222222222"));
+        expectedMap.put(vds1, expectedIpv6);
+        expectedMap.put(vds2, expectedIpv62);
+        expectedMap.put(vds3, expectedIpv63);
+        hostlist.add(vds2);
+        hostlist.add(vds3);
+
+        NetworkCluster networkCluster = new NetworkCluster();
+
+        vdsNetworkInterfaceOldHostIpv6.setNetworkName(networkName);
+        vdsNetworkInterfaceClusterHostIpv6.setNetworkName(networkName);
+        vdsNetworkInterfaceClusterHost2Ipv6.setNetworkName(networkName);
+        vdsNetworkInterfaceOldHostIpv6.setIpv6Address(expectedIpv6);
+        vdsNetworkInterfaceClusterHostIpv6.setIpv6Address(expectedIpv62);
+        vdsNetworkInterfaceClusterHost2Ipv6.setIpv6Address(expectedIpv63);
+        vdsNetworkInterfaceOldHostListIpv6.add(vdsNetworkInterfaceOldHostIpv6);
+        vdsNetworkInterfaceClusterHostListIpv6.add(vdsNetworkInterfaceClusterHostIpv6);
+        vdsNetworkInterfaceClusterHost2ListIpv6.add(vdsNetworkInterfaceClusterHost2Ipv6);
+
+        networkCluster.setManagement(false);
+        Network network = new Network();
+        network.setName("network_name");
+        network.setCluster(networkCluster);
+        network.getCluster().setGluster(true);
+        map.put(networkName, network);
+
+        doReturn(vdsNetworkInterfaceOldHostListIpv6).when(glusterUtil).getGlusterIpaddressUtil(vds1.getId());
+        doReturn(vdsNetworkInterfaceClusterHostListIpv6).when(glusterUtil).getGlusterIpaddressUtil(vds2.getId());
+        doReturn(vdsNetworkInterfaceClusterHost2ListIpv6).when(glusterUtil).getGlusterIpaddressUtil(vds3.getId());
+        Map<VDS, String> actualMap = glusterUtil.getGlusterIpaddressAsMap(map, vds1, hostlist);
+        assertEquals(expectedMap, actualMap);
+
     }
 }

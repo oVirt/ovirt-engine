@@ -247,6 +247,7 @@
         <include name="common/businessentities/ClusterEditWarnings.java" />
         <include name="common/businessentities/HostedEngineDeployConfiguration.java" />
         <include name="common/businessentities/SubjectEntity.java" />
+        <include name="common/businessentities/ReplaceHostConfiguration.java" />
         <include name="common/job/*.java" />
 
         <!-- Console -->

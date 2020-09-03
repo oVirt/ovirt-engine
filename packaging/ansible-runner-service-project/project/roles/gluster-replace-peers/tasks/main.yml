@@ -1,7 +1,67 @@
 ---
+# Peer restoration
+# Create tmp dir for storing peer data
+- name: Create temporary storage directory
+  tempfile:
+    state: directory
+    suffix: _peer
+  register: tmpdir
+  delegate_to: localhost
+  run_once: True
+
 # Set the glusterd location
 - name: Set the path of glusterd.info file
   set_fact:
     glusterd_libdir: "/var/lib/glusterd"
+    peer_tmp_dir: "{{ tmpdir['path'] }}"
 
-- import_tasks: peers.yml
+- name: Import Tasks
+  block:
+
+    - name: Include pre-task  in play
+      import_tasks: pre-task.yml
+
+    - name: Include authorization task in play
+      import_tasks: authorization.yml
+
+    - name: Include peers reconfiguration task in play
+      import_tasks: peers.yml
+
+    - name: Include volume reconfiguration task in play
+      import_tasks: volume.yml
+
+  when: gluster_maintenance_old_node is defined and
+    gluster_maintenance_cluster_node is defined and
+    gluster_maintenance_cluster_node_2 is defined
+
+# Detach the old host, to replace host with different FQDN usecase
+- name: Detach the peer, in the case of different host replacement
+  gluster_peer:
+    state: absent
+    force: true
+    nodes:
+      - "{{ gluster_maintenance_old_node }}"
+  when: gluster_maintenance_old_node != gluster_maintenance_new_node
+
+- name: Force removal of old node peer in new node
+  file:
+    path: "{{ glusterd_libdir }}/peers/{{ old_node_uuid.stdout | trim }}"
+    state: absent
+  when: gluster_maintenance_old_node != gluster_maintenance_new_node
+  delegate_to : "{{ gluster_maintenance_new_node }}"
+  connection: ssh
+
+- name: Restart glusterd on the new node
+  connection: ssh
+  service:
+    name: glusterd
+    state: restarted
+  delegate_to: "{{ gluster_new_node }}"
+
+# Ensure to delete the temporary directory
+- name: Delete the temporary directory
+  file:
+    state: absent
+    path: "{{ peer_tmp_dir }}"
+  delegate_to: localhost
+  run_once: True

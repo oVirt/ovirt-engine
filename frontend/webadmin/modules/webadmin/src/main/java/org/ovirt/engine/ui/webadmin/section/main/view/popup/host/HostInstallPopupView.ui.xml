@@ -142,6 +142,26 @@
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="replaceHostTab" label="{constants.replaceHostLabel}">
+                        <t:content>
+                            <b:Container fluid="true">
+                                <b:Row addStyleNames="{style.topElement}">
+                                    <e:ListModelListBoxEditor ui:field="replaceHostEditor"
+                                                              addStyleNames="{style.floatLeft}"
+                                                              usePatternFly="true"
+                                                              label="{constants.replaceHostAction}"
+                                                              labelColSize="SM_6"
+                                                              widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <ge:StringEntityModelTextBoxEditor ui:field="fqdnEditor" usePatternFly="true"
+                                                                       labelColSize="SM_4" widgetColSize="SM_8"/>
+                                </b:Row>
+                            </b:Container>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
             </t:DialogTabPanel>
         </d:content>
     </d:SimpleDialogPanel>

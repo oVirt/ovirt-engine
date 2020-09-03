@@ -506,6 +506,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostPopupUsernameLabel();
 
+    String hostPopupFqdnLabel();
+
     String hostPopupDefaultUsername();
 
     String hostPopupPublicKeyLabel();
@@ -2377,6 +2379,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String retainBricks();
 
     String replaceBrickBrick();
+
+    String replaceHostAction();
+
+    String replaceHostLabel();
 
     String advancedDetailsBrick();
 

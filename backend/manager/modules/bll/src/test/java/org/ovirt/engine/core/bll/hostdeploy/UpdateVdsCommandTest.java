@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.action.VdsOperationActionParameters.Authenti
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
+import org.ovirt.engine.core.common.businessentities.ReplaceHostConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -33,6 +34,9 @@ public class UpdateVdsCommandTest {
     private static final String PASSWORD = "password";
     private static final HostedEngineDeployConfiguration HOSTED_ENGINE_DEPLOY_CONFIGURATION =
             new HostedEngineDeployConfiguration();
+    private static final ReplaceHostConfiguration REPLACE_HOST_CONFIGURATION =
+            new ReplaceHostConfiguration();
+
 
     @Mock
     private VdsDao vdsDaoMock;

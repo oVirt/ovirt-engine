@@ -1,0 +1,95 @@
+#check if there exist more than 1 hostname in the gluster peer status if not, it skips the pre-task
+#if parsed input is ip itself and there exist only 1 hostname in gluster peer status , then we can safely assume that gluster is configured with gluster ip address
+# [1]Not Needed: check if that is ip or not, if not ip then copy the playbook hostname directly to further tasks
+# if the parsed input is hostname, and there exist only 1 hostname in the gluster peer status , then we can assume that gluster is configured with hostnames itself
+#[1]Not Needed :if its ip then replace the hostname with ip and parse it as well (more or less the same as above)
+#[1]no need of those two steps as it  already would be set in the playbook.
+#check if old node nad new node are same , if its same then parse the same name while storing the playbook else leave it
+
+---
+- name: Setting the hostname's from playbook
+  set_fact:
+    gluster_old_node: "{{ gluster_maintenance_old_node }}"
+    gluster_new_node: "{{ gluster_maintenance_new_node }}"
+    gluster_cluster_node: "{{ gluster_maintenance_cluster_node }}"
+    gluster_cluster_node_2: "{{ gluster_maintenance_cluster_node_2 }}"
+
+- name: Get the number of hosts in the cluster
+  shell: >
+    cat /var/lib/glusterd/peers/* | grep -c uuid
+  register: host_count
+  tags:
+    - skip_ansible_lint # E301
+
+- name: Get the number of hostname in the peer output
+  shell: >
+    cat /var/lib/glusterd/peers/* | grep -c hostname
+  register: hostname_count
+  tags:
+    - skip_ansible_lint # E301
+
+- name: Check if Parsed hosts are Ipv4 or not
+  shell: >
+    echo "{{ gluster_maintenance_cluster_node }}" | grep -E -q  "([0-9]{1,3}[\.]){3}[0-9]{1,3}" && echo true || echo false
+  register: isipv4
+  tags:
+    - skip_ansible_lint # E301
+
+- name: Check if Parsed hosts are IPv6 or not
+  shell : >
+    echo "fe80::24c0:20ff:fec2:8f6c" | grep -Po -q \
+      '(?<![[:alnum:]]|[[:alnum:]]:)(?:(?:[a-f0-9]{1,4}:){7}[a-f0-9]{1,4}|(?:[a-f0-9]{1,4}:){1,6}:(?:[a-f0-9]{1,4}:){0,5}[a-f0-9]{1,4})(?![[:alnum:]]:?)' \
+      && echo true || echo false
+  register: isipv6
+  tags:
+    - skip_ansible_lint # E301
+
+- name: Check if gluster is configured as another network
+  block:
+    # probe the new host, if new host is not the same old host
+    - name: Fetch the old host's hostname from the ip
+      shell: >
+        cat /var/lib/glusterd/peers/* |
+        grep -A1 -B1 {{ gluster_old_node | mandatory }} |
+        grep -v {{ gluster_old_node }} | grep hostname | sed -n -e 's/^.*'='//p'
+      register: old_node_temp
+      tags:
+        - skip_ansible_lint # E301
+
+    - name: Fetch the maintenance host's hostname from the ip
+      shell: >
+        cat /var/lib/glusterd/peers/* |
+        grep -A1 -B1 {{ gluster_cluster_node | mandatory }} |
+        grep -v {{ gluster_cluster_node }} | grep hostname | sed -n -e 's/^.*'='//p'
+      register: cluster_node_temp
+      delegate_to: "{{ gluster_cluster_node_2 | mandatory }}"
+      connection: ssh
+      tags:
+        - skip_ansible_lint # E301
+
+    - name: Fetch the Cluster maintenance host's hostname from the ip
+      shell: >
+        cat /var/lib/glusterd/peers/* |
+        grep -A1 -B1 {{ gluster_cluster_node_2 | mandatory }} |
+        grep -v {{ gluster_cluster_node_2 }} | grep hostname | sed -n -e 's/^.*'='//p'
+      register: cluster_node_2_temp
+      delegate_to: "{{ gluster_cluster_node | mandatory }}"
+      connection: ssh
+      tags:
+        - skip_ansible_lint # E301
+
+    - name: Store the HostName's
+      set_fact:
+         gluster_old_node: "{{ old_node_temp.stdout | trim }}"
+         gluster_cluster_node: "{{ cluster_node_temp.stdout| trim }}"
+         gluster_cluster_node_2: "{{ cluster_node_2_temp.stdout | trim }}"
+         cacheable: yes
+
+    - name: Store the new Hostname if its same as old
+      set_fact:
+        gluster_new_node: "{{ old_node_temp.stdout | trim }}"
+      when: gluster_maintenance_old_node == gluster_maintenance_new_node
+
+  when:  host_count.stdout != hostname_count.stdout and isipv4.stdout == "true" or isipv6.stdout == "true"
+  tags:
+    - skip_ansible_lint # E301

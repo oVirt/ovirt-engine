@@ -1,107 +1,168 @@
 ---
-- name: Fetch the UUID of the old node
+- name: Validating the state of the old host
+  block:
+    - name: Fetch the UUID of the old node
+      shell: >
+        gluster peer status |
+        grep -A1 {{ gluster_old_node | mandatory }} |
+        awk -F: '/uid/ { print $2}'
+      register: uuid
+      tags:
+        - skip_ansible_lint # E301
+
+    - name: Get the state from peer file
+      shell: grep state "/var/lib/glusterd/peers/{{ uuid.stdout | trim }}"
+      register: grepres1
+      tags:
+        - skip_ansible_lint # E301
+
+    - name: Get the state from the peer command
+      shell: >
+        gluster peer status |
+        grep -A1 {{ uuid.stdout | trim }} |
+        grep Connected |
+        wc -l
+      ignore_errors: true
+      register: grepres2
+      tags:
+        - skip_ansible_lint # E301
+
+    - name: Fail the play if the previous command did not succeed
+      fail:
+        msg: "{{ gluster_old_node }} is already in connected state"
+      when: grepres1.stdout == "state=3" and grepres2.stdout == "1"
+  run_once: true
+
+- name: Get the UUID of the old node
   shell: >
     gluster peer status |
-    grep -A1 {{ gluster_maintenance_old_node | mandatory }} |
+    grep -A1 {{ gluster_old_node | mandatory }} |
     awk -F: '/uid/ { print $2}'
   register: old_node_uuid
   run_once: true
   tags:
     - skip_ansible_lint # E301
 
-- name: Fetch the cluster_node UUID of the cluster node 2
-  shell: >
-    gluster peer status |
-    grep -A1 {{ gluster_maintenance_cluster_node_2 | mandatory }} |
-    awk -F: '/uid/ { print $2}'
-  register: cluster_node_uuid
-  run_once: true
+- name: Fail if parsed hostname is different from the back-end FQDN
+  fail: msg="Hostname mentioned in inventory should be same with back-end gluster FQDN"
+  when: old_node_uuid.stdout | bool
   tags:
-    - skip_ansible_lint # E301
+    - skip_ansible_lint # E602
 
-- name: Get the UUID of master
-  shell: awk -F= '/UUID/{print $2}' "{{ glusterd_libdir }}/glusterd.info"
-  register: master_uuid
-  run_once: true
-  tags:
-    - skip_ansible_lint # E301
+# Following tasks are applicable only for replacing with different FQDN
+- name: Peer restoration in the case of replacing with different FQDN
+  block:
+    # probe the new host, if new host is not the same old host
+    - name: Peer probe the new host
+      gluster_peer:
+        state: present
+        nodes:
+          - "{{ gluster_new_node }}"
 
-- name: Store the UUID
-  set_fact:
-    old_uuid: "{{ old_node_uuid.stdout | trim }}"
-    master_uuid: "{{ master_uuid.stdout }}"
-    cluster_uuid: "{{ cluster_node_uuid.stdout | trim }}"
+    # Workaround for Gluster Bug doesn't copy the peer file in rejected state
+    - name: Workaround for the bug to copy peer file of reject node
+      connection: ssh
+      synchronize:
+        src: "{{ glusterd_libdir }}/peers/{{ old_node_uuid.stdout | trim }}"
+        dest: "{{ glusterd_libdir }}/peers/"
+        mode: pull
+      delegate_to: "{{ gluster_new_node }}"
 
-- name: Copy the details of peers from cluster_node 2
-  fetch:
-    src: "{{ glusterd_libdir }}/peers/{{ master_uuid }}"
-    dest: /tmp/peers/
-    flat: yes
-  delegate_to: "{{ gluster_maintenance_cluster_node_2 | mandatory }}"
+    - name: Restart glusterd on the new node
+      connection: ssh
+      service:
+        name: glusterd
+        state: restarted
+      delegate_to: "{{ gluster_new_node }}"
+  when: gluster_old_node != gluster_new_node
 
-- name: Copy the details of the old node
-  fetch:
-    src: "{{ glusterd_libdir }}/peers/{{ cluster_uuid }}"
-    dest: /tmp/peers/
-    flat: yes
-  delegate_to: "{{ gluster_maintenance_cluster_node | mandatory }}"
+# Following tasks are applicable only for replacing with same FQDN
+- name: Peer restoration in the case of replacing with same FQDN
+  block:
+    - name: Get the UUID of the current node
+      shell: >
+        cat "{{ glusterd_libdir }}"/glusterd.info |
+        awk -F= '/UUID/ { print $2}'
+      register: current_node_uuid
+      run_once: true
+      tags:
+        - skip_ansible_lint # E301
 
-- name: stop the gluster service
-  shell: >
-    systemctl stop glusterd
-  delegate_to: "{{ gluster_maintenance_new_node | mandatory }}"
-  tags:
-    - skip_ansible_lint # E301
+    - name: Fail if current node UUID is empty
+      fail: msg="Execute this playbook on the active host"
+      when: current_node_uuid.stdout | bool
+      tags:
+        - skip_ansible_lint # E602
 
-- name: Delete the glusterd library from the old host
-  file:
-    path: "{{ glusterd_libdir }}"
-    state: absent
-  delegate_to: "{{ gluster_maintenance_old_node }}"
+    - name: Store the UUID
+      set_fact:
+        old_uuid: "{{ old_node_uuid.stdout | trim }}"
+        current_uuid: "{{ current_node_uuid.stdout | trim }}"
 
-- name: Restart glusterd
-  shell: >
-    systemctl restart glusterd
-  delegate_to: "{{ gluster_maintenance_new_node | mandatory }}"
-  tags:
-    - skip_ansible_lint # E301
+    - name: Collect all the peer files from cluster_node
+      connection: ssh
+      synchronize:
+        src: "{{ glusterd_libdir }}/peers/"
+        dest: "{{ peer_tmp_dir }}/"
+        mode: pull
+      delegate_to: "{{ gluster_cluster_node }}"
 
-- pause: seconds=15
-  tags:
-    - skip_ansible_lint # E501
+    - name: Check whether peer file of cluster_node is available
+      connection: ssh
+      stat:
+        path: "{{ glusterd_libdir }}/peers/{{ current_uuid }}"
+      register: peerfileres
+      delegate_to: "{{ gluster_cluster_node_2 | mandatory }}"
 
-- name: stop the gluster service
-  shell: >
-    systemctl stop glusterd
-  delegate_to: "{{ gluster_maintenance_new_node | mandatory }}"
-  tags:
-    - skip_ansible_lint # E301
+    - name: Fetch the peer file of the current node
+      connection: ssh
+      fetch:
+        src: "{{ glusterd_libdir }}/peers/{{ current_uuid }}"
+        dest: "{{ peer_tmp_dir }}/"
+        flat: yes
+      delegate_to: "{{ gluster_cluster_node_2 | mandatory }}"
+      when: peerfileres.stat.isreg is defined
 
-- name: Edit the new node's gluster.info
-  lineinfile:
-    path: "{{ glusterd_libdir }}/glusterd.info"
-    regexp: '^UUID='
-    line: "UUID={{ old_uuid }}"
-  delegate_to: "{{ gluster_maintenance_new_node | mandatory }}"
+    - name: Fetch the peer file of the current node
+      connection: ssh
+      fetch:
+        src: "{{ glusterd_libdir }}/peers/{{ current_uuid }}"
+        dest: "{{ peer_tmp_dir }}/"
+        flat: yes
+      delegate_to: "{{ gluster_cluster_node | mandatory }}"
+      when: peerfileres.stat.isreg is not defined
 
-- name: Copy the peer data to new node
-  copy:
-    src: "{{ item }}"
-    dest: "{{ glusterd_libdir }}/peers/"
-    mode: preserve
-  with_fileglob:
-    - /tmp/peers/*
-  delegate_to: "{{ gluster_maintenance_new_node }}"
+    - name: Remove the old node uuid from the extracted peer details
+      connection: ssh
+      file:
+        path: "{{ peer_tmp_dir }}/{{ old_uuid }}"
+        state: absent
+      delegate_to: "{{ gluster_cluster_node }}"
 
-- name: Delete temp directory
-  file:
-    path: "/tmp/peers/"
-    state: absent
-  delegate_to: "{{ gluster_maintenance_cluster_node | mandatory }}"
+    - name: Copy all the peer files to the new host
+      connection: ssh
+      copy:
+        src: "{{ peer_tmp_dir }}/"
+        dest: "{{ glusterd_libdir }}/peers/"
+      delegate_to: "{{ gluster_new_node }}"
 
-- name: Start glusterd service
-  shell: >
-    systemctl start glusterd
-  delegate_to: "{{ gluster_maintenance_new_node | mandatory }}"
-  tags:
-    - skip_ansible_lint # E301
+
+    - name: Edit the new node's glusterd.info
+      connection: ssh
+      lineinfile:
+        path: "{{ glusterd_libdir }}/glusterd.info"
+        regexp: '^UUID='
+        line: "UUID={{ old_uuid }}"
+      delegate_to: "{{ gluster_new_node | mandatory }}"
+
+    - name: Restart glusterd
+      connection: ssh
+      service:
+        name: glusterd
+        state: restarted
+      delegate_to: "{{ gluster_new_node | mandatory }}"
+
+    - name: Pausing for 5 seconds
+      pause: seconds=5
+
+  when: gluster_old_node == gluster_new_node
