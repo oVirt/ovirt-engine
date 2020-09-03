@@ -55,6 +55,12 @@ public class EditNetworkModel extends NetworkModel {
             getVLanTag().setEntity(getNetwork().getVlanId());
         }
 
+        getPortIsolation().setEntity(getNetwork().isPortIsolation());
+        getPortIsolation().setIsChangeable(false);
+        if (getPortIsolation().getEntity()) {
+            getIsVmNetwork().setIsChangeable(false);
+        }
+
         toggleProfilesAvailability();
     }
 

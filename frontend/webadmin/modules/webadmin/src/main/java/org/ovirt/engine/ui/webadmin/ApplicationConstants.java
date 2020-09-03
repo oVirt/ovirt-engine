@@ -209,6 +209,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String externalProviderLabel();
 
+    String portIsolationLabel();
+
     String hostProviderTabLabel();
 
     String discoveredHostsLabel();

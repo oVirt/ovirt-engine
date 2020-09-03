@@ -108,6 +108,11 @@
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
+                                    <b:Column size="SM_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="portIsolationEditor" addStyleNames="{style.floatLeft}" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
                                     <b:Column size="SM_6">
                                         <g:Label text="{constants.mtuLabel}" />
                                     </b:Column>

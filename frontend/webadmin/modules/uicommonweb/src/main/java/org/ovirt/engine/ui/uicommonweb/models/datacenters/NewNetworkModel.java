@@ -31,6 +31,8 @@ public class NewNetworkModel extends NetworkModel {
     public NewNetworkModel(SearchableListModel<?, ? extends Network> sourceListModel) {
         super(sourceListModel);
         setNetworkClusterList(new ListModel<NetworkClusterModel>());
+        getIsVmNetwork().getEntityChangedEvent().addListener(
+                (ev, sender, args) -> updatePortIsolationChangeabilityAndValue());
         init();
     }
 
@@ -139,7 +141,17 @@ public class NewNetworkModel extends NetworkModel {
             }
         }
 
+        updatePortIsolationChangeabilityAndValue();
+
         super.onExportChanged();
+    }
+
+   private void updatePortIsolationChangeabilityAndValue() {
+        boolean portIsolationAllowed = getIsVmNetwork().getEntity() && !getExternal().getEntity();
+        getPortIsolation().setIsChangeable(portIsolationAllowed);
+        if (!portIsolationAllowed) {
+            getPortIsolation().setEntity(false);
+        }
     }
 
     @Override

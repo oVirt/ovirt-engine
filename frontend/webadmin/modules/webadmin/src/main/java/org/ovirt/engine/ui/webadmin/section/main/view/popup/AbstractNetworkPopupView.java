@@ -156,6 +156,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public final EntityModelCheckBoxEditor isVmNetworkEditor;
 
     @UiField(provided = true)
+    @Path(value = "portIsolation.entity")
+    public final EntityModelCheckBoxEditor portIsolationEditor;
+
+    @UiField(provided = true)
     @Path(value = "hasVLanTag.entity")
     public final EntityModelCheckBoxEditor vlanTagging;
 
@@ -269,6 +273,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
                     physicalNetworkLabel.setVisible(event.getValue());
                 });
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        portIsolationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         mtuEditor = new IntegerEntityModelTextBoxOnlyEditor();
         mtuEditor.setUsePatternFly(true);
@@ -304,6 +309,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         networkLabel.setLabel(constants.networkLabel());
         commentEditor.setLabel(constants.commentLabel());
         isVmNetworkEditor.setLabel(constants.vmNetworkLabel());
+        portIsolationEditor.setLabel(constants.portIsolationLabel());
         vlanTagging.setLabel(constants.enableVlanTagLabel());
         qosEditor.setLabel(constants.hostNetworkQos());
         createSubnetEditor.setLabel(constants.createSubnetLabel());
