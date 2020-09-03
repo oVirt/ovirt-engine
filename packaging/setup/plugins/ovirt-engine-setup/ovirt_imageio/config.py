@@ -64,10 +64,10 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
-                osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
+            osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
         after=(
-                osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
+            osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
         ),
         name=oipcons.ImageIO.CONFIG_STAGE,
     )
@@ -78,11 +78,11 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: self._enabled,
         before=(
-                osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
+            osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
         after=(
-                osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
-                oipcons.ImageIO.CONFIG_STAGE,
+            osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
+            oipcons.ImageIO.CONFIG_STAGE,
         ),
     )
     def _customization_firewall(self):
@@ -96,16 +96,16 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: (
-                not self.environment[
-                    osetupcons.CoreEnv.DEVELOPER_MODE
-                ] and self._enabled
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
+            ] and self._enabled
         ),
         before=(
-                osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
+            osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
         after=(
-                osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
-                oipcons.ImageIO.CONFIG_STAGE,
+            osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
+            oipcons.ImageIO.CONFIG_STAGE,
         ),
     )
     def _customization_resereve_ports(self):
@@ -122,10 +122,10 @@ class Plugin(plugin.PluginBase):
         # run before that.
         stage=plugin.Stages.STAGE_TRANSACTION_BEGIN,
         condition=lambda self: (
-                not self.environment[
-                    osetupcons.CoreEnv.DEVELOPER_MODE
-                ] and self._enabled
-                and os.path.exists(OLD_FIREWALLD_SERVICE_PATH)
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
+            ] and self._enabled
+            and os.path.exists(OLD_FIREWALLD_SERVICE_PATH)
         ),
     )
     def _remove_old_firewalld_service(self):
@@ -230,9 +230,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         condition=lambda self: (
-                not self.environment[
-                    osetupcons.CoreEnv.DEVELOPER_MODE
-                ] and self._enabled
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
+            ] and self._enabled
         ),
     )
     def _closeup_restart_service(self):
