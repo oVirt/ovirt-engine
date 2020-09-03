@@ -49,6 +49,7 @@ public abstract class NetworkClusterCommandBase<T extends NetworkClusterParamete
         result = result && validate(validator.roleNetworkHasIp());
         result = result && (!getPersistedNetwork().isExternal() || validateExternalNetwork(validator));
         result = result && validate(validator.portIsolationCompatibleClusterLevel(getCluster(), network));
+        result = result && validate(validator.portIsolationCompatibleSwitchType(getCluster(), network));
 
         return result;
     }

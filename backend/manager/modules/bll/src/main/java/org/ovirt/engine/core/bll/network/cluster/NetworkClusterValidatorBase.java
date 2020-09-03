@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -174,5 +175,12 @@ public abstract class NetworkClusterValidatorBase {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PORT_ISOLATION_UNSUPPORTED_CLUSTER_LEVEL).
                 when(network.isPortIsolation()
                         && !FeatureSupported.isPortIsolationSupported(cluster.getCompatibilityVersion()));
+    }
+
+    public ValidationResult portIsolationCompatibleSwitchType(Cluster cluster, Network network) {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PORT_ISOLATION_INCOMPATIBLE_SWITCH_TYPE,
+                String.format(NETWORK_NAME_REPLACEMENT, network.getName())).
+                when(network.isPortIsolation()
+                        && cluster.getRequiredSwitchTypeForCluster() != SwitchType.LEGACY);
     }
 }
