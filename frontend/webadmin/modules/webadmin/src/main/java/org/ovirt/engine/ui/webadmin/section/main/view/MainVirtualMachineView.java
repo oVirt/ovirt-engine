@@ -232,6 +232,6 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
         };
         namespaceColumn.makeSortable(VmConditionFieldAutoCompleter.NAMESPACE);
         getTable().addColumn(namespaceColumn, constants.k8s_namespace(), "120px"); //$NON-NLS-1$
-        getTable().table.setColumnVisible(namespaceColumn, false);
+        getTable().hideColumnByDefault(namespaceColumn);
     }
 }

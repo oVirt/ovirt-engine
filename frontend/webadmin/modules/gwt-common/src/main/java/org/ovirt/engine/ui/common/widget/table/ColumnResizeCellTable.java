@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -174,6 +176,8 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     private final List<Column<T, ?>> unaddedColumns = new ArrayList<>();
     private final List<Header<?>> unaddedHeaders = new ArrayList<>();
     private final Map<Column<T, ?>, String> unaddedColumnWidths = new HashMap<>();
+    // Columns not displayed in default configuration (user can override that)
+    private final Set<Column<T, ?>> hiddenByDefault = new HashSet<>();
     private int maxSwappedIndex = -1;
 
     // Column header context menu popup
@@ -520,6 +524,96 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         return getColumnIndex(column) != -1;
     }
 
+    public void markColumnAsHiddenByDefault(Column<T, ?> column) {
+        hiddenByDefault.add(column);
+    }
+
+    public boolean isHiddenByDefault(Column<T, ?> column) {
+        return hiddenByDefault.contains(column);
+    }
+
+    public boolean isVisibleOnUserRequest(Column<T, ?> column) {
+        if (!isHiddenByDefault(column)) {
+            return false;
+        }
+
+        return getVisibleByUserRequestColumns().contains(column);
+    }
+
+    private Set<Column<T, ?>> getVisibleByUserRequestColumns() {
+        String key = getVisibleByUserRequestListKey();
+        if (key == null) {
+            return Collections.emptySet();
+        }
+
+        String encodedList = clientStorage.getLocalItem(key);
+        if (encodedList == null) {
+            return Collections.emptySet();
+        }
+        // format: comma separated list of (original) indices
+        return Arrays.stream(encodedList.split(",")) //$NON-NLS-1$
+                .map(IntegerCompat::tryParse)
+                .filter(index -> index != null)
+                .map(index -> determineRealIndex(index))
+                // forward compatibility - column count could change
+                .filter(realIndex -> realIndex >= 0 && realIndex < getColumnCount())
+                .map(realIndex -> getColumn(realIndex))
+                .collect(Collectors.toSet());
+    }
+
+    private void addToVisibleByUserRequest(Column<T, ?> column) {
+        Set<Column<T, ?>> alreadyStored = getVisibleByUserRequestColumns();
+        if(!columnResizePersistenceEnabled || alreadyStored.contains(column)) {
+            return;
+        }
+
+        Set<Column<T, ?>> toBeStored = new HashSet<>(alreadyStored);
+        toBeStored.add(column);
+
+        storeVisibleByUserRequestList(toBeStored);
+    }
+
+    private void storeVisibleByUserRequestList(Set<Column<T, ?>> toBeStored) {
+        String key = getVisibleByUserRequestListKey();
+        if( key == null) {
+            return;
+        }
+
+        if(toBeStored.isEmpty()) {
+            clientStorage.removeLocalItem(key);
+            return;
+        }
+
+        String encodedList = toBeStored.stream()
+                // forward compatibility - column could be made visible by default
+                .filter(this::isHiddenByDefault)
+                .map(this::getColumnIndex)
+                .map(this::determineOriginalIndex)
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));  //$NON-NLS-1$
+
+        clientStorage.setLocalItem(key, encodedList);
+    }
+
+    private void removeFromVisibleByUserRequest(Column<T, ?> column) {
+        Set<Column<T, ?>> visibleColumns = getVisibleByUserRequestColumns();
+        if(!columnResizePersistenceEnabled || !visibleColumns.contains(column) || !isHiddenByDefault(column)) {
+            return;
+        }
+
+        Set<Column<T, ?>> toBeStored = new HashSet<>(visibleColumns);
+        toBeStored.remove(column);
+
+        storeVisibleByUserRequestList(toBeStored);
+    }
+
+    private String getVisibleByUserRequestListKey() {
+        if (columnResizePersistenceEnabled) {
+            return GRID_VISIBLE + "_" + getGridElementId(); //$NON-NLS-1$
+        }
+        return null;
+    }
+
     @Override
     public String getColumnContextMenuTitle(Column<T, ?> column) {
         if (!isColumnPresent(column)) {
@@ -634,6 +728,16 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         }
         return index;
     }
+
+    private int determineRealIndex(int originalIndex) {
+        for (Map.Entry<Integer, Integer> entry: realToSwappedIndexes.entrySet()) {
+            if( entry.getValue().intValue() == originalIndex) {
+                return entry.getKey();
+            }
+        }
+        return originalIndex;
+    }
+
 
     private void storeSwappedIndexMap() {
         String value = realToSwappedIndexes.entrySet().stream().map(
@@ -793,15 +897,25 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
 
     @Override
     public void persistColumnVisibility(Column<T, ?> column, boolean visible) {
-        if (columnResizePersistenceEnabled) {
-            String key = getHiddenColumnWidthKey(column);
-            if (key != null) {
-                if (!visible) {
-                    // Store the width of the column before hiding it, so we can restore it.
-                    clientStorage.setLocalItem(key, getColumnWidth(column));
-                } else {
-                    clientStorage.removeLocalItem(key);
-                }
+        String key = getHiddenColumnWidthKey(column);
+        if (!columnResizePersistenceEnabled || key == null) {
+            return;
+        }
+
+        if (!visible) {
+            if (isHiddenByDefault(column)) {
+                // don't store the width since it should be stored under getColumnWidthKey()
+                removeFromVisibleByUserRequest(column);
+            } else {
+                // Store the width of the column before hiding it, so we can restore it.
+                // TODO: width is stored 2x: under this key and getColumnWidthKey()
+                clientStorage.setLocalItem(key, getColumnWidth(column));
+            }
+        } else {
+            // column just recently made hidden-by-default might have already grid-hidden keys
+            clientStorage.removeLocalItem(key);
+            if (isHiddenByDefault(column)) {
+                addToVisibleByUserRequest(column);
             }
         }
     }

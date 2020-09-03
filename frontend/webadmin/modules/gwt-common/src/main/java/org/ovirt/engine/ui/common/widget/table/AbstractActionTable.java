@@ -607,6 +607,13 @@ public abstract class AbstractActionTable<E, T> extends AbstractActionPanel<T> i
         this.menuContainer.removeStyleName(OPEN);
     }
 
+    public void hideColumnByDefault(Column<T, ?> column) {
+        table.markColumnAsHiddenByDefault(column);
+        if (!table.isVisibleOnUserRequest(column)) {
+            table.setColumnVisible(column, false);
+        }
+    }
+
     /**
      * Moves visual header sort state (arrows visible in the table header).
      * <p>
