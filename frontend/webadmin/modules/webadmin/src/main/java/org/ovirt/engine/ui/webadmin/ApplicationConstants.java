@@ -1490,6 +1490,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String memoryVm();
 
+    String memoryVmMB();
+
     String cpuVm();
 
     String cpusVm();
