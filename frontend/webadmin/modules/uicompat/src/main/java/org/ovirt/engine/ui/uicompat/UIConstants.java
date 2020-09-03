@@ -15,6 +15,7 @@ public interface UIConstants extends Constants {
 
     String notAvailableLabel();
 
+    @DefaultStringValue("") // Use annotation and not a properties key to leave it out of translations
     String emptyString();
 
     String bracketedNotAvailableLabel();
@@ -27,6 +28,7 @@ public interface UIConstants extends Constants {
 
     String hideAdvancedOptions();
 
+    @DefaultStringValue(" ") // Use annotation and not a properties key to leave it out of translations
     String space();
 
     String errorTitle();
@@ -1492,8 +1494,6 @@ public interface UIConstants extends Constants {
     String nullOperationDuplicateVlanIds();
 
     String nullOperationInvalidBondMode();
-
-    String diskTypeSearchPrefix();
 
     String assignQuotaForDisk();
 

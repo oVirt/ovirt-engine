@@ -8,6 +8,7 @@ public interface CommonApplicationConstants extends Constants {
 
     String changeColumnsVisibilityOrder();
 
+    @DefaultStringValue("") // Use annotation and not a properties key to leave it out of translations
     String empty();
 
     String emptyListBoxText();
@@ -20,16 +21,18 @@ public interface CommonApplicationConstants extends Constants {
 
     String unAvailablePropertyLabel();
 
+    @DefaultStringValue("<br/>") // Use annotation and not a properties key to leave it out of translations
     String lineBreak();
 
+    @DefaultStringValue("&nbsp;") // Use annotation and not a properties key to leave it out of translations
     String htmlNonBreakingSpace();
 
+    @DefaultStringValue("&emsp;") // Use annotation and not a properties key to leave it out of translations
     String htmlTab();
-
-    String commaBreak();
 
     String andBreak();
 
+    @DefaultStringValue(" ") // Use annotation and not a properties key to leave it out of translations
     String space();
 
     String missingColumnContextMenuTitle();

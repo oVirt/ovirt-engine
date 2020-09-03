@@ -810,6 +810,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String clusterPolicyPolicyLabel();
 
+    @DefaultStringValue("") // Use annotation and not a properties key to leave it out of translations
     String copyRightNotice();
 
     String configurePopupTitle();
