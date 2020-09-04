@@ -277,10 +277,12 @@ public class VmInfoBuildUtilsTest {
 
         DiskVmElement nonBootDiskVmElement = new DiskVmElement(lunDiskVmDevice.getId());
         nonBootDiskVmElement.setBoot(false);
+        nonBootDiskVmElement.setPlugged(true);
         nonBootDiskVmElement.setDiskInterface(DiskInterface.VirtIO_SCSI);
 
         DiskVmElement bootDiskVmElement = new DiskVmElement(diskImageVmDevice.getId());
         bootDiskVmElement.setBoot(true);
+        bootDiskVmElement.setPlugged(true);
         bootDiskVmElement.setDiskInterface(DiskInterface.VirtIO_SCSI);
 
         LunDisk lunDisk = new LunDisk();

@@ -567,7 +567,7 @@ public class VmInfoBuildUtils {
         vmDeviceUnitMap.putAll(getVmDeviceUnitMapForHostdevScsiDisks(vm));
 
         LinkedList<VmDevice> vmDeviceList = new LinkedList<>();
-        for (Disk disk : getSortedDisks(vm)) {
+        getSortedPluggedDisks(vm).forEachOrdered(disk -> {
             DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
             if (dve.getDiskInterface() == scsiInterface) {
                 VmDevice vmDevice = getVmDeviceByDiskId(disk.getId(), vm.getId());
@@ -596,7 +596,7 @@ public class VmInfoBuildUtils {
                     vmDeviceList.add(vmDevice);
                 }
             }
-        }
+        });
 
         // Find available unit (disk's index in VirtIO-SCSI controller) for disks with empty address
         IntStream.range(0, vmDeviceList.size()).forEach(index -> {
@@ -734,16 +734,16 @@ public class VmInfoBuildUtils {
         return diskAndDevicePairs;
     }
 
-    public List<Disk> getSortedDisks(VM vm) {
+    private Stream<Disk> getSortedPluggedDisks(VM vm) {
         // Order the drives as following:
         // - Boot devices of non-snapshot disks
         // - Boot devices of snapshot disks (i.e., boot disks of other VMs plugged to this one
         // - Then by the disk alias
-        List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
-        disks.sort(Comparator.comparing((Disk d) -> !d.getDiskVmElementForVm(vm.getId()).isBoot())
-                .thenComparing(d -> d.getDiskVmElementForVm(vm.getId()).isBoot() && d.isDiskSnapshot())
-                .thenComparing(new LexoNumericNameableComparator<>()));
-        return disks;
+        return vm.getDiskMap().values().stream()
+                .filter(disk -> disk.getDiskVmElementForVm(vm.getId()).isPlugged())
+                .sorted(Comparator.comparing((Disk d) -> !d.getDiskVmElementForVm(vm.getId()).isBoot())
+                        .thenComparing(d -> d.getDiskVmElementForVm(vm.getId()).isBoot() && d.isDiskSnapshot())
+                        .thenComparing(new LexoNumericNameableComparator<>()));
     }
 
     public int getAvailableUnitForScsiDisk(Map<VmDevice, Integer> vmDeviceUnitMap, boolean reserveFirstTwoLuns, boolean reserveForScsiCd) {
