@@ -85,8 +85,9 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected void performPlugCommand(VDSCommandType commandType,
-                                      Disk disk, VmDevice vmDevice) {
-        switch(disk.getDiskStorageType()) {
+            Disk disk,
+            VmDevice vmDevice) {
+        switch (disk.getDiskStorageType()) {
         case LUN:
             LunDisk lunDisk = (LunDisk) disk;
             if (commandType == VDSCommandType.HotPlugDisk) {
@@ -129,9 +130,13 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         }
 
         disk.setDiskVmElements(Collections.singleton(getDiskVmElement()));
-        runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
-                getVm(), disk, vmDevice, getDiskVmElement().getDiskInterface(),
-                getDiskVmElement().isPassDiscard()));
+        runVdsCommand(commandType,
+                new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
+                        getVm(),
+                        disk,
+                        vmDevice,
+                        getDiskVmElement().getDiskInterface(),
+                        getDiskVmElement().isPassDiscard()));
     }
 
     private IStorageHelper getStorageHelper(StorageType storageType) {
@@ -253,8 +258,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected boolean isVmNotInPreviewSnapshot() {
-        return
-                getVmId() != null &&
+        return getVmId() != null &&
                 validate(snapshotsValidator.vmNotDuringSnapshot(getVmId())) &&
                 validate(snapshotsValidator.vmNotInPreview(getVmId()));
     }
@@ -268,10 +272,11 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     /**
      * Returns a possibly new PCI address allocated for a disk that is set the specified address and interface
+     *
      * @return an address allocated to the given disk
      */
     public String getDiskAddress(final String currentAddress, DiskInterface diskInterface) {
-        switch(diskInterface) {
+        switch (diskInterface) {
         case VirtIO_SCSI:
         case SPAPR_VSCSI:
             int controllerIndex = ArchStrategyFactory.getStrategy(getVm().getClusterArch())
@@ -279,16 +284,26 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                     .returnValue()
                     .get(diskInterface);
             try (EngineLock vmDiskHotPlugEngineLock = lockVmDiskHotPlugWithWait()) {
-                switch(diskInterface) {
+                switch (diskInterface) {
                 case VirtIO_SCSI:
                     var vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(getVm());
-                    var vmDeviceUnitMapForController = vmDeviceUnitMapForController(currentAddress, vmDeviceUnitMap, diskInterface);
-                    var addressMap = getAddressMapForScsiDisk(currentAddress, vmDeviceUnitMapForController, controllerIndex, false, false);
+                    var vmDeviceUnitMapForController =
+                            vmDeviceUnitMapForController(currentAddress, vmDeviceUnitMap, diskInterface);
+                    var addressMap = getAddressMapForScsiDisk(currentAddress,
+                            vmDeviceUnitMapForController,
+                            controllerIndex,
+                            false,
+                            false);
                     return addressMap.toString();
                 case SPAPR_VSCSI:
                     vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
-                    vmDeviceUnitMapForController = vmDeviceUnitMapForController(currentAddress, vmDeviceUnitMap, diskInterface);
-                    addressMap = getAddressMapForScsiDisk(currentAddress, vmDeviceUnitMapForController, controllerIndex, true, true);
+                    vmDeviceUnitMapForController =
+                            vmDeviceUnitMapForController(currentAddress, vmDeviceUnitMap, diskInterface);
+                    addressMap = getAddressMapForScsiDisk(currentAddress,
+                            vmDeviceUnitMapForController,
+                            controllerIndex,
+                            true,
+                            true);
                     return addressMap.toString();
                 }
             }
@@ -309,22 +324,26 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     private Map<String, String> getAddressMapForScsiDisk(String address,
-                                       Map<VmDevice, Integer> vmDeviceUnitMap,
-                                       int controllerIndex,
-                                       boolean reserveFirstAddress,
-                                       boolean reserveForScsiCd) {
+            Map<VmDevice, Integer> vmDeviceUnitMap,
+            int controllerIndex,
+            boolean reserveFirstAddress,
+            boolean reserveForScsiCd) {
         // If address has been already set before, verify its uniqueness;
         // Otherwise, set address according to the next available unit.
         if (StringUtils.isNotBlank(address)) {
             var addressMap = StringMapUtils.string2Map(address);
             int unit = Integer.parseInt(addressMap.get(VdsProperties.Unit));
             if (vmDeviceUnitMap.containsValue(unit)) {
-                int availableUnit = vmInfoBuildUtils.getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstAddress, reserveForScsiCd && controllerIndex == 0);
+                int availableUnit = vmInfoBuildUtils.getAvailableUnitForScsiDisk(vmDeviceUnitMap,
+                        reserveFirstAddress,
+                        reserveForScsiCd && controllerIndex == 0);
                 addressMap = vmInfoBuildUtils.createAddressForScsiDisk(controllerIndex, availableUnit);
             }
             return addressMap;
         } else {
-            int availableUnit = vmInfoBuildUtils.getAvailableUnitForScsiDisk(vmDeviceUnitMap, reserveFirstAddress, reserveForScsiCd && controllerIndex == 0);
+            int availableUnit = vmInfoBuildUtils.getAvailableUnitForScsiDisk(vmDeviceUnitMap,
+                    reserveFirstAddress,
+                    reserveForScsiCd && controllerIndex == 0);
             return vmInfoBuildUtils.createAddressForScsiDisk(controllerIndex, availableUnit);
         }
     }
