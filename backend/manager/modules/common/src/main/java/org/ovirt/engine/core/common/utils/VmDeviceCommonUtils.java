@@ -283,7 +283,7 @@ public class VmDeviceCommonUtils {
     /**
      * is special device - device which is managed, but contains the general properties
      */
-    public static boolean isSpecialDevice(String device, VmDeviceGeneralType type) {
+    public static boolean isSpecialDevice(String device, VmDeviceGeneralType type, boolean includeHostDev) {
         if (VmDeviceType.USB.getName().equals(device)) {
             return true;
         }
@@ -306,6 +306,8 @@ public class VmDeviceCommonUtils {
         case CONTROLLER:
             return VmDeviceType.VIRTIOSERIAL.getName().equals(device)
                     || VmDeviceType.VIRTIOSCSI.getName().equals(device);
+        case HOSTDEV:
+            return includeHostDev;
         default:
             return false;
         }

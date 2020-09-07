@@ -1911,7 +1911,10 @@ public class VmDeviceUtils {
                     break;
 
                 case HOSTDEV:
-                    // it is currently unsafe to import host devices, due to possibility of invalid dedicatedVmForVds
+                    if (isPinngedToSingleValidHost(vmBase)) {
+                        vmDevice.setPlugged(true);
+                        break;
+                    }
                     continue;
 
             }
@@ -1930,6 +1933,17 @@ public class VmDeviceUtils {
                 .filter(device -> !VmDeviceCommonUtils.isMemory(device) || withMemory)
                 .collect(Collectors.toList());
         vmDeviceToAdd.addAll(unmanagedDevicesToAdd);
+    }
+
+    /**
+     * Checks if the VM has one dedicated host when having host device attached to it.
+     *
+     * @param vmBase The VM we check.
+     * @return true, if the VM has the dedicated host in the cluster, and only pinned to that host.
+     */
+    private boolean isPinngedToSingleValidHost(VmBase vmBase) {
+        return vmBase.getDedicatedVmForVdsList().size() == 1
+                && vmHandler.validateDedicatedVdsExistOnSameCluster(vmBase).isValid();
     }
 
     /**

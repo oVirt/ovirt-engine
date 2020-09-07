@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -401,22 +402,30 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     private void writeOtherDevices() {
-        List<VmDevice> devices = vmBase.getUnmanagedDeviceList();
+        List<VmDevice> devices = new ArrayList<>(vmBase.getUnmanagedDeviceList());
 
         Collection<VmDevice> managedDevices = vmBase.getManagedDeviceMap().values();
         for (VmDevice device : managedDevices) {
-            if (VmDeviceCommonUtils.isSpecialDevice(device.getDevice(), device.getType())) {
+            if (isSpecialDevice(device)) {
                 devices.add(device);
             }
         }
 
         for (VmDevice vmDevice : devices) {
-            _writer.writeStartElement("Item");
-            _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.OTHER);
-            _writer.writeElement(RASD_URI, getInstaceIdTag(), vmDevice.getId().getDeviceId().toString());
-            writeVmDeviceInfo(vmDevice);
-            _writer.writeEndElement(); // item
+            writeVmDevice(vmDevice);
         }
+    }
+
+    protected boolean isSpecialDevice(VmDevice vmDevice) {
+        return VmDeviceCommonUtils.isSpecialDevice(vmDevice.getDevice(), vmDevice.getType(), false);
+    }
+
+    protected void writeVmDevice(VmDevice vmDevice) {
+        _writer.writeStartElement("Item");
+        _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.OTHER);
+        _writer.writeElement(RASD_URI, getInstaceIdTag(), vmDevice.getId().getDeviceId().toString());
+        writeVmDeviceInfo(vmDevice);
+        _writer.writeEndElement(); // item
     }
 
     private void writeMonitors() {
