@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.common.action.MeasureVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -90,6 +92,7 @@ class MeasureVolumeCommandTest extends BaseCommandTest {
         di.setId(imageGroupID);
         di.setStorageIds(List.of(storageDomainID));
         di.setStoragePoolId(storagePoolID);
+        di.setStorageTypes(Collections.singletonList(StorageType.NFS));
         di.setActive(true);
 
         return di;

@@ -190,8 +190,8 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
             Guid imageGroupID) {
         Guid hostId = imagesHandler.getHostForMeasurement(storagePoolId, imageGroupID);
         if (hostId != null) {
-            if (storageDomainDao.get(dstDomain).getStorageType().isBlockDomain() &&
-                    Guid.Empty.equals(sourceImage.getParentId())) {
+            if ((storageDomainDao.get(srcDomain).getStorageType().isBlockDomain() || !sourceImage.isActive()) &&
+                    storageDomainDao.get(dstDomain).getStorageType().isBlockDomain()) {
                 MeasureVolumeParameters parameters = new MeasureVolumeParameters(storagePoolId,
                         srcDomain,
                         imageGroupID,
@@ -201,6 +201,7 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
                 parameters.setParentCommand(getActionType());
                 parameters.setVdsRunningOn(hostId);
                 parameters.setCorrelationId(getCorrelationId());
+                parameters.setWithBacking(false);
                 ActionReturnValue actionReturnValue =
                         runInternalAction(ActionType.MeasureVolume, parameters,
                                 ExecutionHandler.createDefaultContextForTasks(getContext()));

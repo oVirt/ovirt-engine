@@ -65,7 +65,7 @@ public class MeasureVolumeCommand<T extends MeasureVolumeParameters> extends Com
         DiskImage diskImage = diskImageDao.getSnapshotById(getParameters().getImageId());
 
         // We cannot measure active images used by VMs
-        if (isAttachedToRunningVMs(vms) && diskImage.getActive()) {
+        if (isAttachedToRunningVMs(vms) && diskImage.getActive() && !diskImage.getStorageTypes().get(0).isBlockDomain()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_IMAGE_CANNOT_BE_MEASURED_WHILE_USED,
                     List.of(ReplacementUtils.createSetVariableString("imageId", getParameters().getImageId())));
         }
@@ -102,6 +102,7 @@ public class MeasureVolumeCommand<T extends MeasureVolumeParameters> extends Com
                         getParameters().getImageGroupId(),
                         getParameters().getImageId(),
                         getParameters().getDstVolFormat());
+        params.setWithBacking(getParameters().isWithBacking());
         params.setVdsId(getParameters().getVdsRunningOn());
 
         long volumeSize = (long) vdsCommandsHelper.runVdsCommandWithoutFailover(
