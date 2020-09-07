@@ -20,7 +20,8 @@ public class MeasureVolumeVDSCommand<P extends MeasureVolumeVDSCommandParameters
                 getParameters().getStoragePoolId().toString(),
                 getParameters().getImageGroupId().toString(),
                 getParameters().getImageId().toString(),
-                getParameters().getDstVolFormat());
+                getParameters().getDstVolFormat(),
+                getParameters().isWithBacking());
         proceedProxyReturnValue();
         setReturnValue(result.getVolumeRequiredSize());
     }

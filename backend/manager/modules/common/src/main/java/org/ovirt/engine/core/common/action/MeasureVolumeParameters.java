@@ -11,6 +11,7 @@ public class MeasureVolumeParameters extends ActionParametersBase {
     private Guid imageId;
     private int dstVolFormat;
     private boolean shouldTeardown;
+    private boolean withBacking = true;
 
     public MeasureVolumeParameters() {
     }
@@ -73,5 +74,13 @@ public class MeasureVolumeParameters extends ActionParametersBase {
 
     public void setDstVolFormat(int dstVolFormat) {
         this.dstVolFormat = dstVolFormat;
+    }
+
+    public boolean isWithBacking() {
+        return withBacking;
+    }
+
+    public void setWithBacking(boolean withBacking) {
+        this.withBacking = withBacking;
     }
 }

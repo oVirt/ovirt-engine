@@ -4,6 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class MeasureVolumeVDSCommandParameters extends GetVolumeInfoVDSCommandParameters {
     private int dstVolFormat;
+    private boolean withBacking = true;
 
     public MeasureVolumeVDSCommandParameters() {
     }
@@ -24,5 +25,13 @@ public class MeasureVolumeVDSCommandParameters extends GetVolumeInfoVDSCommandPa
 
     public void setDstVolFormat(int dstVolFormat) {
         this.dstVolFormat = dstVolFormat;
+    }
+
+    public boolean isWithBacking() {
+        return withBacking;
+    }
+
+    public void setWithBacking(boolean withBacking) {
+        this.withBacking = withBacking;
     }
 }

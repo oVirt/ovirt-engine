@@ -2389,7 +2389,12 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public MeasureReturn measureVolume(String sdUUID, String spUUID, String imgUUID, String volUUID, int dstVolFormat) {
+    public MeasureReturn measureVolume(String sdUUID,
+            String spUUID,
+            String imgUUID,
+            String volUUID,
+            int dstVolFormat,
+            boolean withBacking) {
         JsonRpcRequest request =
                 new RequestBuilder("Volume.measure")
                         .withParameter("storagepoolID", spUUID)
@@ -2397,6 +2402,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("imageID", imgUUID)
                         .withParameter("volumeID", volUUID)
                         .withParameter("dstVolFormat", dstVolFormat)
+                        .withParameter("backing_chain", withBacking)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new MeasureReturn(response);

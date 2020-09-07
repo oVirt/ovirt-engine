@@ -998,7 +998,12 @@ public class NullVdsServer implements IVdsServer {
     }
 
     @Override
-    public MeasureReturn measureVolume(String sdUUID, String spUUID, String imgUUID, String volUUID, int dstVolFormat) {
+    public MeasureReturn measureVolume(String sdUUID,
+            String spUUID,
+            String imgUUID,
+            String volUUID,
+            int dstVolFormat,
+            boolean withBacking) {
         return null;
     }
 
