@@ -45,7 +45,7 @@ public class ColdMergeCommand<T extends ColdMergeCommandParameters> extends Stor
         completeGenerationInfo();
         vdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.ColdMerge,
                 new ColdMergeVDSCommandParameters(getParameters().getStorageJobId(),
-                        getParameters().getSubchainInfo()),
+                        getParameters().getSubchainInfo(), getParameters().isMergeBitmaps()),
                 getParameters().getStoragePoolId(), this);
         setSucceeded(true);
     }

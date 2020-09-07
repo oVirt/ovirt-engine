@@ -76,7 +76,9 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
-    @Override public StatusOnlyReturn mergeSubchain(String jobId, Map<String, Object> subchainInfo) {
+    @Override public StatusOnlyReturn mergeSubchain(String jobId,
+            Map<String, Object> subchainInfo,
+            boolean mergeBitmaps) {
         return null;
     }
 

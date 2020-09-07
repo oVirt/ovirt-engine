@@ -7,6 +7,7 @@ public class ColdMergeCommandParameters extends StorageJobCommandParameters {
 
     private static final long serialVersionUID = -6337018038220230095L;
     private SubchainInfo subchainInfo;
+    private boolean mergeBitmaps;
 
     public ColdMergeCommandParameters() {
     }
@@ -18,5 +19,13 @@ public class ColdMergeCommandParameters extends StorageJobCommandParameters {
 
     public SubchainInfo getSubchainInfo() {
         return subchainInfo;
+    }
+
+    public boolean isMergeBitmaps() {
+        return mergeBitmaps;
+    }
+
+    public void setMergeBitmaps(boolean mergeBitmaps) {
+        this.mergeBitmaps = mergeBitmaps;
     }
 }

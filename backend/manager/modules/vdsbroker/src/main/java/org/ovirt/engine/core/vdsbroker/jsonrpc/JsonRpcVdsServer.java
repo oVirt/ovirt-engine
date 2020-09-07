@@ -203,11 +203,12 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturn mergeSubchain(String jobId, Map<String, Object> subchainInfo) {
+    public StatusOnlyReturn mergeSubchain(String jobId, Map<String, Object> subchainInfo, boolean mergeBitmaps) {
         JsonRpcRequest request =
                 new RequestBuilder("SDM.merge")
                         .withParameter("job_id", jobId)
                         .withParameter("subchain_info", subchainInfo)
+                        .withParameter("merge_bitmaps", mergeBitmaps)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);

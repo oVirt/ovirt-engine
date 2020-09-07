@@ -14,7 +14,8 @@ public class ColdMergeVDSCommand<P extends ColdMergeVDSCommandParameters> extend
         log.info("-- executeVdsBrokerCommand: calling 'mergeSubchain'");
 
         status = getBroker().mergeSubchain(getParameters().getJobId().toString(),
-                SubchainInfoHelper.prepareSubchainInfoForVdsCommand(getParameters().getSubchainInfo()));
+                SubchainInfoHelper.prepareSubchainInfoForVdsCommand(getParameters().getSubchainInfo()),
+                getParameters().isMergeBitmaps());
 
         proceedProxyReturnValue();
     }
