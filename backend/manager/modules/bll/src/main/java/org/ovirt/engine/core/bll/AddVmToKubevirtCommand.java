@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -107,6 +108,16 @@ public class AddVmToKubevirtCommand<T extends AddVmParameters> extends VmManagem
                 VdcObjectType.VmTemplate,
                 getActionType().getActionGroup()));
         return permissionList;
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(VdcObjectType.VM.name().toLowerCase(),
+                    (getVmName() == null) ? "" : getVmName());
+        }
+        return jobProperties;
     }
 
     private DiskVmElement getRootDisk() {
