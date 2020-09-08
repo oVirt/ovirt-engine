@@ -92,6 +92,7 @@ public class BackendVmsResource extends
 
     public static final String CLONE = "clone";
     public static final String CLONE_PERMISSIONS = "clone_permissions";
+    public static final String OVF_AS_OVA = "ovf_as_ova";
     private static final String LEGAL_CLUSTER_COMPATIBILITY_VERSIONS =
             Version.ALL.stream().map(Version::toString).collect(Collectors.joining(", "));
 
@@ -704,7 +705,8 @@ public class BackendVmsResource extends
     protected Vm setVmOvfConfiguration (Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         QueryReturnValue queryReturnValue =
                 runQuery(QueryType.GetVmOvfByVmId,
-                        new GetVmOvfByVmIdParameters(entity.getId(), entity.getDbGeneration()));
+                        new GetVmOvfByVmIdParameters(entity.getId(), entity.getDbGeneration(),
+                                ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, OVF_AS_OVA, true, false)));
 
         if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
             String configuration = queryReturnValue.getReturnValue();
