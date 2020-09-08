@@ -1,5 +1,4 @@
 
-
 #
 # CUSTOMIZATION-BEGIN
 #
@@ -37,13 +36,29 @@
 %if 0%{!?ovirt_build_all_user_agents:1}
 %global ovirt_build_all_user_agents 1
 %endif
+# define "ovirt_provides_jboss 0" to use EAP 7
+#if True
+%global ovirt_provides_jboss 0
+#else
+%global ovirt_provides_jboss 1
+#end if
 #
 # CUSTOMIZATION-END
 #
 
+#raw
+
 # Do not repack .jar files, as it takes a long time and doesn't have a
 # real benefit:
 %global __jar_repack 0
+
+%if !%{ovirt_provides_jboss}
+#
+# unsign all provided jars
+# see rhbz#1019637
+#
+%global _jarsign_opts --unsign=/usr/share/ovirt-engine
+%endif
 
 #
 # rpm does not support override
@@ -60,7 +75,6 @@
 #
 
 %global ovirt_install_poms 1
-%global ovirt_provides_jboss 1
 
 %global ovirt_product_name oVirt Engine
 %global ovirt_product_name_short oVirt Engine
@@ -128,8 +142,12 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global wildfly_overlay_modules "/usr/share/ovirt-engine-wildfly-overlay/modules"
 %else
 %global wildfly_overlay_modules ""
+%define extra_common_opts \\\
+	MVN=true \\\
+	BUILD_ENV_VALIDATION=0 \\\
+	JBOSS_HOME=/opt/rh/eap7/root/usr/share/wildfly \\\
+	MAVEN_OUTPUT_DIR=%{_sourcedir}
 %endif
-
 
 %global make_common_opts \\\
 	-j1 \\\
@@ -171,27 +189,80 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PKG_GROUP=%{engine_group} \\\
 	POSTGRESQL_SYSTEMD_SERVICE=postgresql.service \\\
 	WILDFLY_OVERLAY_MODULES=%{wildfly_overlay_modules} \\\
-	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"}
+	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"} \\\
+	%{?extra_common_opts}
 
-%global ovirt_dependencies_slot 4.4
+%if %{ovirt_provides_jboss}
+%global ovirt_dependencies ovirt-dependencies/4.4
+%else
+%global ovirt_dependencies rhvm-dependencies/4.4
 
+%global extra_backend_requires Requires: rhvm-branding-rhv >= 4.3.0
+%global extra_setup_requires Requires: rhvm-setup-plugins >= 4.4.0
+%global spice_version 8.0
+%endif
+
+%if %{ovirt_provides_jboss}
 Name:		@PACKAGE_NAME@
 Version:	@RPM_VERSION@
 Release:	@RPM_RELEASE@%{?release_suffix}%{?dist}
+%else
+Name:		ovirt-engine
+# start of cheetah processed code
+#end raw
+#import os
+#import zipfile
+#import re
+#for $artifact in $all_artifacts
+   #if $artifact.endswith('-sources.zip')
+     #set $sourcezip = zipfile.ZipFile($artifact)
+     #set $entry = $sourcezip.namelist()[0]
+     #set $source_rootdir = $entry.split('/')[0]
+     #set $versionmak = $sourcezip.open(os.path.join(source_rootdir, 'version.mak')).read().decode()
+     #set $downstream_rpm_release_prefix = re.search('DOWNSTREAM_RPM_RELEASE_PREFIX=(.*)', $versionmak).group(1)
+     #set $pomxmlhead = $sourcezip.open(os.path.join(source_rootdir, 'pom.xml')).read().decode().splitlines()[:20]
+     #set $pomversionline = [ l for l in $pomxmlhead if '<version>' in l ][0]
+     #set $pomversion = re.search('.*>(.*)<.*', $pomversionline).group(1)
+     #set $release_suffix = ''
+     #if 'SNAPSHOT' in $pomversion
+       #set $release_suffix = '.master'
+     #end if
+   #end if
+#end for
+Version:	$version
+Release:	$downstream_rpm_release_prefix$release$release_suffix%{?dist}
+%endif
 Summary:	Management server for Open Virtualization
 Group:		%{ovirt_product_group}
 License:	ASL 2.0
+%if %{ovirt_provides_jboss}
 URL:		http://www.ovirt.org
 Source0:	http://resources.ovirt.org/pub/ovirt-master-snapshot/src/@PACKAGE_NAME@/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
+%else
+URL:		http://www.redhat.com/products/virtualization
+#
+# Acquire brew/mead pre-built resources.
+#
+#set $i = 0
+#for $artifact in $all_artifacts
+   #set $source = $artifact.split('/')[-1]
+Source$i:   $source
+   #set $i += 1
+#end for
+%endif
 
 BuildArch:	noarch
 
+%if %{ovirt_provides_jboss}
 BuildRequires:	assertj-core >= 2.2.0
+BuildRequires:	maven >= 3.5.0
+BuildRequires:  maven-enforcer-plugin
+%else
+BuildRequires:  perl
+%endif
 BuildRequires:	java-11-openjdk-devel >= 11.0.4
 BuildRequires:	javapackages-tools
 BuildRequires:	make
-BuildRequires:	maven >= 3.5.0
-BuildRequires:  maven-enforcer-plugin
 BuildRequires:	python3-devel
 BuildRequires:	systemd
 BuildRequires:	unzip
@@ -200,12 +271,17 @@ BuildRequires:	javapackages-local
 
 Requires(pre):	shadow-utils
 
+%if %{ovirt_provides_jboss}
 # There is no way how to prevent WildFly not being upgraded, so we need to
 # fix engine to work with current and new WildFly version and only afterwards
 # bump the requirement (otherwise we would need to pass wildfly,
 # wildfly-overlay and ovirt-engine through the change queue at once)
-%if %{ovirt_provides_jboss}
 Requires:	ovirt-engine-wildfly-overlay >= 18
+Requires:	ansible >= 2.9.0, ansible < 2.10.0
+%else
+Requires:	eap7-wildfly >= 7.3.0
+Requires:	rhvm = %{version}-%{release}
+Requires:	ansible = 2.9.13
 %endif
 
 Requires:	%{name}-backend = %{version}-%{release}
@@ -216,7 +292,6 @@ Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
 Requires:	%{name}-ui-extensions >= 1.0.4
-Requires:	ansible >= 2.9.0, ansible < 2.10.0
 Requires:	ansible-runner-service >= 1.0.4
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
@@ -274,6 +349,7 @@ Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 2.4.1
 Requires:	ovirt-dependencies >= 4.4.2
+%{?extra_main_requires}
 
 # We can't require exactly the same version and release of the
 # setup package because it needs to be updated independently as part
@@ -305,6 +381,23 @@ Provides:	bundled(js-patternfly-next) = 2.26.1
 %{ovirt_product_name} is a feature-rich server virtualization management
 system that provides advanced capabilities for managing the Open
 virtualization infrastructure for Servers and Desktops.
+
+%if !%{ovirt_provides_jboss}
+%package -n rhvm
+Summary:    Red Hat Virtualization Manager
+Group:      %{ovirt_product_group}
+Requires:   ovirt-engine = %{version}-%{release}
+Requires:   ovirt-log-collector >= 4.3.0
+Requires:   rhv-log-collector-analyzer
+# misc packages
+Requires:   spice-client-win-x64 >= %{spice_version}
+Requires:   spice-client-win-x86 >= %{spice_version}
+
+%description -n rhvm
+Red Hat Virtualization is a feature-rich server virtualization management
+system that provides advanced capabilities for managing Red Hat
+virtualization infrastructure for Servers and Desktops.
+%endif
 
 %package -n python%{python3_pkgversion}-%{name}-lib
 Summary:	%{ovirt_product_name_short} library
@@ -340,6 +433,7 @@ Requires:	java-client-kubevirt >= 0.5.0
 Requires:	openssl
 Requires:	ovirt-engine-extension-aaa-jdbc >= 1.2.0
 Requires:	python3-jinja2
+%{?extra_backend_requires}
 Requires(pre):	shadow-utils
 Requires(post):		systemd
 Requires(preun):	systemd
@@ -393,6 +487,7 @@ Conflicts:	%{name}-dwh-setup < 4.4.0
 Summary:	Setup and upgrade scripts for %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
+%{?extra_setup_requires}
 
 %description setup
 Setup and upgrade scripts for %{ovirt_product_name_short}
@@ -618,7 +713,26 @@ Requires:	ovirt-imageio-daemon >= 2.0.10-1
 Setup imageio service.
 
 %prep
+%if %{ovirt_provides_jboss}
 %setup -c -q
+%else
+#
+# Collect brew/mead binary artifacts
+#
+#import zipfile
+#set $i = 0
+#for $artifact in $all_artifacts
+   #if $artifact.endswith('-sources.zip')
+     #set $sourcezip = zipfile.ZipFile($artifact)
+     #set $entry = $sourcezip.namelist()[0]
+     #set $source_rootdir = $entry.split('/')[0]
+%setup -q -T -b $i -n $source_rootdir
+   #end if
+   #set $i += 1
+#end for
+#raw
+# end cheetah processed code
+%endif
 
 %build
 
@@ -804,16 +918,16 @@ tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
 tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
 tools/org/slf4j/jcl-over-slf4j/main/jcl-over-slf4j.jar slf4j/jcl-over-slf4j.jar
 
-../engine.ear/webadmin.war/WEB-INF/lib/gwt-servlet.jar ovirt-dependencies/%{ovirt_dependencies_slot}/gwt-servlet.jar
-common/org/springframework/main/spring-aop.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-aop.jar
-common/org/springframework/main/spring-asm.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-asm.jar
-common/org/springframework/main/spring-beans.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-beans.jar
-common/org/springframework/main/spring-context.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-context.jar
-common/org/springframework/main/spring-core.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-core.jar
-common/org/springframework/main/spring-expression.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-expression.jar
-common/org/springframework/main/spring-instrument.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-instrument.jar
-common/org/springframework/main/spring-jdbc.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-jdbc.jar
-common/org/springframework/main/spring-tx.jar ovirt-dependencies/%{ovirt_dependencies_slot}/spring-tx.jar
+../engine.ear/webadmin.war/WEB-INF/lib/gwt-servlet.jar %{ovirt_dependencies}/gwt-servlet.jar
+common/org/springframework/main/spring-aop.jar %{ovirt_dependencies}/spring-aop.jar
+common/org/springframework/main/spring-asm.jar %{ovirt_dependencies}/spring-asm.jar
+common/org/springframework/main/spring-beans.jar %{ovirt_dependencies}/spring-beans.jar
+common/org/springframework/main/spring-context.jar %{ovirt_dependencies}/spring-context.jar
+common/org/springframework/main/spring-core.jar %{ovirt_dependencies}/spring-core.jar
+common/org/springframework/main/spring-expression.jar %{ovirt_dependencies}/spring-expression.jar
+common/org/springframework/main/spring-instrument.jar %{ovirt_dependencies}/spring-instrument.jar
+common/org/springframework/main/spring-jdbc.jar %{ovirt_dependencies}/spring-jdbc.jar
+common/org/springframework/main/spring-tx.jar %{ovirt_dependencies}/spring-tx.jar
 __EOF__
 
 
@@ -834,8 +948,16 @@ cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" <
 OVESETUP_APACHE/configureRootRedirectionDefault=bool:True
 OVESETUP_CONFIG/validFirewallManagers=str:firewalld
 __EOF__
+%if !%{ovirt_provides_jboss}
+# just add to the list
+cat >> "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" << __EOF__
+OVESETUP_CONFIG/jbossHome=str:/opt/rh/eap7/root/usr/share/wildfly
+OVESETUP_CONFIG/pkiRenewalDocUrl=str:https://access.redhat.com/solutions/1572983
+__EOF__
 
-%if %{ovirt_provides_jboss}
+cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-wsp.conf" << __EOF__
+__EOF__
+%else
 cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf" << __EOF__
 [environment:default]
 OVESETUP_CONFIG/jbossHome=str:/usr/share/ovirt-engine-wildfly
@@ -848,6 +970,19 @@ ln -s %{engine_data}/../ovirt-engine-metrics/bin/ovirt-engine-hosts-ansible-inve
     %{buildroot}/%{engine_data}/playbooks/install-skydive.inventory.sample/00_ovirt-engine-hosts-ansible-inventory
 
 mkdir -p %{buildroot}/%{engine_rpm_state_dir}
+%if !%{ovirt_provides_jboss}
+ln -s /usr/share/spice "%{buildroot}%{engine_data}/files/spice"
+
+#
+# unsign ear
+# see rhbz#1019637
+# copied from redhat-rpm-config::brp-jboss-sign-jars::unsign_jarfile
+#
+rm -f "%{buildroot}%{engine_ear}/META-INF"/*.{DSA,RSA,SF}
+perl -i -pe 'BEGIN{undef $/;} s/Name: [^\n]+\n( [^\n]+\n)*([^\s]+-Digest: [^\n]+\n(\s)?)+(Magic: [^\n]+\n)?\n//mgs' "%{buildroot}%{engine_ear}/META-INF/MANIFEST.MF"
+perl -i -pe 's/^SHA1-Digest: [^\n]+\n//g' "%{buildroot}%{engine_ear}/META-INF/MANIFEST.MF"
+
+%endif
 
 %preun
 if [ "$1" -eq 0 ]; then
@@ -918,6 +1053,11 @@ fi
 #
 %if "%{name}" != "%{engine_name}"
 %{_javadir}/%{name}
+%endif
+
+%if !%{ovirt_provides_jboss}
+%files -n rhvm
+%license LICENSE
 %endif
 
 %files -n python%{python3_pkgversion}-%{name}-lib
@@ -1058,6 +1198,9 @@ fi
 
 %files setup-plugin-websocket-proxy
 %license LICENSE
+%if !%{ovirt_provides_jboss}
+%config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-wsp.conf
+%endif
 %{engine_data}/firewalld/websocket-proxy/
 %{engine_data}/setup/ovirt_engine_setup/websocket_proxy/
 %{engine_data}/setup/plugins/*/websocket_proxy/
