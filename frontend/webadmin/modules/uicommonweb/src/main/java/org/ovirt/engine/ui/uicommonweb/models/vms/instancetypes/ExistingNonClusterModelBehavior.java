@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import static org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider.getInstance;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -39,7 +37,6 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
     public void initialize() {
         super.initialize();
         updateNumOfSockets();
-        getModel().getUsbPolicy().setItems(Arrays.asList(UsbPolicy.values()));
 
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
 

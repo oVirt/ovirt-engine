@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
@@ -20,7 +19,6 @@ public class NewInstanceTypeModelBehavior extends NonClusterModelBehaviorBase {
 
         // no way to pick a specific host
         getModel().getIsAutoAssign().setEntity(true);
-        getModel().getUsbPolicy().setItems(Arrays.asList(UsbPolicy.values()));
 
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
         getModel().setSelectedMigrationDowntime(null);

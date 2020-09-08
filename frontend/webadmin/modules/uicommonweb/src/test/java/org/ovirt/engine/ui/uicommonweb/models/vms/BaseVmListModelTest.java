@@ -71,7 +71,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getAllowConsoleReconnect().getEntity()).thenReturn(true);
         when(model.isSingleQxlEnabled()).thenReturn(true);
         when(model.getTotalCPUCores().getEntity()).thenReturn(Integer.toString(TOTAL_CPU));
-        when(model.getUsbPolicy().getSelectedItem()).thenReturn(USB_POLICY);
+        when(model.getIsUsbEnabled().getEntity()).thenReturn(USB_ENABLED);
         when(model.getIsStateless().getEntity()).thenReturn(true);
         when(model.getIsSmartcardEnabled().getEntity()).thenReturn(true);
         when(model.getIsDeleteProtected().getEntity()).thenReturn(true);

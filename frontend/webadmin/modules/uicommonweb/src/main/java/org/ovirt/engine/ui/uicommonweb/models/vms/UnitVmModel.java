@@ -36,7 +36,6 @@ import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
@@ -318,7 +317,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getIsHeadlessModeEnabled().setIsChangeable(false);
             getDisplayType().setIsChangeable(false);
             getGraphicsType().setIsChangeable(false);
-            getUsbPolicy().setIsChangeable(false);
+            getIsUsbEnabled().setIsChangeable(false);
             getConsoleDisconnectAction().setIsChangeable(false);
             getResumeBehavior().setIsChangeable(false);
             getNumOfMonitors().setIsChangeable(false);
@@ -660,14 +659,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         privateQuota = value;
     }
 
-    private NotChangableForVmInPoolListModel<UsbPolicy> privateUsbPolicy;
+    private NotChangableForVmInPoolEntityModel<Boolean> privateUsbEnabled;
 
-    public ListModel<UsbPolicy> getUsbPolicy() {
-        return privateUsbPolicy;
+    public EntityModel<Boolean> getIsUsbEnabled() {
+        return privateUsbEnabled;
     }
 
-    private void setUsbPolicy(NotChangableForVmInPoolListModel<UsbPolicy> value) {
-        privateUsbPolicy = value;
+    public void setIsUsbEnabled(NotChangableForVmInPoolEntityModel<Boolean> usbEnabled) {
+        this.privateUsbEnabled = usbEnabled;
     }
 
     private NotChangableForVmInPoolListModel<ConsoleDisconnectAction> consoleDisconnectAction;
@@ -1631,7 +1630,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setDescription(new NotChangableForVmInPoolEntityModel<String>());
         setComment(new NotChangableForVmInPoolEntityModel<String>());
         setMinAllocatedMemory(new NotChangableForVmInPoolEntityModel<Integer>());
-        setUsbPolicy(new NotChangableForVmInPoolListModel<UsbPolicy>());
+        setIsUsbEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setConsoleDisconnectAction(new NotChangableForVmInPoolListModel<ConsoleDisconnectAction>());
         setIsStateless(new NotChangableForVmInPoolEntityModel<Boolean>());
         setIsRunAndPause(new NotChangableForVmInPoolEntityModel<Boolean>());
@@ -2327,26 +2326,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        getUsbPolicy().setIsChangeable(true);
-
-        UsbPolicy prevSelectedUsbPolicy = getUsbPolicy().getSelectedItem();
-        getUsbPolicy().setItems(Arrays.asList(
-                UsbPolicy.DISABLED,
-                UsbPolicy.ENABLED_NATIVE
-        ));
+        getIsUsbEnabled().setIsChangeable(true);
 
         if (!graphicsTypes.getBackingGraphicsTypes().contains(GraphicsType.SPICE)) {
-            getUsbPolicy().setIsChangeable(false);
-        }
-
-        if (getBehavior().basedOnCustomInstanceType()) {
-            Collection<UsbPolicy> policies = getUsbPolicy().getItems();
-            if (policies.contains(prevSelectedUsbPolicy)) {
-                getUsbPolicy().setSelectedItem(prevSelectedUsbPolicy);
-            } else if (policies.size() > 0) {
-                getUsbPolicy().setSelectedItem(getVmType().getSelectedItem() == VmType.HighPerformance ?
-                        UsbPolicy.DISABLED : policies.iterator().next());
-            }
+            getIsUsbEnabled().setIsChangeable(false);
         }
     }
 
@@ -2736,12 +2719,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         if (display != DisplayType.qxl || !graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE)) {
-            getUsbPolicy().setSelectedItem(UsbPolicy.DISABLED);
+            getIsUsbEnabled().setEntity(false);
             getIsSmartcardEnabled().setEntity(false);
         }
 
         handleQxlClusterLevel();
-        getUsbPolicy().setIsChangeable(graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE));
+        getIsUsbEnabled().setIsChangeable(graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE));
         getIsSmartcardEnabled().setIsChangeable(graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE));
         getVncKeyboardLayout().setIsAvailable(graphics.getBackingGraphicsTypes().contains(GraphicsType.VNC));
         updateNumOfMonitors();
@@ -2761,7 +2744,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getIsSoundcardEnabled().setIsChangeable(!isHeadlessEnabled);
 
         if (isHeadlessEnabled) {
-            getUsbPolicy().setIsChangeable(!isHeadlessEnabled);
+            getIsUsbEnabled().setIsChangeable(!isHeadlessEnabled);
             getNumOfMonitors().setIsChangeable(!isHeadlessEnabled);
             getIsSmartcardEnabled().setIsChangeable(!isHeadlessEnabled);
             getSpiceFileTransferEnabled().setIsChangeable(!isHeadlessEnabled);
@@ -3124,7 +3107,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getCustomCpu().validateSelectedItem(new IValidation[] { new CpuNameValidation(), new LengthValidation(BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE)});
 
         setValidTab(TabName.CONSOLE_TAB, isValidTab(TabName.CONSOLE_TAB) &&
-                getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid() && getSpiceProxy().getIsValid());
+                getIsUsbEnabled().getIsValid() && getNumOfMonitors().getIsValid() && getSpiceProxy().getIsValid());
 
         setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid());
 

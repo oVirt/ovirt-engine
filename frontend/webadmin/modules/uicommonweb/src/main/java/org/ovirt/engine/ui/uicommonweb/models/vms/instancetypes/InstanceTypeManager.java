@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -157,7 +158,7 @@ public abstract class InstanceTypeManager {
         maybeSetSingleQxlPci(vmBase);
         updateWatchdog(vmBase, false);
         updateBalloon(vmBase, false);
-        maybeSetSelectedItem(model.getUsbPolicy(), vmBase.getUsbPolicy());
+        maybeSetEntity(model.getIsUsbEnabled(), vmBase.getUsbPolicy() != UsbPolicy.DISABLED);
 
         activate();
     }
@@ -494,7 +495,7 @@ public abstract class InstanceTypeManager {
                     }
 
                     maybeSetSelectedItem(model.getNumOfMonitors(), vmBase.getNumOfMonitors());
-                    maybeSetSelectedItem(model.getUsbPolicy(), vmBase.getUsbPolicy());
+                    maybeSetEntity(model.getIsUsbEnabled(), vmBase.getUsbPolicy() != UsbPolicy.DISABLED);
                     maybeSetEntity(model.getIsSmartcardEnabled(), vmBase.isSmartcardEnabled());
                     maybeSetSingleQxlPci(vmBase);
 

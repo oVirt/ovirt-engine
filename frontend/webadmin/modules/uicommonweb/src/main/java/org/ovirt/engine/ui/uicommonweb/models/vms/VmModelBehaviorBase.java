@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -1406,7 +1405,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             // Console tab
             getModel().getIsHeadlessModeEnabled().setEntity(true);
             getModel().getIsConsoleDeviceEnabled().setEntity(true);
-            getModel().getUsbPolicy().setSelectedItem(UsbPolicy.DISABLED);
+            getModel().getIsUsbEnabled().setEntity(false);
             getModel().getIsSmartcardEnabled().setEntity(false);
 
             // High Availability tab

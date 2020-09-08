@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
@@ -120,7 +121,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             buildModel(vmBase, (source, destination) -> {
                 setSelectedOSType(vmBase, getModel().getSelectedCluster().getArchitecture());
                 getModel().getVmType().setSelectedItem(vmBase.getVmType());
-                getModel().getUsbPolicy().setSelectedItem(vmBase.getUsbPolicy());
+                getModel().getIsUsbEnabled().setEntity(vmBase.getUsbPolicy() != UsbPolicy.DISABLED);
                 getModel().getIsRunAndPause().setEntity(false);
 
                 boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());

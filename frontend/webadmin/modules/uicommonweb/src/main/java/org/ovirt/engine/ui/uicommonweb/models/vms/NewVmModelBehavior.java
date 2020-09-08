@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -174,7 +175,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
             getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
             getModel().getVmType().setSelectedItem(template.getVmType());
-            getModel().getUsbPolicy().setSelectedItem(template.getUsbPolicy());
+            getModel().getIsUsbEnabled().setEntity(template.getUsbPolicy() != UsbPolicy.DISABLED);
             updateRngDevice(template.getId());
 
             if (isHostCpuValueStillBasedOnTemp()) {

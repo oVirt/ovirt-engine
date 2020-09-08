@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.ui.uicommonweb.builders.BaseSyncBuilder;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -12,7 +13,7 @@ public class HwOnlyVmBaseToUnitBuilder extends BaseSyncBuilder<VmBase, UnitVmMod
         model.getIoThreadsEnabled().setEntity(vm.getNumOfIoThreads() != 0);
         model.getNumOfIoThreads().setEntity(Integer.toString(vm.getNumOfIoThreads()));
         model.getMinAllocatedMemory().setEntity(vm.getMinAllocatedMem());
-        model.getUsbPolicy().setSelectedItem(vm.getUsbPolicy());
+        model.getIsUsbEnabled().setEntity(vm.getUsbPolicy() != UsbPolicy.DISABLED);
         model.getNumOfMonitors().setSelectedItem(vm.getNumOfMonitors());
         model.setSingleQxlEnabled(vm.getSingleQxlPci());
         model.setBootSequence(vm.getDefaultBootSequence());

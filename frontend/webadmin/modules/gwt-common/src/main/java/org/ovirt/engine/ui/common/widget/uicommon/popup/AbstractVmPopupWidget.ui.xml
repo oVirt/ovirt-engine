@@ -311,9 +311,6 @@
                   <e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" label="{constants.vncKeyboardLayoutVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
-                  <e:ListModelListBoxEditor ui:field="usbSupportEditor" label="{constants.usbPolicyVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                </b:Row>
-                <b:Row>
                   <e:ListModelListBoxEditor ui:field="consoleDisconnectActionEditor" label="{constants.consoleDisconnectActionVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row ui:field="monitors">
@@ -322,6 +319,11 @@
                   </b:Column>
                   <b:Column size="SM_2">
                     <e:ListModelListBoxEditor ui:field="numOfMonitorsEditor" usePatternFly="true" />
+                  </b:Column>
+                </b:Row>
+                <b:Row>
+                  <b:Column size="SM_12">
+                    <ge:EntityModelCheckBoxEditor ui:field="isUsbEnabledEditor" label="{constants.usbPolicyVmPopup}" removeFormGroup="true" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>

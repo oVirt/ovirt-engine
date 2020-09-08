@@ -42,6 +42,7 @@ public class BaseVmTest {
     protected static final int CORES_PER_SOCKET = 1;
     protected static final int THREADS_PER_CORE = 1;
     protected static final UsbPolicy USB_POLICY = UsbPolicy.ENABLED_NATIVE;
+    protected static final boolean USB_ENABLED = true;
     protected static final SsoMethod SSO_METHOD = SsoMethod.GUEST_AGENT;
     protected static final BootSequence BOOT_SEQUENCE = BootSequence.CD;
     protected static final String ISO_NAME = "foo.iso";  //$NON-NLS-1$

@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
@@ -507,9 +506,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public ListModelListBoxEditor<String> vncKeyboardLayoutEditor;
 
     @UiField(provided = true)
-    @Path(value = "usbPolicy.selectedItem")
+    @Path(value = "isUsbEnabled.entity")
     @WithElementId("usbPolicy")
-    public ListModelListBoxEditor<UsbPolicy> usbSupportEditor;
+    public EntityModelCheckBoxEditor isUsbEnabledEditor;
 
     @UiField(provided = true)
     @Path(value = "consoleDisconnectAction.selectedItem")
@@ -1082,6 +1081,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         bootMenuEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        isUsbEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSoundcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         ssoMethodNone = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
         ssoMethodGuestAgent = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer());//$NON-NLS-1$
@@ -1498,8 +1498,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         graphicsTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<UnitVmModel.GraphicsTypes>());
 
-        usbSupportEditor =
-                new ListModelListBoxEditor<>(new EnumRenderer<UsbPolicy>(), new ModeSwitchingVisibilityRenderer());
         consoleDisconnectActionEditor =
                 new ListModelListBoxEditor<>(new EnumRenderer<ConsoleDisconnectAction>(), new ModeSwitchingVisibilityRenderer());
 
@@ -2069,7 +2067,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         displayTypeEditor.setTabIndex(nextTabIndex++);
         graphicsTypeEditor.setTabIndex(nextTabIndex++);
         vncKeyboardLayoutEditor.setTabIndex(nextTabIndex++);
-        usbSupportEditor.setTabIndex(nextTabIndex++);
+        isUsbEnabledEditor.setTabIndex(nextTabIndex++);
         consoleDisconnectActionEditor.setTabIndexes(nextTabIndex++);
         numOfMonitorsEditor.setTabIndex(nextTabIndex++);
         isSmartcardEnabledEditor.setTabIndex(nextTabIndex++);
@@ -2176,7 +2174,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 isHeadlessModeEnabledInfoIcon,
                 displayTypeEditor,
                 graphicsTypeEditor,
-                usbSupportEditor,
+                isUsbEnabledEditor,
                 consoleDisconnectActionEditor,
                 isSmartcardEnabledEditor,
                 expander,
@@ -2269,7 +2267,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 customSerialNumberEditor,
 
                 // console tab
-                usbSupportEditor,
+                isUsbEnabledEditor,
                 consoleDisconnectActionEditor,
                 monitors,
                 ssoMethodLabel,

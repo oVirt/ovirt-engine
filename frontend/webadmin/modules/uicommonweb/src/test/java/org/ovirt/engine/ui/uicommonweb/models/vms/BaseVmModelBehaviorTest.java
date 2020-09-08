@@ -162,7 +162,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
     protected void verifyBuiltHardware(UnitVmModel model) {
         assertEquals(MEM_SIZE, (int) model.getMemSize().getEntity());
         assertEquals(MIN_MEM, (int) model.getMinAllocatedMemory().getEntity());
-        assertEquals(USB_POLICY, model.getUsbPolicy().getSelectedItem());
+        assertEquals(USB_ENABLED, model.getIsUsbEnabled().getEntity());
         assertEquals(NUM_OF_MONITORS, (int) model.getNumOfMonitors().getSelectedItem());
         assertTrue(model.isSingleQxlEnabled());
         assertEquals(BOOT_SEQUENCE, model.getBootSequence());
