@@ -61,3 +61,16 @@
     - image_pkg_updated|bool
     - not image_updated_file.stat.exists
     - host_deploy_cluster_version|float >= 4.4
+
+- name: Configure LVM filter
+  command: vdsm-tool config-lvm-filter -y
+  register: lvm_filter_result
+  when: el_ver|int >= 8
+  ignore_errors: true
+
+- name: Error configuring LVM filter
+  debug:
+    msg: "Cannot configure LVM filter on host, please run: vdsm-tool config-lvm-filter"
+  when:
+    - el_ver|int >= 8
+    - lvm_filter_result.rc != 0
