@@ -501,6 +501,12 @@ public class SyntaxCheckerTest {
                 "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT distinct vms_with_tags.vm_guid FROM  vms_with_tags   WHERE  vms_with_tags.tag_name IN ('tag1','all') ))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
+    @Test
+    public void testSearchThatContainsColumnNamePrefix() {
+        testValidSql("Cluster:namepref*",
+                "SELECT * FROM (SELECT * FROM cluster_view WHERE ( cluster_id IN (SELECT distinct cluster_storage_domain.cluster_id FROM  cluster_storage_domain   WHERE  (  cluster_storage_domain.cpu_name LIKE '%namepref%%' OR  cluster_storage_domain.description LIKE '%namepref%%' OR  cluster_storage_domain.free_text_comment LIKE '%namepref%%' OR  cluster_storage_domain.name LIKE '%namepref%%' ) ))  ORDER BY name ASC) as T1 OFFSET (1 -1) LIMIT 0");
+    }
+
     private void testValidSql(String dynamicQuery, String exepctedSQLResult) {
         SyntaxChecker chkr = new SyntaxChecker();
         ISyntaxChecker curSyntaxChecker = SyntaxCheckerFactory.createBackendSyntaxChecker("foo");

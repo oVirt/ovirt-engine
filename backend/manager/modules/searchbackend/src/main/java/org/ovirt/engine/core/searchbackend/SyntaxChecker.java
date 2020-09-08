@@ -346,8 +346,18 @@ public class SyntaxChecker implements ISyntaxChecker {
                 keepValid = false;
                 curConditionFieldAC = searchObjectAC.getFieldAutoCompleter(syntaxContainer.getSearchObjectStr());
                 if (curConditionFieldAC.validate(nextObject)) {
-                    syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
-                    curStartPos = idx + 1;
+                    // Allow to use free text search on entities that has column name prefix in their values
+                    if (searchCharArr.length >= idx + 2) {
+                        char c = searchCharArr[idx + 1];
+                        // Check that this is a full keyword followed by a blank or by an operator
+                        if (c == ' ' || c == '!' || c == '=' || c == '<' || c == '>') {
+                            syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD,
+                                    nextObject,
+                                    curStartPos,
+                                    idx + 1);
+                            curStartPos = idx + 1;
+                        }
+                    }
 
                 } else if (sortbyAC.validate(nextObject)) {
                     syntaxContainer.addSyntaxObject(SyntaxObjectType.SORTBY, nextObject, curStartPos, idx + 1);
