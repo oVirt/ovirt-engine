@@ -44,7 +44,7 @@ public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmI
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        doReturn("config").when(getQuery()).generateOvfConfig(any());
+        doReturn("config").when(getQuery()).generateOvfConfig(any(), anyBoolean());
     }
 
     private VM createVm(Guid existingVmId, long dbGeneration) {
@@ -64,7 +64,7 @@ public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmI
         when(getQueryParameters().getRequiredGeneration()).thenReturn(dbGeneration - 1);
         GetVmOvfByVmIdQuery query = getQuery();
         query.execute();
-        verify(query, never()).generateOvfConfig(any());
+        verify(query, never()).generateOvfConfig(any(), anyBoolean());
         assertFalse(query.getQueryReturnValue().getSucceeded());
         assertNull(query.getQueryReturnValue().getReturnValue());
     }
@@ -78,7 +78,7 @@ public class GetVmOvfByVmIdQueryTest extends AbstractUserQueryTest<GetVmOvfByVmI
         when(getQueryParameters().getRequiredGeneration()).thenReturn(dbGeneration);
         GetVmOvfByVmIdQuery query = getQuery();
         query.execute();
-        verify(query, times(1)).generateOvfConfig(any());
+        verify(query, times(1)).generateOvfConfig(any(), anyBoolean());
         assertTrue(query.getQueryReturnValue().getSucceeded());
         assertNotNull(query.getQueryReturnValue().getReturnValue());
     }

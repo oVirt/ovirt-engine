@@ -30,6 +30,8 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbUserDao;
@@ -171,7 +173,7 @@ public class OvfHelper {
         return fullEntityOvfData;
     }
 
-    public String generateOvfConfigurationForVm(VM vm) {
+    public String generateOvfConfigurationForVm(VM vm, boolean asOva) {
         if (VMStatus.ImageLocked != vm.getStatus()) {
             vmHandler.updateDisksFromDb(vm);
             DiskImagesValidator validator = new DiskImagesValidator(vm.getDiskList());
@@ -180,7 +182,7 @@ public class OvfHelper {
                 Long currentDbGeneration = vmStaticDao.getDbGeneration(vm.getId());
                 // currentDbGeneration can be null in case that the vm was deleted during the run of OvfDataUpdater.
                 if (currentDbGeneration != null && vm.getStaticData().getDbGeneration() == currentDbGeneration) {
-                    return buildMetadataDictionaryForVm(vm);
+                    return buildMetadataDictionaryForVm(vm, asOva);
                 }
             }
         }
@@ -191,7 +193,7 @@ public class OvfHelper {
     /**
      * Adds the given vm metadata to the given map
      */
-    private String buildMetadataDictionaryForVm(VM vm) {
+    private String buildMetadataDictionaryForVm(VM vm, boolean asOva) {
         List<DiskImage> allVmImages = new ArrayList<>();
         List<DiskImage> filteredDisks = DisksFilter.filterImageDisks(vm.getDiskList(), ONLY_SNAPABLE, ONLY_ACTIVE);
         List<LunDisk> lunDisks = DisksFilter.filterLunDisks(vm.getDiskMap().values());
@@ -202,6 +204,13 @@ public class OvfHelper {
         for (DiskImage diskImage : filteredDisks) {
             List<DiskImage> images = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
             images.forEach(d -> d.setDiskVmElements(Collections.singletonList(diskImage.getDiskVmElementForVm(vm.getId()))));
+            if (asOva) {
+                images.forEach(d -> {
+                    d.setActualSizeInBytes(-1);
+                    d.setVolumeFormat(VolumeFormat.COW);
+                    d.setVolumeType(VolumeType.Sparse);
+                });
+            }
             allVmImages.addAll(images);
         }
 
@@ -212,7 +221,13 @@ public class OvfHelper {
         fullEntityOvfData.setAffinityLabels(affinityLabels);
         fullEntityOvfData.setDbUsers(dbUsers);
         populateUserToRoles(fullEntityOvfData, vm.getId());
-        return ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));
+        String ovf;
+        if (asOva) {
+            ovf = ovfManager.exportOva(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));
+        } else {
+            ovf = ovfManager.exportVm(vm, fullEntityOvfData, clusterUtils.getCompatibilityVersion(vm));
+        }
+        return ovf;
     }
 
     public void populateUserToRoles(FullEntityOvfData fullEntityOvfData, Guid entityId) {

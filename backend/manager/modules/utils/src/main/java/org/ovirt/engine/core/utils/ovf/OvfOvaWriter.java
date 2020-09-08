@@ -46,8 +46,12 @@ public abstract class OvfOvaWriter extends OvfWriter {
         _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "capacity",
                 String.valueOf(convertBytesToGigabyte(image.getSize())));
         _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "capacityAllocationUnits", "byte * 2^30");
-        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "populatedSize",
-                String.valueOf(image.getActualSizeInBytes()));
+        // When we generate an OVF representation to the client usage, the client needs to fill the populatedSize.
+        // In that case the actualSizeInBytes set to negative in order to distinguish it.
+        if (image.getActualSizeInBytes() >= 0) {
+            _writer.writeAttributeString(
+                    OVF_PREFIX, getOvfUri(), "populatedSize", String.valueOf(image.getActualSizeInBytes()));
+        }
         _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "parentRef", "");
         _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "fileRef", image.getImageId().toString());
         _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "format", getVolumeImageFormat(image.getVolumeFormat()));

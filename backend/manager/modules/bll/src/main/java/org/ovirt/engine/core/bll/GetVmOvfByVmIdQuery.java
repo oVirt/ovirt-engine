@@ -37,7 +37,7 @@ public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends Que
 
         vm.setSnapshots(snapshotDao.getAllWithConfiguration(vm.getId()));
         vmDeviceUtils.setVmDevices(vm.getStaticData());
-        String ovfData = generateOvfConfig(vm);
+        String ovfData = generateOvfConfig(vm, getParameters().isAsOva());
 
         if (ovfData == null) {
             return;
@@ -46,7 +46,7 @@ public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends Que
         getQueryReturnValue().setReturnValue(ovfData);
     }
 
-    protected String generateOvfConfig(VM vm) {
-        return ovfHelper.generateOvfConfigurationForVm(vm);
+    protected String generateOvfConfig(VM vm, boolean asOva) {
+        return ovfHelper.generateOvfConfigurationForVm(vm, asOva);
     }
 }
