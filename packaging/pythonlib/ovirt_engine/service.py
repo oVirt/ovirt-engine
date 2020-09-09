@@ -431,9 +431,9 @@ class Daemon(base.Base):
         # bit undocumented.
         #
         handles = []
-        for l in logging.getLogger('ovirt').handlers:
-            if hasattr(l, 'socket'):
-                handles.append(l.socket)
+        for handler in logging.getLogger('ovirt').handlers:
+            if hasattr(handler, 'socket'):
+                handles.append(handler.socket)
 
         with daemon.DaemonContext(
             detach_process=self._options.background,

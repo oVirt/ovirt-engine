@@ -124,8 +124,8 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: (
             not self.environment[
                 osetupcons.CoreEnv.DEVELOPER_MODE
-            ] and self._enabled
-            and os.path.exists(OLD_FIREWALLD_SERVICE_PATH)
+            ] and self._enabled and
+            os.path.exists(OLD_FIREWALLD_SERVICE_PATH)
         ),
     )
     def _remove_old_firewalld_service(self):

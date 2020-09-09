@@ -131,8 +131,8 @@ class Plugin(plugin.PluginBase):
                     ),
                     configdir=osetupcons.FileLocations.FIREWALLD_SERVICES_DIR,
                     commands='\n'.join([
-                        '    ' + l
-                        for l in commands
+                        '    ' + command
+                        for command in commands
                     ]),
                 )
             )

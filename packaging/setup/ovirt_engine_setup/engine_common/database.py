@@ -907,10 +907,10 @@ class OvirtUtils(base.Base):
         # Do something different for psql/pg_restore?
         if stderr:
             errors = [
-                l for l in stderr
-                if l and
-                'ERROR:' in l and
-                not self._RE_IGNORED_ERRORS.match(l)
+                line for line in stderr
+                if line and
+                'ERROR:' in line and
+                not self._RE_IGNORED_ERRORS.match(line)
             ]
             if errors:
                 self.logger.error(
@@ -1150,8 +1150,8 @@ class OvirtUtils(base.Base):
             key = item['key']
             if item['needed_on_create']:
                 edit_params[key] = item['expected']
-        for l in content:
-            m = RE_KEY_VALUE.match(l)
+        for line in content:
+            m = RE_KEY_VALUE.match(line)
             if m is not None:
                 for item in [
                     i for i in self._pg_conf_info()
@@ -1477,8 +1477,8 @@ class OvirtUtils(base.Base):
             raiseOnError=False,
         )
         if rc == 0:
-            for l in stdout:
-                for k, v in RE_KEY_VALUE_MULTIPLE.findall(l):
+            for line in stdout:
+                for k, v in RE_KEY_VALUE_MULTIPLE.findall(line):
                     if k == 'PGDATA':
                         return v
         raise RuntimeError(_('Unable to detect PGDATA location'))

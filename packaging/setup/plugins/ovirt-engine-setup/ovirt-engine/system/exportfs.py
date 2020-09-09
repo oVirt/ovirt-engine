@@ -51,12 +51,12 @@ class Plugin(plugin.PluginBase):
         if os.path.exists(conf):
             with open(conf, 'r') as f:
                 content = f.read().splitlines()
-            for l in content:
-                matcher = self._RE_EXPORTS_LINE.match(l)
+            for line in content:
+                matcher = self._RE_EXPORTS_LINE.match(line)
                 if matcher and matcher.group('path') == path:
-                    old_line = l
+                    old_line = line
                 else:
-                    new_content.append(l)
+                    new_content.append(line)
         return new_content, old_line
 
     def _getContentAppendLine(self, conf, new):
@@ -66,13 +66,13 @@ class Plugin(plugin.PluginBase):
         if os.path.exists(conf):
             with open(conf, 'r') as f:
                 content = f.read().splitlines()
-            for l in content:
-                matcher = self._RE_EXPORTS_LINE.match(l)
+            for line in content:
+                matcher = self._RE_EXPORTS_LINE.match(line)
                 if matcher and matcher.group('path') == path:
                     new_content.append(new)
                     found = True
                 else:
-                    new_content.append(l)
+                    new_content.append(line)
         if not found:
             new_content.append(new)
         return new_content
