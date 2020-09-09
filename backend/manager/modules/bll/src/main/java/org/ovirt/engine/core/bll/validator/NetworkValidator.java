@@ -71,6 +71,10 @@ public class NetworkValidator {
                 .when(network.isPortIsolation() && !network.isVmNetwork());
     }
 
+    public ValidationResult portIsolationNoExternalNetwork() {
+        return ValidationResult.failWith(EngineMessage.EXTERNAL_NETWORK_CANNOT_SUPPORT_PORT_ISOLATION)
+                .when(network.isExternal() && network.isPortIsolation());
+    }
     /**
      * @return An error iff network is named as if it were a bond.
      */

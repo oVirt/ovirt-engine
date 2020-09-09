@@ -141,6 +141,33 @@ public class NetworkValidatorTest {
     }
 
     @Test
+    public void portIsolationWhenNoExternalNetwork() {
+        portIsolationExternalTest(isValid(), false, true);
+    }
+
+    @Test
+    public void noPortIsolationWhenExternalNetwork() {
+        portIsolationExternalTest(isValid(), true, false);
+    }
+
+    @Test
+    public void portIsolationWhenExternalNetwork() {
+        portIsolationExternalTest(failsWith(EngineMessage.EXTERNAL_NETWORK_CANNOT_SUPPORT_PORT_ISOLATION), true, true);
+    }
+
+    @Test
+    public void noPortIsolationWhenNonExternalNetwork() {
+        portIsolationExternalTest(isValid(), false, false);
+    }
+
+    private void portIsolationExternalTest(Matcher<ValidationResult> matcher, boolean externalNetwork, boolean portIsolation) {
+        when(network.isExternal()).thenReturn(externalNetwork);
+        when(network.isPortIsolation()).thenReturn(portIsolation);
+
+        assertThat(validator.portIsolationNoExternalNetwork(), matcher);
+    }
+
+    @Test
     public void noPortIsolationWhenNonVmNetwork() {
         portIsolationTest(isValid(), false, false);
     }
