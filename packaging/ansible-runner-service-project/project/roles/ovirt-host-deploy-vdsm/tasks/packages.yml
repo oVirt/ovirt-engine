@@ -24,9 +24,7 @@
 # the local devices as FC storage in engine.
 
 - name: Configure LVM filter
-  shell: vdsm-tool config-lvm-filter -y
-  tags:
-    - skip_ansible_lint # E305
+  command: vdsm-tool config-lvm-filter -y
   register: lvm_filter_result
   when: el_ver|int >= 8
   ignore_errors: true
@@ -39,6 +37,5 @@
     - lvm_filter_result.rc != 0
 
 - name: Reconfigure vdsm tool
-  shell: vdsm-tool configure --force
-  tags:
-    - skip_ansible_lint # E305
+  command: vdsm-tool configure --force
+  changed_when: True
