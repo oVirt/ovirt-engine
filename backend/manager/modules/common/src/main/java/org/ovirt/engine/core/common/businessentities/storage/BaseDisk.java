@@ -87,7 +87,9 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
     }
 
     public void setDiskVmElements(Collection<DiskVmElement> diskVmElements) {
-        diskVmElementsMap = diskVmElements.stream().collect(Collectors.toMap(d -> d.getId().getVmId(), Function.identity()));
+        diskVmElementsMap = diskVmElements.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(d -> d.getId().getVmId(), Function.identity()));
     }
 
     @JsonIgnore
