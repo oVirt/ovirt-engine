@@ -33,7 +33,7 @@ public class AddDiskCommandCallback extends ConcurrentChildCommandsExecutionCall
             int completedChildren) {
         AddDiskCommand<AddDiskParameters> addDiskCommand = (AddDiskCommand<AddDiskParameters>) command;
 
-        if (addDiskCommand.getChildActionType() != ActionType.AddImageFromScratch) {
+        if (addDiskCommand.getChildActionType() != ActionType.AddImageFromScratch || anyFailed) {
             super.childCommandsExecutionEnded(command, anyFailed, childCmdIds, status, completedChildren);
             return;
         }
