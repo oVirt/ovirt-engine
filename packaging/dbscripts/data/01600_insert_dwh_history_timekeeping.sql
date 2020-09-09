@@ -1,25 +1,14 @@
---
--- PostgreSQL database dump
---
+INSERT INTO dwh_history_timekeeping SELECT 'lastFullHostCheck',NULL,to_timestamp('01/01/2000', 'DD/MM/YYYY') WHERE not exists (SELECT 1 FROM dwh_history_timekeeping WHERE var_name ='lastFullHostCheck');
 
--- Dumped from database version 10.6
--- Dumped by pg_dump version 10.6
+INSERT INTO dwh_history_timekeeping SELECT 'lastOsinfoUpdate',NULL,to_timestamp('01/01/2000', 'DD/MM/YYYY') WHERE not exists (SELECT 1 FROM dwh_history_timekeeping WHERE var_name ='lastOsinfoUpdate');
 
+INSERT INTO dwh_history_timekeeping SELECT 'heartBeat',NULL,to_timestamp('01/01/2000', 'DD/MM/YYYY') WHERE not exists (SELECT 1 FROM dwh_history_timekeeping WHERE var_name ='heartBeat');
 
---
--- Data for Name: dwh_history_timekeeping; Type: TABLE DATA; Schema: public; Owner: engine
---
+INSERT INTO dwh_history_timekeeping(var_name,var_value) SELECT 'DwhCurrentlyRunning','0' WHERE not exists (SELECT 1 FROM dwh_history_timekeeping WHERE var_name = 'DwhCurrentlyRunning');
 
-INSERT INTO dwh_history_timekeeping (var_name, var_value, var_datetime) VALUES ('lastFullHostCheck', NULL, '2000-01-01 00:00:00+02');
-INSERT INTO dwh_history_timekeeping (var_name, var_value, var_datetime) VALUES ('lastOsinfoUpdate', NULL, '2000-01-01 00:00:00+02');
-INSERT INTO dwh_history_timekeeping (var_name, var_value, var_datetime) VALUES ('heartBeat', NULL, '2000-01-01 00:00:00+02');
-INSERT INTO dwh_history_timekeeping (var_name, var_value, var_datetime) VALUES ('DwhCurrentlyRunning', '0', NULL);
-INSERT INTO dwh_history_timekeeping (var_name, var_value, var_datetime) VALUES ('dwhHostname', NULL, NULL);
-INSERT INTO dwh_history_timekeeping (var_name, var_value, var_datetime) VALUES ('dwhUuid', NULL, NULL);
-INSERT INTO dwh_history_timekeeping (var_name, var_value, var_datetime) VALUES ('lastSync', NULL, '2005-01-01 00:00:00+02');
+INSERT INTO dwh_history_timekeeping(var_name,var_value) SELECT 'dwhHostname',NULL WHERE not exists (SELECT 1 FROM dwh_history_timekeeping WHERE var_name = 'dwhHostname');
 
+INSERT INTO dwh_history_timekeeping(var_name,var_value) SELECT 'dwhUuid',NULL WHERE not exists (SELECT 1 FROM dwh_history_timekeeping WHERE var_name = 'dwhUuid');
 
---
--- PostgreSQL database dump complete
---
+INSERT INTO dwh_history_timekeeping SELECT 'lastSync',NULL,to_timestamp('01/01/2000', 'DD/MM/YYYY') WHERE not exists (SELECT 1 FROM dwh_history_timekeeping WHERE var_name ='lastSync');
 
