@@ -98,31 +98,6 @@ class Plugin(plugin.PluginBase):
                 ],
             )
         )
-        # Apache application for ansible-runner-service
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-            filetransaction.FileTransaction(
-                name=runner_wsgi_file,
-                content=textwrap.dedent('''
-                #!/usr/bin/python
-
-                import runner_service.configuration as configuration
-                from runner_service.ansible_runner_service import setup_logging
-                from runner_service.app import create_app
-
-                # wsgi entry point is only for production servers
-                configuration.init(mode='prod')
-
-                # Setup log
-                setup_logging()
-
-                # The object to be managed by uwsgi
-                application = create_app()
-                '''),
-                modifiedList=self.environment[
-                    otopicons.CoreEnv.MODIFIED_FILES
-                ],
-            )
-        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
