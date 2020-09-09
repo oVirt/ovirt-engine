@@ -118,6 +118,7 @@ import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmInitDao;
@@ -162,6 +163,9 @@ public class VmHandler implements BackendService {
 
     @Inject
     private VdsDao vdsDao;
+
+    @Inject
+    private VdsStaticDao vdsStaticDao;
 
     @Inject
     private VmDynamicDao vmDynamicDao;
@@ -1049,10 +1053,11 @@ public class VmHandler implements BackendService {
     public ValidationResult validateDedicatedVdsExistOnSameCluster(VmBase vm) {
         for (Guid vdsId : vm.getDedicatedVmForVdsList()) {
             // get dedicated host, checks if exists and compare its cluster to the VM cluster
-            VDS vds = vdsDao.get(vdsId);
+            var vds = vdsStaticDao.get(vdsId);
             if (vds == null) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_DOES_NOT_EXIST);
-            } else if (!Objects.equals(vm.getClusterId(), vds.getClusterId())) {
+            }
+            if (!Objects.equals(vm.getClusterId(), vds.getClusterId())) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER);
             }
         }
