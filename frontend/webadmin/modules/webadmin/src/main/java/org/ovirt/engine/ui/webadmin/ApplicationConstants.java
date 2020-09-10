@@ -1728,6 +1728,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String mtuNetwork();
 
+    String portIsolationNetwork();
+
     String mtuDefault();
 
     String requiredNetwork();

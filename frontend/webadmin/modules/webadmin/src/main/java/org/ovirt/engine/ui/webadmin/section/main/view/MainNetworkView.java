@@ -209,6 +209,16 @@ public class MainNetworkView extends AbstractMainWithDetailsTableView<NetworkVie
         };
         mtuColumn.makeSortable(NetworkConditionFieldAutoCompleter.MTU);
         getTable().addColumn(mtuColumn, constants.mtuNetwork(), "120px"); //$NON-NLS-1$
+
+        AbstractTextColumn<NetworkView> portIsolationColumn = new AbstractTextColumn<NetworkView>() {
+            @Override
+            public String getValue(NetworkView object) {
+                return object.isPortIsolation() ? constants.yes() : constants.no();
+            }
+        };
+        portIsolationColumn.makeSortable();
+        getTable().addColumn(portIsolationColumn, constants.portIsolationNetwork(), "120px"); //$NON-NLS-1$
+
     }
 
     @Override
