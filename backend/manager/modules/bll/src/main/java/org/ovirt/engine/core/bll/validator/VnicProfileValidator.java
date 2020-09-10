@@ -96,6 +96,11 @@ public class VnicProfileValidator {
                 : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK);
     }
 
+    public ValidationResult passthroughProfileNoPortIsolation() {
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_NOT_SUPPORTS_PORT_ISOLATION)
+                .when(vnicProfile.isPassthrough() && getNetwork().isPortIsolation());
+    }
+
     protected ValidationResult vnicProfileNotUsed(List<? extends Nameable> entities, EngineMessage entitiesReplacementPlural, EngineMessage entitiesReplacementSingular) {
         if (entities.isEmpty()) {
             return ValidationResult.VALID;

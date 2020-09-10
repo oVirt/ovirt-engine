@@ -309,6 +309,24 @@ public class VnicProfileValidatorTest {
     }
 
     @Test
+    public void vnicProfileForNoPortIsolationNetwork() {
+        vnicProfileForPortIsolationNetworkTest(false, isValid());
+    }
+
+    @Test
+    public void vnicProfileForPortIsolationNetwork() {
+        vnicProfileForPortIsolationNetworkTest(true,
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_NOT_SUPPORTS_PORT_ISOLATION));
+    }
+
+    private void vnicProfileForPortIsolationNetworkTest(boolean portIsolation, Matcher<ValidationResult> matcher) {
+        when(network.isPortIsolation()).thenReturn(portIsolation);
+        when(networkDao.get(any())).thenReturn(network);
+        when(vnicProfile.isPassthrough()).thenReturn(true);
+        assertThat(validator.passthroughProfileNoPortIsolation(), matcher);
+    }
+
+    @Test
     public void externalNetworkPortMirroring() {
         externalNetworkPortMirroringTest(true,
                 true,

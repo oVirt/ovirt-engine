@@ -41,6 +41,7 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
                 && validator.validateCustomProperties(getReturnValue().getValidationMessages())
                 && validate(validator.passthroughNotChangedIfUsedByVms())
                 && validate(validator.passthroughProfileContainsSupportedProperties())
+                && validate(validator.passthroughProfileNoPortIsolation())
                 && validate(validator.validNetworkFilterId());
     }
 
