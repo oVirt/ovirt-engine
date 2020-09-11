@@ -47,7 +47,7 @@ class ImageIO(object):
     # If you want to change the certificates, you need to restart
     # ovirt-imageio service.
     # For more information about imageio certificates, please read
-    # http://ovirt.github.io/ovirt-imageio/overview.html#ssl-keys-in-imageio
+    # http://ovirt.github.io/ovirt-imageio/configuration.html#tls-configuration
     key_file = {key_file}
     cert_file = {cert_file}
     ca_file = {ca_file}
