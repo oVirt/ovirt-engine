@@ -25,6 +25,8 @@ public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkMode
     public NewNetworkPopupView(EventBus eventBus) {
         super(eventBus);
         driver.initialize(this);
+        portIsolationEditor.asCheckBox().addValueChangeHandler(event -> refreshClustersTable());
+        isVmNetworkEditor.asCheckBox().addValueChangeHandler(event -> refreshClustersTable());
     }
 
     @Override

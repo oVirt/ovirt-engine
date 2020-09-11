@@ -2969,6 +2969,10 @@ public class AsyncDataProvider {
                 getDefaultConfigurationVersion());
     }
 
+    public boolean getIsPortIsolationSupported(Version version) {
+        return (Boolean) getConfigValuePreConverted(ConfigValues.IsPortIsolationSupported, version.getValue());
+    }
+
     public Integer getDefaultOs(ArchitectureType architectureType) {
         return defaultOSes.get(architectureType);
     }

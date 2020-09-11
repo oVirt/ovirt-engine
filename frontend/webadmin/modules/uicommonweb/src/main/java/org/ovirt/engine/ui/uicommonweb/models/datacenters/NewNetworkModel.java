@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -32,7 +33,8 @@ public class NewNetworkModel extends NetworkModel {
         super(sourceListModel);
         setNetworkClusterList(new ListModel<NetworkClusterModel>());
         getIsVmNetwork().getEntityChangedEvent().addListener(
-                (ev, sender, args) -> updatePortIsolationChangeabilityAndValue());
+                (ev, sender, args) -> updatePortIsolationState());
+        getPortIsolation().getEntityChangedEvent().addListener((ev, sender, args) -> updateClusterAttachments());
         init();
     }
 
@@ -132,18 +134,15 @@ public class NewNetworkModel extends NetworkModel {
             getIsVmNetwork().setEntity(true);
         }
 
-        Iterable<NetworkClusterModel> networkClusters = getNetworkClusterList().getItems();
-        if (networkClusters != null) {
-            for (NetworkClusterModel networkCluster : networkClusters) {
-                networkCluster.setIsChangeable(true);
-                networkCluster.setAttached(true);
-                networkCluster.setRequired(!externalNetwork);
-            }
-        }
-
-        updatePortIsolationChangeabilityAndValue();
+        updatePortIsolationState();
 
         super.onExportChanged();
+    }
+
+
+    private void updatePortIsolationState() {
+        updatePortIsolationChangeabilityAndValue();
+        updateClusterAttachments();
     }
 
    private void updatePortIsolationChangeabilityAndValue() {
@@ -151,6 +150,21 @@ public class NewNetworkModel extends NetworkModel {
         getPortIsolation().setIsChangeable(portIsolationAllowed);
         if (!portIsolationAllowed) {
             getPortIsolation().setEntity(false);
+        }
+    }
+
+    private void updateClusterAttachments() {
+        Iterable<NetworkClusterModel> networkClusters = getNetworkClusterList().getItems();
+        if (networkClusters != null) {
+            for (NetworkClusterModel networkClusterModel : networkClusters) {
+                Cluster cluster = networkClusterModel.getEntity();
+                boolean portIsolationSupported =
+                        AsyncDataProvider.getInstance().getIsPortIsolationSupported(cluster.getCompatibilityVersion())
+                                && cluster.getRequiredSwitchTypeForCluster() == SwitchType.LEGACY;
+                boolean attached = portIsolationSupported || !getPortIsolation().getEntity();
+                networkClusterModel.setAttached(attached);
+                networkClusterModel.setRequired(attached && !getExternal().getEntity());
+            }
         }
     }
 
