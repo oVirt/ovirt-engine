@@ -303,7 +303,7 @@ Requires:	python3-mod_wsgi >= 4.6.4
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
-Requires:	ovirt-ansible-roles >= 1.2.0
+Requires:	ovirt-ansible-collection >= 1.2.0
 Requires:	ovirt-web-ui
 Requires:	ovirt-cockpit-sso
 Requires:	ovirt-engine-api-explorer
