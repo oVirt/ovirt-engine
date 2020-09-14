@@ -3,7 +3,6 @@ package org.ovirt.engine.core;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +16,7 @@ public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 9210030009170727847L;
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, Object> deployedResponse = SsoOAuthServiceUtils.isSsoDeployed();
         if (deployedResponse.containsKey(WelcomeUtils.ERROR_DESCRIPTION)) {
             request.getSession(true).setAttribute(WelcomeUtils.ERROR_DESCRIPTION,

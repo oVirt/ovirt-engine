@@ -29,7 +29,7 @@ public class RestApiSessionMgmtFilter implements Filter {
     private static final String BEARER = "Bearer";
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
     }
 
     @Override

@@ -50,7 +50,7 @@ public class NegotiationFilter implements Filter {
     private long caps = 0;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         String capsParam = filterConfig.getInitParameter(CAPABILITIES_PARAMETER);
         if (capsParam != null) {
             for (String nego : capsParam.trim().split(" *\\| *")) {
@@ -118,8 +118,7 @@ public class NegotiationFilter implements Filter {
         }
     }
 
-    private void doAuth(HttpServletRequest req, HttpServletResponse rsp, Deque<AuthenticationProfile> stack)
-            throws IOException, ServletException {
+    private void doAuth(HttpServletRequest req, HttpServletResponse rsp, Deque<AuthenticationProfile> stack) {
 
         boolean stop = false;
         while (!stop && !stack.isEmpty()) {

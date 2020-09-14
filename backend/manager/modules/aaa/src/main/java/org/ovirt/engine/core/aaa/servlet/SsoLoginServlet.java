@@ -2,7 +2,6 @@ package org.ovirt.engine.core.aaa.servlet;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +21,7 @@ public class SsoLoginServlet extends HttpServlet {
     private String authSequencePriorityPropertyName;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         postActionUrl = getServletContext().getInitParameter("post-action-url");
         if (postActionUrl == null) {
             throw new RuntimeException("No post-action-url init parameter specified for SsoLoginServlet.");
@@ -34,7 +33,7 @@ public class SsoLoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("Entered SsoLoginServlet");
 
         String scope = String.format("ovirt-app-admin ovirt-app-portal ovirt-ext=auth:sequence-priority=%s",

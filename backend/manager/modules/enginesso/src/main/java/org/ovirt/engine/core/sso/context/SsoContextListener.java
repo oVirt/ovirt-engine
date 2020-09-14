@@ -31,6 +31,7 @@ public class SsoContextListener implements ServletContextListener {
         ssoContext.setScopeDependencies(DBUtils.getAllSsoScopeDependencies());
         ssoContext.setSsoDefaultProfile(AuthenticationUtils.getDefaultProfile(ssoContext.getSsoExtensionsManager()));
         ssoContext.setSsoProfiles(AuthenticationUtils.getAvailableProfiles(ssoContext.getSsoExtensionsManager()));
+        // required in login.jsp
         ssoContext.setSsoProfilesSupportingPasswd(
                 AuthenticationUtils.getAvailableProfilesSupportingPasswd(ssoContext.getSsoExtensionsManager()));
         ssoContext.setSsoProfilesSupportingPasswdChange(

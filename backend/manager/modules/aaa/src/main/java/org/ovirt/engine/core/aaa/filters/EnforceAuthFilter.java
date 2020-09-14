@@ -24,7 +24,7 @@ public class EnforceAuthFilter implements Filter {
     private final List<String> additionalSchemes = new ArrayList<>();
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         for (String paramName : Collections.list(filterConfig.getInitParameterNames())) {
             if (paramName.startsWith("scheme")) {
                 additionalSchemes.add(filterConfig.getInitParameter(paramName));
@@ -47,9 +47,7 @@ public class EnforceAuthFilter implements Filter {
                 schemes = Collections.emptyList();
             }
             Set<String> allSchemes = new HashSet<>(schemes);
-            if (additionalSchemes != null) {
-                allSchemes.addAll(additionalSchemes);
-            }
+            allSchemes.addAll(additionalSchemes);
             for (String scheme: allSchemes) {
                 res.setHeader(FiltersHelper.Constants.HEADER_WWW_AUTHENTICATE, scheme);
             }

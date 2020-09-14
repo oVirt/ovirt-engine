@@ -162,7 +162,7 @@ public class AuthenticationUtils {
             authRecord = outputMap.get(Authn.InvokeKeys.AUTH_RECORD);
         }
         authRecord = getMappedAuthRecord(profile, authRecord);
-        ExtMap principalRecord = getPrincipalRecord(profile, authRecord, false, null, null);
+        ExtMap principalRecord = getPrincipalRecord(profile, authRecord, false, null);
 
         log.debug("AuthenticationUtils.handleCredentials saving data in session data");
         return SsoUtils.persistAuthInfoInContextWithToken(request,
@@ -195,7 +195,6 @@ public class AuthenticationUtils {
     private static ExtMap getPrincipalRecord(ExtensionProfile profile,
             ExtMap authRecord,
             boolean externalAuthEnabled,
-            HttpServletRequest request,
             Map<String, String> params) {
         log.debug("AuthenticationUtils.handleCredentials invoking FETCH_PRINCIPAL_RECORD on authz");
         ExtMap input = new ExtMap().mput(
@@ -211,8 +210,6 @@ public class AuthenticationUtils {
         if (externalAuthEnabled) {
             if (params != null) {
                 input.put(Authz.InvokeKeys.HTTP_SERVLET_REQUEST_PARAMS, params);
-            } else if (request != null) {
-                input.put(Authz.InvokeKeys.HTTP_SERVLET_REQUEST, request);
             }
         }
         ExtMap output = profile.authz.invoke(input);
@@ -235,7 +232,7 @@ public class AuthenticationUtils {
                 SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_PARAMS),
                 HashMap.class);
 
-        ExtMap principalRecord = getPrincipalRecord(profile, authRecord, true, null, params);
+        ExtMap principalRecord = getPrincipalRecord(profile, authRecord, true, params);
 
         return SsoUtils.persistAuthInfoInContextWithToken(request,
                 params.get(SsoConstants.HTTP_REQ_HEADER_OIDC_ACCESS_TOKEN),
@@ -306,10 +303,10 @@ public class AuthenticationUtils {
     public static String getDefaultProfile(SsoExtensionsManager extensionsManager) {
         Optional<ExtensionProxy> defaultExtension =  extensionsManager.getExtensionsByService(Authn.class.getName())
                 .stream()
-                .filter(a -> Boolean.valueOf(a.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION)
+                .filter(a -> Boolean.parseBoolean(a.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION)
                                 .getProperty(Authn.ConfigKeys.DEFAULT_PROFILE)))
                 .findFirst();
-        return defaultExtension.isPresent() ? getProfileName(defaultExtension.get()) : null;
+        return defaultExtension.map(AuthenticationUtils::getProfileName).orElse(null);
     }
 
     public static List<String> getAvailableProfiles(SsoExtensionsManager extensionsManager) {
@@ -328,21 +325,21 @@ public class AuthenticationUtils {
 
     public static ExtensionProfile getExtensionProfile(SsoContext ssoContext, String profileName) {
         Optional<ExtensionProfile> profile = getExtensionProfileImpl(ssoContext, profileName, null);
-        if (!profile.isPresent()) {
+        if (profile.isEmpty()) {
             log.debug("AuthenticationUtils.getExtensionProfile authn and authz NOT found for profile {}", profileName);
             throw new RuntimeException(String.format("Error in obtaining profile %s", profileName));
         }
-        log.debug("AuthenticationUtils.getExtensionProfile authn and authz found for profile %s", profileName);
+        log.debug("AuthenticationUtils.getExtensionProfile authn and authz found for profile {}", profileName);
         return profile.get();
     }
 
     public static ExtensionProfile getExtensionProfileByAuthzName(SsoContext ssoContext, String authzName) {
         Optional<ExtensionProfile> profile = getExtensionProfileImpl(ssoContext, null, authzName);
-        if (!profile.isPresent()) {
+        if (profile.isEmpty()) {
             log.debug("AuthenticationUtils.getExtensionProfile authn and authz NOT found for authz {}", authzName);
             throw new RuntimeException(String.format("Error in obtaining profile for authz %s", authzName));
         }
-        log.debug("AuthenticationUtils.getExtensionProfile authn and authz found for authz %s", authzName);
+        log.debug("AuthenticationUtils.getExtensionProfile authn and authz found for authz {}", authzName);
         return profile.get();
     }
 

@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.sso.servlets;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,13 +31,12 @@ public class InteractiveAuthServlet extends HttpServlet {
     private SsoContext ssoContext;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) {
         ssoContext = SsoUtils.getSsoContext(config.getServletContext());
     }
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) {
         log.debug("Entered InteractiveAuthServlet");
         try {
             String redirectUrl;
@@ -92,7 +89,7 @@ public class InteractiveAuthServlet extends HttpServlet {
     private String authenticateUser(
             HttpServletRequest request,
             HttpServletResponse response,
-            Credentials userCredentials) throws ServletException, IOException, AuthenticationException {
+            Credentials userCredentials) throws AuthenticationException {
         if (userCredentials == null || !SsoUtils.areCredentialsValid(request, userCredentials, true)) {
             throw new AuthenticationException(
                     ssoContext.getLocalizationUtils().localize(
@@ -118,7 +115,7 @@ public class InteractiveAuthServlet extends HttpServlet {
         }
     }
 
-    private Credentials getUserCredentials(HttpServletRequest request) throws Exception {
+    private Credentials getUserCredentials(HttpServletRequest request) {
         String username = SsoUtils.getFormParameter(request, USERNAME);
         String password = SsoUtils.getFormParameter(request, PASSWORD);
         String profile = SsoUtils.getFormParameter(request, PROFILE);

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.aaa.filters;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -22,7 +23,7 @@ public class SsoLoginFilter implements Filter {
     private String loginUrl;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         loginUrl = filterConfig.getInitParameter("login-url");
         if (loginUrl == null) {
             throw new RuntimeException("No login-url init parameter specified for SsoLoginFilter.");
@@ -45,7 +46,7 @@ public class SsoLoginFilter implements Filter {
                 String url = String.format("%s%s&app_url=%s&locale=%s",
                         req.getServletContext().getContextPath(),
                         loginUrl,
-                        URLEncoder.encode(requestURL.toString(), "UTF-8"),
+                        URLEncoder.encode(requestURL.toString(), StandardCharsets.UTF_8),
                         request.getAttribute("locale").toString());
                 log.debug("Redirecting to {}", url);
                 res.sendRedirect(url);

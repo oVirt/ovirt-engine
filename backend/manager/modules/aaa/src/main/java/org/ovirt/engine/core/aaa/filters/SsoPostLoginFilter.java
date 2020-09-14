@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.aaa.filters;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +7,6 @@ import javax.naming.InitialContext;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +33,7 @@ public class SsoPostLoginFilter implements Filter {
     private static final boolean FILTER_QUERIES = true;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
     }
 
     protected Object runQuery(QueryType queryType, String sessionId, InitialContext ctx) {
@@ -57,8 +55,7 @@ public class SsoPostLoginFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
         log.debug("Entered SsoPostLoginFilter");
         HttpServletRequest req = (HttpServletRequest) request;
 

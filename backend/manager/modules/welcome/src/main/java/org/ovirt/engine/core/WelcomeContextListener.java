@@ -1,6 +1,7 @@
 package org.ovirt.engine.core;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -10,8 +11,8 @@ import org.ovirt.engine.core.uutils.net.URLBuilder;
 
 public class WelcomeContextListener implements ServletContextListener {
 
-    private static String moduleScope = "ovirt-app-admin ovirt-app-portal ovirt-ext=auth:sequence-priority=%s";
-    private static String switchUserScope = "ovirt-app-admin ovirt-app-portal ovirt-ext=auth:sequence-priority=~I";
+    private static final String moduleScope = "ovirt-app-admin ovirt-app-portal ovirt-ext=auth:sequence-priority=%s";
+    private static final String switchUserScope = "ovirt-app-admin ovirt-app-portal ovirt-ext=auth:sequence-priority=~I";
 
     @Override
     public void contextInitialized(ServletContextEvent event) {
@@ -28,7 +29,7 @@ public class WelcomeContextListener implements ServletContextListener {
                     engineUri,
                     WelcomeUtils.SWITCH_USER_URI,
                     WelcomeUtils.SCOPE,
-                    URLEncoder.encode(switchUserScope, WelcomeUtils.UTF8)));
+                    URLEncoder.encode(switchUserScope, StandardCharsets.UTF_8)));
         } catch (Exception ex) {
             throw new RuntimeException("Unable to initialize Welcome Context", ex);
         }

@@ -12,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
@@ -32,7 +31,7 @@ public class SsoRestApiAuthFilter implements Filter {
     private static final String BEARER = "Bearer";
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         // empty
     }
 
@@ -42,12 +41,12 @@ public class SsoRestApiAuthFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         if (!FiltersHelper.isAuthenticated(req) || !FiltersHelper.isSessionValid((HttpServletRequest) request)) {
             log.debug("SsoRestApiAuthFilter authenticating with sso");
-            authenticateWithSso(req, (HttpServletResponse) response);
+            authenticateWithSso(req);
         }
         chain.doFilter(request, response);
     }
 
-    protected void authenticateWithSso(HttpServletRequest req, HttpServletResponse res) throws ServletException {
+    protected void authenticateWithSso(HttpServletRequest req) {
         String headerValue = req.getHeader(FiltersHelper.Constants.HEADER_AUTHORIZATION);
         if (headerValue != null && (headerValue.startsWith(BASIC) || headerValue.startsWith(BEARER))) {
             try {

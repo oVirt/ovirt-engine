@@ -50,7 +50,7 @@ public class SsoRestApiNegotiationFilter implements Filter {
     private long caps = 0;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         caps |= Authn.Capabilities.AUTHENTICATE_NEGOTIATE_INTERACTIVE | Authn.Capabilities.AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE;
 
         AuthenticationProfileRepository.getInstance().addObserver((o, arg) -> cacheNegotiatingProfiles()
@@ -129,8 +129,7 @@ public class SsoRestApiNegotiationFilter implements Filter {
         }
     }
 
-    private AuthResult doAuth(HttpServletRequest req, HttpServletResponse rsp, Deque<AuthenticationProfile> stack)
-            throws IOException, ServletException {
+    private AuthResult doAuth(HttpServletRequest req, HttpServletResponse rsp, Deque<AuthenticationProfile> stack) {
         AuthResult authResult = new AuthResult();
         log.debug("Performing external authentication");
 

@@ -21,7 +21,7 @@ public class SessionValidationFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(SessionValidationFilter.class);
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,7 +15,6 @@ public class WelcomeUtils {
     public static final String CAPABILITY_CREDENTIALS_CHANGE = "capability_credentials_change";
     public static final String CODE = "code";
     public static final String ENGINE_URI = "ENGINE_URI";
-    public static final String ENGINE_SSO_AUTH_URL = "ENGINE_SSO_AUTH_URL";
     public static final String ENGINE_SSO_CLIENT_ID = "ENGINE_SSO_CLIENT_ID";
     public static final String ENGINE_SSO_ENABLE_EXTERNAL_SSO = "engine_sso_enable_external_sso";
     public static final String LOCALE = "locale";
@@ -23,7 +22,6 @@ public class WelcomeUtils {
     public static final String SCOPE = "scope";
     public static final String SSO_USER = "sso_user";
     public static final String TOKEN = "token";
-    public static final String UTF8 = "UTF-8";
 
     public static final String CREDENTIALS_CHANGE_FORM_URI = "/credentials-change.html";
     public static final String LOGIN_URI = "/login";
@@ -55,11 +53,11 @@ public class WelcomeUtils {
                 EngineLocalConfig.getInstance().getProperty(WelcomeUtils.ENGINE_URI));
     }
 
-    public static String getLoginUrl(String engineUri, String scope) throws UnsupportedEncodingException {
+    public static String getLoginUrl(String engineUri, String scope) {
         return String.format("%s%s?%s=%s",
                 engineUri,
                 WelcomeUtils.LOGIN_URI,
                 WelcomeUtils.SCOPE,
-                URLEncoder.encode(scope, WelcomeUtils.UTF8));
+                URLEncoder.encode(scope, StandardCharsets.UTF_8));
     }
 }
