@@ -12,6 +12,7 @@ public class CopyDataCommandParameters extends StorageJobCommandParameters {
     private LocationInfo dstInfo;
     private boolean collapse;
     private List<DiskImage> destImages = new ArrayList<>();
+    private boolean copyBitmaps;
 
     public CopyDataCommandParameters() {
     }
@@ -53,5 +54,13 @@ public class CopyDataCommandParameters extends StorageJobCommandParameters {
 
     public void setDestImages(List<DiskImage> destImages) {
         this.destImages = destImages;
+    }
+
+    public boolean isCopyBitmaps() {
+        return copyBitmaps;
+    }
+
+    public void setCopyBitmaps(boolean copyBitmaps) {
+        this.copyBitmaps = copyBitmaps;
     }
 }

@@ -54,7 +54,7 @@ public interface IVdsServer {
 
     OneVmReturn create(Map createInfo);
 
-    StatusOnlyReturn copyData(String jobId, Map src, Map dst);
+    StatusOnlyReturn copyData(String jobId, Map src, Map dst, boolean copyBitmaps);
 
     StatusOnlyReturn updateVolume(String jobId, Map<?, ?> volumeInfo, Map<?, ?> volumeAttributes);
 

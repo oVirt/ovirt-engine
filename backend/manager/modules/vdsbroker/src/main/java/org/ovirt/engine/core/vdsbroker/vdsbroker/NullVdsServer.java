@@ -60,7 +60,7 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
-    @Override public StatusOnlyReturn copyData(String jobId, Map src, Map dst) {
+    @Override public StatusOnlyReturn copyData(String jobId, Map src, Map dst, boolean copyBitmaps) {
         return null;
     }
 

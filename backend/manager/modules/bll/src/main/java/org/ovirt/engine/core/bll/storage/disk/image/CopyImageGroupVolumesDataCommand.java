@@ -39,6 +39,8 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
     @Inject
     private DiskImageDao diskImageDao;
     @Inject
+    private ImagesHandler imagesHandler;
+    @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
@@ -127,6 +129,11 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
                 buildImageLocationInfo(getParameters().getSrcDomain(), getParameters().getImageGroupID(), image),
                 destLocationInfo,
                 false);
+
+        if (imagesHandler.shouldUseDiskBitmaps(getStoragePool().getCompatibilityVersion(),
+                getParameters().getImageGroupID())) {
+            parameters.setCopyBitmaps(true);
+        }
 
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setParentCommand(getActionType());

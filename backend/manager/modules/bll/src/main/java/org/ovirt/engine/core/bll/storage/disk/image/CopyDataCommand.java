@@ -42,7 +42,8 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
                 new CopyVolumeDataVDSCommandParameters(getParameters().getStorageJobId(),
                         getParameters().getSrcInfo(),
                         getParameters().getDstInfo(),
-                        getParameters().isCollapse()),
+                        getParameters().isCollapse(),
+                        getParameters().isCopyBitmaps()),
                 getParameters().getStoragePoolId(), this);
         setSucceeded(true);
     }

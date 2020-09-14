@@ -155,12 +155,13 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public StatusOnlyReturn copyData(String jobId, Map src, Map dst) {
+    public StatusOnlyReturn copyData(String jobId, Map src, Map dst, boolean copyBitmaps) {
         JsonRpcRequest request =
                 new RequestBuilder("SDM.copy_data")
                         .withParameter("source", src)
                         .withParameter("destination", dst)
                         .withParameter("job_id", jobId)
+                        .withParameter("copy_bitmaps", copyBitmaps)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);

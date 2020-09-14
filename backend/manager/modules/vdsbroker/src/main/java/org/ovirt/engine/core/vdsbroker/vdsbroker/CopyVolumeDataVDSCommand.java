@@ -15,8 +15,11 @@ public class CopyVolumeDataVDSCommand<P extends CopyVolumeDataVDSCommandParamete
     protected void executeVdsBrokerCommand() {
         log.info("-- executeVdsBrokerCommand: calling 'copyVolumeData'");
 
-        status = getBroker().copyData(getParameters().getJobId().toString(), buildLocationInfo(getParameters().getSrcInfo()),
-                buildLocationInfo(getParameters().getDstInfo()));
+        status = getBroker().copyData(
+                getParameters().getJobId().toString(),
+                buildLocationInfo(getParameters().getSrcInfo()),
+                buildLocationInfo(getParameters().getDstInfo()),
+                getParameters().isCopyBitmaps());
 
         proceedProxyReturnValue();
     }
