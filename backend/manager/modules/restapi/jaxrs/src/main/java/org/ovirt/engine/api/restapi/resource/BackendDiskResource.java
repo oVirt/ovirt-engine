@@ -21,6 +21,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DiskResource;
+import org.ovirt.engine.api.resource.DiskSnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -58,6 +59,11 @@ public class BackendDiskResource
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(QueryType.GetDiskByDiskId, IdQueryParameters.class);
         DiskStatisticalQuery query = new DiskStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<>(entityType, guid, query));
+    }
+
+    @Override
+    public DiskSnapshotsResource getDiskSnapshotsResource() {
+        return null;
     }
 
     @Override

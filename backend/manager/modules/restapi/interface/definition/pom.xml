@@ -191,7 +191,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>java</executable>
+              <executable>/usr/lib/jvm/java-11-openjdk/bin/java</executable>
               <classpathScope>runtime</classpathScope>
               <arguments>
                 <argument>-classpath</argument>
@@ -216,7 +216,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>java</executable>
+              <executable>/usr/lib/jvm/java-11-openjdk/bin/java</executable>
               <classpathScope>runtime</classpathScope>
               <arguments>
                 <argument>-classpath</argument>
