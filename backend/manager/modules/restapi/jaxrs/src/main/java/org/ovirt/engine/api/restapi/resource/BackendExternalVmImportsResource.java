@@ -11,7 +11,6 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.ExternalVmImportsResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
-import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalUrlParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -66,10 +65,11 @@ public class BackendExternalVmImportsResource extends BackendResource implements
         parameters.setExternalName(vmImport.getName());
         parameters.setNewVmName(vmImport.getVm() != null ? vmImport.getVm().getName() : null);
         parameters.setVolumeType(getVolumeType(vmImport));
-        parameters.setProxyHostId(getProxyHostId(vmImport));
+        Guid clusterId = getClusterId(vmImport);
+        parameters.setProxyHostId(getProxyHostId(vmImport, clusterId));
         parameters.setVirtioIsoName(getVirtioIsoName(vmImport));
         parameters.setStorageDomainId(getStorageDomainId(vmImport));
-        parameters.setClusterId(getClusterId(vmImport));
+        parameters.setClusterId(clusterId);
         parameters.setQuotaId(getQuotaId(vmImport));
         parameters.setCpuProfileId(getCpuProfileId(vmImport));
         parameters.setUsername(vmImport.getUsername());
@@ -81,8 +81,7 @@ public class BackendExternalVmImportsResource extends BackendResource implements
         return VmMapper.mapExternalVmProviderToOrigin(vmImport.getProvider());
     }
 
-    private Guid getProxyHostId(ExternalVmImport vmImport) {
-        Guid clusterId = vmImport.getCluster() != null ? GuidUtils.asGuid(vmImport.getCluster().getId()) : null;
+    private Guid getProxyHostId(ExternalVmImport vmImport, Guid clusterId) {
         if (vmImport.isSetHost()) {
             if (vmImport.getHost().isSetId()) {
                 return asGuid(vmImport.getHost().getId());
