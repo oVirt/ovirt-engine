@@ -181,7 +181,6 @@ class CinderlibDBEnv(object):
     PGPASS_FILE = 'OVESETUP_CL_DB/pgPassFile'
     NEW_DATABASE = 'OVESETUP_CL_DB/newDatabase'
     NEED_DBMSUPGRADE = 'OVESETUP_CL_DB/needDBMSUpgrade'
-    JUST_RESTORED = 'OVESETUP_CL_DB/justRestored'
 
     @osetupattrs(
         answerfile=True,

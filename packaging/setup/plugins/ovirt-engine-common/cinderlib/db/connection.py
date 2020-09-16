@@ -83,7 +83,6 @@ class Plugin(plugin.PluginBase):
         self.environment[oclcons.CinderlibDBEnv.STATEMENT] = None
         self.environment[oclcons.CinderlibDBEnv.NEW_DATABASE] = True
         self.environment[oclcons.CinderlibDBEnv.NEED_DBMSUPGRADE] = False
-        self.environment[oclcons.CinderlibDBEnv.JUST_RESTORED] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
