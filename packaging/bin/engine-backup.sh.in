@@ -131,6 +131,10 @@ cinderlib_enabled() {
 	engine_setup_service_enabled "OVESETUP_CL_DB/enable"
 }
 
+grafana_enabled() {
+	engine_setup_service_enabled "OVESETUP_GRAFANA_CORE/enable"
+}
+
 load_branding() {
 	for f in /etc/ovirt-engine/branding/*/branding-external-resources.properties; do
 		if [ -e "${f}" ]; then
@@ -166,12 +170,20 @@ BACKUP_PATHS="/etc/ovirt-engine
 /var/lib/openvswitch
 /etc/grafana
 /var/lib/grafana"
+
 # Add /var/lib/ovirt-engine except a few
-VAR_LIB_EXCLUSIONS="/var/lib/ovirt-engine/backups
+VAR_LIB_OVIRT_ENGINE_EXCLUSIONS="/var/lib/ovirt-engine/backups
 /var/lib/ovirt-engine/jboss_runtime
 /var/lib/ovirt-engine/ansible-runner-service.log"
 for p in /var/lib/ovirt-engine/*; do
-	echo "${VAR_LIB_EXCLUSIONS}" | grep -q "^${p}\$" || BACKUP_PATHS="${BACKUP_PATHS}
+	echo "${VAR_LIB_OVIRT_ENGINE_EXCLUSIONS}" | grep -q "^${p}\$" || BACKUP_PATHS="${BACKUP_PATHS}
+${p}"
+done
+
+# Add /var/lib/grafana except its db, which is backed up separately
+VAR_LIB_GRAFANA_EXCLUSIONS="/var/lib/grafana/grafana.db"
+for p in /var/lib/grafana/*; do
+	echo "${VAR_LIB_GRAFANA_EXCLUSIONS}" | grep -q "^${p}\$" || BACKUP_PATHS="${BACKUP_PATHS}
 ${p}"
 done
 
@@ -190,6 +202,7 @@ FILE=""
 DB_BACKUP_FILE_NAME="engine_backup.db"
 DWHDB_BACKUP_FILE_NAME="dwh_backup.db"
 CINDERLIBDB_BACKUP_FILE_NAME="cinderlib_backup.db"
+GRAFANA_BACKUP_FILE_NAME="grafana.db"
 
 PACKAGE_VERSION_FILENAME="version"
 OS_VERSION_FILENAME="os_version"
@@ -225,6 +238,7 @@ USAGE:
     db                              Engine database only
     dwhdb                           Data Warehouse database only
     cinderlibdb                     Cinderlib database only
+    grafanadb                       Grafana database only
     The option --scope can be passed more than once, with different scopes.
  --file=FILE                        file to use during backup or restore.
                                     If mode is backup,  default to $ENGINE_BACKUP_DEFAULT_DIR/ovirt-engine-backup-YmdHMS.backup
@@ -393,6 +407,7 @@ SCOPE_FILES=
 SCOPE_ENGINE_DB=
 SCOPE_DWH_DB=
 SCOPE_CINDERLIB_DB=
+SCOPE_GRAFANA_DB=
 KEEP_TEMPORARY_DATA=
 ARCHIVE_COMPRESS_OPTION=z
 FILES_COMPRESS_OPTION=J
@@ -440,6 +455,7 @@ MY_CINDERLIB_DB_DATABASE=
 MY_CINDERLIB_DB_SECURED=False
 MY_CINDERLIB_DB_SECURED_VALIDATION=False
 MY_CINDERLIB_DB_CREDS=
+GRAFANA_DB_FILENAME=/var/lib/grafana/grafana.db
 RESTORE_PERMISSIONS=
 PROVISION_ALL_DBS=
 HE_REMOVE_STORAGE_VM=
@@ -519,6 +535,7 @@ set_scope() {
 			SCOPE_ENGINE_DB=1
 			SCOPE_DWH_DB=1
 			SCOPE_CINDERLIB_DB=1
+			SCOPE_GRAFANA_DB=1
 			;;
 		files)
 			SCOPE_FILES=1
@@ -531,6 +548,9 @@ set_scope() {
 			;;
 		cinderlibdb)
 			SCOPE_CINDERLIB_DB=1
+			;;
+		grafanadb)
+			SCOPE_GRAFANA_DB=1
 			;;
 		*) die "invalid scope '${s}'"
 	esac
@@ -953,6 +973,11 @@ dobackup() {
 		log "Backing up cinderlib database to ${tardir}/db/${CINDERLIBDB_BACKUP_FILE_NAME}"
 		backupDB "${tardir}/db/${CINDERLIBDB_BACKUP_FILE_NAME}" "${CINDERLIB_DB_USER}" "${CINDERLIB_DB_HOST}" "${CINDERLIB_DB_PORT}" "${CINDERLIB_DB_DATABASE}" "${CINDERLIB_DB_DUMP_COMPRESSOR}" "${CINDERLIB_DB_DUMP_FORMAT}"
 	fi
+	if grafana_enabled && [ -n "${SCOPE_GRAFANA_DB}" ]; then
+		output "- Grafana database '"${GRAFANA_DB_FILENAME}"'"
+		log "Backing up grafana database to ${tardir}/db/${GRAFANA_BACKUP_FILE_NAME}"
+		backupSQLiteDB "${tardir}/db/${GRAFANA_BACKUP_FILE_NAME}" "${GRAFANA_DB_FILENAME}"
+	fi
 	echo "${PACKAGE_VERSION}" > "${tardir}/${PACKAGE_VERSION_FILENAME}" || logdie "Can't create ${tardir}/${PACKAGE_VERSION_FILENAME}"
 	getOSVersion > "${tardir}/${OS_VERSION_FILENAME}" || logdie "Can't create ${tardir}/${OS_VERSION_FILENAME}"
 	source_d dobackup
@@ -1066,6 +1091,15 @@ backupDB() {
 	[ -n "${failed_msg}" ] && logdie "${failed_msg}"
 }
 
+backupSQLiteDB() {
+	local backup_file="$1"
+	local db_file="$2"
+
+	sqlite3 "${db_file}" ".backup ${backup_file}" 2>> "${LOG}" || logdie "failed to backup ${db_file} with sqlite3"
+	chown --reference="${db_file}" "${backup_file}" 2>> "${LOG}" || logdie "chown failed"
+	chmod --reference="${db_file}" "${backup_file}" 2>> "${LOG}" || logdie "chmod failed"
+}
+
 dorestore() {
 	output "Preparing to restore:"
 	if [ -r "${ENGINE_UP_MARK}" ]; then
@@ -1110,6 +1144,7 @@ dorestore() {
 	[ -s "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" ] || SCOPE_ENGINE_DB=
 	[ -s "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" ] || SCOPE_DWH_DB=
 	[ -s "${TEMP_FOLDER}/db/${CINDERLIBDB_BACKUP_FILE_NAME}" ] || SCOPE_CINDERLIB_DB=
+	[ -s "${TEMP_FOLDER}/db/${GRAFANA_BACKUP_FILE_NAME}" ] || SCOPE_GRAFANA_DB=
 
 	if [ -n "${PROVISION_ALL_DBS}" ]; then
 		[ -n "${SCOPE_ENGINE_DB}" ] && PROVISION_DB=1
@@ -1187,6 +1222,10 @@ __EOF__
 		output "- Cinderlib database '"${CINDERLIB_DB_DATABASE}"'"
 		log "Restoring Cinderlib database backup at ${TEMP_FOLDER}/db/${CINDERLIBDB_BACKUP_FILE_NAME}"
 		restoreDB "${TEMP_FOLDER}/db/${CINDERLIBDB_BACKUP_FILE_NAME}" "${CINDERLIB_DB_USER}" "${CINDERLIB_DB_HOST}" "${CINDERLIB_DB_PORT}" "${CINDERLIB_DB_DATABASE}" "${ORIG_CINDERLIB_DB_USER}" "${CINDERLIB_DB_DUMP_COMPRESSOR}" "${CINDERLIB_DB_DUMP_FORMAT}" "${CINDERLIB_DB_RESTORE_JOBS}"
+	fi
+	if [ -n "${SCOPE_GRAFANA_DB}" ]; then
+		output "- Grafana database '"${GRAFANA_DB_FILENAME}"'"
+		restoreSQLiteDB "${TEMP_FOLDER}/db/${GRAFANA_BACKUP_FILE_NAME}" "${GRAFANA_DB_FILENAME}" "grafana:grafana"
 	fi
 	[ -n "${CHANGE_DB_CREDENTIALS}" ] && changeEngineDBConf
 	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" -a "${DWH_DB_USER}" ] && changeDwhDBConf
@@ -1440,6 +1479,22 @@ __EOF
 		cat "${non_ignored_errors}" >> "${LOG}"
 		logdie "Errors while restoring database ${database}"
 	fi
+}
+
+restoreSQLiteDB() {
+	local backupfile="$1"
+	local db_file="$2"
+	local dir_owner="$3"
+
+	local db_dir=$(dirname ${db_file})
+	if ! [ -d "${db_dir}" ]; then
+		# Can happen if using scope=grafanadb only, without scope=files.
+		# Not very likely, but better safe than sorry.
+		mkdir -p "${db_dir}" 2>> "${LOG}" || logdie "mkdir failed"
+		chmod 0750 "${db_dir}" 2>> "${LOG}" || logdie "chmod failed"
+		chown "${dir_owner}" "${db_dir}" 2>> "${LOG}" || output "Warning: ${dir_owner} user or group missing"
+	fi
+	cp -a "${backupfile}" "${db_file}" 2>> "${LOG}" || "cp failed"
 }
 
 verifyEngineDb() {
@@ -1926,6 +1981,7 @@ notify_engine() {
 	[ -n "${SCOPE_ENGINE_DB}" ] && do_notify 'db'
 	[ -n "${SCOPE_DWH_DB}" ] && do_notify 'dwhdb'
 	[ -n "${SCOPE_CINDERLIB_DB}" ] && do_notify 'cinderlib'
+	[ -n "${SCOPE_GRAFANA_DB}" ] && do_notify 'grafanadb'
 
 	unset -f do_notify
 }
@@ -1949,6 +2005,7 @@ doverify() {
 	[ -s "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" ] || SCOPE_ENGINE_DB=
 	[ -s "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" ] || SCOPE_DWH_DB=
 	[ -s "${TEMP_FOLDER}/db/${CINDERLIBDB_BACKUP_FILE_NAME}" ] || SCOPE_CINDERLIB_DB=
+	[ -s "${TEMP_FOLDER}/db/${GRAFANA_BACKUP_FILE_NAME}" ] || SCOPE_GRAFANA_DB=
 
 	if [ -n "${SCOPE_ENGINE_DB}" -a -n "${ENGINE_DB_USER}" ]; then
 		output "- Engine database '"${ENGINE_DB_DATABASE}"'"
