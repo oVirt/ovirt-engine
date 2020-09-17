@@ -330,6 +330,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
             return NoOpCompensationContext.getInstance();
         }
 
+        setCompensationPhaseEndCommand();
         return createDefaultCompensationContext();
     }
 
@@ -349,6 +350,11 @@ public abstract class CommandBase<T extends ActionParametersBase>
      */
     protected boolean isCompensationEnabledByCaller() {
         return getParameters().isCompensationEnabled();
+    }
+
+    private void setCompensationPhaseEndCommand() {
+        getParameters().setCompensationPhaseEndCommand(
+                getCommandCompensationPhase() == CommandCompensationPhase.END_COMMAND);
     }
 
     /**

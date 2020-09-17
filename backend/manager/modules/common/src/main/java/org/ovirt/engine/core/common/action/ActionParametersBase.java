@@ -36,6 +36,11 @@ public class ActionParametersBase implements Serializable, HasCorrelationId {
      */
     private boolean compensationEnabled;
 
+    /**
+     * Indicates if the command is set with END_COMMAND annotation.
+     */
+    private boolean compensationPhaseEndCommand;
+
     private ActionType parentCommand;
 
     /**
@@ -94,6 +99,7 @@ public class ActionParametersBase implements Serializable, HasCorrelationId {
         setParentCommand(ActionType.Unknown);
         executionReason = CommandExecutionReason.REGULAR_FLOW;
         compensationEnabled = false;
+        compensationPhaseEndCommand = false;
         parentCommand = ActionType.Unknown;
         commandType = ActionType.Unknown;
         imagesParameters = new ArrayList<>();
@@ -170,6 +176,14 @@ public class ActionParametersBase implements Serializable, HasCorrelationId {
 
     public void setCompensationEnabled(boolean compensationEnabled) {
         this.compensationEnabled = compensationEnabled;
+    }
+
+    public boolean isCompensationPhaseEndCommand() {
+        return compensationPhaseEndCommand;
+    }
+
+    public void setCompensationPhaseEndCommand(boolean compensationPhaseEndCommand) {
+        this.compensationPhaseEndCommand = compensationPhaseEndCommand;
     }
 
     public ActionType getParentCommand() {

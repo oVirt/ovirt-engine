@@ -7,10 +7,14 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.KeyValue;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.TransientCompensationBusinessEntity;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.dao.GenericDao;
@@ -34,6 +38,9 @@ public class CommandCompensator {
     @Inject
     private ObjectCompensation objectCompensation;
 
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
+
     /**
      * Handles compensation in case of uncompleted compensation-aware commands resulted from server failure.
      */
@@ -41,6 +48,9 @@ public class CommandCompensator {
         // get all command snapshot entries
         List<KeyValue> commandSnapshots = businessEntitySnapshotDao.getAllCommands();
         for (KeyValue commandSnapshot : commandSnapshots) {
+            if(skipCompensationOnStartup((Guid) commandSnapshot.getKey())) {
+                continue;
+            }
             // create an instance of the related command by its class name and command id
             try {
                 compensate((Guid) commandSnapshot.getKey(), (String) commandSnapshot.getValue(), null);
@@ -114,6 +124,21 @@ public class CommandCompensator {
             }
             return null;
         });
+    }
+
+    /**
+     * This method checks if we should compensate the command with the given id on engine startup.
+     * @param commandId The command ID we check.
+     * @return true if we wish to skip the compensation, false otherwise.
+     */
+    private boolean skipCompensationOnStartup(Guid commandId) {
+        CommandBase<?> cmd = commandCoordinatorUtil.retrieveCommand(commandId);
+        return cmd != null && cmd.getParameters().isCompensationPhaseEndCommand()
+                && cmd.getActionType() != ActionType.DeactivateStorageDomainWithOvfUpdate
+                && commandCoordinatorUtil.getChildCommandIds(commandId)
+                .stream()
+                .anyMatch(command -> commandCoordinatorUtil.getCommandStatus(command) == CommandStatus.ACTIVE
+                        && commandCoordinatorUtil.getCommandExecutionStatus(command) == CommandExecutionStatus.EXECUTED);
     }
 
     private void deletedOrUpdateEntity(Class<BusinessEntity<Serializable>> entityClass,
