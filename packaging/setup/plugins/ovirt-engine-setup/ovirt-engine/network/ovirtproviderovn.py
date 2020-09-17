@@ -980,6 +980,30 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
+        after=(
+                oenginecons.Stages.OVN_SERVICES_RESTART,
+        ),
+        condition=lambda self: self._enabled or self._provider_installed,
+    )
+    def _misc_configure_ovn_timeout(self):
+        self.logger.info(_('Updating OVN timeout configuration'))
+        self._execute_command(
+            (
+                self.OVN_SOUTH_DB_CONFIG.command,
+                'set',
+                'connection',
+                '.',
+                'inactivity_probe=60000',
+            ),
+            _(
+                'Failed to configure timeout on {name}'
+            ).format(
+                name=self.OVN_SOUTH_DB_CONFIG.name
+            )
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
         before=(
             oenginecons.Stages.OVN_PROVIDER_SERVICE_RESTART,
         ),
