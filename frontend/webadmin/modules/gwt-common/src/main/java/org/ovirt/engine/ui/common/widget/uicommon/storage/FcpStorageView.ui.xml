@@ -30,7 +30,9 @@
         <b:Row>
             <b:Column size="SM_12">
                 <g:FlowPanel addStyleNames="content-view-pf-pagination clearfix {style.paginationBar}">
-                    <w:PaginationControl ui:field="paginationControl"/>
+                    <b:FormGroup>
+                        <w:PaginationControl ui:field="paginationControl"/>
+                    </b:FormGroup>
                 </g:FlowPanel>
                 <w:ValidatedPanelWidget ui:field="contentPanel"/>
             </b:Column>

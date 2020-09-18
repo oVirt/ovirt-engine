@@ -585,7 +585,7 @@ public abstract class AbstractActionTable<E, T> extends AbstractActionPanel<T> i
     /**
      * Close all other open bootstrap popups by removing the 'open' class from them.
      */
-    private native void closeOtherPopups() /*-{
+    protected native void closeOtherPopups() /*-{
         $wnd.jQuery(".open").removeClass("open");
     }-*/;
 

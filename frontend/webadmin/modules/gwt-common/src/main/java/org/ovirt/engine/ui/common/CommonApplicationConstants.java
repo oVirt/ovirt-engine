@@ -3,6 +3,11 @@ package org.ovirt.engine.ui.common;
 import com.google.gwt.i18n.client.Constants;
 
 public interface CommonApplicationConstants extends Constants {
+
+    String resetGridSettings();
+
+    String changeColumnsVisibilityOrder();
+
     String empty();
 
     String emptyListBoxText();

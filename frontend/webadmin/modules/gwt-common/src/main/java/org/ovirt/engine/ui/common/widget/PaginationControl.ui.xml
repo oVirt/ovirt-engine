@@ -9,22 +9,25 @@
 
     <ui:style>
         .pagerButton>i {
-        font-size: 15px;
-        vertical-align: top;
-        margin: 2px 0;
+            font-size: 15px;
+            vertical-align: top;
+            margin: 2px 0;
+        }
+
+        .baseline {
+            display: flex;
+            align-items: baseline;
         }
     </ui:style>
 
-    <g:FlowPanel>
-        <b:FormGroup>
-            <g:HTMLPanel tag="SPAN">
-                <g:HTMLPanel tag="SPAN" ui:field="itemsCurrent" addStyleNames="pagination-pf-items-current"/>
-            </g:HTMLPanel>
-            <b:ButtonGroup addStyleNames="pagination">
-                <b:Button icon="ANGLE_LEFT" ui:field="prevPageButton" addStyleNames="{style.pagerButton}"/>
-                <b:Button icon="ANGLE_RIGHT" ui:field="nextPageButton" addStyleNames="{style.pagerButton}"/>
-            </b:ButtonGroup>
-        </b:FormGroup>
+    <g:FlowPanel addStyleNames="{style.baseline}">
+        <g:HTMLPanel tag="SPAN">
+            <g:HTMLPanel tag="SPAN" ui:field="itemsCurrent" addStyleNames="pagination-pf-items-current"/>
+        </g:HTMLPanel>
+        <b:ButtonGroup addStyleNames="pagination">
+            <b:Button icon="ANGLE_LEFT" ui:field="prevPageButton" addStyleNames="{style.pagerButton}"/>
+            <b:Button icon="ANGLE_RIGHT" ui:field="nextPageButton" addStyleNames="{style.pagerButton}"/>
+        </b:ButtonGroup>
     </g:FlowPanel>
 
 </ui:UiBinder>

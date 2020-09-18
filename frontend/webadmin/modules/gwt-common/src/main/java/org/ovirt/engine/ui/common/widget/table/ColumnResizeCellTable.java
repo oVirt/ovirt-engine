@@ -171,6 +171,9 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     // Current column widths
     private final Map<Column<T, ?>, String> columnWidthMap = new HashMap<>();
 
+    // Default column widths
+    private final Map<Column<T, ?>, String> defaultWidthMap = new HashMap<>();
+
     // Mapping of column indexes to swapped indexes
     private final Map<Integer, Integer> realToSwappedIndexes = new HashMap<>();
     private final List<Column<T, ?>> unaddedColumns = new ArrayList<>();
@@ -243,7 +246,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         }
     }
 
-    private NativeContextMenuHandler ensureContextMenuHandler() {
+    public NativeContextMenuHandler ensureContextMenuHandler() {
         if (headerContextMenuHandler == null) {
             headerContextMenuHandler = event -> {
                 event.preventDefault();
@@ -467,6 +470,11 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
     }
 
     public void setColumnWidth(Column<T, ?> column, String width, boolean overridePersist) {
+        if (!defaultWidthMap.containsKey(column)) {
+            // treat first width ever set as the default one
+            defaultWidthMap.put(column, width);
+        }
+
         boolean columnVisible = isColumnVisible(column);
 
         if (columnVisible) {
@@ -1106,4 +1114,71 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         return width + "px"; // $NON-NLS-1$
     }
 
+    private void clearPersistedSettings() {
+        clientStorage.removeLocalItem(getSwappedColumnListKey());
+        clientStorage.removeLocalItem(getVisibleByUserRequestListKey());
+
+        for(Column column : getAllColumns().values()) {
+            clientStorage.removeLocalItem(getColumnWidthKey(column));
+            clientStorage.removeLocalItem(getHiddenColumnWidthKey(column));
+        }
+    }
+
+    private Map<Integer, Column> getAllColumns() {
+        Map<Integer, Column> result = new HashMap<>();
+        for (int index = 0; index < getColumnCount(); index++) {
+            result.put(index, getColumn(index));
+        }
+        return result;
+    }
+
+    public void resetGridSettings() {
+        clearPersistedSettings();
+
+        boolean originalFlag = columnResizePersistenceEnabled;
+        columnResizePersistenceEnabled = false;
+
+        // touch only regular columns
+        Map<Integer, Column> indexToColumn = getAllColumns().entrySet().stream()
+                .filter(entry -> entry.getValue() != emptyNoWidthColumn)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        List<Object[]> tuples = indexToColumn.keySet().stream()
+                .map(currentIndex -> {
+                    Object[] tuple = {
+                            Integer.valueOf(determineOriginalIndex(currentIndex)),
+                            getHeader(currentIndex),
+                            indexToColumn.get(currentIndex)
+                    };
+                    return tuple;
+                }).collect(Collectors.toList());
+
+        // original indices are already resolved - we can clear this mapping
+        realToSwappedIndexes.clear();
+
+        for (Column column :indexToColumn.values()) {
+            // side effect: columns hidden by default receive default width
+            setColumnVisible(column, true);
+            // we assume that all column related mappings are not cleared
+            removeColumn(column);
+            contextPopup.getContextMenu().removeItem(column);
+        }
+
+        tuples.stream()
+                // sort columns by original index
+                .sorted(Comparator.comparingInt(tuple -> (Integer)tuple[0]))
+                .forEach(tuple -> {
+                    int originalIndex = (Integer)tuple[0];
+                    Header<?> header = (Header)tuple[1];
+                    Column column = (Column)tuple[2];
+
+                    insertColumn(originalIndex, column, header);
+                    contextPopup.getContextMenu().addItem(column);
+
+                    setColumnWidth(column, defaultWidthMap.get(column));
+                    setColumnVisible(column, !isHiddenByDefault(column));
+                });
+
+        columnResizePersistenceEnabled = originalFlag;
+    }
 }

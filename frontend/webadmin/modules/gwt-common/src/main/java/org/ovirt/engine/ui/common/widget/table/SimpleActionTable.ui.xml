@@ -22,6 +22,16 @@
             display: table-cell;
         }
 
+        .center {
+<!--            marker class -->
+        }
+
+        @external .content-view-pf-pagination;
+        @external .form-group;
+        .content-view-pf-pagination .form-group.center {
+            align-items: center;
+        }
+
         .tableOverhead {
             padding-top: 10px;
             padding-bottom: 10px;
@@ -40,7 +50,10 @@
             <b:FormGroup>
                 <r:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />
             </b:FormGroup>
-            <w:PaginationControl ui:field="paginationControl"/>
+            <b:FormGroup addStyleNames="{style.center}">
+                <w:PaginationControl ui:field="paginationControl"/>
+                <w:Kebab ui:field="actionKebab" visible="false"/>
+            </b:FormGroup>
         </g:FlowPanel>
         <g:FlowPanel addStyleNames="{style.tableHorizontalOverflow}">
             <g:FlowPanel ui:field="tableContainer" />
