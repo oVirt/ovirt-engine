@@ -118,6 +118,7 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -1795,6 +1796,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getCpuPinning().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
                 cpuPinningLabel.setStyleName(object.getCpuPinning().getIsChangable() ? OvirtCss.LABEL_ENABLED : OvirtCss.LABEL_DISABLED);
+                cpuPinningLabel.getElement().getStyle().setFloat(Float.LEFT);
             }
         });
 
