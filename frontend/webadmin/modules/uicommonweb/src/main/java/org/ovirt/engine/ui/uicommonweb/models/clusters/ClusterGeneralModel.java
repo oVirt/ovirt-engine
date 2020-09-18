@@ -167,6 +167,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
     private ClusterType clusterType;
     private String emulatedMachine;
     private BiosType biosType;
+    private String clusterId;
 
     public void setConsoleAddressPartiallyOverridden(Boolean consoleAddressPartiallyOverridden) {
         if (isConsoleAddressPartiallyOverridden().booleanValue() !=
@@ -216,6 +217,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         setName(cluster.getName());
         setDescription(cluster.getDescription());
         setArchitecture(cluster.getArchitecture());
+        setClusterId(cluster.getId().toString());
         setCpuType(cluster.getCpuName());
         setCpuVerb(cluster.getConfiguredCpuVerb());
         setDataCenterName(cluster.getStoragePoolName());
@@ -230,7 +232,6 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         generateClusterType(cluster.supportsGlusterService(), cluster.supportsVirtService());
         AsyncDataProvider.getInstance().getNumberOfVmsInCluster(new AsyncQuery<>(
                 (QueryReturnValue returnValue) -> setNumberOfVms((Integer) returnValue.getReturnValue())), cluster.getId());
-
     }
 
     private void updateConsoleAddressPartiallyOverridden(Cluster cluster) {
@@ -691,6 +692,18 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
 
     public void setCompatibilityVersion(String compatibilityVersion) {
         this.compatibilityVersion = compatibilityVersion;
+    }
+
+
+    public String getClusterId() {
+        return clusterId;
+    }
+
+    public void setClusterId(String value) {
+        if (!Objects.equals(clusterId, value)) {
+            clusterId = value;
+            onPropertyChanged(new PropertyChangedEventArgs("clusterId")); //$NON-NLS-1$
+        }
     }
 
     public ClusterType getClusterType() {

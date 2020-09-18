@@ -51,6 +51,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     StringValueLabel compatibilityVersion = new StringValueLabel();
     StringValueLabel emulatedMachine = new StringValueLabel();
     StringValueLabel numberOfVms = new StringValueLabel();
+    StringValueLabel clusterId = new StringValueLabel();
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -97,6 +98,8 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
         formBuilder.addFormItem(new FormItem(constants.clusterType(), clusterType, 4, 0, virtSupported
                 && glusterSupported));
 
+
+        formBuilder.addFormItem(new FormItem(constants.idCluster(), clusterId, 5, 0));
         // properties for virt support
         formBuilder.addFormItem(new FormItem(constants.cpuTypeCluster(), createCpuType(), 0, 1, virtSupported)
                 .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));

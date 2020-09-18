@@ -1150,6 +1150,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String nameCluster();
 
+    String idCluster();
+
     String dcCluster();
 
     String attachedNetworkCluster();
