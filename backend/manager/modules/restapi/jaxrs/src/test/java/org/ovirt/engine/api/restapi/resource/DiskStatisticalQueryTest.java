@@ -17,14 +17,16 @@ public class DiskStatisticalQueryTest {
     private static final double WRITE_LATENCY = 2.2;
     private static final double FLUSH_LATENCY = 3.3;
     private static final int READ_RATE = 4;
-    private static final int WRITE_RATE = 5;
+    private static final int READ_OPS = 5;
+    private static final int WRITE_RATE = 6;
+    private static final int WRITE_OPS = 7;
 
     private DiskStatisticalQuery query = new DiskStatisticalQuery(getParent());
 
     @Test
     public void testQuery() {
         List<Statistic> statistics = query.getStatistics(getDisk());
-        assertEquals(5, statistics.size());
+        assertEquals(7, statistics.size());
         for (Statistic statistic : statistics) {
             verifyStatistic(statistic);
         }
@@ -39,7 +41,9 @@ public class DiskStatisticalQueryTest {
     private DiskImage getDisk() {
         DiskImage disk = new DiskImage();
         disk.setReadRate(READ_RATE);
+        disk.setReadOps(READ_OPS);
         disk.setWriteRate(WRITE_RATE);
+        disk.setWriteOps(WRITE_OPS);
         disk.setReadLatency(READ_LATENCY);
         disk.setWriteLatency(WRITE_LATENCY);
         disk.setFlushLatency(FLUSH_LATENCY);
@@ -50,8 +54,14 @@ public class DiskStatisticalQueryTest {
         if (statistic.getName().equals(DiskStatisticalQuery.DATA_READ.getName())) {
             assertEquals(READ_RATE, statistic.getValues().getValues().get(0).getDatum().intValue());
         }
+        if (statistic.getName().equals(DiskStatisticalQuery.DATA_READ_OPS.getName())) {
+            assertEquals(READ_OPS, statistic.getValues().getValues().get(0).getDatum().intValue());
+        }
         if (statistic.getName().equals(DiskStatisticalQuery.DATA_WRITE.getName())) {
             assertEquals(WRITE_RATE, statistic.getValues().getValues().get(0).getDatum().intValue());
+        }
+        if (statistic.getName().equals(DiskStatisticalQuery.DATA_WRITE_OPS.getName())) {
+            assertEquals(WRITE_OPS, statistic.getValues().getValues().get(0).getDatum().intValue());
         }
         if (statistic.getName().equals(DiskStatisticalQuery.READ_LATENCY.getName())) {
             assertEquals(READ_LATENCY, statistic.getValues().getValues().get(0).getDatum().doubleValue(), EPSILON);

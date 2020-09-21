@@ -6,7 +6,9 @@
 CREATE OR REPLACE FUNCTION Insertdisk_image_dynamic (
     v_image_id UUID,
     v_read_rate INT,
+    v_read_ops INT,
     v_write_rate INT,
+    v_write_ops INT,
     v_actual_size BIGINT,
     v_read_latency_seconds NUMERIC(18, 9),
     v_write_latency_seconds NUMERIC(18, 9),
@@ -17,7 +19,9 @@ BEGIN
     INSERT INTO disk_image_dynamic (
         image_id,
         read_rate,
+        read_ops,
         write_rate,
+        write_ops,
         actual_size,
         read_latency_seconds,
         write_latency_seconds,
@@ -26,7 +30,9 @@ BEGIN
     VALUES (
         v_image_id,
         v_read_rate,
+        v_read_ops,
         v_write_rate,
+        v_write_ops,
         v_actual_size,
         v_read_latency_seconds,
         v_write_latency_seconds,
@@ -38,7 +44,9 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION Updatedisk_image_dynamic (
     v_image_id UUID,
     v_read_rate INT,
+    v_read_ops INT,
     v_write_rate INT,
+    v_write_ops INT,
     v_actual_size BIGINT,
     v_read_latency_seconds NUMERIC(18, 9),
     v_write_latency_seconds NUMERIC(18, 9),
@@ -50,7 +58,9 @@ RETURNS VOID
 BEGIN
     UPDATE disk_image_dynamic
     SET read_rate = v_read_rate,
+        read_ops = v_read_ops,
         write_rate = v_write_rate,
+        write_ops = v_write_ops,
         actual_size = v_actual_size,
         read_latency_seconds = v_read_latency_seconds,
         write_latency_seconds = v_write_latency_seconds,
@@ -64,7 +74,9 @@ CREATE OR REPLACE FUNCTION Updatedisk_image_dynamic_by_disk_id_and_vm_id (
     v_image_group_id UUID,
     v_vm_id UUID,
     v_read_rate INT,
+    v_read_ops INT,
     v_write_rate INT,
+    v_write_ops INT,
     v_actual_size BIGINT,
     v_read_latency_seconds NUMERIC(18, 9),
     v_write_latency_seconds NUMERIC(18, 9),
@@ -76,7 +88,9 @@ RETURNS VOID
 BEGIN
     UPDATE disk_image_dynamic
     SET read_rate = v_read_rate,
+        read_ops = v_read_ops,
         write_rate = v_write_rate,
+        write_ops = v_write_ops,
         actual_size = v_actual_size,
         read_latency_seconds = v_read_latency_seconds,
         write_latency_seconds = v_write_latency_seconds,

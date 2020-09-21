@@ -39,7 +39,9 @@ public class DiskImageDynamicDaoImpl extends MassOperationsGenericDao<DiskImageD
     protected MapSqlParameterSource createFullParametersMapper(DiskImageDynamic entity) {
         return createIdParameterMapper(entity.getId())
                 .addValue("read_rate", entity.getReadRate())
+                .addValue("read_ops", entity.getReadOps())
                 .addValue("write_rate", entity.getWriteRate())
+                .addValue("write_ops", entity.getWriteOps())
                 .addValue("actual_size", entity.getActualSize())
                 .addValue("read_latency_seconds", entity.getReadLatency())
                 .addValue("write_latency_seconds", entity.getWriteLatency())
@@ -52,7 +54,9 @@ public class DiskImageDynamicDaoImpl extends MassOperationsGenericDao<DiskImageD
             DiskImageDynamic entity = new DiskImageDynamic();
             entity.setId(getGuidDefaultEmpty(rs, "image_id"));
             entity.setReadRate((Integer) rs.getObject("read_rate"));
+            entity.setReadOps((Integer) rs.getObject("read_ops"));
             entity.setWriteRate((Integer) rs.getObject("write_rate"));
+            entity.setWriteOps((Integer) rs.getObject("write_ops"));
             entity.setActualSize(rs.getLong("actual_size"));
             entity.setReadLatency(rs.getObject("read_latency_seconds") != null ? rs.getDouble("read_latency_seconds")
                     : null);
@@ -72,7 +76,9 @@ public class DiskImageDynamicDaoImpl extends MassOperationsGenericDao<DiskImageD
                     .addValue("vm_id", vmId)
                     .addValue("image_group_id", diskImageDynamic.getId())
                     .addValue("read_rate", diskImageDynamic.getReadRate())
+                    .addValue("read_ops", diskImageDynamic.getReadOps())
                     .addValue("write_rate", diskImageDynamic.getWriteRate())
+                    .addValue("write_ops", diskImageDynamic.getWriteOps())
                     .addValue("actual_size", diskImageDynamic.getActualSize())
                     .addValue("read_latency_seconds", diskImageDynamic.getReadLatency())
                     .addValue("write_latency_seconds", diskImageDynamic.getWriteLatency())

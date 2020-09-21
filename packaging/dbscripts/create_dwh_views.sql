@@ -480,8 +480,10 @@ SELECT d.disk_id AS vm_disk_id,
     cast(images.imageStatus AS SMALLINT) AS vm_disk_status,
     vm_disk_actual_size.vm_disk_actual_size_mb AS vm_disk_actual_size_mb,
     disk_image_dynamic.read_rate AS read_rate_bytes_per_second,
+    disk_image_dynamic.read_ops AS read_ops_per_second,
     disk_image_dynamic.read_latency_seconds AS read_latency_seconds,
     disk_image_dynamic.write_rate AS write_rate_bytes_per_second,
+    disk_image_dynamic.write_ops AS write_ops_per_second,
     disk_image_dynamic.write_latency_seconds AS write_latency_seconds,
     disk_image_dynamic.flush_latency_seconds AS flush_latency_seconds
 FROM images

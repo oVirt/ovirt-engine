@@ -14,7 +14,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class DiskStatisticalQuery extends AbstractStatisticalQuery<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
 
     static final Statistic DATA_READ  = create("data.current.read",  "Read data rate",  GAUGE, BYTES_PER_SECOND, DECIMAL);
+    static final Statistic DATA_READ_OPS  = create("data.current.read_ops",  "Read data ops",  GAUGE, StatisticUnit.SECONDS, DECIMAL);
     static final Statistic DATA_WRITE = create("data.current.write", "Write data rate", GAUGE, BYTES_PER_SECOND, DECIMAL);
+    static final Statistic DATA_WRITE_OPS = create("data.current.write_ops", "Write data ops", GAUGE, StatisticUnit.SECONDS, DECIMAL);
     static final Statistic READ_LATENCY = create("disk.read.latency", "Read latency", GAUGE, StatisticUnit.SECONDS, DECIMAL);
     static final Statistic WRITE_LATENCY = create("disk.write.latency", "Write latency", GAUGE, StatisticUnit.SECONDS, DECIMAL);
     static final Statistic FLUSH_LATENCY = create("disk.flush.latency", "Flush latency", GAUGE, StatisticUnit.SECONDS, DECIMAL);
@@ -32,7 +34,9 @@ public class DiskStatisticalQuery extends AbstractStatisticalQuery<Disk, org.ovi
         if (i.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage disk = (DiskImage) i;
             return asList(setDatum(clone(DATA_READ), disk.getReadRate()),
+                      setDatum(clone(DATA_READ_OPS), disk.getReadOps()),
                       setDatum(clone(DATA_WRITE), disk.getWriteRate()),
+                      setDatum(clone(DATA_WRITE_OPS), disk.getWriteOps()),
                       setDatum(clone(READ_LATENCY), disk.getReadLatency()==null ? 0.0 : disk.getReadLatency()),
                       setDatum(clone(WRITE_LATENCY), disk.getWriteLatency()==null ? 0.0 : disk.getWriteLatency()),
                       setDatum(clone(FLUSH_LATENCY), disk.getFlushLatency()==null ? 0.0 : disk.getFlushLatency()));

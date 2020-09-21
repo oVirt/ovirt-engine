@@ -545,11 +545,11 @@
   <event_map event_up_name="TestRun" event_down_name="TestStop"/>
   <event_subscriber subscriber_id="9bf7c640-b620-456f-a550-0348f366544a" event_up_name="TestRun" notification_method="smtp" tag_name="testrun"/>
 
-  <disk_image_dynamic image_id="42058975-3d5e-484a-80c1-01c31207f578" read_rate="0" write_rate="0" actual_size="1073741824"/>
-  <disk_image_dynamic image_id="52058975-3d5e-484a-80c1-01c31207f578" read_rate="0" write_rate="0" actual_size="1073741824"/>
-  <disk_image_dynamic image_id="c9a559d9-8666-40d1-9967-759502b19f0c" read_rate="0" write_rate="0" actual_size="1073741824"/>
-  <disk_image_dynamic image_id="42058975-3d5e-484a-80c1-01c31207f579" read_rate="0" write_rate="0" actual_size="1073741824"/>
-  <disk_image_dynamic image_id="c9a559d9-8666-40d1-9967-759502b19f0b" read_rate="0" write_rate="0" actual_size="1073741824"/>
+  <disk_image_dynamic image_id="42058975-3d5e-484a-80c1-01c31207f578" read_rate="0" read_ops="0" write_rate="0" write_ops="0" actual_size="1073741824"/>
+  <disk_image_dynamic image_id="52058975-3d5e-484a-80c1-01c31207f578" read_rate="0" read_ops="0" write_rate="0" write_ops="0" actual_size="1073741824"/>
+  <disk_image_dynamic image_id="c9a559d9-8666-40d1-9967-759502b19f0c" read_rate="0" read_ops="0" write_rate="0" write_ops="0" actual_size="1073741824"/>
+  <disk_image_dynamic image_id="42058975-3d5e-484a-80c1-01c31207f579" read_rate="0" read_ops="0" write_rate="0" write_ops="0" actual_size="1073741824"/>
+  <disk_image_dynamic image_id="c9a559d9-8666-40d1-9967-759502b19f0b" read_rate="0" read_ops="0" write_rate="0" write_ops="0" actual_size="1073741824"/>
 
   <tags_user_group_map tag_id="d3ec3e01-ca89-48e1-8b43-a9b38f873b0c" group_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1"/>
   <tags_user_group_map tag_id="d3ec3e01-ca89-48e1-8b43-a9b38f873b0d" group_id="b399944a-81ab-4ec5-8266-e19ba7c3c9d1"/>

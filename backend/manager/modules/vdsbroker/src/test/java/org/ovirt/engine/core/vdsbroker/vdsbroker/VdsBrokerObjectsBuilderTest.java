@@ -149,8 +149,10 @@ public class VdsBrokerObjectsBuilderTest {
     public void testWhenVDSMNotSendingFields() {
         Map<String, Object> diskData = new HashMap<>();
         diskData.put(VdsProperties.vm_disk_read_rate, DEFAULT_VALUE);
+        diskData.put(VdsProperties.vm_disk_read_ops, DEFAULT_VALUE);
         diskData.put(VdsProperties.ImageId, IMAGE_ID.toString());
         diskData.put(VdsProperties.vm_disk_write_rate, DEFAULT_VALUE);
+        diskData.put(VdsProperties.vm_disk_write_ops, DEFAULT_VALUE);
 
         // Set the default values to the fields.
         diskData.put(VdsProperties.vm_disk_flush_latency, DEFAULT_VALUE);
@@ -296,8 +298,10 @@ public class VdsBrokerObjectsBuilderTest {
     private static Map<String, Object> setDiskData() {
         Map<String, Object> diskData = new HashMap<>();
         diskData.put(VdsProperties.vm_disk_read_rate, DEFAULT_VALUE);
+        diskData.put(VdsProperties.vm_disk_read_ops, DEFAULT_VALUE);
         diskData.put(VdsProperties.ImageId, IMAGE_ID.toString());
         diskData.put(VdsProperties.vm_disk_write_rate, DEFAULT_VALUE);
+        diskData.put(VdsProperties.vm_disk_write_ops, DEFAULT_VALUE);
 
         // Set the default values to the fields.
         diskData.put(VdsProperties.vm_disk_flush_latency, DEFAULT_VALUE);

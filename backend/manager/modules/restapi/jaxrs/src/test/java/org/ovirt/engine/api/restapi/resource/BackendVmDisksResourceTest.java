@@ -123,10 +123,12 @@ public class BackendVmDisksResourceTest
 
     static org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
         when(entity.getReadRate()).thenReturn(1);
-        when(entity.getWriteRate()).thenReturn(2);
-        when(entity.getReadLatency()).thenReturn(3.0);
-        when(entity.getWriteLatency()).thenReturn(4.0);
-        when(entity.getFlushLatency()).thenReturn(5.0);
+        when(entity.getReadOps()).thenReturn(2);
+        when(entity.getWriteRate()).thenReturn(3);
+        when(entity.getWriteOps()).thenReturn(4);
+        when(entity.getReadLatency()).thenReturn(5.0);
+        when(entity.getWriteLatency()).thenReturn(6.0);
+        when(entity.getFlushLatency()).thenReturn(7.0);
         return entity;
     }
 

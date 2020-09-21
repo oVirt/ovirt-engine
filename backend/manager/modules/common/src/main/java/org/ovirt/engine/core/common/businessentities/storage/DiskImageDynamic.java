@@ -12,7 +12,11 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
 
     private Integer readRate;
 
+    private Integer readOps;
+
     private Integer writeRate;
+
+    private Integer writeOps;
 
     private long actualSize;
 
@@ -34,12 +38,28 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
         readRate = rate;
     }
 
+    public Integer getReadOps() {
+        return readOps;
+    }
+
+    public void setReadOps(Integer ops) {
+        readOps = ops;
+    }
+
     public Integer getWriteRate() {
         return writeRate;
     }
 
     public void setWriteRate(Integer rate) {
         writeRate = rate;
+    }
+
+    public Integer getWriteOps() {
+        return writeOps;
+    }
+
+    public void setWriteOps(Integer ops) {
+        writeOps = ops;
     }
 
     public Double getReadLatency() {
@@ -80,7 +100,9 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
                 id,
                 actualSize,
                 readRate,
+                readOps,
                 writeRate,
+                writeOps,
                 readLatency,
                 writeLatency,
                 flushLatency
@@ -99,7 +121,9 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
         return Objects.equals(id, other.id)
                 && actualSize == other.actualSize
                 && Objects.equals(readRate, other.readRate)
+                && Objects.equals(readOps, other.readOps)
                 && Objects.equals(writeRate, other.writeRate)
+                && Objects.equals(writeOps, other.writeOps)
                 && Objects.equals(readLatency, other.readLatency)
                 && Objects.equals(writeLatency, other.writeLatency)
                 && Objects.equals(flushLatency, other.flushLatency);

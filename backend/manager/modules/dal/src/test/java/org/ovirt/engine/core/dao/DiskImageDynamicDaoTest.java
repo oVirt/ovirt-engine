@@ -47,7 +47,9 @@ public class DiskImageDynamicDaoTest extends BaseGenericDaoTestCase<Guid, DiskIm
     public DiskImageDynamic createDiskImageDynamic(Guid id) {
         DiskImageDynamic dynamic = new DiskImageDynamic();
         dynamic.setReadRate(5);
-        dynamic.setWriteRate(6);
+        dynamic.setReadOps(6);
+        dynamic.setWriteRate(7);
+        dynamic.setWriteOps(8);
         dynamic.setReadLatency(0d);
         dynamic.setFlushLatency(0.0202020d);
         dynamic.setWriteLatency(null);

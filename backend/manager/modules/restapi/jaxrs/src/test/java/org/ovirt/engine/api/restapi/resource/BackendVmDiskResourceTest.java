@@ -288,7 +288,9 @@ public class BackendVmDiskResourceTest
         DiskImage entity = mock(DiskImage.class);
         when(entity.getId()).thenReturn(DISK_ID);
         when(entity.getReadRate()).thenReturn(10);
+        when(entity.getReadOps()).thenReturn(15);
         when(entity.getWriteRate()).thenReturn(20);
+        when(entity.getWriteOps()).thenReturn(25);
         when(entity.getReadLatency()).thenReturn(30.0);
         when(entity.getWriteLatency()).thenReturn(40.0);
         when(entity.getFlushLatency()).thenReturn(50.0);
@@ -305,14 +307,18 @@ public class BackendVmDiskResourceTest
             statistics,
             new String[] {
                 "data.current.read",
+                "data.current.read_ops",
                 "data.current.write",
+                "data.current.write_ops",
                 "disk.read.latency",
                 "disk.write.latency",
                 "disk.flush.latency"
             },
             new BigDecimal[] {
                 asDec(10),
+                asDec(15),
                 asDec(20),
+                asDec(25),
                 asDec(30.0),
                 asDec(40.0),
                 asDec(50.0)
@@ -521,10 +527,12 @@ public class BackendVmDiskResourceTest
 
     private org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
         when(entity.getReadRate()).thenReturn(1);
-        when(entity.getWriteRate()).thenReturn(2);
-        when(entity.getReadLatency()).thenReturn(3.0);
-        when(entity.getWriteLatency()).thenReturn(4.0);
-        when(entity.getFlushLatency()).thenReturn(5.0);
+        when(entity.getReadOps()).thenReturn(2);
+        when(entity.getWriteRate()).thenReturn(3);
+        when(entity.getWriteOps()).thenReturn(4);
+        when(entity.getReadLatency()).thenReturn(5.0);
+        when(entity.getWriteLatency()).thenReturn(6.0);
+        when(entity.getFlushLatency()).thenReturn(7.0);
         return entity;
     }
 

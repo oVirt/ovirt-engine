@@ -212,7 +212,9 @@ public final class VdsProperties {
     // Disks configuration
     public static final String vm_disks = "disks";
     public static final String vm_disk_read_rate = "readRate";
+    public static final String vm_disk_read_ops = "readOps";
     public static final String vm_disk_write_rate = "writeRate";
+    public static final String vm_disk_write_ops = "writeOps";
     public static final String vm_disk_read_latency = "readLatency";
     public static final String vm_disk_write_latency = "writeLatency";
     public static final String vm_disk_flush_latency = "flushLatency";
