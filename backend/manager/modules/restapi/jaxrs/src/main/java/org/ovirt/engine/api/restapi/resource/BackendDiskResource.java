@@ -21,9 +21,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DiskResource;
-import org.ovirt.engine.api.resource.DiskSnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
-import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -60,17 +58,6 @@ public class BackendDiskResource
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(QueryType.GetDiskByDiskId, IdQueryParameters.class);
         DiskStatisticalQuery query = new DiskStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<>(entityType, guid, query));
-    }
-
-    public DiskSnapshotsResource getDiskSnapshotsResource() {
-        QueryReturnValue result = runQuery(QueryType.GetDiskByDiskId, new IdQueryParameters(guid));
-        if (result.getSucceeded() && result.getReturnValue() != null) {
-            Disk disk = DiskMapper
-                    .map((org.ovirt.engine.core.common.businessentities.storage.Disk) result.getReturnValue(), null);
-            Guid storageDomainGuid = getSourceStorageDomainId(disk);
-            return inject(new BackendStorageDomainDiskSnapshotsResource(storageDomainGuid));
-        }
-        return notFound(DiskSnapshotsResource.class);
     }
 
     @Override
