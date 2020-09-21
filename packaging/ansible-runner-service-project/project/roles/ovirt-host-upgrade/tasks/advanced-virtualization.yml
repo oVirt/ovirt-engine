@@ -1,0 +1,31 @@
+---
+- block:
+    - name: Fetch redhat-release version
+      yum:
+        list: redhat-release
+        update_cache: yes
+      register: available_releases
+
+    - name: Find latest available redhat-release version
+      set_fact:
+        virt_mod_ver: "{{ item.version }}"
+      when: virt_mod_ver | default('0') is version (item.version, '<')
+      loop: "{{ available_releases.results }}"
+
+    - block:
+        - name: Reset configuration of advanced virtualization module
+          shell: dnf -y module reset virt
+          tags:
+            - skip_ansible_lint # E305
+
+        - name: Enable advanced virtualization module for relevant OS version
+          shell: "dnf -y module enable virt:{{ virt_mod_ver }}"
+          tags:
+            - skip_ansible_lint # E305
+
+      when: virt_mod_ver is version (ansible_distribution_version, '>')
+
+  when:
+    - host_deploy_origin_type != ovirt_origin_type
+    - el_ver|int >= 8
+    - not node_host|bool

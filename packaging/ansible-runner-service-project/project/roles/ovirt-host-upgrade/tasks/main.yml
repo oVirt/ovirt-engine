@@ -20,6 +20,9 @@
     name: ovirt-host-deploy-facts
     tasks_from: host-os.yml
 
+- name: Configure advanced virtualization
+  import_tasks: advanced-virtualization.yml
+
 - name: Prepare NGN host for upgrade
   file:
     path: /var/imgbased/.image-updated
