@@ -93,6 +93,13 @@ public class InstanceImagesEditor extends AddRemoveRowWidget<InstanceImagesModel
     @Override
     public void edit(final InstanceImagesModel model) {
         this.model = model;
+        model.getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                title.setVisible(model.getIsAvailable());
+                mainPanel.setVisible(model.getIsAvailable());
+                contentPanel.setVisible(model.getIsAvailable());
+            }
+        });
         super.edit(model);
     }
 
