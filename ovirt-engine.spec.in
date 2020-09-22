@@ -622,6 +622,7 @@ Requires:	bzip2
 Requires:	xz
 Requires:	python3-otopi >= 1.9.0
 Requires:	postgresql >= 12.0
+Requires:	sqlite
 
 %description tools-backup
 %{ovirt_product_name_short} Tools (engine-backup)
