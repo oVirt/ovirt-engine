@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -568,6 +569,9 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
         vdsActionParams.setAuthMethod(model.getAuthenticationMethod());
         vdsActionParams.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         vdsActionParams.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
+        vdsActionParams.setHostedEngineDeployConfiguration(
+                new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
+
         model.startProgress();
 
         Frontend.getInstance().runAction(ActionType.AddVds, vdsActionParams,

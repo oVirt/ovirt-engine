@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -1270,7 +1271,6 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
         host.setPmKdumpDetection(model.getPmKdumpDetection().getEntity());
 
-
         AddVdsActionParameters addVdsParams = new AddVdsActionParameters();
         addVdsParams.setVdsId(host.getId());
         addVdsParams.setvds(host);
@@ -1280,6 +1280,8 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         addVdsParams.setAuthMethod(model.getAuthenticationMethod());
         addVdsParams.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         addVdsParams.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
+        addVdsParams.setHostedEngineDeployConfiguration(
+                new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
         model.startProgress();
 
         Frontend.getInstance().runAction(ActionType.AddVds, addVdsParams,
