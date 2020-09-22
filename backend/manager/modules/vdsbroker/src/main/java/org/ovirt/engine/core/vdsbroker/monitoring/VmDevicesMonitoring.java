@@ -537,7 +537,9 @@ public class VmDevicesMonitoring {
 
     private String getDeviceLogicalName(Map<String, Object> vmInfo, Map<String, Object> device) {
         Guid deviceId = getDeviceId(device);
-        if (deviceId != null && VmDeviceType.DISK.getName().equals(device.get(VdsProperties.Device))) {
+        Object deviceType = device.get(VdsProperties.Device);
+        if (deviceId != null
+                && (VmDeviceType.DISK.getName().equals(deviceType) || VmDeviceType.LUN.getName().equals(deviceType))) {
             try {
                 return getDeviceLogicalName((Map<String, Object>) vmInfo.get(VdsProperties.GuestDiskMapping), deviceId);
             } catch (Exception e) {

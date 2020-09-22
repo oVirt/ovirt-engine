@@ -95,9 +95,20 @@ public class VmDevicesConverter {
 
             XmlNode guestNameNode = node.selectSingleNode("ovirt-vm:guestName", xmlNS);
             if (guestNameNode != null) {
-                // guest disk mapping is not available for LUNs at the moment
-                result.put(node.selectSingleNode("ovirt-vm:imageID", xmlNS).innerText,
-                        Collections.singletonMap(VdsProperties.Name, guestNameNode.innerText));
+                // Both LUN and regular disk are having imageID. Therefore, we first check the LUN.
+                XmlNode lunId = node.selectSingleNode("ovirt-vm:GUID", xmlNS);
+                if (lunId != null) {
+                    // direct LUN
+                    result.put(diskLunMapDao.getDiskIdByLunId(lunId.innerText).getDiskId().toString(),
+                            Collections.singletonMap(VdsProperties.Name, guestNameNode.innerText));
+                } else {
+                    XmlNode imageId = node.selectSingleNode("ovirt-vm:imageID", xmlNS);
+                    if (imageId != null) {
+                        // regular disk
+                        result.put(imageId.innerText,
+                                Collections.singletonMap(VdsProperties.Name, guestNameNode.innerText));
+                    }
+                }
             }
         }
         return result;
