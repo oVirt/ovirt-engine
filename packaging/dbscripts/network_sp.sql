@@ -1150,6 +1150,7 @@ BEGIN
             FROM vm_static
             WHERE vm_static.cluster_id = v_cluster_id
               AND vm_static.vm_guid = vm_interface.vm_guid
+              AND vm_interface.mac_addr IS NOT NULL
             );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
