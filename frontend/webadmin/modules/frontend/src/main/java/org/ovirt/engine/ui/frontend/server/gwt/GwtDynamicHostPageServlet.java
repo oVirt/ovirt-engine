@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -264,7 +265,13 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     }
 
     protected DbUser getLoggedInUser(String sessionId) {
-        return (DbUser) runQuery(QueryType.GetUserBySessionId, new QueryParametersBase(), sessionId);
+        DbUser userFromSession = (DbUser) runQuery(QueryType.GetUserBySessionId, new QueryParametersBase(), sessionId);
+        if (userFromSession == null) {
+            return null;
+        }
+        return (DbUser) runQuery(QueryType.GetDbUserByUserId,
+                new IdQueryParameters(userFromSession.getId()),
+                sessionId);
     }
 
     protected ObjectNode getUserInfoObject(DbUser loggedInUser, String ssoToken) {

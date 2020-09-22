@@ -127,6 +127,13 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     @Test
     public void testDoGet_WithUserInfoObject() throws IOException, ServletException, NoSuchAlgorithmException {
         doReturn(mockDigest).when(testServlet).getMd5Digest(any());
+
+        QueryReturnValue returnValue = new QueryReturnValue();
+        returnValue.setSucceeded(true);
+        returnValue.setReturnValue(mockUser);
+        when(mockBackend.runQuery(eq(QueryType.GetDbUserByUserId),
+                any())).thenReturn(returnValue);
+
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey()),
                 any());
