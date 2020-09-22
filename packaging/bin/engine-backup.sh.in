@@ -1267,15 +1267,27 @@ __EOF
 }
 
 verifyVersion() {
-	INSTALLED_VERSION="$(echo ${PACKAGE_VERSION} | cut -d . -f 1-2)"
-	BACKUP_VERSION="$(cat ${TEMP_FOLDER}/${PACKAGE_VERSION_FILENAME} | cut -d . -f 1-2)"
+	INSTALLED_VERSION="${PACKAGE_VERSION}"
+	INSTALLED_VERSION_X_Y="$(echo ${INSTALLED_VERSION} | cut -d . -f 1-2)"
+	BACKUP_VERSION="$(cat ${TEMP_FOLDER}/${PACKAGE_VERSION_FILENAME})"
+	BACKUP_VERSION_X_Y="$(echo ${BACKUP_VERSION} | cut -d . -f 1-2)"
 	local ok=
 	while read validbck validres; do
-		[ "${BACKUP_VERSION}" = "${validbck}" -a "${INSTALLED_VERSION}" = "${validres}" ] && ok=1
+		[ "${BACKUP_VERSION_X_Y}" = "${validbck}" -a "${INSTALLED_VERSION_X_Y}" = "${validres}" ] && ok=1
 	done << __EOF__
 ${VALID_BACKUP_RESTORE_PAIRS}
 __EOF__
-	[ "${INSTALLED_VERSION}" == "${BACKUP_VERSION}" ] && ok=1
+	[ "${INSTALLED_VERSION_X_Y}" == "${BACKUP_VERSION_X_Y}" ] && ok=1
+	if [ "${BACKUP_VERSION_X_Y}" = "4.3" ]; then
+		# Prevent upgrading from < 4.3.10.
+		# We already document to upgrade first to latest 4.3, before upgrading to 4.4.
+		# Also, specifically, cinderlib backup was added in 4.3.10,
+		# So a backup taken with 4.3.9 on a setup with cinderlib,
+		# will not include its db, and engine-setup will fail, and
+		# this will leave the system in a broken state. Prevent that.
+		local z="$(echo ${BACKUP_VERSION} | cut -d . -f 3)"
+		[ "${z}" -lt 10 ] && ok=
+	fi
 	[ -z "${ok}" ] && logdie "Backup was created by version '${BACKUP_VERSION}' and can not be restored using the installed version ${INSTALLED_VERSION}"
 }
 
