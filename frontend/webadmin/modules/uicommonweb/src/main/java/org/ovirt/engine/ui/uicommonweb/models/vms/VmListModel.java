@@ -1794,11 +1794,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         CloneVmParameters parameters = getCloneVmParameters(vm, vm.getName(), true);
         parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
 
-        Frontend.getInstance()
-                .runAction(ActionType.CloneVm,
-                        parameters,
-                        new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, null),
-                        this);
+        Frontend.getInstance().runAction(ActionType.CloneVm, parameters, null, this);
     }
 
     private boolean isHeadlessModeChanged(VM source, VmManagementParametersBase updateVmParameters) {

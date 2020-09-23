@@ -154,7 +154,7 @@ public final class ActionUtils {
         Map<Enum<?>, Set<ActionType>> vmMatrix = new HashMap<>();
         vmMatrix.put(
                 VMStatus.WaitForLaunch,
-                EnumSet.of(ActionType.HibernateVm, ActionType.RunVm, ActionType.CloneVm,
+                EnumSet.of(ActionType.HibernateVm, ActionType.RunVm,
                         ActionType.RunVmOnce, ActionType.AddVmTemplate, ActionType.RemoveVm,
                         ActionType.ExportVm, ActionType.ImportVm, ActionType.ChangeDisk,
                         ActionType.AddVmInterface, ActionType.UpdateVmInterface,
@@ -162,13 +162,13 @@ public final class ActionUtils {
                         ActionType.ExtendImageSize, ActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.Up,
-                EnumSet.of(ActionType.RunVm, ActionType.CloneVm,
-                        ActionType.RunVmOnce, ActionType.AddVmTemplate, ActionType.RemoveVm, ActionType.CloneVm,
+                EnumSet.of(ActionType.RunVm,
+                        ActionType.RunVmOnce, ActionType.AddVmTemplate, ActionType.RemoveVm,
                         ActionType.ExportVm, ActionType.ImportVm,
                         ActionType.CancelMigrateVm));
         vmMatrix.put(
                 VMStatus.PoweringDown,
-                EnumSet.of(ActionType.HibernateVm, ActionType.RunVm, ActionType.CloneVm,
+                EnumSet.of(ActionType.HibernateVm, ActionType.RunVm,
                         ActionType.RunVmOnce,
                         ActionType.AddVmTemplate, ActionType.RemoveVm, ActionType.MigrateVm,
                         ActionType.ExportVm, ActionType.ImportVm,
@@ -178,7 +178,7 @@ public final class ActionUtils {
                         ActionType.ExtendImageSize, ActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.PoweringUp,
-                EnumSet.of(ActionType.HibernateVm, ActionType.RunVm, ActionType.CloneVm,
+                EnumSet.of(ActionType.HibernateVm, ActionType.RunVm,
                         ActionType.RunVmOnce, ActionType.AddVmTemplate, ActionType.RemoveVm,
                         ActionType.ExportVm, ActionType.ImportVm, ActionType.ChangeDisk,
                         ActionType.AddVmInterface, ActionType.UpdateVmInterface,
@@ -186,7 +186,7 @@ public final class ActionUtils {
                         ActionType.ExtendImageSize));
         vmMatrix.put(
                 VMStatus.RebootInProgress,
-                EnumSet.of(ActionType.HibernateVm, ActionType.RunVm, ActionType.CloneVm,
+                EnumSet.of(ActionType.HibernateVm, ActionType.RunVm,
                         ActionType.RunVmOnce, ActionType.AddVmTemplate, ActionType.RemoveVm,
                         ActionType.ExportVm, ActionType.ImportVm, ActionType.ChangeDisk,
                         ActionType.AddVmInterface, ActionType.UpdateVmInterface,
@@ -194,7 +194,7 @@ public final class ActionUtils {
                         ActionType.ExtendImageSize, ActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.MigratingFrom,
-                EnumSet.of(ActionType.RunVm, ActionType.CloneVm,
+                EnumSet.of(ActionType.RunVm,
                         ActionType.RunVmOnce, ActionType.AddVmTemplate, ActionType.RemoveVm,
                         ActionType.HibernateVm, ActionType.MigrateVm, ActionType.ExportVm,
                         ActionType.ImportVm, ActionType.ChangeDisk,
@@ -203,7 +203,7 @@ public final class ActionUtils {
                         ActionType.ExtendImageSize, ActionType.RebootVm));
         vmMatrix.put(
                 VMStatus.Suspended,
-                EnumSet.of(ActionType.HibernateVm, ActionType.AddVmTemplate, ActionType.CloneVm,
+                EnumSet.of(ActionType.HibernateVm, ActionType.AddVmTemplate,
                         ActionType.RunVmOnce, ActionType.MigrateVm, ActionType.ExportVm,
                         ActionType.ImportVm, ActionType.ChangeDisk, ActionType.RemoveVm,
                         ActionType.AddVmInterface, ActionType.UpdateVmInterface,
@@ -211,7 +211,7 @@ public final class ActionUtils {
                         ActionType.CreateSnapshotForVm));
         vmMatrix.put(
                 VMStatus.Paused,
-                EnumSet.of(ActionType.RemoveVm, ActionType.HibernateVm, ActionType.CloneVm,
+                EnumSet.of(ActionType.RemoveVm, ActionType.HibernateVm,
                         ActionType.AddVmTemplate, ActionType.RunVmOnce, ActionType.ExportVm,
                         ActionType.ImportVm, ActionType.ExtendImageSize,
                         ActionType.AddVmInterface, ActionType.UpdateVmInterface,

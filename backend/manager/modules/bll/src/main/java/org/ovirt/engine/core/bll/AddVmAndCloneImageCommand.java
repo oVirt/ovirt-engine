@@ -104,6 +104,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 diskInfoDestinationMap != null ? diskInfoDestinationMap.get(diskImage.getId()) : null);
         ImagesHandler.setDiskAlias(newDiskImage, getVm());
         newDiskImage.setDiskAlias(String.format("%s_%s", newDiskImage.getDiskAlias(), getVm().getName()));
+        newDiskImage.setActive(true);
         MoveOrCopyImageGroupParameters parameters = createCopyParameters(newDiskImage,
                 srcStorageDomainId,
                 diskImage.getId(),
