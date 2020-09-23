@@ -31,7 +31,6 @@
   yum:
     name: "{{ item }}"
     state: latest
-    update_cache: yes
     lock_timeout: 300
   loop: "{{ yum_result.split('\n') }}"
   tags:
