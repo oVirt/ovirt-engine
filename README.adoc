@@ -26,8 +26,8 @@ Install the following system components:
 - ansible >= 2.9.0
 - ansible-runner-service-dev >= 1.0.4
 - ovirt-ansible-roles >= 1.2.0
-- ovirt-engine-metrics
 - ovirt-imageio-daemon >= 2.0.6
+- ovirt-engine-metrics (optional)
 - python3-ovirt-engine-sdk4 (optional)
 - ansible-lint / python3-ansible-lint (optional)
 - python-flake8 / pyflakes (optional)
