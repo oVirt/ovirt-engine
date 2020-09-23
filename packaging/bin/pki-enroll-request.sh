@@ -19,7 +19,8 @@ sign() {
 		local extsection="v3_ca"
 		[ -n "${ovirt_san}" ] && extsection="v3_ca_san"
 		[ -n "${ovirt_ku}" -o -n "${ovirt_eku}" ] && extsection="custom"
-		EXTRA_COMMAND="-extfile cert.conf -extensions ${extsection}"
+		[ -e "${CERT_CONF}" ] || die "${CERT_CONF} is missing, Cannot sign certificate"
+		EXTRA_COMMAND="-extfile ${CERT_CONF} -extensions ${extsection}"
 	fi
 	OVIRT_KU="${ovirt_ku}" OVIRT_EKU="${ovirt_eku}" OVIRT_SAN="${ovirt_san}" \
 		openssl ca \
@@ -124,6 +125,7 @@ while [ -n "$1" ]; do
 done
 
 [ -n "${NAME}" ] || die "Please specify name"
+common_set_conf_vars
 
 # cannot use TMPDIR as we want the
 # same file at any environment

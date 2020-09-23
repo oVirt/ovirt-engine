@@ -2,16 +2,19 @@
 
 CA_DAYS="3650"
 KEYTOOL="${JAVA_HOME:-/usr}/bin/keytool"
-ENGINE_CA="ca"
 
 clean_pki_dir() {
+	files_to_clean=(
+		"${PKIDIR}/${CACERT_CONF}"
+		"${PKIDIR}/${CERT_CONF}"
+		"${PKIDIR}/private/${CA_FILE}.pem"
+		"${PKIDIR}/${CA_FILE}.pem"
+	)
 	if [ "${CA_FILE}" == "${ENGINE_CA}" ]; then
 		# engine CA is the main authority, so when renewing it,
 		# we remove all files shared with other authorities and
 		# expect to renew also all other authorities
-		files_to_clean=(
-			"${PKIDIR}/cacert.conf"
-			"${PKIDIR}/cert.conf"
+		files_to_clean+=(
 			"${PKIDIR}/serial.txt"
 			"${PKIDIR}/serial.txt.old"
 			"${PKIDIR}/database.txt"
@@ -28,13 +31,6 @@ clean_pki_dir() {
 			"${PKIDIR}/requests"/*.req
 			"${PKIDIR}/requests"/*.csr
 		)
-	else
-		# when renewing non-engine CA, then we clean only private key
-		# and certificate of the relevant CA
-		files_to_clean=(
-			"${PKIDIR}/private/${CA_FILE}.pem"
-			"${PKIDIR}/${CA_FILE}.pem"
-		)
 	fi
 
 	for f in "${files_to_clean[@]}"; do
@@ -47,9 +43,9 @@ clean_pki_dir() {
 }
 
 config() {
-	cp "${PKIDIR}/cacert.template" "${PKIDIR}/cacert.conf" || die "Cannot create cacert.conf"
-	cp "${PKIDIR}/cert.template" "${PKIDIR}/cert.conf" || die "Cannot create cert.conf"
-	chmod a+r "${PKIDIR}/cacert.conf" "${PKIDIR}/cert.conf" || die "Cannot set config files permissions"
+	cp "${PKIDIR}/${CACERT_TEMPLATE}" "${PKIDIR}/${CACERT_CONF}" || die "Cannot create ${CACERT_CONF}"
+	cp "${PKIDIR}/${CERT_TEMPLATE}" "${PKIDIR}/${CERT_CONF}" || die "Cannot create ${CERT_CONF}"
+	chmod a+r "${PKIDIR}/${CACERT_CONF}" "${PKIDIR}/${CERT_CONF}" || die "Cannot set config files permissions"
 }
 
 enroll() {
@@ -82,7 +78,7 @@ enroll() {
 		|| die "Cannot generate CA key"
 	openssl req \
 		-batch \
-		-config "${PKIDIR}/cacert.conf" \
+		-config "${PKIDIR}/${CACERT_CONF}" \
 		-new \
 		-key "${PKIDIR}/private/${CA_FILE}.pem" \
 		-out "${PKIDIR}/requests/${CA_FILE}.csr" \
@@ -94,7 +90,7 @@ enroll() {
 		openssl ca \
 			-batch \
 			-config openssl.conf \
-			-extfile cacert.conf \
+			-extfile "${CACERT_CONF}" \
 			-extensions v3_ca \
 			-in requests/${CA_FILE}.csr \
 			-notext \
@@ -208,6 +204,7 @@ done
 [ -z "${RENEW}" -a -z "${SUBJECT}" ] && die "Please specify subject"
 [ -n "${KEYSTORE_PASSWORD}" ] || die "Please specify keystore password"
 [ -n "${CA_FILE}" ] || die "Please specify CA file"
+common_set_conf_vars
 
 if [ -z "${RENEW}" ]; then
 	clean_pki_dir

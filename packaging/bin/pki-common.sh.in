@@ -2,6 +2,8 @@
 PKIDIR="@ENGINE_PKI@"
 USRDIR="@ENGINE_USR@"
 BINDIR="${USRDIR}/bin"
+ENGINE_CA="ca"
+QEMU_CA="qemu-ca"
 
 die() {
 	local m="$1"
@@ -29,4 +31,21 @@ common_restore_perms() {
 	# of these files, so we have to reset
 	# our defaults
 	chown --reference="${pkidir}" "${pkidir}"/serial.txt* "${pkidir}"/database.txt* "${pkidir}"/.rnd* > /dev/null 2>&1
+}
+
+common_set_conf_vars() {
+	# Set {CACERT,CERT}_{TEMPLATE,CONF} based on value of CA_FILE
+	if [ "${CA_FILE}" == "${ENGINE_CA}" ]; then
+		CERT_CONF="cert.conf"
+		CACERT_CONF="cacert.conf"
+		CERT_TEMPLATE="cert.template"
+		CACERT_TEMPLATE="cacert.template"
+	elif [ "${CA_FILE}" == "${QEMU_CA}" ]; then
+		CERT_CONF="qemu-cert.conf"
+		CACERT_CONF="qemu-cacert.conf"
+		CERT_TEMPLATE="qemu-cert.template"
+		CACERT_TEMPLATE="qemu-cacert.template"
+	else
+		die "Unknown CA file"
+	fi
 }
