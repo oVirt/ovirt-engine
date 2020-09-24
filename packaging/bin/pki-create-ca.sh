@@ -75,9 +75,10 @@ enroll() {
 
 	touch "${PKIDIR}/private/${CA_FILE}.pem"
 	chmod o-rwx "${PKIDIR}/private/${CA_FILE}.pem" || die "Cannot set CA permissions"
-	openssl genrsa \
+	openssl genpkey \
+		-algorithm RSA \
+		-pkeyopt rsa_keygen_bits:2048 \
 		-out "${PKIDIR}/private/${CA_FILE}.pem" \
-		2048 \
 		|| die "Cannot generate CA key"
 	openssl req \
 		-batch \

@@ -16,11 +16,12 @@ enroll() {
 
 	if [ -z "${keep_key}" ]; then
 		openssl \
-			genrsa \
+			genpkey \
+			-algorithm RSA \
+			-pkeyopt rsa_keygen_bits:2048 \
 			-out "${TMPKEY}" \
-			-passout "pass:${pass}" \
-			-des3 \
-			2048 \
+			-aes256 \
+			-pass "pass:${pass}" \
 			|| die "Cannot create certificate request"
 	else
 		openssl \
@@ -63,7 +64,7 @@ enroll() {
 		-out "${pkcs12}" \
 		-passin "pass:${pass}" \
 		-passout "pass:${pass}" \
-		-descert \
+		-aes256 \
 		|| die "Cannot create PKCS#12"
 
 	return 0
