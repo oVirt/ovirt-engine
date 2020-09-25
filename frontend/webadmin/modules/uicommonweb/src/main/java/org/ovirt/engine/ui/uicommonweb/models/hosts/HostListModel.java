@@ -74,6 +74,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.Uri;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.AddVdsActionParametersMapper;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HostErrataCountModel;
@@ -82,6 +83,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
+import org.ovirt.engine.ui.uicommonweb.models.VDSMapper;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.HostAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
@@ -869,32 +871,21 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             return;
         }
 
-        VDS host = model.getIsNew() ? new VDS() : (VDS) Cloner.clone(getSelectedItem());
+        VDS initHost = model.getIsNew()
+                ? new VDS()
+                : (VDS) Cloner.clone(getSelectedItem());
+        Guid oldClusterId = initHost.getClusterId();
 
-        // Save changes.
-        host.setVdsName(model.getName().getEntity());
+        VDS host = VDSMapper.INSTANCE.apply(initHost, model);
+
         host.setComment(model.getComment().getEntity());
-        host.setHostName(model.getHost().getEntity().trim());
-        host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
-        host.setSshPort(Integer.parseInt(model.getAuthSshPort().getEntity().toString()));
-        boolean sshUsernameSet = model.getUserName().getEntity() != null;
-        host.setSshUsername(sshUsernameSet ? model.getUserName().getEntity() : null);
-        boolean sshFpSet = model.getFetchSshFingerprint().getEntity() != null;
-        host.setSshKeyFingerprint(!sshFpSet ? null : model.getFetchSshFingerprint().getEntity());
-        host.setVdsSpmPriority(model.getSpmPriorityValue());
         boolean consoleAddressSet = model.getConsoleAddressEnabled().getEntity();
         host.setConsoleAddress(!consoleAddressSet ? null : model.getConsoleAddress().getEntity());
         host.setVgpuPlacement(model.getVgpuPlacement().getValue());
-        Guid oldClusterId = host.getClusterId();
-        Guid newClusterId = model.getCluster().getSelectedItem().getId();
-        host.setClusterId(newClusterId);
+
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         host.setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(model.getPmProxyPreferences()));
 
-        // Save other PM parameters.
-        host.setPmEnabled(model.getIsPm().getEntity());
-        host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
-        host.setPmKdumpDetection(model.getPmKdumpDetection().getEntity());
 
         host.setCurrentKernelCmdline(model.getKernelCmdline().getEntity());
         host.setKernelCmdlineBlacklistNouveau(model.getKernelCmdlineBlacklistNouveau().getEntity());
@@ -910,15 +901,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         model.startProgress();
 
         if (model.getIsNew()) {
-            AddVdsActionParameters parameters = new AddVdsActionParameters();
-            parameters.setVdsId(host.getId());
-            parameters.setvds(host);
-            parameters.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
-            if (model.getUserPassword().getEntity() != null) {
-                parameters.setPassword(model.getUserPassword().getEntity());
-            }
-            parameters.setOverrideFirewall(model.getOverrideIpTables().getEntity());
-            parameters.setAuthMethod(model.getAuthenticationMethod());
+            AddVdsActionParameters parameters = AddVdsActionParametersMapper.INSTANCE.apply(host, model);
 
             if (model.getProviders().getSelectedItem() != null) {
                 parameters.getVdsStaticData().setHostProviderId(model.getProviders().getSelectedItem().getId());
@@ -937,8 +920,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                         discoveredHost.getIp());
             }
 
-            parameters.setHostedEngineDeployConfiguration(
-                    new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
             parameters.setAffinityGroups(model.getAffinityGroupList().getSelectedItems());
             parameters.setAffinityLabels(model.getLabelList().getSelectedItems());
             parameters.setActivateHost(model.getActivateHostAfterInstall().getEntity());
@@ -966,9 +947,9 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 host.setHostProviderId(model.getProviders().getSelectedItem().getId());
             }
 
-            if (!oldClusterId.equals(newClusterId)) {
+            if (!oldClusterId.equals(host.getClusterId())) {
                 Frontend.getInstance().runAction(ActionType.ChangeVDSCluster,
-                        new ChangeVDSClusterParameters(newClusterId, host.getId()),
+                        new ChangeVDSClusterParameters(host.getClusterId(), host.getId()),
                         result -> {
 
                             Object[] array = (Object[]) result.getState();

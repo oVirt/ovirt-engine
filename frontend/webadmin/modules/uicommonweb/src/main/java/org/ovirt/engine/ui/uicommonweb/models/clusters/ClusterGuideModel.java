@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -22,11 +21,13 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.AddVdsActionParametersMapper;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.VDSMapper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHostData;
@@ -544,37 +545,12 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
             return;
         }
 
-        // Save changes.
-        VDS host = new VDS();
-        host.setVdsName(model.getName().getEntity());
-        host.setHostName(model.getHost().getEntity());
-        host.setPort(model.getPort().getEntity());
-        host.setSshPort(model.getAuthSshPort().getEntity());
-        host.setSshUsername(model.getUserName().getEntity());
-        host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity());
-        host.setClusterId(model.getCluster().getSelectedItem().getId());
-        host.setVdsSpmPriority(model.getSpmPriorityValue());
-
-        // Save other PM parameters.
-        host.setPmEnabled(model.getIsPm().getEntity());
-        host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
-        host.setPmKdumpDetection(model.getPmKdumpDetection().getEntity());
-
-        AddVdsActionParameters vdsActionParams = new AddVdsActionParameters();
-        vdsActionParams.setvds(host);
-        vdsActionParams.setVdsId(host.getId());
-        if (model.getUserPassword().getEntity() != null) {
-            vdsActionParams.setPassword(model.getUserPassword().getEntity());
-        }
-        vdsActionParams.setAuthMethod(model.getAuthenticationMethod());
-        vdsActionParams.setOverrideFirewall(model.getOverrideIpTables().getEntity());
-        vdsActionParams.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
-        vdsActionParams.setHostedEngineDeployConfiguration(
-                new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
+        AddVdsActionParameters addVdsParams =
+                AddVdsActionParametersMapper.INSTANCE.apply(VDSMapper.INSTANCE.apply(new VDS(), model), model);
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(ActionType.AddVds, vdsActionParams,
+        Frontend.getInstance().runAction(ActionType.AddVds, addVdsParams,
                 result -> {
 
                     ClusterGuideModel localModel = (ClusterGuideModel) result.getState();
