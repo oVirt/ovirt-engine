@@ -5,11 +5,9 @@ import static org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel.crea
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1000,13 +998,13 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         VDS vds = getSelectedItem();
         ApproveVdsParameters params = new ApproveVdsParameters(vds.getId());
         if (model.getUserPassword().getEntity() != null) {
-            params.setPassword(model.getUserPassword().getEntity().toString());
+            params.setPassword(model.getUserPassword().getEntity());
         }
         params.setAuthMethod(model.getAuthenticationMethod());
         params.setActivateHost(model.getActivateHostAfterInstall().getEntity());
 
         Frontend.getInstance().runMultipleAction(ActionType.ApproveVds,
-                new ArrayList<>(Arrays.asList(new ActionParametersBase[]{params})),
+                new ArrayList<>(Arrays.asList(params)),
                 result -> {
 
                 },
@@ -1165,7 +1163,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     public void activate() {
         ArrayList<ActionParametersBase> list = new ArrayList<>();
 
-        Collections.sort(getSelectedItems(), Comparator.comparing(VDS::getVdsSpmPriority).reversed());
+        getSelectedItems().sort(Comparator.comparing(VDS::getVdsSpmPriority).reversed());
 
         for (VDS vds : getSelectedItems()) {
             list.add(new VdsActionParameters(vds.getId()));
@@ -1227,8 +1225,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             model.setForceLabel(ConstantsManager.getInstance().getConstants().ignoreGlusterQuorumChecks());
         }
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
-        List<String> vdssNames = getSelectedItems().stream().map(d -> d.getName()).collect(Collectors.toList());
-        List<Guid> vdssIds = getSelectedItems().stream().map(d -> d.getId()).collect(Collectors.toList());
+        List<String> vdssNames = getSelectedItems().stream().map(VDS::getName).collect(Collectors.toList());
+        List<Guid> vdssIds = getSelectedItems().stream().map(VDS::getId).collect(Collectors.toList());
         model.setItems(vdssNames);
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnMaintenance", this); //$NON-NLS-1$
@@ -1316,22 +1314,18 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         model.getOverrideIpTables().setEntity(true);
         model.getActivateHostAfterInstall().setEntity(true);
         model.getReconfigureGluster().setIsAvailable(false);
-        addInstallCommands(model, host, false);
+        addInstallCommands(model, host);
         getWindow().stopProgress();
     }
 
-    private void addInstallCommands(InstallModel model, VDS host, boolean isOnlyClose) {
-
-        if (!isOnlyClose) {
-            UICommand command = UICommand.createDefaultOkUiCommand("OnInstall", this); //$NON-NLS-1$
-            model.getCommands().add(command);
-        }
+    private void addInstallCommands(InstallModel model, VDS host) {
+        model.getCommands()
+                .add(UICommand.createDefaultOkUiCommand("OnInstall", this)); //$NON-NLS-1$
         model.getUserName().setEntity(host.getSshUsername());
-        UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(isOnlyClose ? ConstantsManager.getInstance().getConstants().close()
-                : ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        model.getCommands().add(command);
+        model.getCommands()
+                .add(new UICommand("Cancel", this) //$NON-NLS-1$
+                        .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+                        .setIsCancel(true));
     }
 
     public void onInstall() {
@@ -2032,11 +2026,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             return false;
         }
 
-        if (vds.getVdsSpmPriority() == BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY) {
-            return false;
-        }
-
-        return true;
+        return vds.getVdsSpmPriority() != BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY;
     }
 
     @Override
@@ -2074,11 +2064,10 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     private void displayPinnedVmsInfoMsg(HostMaintenanceConfirmationModel model, Guid clusterId, Map<Guid, List<VM>> vdsToVmsMap) {
         AsyncDataProvider.getInstance().getVMsWithVNumaNodesByClusterId(new AsyncQuery<>(returnValue -> {
-            List<VM> vmsWithvNumaNodesConf = returnValue;
             List<String> pinnedVmsNames = new ArrayList<>();
             List<Guid> hostsIdsForPinnedVms = new ArrayList<>();
 
-            findHpOrPinnedVms(vdsToVmsMap, vmsWithvNumaNodesConf, pinnedVmsNames, hostsIdsForPinnedVms);
+            findHpOrPinnedVms(vdsToVmsMap, returnValue, pinnedVmsNames, hostsIdsForPinnedVms);
             formatAndDisplayPinnedVmsMsg(pinnedVmsNames, hostsIdsForPinnedVms, model);
         }), clusterId);
     }
@@ -2107,11 +2096,16 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
      */
     private void formatAndDisplayPinnedVmsMsg(List<String> pinnedVmsNames, List<Guid> hostsIdsForPinnedVms, HostMaintenanceConfirmationModel model) {
         if (!pinnedVmsNames.isEmpty()) {
-            List<String> hostsNamesForPinnedVms = getSelectedItems().stream().filter(d -> hostsIdsForPinnedVms.contains(d.getId())).map(d -> d.getName()).collect(Collectors.toList());
+            List<String> hostsNamesForPinnedVms = getSelectedItems().stream()
+                    .filter(d -> hostsIdsForPinnedVms.contains(d.getId()))
+                    .map(VDS::getName)
+                    .collect(Collectors.toList());
 
-            String formatedPinnedVMsInfoMsg = ConstantsManager.getInstance().getConstants().areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeDueToPinnedVmsMsg()
+            String formatedPinnedVMsInfoMsg = ConstantsManager.getInstance()
+                    .getConstants()
+                    .areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeDueToPinnedVmsMsg()
                     + "VM(s): " //$NON-NLS-1$
-                    + String.join(", ", pinnedVmsNames)   //$NON-NLS-1$
+                    + String.join(", ", pinnedVmsNames) //$NON-NLS-1$
                     + "\nHost(s): " //$NON-NLS-1$
                     + String.join(", ", hostsNamesForPinnedVms); //$NON-NLS-1$
             model.setPinnedVMsInfoPanelVisible(true);
@@ -2125,9 +2119,9 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     private Set<Guid> getOnlyVmsWithPinnedvNumaNodes(List<VM> vmsWithvNumaNodesConf) {
         Set<Guid> vmsWithPinnedvNumaNodes = new HashSet<>();
 
-        for (Iterator<VM> vmIterator = vmsWithvNumaNodesConf.iterator(); vmIterator.hasNext(); ) {
-            final VM vm = vmIterator.next();
-            if (vm.getvNumaNodeList() != null && vm.getvNumaNodeList().stream().anyMatch(node -> !node.getVdsNumaNodeList().isEmpty())) {
+        for (final VM vm : vmsWithvNumaNodesConf) {
+            if (vm.getvNumaNodeList() != null
+                    && vm.getvNumaNodeList().stream().anyMatch(node -> !node.getVdsNumaNodeList().isEmpty())) {
                 vmsWithPinnedvNumaNodes.add(vm.getId());
             }
         }

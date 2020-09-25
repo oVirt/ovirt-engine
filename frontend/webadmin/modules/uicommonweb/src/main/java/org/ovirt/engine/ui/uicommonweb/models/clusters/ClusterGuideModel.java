@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.VDSMapper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
@@ -208,7 +209,6 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
         } else {
             //No data-center associated with this cluster.
             AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
-                @SuppressWarnings("unchecked")
                 final List<StoragePool> localDataCenters = new ArrayList<>();
                 boolean enableButton = false;
                 for (StoragePool dataCenter: dataCenters) {
@@ -329,12 +329,11 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
             return;
         }
 
-        model.setSelectedHosts(new ArrayList<MoveHostData>());
-        for (EntityModel a : model.getItems()) {
-            if (a.getIsSelected()) {
-                model.getSelectedHosts().add((MoveHostData) a);
-            }
-        }
+        model.setSelectedHosts(new ArrayList<>());
+        model.getItems()
+                .stream()
+                .filter(Model::getIsSelected)
+                .forEach(a -> model.getSelectedHosts().add(a));
 
         Cluster cluster = model.getCluster().getSelectedItem();
 
@@ -389,7 +388,6 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
 
     private void addDataCenter() {
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(allDataCenters -> {
-            @SuppressWarnings("unchecked")
             List<EntityModel<StoragePool>> filteredDataCenters = new ArrayList<>();
             List<StoragePool> localDataCenters = new ArrayList<>();
             for (StoragePool dataCenter: allDataCenters) {

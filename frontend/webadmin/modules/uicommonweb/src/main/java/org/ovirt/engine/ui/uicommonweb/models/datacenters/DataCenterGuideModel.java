@@ -1277,7 +1277,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
         getWindow().startProgress();
 
-        Task.create(this, new ArrayList<>(Arrays.asList(new Object[]{"SavePosix"}))).run(); //$NON-NLS-1$
+        Task.create(this, new ArrayList<>(Arrays.asList("SavePosix"))).run(); //$NON-NLS-1$
     }
 
     private void savePosixStorage(final TaskContext context) {
@@ -1370,7 +1370,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
         Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
-                new ArrayList<>(Arrays.asList(new IFrontendActionAsyncCallback[]{callback1, callback2})),
+                new ArrayList<>(Arrays.asList(callback1, callback2)),
                 failureCallback,
                 this);
     }
