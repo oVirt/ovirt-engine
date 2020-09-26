@@ -84,7 +84,8 @@ CREATE OR REPLACE FUNCTION UpdateImageUploads(
     v_image_format INTEGER,
     v_backend INTEGER,
     v_backup_id UUID,
-    v_client_type INTEGER
+    v_client_type INTEGER,
+    v_shallow BOOLEAN
     )
 RETURNS VOID
 AS $PROCEDURE$
@@ -108,7 +109,8 @@ BEGIN
         image_format = v_image_format,
         backend = v_backend,
         backup_id = v_backup_id,
-        client_type = v_client_type
+        client_type = v_client_type,
+        shallow = v_shallow
     WHERE command_id = v_command_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -144,7 +146,8 @@ CREATE OR REPLACE FUNCTION InsertImageUploads(
     v_image_format INTEGER,
     v_backend INTEGER,
     v_backup_id UUID,
-    v_client_type INTEGER
+    v_client_type INTEGER,
+    v_shallow BOOLEAN
     )
 RETURNS VOID
 AS $PROCEDURE$
@@ -168,7 +171,8 @@ BEGIN
         image_format,
         backend,
         backup_id,
-        client_type
+        client_type,
+        shallow
         )
     VALUES (
         v_command_id,
@@ -189,7 +193,8 @@ BEGIN
         v_image_format,
         v_backend,
         v_backup_id,
-        v_client_type
+        v_client_type,
+        v_shallow
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;

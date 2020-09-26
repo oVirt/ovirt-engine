@@ -60,6 +60,7 @@ public class ImageTransferDaoTest extends BaseGenericDaoTestCase<Guid, ImageTran
         imageTransfer.setImageFormat(VolumeFormat.COW);
         imageTransfer.setBackend(ImageTransferBackend.FILE);
         imageTransfer.setTransferClientType(TransferClientType.UNKNOWN);
+        imageTransfer.setShallow(false);
         return imageTransfer;
     }
 

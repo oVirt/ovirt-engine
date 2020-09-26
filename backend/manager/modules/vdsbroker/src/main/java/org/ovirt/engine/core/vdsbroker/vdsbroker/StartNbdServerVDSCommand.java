@@ -40,6 +40,7 @@ public class StartNbdServerVDSCommand<P extends NbdServerVDSParameters> extends 
         configMap.put("vol_id", getParameters().getVolumeId().toString());
         configMap.put("readonly", getParameters().isReadonly());
         configMap.put("discard", getParameters().isDiscard());
+        configMap.put("backing_chain", getParameters().getBackingChain());
         return configMap;
     }
 }

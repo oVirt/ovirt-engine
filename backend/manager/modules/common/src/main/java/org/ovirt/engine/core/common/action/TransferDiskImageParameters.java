@@ -23,6 +23,9 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
     private Guid backupId;
     private TransferClientType transferClientType = TransferClientType.UNKNOWN;
 
+    // Transfer only specified image data instead of entire image chain.
+    private boolean shallow;
+
     public TransferDiskImageParameters() {}
 
     public TransferDiskImageParameters(Guid storageDomainId, AddDiskParameters addDiskParameters) {
@@ -124,5 +127,13 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
 
     public void setTransferClientType(TransferClientType transferClientType) {
         this.transferClientType = transferClientType;
+    }
+
+    public boolean isShallow() {
+        return shallow;
+    }
+
+    public void setShallow(boolean shallow) {
+        this.shallow = shallow;
     }
 }

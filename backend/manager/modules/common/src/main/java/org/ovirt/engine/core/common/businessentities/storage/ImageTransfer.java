@@ -34,6 +34,9 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
     private VolumeFormat imageFormat;
     private ImageTransferBackend backend;
 
+    // Transfer specified image data instead of data from entire image chain.
+    private Boolean shallow;
+
     public ImageTransfer(Guid commandId) {
         this.commandId = commandId;
     }
@@ -200,6 +203,14 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
         this.transferClientType = transferClientType;
     }
 
+    public Boolean isShallow() {
+        return shallow;
+    }
+
+    public void setShallow(Boolean shallow) {
+        this.shallow = shallow;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -226,6 +237,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 && Objects.equals(clientInactivityTimeout, other.clientInactivityTimeout)
                 && Objects.equals(imageFormat, other.imageFormat)
                 && Objects.equals(transferClientType, other.transferClientType)
+                && Objects.equals(shallow, other.shallow)
                 && type == other.type;
     }
 
@@ -246,7 +258,8 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 bytesTotal,
                 clientInactivityTimeout,
                 imageFormat,
-                transferClientType
+                transferClientType,
+                shallow
         );
     }
 
@@ -268,6 +281,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 .append("clientInactivityTimeout", getClientInactivityTimeout())
                 .append("imageFormat", getImageFormat())
                 .append("transferClientType", getTransferClientType())
+                .append("shallow", isShallow())
                 .build();
     }
 

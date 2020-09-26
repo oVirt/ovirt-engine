@@ -68,6 +68,9 @@ public class BackendImageTransfersResource
         if (imageTransfer.isSetBackup() && imageTransfer.getBackup().isSetId()) {
             params.setBackupId(Guid.createGuidFromString(imageTransfer.getBackup().getId()));
         }
+        if (imageTransfer.isSetShallow()) {
+            params.setShallow(imageTransfer.isShallow());
+        }
         params.setTransferClientType(TransferClientType.TRANSFER_VIA_API);
         return performCreate(ActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(QueryType.GetImageTransferById,
                 IdQueryParameters.class));

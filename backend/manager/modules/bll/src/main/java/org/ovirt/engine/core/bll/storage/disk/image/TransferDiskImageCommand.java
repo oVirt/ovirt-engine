@@ -222,6 +222,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         nbdServerVDSParameters.setVolumeId(getDiskImage().getImageId());
         nbdServerVDSParameters.setReadonly(getParameters().getTransferType() == TransferType.Download);
         nbdServerVDSParameters.setDiscard(isSparseImage());
+        nbdServerVDSParameters.setBackingChain(!getParameters().isShallow());
         return nbdServerVDSParameters;
     }
 
@@ -403,6 +404,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         entity.setBackend(getTransferBackend());
         entity.setBackupId(getParameters().getBackupId());
         entity.setTransferClientType(getParameters().getTransferClientType());
+        entity.setShallow(getParameters().isShallow());
         imageTransferDao.save(entity);
 
         if (isImageProvided()) {

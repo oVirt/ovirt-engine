@@ -34,6 +34,9 @@ public class ImageTransferMapper {
         if (model.isSetBackup() && model.getBackup().isSetId()) {
             entity.setBackupId(GuidUtils.asGuid(model.getBackup().getId()));
         }
+        if (model.isSetShallow()) {
+            entity.setShallow(model.isShallow());
+        }
         return entity;
     }
 
@@ -75,6 +78,9 @@ public class ImageTransferMapper {
         }
         if (entity.getImageFormat() != null) {
             model.setFormat(map(entity.getImageFormat(), null));
+        }
+        if (entity.isShallow() != null) {
+            model.setShallow(entity.isShallow());
         }
         return model;
     }

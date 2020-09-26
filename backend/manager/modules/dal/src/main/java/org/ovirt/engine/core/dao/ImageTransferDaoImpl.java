@@ -97,6 +97,7 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
         mapper.addValue("backup_id", entity.getBackupId());
         mapper.addValue("client_type", entity.getTransferClientType() == null ?
                 TransferClientType.UNKNOWN.getValue() : entity.getTransferClientType().getValue());
+        mapper.addValue("shallow", entity.isShallow() == null ? false : entity.isShallow());
         return mapper;
     }
 
@@ -123,6 +124,7 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
             entity.setBackend(ImageTransferBackend.forValue(rs.getInt("backend")));
             entity.setBackupId(getGuid(rs, "backup_id"));
             entity.setTransferClientType(TransferClientType.forValue(rs.getInt("client_type")));
+            entity.setShallow(rs.getBoolean("shallow"));
             return entity;
         };
     }
