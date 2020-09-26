@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.ws.rs.core.UriInfo;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -14,7 +16,7 @@ import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.DiskSnapshotsQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
@@ -51,6 +53,14 @@ public class BackendStorageDomainDiskSnapshotsResourceTest extends
         return entity;
     }
 
+    private List<Disk> getDisks() {
+        List<Disk> disks = new ArrayList<>();
+        for (int i = 0; i < NAMES.length; i++) {
+            disks.add(getEntity(i));
+        }
+        return disks;
+    }
+
     @Override
     @Test
     @Disabled
@@ -61,17 +71,28 @@ public class BackendStorageDomainDiskSnapshotsResourceTest extends
     @Override
     @MockedConfig("mockConfiguration")
     public void testList() throws Exception {
-        collection.setUriInfo(setUpBasicUriExpectations());
-
-        List<Disk> entities = new ArrayList<>();
-        for (int i = 0; i < NAMES.length; i++) {
-            entities.add(getEntity(i));
-        }
+        setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetAllDiskSnapshotsByStorageDomainId,
-                IdQueryParameters.class,
+                DiskSnapshotsQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] {DOMAIN_ID},
-                entities);
+                getDisks());
+        verifyCollection(getCollection());
+    }
+
+    @Test
+    public void testListIncludingActive() throws Exception {
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        uriInfo = addMatrixParameterExpectations(uriInfo, BackendStorageDomainDiskSnapshotsResource.INCLUDE_ACTIVE,
+                "yes");
+        setUriInfo(uriInfo);
+
+        // TODO: How to verify query getIncludeActive()?
+        setUpEntityQueryExpectations(QueryType.GetAllDiskSnapshotsByStorageDomainId,
+                DiskSnapshotsQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] {DOMAIN_ID},
+                getDisks());
         verifyCollection(getCollection());
     }
 

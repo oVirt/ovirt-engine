@@ -7,14 +7,17 @@ import org.ovirt.engine.api.model.DiskSnapshots;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.DiskSnapshotResource;
 import org.ovirt.engine.api.resource.DiskSnapshotsResource;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.DiskSnapshotsQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainDiskSnapshotsResource
         extends AbstractBackendCollectionResource<DiskSnapshot, Disk>
         implements DiskSnapshotsResource {
+
+    protected static final String INCLUDE_ACTIVE = "include_active";
 
     Guid storageDomainId;
 
@@ -26,7 +29,7 @@ public class BackendStorageDomainDiskSnapshotsResource
     @Override
     public DiskSnapshots list() {
             return mapCollection(getBackendCollection(QueryType.GetAllDiskSnapshotsByStorageDomainId,
-                    new IdQueryParameters(this.storageDomainId)));
+                    new DiskSnapshotsQueryParameters(this.storageDomainId, includeActive())));
     }
 
     protected DiskSnapshots mapCollection(List<Disk> entities) {
@@ -52,4 +55,9 @@ public class BackendStorageDomainDiskSnapshotsResource
     protected Guid getStorageDomainId() {
         return storageDomainId;
     }
+
+    private boolean includeActive() {
+        return ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, INCLUDE_ACTIVE, true, false);
+    }
+
 }

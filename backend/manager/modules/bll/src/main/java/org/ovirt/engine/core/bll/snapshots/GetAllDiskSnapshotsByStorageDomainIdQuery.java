@@ -12,12 +12,12 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.DiskSnapshotsQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
-public class GetAllDiskSnapshotsByStorageDomainIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetAllDiskSnapshotsByStorageDomainIdQuery<P extends DiskSnapshotsQueryParameters> extends QueriesCommandBase<P> {
     @Inject
     private DiskImageDao diskImageDao;
 
@@ -32,8 +32,10 @@ public class GetAllDiskSnapshotsByStorageDomainIdQuery<P extends IdQueryParamete
     protected void executeQueryCommand() {
         List<DiskImage> diskImages = diskImageDao.getAllSnapshotsForStorageDomain(getParameters().getId());
 
-        // Filter out active volumes
-        diskImages = diskImages.stream().filter(d -> !d.getActive()).collect(Collectors.toList());
+        if (!getParameters().getIncludeActive()) {
+            // Filter out active volumes for backward compatibility.
+            diskImages = diskImages.stream().filter(d -> !d.getActive()).collect(Collectors.toList());
+        }
 
         // Retrieving snapshots objects for setting description
         Map<Guid, Snapshot> snapshots =
