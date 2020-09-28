@@ -20,6 +20,7 @@ import org.ovirt.engine.api.restapi.resource.BackendAssignedPermissionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedRolesResource;
 import org.ovirt.engine.api.restapi.resource.BackendEventSubscriptionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendUserTagsResource;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -36,6 +37,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendUserResource
         extends AbstractBackendSubResource<User, DbUser>
         implements UserResource {
+
+    private static final String MERGE = "merge";
 
     private static final String[] IMMUTABLE_FIELDS = {
             "department",
@@ -75,16 +78,23 @@ public class BackendUserResource
 
     @Override
     public User update(User user) {
+        boolean mergeOptions = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, MERGE, false, false);
         return performUpdate(user,
                 new QueryIdResolver<Guid>(QueryType.GetDbUserByUserId, IdQueryParameters.class),
                 ActionType.UpdateUserOptions,
-                new UpdateParametersProvider());
+                new UpdateParametersProvider(mergeOptions));
     }
 
     public class UpdateParametersProvider implements ParametersProvider<User, DbUser> {
+        private boolean mergeOptions;
+
+        public UpdateParametersProvider(boolean mergeOptions) {
+            this.mergeOptions = mergeOptions;
+        }
+
         @Override
         public ActionParametersBase getParameters(User model, DbUser entity) {
-            return new UpdateUserParameters(map(model, entity));
+            return new UpdateUserParameters(map(model, entity), mergeOptions);
         }
     }
 
