@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MemoizingSupplier;
 
 public class ClusterValidator {
@@ -54,6 +56,7 @@ public class ClusterValidator {
     private GlusterVolumeDao glusterVolumeDao;
     private ClusterFeatureDao clusterFeatureDao;
     private SupportedHostFeatureDao hostFeatureDao;
+    private NetworkDao networkDao;
 
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
     private LabelDao labelDao;
@@ -88,7 +91,8 @@ public class ClusterValidator {
                             GlusterVolumeDao glusterVolumeDao,
                             ClusterFeatureDao clusterFeatureDao,
                             SupportedHostFeatureDao hostFeatureDao,
-                            LabelDao labelDao) {
+                            LabelDao labelDao,
+                            NetworkDao networkDao) {
         this.cluster = cluster;
         this.clusterDao = clusterDao;
         this.dataCenterDao = dataCenterDao;
@@ -98,9 +102,14 @@ public class ClusterValidator {
         this.clusterFeatureDao = clusterFeatureDao;
         this.hostFeatureDao = hostFeatureDao;
         this.labelDao = labelDao;
+        this.networkDao = networkDao;
 
         allHostsForCluster = new MemoizingSupplier<>(() -> vdsDao.getAllForCluster(cluster.getId()));
         allVmsForCluster = new MemoizingSupplier<>(() -> vmDao.getAllForCluster(cluster.getId()));
+    }
+
+    Cluster getNewCluster() {
+        return newCluster;
     }
 
     public ValidationResult nameNotUsed() {
@@ -246,6 +255,15 @@ public class ClusterValidator {
                         && cluster.getStoragePoolId() != null
                         && !oldClusterValidator.dataCenterVersionMismatch().isValid());
     }
+
+
+    public ValidationResult decreaseClusterWithPortIsolation() {
+        return ValidationResult
+                .failWith(EngineMessage.ACTION_TYPE_FAILED_PORT_ISOLATION_UNSUPPORTED_CLUSTER_LEVEL)
+                .when(networkDao.getAllForCluster(cluster.getId()).stream().anyMatch(Network::isPortIsolation)
+                        && !FeatureSupported.isPortIsolationSupported(getNewCluster().getCompatibilityVersion()));
+    }
+
 
     private boolean areAllVdssInMaintenance(List<VDS> vdss) {
         return vdss.stream().allMatch(vds -> vds.getStatus() == VDSStatus.Maintenance);

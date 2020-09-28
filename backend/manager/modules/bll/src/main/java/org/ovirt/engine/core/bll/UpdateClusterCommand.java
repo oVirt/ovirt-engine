@@ -678,6 +678,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 && validate(clusterValidator.newClusterVersionSupported())
                 && validate(clusterValidator.decreaseClusterWithHosts())
                 && validate(clusterValidator.decreaseClusterBeneathDc(getClusterValidator(oldCluster)))
+                && validate(clusterValidator.decreaseClusterWithPortIsolation())
                 && validate(clusterValidator.canChangeStoragePool())
                 && validateCpuUpdatable(clusterValidator)
                 && validate(clusterValidator.vmInPrev())

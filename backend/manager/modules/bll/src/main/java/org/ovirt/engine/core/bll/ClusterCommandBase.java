@@ -18,6 +18,7 @@ import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public abstract class ClusterCommandBase<T extends ClusterParametersBase> extends CommandBase<T> {
 
@@ -41,6 +42,8 @@ public abstract class ClusterCommandBase<T extends ClusterParametersBase> extend
     private SupportedHostFeatureDao hostFeatureDao;
     @Inject
     private LabelDao labelDao;
+    @Inject
+    private NetworkDao networkDao;
 
     private Cluster cluster;
 
@@ -68,7 +71,8 @@ public abstract class ClusterCommandBase<T extends ClusterParametersBase> extend
                 glusterVolumeDao,
                 clusterFeatureDao,
                 hostFeatureDao,
-                labelDao);
+                labelDao,
+                networkDao);
     }
 
     @Override

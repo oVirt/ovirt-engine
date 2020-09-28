@@ -25,12 +25,14 @@ import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.MockedConfig;
@@ -43,6 +45,9 @@ public class ClusterValidatorTest {
 
     @Mock
     private StoragePoolDao dataCenterDao;
+
+    @Mock
+    private NetworkDao networkDao;
 
     @Mock
     private Cluster cluster;
@@ -260,5 +265,47 @@ public class ClusterValidatorTest {
 
         assertThat(validator.migrationSupported(RandomUtils.instance().nextEnum(ArchitectureType.class)),
                 failsWith(EngineMessage.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED));
+    }
+
+    @Test
+    public void decreaseClusterWithNoPortIsolation() {
+        assertThat(validator.decreaseClusterWithPortIsolation(), isValid());
+    }
+
+    @Test
+    @MockedConfig("mockConfigurationNotIsPortIsolationSupported")
+    public void decreaseClusterWithPortIsolation() {
+        setPortIsolationOnNetwork();
+        setVersionOnNewCluster();
+        assertThat(validator.decreaseClusterWithPortIsolation(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_PORT_ISOLATION_UNSUPPORTED_CLUSTER_LEVEL));
+    }
+
+    @Test
+    @MockedConfig("mockConfigurationIsPortIsolationSupported")
+    public void decreaseClusterWithPortIsolationAllowed() {
+        setPortIsolationOnNetwork();
+        setVersionOnNewCluster();
+        assertThat(validator.decreaseClusterWithPortIsolation(), isValid());
+    }
+
+    private void setPortIsolationOnNetwork() {
+        Network network = new Network();
+        network.setPortIsolation(true);
+        when(networkDao.getAllForCluster(any())).thenReturn(Collections.singletonList(network));
+    }
+
+    private void setVersionOnNewCluster() {
+        Cluster newCluster = new Cluster();
+        newCluster.setCompatibilityVersion(Version.getLast());
+        when(validator.getNewCluster()).thenReturn(newCluster);
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfigurationNotIsPortIsolationSupported() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.IsPortIsolationSupported, Version.getLast(), false));
+    }
+
+    public static Stream<MockConfigDescriptor<?>> mockConfigurationIsPortIsolationSupported() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.IsPortIsolationSupported, Version.getLast(), true));
     }
 }
