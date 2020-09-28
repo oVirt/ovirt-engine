@@ -2,8 +2,10 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskSnapshot;
+import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.compat.Guid;
 
 public class DiskSnapshotMapper {
 
@@ -21,6 +23,18 @@ public class DiskSnapshotMapper {
         DiskImage diskImage = (DiskImage) entity;
         model.setId(diskImage.getImageId().toString());
         model.setImageId(null);
+
+        if (!Guid.isNullOrEmpty(diskImage.getParentId())) {
+            DiskSnapshot parent = new DiskSnapshot();
+            parent.setId(diskImage.getParentId().toString());
+
+            // Add storage domain to allow creating a link later.
+            StorageDomain storageDomain = new StorageDomain();
+            storageDomain.setId(diskImage.getStorageIds().get(0).toString());
+            parent.setStorageDomain(storageDomain);
+
+            model.setParent(parent);
+        }
 
         return model;
     }
