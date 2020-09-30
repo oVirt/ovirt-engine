@@ -48,4 +48,8 @@ public enum StorageDomainType {
     public boolean isInternalDomain() {
         return isDataDomain() || isIsoOrImportExportDomain();
     }
+
+    public boolean isKubevirtDomain() {
+        return this == Unmanaged;
+    }
 }

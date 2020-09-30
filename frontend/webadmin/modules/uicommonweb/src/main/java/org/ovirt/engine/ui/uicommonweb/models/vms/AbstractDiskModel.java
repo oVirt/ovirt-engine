@@ -387,7 +387,8 @@ public abstract class AbstractDiskModel extends DiskModel {
             Predicate<StorageDomain> domainByDiskType;
             switch (getDiskStorageType().getEntity()) {
                 case IMAGE:
-                    domainByDiskType = d -> d.getStorageDomainType().isDataDomain();
+                    domainByDiskType = d -> d.getStorageDomainType().isDataDomain()
+                        || d.getStorageDomainType().isKubevirtDomain();
                     break;
                 case CINDER:
                     domainByDiskType = d -> d.getStorageType() == StorageType.CINDER;
