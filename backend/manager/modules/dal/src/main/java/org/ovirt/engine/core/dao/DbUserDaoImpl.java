@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Named;
@@ -9,6 +10,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.NullNode;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.JsonHelper;
@@ -38,12 +40,12 @@ public class DbUserDaoImpl extends BaseDao implements DbUserDao {
         entity.setExternalId(rs.getString("external_id"));
         entity.setNamespace(rs.getString("namespace"));
         // options column is backed by JSONB column type and guarantees valid JSON
-        entity.setUserOptions(toStringMap(JsonHelper.jsonToMapUnchecked(rs.getString("options"), JsonNode.class)));
+        entity.setUserOptions(toStringMap(rs.getString("options")));
         return entity;
     };
 
-    private static Map<String, String> toStringMap(Map<String, JsonNode> options) {
-        return options.entrySet()
+    static Map<String, String> toStringMap(String options) {
+        return JsonHelper.jsonToMapUnchecked(options, JsonNode.class).entrySet()
                 .stream()
                 .collect(Collectors.toMap(
                         e -> e.getKey(),
@@ -72,7 +74,8 @@ public class DbUserDaoImpl extends BaseDao implements DbUserDao {
                 .stream()
                 .collect(Collectors.toMap(
                         e -> e.getKey(),
-                        e -> deserializer.deserializeUnformattedJson(e.getValue())));
+                        e -> Optional.ofNullable(deserializer.deserializeUnformattedJson(e.getValue()))
+                                .orElse(NullNode.getInstance())));
     }
 
     @Override
