@@ -64,7 +64,7 @@ public class VmDevicesConverterTest {
 
         List<VmDevice> devices = Arrays.asList(disk, hostdev);
 
-        List<Map<String, Object>> res = converter.parseDisks(xmlDevices, devices);
+        List<Map<String, Object>> res = converter.parseDisks(xmlDevices, devices, false);
         assertEquals(2, res.size());
         assertEquals("24f658ce-619b-47e1-a7d9-f19ed024c3fc", res.get(0).get(VdsProperties.DeviceId));
         assertEquals("c0a9d379-6798-4859-ab3b-7c04006dd82e", res.get(1).get(VdsProperties.DeviceId));
