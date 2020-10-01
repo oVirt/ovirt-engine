@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.MacPool;
+import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.MacPoolResource;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -43,5 +44,9 @@ public class BackendMacPoolResource extends AbstractBackendSubResource<MacPool,
     public Response remove() {
         get();
         return performAction(ActionType.RemoveMacPool, new RemoveMacPoolByIdParameters(guid));
+    }
+
+    public AssignedPermissionsResource getPermissionsResource() {
+        return null;
     }
 }
