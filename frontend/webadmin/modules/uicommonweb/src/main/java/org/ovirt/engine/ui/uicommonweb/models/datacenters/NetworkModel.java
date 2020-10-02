@@ -173,9 +173,6 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
         setPortIsolation(new EntityModel<>(false));
 
-        EntityModel<Boolean> publicUse = new EntityModel<>();
-        publicUse.setEntity(true);
-
         setProfiles(new NetworkProfilesModel());
         List<VnicProfileModel> profiles = new LinkedList<>();
         profiles.add(createDefaultProfile());
