@@ -38,6 +38,8 @@ public class InstanceImageLineEditor extends AbstractModelBoundPopupWidget<Insta
 
     private boolean enabled = true;
 
+    private boolean createEditButtonEnabled = true;
+
     private String elementId = DOM.createUniqueId();
 
     public interface Driver extends UiCommonEditorDriver<InstanceImageLineModel, InstanceImageLineEditor> {
@@ -75,11 +77,17 @@ public class InstanceImageLineEditor extends AbstractModelBoundPopupWidget<Insta
 
         attachButton.addClickHandler(event -> attachButton.getCommand().execute());
 
-        updateButtonText(model);
+        updateCreateEditButtonText(model);
+        updateCreateEditButtonEnablement(model);
 
         model.getDiskModel().getEntityChangedEvent().addListener((ev, sender, args) -> {
             ValueChangeEvent.fire(InstanceImageLineEditor.this, model);
-            updateButtonText(model);
+            updateCreateEditButtonText(model);
+            updateCreateEditButtonEnablement(model);
+        });
+
+        model.getCreateEditCommand().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            updateCreateEditButtonEnablement(model);
         });
     }
 
@@ -92,9 +100,16 @@ public class InstanceImageLineEditor extends AbstractModelBoundPopupWidget<Insta
         createEditButton.getElement().setId(ElementIdUtils.createElementId(composedId, "createEdit")); //$NON-NLS-1$
     }
 
-    private void updateButtonText(InstanceImageLineModel model) {
+    private void updateCreateEditButtonText(InstanceImageLineModel model) {
         String text = model.getDiskModel().getEntity() != null ? constants.editInstanceImages() : constants.addInstanceImages();
         createEditButton.setLabel(text);
+    }
+
+    private void updateCreateEditButtonEnablement(InstanceImageLineModel model) {
+        createEditButtonEnabled =
+                model.getDiskModel().getEntity() != null ? model.getCreateEditCommand().isEditAllowed()
+                        : model.getCreateEditCommand().isCreateAllowed();
+        createEditButton.setEnabled(createEditButtonEnabled);
     }
 
     @Override
@@ -115,7 +130,7 @@ public class InstanceImageLineEditor extends AbstractModelBoundPopupWidget<Insta
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-        createEditButton.setEnabled(enabled);
+        createEditButton.setEnabled(enabled && createEditButtonEnabled);
         attachButton.setEnabled(enabled);
     }
 

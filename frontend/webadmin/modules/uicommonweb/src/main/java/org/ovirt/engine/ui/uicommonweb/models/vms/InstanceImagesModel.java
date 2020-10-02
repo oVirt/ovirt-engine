@@ -315,6 +315,7 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
 
     public void updateActionsAvailability() {
         boolean clusterSelected = unitVmModel.getSelectedCluster() != null;
+        boolean isKubevirt = clusterSelected && !unitVmModel.getSelectedCluster().isManaged();
         boolean osSelected = unitVmModel.getOSType().getSelectedItem() != null;
 
         if (getItems() == null) {
@@ -322,6 +323,8 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
         }
 
         for (InstanceImageLineModel model : getItems()) {
+            model.getCreateEditCommand().setCreateAllowed(!isKubevirt);
+            model.getCreateEditCommand().setEditAllowed(true);
             if (model.isGhost()) {
                 continue;
             }

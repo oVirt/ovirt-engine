@@ -104,6 +104,14 @@ public class InstanceImagesEditor extends AddRemoveRowWidget<InstanceImagesModel
     }
 
     @Override
+    protected void doRemoveItem(Pair<InstanceImageLineModel, InstanceImageLineEditor> item,
+            InstanceImageLineModel value,
+            InstanceImageLineEditor widget) {
+        super.doRemoveItem(item, value, widget);
+        model.updateActionsAvailability();
+    }
+
+    @Override
     public void setElementId(String elementId) {
         this.elementId = elementId;
     }

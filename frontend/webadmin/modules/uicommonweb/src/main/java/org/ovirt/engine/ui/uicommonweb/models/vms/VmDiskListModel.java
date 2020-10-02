@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -422,7 +423,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     private void updateActionAvailability() {
         Disk disk = getSelectedItem();
 
-        getNewCommand().setIsExecutionAllowed(true);
+        getNewCommand().setIsExecutionAllowed(!isKubevirt());
 
         getAttachCommand().setIsExecutionAllowed(true);
 
@@ -444,6 +445,11 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     public boolean isVmDown() {
         VM vm = getEntity();
         return vm != null && vm.getStatus() == VMStatus.Down;
+    }
+
+    public boolean isKubevirt() {
+        VM vm = getEntity();
+        return vm != null && vm.getOrigin() == OriginType.KUBEVIRT;
     }
 
     private boolean isDiskLocked(Disk disk) {

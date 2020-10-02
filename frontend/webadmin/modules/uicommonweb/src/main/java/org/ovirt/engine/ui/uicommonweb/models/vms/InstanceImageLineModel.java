@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.ActionType;
@@ -18,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
@@ -33,7 +35,7 @@ public class InstanceImageLineModel extends EntityModel {
 
     private UICommand attachCommand;
 
-    private UICommand createEditCommand;
+    private CreateEditCommand createEditCommand;
 
     private EntityModel<AbstractDiskModel> diskModel = new EntityModel<>();
 
@@ -54,7 +56,7 @@ public class InstanceImageLineModel extends EntityModel {
         this.parentModel = parentModel;
 
         attachCommand = new UICommand("attachCommand", this); //$NON-NLS-1$
-        createEditCommand = new UICommand("createEditCommand", this); //$NON-NLS-1$
+        createEditCommand = new CreateEditCommand("createEditCommand", this); //$NON-NLS-1$
     }
 
     private void fillData() {
@@ -440,7 +442,7 @@ public class InstanceImageLineModel extends EntityModel {
         return attachCommand;
     }
 
-    public UICommand getCreateEditCommand() {
+    public CreateEditCommand getCreateEditCommand() {
         return createEditCommand;
     }
 
@@ -465,5 +467,47 @@ public class InstanceImageLineModel extends EntityModel {
 
     public void setChanged(boolean changed) {
         this.changed = changed;
+    }
+
+    public boolean isCreateAllowed() {
+        return parentModel.getUnitVmModel() == null || parentModel.getUnitVmModel().getSelectedCluster() == null
+                || parentModel.getUnitVmModel().getSelectedCluster().isManaged();
+    }
+
+    public boolean isEditAllowed() {
+        return true;
+    }
+
+    public static class CreateEditCommand extends UICommand {
+
+        private boolean createAllowed = true;
+
+        private boolean editAllowed = true;
+
+        public CreateEditCommand(String name, InstanceImageLineModel target) {
+            super(name, target);
+        }
+
+        public boolean isCreateAllowed() {
+            return createAllowed;
+        }
+
+        public void setCreateAllowed(boolean value) {
+            if (!Objects.equals(createAllowed, value)) {
+                createAllowed = value;
+                onPropertyChanged(new PropertyChangedEventArgs("CreateAllowed")); //$NON-NLS-1$
+            }
+        }
+
+        public boolean isEditAllowed() {
+            return editAllowed;
+        }
+
+        public void setEditAllowed(boolean value) {
+            if (!Objects.equals(editAllowed, value)) {
+                editAllowed = value;
+                onPropertyChanged(new PropertyChangedEventArgs("EditAllowed")); //$NON-NLS-1$
+            }
+        }
     }
 }
