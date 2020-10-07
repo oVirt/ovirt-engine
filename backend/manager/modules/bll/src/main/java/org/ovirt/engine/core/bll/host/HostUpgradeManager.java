@@ -169,8 +169,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
             .variable("ovirt_san", CertificateUtils.getSan(host.getHostName()))
             .variable("ovirt_engine_usr", config.getUsrDir())
             .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))
-            .variable("ovirt_vdscertificatevalidityinyears",
-                    Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears))
+            .variable("ovirt_vds_certificate_validity_in_days", Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInDays))
             .variable("ovirt_signcerttimeoutinseconds",
                     Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds))
             .variable("ovirt_time_to_check", allowedExpirationDateInSeconds)

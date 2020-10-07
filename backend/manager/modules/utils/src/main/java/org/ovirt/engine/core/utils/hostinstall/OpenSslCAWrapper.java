@@ -101,7 +101,7 @@ public class OpenSslCAWrapper {
         boolean returnValue;
         if (executable.exists()) {
             String organization = Config.getValue(ConfigValues.OrganizationName);
-            int days = Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears) * 365;
+            int days = Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInDays);
             Integer signatureTimeout = Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds);
             returnValue = runCommandArray(
                 new String[] {
@@ -131,7 +131,7 @@ public class OpenSslCAWrapper {
         log.debug("Entered signOpenSSHCertificate");
         boolean returnValue;
         if (executable.exists()) {
-            int days = Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears) * 365;
+            int days = Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInDays);
             returnValue = runCommandArray(
                 new String[] {
                     executable.getAbsolutePath(),

@@ -274,8 +274,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     .variable("ovirt_pki_dir", config.getPKIDir())
                     .variable("ovirt_vds_hostname", vds.getHostName())
                     .variable("ovirt_san", CertificateUtils.getSan(vds.getHostName()))
-                    .variable("ovirt_vdscertificatevalidityinyears",
-                            Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears))
+                    .variable("ovirt_vds_certificate_validity_in_days", Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInDays))
                     .variable("ovirt_signcerttimeoutinseconds",
                             Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds))
                     .variable("ovirt_ca_key",

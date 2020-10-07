@@ -136,7 +136,7 @@ public enum ConfigValues {
     oVirtUpgradeScriptName,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
-    VdsCertificateValidityInYears,
+    VdsCertificateValidityInDays,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     SearchResultsLimit(ClientAccessLevel.User),

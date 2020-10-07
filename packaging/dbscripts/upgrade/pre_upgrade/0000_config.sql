@@ -558,7 +558,6 @@ select fn_db_add_config_value('VcpuConsumptionPercentage','10','general');
 --Handling Host Installation Bootstrap Script URL
 select fn_db_add_config_value('VdcVersion','3.0.0.0','general');
 select fn_db_add_config_value('VDSAttemptsToResetCount','2','general');
-select fn_db_add_config_value('VdsCertificateValidityInYears','5','general');
 select fn_db_add_config_value('vdsConnectionTimeout','20','general');
 select fn_db_add_config_value('VdsMaxConnectionsPerHost','2','general');
 select fn_db_add_config_value('MaxTotalConnections','20','general');

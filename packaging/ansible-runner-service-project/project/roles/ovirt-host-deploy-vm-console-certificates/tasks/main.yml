@@ -36,7 +36,7 @@
       "{{ ovirt_engine_usr }}/bin/pki-enroll-request.sh"
       "--name={{ ovirt_vds_hostname }}-ssh"
       "--subject=/O={{ ovirt_organizationname }}/CN={{ ovirt_vds_hostname }}"
-      "--days={{ ovirt_vdscertificatevalidityinyears | int * 365 }}"
+      "--days={{ ovirt_vds_certificate_validity_in_days }}"
       "--timeout={{ ovirt_signcerttimeoutinseconds }}"
     delegate_to: localhost
 
@@ -47,7 +47,7 @@
       "--host"
       "--id={{ ovirt_vds_hostname }}"
       "--principals={{ ovirt_vds_hostname }}"
-      "--days={{ ovirt_vdscertificatevalidityinyears | int * 365 }}"
+      "--days={{ ovirt_vds_certificate_validity_in_days }}"
     delegate_to: localhost
 
   - name: Add vmconsole cacert files

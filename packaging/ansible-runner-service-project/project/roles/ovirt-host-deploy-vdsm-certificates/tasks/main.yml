@@ -41,7 +41,7 @@
        "--name={{ ovirt_vds_hostname }}"
        "--subject=/O={{ ovirt_organizationname }}/CN={{ ovirt_vds_hostname }}{{ item.ou }}"
        "--san={{ ovirt_san }}"
-       "--days={{ ovirt_vdscertificatevalidityinyears | int * 365 }}"
+       "--days={{ ovirt_vds_certificate_validity_in_days }}"
        "--timeout={{ ovirt_signcerttimeoutinseconds }}"
        "--ca-file={{ item.ca_file }}"
        "--cert-dir={{ item.cert_dir }}"
