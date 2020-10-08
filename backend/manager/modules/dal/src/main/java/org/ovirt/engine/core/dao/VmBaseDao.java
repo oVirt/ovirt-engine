@@ -86,6 +86,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("predefined_properties", entity.getPredefinedProperties())
                 .addValue("userdefined_properties", entity.getUserDefinedProperties())
                 .addValue("custom_emulated_machine", entity.getCustomEmulatedMachine())
+                .addValue("effective_bios_type", entity.getEffectiveBiosType())
                 .addValue("custom_bios_type", entity.getCustomBiosType())
                 .addValue("custom_cpu_name", entity.getCustomCpuName())
                 .addValue("host_cpu_flags", entity.isUseHostCpuFlags())
@@ -164,6 +165,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(predefinedProperties,
                     userDefinedProperties));
             entity.setCustomEmulatedMachine(rs.getString("custom_emulated_machine"));
+            entity.setEffectiveBiosType(BiosType.forValue(rs.getInt("effective_bios_type")));
             entity.setCustomBiosType(BiosType.forValue(rs.getInt("custom_bios_type")));
             entity.setCustomCpuName(rs.getString("custom_cpu_name"));
             entity.setUseHostCpuFlags((Boolean) rs.getObject("host_cpu_flags"));

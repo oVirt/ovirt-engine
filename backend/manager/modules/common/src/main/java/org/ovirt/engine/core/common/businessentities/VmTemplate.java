@@ -413,10 +413,6 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         this.clusterBiosType = clusterBiosType;
     }
 
-    public BiosType getEffectiveBiosType() {
-        return getCustomBiosType() != BiosType.CLUSTER_DEFAULT ? getCustomBiosType() : getClusterBiosType();
-    }
-
     public BiosType getClusterBiosTypeOrigin() {
         return clusterBiosTypeOrigin;
     }

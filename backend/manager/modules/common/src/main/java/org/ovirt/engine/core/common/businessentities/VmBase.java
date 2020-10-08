@@ -168,6 +168,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @CopyOnNewVersion
     @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
+    private BiosType effectiveBiosType;
+
+    @CopyOnNewVersion
+    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmTemplateField
     private BiosType customBiosType;
 
     @CopyOnNewVersion
@@ -404,6 +409,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         customProperties = "";
         consoleDisconnectAction = ConsoleDisconnectAction.LOCK_SCREEN;
         resumeBehavior = VmResumeBehavior.AUTO_RESUME;
+        effectiveBiosType = BiosType.CLUSTER_DEFAULT;
         customBiosType = BiosType.CLUSTER_DEFAULT;
         description = "";
         comment = "";
@@ -1521,6 +1527,14 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     public void setCustomEmulatedMachine(String customEmulatedMachine) {
         this.customEmulatedMachine = customEmulatedMachine == null || customEmulatedMachine.trim().isEmpty() ? null : customEmulatedMachine;
+    }
+
+    public BiosType getEffectiveBiosType() {
+        return effectiveBiosType;
+    }
+
+    public void setEffectiveBiosType(BiosType biosType) {
+        this.effectiveBiosType = biosType;
     }
 
     public BiosType getCustomBiosType() {
