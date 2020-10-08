@@ -41,18 +41,18 @@ public class EmulatedMachineUtilsTest {
     @Test
     public void testEffectiveEmulatedMachineWithoutCustomSet() {
         final VmBase vmBase = new VmBase();
+        vmBase.setEffectiveBiosType(BiosType.I440FX_SEA_BIOS);
         final Cluster cluster = new Cluster();
         cluster.setEmulatedMachine("cluster-pc-i440fx-rhel7.3.0");
-        cluster.setBiosType(BiosType.I440FX_SEA_BIOS);
         assertEquals("cluster-pc-i440fx-rhel7.3.0", EmulatedMachineUtils.getEffective(vmBase, () -> cluster));
     }
 
     @Test
     public void testEffectiveEmulatedMachineCCV() {
         final VmBase vmBase = new VmBase();
+        vmBase.setEffectiveBiosType(BiosType.I440FX_SEA_BIOS);
         final Cluster cluster = new Cluster();
         cluster.setEmulatedMachine("pc-i440fx-rhel7.3.0");
-        cluster.setBiosType(BiosType.I440FX_SEA_BIOS);
         vmBase.setCustomCompatibilityVersion(Version.v4_2);
         assertEquals("pc-i440fx-rhel7.2.0", EmulatedMachineUtils.getEffective(vmBase, () -> cluster));
     }

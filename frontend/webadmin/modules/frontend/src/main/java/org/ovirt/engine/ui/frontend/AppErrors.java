@@ -2871,6 +2871,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_CANNOT_CHANGE_INITIAL_RUN_DATA();
 
+    String CLUSTER_BIOS_TYPE_NOT_SET();
+
     String NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY();
 
     String VM_ICON_DATAURL_MALFORMED();

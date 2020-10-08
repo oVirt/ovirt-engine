@@ -40,6 +40,7 @@ import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -145,6 +146,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         cluster.setStoragePoolId(storagePoolId);
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setCompatibilityVersion(Version.getLast());
+        cluster.setBiosType(BiosType.Q35_SEA_BIOS);
 
         storagePool = new StoragePool();
         storagePool.setId(storagePoolId);

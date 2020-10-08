@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -148,6 +149,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
         if (getCluster() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
+        }
+
+        if (getCluster().getBiosType() == null || getCluster().getBiosType() == BiosType.CLUSTER_DEFAULT) {
+            return failValidation(EngineMessage.CLUSTER_BIOS_TYPE_NOT_SET);
         }
 
         updateVmVersion();

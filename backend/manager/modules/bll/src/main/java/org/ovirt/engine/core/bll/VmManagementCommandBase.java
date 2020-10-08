@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -21,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,7 +47,6 @@ public abstract class VmManagementCommandBase<T extends VmManagementParametersBa
 
     private InstanceType instanceType;
     private Version effectiveCompatibilityVersion;
-    private BiosType effectiveBiosType;
 
     protected VmManagementCommandBase(Guid commandId) {
         super(commandId);
@@ -67,17 +64,11 @@ public abstract class VmManagementCommandBase<T extends VmManagementParametersBa
     protected void init() {
         super.init();
         initEffectiveCompatibilityVersion();
-        initEffectiveBiosType();
     }
 
     protected void initEffectiveCompatibilityVersion() {
         setEffectiveCompatibilityVersion(
                 CompatibilityVersionUtils.getEffective(getParameters().getVmStaticData(), this::getCluster));
-    }
-
-    protected void initEffectiveBiosType() {
-        setEffectiveBiosType(
-                BiosTypeUtils.getEffective(getParameters().getVmStaticData(), this::getCluster));
     }
 
     protected Guid getInstanceTypeId() {
@@ -100,14 +91,6 @@ public abstract class VmManagementCommandBase<T extends VmManagementParametersBa
 
     protected void setEffectiveCompatibilityVersion(Version effectiveCompatibilityVersion) {
         this.effectiveCompatibilityVersion = effectiveCompatibilityVersion;
-    }
-
-    public BiosType getEffectiveBiosType() {
-        return effectiveBiosType;
-    }
-
-    public void setEffectiveBiosType(BiosType effectiveBiosType) {
-        this.effectiveBiosType = effectiveBiosType;
     }
 
     protected VDS getVds(Guid id) {

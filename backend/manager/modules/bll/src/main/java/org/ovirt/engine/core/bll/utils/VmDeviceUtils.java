@@ -53,7 +53,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -457,12 +456,11 @@ public class VmDeviceUtils {
      * @param compatibilityVersion  cluster compatibility version
      * @param isSoundDeviceEnabled  true/false to enable/disable device respectively, null to leave it untouched
      */
-    public void updateSoundDevice(VmBase oldVmBase, VmBase newVmBase, Cluster cluster, Version compatibilityVersion,
+    public void updateSoundDevice(VmBase oldVmBase, VmBase newVmBase, Version compatibilityVersion,
                                   Boolean isSoundDeviceEnabled) {
         boolean osChanged = oldVmBase.getOsId() != newVmBase.getOsId();
-        BiosType biosType = BiosTypeUtils.getEffective(newVmBase, cluster);
         updateSoundDevice(newVmBase.getId(), newVmBase.getOsId(), compatibilityVersion,
-                biosType.getChipsetType(), isSoundDeviceEnabled, osChanged);
+                newVmBase.getEffectiveBiosType().getChipsetType(), isSoundDeviceEnabled, osChanged);
     }
 
     /**
@@ -511,8 +509,7 @@ public class VmDeviceUtils {
      */
     public VmDevice addSoundDevice(VmBase vmBase, Supplier<Cluster> clusterSupplier) {
         Version compatibilityVersion = CompatibilityVersionUtils.getEffective(vmBase, clusterSupplier);
-        BiosType biosType = BiosTypeUtils.getEffective(vmBase, clusterSupplier);
-        return addSoundDevice(vmBase.getId(), vmBase.getOsId(), compatibilityVersion, biosType.getChipsetType());
+        return addSoundDevice(vmBase.getId(), vmBase.getOsId(), compatibilityVersion, vmBase.getEffectiveBiosType().getChipsetType());
     }
 
     /**
@@ -697,7 +694,7 @@ public class VmDeviceUtils {
         final Version version = CompatibilityVersionUtils.getEffective(vm, vmCluster);
 
         return (vmCluster == null || FeatureSupported.isTpmDeviceSupported(version, vmCluster.getArchitecture()))
-                && BiosTypeUtils.getEffective(vm, vmCluster).isOvmf();
+                && vm.getEffectiveBiosType().isOvmf();
     }
 
     /**
@@ -852,7 +849,6 @@ public class VmDeviceUtils {
         final UsbPolicy newUsbPolicy = newVm.getUsbPolicy();
         final int oldNumberOfSlots = getUsbSlots(oldVm.getId()).size();
 
-        final BiosType effectiveBiosType = BiosTypeUtils.getEffective(newVm, newVmCluster);
         final int newNumberOfUsbSlots = Config.<Integer> getValue(ConfigValues.NumberOfUSBSlots);
 
         if (UsbPolicy.DISABLED == newUsbPolicy && newVm.getVmType() == VmType.HighPerformance) {
@@ -861,17 +857,15 @@ public class VmDeviceUtils {
         }
         if (UsbPolicy.DISABLED == oldUsbPolicy && UsbPolicy.ENABLED_NATIVE == newUsbPolicy) {
             disableNormalUsb(newVm.getId());
-            enableSpiceUsb(newVm.getId(), effectiveBiosType, newNumberOfUsbSlots);
+            enableSpiceUsb(newVm.getId(), newVm.getEffectiveBiosType(), newNumberOfUsbSlots);
             return;
         }
         if (UsbPolicy.ENABLED_NATIVE == oldUsbPolicy && UsbPolicy.ENABLED_NATIVE == newUsbPolicy) {
-            BiosType oldBiosType = BiosTypeUtils.getEffective(oldVm, oldVmCluster);
-            BiosType newBiosType = BiosTypeUtils.getEffective(newVm, newVmCluster);
-            if (!oldBiosType.getChipsetType().equals(newBiosType.getChipsetType())) {
+            if (!oldVm.getEffectiveBiosType().getChipsetType().equals(newVm.getEffectiveBiosType().getChipsetType())) {
                 disableSpiceUsb(newVm.getId());
-                enableSpiceUsb(newVm.getId(), effectiveBiosType, newNumberOfUsbSlots);
+                enableSpiceUsb(newVm.getId(), newVm.getEffectiveBiosType(), newNumberOfUsbSlots);
             } else {
-                updateSpiceUsb(newVm.getId(), effectiveBiosType, oldNumberOfSlots, newNumberOfUsbSlots);
+                updateSpiceUsb(newVm.getId(), newVm.getEffectiveBiosType(), oldNumberOfSlots, newNumberOfUsbSlots);
             }
             return;
         }
@@ -1052,8 +1046,7 @@ public class VmDeviceUtils {
         MemoizingSupplier<Cluster> clusterSupplier =
                 new MemoizingSupplier<>(() -> getCluster(vmBase.getClusterId()));
         Version version = CompatibilityVersionUtils.getEffective(vmBase, clusterSupplier);
-        BiosType biosType = BiosTypeUtils.getEffective(vmBase, clusterSupplier);
-        return osRepository.getOsUsbControllerModel(vmBase.getOsId(), version, biosType.getChipsetType());
+        return osRepository.getOsUsbControllerModel(vmBase.getOsId(), version, vmBase.getEffectiveBiosType().getChipsetType());
     }
 
     private String getUsbControllerModelName(VmDevice usbControllerDevice) {
@@ -1469,7 +1462,7 @@ public class VmDeviceUtils {
         updateVideoDevices(oldVmBase, newVmBase);
         updateUsbSlots(oldVmBase, oldVmCluster, newVmBase, newVmCluster);
         updateMemoryBalloon(newVmBase.getId(), params.isBalloonEnabled());
-        updateSoundDevice(oldVmBase, newVmBase, newVmCluster, oldVm.getCompatibilityVersion(),
+        updateSoundDevice(oldVmBase, newVmBase, oldVm.getCompatibilityVersion(),
                 params.isSoundDeviceEnabled());
         updateTpmDevice(newVmBase, newVmCluster, params.isTpmEnabled());
         updateSmartcardDevice(oldVm, newVmBase);
@@ -1607,8 +1600,8 @@ public class VmDeviceUtils {
 
         final Cluster srcCluster = getCluster(srcVmBase.getClusterId());
         final Cluster dstCluster = getCluster(dstVmBase.getClusterId(), srcCluster);
-        ChipsetType srcChipsetType = BiosTypeUtils.getEffective(srcVmBase, srcCluster).getChipsetType();
-        ChipsetType dstChipsetType = BiosTypeUtils.getEffective(dstVmBase, dstCluster).getChipsetType();
+        ChipsetType srcChipsetType = srcVmBase.getEffectiveBiosType().getChipsetType();
+        ChipsetType dstChipsetType = dstVmBase.getEffectiveBiosType().getChipsetType();
 
         for (VmDevice device : srcDevices) {
             if (device.getSnapshotId() != null && !copySnapshotDevices) {

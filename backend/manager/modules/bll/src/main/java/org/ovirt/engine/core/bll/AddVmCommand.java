@@ -115,6 +115,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -277,6 +278,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
 
             setVmTemplateId(templateIdToUse);
+            BiosTypeUtils.setEffective(parameters.getVmStaticData(), getCluster());
 
             // API backward compatibility
             if (getVmDeviceUtils().shouldOverrideSoundDevice(
@@ -809,6 +811,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         List<EngineMessage> msgs = cloudInitHandler.validate(getParameters().getVmStaticData().getVmInit());
         if (!CollectionUtils.isEmpty(msgs)) {
             return failValidation(msgs);
+        }
+
+        if (getCluster().getBiosType() == null || getCluster().getBiosType() == BiosType.CLUSTER_DEFAULT) {
+            return failValidation(EngineMessage.CLUSTER_BIOS_TYPE_NOT_SET);
         }
 
         if (FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
@@ -1765,7 +1771,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         boolean isOsSupportedForVirtIoScsi = vmValidationUtils.isDiskInterfaceSupportedByOs(
                 getParameters().getVm().getOs(),
                 getEffectiveCompatibilityVersion(),
-                getEffectiveBiosType().getChipsetType(),
+                getParameters().getVmStaticData().getEffectiveBiosType().getChipsetType(),
                 DiskInterface.VirtIO_SCSI);
 
         return virtioScsiEnabled != null ? virtioScsiEnabled : isOsSupportedForVirtIoScsi;

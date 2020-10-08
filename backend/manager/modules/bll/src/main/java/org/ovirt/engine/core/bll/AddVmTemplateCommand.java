@@ -68,6 +68,7 @@ import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -241,16 +242,24 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             separateCustomProperties(masterVm);
         }
         if (getVm() != null) {
+            // template from vm
             updateVmDevices();
             images.addAll(getVmDisksFromDB());
             setStoragePoolId(getVm().getStoragePoolId());
             isVmInDb = true;
         } else if (getCluster() != null && masterVm != null) {
+            // template from image
             VM vm = new VM(masterVm, new VmDynamic(), null);
             vm.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
             vm.setClusterBiosType(getCluster().getBiosType());
+            vm.setEffectiveBiosType(
+                    vm.getCustomBiosType() != BiosType.CLUSTER_DEFAULT ? vm.getCustomBiosType() : getCluster().getBiosType());
             setVm(vm);
             setStoragePoolId(getCluster().getStoragePoolId());
+        } else {
+            // instance types
+            masterVm.setEffectiveBiosType(
+                    masterVm.getCustomBiosType() != BiosType.CLUSTER_DEFAULT ? masterVm.getCustomBiosType() : BiosType.I440FX_SEA_BIOS);
         }
         updateDiskInfoDestinationMap();
         generateTargetDiskIds();
@@ -973,6 +982,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getUseTscFrequency(),
                         getParameters().getMasterVm().getCpuPinning()));
         getVmTemplate().setOrigin(getParameters().getMasterVm().getOrigin());
+        getVmTemplate().setEffectiveBiosType(getParameters().getMasterVm().getEffectiveBiosType());
         updateVmIcons();
         getVmTemplate().setSealed(getParameters().isSealTemplate());
         vmTemplateDao.save(getVmTemplate());

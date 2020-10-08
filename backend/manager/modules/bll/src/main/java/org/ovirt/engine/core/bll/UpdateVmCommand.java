@@ -96,6 +96,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
@@ -219,6 +220,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(
                     compatibilityVersion, getVm().getStaticData());
         }
+
+        BiosTypeUtils.setEffective(getParameters().getVmStaticData(), getNewCluster());
+
         vmHandler.updateDefaultTimeZone(getParameters().getVmStaticData());
 
         vmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData());
@@ -1518,7 +1522,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private boolean isChipsetChanged() {
-        return getEffectiveBiosType().getChipsetType() != getVm().getEffectiveBiosType().getChipsetType();
+        BiosType newEffectiveBiosType = getParameters().getVmStaticData().getEffectiveBiosType();
+        BiosType oldEffectiveBiosType = getVm().getEffectiveBiosType();
+        return  newEffectiveBiosType.getChipsetType() != oldEffectiveBiosType.getChipsetType();
     }
 
     @Override

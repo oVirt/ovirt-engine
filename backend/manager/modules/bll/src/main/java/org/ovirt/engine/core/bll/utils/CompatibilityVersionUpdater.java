@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
-import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
@@ -48,7 +47,7 @@ public class CompatibilityVersionUpdater {
     public static BiosType getBiosTypeOrigin(VM vm) {
         BiosType clusterBiosType =
                 vm.getClusterBiosTypeOrigin() != null ? vm.getClusterBiosTypeOrigin() : BiosType.I440FX_SEA_BIOS;
-        return BiosTypeUtils.getEffective(vm.getCustomBiosType(), clusterBiosType);
+        return vm.getCustomBiosType() != null ? vm.getCustomBiosType() : clusterBiosType;
     }
 
     /**

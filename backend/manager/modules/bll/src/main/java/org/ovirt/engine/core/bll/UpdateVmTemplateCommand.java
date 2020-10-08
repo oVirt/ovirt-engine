@@ -445,7 +445,6 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         // update audio device
         getVmDeviceUtils().updateSoundDevice(oldTemplate,
                 getVmTemplate(),
-                getCluster(),
                 getVmTemplate().getCompatibilityVersion(),
                 getParameters().isSoundDeviceEnabled());
 

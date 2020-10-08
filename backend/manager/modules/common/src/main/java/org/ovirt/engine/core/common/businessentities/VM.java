@@ -1857,7 +1857,11 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     }
 
     public BiosType getEffectiveBiosType() {
-        return getCustomBiosType() != BiosType.CLUSTER_DEFAULT ? getCustomBiosType() : getClusterBiosType();
+        return vmStatic.getEffectiveBiosType();
+    }
+
+    public void setEffectiveBiosType(BiosType type) {
+        vmStatic.setEffectiveBiosType(type);
     }
 
     public BiosType getClusterBiosTypeOrigin() {

@@ -43,6 +43,7 @@ import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.bll.validator.VmNicMacsUtils;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -154,6 +155,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cluster.setStoragePoolId(cmd.getParameters().getStoragePoolId());
         cluster.setClusterId(cmd.getParameters().getClusterId());
         cluster.setCompatibilityVersion(Version.getLast());
+        cluster.setBiosType(BiosType.Q35_SEA_BIOS);
         doReturn(cluster).when(cmd).getCluster();
     }
 
@@ -206,6 +208,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cluster.setStoragePoolId(cmd.getParameters().getStoragePoolId());
         cluster.setArchitecture(ArchitectureType.ppc64);
         cluster.setCompatibilityVersion(Version.getLast());
+        cluster.setBiosType(BiosType.I440FX_SEA_BIOS);
         doReturn(cluster).when(cmd).getCluster();
         doReturn(true).when(cmd).validateImages(any());
     }
@@ -285,6 +288,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         vm.setName("testVm");
         Guid clusterId = Guid.newGuid();
         vm.setClusterId(clusterId);
+        vm.setCustomBiosType(BiosType.Q35_SEA_BIOS);
         vm.setClusterCompatibilityVersion(Version.getLast());
         vm.setClusterCompatibilityVersionOrigin(Version.getLast());
         Guid spId = Guid.newGuid();
@@ -312,6 +316,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         v.setImages(new ArrayList<>(Arrays.asList(baseImage, activeImage)));
         v.setSnapshots(new ArrayList<>(Arrays.asList(baseSnapshot, activeSnapshot)));
         v.setClusterId(Guid.Empty);
+        v.setCustomBiosType(BiosType.Q35_SEA_BIOS);
 
         return v;
     }
