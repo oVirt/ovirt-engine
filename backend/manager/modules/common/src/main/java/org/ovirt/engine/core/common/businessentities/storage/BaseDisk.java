@@ -113,6 +113,8 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
 
     private DiskBackup backup;
 
+    private DiskBackupMode backupMode;
+
     public BaseDisk() {
         propagateErrors = PropagateErrors.Off;
         contentType = DiskContentType.DATA;
@@ -244,6 +246,14 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
         this.backup = backup;
     }
 
+    public DiskBackupMode getBackupMode() {
+        return backupMode;
+    }
+
+    public void setBackupMode(DiskBackupMode backupMode) {
+        this.backupMode = backupMode;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -256,7 +266,8 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
                 sgio,
                 cinderVolumeType,
                 contentType,
-                backup
+                backup,
+                backupMode
         );
     }
 
@@ -283,6 +294,7 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
                 && sgio == other.sgio
                 && Objects.equals(cinderVolumeType, other.cinderVolumeType)
                 && contentType == other.contentType
-                && backup == other.backup;
+                && backup == other.backup
+                && backupMode == other.backupMode;
     }
 }

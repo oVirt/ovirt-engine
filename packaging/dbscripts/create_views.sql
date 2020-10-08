@@ -87,6 +87,7 @@ SELECT images.image_guid AS image_guid,
     base_disks.sgio AS sgio,
     base_disks.disk_content_type AS disk_content_type,
     base_disks.backup AS backup,
+    base_disks.backup_mode AS backup_mode,
     image_storage_domain_map.quota_id AS quota_id,
     quota.quota_name AS quota_name,
     storage_pool.quota_enforcement_type,
@@ -211,6 +212,7 @@ SELECT storage_for_image_view.storage_id AS storage_id,
     images_storage_domain_view.sgio AS sgio,
     images_storage_domain_view.disk_content_type AS disk_content_type,
     images_storage_domain_view.backup AS backup,
+    images_storage_domain_view.backup_mode AS backup_mode,
     images_storage_domain_view.entity_type AS entity_type,
     images_storage_domain_view.number_of_vms AS number_of_vms,
     images_storage_domain_view.vm_names AS vm_names,
@@ -252,7 +254,8 @@ SELECT storage_impl.*,
     bd.disk_storage_type,
     bd.cinder_volume_type,
     bd.disk_content_type,
-    bd.backup
+    bd.backup,
+    bd.backup_mode
 FROM (
     SELECT storage_for_image_view.storage_id AS storage_id,
         -- Storage fields
@@ -436,7 +439,8 @@ SELECT storage_impl.*,
     bd.disk_storage_type,
     bd.cinder_volume_type,
     bd.disk_content_type,
-    bd.backup
+    bd.backup,
+    bd.backup_mode
 FROM (
     SELECT storage_for_image_view.storage_id AS storage_id,
         -- Storage fields

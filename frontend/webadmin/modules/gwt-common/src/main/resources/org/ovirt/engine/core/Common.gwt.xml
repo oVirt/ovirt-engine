@@ -332,6 +332,7 @@
         <include name="common/businessentities/VmBackup.java" />
         <include name="common/businessentities/VmBackupPhase.java" />
         <include name="common/businessentities/VmCheckpoint.java" />
+        <include name="common/businessentities/storage/DiskBackupMode.java" />
 
         <!-- Misc -->
         <include name="common/AuditLogType.java" />
