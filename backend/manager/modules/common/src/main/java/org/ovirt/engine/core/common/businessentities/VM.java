@@ -62,7 +62,6 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     private boolean trustedService;
     private boolean hasIllegalImages;
     private BiosType clusterBiosType;
-    private BiosType clusterBiosTypeOrigin;
     @TransientField
     private boolean differentTimeZone;
 
@@ -1856,20 +1855,12 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         this.clusterBiosType = clusterBiosType;
     }
 
-    public BiosType getEffectiveBiosType() {
-        return vmStatic.getEffectiveBiosType();
-    }
-
     public void setEffectiveBiosType(BiosType type) {
         vmStatic.setEffectiveBiosType(type);
     }
 
-    public BiosType getClusterBiosTypeOrigin() {
-        return clusterBiosTypeOrigin;
-    }
-
-    public void setClusterBiosTypeOrigin(BiosType clusterBiosTypeOrigin) {
-        this.clusterBiosTypeOrigin = clusterBiosTypeOrigin;
+    public BiosType getEffectiveBiosType() {
+        return vmStatic.getEffectiveBiosType();
     }
 
     public boolean getUseTscFrequency() {

@@ -693,9 +693,12 @@ public abstract class OvfReader implements IOvfBuilder {
         // For compatibility with oVirt 4.3, use values of BiosType constants that existed before
         // introduction of CLUSTER_DEFAULT:  0 == I440FX_SEA_BIOS and so on
         acceptNode(
-                val -> vmBase.setCustomBiosType(BiosType.forValue(Integer.parseInt(val) + 1)),
+                val -> {
+                    vmBase.setCustomBiosType(BiosType.forValue(Integer.parseInt(val) + 1));
+                    vmBase.setEffectiveBiosType(vmBase.getCustomBiosType());
+                },
                 () -> {
-                    assignClusterBiosTypeOrigin(BiosType.I440FX_SEA_BIOS);
+                    vmBase.setEffectiveBiosType(BiosType.I440FX_SEA_BIOS);
                     vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
                 },
                 biosTypeNode);
@@ -703,21 +706,17 @@ public abstract class OvfReader implements IOvfBuilder {
             consumeReadXmlAttribute(biosTypeNode, "ovf:custom",
                     val -> {
                         if (!Boolean.parseBoolean(val)) {
-                            assignClusterBiosTypeOrigin(vmBase.getCustomBiosType());
                             vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
                         }
                     },
                     () -> {
                         if (vmBase.getCustomBiosType() != BiosType.Q35_SECURE_BOOT
                                 && vmBase.getCustomBiosType() != BiosType.Q35_OVMF) {
-                            assignClusterBiosTypeOrigin(vmBase.getCustomBiosType());
                             vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
                         }
                     });
         }
     }
-
-    protected abstract void assignClusterBiosTypeOrigin(BiosType biosType);
 
     private String escapedNewLines(String value) {
         return value.replaceAll("\\\\n", "\n");

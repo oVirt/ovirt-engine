@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -93,16 +92,6 @@ public class OvfVmWriter extends OvfOvirtWriter {
         writeAffinityGroups();
         writeAffinityLabels();
         writeNumaNodeList();
-    }
-
-    @Override
-    protected BiosType getEffectiveBiosType() {
-        return vm.getEffectiveBiosType();
-    }
-
-    @Override
-    protected boolean isCustomBiosType() {
-        return vm.getCustomBiosType() != BiosType.CLUSTER_DEFAULT;
     }
 
     private void writeLogEvent(String name, String value) {

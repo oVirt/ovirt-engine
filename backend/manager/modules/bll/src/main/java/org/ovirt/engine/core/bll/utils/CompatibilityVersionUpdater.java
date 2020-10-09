@@ -31,23 +31,17 @@ public class CompatibilityVersionUpdater {
      */
     public EnumSet<VmUpdateType> updateVmCompatibilityVersion(VM vm, Version newVersion, Cluster cluster) {
         vm.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
-        updateDefaultBiosType(vm, newVersion);
+        updateBiosType(vm, newVersion, cluster);
         return updateVmBaseCompatibilityVersion(vm.getStaticData(), newVersion, cluster);
     }
 
-    private void updateDefaultBiosType(VM vm, Version newVersion) {
+    // we should preserve the Q35_SECURE_BOOT settings to ensure the VM starts
+    private void updateBiosType(VM vm, Version newVersion, Cluster cluster) {
         if (newVersion.greaterOrEquals(Version.v4_3)) {
-            BiosType oldBiosType = getBiosTypeOrigin(vm);
-            if (oldBiosType == BiosType.Q35_SECURE_BOOT) {
+            if (vm.getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT && cluster.getBiosType() != BiosType.Q35_SECURE_BOOT) {
                 vm.setCustomBiosType(BiosType.Q35_SECURE_BOOT);
             }
         }
-    }
-
-    public static BiosType getBiosTypeOrigin(VM vm) {
-        BiosType clusterBiosType =
-                vm.getClusterBiosTypeOrigin() != null ? vm.getClusterBiosTypeOrigin() : BiosType.I440FX_SEA_BIOS;
-        return vm.getCustomBiosType() != null ? vm.getCustomBiosType() : clusterBiosType;
     }
 
     /**

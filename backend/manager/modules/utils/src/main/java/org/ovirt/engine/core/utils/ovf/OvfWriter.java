@@ -327,7 +327,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected void writeBiosType() {
-        BiosType effectiveBiosType = getEffectiveBiosType();
+        BiosType effectiveBiosType = vmBase.getEffectiveBiosType();
         if (effectiveBiosType != null && effectiveBiosType != BiosType.CLUSTER_DEFAULT) {
             // For compatibility with oVirt 4.3, use values of BiosType constants that existed before
             // introduction of CLUSTER_DEFAULT:  0 == I440FX_SEA_BIOS and so on
@@ -340,8 +340,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
     }
 
-    protected abstract BiosType getEffectiveBiosType();
-    protected abstract boolean isCustomBiosType();
+    private boolean isCustomBiosType() {
+        return vmBase.getCustomBiosType() != BiosType.CLUSTER_DEFAULT;
+    }
+
     protected abstract String getInstaceIdTag();
 
     protected void writeCustomCpuName() {

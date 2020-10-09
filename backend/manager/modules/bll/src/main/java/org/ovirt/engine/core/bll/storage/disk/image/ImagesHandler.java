@@ -778,7 +778,6 @@ public class ImagesHandler {
                 VM vmSnapshot = new VM();
                 FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(vmSnapshot);
                 ovfManager.importVm(snapConfig, vmSnapshot, fullEntityOvfData);
-                vmSnapshot.setClusterBiosType(vmSnapshot.getClusterBiosTypeOrigin());
 
                 // Remove the image from the disk list
                 Iterator<DiskImage> diskIter = fullEntityOvfData.getDiskImages().iterator();

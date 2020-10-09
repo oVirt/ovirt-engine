@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.utils.ovf;
 
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -37,16 +36,6 @@ public class OvfTemplateWriter extends OvfOvirtWriter {
     @Override
     protected Integer maxNumOfVcpus() {
         return VmCpuCountHelper.calcMaxVCpu(vmTemplate, getVersion());
-    }
-
-    @Override
-    protected BiosType getEffectiveBiosType() {
-        return vmTemplate.getEffectiveBiosType();
-    }
-
-    @Override
-    protected boolean isCustomBiosType() {
-        return vmTemplate.getCustomBiosType() != BiosType.CLUSTER_DEFAULT;
     }
 
     @Override

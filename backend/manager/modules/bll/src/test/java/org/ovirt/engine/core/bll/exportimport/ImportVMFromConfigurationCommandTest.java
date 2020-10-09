@@ -290,7 +290,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
                 EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
     }
 
-    private void testBiosType(BiosType biosType, Boolean custom, BiosType expectedBiosType) throws Exception {
+    private void testBiosType(BiosType biosType, Boolean custom, BiosType expectedCustomBiosType, BiosType expectedEffectiveBiosType) throws Exception {
         doNothing().when(cmd).processImages();
         doReturn(mock(CompensationContext.class)).when(cmd).getCompensationContext();
 
@@ -308,42 +308,43 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
         cmd.executeVmCommand();
         vmStaticArgumentCaptor = ArgumentCaptor.forClass(VmStatic.class);
         verify(vmStaticDao).save(vmStaticArgumentCaptor.capture());
-        assertEquals(vmStaticArgumentCaptor.getValue().getCustomBiosType(), expectedBiosType);
+        assertEquals(expectedCustomBiosType, vmStaticArgumentCaptor.getValue().getCustomBiosType(), "Custom bios type");
+        assertEquals(expectedEffectiveBiosType, vmStaticArgumentCaptor.getValue().getEffectiveBiosType(), "Effective bios type");
     }
 
     @Test
     public void testBiosTypeDefault() throws Exception {
-        testBiosType(null, null, BiosType.CLUSTER_DEFAULT);
+        testBiosType(null, null, BiosType.CLUSTER_DEFAULT, BiosType.I440FX_SEA_BIOS);
     }
 
     @Test
     public void testBiosTypeDefaultQ35SeaBios() throws Exception {
-        testBiosType(BiosType.Q35_SEA_BIOS, null, BiosType.CLUSTER_DEFAULT);
+        testBiosType(BiosType.Q35_SEA_BIOS, null, BiosType.CLUSTER_DEFAULT, BiosType.Q35_SEA_BIOS);
     }
 
     @Test
     public void testBiosTypeDefaultQ35SecureBoot() throws Exception {
-        testBiosType(BiosType.Q35_SECURE_BOOT, null, BiosType.Q35_SECURE_BOOT);
+        testBiosType(BiosType.Q35_SECURE_BOOT, null, BiosType.Q35_SECURE_BOOT, BiosType.Q35_SECURE_BOOT);
     }
 
     @Test
     public void testBiosTypeNotCustomQ35SeaBios() throws Exception {
-        testBiosType(BiosType.Q35_SEA_BIOS, false, BiosType.CLUSTER_DEFAULT);
+        testBiosType(BiosType.Q35_SEA_BIOS, false, BiosType.CLUSTER_DEFAULT, BiosType.Q35_SEA_BIOS);
     }
 
     @Test
     public void testBiosTypeCustomQ35SeaBios() throws Exception {
-        testBiosType(BiosType.Q35_SEA_BIOS, true, BiosType.Q35_SEA_BIOS);
+        testBiosType(BiosType.Q35_SEA_BIOS, true, BiosType.Q35_SEA_BIOS, BiosType.Q35_SEA_BIOS);
     }
 
     @Test
     public void testBiosTypeNotCustomQ35SecureBoot() throws Exception {
-        testBiosType(BiosType.Q35_SECURE_BOOT, false, BiosType.CLUSTER_DEFAULT);
+        testBiosType(BiosType.Q35_SECURE_BOOT, false, BiosType.CLUSTER_DEFAULT, BiosType.Q35_SECURE_BOOT);
     }
 
     @Test
     public void testBiosTypeCustomQ35SecureBoot() throws Exception {
-        testBiosType(BiosType.Q35_SECURE_BOOT, true, BiosType.Q35_SECURE_BOOT);
+        testBiosType(BiosType.Q35_SECURE_BOOT, true, BiosType.Q35_SECURE_BOOT, BiosType.Q35_SECURE_BOOT);
     }
 
     private ImportVmFromConfParameters createParametersWhenImagesExistOnTargetStorageDomain() {

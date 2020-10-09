@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
-import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -384,9 +383,9 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             }
         }
 
-        ChipsetType oldChipsetType = CompatibilityVersionUpdater.getBiosTypeOrigin(getVm()).getChipsetType();
         var updates = new CompatibilityVersionUpdater().updateVmCompatibilityVersion(getVm(), newVersion, getCluster());
-        if (ChipsetUpdater.updateChipset(getVm().getStaticData(), oldChipsetType, getCluster())) {
+
+        if (ChipsetUpdater.updateChipset(getVm().getStaticData(), getCluster())) {
             updates.add(VmUpdateType.CHIPSET);
         }
 

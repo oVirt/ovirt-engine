@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.BiosType;
@@ -17,23 +16,21 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 public class ChipsetUpdater {
 
     public static boolean updateChipset(VM vm, Cluster cluster) {
-        return updateChipset(vm.getStaticData(), vm.getEffectiveBiosType().getChipsetType(), cluster);
+        return updateChipset(vm.getStaticData(), cluster);
     }
 
-    public static boolean updateChipset(VmBase vmBase, ChipsetType oldChipsetType, Cluster cluster) {
-        if (oldChipsetType == null) {
-            return false;
-        }
+    public static boolean updateChipset(VmBase vmBase, Cluster cluster) {
+
+        BiosType oldBiosType = vmBase.getEffectiveBiosType();
         BiosType newBiosType = vmBase.getCustomBiosType() != BiosType.CLUSTER_DEFAULT ? vmBase.getCustomBiosType() : cluster.getBiosType();
-        vmBase.setEffectiveBiosType(newBiosType);
-        if (oldChipsetType == newBiosType.getChipsetType()) {
+
+        if (oldBiosType.getChipsetType() == newBiosType.getChipsetType()) {
             return false;
         }
 
-        List<VmDevice> devices = new ArrayList<>();
-        devices.addAll(vmBase.getManagedDeviceMap().values());
-        devices.addAll(vmBase.getUnmanagedDeviceList()); // TODO: this can probably be dropped
-        return updateDevicesForChipset(devices, newBiosType.getChipsetType());
+        vmBase.setEffectiveBiosType(newBiosType);
+        vmBase.setUnmanagedDeviceList(new ArrayList<>());
+        return updateDevicesForChipset(vmBase.getManagedDeviceMap().values(), newBiosType.getChipsetType());
     }
 
     private static boolean updateDevicesForChipset(Collection<VmDevice> devices, ChipsetType chipsetType) {
@@ -59,5 +56,4 @@ public class ChipsetUpdater {
         }
         return updated;
     }
-
 }

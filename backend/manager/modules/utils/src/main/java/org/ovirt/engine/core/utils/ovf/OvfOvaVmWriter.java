@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.utils.ovf;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -61,16 +60,6 @@ public class OvfOvaVmWriter extends OvfOvaWriter {
         if (vm.getCpuPinning() != null) {
             _writer.writeElement(CPU_PINNING, vm.getCpuPinning());
         }
-    }
-
-    @Override
-    protected BiosType getEffectiveBiosType() {
-        return vm.getEffectiveBiosType();
-    }
-
-    @Override
-    protected boolean isCustomBiosType() {
-        return vm.getCustomBiosType() != BiosType.CLUSTER_DEFAULT;
     }
 
     @Override
