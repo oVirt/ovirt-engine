@@ -113,9 +113,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @EditableVdsField
     private Guid hostProviderId;
 
-    @EditableVdsField
-    private Guid openstackNetworkProviderId;
-
     /**
      * Current kernel cmdline
      *
@@ -373,14 +370,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         return hostProviderId;
     }
 
-    public Guid getOpenstackNetworkProviderId() {
-        return openstackNetworkProviderId;
-    }
-
-    public void setOpenstackNetworkProviderId(Guid openstackNetworkProviderId) {
-        this.openstackNetworkProviderId = openstackNetworkProviderId;
-    }
-
     public String getCurrentKernelCmdline() {
         return currentKernelCmdline;
     }
@@ -500,7 +489,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 vdsType,
                 disablePowerManagementPolicy,
                 hostProviderId,
-                openstackNetworkProviderId,
                 currentKernelCmdline,
                 kernelCmdlineParsable,
                 lastStoredKernelCmdline,
@@ -540,7 +528,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && Objects.equals(sshKeyFingerprint, other.sshKeyFingerprint)
                 && disablePowerManagementPolicy == other.disablePowerManagementPolicy
                 && Objects.equals(hostProviderId, other.hostProviderId)
-                && Objects.equals(openstackNetworkProviderId, other.openstackNetworkProviderId)
                 && Objects.equals(currentKernelCmdline, other.currentKernelCmdline)
                 && Objects.equals(kernelCmdlineParsable, other.kernelCmdlineParsable)
                 && Objects.equals(lastStoredKernelCmdline, other.lastStoredKernelCmdline)

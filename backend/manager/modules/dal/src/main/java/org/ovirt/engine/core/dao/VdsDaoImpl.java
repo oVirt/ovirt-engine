@@ -386,7 +386,6 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setBalloonEnabled(rs.getBoolean("enable_balloon"));
         entity.setCountThreadsAsCores(rs.getBoolean("count_threads_as_cores"));
         entity.setMaintenanceReason(rs.getString("maintenance_reason"));
-        entity.getStaticData().setOpenstackNetworkProviderId(getGuid(rs, "openstack_network_provider_id"));
         entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
         entity.setHostDevicePassthroughEnabled(rs.getBoolean("is_hostdev_enabled"));
         entity.setHostedEngineHost(rs.getBoolean("is_hosted_engine_host"));

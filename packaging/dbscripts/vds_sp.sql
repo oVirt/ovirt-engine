@@ -681,7 +681,6 @@ CREATE OR REPLACE FUNCTION InsertVdsStatic (
     v_ssh_username VARCHAR(255),
     v_disable_auto_pm BOOLEAN,
     v_host_provider_id UUID,
-    v_openstack_network_provider_id UUID,
     v_kernel_cmdline TEXT,
     v_last_stored_kernel_cmdline TEXT,
     v_vgpu_placement INT
@@ -715,7 +714,6 @@ BEGIN
             ssh_username,
             disable_auto_pm,
             host_provider_id,
-            openstack_network_provider_id,
             kernel_cmdline,
             last_stored_kernel_cmdline,
             vgpu_placement
@@ -740,7 +738,6 @@ BEGIN
             v_ssh_username,
             v_disable_auto_pm,
             v_host_provider_id,
-            v_openstack_network_provider_id,
             v_kernel_cmdline,
             v_last_stored_kernel_cmdline,
             v_vgpu_placement
@@ -827,7 +824,6 @@ CREATE OR REPLACE FUNCTION UpdateVdsStatic (
     v_ssh_username VARCHAR(255),
     v_disable_auto_pm BOOLEAN,
     v_host_provider_id UUID,
-    v_openstack_network_provider_id UUID,
     v_kernel_cmdline TEXT,
     v_reinstall_required BOOLEAN,
     v_vgpu_placement INTEGER
@@ -854,7 +850,6 @@ BEGIN
             vds_spm_priority = v_vds_spm_priority,
             sshKeyFingerprint = v_sshKeyFingerprint,
             host_provider_id = v_host_provider_id,
-            openstack_network_provider_id = v_openstack_network_provider_id,
             console_address = v_console_address,
             ssh_port = v_ssh_port,
             ssh_username = v_ssh_username,
