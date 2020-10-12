@@ -30,8 +30,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.EngineCronTrigger;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.AutoRecoverDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -127,13 +125,7 @@ public class AutoRecoveryManager implements BackendService {
                             // and will not be activated so that HE VM never migrated out of its cluster
                             continue;
                         }
-                        if (vds.getNonOperationalReason() == NonOperationalReason.NETWORK_INTERFACE_IS_DOWN) {
-                            resourceManager.runVdsCommand(VDSCommandType.GetStats,
-                                    new VdsIdAndVdsVDSCommandParametersBase(vds));
-                            nics = vds.getInterfaces();
-                        } else {
-                            nics = interfaceDao.getAllInterfacesForVds(vds.getId());
-                        }
+                        nics = interfaceDao.getAllInterfacesForVds(vds.getId());
                         Guid clusterId = vds.getClusterId();
                         if (!clusterNetworksMap.containsKey(clusterId)) {
                             clusterNetworks = networkDao.getAllForCluster(vds.getClusterId());
