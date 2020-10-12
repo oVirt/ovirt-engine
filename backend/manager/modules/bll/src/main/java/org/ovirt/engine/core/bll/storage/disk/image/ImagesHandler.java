@@ -1118,7 +1118,7 @@ public class ImagesHandler {
     }
 
     public boolean shouldUseDiskBitmaps(Version version, Guid diskId) {
-        return FeatureSupported.isBitmapsOperationsSupported(version) &&
+        return FeatureSupported.isBackupModeAndBitmapsOperationsSupported(version) &&
                 vmCheckpointDao.isDiskIncludedInCheckpoint(diskId);
     }
 }

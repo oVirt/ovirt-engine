@@ -48,7 +48,8 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
 
     public static Stream<MockConfigDescriptor<?>> mockConfigIsIncrementalBackupSupported() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.IsIncrementalBackupSupported, Version.getLast(), true));
+                MockConfigDescriptor.of(ConfigValues.IsIncrementalBackupSupported, Version.getLast(), true),
+                MockConfigDescriptor.of(ConfigValues.IsIncrementalBackupSupported, Version.v4_4, true));
     }
 
     @Mock
@@ -161,6 +162,18 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
 
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
+    public void validateMixedBackupAllowed() {
+        command.getCluster().setCompatibilityVersion(Version.getLast());
+        mockVds(true);
+        mockVm(VMStatus.Up);
+        when(vmBackupDao.getAllForVm(vmId)).thenReturn(new ArrayList<>());
+        doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
+        doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedMissingCheckpoint() {
         mockVm(VMStatus.Up);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(List.of(mockVmBackup()));
@@ -205,7 +218,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     private void initCluster() {
         Cluster cluster = new Cluster();
         cluster.setClusterId(Guid.newGuid());
-        cluster.setCompatibilityVersion(Version.getLast());
+        cluster.setCompatibilityVersion(Version.v4_4);
         command.setClusterId(cluster.getId());
         command.setCluster(cluster);
     }

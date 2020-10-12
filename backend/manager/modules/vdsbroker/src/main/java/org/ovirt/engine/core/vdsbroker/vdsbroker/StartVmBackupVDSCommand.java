@@ -54,6 +54,9 @@ public class StartVmBackupVDSCommand<P extends VmBackupVDSParameters> extends Vd
             imageParams.put(VdsProperties.ImageId, diskImage.getId().toString());
             imageParams.put(VdsProperties.VolumeId, diskImage.getImageId().toString());
             imageParams.put(VdsProperties.CHECKPOINT, isDiskInCheckpoint(diskImage.getImageId(), toCheckpointId));
+            if (diskImage.getBackupMode() != null) {
+                imageParams.put(VdsProperties.BACKUP_MODE, diskImage.getBackupMode().getName());
+            }
             return imageParams;
         }).toArray(HashMap[]::new);
     }

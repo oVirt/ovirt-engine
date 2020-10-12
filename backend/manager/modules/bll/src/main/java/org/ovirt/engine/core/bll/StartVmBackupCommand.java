@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -49,6 +50,7 @@ import org.ovirt.engine.core.common.vdscommands.VmBackupVDSParameters;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmCheckpointDao;
@@ -73,10 +75,13 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     @Inject
     private VmCheckpointDao vmCheckpointDao;
     @Inject
+    private BaseDiskDao baseDiskDao;
+    @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
 
     private List<DiskImage> disksList;
     private VmCheckpoint vmCheckpointsLeaf;
+    private Set<Guid> fromCheckpointDisksIds;
 
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
@@ -117,14 +122,16 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CHECKPOINT_NOT_EXIST,
                         String.format("$checkpointId %s", getParameters().getVmBackup().getFromCheckpointId()));
             }
-
-            // Due to bz #1829829, Libvirt doesn't handle the case of mixing full and incremental
-            // backup under the same operation. This situation can happen when adding a new disk
-            // to a VM that already has a previous backup.
-            Set<Guid> diskIds = getDisksNotInPreviousCheckpoint();
-            if (!diskIds.isEmpty()) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_MIXED_INCREMENTAL_AND_FULL_BACKUP_NOT_SUPPORTED,
-                        String.format("$diskIds %s", diskIds));
+            if (!FeatureSupported.isBackupModeAndBitmapsOperationsSupported(getCluster().getCompatibilityVersion())) {
+                // Due to bz #1829829, Libvirt doesn't handle the case of mixing full and incremental
+                // backup under the same operation. This situation can happen when adding a new disk
+                // to a VM that already has a previous backup.
+                Set<Guid> diskIds = getDisksNotInPreviousCheckpoint();
+                if (!diskIds.isEmpty()) {
+                    return failValidation(
+                            EngineMessage.ACTION_TYPE_FAILED_MIXED_INCREMENTAL_AND_FULL_BACKUP_NOT_SUPPORTED,
+                            String.format("$diskIds %s", diskIds));
+                }
             }
         }
 
@@ -142,16 +149,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     public Set<Guid> getDisksNotInPreviousCheckpoint() {
-        List<DiskImage> checkpointDisks =
-                vmCheckpointDao.getDisksByCheckpointId(getParameters().getVmBackup().getFromCheckpointId());
-
-        Set<Guid> vmCheckpointDisksIds = checkpointDisks
-                .stream()
-                .map(DiskImage::getId)
-                .collect(Collectors.toCollection(HashSet::new));
-
         return getDiskIds().stream()
-                .filter(diskId -> !vmCheckpointDisksIds.contains(diskId))
+                .filter(diskId -> !getFromCheckpointDisksIds().contains(diskId))
                 .collect(Collectors.toSet());
     }
 
@@ -287,6 +286,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     private void finalizeVmBackup() {
+        cleanDisksBackupModeIfSupported();
         unlockDisks();
     }
 
@@ -309,11 +309,48 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         TransactionSupport.executeInNewTransaction(() -> {
             vmBackupDao.save(vmBackup);
             getParameters().getVmBackup().getDisks().forEach(
-                    disk -> vmBackupDao.addDiskToVmBackup(vmBackup.getId(), disk.getId()));
+                    disk -> {
+                        setDiskBackupModeIfSupported(disk);
+                        vmBackupDao.addDiskToVmBackup(vmBackup.getId(), disk.getId());
+                    });
             return null;
         });
         persistCommandIfNeeded();
         return vmBackup.getId();
+    }
+
+    private void setDiskBackupModeIfSupported(DiskImage disk) {
+        if (FeatureSupported.isBackupModeAndBitmapsOperationsSupported(getCluster().getCompatibilityVersion())) {
+            DiskBackupMode diskBackupMode =
+                    getBackupModeForDisk(disk.getId(),
+                            getParameters().getVmBackup().getFromCheckpointId());
+            disk.setBackupMode(diskBackupMode);
+            baseDiskDao.update(disk);
+        }
+    }
+
+    private DiskBackupMode getBackupModeForDisk(Guid diskId, Guid checkpointId) {
+        if (checkpointId == null) {
+            return DiskBackupMode.Full;
+        } else if (!getFromCheckpointDisksIds().contains(diskId)) {
+            log.warn("Disk ID {} doesn't include in checkpoint ID {}, a full back will be taken for it.",
+                    diskId, checkpointId);
+            return DiskBackupMode.Full;
+        }
+        return DiskBackupMode.Incremental;
+    }
+
+    public Set<Guid> getFromCheckpointDisksIds() {
+        if (fromCheckpointDisksIds == null) {
+            List<DiskImage> checkpointDisks =
+                    vmCheckpointDao.getDisksByCheckpointId(getParameters().getVmBackup().getFromCheckpointId());
+
+            fromCheckpointDisksIds = checkpointDisks
+                    .stream()
+                    .map(DiskImage::getId)
+                    .collect(Collectors.toCollection(HashSet::new));
+        }
+        return fromCheckpointDisksIds;
     }
 
     private Guid createVmCheckpoint() {
@@ -475,6 +512,19 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 ImageStatus.LOCKED,
                 ImageStatus.OK,
                 getCompensationContext());
+    }
+
+    private void cleanDisksBackupModeIfSupported() {
+        if (FeatureSupported.isBackupModeAndBitmapsOperationsSupported(getCluster().getCompatibilityVersion())) {
+            TransactionSupport.executeInNewTransaction(() -> {
+                getParameters().getVmBackup().getDisks().forEach(
+                        disk -> {
+                            disk.setBackupMode(null);
+                            baseDiskDao.update(disk);
+                        });
+                return null;
+            });
+        }
     }
 
     private void unlockDisks() {

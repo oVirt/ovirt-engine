@@ -229,12 +229,12 @@ public class FeatureSupported {
     }
 
     /**
-     * Check if bitmaps operations are supported.
+     * Check if using backup mode and bitmaps operations are supported.
      *
      * @param version Compatibility version to check for.
-     * @return true if bitmaps operations are supported.
+     * @return true if backup mode supported and bitmaps operations are supported.
      */
-    public static boolean isBitmapsOperationsSupported(Version version) {
+    public static boolean isBackupModeAndBitmapsOperationsSupported(Version version) {
         return Version.v4_5.lessOrEquals(version);
     }
 
