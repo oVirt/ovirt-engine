@@ -342,11 +342,13 @@ public class BackendApiResource
 
     private Api addSystemVersion(Api api) {
         String productVersion = getConfigurationValueDefault(ConfigValues.ProductRPMVersion);
+        String instanceId = getConfigurationValueDefault(ConfigValues.InstanceId);
         if (productVersion != null) {
             BrandingManager obrand = BrandingManager.getInstance();
             ProductInfo productInfo = new ProductInfo();
             productInfo.setName(obrand.getMessage("obrand.backend.product"));
             productInfo.setVendor(obrand.getMessage("obrand.backend.vendor"));
+            productInfo.setId(instanceId);
             Version version = getVersion();
             version.setFullVersion(productVersion);
             productInfo.setVersion(version);

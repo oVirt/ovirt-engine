@@ -845,6 +845,9 @@ select fn_db_add_config_value('KubevirtProviderSupportEnabled', 'false', 'genera
 
 -- Sku -> Version mapping for Windows Update
 select fn_db_add_config_value('SkuToAVLevel', '', '4.4');
+
+-- UUID of this oVirt instance
+select fn_db_add_config_value('InstanceId', uuid_generate_v1()::varchar, 'general');
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

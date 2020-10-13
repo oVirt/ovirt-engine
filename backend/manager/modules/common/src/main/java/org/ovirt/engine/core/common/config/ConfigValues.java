@@ -1554,6 +1554,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     PropagateDiskErrors,
 
+    @TypeConverterAttribute(String.class)
+    InstanceId,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;
