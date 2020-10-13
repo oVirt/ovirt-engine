@@ -1512,6 +1512,7 @@ public class VmDeviceUtils {
 
         final Cluster srcCluster = getCluster(srcVmBase.getClusterId());
         final Cluster dstCluster = getCluster(dstVmBase.getClusterId(), srcCluster);
+        ChipsetType srcChipsetType = BiosTypeUtils.getEffective(srcVmBase, srcCluster).getChipsetType();
         ChipsetType dstChipsetType = BiosTypeUtils.getEffective(dstVmBase, dstCluster).getChipsetType();
 
         for (VmDevice device : srcDevices) {
@@ -1660,6 +1661,9 @@ public class VmDeviceUtils {
             }
             device.setId(new VmDeviceId(deviceId, dstId));
             device.setSpecParams(specParams);
+            if (srcChipsetType != dstChipsetType) {
+                device.setAddress("");
+            }
             vmDeviceDao.save(device);
         }
 
