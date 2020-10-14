@@ -8,4 +8,5 @@
     LANG: "C"
 
   roles:
+  - role: ovirt-host-deploy-facts
   - role: ovirt-host-check-upgrade

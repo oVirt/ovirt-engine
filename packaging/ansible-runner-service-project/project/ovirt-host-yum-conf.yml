@@ -1,0 +1,17 @@
+- name: Copy yum configuration file
+  copy:
+    src: "/etc/yum.conf"
+    dest: "/tmp/yum.conf"
+    owner: root
+    group: root
+    mode: 0644
+    remote_src: yes
+
+- name: Set 'best' to false
+  replace:
+    path: "/tmp/yum.conf"
+    regexp: '^best=True'
+    replace: 'best=False'
+    owner: root
+    group: root
+    mode: 0644

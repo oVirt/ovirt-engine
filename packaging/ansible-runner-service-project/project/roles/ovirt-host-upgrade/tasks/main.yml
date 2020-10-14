@@ -35,6 +35,7 @@
     name: "{{ item }}"
     state: latest
     lock_timeout: 300
+    conf_file: /tmp/yum.conf
   loop: "{{ yum_result.split('\n') }}"
   tags:
   - updatecheck

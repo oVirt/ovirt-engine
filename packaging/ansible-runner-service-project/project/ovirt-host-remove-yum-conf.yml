@@ -1,0 +1,6 @@
+- name: Remove temporary yum configuration file
+  file:
+    path: "/tmp/yum.conf"
+    state: absent
+  ignore_errors: True
+

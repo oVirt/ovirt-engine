@@ -1,7 +1,17 @@
 ---
-- name: Check for system updates (remove empty lines)
-  shell: yum check-update -q | grep '[0-9]' | cut -d ' ' -f1 | sed '/^$/d' >> /tmp/yum_updates
+- name: Check for system updates (remove empty lines) on EL7
+  shell: yum check-update -q --exclude=ansible | grep '[0-9]' | cut -d ' ' -f1 | sed '/^$/d' >> /tmp/yum_updates
   register: yum_updates_res
+  when: el_ver|int == 7
+  failed_when: "'rc' in yum_updates_res and yum_updates_res.rc == 1"
+  tags:
+  - updatecheck
+  - skip_ansible_lint # E305
+
+- name: Check for system updates (remove empty lines)
+  shell: yum check-update -q --excludepkgs=ansible | grep '[0-9]' | cut -d ' ' -f1 | sed '/^$/d' >> /tmp/yum_updates
+  register: yum_updates_res
+  when: el_ver|int != 7
   failed_when: "'rc' in yum_updates_res and yum_updates_res.rc == 1"
   tags:
   - updatecheck
