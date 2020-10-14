@@ -20,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
+import org.ovirt.engine.api.restapi.resource.BackendResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,7 @@ public class ParametersHelper {
 
     static {
         HEADER_PARAMETERS.add("filter");
+        HEADER_PARAMETERS.add(BackendResource.ALL_CONTENT_HEADER);
     }
 
     private ParametersHelper() {

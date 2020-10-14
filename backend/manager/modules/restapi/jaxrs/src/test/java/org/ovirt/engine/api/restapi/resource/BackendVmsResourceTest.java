@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
@@ -1190,7 +1191,7 @@ public class BackendVmsResourceTest
         if (allContent) {
             List<String> populates = new ArrayList<>();
             populates.add("true");
-            when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
+            when(httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER)).thenReturn(populates);
             setUpGetPayloadExpectations(3);
             setUpGetBallooningExpectations(3);
             setUpGetConsoleExpectations(0, 1, 2);
@@ -1207,11 +1208,29 @@ public class BackendVmsResourceTest
     }
 
     @Test
-    public void testListAllContent() throws Exception {
+    public void testListAllContentHeader() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
         List<String> populates = new ArrayList<>();
         populates.add("true");
-        when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
+        when(httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER)).thenReturn(populates);
+        setUpAllContentExpectations();
+        collection.setUriInfo(uriInfo);
+        verifyCollection(getCollection());
+    }
+
+    @Test
+    public void testListAllContentQueryParameter() throws Exception {
+        UriInfo uriInfo = setUpUriExpectations(null);
+        MultivaluedMap<String, String> queries = mock(MultivaluedMap.class);
+        when(queries.containsKey(BackendResource.ALL_CONTENT_QUERY)).thenReturn(true);
+        when(queries.getFirst(BackendResource.ALL_CONTENT_QUERY)).thenReturn("true");
+        when(uriInfo.getQueryParameters()).thenReturn(queries);
+        setUpAllContentExpectations();
+        collection.setUriInfo(uriInfo);
+        verifyCollection(getCollection(), true);
+    }
+
+    private void setUpAllContentExpectations() throws Exception{
         setUpGetPayloadExpectations(3);
         setUpGetBallooningExpectations(3);
         setUpGetGraphicsMultipleExpectations(3);
@@ -1223,8 +1242,6 @@ public class BackendVmsResourceTest
         setUpGetCertuficateExpectations(3);
         setUpGetCaRootExpectations();
         setUpQueryExpectations("");
-        collection.setUriInfo(uriInfo);
-        verifyCollection(getCollection());
     }
 
     private void setUpGetCertuficateExpectations(int times) {
@@ -1473,14 +1490,22 @@ public class BackendVmsResourceTest
 
     @Override
     protected void verifyCollection(List<Vm> collection) throws Exception {
+        verifyCollection(collection, false);
+    }
+
+    private void verifyCollection(List<Vm> collection, boolean isPopulated) throws Exception {
         super.verifyCollection(collection);
 
-        List<String> populateHeader = httpHeaders.getRequestHeader(BackendResource.POPULATE);
-        boolean populated = populateHeader != null ? populateHeader.contains("true") : false;
+        boolean populated = isPopulated || checkPopulatedHeader();
 
         for (Vm vm : collection) {
             assertTrue(populated ? vm.isSetConsole() : !vm.isSetConsole());
         }
+    }
+
+    private boolean checkPopulatedHeader() {
+        List<String> populateHeader = httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER);
+        return populateHeader != null ? populateHeader.contains("true") : false;
     }
 
     @Override

@@ -40,7 +40,8 @@ public class BackendResource extends BaseBackendResource {
     public static final String FORCE_CONSTRAINT = "force";
     private static final String NON_BLOCKING_EXPECTATION = "202-accepted";
     private static final Logger log = LoggerFactory.getLogger(BackendResource.class);
-    public static final String POPULATE = "All-Content";
+    public static final String ALL_CONTENT_QUERY = "all_content";
+    public static final String ALL_CONTENT_HEADER = "All-Content";
     public static final String JOB_ID_CONSTRAINT = "JobId";
     public static final String STEP_ID_CONSTRAINT = "StepId";
 
@@ -296,15 +297,11 @@ public class BackendResource extends BaseBackendResource {
     }
 
     /**
-     * @return true if request header contains [All-Content='true']
+     * @return true if request header contains [All-Content='true'] or query parameter contains [all_content='true']
      */
     protected boolean isPopulate() {
-        List<String> populates = httpHeaders.getRequestHeader(POPULATE);
-        if (populates != null && populates.size() > 0) {
-            return Boolean.valueOf(populates.get(0)).booleanValue();
-        } else {
-            return false;
-        }
+        return ParametersHelper.getBooleanParameter(null, uriInfo, ALL_CONTENT_QUERY, true, false)
+                || ParametersHelper.getBooleanParameter(httpHeaders, null, ALL_CONTENT_HEADER, true, false);
     }
 
     /**

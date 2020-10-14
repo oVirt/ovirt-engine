@@ -112,7 +112,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         if (allContent) {
             List<String> populates = new ArrayList<>();
             populates.add("true");
-            when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
+            when(httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER)).thenReturn(populates);
             setUpGetConsoleExpectations(0, 1, 2);
             setUpGetVirtioScsiExpectations(0, 1, 2);
             setUpGetSoundcardExpectations(0, 1, 2);
@@ -130,7 +130,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
     protected void verifyCollection(List<R> collection) throws Exception {
         super.verifyCollection(collection);
 
-        List<String> populateHeader = httpHeaders.getRequestHeader(BackendResource.POPULATE);
+        List<String> populateHeader = httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER);
         boolean populated = populateHeader != null ? populateHeader.contains("true") : false;
 
         for (R template : collection) {

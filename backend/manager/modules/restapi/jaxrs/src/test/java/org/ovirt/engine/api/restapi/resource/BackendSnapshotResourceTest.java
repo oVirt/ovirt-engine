@@ -65,7 +65,7 @@ public class BackendSnapshotResourceTest
         org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot = new org.ovirt.engine.core.common.businessentities.Snapshot();
         resultSnapshot.setVmConfiguration(ovfData);
         resultSnapshot.setId(SNAPSHOT_ID);
-        when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
+        when(httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER)).thenReturn(populates);
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(asList(getEntity(1)));
         setUpEntityQueryExpectations(QueryType.GetSnapshotBySnapshotId,

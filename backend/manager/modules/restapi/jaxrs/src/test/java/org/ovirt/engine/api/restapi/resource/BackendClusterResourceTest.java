@@ -212,7 +212,7 @@ public class BackendClusterResourceTest
 
     private void setUpPopulateExpectation() {
         if (!isPopulateSet) {
-            when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(Collections.singletonList("true"));
+            when(httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER)).thenReturn(Collections.singletonList("true"));
             isPopulateSet = true;
         }
     }

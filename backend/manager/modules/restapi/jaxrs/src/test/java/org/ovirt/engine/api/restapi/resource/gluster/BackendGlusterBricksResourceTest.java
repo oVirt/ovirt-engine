@@ -431,7 +431,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     private void setUpGetEntityExpectationsAllContent(boolean notFound) {
         List<String> populateValue = new ArrayList<>();
         populateValue.add("true");
-        when(httpHeaders.getRequestHeader(AbstractBackendResource.POPULATE)).thenReturn(populateValue);
+        when(httpHeaders.getRequestHeader(AbstractBackendResource.ALL_CONTENT_HEADER)).thenReturn(populateValue);
 
         setupEntityExpectationAdvancedDetails(NAMES.length, notFound);
     }

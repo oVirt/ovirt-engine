@@ -103,7 +103,7 @@ public class BackendTemplateResourceTest
         if (allContent) {
             List<String> populates = new ArrayList<>();
             populates.add("true");
-            when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
+            when(httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER)).thenReturn(populates);
             setUpGetConsoleExpectations(0);
             setUpGetVirtioScsiExpectations(0);
             setUpGetSoundcardExpectations(0);
@@ -114,7 +114,7 @@ public class BackendTemplateResourceTest
         Template response = resource.get();
         verifyModel(response, 0);
 
-        List<String> populateHeader = httpHeaders.getRequestHeader(BackendResource.POPULATE);
+        List<String> populateHeader = httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER);
         boolean populated = populateHeader != null ? populateHeader.contains("true") : false;
         assertTrue(populated ? response.isSetConsole() : !response.isSetConsole());
     }
