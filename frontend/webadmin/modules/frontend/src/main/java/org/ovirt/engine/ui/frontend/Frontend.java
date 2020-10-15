@@ -1139,7 +1139,7 @@ public class Frontend implements HasHandlers {
      */
     public void uploadUserSettings(DbUser upToDateUser, IFrontendActionAsyncCallback callback, Object model) {
         runAction(ActionType.UpdateUserOptions,
-                new UpdateUserParameters(upToDateUser),
+                new UpdateUserParameters(upToDateUser, false),
                 callback,
                 model
         );
