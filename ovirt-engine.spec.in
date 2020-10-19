@@ -306,7 +306,7 @@ Requires:	xmlrpc-client
 Requires:	ovirt-ansible-collection >= 1.2.0
 Requires:	ovirt-web-ui
 Requires:	ovirt-cockpit-sso
-Requires:	ovirt-engine-api-explorer
+Obsoletes:	ovirt-engine-api-explorer
 
 # Metrics stuff
 Requires:	collectd
