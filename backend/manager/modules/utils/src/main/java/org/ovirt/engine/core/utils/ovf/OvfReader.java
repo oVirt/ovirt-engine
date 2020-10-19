@@ -711,8 +711,11 @@ public abstract class OvfReader implements IOvfBuilder {
                         }
                     },
                     () -> {
-                        assignClusterBiosTypeOrigin(vmBase.getCustomBiosType());
-                        vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
+                        if (vmBase.getCustomBiosType() != BiosType.Q35_SECURE_BOOT
+                                && vmBase.getCustomBiosType() != BiosType.Q35_OVMF) {
+                            assignClusterBiosTypeOrigin(vmBase.getCustomBiosType());
+                            vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
+                        }
                     });
         }
     }
