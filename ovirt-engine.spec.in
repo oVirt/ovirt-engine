@@ -281,7 +281,7 @@ Requires:	ansible >= 2.9.0, ansible < 2.10.0
 %else
 Requires:	eap7-wildfly >= 7.3.0
 Requires:	rhvm = %{version}-%{release}
-Requires:	ansible = 2.9.13
+Requires:	ansible = 2.9.14
 %endif
 
 Requires:	%{name}-backend = %{version}-%{release}
