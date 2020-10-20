@@ -348,7 +348,7 @@ public class BackendApiResource
             ProductInfo productInfo = new ProductInfo();
             productInfo.setName(obrand.getMessage("obrand.backend.product"));
             productInfo.setVendor(obrand.getMessage("obrand.backend.vendor"));
-            productInfo.setId(instanceId);
+            productInfo.setInstanceId(instanceId);
             Version version = getVersion();
             version.setFullVersion(productVersion);
             productInfo.setVersion(version);
