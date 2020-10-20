@@ -1608,6 +1608,10 @@ public class VmInfoBuildUtils {
         return vdsDynamicDao.get(vdsGuid).getCpuFlags();
     }
 
+    String getCpuModel(Guid vdsGuid) {
+        return vdsDynamicDao.get(vdsGuid).getCpuModel();
+    }
+
     private Long alignDown(Long size, Long alignment) {
         return (size / alignment) * alignment;
     }

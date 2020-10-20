@@ -142,6 +142,7 @@ public class LibvirtVmXmlBuilder {
     private MemoizingSupplier<VgpuPlacement> hostVgpuPlacementSupplier;
     private MemoizingSupplier<String> tscFrequencySupplier;
     private MemoizingSupplier<String> cpuFlagsSupplier;
+    private MemoizingSupplier<String> cpuModelSupplier;
     private MemoizingSupplier<Boolean> incrementalBackupSupplier;
 
     private Map<String, Map<String, Object>> vnicMetadata;
@@ -248,6 +249,7 @@ public class LibvirtVmXmlBuilder {
             hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.vgpuPlacement(hostId));
             tscFrequencySupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getTscFrequency(hostId));
             cpuFlagsSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getCpuFlags(hostId));
+            cpuModelSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getCpuModel(hostId));
             incrementalBackupSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.isHostIncrementalBackupEnabled(hostId));
         } else {
             hostDevicesSupplier = new MemoizingSupplier<>(() -> Collections.emptyMap());
@@ -256,6 +258,7 @@ public class LibvirtVmXmlBuilder {
             hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> null);
             tscFrequencySupplier = new MemoizingSupplier<>(() -> null);
             cpuFlagsSupplier = new MemoizingSupplier<>(() -> "");
+            cpuModelSupplier = new MemoizingSupplier<>(() -> "");
             incrementalBackupSupplier = new MemoizingSupplier<>(() -> false);
         }
         vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
@@ -407,6 +410,14 @@ public class LibvirtVmXmlBuilder {
         }
         if (vm.getUseTscFrequency() && tscFrequencySupplier.get() != null) {
             cpuType += ",+invtsc";
+        }
+
+        // Work around for https://bugzilla.redhat.com/1689362
+        // If it is a nested VM on AMD EPYC, monitor feature must be
+        // disabled manually, until libvirt is fixed.
+        if (cpuModelSupplier.get() != null && cpuModelSupplier.get().contains("AMD EPYC") &&
+                cpuFlagsSupplier.get() != null && !cpuFlagsSupplier.get().contains("monitor")) {
+            cpuType += ",-monitor";
         }
 
         String[] typeAndFlags = cpuType.split(",");

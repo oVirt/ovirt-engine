@@ -238,6 +238,7 @@ public class LibvirtVmXmlBuilderTest {
         setUpTscTest(underTest, vm, writer, properties);
         setTscFreqSupplier(underTest);
         setCpuFlagsSupplier(underTest, "tsc,constant_tsc,nonstop_tsc");
+        setCpuModelSupplier(underTest);
 
         underTest.writeCpu(false);
         verify(writer, times(1)).writeStartElement("feature");
@@ -258,6 +259,7 @@ public class LibvirtVmXmlBuilderTest {
         setTscFreqSupplier(underTest);
         setVmInfoBuildUtils(underTest);
         setCpuFlagsSupplier(underTest, "tsc,constant_tsc,nonstop_tsc");
+        setCpuModelSupplier(underTest);
 
         underTest.writeClock();
         verify(writer, times(4)).writeStartElement("timer");
@@ -360,6 +362,11 @@ public class LibvirtVmXmlBuilderTest {
     private void setCpuFlagsSupplier(LibvirtVmXmlBuilder underTest, String flags) throws NoSuchFieldException {
         Field cpuFlagsSupplier = LibvirtVmXmlBuilder.class.getDeclaredField("cpuFlagsSupplier");
         FieldSetter.setField(underTest, cpuFlagsSupplier, new MemoizingSupplier<>(() -> flags));
+    }
+
+    private void setCpuModelSupplier(LibvirtVmXmlBuilder underTest) throws NoSuchFieldException {
+        Field cpuModelSupplier = LibvirtVmXmlBuilder.class.getDeclaredField("cpuModelSupplier");
+        FieldSetter.setField(underTest, cpuModelSupplier, new MemoizingSupplier<>(() -> "unknown"));
     }
 
     private VM getVm(LibvirtVmXmlBuilder underTest) throws NoSuchFieldException, IllegalAccessException {
