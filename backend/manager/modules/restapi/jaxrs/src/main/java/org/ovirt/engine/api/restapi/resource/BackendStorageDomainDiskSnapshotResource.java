@@ -28,13 +28,18 @@ public class BackendStorageDomainDiskSnapshotResource
 
     @Override
     public DiskSnapshot get() {
-        DiskSnapshot diskSnapshot =  performGet(QueryType.GetDiskSnapshotByImageId, new IdQueryParameters(guid));
+        DiskSnapshot diskSnapshot =  performGet(QueryType.GetDiskSnapshotByImageId, new IdQueryParameters(guid), StorageDomain.class);
 
         // this code generates back-link to the corresponding SD
         diskSnapshot.setStorageDomain(new StorageDomain());
         diskSnapshot.getStorageDomain().setId(this.storageDomainId);
+        diskSnapshot.setHref(buildHref(storageDomainId, diskSnapshot.getId().toString()));
 
         return diskSnapshot;
+    }
+
+    private String buildHref(String storageDomainId, String snapshotId) {
+        return "/ovirt-engine/api/storagedomains/" + storageDomainId + "/disksnapshots/" + snapshotId;
     }
 
     @Override

@@ -63,7 +63,7 @@ public class BackendDiskResource
 
     @Override
     public DiskSnapshotsResource getDiskSnapshotsResource() {
-        return null;
+        return inject(new BackendDiskSnapshotsResource(guid));
     }
 
     @Override
