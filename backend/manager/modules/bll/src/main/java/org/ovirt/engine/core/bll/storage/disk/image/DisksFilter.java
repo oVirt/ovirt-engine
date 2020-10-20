@@ -81,6 +81,11 @@ public class DisksFilter {
     public static final Predicate<Disk> ONLY_PLUGGED = Disk::getPlugged;
 
     /**
+     * Filters out all disk snapshots
+     */
+    public static final Predicate<Disk> ONLY_DISK_SNAPSHOT = Disk::isDiskSnapshot;
+
+    /**
      * This method filters a list of disks retaining only disk images and continues to filter the list by the
      * specified predicates.
      *

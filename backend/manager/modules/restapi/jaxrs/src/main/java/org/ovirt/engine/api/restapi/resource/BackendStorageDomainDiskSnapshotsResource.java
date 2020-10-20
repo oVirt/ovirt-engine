@@ -42,7 +42,7 @@ public class BackendStorageDomainDiskSnapshotsResource
             diskSnapshot.setStorageDomain(new StorageDomain());
             diskSnapshot.getStorageDomain().setId(this.storageDomainId.toString());
 
-            collection.getDiskSnapshots().add(addLinks(populate(diskSnapshot, disk)));
+            collection.getDiskSnapshots().add(addLinks(populate(diskSnapshot, disk), StorageDomain.class));
         }
         return collection;
     }
