@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.DiskSnapshotsQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -84,7 +84,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
 
         super.syncSearch();
 
-        IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
+        DiskSnapshotsQueryParameters parameters = new DiskSnapshotsQueryParameters(getEntity().getId(), false);
         parameters.setRefresh(getIsQueryFirstTime());
 
         Frontend.getInstance().runQuery(QueryType.GetAllDiskSnapshotsByStorageDomainId, parameters,
