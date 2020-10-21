@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VgpuPlacement;
@@ -144,6 +145,7 @@ public class LibvirtVmXmlBuilder {
     private MemoizingSupplier<String> cpuFlagsSupplier;
     private MemoizingSupplier<String> cpuModelSupplier;
     private MemoizingSupplier<Boolean> incrementalBackupSupplier;
+    private MemoizingSupplier<Boolean> kernelFipsModeSupplier;
 
     private Map<String, Map<String, Object>> vnicMetadata;
     private Map<String, Map<String, String>> diskMetadata;
@@ -247,10 +249,12 @@ public class LibvirtVmXmlBuilder {
             hostStatisticsSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsStatistics(hostId));
             hostNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsNumaNodes(hostId));
             hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.vgpuPlacement(hostId));
-            tscFrequencySupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getTscFrequency(hostId));
-            cpuFlagsSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getCpuFlags(hostId));
-            cpuModelSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getCpuModel(hostId));
-            incrementalBackupSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.isHostIncrementalBackupEnabled(hostId));
+            VdsDynamic vds = vmInfoBuildUtils.getVdsDynamic(hostId);
+            tscFrequencySupplier = new MemoizingSupplier<>(() -> vds.getTscFrequency());
+            cpuFlagsSupplier = new MemoizingSupplier<>(() -> vds.getCpuFlags());
+            cpuModelSupplier = new MemoizingSupplier<>(() -> vds.getCpuModel());
+            incrementalBackupSupplier = new MemoizingSupplier<>(() -> vds.isBackupEnabled());
+            kernelFipsModeSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.isKernelFipsMode(vds));
         } else {
             hostDevicesSupplier = new MemoizingSupplier<>(() -> Collections.emptyMap());
             hostStatisticsSupplier = new MemoizingSupplier<>(() -> null);
@@ -260,6 +264,7 @@ public class LibvirtVmXmlBuilder {
             cpuFlagsSupplier = new MemoizingSupplier<>(() -> "");
             cpuModelSupplier = new MemoizingSupplier<>(() -> "");
             incrementalBackupSupplier = new MemoizingSupplier<>(() -> false);
+            kernelFipsModeSupplier = new MemoizingSupplier<>(() -> false);
         }
         vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
         mdevDisplayOn = MDevTypesUtils.isMdevDisplayOn(vm);
@@ -1915,9 +1920,8 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("port", String.valueOf(LIBVIRT_PORT_AUTOSELECT));
         writer.writeAttributeString("autoport", "yes");
         // TODO: defaultMode
-        if (graphicsType == GraphicsType.SPICE      // SPICE always needs password
-            || hostStatisticsSupplier.get() == null // when there's no host, it doesn't matter; use password to be safe
-            || !vmInfoBuildUtils.isKernelFipsMode(hostStatisticsSupplier.get().getId())) {
+        if (graphicsType == GraphicsType.SPICE  // SPICE always needs password
+                || !kernelFipsModeSupplier.get()) {
             writer.writeAttributeString("passwd", "*****");
             writer.writeAttributeString("passwdValidTo", "1970-01-01T00:00:01");
         }

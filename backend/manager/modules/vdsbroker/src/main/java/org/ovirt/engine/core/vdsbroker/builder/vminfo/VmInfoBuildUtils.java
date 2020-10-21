@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VgpuPlacement;
@@ -1403,13 +1404,6 @@ public class VmInfoBuildUtils {
                 .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device));
     }
 
-    public boolean isHostIncrementalBackupEnabled(Guid hostId) {
-        if (hostId != null) {
-            return vdsDynamicDao.get(hostId).isBackupEnabled();
-        }
-        return false;
-    }
-
     public void refreshVmDevices(Guid vmId) {
         vmDevicesMonitoring.refreshVmDevices(vmId);
     }
@@ -1576,9 +1570,9 @@ public class VmInfoBuildUtils {
         }
     }
 
-    boolean isKernelFipsMode(Guid vdsGuid) {
-        boolean fips = vdsDynamicDao.get(vdsGuid).isFipsEnabled();
-        log.debug("Kernel FIPS - Guid: {} fips: {}", vdsGuid, fips);
+    boolean isKernelFipsMode(VdsDynamic vds) {
+        boolean fips = vds.isFipsEnabled();
+        log.debug("Kernel FIPS - Guid: {} fips: {}", vds.getId(), fips);
         return fips;
     }
 
@@ -1600,16 +1594,8 @@ public class VmInfoBuildUtils {
         return new IgnitionHandler(vmInit, ignitionVersion).getFileData();
     }
 
-    String getTscFrequency(Guid vdsGuid) {
-        return vdsDynamicDao.get(vdsGuid).getTscFrequency();
-    }
-
-    String getCpuFlags(Guid vdsGuid) {
-        return vdsDynamicDao.get(vdsGuid).getCpuFlags();
-    }
-
-    String getCpuModel(Guid vdsGuid) {
-        return vdsDynamicDao.get(vdsGuid).getCpuModel();
+    VdsDynamic getVdsDynamic(Guid vdsGuid) {
+        return vdsDynamicDao.get(vdsGuid);
     }
 
     private Long alignDown(Long size, Long alignment) {
