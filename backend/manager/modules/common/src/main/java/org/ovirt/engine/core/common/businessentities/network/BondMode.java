@@ -47,9 +47,9 @@ public enum BondMode {
         if (value.equals(BondMode.BOND4.value)) {
             extraOption = " xmit_hash_policy=" + BOND_XMIT_POLICY_LAYER23;
         } else {
-            extraOption = "";
+            extraOption = " miimon=" + miimonValue;
         }
-        return MODE + value + " miimon=" + miimonValue + extraOption;
+        return MODE + value + extraOption;
     }
 
     public boolean isBondModeValidForVmNetwork(){
