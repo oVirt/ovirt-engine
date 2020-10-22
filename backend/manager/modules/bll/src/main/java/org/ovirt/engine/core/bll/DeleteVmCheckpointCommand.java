@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.action.VmCheckpointParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -86,7 +87,7 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
                     String.format("$checkpointId %s", getParameters().getVmCheckpoint().getId()));
         }
 
-        if (!getVm().getStatus().isQualifiedForVmBackup()) {
+        if (!getVm().getStatus().equals(VMStatus.Up)) {
             return failValidation(EngineMessage.CANNOT_DELETE_CHECKPOINT_VM_SHOULD_BE_IN_UP_STATUS);
         }
 

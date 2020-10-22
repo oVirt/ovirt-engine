@@ -110,17 +110,18 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedVmNotQualifiedForBackup() {
-        mockVm(VMStatus.Down);
+        mockVm(VMStatus.PoweringUp);
         doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
         doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
         ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.CANNOT_START_BACKUP_VM_SHOULD_BE_IN_UP_STATUS);
+                EngineMessage.CANNOT_START_BACKUP_VM_SHOULD_BE_IN_UP_OR_DOWN_STATUS);
     }
 
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedBackupAlreadyInProgress() {
         mockVm(VMStatus.Up);
+        mockVds(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(List.of(mockVmBackup()));
         doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
         doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());

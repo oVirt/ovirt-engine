@@ -1137,6 +1137,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
         }
 
+        if (isVmDuringBackup()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP);
+        }
+
         return true;
     }
 

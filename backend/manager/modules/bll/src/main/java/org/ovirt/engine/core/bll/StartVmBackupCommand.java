@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -28,11 +29,16 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.AddVolumeBitmapCommandParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
@@ -78,6 +84,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     private BaseDiskDao baseDiskDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    private VdsCommandsHelper vdsCommandsHelper;
 
     private List<DiskImage> disksList;
     private VmCheckpoint vmCheckpointsLeaf;
@@ -136,14 +144,23 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         }
 
         if (!getVm().getStatus().isQualifiedForVmBackup()) {
-            return failValidation(EngineMessage.CANNOT_START_BACKUP_VM_SHOULD_BE_IN_UP_STATUS);
+            return failValidation(EngineMessage.CANNOT_START_BACKUP_VM_SHOULD_BE_IN_UP_OR_DOWN_STATUS);
+        }
+        if (isLiveBackup()) {
+            if (!getVds().isBackupEnabled()) {
+                return failValidation(EngineMessage.CANNOT_START_BACKUP_NOT_SUPPORTED_BY_VDS,
+                        String.format("$vdsName %s", getVdsName()));
+            }
+        } else {
+            if (!FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_NOT_SUPPORTED);
+            }
+            if (!FeatureSupported.isBackupModeAndBitmapsOperationsSupported(getCluster().getCompatibilityVersion())) {
+                return failValidation(EngineMessage.ACTION_TYPE_BITMAPS_OPERATION_ARE_NOT_SUPPORTED);
+            }
         }
         if (!vmBackupDao.getAllForVm(getVmId()).isEmpty()) {
             return failValidation(EngineMessage.CANNOT_START_BACKUP_ALREADY_IN_PROGRESS);
-        }
-        if (!getVds().isBackupEnabled()) {
-            return failValidation(EngineMessage.CANNOT_START_BACKUP_NOT_SUPPORTED_BY_VDS,
-                    String.format("$vdsName %s", getVdsName()));
         }
         return true;
     }
@@ -166,15 +183,17 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         Guid vmBackupId = createVmBackup();
         log.info("Created VmBackup entity '{}'", vmBackupId);
 
-        log.info("Redefine previous VM checkpoints for VM '{}'", vmBackup.getVmId());
-        ActionReturnValue returnValue = runInternalAction(ActionType.RedefineVmCheckpoint, getParameters());
-        if (!returnValue.getSucceeded()) {
-            addCustomValue("backupId", vmBackupId.toString());
-            auditLogDirector.log(this, AuditLogType.VM_INCREMENTAL_BACKUP_FAILED_FULL_VM_BACKUP_NEEDED);
-            setCommandStatus(CommandStatus.FAILED);
-            return;
+        if (isLiveBackup()) {
+            log.info("Redefine previous VM checkpoints for VM '{}'", vmBackup.getVmId());
+            ActionReturnValue returnValue = runInternalAction(ActionType.RedefineVmCheckpoint, getParameters());
+            if (!returnValue.getSucceeded()) {
+                addCustomValue("backupId", vmBackupId.toString());
+                auditLogDirector.log(this, AuditLogType.VM_INCREMENTAL_BACKUP_FAILED_FULL_VM_BACKUP_NEEDED);
+                setCommandStatus(CommandStatus.FAILED);
+                return;
+            }
+            log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmBackup.getVmId());
         }
-        log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmBackup.getVmId());
 
         if (FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())
                 && !isBackupContainsRawDisksOnly()) {
@@ -202,9 +221,10 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
         switch (getParameters().getVmBackup().getPhase()) {
             case STARTING:
-                if (runVmBackup()) {
+                boolean isBackupSucceeded = isLiveBackup() ? runLiveVmBackup() : runColdVmBackup();
+                if (isBackupSucceeded) {
                     updateVmBackupPhase(VmBackupPhase.READY);
-                    log.info("Ready to start image transfers using backup URLs");
+                    log.info("Ready to start image transfers");
                 } else {
                     setCommandStatus(CommandStatus.FAILED);
                 }
@@ -222,7 +242,55 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         return true;
     }
 
-    private boolean runVmBackup() {
+    private boolean runColdVmBackup() {
+        lockDisks();
+        setHostForColdBackupOperation();
+        if (getParameters().getVdsRunningOn() == null) {
+            log.error("Failed to find host to run cold backup operation for VM '{}'",
+                    getParameters().getVmBackup().getVmId());
+            return false;
+        }
+        getParameters().getVmBackup().setToCheckpointId(getParameters().getToCheckpointId());
+
+        for (DiskImage diskImage : getParameters().getVmBackup().getDisks()) {
+            if (!diskImage.isQcowFormat()) {
+                continue;
+            }
+
+            VdsmImageLocationInfo locationInfo = new VdsmImageLocationInfo(
+                    diskImage.getStorageIds().get(0),
+                    diskImage.getId(),
+                    diskImage.getImageId(),
+                    null);
+
+            AddVolumeBitmapCommandParameters parameters =
+                    new AddVolumeBitmapCommandParameters(
+                            getStoragePoolId(),
+                            locationInfo,
+                            getParameters().getToCheckpointId().toString());
+            parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
+            parameters.setParentCommand(getActionType());
+            parameters.setParentParameters(getParameters());
+
+            ActionReturnValue returnValue = runInternalActionWithTasksContext(ActionType.AddVolumeBitmap, parameters);
+            if (!returnValue.getSucceeded()) {
+                log.error("Failed to add bitmap to disk '{}'", diskImage.getId());
+                return false;
+            }
+        }
+        updateVmBackupCheckpoint(null);
+        return true;
+    }
+
+    private void setHostForColdBackupOperation() {
+        if (getParameters().getVdsRunningOn() == null) {
+            getParameters().setVdsRunningOn(
+                    vdsCommandsHelper.getHostForExecution(getStoragePoolId(), VDS::isColdBackupEnabled));
+            persistCommandIfNeeded();
+        }
+    }
+
+    private boolean runLiveVmBackup() {
         lockDisks();
         VmBackupInfo vmBackupInfo = null;
         if (!getParameters().isBackupInitiated()) {
@@ -425,9 +493,12 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         TransactionSupport.executeInNewTransaction(() -> {
             // Update the VmBackup to include the checkpoint ID
             vmBackupDao.update(getParameters().getVmBackup());
-            // Update the vmCheckpoint to include the checkpoint XML
-            vmCheckpointDao.updateCheckpointXml(getParameters().getVmBackup().getToCheckpointId(),
-                    vmBackupInfo.getCheckpoint());
+
+            if (vmBackupInfo != null) {
+                // Update the vmCheckpoint to include the checkpoint XML
+                vmCheckpointDao.updateCheckpointXml(getParameters().getVmBackup().getToCheckpointId(),
+                        vmBackupInfo.getCheckpoint());
+            }
             return null;
         });
     }
@@ -567,5 +638,9 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             }
         }
         return vmCheckpointsLeaf;
+    }
+
+    private boolean isLiveBackup() {
+        return getVm().getStatus() == VMStatus.Up;
     }
 }
