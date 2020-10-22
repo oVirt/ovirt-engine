@@ -544,6 +544,8 @@ public interface IVdsServer {
 
     VmCheckpointInfo getVmCheckpointsXML(String vmId, String checkpointId);
 
+    StatusOnlyReturn addBitmap(String jobId, Map<String, Object> volInfo, String bitmapName);
+
     NbdServerURLReturn startNbdServer(String serverId, Map<String, Object> nbdServerConfig);
 
     StatusOnlyReturn stopNbdServer(String serverId);
