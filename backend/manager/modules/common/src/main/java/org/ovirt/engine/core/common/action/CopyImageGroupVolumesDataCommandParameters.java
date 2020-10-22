@@ -13,6 +13,7 @@ public class CopyImageGroupVolumesDataCommandParameters extends ImagesActionsPar
     private Guid destImageGroupId;
     private Guid destImageId;
     private List<DiskImage> destImages = new ArrayList<>();
+    private boolean live;
 
     public CopyImageGroupVolumesDataCommandParameters() {
     }
@@ -77,5 +78,13 @@ public class CopyImageGroupVolumesDataCommandParameters extends ImagesActionsPar
 
     public void setDestImages(List<DiskImage> destImages) {
         this.destImages = destImages;
+    }
+
+    public boolean isLive() {
+        return live;
+    }
+
+    public void setLive(boolean live) {
+        this.live = live;
     }
 }

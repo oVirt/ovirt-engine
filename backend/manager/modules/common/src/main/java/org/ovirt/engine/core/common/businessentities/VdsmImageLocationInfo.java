@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.StringJoiner;
+
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -8,12 +10,18 @@ public class VdsmImageLocationInfo extends LocationInfo {
     private Guid imageGroupId;
     private Guid imageId;
     private Integer generation;
+    private boolean prepared;
 
     public VdsmImageLocationInfo(Guid storageDomainId, Guid imageGroupId, Guid imageGuid, Integer generation) {
         this.storageDomainId = storageDomainId;
         this.imageGroupId = imageGroupId;
         this.imageId = imageGuid;
         this.generation = generation;
+    }
+
+    public VdsmImageLocationInfo(Guid storageDomainId, Guid imageGroupId, Guid imageGuid, Integer generation, boolean prepared) {
+        this(storageDomainId, imageGroupId, imageGuid, generation);
+        this.prepared = prepared;
     }
 
     public VdsmImageLocationInfo(DiskImage diskImage) {
@@ -58,13 +66,22 @@ public class VdsmImageLocationInfo extends LocationInfo {
         this.generation = generation;
     }
 
+    public void setPrepared(boolean prepared) {
+        this.prepared = prepared;
+    }
+
+    public boolean isPrepared() {
+        return prepared;
+    }
+
     @Override
     public String toString() {
-        return "VdsmImageLocationInfo [" +
-                "storageDomainId=" + storageDomainId +
-                ", imageGroupId=" + imageGroupId +
-                ", imageId=" + imageId +
-                ", generation=" + generation +
-                ']';
+        return new StringJoiner(", ", VdsmImageLocationInfo.class.getSimpleName() + "[", "]")
+                .add("storageDomainId=" + storageDomainId)
+                .add("imageGroupId=" + imageGroupId)
+                .add("imageId=" + imageId)
+                .add("generation=" + generation)
+                .add("prepared=" + prepared)
+                .toString();
     }
 }

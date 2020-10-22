@@ -118,15 +118,20 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
         if (getParameters().getDestImages().isEmpty()) {
             destLocationInfo = buildImageLocationInfo(getParameters().getDestDomain(),
                             getParameters().getImageGroupID(),
-                            image);
+                            image,
+                            getParameters().isLive());
         } else {
             destLocationInfo = buildImageLocationInfo(getParameters().getDestDomain(),
                     getParameters().getDestImageGroupId(),
-                    getParameters().getDestImages().get(imageIndex).getImageId());
+                    getParameters().getDestImages().get(imageIndex).getImageId(),
+                    getParameters().isLive());
         }
 
         CopyDataCommandParameters parameters = new CopyDataCommandParameters(getParameters().getStoragePoolId(),
-                buildImageLocationInfo(getParameters().getSrcDomain(), getParameters().getImageGroupID(), image),
+                buildImageLocationInfo(getParameters().getSrcDomain(),
+                        getParameters().getImageGroupID(),
+                        image,
+                        getParameters().isLive()),
                 destLocationInfo,
                 false);
 
@@ -146,8 +151,8 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
     public void handleFailure() {
     }
 
-    private LocationInfo buildImageLocationInfo(Guid domId, Guid imageGroupId, Guid imageId) {
-        return new VdsmImageLocationInfo(domId, imageGroupId, imageId, null);
+    private LocationInfo buildImageLocationInfo(Guid domId, Guid imageGroupId, Guid imageId, boolean prepared) {
+        return new VdsmImageLocationInfo(domId, imageGroupId, imageId, null, prepared);
     }
 }
 
