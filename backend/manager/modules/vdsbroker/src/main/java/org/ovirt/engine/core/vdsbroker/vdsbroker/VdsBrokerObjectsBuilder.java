@@ -1005,6 +1005,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setConnectorInfo((Map<String, Object>) struct.get(VdsProperties.CONNECTOR_INFO));
         vds.setKvmEnabled(assignBoolValue(struct, VdsProperties.kvm_enabled));
         vds.setBackupEnabled(assignBoolValue(struct, VdsProperties.BACKUP_ENABLED));
+        vds.setColdBackupEnabled(assignBoolValue(struct, VdsProperties.COLD_BACKUP_ENABLED));
         if (struct.containsKey(VdsProperties.domain_versions)) { //Older VDSMs do not return that
             Set<StorageFormatType> domain_versions = Stream.of((Object[]) struct.get(VdsProperties.domain_versions))
                     .map(o -> (Integer) o)

@@ -214,6 +214,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean backupEnabled;
 
+    private boolean coldBackupEnabled;
+
     @Valid
     private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
@@ -927,6 +929,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         backupEnabled = value;
     }
 
+    public boolean isColdBackupEnabled() {
+        return coldBackupEnabled;
+    }
+
+    public void setColdBackupEnabled(Boolean coldBackupEnabled) {
+        this.coldBackupEnabled = coldBackupEnabled;
+    }
+
     public Map<String, Object> getSupportedBlockSize() {
         return supportedBlockSize;
     }
@@ -1040,6 +1050,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 vncEncryptionEnabled,
                 connectorInfo,
                 backupEnabled,
+                coldBackupEnabled,
                 supportedDomainVersions,
                 supportedBlockSize,
                 tscFrequency,
@@ -1130,6 +1141,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && vncEncryptionEnabled == other.vncEncryptionEnabled
                 && Objects.equals(connectorInfo, other.connectorInfo)
                 && backupEnabled == other.backupEnabled
+                && coldBackupEnabled == other.coldBackupEnabled
                 && Objects.equals(supportedDomainVersions, other.supportedDomainVersions)
                 && Objects.equals(supportedBlockSize, other.supportedBlockSize)
                 && Objects.equals(tscFrequency, other.tscFrequency)

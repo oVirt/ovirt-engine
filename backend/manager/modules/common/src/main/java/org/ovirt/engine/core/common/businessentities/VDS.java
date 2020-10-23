@@ -1740,6 +1740,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vdsDynamic.setBackupEnabled(value);
     }
 
+    public Boolean isColdBackupEnabled() {
+        return vdsDynamic.isColdBackupEnabled();
+    }
+
+    public void setColdBackupEnabled(Boolean value) {
+        vdsDynamic.setColdBackupEnabled(value);
+    }
+
     public Set<StorageFormatType> getSupportedDomainVersions() {
         return vdsDynamic.getSupportedDomainVersions();
     }
