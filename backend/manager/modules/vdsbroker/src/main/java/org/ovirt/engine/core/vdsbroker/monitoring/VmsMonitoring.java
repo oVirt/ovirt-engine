@@ -252,14 +252,14 @@ public class VmsMonitoring {
 
         getVdsEventListener().updateSlaPolicies(succeededToRunVms, vdsManager.getVdsId());
 
+        // process all vms that went down
+        getVdsEventListener().processOnVmStop(movedToDownVms, vdsManager.getVdsId());
+
         // run all vms that crashed that marked with auto startup
         getVdsEventListener().runFailedAutoStartVMs(autoVmsToRun);
 
         // run all vms that went down as a part of cold reboot process
         getVdsEventListener().runColdRebootVms(coldRebootVmsToRun);
-
-        // process all vms that went down
-        getVdsEventListener().processOnVmStop(movedToDownVms, vdsManager.getVdsId());
 
         getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, vdsManager.getVdsId());
 
