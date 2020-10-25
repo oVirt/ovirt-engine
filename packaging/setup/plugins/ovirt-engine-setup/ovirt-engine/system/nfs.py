@@ -132,16 +132,20 @@ class Plugin(plugin.PluginBase):
             oenginecons.SystemEnv.NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL
         ] = False
 
-        rc, stdout, stderr = self.execute(
-            (
-                self.command.get('exportfs'),
-            ),
-            raiseOnError=False,
-        )
-        if rc == 0:
-            for line in stdout:
-                if line[0] == '/':
-                    self._foundpreextnfs = True
+        exportfs = self.command.get('exportfs', optional=True)
+        if exportfs:
+            # We used to always have it, because we required nfs-utils.
+            # This broke SCAP, so we removed the requirement.
+            rc, stdout, stderr = self.execute(
+                (
+                    exportfs,
+                ),
+                raiseOnError=False,
+            )
+            if rc == 0:
+                for line in stdout:
+                    if line[0] == '/':
+                        self._foundpreextnfs = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
