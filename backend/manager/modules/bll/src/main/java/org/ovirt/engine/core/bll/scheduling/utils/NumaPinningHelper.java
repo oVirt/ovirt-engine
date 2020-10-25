@@ -205,33 +205,29 @@ public class NumaPinningHelper {
     public static String getSapHanaCpuPinning(VM vm, VDS host, List<VdsNumaNode> numaNodes) {
         StringBuilder sb = new StringBuilder();
         int hostSockets = host.getCpuSockets();
-        int hostThreads = host.getCpuThreads() / host.getCpuCores();
-        int vmCpu = vm.getNumOfCpus();
-        int maxCpuNumaThread = vmCpu / hostSockets / hostThreads;
-        if (maxCpuNumaThread != 0) {
-            maxCpuNumaThread++;
+        int hostThreadsPerCore = host.getCpuThreads() / host.getCpuCores();
+        int vmNumCpus = vm.getNumOfCpus();
+        int vCpusPerNumaThread = vmNumCpus / hostSockets / hostThreadsPerCore;
+        if (vCpusPerNumaThread != 0) {
+            vCpusPerNumaThread++;
         } else {
             return null;
         }
         int currentCpu = 0;
         for (VdsNumaNode vdsNumaNode : numaNodes) {
             List<Integer> cpusInNuma = vdsNumaNode.getCpuIds();
-            int numCore = vdsNumaNode.getCpuIds().size() / hostThreads;
-            if (maxCpuNumaThread == 0) {
-                maxCpuNumaThread = numCore;
+            int coresInNuma = cpusInNuma.size() / hostThreadsPerCore;
+            if (vCpusPerNumaThread > coresInNuma) {
+                vCpusPerNumaThread = coresInNuma;
             }
-            for (int i = 1; i < maxCpuNumaThread; i++) {
-                for (int t = 0; t < hostThreads; t++) {
-                    if (i == numCore) {
-                        sb.append(currentCpu++).append("#").append(cpusInNuma.get(numCore)).append("_");
-                    } else {
-                        sb.append(currentCpu++)
-                                .append("#")
-                                .append(cpusInNuma.get(i))
-                                .append(",")
-                                .append(cpusInNuma.get(i + numCore))
-                                .append("_");
-                    }
+            for (int i = 1; i < vCpusPerNumaThread; i++) {
+                for (int t = 0; t < hostThreadsPerCore; t++) {
+                    sb.append(currentCpu++)
+                            .append("#")
+                            .append(cpusInNuma.get(i))
+                            .append(",")
+                            .append(cpusInNuma.get(i + coresInNuma))
+                            .append("_");
                 }
             }
         }
