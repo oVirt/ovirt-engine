@@ -67,13 +67,10 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
                 vmManager.unlock();
             }
         } else {
-            final VDSReturnValue returnValue =
+            VDSReturnValue returnValue =
                     runVdsCommand(VDSCommandType.RebootVm, new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
             setActionReturnValue(returnValue.getReturnValue());
             setSucceeded(returnValue.getSucceeded());
-            if (getSucceeded()) {
-                vmDynamicDao.updateStatus(getVm().getId(), VMStatus.RebootInProgress);
-            }
         }
     }
 

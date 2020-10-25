@@ -4,9 +4,9 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 
-public class RebootVmVDSCommand<P extends VdsAndVmIDVDSParametersBase> extends VdsBrokerCommand<P> {
+public class RebootVmBrokerVDSCommand<P extends VdsAndVmIDVDSParametersBase> extends VdsBrokerCommand<P> {
 
-    public RebootVmVDSCommand(P parameters) {
+    public RebootVmBrokerVDSCommand(P parameters) {
         super(parameters);
     }
 
