@@ -65,6 +65,11 @@ public class CpuOverloadPolicyUnit extends PolicyUnitImpl {
             // more than the defined percentage
             int highUtilizationTotal = getHighUtilizationForAllCores(highUtilization, cores);
 
+            if (vds.getUsageCpuPercent() == null) {
+                log.info("Unknown CPU usage for host {}, filtering out.", vds.getName());
+                continue;
+            }
+
             if ((vds.getUsageCpuPercent()
                     // This has to use greater than (without 'or equals') as we only have percents without
                     // fractional part and 100% means we still have some power on machines with more
