@@ -60,7 +60,23 @@ public class Pair<T, K> implements Serializable {
             return false;
         }
         Pair<?, ?> other = (Pair<?, ?>) obj;
-        return Objects.equals(first, other.first)
-                && Objects.equals(second, other.second);
+
+        return equals(first, other.first) && equals(second, other.second);
     }
+
+    private boolean equals(Object obj1, Object obj2) {
+        if (obj1 == null && obj2 == null) {
+            return true;
+        }
+
+        if (obj1 == null || obj2 == null) {
+            return false;
+        }
+
+        if (obj1.getClass().isArray()) {
+            return obj2.getClass().isArray() && Objects.deepEquals(obj1, obj2);
+        }
+        return Objects.equals(obj1, obj2);
+    }
+
 }

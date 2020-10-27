@@ -32,4 +32,29 @@ public class PairTest {
         assertEquals(p1, p2);
         assertNotEquals(p1, p3);
     }
+
+    @Test
+    public void testArraysEquality() {
+        Pair<Boolean, String[]> p1 = new Pair<>(true, new String[] { "abc", "def" });
+        Pair<Boolean, String[]> p2 = new Pair<>(true, new String[] { "abc", "def" });
+        Pair<Boolean, String[]> p3 = new Pair<>(false, new String[] { "abc", "xyz" });
+
+        assertEquals(p1, p2);
+        assertNotEquals(p1, p3);
+    }
+
+    @Test
+    public void testEqualityOfNullableArguments() {
+        Pair<Boolean, String> p1 = new Pair<>(true, null);
+        Pair<Boolean, String> p2 = new Pair<>(true, null);
+        Pair<Boolean, String> p3 = new Pair<>(null, null);
+        Pair<Boolean, String> p4 = new Pair<>(null, null);
+        Pair<Boolean, String> p5 = new Pair<>(null, "abc");
+        Pair<Boolean, String> p6 = new Pair<>(null, "abc");
+
+        assertEquals(p1, p2);
+        assertNotEquals(p2, p3);
+        assertEquals(p3, p4);
+        assertEquals(p5, p6);
+    }
 }
