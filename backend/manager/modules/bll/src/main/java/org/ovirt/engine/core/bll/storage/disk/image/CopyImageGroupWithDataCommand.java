@@ -221,18 +221,17 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         // otherwise fallback to the legacy method
         Guid hostId = imagesHandler.getHostForMeasurement(sourceImage.getStoragePoolId(),
                 sourceImage.getId());
-        if (hostId == null) {
+        // We are collapsing the chain, so we want to measure the leaf to get the size
+        // of the entire chain
+        List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(sourceImage.getId());
+        imagesHandler.sortImageList(images);
+        DiskImage leaf = images.get(images.size() - 1);
+        if (hostId == null || (leaf.getActive() && !leaf.getStorageTypes().get(0).isBlockDomain())) {
             return imagesHandler.determineTotalImageInitialSize(getDiskImage(),
                     getParameters().getDestinationFormat(),
                     getParameters().getSrcDomain(),
                     getParameters().getDestDomain());
         } else {
-            // We are collapsing the chain, so we want to measure the leaf to get the size
-            // of the entire chain
-            List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(sourceImage.getId());
-            imagesHandler.sortImageList(images);
-            DiskImage leaf = images.get(images.size() - 1);
-
             MeasureVolumeParameters parameters = new MeasureVolumeParameters(leaf.getStoragePoolId(),
                     srcDomain,
                     leaf.getId(),
