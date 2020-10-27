@@ -393,9 +393,11 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     );
         }
         for(Cluster cluster: clusters) {
-            List<VDS> hostsWithMissingFlags = backend.runInternalQuery(QueryType.GetHostsWithMissingFlagsForCluster,
-                    new IdQueryParameters(cluster.getId())).getReturnValue();
-            cluster.setHasHostWithMissingCpuFlags(!hostsWithMissingFlags.isEmpty());
+            if (cluster.isManaged()) {
+                List<VDS> hostsWithMissingFlags = backend.runInternalQuery(QueryType.GetHostsWithMissingFlagsForCluster,
+                        new IdQueryParameters(cluster.getId())).getReturnValue();
+                cluster.setHasHostWithMissingCpuFlags(!hostsWithMissingFlags.isEmpty());
+            }
 
             String verb = cpuFlagsManagerHandler.getCpuId(cluster.getCpuName(), cluster.getCompatibilityVersion());
             cluster.setConfiguredCpuVerb(verb);
