@@ -95,6 +95,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.ICancelable;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -1794,7 +1795,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         CloneVmParameters parameters = getCloneVmParameters(vm, vm.getName(), true);
         parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
 
-        Frontend.getInstance().runAction(ActionType.CloneVm, parameters, null, this);
+        IFrontendActionAsyncCallback callback = result -> {
+            model.stopProgress();
+            cancel();
+        };
+        Frontend.getInstance().runAction(ActionType.CloneVm, parameters, callback, this);
     }
 
     private boolean isHeadlessModeChanged(VM source, VmManagementParametersBase updateVmParameters) {
