@@ -47,6 +47,9 @@ public class SubTabStorageSnapshotView extends AbstractSubTabTableView<StorageDo
                 DisksViewColumns.getDateCreatedColumn(null), constants.creationDateDisk(), true, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
+                DisksViewColumns.getSnapshotCreationDateColumn(null), constants.diskSnapshotCreationDate(), true, "130px"); //$NON-NLS-1$
+
+        getTable().ensureColumnVisible(
                 DisksViewColumns.getAliasColumn(null), constants.diskSnapshotAlias(), true, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(

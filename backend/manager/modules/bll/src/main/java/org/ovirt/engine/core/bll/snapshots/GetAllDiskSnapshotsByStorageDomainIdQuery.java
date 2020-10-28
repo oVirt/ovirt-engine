@@ -47,6 +47,7 @@ public class GetAllDiskSnapshotsByStorageDomainIdQuery<P extends DiskSnapshotsQu
             // Verify snapshot is not null to mitigate possible race conditions
             if (snapshot != null) {
                 diskImage.setVmSnapshotDescription(snapshot.getDescription());
+                diskImage.setSnapshotCreationDate(snapshot.getCreationDate());
                 diskImagesToReturn.add(diskImage);
             }
         }

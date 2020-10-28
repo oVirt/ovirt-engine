@@ -16,6 +16,7 @@ public class DiskImage extends DiskImageBase {
     private static final long serialVersionUID = 3185087852755356847L;
 
     private Date lastModifiedDate;
+    private Date snapshotCreationDate;
     private List<String> storagesNames;
     private long actualSizeInBytes;
     private long apparentSizeInBytes;
@@ -117,6 +118,14 @@ public class DiskImage extends DiskImageBase {
 
     public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public Date getSnapshotCreationDate() {
+        return snapshotCreationDate;
+    }
+
+    public void setSnapshotCreationDate(Date snapshotCreationDate) {
+        this.snapshotCreationDate = snapshotCreationDate;
     }
 
     public long getActualSizeInBytes() {
@@ -446,6 +455,7 @@ public class DiskImage extends DiskImageBase {
         di.setQuotaEnforcementType(diskImage.getQuotaEnforcementType());
         di.setActive(diskImage.getActive());
         di.setCreationDate(new Date(diskImage.getCreationDate().getTime()));
+        di.setSnapshotCreationDate(diskImage.getSnapshotCreationDate());
         di.setLastModifiedDate(new Date(diskImage.getLastModifiedDate().getTime()));
         di.actualSizeInBytes = diskImage.actualSizeInBytes;
         di.initialSizeInBytes = diskImage.initialSizeInBytes;
@@ -495,6 +505,7 @@ public class DiskImage extends DiskImageBase {
                 super.hashCode(),
                 getImage(),
                 snapshots,
+                snapshotCreationDate,
                 actualSizeInBytes,
                 initialSizeInBytes,
                 appList,
@@ -530,6 +541,7 @@ public class DiskImage extends DiskImageBase {
                 && Objects.equals(initialSizeInBytes, other.initialSizeInBytes)
                 && Objects.equals(appList, other.appList)
                 && Objects.equals(description, other.description)
+                && Objects.equals(snapshotCreationDate, other.getSnapshotCreationDate())
                 && readRateFromDiskImageDynamic == other.readRateFromDiskImageDynamic
                 && readOpsFromDiskImageDynamic == other.readOpsFromDiskImageDynamic
                 && Objects.equals(storageIds, other.storageIds)

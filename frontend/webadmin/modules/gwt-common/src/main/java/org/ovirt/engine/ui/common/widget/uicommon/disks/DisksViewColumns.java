@@ -354,6 +354,16 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
+    public static final AbstractFullDateTimeColumn<Disk> getSnapshotCreationDateColumn(String sortBy) {
+        AbstractFullDateTimeColumn<Disk> column = new AbstractFullDateTimeColumn<Disk>() {
+            @Override
+            protected Date getRawValue(Disk object) {
+                return diskImagePredicate.test(object) ? ((DiskImage) object).getSnapshotCreationDate() : null;
+            }
+        };
+        return makeSortable(column, sortBy);
+    }
+
     public static final AbstractFullDateTimeColumn<Disk> getDateModifiedColumn(String sortBy) {
         AbstractFullDateTimeColumn<Disk> column = new AbstractFullDateTimeColumn<Disk>() {
             @Override

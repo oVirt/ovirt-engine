@@ -829,6 +829,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String modificationDateDisk();
 
+    String diskSnapshotCreationDate();
+
     String diskSnapshotIDDisk();
 
     String descriptionDisk();
