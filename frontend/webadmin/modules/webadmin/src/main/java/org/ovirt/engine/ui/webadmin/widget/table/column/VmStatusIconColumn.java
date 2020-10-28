@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import java.util.Comparator;
 
-import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -10,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
-import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -134,24 +132,7 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
     }
 
     private static boolean hasDifferentTimezone(VM vm) {
-        if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId())) {
-            String timeZone = vm.getTimeZone();
-            if (timeZone != null && !timeZone.isEmpty()) {
-                int offset = 0;
-                String javaZoneId = null;
-                // convert to java & calculate offset
-                javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
-
-                if (javaZoneId != null) {
-                    offset = TimeZoneType.GENERAL_TIMEZONE.getStandardOffset(javaZoneId);
-                }
-
-                if (vm.getGuestOsTimezoneOffset() != offset) {
-                    return true;
-                }
-            }
-        }
-        return false;
+       return vm.isDifferentTimeZone();
     }
 
     private static boolean isNameChanged(VM vm) {

@@ -218,22 +218,6 @@ public enum TimeZoneType {
         return Integer.parseInt(match.groups().get(0).getValue().substring(3).replace(":", "").replace("+", ""));
     }
 
-    public int getStandardOffset(String timeZoneKey) {
-        String s = getTimeZoneList().get(timeZoneKey);
-        Match match = Regex.match(s, TimeZoneExtractTimePattern);
-        int value = 0;
-        if(match.success() && match.groups().size() > 0) {
-            value = extractOffsetFromMatch(match);
-            boolean neg = value < 0;
-            value = Math.abs(value);
-            value = (value / 100) * 60 + value % 100;
-            if(neg) {
-                value *= -1;
-            }
-        }
-        return value;
-    }
-
     protected abstract Map<String, String> initializeTimeZoneList();
 
 

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -109,6 +111,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -124,6 +127,7 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmInitDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.VirtioWinLoader;
@@ -132,6 +136,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -662,6 +667,24 @@ public class VmHandler implements BackendService {
                         vm.getClusterCpuName(),
                         vm.getCompatibilityVersion());
         vm.setConfiguredCpuVerb(configuredCpuVerb);
+    }
+
+    public void updateIsDifferentTimeZone(VM vm, MemoizingSupplier<Function<String, Integer>> javaZoneIdToOffset) {
+        String timeZone = vm.getTimeZone();
+        if (timeZone != null && !timeZone.isEmpty() && osRepository.isWindows(vm.getOs())) {
+            String javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
+            int offset = javaZoneIdToOffset.get().apply(javaZoneId);
+            int guestOffset = vm.getGuestOsTimezoneOffset() * 60; // convert to seconds
+            vm.setDifferentTimeZone(guestOffset != offset);
+        }
+    }
+
+    public MemoizingSupplier<Function<String, Integer>> getJavaZoneIdToOffsetFuncSupplier() {
+        return new MemoizingSupplier<>(() -> {
+            long now = System.currentTimeMillis();
+            Map<String, Integer> cache = new HashMap<>();
+            return javaZoneId -> cache.computeIfAbsent(javaZoneId, tz -> VmInfoBuildUtils.javaZoneToOffset(tz, now));
+        });
     }
 
     public VmManagementParametersBase createVmManagementParametersBase(VM vm) {

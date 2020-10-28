@@ -63,6 +63,8 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     private boolean hasIllegalImages;
     private BiosType clusterBiosType;
     private BiosType clusterBiosTypeOrigin;
+    @TransientField
+    private boolean differentTimeZone;
 
     public VM() {
         this(new VmStatic(), new VmDynamic(), new VmStatistics());
@@ -1902,5 +1904,13 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     public boolean isManaged() {
         // TODO: think of a better way to distinguish that from #isManagedVm
         return vmStatic.isManaged();
+    }
+
+    public boolean isDifferentTimeZone() {
+        return differentTimeZone;
+    }
+
+    public void setDifferentTimeZone(boolean differentTimeZone) {
+        this.differentTimeZone = differentTimeZone;
     }
 }

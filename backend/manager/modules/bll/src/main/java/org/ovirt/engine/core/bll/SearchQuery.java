@@ -254,6 +254,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             return Collections.emptyList();
         }
 
+        var javaZoneIdToOffset = vmHandler.getJavaZoneIdToOffsetFuncSupplier();
         List<VM> vms = vmDao.getAllUsingQuery(data.getQuery());
         for (VM vm : vms) {
             vmHandler.updateVmGuestAgentVersion(vm);
@@ -261,6 +262,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             vmHandler.updateOperationProgress(vm);
             vmHandler.updateVmStatistics(vm);
             vmHandler.updateConfiguredCpuVerb(vm);
+            vmHandler.updateIsDifferentTimeZone(vm, javaZoneIdToOffset);
         }
         return vms;
     }

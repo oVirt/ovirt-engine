@@ -91,6 +91,8 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
     private LockManager lockManager;
     @Mock
     private HostLocking hostLocking;
+    @Mock
+    private VmHandler vmHandler;
 
     List<Disk> diskImageResultList = new ArrayList<>();
     List<Quota> quotaResultList = new ArrayList<>();

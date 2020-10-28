@@ -847,23 +847,14 @@ public class VmInfoBuildUtils {
     }
 
     public int getVmTimeZone(VM vm) {
-        // get vm timezone
         String timeZone = getTimeZoneForVm(vm);
+        String javaZoneId = osRepository.isWindows(vm.getOs()) ? WindowsJavaTimezoneMapping.get(timeZone) : timeZone;
+        long now = new Date().getTime();
+        return javaZoneToOffset(javaZoneId, now);
+    }
 
-        final String javaZoneId;
-        if (osRepository.isWindows(vm.getOs())) {
-            // convert to java & calculate offset
-            javaZoneId = WindowsJavaTimezoneMapping.get(timeZone);
-        } else {
-            javaZoneId = timeZone;
-        }
-
-        int offset = 0;
-        if (javaZoneId != null) {
-            offset = TimeZone.getTimeZone(javaZoneId).getOffset(
-                    new Date().getTime()) / 1000;
-        }
-        return offset;
+    public static int javaZoneToOffset(String javaZoneId, long now) {
+        return javaZoneId != null ? TimeZone.getTimeZone(javaZoneId).getOffset(now) / 1000 : 0;
     }
 
     public String getEmulatedMachineByClusterArch(ArchitectureType arch) {
