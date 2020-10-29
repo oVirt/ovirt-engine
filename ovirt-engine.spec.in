@@ -956,6 +956,7 @@ OVESETUP_CONFIG/pkiRenewalDocUrl=str:https://access.redhat.com/solutions/1572983
 __EOF__
 
 cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-wsp.conf" << __EOF__
+[environment:default]
 __EOF__
 %else
 cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf" << __EOF__
