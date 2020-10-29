@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 @InternalCommandAttribute
 public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
@@ -35,6 +37,8 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
     private DiskImageDao diskImageDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -49,21 +53,28 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
 
     @Override
     protected void executeCommand() {
-        ActionReturnValue result =
-                runInternalActionWithTasksContext(
-                        ActionType.UpdateVmVersion,
-                        buildUpdateVmVersionParameters());
+        Guid vmtId = getVm().getVmtGuid();
+        if (getVm().isUseLatestVersion() &&
+                !Objects.equals(vmTemplateDao.getTemplateWithLatestVersionInChain(vmtId).getId(),
+                        vmtId)) {
+            ActionReturnValue result =
+                    runInternalActionWithTasksContext(
+                            ActionType.UpdateVmVersion,
+                            buildUpdateVmVersionParameters());
 
-        // if it fail because of validate, its safe to restore the snapshot
-        // and the vm will still be usable with previous version
-        if (!result.getSucceeded() && !result.isValid()) {
-            log.warn("Couldn't update VM '{}' ({}) version from it's template, continue with restoring stateless snapshot.",
-                    getVm().getName(),
-                    getVmId());
+            // if it fail because of validate, its safe to restore the snapshot
+            // and the vm will still be usable with previous version
+            if (!result.getSucceeded() && !result.isValid()) {
+                log.warn("Couldn't update VM '{}' ({}) version from it's template, continue with restoring stateless snapshot.",
+                        getVm().getName(),
+                        getVmId());
 
-            setSucceeded(restoreInitialState());
+                setSucceeded(restoreInitialState());
+            } else {
+                setSucceeded(result.getSucceeded());
+            }
         } else {
-            setSucceeded(result.getSucceeded());
+            setSucceeded(restoreInitialState());
         }
     }
 
