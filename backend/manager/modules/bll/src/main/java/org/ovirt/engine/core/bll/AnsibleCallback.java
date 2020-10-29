@@ -110,4 +110,9 @@ public class AnsibleCallback implements CommandCallback {
     private CommandBase<AnsibleCommandParameters> getCommand(Guid cmdId) {
         return commandCoordinatorUtil.retrieveCommand(cmdId);
     }
+
+    @Override
+    public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
+        getCommand(cmdId).endAction();
+    }
 }

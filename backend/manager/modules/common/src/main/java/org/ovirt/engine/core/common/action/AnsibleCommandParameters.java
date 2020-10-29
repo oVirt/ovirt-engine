@@ -12,7 +12,6 @@ public class AnsibleCommandParameters extends ActionParametersBase {
     private StringBuilder stringBuilder;
     private Guid hostId;
     private String playAction;
-    private Guid diskId;
     private Map<String, Object> variables;
 
     public int getLastEventId() {
@@ -61,14 +60,6 @@ public class AnsibleCommandParameters extends ActionParametersBase {
 
     public String getPlayAction() {
         return playAction;
-    }
-
-    public Guid getDiskId() {
-        return diskId;
-    }
-
-    public void setDiskId(Guid diskId) {
-        this.diskId = diskId;
     }
 
     public void setVariables(Map<String, Object> variables) {

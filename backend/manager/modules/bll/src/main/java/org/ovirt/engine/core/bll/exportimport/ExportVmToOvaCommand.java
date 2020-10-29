@@ -9,7 +9,6 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -51,7 +50,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 public class ExportVmToOvaCommand<T extends ExportVmToOvaParameters> extends ExportOvaCommand<T> implements SerialChildExecutingCommand {
 
     @Inject
-    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
     @Inject
     private SnapshotDao snapshotDao;

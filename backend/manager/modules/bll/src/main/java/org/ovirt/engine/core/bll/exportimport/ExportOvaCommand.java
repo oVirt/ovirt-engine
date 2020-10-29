@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateOvaParameters;
@@ -126,6 +127,9 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
         parameters.setDisks(getDisks());
         parameters.setProxyHostId(getParameters().getProxyHostId());
         parameters.setDirectory(getParameters().getDirectory());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
         parameters.setName(getParameters().getName());
         return parameters;
     }

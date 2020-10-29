@@ -8,14 +8,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
+import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -32,8 +37,11 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 
 @NonTransactiveCommandAttribute
-public class ExportVmTemplateToOvaCommand<T extends ExportOvaParameters> extends ExportOvaCommand<T> {
+public class ExportVmTemplateToOvaCommand<T extends ExportOvaParameters> extends ExportOvaCommand<T> implements SerialChildExecutingCommand {
 
+    @Inject
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
     @Inject
     private DiskDao diskDao;
     @Inject
@@ -141,5 +149,15 @@ public class ExportVmTemplateToOvaCommand<T extends ExportOvaParameters> extends
     @Override
     protected CommandContext createOvaCreationStepContext() {
         return ExecutionHandler.createDefaultContextForTasks(getContext());
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
+    }
+
+    @Override
+    public boolean performNextOperation(int completedChildCount) {
+        return false;
     }
 }
