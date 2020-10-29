@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
@@ -209,7 +210,23 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
                     throw new RuntimeException("Could not measure volume");
                 }
 
-                return actionReturnValue.getActionReturnValue();
+                long requiredSize = actionReturnValue.getActionReturnValue();
+
+                // The required size for the leaf might be very small depending on the amount of data.
+                // Extend it to 1GB or disk size to avoid having the VM paused for extension too fast.
+                if (sourceImage.isActive()) {
+
+                    // TODO: 1GB is selected as this is the default chunk size in Vdsm.
+                    // This uses the logic from Vdsm's optimal_size
+                    // https://github.com/oVirt/vdsm/blob/e11b71eab5995fb00e5fe1619332687a5f717903/lib/vdsm/storage/blockVolume.py#L403
+                    // Ideally, we'd get a report from Vdsm about the chunk size and use it rather than assuming
+                    // it is the default chunk size.
+                    // https://bugzilla.redhat.com/show_bug.cgi?id=1993839
+                    requiredSize += SizeConverter.BYTES_IN_GB;
+                    return Math.min(requiredSize, sourceImage.getSize());
+                }
+
+                return requiredSize;
             }
         }
 
