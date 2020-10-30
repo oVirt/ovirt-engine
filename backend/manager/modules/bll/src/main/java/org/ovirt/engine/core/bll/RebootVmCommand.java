@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
@@ -51,20 +52,28 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
             return;
         }
         if (isColdReboot()) {
-            ActionReturnValue
-                    returnValue = runInternalAction(ActionType.ShutdownVm, new ShutdownVmParameters(getVmId(), false));
-            setReturnValue(returnValue);
-            setSucceeded(returnValue.getSucceeded());
-            if (getSucceeded()) {
-                resourceManager.getVmManager(getVmId()).setColdReboot(true);
+            VmManager vmManager = resourceManager.getVmManager(getVmId());
+            vmManager.lock();
+            try {
+                ActionReturnValue returnValue =
+                        runInternalAction(ActionType.ShutdownVm, new ShutdownVmParameters(getVmId(), false));
+                setReturnValue(returnValue);
+                setSucceeded(returnValue.getSucceeded());
+                if (getSucceeded()) {
+                    resourceManager.getVmManager(getVmId()).setColdReboot(true);
+                    vmDynamicDao.updateStatus(getVm().getId(), VMStatus.RebootInProgress);
+                }
+            } finally {
+                vmManager.unlock();
             }
         } else {
-            final VDSReturnValue returnValue = runVdsCommand(VDSCommandType.RebootVm, new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
+            final VDSReturnValue returnValue =
+                    runVdsCommand(VDSCommandType.RebootVm, new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
             setActionReturnValue(returnValue.getReturnValue());
             setSucceeded(returnValue.getSucceeded());
-        }
-        if (getSucceeded()) {
-            vmDynamicDao.updateStatus(getVm().getId(), VMStatus.RebootInProgress);
+            if (getSucceeded()) {
+                vmDynamicDao.updateStatus(getVm().getId(), VMStatus.RebootInProgress);
+            }
         }
     }
 
@@ -101,7 +110,8 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
     private boolean isColdReboot() {
         boolean coldReboot = (getVm().isRunOnce() && getVm().isVolatileRun()) || getVm().isNextRunConfigurationExists();
 
-        log.info("VM '{}' is performing {} reboot; run once: '{}', running as volatile: '{}', has next run configuration: '{}'",
+        log.info(
+                "VM '{}' is performing {} reboot; run once: '{}', running as volatile: '{}', has next run configuration: '{}'",
                 getVm().getName(),
                 coldReboot ? "cold" : "warm",
                 getVm().isRunOnce(),
