@@ -465,11 +465,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         }
 
         allHostsForCluster.stream()
-                .filter(vds -> !Objects.equals(vds.getOpenstackNetworkProviderId(),
-                        getCluster().getDefaultNetworkProviderId()))
                 .forEach(vds -> {
                     VdsStatic vdsStatic = vds.getStaticData();
-                    vdsStatic.setOpenstackNetworkProviderId(getCluster().getDefaultNetworkProviderId());
                     vdsStatic.setReinstallRequired(true);
                     vdsStaticDao.update(vdsStatic);
                 });

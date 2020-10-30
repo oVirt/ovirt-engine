@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
-import org.ovirt.engine.core.bll.provider.NetworkProviderValidator;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
@@ -17,7 +16,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
-import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -303,21 +301,5 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
             "Please refer to %1$s/engine.log and log logs under %1$s/host-deploy/ for further details.",
             EngineLocalConfig.getInstance().getLogDir()
         );
-    }
-
-    protected boolean validateNetworkProviderConfiguration(Guid providerId) {
-        if (providerId == null) {
-            return true;
-        } else {
-            Provider provider = providerDao.get(providerId);
-            NetworkProviderValidator validator = new NetworkProviderValidator(provider);
-
-            if (!(validate(validator.providerIsSet()) &&
-                    validate(validator.providerTypeIsNetwork()))) {
-                return false;
-            }
-
-            return true;
-        }
     }
 }

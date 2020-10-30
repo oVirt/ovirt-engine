@@ -512,7 +512,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     }
 
     private String getOvnCentral() {
-        Guid providerId = getParameters().getNetworkProviderId();
+        Guid providerId = getCluster().getDefaultNetworkProviderId();
         if (providerId != null) {
             Provider provider = providerDao.get(providerId);
             if (provider.getType() == ProviderType.EXTERNAL_NETWORK ) {
