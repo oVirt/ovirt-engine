@@ -33,13 +33,9 @@ import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
-import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
-import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.Permission;
-import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ReplaceHostConfiguration;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.Tags;
@@ -876,50 +872,11 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         VDS host = VDSMapper.INSTANCE.apply(initHost, model);
 
-        host.setComment(model.getComment().getEntity());
-        boolean consoleAddressSet = model.getConsoleAddressEnabled().getEntity();
-        host.setConsoleAddress(!consoleAddressSet ? null : model.getConsoleAddress().getEntity());
-        host.setVgpuPlacement(model.getVgpuPlacement().getValue());
-
-        host.setVdsSpmPriority(model.getSpmPriorityValue());
-        host.setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(model.getPmProxyPreferences()));
-
-
-        host.setCurrentKernelCmdline(model.getKernelCmdline().getEntity());
-        host.setKernelCmdlineBlacklistNouveau(model.getKernelCmdlineBlacklistNouveau().getEntity());
-        host.setKernelCmdlineParsable(model.isKernelCmdlineParsable());
-        host.setKernelCmdlineIommu(model.getKernelCmdlineIommu().getEntity());
-        host.setKernelCmdlineKvmNested(model.getKernelCmdlineKvmNested().getEntity());
-        host.setKernelCmdlineUnsafeInterrupts(model.getKernelCmdlineUnsafeInterrupts().getEntity());
-        host.setKernelCmdlinePciRealloc(model.getKernelCmdlinePciRealloc().getEntity());
-        host.setKernelCmdlineFips(model.getKernelCmdlineFips().getEntity());
-        host.setKernelCmdlineSmtDisabled(model.getKernelCmdlineSmtDisabled().getEntity());
-
         cancelConfirm();
         model.startProgress();
 
         if (model.getIsNew()) {
             AddVdsActionParameters parameters = AddVdsActionParametersMapper.INSTANCE.apply(host, model);
-
-            if (model.getProviders().getSelectedItem() != null) {
-                parameters.getVdsStaticData().setHostProviderId(model.getProviders().getSelectedItem().getId());
-            }
-            if (Boolean.TRUE.equals(model.getIsDiscoveredHosts().getEntity())) {
-                Provider<?> provider = model.getProviders().getSelectedItem();
-                ExternalHostGroup hostGroup = (ExternalHostGroup) model.getExternalHostGroups().getSelectedItem();
-                ExternalComputeResource computeResource = (ExternalComputeResource) model.getExternalComputeResource().getSelectedItem();
-                ExternalDiscoveredHost discoveredHost = (ExternalDiscoveredHost) model.getExternalDiscoveredHosts().getSelectedItem();
-                parameters.initVdsActionParametersForProvision(
-                        provider.getId(),
-                        hostGroup,
-                        computeResource,
-                        discoveredHost.getMac(),
-                        discoveredHost.getName(),
-                        discoveredHost.getIp());
-            }
-
-            parameters.setAffinityGroups(model.getAffinityGroupList().getSelectedItems());
-            parameters.setAffinityLabels(model.getLabelList().getSelectedItems());
 
             Frontend.getInstance().runAction(ActionType.AddVds, parameters,
                     result -> {
