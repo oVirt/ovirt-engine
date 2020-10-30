@@ -9,9 +9,11 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.resource.ExternalNetworkProviderConfigurationResource;
 import org.ovirt.engine.api.resource.ExternalNetworkProviderConfigurationsResource;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -35,11 +37,16 @@ public class BackendHostExternalNetworkProviderConfigurationsResource extends Ab
 
         VDS host = getEntity(VDS.class, QueryType.GetVdsByVdsId, new IdQueryParameters(hostId), hostId.toString(),
                 true);
-        Guid externalNetworkProviderId = host.getOpenstackNetworkProviderId();
-        if (externalNetworkProviderId != null) {
-            externalNetworkProviders.add(getEntity(Provider.class, QueryType.GetProviderById,
-                            new IdQueryParameters(externalNetworkProviderId), externalNetworkProviderId.toString()));
+        QueryReturnValue result = runQuery(QueryType.GetClusterById, new IdQueryParameters(host.getClusterId()));
+        if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
+            Cluster cluster = result.getReturnValue();
+            Guid externalNetworkProviderId = cluster.getDefaultNetworkProviderId();
+            if (externalNetworkProviderId != null) {
+                externalNetworkProviders.add(getEntity(Provider.class, QueryType.GetProviderById,
+                        new IdQueryParameters(externalNetworkProviderId), externalNetworkProviderId.toString()));
+            }
         }
+
         return externalNetworkProviders;
     }
 

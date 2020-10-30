@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.ExternalNetworkProviderConfiguration;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -26,6 +27,7 @@ public class BackendHostExternalNetworkProviderConfigurationsResourceTest
     private static final int PROVIDER_INDEX = 0;
     private static final Guid PROVIDER_ID = GUIDS[PROVIDER_INDEX];
     private static final Guid HOST_ID = GUIDS[PROVIDER_INDEX +1];
+    private static final Guid CLUSTER_ID = GUIDS[PROVIDER_INDEX +1];
 
     public BackendHostExternalNetworkProviderConfigurationsResourceTest() {
         super(new BackendHostExternalNetworkProviderConfigurationsResource(HOST_ID), null, null);
@@ -66,14 +68,28 @@ public class BackendHostExternalNetworkProviderConfigurationsResourceTest
                         failure
                 );
             }
+            setUpEntityQueryExpectations(
+                    QueryType.GetClusterById,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { CLUSTER_ID },
+                    getCluster(),
+                    failure
+            );
         }
     }
 
     private VDS getHost() {
         VDS host = new VDS();
         host.setId(HOST_ID);
-        host.setOpenstackNetworkProviderId(PROVIDER_ID);
+        host.setClusterId(CLUSTER_ID);
         return host;
+    }
+
+    private Cluster getCluster() {
+        Cluster cluster = new Cluster();
+        cluster.setDefaultNetworkProviderId(PROVIDER_ID);
+        return cluster;
     }
 
     protected List<Provider> getEntityList() {

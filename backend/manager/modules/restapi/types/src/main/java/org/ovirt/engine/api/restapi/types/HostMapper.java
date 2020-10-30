@@ -18,7 +18,6 @@ import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.ExternalHostProvider;
-import org.ovirt.engine.api.model.ExternalNetworkProviderConfiguration;
 import org.ovirt.engine.api.model.ExternalStatus;
 import org.ovirt.engine.api.model.HardwareInformation;
 import org.ovirt.engine.api.model.Hook;
@@ -122,17 +121,6 @@ public class HostMapper {
             mapOperatingSystem(model.getOs(), entity);
         }
 
-        if (model.isSetExternalNetworkProviderConfigurations()
-                && model.getExternalNetworkProviderConfigurations().isSetExternalNetworkProviderConfigurations()) {
-            List<ExternalNetworkProviderConfiguration> externalProviders =
-                    model.getExternalNetworkProviderConfigurations().getExternalNetworkProviderConfigurations();
-            if (externalProviders.size() > 0) {
-                // Ignore everything but the first external provider, because engine's VdsStatic currently supports
-                // only a single external network provider
-                String providerId = externalProviders.get(0).getExternalNetworkProvider().getId();
-                entity.setOpenstackNetworkProviderId(providerId == null ? null : GuidUtils.asGuid(providerId));
-            }
-        }
         return entity;
     }
 
