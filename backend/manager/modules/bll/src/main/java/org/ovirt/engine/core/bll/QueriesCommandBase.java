@@ -183,6 +183,20 @@ public abstract class QueriesCommandBase<P extends QueryParametersBase> extends 
         return true;
     }
 
+    /**
+     * Apply {@linkplain ValidationResult} to {@linkplain QueryReturnValue} maintained for this query.
+     * @param result to be applied
+     * @return true if provided result is valid
+     */
+    public boolean validate(ValidationResult result) {
+        if (result.isValid()) {
+            return true;
+        }
+        returnValue.setExceptionString(result.getMessagesAsStrings().stream().findFirst().orElse(""));
+        returnValue.setSucceeded(false);
+        return false;
+    }
+
     public QueryReturnValue getQueryReturnValue() {
         return returnValue;
     }

@@ -1,26 +1,23 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public class EditOptionsModel extends Model {
 
-    private EntityModel<String> publicKey;
+    private final EntityModel<String> publicKey = new EntityModel<>("");
 
-    private EntityModel<Boolean> localStoragePersistedOnServer;
+    private EntityModel<Boolean> localStoragePersistedOnServer = new EntityModel<>();
     private boolean sshUploadSucceeded;
     private boolean optionsUploadSucceeded;
-    private EntityModel<String> originalPublicKey = new EntityModel<>();
-    private EntityModel<Boolean> originalLocalStoragePersistedOnServer = new EntityModel<>();
+    private final EntityModel<String> originalPublicKey = new EntityModel<>("");
+    private final EntityModel<Boolean> originalLocalStoragePersistedOnServer = new EntityModel<>();
 
     public EditOptionsModel() {
-        setPublicKey(new EntityModel<>());
-        setLocalStoragePersistedOnServer(new EntityModel<>());
-        // "original" values are set earlier so
-        // only work values require listeners
-        getPublicKey().getEntityChangedEvent().addListener(this::updateAvailability);
+        publicKey.getEntityChangedEvent().addListener(this::updateAvailability);
         getLocalStoragePersistedOnServer().getEntityChangedEvent().addListener(this::updateAvailability);
     }
 
@@ -33,17 +30,29 @@ public class EditOptionsModel extends Model {
     }
 
     private boolean hasChangedValues() {
-        return !Objects.equals(originalPublicKey.getEntity(), publicKey.getEntity()) ||
+        return isSshKeyUpdated() || isSshKeyRemoved() ||
                 !Objects.equals(originalLocalStoragePersistedOnServer.getEntity(),
                         localStoragePersistedOnServer.getEntity());
     }
 
-    public EntityModel<String> getPublicKey() {
-        return publicKey;
+    public boolean isSshKeyUpdated() {
+        return !Objects.equals(getOriginalPublicKey(), getNewPublicKey())
+                && !getNewPublicKey().isEmpty();
     }
 
-    public void setPublicKey(EntityModel<String> textInput) {
-        this.publicKey = textInput;
+    public boolean isSshKeyRemoved() {
+        return !Objects.equals(getOriginalPublicKey(), getNewPublicKey())
+                && !getOriginalPublicKey().isEmpty()
+                && getNewPublicKey().isEmpty();
+    }
+
+    public String getNewPublicKey() {
+        return Optional.ofNullable(publicKey.getEntity()).orElse("").trim();
+    }
+
+    // required to generate the view/driver
+    public EntityModel<String> getPublicKey() {
+        return publicKey;
     }
 
     public EntityModel<Boolean> getLocalStoragePersistedOnServer() {
@@ -66,8 +75,17 @@ public class EditOptionsModel extends Model {
         return optionsUploadSucceeded && sshUploadSucceeded;
     }
 
-    public EntityModel<String> getOriginalPublicKey() {
-        return originalPublicKey;
+    public String getOriginalPublicKey() {
+        return originalPublicKey.getEntity().trim();
+    }
+
+    public void setOriginalPublicKey(String textInput) {
+        if (textInput != null) {
+            // "original" values are set earlier so
+            // only work values require listeners
+            this.originalPublicKey.setEntity(textInput);
+            this.publicKey.setEntity(textInput);
+        }
     }
 
     public EntityModel<Boolean> getOriginalStoragePersistedOnServer() {

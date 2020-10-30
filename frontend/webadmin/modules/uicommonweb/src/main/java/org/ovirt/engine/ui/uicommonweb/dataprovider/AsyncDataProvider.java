@@ -627,7 +627,11 @@ public class AsyncDataProvider {
     }
 
     public void getUserProfile(AsyncQuery<QueryReturnValue> aQuery) {
-        Frontend.getInstance().runQuery(QueryType.GetUserProfile, new QueryParametersBase().withoutRefresh(), aQuery);
+        Frontend.getInstance().runQuery(
+                QueryType.GetUserProfile,
+                new IdQueryParameters(Frontend.getInstance().getLoggedInUser()
+                        .getId()).withoutRefresh(),
+                aQuery);
     }
 
     public void getAAAProfilesListViaPublic(AsyncQuery<List<String>> aQuery, boolean passwordBasedOnly) {

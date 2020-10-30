@@ -499,8 +499,8 @@
   <users user_id="81940459-2ec4-4afa-bbaa-22549555293b" external_id="c" name="userportal4" domain="testportal.redhat.com" username="userportal4@testportal.redhat.com" last_admin_check_status="0" namespace="*"/>
   <users user_id="81940459-2ec4-4afa-bbaa-22549555293c" external_id="d" name="userportal4" domain="testportal.redhat.com" username="userportal4@testportal.redhat.com" last_admin_check_status="0" namespace="*"/>
 
-  <user_profiles profile_id="38cb5663-96bc-485c-834a-cbbc03acc820" user_id="9bf7c640-b620-456f-a550-0348f366544a" ssh_public_key_id="39df6903-7eda-46c3-bd54-50be69a0d512" ssh_public_key="key1"/>
-  <user_profiles profile_id="38cb5663-96bc-485c-834a-cbbc03acc821" user_id="81940459-2ec4-4afa-bbaa-22549555293b" ssh_public_key_id="3a5f6ee7-fc24-4620-bf05-a8b2863431d5" ssh_public_key="key2"/>
+  <user_profiles user_id="9bf7c640-b620-456f-a550-0348f366544a" property_id="39df6903-7eda-46c3-bd54-50be69a0d512"  property_type="SSH_PUBLIC_KEY" property_name="key1"/>
+  <user_profiles user_id="9bf7c640-b620-456f-a550-0348f366544a" property_id="39df6903-7eda-46c3-bd54-50be69a0d513"  property_type="JSON" property_name="key2"/>
 
   <tags_user_map tag_id="d3ec3e01-ca89-48e1-8b43-a9b38f873b0c" user_id="9bf7c640-b620-456f-a550-0348f366544a"/>
   <tags_user_map tag_id="d3ec3e01-ca89-48e1-8b43-a9b38f873b0d" user_id="9bf7c640-b620-456f-a550-0348f366544a"/>

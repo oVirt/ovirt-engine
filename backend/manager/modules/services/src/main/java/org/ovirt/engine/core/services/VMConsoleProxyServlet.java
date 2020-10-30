@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LoginOnBehalfParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.UserProfile;
+import org.ovirt.engine.core.common.businessentities.UserSshKey;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
@@ -63,27 +63,24 @@ public class VMConsoleProxyServlet extends HttpServlet {
 
     // TODO: implmement key filtering based on input parameters
     private List<Map<String, String>> availablePublicKeys(String keyFingerPrint, String keyType, String keyContent) {
+        QueryReturnValue v = backend.runInternalQuery(QueryType.GetAllUserPublicSshKeys, new QueryParametersBase());
 
+        if (v == null || !v.getSucceeded()) {
+            return Collections.emptyList();
+        }
+
+        List<UserSshKey> userSshKeys = v.getReturnValue();
         List<Map<String, String>> jsonUsers = new ArrayList<>();
-        QueryParametersBase userProfileParams = new QueryParametersBase();
+        for (UserSshKey userSshKey : userSshKeys) {
+            for (String publicKey : StringUtils.split(userSshKey.getContent(), "\n")) {
+                if (StringUtils.isNotBlank(publicKey)) {
+                    Map<String, String> jsonUser = new HashMap<>();
 
-        QueryReturnValue v = backend.runInternalQuery(QueryType.GetAllUserProfiles, userProfileParams);
+                    jsonUser.put("entityid", userSshKey.getUserId());
+                    jsonUser.put("entity", userSshKey.getLoginName());
+                    jsonUser.put("key", publicKey.trim());
 
-        if (v != null) {
-            List<UserProfile> profiles = v.getReturnValue();
-            for (UserProfile profile : profiles) {
-                if (StringUtils.isNotEmpty(profile.getSshPublicKey())) {
-                    for (String publicKey : StringUtils.split(profile.getSshPublicKey(), "\n")) {
-                        if (StringUtils.isNotEmpty(publicKey)) {
-                            Map<String, String> jsonUser = new HashMap<>();
-
-                            jsonUser.put("entityid", profile.getUserId().toString());
-                            jsonUser.put("entity", profile.getLoginName());
-                            jsonUser.put("key", publicKey.trim());
-
-                            jsonUsers.add(jsonUser);
-                        }
-                    }
+                    jsonUsers.add(jsonUser);
                 }
             }
         }

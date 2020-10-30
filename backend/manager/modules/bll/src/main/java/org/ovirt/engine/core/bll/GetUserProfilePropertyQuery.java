@@ -4,34 +4,31 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.validator.UserProfileValidator;
+import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
-public class GetUserProfileQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetUserProfilePropertyQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     @Inject
     private UserProfileDao userProfileDao;
 
     private final UserProfileValidator validator = new UserProfileValidator();
 
-    public GetUserProfileQuery(P parameters, EngineContext engineContext) {
+    public GetUserProfilePropertyQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
 
-    private boolean validate() {
-        return validate(
-                validator.authorized(
-                        getUser(),
-                        getParameters().getId()
-                )
-        );
+    private boolean validate(UserProfileProperty prop) {
+        return validate(validator.authorized(getUser(), prop.getUserId()));
     }
 
     @Override
     protected void executeQueryCommand() {
-        if (!validate()) {
+        UserProfileProperty prop = userProfileDao.get(getParameters().getId());
+        if (prop == null || !validate(prop)) {
             return;
         }
 
-        getQueryReturnValue().setReturnValue(userProfileDao.getProfile(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(prop);
     }
 }

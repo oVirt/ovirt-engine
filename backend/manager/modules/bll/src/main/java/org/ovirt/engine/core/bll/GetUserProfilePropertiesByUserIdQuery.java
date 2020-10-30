@@ -7,23 +7,18 @@ import org.ovirt.engine.core.bll.validator.UserProfileValidator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
-public class GetUserProfileQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetUserProfilePropertiesByUserIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     @Inject
     private UserProfileDao userProfileDao;
 
-    private final UserProfileValidator validator = new UserProfileValidator();
+    private UserProfileValidator validator = new UserProfileValidator();
 
-    public GetUserProfileQuery(P parameters, EngineContext engineContext) {
+    public GetUserProfilePropertiesByUserIdQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
 
     private boolean validate() {
-        return validate(
-                validator.authorized(
-                        getUser(),
-                        getParameters().getId()
-                )
-        );
+        return validate(validator.authorized(getUser(), getParameters().getId()));
     }
 
     @Override
@@ -32,6 +27,6 @@ public class GetUserProfileQuery<P extends IdQueryParameters> extends QueriesCom
             return;
         }
 
-        getQueryReturnValue().setReturnValue(userProfileDao.getProfile(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(userProfileDao.getAll(getParameters().getId()));
     }
 }

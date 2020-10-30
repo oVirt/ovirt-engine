@@ -239,6 +239,7 @@
         <include name="common/businessentities/SnapshotActionEnum.java"/>
         <include name="common/businessentities/VmRngDevice.java" />
         <include name="common/businessentities/UserProfile.java" />
+        <include name="common/businessentities/UserProfileProperty.java" />
         <include name="common/locks/LockInfo.java" />
         <include name="common/businessentities/OsType.java" />
         <include name="common/businessentities/VmHostDevice.java" />

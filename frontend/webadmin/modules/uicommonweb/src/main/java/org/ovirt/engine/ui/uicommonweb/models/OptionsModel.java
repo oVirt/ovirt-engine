@@ -1,11 +1,19 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import static org.ovirt.engine.core.common.action.ActionType.AddUserProfileProperty;
+import static org.ovirt.engine.core.common.action.ActionType.RemoveUserProfileProperty;
+import static org.ovirt.engine.core.common.action.ActionType.UpdateUserProfileProperty;
+
 import java.util.Collections;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.UserProfileParameters;
+import org.ovirt.engine.core.common.action.IdParameters;
+import org.ovirt.engine.core.common.action.UserProfilePropertyParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
+import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.UserSettings;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -23,7 +31,7 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
     private UICommand editCommand;
 
     private UserProfile userProfile;
-    private LocalStorage localStorage;
+    private final LocalStorage localStorage;
 
     @Inject
     public OptionsModel(LocalStorage localStorage) {
@@ -64,11 +72,8 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
 
         AsyncDataProvider.getInstance().getUserProfile(model.asyncQuery(returnValue -> {
             UserProfile profile = returnValue.getReturnValue();
-            if (profile != null) {
-                setUserProfile(profile);
-                model.getOriginalPublicKey().setEntity(profile.getSshPublicKey());
-                model.getPublicKey().setEntity(profile.getSshPublicKey());
-            }
+            setUserProfile(profile);
+            model.setOriginalPublicKey(getUserProfile().getSshPublicKey());
         }));
 
         Frontend.getInstance().reloadUser(user -> {
@@ -83,19 +88,19 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
 
     private void onSave() {
         EditOptionsModel model = (EditOptionsModel) getWindow();
-        UserProfileParameters params = new UserProfileParameters();
-        ActionType action = ActionType.AddUserProfile;
-        if (getUserProfile() != null) {
-            action = ActionType.UpdateUserProfile;
-            params.setUserProfile(getUserProfile());
+
+        ActionType action = chooseUserProfileAction(model);
+        ActionParametersBase params = createParamsForAction(action, model.getNewPublicKey());
+        if (params != null) {
+            Frontend.getInstance().runAction(action, params, result -> {
+                model.setSshUploadSucceeded(result.getReturnValue().getSucceeded());
+                if (model.isUploadComplete()) {
+                    cancel();
+                }
+            }, model);
+        } else {
+            model.setSshUploadSucceeded(true);
         }
-        params.getUserProfile().setSshPublicKey(model.getPublicKey().getEntity());
-        Frontend.getInstance().runAction(action, params, result -> {
-            model.setSshUploadSucceeded(result.getReturnValue().getSucceeded());
-            if (model.isUploadComplete()) {
-                cancel();
-            }
-        }, model);
 
         Frontend.getInstance().reloadUser(fetchedUser -> {
             Map<String, String> storage = Collections.emptyMap();
@@ -117,6 +122,46 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
                 }
             }, model);
         }, model);
+    }
+
+    private ActionParametersBase createParamsForAction(ActionType action, String newPublicKey) {
+        if (action == null) {
+            return null;
+        }
+        switch (action) {
+        case UpdateUserProfileProperty:
+            return buildUserProfilePropertyParams(getUserProfile().getSshPublicKeyId(), newPublicKey);
+        case AddUserProfileProperty:
+            return buildUserProfilePropertyParams(Guid.newGuid(), newPublicKey);
+        case RemoveUserProfileProperty:
+            return new IdParameters(getUserProfile().getSshPublicKeyId());
+        default:
+            return null;
+        }
+    }
+
+    private ActionType chooseUserProfileAction(EditOptionsModel model) {
+        if (!getUserProfile().getSshProperties().isEmpty()) {
+            if (model.isSshKeyUpdated()) {
+                return UpdateUserProfileProperty;
+            } else if (model.isSshKeyRemoved()) {
+                return RemoveUserProfileProperty;
+            }
+        } else if (model.isSshKeyUpdated()) {
+            return AddUserProfileProperty;
+        }
+
+        return null;
+    }
+
+    private ActionParametersBase buildUserProfilePropertyParams(Guid guid,
+            String content) {
+        return new UserProfilePropertyParameters(UserProfileProperty.builder()
+                .withDefaultSshProp()
+                .withPropertyId(guid)
+                .withContent(content)
+                .withUserId(Frontend.getInstance().getLoggedInUser().getId())
+                .build());
     }
 
     public UICommand getEditCommand() {

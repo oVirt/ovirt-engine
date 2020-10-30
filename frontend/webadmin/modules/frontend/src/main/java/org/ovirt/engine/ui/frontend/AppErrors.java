@@ -661,7 +661,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__TYPE__HOST_DEVICES();
 
-    String VAR__TYPE__USER_PROFILE();
+    String VAR__TYPE__USER_PROFILE_PROPERTY();
 
     String VAR__TYPE__MEMORY_DEVICE();
 

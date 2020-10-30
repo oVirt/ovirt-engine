@@ -227,9 +227,9 @@ public enum ActionType {
     UpdateUserOptions(426, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
 
     // UserProfile
-    AddUserProfile(421, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
-    UpdateUserProfile(422, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
-    RemoveUserProfile(423, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
+    UpdateUserProfileProperty(427, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
+    RemoveUserProfileProperty(428, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
+    AddUserProfileProperty(429, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
 
     // Tags
     AddTag(501, false, QuotaDependency.NONE),
