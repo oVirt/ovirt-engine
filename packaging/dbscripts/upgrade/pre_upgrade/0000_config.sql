@@ -601,7 +601,7 @@ select fn_db_add_config_value('MaxNumOfSkipsBeforeAutoStartVm','3','general');
 select fn_db_add_config_value('MaxTimeAutoStartBlockedOnPriority','600','general');
 --Handling Keyboard Layout configuration for VNC
 select fn_db_add_config_value('VncKeyboardLayout','en-us','general');
-select fn_db_add_config_value('VncKeyboardLayoutValidValues','ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr','general');
+select fn_db_add_config_value('VncKeyboardLayoutValidValues','ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,no,pl,pt,pt-br,ru,sl,sv,th,tr','general');
 select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
 --The default network connectivity check timeout
 select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','general');
@@ -1245,6 +1245,9 @@ select fn_db_update_default_config_value('GlusterDefaultBrickMountPoint', '/glus
 
 -- update to use aio=threads for gluster
 select fn_db_update_config_value_for_versions_from_up_to('UseNativeIOForGluster','false','4.2','4.5');
+
+-- remove nl-be from
+select fn_db_update_default_config_value('VncKeyboardLayoutValidValues','ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr','ar,cz,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,no,pl,pt,pt-br,ru,sl,sv,th,tr','general', false);
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
