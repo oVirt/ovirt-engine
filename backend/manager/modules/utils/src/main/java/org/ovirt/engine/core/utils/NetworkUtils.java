@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
@@ -151,13 +150,6 @@ public final class NetworkUtils {
      */
     public static Network getDisplayNetwork(Collection<Network> clusterNetworks) {
         return clusterNetworks.stream().filter(n -> n.getCluster().isDisplay()).findFirst().orElse(null);
-    }
-
-    /**
-     * @return A unique host name representation
-     */
-    public static String getUniqueHostName(VDS host) {
-        return host.getHostName() + "-" + DigestUtils.md5Hex(host.getId().toByteArray()).substring(0, 6);
     }
 
     /**

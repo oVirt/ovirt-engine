@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.utils.NetworkUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,7 +227,7 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         boolean ignoreSecurityGroupsOnUpdate, String hostBindingId) {
 
         if (hostBindingId==null) {
-            hostBindingId = getHostId(host);
+            hostBindingId = host.getHostName();
             log.warn("Host binding id for external network {} on host {} is null, using host id {} to allocate vNIC " +
                     " {} instead. Please provide an after_get_caps hook for the plugin type {} on host {}",
                 network.getName(), host.getName(), hostBindingId, nic.getName(),
@@ -265,14 +264,6 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
             return execute(getClient().ports().update(portForUpdate));
         }
         return port;
-    }
-
-    private String getHostId(VDS host) {
-        if (host.getStaticData().getOpenstackNetworkProviderId() == null) {
-            return host.getHostName();
-        } else {
-            return NetworkUtils.getUniqueHostName(host);
-        }
     }
 
     protected Port modifyPortForAllocate(Port port, String hostBindingId, boolean hostChanged,
