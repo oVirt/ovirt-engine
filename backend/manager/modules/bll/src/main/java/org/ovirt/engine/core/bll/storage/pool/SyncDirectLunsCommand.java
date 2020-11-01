@@ -201,6 +201,9 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
             List<VM> pluggedVms = vmDao.getForDisk(lun, false).get(Boolean.TRUE);
             if (pluggedVms != null && !pluggedVms.isEmpty()) {
                 Guid hostId = pluggedVms.get(0).getRunOnVds();
+                if (hostId == null) {
+                    hostId = vdsCommandsHelper.getHostForExecution(pluggedVms.get(0).getStoragePoolId());
+                }
                 luns.putIfAbsent(hostId, new HashSet<>());
                 luns.get(hostId).add(lun);
             }
