@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.NumaNode;
@@ -203,33 +204,30 @@ public class NumaPinningHelper {
     }
 
     public static String getSapHanaCpuPinning(VM vm, VDS host, List<VdsNumaNode> numaNodes) {
-        StringBuilder sb = new StringBuilder();
         int hostSockets = host.getCpuSockets();
         int hostThreadsPerCore = host.getCpuThreads() / host.getCpuCores();
         int vmNumCpus = vm.getNumOfCpus();
         int vCpusPerNumaThread = vmNumCpus / hostSockets / hostThreadsPerCore;
-        if (vCpusPerNumaThread != 0) {
-            vCpusPerNumaThread++;
-        } else {
+        if (vCpusPerNumaThread == 0) {
             return null;
         }
-        int currentCpu = 0;
+        StringBuilder sb = new StringBuilder();
+        Integer coresInNuma = null;
+        int numaNodeNumber = 0;
         for (VdsNumaNode vdsNumaNode : numaNodes) {
             List<Integer> cpusInNuma = vdsNumaNode.getCpuIds();
-            int coresInNuma = cpusInNuma.size() / hostThreadsPerCore;
-            if (vCpusPerNumaThread > coresInNuma) {
-                vCpusPerNumaThread = coresInNuma;
-            }
-            for (int i = 1; i < vCpusPerNumaThread; i++) {
-                for (int t = 0; t < hostThreadsPerCore; t++) {
-                    sb.append(currentCpu++)
-                            .append("#")
-                            .append(cpusInNuma.get(i))
-                            .append(",")
-                            .append(cpusInNuma.get(i + coresInNuma))
-                            .append("_");
+            if (coresInNuma == null) {
+                coresInNuma = cpusInNuma.size() / hostThreadsPerCore;
+                if (vCpusPerNumaThread >= coresInNuma) {
+                    vCpusPerNumaThread = coresInNuma - 1;
                 }
             }
+            for (int i = 1; i <= vCpusPerNumaThread; i++) {
+                final int pinnedCpus = ((i-1) + numaNodeNumber * vCpusPerNumaThread) * hostThreadsPerCore;
+                String pinning = String.format("#%d,%d_", cpusInNuma.get(i), cpusInNuma.get(i + coresInNuma));
+                IntStream.range(0, hostThreadsPerCore).forEach(idx -> sb.append(pinnedCpus+idx).append(pinning));
+            }
+            numaNodeNumber++;
         }
         sb.deleteCharAt(sb.lastIndexOf("_"));
         return sb.toString();

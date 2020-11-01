@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.scheduling.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -111,8 +112,10 @@ class NumaPinningHelperTest {
         VDS host = createVDS();
 
         List<VdsNumaNode> hostNodes = Arrays.asList(
-                createHostNumaNodeWithCpus(0, 1500, IntStream.rangeClosed(0, 32).boxed().collect(Collectors.toList())),
-                createHostNumaNodeWithCpus(1, 1500, IntStream.rangeClosed(0, 32).boxed().collect(Collectors.toList()))
+                createHostNumaNodeWithCpus(0, 1500,
+                        IntStream.concat(IntStream.range(0, 16), IntStream.range(32, 48)).boxed().collect(Collectors.toList())),
+                createHostNumaNodeWithCpus(1, 1500,
+                        IntStream.concat(IntStream.range(16, 32), IntStream.range(48, 64)).boxed().collect(Collectors.toList()))
         );
 
         assertThat(NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes)).isNull();
@@ -128,12 +131,14 @@ class NumaPinningHelperTest {
         VDS host = createVDS();
 
         List<VdsNumaNode> hostNodes = Arrays.asList(
-                createHostNumaNodeWithCpus(0, 1500, IntStream.rangeClosed(0, 32).boxed().collect(Collectors.toList())),
-                createHostNumaNodeWithCpus(1, 1500, IntStream.rangeClosed(0, 32).boxed().collect(Collectors.toList()))
+                createHostNumaNodeWithCpus(0, 1500,
+                        IntStream.concat(IntStream.range(0, 16), IntStream.range(32, 48)).boxed().collect(Collectors.toList())),
+                createHostNumaNodeWithCpus(1, 1500,
+                        IntStream.concat(IntStream.range(16, 32), IntStream.range(48, 64)).boxed().collect(Collectors.toList()))
         );
         vm.setCpuPinning(NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes));
 
-        assertThat(vm.getCpuPinning().equals("0#1,33_1#1,33_2#2,34_3#2,34_4#17,49_5#17,49_6#18,50_7#18,50"));
+        assertEquals("0#1,33_1#1,33_2#2,34_3#2,34_4#17,49_5#17,49_6#18,50_7#18,50", vm.getCpuPinning());
     }
 
     @Test
@@ -141,23 +146,24 @@ class NumaPinningHelperTest {
         VM vm = new VM();
         vm.setNumOfSockets(2);
         vm.setThreadsPerCpu(2);
-        vm.setCpuPerSocket(16);
+        vm.setCpuPerSocket(15);
 
         VDS host = createVDS();
 
         List<VdsNumaNode> hostNodes = Arrays.asList(
-                createHostNumaNodeWithCpus(0, 1500, IntStream.rangeClosed(0, 32).boxed().collect(Collectors.toList())),
-                createHostNumaNodeWithCpus(1, 1500, IntStream.rangeClosed(0, 32).boxed().collect(Collectors.toList()))
+                createHostNumaNodeWithCpus(0, 1500,
+                        IntStream.concat(IntStream.range(0, 16), IntStream.range(32, 48)).boxed().collect(Collectors.toList())),
+                createHostNumaNodeWithCpus(1, 1500,
+                        IntStream.concat(IntStream.range(16, 32), IntStream.range(48, 64)).boxed().collect(Collectors.toList()))
         );
 
         String output = NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes);
-        assert output != null;
-        assertThat(output.equals("0#1,33_1#1,33_2#2,34_" +
-                "3#2,34_4#3,35_5#3,35_6#4,36_7#4,36_8#5,37_9#5,37_10#6,38_11#6,38_12#7,39_13#7,39_14#8,40_15#8,40_" +
-                "16#9,41_17#9,41_18#10,42_19#10,42_20#11,43_21#11,43_22#12,44_23#12,44_24#13,45_25#13,45_26#14,46_" +
-                "27#14,46_28#15,47_29#15,47_30#17,49_31#17,49_32#18,50_33#18,50_34#19,51_35#19,51_36#20,52_37#20,52_" +
-                "38#21,53_39#21,53_40#22,54_41#22,54_42#23,55_43#23,55_44#24,56_45#24,56_46#25,57_47#25,57_48#26,58_" +
-                "49#26,58_50#27,59_51#27,59_52#28,60_53#28,60_54#29,61_55#29,61_56#30,62_57#30,62_58#31,63_59#31,63"));
+        assertEquals("0#1,33_1#1,33_2#2,34_3#2,34_4#3,35_5#3,35_6#4,36_7#4,36_8#5,37_9#5,37_10#6,38_11#6,38_"
+                + "12#7,39_13#7,39_14#8,40_15#8,40_16#9,41_17#9,41_18#10,42_19#10,42_20#11,43_21#11,43_22#12,44_"
+                + "23#12,44_24#13,45_25#13,45_26#14,46_27#14,46_28#15,47_29#15,47_30#17,49_31#17,49_32#18,50_"
+                + "33#18,50_34#19,51_35#19,51_36#20,52_37#20,52_38#21,53_39#21,53_40#22,54_41#22,54_42#23,55_"
+                + "43#23,55_44#24,56_45#24,56_46#25,57_47#25,57_48#26,58_49#26,58_50#27,59_51#27,59_52#28,60_"
+                + "53#28,60_54#29,61_55#29,61_56#30,62_57#30,62_58#31,63_59#31,63", output);
     }
 
     @Test
@@ -170,18 +176,21 @@ class NumaPinningHelperTest {
         VDS host = createVDS();
 
         List<VdsNumaNode> hostNodes = Arrays.asList(
-                createHostNumaNodeWithCpus(0, 1500, IntStream.rangeClosed(0, 12).boxed().collect(Collectors.toList())),
-                createHostNumaNodeWithCpus(1, 1500, IntStream.rangeClosed(0, 12).boxed().collect(Collectors.toList())),
-                createHostNumaNodeWithCpus(2, 1500, IntStream.rangeClosed(0, 12).boxed().collect(Collectors.toList())),
-                createHostNumaNodeWithCpus(3, 1500, IntStream.rangeClosed(0, 12).boxed().collect(Collectors.toList()))
+                createHostNumaNodeWithCpus(0, 1500,
+                        IntStream.concat(IntStream.range(0, 6), IntStream.range(24, 30)).boxed().collect(Collectors.toList())),
+                createHostNumaNodeWithCpus(1, 1500,
+                        IntStream.concat(IntStream.range(6, 12), IntStream.range(30, 36)).boxed().collect(Collectors.toList())),
+                createHostNumaNodeWithCpus(2, 1500,
+                        IntStream.concat(IntStream.range(12, 18), IntStream.range(36, 42)).boxed().collect(Collectors.toList())),
+                createHostNumaNodeWithCpus(3, 1500,
+                        IntStream.concat(IntStream.range(18, 24), IntStream.range(42, 48)).boxed().collect(Collectors.toList()))
         );
 
         String output = NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes);
-        assert output != null;
-        assertThat(output.equals("0#1,25_1#1,25_2#2,26_3#2,26_4#3,27_5#3,27_6#4,28_7#4,28_8#5,29_9#5,29_"
-                + "10#7,31_11#7,31_12#8,32_13#8,32_14#9,33_15#9,33_16#10,34_17#10,34_18#11,35_19#11,35_"
-                + "20#13,37_21#13,37_22#14,38_23#14,38_24#15,39_25#15,39_26#16,40_27#16,40_28#17,41_29#17,41_"
-                + "30#19,43_31#19,43_32#20,44_33#20,44_34#21,45_35#21,45_36#22,46_37#22,46_38#23,47_39#23,47"));
+        assertEquals("0#1,25_1#1,25_2#2,26_3#2,26_4#3,27_5#3,27_6#4,28_7#4,28_8#5,29_9#5,29_10#7,31_11#7,31_"
+                + "12#8,32_13#8,32_14#9,33_15#9,33_16#10,34_17#10,34_18#11,35_19#11,35_20#13,37_21#13,37_22#14,38_"
+                + "23#14,38_24#15,39_25#15,39_26#16,40_27#16,40_28#17,41_29#17,41_30#19,43_31#19,43_32#20,44_"
+                + "33#20,44_34#21,45_35#21,45_36#22,46_37#22,46_38#23,47_39#23,47", output);
     }
 
     // TODO - add tests for multiple VMs
