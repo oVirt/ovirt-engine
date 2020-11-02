@@ -21,6 +21,8 @@ public class NbdServerVDSParameters extends VdsIdVDSCommandParametersBase {
     // export only the specified volume.
     private boolean backingChain = true;
 
+    private Guid bitmap;
+
     public NbdServerVDSParameters() {
     }
 
@@ -84,6 +86,14 @@ public class NbdServerVDSParameters extends VdsIdVDSCommandParametersBase {
         this.backingChain = backingChain;
     }
 
+    public Guid getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Guid bitmap) {
+        this.bitmap = bitmap;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
@@ -93,6 +103,7 @@ public class NbdServerVDSParameters extends VdsIdVDSCommandParametersBase {
                 .append("volumeId", volumeId)
                 .append("readonly", readonly)
                 .append("discard", discard)
-                .append("backingChain", backingChain);
+                .append("backingChain", backingChain)
+                .append("bitmap", bitmap);
     }
 }

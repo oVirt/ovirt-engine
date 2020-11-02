@@ -41,6 +41,7 @@ public class StartNbdServerVDSCommand<P extends NbdServerVDSParameters> extends 
         configMap.put("readonly", getParameters().isReadonly());
         configMap.put("discard", getParameters().isDiscard());
         configMap.put("backing_chain", getParameters().getBackingChain());
+        configMap.put("bitmap", getParameters().getBitmap() != null ? getParameters().getBitmap().toString() : null);
         return configMap;
     }
 }

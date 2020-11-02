@@ -118,7 +118,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private Instance<TransferImageCommandCallback> callbackProvider;
 
     private ImageioClient proxyClient;
-    private VmBackup vmBackup;
+    private VmBackup backup;
+    private VM backupVm;
 
     public TransferDiskImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -142,13 +143,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     protected String prepareImage(Guid vdsId, Guid imagedTicketId) {
-        if (isBackup()) {
+        if (isLiveBackup()) {
             return vmBackupDao.getBackupUrlForDisk(
                     getParameters().getBackupId(), getDiskImage().getId());
         }
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.PrepareImage,
                     getPrepareParameters(vdsId));
-        if (getTransferBackend() == ImageTransferBackend.NBD) {
+        if (usingNbdServer()) {
             vdsRetVal = runVdsCommand(VDSCommandType.StartNbdServer,
                     getStartNbdServerParameters(vdsId, imagedTicketId));
             return (String) vdsRetVal.getReturnValue();
@@ -180,8 +181,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private ValidationResult isVmBackupExists() {
-        VmBackup vmBackup = getVmBackup();
-        if (vmBackup == null) {
+        if (getBackup() == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_NOT_EXIST);
         }
         return ValidationResult.VALID;
@@ -214,6 +214,14 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getDiskImage().getImageId(), true);
     }
 
+    private Guid getBitmap() {
+        if (getParameters().getTransferType() == TransferType.Download
+                && getBackupVm() != null && getBackupVm().isDown()) {
+            return getBackup().getFromCheckpointId();
+        }
+        return null;
+    }
+
     private NbdServerVDSParameters getStartNbdServerParameters(Guid vdsId, Guid imagedTicketId) {
         NbdServerVDSParameters nbdServerVDSParameters = new NbdServerVDSParameters(vdsId);
         nbdServerVDSParameters.setServerId(imagedTicketId);
@@ -223,6 +231,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         nbdServerVDSParameters.setReadonly(getParameters().getTransferType() == TransferType.Download);
         nbdServerVDSParameters.setDiscard(isSparseImage());
         nbdServerVDSParameters.setBackingChain(!getParameters().isShallow());
+        nbdServerVDSParameters.setBitmap(getBitmap());
         return nbdServerVDSParameters;
     }
 
@@ -320,11 +329,18 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return diskImage;
     }
 
-    private VmBackup getVmBackup() {
-        if (vmBackup == null) {
-            vmBackup = vmBackupDao.get(getParameters().getBackupId());
+    private VmBackup getBackup() {
+        if (backup == null) {
+            backup = vmBackupDao.get(getParameters().getBackupId());
         }
-        return vmBackup;
+        return backup;
+    }
+
+    private VM getBackupVm() {
+        if (backupVm == null && getBackup() != null) {
+            backupVm = vmDao.get(getBackup().getVmId());
+        }
+        return backupVm;
     }
 
     @Override
@@ -1009,16 +1025,29 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     protected boolean initializeVds() {
         // In case of downloading a backup disk, the host that runs the VM must handle the transfer
         if (isBackup() && getParameters().getTransferType() == TransferType.Download) {
-            VmBackup vmBackup = getVmBackup();
-            if (vmBackup == null) {
-                log.warn("Cannot download disk id: '{}' backup id: '{}' not exist.",
+            VmBackup backup = getBackup();
+            if (backup == null) {
+                log.error("Cannot download disk: '{}'. Backup id: '{}' doesn't exist.",
                         getDiskImage().getId(),
                         getParameters().getBackupId());
                 return false;
             }
 
-            VM vm = vmDao.get(vmBackup.getVmId());
-            VDS vds = vdsDao.get(vm.getRunOnVds());
+            if (getBackupVm() == null) {
+                log.error("Cannot download disk: '{}' for backup id: '{}', backup VM '{}' could not be found.",
+                        getDiskImage().getId(),
+                        getParameters().getBackupId(),
+                        backup.getVmId());
+                return false;
+            }
+
+            // Downloading a cold VM backup disk can be done from the host specified by the user,
+            // or from any active host otherwise.
+            if (getBackupVm().isDown()) {
+                return super.initializeVds();
+            }
+
+            VDS vds = vdsDao.get(getBackupVm().getRunOnVds());
             if (vds == null) {
                 // Can happen when the VM crashed and Not running on any host.
                 log.warn("Cannot download disk id: '{}' backup id: '{}', the VM is down.",
@@ -1072,12 +1101,20 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return getParameters().getBackupId() != null;
     }
 
+    private boolean isLiveBackup() {
+        return isBackup() && getBackupVm() != null && !getBackupVm().isDown();
+    }
+
     private boolean isSupportsDirtyExtents() {
         if (!isBackup() || getParameters().getTransferType() != TransferType.Download) {
             return false;
         }
-        VmBackup vmBackup = getVmBackup();
-        return vmBackup != null && vmBackup.isIncremental();
+        VmBackup backup = getBackup();
+        return backup != null && backup.isIncremental();
+    }
+
+    private boolean usingNbdServer() {
+        return !isLiveBackup() && getTransferBackend() == ImageTransferBackend.NBD;
     }
 
     private boolean addImageTicketToProxy(Guid imagedTicketId, String hostUri) {
@@ -1210,7 +1247,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
 
         // Stopping NBD server if necessary
-        if (!isBackup() && getTransferBackend() == ImageTransferBackend.NBD) {
+        if (usingNbdServer()) {
             stopNbdServer(entity.getVdsId(), entity.getImagedTicketId());
         }
 
