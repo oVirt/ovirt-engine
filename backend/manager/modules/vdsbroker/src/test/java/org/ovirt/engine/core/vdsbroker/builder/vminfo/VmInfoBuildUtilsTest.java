@@ -562,5 +562,11 @@ public class VmInfoBuildUtilsTest {
 
         vm.setVmOs(30); // RHEL 8 OS
         assertFalse(underTest.isOvirtGuestAgent(vm.getVmOsId()));
+
+        vm.setVmOs(1257); // ubuntu_18_04
+        assertFalse(underTest.isOvirtGuestAgent(vm.getVmOsId()));
+
+        vm.setVmOs(1301); // debian_9
+        assertFalse(underTest.isOvirtGuestAgent(vm.getVmOsId()));
     }
 }

@@ -134,10 +134,12 @@ public abstract class OvfOvaWriter extends OvfWriter {
         case 1254:
         case 1255:
         case 1256:
+        case 1257:
         case 1005:
         case 2005:
-            return 94; // Ubuntu x64
+            return 94; // Ubuntu
         case 1300: // Debian 7
+        case 1301: // Debian 9
             return 96;
         case 1500: // FreeBSD
             return 42;
