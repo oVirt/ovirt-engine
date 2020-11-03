@@ -167,12 +167,14 @@ If soft limit was not set, before building, apply new limit using:
 
   $ ulimit -n 10240
 
-Development environment by default uses ports 8080 (HTTP), 8443 (HTTPS) and 8787 (java debug), so make sure they are
-accessible from the outside. For example, on fedora:
+Development environment by default uses ports 8080 (HTTP), 8443 (HTTPS), 8787
+(java debug), and 54323 (ovirt-imageio-proxy) so make sure they are accessible
+from the outside. For example:
 
     firewall-cmd --add-port=8080/tcp --permanent
     firewall-cmd --add-port=8443/tcp --permanent
     firewall-cmd --add-port=8787/tcp --permanent
+    firewall-cmd --add-port=54323/tcp --permanent
 
 If you also want to connect to the database from the outside:
 
