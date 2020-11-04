@@ -72,9 +72,9 @@ public class DataCenterCompatibilityChecker implements BackendService {
         AuditLogable auditLog = new AuditLogableImpl();
         auditLog.setStoragePoolId(storagePool.getId());
         auditLog.setStoragePoolName(storagePool.getName());
-        auditLog.addCustomValue("engineVersion", version.toString());
+        auditLog.addCustomValue("latestVersion", version.toString());
         auditLog.addCustomValue("dcVersion", storagePool.getCompatibilityVersion().toString());
-        auditLogDirector.log(auditLog, AuditLogType.STORAGE_POOL_LOWER_THAN_ENGINE_HIGHEST_CLUSTER_LEVEL);
+        auditLogDirector.log(auditLog, AuditLogType.STORAGE_POOL_VERSION_LOWER_THAN_LATEST_AVAILABLE_VERSION);
     }
 
 }
