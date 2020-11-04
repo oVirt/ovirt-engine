@@ -149,6 +149,15 @@ public class ClusterValidator {
                 .unless(VersionSupport.checkVersionSupported(newCluster.getCompatibilityVersion()));
     }
 
+    public ValidationResult atLeastOneHostSupportingClusterVersion() {
+        return ValidationResult.failWith(EngineMessage.CLUSTER_CANNOT_UPDATE_VERSION_WHEN_NO_HOST_SUPPORTS_THE_VERSION)
+                .unless(allHostsForCluster.get().isEmpty()
+                        || allHostsForCluster.get()
+                                .stream()
+                                .anyMatch(h -> h.getSupportedClusterVersionsSet().contains(
+                                        newCluster.getCompatibilityVersion())));
+    }
+
     public ValidationResult dataCenterVersionMismatch() {
         StoragePool dataCenter = getDataCenter();
         return ValidationResult

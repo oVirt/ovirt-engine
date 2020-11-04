@@ -689,6 +689,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 && validate(clusterValidator.updateSupportedFeatures())
                 && hasSuspendedVms()
                 && validate(clusterValidator.addMoreThanOneHost())
+                && validate(clusterValidator.atLeastOneHostSupportingClusterVersion())
                 && validate(clusterValidator.defaultClusterOnLocalfs())
                 && validate(clusterValidator.oneServiceEnabled())
                 && validate(clusterValidator.mixedClusterServicesSupportedForNewCluster())
