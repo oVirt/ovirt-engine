@@ -88,6 +88,7 @@ public class AnsibleRunnerHttpClientTest {
         AnsibleCommandConfig command = mock(AnsibleCommandConfig.class);
 
         when(command.hosts()).thenReturn(new ArrayList<>());
+        when(command.playAction()).thenReturn("play action");
         when(httpClient.execute(any(HttpPost.class))).thenReturn(
             createHttpResponse("{\"data\": {\"play_uuid\": \"123-456\"}}", HttpStatus.SC_ACCEPTED)
         );
@@ -100,6 +101,7 @@ public class AnsibleRunnerHttpClientTest {
         AnsibleCommandConfig command = mock(AnsibleCommandConfig.class);
 
         when(command.hosts()).thenReturn(new ArrayList<>());
+        when(command.playAction()).thenReturn("play action");
         when(httpClient.execute(any(HttpPost.class))).thenReturn(
             createHttpResponse(
                 "{\"status\": \"FAILED\", \"msg\": \"Runner thread failed to start\"}",
@@ -259,26 +261,28 @@ public class AnsibleRunnerHttpClientTest {
                 Arguments.of(
                         provideCommandVariables(),
                         "",
-                        "{\"dateValue\": \"1989-11-17T16:00:00Z\","
-                                + "\"stringValue\": \"default\","
-                                + "\"booleanValue\": \"false\","
-                                + "\"integerValue\": \"4\","
-                                // This output is actually wrong, because double quotes won't be properly escaped
-                                // in JSON output
-                                + "\"stringWithQuotes\": \"Contains \"double quotes\"\","
-                                + "\"xmlVersion\": \"\\\\\\\"1.0\\\\\\\"\"}"),
+                        "{\"dateValue\":\"1989-11-17T16:00:00Z\","
+                                + "\"stringValue\":\"default\","
+                                // Boolean values are stored as boolean in JSON
+                                + "\"booleanValue\":false,"
+                                // Numbers are stored as numbers in JSON
+                                + "\"integerValue\":4,"
+                                // Double quotes need to be properly escaped in JSON output
+                                + "\"stringWithQuotes\":\"Contains \\\"double quotes\\\"\","
+                                + "\"xmlVersion\":\"\\\\\\\\\\\\\\\"1.0\\\\\\\\\\\\\\\"\"}"),
 
                 // For "Pack OVA" playbook
                 Arguments.of(
                         provideCommandVariables(),
                         "Pack OVA",
-                        "{\"dateValue\": \"1989-11-17T16:00:00Z\","
-                                + "\"stringValue\": \"default\","
-                                + "\"booleanValue\": \"false\","
-                                + "\"integerValue\": \"4\","
-                                // This output is actually wrong, because double quotes won't be properly escaped
-                                // in JSON output
-                                + "\"stringWithQuotes\": \"Contains \"double quotes\"\","
-                                + "\"xmlVersion\": \"\\\\\\\"1.0\\\\\\\"\"}"));
+                        "{\"dateValue\":\"1989-11-17T16:00:00Z\","
+                                + "\"stringValue\":\"default\","
+                                // Boolean values are stored as boolean in JSON
+                                + "\"booleanValue\":false,"
+                                // Numbers are stored as numbers in JSON
+                                + "\"integerValue\":4,"
+                                // Double quotes need to be properly escaped in JSON output
+                                + "\"stringWithQuotes\":\"Contains \\\"double quotes\\\"\","
+                                + "\"xmlVersion\":\"\\\\\\\"1.0\\\\\\\"\"}"));
     }
 }

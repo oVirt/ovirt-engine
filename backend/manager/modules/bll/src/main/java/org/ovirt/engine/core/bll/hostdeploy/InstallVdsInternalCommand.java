@@ -259,7 +259,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     .variable("host_deploy_override_firewall", getParameters().getOverrideFirewall())
                     .variable("host_deploy_firewall_type", hostCluster.getFirewallType().name())
                     .variable("ansible_port", vds.getSshPort())
-                    .variable("host_deploy_post_tasks", AnsibleConstants.HOST_DEPLOY_POST_TASKS_FILE_PATH)
+                    .variable("host_deploy_post_tasks", AnsibleConstants.HOST_DEPLOY_POST_TASKS_FILE_PATH.toString())
                     .variable("host_deploy_ovn_tunneling_interface", NetworkUtils.getHostIp(vds))
                     .variable("host_deploy_ovn_central", getOvnCentral())
                     .variable("host_deploy_vnc_tls", hostCluster.isVncEncryptionEnabled() ? "true" : "false")

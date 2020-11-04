@@ -45,9 +45,8 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 
 @Singleton
 public class AnsibleRunnerHttpClient {
@@ -56,6 +55,7 @@ public class AnsibleRunnerHttpClient {
     private static final Object executeLock = new Object();
     private static final String HOST_GROUP = "ovirt";
     private static final String API_VERSION = "/api/v1";
+
     private static Logger log = LoggerFactory.getLogger(AnsibleRunnerHttpClient.class);
 
     private ObjectMapper mapper;
@@ -67,7 +67,8 @@ public class AnsibleRunnerHttpClient {
         this.mapper = JsonMapper
                 .builder()
                 .findAndAddModules()
-                .build();
+                .build()
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
     public void addHost(String hostname, int port) {
@@ -145,22 +146,17 @@ public class AnsibleRunnerHttpClient {
     }
 
     protected String formatCommandVariables(Map<String, Object> variables, String playAction) {
-        String res = "{" +
-                variables.entrySet()
-                        .stream()
-                        .map(e -> String.format(
-                                e.getValue() instanceof ArrayNode || e.getValue() instanceof TextNode
-                                        ? "\"%1$s\": %2$s"
-                                        : "\"%1$s\": \"%2$s\"",
-                                e.getKey(),
-                                // If value is ArrayNode it will format as JSON list
-                                e.getValue() instanceof ArrayNode
-                                        ? e.getValue()
-                                        // Replace to have proper formatting of JSON newlines
-                                        : String.valueOf(e.getValue()).replaceAll("\n", "\\\\n")))
-                        .collect(Collectors.joining(","))
-                + "}";
-        return res;
+        String result;
+        try {
+            result = mapper.writeValueAsString(variables);
+        } catch (IOException ex) {
+            throw new AnsibleRunnerCallException("Failed to create host deploy variables mapper", ex);
+        }
+        if (playAction.equals("Pack OVA")) {
+            // set xml string in the expected format
+            result = result.replaceAll("\\\\\\\\\\\\", "\\\\");
+        }
+        return result;
     }
 
     public PlaybookStatus getPlaybookStatus(String playUuid) {
