@@ -398,7 +398,7 @@ public class AnsibleRunnerHTTPClient {
         return readResponse(statusResponse);
     }
 
-    static class PlaybookStatus {
+    public static class PlaybookStatus {
         private String status;
         private String msg;
 
