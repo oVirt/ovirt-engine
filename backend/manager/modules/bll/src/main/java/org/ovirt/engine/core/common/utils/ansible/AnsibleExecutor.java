@@ -1,7 +1,7 @@
 /*
  * Copyright oVirt Authors
  * SPDX-License-Identifier: Apache-2.0
-*/
+ */
 
 package org.ovirt.engine.core.common.utils.ansible;
 
@@ -43,7 +43,15 @@ public class AnsibleExecutor {
      * @return return code of ansible-playbook
      */
     public AnsibleReturnValue runCommand(AnsibleCommandConfig commandConfig) {
-        return runCommand(commandConfig, 0);
+        return runCommand(commandConfig, 0, false);
+    }
+
+    public AnsibleReturnValue runCommand(AnsibleCommandConfig commandConfig, boolean async) {
+        return runCommand(commandConfig, 0, async);
+    }
+
+    public AnsibleReturnValue runCommand(AnsibleCommandConfig command, int timeout) {
+        return runCommand(command, timeout, false);
     }
 
     /**
@@ -53,44 +61,55 @@ public class AnsibleExecutor {
      *            the config of command to be executed
      * @param timeout
      *            timeout in minutes to wait for command to finish
+     * @param async
+     *            true if the playbook executed asynchronously, false otherwise
      * @return return code of ansible-playbook
      */
-    public AnsibleReturnValue runCommand(AnsibleCommandConfig command, int timeout) {
+    public AnsibleReturnValue runCommand(AnsibleCommandConfig command, int timeout, boolean async) {
         return runCommand(
-            command,
-            timeout,
-            (String taskName, String eventUrl) -> {
-                AuditLogable logable = createAuditLogable(command, taskName);
-                auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
-            }
+                command,
+                timeout,
+                (String taskName, String eventUrl) -> {
+                    AuditLogable logable = createAuditLogable(command, taskName);
+                    auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
+                },
+                async
         );
     }
 
     public AnsibleReturnValue runCommand(AnsibleCommandConfig command, BiConsumer<String, String> fn) {
         int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
-        return runCommand(command, timeout, fn);
+        return runCommand(command, timeout, fn, false);
     }
 
     public AnsibleReturnValue runCommand(AnsibleCommandConfig command,
             Logger originLogger,
-            BiConsumer<String, String> eventUrlConsumer) {
-        int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
-        return runCommand(
-            command,
-            timeout,
-            (String taskName, String eventUrl) -> {
-                AuditLogable logable = createAuditLogable(command, taskName);
-                auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
-                try {
-                    eventUrlConsumer.accept(taskName, eventUrl);
-                } catch (Exception ex) {
-                    originLogger.error("Error: {}", ex.getMessage());
-                    originLogger.debug("Exception: ", ex);
-                }
-            });
+            BiConsumer<String, String> eventUrlConsume) {
+        return runCommand(command, originLogger, eventUrlConsume, false);
     }
 
-    public AnsibleReturnValue runCommand(AnsibleCommandConfig command, int timeout, BiConsumer<String, String> fn) {
+    public AnsibleReturnValue runCommand(AnsibleCommandConfig command,
+            Logger originLogger,
+            BiConsumer<String, String> eventUrlConsumer,
+            boolean async) {
+        int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
+        return runCommand(
+                command,
+                timeout,
+                (String taskName, String eventUrl) -> {
+                    AuditLogable logable = createAuditLogable(command, taskName);
+                    auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
+                    try {
+                        eventUrlConsumer.accept(taskName, eventUrl);
+                    } catch (Exception ex) {
+                        originLogger.error("Error: {}", ex.getMessage());
+                        originLogger.debug("Exception: ", ex);
+                    }
+                },
+                async);
+    }
+
+    public AnsibleReturnValue runCommand(AnsibleCommandConfig command, int timeout, BiConsumer<String, String> fn, boolean async) {
         if (timeout <= 0) {
             timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
         }
@@ -117,6 +136,12 @@ public class AnsibleExecutor {
                 return ret;
             }
 
+            if (async) {
+                ret.setPlayUuid(playUuid);
+                ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
+                return ret;
+            }
+
             // Process the events of the playbook:
             while (iteration < timeout * 60) {
                 Thread.sleep(POLL_INTERVAL);
@@ -129,8 +154,8 @@ public class AnsibleExecutor {
                 totalEvents = runnerClient.getTotalEvents(playUuid);
 
                 if (
-                    msg.equalsIgnoreCase("running")
-                    || (msg.equalsIgnoreCase("successful") && lastEventId < totalEvents)
+                        msg.equalsIgnoreCase("running")
+                                || (msg.equalsIgnoreCase("successful") && lastEventId < totalEvents)
                 ) {
                     lastEventId = runnerClient.processEvents(playUuid, lastEventId, fn, msg, ret.getLogFile());
                     iteration += POLL_INTERVAL / 1000;
@@ -167,7 +192,7 @@ public class AnsibleExecutor {
             ret.setStderr(ex.getMessage());
         } finally {
             // Make sure all events are proccessed even in case of failure:
-            if (playUuid != null && runnerClient != null) {
+            if (playUuid != null && runnerClient != null && !async) {
                 runnerClient.processEvents(playUuid, lastEventId, fn, msg, ret.getLogFile());
             }
         }
@@ -183,9 +208,9 @@ public class AnsibleExecutor {
             );
         }
         return AuditLogableImpl.createHostEvent(
-            command.hosts().get(0),
-            command.correlationId(),
-            Map.of("Message", taskName, "PlayAction", command.playAction())
+                command.hosts().get(0),
+                command.correlationId(),
+                Map.of("Message", taskName, "PlayAction", command.playAction())
         );
     }
 }

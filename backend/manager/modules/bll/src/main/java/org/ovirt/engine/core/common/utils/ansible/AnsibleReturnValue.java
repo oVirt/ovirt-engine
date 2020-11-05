@@ -34,6 +34,11 @@ public class AnsibleReturnValue {
      */
     private Path logFile;
 
+    /**
+     *  Holds the playbook execution UUID. Needed to async executions.
+     */
+    private String playUuid;
+
     public AnsibleReturnValue(AnsibleReturnCode ansibleReturnCode) {
         this(ansibleReturnCode, null);
     }
@@ -79,5 +84,13 @@ public class AnsibleReturnValue {
         if (!Files.exists(this.logFile)) {
             this.logFile = AnsibleConstants.ANSIBLE_RUNNER_SERVICE_LOG;
         }
+    }
+
+    public void setPlayUuid(String playUuid) {
+        this.playUuid = playUuid;
+    }
+
+    public String getPlayUuid() {
+        return playUuid;
     }
 }
