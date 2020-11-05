@@ -61,8 +61,9 @@ public class SsoPostLoginServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("Entered SsoPostLoginServlet");
-        String username = null;
-        String profile = null;
+        String username;
+        String profile;
+        String authzName;
         InitialContext ctx = null;
         try {
             String error_description = request.getParameter("error_description");
@@ -89,12 +90,8 @@ public class SsoPostLoginServlet extends HttpServlet {
             Map<String, Object> payload = (Map<String, Object>) jsonResponse.get("ovirt");
 
             username = (String) jsonResponse.get("user_id");
-            profile = "";
-            int index = username.lastIndexOf("@");
-            if (index != -1) {
-                profile = username.substring(index+1);
-                username = username.substring(0, index);
-            }
+            profile = (String) jsonResponse.get("user_authn_profile");
+            authzName = (String) jsonResponse.get("user_authz");
 
             try {
                 ctx = new InitialContext();
@@ -116,15 +113,17 @@ public class SsoPostLoginServlet extends HttpServlet {
                 if (!queryRetVal.getSucceeded() ) {
                     if (queryRetVal.getActionReturnValue() == CreateUserSessionsError.NUM_OF_SESSIONS_EXCEEDED) {
                         throw new RuntimeException(String.format(
-                                "Unable to login user %s@%s because the maximum number of allowed sessions %s is"
-                                        + " exceeded",
+                                "Unable to login user %s@%s with profile [%s]" +
+                                        " because the maximum number of allowed sessions %s is exceeded",
                                 username,
+                                authzName,
                                 profile,
                                 maxUserSessions));
                     }
                     throw new RuntimeException(String.format(
-                            "The user %s@%s is not authorized to perform login",
+                            "The user %s@%s with profile [%s] is not authorized to perform login",
                             username,
+                            authzName,
                             profile));
                 } else {
                     HttpSession httpSession = request.getSession(true);
@@ -140,7 +139,9 @@ public class SsoPostLoginServlet extends HttpServlet {
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new RuntimeException(String.format("User login failure: %s", username), ex);
+                throw new RuntimeException(
+                        String.format("User login failure: %s@%s with profile [%s]", username, authzName, profile),
+                        ex);
             } finally {
                 try {
                     if (ctx != null) {

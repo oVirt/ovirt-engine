@@ -141,8 +141,9 @@ public class NegotiateAuthUtils {
                                 profile.getName(),
                                 authRecord,
                                 outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
-                            log.info("User {}@{} successfully logged in with scopes : {} ",
+                            log.info("User {}@{} with profile [{}] successfully logged in with scopes : {} ",
                                 SsoUtils.getUserId(outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD)),
+                                profile.getAuthzName(),
                                 profile.getName(),
                                 ssoSession.getScope());
                             token = (String) req.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);

@@ -55,8 +55,9 @@ public class OAuthRevokeServlet extends HttpServlet {
                     ssoSession.getAssociatedClientIds().remove(clientIdAndSecret[0]);
                 }
                 if (revokeAllScope || ssoSession.getAssociatedClientIds().isEmpty()) {
-                    log.info("User {}@{} successfully logged out",
+                    log.info("User {}@{} with profile [{}] successfully logged out",
                             SsoUtils.getUserId(ssoSession.getPrincipalRecord()),
+                            ssoContext.getUserAuthzName(ssoSession),
                             ssoSession.getProfile());
                     TokenCleanupUtility.cleanupSsoSession(ssoContext, ssoSession, associatedClientIds);
                 }

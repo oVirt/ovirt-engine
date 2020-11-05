@@ -188,7 +188,9 @@ public class WelcomeServlet extends HttpServlet {
                     userInfoMap.get(WelcomeUtils.ERROR_DESCRIPTION));
             request.getSession(true).setAttribute(WelcomeUtils.ERROR, userInfoMap.get(WelcomeUtils.ERROR));
         } else {
-            username = (String) userInfoMap.get(WelcomeUtils.JSON_USER_ID);
+            String userId = (String) userInfoMap.get(WelcomeUtils.JSON_USER_ID);
+            String userAuthz = (String) userInfoMap.get(WelcomeUtils.JSON_USER_AUTHZ);
+            username = userId + "@" + userAuthz;
             log.debug("Got current user {} for session", username);
         }
         return username;

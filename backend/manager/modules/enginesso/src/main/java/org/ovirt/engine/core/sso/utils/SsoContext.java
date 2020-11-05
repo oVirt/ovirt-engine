@@ -237,4 +237,14 @@ public class SsoContext implements Serializable{
     public Certificate getEngineCertificate() {
         return engineCertificate;
     }
+
+    public String getUserAuthzName(SsoSession ssoSession) {
+        return getProfiles()
+                .stream()
+                .filter(p -> p.getName().equals(ssoSession.getProfile()))
+                .findAny()
+                .map(AuthenticationProfile::getAuthzName)
+                .orElseThrow(() -> new IllegalStateException(
+                        "User's authz provider could not be resolved from sso session. Please check configuration"));
+    }
 }

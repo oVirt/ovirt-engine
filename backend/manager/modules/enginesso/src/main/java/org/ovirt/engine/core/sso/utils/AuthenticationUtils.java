@@ -64,8 +64,9 @@ public class AuthenticationUtils {
                         SsoUtils.getSsoContext(request).getSsoProfiles().contains(profile)),
                 authRecord,
                 false);
-        log.info("User {}@{} successfully logged in using login-on-behalf with client id : {} and scopes : {}",
+        log.info("User {}@{} with profile [{}] successfully logged in using login-on-behalf with client id : {} and scopes : {}",
                 username,
+                ssoContext.getUserAuthzName(ssoSession),
                 profile,
                 ssoSession.getClientId(),
                 ssoSession.getScope());
@@ -91,8 +92,11 @@ public class AuthenticationUtils {
                             (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         SsoSession ssoSession = login(ssoContext, request, credentials, null, interactive);
-        log.info("User {} successfully logged in with scopes: {}",
-                credentials.getUsernameWithProfile(),
+        String userDomain = ssoContext.getUserAuthzName(ssoSession);
+        log.info("User {}@{} with profile [{}] successfully logged in with scopes: {}",
+                credentials.getUsername(),
+                userDomain,
+                ssoSession.getProfile(),
                 ssoSession.getScope());
     }
 

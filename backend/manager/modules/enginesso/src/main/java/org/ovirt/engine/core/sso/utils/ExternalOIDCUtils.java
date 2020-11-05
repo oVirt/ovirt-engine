@@ -96,10 +96,11 @@ public class ExternalOIDCUtils {
             HttpServletRequest request,
             Credentials credentials) throws Exception {
 
-
         SsoSession ssoSession = login(ssoContext, request, credentials);
-        log.info("User {} successfully logged into external OP with scopes: {}",
-                credentials.getUsername(),
+        log.info("User {}@{} with profile [{}] successfully logged into external OP with scopes: {}",
+                SsoUtils.getUserId(ssoSession.getPrincipalRecord()),
+                ssoContext.getUserAuthzName(ssoSession),
+                ssoSession.getProfile(),
                 ssoSession.getScope());
     }
 
