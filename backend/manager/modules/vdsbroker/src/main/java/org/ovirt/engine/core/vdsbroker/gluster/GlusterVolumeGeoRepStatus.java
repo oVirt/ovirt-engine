@@ -60,7 +60,9 @@ public class GlusterVolumeGeoRepStatus extends StatusReturn {
                     masterBrickDir);
         }
 
-        String slave = innerMap.containsKey(REMOTE_HOST) ? innerMap.get(REMOTE_HOST).toString() : null;
+        String slave = innerMap.containsKey(REMOTE_HOST) && innerMap.get(REMOTE_HOST) != null
+                ? innerMap.get(REMOTE_HOST).toString()
+                : null;
         details.setSlaveHostName(slave);
         details.setStatus(GeoRepSessionStatus.from((String) innerMap.get(STATUS)));
         details.setCrawlStatus(GeoRepCrawlStatus.from((String) innerMap.get(CRAWL_STATUS)));
