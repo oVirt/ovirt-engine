@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -21,6 +22,8 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.SwitchMasterStorageDomainCommandParameters;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -28,7 +31,7 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendDataCenterResource extends AbstractBackendSubResource<DataCenter, StoragePool>
+public class BackendDataCenterResource extends AbstractBackendActionableResource<DataCenter, StoragePool>
         implements DataCenterResource {
 
     public static final String FORCE = "force";
@@ -168,5 +171,14 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     @Override
     public ActionResource getActionResource(String action, String oid) {
         return null;
+    }
+
+    @Override
+    public Response setMaster(Action action) {
+        Guid storageDomainId = getStorageDomainId(action);
+        SwitchMasterStorageDomainCommandParameters params =
+                new SwitchMasterStorageDomainCommandParameters(guid, storageDomainId);
+        params.setEntityInfo(new EntityInfo(VdcObjectType.Storage, storageDomainId));
+        return performAction(ActionType.SwitchMasterStorageDomain, params);
     }
 }

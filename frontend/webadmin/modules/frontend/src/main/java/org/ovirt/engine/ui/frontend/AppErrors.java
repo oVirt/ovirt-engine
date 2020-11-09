@@ -797,6 +797,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__ACTION__FORCE_SELECT();
 
+    String VAR__ACTION__SWITCH_MASTER();
+
     String VAR__ACTION__ASSIGN();
 
     String VAR__ACTION__REFRESH();
@@ -3094,5 +3096,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String CLUSTER_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES();
 
     String ACTION_TYPE_CANNOT_PIN_WITHOUT_HOST();
+
+    String ACTION_TYPE_FAILED_MASTER_ROLE_IS_BEING_SWITCHED();
 }
 

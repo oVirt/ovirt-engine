@@ -354,6 +354,7 @@ public enum ActionType {
     ScheduleGlusterStorageSync(1038, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     FenceVolumeJob(1039, QuotaDependency.STORAGE),
     ReduceImage(1046, ActionGroup.REDUCE_DISK, QuotaDependency.NONE),
+    SwitchMasterStorageDomain(1048, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
 
     // Leases
     AddVmLease(1040, QuotaDependency.NONE),

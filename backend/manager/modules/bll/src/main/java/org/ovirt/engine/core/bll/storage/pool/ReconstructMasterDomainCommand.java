@@ -14,6 +14,8 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
+import org.ovirt.engine.core.common.businessentities.SpmStatus;
+import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -27,21 +29,28 @@ import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ReconstructMasterVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.SpmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameters> extends
         DeactivateStorageDomainCommand<T> {
 
     @Inject
+    private StoragePoolDao storagePoolDao;
+    @Inject
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
     @Inject
     private VdsDao vdsDao;
+    @Inject
+    private ResourceManager resourceManager;
 
     protected StorageDomain newMasterStorageDomain;
     protected Guid newMasterStorageDomainId;
@@ -136,11 +145,19 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         boolean commandSucceeded = stopSpm();
 
         if (commandSucceeded) {
-            commandSucceeded = runVdsCommand(
-                    VDSCommandType.DisconnectStoragePool,
-                    new DisconnectStoragePoolVDSCommandParameters(getVds().getId(),
-                            getStoragePool().getId(), getVds().getVdsSpmId())
-                    ).getSucceeded();
+            try {
+                commandSucceeded = runVdsCommand(
+                        VDSCommandType.DisconnectStoragePool,
+                        new DisconnectStoragePoolVDSCommandParameters(getVds().getId(),
+                                getStoragePool().getId(), getVds().getVdsSpmId())
+                ).getSucceeded();
+            } catch (EngineException e) {
+                // In case SpmVdsId is null, its value should be set.
+                if (e.getErrorCode() == EngineError.IsSpm) {
+                    setSpmFromVdsm();
+                }
+                throw e;
+            }
         }
 
         if (!commandSucceeded) {
@@ -202,6 +219,29 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             }
         }
         return commandSucceeded;
+    }
+
+    private void setSpmFromVdsm() {
+        // In case the ReconstructMaster command fails a few times, the SpmVdsId value will become null,
+        // and the SPM host is no longer marked as SPM.
+        // In that case, the ResetIrs and SpmStop VDS command aren't being called,
+        // which causes an IsSpm error on DisconnectStoragePool.
+        // TODO improve this further by parallelizing (https://bugzilla.redhat.com/1905244)
+        for (VDS vds : getAllRunningVdssInPool()) {
+            try {
+                VDSReturnValue statusResult = resourceManager.runVdsCommand(VDSCommandType.SpmStatus,
+                        new SpmStatusVDSCommandParameters(vds.getId(), getStoragePoolId()));
+                if (statusResult != null && statusResult.getSucceeded() &&
+                        ((SpmStatusResult) statusResult.getReturnValue()).getSpmStatus() == SpmStatus.SPM) {
+                    getStoragePool().setSpmVdsId(vds.getId());
+                    storagePoolDao.update(getStoragePool());
+                    break;
+                }
+            } catch (Exception e) {
+                log.error("Could not get spm status on host '{}' for reconstructMaster: {}",
+                        vds.getId(), e.getMessage());
+            }
+        }
     }
 
     /**

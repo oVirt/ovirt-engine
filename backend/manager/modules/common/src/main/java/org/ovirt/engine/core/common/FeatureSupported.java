@@ -279,4 +279,14 @@ public class FeatureSupported {
     public static boolean isWindowsGuestToolsSupported(Version version) {
         return version.less(Version.v4_4);
     }
+
+    /**
+     * Check if switching the master storage domain operation is supported.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if switching the master storage domain operation is supported.
+     */
+    public static boolean isSwitchMasterStorageDomainOperationSupported(Version version) {
+        return Version.v4_5.lessOrEquals(version);
+    }
 }
