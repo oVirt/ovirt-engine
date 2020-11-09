@@ -108,4 +108,6 @@ public interface IIrsServer {
     VmLeaseTaskInfoReturn removeVmLease(String leaseUUID, String sdUUID);
 
     LeaseInfoReturn getVmLeaseInfo(String leaseUUID, String sdUUID);
+
+    OneUuidReturn switchMaster(String spUUID, String oldMasterUUID, String newMasterUUID, int masterVersion);
 }

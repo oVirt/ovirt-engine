@@ -658,4 +658,17 @@ public class JsonRpcIIrsServer implements IIrsServer {
         return new LeaseInfoReturn(response);
     }
 
+    @Override
+    public OneUuidReturn switchMaster(String spUUID, String oldMasterUUID, String newMasterUUID,
+            int masterVersion) {
+        JsonRpcRequest request =
+                new RequestBuilder("StoragePool.switchMaster")
+                        .withParameter("storagepoolID", spUUID)
+                        .withParameter("oldMasterUUID", oldMasterUUID)
+                        .withParameter("newMasterUUID", newMasterUUID)
+                        .withParameter("masterVersion", masterVersion)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request).withResponseKey("uuid");
+        return new OneUuidReturn(response);
+    }
 }

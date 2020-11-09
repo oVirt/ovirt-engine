@@ -19,7 +19,8 @@ public enum AsyncTaskType {
     finalizeMerge,
     notSupported,
     addVmLease,
-    removeVmLease;
+    removeVmLease,
+    switchMaster;
 
     public int getValue() {
         return this.ordinal();

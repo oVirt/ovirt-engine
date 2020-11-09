@@ -59,6 +59,7 @@ public enum StepEnum {
     REMOVE_VM_LEASE(AsyncTaskType.removeVmLease),
     REDUCE_IMAGE(AsyncTaskType.reduceImage),
     EXTEND_IMAGE(AsyncTaskType.extendImageSize),
+    SWITCH_MASTER(AsyncTaskType.switchMaster),
     UNKNOWN(AsyncTaskType.unknown);
 
     /**
