@@ -4,24 +4,11 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DeactivateStorageDomainVDSCommandParameters extends ActivateStorageDomainVDSCommandParameters {
-    private Guid privateMasterStorageDomainId;
+    private Guid masterStorageDomainId;
+    private int masterVersion;
 
-    public Guid getMasterStorageDomainId() {
-        return privateMasterStorageDomainId;
-    }
-
-    private void setMasterStorageDomainId(Guid value) {
-        privateMasterStorageDomainId = value;
-    }
-
-    private int privateMasterVersion;
-
-    public int getMasterVersion() {
-        return privateMasterVersion;
-    }
-
-    private void setMasterVersion(int value) {
-        privateMasterVersion = value;
+    public DeactivateStorageDomainVDSCommandParameters() {
+        masterStorageDomainId = Guid.Empty;
     }
 
     public DeactivateStorageDomainVDSCommandParameters(Guid storagePoolId, Guid storageDomainId,
@@ -31,8 +18,20 @@ public class DeactivateStorageDomainVDSCommandParameters extends ActivateStorage
         setMasterVersion(masterVersion);
     }
 
-    public DeactivateStorageDomainVDSCommandParameters() {
-        privateMasterStorageDomainId = Guid.Empty;
+    public Guid getMasterStorageDomainId() {
+        return masterStorageDomainId;
+    }
+
+    private void setMasterStorageDomainId(Guid value) {
+        masterStorageDomainId = value;
+    }
+
+    public int getMasterVersion() {
+        return masterVersion;
+    }
+
+    private void setMasterVersion(int value) {
+        masterVersion = value;
     }
 
     @Override
