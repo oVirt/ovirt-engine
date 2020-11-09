@@ -3,7 +3,6 @@ package org.ovirt.engine.core.sso.utils;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
@@ -160,12 +159,6 @@ public class SsoSession implements Serializable, Cloneable {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getUserIdWithProfile() {
-        return String.format("%s@%s",
-                Objects.toString(getUserId(), ""),
-                Objects.toString(getProfile(), ""));
     }
 
     public String getScope() {

@@ -89,8 +89,8 @@ class OpenIdServiceTest {
         assertThat(responseJson.get("nonce").getTextValue()).isEqualTo("testNonce");
         assertThat(responseJson.get("jti").getTextValue()).isEqualTo("AliceID");
         assertThat(responseJson.get("aud").getTextValue()).isEqualTo(SSO_CLIENT_ID);
-        assertThat(responseJson.get("sub").getTextValue()).isEqualTo("testUserIdWithProfile");
-        assertThat(responseJson.get("preferred_username").getTextValue()).isEqualTo("testUserIdWithProfile");
+        assertThat(responseJson.get("sub").getTextValue()).isEqualTo("testUserId@Profile");
+        assertThat(responseJson.get("preferred_username").getTextValue()).isEqualTo("testUserId@Profile");
         assertThat(responseJson.get("email").getTextValue()).isEqualTo("testUser@some.org");
         assertThat(responseJson.get("acr").getTextValue()).isEqualTo("0");
         String expectedIss = SCHEME + "://" + TEST_SERVER_NAME + ":" + TEST_SERVER_PORT;
@@ -117,7 +117,8 @@ class OpenIdServiceTest {
     private SsoSession getTestSsoSession() {
         SsoSession session = Mockito.mock(SsoSession.class);
         given(session.getAuthTime()).willReturn(NOW);
-        given(session.getUserIdWithProfile()).willReturn("testUserIdWithProfile");
+        given(session.getUserId()).willReturn("testUserId");
+        given(session.getProfile()).willReturn("Profile");
 
         ExtMap principalRecord = new ExtMap();
         principalRecord.put(Authz.PrincipalRecord.EMAIL, "testUser@some.org");
