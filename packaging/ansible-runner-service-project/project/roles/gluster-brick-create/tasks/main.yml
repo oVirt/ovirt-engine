@@ -37,11 +37,10 @@
   lvg:
     state: present
     vg: "{{ vgname }}"
-    pvs: "{{ item }}"
+    pvs: "{{ disks }}"
     pv_options: "--dataalignment {{ pv_dataalign }}"
     # pesize is 4m by default for JBODs
     pesize: "{{ vg_pesize | default(4) }}"
-  with_items: "{{ disks }}"
 
 # Chunksize is calculated as follows for GlusterFS' optimal performance.
 # RAID6:
@@ -80,6 +79,7 @@
   lvol:
      state: present
      vg: "{{ vgname }}"
+     shrink: no
      lv: "{{ lvname }}"
      size: "{{ size }}"
      thinpool: "{{ lvname }}_pool"
@@ -115,4 +115,3 @@
     setype: glusterd_brick_t
     state: present
     reload: yes
-

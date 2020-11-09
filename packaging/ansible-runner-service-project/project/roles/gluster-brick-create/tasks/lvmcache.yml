@@ -1,11 +1,14 @@
 ---
+- name: Merging cache disk with other list of disks
+  set_fact:
+    disklist: "{{ (disks|from_yaml + [ssd]) | join(',') }}"
+
 - name: Setup SSD for caching | Extend the Volume Group
   lvg:
      state: present
      vg: "{{ vgname }}"
-     pvs: "{{ item }}"
+     pvs: "{{ disklist }}"
      pv_options: "--dataalignment 256K"
-  with_items: "{{ ssd }}"
 
 - name: Setup SSD for caching | Change the attributes of the logical volume
   lvol:
