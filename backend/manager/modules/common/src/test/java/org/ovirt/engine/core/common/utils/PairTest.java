@@ -40,6 +40,7 @@ public class PairTest {
         Pair<Boolean, String[]> p3 = new Pair<>(false, new String[] { "abc", "xyz" });
 
         assertEquals(p1, p2);
+        assertEquals(p1.hashCode(), p2.hashCode());
         assertNotEquals(p1, p3);
     }
 
@@ -53,8 +54,11 @@ public class PairTest {
         Pair<Boolean, String> p6 = new Pair<>(null, "abc");
 
         assertEquals(p1, p2);
+        assertEquals(p1.hashCode(), p2.hashCode());
         assertNotEquals(p2, p3);
         assertEquals(p3, p4);
+        assertEquals(p3.hashCode(), p4.hashCode());
         assertEquals(p5, p6);
+        assertEquals(p5.hashCode(), p6.hashCode());
     }
 }

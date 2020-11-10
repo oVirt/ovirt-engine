@@ -196,7 +196,7 @@ public final class CommandsFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> Constructor<T> getCommandConstructor(Class<T> type, Class<?>... expectedParams) {
+    static <T> Constructor<T> getCommandConstructor(Class<T> type, Class<?>... expectedParams) {
         return (Constructor<T>) constructorCache.computeIfAbsent(new Pair<>(type, expectedParams),
                 k -> findCommandConstructor(type, expectedParams));
     }
@@ -238,5 +238,9 @@ public final class CommandsFactory {
         }else{
             log.error("Exception", ex);
         }
+    }
+
+    static long getConstructorCacheSize() {
+        return constructorCache.size();
     }
 }
