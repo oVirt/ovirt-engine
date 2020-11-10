@@ -79,13 +79,15 @@ public final class CommandsFactory {
     }
 
     private static ConcurrentMap<String, Class<?>> commandsCache = new ConcurrentHashMap<>();
-    private static ConcurrentMap<Pair<Class<?>, Class<?>[]>, Constructor<?>> constructorCache = new ConcurrentHashMap<>();
+    private static ConcurrentMap<Pair<Class<?>, Class<?>[]>, Constructor<?>> constructorCache =
+            new ConcurrentHashMap<>();
 
     public static <P extends ActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters) {
         return createCommand(action, parameters, null);
     }
 
-    public static <P extends ActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters,
+    public static <P extends ActionParametersBase> CommandBase<P> createCommand(ActionType action,
+            P parameters,
             CommandContext commandContext) {
         try {
             Constructor<?> commandConstructor =
@@ -102,14 +104,14 @@ public final class CommandsFactory {
             @SuppressWarnings("unchecked")
             CommandBase<P> command = (CommandBase<P>) commandConstructor.newInstance(parameters, commandContext);
             return Injector.injectMembers(command);
-        } catch(InvocationTargetException ex) {
+        } catch (InvocationTargetException ex) {
             logException(ex,
                     "Error in invocating CTOR of command '{}' with parameters '{}': {}",
                     action.name(),
                     parameters,
                     ex.getMessage());
             return null;
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             logException(ex,
                     "An exception has occurred while trying to create a command object for command '{}' with parameters '{}': {}",
                     action.name(),
@@ -143,7 +145,9 @@ public final class CommandsFactory {
         }
     }
 
-    public static QueriesCommandBase<?> createQueryCommand(QueryType query, QueryParametersBase parameters, EngineContext engineContext) {
+    public static QueriesCommandBase<?> createQueryCommand(QueryType query,
+            QueryParametersBase parameters,
+            EngineContext engineContext) {
         Class<?> type = null;
         try {
             type = getQueryClass(query.name());
@@ -209,8 +213,7 @@ public final class CommandsFactory {
      * @param type
      *            A class representing the command type to look for.
      * @param expectedParams
-     *            The parameters which the constructor is expected to have (can
-     *            be empty).
+     *            The parameters which the constructor is expected to have (can be empty).
      *
      * @return The first matching constructor for the command.
      * @throws RuntimeException
@@ -232,10 +235,10 @@ public final class CommandsFactory {
     private static void logException(Throwable ex, String message, Object... arguments) {
         log.error(message, arguments);
         Throwable rootCause = ExceptionUtils.getRootCause(ex);
-        if(rootCause != null){
+        if (rootCause != null) {
             log.error("Exception", rootCause);
             log.debug("Exception", ex);
-        }else{
+        } else {
             log.error("Exception", ex);
         }
     }
