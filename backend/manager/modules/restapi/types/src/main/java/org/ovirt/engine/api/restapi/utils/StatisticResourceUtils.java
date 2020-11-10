@@ -43,7 +43,7 @@ public class StatisticResourceUtils {
     }
 
     public static Statistic setDatum(Statistic statistic, String datum) {
-        if (datum != null) {
+        if (datum != null && !datum.isEmpty()) {
             Value value = new Value();
             value.setDetail(datum);
             statistic.getValues().getValues().add(value);
