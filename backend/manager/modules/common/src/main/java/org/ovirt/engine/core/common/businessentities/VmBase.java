@@ -732,7 +732,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.allowConsoleReconnect = allowConsoleReconnect;
         this.dedicatedVmForVdsList = dedicatedVmForVdsList;
         this.migrationDowntime = migrationDowntime;
-        this.vmInit = vmInit;
+        this.vmInit = vmInit != null ? new VmInit(vmInit) : null;
         this.serialNumberPolicy = serialNumberPolicy;
         this.customSerialNumber = customSerialNumber;
         this.bootMenuEnabled = bootMenuEnabled;

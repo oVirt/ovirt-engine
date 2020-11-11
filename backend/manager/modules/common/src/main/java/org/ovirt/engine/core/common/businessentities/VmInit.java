@@ -39,6 +39,30 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
         this.setRegenerateKeys(false);
     }
 
+    public VmInit(VmInit vmInit) {
+        id = vmInit.id;
+        hostname = vmInit.hostname;
+        domain = vmInit.domain;
+        timeZone = vmInit.timeZone;
+        authorizedKeys = vmInit.authorizedKeys;
+        regenerateKeys = vmInit.regenerateKeys;
+        activeDirectoryOU = vmInit.activeDirectoryOU;
+        orgName = vmInit.orgName;
+        dnsServers = vmInit.dnsServers;
+        dnsSearch = vmInit.dnsSearch;
+        networks = vmInit.networks;
+        winKey = vmInit.winKey;
+        userName = vmInit.userName;
+        rootPassword = vmInit.rootPassword;
+        passwordAlreadyStored = vmInit.passwordAlreadyStored;
+        customScript = vmInit.customScript;
+        inputLocale = vmInit.inputLocale;
+        uiLanguage = vmInit.uiLanguage;
+        systemLocale = vmInit.systemLocale;
+        userLocale = vmInit.userLocale;
+        cloudInitNetworkProtocol = vmInit.cloudInitNetworkProtocol;
+    }
+
     public void setCustomScript(String customScript) {
         this.customScript = customScript;
     }
