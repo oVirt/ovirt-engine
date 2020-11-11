@@ -23,6 +23,11 @@
 - name: Configure advanced virtualization
   import_tasks: advanced-virtualization.yml
 
+# We need to check for updates after we enable new advanced virt module
+- name: Check for updated packages
+  import_role:
+    name: ovirt-host-check-upgrade
+
 - name: Prepare NGN host for upgrade
   file:
     path: /var/imgbased/.image-updated
