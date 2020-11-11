@@ -308,6 +308,10 @@ Requires:	ovirt-web-ui
 Requires:	ovirt-cockpit-sso
 Obsoletes:	ovirt-engine-api-explorer
 
+# This is required for OpenJDK keytool to work properly, when engine machine
+# is running in FIPS mode. More info at https://bugzilla.redhat.com/1894083
+Requires:	nss
+
 # Metrics stuff
 Requires:	collectd
 Requires:	collectd-postgresql
