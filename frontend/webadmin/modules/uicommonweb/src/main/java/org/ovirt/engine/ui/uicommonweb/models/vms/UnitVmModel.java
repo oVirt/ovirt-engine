@@ -1886,7 +1886,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setCpuSharesAmountSelection(new NotChangableForVmInPoolListModel<CpuSharesAmount>());
         getCpuSharesAmountSelection().setItems(Arrays.asList(CpuSharesAmount.values()));
         getCpuSharesAmountSelection().getSelectedItemChangedEvent().addListener(this);
-        getCpuSharesAmountSelection().getSelectedItemChangedEvent().addListener(this);
         getCpuSharesAmountSelection().setSelectedItem(CpuSharesAmount.DISABLED);
 
         setIsSoundcardEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());

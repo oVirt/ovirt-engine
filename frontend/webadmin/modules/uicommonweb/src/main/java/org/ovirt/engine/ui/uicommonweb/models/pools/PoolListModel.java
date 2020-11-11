@@ -442,7 +442,6 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
         param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         param.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
 
-        param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         param.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
         if(model.getIsHeadlessModeEnabled().getEntity()) {
             param.getVmStaticData().setDefaultDisplayType(DisplayType.none);
