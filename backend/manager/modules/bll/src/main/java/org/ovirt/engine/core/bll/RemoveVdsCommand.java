@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -17,6 +18,9 @@ import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -42,6 +46,8 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
@@ -74,6 +80,10 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     private VdsDao vdsDao;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
     @Inject
     private GlusterBrickDao glusterBrickDao;
     @Inject
@@ -142,7 +152,24 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         setSucceeded(true);
     }
 
+    private void removeHostAndHostDevicesFromVmReferences(Guid hostId) {
+        List<VM> vms = vmDao.getAllPinnedToHost(hostId);
+        for (VM vm : vms) {
+            List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(),
+                    VmDeviceGeneralType.HOSTDEV);
+            for (VmDevice vmDevice : vmDevices) {
+                vmDeviceDao.remove(vmDevice.getId());
+            }
+            List <Guid> newDedicatedVmForVds = vm.getDedicatedVmForVdsList().stream()
+                    .filter(x -> !x.equals(hostId))
+                    .collect(Collectors.toList());
+            vm.setDedicatedVmForVdsList(newDedicatedVmForVds);
+            vmStaticDao.update(vm.getStaticData());
+        }
+    }
+
     private void removeHostFromDB(Guid hostId) {
+        removeHostAndHostDevicesFromVmReferences(hostId);
         vdsStatisticsDao.remove(hostId);
         tagDao.detachVdsFromAllTags(hostId);
         vdsDynamicDao.remove(hostId);

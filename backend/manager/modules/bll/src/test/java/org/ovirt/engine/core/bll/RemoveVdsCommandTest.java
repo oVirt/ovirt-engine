@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -54,6 +55,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
@@ -69,6 +71,9 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Mock
     private VmStaticDao vmStaticDao;
+
+    @Mock
+    private VmDao vmDao;
 
     @Mock
     private VdsDao vdsDao;
@@ -301,6 +306,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockIsGlusterEnabled(true);
         mockHasMultipleClusters(true);
+        mockFromVmVmsPinnedToHost(Collections.emptyList());
 
         command.executeCommand();
 
@@ -312,6 +318,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockIsGlusterEnabled(true);
         mockHasMultipleClusters(false);
+        mockFromVmVmsPinnedToHost(Collections.emptyList());
 
         command.executeCommand();
 
@@ -326,6 +333,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         mockVdsWithStatus(vdsStatus);
         mockIsGlusterEnabled(true);
         mockHasMultipleClusters(false);
+        mockFromVmVmsPinnedToHost(Collections.emptyList());
         AnsibleReturnValue ansibleReturnValue = new AnsibleReturnValue(ansibleReturnCode);
         ansibleReturnValue.setLogFile(Paths.get("ansible_unit_test.log"));
         when(ansibleExecutor.runCommand(any(AnsibleCommandConfig.class))).thenReturn(ansibleReturnValue);
@@ -356,6 +364,17 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
      */
     private void mockVmsPinnedToHost(List<String> emptyList) {
         when(vmStaticDao.getAllNamesPinnedToHost(command.getParameters().getVdsId())).thenReturn(emptyList);
+    }
+
+    /**
+     * Mocks that the given VMs are pinned to the host (List can be empty, but by the API contract can't be
+     * <code>null</code>).
+     *
+     * @param emptyList
+     *            The list of VM names.
+     */
+    private void mockFromVmVmsPinnedToHost(List<VM> emptyList) {
+        when(vmDao.getAllPinnedToHost(command.getParameters().getVdsId())).thenReturn(emptyList);
     }
 
     /**
