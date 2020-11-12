@@ -2077,6 +2077,8 @@ public class LibvirtVmXmlBuilder {
 
         if (disk.getDiskStorageType() != DiskStorageType.LUN) {
             writer.writeElement("serial", disk.getId().toString());
+        } else if (!disk.isScsiPassthrough()) {
+            writer.writeElement("serial", ((LunDisk) disk).getLun().getLUNId());
         }
 
         if (device.getReadOnly()) {
