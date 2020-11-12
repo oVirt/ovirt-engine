@@ -133,8 +133,9 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     @Override
     protected void executeVmCommand() {
         getParameters().setStage(CloneVmParameters.CloneVmStage.CREATE_VM_SNAPSHOT);
-        setSnapshotId(createVmSnapshot());
-        setSucceeded(true);
+        Guid snapshotId = createVmSnapshot();
+        setSnapshotId(snapshotId);
+        setSucceeded(snapshotId != null);
     }
 
     private void setSnapshotId(Guid snapshotId) {
@@ -212,7 +213,11 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
                 buildCreateSnapshotParameters(),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
 
-        if (!returnValue.getSucceeded()) {
+        if (!returnValue.isValid()) {
+            getReturnValue().getValidationMessages().addAll(returnValue.getValidationMessages());
+            getReturnValue().setValid(false);
+            return null;
+        } else if (!returnValue.getSucceeded()) {
             log.error("Failed to create VM snapshot");
             throw new EngineException(returnValue.getFault().getError(), returnValue.getFault().getMessage());
         }
