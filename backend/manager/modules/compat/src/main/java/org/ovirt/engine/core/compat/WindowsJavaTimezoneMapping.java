@@ -27,7 +27,7 @@ public class WindowsJavaTimezoneMapping {
             { "E. Australia Standard Time", "Australia/Brisbane" }, { "E. Europe Standard Time", "Europe/Minsk" },
             { "E. South America Standard Time", "America/Sao_Paulo" }, { "Eastern Standard Time", "America/New_York" },
             { "Egypt Standard Time", "Africa/Cairo" }, { "Ekaterinburg Standard Time", "Asia/Yekaterinburg" },
-            { "FLE Standard Time", "Europe/Kiev" }, { "Fiji Standard Time", "Pacific/Fiji" },
+            { "FLE Standard Time", "Europe/Helsinki" }, { "Fiji Standard Time", "Pacific/Fiji" },
             { "GMT Standard Time", "Europe/London" }, { "GTB Standard Time", "Europe/Istanbul" },
             { "Georgian Standard Time", "Asia/Tbilisi" }, { "Greenland Standard Time", "America/Godthab" },
             { "Greenwich Standard Time", "Africa/Reykjavik" }, { "Hawaiian Standard Time", "Pacific/Honolulu" },

@@ -51,7 +51,7 @@ public enum TimeZoneType {
             generalTimeZones.put("Africa/Algiers", "(GMT+01:00) Algeria Standard Time");
             generalTimeZones.put("Asia/Yekaterinburg", "(GMT+05:00) Ekaterinburg Standard Time");
             generalTimeZones.put("Pacific/Fiji", "(GMT+12:00) Fiji Standard Time");
-            generalTimeZones.put("Europe/Kiev", "(GMT+02:00) FLE Standard Time");
+            generalTimeZones.put("Europe/Helsinki", "(GMT+02:00) FLE Standard Time");
             generalTimeZones.put("Asia/Tbilisi", "(GMT+04:00) Georgian Standard Time");
             generalTimeZones.put("Europe/London", "(GMT+00:00) London Standard Time"); // Updated display name
             generalTimeZones.put("America/Godthab", "(GMT-03:00) Greenland Standard Time");
