@@ -1770,7 +1770,7 @@ public class LibvirtVmXmlBuilder {
         Map<String, Object> specParams = hostDevice.getSpecParams();
         String mode = (String)specParams.get(VdsProperties.MODE);
         String numaNode = (String)specParams.get(VdsProperties.NUMA_NODE);
-        String targetNode = vmInfoBuildUtils.getMatchingNumaNode(vm, getNumaTuneSetting(), vmNumaNodesSupplier, numaNode);
+        String targetNode = vmInfoBuildUtils.getMatchingNumaNode(getNumaTuneSetting(), vmNumaNodesSupplier, numaNode);
         if (targetNode == null) {
             log.error("No NUMA node, cannot add NVDIMM devices");
             return;

@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
-import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
@@ -1324,16 +1323,16 @@ public class VmInfoBuildUtils {
         return true;
     }
 
-    public String getMatchingNumaNode(VM vm, Map<String, Object> numaTuneSetting, MemoizingSupplier<List<VmNumaNode>> vmNumaNodesSupplier, String preferredNode) {
+    public String getMatchingNumaNode(Map<String, Object> numaTuneSetting,
+            MemoizingSupplier<List<VmNumaNode>> vmNumaNodesSupplier, String preferredNode) {
         String node = null;
-        NumaTuneMode numaTune = vm.getNumaTuneMode();
         if (numaTuneSetting != null) {
             @SuppressWarnings("unchecked")
             List<Map<String, String>> memNodes = (List<Map<String, String>>) numaTuneSetting.get(VdsProperties.NUMA_TUNE_MEMNODES);
             if (memNodes != null) {
                 for (Map<String, String> memnode : memNodes) {
-                    if (memnode.get((String) VdsProperties.NUMA_TUNE_NODESET) == preferredNode) {
-                        node = (String) memnode.get(VdsProperties.NUMA_TUNE_VM_NODE_INDEX);
+                    if (memnode.get(VdsProperties.NUMA_TUNE_NODESET).equals(preferredNode)) {
+                        node = memnode.get(VdsProperties.NUMA_TUNE_VM_NODE_INDEX);
                         break;
                     }
                 }
