@@ -1913,4 +1913,20 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     public void setDifferentTimeZone(boolean differentTimeZone) {
         this.differentTimeZone = differentTimeZone;
     }
+
+    public Guid getSmallIconId() {
+        return vmStatic.getSmallIconId();
+    }
+
+    public void setSmallIconId(Guid smallIconId) {
+        vmStatic.setSmallIconId(smallIconId);
+    }
+
+    public Guid getLargeIconId() {
+        return vmStatic.getLargeIconId();
+    }
+
+    public void setLargeIconId(Guid largeIconId) {
+        vmStatic.setLargeIconId(largeIconId);
+    }
 }

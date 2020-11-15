@@ -121,6 +121,7 @@ public class OvfManager {
         try {
             ovf = new OvfOvaVmReader(new XmlDocument(ovfstring), fullEntityOvfData, vm, getOsRepository());
             ovf.build();
+            initIcons(vm.getStaticData());
         } catch (Exception ex) {
             String message = generateOvfReaderErrorMessage(ovf, ex);
             logOvfLoadError(message, ovfstring);

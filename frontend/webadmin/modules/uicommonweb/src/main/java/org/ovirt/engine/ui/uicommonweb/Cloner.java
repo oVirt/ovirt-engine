@@ -214,6 +214,8 @@ public final class Cloner {
         vm.setRuntimeDeviceCustomProperties(instance.getRuntimeDeviceCustomProperties());
         vm.setLeaseStorageDomainId(instance.getLeaseStorageDomainId());
         vm.setVmInit(instance.getVmInit());
+        vm.setSmallIconId(instance.getSmallIconId());
+        vm.setLargeIconId(instance.getLargeIconId());
         return vm;
     }
 
