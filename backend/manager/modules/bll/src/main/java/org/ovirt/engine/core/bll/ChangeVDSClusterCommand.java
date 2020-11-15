@@ -291,6 +291,10 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             configureNetworks();
         }
 
+        if (!getSourceCluster().getRequiredSwitchTypeForCluster().equals(getTargetCluster().getRequiredSwitchTypeForCluster())) {
+            runInternalAction(ActionType.SyncAllHostNetworks, new PersistentHostSetupNetworksParameters(getVdsId()));
+        }
+
         setSucceeded(true);
     }
 
