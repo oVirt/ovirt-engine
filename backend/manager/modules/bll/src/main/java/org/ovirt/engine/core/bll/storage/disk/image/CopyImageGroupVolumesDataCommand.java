@@ -134,6 +134,8 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
                         getParameters().isLive()),
                 destLocationInfo,
                 false);
+        parameters.setVdsId(getParameters().getVdsId());
+        parameters.setVdsRunningOn(getParameters().getVdsRunningOn());
 
         if (imagesHandler.shouldUseDiskBitmaps(getStoragePool().getCompatibilityVersion(),
                 getParameters().getImageGroupID())) {

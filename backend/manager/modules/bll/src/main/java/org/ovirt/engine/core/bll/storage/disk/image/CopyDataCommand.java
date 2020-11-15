@@ -38,13 +38,18 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
     @Override
     protected void executeCommand() {
         completeGenerationInfo();
-        vdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.CopyVolumeData,
+        CopyVolumeDataVDSCommandParameters parameters =
                 new CopyVolumeDataVDSCommandParameters(getParameters().getStorageJobId(),
                         getParameters().getSrcInfo(),
                         getParameters().getDstInfo(),
                         getParameters().isCollapse(),
-                        getParameters().isCopyBitmaps()),
-                getParameters().getStoragePoolId(), this);
+                        getParameters().isCopyBitmaps());
+        parameters.setVdsId(getParameters().getVdsId());
+
+        vdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.CopyVolumeData,
+                parameters,
+                getParameters().getStoragePoolId(),
+                this);
         setSucceeded(true);
     }
 
