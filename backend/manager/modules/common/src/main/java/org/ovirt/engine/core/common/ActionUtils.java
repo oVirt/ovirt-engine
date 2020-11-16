@@ -208,7 +208,7 @@ public final class ActionUtils {
                         ActionType.ImportVm, ActionType.ChangeDisk, ActionType.RemoveVm,
                         ActionType.AddVmInterface, ActionType.UpdateVmInterface,
                         ActionType.RemoveVmInterface, ActionType.CancelMigrateVm, ActionType.RebootVm,
-                        ActionType.CreateSnapshotForVm));
+                        ActionType.CreateSnapshotForVm, ActionType.CloneVm));
         vmMatrix.put(
                 VMStatus.Paused,
                 EnumSet.of(ActionType.RemoveVm, ActionType.HibernateVm,
