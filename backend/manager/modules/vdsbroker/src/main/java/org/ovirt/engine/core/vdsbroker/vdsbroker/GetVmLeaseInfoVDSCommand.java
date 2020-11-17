@@ -15,7 +15,7 @@ public class GetVmLeaseInfoVDSCommand<T extends VmLeaseVDSParameters> extends Ir
 
     @Override
     protected void executeIrsBrokerCommand() {
-        result = getIrsProxy().getVmLeaseInfo(
+        result = getIrsProxy().getLeaseInfo(
                 getParameters().getLeaseId().toString(),
                 getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();

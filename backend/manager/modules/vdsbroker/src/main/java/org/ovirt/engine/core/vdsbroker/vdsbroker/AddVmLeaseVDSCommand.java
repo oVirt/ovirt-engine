@@ -5,11 +5,11 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.VmLeaseVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
-import org.ovirt.engine.core.vdsbroker.irsbroker.VmLeaseTaskInfoReturn;
+import org.ovirt.engine.core.vdsbroker.irsbroker.LeaseTaskInfoReturn;
 
 public class AddVmLeaseVDSCommand<T extends VmLeaseVDSParameters> extends IrsBrokerCommand<T> {
 
-    private VmLeaseTaskInfoReturn returnValue;
+    private LeaseTaskInfoReturn returnValue;
 
     public AddVmLeaseVDSCommand(T parameters) {
         super(parameters);
@@ -17,14 +17,14 @@ public class AddVmLeaseVDSCommand<T extends VmLeaseVDSParameters> extends IrsBro
 
     @Override
     protected void executeIrsBrokerCommand() {
-        returnValue = getIrsProxy().addVmLease(
+        returnValue = getIrsProxy().addLease(
                 getParameters().getLeaseId().toString(),
                 getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
 
         Guid taskID = new Guid(returnValue.getTaskId());
         getVDSReturnValue().setCreationInfo(
-                new AsyncTaskCreationInfo(taskID, AsyncTaskType.addVmLease,
+                new AsyncTaskCreationInfo(taskID, AsyncTaskType.addLease,
                         getParameters().getStoragePoolId()));
     }
 

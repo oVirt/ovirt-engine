@@ -18,8 +18,8 @@ public enum AsyncTaskType {
     prepareMerge,
     finalizeMerge,
     notSupported,
-    addVmLease,
-    removeVmLease,
+    addLease,
+    removeLease,
     switchMaster;
 
     public int getValue() {

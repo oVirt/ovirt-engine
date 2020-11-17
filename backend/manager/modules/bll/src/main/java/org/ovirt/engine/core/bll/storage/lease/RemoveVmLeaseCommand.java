@@ -26,6 +26,6 @@ public class RemoveVmLeaseCommand<T extends VmLeaseParameters> extends VmLeaseCo
 
     @Override
     protected AsyncTaskType getTaskType() {
-        return AsyncTaskType.removeVmLease;
+        return AsyncTaskType.removeLease;
     }
 }

@@ -37,7 +37,7 @@ public class AddVmLeaseCommand<T extends VmLeaseParameters> extends VmLeaseComma
 
     @Override
     protected AsyncTaskType getTaskType() {
-        return AsyncTaskType.addVmLease;
+        return AsyncTaskType.addLease;
     }
 
     @Override protected void executeCommand() {

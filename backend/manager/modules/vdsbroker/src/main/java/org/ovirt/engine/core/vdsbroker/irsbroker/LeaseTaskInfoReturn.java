@@ -2,11 +2,11 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.util.Map;
 
-public class VmLeaseTaskInfoReturn extends StatusReturn {
+public class LeaseTaskInfoReturn extends StatusReturn {
 
     private static final String TASK_ID_KEY = "info";
 
-    public VmLeaseTaskInfoReturn(Map<String, Object> innerMap) {
+    public LeaseTaskInfoReturn(Map<String, Object> innerMap) {
         super(innerMap);
     }
 
