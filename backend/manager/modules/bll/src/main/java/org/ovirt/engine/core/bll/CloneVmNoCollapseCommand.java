@@ -105,7 +105,7 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
 
     @Override
     protected void copyDisks() {
-        Collection<DiskImage> vmDisks = super.getAdjustedDiskImagesFromConfiguration();
+        Collection<DiskImage> vmDisks = super.getSourceDisks();
 
         for (DiskImage diskImage : vmDisks) {
             MoveOrCopyImageGroupParameters copyParams = createCopyParams(diskImage);

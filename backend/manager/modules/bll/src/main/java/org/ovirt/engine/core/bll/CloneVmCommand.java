@@ -127,7 +127,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
             // the VM id has to be the new VM id - same as the getVm is always the new VM
             setVmId(getParameters().getNewVmGuid());
         }
-        getParameters().setUseCinderCommandCallback(!getAdjustedDiskImagesFromConfiguration().isEmpty());
+        getParameters().setUseCinderCommandCallback(!getSourceDisks().isEmpty());
     }
 
     @Override
@@ -141,7 +141,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     private void setSnapshotId(Guid snapshotId) {
         getParameters().setSourceSnapshotId(snapshotId);
         diskImagesFromConfiguration = null;
-        diskInfoDestinationMap.clear();
+        diskInfoDestinationMap = new HashMap<>();
         fillDisksToParameters();
         storageToDisksMap =
                 ImagesHandler.buildStorageToDiskMap(getImagesToCheckDestinationStorageDomains(),
@@ -386,7 +386,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     @Override
-    protected Collection<DiskImage> getAdjustedDiskImagesFromConfiguration() {
+    protected Collection<DiskImage> getSourceDisks() {
         if (diskImagesFromConfiguration == null) {
             Collection<? extends Disk> loadedImages =
                     getParameters().getSourceSnapshotId() != null ? getSnapshotDisks() : getVmDisks();
@@ -397,6 +397,36 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
             diskImagesFromConfiguration.addAll(DisksFilter.filterManagedBlockStorageDisks(loadedImages, ONLY_PLUGGED));
         }
         return diskImagesFromConfiguration;
+    }
+
+    private Collection<DiskImage> getTargetDisks() {
+        Collection<DiskImage> diskImages = getSourceDisks();
+        if (!getParameters().isEdited()) {
+            return diskImages;
+        }
+
+        List<DiskImage> destDiskImages = new ArrayList<>();
+        for (DiskImage diskImage : diskImages) {
+            DiskImage paramDiskImage = getParameters().getDiskInfoDestinationMap().get(diskImage.getId());
+            if (paramDiskImage == null) {
+                continue;
+            }
+            DiskImage destDiskImage = DiskImage.copyOf(diskImage);
+            destDiskImage.setStorageIds(paramDiskImage.getStorageIds());
+            destDiskImage.setDiskAlias(paramDiskImage.getDiskAlias());
+            destDiskImage.setDiskProfileId(paramDiskImage.getDiskProfileId());
+            if (paramDiskImage.getQuotaId() != null) {
+                destDiskImage.setQuotaId(paramDiskImage.getQuotaId());
+            }
+            if (paramDiskImage.getVolumeType() != null) {
+                destDiskImage.setVolumeType(paramDiskImage.getVolumeType());
+            }
+            if (paramDiskImage.getVolumeFormat() != null) {
+                destDiskImage.setVolumeFormat(paramDiskImage.getVolumeFormat());
+            }
+            destDiskImages.add(destDiskImage);
+        }
+        return destDiskImages;
     }
 
     @Override
@@ -464,8 +494,8 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     private void fillDisksToParameters() {
-        for (Disk image : getAdjustedDiskImagesFromConfiguration()) {
-                diskInfoDestinationMap.put(image.getId(), (DiskImage) image);
+        for (Disk image : getTargetDisks()) {
+            diskInfoDestinationMap.put(image.getId(), (DiskImage) image);
         }
 
         getParameters().setDiskInfoDestinationMap(diskInfoDestinationMap);

@@ -305,10 +305,10 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
      * Returns collection of DiskImage objects to use for construction of the imageToDestinationDomainMap
      */
     protected Collection<DiskImage> getDiskImagesToBeCloned() {
-        return getAdjustedDiskImagesFromConfiguration();
+        return getSourceDisks();
     }
 
-    protected abstract Collection<DiskImage> getAdjustedDiskImagesFromConfiguration();
+    protected abstract Collection<DiskImage> getSourceDisks();
 
     protected DiskImage getDiskImageToRemoveByParam(MoveOrCopyImageGroupParameters param) {
         Guid imageGroupId = param.getDestImageGroupId();
@@ -388,9 +388,9 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         List<DiskImage> cinderDisks = new ArrayList<>();
         List<DiskImage> managedBlockDisks = new ArrayList<>();
         try {
-            if (!getAdjustedDiskImagesFromConfiguration().isEmpty()) {
+            if (!getSourceDisks().isEmpty()) {
                 lockEntities();
-                for (DiskImage diskImage : getAdjustedDiskImagesFromConfiguration()) {
+                for (DiskImage diskImage : getSourceDisks()) {
                     // For illegal image check if it was snapshot as illegal (therefore
                     // still exists at DB, or was it erased after snapshot - therefore the
                     // query returned to UI an illegal image)

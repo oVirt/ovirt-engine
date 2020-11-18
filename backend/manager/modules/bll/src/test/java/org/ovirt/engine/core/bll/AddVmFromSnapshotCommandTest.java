@@ -92,7 +92,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTestBase<AddVmFrom
         DiskVmElement dve = new DiskVmElement(disk.getId(), vm.getId());
         dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
         disk.setDiskVmElements(Collections.singletonList(dve));
-        doReturn(Collections.singletonList(disk)).when(cmd).getAdjustedDiskImagesFromConfiguration();
+        doReturn(Collections.singletonList(disk)).when(cmd).getSourceDisks();
 
         VmValidator vmValidator = spy(new VmValidator(vm));
         doReturn(vmValidator).when(cmd).createVmValidator(vm);
