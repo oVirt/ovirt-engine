@@ -856,11 +856,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         // TODO: refactor to reuse similar logic in handleFinalizingSuccess
         if (stopImageTransferSession(context.entity)) {
             // Setting disk status to ILLEGAL only on upload failure
-            // (only if not disk snapshot)
-            if (!Guid.isNullOrEmpty(getParameters().getImageGroupID())) {
-                setImageStatus(getParameters().getTransferType() == TransferType.Upload ?
-                        ImageStatus.ILLEGAL : ImageStatus.OK);
-            }
+            setImageStatus(getParameters().getTransferType() == TransferType.Upload ?
+                    ImageStatus.ILLEGAL : ImageStatus.OK);
             Guid vdsId = context.entity.getVdsId() != null ? context.entity.getVdsId() : getVdsId();
             // Teardown is required for all scenarios as we call prepareImage when
             // starting a new session.
