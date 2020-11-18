@@ -1322,6 +1322,9 @@ select fn_db_update_config_value_for_versions_from_up_to('UseNativeIOForGluster'
 
 -- remove nl-be from
 select fn_db_update_default_config_value('VncKeyboardLayoutValidValues','ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr','ar,cz,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,no,pl,pt,pt-br,ru,sl,sv,th,tr','general', false);
+
+-- Enable TPM
+select fn_db_update_default_config_value('TpmDeviceSupported', '{"x86":"false","ppc":"false","s390x":"false"}', '{"x86":"true","ppc":"true","s390x":"false"}', '4.6', false);
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
