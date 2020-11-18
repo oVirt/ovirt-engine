@@ -118,7 +118,7 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
             imageDao.save(disk.getImage());
             managedBlockStorageDiskUtil.saveDisk(disk);
 
-            if (getParameters().getVmId() != null) {
+            if (!Guid.isNullOrEmpty(getParameters().getVmId())) {
                 // Set correct device id
                 DiskVmElement diskVmElement = getParameters().getDiskVmElement();
                 diskVmElement.getId().setDeviceId(volumeId);
