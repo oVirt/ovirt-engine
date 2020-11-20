@@ -92,7 +92,7 @@ public class EngineMonitorService implements Runnable {
             throw new NotificationServiceException(NotificationProperties.ENGINE_TIMEOUT_IN_SECONDS
                     + " value must be a positive integer number");
         }
-        serverMonitorTimeout = TimeUnit.SECONDS.convert(interval, TimeUnit.MILLISECONDS);
+        serverMonitorTimeout = TimeUnit.MILLISECONDS.convert(interval, TimeUnit.SECONDS);
     }
 
     /**
