@@ -170,14 +170,12 @@ public class VdsManager {
     private ArrayList<VDSDomainsData> domains;
 
     private final ReentrantLock autoStartVmsWithLeasesLock;
-    protected final long HOST_REFRESH_RATE;
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     private HostConnectionRefresherInterface hostRefresher;
     private volatile boolean inServerRebootTimeout;
 
     VdsManager(VDS vds, ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
-        HOST_REFRESH_RATE = Config.<Long> getValue(ConfigValues.VdsRefreshRate) * 1000L;
         NUMBER_HOST_REFRESHES_BEFORE_SAVE = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
         refreshIteration = new AtomicInteger(NUMBER_HOST_REFRESHES_BEFORE_SAVE - 1);
         log.info("Entered VdsManager constructor");
