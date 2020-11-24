@@ -1146,6 +1146,11 @@ dorestore() {
 	[ -s "${TEMP_FOLDER}/db/${CINDERLIBDB_BACKUP_FILE_NAME}" ] || SCOPE_CINDERLIB_DB=
 	[ -s "${TEMP_FOLDER}/db/${GRAFANA_BACKUP_FILE_NAME}" ] || SCOPE_GRAFANA_DB=
 
+	log 'Scope after checking backup content:'
+	for v in SCOPE_FILES SCOPE_ENGINE_DB SCOPE_DWH_DB SCOPE_CINDERLIB_DB SCOPE_GRAFANA_DB; do
+		log "$v:${!v}"
+	done
+
 	if [ -n "${PROVISION_ALL_DBS}" ]; then
 		[ -n "${SCOPE_ENGINE_DB}" ] && PROVISION_DB=1
 		[ -n "${SCOPE_DWH_DB}" ] && PROVISION_DWH_DB=1
