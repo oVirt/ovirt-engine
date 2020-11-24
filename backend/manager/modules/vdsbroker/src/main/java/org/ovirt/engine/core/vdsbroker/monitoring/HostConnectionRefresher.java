@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.Map;
+import java.util.concurrent.Flow;
 
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
-import org.reactivestreams.Subscription;
 
 public class HostConnectionRefresher implements HostConnectionRefresherInterface {
 
@@ -33,14 +33,14 @@ public class HostConnectionRefresher implements HostConnectionRefresherInterface
 
     private class SubscriberRefreshingHostOnHostConnectionChangeEvent extends EventSubscriber {
 
-        private Subscription subscription;
+        private Flow.Subscription subscription;
 
         public SubscriberRefreshingHostOnHostConnectionChangeEvent() {
             super(HostConnectionRefresher.this.vdsManager.getVdsHostname() + "|net|host_conn|*");
         }
 
         @Override
-        public void onSubscribe(Subscription sub) {
+        public void onSubscribe(Flow.Subscription sub) {
             subscription = sub;
             subscription.request(1);
         }

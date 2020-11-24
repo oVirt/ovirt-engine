@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.Map;
+import java.util.concurrent.Flow;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
-import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ public class VmMigrationProgressMonitoring extends EventSubscriber implements Ba
     @Inject
     private ResourceManager resourceManager;
 
-    private Subscription subscription;
+    private Flow.Subscription subscription;
 
     public VmMigrationProgressMonitoring() {
         super("*|*|VM_migration_status|*");
@@ -36,7 +36,7 @@ public class VmMigrationProgressMonitoring extends EventSubscriber implements Ba
     }
 
     @Override
-    public void onSubscribe(Subscription sub) {
+    public void onSubscribe(Flow.Subscription sub) {
         subscription = sub;
         subscription.request(1);
     }

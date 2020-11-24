@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import java.util.Map;
+import java.util.concurrent.Flow;
 
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
-import org.reactivestreams.Subscription;
 
 public class CoCoEventSubscriber extends EventSubscriber {
-    private Subscription subscription;
+    private Flow.Subscription subscription;
     private CommandEntity commandEntity;
     private CommandsRepository commandsRepository;
 
@@ -21,7 +21,7 @@ public class CoCoEventSubscriber extends EventSubscriber {
     }
 
     @Override
-    public void onSubscribe(Subscription subscription) {
+    public void onSubscribe(Flow.Subscription subscription) {
         this.subscription = subscription;
         subscription.request(1);
     }
