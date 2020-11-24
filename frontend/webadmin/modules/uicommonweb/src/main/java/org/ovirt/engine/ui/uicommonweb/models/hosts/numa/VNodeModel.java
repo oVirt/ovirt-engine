@@ -4,9 +4,14 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
 
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 /**
  * Model of a virtual numa node used for drag and drop in the numa pinning dialog. It is backed by a real virtual
@@ -14,19 +19,36 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
  * model.
  */
 public class VNodeModel extends Model {
+    static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private final VM vm;
     private final VmNumaNode vmNumaNode;
     private boolean pinned;
     private boolean locked;
     private Integer hostNodeIndex;
+    private ListModel<NumaTuneMode> numaTuneModeList;
 
-    public VNodeModel(VM vm, VmNumaNode vmNumaNode) {
+    public VNodeModel(VM vm, VmNumaNode vmNumaNode, boolean editEnabled) {
         this.vm = vm;
         this.vmNumaNode = vmNumaNode;
         if (vmNumaNode.getVdsNumaNodeList() != null && !vmNumaNode.getVdsNumaNodeList().isEmpty()){
             hostNodeIndex = vmNumaNode.getVdsNumaNodeList().get(0);
             pinned = true;
         }
+        setNumaTuneModeList(new ListModel<NumaTuneMode>());
+        initNumaTunes(editEnabled);
+    }
+
+    private void initNumaTunes(boolean editEnabled) {
+        getNumaTuneModeList().setItems(AsyncDataProvider.getInstance().getNumaTuneModeList());
+        NumaTuneMode selectedMode;
+
+        if (vmNumaNode.getNumaTuneMode() != null) {
+            selectedMode = vmNumaNode.getNumaTuneMode();
+        } else {
+            selectedMode = NumaTuneMode.INTERLEAVE;
+        }
+        getNumaTuneModeList().setSelectedItem(selectedMode);
+        getNumaTuneModeList().setIsChangeable(editEnabled);
     }
 
     public VM getVm() {
@@ -70,6 +92,7 @@ public class VNodeModel extends Model {
         newNode.setId(vmNumaNode.getId());
         newNode.setMemTotal(vmNumaNode.getMemTotal());
         newNode.setCpuIds(vmNumaNode.getCpuIds());
+        newNode.setNumaTuneMode(getNumaTuneModeList().getSelectedItem());
         if (isPinned()) {
             newNode.setVdsNumaNodeList(Arrays.asList(hostNodeIndex));
         }
@@ -82,5 +105,13 @@ public class VNodeModel extends Model {
 
     public boolean isLocked() {
         return locked;
+    }
+
+    public ListModel<NumaTuneMode> getNumaTuneModeList() {
+        return numaTuneModeList;
+    }
+
+    public void setNumaTuneModeList(ListModel<NumaTuneMode> numaTuneModeList) {
+        this.numaTuneModeList = numaTuneModeList;
     }
 }

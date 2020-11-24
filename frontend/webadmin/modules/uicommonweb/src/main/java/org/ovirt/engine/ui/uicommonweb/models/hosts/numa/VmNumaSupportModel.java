@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -79,5 +80,10 @@ public class VmNumaSupportModel extends NumaSupportModel {
 
     public VM getVm() {
         return vm;
+    }
+
+    @Override
+    protected VNodeModel createVNodeModel(VM vm, VmNumaNode vmNumaNode) {
+        return new VNodeModel(vm, vmNumaNode, getVm().equals(vm));
     }
 }

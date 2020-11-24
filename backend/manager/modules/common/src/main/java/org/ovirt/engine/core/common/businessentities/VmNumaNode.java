@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class VmNumaNode extends NumaNode {
 
-    private static final long serialVersionUID = -5384287037435972730L;
+    private static final long serialVersionUID = -8359874676349954401L;
 
     private List<Integer> vdsNumaNodeList = new ArrayList<>();
 

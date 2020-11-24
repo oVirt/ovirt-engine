@@ -11,7 +11,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
-import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -104,7 +103,6 @@ public class BaseVmListModelTest extends BaseVmTest {
         ListModel<CpuProfile> cpuProfiles = mockCpuProfiles();
         when(model.getCpuProfiles()).thenReturn(cpuProfiles);
         when(model.getNumaNodeCount().getEntity()).thenReturn(0);
-        when(model.getNumaTuneMode().getSelectedItem()).thenReturn(NumaTuneMode.INTERLEAVE);
         when(model.getAutoConverge().getSelectedItem()).thenReturn(true);
         when(model.getMigrateCompressed().getSelectedItem()).thenReturn(true);
         when(model.getMigrateEncrypted().getSelectedItem()).thenReturn(true);

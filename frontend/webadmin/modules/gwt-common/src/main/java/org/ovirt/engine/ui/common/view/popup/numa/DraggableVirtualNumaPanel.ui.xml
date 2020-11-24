@@ -7,8 +7,6 @@
 
     <ui:style type="org.ovirt.engine.ui.common.view.popup.numa.DraggableVirtualNumaPanel.Style">
         .panel {
-            background-color: #969696;
-            color: white;
             margin: 1px 15px 1px 15px;
             width: 213px;
         }
@@ -25,9 +23,6 @@
     </ui:style>
 
     <g:FocusPanel ui:field="container" addStyleNames="{style.panel}">
-        <onu:VirtualNumaPanel ui:field="numaPanel">
-            <g:Image ui:field="dragHandle" resource="{resources.dragHandleIcon}" addStyleNames="{style.imageStyle}" visible="false"/>
-        </onu:VirtualNumaPanel>
     </g:FocusPanel>
 
 </ui:UiBinder>

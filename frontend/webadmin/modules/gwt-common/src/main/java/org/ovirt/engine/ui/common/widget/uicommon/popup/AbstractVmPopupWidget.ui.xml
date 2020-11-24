@@ -495,9 +495,6 @@
                     <ge:IntegerEntityModelTextBoxEditor ui:field="numaNodeCount" label="{constants.numaNodeCountLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row>
-                    <e:ListModelListBoxEditor ui:field="numaTuneMode" label="{constants.numaTunaModeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                  </b:Row>
-                  <b:Row>
                     <b:Column size="SM_12">
                       <w:UiCommandButton ui:field="numaSupportButton" label="{constants.numaSupportButtonLabel}" />
                     </b:Column>

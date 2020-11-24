@@ -3133,11 +3133,11 @@ public class AsyncDataProvider {
     }
 
     public ArrayList<NumaTuneMode> getNumaTuneModeList() {
-        return new ArrayList<>(Arrays.asList(new NumaTuneMode[] {
-                NumaTuneMode.STRICT,
+        return new ArrayList<>(Arrays.asList(
+                NumaTuneMode.INTERLEAVE,
                 NumaTuneMode.PREFERRED,
-                NumaTuneMode.INTERLEAVE
-        }));
+                NumaTuneMode.STRICT
+        ));
     }
 
     public void getEmulatedMachinesByClusterID(AsyncQuery<Set<String>> aQuery, Guid clusterId) {

@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -1518,17 +1517,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private EntityModel<Boolean> numaEnabled;
 
-    private NotChangableForVmInPoolListModel<NumaTuneMode> numaTuneMode;
-
-    public ListModel<NumaTuneMode> getNumaTuneMode() {
-        return numaTuneMode;
-    }
-
-    public void setNumaTuneMode(NotChangableForVmInPoolListModel<NumaTuneMode> numaTuneMode) {
-        this.numaTuneMode = numaTuneMode;
-        setNumaChanged(true);
-    }
-
     private int initialsNumaNodeCount;
 
     private NotChangableForVmInPoolEntityModel<Integer> numaNodeCount;
@@ -1902,10 +1890,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setCpuProfiles(new NotChangableForVmInPoolListModel<CpuProfile>());
         getCpuProfiles().setIsAvailable(false);
-
-        setNumaTuneMode(new NotChangableForVmInPoolListModel<NumaTuneMode>());
-        getNumaTuneMode().setItems(AsyncDataProvider.getInstance().getNumaTuneModeList());
-        getNumaTuneMode().setSelectedItem(NumaTuneMode.INTERLEAVE);
 
         setNumaNodeCount(new NotChangableForVmInPoolEntityModel<Integer>());
         getNumaNodeCount().setEntity(0);

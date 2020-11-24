@@ -37,8 +37,7 @@ public class NumaUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
         NumaUtils.setNumaListConfiguration(nodeList,
                 model.getMemSize().getEntity(),
                 getHugePageSize(model),
-                Integer.parseInt(model.getTotalCPUCores().getEntity()),
-                model.getNumaTuneMode().getSelectedItem());
+                Integer.parseInt(model.getTotalCPUCores().getEntity()));
         vm.setvNumaNodeList(nodeList);
     }
 

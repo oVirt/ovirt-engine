@@ -344,6 +344,10 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         listPanel.setAriaLabelledBy(elementId);
     }
 
+    public void addButtonStyleName(String styleName) {
+        dropdownButton.addStyleName(styleName);
+    }
+
     protected Renderer<T> getRenderer() {
         return this.renderer;
     }

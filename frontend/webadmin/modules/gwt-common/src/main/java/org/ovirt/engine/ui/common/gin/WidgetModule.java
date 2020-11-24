@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.view.popup.numa.MemorySummaryPanel;
 import org.ovirt.engine.ui.common.view.popup.numa.NumaPanel;
 import org.ovirt.engine.ui.common.view.popup.numa.SocketPanel;
 import org.ovirt.engine.ui.common.view.popup.numa.VirtualNumaPanel;
+import org.ovirt.engine.ui.common.view.popup.numa.VirtualNumaPanelDetails;
 import org.ovirt.engine.ui.common.view.popup.numa.VmTitlePanel;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -28,6 +29,7 @@ public class WidgetModule extends AbstractGinModule {
         bind(VmTitlePanel.class);
         bind(HostSummaryContentPanel.class);
         bind(VirtualNumaPanel.class);
+        bind(VirtualNumaPanelDetails.class);
     }
 
 }

@@ -101,7 +101,7 @@ public class NumaSupportModel extends Model {
         for (final VM vm : getVmsWithvNumaNodeList()) {
             numaModelsPerVm.put(vm.getId(), new HashMap<Integer, VNodeModel>());
             for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {
-                VNodeModel vNodeModel = new VNodeModel(vm, vmNumaNode);
+                VNodeModel vNodeModel = createVNodeModel(vm, vmNumaNode);
                 numaModelsPerVm.get(vm.getId()).put(vNodeModel.getIndex(), vNodeModel);
                 if (vNodeModel.isPinned()) {
                     if (!hostIndices.contains(vNodeModel.getHostNodeIndex())) {
@@ -326,5 +326,9 @@ public class NumaSupportModel extends Model {
             parameters.add(new VmNumaNodeOperationParameters(vmId, numaNodes));
         }
         return parameters;
+    }
+
+    protected VNodeModel createVNodeModel(VM vm, VmNumaNode vmNumaNode) {
+        return new VNodeModel(vm, vmNumaNode, false);
     }
 }

@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.popup.numa.NumaVmSelectedEvent;
 import org.ovirt.engine.ui.common.presenter.popup.numa.UpdatedVnumaEvent;
+import org.ovirt.engine.ui.common.view.CollapsiblePanelView;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
@@ -43,21 +44,24 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
 
     interface Style extends CssResource {
         String panelOver();
+        String imageStyle();
     }
 
     static final PopupPanel menuPopup = new PopupPanel(true);
 
     @UiField
+    Style style;
+
+    @UiField
     FocusPanel container;
 
-    @UiField(provided=true)
-    VirtualNumaPanel numaPanel;
+    private CollapsiblePanelView collapsiblePanel;
 
-    @UiField
-    Image dragHandle;
+    private VirtualNumaPanel numaPanel;
 
-    @UiField
-    Style style;
+    private VirtualNumaPanelDetails numaPanelDetails;
+
+    private Image dragHandle;
 
     private VNodeModel nodeModel;
 
@@ -73,12 +77,29 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public DraggableVirtualNumaPanel(EventBus gwtEventBus, VirtualNumaPanel virtualNumaPanel) {
-        numaPanel = virtualNumaPanel;
-        initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        initializeResouceIcons();
+    public DraggableVirtualNumaPanel(EventBus gwtEventBus,
+            VirtualNumaPanel virtualNumaPanel,
+            VirtualNumaPanelDetails virtualNumaPanelDetails,
+            CollapsiblePanelView collapsiblePanel) {
+        this.numaPanel = virtualNumaPanel;
+        this.numaPanelDetails = virtualNumaPanelDetails;
+        this.collapsiblePanel = collapsiblePanel;
         this.eventBus = gwtEventBus;
+
+        initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+
+        initializeResouceIcons();
         enableDrag(true);
+
+        this.dragHandle = new Image(resources.dragHandleIcon());
+        this.dragHandle.addStyleName(style.imageStyle());
+        this.dragHandle.setVisible(false);
+
+        this.collapsiblePanel.setTitleWidget(numaPanel);
+        this.collapsiblePanel.addContentWidget(numaPanelDetails);
+        this.collapsiblePanel.collapsePanel();
+
+        this.container.add(collapsiblePanel);
     }
 
     @Override
@@ -181,7 +202,11 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
     }
 
     public void setModel(VNodeModel nodeModel, List<VdsNumaNode> numaNodeList) {
+        if (!nodeModel.getNumaTuneModeList().getIsChangable()) {
+            collapsiblePanel.collapsePanel();
+        }
         numaPanel.setModel(nodeModel);
+        numaPanelDetails.setModel(nodeModel);
         this.nodeModel = nodeModel;
         if (nodeModel.isLocked()) {
             enableDrag(false);

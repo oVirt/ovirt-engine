@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -661,11 +660,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "numaNodeCount.entity")
     @WithElementId("numaNodeCount")
     public IntegerEntityModelTextBoxEditor numaNodeCount;
-
-    @UiField(provided = true)
-    @Path(value = "numaTuneMode.selectedItem")
-    @WithElementId("numaTuneMode")
-    public ListModelListBoxEditor<NumaTuneMode> numaTuneMode;
 
     @UiField
     UiCommandButton numaSupportButton;
@@ -1589,8 +1583,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         cpuSharesAmountSelectionEditor =
                 new ListModelListBoxOnlyEditor<>(new EnumRenderer<UnitVmModel.CpuSharesAmount>(), new ModeSwitchingVisibilityRenderer());
 
-        numaTuneMode = new ListModelListBoxEditor<>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
-
         providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider<OpenstackNetworkProviderProperties>>());
         providersEditor.setLabel(constants.providerLabel());
 
@@ -1678,7 +1670,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private void enableNumaFields(boolean enabled) {
         numaNodeCount.setEnabled(enabled);
-        numaTuneMode.setEnabled(enabled);
         numaSupportButton.setEnabled(enabled);
     }
 
@@ -2100,7 +2091,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         customCompatibilityVersionEditor.setTabIndex(nextTabIndex++);
 
         numaNodeCount.setTabIndex(nextTabIndex++);
-        numaTuneMode.setTabIndex(nextTabIndex++);
         // ==High Availability Tab==
         nextTabIndex = highAvailabilityTab.setTabIndexes(nextTabIndex);
         isHighlyAvailableEditor.setTabIndex(nextTabIndex++);
