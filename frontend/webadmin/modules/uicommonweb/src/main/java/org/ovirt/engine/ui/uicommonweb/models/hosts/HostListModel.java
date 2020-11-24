@@ -893,6 +893,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             parameters.setVdsId(host.getId());
             parameters.setPassword(""); //$NON-NLS-1$
             parameters.setInstallHost(false);
+            parameters.setRebootHost(model.getRebootHostAfterInstall().getEntity());
             parameters.setAuthMethod(model.getAuthenticationMethod());
             parameters.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
             parameters.setAffinityGroups(model.getAffinityGroupList().getSelectedItems());
@@ -958,6 +959,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
         params.setAuthMethod(model.getAuthenticationMethod());
         params.setActivateHost(model.getActivateHostAfterInstall().getEntity());
+        params.setRebootHost(model.getRebootHostAfterInstall().getEntity());
 
         Frontend.getInstance().runMultipleAction(ActionType.ApproveVds,
                 new ArrayList<>(Arrays.asList(params)),
@@ -1299,6 +1301,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         param.setReconfigureGluster(model.getReconfigureGluster().getEntity());
         param.setFqdnBox(model.getFqdnBox().getEntity());
         param.setActivateHost(model.getActivateHostAfterInstall().getEntity());
+        param.setRebootHost(model.getRebootHostAfterInstall().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
         param.setFenceAgents(null);  // Explicitly set null, to be clear we don't want to update fence agents.
         param.setHostedEngineDeployConfiguration(

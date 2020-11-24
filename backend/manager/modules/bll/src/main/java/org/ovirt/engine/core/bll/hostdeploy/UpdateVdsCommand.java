@@ -193,6 +193,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             }
             tempVar.setOverrideFirewall(getParameters().getOverrideFirewall());
             tempVar.setActivateHost(getParameters().getActivateHost());
+            tempVar.setRebootHost(getParameters().getRebootHost());
             tempVar.setAuthMethod(getParameters().getAuthMethod());
             tempVar.setHostedEngineDeployConfiguration(getParameters().getHostedEngineDeployConfiguration());
             tempVar.setReplaceHostConfiguration(getParameters().getReplaceHostConfiguration());

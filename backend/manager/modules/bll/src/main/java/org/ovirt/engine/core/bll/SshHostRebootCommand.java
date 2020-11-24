@@ -34,9 +34,13 @@ public class SshHostRebootCommand <T extends VdsActionParameters> extends VdsCom
     }
 
     private VDSStatus getStatusAfterReboot() {
-        return getParameters().getPrevVdsStatus() == VDSStatus.Maintenance
-                ? VDSStatus.Maintenance
-                : VDSStatus.NonResponsive;
+        switch(getParameters().getPrevVdsStatus()) {
+            case Maintenance:
+            case Installing:
+                return getParameters().getPrevVdsStatus();
+            default:
+                return VDSStatus.NonResponsive;
+        }
     }
 
     /**

@@ -57,6 +57,16 @@ public class InstallModel extends Model {
         activateHostAfterInstall = value;
     }
 
+    private EntityModel<Boolean> rebootHostAfterInstall;
+
+    public EntityModel<Boolean> getRebootHostAfterInstall() {
+        return rebootHostAfterInstall;
+    }
+
+    private void setRebootHostAfterInstall(EntityModel<Boolean> value) {
+        rebootHostAfterInstall = value;
+    }
+
     private  EntityModel<Boolean> reconfigureGluster;
 
     private void setReconfigureGluster(EntityModel<Boolean> value) {
@@ -163,9 +173,11 @@ public class InstallModel extends Model {
         setHostVersion(new EntityModel<String>());
         setOverrideIpTables(new EntityModel<Boolean>());
         setActivateHostAfterInstall(new EntityModel<Boolean>());
+        setRebootHostAfterInstall(new EntityModel<Boolean>());
         setReconfigureGluster(new EntityModel<Boolean>());
         getOverrideIpTables().setEntity(false);
         getActivateHostAfterInstall().setEntity(false);
+        getRebootHostAfterInstall().setEntity(true);
         getReconfigureGluster().setEntity(true);
         setFqdnBox(new EntityModel<String>());
         getFqdnBox().setIsAvailable(true);

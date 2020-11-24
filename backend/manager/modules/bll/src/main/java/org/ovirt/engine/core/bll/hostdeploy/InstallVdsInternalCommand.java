@@ -20,10 +20,13 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
@@ -200,6 +203,19 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             markCurrentCmdlineAsStored();
             markVdsReinstalled();
             configureManagementNetwork();
+
+            if (getParameters().getRebootHost()) {
+                ActionReturnValue returnValue = runInternalAction(ActionType.SshHostReboot,
+                        getParameters(),
+                        ExecutionHandler.createInternalJobContext());
+                if (!returnValue.getSucceeded()) {
+                    setVdsStatus(VDSStatus.InstallFailed);
+                    log.error("Engine failed to restart via ssh host '{}' ('{}') after host install",
+                            getVds().getName(),
+                            getVds().getId());
+                    return;
+                }
+            }
             if (!getParameters().getActivateHost()) {
                 setVdsStatus(VDSStatus.Maintenance);
             } else {

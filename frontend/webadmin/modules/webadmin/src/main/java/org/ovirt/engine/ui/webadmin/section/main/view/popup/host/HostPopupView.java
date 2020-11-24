@@ -201,6 +201,11 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @WithElementId("activateHostAfterInstall")
     EntityModelCheckBoxEditor activateHostAfterInstallEditor;
 
+    @UiField(provided = true)
+    @Path(value = "rebootHostAfterInstall.entity")
+    @WithElementId("rebootHostAfterInstall")
+    EntityModelCheckBoxEditor rebootHostAfterInstallEditor;
+
     @UiField
     @Path(value = "userPassword.entity")
     @WithElementId("userPassword")
@@ -530,6 +535,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     private void initEditors() {
         publicKeyEditor = new StringEntityModelTextAreaLabelEditor();
         activateHostAfterInstallEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        rebootHostAfterInstallEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         // List boxes
         clusterEditor = new GroupedListModelListBoxEditor<>(new GroupedListModelListBox<Cluster>(new NameRenderer<Cluster>()) {
@@ -643,6 +649,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         hostAddressLabel.setText(constants.ipHost());
         authSshPortEditor.setLabel(constants.hostPopupPortLabel());
         activateHostAfterInstallEditor.setLabel(constants.activateHostAfterInstallLabel());
+        rebootHostAfterInstallEditor.setLabel(constants.rebootHostAfterInstallLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
         rootPasswordLabel.setText(constants.hostPopupAuthLabelForExternalHost());
         rbPasswordLabel.setText(constants.hostPopupPasswordLabel());

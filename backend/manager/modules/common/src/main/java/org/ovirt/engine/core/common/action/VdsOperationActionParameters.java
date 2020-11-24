@@ -25,6 +25,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
      */
     private boolean overrideFirewall = true;
     private boolean activateHost;
+    private boolean rebootHost;
     private boolean reconfigureGluster = false;
     private boolean enableSerialConsole;
     private AuthenticationMethod authMethod;
@@ -143,6 +144,14 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public boolean getActivateHost() {
         return activateHost;
+    }
+
+    public void setRebootHost(boolean rebootHost) {
+        this.rebootHost = rebootHost;
+    }
+
+    public boolean getRebootHost() {
+        return rebootHost;
     }
 
     public HostedEngineDeployConfiguration getHostedEngineDeployConfiguration() {

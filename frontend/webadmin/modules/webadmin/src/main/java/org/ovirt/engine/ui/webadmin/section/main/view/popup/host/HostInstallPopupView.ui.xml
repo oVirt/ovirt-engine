@@ -122,6 +122,11 @@
                                         <ge:EntityModelCheckBoxEditor ui:field="activateHostAfterInstallEditor" usePatternFly="true"/>
                                     </b:Column>
                                 </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="rebootHostAfterInstallEditor" usePatternFly="true"/>
+                                    </b:Column>
+                                </b:Row>
                             </b:Container>
                         </t:content>
                     </t:DialogTab>

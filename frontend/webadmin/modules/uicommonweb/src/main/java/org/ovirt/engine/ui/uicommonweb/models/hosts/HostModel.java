@@ -186,6 +186,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         activateHostAfterInstall = value;
     }
 
+    private EntityModel<Boolean> rebootHostAfterInstall;
+
+    public EntityModel<Boolean> getRebootHostAfterInstall() {
+        return rebootHostAfterInstall;
+    }
+
+    private void setRebootHostAfterInstall(EntityModel<Boolean> value) {
+        rebootHostAfterInstall = value;
+    }
+
     private EntityModel<String> privateUserPassword;
 
     public EntityModel<String> getUserPassword() {
@@ -782,6 +792,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getAuthSshPort().setEntity(VdsStatic.DEFAULT_SSH_PORT);
         setActivateHostAfterInstall(new EntityModel<Boolean>());
         getActivateHostAfterInstall().setEntity(true);
+        setRebootHostAfterInstall(new EntityModel<Boolean>());
+        getRebootHostAfterInstall().setEntity(true);
         setUserName(new EntityModel<String>());
         getUserName().setEntity(RootUserName);
         // TODO: remove setIsChangeable when configured ssh username is enabled

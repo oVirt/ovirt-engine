@@ -200,6 +200,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setAuthMethod(getParameters().getAuthMethod());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             installVdsParameters.setActivateHost(getParameters().getActivateHost());
+            installVdsParameters.setRebootHost(getParameters().getRebootHost());
             installVdsParameters
                     .setHostedEngineDeployConfiguration(getParameters().getHostedEngineDeployConfiguration());
             Map<String, String> values = new HashMap<>();

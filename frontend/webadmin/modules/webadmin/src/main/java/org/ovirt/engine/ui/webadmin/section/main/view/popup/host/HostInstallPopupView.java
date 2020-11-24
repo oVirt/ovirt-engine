@@ -81,6 +81,11 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @WithElementId("activateHostAfterInstall")
     EntityModelCheckBoxEditor activateHostAfterInstallEditor;
 
+    @UiField(provided = true)
+    @Path(value = "rebootHostAfterInstall.entity")
+    @WithElementId("rebootHostAfterInstall")
+    EntityModelCheckBoxEditor rebootHostAfterInstallEditor;
+
     @UiField
     @Ignore
     Label authLabel;
@@ -167,6 +172,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
         publicKeyEditor = new StringEntityModelTextAreaLabelEditor();
         activateHostAfterInstallEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        rebootHostAfterInstallEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         overrideIpTablesEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         reconfigureGlusterEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         replaceHostEditor = new ListModelListBoxEditor<>(new EnumRenderer<ReplaceHostConfiguration.Action>());
@@ -177,6 +183,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         isoEditor.setLabel(constants.hostInstallIsoLabel());
         overrideIpTablesEditor.setLabel(constants.hostInstallOverrideIpTablesLabel());
         activateHostAfterInstallEditor.setLabel(constants.activateHostAfterInstallLabel());
+        rebootHostAfterInstallEditor.setLabel(constants.rebootHostAfterInstallLabel());
         reconfigureGlusterEditor.setLabel(constants.reconfigureGlusterLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
         userNameEditor.setLabel(constants.hostPopupUsernameLabel());
