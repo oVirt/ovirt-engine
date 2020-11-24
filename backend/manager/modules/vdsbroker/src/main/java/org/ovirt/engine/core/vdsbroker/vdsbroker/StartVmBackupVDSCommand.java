@@ -68,6 +68,7 @@ public class StartVmBackupVDSCommand<P extends VmBackupVDSParameters> extends Vd
         backupConfig.put("from_checkpoint_id", fromCheckpointId != null ? fromCheckpointId.toString() : null);
         backupConfig.put("to_checkpoint_id", toCheckpointId != null ? toCheckpointId.toString() : null);
         backupConfig.put("parent_checkpoint_id", getParentId());
+        backupConfig.put("require_consistency", getParameters().isRequireConsistency());
 
         return backupConfig;
     }

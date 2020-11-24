@@ -16,12 +16,18 @@ public class VmBackupParameters extends VmOperationParameterBase implements Seri
     private VmBackup vmBackup;
     private boolean backupInitiated;
     private Guid toCheckpointId;
+    private boolean requireConsistency;
 
     public VmBackupParameters() {
     }
 
     public VmBackupParameters(VmBackup vmBackup) {
+        this(vmBackup, false);
+    }
+
+    public VmBackupParameters(VmBackup vmBackup, boolean requireConsistency) {
         this.vmBackup = vmBackup;
+        this.requireConsistency = requireConsistency;
     }
 
     public VmBackup getVmBackup() {
@@ -46,6 +52,10 @@ public class VmBackupParameters extends VmOperationParameterBase implements Seri
 
     public void setToCheckpointId(Guid toCheckpointId) {
         this.toCheckpointId = toCheckpointId;
+    }
+
+    public boolean isRequireConsistency() {
+        return requireConsistency;
     }
 
     @Override

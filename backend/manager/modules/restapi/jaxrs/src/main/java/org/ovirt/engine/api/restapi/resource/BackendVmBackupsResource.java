@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.Backups;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.VmBackupResource;
 import org.ovirt.engine.api.resource.VmBackupsResource;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -19,6 +20,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendVmBackupsResource
         extends AbstractBackendCollectionResource<Backup, org.ovirt.engine.core.common.businessentities.VmBackup>
         implements VmBackupsResource {
+
+    protected static final String REQUIRE_CONSISTENCY_CONSTRAINT_PARAMETER = "require_consistency";
 
     private org.ovirt.engine.core.compat.Guid vmId;
 
@@ -51,9 +54,11 @@ public class BackendVmBackupsResource
 
     public javax.ws.rs.core.Response add(org.ovirt.engine.api.model.Backup vmBackup) {
         org.ovirt.engine.core.common.businessentities.VmBackup entity = map(vmBackup);
+        boolean requireConsistency = ParametersHelper.getBooleanParameter(
+                httpHeaders, uriInfo, REQUIRE_CONSISTENCY_CONSTRAINT_PARAMETER, true, false);
         entity.setVmId(vmId);
         return performCreate(ActionType.StartVmBackup,
-                new VmBackupParameters(entity),
+                new VmBackupParameters(entity, requireConsistency),
                 new QueryIdResolver<Guid>(QueryType.GetVmBackupById, IdQueryParameters.class));
     }
 

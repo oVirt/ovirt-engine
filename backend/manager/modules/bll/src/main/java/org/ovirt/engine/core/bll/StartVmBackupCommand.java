@@ -457,7 +457,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         VmBackup vmBackup = getParameters().getVmBackup();
         vmBackup.setToCheckpointId(getParameters().getToCheckpointId());
         try {
-            vdsRetVal = runVdsCommand(vdsCommandType, new VmBackupVDSParameters(getVdsId(), vmBackup));
+            vdsRetVal = runVdsCommand(vdsCommandType,
+                    new VmBackupVDSParameters(getVdsId(), vmBackup, getParameters().isRequireConsistency()));
             if (!vdsRetVal.getSucceeded()) {
                 EngineException engineException = new EngineException();
                 engineException.setVdsError(vdsRetVal.getVdsError());
