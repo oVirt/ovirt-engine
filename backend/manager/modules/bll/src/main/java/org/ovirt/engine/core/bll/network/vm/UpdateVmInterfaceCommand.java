@@ -36,8 +36,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -49,6 +47,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -63,6 +62,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     private VmDeviceDao vmDeviceDao;
     @Inject
     private VmNicDao vmNicDao;
+    @Inject
+    private VmNicFilterParameterDao vmNicFilterParameterDao;
     @Inject
     private VmDynamicDao vmDynamicDao;
     @Inject
@@ -81,6 +82,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     private CountMacUsageDifference countMacUsageDifference;
     private List<VmNic> vmInterfaces;
+    private List<VmNicFilterParameter> oldFilterParameters;
 
     public UpdateVmInterfaceCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -210,7 +212,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     private boolean propertiesRequiringVmUpdateDeviceWereUpdated() {
         return !Objects.equals(oldIface.getVnicProfileId(), getInterface().getVnicProfileId())
-                || oldIface.isLinked() != getInterface().isLinked();
+                || oldIface.isLinked() != getInterface().isLinked()
+                || !Objects.equals(oldFilterParameters, getParameters().getFilterParameters());
     }
 
     private void updatePassthoughDeviceIfNeeded() {
@@ -324,6 +327,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         oldVmDevice = vmDeviceDao.get(new VmDeviceId(getInterface().getId(), getVmId()));
         vmInterfaces = vmNicDao.getAllForVm(getVmId());
         oldIface = vmInterfaces.stream().filter(i -> i.getId().equals(getInterface().getId())).findFirst().orElse(null);
+        oldFilterParameters = vmNicFilterParameterDao.getAllForVmNic(getInterface().getId());
     }
 
     @Override
@@ -400,10 +404,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     protected void saveNetworkFilterParameters() {
         List<VmNicFilterParameter> newParameters = getParameters().getFilterParameters();
         if (newParameters != null) {
-            List<VmNicFilterParameter> savedParameters = runInternalQuery(QueryType.GetVmInterfaceFilterParametersByVmInterfaceId,
-                    new IdQueryParameters(getInterface().getId())).getReturnValue();
             for (VmNicFilterParameter parameter : newParameters) {
-                boolean toUpdate = savedParameters.stream()
+                boolean toUpdate = oldFilterParameters.stream()
                         .anyMatch(saved -> Objects.equals(parameter.getId(), saved.getId()));
                 if (toUpdate) {
                     runInternalAction(ActionType.UpdateVmNicFilterParameter,
@@ -416,7 +418,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                             cloneContextWithNoCleanupCompensation());
                 }
             }
-            for (VmNicFilterParameter parameter : savedParameters) {
+            for (VmNicFilterParameter parameter : oldFilterParameters) {
                 if (newParameters.stream()
                         .noneMatch(newParameter -> Objects.equals(parameter.getId(), newParameter.getId()))) {
                     runInternalAction(ActionType.RemoveVmNicFilterParameter,
