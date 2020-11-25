@@ -17,7 +17,8 @@ CREATE OR REPLACE FUNCTION InsertNumaNode (
     v_cpu_idle DECIMAL(5, 2),
     v_usage_cpu_percent INT,
     v_distance TEXT,
-    v_hugepages TEXT
+    v_hugepages TEXT,
+    v_numa_tune_mode VARCHAR(20)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -36,7 +37,8 @@ BEGIN
             cpu_idle,
             usage_cpu_percent,
             distance,
-            hugepages
+            hugepages,
+            numa_tune_mode
             )
         VALUES (
             v_numa_node_id,
@@ -52,7 +54,8 @@ BEGIN
             v_cpu_idle,
             v_usage_cpu_percent,
             v_distance,
-            v_hugepages
+            v_hugepages,
+            v_numa_tune_mode
             );
     END;
 
@@ -66,7 +69,8 @@ CREATE OR REPLACE FUNCTION UpdateNumaNode (
     v_mem_total BIGINT,
     v_cpu_count SMALLINT,
     v_distance TEXT,
-    v_hugepages TEXT
+    v_hugepages TEXT,
+    v_numa_tune_mode VARCHAR(20)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -76,7 +80,8 @@ BEGIN
             mem_total = v_mem_total,
             cpu_count = v_cpu_count,
             distance = v_distance,
-            hugepages = v_hugepages
+            hugepages = v_hugepages,
+            numa_tune_mode = v_numa_tune_mode
         WHERE numa_node_id = v_numa_node_id;
     END;
 

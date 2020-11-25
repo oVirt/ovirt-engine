@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -65,14 +66,17 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoBase<VmNumaNode> implements Vm
 
     @Override
     public void massSaveNumaNode(List<VmNumaNode> numaNodes, Guid vmId) {
-        insertNodes(numaNodes, node -> createNumaNodeParametersMapper(node).addValue("vm_id", vmId));
+        insertNodes(numaNodes, node -> createNumaNodeParametersMapper(node)
+                    .addValue("vm_id", vmId)
+                    .addValue("numa_tune_mode", node.getNumaTuneMode().getValue()));
         insertNumaNodeMap(numaNodes);
         insertCpus(numaNodes);
     }
 
     @Override
     public void massUpdateNumaNode(List<VmNumaNode> numaNodes) {
-        updateNodes(numaNodes, node -> createNumaNodeParametersMapper(node));
+        updateNodes(numaNodes, node -> createNumaNodeParametersMapper(node)
+                .addValue("numa_tune_mode", node.getNumaTuneMode().getValue()));
         removeCpus(numaNodes);
         insertCpus(numaNodes);
 
@@ -105,6 +109,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoBase<VmNumaNode> implements Vm
         entity.setId(getGuid(rs, "numa_node_id"));
         entity.setIndex(rs.getInt("numa_node_index"));
         entity.setMemTotal(rs.getLong("mem_total"));
+        entity.setNumaTuneMode(NumaTuneMode.forValue(rs.getString("numa_tune_mode")));
         return entity;
     };
 
@@ -121,6 +126,7 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoBase<VmNumaNode> implements Vm
         entity.setId(getGuid(rs, "vm_numa_node_id"));
         entity.setIndex(rs.getInt("vm_numa_node_index"));
         entity.setMemTotal(rs.getLong("vm_numa_node_mem_total"));
+        entity.setNumaTuneMode(NumaTuneMode.forValue(rs.getString("vm_numa_node_numa_tune_mode")));
         return new Pair<>(getGuid(rs, "vm_numa_node_vm_id"), entity);
     };
 

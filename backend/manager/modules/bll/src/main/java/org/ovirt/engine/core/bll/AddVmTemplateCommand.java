@@ -953,7 +953,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().isSpiceFileTransferEnabled(),
                         getParameters().getMasterVm().isSpiceCopyPasteEnabled(),
                         getParameters().getMasterVm().getCpuProfileId(),
-                        getParameters().getMasterVm().getNumaTuneMode(),
                         getParameters().getMasterVm().getAutoConverge(),
                         getParameters().getMasterVm().getMigrateCompressed(),
                         getParameters().getMasterVm().getMigrateEncrypted(),

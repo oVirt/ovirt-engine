@@ -69,7 +69,7 @@ public class NumaValidatorTest {
         vm.setCpuPerSocket(2);
         vm.setVmMemSizeMb(4000);
         vm.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
-        vm.setNumaTuneMode(NumaTuneMode.INTERLEAVE);
+        vm.getvNumaNodeList().forEach(node -> node.setNumaTuneMode(NumaTuneMode.INTERLEAVE));
         vm.setvNumaNodeList(vmNumaNodes);
     }
 
@@ -115,7 +115,7 @@ public class NumaValidatorTest {
 
     @Test
     public void shouldDetectInsufficientMemory() {
-        vm.setNumaTuneMode(NumaTuneMode.STRICT);
+        vmNumaNodes.get(0).setNumaTuneMode(NumaTuneMode.STRICT);
         vmNumaNodes.get(0).setMemTotal(1000);
         vdsNumaNodes_host1.get(0).setMemTotal(500);
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
@@ -124,15 +124,16 @@ public class NumaValidatorTest {
 
     @Test
     public void shouldDetectTooMuchVmNumaNodes() {
-        vm.setNumaTuneMode(NumaTuneMode.PREFERRED);
+        vm.getvNumaNodeList().forEach(node -> node.setNumaTuneMode(NumaTuneMode.PREFERRED));
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
                 EngineMessage.VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE);
     }
 
     @Test
     public void shouldDetectTooMuchHostNodes() {
-        vm.setvNumaNodeList(Collections.singletonList(createVmNumaNode(1, vdsNumaNodes_host1)));
-        vm.setNumaTuneMode(NumaTuneMode.PREFERRED);
+        VmNumaNode vmNumaNode = createVmNumaNode(1, vdsNumaNodes_host1);
+        vmNumaNode.setNumaTuneMode(NumaTuneMode.PREFERRED);
+        vm.setvNumaNodeList(Collections.singletonList(vmNumaNode));
         assertValidationFailure(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()),
                 EngineMessage.VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE);
     }
@@ -164,7 +165,7 @@ public class NumaValidatorTest {
     @Test
     public void shouldValidateSingleNodePinning() {
         vm.setvNumaNodeList(Collections.singletonList(createVmNumaNode(0, Collections.singletonList(createVdsNumaNode(1)))));
-        vm.setNumaTuneMode(NumaTuneMode.PREFERRED);
+        vm.getvNumaNodeList().forEach(node -> node.setNumaTuneMode(NumaTuneMode.PREFERRED));
         assertTrue(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()).isValid());
     }
 
@@ -177,7 +178,7 @@ public class NumaValidatorTest {
 
     @Test
     public void shouldDetectSufficientMemory() {
-        vm.setNumaTuneMode(NumaTuneMode.STRICT);
+        vm.getvNumaNodeList().forEach(node -> node.setNumaTuneMode(NumaTuneMode.STRICT));
         vmNumaNodes.get(0).setMemTotal(1000);
         vdsNumaNodes_host1.get(0).setMemTotal(2000);
         assertTrue(underTest.checkVmNumaNodesIntegrity(vm, vm.getvNumaNodeList()).isValid());

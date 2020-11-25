@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -161,6 +162,10 @@ public class OvfVmReader extends OvfOvirtReader {
             vmNumaNode.setCpuIds(readIntegerList(node, "cpuIdList"));
             vmNumaNode.setVdsNumaNodeList(readIntegerList(node, "vdsNumaNodeList"));
             vmNumaNode.setMemTotal(Long.valueOf(selectSingleNode(node, "MemTotal", _xmlNS).innerText));
+            XmlNode numaTuneMode = selectSingleNode(node, NUMA_TUNE_MODE, _xmlNS);
+            if (numaTuneMode != null) {
+                vmNumaNode.setNumaTuneMode(NumaTuneMode.forValue(numaTuneMode.innerText));
+            }
             vmNumaNodes.add(vmNumaNode);
         }
     }

@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.AuthorizedKey;
@@ -32,7 +33,6 @@ import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.Kernel;
 import org.ovirt.engine.api.model.Nic;
-import org.ovirt.engine.api.model.NumaTuneMode;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Payload;
@@ -55,12 +55,14 @@ import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -200,7 +202,8 @@ public class VmMapper extends VmBaseMapper {
         }
 
         if (vm.isSetNumaTuneMode()) {
-            staticVm.setNumaTuneMode(map(vm.getNumaTuneMode(), null));
+            staticVm.getvNumaNodeList()
+                    .forEach(node -> node.setNumaTuneMode(NumaMapper.map(vm.getNumaTuneMode(), null)));
         }
 
         if (vm.isSetExternalHostProvider()) {
@@ -398,7 +401,7 @@ public class VmMapper extends VmBaseMapper {
             model.setInitialization(InitializationMapper.map(entity.getVmInit(), null));
         }
         model.setNextRunConfigurationExists(entity.isNextRunConfigurationExists());
-        model.setNumaTuneMode(map(entity.getNumaTuneMode(), null));
+        model.setNumaTuneMode(NumaMapper.map(getVmNumaTuneIfApplies(entity.getvNumaNodeList()), null));
 
         if (entity.getProviderId() != null) {
             model.setExternalHostProvider(new ExternalHostProvider());
@@ -406,6 +409,15 @@ public class VmMapper extends VmBaseMapper {
         }
 
         return model;
+    }
+
+    private static NumaTuneMode getVmNumaTuneIfApplies(List<VmNumaNode> vmNumaNodes) {
+        Set<NumaTuneMode> numaTuneModes = vmNumaNodes.stream().map(VmNumaNode::getNumaTuneMode).collect(Collectors.toSet());
+        // if the size is one, all the vNodes having the same tuning. We can reflect it on the VM.
+        if (numaTuneModes.size() == 1) {
+            return numaTuneModes.stream().findFirst().get();
+        }
+        return null;
     }
 
     private static String getEffectiveSpiceProxy(org.ovirt.engine.core.common.businessentities.VM entity) {
@@ -1250,37 +1262,5 @@ public class VmMapper extends VmBaseMapper {
             sessions.getSessions().add(guestSession);
         }
         return sessions;
-    }
-
-    @Mapping(from = NumaTuneMode.class, to = org.ovirt.engine.core.common.businessentities.NumaTuneMode.class)
-    public static org.ovirt.engine.core.common.businessentities.NumaTuneMode map(NumaTuneMode mode,
-                                      org.ovirt.engine.core.common.businessentities.NumaTuneMode incoming) {
-        switch (mode) {
-        case STRICT:
-            return org.ovirt.engine.core.common.businessentities.NumaTuneMode.STRICT;
-        case INTERLEAVE:
-            return org.ovirt.engine.core.common.businessentities.NumaTuneMode.INTERLEAVE;
-        case PREFERRED:
-            return org.ovirt.engine.core.common.businessentities.NumaTuneMode.PREFERRED;
-        default:
-            return null;
-        }
-    }
-
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.NumaTuneMode.class, to = NumaTuneMode.class)
-    public static NumaTuneMode map(org.ovirt.engine.core.common.businessentities.NumaTuneMode mode, NumaTuneMode incoming) {
-        if (mode == null) {
-            return null;
-        }
-        switch (mode) {
-        case STRICT:
-            return NumaTuneMode.STRICT;
-        case INTERLEAVE:
-            return NumaTuneMode.INTERLEAVE;
-        case PREFERRED:
-            return NumaTuneMode.PREFERRED;
-        default:
-            return null;
-        }
     }
 }

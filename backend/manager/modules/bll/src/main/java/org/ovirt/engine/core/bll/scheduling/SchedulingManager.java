@@ -522,7 +522,8 @@ public class SchedulingManager implements BackendService {
          * When starting many VMs with NUMA pinning, it may happen that some of them will
          * not pass scheduling, even if they could fit on the host.
          */
-        if (vm.getNumaTuneMode() != NumaTuneMode.PREFERRED) {
+        if (vm.getvNumaNodeList().stream().map(VmNumaNode::getNumaTuneMode)
+                .allMatch(tune -> tune != NumaTuneMode.PREFERRED)) {
             numaConsumption.forEach((nodeIndex, neededMemory) -> {
                 getPendingResourceManager().addPending(new PendingNumaMemory(hostId, vm, nodeIndex, neededMemory));
             });
@@ -537,7 +538,8 @@ public class SchedulingManager implements BackendService {
 
     private  Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> vmNumaRequirements(List<VM> vmGroup, VDS host) {
         List<VM> filteredVms = vmGroup.stream()
-                .filter(vm -> vm.getNumaTuneMode() != NumaTuneMode.PREFERRED)
+                .filter(vm -> vm.getvNumaNodeList().stream().map(VmNumaNode::getNumaTuneMode)
+                        .allMatch(tune -> tune != NumaTuneMode.PREFERRED))
                 .filter(vm -> !host.getId().equals(vm.getRunOnVds()))
                 .collect(Collectors.toList());
 

@@ -46,10 +46,10 @@ public class NumaValidator {
     /**
      * preferred supports single pinned vNUMA node (without that VM fails to run in libvirt)
      */
-    private ValidationResult checkNumaPreferredTuneMode(NumaTuneMode numaTuneMode,
-            List<VmNumaNode> vmNumaNodes) {
+    private ValidationResult checkNumaPreferredTuneMode(List<VmNumaNode> vmNumaNodes) {
         // check tune mode
-        if (numaTuneMode != NumaTuneMode.PREFERRED) {
+        if (vmNumaNodes.stream().map(VmNumaNode::getNumaTuneMode)
+                .allMatch(tune -> tune != NumaTuneMode.PREFERRED)) {
             return ValidationResult.VALID;
         }
 
@@ -216,8 +216,7 @@ public class NumaValidator {
             return ValidationResult.VALID;
         }
 
-        ValidationResult validationResult = checkNumaPreferredTuneMode(vm.getNumaTuneMode(),
-                vmNumaNodes);
+        ValidationResult validationResult = checkNumaPreferredTuneMode(vmNumaNodes);
         if (!validationResult.isValid()) {
             return validationResult;
         }
@@ -296,7 +295,7 @@ public class NumaValidator {
                                 String.format("$hostName %s", getHostNameOrId(pinnedVds)));
                     }
 
-                    if (vm.getNumaTuneMode() == NumaTuneMode.STRICT
+                    if (vmNumaNode.getNumaTuneMode() == NumaTuneMode.STRICT
                             && vmNumaNode.getMemTotal() > hostNodeIndexToNodeMap.get(vdsPinnedIndex).getMemTotal()) {
                         return new ValidationResult(EngineMessage.VM_NUMA_NODE_MEMORY_ERROR,
                                 String.format("$vmNodeIndex %d", vmNumaNode.getIndex()),

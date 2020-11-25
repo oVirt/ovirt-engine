@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
@@ -82,7 +81,6 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("is_spice_file_transfer_enabled", entity.isSpiceFileTransferEnabled())
                 .addValue("is_spice_copy_paste_enabled", entity.isSpiceCopyPasteEnabled())
                 .addValue("cpu_profile_id", entity.getCpuProfileId())
-                .addValue("numatune_mode", entity.getNumaTuneMode().getValue())
                 .addValue("is_auto_converge", entity.getAutoConverge())
                 .addValue("is_migrate_compressed", entity.getMigrateCompressed())
                 .addValue("is_migrate_encrypted", entity.getMigrateEncrypted())
@@ -157,7 +155,6 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
             entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setCpuProfileId(getGuid(rs, "cpu_profile_id"));
-            entity.setNumaTuneMode(NumaTuneMode.forValue(rs.getString("numatune_mode")));
             entity.setAutoConverge((Boolean) rs.getObject("is_auto_converge"));
             entity.setMigrateCompressed((Boolean) rs.getObject("is_migrate_compressed"));
             entity.setMigrateEncrypted((Boolean) rs.getObject("is_migrate_encrypted"));

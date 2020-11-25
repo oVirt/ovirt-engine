@@ -80,7 +80,7 @@ public abstract class AbstractVmNumaNodeCommandTestBase
         vm.setCpuPerSocket(4);
         vm.setVmMemSizeMb(4000);
         vm.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
-        vm.setNumaTuneMode(NumaTuneMode.INTERLEAVE);
+        vm.getvNumaNodeList().forEach(node -> node.setNumaTuneMode(NumaTuneMode.INTERLEAVE));
         when(vmDao.get(eq(vm.getId()))).thenReturn(vm);
     }
 

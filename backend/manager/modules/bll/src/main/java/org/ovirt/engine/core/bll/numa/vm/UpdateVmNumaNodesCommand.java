@@ -44,6 +44,7 @@ public class UpdateVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> e
     @Override
     protected void executeCommand() {
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
+        vmNumaNodes.forEach(node -> node.setNumaTuneMode(getEffectiveNumaTune(node)));
         vmNumaNodeDao.massUpdateNumaNode(vmNumaNodes);
         setSucceeded(true);
     }

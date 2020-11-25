@@ -1629,14 +1629,6 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         return nextRunChangedFields;
     }
 
-    public NumaTuneMode getNumaTuneMode() {
-        return vmStatic.getNumaTuneMode();
-    }
-
-    public void setNumaTuneMode(NumaTuneMode numaTuneMode) {
-        vmStatic.setNumaTuneMode(numaTuneMode);
-    }
-
     public void setvNumaNodeList(List<VmNumaNode> vNumaNodeList) {
         vmStatic.setvNumaNodeList(vNumaNodeList);
     }

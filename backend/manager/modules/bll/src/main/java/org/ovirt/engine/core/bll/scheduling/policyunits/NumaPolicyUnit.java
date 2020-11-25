@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -66,7 +67,8 @@ public class NumaPolicyUnit extends PolicyUnitImpl {
                 skipHostCheck = false;
 
                 // If the NUMA mode is PREFERRED, a host with any NUMA configuration is accepted.
-                if (vm.getNumaTuneMode() != NumaTuneMode.PREFERRED) {
+                if (vm.getvNumaNodeList().stream().map(VmNumaNode::getNumaTuneMode)
+                        .allMatch(tune -> tune != NumaTuneMode.PREFERRED)) {
                     vmsToCheckOnHost.add(vm);
                 }
             }

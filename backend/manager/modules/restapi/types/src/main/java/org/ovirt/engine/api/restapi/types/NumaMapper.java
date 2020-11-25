@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.NumaNode;
 import org.ovirt.engine.api.model.NumaNodePin;
 import org.ovirt.engine.api.model.NumaNodePins;
+import org.ovirt.engine.api.model.NumaTuneMode;
 import org.ovirt.engine.api.model.VirtualNumaNode;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -63,6 +64,9 @@ public class NumaMapper {
             cpu.setCores(cores);
             model.setCpu(cpu);
         }
+        if (entity.getNumaTuneMode() != null) {
+            model.setNumaTuneMode(map(entity.getNumaTuneMode(), null));
+        }
         if (entity.getVdsNumaNodeList() != null && entity.getVdsNumaNodeList().size() > 0) {
             NumaNodePins pins = new NumaNodePins();
             for (Integer pinnedIndex : entity.getVdsNumaNodeList()) {
@@ -104,11 +108,46 @@ public class NumaMapper {
         if (model.isSetMemory()) {
             entity.setMemTotal(model.getMemory());
         }
+        if (model.isSetNumaTuneMode()) {
+            entity.setNumaTuneMode(map(model.getNumaTuneMode(), null));
+        }
         if (model.isSetNumaNodePins()) {
             entity.setVdsNumaNodeList(model.getNumaNodePins().getNumaNodePins().stream()
                     .map(NumaNodePin::getIndex)
                     .collect(Collectors.toList()));
         }
         return entity;
+    }
+
+    @Mapping(from = NumaTuneMode.class, to = org.ovirt.engine.core.common.businessentities.NumaTuneMode.class)
+    public static org.ovirt.engine.core.common.businessentities.NumaTuneMode map(NumaTuneMode mode,
+            org.ovirt.engine.core.common.businessentities.NumaTuneMode incoming) {
+        switch (mode) {
+        case STRICT:
+            return org.ovirt.engine.core.common.businessentities.NumaTuneMode.STRICT;
+        case INTERLEAVE:
+            return org.ovirt.engine.core.common.businessentities.NumaTuneMode.INTERLEAVE;
+        case PREFERRED:
+            return org.ovirt.engine.core.common.businessentities.NumaTuneMode.PREFERRED;
+        default:
+            return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.NumaTuneMode.class, to = NumaTuneMode.class)
+    public static NumaTuneMode map(org.ovirt.engine.core.common.businessentities.NumaTuneMode mode, NumaTuneMode incoming) {
+        if (mode == null) {
+            return null;
+        }
+        switch (mode) {
+        case STRICT:
+            return NumaTuneMode.STRICT;
+        case INTERLEAVE:
+            return NumaTuneMode.INTERLEAVE;
+        case PREFERRED:
+            return NumaTuneMode.PREFERRED;
+        default:
+            return null;
+        }
     }
 }

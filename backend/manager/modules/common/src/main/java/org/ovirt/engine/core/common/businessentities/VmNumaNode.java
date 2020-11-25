@@ -14,6 +14,8 @@ public class VmNumaNode extends NumaNode {
 
     private List<Integer> vdsNumaNodeList = new ArrayList<>();
 
+    private NumaTuneMode numaTuneMode;
+
     /**
      * @return pNUMA node index
      */
@@ -25,11 +27,20 @@ public class VmNumaNode extends NumaNode {
         this.vdsNumaNodeList = vdsNumaNodeList;
     }
 
+    public NumaTuneMode getNumaTuneMode() {
+        return numaTuneMode;
+    }
+
+    public void setNumaTuneMode(NumaTuneMode numaTuneMode) {
+        this.numaTuneMode = numaTuneMode;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
                 super.hashCode(),
-                vdsNumaNodeList
+                vdsNumaNodeList,
+                numaTuneMode
         );
     }
 
@@ -43,7 +54,8 @@ public class VmNumaNode extends NumaNode {
         }
         VmNumaNode other = (VmNumaNode) obj;
         return super.equals(obj)
-                && Objects.equals(vdsNumaNodeList, other.vdsNumaNodeList);
+                && Objects.equals(vdsNumaNodeList, other.vdsNumaNodeList)
+                && numaTuneMode == other.numaTuneMode;
     }
 
 }

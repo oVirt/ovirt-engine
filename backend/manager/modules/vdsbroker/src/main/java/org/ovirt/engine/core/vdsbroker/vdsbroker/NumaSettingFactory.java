@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 
@@ -50,9 +49,7 @@ public class NumaSettingFactory {
         return cpuPinDict;
     }
 
-    public static Map<String, Object> buildVmNumatuneSetting(
-            NumaTuneMode numaTuneMode,
-            List<VmNumaNode> vmNumaNodes) {
+    public static Map<String, Object> buildVmNumatuneSetting(List<VmNumaNode> vmNumaNodes) {
 
         List<Map<String, String>> memNodeList = new ArrayList<>();
         for (VmNumaNode node : vmNumaNodes) {
@@ -60,10 +57,11 @@ public class NumaSettingFactory {
                 continue;
             }
 
-            Map<String, String> memNode = new HashMap<>(2);
+            Map<String, String> memNode = new HashMap<>(3);
             memNode.put(VdsProperties.NUMA_TUNE_VM_NODE_INDEX, String.valueOf(node.getIndex()));
             memNode.put(VdsProperties.NUMA_TUNE_NODESET,
                     buildStringFromListForNuma(node.getVdsNumaNodeList()));
+            memNode.put(VdsProperties.NUMA_TUNE_MODE, node.getNumaTuneMode().getValue());
 
             memNodeList.add(memNode);
         }
@@ -73,11 +71,7 @@ public class NumaSettingFactory {
             return Collections.emptyMap();
         }
 
-        Map<String, Object> createNumaTune = new HashMap<>(2);
-        createNumaTune.put(VdsProperties.NUMA_TUNE_MEMNODES, memNodeList);
-        createNumaTune.put(VdsProperties.NUMA_TUNE_MODE, numaTuneMode.getValue());
-
-        return createNumaTune;
+        return Collections.singletonMap(VdsProperties.NUMA_TUNE_MEMNODES, memNodeList);
     }
 
     private static String buildStringFromListForNuma(Collection<Integer> list) {

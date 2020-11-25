@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HugePage;
-import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -598,13 +597,7 @@ public class LibvirtVmXmlBuilder {
     }
 
     private Map<String, Object> getNumaTuneSetting() {
-        NumaTuneMode numaTune = vm.getNumaTuneMode();
-        if (numaTune == null) {
-            return null;
-        }
-
         Map<String, Object> numaTuneSetting = NumaSettingFactory.buildVmNumatuneSetting(
-                numaTune,
                 vmNumaNodesSupplier.get());
         if (numaTuneSetting.isEmpty()) {
             return null;
@@ -622,7 +615,6 @@ public class LibvirtVmXmlBuilder {
         // <numatune>
         //   <memnode cellid='0' mode='strict' nodeset='1'>
         // </numatune>
-        String mode = (String) numaTuneSetting.get(VdsProperties.NUMA_TUNE_MODE);
         @SuppressWarnings("unchecked")
         List<Map<String, String>> memNodes = (List<Map<String, String>>) numaTuneSetting.get(VdsProperties.NUMA_TUNE_MEMNODES);
         if (memNodes != null) {
@@ -630,9 +622,9 @@ public class LibvirtVmXmlBuilder {
 
             for (Map<String, String> memnode : memNodes) {
                 writer.writeStartElement("memnode");
-                writer.writeAttributeString("mode", mode);
-                writer.writeAttributeString("cellid", (String) memnode.get(VdsProperties.NUMA_TUNE_VM_NODE_INDEX));
-                writer.writeAttributeString("nodeset", (String) memnode.get(VdsProperties.NUMA_TUNE_NODESET));
+                writer.writeAttributeString("mode", memnode.get(VdsProperties.NUMA_TUNE_MODE));
+                writer.writeAttributeString("cellid", memnode.get(VdsProperties.NUMA_TUNE_VM_NODE_INDEX));
+                writer.writeAttributeString("nodeset", memnode.get(VdsProperties.NUMA_TUNE_NODESET));
                 writer.writeEndElement();
             }
 

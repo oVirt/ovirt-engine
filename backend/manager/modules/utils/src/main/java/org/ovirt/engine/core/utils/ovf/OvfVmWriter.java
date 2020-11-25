@@ -148,6 +148,7 @@ public class OvfVmWriter extends OvfOvirtWriter {
             writeIntegerList("cpuIdList", vmNumaNode.getCpuIds());
             writeIntegerList("vdsNumaNodeList", vmNumaNode.getVdsNumaNodeList());
             _writer.writeElement("MemTotal", String.valueOf(vmNumaNode.getMemTotal()));
+            _writer.writeElement(NUMA_TUNE_MODE, vmNumaNode.getNumaTuneMode().getValue());
             _writer.writeEndElement();
         }
         _writer.writeEndElement();

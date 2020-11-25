@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -34,7 +35,8 @@ public class CpuAndNumaPinningWeightPolicyUnit extends PolicyUnitImpl {
     public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup) {
         List<VM> vmsToCheck = vmGroup.stream()
                 // If the NUMA mode is PREFERRED, a host with any NUMA configuration is accepted.
-                .filter(vm -> vm.getNumaTuneMode() != NumaTuneMode.PREFERRED)
+                .filter(vm -> vm.getvNumaNodeList().stream().map(VmNumaNode::getNumaTuneMode)
+                        .allMatch(tune -> tune != NumaTuneMode.PREFERRED))
                 .filter(vm -> !vm.getvNumaNodeList().isEmpty())
                 .collect(Collectors.toList());
 

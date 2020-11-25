@@ -45,7 +45,6 @@ public class NumaPolicyUnitTest extends NumaPolicyTestBase{
     public void setUp() {
         vm = new VM();
         vm.setId(Guid.newGuid());
-        vm.setNumaTuneMode(NumaTuneMode.STRICT);
 
         hostWithoutNuma = createHost(0, NODE_SIZE);
         hostTwoNodes = createHost(2, NODE_SIZE);
@@ -64,10 +63,10 @@ public class NumaPolicyUnitTest extends NumaPolicyTestBase{
 
     @Test
     public void testInterleaveMode() {
-        vm.setNumaTuneMode(NumaTuneMode.INTERLEAVE);
         vm.setvNumaNodeList(Arrays.asList(
                 createVmNode(NODE_SIZE, 0, Arrays.asList(0))
         ));
+        vm.getvNumaNodeList().forEach(node -> node.setNumaTuneMode(NumaTuneMode.INTERLEAVE));
 
         List<VDS> passedHosts = filter();
         assertThat(passedHosts).containsOnly(hostTwoNodes, hostFourNodes);

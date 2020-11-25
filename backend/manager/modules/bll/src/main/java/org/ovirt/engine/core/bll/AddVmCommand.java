@@ -1129,9 +1129,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         NumaUtils.setNumaListConfiguration(vmNumaNodes,
                 getParameters().getVm().getMemSizeMb(),
                 HugePageUtils.getHugePageSize(getParameters().getVm().getStaticData()),
-                getParameters().getVm().getNumOfCpus());
+                getParameters().getVm().getNumOfCpus(),
+                NumaTuneMode.STRICT);
         getParameters().getVm().setvNumaNodeList(vmNumaNodes);
-        getParameters().getVm().setNumaTuneMode(NumaTuneMode.STRICT);
     }
 
     private void addGraphicsDevice() {

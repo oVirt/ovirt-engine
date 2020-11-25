@@ -212,7 +212,7 @@ class NumaPinningHelperTest {
         VM vm = new VM();
         vm.setId(Guid.newGuid());
         vm.setvNumaNodeList(nodes);
-        vm.setNumaTuneMode(NumaTuneMode.STRICT);
+        vm.getvNumaNodeList().forEach(node -> node.setNumaTuneMode(NumaTuneMode.STRICT));
 
         return Collections.singletonList(vm);
     }

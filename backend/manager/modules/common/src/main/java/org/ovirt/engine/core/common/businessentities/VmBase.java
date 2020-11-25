@@ -335,9 +335,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @Min(value = 0, message = "VALIDATION_VM_MIGRATION_DOWNTIME_RANGE")
     private Integer migrationDowntime;
 
-    @EditableVmField
-    private NumaTuneMode numaTuneMode;
-
     @EditableVmField(onStatuses = VMStatus.Down)
     private List<VmNumaNode> vNumaNodeList;
 
@@ -409,7 +406,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         singleQxlPci = true;
         spiceFileTransferEnabled = true;
         spiceCopyPasteEnabled = true;
-        setNumaTuneMode(NumaTuneMode.INTERLEAVE);
         vNumaNodeList = new ArrayList<>();
         customProperties = "";
         consoleDisconnectAction = ConsoleDisconnectAction.LOCK_SCREEN;
@@ -595,7 +591,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.isSpiceFileTransferEnabled(),
                 vmBase.isSpiceCopyPasteEnabled(),
                 vmBase.getCpuProfileId(),
-                vmBase.getNumaTuneMode(),
                 vmBase.getAutoConverge(),
                 vmBase.getMigrateCompressed(),
                 vmBase.getMigrateEncrypted(),
@@ -668,7 +663,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             boolean spiceFileTransferEnabled,
             boolean spiceCopyPasteEnabled,
             Guid cpuProfileId,
-            NumaTuneMode numaTuneMode,
             Boolean autoConverge,
             Boolean migrateCompressed,
             Boolean migrateEncrypted,
@@ -737,7 +731,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.customSerialNumber = customSerialNumber;
         this.bootMenuEnabled = bootMenuEnabled;
         this.spiceFileTransferEnabled = spiceFileTransferEnabled;
-        this.numaTuneMode = numaTuneMode;
         this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
         this.cpuProfileId = cpuProfileId;
         this.autoConverge = autoConverge;
@@ -1159,7 +1152,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 spiceFileTransferEnabled,
                 spiceCopyPasteEnabled,
                 cpuProfileId,
-                numaTuneMode,
                 vNumaNodeList,
                 autoConverge,
                 migrateCompressed,
@@ -1231,7 +1223,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && spiceFileTransferEnabled == other.spiceFileTransferEnabled
                 && spiceCopyPasteEnabled == other.spiceCopyPasteEnabled
                 && Objects.equals(cpuProfileId, other.cpuProfileId)
-                && Objects.equals(numaTuneMode.getValue(), other.numaTuneMode.getValue())
                 && Objects.equals(vNumaNodeList, other.vNumaNodeList)
                 && Objects.equals(autoConverge, other.autoConverge)
                 && Objects.equals(migrateCompressed, other.migrateCompressed)
@@ -1459,14 +1450,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     public void setCpuProfileId(Guid cpuProfileId) {
         this.cpuProfileId = cpuProfileId;
-    }
-
-    public NumaTuneMode getNumaTuneMode() {
-        return numaTuneMode;
-    }
-
-    public void setNumaTuneMode(NumaTuneMode numaTuneMode) {
-        this.numaTuneMode = numaTuneMode;
     }
 
     public List<VmNumaNode> getvNumaNodeList() {

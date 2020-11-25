@@ -12,6 +12,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -81,6 +82,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase<VmNumaNodeDao> {
         newVmNumaNode.setId(vmNumaNode1);
         newVmNumaNode.setIndex(0);
         newVmNumaNode.getVdsNumaNodeList().add(0);
+        newVmNumaNode.setNumaTuneMode(NumaTuneMode.STRICT);
         newVmNode.add(newVmNumaNode);
 
         newVmNumaNode = new VmNumaNode();
@@ -88,6 +90,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase<VmNumaNodeDao> {
         newVmNumaNode.setId(vmNumaNode2);
         newVmNumaNode.setIndex(1);
         newVmNumaNode.getVdsNumaNodeList().add(1);
+        newVmNumaNode.setNumaTuneMode(NumaTuneMode.INTERLEAVE);
         newVmNode.add(newVmNumaNode);
 
         dao.massSaveNumaNode(newVmNode, ANOTHER_EXISTING_VM_ID);
@@ -104,9 +107,11 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase<VmNumaNodeDao> {
 
         assertEquals(1, nodes.get(vmNumaNode1).getVdsNumaNodeList().size());
         assertEquals(0, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).intValue());
+        assertEquals(NumaTuneMode.STRICT, nodes.get(vmNumaNode1).getNumaTuneMode());
 
         assertEquals(1, nodes.get(vmNumaNode2).getVdsNumaNodeList().size());
         assertEquals(1, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).intValue());
+        assertEquals(NumaTuneMode.INTERLEAVE, nodes.get(vmNumaNode2).getNumaTuneMode());
 
         List<Guid> vmNodeList = new ArrayList<>();
         vmNodeList.add(vmNumaNode1);
@@ -133,6 +138,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase<VmNumaNodeDao> {
         newVmNumaNode.setId(vmNumaNode1);
         newVmNumaNode.setIndex(0);
         newVmNumaNode.getVdsNumaNodeList().add(0);
+        newVmNumaNode.setNumaTuneMode(NumaTuneMode.STRICT);
         newVmNode.add(newVmNumaNode);
 
         newVmNumaNode = new VmNumaNode();
@@ -140,6 +146,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase<VmNumaNodeDao> {
         newVmNumaNode.setId(vmNumaNode2);
         newVmNumaNode.setIndex(1);
         newVmNumaNode.getVdsNumaNodeList().add(1);
+        newVmNumaNode.setNumaTuneMode(NumaTuneMode.STRICT);
         newVmNode.add(newVmNumaNode);
 
         dao.massSaveNumaNode(newVmNode, ANOTHER_EXISTING_VM_ID);
@@ -153,9 +160,11 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase<VmNumaNodeDao> {
 
         nodes.get(vmNumaNode1).getVdsNumaNodeList().clear();
         nodes.get(vmNumaNode1).getVdsNumaNodeList().add(1);
+        nodes.get(vmNumaNode1).setNumaTuneMode(NumaTuneMode.INTERLEAVE);
 
         nodes.get(vmNumaNode2).getVdsNumaNodeList().clear();
         nodes.get(vmNumaNode2).getVdsNumaNodeList().add(0);
+        nodes.get(vmNumaNode2).setNumaTuneMode(NumaTuneMode.PREFERRED);
 
         newVmNode.clear();
         newVmNode.add(nodes.get(vmNumaNode1));
@@ -176,9 +185,11 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase<VmNumaNodeDao> {
 
         assertEquals(1, nodes.get(vmNumaNode1).getVdsNumaNodeList().size());
         assertEquals(1, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).intValue());
+        assertEquals(NumaTuneMode.INTERLEAVE, nodes.get(vmNumaNode1).getNumaTuneMode());
 
         assertEquals(1, nodes.get(vmNumaNode2).getVdsNumaNodeList().size());
         assertEquals(0, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).intValue());
+        assertEquals(NumaTuneMode.PREFERRED, nodes.get(vmNumaNode2).getNumaTuneMode());
 
         List<Guid> vmNodeList = new ArrayList<>();
         vmNodeList.add(vmNumaNode1);

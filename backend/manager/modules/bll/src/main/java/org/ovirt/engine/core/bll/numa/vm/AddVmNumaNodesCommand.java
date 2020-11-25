@@ -32,7 +32,10 @@ public class AddVmNumaNodesCommand<T extends VmNumaNodeOperationParameters> exte
     @Override
     protected void executeCommand() {
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
-        vmNumaNodes.forEach(node -> node.setId(Guid.newGuid()));
+        vmNumaNodes.forEach(node -> {
+            node.setId(Guid.newGuid());
+            node.setNumaTuneMode(getEffectiveNumaTune(node));
+        });
 
         vmNumaNodeDao.massSaveNumaNode(vmNumaNodes, getVm().getId());
 

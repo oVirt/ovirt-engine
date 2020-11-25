@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
@@ -65,5 +66,9 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
 
     protected NumaValidator getNumaValidator() {
         return numaValidator;
+    }
+
+    protected NumaTuneMode getEffectiveNumaTune(VmNumaNode vmNumaNode) {
+        return vmNumaNode.getNumaTuneMode() != null ? vmNumaNode.getNumaTuneMode() : NumaTuneMode.INTERLEAVE;
     }
 }

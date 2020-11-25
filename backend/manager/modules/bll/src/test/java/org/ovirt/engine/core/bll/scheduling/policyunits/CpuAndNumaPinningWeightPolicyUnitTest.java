@@ -18,7 +18,6 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -56,7 +55,6 @@ public class CpuAndNumaPinningWeightPolicyUnitTest extends NumaPolicyTestBase {
         vm.setNumOfSockets(2);
         vm.setCpuPerSocket(1);
         vm.setThreadsPerCpu(1);
-        vm.setNumaTuneMode(NumaTuneMode.STRICT);
 
         hostWithoutNuma = createHost(0, NODE_SIZE);
         hostWithOneCpuPerNode = createHost(2, NODE_SIZE, 1);

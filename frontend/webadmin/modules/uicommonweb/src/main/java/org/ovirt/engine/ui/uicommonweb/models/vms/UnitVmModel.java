@@ -1526,6 +1526,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     public void setNumaTuneMode(NotChangableForVmInPoolListModel<NumaTuneMode> numaTuneMode) {
         this.numaTuneMode = numaTuneMode;
+        setNumaChanged(true);
     }
 
     private int initialsNumaNodeCount;
