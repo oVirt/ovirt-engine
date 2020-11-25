@@ -1813,9 +1813,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("unit", "KiB");
         writer.writeRaw(String.valueOf(alignSize / 1024));
         writer.writeEndElement();  // alignsize
-        if (!"raw".equals(mode) && !"sector".equals(mode)) {
-            writer.writeElement("pmem");
-        }
+        writer.writeElement("pmem");
         writer.writeEndElement();  // source
 
         writer.writeStartElement("target");
