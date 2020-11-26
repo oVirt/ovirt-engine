@@ -389,4 +389,27 @@ public interface VmDao extends Dao {
      * @return the running VM names with with the specified ISO disk attached as a CDROM
      */
     List<String> getAllRunningNamesWithSpecificIsoAttached(Guid isoDiskId);
+
+    /**
+     * Returns the TPM data for the specified VM.
+     *
+     * @param vmId the VM id
+     */
+    String getTpmData(Guid vmId);
+
+    /**
+     * Stores the specified TPM data for the given VM.
+     *
+     * @param vmId the VM id
+     * @param tpmData the data
+     */
+    void updateTpmData(Guid vmId, String tpmData);
+
+    /**
+     * Copies the specified TPM data from one VM to another one.
+     *
+     * @param sourceVmId id of the VM to copy the data from
+     * @param targetVmId id of the VM to copy the data to
+     */
+    void copyTpmData(Guid sourceVmId, Guid targetVmId);
 }

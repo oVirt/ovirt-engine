@@ -957,6 +957,8 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             doExport();
         } else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
+        } else if ("ConfirmAndSaveOrUpdateVM".equals(command.getName())) { //$NON-NLS-1$
+            confirmAndSaveOrUpdateVM((UnitVmModel) getWindow());
         } else if ("SaveOrUpdateVM".equals(command.getName())) { // $NON-NLS-1$
             UnitVmModel model = (UnitVmModel) getWindow();
             if (!model.validate()) {

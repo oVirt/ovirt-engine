@@ -69,6 +69,7 @@ import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -115,6 +116,8 @@ public class VmInfoBuildUtilsTest {
     private NetworkQoSDao networkQosDao;
     @Mock
     private StorageQosDao storageQosDao;
+    @Mock
+    private VmDao vmDao;
     @Mock
     private VmDeviceDao vmDeviceDao;
     @Mock

@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -362,6 +363,39 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         if (getcurrentVm().getVmType() == VmType.HighPerformance) {
             displayHighPerformanceConfirmationPopup();
         } else {
+            confirmAndSaveOrUpdateVM(model);
+        }
+    }
+
+    protected void confirmAndSaveOrUpdateVM(final UnitVmModel model) {
+        if (model.getTpmEnabled().getValueChanged() && !model.getTpmEnabled().getEntity()) {
+            Guid vmId = getcurrentVm().getId();
+            if (vmId != null) {
+                Frontend.getInstance().runQuery(QueryType.HasTpmData, new IdQueryParameters(vmId),
+                        new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
+                            if ((Boolean) returnValue.getReturnValue()) {
+                                ConfirmationModel confirmModel = new ConfirmationModel();
+                                confirmModel.setTitle(ConstantsManager.getInstance().getConstants()
+                                        .confirmTpmDataRemovalTitle());
+                                confirmModel.setMessage(ConstantsManager.getInstance().getConstants()
+                                        .confirmTpmDataRemovalMessage());
+                                confirmModel.setHelpTag(HelpTag.remove_tpm_data);
+                                confirmModel.setHashName("remove_tpm_data"); //$NON-NLS-1$
+                                confirmModel.getCommands().add(new UICommand("SaveOrUpdateVM", VmBaseListModel.this) //$NON-NLS-1$
+                                        .setTitle(ConstantsManager.getInstance().getConstants().ok()));
+                                confirmModel.getCommands()
+                                        .add(UICommand.createCancelUiCommand("CancelConfirmation", VmBaseListModel.this) //$NON-NLS-1$
+                                                .setIsDefault(true));
+                                setConfirmWindow(null);
+                                setConfirmWindow(confirmModel);
+                            } else {
+                                saveOrUpdateVM(model);
+                            }
+                        }));
+            } else {
+                saveOrUpdateVM(model);
+            }
+        } else {
             saveOrUpdateVM(model);
         }
     }
@@ -668,7 +702,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
             confirmModel.setHelpTag(HelpTag.configuration_changes_for_high_performance_vm);
             confirmModel.setHashName("configuration_changes_for_high_performance_vm"); //$NON-NLS-1$
 
-            confirmModel.getCommands().add(new UICommand("SaveOrUpdateVM", VmBaseListModel.this) //$NON-NLS-1$
+            confirmModel.getCommands().add(new UICommand("ConfirmAndSaveOrUpdateVM", VmBaseListModel.this) //$NON-NLS-1$
                     .setTitle(ConstantsManager.getInstance().getConstants().ok())
                     .setIsDefault(true));
 
@@ -678,7 +712,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
             setConfirmWindow(null);
             setConfirmWindow(confirmModel);
          } else {
-            saveOrUpdateVM(model);
+            confirmAndSaveOrUpdateVM(model);
          }
     }
 }

@@ -229,6 +229,7 @@ public enum VDSCommandType {
     GetAllVmStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),  // get a list of VMs with full data and statistics
     HostDevListByCaps("org.ovirt.engine.core.vdsbroker"),        // get all host devices with passthrough information
     Destroy("org.ovirt.engine.core.vdsbroker.vdsbroker"),        // Clean a DOWN VM from the vms list
+    GetVmExternalData("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SetDestroyOnReboot("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HostDevChangeNumVfs("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     RegisterLibvirtSecrets("org.ovirt.engine.core.vdsbroker.vdsbroker"),

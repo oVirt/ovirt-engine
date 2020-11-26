@@ -102,6 +102,7 @@ import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -152,6 +153,7 @@ public class VmInfoBuildUtils {
     private final NetworkQoSDao networkQosDao;
     private final StorageQosDao storageQosDao;
     private final VmDeviceDao vmDeviceDao;
+    private final VmDao vmDao;
     private final VnicProfileDao vnicProfileDao;
     private final VmNicFilterParameterDao vmNicFilterParameterDao;
     private final AuditLogDirector auditLogDirector;
@@ -186,6 +188,7 @@ public class VmInfoBuildUtils {
             NetworkQoSDao networkQosDao,
             StorageQosDao storageQosDao,
             VmDeviceDao vmDeviceDao,
+            VmDao vmDao,
             VnicProfileDao vnicProfileDao,
             VmNicFilterParameterDao vmNicFilterParameterDao,
             NetworkClusterDao networkClusterDao,
@@ -209,6 +212,7 @@ public class VmInfoBuildUtils {
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
         this.storageQosDao = Objects.requireNonNull(storageQosDao);
         this.vmDeviceDao = Objects.requireNonNull(vmDeviceDao);
+        this.vmDao = Objects.requireNonNull(vmDao);
         this.vnicProfileDao = Objects.requireNonNull(vnicProfileDao);
         this.vmNicFilterParameterDao = Objects.requireNonNull(vmNicFilterParameterDao);
         this.networkClusterDao = Objects.requireNonNull(networkClusterDao);
@@ -1346,6 +1350,10 @@ public class VmInfoBuildUtils {
             }
         }
         return node;
+    }
+
+    public String tpmData(Guid vmId) {
+        return vmDao.getTpmData(vmId);
     }
 
     public List<VmDevice> getVmDevices(Guid vmId) {

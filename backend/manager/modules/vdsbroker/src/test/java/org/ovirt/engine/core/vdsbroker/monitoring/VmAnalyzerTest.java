@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -69,6 +70,8 @@ public class VmAnalyzerTest {
     private ArgumentCaptor<VDSParametersBase> vdsParamsCaptor;
     @Mock
     private VdsDynamicDao vdsDynamicDao;
+    @Mock
+    private VmDeviceDao vmDeviceDao;
     @Mock
     private VdsDynamic srcHost;
     @Mock
@@ -347,6 +350,7 @@ public class VmAnalyzerTest {
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setSucceeded(true);
         doReturn(vdsReturnValue).when(vmAnalyzer).runVdsCommand(any(), any());
+        doReturn(true).when(vmAnalyzer).saveVmExternalData();
 
         if (run) {
             vmAnalyzer.analyze();

@@ -84,6 +84,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VMInfoListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMNamesListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VmExternalDataReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VolumeInfoReturn;
 import org.ovirt.vdsm.jsonrpc.client.BrokerCommandCallback;
@@ -389,6 +390,18 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new FutureMap(this.client, request).withResponseKey("statsList")
                         .withResponseType(Object[].class);
         return new VMInfoListReturn(response);
+    }
+
+    @Override
+    public VmExternalDataReturn getVmExternalData(String vmId, String kind, boolean forceUpdate) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.getExternalData").withParameter("vmID", vmId)
+                        .withParameter("kind", kind)
+                        .withParameter("forceUpdate", forceUpdate)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("info");
+        return new VmExternalDataReturn(response);
     }
 
     @Override

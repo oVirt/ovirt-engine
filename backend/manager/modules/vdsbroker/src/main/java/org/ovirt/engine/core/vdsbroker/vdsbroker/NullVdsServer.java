@@ -178,6 +178,10 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
+    @Override public VmExternalDataReturn getVmExternalData(String vmId, String kind, boolean forceUpdate) {
+        return null;
+    }
+
     @Override public HostDevListReturn hostDevListByCaps() {
         return null;
     }

@@ -60,6 +60,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -82,6 +83,7 @@ public class VmDeviceUtils {
     private static final Logger log = LoggerFactory.getLogger(VmDeviceUtils.class);
 
     private final VmStaticDao vmStaticDao;
+    private final VmDao vmDao;
     private final VmDeviceDao vmDeviceDao;
     private final ClusterDao clusterDao;
     private final VmTemplateDao vmTemplateDao;
@@ -99,6 +101,7 @@ public class VmDeviceUtils {
 
     @Inject
     VmDeviceUtils(VmStaticDao vmStaticDao,
+                  VmDao vmDao,
                   VmDeviceDao vmDeviceDao,
                   ClusterDao clusterDao,
                   VmTemplateDao vmTemplateDao,
@@ -108,6 +111,7 @@ public class VmDeviceUtils {
                   VideoDeviceSettings videoDeviceSettings,
                   OsRepository osRepository) {
         this.vmStaticDao = vmStaticDao;
+        this.vmDao = vmDao;
         this.vmDeviceDao = vmDeviceDao;
         this.clusterDao = clusterDao;
         this.vmTemplateDao = vmTemplateDao;
@@ -2282,5 +2286,11 @@ public class VmDeviceUtils {
 
     public boolean containsDeviceWithType(List<VmDevice> devices, VmDeviceGeneralType type) {
         return containsDeviceWithType(devices, type, null);
+    }
+
+    public void copyVmExternalData(Guid sourceVmId, Guid targetVmId) {
+        if (hasTpmDevice(targetVmId)) {
+            vmDao.copyTpmData(sourceVmId, targetVmId);
+        }
     }
 }

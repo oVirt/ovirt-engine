@@ -473,6 +473,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 false,
                 getVmDeviceUtils().canCopyHostDevices(getSourceVmId(), getVm().getStaticData()),
                 getEffectiveCompatibilityVersion());
+        getVmDeviceUtils().copyVmExternalData(getSourceVmId(), getVmId());
     }
 
     @Override

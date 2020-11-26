@@ -1302,13 +1302,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.tscFrequency = tscFrequency;
     }
 
-    private EntityModel<Boolean> tpmEnabled;
+    private TpmModel<Boolean> tpmEnabled;
 
-    public EntityModel<Boolean> getTpmEnabled() {
+    public TpmModel<Boolean> getTpmEnabled() {
         return tpmEnabled;
     }
 
-    public void setTpmEnabled(EntityModel<Boolean> tpmEnabled) {
+    public void setTpmEnabled(TpmModel<Boolean> tpmEnabled) {
         this.tpmEnabled = tpmEnabled;
     }
 
@@ -1733,7 +1733,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setDataCenterWithClustersList(new NotChangableForVmInPoolListModel<DataCenterWithCluster>());
         getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener(this);
 
-        setTpmEnabled(new NotChangableForVmInPoolEntityModel<Boolean>(false));
+        setTpmEnabled(new TpmModel<Boolean>(false));
 
         setBiosType(new ListModelWithClusterDefault<>(BiosType.CLUSTER_DEFAULT));
         getBiosType().getSelectedItemChangedEvent().addListener(this);
@@ -3452,6 +3452,28 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 super.setIsChangeable(value);
             }
             return this;
+        }
+    }
+
+    public class TpmModel<T> extends NotChangableForVmInPoolEntityModel<T> {
+        private boolean entityChanged = false;
+
+        public boolean getValueChanged() {
+            return entityChanged;
+        }
+
+        private void setValueChanged(boolean valueChanged) {
+            this.entityChanged = valueChanged;
+        }
+
+        public TpmModel(T entity) {
+            super(entity);
+        }
+
+        @Override
+        protected void onEntityChanged() {
+            setValueChanged(true);
+            super.onEntityChanged();
         }
     }
 

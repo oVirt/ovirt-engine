@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.SaveVmExternalDataParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UnchangeableByVdsm;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -280,7 +281,15 @@ public class VmAnalyzer {
     }
 
     void proceedDownVm() {
-        // destroy the VM as soon as possible
+        // destroy the VM as soon as possible, but save VM data first
+        if (isVmRunningInDatabaseOnMonitoredHost() &&
+            // not a successful migration on a source host
+            (vdsmVm.getVmDynamic().getExitStatus() != VmExitStatus.Normal ||
+             vdsmVm.getVmDynamic().getExitReason() != VmExitReason.MigrationSucceeded)) {
+            if (!saveVmExternalData()) {
+                return;
+            }
+        }
         destroyVm();
 
         // VM is running on another host - must be during migration
@@ -355,6 +364,12 @@ public class VmAnalyzer {
                 }
             }
         }
+    }
+
+    boolean saveVmExternalData() {
+        SaveVmExternalDataParameters parameters = new SaveVmExternalDataParameters(dbVm.getId(),
+                () -> getVmManager().incFailedVmExternalDataRetrievalAttempts(), true);
+        return resourceManager.getEventListener().saveExternalData(parameters).getSucceeded();
     }
 
     private String getPowerOffExitMessage() {

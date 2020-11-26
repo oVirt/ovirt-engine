@@ -407,4 +407,28 @@ public class VmDaoImpl extends BaseDao implements VmDao {
                 SingleColumnRowMapper.newInstance(String.class),
                 getCustomMapSqlParameterSource().addValue("iso_disk_id", isoDiskId));
     }
+
+    @Override
+    public String getTpmData(Guid vmId) {
+        return getCallsHandler().executeRead("GetTpmData",
+                SingleColumnRowMapper.newInstance(String.class),
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_id", vmId));
+    }
+
+    @Override
+    public void updateTpmData(Guid vmId, String tpmData) {
+        getCallsHandler().executeModification("UpdateTpmData",
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_id", vmId)
+                        .addValue("tpm_data", tpmData));
+    }
+
+    @Override
+    public void copyTpmData(Guid sourceVmId, Guid targetVmId) {
+        getCallsHandler().executeModification("CopyTpmData",
+                getCustomMapSqlParameterSource()
+                        .addValue("source_vm_id", sourceVmId)
+                        .addValue("target_vm_id", targetVmId));
+    }
 }

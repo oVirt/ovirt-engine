@@ -60,6 +60,8 @@ public class VmManager {
 
     private boolean coldReboot;
 
+    private Integer failedVmExternalDataRetrievalAttempts;
+
     /**
      * vmOverhead contains the last known VM memory impact incl. QEMU overhead prediction.
      *
@@ -88,6 +90,7 @@ public class VmManager {
         convertOperationProgress = -1;
         statistics = new VmStatistics(vmId);
         vmMemoryWithOverheadInMB = 0;
+        failedVmExternalDataRetrievalAttempts = Integer.valueOf(0);
     }
 
     @PostConstruct
@@ -305,4 +308,7 @@ public class VmManager {
         return vmDynamicDao.get(vmId).getStopReason();
     }
 
+    public Integer incFailedVmExternalDataRetrievalAttempts() {
+        return ++failedVmExternalDataRetrievalAttempts;
+    }
 }

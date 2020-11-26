@@ -558,7 +558,9 @@ public enum EngineError {
 
     SESSION_ERROR(9999),
 
-    HOST_DEVICES_TAKEN_BY_OTHER_VM(6000);
+    HOST_DEVICES_TAKEN_BY_OTHER_VM(6000),
+
+    METHOD_NOT_FOUND(-32601);
 
     private int intValue;
     private static final Map<Integer, EngineError> mappings = new HashMap<>();

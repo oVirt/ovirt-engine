@@ -2160,6 +2160,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             clearCpuPinning();
         } else if (CMD_CONFIGURE_VMS_TO_IMPORT.equals(command.getName())) {
             onConfigureVmsToImport();
+        } else if ("ConfirmAndSaveOrUpdateVM".equals(command.getName())) { //$NON-NLS-1$
+            confirmAndSaveOrUpdateVM((UnitVmModel) getWindow());
         } else if ("SaveOrUpdateVM".equals(command.getName())) { // $NON-NLS-1$
             UnitVmModel model = (UnitVmModel) getWindow();
             if (!model.validate()) {

@@ -72,6 +72,11 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
             createInfo.put("memoryConfVolume", memoryConfPDIV);
         }
 
+        String tpmData = vmInfoBuildUtils.tpmData(vm.getId());
+        if (tpmData != null) {
+            createInfo.put(VdsProperties.tpmData, tpmData);
+        }
+
         return createInfo;
     }
 

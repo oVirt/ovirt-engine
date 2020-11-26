@@ -2350,3 +2350,50 @@ BEGIN
     WHERE pin.vds_id = v_host_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+
+
+CREATE OR REPLACE FUNCTION GetTpmData (
+    v_vm_id UUID
+)
+RETURNS TEXT STABLE AS $FUNCTION$
+BEGIN
+    RETURN
+    (
+        SELECT tpm_data
+        FROM vm_external_data
+        WHERE vm_id = v_vm_id
+    );
+END;$FUNCTION$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION UpdateTpmData (
+    v_vm_id UUID,
+    v_tpm_data TEXT
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    INSERT INTO vm_external_data (
+        device_id,
+        vm_id,
+        tpm_data
+    )
+    SELECT device_id, v_vm_id, v_tpm_data
+    FROM vm_device
+    WHERE v_tpm_data IS NOT NULL AND vm_id = v_vm_id AND type = 'tpm'
+    ON CONFLICT (device_id, vm_id) DO
+    UPDATE
+    SET tpm_data = v_tpm_data;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION CopyTpmData (
+    v_source_vm_id UUID,
+    v_target_vm_id UUID
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    PERFORM UpdateTpmData(v_target_vm_id, GetTpmData(v_source_vm_id));
+END;$PROCEDURE$
+LANGUAGE plpgsql;

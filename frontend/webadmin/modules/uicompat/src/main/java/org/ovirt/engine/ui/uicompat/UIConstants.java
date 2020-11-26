@@ -125,6 +125,10 @@ public interface UIConstants extends Constants {
 
     String editNextRunConfigurationTitle();
 
+    String confirmTpmDataRemovalTitle();
+
+    String confirmTpmDataRemovalMessage();
+
     String configurationChangesForHighPerformanceVmTitle();
 
     String configurationChangesForHighPerformancePoolTitle();

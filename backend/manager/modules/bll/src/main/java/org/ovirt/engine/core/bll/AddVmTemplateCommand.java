@@ -389,6 +389,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         graphicsToSkip,
                         false,
                         getEffectiveCompatibilityVersion());
+                getVmDeviceUtils().copyVmExternalData(getVmId(), getVmTemplateId());
             } else {
                 // for instance type and new template without a VM
                 getVmDeviceUtils().copyVmDevices(VmTemplateHandler.BLANK_VM_TEMPLATE_ID,

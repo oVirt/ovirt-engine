@@ -1070,6 +1070,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             getVmDeviceUtils().updateVirtioScsiController(getVm().getStaticData(),
                     getParameters().isVirtioScsiEnabled());
             updateVmDevicesOnChipsetChange();
+            getVmDeviceUtils().copyVmExternalData(getVmTemplateId(), getVmId());
             return null;
         });
 

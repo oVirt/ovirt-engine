@@ -330,6 +330,8 @@ public final class VdsProperties {
     public static final String memoryDumpVolumeInfo = "memoryDumpVolumeInfo";
     public static final String memoryMetadataVolumeInfo = "memoryMetadataVolumeInfo";
     public static final String engineXml = "xml";
+    public static final String tpmData = "_X_tpmdata";
+    public static final String tpm = "tpm";
     public static final String pauseCode = "pauseCode";
     public static final String KeyboardMap = "keyMap";
     public static final String TabletEnable = "tabletEnable";

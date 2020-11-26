@@ -112,6 +112,8 @@ public interface IVdsServer {
 
     VMInfoListReturn getAllVmStats();
 
+    VmExternalDataReturn getVmExternalData(String vmId, String kind, boolean forceUpdate);
+
     HostDevListReturn hostDevListByCaps();
 
     StatusOnlyReturn migrate(Map<String, Object> migrationInfo);
