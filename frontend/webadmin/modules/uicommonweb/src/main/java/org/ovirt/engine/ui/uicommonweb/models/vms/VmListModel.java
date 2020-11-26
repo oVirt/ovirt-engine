@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
+import org.ovirt.engine.core.common.action.VmInterfacesModifyParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -1794,6 +1795,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         CloneVmParameters parameters = getCloneVmParameters(vm, vm.getName(), true);
         parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
+        List<VmInterfacesModifyParameters.VnicWithProfile> vnicsWithProfiles =
+                model.getNicsWithLogicalNetworks().getItems().stream()
+                    .map(vnic -> new VmInterfacesModifyParameters.VnicWithProfile(
+                            vnic.getNetworkInterface(), vnic.getSelectedItem()))
+                    .collect(Collectors.toList());
+        parameters.setVnicsWithProfiles(vnicsWithProfiles);
 
         IFrontendActionAsyncCallback callback = result -> {
             model.stopProgress();

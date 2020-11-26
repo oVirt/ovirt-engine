@@ -36,6 +36,7 @@ public enum ActionType {
     AddVmInterface(28, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     RemoveVmInterface(29, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     UpdateVmInterface(30, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
+    VmInterfacesModify(260, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     AddDisk(31, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     RegisterDisk(32, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     ExtractOva(33, QuotaDependency.NONE),

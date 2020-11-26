@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
+import org.ovirt.engine.core.common.action.VmInterfacesModifyParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -174,6 +175,13 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
                 break;
 
             case REMOVE_VM_SNAPSHOT:
+                if (getParameters().getVnicsWithProfiles() == null) {
+                    return false;
+                }
+                getParameters().setStage(CloneVmParameters.CloneVmStage.MODIFY_VM_INTERFACES);
+                break;
+
+            case MODIFY_VM_INTERFACES:
                 return false;
 
             default:
@@ -200,6 +208,10 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
             case REMOVE_VM_SNAPSHOT:
                 removeVmSnapshot();
+                break;
+
+            case MODIFY_VM_INTERFACES:
+                modifyVmInterfaces();
                 break;
 
             default:
@@ -275,6 +287,9 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         if (!returnValue.getSucceeded()) {
             log.error("Failed to remove VM snapshot");
         }
+
+        // If the command fails beyond this point, endWithFailure() do not need to delete the snapshot anymore
+        setSnapshotId(null);
     }
 
     private RemoveSnapshotParameters createRemoveSnapshotParameters() {
@@ -284,6 +299,26 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setNeedsLocking(false);
         parameters.setShouldBeLogged(false);
+        return parameters;
+    }
+
+    private void modifyVmInterfaces() {
+        ActionReturnValue returnValue = runInternalAction(
+                ActionType.VmInterfacesModify,
+                buildVmInterfacesModifyParameters());
+
+        if (!returnValue.getSucceeded()) {
+            log.error("Failed to modify VM interfaces");
+        }
+    }
+
+    private VmInterfacesModifyParameters buildVmInterfacesModifyParameters() {
+        VmInterfacesModifyParameters parameters = new VmInterfacesModifyParameters();
+        parameters.setVmId(getVmId());
+        parameters.setVnicsWithProfiles(getParameters().getVnicsWithProfiles());
+        parameters.setOsId(getVm().getVmOsId());
+        parameters.setCompatibilityVersion(getVm().getClusterCompatibilityVersion());
+        parameters.setAddingNewVm(true);
         return parameters;
     }
 
