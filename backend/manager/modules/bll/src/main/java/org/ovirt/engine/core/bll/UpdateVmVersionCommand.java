@@ -175,14 +175,16 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
                 buildRemoveVmParameters(),
                 getLock());
 
-        if (result.getSucceeded()) {
-            if (result.getHasAsyncTasks()) {
-                getReturnValue().getVdsmTaskIdList().addAll(result.getInternalVdsmTaskIdList());
-            } else {
-                endVmCommand();
-            }
-            setSucceeded(true);
+        if (!result.getSucceeded()) {
+            log.error("Could not remove vm '{}' ({})", getVm().getName(), getVmId());
+            return;
         }
+
+        getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
+        if (getTaskIdList().isEmpty()) {
+            endVmCommand();
+        }
+        setSucceeded(true);
     }
 
     private Guid getIdOfDiskOperator() {
