@@ -142,7 +142,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     protected String prepareImage(Guid vdsId, Guid imagedTicketId) {
-        if (getParameters().getBackupId() != null) {
+        if (isBackup()) {
             return vmBackupDao.getBackupUrlForDisk(
                     getParameters().getBackupId(), getDiskImage().getId());
         }
@@ -167,7 +167,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 validate(diskValidator.isDiskExists())
                 && validate(diskImagesValidator.diskImagesNotIllegal())
                 && validate(storageDomainValidator.isDomainExistAndActive());
-        if (getParameters().getBackupId() != null) {
+        if (isBackup()) {
             return isValid && validate(isVmBackupExists()) && validate(isFormatApplicableForBackup());
         }
         return isValid
@@ -361,7 +361,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
-        if (getParameters().getBackupId() != null) {
+        if (isBackup()) {
             // StartVmBackup should handle locks
             return locks;
         }
@@ -376,7 +376,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
-        if (getParameters().getBackupId() != null) {
+        if (isBackup()) {
             // StartVmBackup should handle locks
             return locks;
         }
@@ -439,7 +439,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     protected ImageTransferBackend getTransferBackend() {
-        if (getParameters().getBackupId() != null) {
+        if (isBackup()) {
             // Incremental backup uses NBD transfer backend
             return ImageTransferBackend.NBD;
         }
@@ -1011,7 +1011,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     protected boolean initializeVds() {
         // In case of downloading a backup disk, the host that runs the VM must handle the transfer
-        if (getParameters().getBackupId() != null && getParameters().getTransferType() == TransferType.Download) {
+        if (isBackup() && getParameters().getTransferType() == TransferType.Download) {
             VmBackup vmBackup = getVmBackup();
             if (vmBackup == null) {
                 log.warn("Cannot download disk id: '{}' backup id: '{}' not exist.",
@@ -1071,8 +1071,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 getStorageDomain().getStorageType().isFileDomain();
     }
 
+    private boolean isBackup() {
+        return getParameters().getBackupId() != null;
+    }
+
     private boolean isSupportsDirtyExtents() {
-        if (getParameters().getBackupId() == null || getParameters().getTransferType() != TransferType.Download) {
+        if (!isBackup() || getParameters().getTransferType() != TransferType.Download) {
             return false;
         }
         VmBackup vmBackup = getVmBackup();
@@ -1209,7 +1213,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
 
         // Stopping NBD server if necessary
-        if (getTransferBackend() == ImageTransferBackend.NBD) {
+        if (!isBackup() && getTransferBackend() == ImageTransferBackend.NBD) {
             stopNbdServer(entity.getVdsId(), entity.getImagedTicketId());
         }
 
