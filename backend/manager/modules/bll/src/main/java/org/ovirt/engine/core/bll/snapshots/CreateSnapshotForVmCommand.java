@@ -305,6 +305,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
                 && (!getParameters().isSaveMemory() || validate(vmValidator.vmNotHavingPciPassthroughDevices()))
                 && (!getParameters().isSaveMemory() || validate(vmValidator.vmNotHavingScsiPassthroughDevices()))
                 && (!getParameters().isSaveMemory() || validate(vmValidator.vmNotHavingNvdimmDevices()))
+                && (!getParameters().isSaveMemory() || validate(vmValidator.vmNotHavingTpm()))
                 && validate(vmValidator.vmNotUsingMdevTypeHook()))) {
             return false;
         }

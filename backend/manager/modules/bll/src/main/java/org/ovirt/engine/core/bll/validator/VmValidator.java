@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -256,6 +257,13 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult vmNotHavingTpm() {
+        if (getVmDeviceUtils().hasTpmDevice(vm.getId())) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_HAS_TPM);
+        }
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult vmNotUsingMdevTypeHook() {
         Map<String, String> properties = getVmPropertiesUtils().getVMProperties(
                 vm.getCompatibilityVersion(),
@@ -270,6 +278,10 @@ public class VmValidator {
 
     private HostDeviceManager getHostDeviceManager() {
         return Injector.get(HostDeviceManager.class);
+    }
+
+    private VmDeviceUtils getVmDeviceUtils() {
+        return Injector.get(VmDeviceUtils.class);
     }
 
     public ValidationResult isPinnedVmRunningOnDedicatedHost(VM recentVm, VmStatic paramVm){
