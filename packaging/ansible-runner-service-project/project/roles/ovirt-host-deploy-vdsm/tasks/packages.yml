@@ -2,10 +2,12 @@
 # We need to install ovirt-hosted-engine-setup first due to its dependency
 # on specific ansible version to prevent collision with newer ansible versions
 # on EL7, because yum on EL7 doesn't contain --nobest option
+# We need to skip on non x86_64 architecture, because HE is not supported there
 - name: Install ovirt-hosted-engine-setup package
   yum:
     name: ovirt-hosted-engine-setup
     state: present
+  when: ansible_architecture == 'x86_64'
   tags:
     - skip_ansible_lint # E403
 
