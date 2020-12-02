@@ -325,9 +325,13 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     @Override
-    protected Map<String, Pair<String, String>> getSharedLocks() {
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
 
+        var parentLocks = super.getExclusiveLocks();
+        if (parentLocks != null) {
+            locks.putAll(parentLocks);
+        }
         for (DiskImage image: getImagesToCheckDestinationStorageDomains()) {
             locks.put(image.getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskSharedLockMessage()));
