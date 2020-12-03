@@ -1,4 +1,7 @@
 ---
+#
+# NOTE: This must be done before configuring vdsm.
+#
 - name: Check if vdsm id exists
   stat:
     path: "{{ vdsm_id_file }}"

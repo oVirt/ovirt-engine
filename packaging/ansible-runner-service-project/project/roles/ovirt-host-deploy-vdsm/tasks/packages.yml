@@ -24,28 +24,3 @@
   fail:
     msg: "Minimum version required for vdsm is {{ host_deploy_vdsm_min_version }}"
   when: host_deploy_vdsm_min_version|float < ansible_facts.packages['vdsm'][0].version|float
-
-# Order of next steps is important:
-#     1. Configure lvm filter
-#     2. Configure vdsm
-#
-# If we configure vdsm before configuring lvm filter, multipath may
-# grab local devices that should be blacklisted. This may expose
-# the local devices as FC storage in engine.
-
-- name: Configure LVM filter
-  command: vdsm-tool config-lvm-filter -y
-  register: lvm_filter_result
-  when: el_ver|int >= 8
-  ignore_errors: true
-
-- name: Error configuring LVM filter
-  debug:
-    msg: "Cannot configure LVM filter on host, please run: vdsm-tool config-lvm-filter"
-  when:
-    - el_ver|int >= 8
-    - lvm_filter_result.rc != 0
-
-- name: Reconfigure vdsm tool
-  command: vdsm-tool configure --force
-  changed_when: True

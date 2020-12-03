@@ -1,0 +1,29 @@
+---
+# Configure vdsm.
+#
+# NOTE: This must be done after creating host vdsm.id file.
+#
+# Order of next steps is important:
+#     1. Configure lvm filter
+#     2. Configure vdsm
+#
+# If we configure vdsm before configuring lvm filter, multipath may
+# grab local devices that should be blacklisted. This may expose
+# the local devices as FC storage in engine.
+
+- name: Configure LVM filter
+  command: vdsm-tool config-lvm-filter -y
+  register: lvm_filter_result
+  when: el_ver|int >= 8
+  ignore_errors: true
+
+- name: Error configuring LVM filter
+  debug:
+    msg: "Cannot configure LVM filter on host, please run: vdsm-tool config-lvm-filter"
+  when:
+    - el_ver|int >= 8
+    - lvm_filter_result.rc != 0
+
+- name: Configure host for vdsm
+  command: vdsm-tool configure --force
+  changed_when: True

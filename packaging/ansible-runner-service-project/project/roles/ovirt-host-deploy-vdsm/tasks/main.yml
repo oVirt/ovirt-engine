@@ -1,8 +1,9 @@
 ---
-- name: Include packages, vdsmid, pki and restart services tasks
+- name: Include packages, vdsmid, pki, configure, and restart services tasks
   include_tasks: "{{ item }}.yml"
   with_items:
   - packages
   - vdsmid
   - pki
+  - configure
   - restart_services
