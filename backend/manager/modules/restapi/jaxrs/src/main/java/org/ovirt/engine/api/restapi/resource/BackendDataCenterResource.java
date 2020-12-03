@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.DataCenter;
+import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
 import org.ovirt.engine.api.resource.ClustersResource;
@@ -162,5 +163,10 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
             params.setForceDelete(force);
         }
         return performAction(ActionType.RemoveStoragePool, params);
+    }
+
+    @Override
+    public ActionResource getActionResource(String action, String oid) {
+        return null;
     }
 }
