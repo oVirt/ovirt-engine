@@ -39,7 +39,7 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
         vmBackup = vmBackupDao.get(getParameters().getVmBackup().getId());
         vmBackup.setDisks(vmBackupDao.getDisksByBackupId(vmBackup.getId()));
         setVmId(vmBackup.getVmId());
-        setVdsId(getVm().getRunOnVds());
+        setVdsId(vmBackup.getHostId());
     }
 
     @Override

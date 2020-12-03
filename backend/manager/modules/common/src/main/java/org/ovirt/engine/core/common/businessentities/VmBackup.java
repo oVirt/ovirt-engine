@@ -15,6 +15,8 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
 
     private Guid vmId;
 
+    private Guid hostId;
+
     private Guid fromCheckpointId;
 
     private Guid toCheckpointId;
@@ -39,6 +41,14 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
 
     public void setVmId(Guid vmId) {
         this.vmId = vmId;
+    }
+
+    public Guid getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(Guid hostId) {
+        this.hostId = hostId;
     }
 
     public Guid getFromCheckpointId() {
@@ -90,6 +100,7 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
         return Objects.hash(
                 id,
                 vmId,
+                hostId,
                 fromCheckpointId,
                 toCheckpointId,
                 phase,
@@ -109,6 +120,7 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
         VmBackup other = (VmBackup) obj;
         return Objects.equals(id, other.id)
                 && Objects.equals(vmId, other.vmId)
+                && Objects.equals(hostId, other.hostId)
                 && Objects.equals(fromCheckpointId, other.fromCheckpointId)
                 && Objects.equals(toCheckpointId, other.toCheckpointId)
                 && Objects.equals(phase, other.phase)

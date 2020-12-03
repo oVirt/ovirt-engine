@@ -19,6 +19,7 @@ CREATE OR REPLACE FUNCTION InsertVmBackup (
     v_from_checkpoint_id UUID,
     v_to_checkpoint_id UUID,
     v_vm_id UUID,
+    v_host_id UUID,
     v_phase TEXT,
     v__create_date TIMESTAMP WITH TIME ZONE
     )
@@ -29,6 +30,7 @@ BEGIN
         from_checkpoint_id,
         to_checkpoint_id,
         vm_id,
+        host_id,
         phase,
         _create_date
         )
@@ -37,6 +39,7 @@ BEGIN
         v_from_checkpoint_id,
         v_to_checkpoint_id,
         v_vm_id,
+        v_host_id,
         v_phase,
         v__create_date
         );
@@ -48,6 +51,7 @@ CREATE OR REPLACE FUNCTION UpdateVmBackup (
     v_from_checkpoint_id UUID,
     v_to_checkpoint_id UUID,
     v_vm_id UUID,
+    v_host_id UUID,
     v_phase TEXT
     )
 RETURNS VOID AS $PROCEDURE$
@@ -57,6 +61,7 @@ BEGIN
         from_checkpoint_id = v_from_checkpoint_id,
         to_checkpoint_id = v_to_checkpoint_id,
         vm_id = v_vm_id,
+        host_id = v_host_id,
         phase = v_phase
     WHERE backup_id = v_backup_id;
 END;$PROCEDURE$

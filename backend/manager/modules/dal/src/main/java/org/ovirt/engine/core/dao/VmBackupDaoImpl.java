@@ -30,6 +30,7 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
     protected MapSqlParameterSource createFullParametersMapper(VmBackup entity) {
         return createIdParameterMapper(entity.getId())
                 .addValue("vm_id", entity.getVmId())
+                .addValue("host_id", entity.getHostId())
                 .addValue("from_checkpoint_id", entity.getFromCheckpointId())
                 .addValue("to_checkpoint_id", entity.getToCheckpointId())
                 .addValue("phase", entity.getPhase().getName())
@@ -50,6 +51,7 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
         VmBackup entity = new VmBackup();
         entity.setId(getGuid(rs, "backup_id"));
         entity.setVmId(getGuid(rs, "vm_id"));
+        entity.setHostId(getGuid(rs, "host_id"));
         entity.setFromCheckpointId(getGuid(rs, "from_checkpoint_id"));
         entity.setToCheckpointId(getGuid(rs, "to_checkpoint_id"));
         entity.setPhase(VmBackupPhase.forName(rs.getString("phase")));
@@ -68,6 +70,7 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("backup_id", entity.getId())
                 .addValue("vm_id", entity.getVmId())
+                .addValue("host_id", entity.getHostId())
                 .addValue("from_checkpoint_id", entity.getFromCheckpointId())
                 .addValue("to_checkpoint_id", entity.getToCheckpointId())
                 .addValue("phase", entity.getPhase().getName());

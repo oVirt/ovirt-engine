@@ -371,6 +371,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     private Guid createVmBackup() {
         final VmBackup vmBackup = getParameters().getVmBackup();
         vmBackup.setId(getCommandId());
+        vmBackup.setHostId(getVdsId());
         vmBackup.setPhase(VmBackupPhase.INITIALIZING);
         vmBackup.setCreationDate(new Date());
         getParameters().setVmBackup(vmBackup);

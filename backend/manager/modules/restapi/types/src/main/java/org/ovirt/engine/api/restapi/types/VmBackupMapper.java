@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.ovirt.engine.api.model.Backup;
 import org.ovirt.engine.api.model.BackupPhase;
+import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
@@ -54,6 +55,11 @@ public class VmBackupMapper {
             Vm vm = new Vm();
             vm.setId(entity.getVmId().toString());
             model.setVm(vm);
+        }
+        if (entity.getHostId() != null) {
+            Host host = new Host();
+            host.setId(entity.getHostId().toString());
+            model.setHost(host);
         }
         return model;
     }
