@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -192,9 +193,16 @@ public class DiskValidator {
                     ReplacementUtils.createSetVariableString("diskStorageType", disk.getDiskStorageType()));
         }
 
-        if (((DiskImage) disk).getImage().getVolumeType() == VolumeType.Preallocated) {
+        DiskImage diskImage = (DiskImage) disk;
+        if (diskImage.getImage().getVolumeType() == VolumeType.Preallocated) {
             return new ValidationResult(
                     EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_FOR_PREALLOCATED,
+                    getDiskAliasVarReplacement());
+        }
+
+        if (diskImage.getImage().getVolumeFormat() == VolumeFormat.COW) {
+            return new ValidationResult(
+                    EngineMessage.ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_FOR_COW,
                     getDiskAliasVarReplacement());
         }
 
