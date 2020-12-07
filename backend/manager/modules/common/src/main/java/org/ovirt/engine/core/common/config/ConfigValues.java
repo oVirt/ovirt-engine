@@ -1001,6 +1001,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     ClientModeVncDefault(ClientAccessLevel.User),
 
+    @TypeConverterAttribute(String.class)
+    ClientModeConsoleDefault(ClientAccessLevel.User),
+
     @Reloadable
     @TypeConverterAttribute(Double.class)
     DelayResetForSpmInSeconds,
