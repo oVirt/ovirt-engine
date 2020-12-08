@@ -292,13 +292,13 @@ public class SyntaxCheckerTest {
     @Test
     public void testUsersWithTags() {
         testValidSql("Users:type=user tag=foo",
-                "SELECT * FROM (SELECT * FROM vdc_users WHERE ( user_id IN (SELECT distinct vdc_users_with_tags.user_id FROM  vdc_users_with_tags   WHERE  vdc_users.user_group = user  AND  vdc_users_with_tags.tag_name IN ('tag1','all') ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM (SELECT * FROM vdc_users WHERE ( user_id IN (SELECT distinct vdc_users_with_tags.user_id FROM  vdc_users_with_tags   WHERE  vdc_users_with_tags.user_group = user  AND  vdc_users_with_tags.tag_name IN ('tag1','all') ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test
     public void testUsersWithVms() {
         testValidSql("Users:type=user vm.id=foo",
-                "SELECT * FROM (SELECT * FROM vdc_users WHERE ( user_id IN (SELECT distinct vdc_users_with_tags.user_id FROM  vdc_users_with_tags   LEFT OUTER JOIN vms_with_tags ON vdc_users_with_tags.vm_guid=vms_with_tags.vm_guid    WHERE  vdc_users.user_group = user  AND  vms_with_tags.vm_guid = foo ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM (SELECT * FROM vdc_users WHERE ( user_id IN (SELECT distinct vdc_users_with_tags.user_id FROM  vdc_users_with_tags   LEFT OUTER JOIN vms_with_tags ON vdc_users_with_tags.vm_guid=vms_with_tags.vm_guid    WHERE  vdc_users_with_tags.user_group = user  AND  vms_with_tags.vm_guid = foo ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test
@@ -505,6 +505,12 @@ public class SyntaxCheckerTest {
     public void testSearchThatContainsColumnNamePrefix() {
         testValidSql("Cluster:namepref*",
                 "SELECT * FROM (SELECT * FROM cluster_view WHERE ( cluster_id IN (SELECT distinct cluster_storage_domain.cluster_id FROM  cluster_storage_domain   WHERE  (  cluster_storage_domain.cpu_name LIKE '%namepref%%' OR  cluster_storage_domain.description LIKE '%namepref%%' OR  cluster_storage_domain.free_text_comment LIKE '%namepref%%' OR  cluster_storage_domain.name LIKE '%namepref%%' ) ))  ORDER BY name ASC) as T1 OFFSET (1 -1) LIMIT 0");
+    }
+
+    @Test
+    public void testSearchThatContainsVmAndStorage() {
+        testValidSql("Vms: status=up and storage=iscsi",
+                "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT distinct vms_with_tags.vm_guid FROM  vms_with_tags   LEFT OUTER JOIN storage_domains_with_hosts_view ON vms_with_tags.storage_id=storage_domains_with_hosts_view.id    WHERE (  vms_with_tags.status = '1'  AND  (  storage_domains_with_hosts_view.storage_comment LIKE '%iscsi%' OR  storage_domains_with_hosts_view.storage_description LIKE '%iscsi%' OR  storage_domains_with_hosts_view.storage_name LIKE '%iscsi%' OR  storage_domains_with_hosts_view.storage_pool_name::text LIKE '%iscsi%' )  )))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     private void testValidSql(String dynamicQuery, String exepctedSQLResult) {

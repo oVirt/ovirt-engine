@@ -8,6 +8,8 @@ import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.VDSNiceType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 
+// IMPORTANT : Adding any new field to this class will require adding it to SearchObjectAutoCompleter.requiresFullTable Map
+
 public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public static final String NAME = "NAME";
     public static final String ADDRESS = "ADDRESS";

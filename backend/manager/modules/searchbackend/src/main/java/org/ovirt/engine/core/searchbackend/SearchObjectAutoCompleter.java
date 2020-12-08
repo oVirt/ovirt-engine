@@ -55,7 +55,85 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         verbs.add(SearchObjects.JOB_OBJ_NAME);
 
         requiresFullTable.put(SearchObjects.VDC_USER_ROLE_SEARCH, true);
-        requiresFullTable.put(SearchObjects.VDC_VM_CLUSTER_SEARCH, true);
+
+        // Adding vm, host and user entities fields such that in case tags are used all the entity fields will be taken
+        // from the tag view and not from the regular one.
+
+        // VMS
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.ADDRESS, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.APPS, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.ARCHITECTURE, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.BIOS_TYPE, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.CLUSTER, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.COMMENT, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.CLUSTER, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.COMPATIBILITY_LEVEL, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.CPU_USAGE, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.CREATED_BY_USER_ID, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.CREATIONDATE, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.CUSTOM_COMPATIBILITY_LEVEL, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.CUSTOM_CPU_TYPE, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.CUSTOM_EMULATED_MACHINE, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.DATACENTER, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.DESCRIPTION, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.FQDN, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.GUARANTEED_MEMORY, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.HAS_ILLEGAL_IMAGES, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.HOST, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.HAS_ILLEGAL_IMAGES, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.ID, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.IP, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.LOGGEDINUSER, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.MEM_USAGE, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.MEMORY, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.MIGRATION_PROGRESS_PERCENT, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.NAME, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.NAMESPACE, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.NETWORK_USAGE, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.NEXT_RUN_CONFIG_EXISTS, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.OS, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.POOL, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.QUOTA, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.STATUS, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.TAG, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.TYPE, true);
+        requiresFullTable.put(SearchObjects.VM_OBJ_NAME + "-" + VmConditionFieldAutoCompleter.UPTIME, true);
+        // Hosts
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.ADDRESS, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.ADDRESS, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.ARCHITECTURE, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.CLUSTER, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.COMMENT, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.COMMITTED_MEM, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.CPU_MODEL, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.CPU_SPEED, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.CPU_USAGE, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.CPUS, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.DATACENTER, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.EXTERNAL_STATUS, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.HA_SCORE, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.HW_ID, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.LOAD, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.MEM_USAGE, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.MEMORY, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.MIGRATING_VMS, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.NAME, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.NETWORK_USAGE, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.SPM_ID, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.STATUS, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.TAG, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.TYPE, true);
+        requiresFullTable.put(SearchObjects.VDS_OBJ_NAME + "-" + VdsConditionFieldAutoCompleter.VERSION, true);
+        // Users
+        requiresFullTable.put(SearchObjects.VDC_USER_OBJ_NAME + "-" + VdcUserConditionFieldAutoCompleter.DEPARTMENT, true);
+        requiresFullTable.put(SearchObjects.VDC_USER_OBJ_NAME + "-" + VdcUserConditionFieldAutoCompleter.DIRECTORY, true);
+        requiresFullTable.put(SearchObjects.VDC_USER_OBJ_NAME + "-" + VdcUserConditionFieldAutoCompleter.FIRST_NAME, true);
+        requiresFullTable.put(SearchObjects.VDC_USER_OBJ_NAME + "-" + VdcUserConditionFieldAutoCompleter.LAST_NAME, true);
+        requiresFullTable.put(SearchObjects.VDC_USER_OBJ_NAME + "-" + VdcUserConditionFieldAutoCompleter.LOGIN, true);
+        requiresFullTable.put(SearchObjects.VDC_USER_OBJ_NAME + "-" + VdcUserConditionFieldAutoCompleter.POOL, true);
+        requiresFullTable.put(SearchObjects.VDC_USER_OBJ_NAME + "-" + VdcUserConditionFieldAutoCompleter.TAG, true);
+        requiresFullTable.put(SearchObjects.VDC_USER_OBJ_NAME + "-" + VdcUserConditionFieldAutoCompleter.TYPE, true);
+        requiresFullTable.put(SearchObjects.VDC_USER_OBJ_NAME + "-" + VdcUserConditionFieldAutoCompleter.USER_NAME, true);
 
         // vms - vds
         addJoin(SearchObjects.VM_OBJ_NAME,

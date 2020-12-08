@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+// IMPORTANT : Adding any new field to this class will require adding it to SearchObjectAutoCompleter.requiresFullTable Map
 
 public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public static final String FIRST_NAME = "NAME";

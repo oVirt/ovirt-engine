@@ -15,6 +15,8 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.compat.Version;
 
+// IMPORTANT : Adding any new field to this class will require adding it to SearchObjectAutoCompleter.requiresFullTable Map
+
 public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public static final String NAME = "NAME";
     public static final String COMMENT = "COMMENT";

@@ -59,7 +59,6 @@ public final class SearchObjects {
 
     // Special fields that require tag based search
     public static final String VDC_USER_ROLE_SEARCH = SearchObjects.VDC_USER_OBJ_NAME + "-ROLE";
-    public static final String VDC_VM_CLUSTER_SEARCH = SearchObjects.VM_OBJ_NAME + "-" + SearchObjects.VDC_CLUSTER_OBJ_NAME;
 
     //special searches
     private static final String ALERT = "EVENTS: severity=alert";
