@@ -1130,6 +1130,11 @@ public class VmHandler implements BackendService {
             if (osRepository.isWindows(vm.getVmOsId())) {
                 if (!FeatureSupported.isWindowsGuestToolsSupported(vm.getClusterCompatibilityVersion())) {
                     virtioWinLoader.load();
+                    // in case we are suppose to use virtio-win RPM but it's not installed we can't check the status
+                    if (virtioWinLoader.getVirtioIsoName() == null
+                            || virtioWinLoader.getAgentVersionByOsName(vm.getVmOsId()) == null) {
+                        return;
+                    }
                     if (getLatestGuestToolsVersion(Set.of(virtioWinLoader.getVirtioIsoName()), getRegexVirtIoIsoPattern())
                             .equals(latestVersionVIO)) {
                         String availableAgent = virtioWinLoader.getAgentVersionByOsName(vm.getVmOsId());

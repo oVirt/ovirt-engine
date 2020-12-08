@@ -36,7 +36,7 @@ public class VirtioWinReader implements VirtioWinLoader {
         try {
             File dir = directoryPath.toFile();
             if (!dir.exists()) {
-                log.error("Directory '{}' doesn't exist.", dir.getPath());
+                log.warn("Directory '{}' doesn't exist.", dir.getPath());
             } else {
                 File[] files = dir.listFiles();
                 if (files == null || files.length <= 0) {
@@ -84,7 +84,11 @@ public class VirtioWinReader implements VirtioWinLoader {
         if (osRepository.get64bitOss().contains(osId)) {
             lookUpArch = "amd64";
         }
-        readAgents(lookUpArch);
+        try {
+            readAgents(lookUpArch);
+        } catch (Exception e) {
+            log.debug("Missing agent details to the os ID: {}", osId);
+        }
         return agentVersion;
     }
 
