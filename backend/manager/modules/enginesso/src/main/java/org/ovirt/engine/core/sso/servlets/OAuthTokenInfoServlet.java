@@ -137,8 +137,7 @@ public class OAuthTokenInfoServlet extends HttpServlet {
         payload.put(SsoConstants.JSON_ACTIVE, ssoSession.isActive());
         payload.put(SsoConstants.JSON_TOKEN_TYPE, "bearer");
         payload.put(SsoConstants.JSON_CLIENT_ID, ssoSession.getClientId());
-        payload.put(SsoConstants.JSON_USER_ID, ssoSession.getUserId());
-        payload.put(SsoConstants.JSON_USER_AUTHN_PROFILE, ssoSession.getProfile());
+        payload.put(SsoConstants.JSON_USER_ID, ssoSession.getUserIdWithProfile());
         payload.put(SsoConstants.JSON_USER_AUTHZ, ssoContext.getUserAuthzName(ssoSession));
         payload.put(SsoConstants.JSON_SCOPE, StringUtils.isEmpty(ssoSession.getScope()) ? "" : ssoSession.getScope());
         payload.put(SsoConstants.JSON_EXPIRES_IN, ssoSession.getValidTo().toString());

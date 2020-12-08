@@ -188,12 +188,22 @@ public class WelcomeServlet extends HttpServlet {
                     userInfoMap.get(WelcomeUtils.ERROR_DESCRIPTION));
             request.getSession(true).setAttribute(WelcomeUtils.ERROR, userInfoMap.get(WelcomeUtils.ERROR));
         } else {
-            String userId = (String) userInfoMap.get(WelcomeUtils.JSON_USER_ID);
+            String userId = getUserId(userInfoMap);
             String userAuthz = (String) userInfoMap.get(WelcomeUtils.JSON_USER_AUTHZ);
             username = userId + "@" + userAuthz;
             log.debug("Got current user {} for session", username);
         }
         return username;
+    }
+
+    private String getUserId(Map<String, Object> userInfoMap) {
+        String userIdWithProfile = (String) userInfoMap.get(WelcomeUtils.JSON_USER_ID);
+        String userId = null;
+        int index = userIdWithProfile.lastIndexOf("@");
+        if (index != -1) {
+            userId = userIdWithProfile.substring(0, index);
+        }
+        return userId;
     }
 
     public boolean getChangePasswordEnabled(Map<String, Object> userInfoMap) {

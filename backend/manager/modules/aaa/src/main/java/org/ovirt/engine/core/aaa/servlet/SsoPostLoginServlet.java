@@ -62,7 +62,7 @@ public class SsoPostLoginServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("Entered SsoPostLoginServlet");
         String username;
-        String profile;
+        String profile = null;
         String authzName;
         InitialContext ctx = null;
         try {
@@ -90,7 +90,11 @@ public class SsoPostLoginServlet extends HttpServlet {
             Map<String, Object> payload = (Map<String, Object>) jsonResponse.get("ovirt");
 
             username = (String) jsonResponse.get("user_id");
-            profile = (String) jsonResponse.get("user_authn_profile");
+            int index = username.lastIndexOf("@");
+            if (index != -1) {
+                profile = username.substring(index + 1);
+                username = username.substring(0, index);
+            }
             authzName = (String) jsonResponse.get("user_authz");
 
             try {

@@ -40,9 +40,13 @@ public class SsoUtils {
         InitialContext ctx = null;
         Map<String, Object> payload = (Map<String, Object>) jsonResponse.get("ovirt");
         String username = (String) jsonResponse.get("user_id");
-        String profile = (String) jsonResponse.get("user_authn_profile");
+        String profile = null;
+        int index = username.lastIndexOf("@");
+        if (index != -1) {
+            profile = username.substring(index + 1);
+            username = username.substring(0, index);
+        }
         String authzName = (String) jsonResponse.get("user_authz");
-
         try {
             ctx = new InitialContext();
             ActionReturnValue queryRetVal = FiltersHelper.getBackend(ctx).runAction(ActionType.CreateUserSession,
