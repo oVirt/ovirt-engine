@@ -7,7 +7,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -119,12 +118,11 @@ public class OpenIdService{
                 request.getServerPort());
 
         // Open ID JWT
-        String userIdWithProfile = getUserIdWithProfile(ssoSession);
         JWT token = new JWT()
                 .acr("0")
                 .authTime(ssoSession.getAuthTime())
-                .sub(userIdWithProfile)
-                .preferredUserName(userIdWithProfile)
+                .sub(ssoSession.getUserIdWithProfile())
+                .preferredUserName(ssoSession.getUserIdWithProfile())
                 .email(ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.EMAIL))
                 .familyName(ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.FIRST_NAME))
                 .givenName(ssoSession.getPrincipalRecord().get(Authz.PrincipalRecord.FIRST_NAME))
@@ -145,11 +143,4 @@ public class OpenIdService{
             throw new JWTException(JWTException.ErrorCode.CANNOT_SERIALIZE_PLAIN_JWT, e);
         }
     }
-
-    private String getUserIdWithProfile(SsoSession ssoSession) {
-        return String.format("%s@%s",
-                Objects.toString(ssoSession.getUserId(), ""),
-                Objects.toString(ssoSession.getProfile(), ""));
-    }
-
 }
