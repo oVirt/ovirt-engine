@@ -14,7 +14,6 @@ public class VmCheckpointParameters extends VmOperationParameterBase implements 
     @Valid
     @NotNull
     private VmCheckpoint vmCheckpoint;
-    private DeleteVmCheckpointStep commandStep;
 
     public VmCheckpointParameters() {
     }
@@ -29,14 +28,6 @@ public class VmCheckpointParameters extends VmOperationParameterBase implements 
 
     public void setVmCheckpoint(VmCheckpoint vmCheckpoint) {
         this.vmCheckpoint = vmCheckpoint;
-    }
-
-    public DeleteVmCheckpointStep getCommandStep() {
-        return commandStep;
-    }
-
-    public void setCommandStep(DeleteVmCheckpointStep commandStep) {
-        this.commandStep = commandStep;
     }
 
     @Override

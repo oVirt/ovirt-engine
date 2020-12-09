@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.DeleteVmCheckpointStep;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.action.VmCheckpointParameters;
@@ -36,7 +35,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VmCheckpointVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VmCheckpointsVDSParameters;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -44,7 +42,6 @@ import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmCheckpointDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
@@ -110,51 +107,24 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
 
     @Override
     protected void executeCommand() {
-        getParameters().setCommandStep(DeleteVmCheckpointStep.REDEFINE_CHECKPOINTS);
+        if (!redefineVmCheckpoints()) {
+            setCommandStatus(CommandStatus.FAILED);
+            return;
+        }
         persistCommandIfNeeded();
         setSucceeded(true);
     }
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
-        boolean stepSucceeded = true;
-
-        switch (getParameters().getCommandStep()) {
-        case REDEFINE_CHECKPOINTS:
-            if (!redefineVmCheckpoints()) {
-                stepSucceeded = false;
-            }
-            getParameters().setCommandStep(DeleteVmCheckpointStep.DELETE_CHECKPOINT);
-            break;
-        case DELETE_CHECKPOINT:
-            log.info("Deleting VmCheckpoint '{}'", vmCheckpoint.getId());
-            if (!deleteVmCheckpoint()) {
-                stepSucceeded = false;
-            }
-            getParameters().setCommandStep(DeleteVmCheckpointStep.UPDATE_XML);
-            break;
-        case UPDATE_XML:
-            if (!updateNewRootCheckpointXML()) {
-                stepSucceeded = false;
-            }
-            getParameters().setCommandStep(DeleteVmCheckpointStep.COMPLETE);
-            break;
-        case COMPLETE:
-            setCommandStatus(CommandStatus.SUCCEEDED);
-            break;
-        }
-
-        persistCommandIfNeeded();
-        if (!stepSucceeded) {
+        log.info("Deleting VmCheckpoint '{}'", vmCheckpoint.getId());
+        if (!deleteVmCheckpoint()) {
             setCommandStatus(CommandStatus.FAILED);
+            return false;
         }
-        return stepSucceeded;
-    }
-
-    @Override
-    public void handleFailure() {
-        log.error("Command '{}' id '{}' failed executing step '{}'", getActionType(), getCommandId(),
-                getParameters().getCommandStep());
+        setCommandStatus(CommandStatus.SUCCEEDED);
+        persistCommandIfNeeded();
+        return true;
     }
 
     private boolean deleteVmCheckpoint() {
@@ -168,6 +138,7 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
                 engineException.setVdsError(vdsRetVal.getVdsError());
                 throw engineException;
             }
+            updateNewRootCheckpoint();
             return true;
         } catch (EngineException e) {
             log.error("Failed to execute VM.delete_checkpoints: {}", e.getMessage());
@@ -175,52 +146,21 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
         }
     }
 
-    private boolean updateNewRootCheckpointXML() {
+    private void updateNewRootCheckpoint() {
         // Get the checkpoint chain before removing the root checkpoint from it,
         // the chain is fetched from the DB and ordered from the new root to the leaf.
         List<VmCheckpoint> vmCheckpoints = vmCheckpointDao.getAllForVm(getParameters().getVmId());
 
-        if (vmCheckpoints.size() == 1) {
-            // No need to update the new root checkpoint XML
-            TransactionSupport.executeInNewTransaction(() -> {
-                vmCheckpointDao.remove(vmCheckpoint.getId());
-                return null;
-            });
-            return true;
-        }
-
-        // Get the new root checkpoint of the chain.
-        VmCheckpoint newRootCheckpoint = vmCheckpoints.get(1);
-
-        VDSReturnValue vdsRetVal;
-        try {
-            vdsRetVal = runVdsCommand(VDSCommandType.GetVmCheckpointXML,
-                    new VmCheckpointVDSParameters(getVdsId(),
-                            getParameters().getVmId(),
-                            newRootCheckpoint));
-            if (!vdsRetVal.getSucceeded()) {
-                EngineException engineException = new EngineException();
-                engineException.setVdsError(vdsRetVal.getVdsError());
-                engineException.setVdsReturnValue(vdsRetVal);
-                throw engineException;
-            }
-        } catch (EngineException e) {
-            // TODO: test if the checkpoints chain is still valid in this
-            // case or we should clean the chain and add a proper message.
-            log.error("Failed to execute VM.dump_checkpoint: {}", e.getMessage());
-            return false;
-        }
-
-        VmCheckpointInfo vmCheckpointInfo = (VmCheckpointInfo) vdsRetVal.getReturnValue();
         TransactionSupport.executeInNewTransaction(() -> {
-            newRootCheckpoint.setCheckpointXml(vmCheckpointInfo.getCheckpoint());
-            newRootCheckpoint.setParentId(null);
-            vmCheckpointDao.update(newRootCheckpoint);
+            if (vmCheckpoints.size() > 1) {
+                // Get the new root checkpoint of the chain.
+                VmCheckpoint newRootCheckpoint = vmCheckpoints.get(1);
+                newRootCheckpoint.setParentId(null);
+                vmCheckpointDao.update(newRootCheckpoint);
+            }
             vmCheckpointDao.remove(vmCheckpoint.getId());
             return null;
         });
-
-        return true;
     }
 
     private boolean redefineVmCheckpoints() {

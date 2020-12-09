@@ -41,7 +41,6 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointIds;
-import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
 import org.ovirt.vdsm.jsonrpc.client.BrokerCommandCallback;
 
 public class NullVdsServer implements IVdsServer {
@@ -966,11 +965,6 @@ public class NullVdsServer implements IVdsServer {
     }
 
     @Override public UUIDListReturn listVmCheckpoints(String vmId) {
-        return null;
-    }
-
-    @Override
-    public VmCheckpointInfo getVmCheckpointsXML(String vmId, String checkpointId) {
         return null;
     }
 

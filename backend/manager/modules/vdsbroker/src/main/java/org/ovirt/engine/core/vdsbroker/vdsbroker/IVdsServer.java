@@ -41,7 +41,6 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointIds;
-import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
 import org.ovirt.vdsm.jsonrpc.client.BrokerCommandCallback;
 
 @SuppressWarnings("rawtypes")
@@ -541,8 +540,6 @@ public interface IVdsServer {
     VmCheckpointIds deleteVmCheckpoints(String vmId, String[] checkpointIds);
 
     UUIDListReturn listVmCheckpoints(String vmId);
-
-    VmCheckpointInfo getVmCheckpointsXML(String vmId, String checkpointId);
 
     StatusOnlyReturn addBitmap(String jobId, Map<String, Object> volInfo, String bitmapName);
 

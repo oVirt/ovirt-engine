@@ -48,7 +48,6 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointIds;
-import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointInfo;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BooleanReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DeviceInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DevicesVisibilityMapReturn;
@@ -2292,17 +2291,6 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request).withResponseKey("uuidlist")
                 .withResponseType(Object[].class);
         return new UUIDListReturn(response);
-    }
-
-    @Override
-    public VmCheckpointInfo getVmCheckpointsXML(String vmId, String checkpointId) {
-        JsonRpcRequest request =
-                new RequestBuilder("VM.dump_checkpoint")
-                        .withParameter("vmID", vmId)
-                        .withParameter("checkpoint_id", checkpointId)
-                        .build();
-        Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new VmCheckpointInfo(response);
     }
 
     @Override
