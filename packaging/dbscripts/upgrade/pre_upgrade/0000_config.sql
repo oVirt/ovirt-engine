@@ -1110,8 +1110,6 @@ select fn_db_update_config_value('ServerCPUList',
         || '16:Secure Intel Skylake Server Family:vmx,ssbd,md_clear,model_Skylake-Server-noTSX-IBRS:Skylake-Server-noTSX-IBRS,+ssbd,+md-clear:x86_64; '
         || '17:Intel Cascadelake Server Family:vmx,model_Cascadelake-Server:Cascadelake-Server,-hle,-rtm:x86_64; '
         || '18:Secure Intel Cascadelake Server Family:vmx,model_Cascadelake-Server-noTSX:Cascadelake-Server-noTSX:x86_64; '
-        || '19:Intel Icelake Server Family:vmx,model_Icelake-Server-noTSX:Icelake-Server-noTSX:x86_64; '
-        || '20:Secure Intel Icelake Server Family:vmx,arch-capabilities,rdctl-no,ibrs-all,skip-l1dfl-vmentry,mds-no,pschange-mc-no,taa-no,model_Icelake-Server-noTSX:Icelake-Server-noTSX,+arch-capabilities,+rdctl-no,+ibrs-all,+skip-l1dfl-vmentry,+mds-no,+pschange-mc-no,+taa-no:x86_64; '
         || '1:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; '
         || '2:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; '
         || '3:AMD EPYC:svm,nx,model_EPYC:EPYC:x86_64; '
