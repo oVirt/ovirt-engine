@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.security.cert.Certificate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -956,7 +957,7 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
-    @Override public VmCheckpointIds redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints) {
+    @Override public VmCheckpointIds redefineVmCheckpoints(String vmId, Collection<Map<String, Object>> checkpoints) {
         return null;
     }
 

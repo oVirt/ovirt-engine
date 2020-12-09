@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.jsonrpc;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -2261,7 +2262,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public VmCheckpointIds redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints) {
+    public VmCheckpointIds redefineVmCheckpoints(String vmId, Collection<Map<String, Object>> checkpoints) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.redefine_checkpoints")
                         .withParameter("vmID", vmId)

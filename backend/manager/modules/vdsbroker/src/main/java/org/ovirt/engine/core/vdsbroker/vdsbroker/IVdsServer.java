@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.security.cert.Certificate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -535,7 +536,7 @@ public interface IVdsServer {
 
     VmBackupInfo vmBackupInfo(String vmId, String backupId, String checkpointId);
 
-    VmCheckpointIds redefineVmCheckpoints(String vmId, Map<String, Object>[] checkpoints);
+    VmCheckpointIds redefineVmCheckpoints(String vmId, Collection<Map<String, Object>> checkpoints);
 
     VmCheckpointIds deleteVmCheckpoints(String vmId, String[] checkpointIds);
 

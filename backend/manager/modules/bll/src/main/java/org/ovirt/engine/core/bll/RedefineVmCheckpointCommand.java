@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -11,11 +12,14 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VmBackupVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VmCheckpointsVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmCheckpointDao;
@@ -66,13 +70,16 @@ public class RedefineVmCheckpointCommand<T extends VmBackupParameters> extends V
         }
 
         for (VmCheckpoint checkpoint : checkpointsToSync) {
-            log.info("Redefine VM '{}' checkpoint '{}'", getVmId(), checkpoint.getId());
+            boolean checkpointRedefined = false;
             // Checkpoint can be redefined in bulks, currently redefine one checkpoint at a time
-            VDSReturnValue redefineVdsReturnValue = performVmCheckpointsOperation(VDSCommandType.RedefineVmCheckpoints,
-                    new VmCheckpointsVDSParameters(getVdsId(), getVmId(), List.of(checkpoint)));
-            VmCheckpointIds vmCheckpointIds = (VmCheckpointIds) redefineVdsReturnValue.getReturnValue();
-            if (vmCheckpointIds == null || vmCheckpointIds.getError() != null ||
-                    vmCheckpointIds.getCheckpointIds().isEmpty()) {
+            VDSReturnValue redefineVdsReturnValue = performRedefineCheckpoint(checkpoint);
+            if (redefineVdsReturnValue != null) {
+                VmCheckpointIds vmCheckpointIds = (VmCheckpointIds) redefineVdsReturnValue.getReturnValue();
+                checkpointRedefined = vmCheckpointIds != null && vmCheckpointIds.getError() == null &&
+                        !vmCheckpointIds.getCheckpointIds().isEmpty();
+            }
+
+            if (!checkpointRedefined) {
                 log.error("Failed to redefine VM '{}' checkpoint '{}', removing the VM checkpoints chain",
                         getVmId(),
                         checkpoint.getId());
@@ -104,6 +111,44 @@ public class RedefineVmCheckpointCommand<T extends VmBackupParameters> extends V
 
         // Checkpoints chain is synced
         return Collections.emptyList();
+    }
+
+    private VDSReturnValue performRedefineCheckpoint(VmCheckpoint checkpoint) {
+        log.info("Redefine VM '{}' checkpoint '{}'", getVmId(), checkpoint.getId());
+        VDSReturnValue vdsRetVal;
+        try {
+            vdsRetVal = runVdsCommand(VDSCommandType.RedefineVmCheckpoints,
+                    buildRedefineCheckpointsParameters(checkpoint));
+            if (!vdsRetVal.getSucceeded()) {
+                EngineException engineException = new EngineException();
+                engineException.setVdsError(vdsRetVal.getVdsError());
+                throw engineException;
+            }
+        } catch (EngineException e) {
+            log.error("Failed to redefine VM '{}' checkpoints: {}", getVmId(), e);
+            return null;
+        }
+        return vdsRetVal;
+    }
+
+    private VmBackupVDSParameters buildRedefineCheckpointsParameters(VmCheckpoint checkpoint) {
+        // Only the disks that exist on the VM can be used for generating the checkpoint XML
+        vmHandler.updateDisksFromDb(getVm());
+        List<DiskImage> checkpointDisks = vmCheckpointDao.getDisksByCheckpointId(checkpoint.getId())
+                .stream()
+                .filter(diskImage -> getVm().getDiskMap().containsKey(diskImage.getId()))
+                .collect(Collectors.toList());
+
+        VmBackup vmBackup = new VmBackup();
+        // Checkpoint's backup isn't needed for redefining a checkpoint
+        vmBackup.setId(Guid.Empty);
+        vmBackup.setVmId(getVmId());
+        vmBackup.setDisks(checkpointDisks);
+        vmBackup.setToCheckpointId(checkpoint.getId());
+        vmBackup.setFromCheckpointId(checkpoint.getParentId());
+        vmBackup.setCreationDate(checkpoint.getCreationDate());
+
+        return new VmBackupVDSParameters(getVdsId(), vmBackup);
     }
 
     private VDSReturnValue performVmCheckpointsOperation(VDSCommandType vdsCommandType,
