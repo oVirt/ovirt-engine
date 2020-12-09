@@ -18,8 +18,7 @@ CREATE OR REPLACE FUNCTION InsertVmCheckpoint (
     v_checkpoint_id UUID,
     v_vm_id UUID,
     v_parent_id UUID,
-    v__create_date TIMESTAMP WITH TIME ZONE,
-    v_checkpoint_xml TEXT
+    v__create_date TIMESTAMP WITH TIME ZONE
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -27,15 +26,13 @@ BEGIN
         checkpoint_id,
         vm_id,
         parent_id,
-        _create_date,
-        checkpoint_xml
+        _create_date
         )
     VALUES (
         v_checkpoint_id,
         v_vm_id,
         v_parent_id,
-        v__create_date,
-        v_checkpoint_xml
+        v__create_date
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -43,28 +40,14 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION UpdateVmCheckpoint (
     v_checkpoint_id UUID,
     v_vm_id UUID,
-    v_parent_id UUID,
-    v_checkpoint_xml TEXT
+    v_parent_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE vm_checkpoints
     SET checkpoint_id = v_checkpoint_id,
         vm_id = v_vm_id,
-        parent_id = v_parent_id,
-        checkpoint_xml = v_checkpoint_xml
-    WHERE checkpoint_id = v_checkpoint_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION UpdateVmCheckpointXml (
-    v_checkpoint_id UUID,
-    v_checkpoint_xml TEXT
-    )
-RETURNS VOID AS $PROCEDURE$
-BEGIN
-    UPDATE vm_checkpoints
-    SET checkpoint_xml = v_checkpoint_xml
+        parent_id = v_parent_id
     WHERE checkpoint_id = v_checkpoint_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

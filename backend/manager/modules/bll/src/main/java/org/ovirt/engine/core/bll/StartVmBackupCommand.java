@@ -304,7 +304,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 return false;
             }
         }
-        updateVmBackupCheckpoint(null);
+        updateVmBackupCheckpoint();
         return true;
     }
 
@@ -336,17 +336,9 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             if (vmBackupInfo == null) {
                 return false;
             }
-        } else if (vmBackupInfo.getCheckpoint() == null && !isBackupContainsRawDisksOnly()
-                && FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())) {
-            vmBackupInfo = recoverFromMissingCheckpointInfo();
-            if (vmBackupInfo == null) {
-                return false;
-            }
         }
 
-        if (vmBackupInfo.getCheckpoint() != null) {
-            updateVmBackupCheckpoint(vmBackupInfo);
-        }
+        updateVmBackupCheckpoint();
         storeBackupsUrls(vmBackupInfo.getDisks());
         return true;
     }
@@ -358,22 +350,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             log.error("Failed to start VM '{}' backup '{}' on the host",
                     getVmId(),
                     getParameters().getVmBackup().getId());
-            return null;
-        }
-        return vmBackupInfo;
-    }
-
-    private VmBackupInfo recoverFromMissingCheckpointInfo() {
-        // Try to fetch the checkpoint XML again
-        VmBackupInfo vmBackupInfo = performVmBackupOperation(VDSCommandType.GetVmBackupInfo);
-        if (vmBackupInfo == null || vmBackupInfo.getCheckpoint() == null) {
-            // Best effort - stop the backup
-            runInternalAction(ActionType.StopVmBackup, getParameters());
-            addCustomValue("backupId", getParameters().getVmBackup().getId().toString());
-            auditLogDirector.log(this, AuditLogType.VM_BACKUP_STOPPED);
-            log.error("Failed to fetch checkpoint id: '{}' XML from Libvirt, VM id: '{}' "
-                            + "backup chain cannot be used anymore and a full backup should be taken.",
-                    getParameters().getVmBackup().getToCheckpointId(), getVmId());
             return null;
         }
         return vmBackupInfo;
@@ -517,16 +493,10 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         vmBackupDao.update(getParameters().getVmBackup());
     }
 
-    private void updateVmBackupCheckpoint(VmBackupInfo vmBackupInfo) {
+    private void updateVmBackupCheckpoint() {
         TransactionSupport.executeInNewTransaction(() -> {
             // Update the VmBackup to include the checkpoint ID
             vmBackupDao.update(getParameters().getVmBackup());
-
-            if (vmBackupInfo != null) {
-                // Update the vmCheckpoint to include the checkpoint XML
-                vmCheckpointDao.updateCheckpointXml(getParameters().getVmBackup().getToCheckpointId(),
-                        vmBackupInfo.getCheckpoint());
-            }
             return null;
         });
     }
