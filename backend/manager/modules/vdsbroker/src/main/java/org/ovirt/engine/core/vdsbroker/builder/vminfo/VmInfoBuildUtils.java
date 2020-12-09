@@ -1625,7 +1625,7 @@ public class VmInfoBuildUtils {
         for (VmDevice device : getVmDevices(vm.getId())) {
             if (device.isPlugged() && device.getType() == VmDeviceGeneralType.HOSTDEV) {
                 HostDevice hostDevice = hostDevicesSupplier.get().get(device.getDevice());
-                if (hostDevice.getCapability().equals("nvdimm")) {
+                if (hostDevice != null && "nvdimm".equals(hostDevice.getCapability())) {
                     size += getNvdimmAlignedSize(vm, hostDevice);
                 }
             }
