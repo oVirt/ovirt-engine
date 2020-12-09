@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -285,6 +286,14 @@ public class DiskValidatorTest {
         disk.getImage().setVolumeType(VolumeType.Preallocated);
         assertThat(validator.isSparsifySupported(), failsWith(EngineMessage
                 .ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_FOR_PREALLOCATED));
+    }
+
+    @Test
+    public void sparsifyNotSupportedWhenDiskIsCow() {
+        createStorageDomainForDisk(StorageType.NFS);
+        disk.getImage().setVolumeFormat(VolumeFormat.COW);
+        assertThat(validator.isSparsifySupported(), failsWith(EngineMessage
+                .ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_FOR_COW));
     }
 
     @Test
