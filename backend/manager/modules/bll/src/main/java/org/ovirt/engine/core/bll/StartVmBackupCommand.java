@@ -18,6 +18,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
@@ -42,6 +43,8 @@ import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -61,7 +64,9 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmCheckpointDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 
@@ -82,6 +87,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     private VmCheckpointDao vmCheckpointDao;
     @Inject
     private BaseDiskDao baseDiskDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
@@ -114,6 +121,10 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
         DiskImagesValidator diskImagesValidator = createDiskImagesValidator(getDisks());
         if (!validate(diskImagesValidator.diskImagesNotLocked())) {
+            return false;
+        }
+
+        if (!validate(allDisksPlugged())) {
             return false;
         }
 
@@ -169,6 +180,21 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         return getDiskIds().stream()
                 .filter(diskId -> !getFromCheckpointDisksIds().contains(diskId))
                 .collect(Collectors.toSet());
+    }
+
+    public ValidationResult allDisksPlugged() {
+        List<Guid> unpluggedDisks = getParameters().getVmBackup().getDisks()
+                .stream()
+                .map(diskImage -> vmDeviceDao.get(new VmDeviceId(diskImage.getId(), getVmId())))
+                .filter(vmDevice -> !vmDevice.isPlugged())
+                .map(VmDevice::getDeviceId)
+                .collect(Collectors.toList());
+        if (!unpluggedDisks.isEmpty()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_ARE_NOT_ACTIVE,
+                    ReplacementUtils.createSetVariableString("vmName", getVm().getName()),
+                    ReplacementUtils.createSetVariableString("diskIds", StringUtils.join(unpluggedDisks, ", ")));
+        }
+        return ValidationResult.VALID;
     }
 
     @Override

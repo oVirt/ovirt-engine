@@ -28,6 +28,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -38,6 +40,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmCheckpointDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.MockedConfig;
@@ -66,6 +69,8 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     private VmBackupDao vmBackupDao;
     @Mock
     private VmCheckpointDao vmCheckpointDao;
+    @Mock
+    private VmDeviceDao vmDeviceDao;
 
     private Guid vmId = Guid.newGuid();
     private VM vm = new VM();
@@ -111,6 +116,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedVmNotQualifiedForBackup() {
         mockVm(VMStatus.PoweringUp);
+        mockVmDevice(true);
         doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
         doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -122,6 +128,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     public void validateFailedBackupAlreadyInProgress() {
         mockVm(VMStatus.Up);
         mockVds(true);
+        mockVmDevice(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(List.of(mockVmBackup()));
         doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
         doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
@@ -134,6 +141,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     public void validateFailedVdsNotSupportBackup() {
         mockVds(false);
         mockVm(VMStatus.Up);
+        mockVmDevice(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(new ArrayList<>());
         doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
         doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
@@ -144,6 +152,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedNotAllDisksSupportsIncremental() {
+        mockVmDevice(true);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_DISABLED_FOR_DISKS))
                 .when(diskImagesValidator).incrementalBackupEnabled();
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -154,6 +163,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedMixedBackup() {
         mockVm(VMStatus.Up);
+        mockVmDevice(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(List.of(mockVmBackup()));
         doReturn(Set.of(diskImages)).when(command).getDisksNotInPreviousCheckpoint();
         doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
@@ -167,6 +177,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
         command.getCluster().setCompatibilityVersion(Version.getLast());
         mockVds(true);
         mockVm(VMStatus.Up);
+        mockVmDevice(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(new ArrayList<>());
         doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
         doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
@@ -177,6 +188,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedMissingCheckpoint() {
         mockVm(VMStatus.Up);
+        mockVmDevice(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(List.of(mockVmBackup()));
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_CHECKPOINT_NOT_EXIST);
@@ -187,10 +199,22 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     public void validateVmQualifiedForBackup() {
         mockVds(true);
         mockVm(VMStatus.Up);
+        mockVmDevice(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(new ArrayList<>());
         doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
         doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
         ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
+    public void validateFailedVmDeviceNotActive() {
+        mockVds(true);
+        mockVm(VMStatus.Up);
+        mockVmDevice(false);
+        when(vmBackupDao.getAllForVm(vmId)).thenReturn(new ArrayList<>());
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_DISKS_ARE_NOT_ACTIVE);
     }
 
     private VmBackup mockVmBackup() {
@@ -241,6 +265,13 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setBackupEnabled(backupEnabled);
         when(vdsDao.get(any())).thenReturn(vds);
+    }
+
+    private void mockVmDevice(Boolean isPlugged) {
+        VmDevice vmDevice = new VmDevice();
+        vmDevice.setId(new VmDeviceId(Guid.newGuid(), Guid.newGuid()));
+        vmDevice.setPlugged(isPlugged);
+        when(vmDeviceDao.get(any())).thenReturn(vmDevice);
     }
 
     private StartVmBackupCommand<VmBackupParameters> createCommand() {
