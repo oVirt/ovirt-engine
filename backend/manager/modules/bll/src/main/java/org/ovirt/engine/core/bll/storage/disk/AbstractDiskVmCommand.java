@@ -275,7 +275,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
      *
      * @return an address allocated to the given disk
      */
-    public String getDiskAddress(final String currentAddress, DiskInterface diskInterface) {
+    private String getDiskAddress(final String currentAddress, DiskInterface diskInterface) {
         switch (diskInterface) {
         case VirtIO_SCSI:
         case SPAPR_VSCSI:
