@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
+import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -123,10 +125,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         }
 
         if (commandType == VDSCommandType.HotPlugDisk) {
-            var address = getDiskAddress(vmDevice.getAddress(), getDiskVmElement().getDiskInterface());
-            // Updating device's address immediately (instead of waiting to VmsMonitoring)
-            // to prevent a duplicate unit value (i.e. ensuring a unique unit value).
-            updateVmDeviceAddress(address, vmDevice);
+            updateDeviceAddress(vmDevice);
         }
 
         disk.setDiskVmElements(Collections.singleton(getDiskVmElement()));
@@ -270,46 +269,48 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return cinderBroker;
     }
 
+    private void updateDeviceAddress(VmDevice vmDevice) {
+        DiskInterface diskInterface = getDiskVmElement().getDiskInterface();
+        if (diskInterface == DiskInterface.VirtIO_SCSI || diskInterface == DiskInterface.SPAPR_VSCSI) {
+            try (EngineLock vmDiskHotPlugEngineLock = lockVmDiskHotPlugWithWait()) {
+                String address = getScsiDiskAddress(vmDevice.getAddress(), diskInterface);
+                if (!Objects.equals(vmDevice.getAddress(), address)) {
+                    // Updating device's address immediately (instead of waiting to VmsMonitoring)
+                    // to prevent a duplicate unit value (i.e. ensuring a unique unit value).
+                    CompensationUtils.<VmDeviceId, VmDevice> updateEntity(vmDevice,
+                            dev -> dev.setAddress(address),
+                            vmDeviceDao,
+                            getCompensationContext());
+                }
+            }
+        }
+    }
+
     /**
-     * Returns a possibly new PCI address allocated for a disk that is set the specified address and interface
+     * Returns a possibly new PCI address allocated for a disk that is set with the specified address and interface
      *
      * @return an address allocated to the given disk
      */
-    private String getDiskAddress(final String currentAddress, DiskInterface diskInterface) {
-        switch (diskInterface) {
-        case VirtIO_SCSI:
-        case SPAPR_VSCSI:
-            int controllerIndex = ArchStrategyFactory.getStrategy(getVm().getClusterArch())
-                    .run(new GetControllerIndices())
-                    .returnValue()
-                    .get(diskInterface);
-            try (EngineLock vmDiskHotPlugEngineLock = lockVmDiskHotPlugWithWait()) {
-                switch (diskInterface) {
-                case VirtIO_SCSI:
-                    var vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(getVm());
-                    var vmDeviceUnitMapForController =
-                            vmDeviceUnitMapForController(currentAddress, vmDeviceUnitMap, diskInterface);
-                    var addressMap = getAddressMapForScsiDisk(currentAddress,
-                            vmDeviceUnitMapForController,
-                            controllerIndex,
-                            false,
-                            false);
-                    return addressMap.toString();
-                case SPAPR_VSCSI:
-                    vmDeviceUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
-                    vmDeviceUnitMapForController =
-                            vmDeviceUnitMapForController(currentAddress, vmDeviceUnitMap, diskInterface);
-                    addressMap = getAddressMapForScsiDisk(currentAddress,
-                            vmDeviceUnitMapForController,
-                            controllerIndex,
-                            true,
-                            true);
-                    return addressMap.toString();
-                }
-            }
-        default:
-            return currentAddress;
-        }
+    private String getScsiDiskAddress(String currentAddress, DiskInterface diskInterface) {
+        int controllerIndex = ArchStrategyFactory.getStrategy(getVm().getClusterArch())
+                .run(new GetControllerIndices())
+                .returnValue()
+                .get(diskInterface);
+        var vmDeviceUnitMap = getVmDeviceUnitMapForScsiDisks(diskInterface);
+        Map<VmDevice, Integer> vmDeviceUnitMapForController =
+                vmDeviceUnitMapForController(currentAddress, vmDeviceUnitMap, diskInterface);
+        Map<String, String> addressMap = getAddressMapForScsiDisk(currentAddress,
+                vmDeviceUnitMapForController,
+                controllerIndex,
+                diskInterface == DiskInterface.SPAPR_VSCSI,
+                diskInterface == DiskInterface.SPAPR_VSCSI);
+        return addressMap.toString();
+    }
+
+    private Map<Integer, Map<VmDevice, Integer>> getVmDeviceUnitMapForScsiDisks(DiskInterface diskInterface) {
+        return diskInterface == DiskInterface.VirtIO_SCSI
+                ? vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(getVm())
+                : vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
     }
 
     private Map<VmDevice, Integer> vmDeviceUnitMapForController(String address,
@@ -346,16 +347,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                     reserveForScsiCd && controllerIndex == 0);
             return vmInfoBuildUtils.createAddressForScsiDisk(controllerIndex, availableUnit);
         }
-    }
-
-    protected void updateVmDeviceAddress(final String address, final VmDevice vmDevice) {
-        if (vmDevice.getAddress().equals(address)) {
-            return;
-        }
-        vmDevice.setAddress(address);
-        getCompensationContext().snapshotEntity(vmDevice);
-        getCompensationContext().stateChanged();
-        vmDeviceDao.update(vmDevice);
     }
 
     protected EngineLock lockVmDiskHotPlugWithWait() {

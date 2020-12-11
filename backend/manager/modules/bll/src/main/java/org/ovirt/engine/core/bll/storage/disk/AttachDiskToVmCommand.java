@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -50,7 +52,9 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
     @Inject
@@ -72,6 +76,10 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
     private List<PermissionSubject> permsList = null;
     private Disk disk;
+
+    public AttachDiskToVmCommand(Guid commandId) {
+        super(commandId);
+    }
 
     public AttachDiskToVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -209,16 +217,10 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
     @Override
     protected void executeVmCommand() {
-        if (!isOperationPerformedOnDiskSnapshot()) {
-            vmStaticDao.incrementDbGeneration(getVm().getId());
-        }
-
-        final VmDevice vmDevice = createVmDevice();
-        vmDeviceDao.save(vmDevice);
+        VmDevice vmDevice = createVmDevice();
 
         DiskVmElement diskVmElement = getDiskVmElement();
         diskVmElement.getId().setDeviceId(disk.getId());
-        diskVmElementDao.save(diskVmElement);
 
         // When performing hot plug for VirtIO-SCSI or SPAPR_VSCSI the address map calculation needs this info to be populated
         disk.setDiskVmElements(Collections.singletonList(diskVmElement));
@@ -226,14 +228,24 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         // update cached image
         vmHandler.updateDisksForVm(getVm(), Collections.singletonList(disk));
 
-        if (!isOperationPerformedOnDiskSnapshot() && disk.isAllowSnapshot()) {
-            updateDiskVmSnapshotId();
-        }
+        TransactionSupport.executeInNewTransaction(() -> {
+            vmDeviceDao.save(vmDevice);
+            diskVmElementDao.save(diskVmElement);
+            getCompensationContext().snapshotNewEntities(Arrays.asList(vmDevice, diskVmElement));
+            if (!isOperationPerformedOnDiskSnapshot() && disk.isAllowSnapshot()) {
+                updateDiskVmSnapshotId();
+            }
+            getCompensationContext().stateChanged();
+            return null;
+        });
 
         if (getParameters().isPlugUnPlug() && getVm().getStatus() != VMStatus.Down && getVm().isManaged()) {
             performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice);
         }
 
+        if (!isOperationPerformedOnDiskSnapshot()) {
+            vmStaticDao.incrementDbGeneration(getVm().getId());
+        }
         setSucceeded(true);
     }
 
@@ -256,15 +268,15 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     }
 
     private void updateDiskVmSnapshotId() {
-        Guid snapshotId = snapshotDao.getId(getVmId(), SnapshotType.ACTIVE);
-        if (disk.getDiskStorageType().isInternal()) {
-            DiskImage diskImage = (DiskImage) disk;
-            imageDao.updateImageVmSnapshotId(diskImage.getImageId(),
-                    snapshotId);
-        } else {
+        if (!disk.getDiskStorageType().isInternal()) {
             throw new EngineException(EngineError.StorageException,
                     "update of snapshot id was initiated for unsupported disk type");
         }
+
+        Guid snapshotId = snapshotDao.getId(getVmId(), SnapshotType.ACTIVE);
+        DiskImage diskImage = (DiskImage) disk;
+        getCompensationContext().snapshotEntity(diskImage);
+        imageDao.updateImageVmSnapshotId(diskImage.getImageId(), snapshotId);
     }
 
     @Override
