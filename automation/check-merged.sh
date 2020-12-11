@@ -72,15 +72,9 @@ rm -f ./*tar.gz
 make clean \
     "EXTRA_BUILD_FLAGS=$EXTRA_BUILD_FLAGS"
 
-# Since spotbugs is a pure java task, there's no reason to run it on multiple
-# platforms.
-# Spotbugs currently has false negatives using mvn 3.5.0, which is the current
-# CentOS version from SCL (rh-maven35).
-# We will work with the Fedora version meanwhile which has maven 3.5.4 and is
-# known to work.
-if [[ "$STD_CI_DISTRO" =~ "fc" ]]; then
-    source automation/spotbugs.sh
-fi
+# CentOS 8 contains maven 3.5.4, which is known to work, but on earlier maven
+# releases we got false positives.
+source automation/spotbugs.sh
 
 # Get the tarball
 make dist
@@ -111,14 +105,12 @@ rpmbuild \
 # archive
 [[ -d exported-artifacts ]] || mkdir -p exported-artifacts
 
-if [[ "$STD_CI_DISTRO" =~ "fc" ]]; then
-    # Move find bugs to a dedicated directory under exported-artifacts
-    mkdir -p exported-artifacts/find-bugs
-    find * -name "*spotbugs.xml" -o -name "spotbugsXml.xml" | \
-        while read source_file; do
-            destination_file=$(
-                sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"
-            )
-            mv $source_file exported-artifacts/find-bugs/"$destination_file"
-        done
-fi
+# Move find bugs to a dedicated directory under exported-artifacts
+mkdir -p exported-artifacts/find-bugs
+find * -name "*spotbugs.xml" -o -name "spotbugsXml.xml" | \
+    while read source_file; do
+        destination_file=$(
+            sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"
+        )
+        mv $source_file exported-artifacts/find-bugs/"$destination_file"
+    done

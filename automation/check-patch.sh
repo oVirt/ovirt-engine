@@ -182,15 +182,9 @@ automation/packaging-setup-tests.sh
 # perform quick validations
 make validations
 
-# Since spotbugs is a pure java task, there's no reason to run it on multiple
-# platforms.
-# Spotbugs currently has false negatives using mvn 3.5.0, which is the current
-# CentOS version from SCL (rh-maven35).
-# We will work with the Fedora version meanwhile which has maven 3.5.4 and is
-# known to work.
-if [[ "$STD_CI_DISTRO" =~ "fc" ]]; then
-    source automation/spotbugs.sh
-fi
+# CentOS 8 contains maven 3.5.4, which is known to work, but on earlier maven
+# releases we got false positives.
+source automation/spotbugs.sh
 
 if [ -n "${MILESTONE}" ] && [ "${MILESTONE}" == "master" ]; then
     OVIRT_BUILD_QUICK=1
@@ -236,18 +230,17 @@ rpmbuild \
 # archive
 find output -iname \*rpm -exec mv "{}" exported-artifacts/ \;
 
-if [[ "$STD_CI_DISTRO" =~ "fc" ]]; then
-    # Collect any mvn spotbugs artifacts
-    mkdir -p exported-artifacts/find-bugs
-    find * -name "*spotbugs.xml" -o -name "spotbugsXml.xml" | \
-        while read source_file; do
-            destination_file=$(
-                sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"
-            )
-            mv $source_file exported-artifacts/find-bugs/"$destination_file"
-        done
-    mv ./*tar.gz exported-artifacts/
-fi
+
+# Collect any mvn spotbugs artifacts
+mkdir -p exported-artifacts/find-bugs
+find * -name "*spotbugs.xml" -o -name "spotbugsXml.xml" | \
+    while read source_file; do
+        destination_file=$(
+            sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"
+        )
+        mv $source_file exported-artifacts/find-bugs/"$destination_file"
+    done
+mv ./*tar.gz exported-artifacts/
 
 # Rename junit surefire reports to match jenkins report plugin
 # Error code 4 means nothing changed, ignore it
