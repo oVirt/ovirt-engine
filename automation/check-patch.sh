@@ -244,10 +244,7 @@ mv ./*tar.gz exported-artifacts/
 
 # Rename junit surefire reports to match jenkins report plugin
 # Error code 4 means nothing changed, ignore it
-if [[ "$(rpm --eval "%dist")" != ".fc30" ]]; then
-# On fc30 following fails, while investigating on it, keeping it working on the other distro
 rename .xml .junit.xml exported-artifacts/tests/* ||  [[ $? -eq 4 ]]
-fi
 
 if git show --name-only | grep ovirt-engine.spec.in; then
 pushd exported-artifacts
@@ -263,21 +260,7 @@ pushd exported-artifacts
     ${PACKAGER} clean all
     ${PACKAGER} install -y http://resources.ovirt.org/pub/yum-repo/ovirt-release-master.rpm
 
-    if [[ "$(rpm --eval "%dist")" == ".fc31" ]]; then
-        # fc31 support is broken, just provide a hint on what's missing
-        # without causing the test to fail.
-        echo "fc31"
-    elif
-     [[ "$(rpm --eval "%dist")" == ".fc30" ]]; then
-        # fc30 support is broken, just provide a hint on what's missing
-        # without causing the test to fail.
-        ${PACKAGER} --downloadonly install *noarch.rpm || true
-        if [[ "${ARCH}" == "x86_64" ]]; then
-            echo "Reference installation from ovirt-release repo."
-            ${PACKAGER} --downloadonly install ovirt-engine ovirt-engine-setup-plugin-websocket-proxy || true
-        fi
-    elif
-     [[ "$(rpm --eval "%dist")" == ".el8" ]]; then
+    if [[ "$(rpm --eval "%dist")" == ".el8" ]]; then
         ${PACKAGER} module reset postgresql
         ${PACKAGER} module enable pki-deps javapackages-tools postgresql:12
         ${PACKAGER} --downloadonly install *noarch.rpm

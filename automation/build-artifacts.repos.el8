@@ -1,3 +1,0 @@
-ovirt-master-tested,https://resources.ovirt.org/repos/ovirt/tested/master/rpm/$distro
-#isort
-EL8_collection,https://copr-be.cloud.fedoraproject.org/results/sbonazzo/EL8_collection/epel-8-$basearch/
