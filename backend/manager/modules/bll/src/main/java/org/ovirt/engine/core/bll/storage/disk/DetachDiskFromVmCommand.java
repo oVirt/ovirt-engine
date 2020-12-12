@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.disk;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
@@ -36,8 +35,6 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
     private ImageDao imageDao;
     @Inject
     private VmStaticDao vmStaticDao;
-    @Inject
-    private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
 
     private Disk disk;
     private VmDevice vmDevice;
@@ -119,8 +116,6 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             imageDao.updateImageVmSnapshotId(((DiskImage) disk).getImageId(), null);
         }
 
-        // update cached image
-        vmHandler.updateDisksFromDb(getVm());
         vmStaticDao.incrementDbGeneration(getVm().getId());
         setSucceeded(true);
     }
