@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.disk;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -15,12 +16,15 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@NonTransactiveCommandAttribute
 public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> extends AbstractDiskVmCommand<T> {
 
     @Inject
@@ -39,6 +43,10 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
     private Disk disk;
     private VmDevice vmDevice;
     private DiskVmElement dveFromDb;
+
+    public DetachDiskFromVmCommand(Guid commandId) {
+        super(commandId);
+    }
 
     public DetachDiskFromVmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -108,15 +116,19 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             performPlugCommand(VDSCommandType.HotUnPlugDisk, disk, vmDevice);
         }
 
-        vmDeviceDao.remove(vmDevice.getId());
-        diskVmElementDao.remove(vmDevice.getId());
+        TransactionSupport.executeInNewTransaction(() -> {
+            vmDeviceDao.remove(vmDevice.getId());
+            diskVmElementDao.remove(vmDevice.getId());
 
-        if (!disk.isDiskSnapshot() && disk.getDiskStorageType().isInternal()) {
-            // clears snapshot ID
-            imageDao.updateImageVmSnapshotId(((DiskImage) disk).getImageId(), null);
-        }
+            if (!disk.isDiskSnapshot() && disk.getDiskStorageType().isInternal()) {
+                // clears snapshot ID
+                imageDao.updateImageVmSnapshotId(((DiskImage) disk).getImageId(), null);
+            }
 
-        vmStaticDao.incrementDbGeneration(getVm().getId());
+            vmStaticDao.incrementDbGeneration(getVm().getId());
+            return null;
+        });
+
         setSucceeded(true);
     }
 
