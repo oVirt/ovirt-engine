@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -438,5 +439,31 @@ public class CommandCoordinatorUtil implements BackendService {
      */
     public void subscribe(String eventKey, CommandEntity commandEntity) {
         coco.get().subscribe(eventKey, commandEntity);
+    }
+
+    /**
+     * Get the ids and the statuses of tasks existing on the storage pool.
+     * @param storagePoolId the id of the storage pool
+     */
+    public Map<Guid, AsyncTaskStatus> getAllTasksStatuses(Guid storagePoolId) {
+        return coco.get().getAllTasksStatuses(storagePoolId);
+    }
+
+    /**
+     * Get the ids of tasks existing on the storage pool that match the required status.
+     * @param storagePoolId the id of the storage pool
+     * @param taskStatus the required task status
+     */
+    public List<Guid> getTasksIdsByStatus(Guid storagePoolId, AsyncTaskStatusEnum taskStatus) {
+        Map<Guid, AsyncTaskStatus> tasksStatuses = getAllTasksStatuses(storagePoolId);
+        if (tasksStatuses == null) {
+            return null;
+        }
+
+        return tasksStatuses.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().getStatus() == taskStatus)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 }

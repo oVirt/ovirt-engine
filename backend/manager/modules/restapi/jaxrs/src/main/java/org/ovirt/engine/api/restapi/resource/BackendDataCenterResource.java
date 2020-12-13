@@ -181,4 +181,9 @@ public class BackendDataCenterResource extends AbstractBackendActionableResource
         params.setEntityInfo(new EntityInfo(VdcObjectType.Storage, storageDomainId));
         return performAction(ActionType.SwitchMasterStorageDomain, params);
     }
+
+    @Override
+    public Response cleanFinishedTasks(Action action) {
+        return performAction(ActionType.CleanFinishedTasks, new StoragePoolParametersBase(guid));
+    }
 }

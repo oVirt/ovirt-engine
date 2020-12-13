@@ -355,6 +355,7 @@ public enum ActionType {
     FenceVolumeJob(1039, QuotaDependency.STORAGE),
     ReduceImage(1046, ActionGroup.REDUCE_DISK, QuotaDependency.NONE),
     SwitchMasterStorageDomain(1048, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    CleanFinishedTasks(1049, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
 
     // Leases
     AddVmLease(1040, QuotaDependency.NONE),
