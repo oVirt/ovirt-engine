@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.utils.ansible;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -10,7 +11,12 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.http.HttpResponse;
@@ -37,6 +43,8 @@ import org.mockito.quality.Strictness;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class AnsibleRunnerHttpClientTest {
+    private static Instant dateTime =
+            LocalDateTime.of(1989, 11, 17, 16, 0, 0).atOffset(ZoneOffset.UTC).toInstant();
 
     @Mock
     HttpClient httpClient;
@@ -226,5 +234,51 @@ public class AnsibleRunnerHttpClientTest {
             client.getCommandStdout(any(String.class)),
             is("output")
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideParamsForCommandVariablesFormatting")
+    void testCommandVariablesFormatting(Map<String, Object> variables, String playAction, String result) {
+        assertEquals(result, client.formatCommandVariables(variables, playAction));
+    }
+
+    private static Map<String, Object> provideCommandVariables() {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("dateValue", dateTime);
+        variables.put("stringValue", "default");
+        variables.put("booleanValue", false);
+        variables.put("integerValue", 4);
+        variables.put("stringWithQuotes", "Contains \"double quotes\"");
+        variables.put("xmlVersion", "\\\\\\\"1.0\\\\\\\"");
+        return variables;
+    }
+
+    private static Stream<Arguments> provideParamsForCommandVariablesFormatting() {
+        return Stream.of(
+                // For all playbooks except "Pack OVA"
+                Arguments.of(
+                        provideCommandVariables(),
+                        "",
+                        "{\"dateValue\": \"1989-11-17T16:00:00Z\","
+                                + "\"stringValue\": \"default\","
+                                + "\"booleanValue\": \"false\","
+                                + "\"integerValue\": \"4\","
+                                // This output is actually wrong, because double quotes won't be properly escaped
+                                // in JSON output
+                                + "\"stringWithQuotes\": \"Contains \"double quotes\"\","
+                                + "\"xmlVersion\": \"\\\\\\\"1.0\\\\\\\"\"}"),
+
+                // For "Pack OVA" playbook
+                Arguments.of(
+                        provideCommandVariables(),
+                        "Pack OVA",
+                        "{\"dateValue\": \"1989-11-17T16:00:00Z\","
+                                + "\"stringValue\": \"default\","
+                                + "\"booleanValue\": \"false\","
+                                + "\"integerValue\": \"4\","
+                                // This output is actually wrong, because double quotes won't be properly escaped
+                                // in JSON output
+                                + "\"stringWithQuotes\": \"Contains \"double quotes\"\","
+                                + "\"xmlVersion\": \"\\\\\\\"1.0\\\\\\\"\"}"));
     }
 }

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
@@ -115,27 +116,8 @@ public class AnsibleRunnerHttpClient {
             new BasicNameValuePair("check", String.valueOf(command.isCheckMode()))
         );
 
-        StringEntity entity = new StringEntity(
-        "{" +
-            command.variables()
-                .entrySet()
-                .stream()
-                .map(e -> String.format(
-                    e.getValue() instanceof ArrayNode || e.getValue() instanceof TextNode
-                        ? "\"%1$s\": %2$s"
-                        : "\"%1$s\": \"%2$s\"",
-                    e.getKey(),
-                    // If value is ArrayNode it will format as JSON list
-                    e.getValue() instanceof ArrayNode
-                        ? e.getValue()
-                        // Replace to have proper formatting of JSON newlines
-                        : String.valueOf(e.getValue()).replaceAll("\n", "\\\\n")
-                    )
-                )
-                .collect(Collectors.joining(",")) +
-            "}",
-            ContentType.APPLICATION_JSON
-        );
+        StringEntity entity = new StringEntity(formatCommandVariables(command.variables(), command.playAction()),
+                ContentType.APPLICATION_JSON);
 
         HttpPost request = new HttpPost(uri);
         request.setEntity(entity);
@@ -155,6 +137,25 @@ public class AnsibleRunnerHttpClient {
             }
             return RunnerJsonNode.playUuid(node);
         }
+    }
+
+    protected String formatCommandVariables(Map<String, Object> variables, String playAction) {
+        String res = "{" +
+                variables.entrySet()
+                        .stream()
+                        .map(e -> String.format(
+                                e.getValue() instanceof ArrayNode || e.getValue() instanceof TextNode
+                                        ? "\"%1$s\": %2$s"
+                                        : "\"%1$s\": \"%2$s\"",
+                                e.getKey(),
+                                // If value is ArrayNode it will format as JSON list
+                                e.getValue() instanceof ArrayNode
+                                        ? e.getValue()
+                                        // Replace to have proper formatting of JSON newlines
+                                        : String.valueOf(e.getValue()).replaceAll("\n", "\\\\n")))
+                        .collect(Collectors.joining(","))
+                + "}";
+        return res;
     }
 
     public PlaybookStatus getPlaybookStatus(String playUuid) {
