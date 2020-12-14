@@ -245,3 +245,18 @@ BEGIN
              AND    entity_id = images_storage_domain_view.image_group_id));
 END; $procedure$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetMetadataAndMemoryDisksOfSnapshotsOnDifferentStorageDomains(v_storage_domain_id UUID)
+RETURNS SETOF UUID
+   AS $procedure$
+BEGIN
+    RETURN QUERY SELECT isdv.disk_id
+    FROM images_storage_domain_view isdv
+    INNER JOIN snapshots s
+    ON (s.memory_dump_disk_id = isdv.disk_id OR s.memory_metadata_disk_id = isdv.disk_id)
+    AND isdv.storage_id = v_storage_domain_id
+    WHERE EXISTS (SELECT vm_snapshot_id
+                  FROM images_storage_domain_view
+                  WHERE storage_id != v_storage_domain_id);
+END; $procedure$
+LANGUAGE plpgsql;

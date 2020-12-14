@@ -2063,6 +2063,15 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    public void getAllMetadataAndMemoryDisksOfSnapshotsOnDifferentStorageDomains(
+            AsyncQuery<List<Guid>> aQuery, Guid sdId) {
+        aQuery.converterCallback = new ListConverter<>();
+
+        Frontend.getInstance().runQuery(QueryType.GetAllMetadataAndMemoryDisksOfSnapshotsOnDifferentStorageDomains,
+                new IdQueryParameters(sdId),
+                aQuery);
+    }
+
     public void getVmsFromExternalServer(AsyncQuery aQuery,
             Guid dataCenterId,
             Guid vdsId,

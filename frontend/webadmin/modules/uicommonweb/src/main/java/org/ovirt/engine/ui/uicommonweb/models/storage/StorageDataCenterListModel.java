@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -475,13 +476,35 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     private void setMsgOnDetach(ConfirmationModel model) {
+        StringBuilder warningMsgBuilder = new StringBuilder();
+
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachStorageFromDcsMsg());
 
+        // Checks if the selected Storage Domain contains entities with disks on other Storage Domains.
         AsyncDataProvider.getInstance().doesStorageDomainContainEntityWithDisksOnMultipleSDs(
                 new AsyncQuery<>(returnValue -> {
                     if (returnValue) {
-                        model.setMessage(ConstantsManager.getInstance().getMessages()
+                        warningMsgBuilder.append(ConstantsManager.getInstance().getMessages()
                                 .detachStorageDomainContainsEntitiesWithDisksOnMultipleSDsFromDC());
+                        model.setMessage(warningMsgBuilder.toString());
+                    }
+                }), getEntity().getId());
+
+        // Checks if the selected data center contains a storage domain with dumps or metadata
+        // memory disks of snapshots on other Storage Domains.
+        AsyncDataProvider.getInstance().getAllMetadataAndMemoryDisksOfSnapshotsOnDifferentStorageDomains(
+                new AsyncQuery<>(returnValue -> {
+                    if (returnValue != null && !returnValue.isEmpty()) {
+                        if (warningMsgBuilder.length() > 0) {
+                            warningMsgBuilder.append("\n\n"); //$NON-NLS-1$
+                        }
+                        warningMsgBuilder.append(ConstantsManager.getInstance().getMessages()
+                                .removeStorageDomainFromDataCenterWithMemoryVolumesOnMultipleSDs(
+                                        getEntity().getStorageName(),
+                                        returnValue.stream()
+                                                .map(id -> String.valueOf(id))
+                                                .collect(Collectors.joining(", ")))); //$NON-NLS-1$
+                        model.setMessage(warningMsgBuilder.toString());
                     }
                 }), getEntity().getId());
     }
