@@ -235,7 +235,8 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
                 String.format("$storagePoolName %s", getStoragePoolName()));
     }
 
-    private boolean isHostInSupportedClusterForProxyHost(VDS host) {
+    protected boolean isHostInSupportedClusterForProxyHost(VDS host) {
+        // virt-v2v is not available on PPC
         return clusterDao.get(host.getClusterId()).getArchitecture() != ArchitectureType.ppc64;
     }
 

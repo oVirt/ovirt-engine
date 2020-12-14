@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -40,9 +41,17 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
     }
 
     @Override
+    protected boolean isHostInSupportedClusterForProxyHost(VDS host) {
+        return isVirtV2VUsed() ? super.isHostInSupportedClusterForProxyHost(host) : true;
+    }
+
+    private boolean isVirtV2VUsed() {
+        return getParameters().getVm().getOrigin() != OriginType.OVIRT;
+    }
+
+    @Override
     protected void convert() {
-        boolean useVirtV2V = getParameters().getVm().getOrigin() != OriginType.OVIRT;
-        if (useVirtV2V) {
+        if (isVirtV2VUsed()) {
             runInternalAction(ActionType.ConvertOva,
                     buildConvertOvaParameters(),
                     createConversionStepContext(StepEnum.CONVERTING_OVA));
