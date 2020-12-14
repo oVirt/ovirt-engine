@@ -275,7 +275,7 @@ public abstract class AbstractDiskModel extends DiskModel {
 
         setIsScsiPassthrough(new EntityModel<>());
         getIsScsiPassthrough().setIsAvailable(false);
-        getIsScsiPassthrough().setEntity(true);
+        getIsScsiPassthrough().setEntity(false);
         getIsScsiPassthrough().getEntityChangedEvent().addListener(this);
 
         setIsSgIoUnfiltered(new EntityModel<>());
