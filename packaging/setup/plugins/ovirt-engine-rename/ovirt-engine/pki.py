@@ -13,7 +13,11 @@
 import gettext
 import os
 
-from M2Crypto import X509
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from cryptography.x509.extensions import ExtensionNotFound
+from cryptography.x509.oid import NameOID
 
 from otopi import filetransaction
 from otopi import plugin
@@ -28,11 +32,26 @@ from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 from ovirt_setup_lib import dialog
 
-XN_FLAG_SEP_MULTILINE = 4 << 16
-
 
 def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
+
+
+# Copied from py-cryptography x509/name.py master (3.4).
+# In el8 we have 2.3, which does not have it.
+#: Short attribute names from RFC 4514:
+#: https://tools.ietf.org/html/rfc4514#page-7
+_NAMEOID_TO_NAME = {
+    NameOID.COMMON_NAME: "CN",
+    NameOID.LOCALITY_NAME: "L",
+    NameOID.STATE_OR_PROVINCE_NAME: "ST",
+    NameOID.ORGANIZATION_NAME: "O",
+    NameOID.ORGANIZATIONAL_UNIT_NAME: "OU",
+    NameOID.COUNTRY_NAME: "C",
+    NameOID.STREET_ADDRESS: "STREET",
+    NameOID.DOMAIN_COMPONENT: "DC",
+    NameOID.USER_ID: "UID",
+}
 
 
 @util.export
@@ -103,16 +122,25 @@ class Plugin(plugin.PluginBase):
             )
         )
 
+    def _pubkey_from_certfile(self, cert_file_name):
+        with open(cert_file_name, 'rb') as f:
+            cert_pubkey = x509.load_pem_x509_certificate(
+                f.read(),
+                backend=default_backend(),
+            ).public_key(
+            ).public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo,
+            )
+        return cert_pubkey
+
     def _check_ca_cert(self, entity):
         if (
             entity['ca_cert'] and
-            X509.load_cert(
-                file=entity['ca_cert'],
-                format=X509.FORMAT_PEM,
-            ).get_pubkey().get_rsa().pub() != X509.load_cert(
-                file=oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-                format=X509.FORMAT_PEM,
-            ).get_pubkey().get_rsa().pub()
+            self._pubkey_from_certfile(entity['ca_cert']) !=
+            self._pubkey_from_certfile(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            )
         ):
             self.logger.warning(
                 _(
@@ -172,18 +200,23 @@ class Plugin(plugin.PluginBase):
                 '--cert=-',
             ),
         )
-        x509 = X509.load_cert_string(
-            string='\n'.join(stdout).encode('ascii'),
-            format=X509.FORMAT_PEM,
+        cert = x509.load_pem_x509_certificate(
+            '\n'.join(stdout).encode('ascii'),
+            backend=default_backend(),
         )
-        subject = x509.get_subject()
-        subject.get_entries_by_nid(
-            X509.X509_Name.nid['CN']
-        )[0].set_data(
-            self.environment[
-                osetupcons.RenameEnv.FQDN
-            ].encode('utf8')
-        )
+        new_subject = ''
+        for rdn in cert.subject.rdns:
+            for name_attribute in rdn:
+                type_text = _NAMEOID_TO_NAME[name_attribute.oid]
+                value_text = name_attribute.value
+                if name_attribute.oid == x509.oid.NameOID.COMMON_NAME:
+                    value_text = self.environment[
+                        osetupcons.RenameEnv.FQDN
+                    ]
+                new_subject += '/{typ}={val}'.format(
+                    typ=type_text,
+                    val=outil.escape(value_text, '/\\'),
+                )
 
         self.execute(
             (
@@ -192,12 +225,7 @@ class Plugin(plugin.PluginBase):
                 '--password=%s' % (
                     self.environment[oenginecons.PKIEnv.STORE_PASS],
                 ),
-                '--subject=%s' % '/' + '/'.join(
-                    outil.escape(s, '/\\')
-                    for s in subject.as_text(
-                        flags=XN_FLAG_SEP_MULTILINE,
-                    ).splitlines()
-                ),
+                '--subject=%s' % new_subject,
                 '--san=DNS:%s' % (
                     self._subjectComponentEscape(
                         self.environment[osetupcons.RenameEnv.FQDN],
@@ -264,47 +292,81 @@ class Plugin(plugin.PluginBase):
         )
     )
     def _aia(self):
-        x509 = X509.load_cert(
-            file=oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-            format=X509.FORMAT_PEM,
-        )
+        with open(
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+            'rb'
+        ) as f:
+            ca_cert = x509.load_pem_x509_certificate(
+                f.read(),
+                backend=default_backend(),
+            )
 
         try:
-            authorityInfoAccess = x509.get_ext(
-                'authorityInfoAccess'
-            ).get_value()
+            access_description = ca_cert.extensions.get_extension_for_oid(
+                x509.oid.ExtensionOID.AUTHORITY_INFORMATION_ACCESS
+            ).value[0]
+        except ExtensionNotFound:
+            # AIA was not included in the CA Cert, no need to warn/prompt
+            return
 
-            self.logger.warning(_('AIA extension found in CA certificate'))
-            self.dialog.note(
-                text=_(
-                    'Please note:\n'
-                    'The certificate for the CA contains the\n'
-                    '"Authority Information Access" extension pointing\n'
-                    'to the old hostname:\n'
-                    '{aia}'
-                    'Currently this is harmless, but it might affect future\n'
-                    'upgrades. In version 3.3 the default was changed to\n'
-                    'create new CA certificate without this extension. If\n'
-                    'possible, it might be better to not rely on this\n'
-                    'program, and instead backup, cleanup and setup again\n'
-                    'cleanly.\n'
-                    '\n'
-                    'More details can be found at the following address:\n'
-                    'http://www.ovirt.org/documentation/how-to/networking'
-                    '/changing-engine-hostname/\n'
-                ).format(
-                    aia=authorityInfoAccess,
-                ),
+        if (
+            (
+                access_description.access_method ==
+                x509.oid.AuthorityInformationAccessOID.CA_ISSUERS
+            ) and (
+                type(access_description.access_location) ==
+                x509.UniformResourceIdentifier
             )
-            if not dialog.queryBoolean(
-                dialog=self.dialog,
-                name='OVESETUP_RENAME_AIA_BYPASS',
-                note=_('Do you want to continue? (@VALUES@) [@DEFAULT@]: '),
-                prompt=True,
-            ):
-                raise RuntimeError(_('Aborted by user'))
-        except LookupError:
-            pass
+        ):
+            # This is the common/expected case
+            # py cryptography, at least 2.3 in el8, does not expose the access
+            # method name, and even internally (in
+            # access_description.access_method._name), it's "caIssuers", a bit
+            # different from m2crypto (which seems to use openssl's texts).
+            # So if we are going to format this ourselves anyway, might as well
+            # keep it identical with m2crypto/openssl, for this case
+            aiatext = 'CA Issuers - URI:{uri}'.format(
+                uri=access_description.access_location.value,
+            )
+        else:
+            # If we didn't do the 'if' part above, but only this str() part,
+            # the common case above would have looked like this:
+            # "<AccessDescription(access_method=<ObjectIdentifier(
+            #  oid=1.3.6.1.5.5.7.48.2, name=caIssuers)>, access_location=
+            #  <UniformResourceIdentifier(value='http://{fqdn}:80/ovirt-engine/
+            #  services/pki-resource?resource=ca-certificate&format=X509-PEM-CA'
+            #  )>)>"
+            aiatext = str(access_description)
+
+        self.logger.warning(_('AIA extension found in CA certificate'))
+        self.dialog.note(
+            text=_(
+                '\nPlease note:\n'
+                'The certificate for the CA contains the '
+                '"Authority Information Access" extension pointing '
+                'to the old hostname:\n\n'
+                '{aia}\n\n'
+                'Currently this is harmless, but it might affect future '
+                'upgrades. In version 3.3 the default was changed to '
+                'create new CA certificate without this extension. If '
+                'possible, it might be better to not rely on this '
+                'program, and instead backup, cleanup and setup again '
+                'cleanly.\n'
+                '\n'
+                'More details can be found at the following address:\n\n'
+                'http://www.ovirt.org/documentation/how-to/networking'
+                '/changing-engine-hostname/\n\n'
+            ).format(
+                aia=aiatext,
+            ),
+        )
+        if not dialog.queryBoolean(
+            dialog=self.dialog,
+            name='OVESETUP_RENAME_AIA_BYPASS',
+            note=_('Do you want to continue? (@VALUES@) [@DEFAULT@]: '),
+            prompt=True,
+        ):
+            raise RuntimeError(_('Aborted by user'))
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,

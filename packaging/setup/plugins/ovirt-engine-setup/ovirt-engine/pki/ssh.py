@@ -14,7 +14,9 @@ import gettext
 import os
 import tempfile
 
-from M2Crypto import X509
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
 
 from otopi import constants as otopicons
 from otopi import filetransaction
@@ -72,10 +74,14 @@ class Plugin(plugin.PluginBase):
             ),
         )
 
-        return X509.load_cert_string(
-            string='\n'.join(cert).encode('ascii'),
-            format=X509.FORMAT_PEM,
-        ).get_pubkey().get_rsa().as_pem()
+        return x509.load_pem_x509_certificate(
+            '\n'.join(cert).encode('ascii'),
+            backend=default_backend(),
+        ).public_key(
+        ).public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        )
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)

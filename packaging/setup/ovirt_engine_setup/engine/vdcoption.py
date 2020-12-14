@@ -7,15 +7,9 @@
 #
 
 
-import base64
 import gettext
 
-from M2Crypto import RSA
-from M2Crypto import X509
-
 from otopi import util
-
-from ovirt_engine_setup.engine import constants as oenginecons
 
 
 def _(m):
@@ -90,19 +84,15 @@ class VdcOption():
             version = option.get('version', 'general')
 
             if option.get('encrypt', False):
-                x509 = X509.load_cert(
-                    file=(
-                        oenginecons.FileLocations.
-                        OVIRT_ENGINE_PKI_ENGINE_CERT
-                    ),
-                    format=X509.FORMAT_PEM,
-                )
-                value = base64.b64encode(
-                    x509.get_pubkey().get_rsa().public_encrypt(
-                        data=value,
-                        padding=RSA.pkcs1_padding,
-                    ),
-                )
+                # AFAICT there aren't anymore users of this function that
+                # ask to encrypt. The only ones I know of were:
+                # AdminPassword - the engine admin password
+                # LocalAdminPassword - for Windows Guests admin password
+                # in plugins/ovirt-engine-setup/ovirt-engine/config/options.py
+                # Both removed 5 years ago.
+                raise RuntimeError(_(
+                    'encrypting vdc options is not supported'
+                ))
 
             if isinstance(value, bool):
                 value = 'true' if value else 'false'

@@ -10,13 +10,9 @@
 """aaa plugin."""
 
 
-import base64
 import gettext
-import os
 import random
 import string
-
-from M2Crypto import RSA
 
 from otopi import plugin
 from otopi import util
@@ -179,69 +175,24 @@ class Plugin(plugin.PluginBase):
         except RuntimeError:
             pass
 
-        # we have legacy user
+        # we have legacy user. Shouldn't happen anymore, after
+        # 3.6 https://gerrit.ovirt.org/q/Ica85b6a
         if adminPassword is not None:
-            self.environment[
-                oenginecons.ConfigEnv.ADMIN_USER_AUTHZ_NAME
-            ] = 'internal'
-            self.environment[
-                oenginecons.ConfigEnv.ADMIN_USER
-            ] = 'admin@internal'
-            self.environment[
-                oenginecons.ConfigEnv.ADMIN_USER_ID
-            ] = 'fdfc627c-d875-11e0-90f0-83df133b58cc'
-            if self.environment[
-                oenginecons.ConfigEnv.ADMIN_PASSWORD
-            ] is None:
-                if not adminPassword:
-                    self.environment[
-                        oenginecons.ConfigEnv.ADMIN_PASSWORD
-                    ] = ''
-                elif os.path.exists(
-                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE
-                ):
-                    def _getRSA():
-                        rc, stdout, stderr = self.execute(
-                            args=(
-                                self.command.get('openssl'),
-                                'pkcs12',
-                                '-in', (
-                                    oenginecons.FileLocations.
-                                    OVIRT_ENGINE_PKI_ENGINE_STORE
-                                ),
-                                '-passin', 'pass:%s' % self.environment[
-                                    oenginecons.PKIEnv.STORE_PASS
-                                ],
-                                '-nocerts',
-                                '-nodes',
-                            ),
-                        )
-                        return RSA.load_key_string(
-                            str('\n'.join(stdout))
-                        )
-
-                    self.environment[
-                        oenginecons.ConfigEnv.ADMIN_PASSWORD
-                    ] = _getRSA().private_decrypt(
-                        data=base64.b64decode(adminPassword),
-                        padding=RSA.pkcs1_padding,
-                    )
-                else:
-                    self.environment[
-                        oenginecons.ConfigEnv.ADMIN_PASSWORD
-                    ] = self._generatePassword()
-                    self.logger.warning(
-                        _(
-                            "Cannot decrypt admin's password during upgrade. "
-                            "Admin's password was set to a random password: "
-                            "{password}. Please replace password as soon as "
-                            "possible."
-                        ).format(
-                            password=self.environment[
-                                oenginecons.ConfigEnv.ADMIN_PASSWORD
-                            ],
-                        )
-                    )
+            self.dialog.note(
+                text=_(
+                    'Old AdminPassword found in vdc_options. This should not '
+                    'happen, and is likely a result of a bad past upgrade.\n'
+                    'Please contact support.\n'
+                    'If you are certain that it is not in use anymore, you '
+                    'can remove it with this command:\n'
+                    '# /usr/share/ovirt-engine/dbscripts/engine-psql.sh -c '
+                    '\\\n'
+                    '   "select fn_db_delete_config_value(\'AdminPassword\','
+                    '\'general\');"\n'
+                    '\nand then try again.\n'
+                )
+            )
+            raise RuntimeError(_('Old AdminPassword found in vdc_options'))
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,

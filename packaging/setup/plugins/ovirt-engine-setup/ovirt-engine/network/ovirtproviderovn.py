@@ -22,7 +22,9 @@ import uuid
 
 from collections import namedtuple
 
-from M2Crypto import RSA
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import padding
 
 from otopi import constants as otopicons
 from otopi import filetransaction
@@ -378,13 +380,18 @@ class Plugin(plugin.PluginBase):
                 ),
                 logStreams=False,
             )
-            return RSA.load_key_string(
-                '\n'.join(stdout).encode()
-                )
+            return serialization.load_pem_private_key(
+                '\n'.join(stdout).encode(),
+                password=None,
+                backend=default_backend(),
+            )
 
-        encrypted_password = _getRSA().public_encrypt(
-            data=password.encode(),
-            padding=RSA.pkcs1_padding,
+        encrypted_password = _getRSA().public_key().encrypt(
+            password.encode(),
+            # TODO replace PKCS1v15 with PSS if/when we know we do not
+            # need m2crypto compatibility. Would likely require changes
+            # also in the engine and in the ovn provider.
+            padding=padding.PKCS1v15(),
         )
         return base64.b64encode(encrypted_password)
 
