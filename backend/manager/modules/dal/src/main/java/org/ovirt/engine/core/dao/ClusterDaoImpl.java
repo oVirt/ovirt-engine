@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterHostsAndVMs;
+import org.ovirt.engine.core.common.businessentities.FipsMode;
 import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
@@ -289,7 +290,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("log_max_memory_used_threshold", cluster.getLogMaxMemoryUsedThreshold())
                 .addValue("log_max_memory_used_threshold_type", cluster.getLogMaxMemoryUsedThresholdType().getValue())
                 .addValue("vnc_encryption_enabled", cluster.isVncEncryptionEnabled())
-                .addValue("managed", cluster.isManaged());
+                .addValue("managed", cluster.isManaged())
+                .addValue("fips_mode", cluster.getFipsMode());
     }
 
     private static final RowMapper<ClusterHostsAndVMs> clusterHostsAndVMsRowMapper = (rs, rowNum) -> {
@@ -361,6 +363,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.setLogMaxMemoryUsedThresholdType(LogMaxMemoryUsedThresholdType.forValue(rs.getInt("log_max_memory_used_threshold_type")));
         entity.setVncEncryptionEnabled(rs.getBoolean("vnc_encryption_enabled"));
         entity.setManaged(rs.getBoolean("managed"));
+        entity.setFipsMode(FipsMode.forValue(rs.getInt("fips_mode")));
         return entity;
     };
 

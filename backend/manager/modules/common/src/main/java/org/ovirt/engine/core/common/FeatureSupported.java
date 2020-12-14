@@ -289,4 +289,14 @@ public class FeatureSupported {
     public static boolean isSwitchMasterStorageDomainOperationSupported(Version version) {
         return Version.v4_5.lessOrEquals(version);
     }
+
+    /**
+     * Check if cluster FIPS mode is supported
+     *
+     * @param version Compatibility version to check for.
+     * @return true if cluster FIPS mode is supported.
+     */
+    public static boolean isFipsModeSupported(Version version) {
+        return Version.v4_4.lessOrEquals(version);
+    }
 }

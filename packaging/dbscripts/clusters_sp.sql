@@ -57,7 +57,8 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_log_max_memory_used_threshold_type SMALLINT,
     v_vnc_encryption_enabled BOOLEAN,
     v_smt_disabled BOOLEAN,
-    v_managed BOOLEAN
+    v_managed BOOLEAN,
+    v_fips_mode SMALLINT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -115,7 +116,8 @@ BEGIN
         log_max_memory_used_threshold_type,
         vnc_encryption_enabled,
         smt_disabled,
-        managed
+        managed,
+        fips_mode
         )
     VALUES (
         v_cluster_id,
@@ -171,7 +173,8 @@ BEGIN
         v_log_max_memory_used_threshold_type,
         v_vnc_encryption_enabled,
         v_smt_disabled,
-        v_managed
+        v_managed,
+        v_fips_mode
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -231,7 +234,8 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     v_log_max_memory_used_threshold_type SMALLINT,
     v_vnc_encryption_enabled BOOLEAN,
     v_smt_disabled BOOLEAN,
-    v_managed BOOLEAN
+    v_managed BOOLEAN,
+    v_fips_mode SMALLINT
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -292,7 +296,8 @@ BEGIN
         log_max_memory_used_threshold_type = v_log_max_memory_used_threshold_type,
         vnc_encryption_enabled = v_vnc_encryption_enabled,
         smt_disabled = v_smt_disabled,
-        managed = v_managed
+        managed = v_managed,
+        fips_mode = v_fips_mode
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

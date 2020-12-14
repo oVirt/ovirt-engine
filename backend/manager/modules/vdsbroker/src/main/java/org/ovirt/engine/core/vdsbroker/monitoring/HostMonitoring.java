@@ -445,6 +445,7 @@ public class HostMonitoring implements HostMonitoringInterface {
 
             if (refreshedCapabilities) {
                 getVdsEventListener().handleVdsVersion(vds.getId());
+                getVdsEventListener().handleVdsFips(vds.getId());
                 markIsSetNonOperationalExecuted();
             }
 

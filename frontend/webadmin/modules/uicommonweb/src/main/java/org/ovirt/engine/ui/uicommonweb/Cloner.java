@@ -330,6 +330,7 @@ public final class Cloner {
         obj.setAutoConverge(instance.getAutoConverge());
         obj.setMigrateCompressed(instance.getMigrateCompressed());
         obj.setMigrateEncrypted(instance.getMigrateEncrypted());
+        obj.setFipsMode(instance.getFipsMode());
         return obj;
     }
 

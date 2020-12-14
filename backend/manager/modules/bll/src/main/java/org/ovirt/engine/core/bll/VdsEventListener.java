@@ -360,6 +360,11 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
+    public void handleVdsFips(Guid vdsId) {
+        backend.runInternalAction(ActionType.HandleVdsFips, new VdsActionParameters(vdsId));
+    }
+
+    @Override
     public void processOnVmPoweringUp(Guid vmId) {
         IVdsAsyncCommand command = vdsBroker.getAsyncCommandForVm(vmId);
 

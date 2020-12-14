@@ -628,6 +628,9 @@ public class VdsManager {
 
                 // Always check VdsVersion
                 resourceManager.getEventListener().handleVdsVersion(vds.getId());
+
+                // Check FIPS compatibility
+                resourceManager.getEventListener().handleVdsFips(vds.getId());
             }
         }
     }
