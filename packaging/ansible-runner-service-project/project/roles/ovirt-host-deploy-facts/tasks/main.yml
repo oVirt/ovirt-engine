@@ -17,7 +17,7 @@
     - not node_host|bool
     - not vdsm_preinstalled|bool
 
-- name: Install Python3 for CentOS/RHEL8 hosts
+- name: Ensure Python3 is installed for CentOS/RHEL8 hosts
   yum:
     name: python3
     state: present
