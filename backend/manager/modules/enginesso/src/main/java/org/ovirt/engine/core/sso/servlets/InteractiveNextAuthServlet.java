@@ -15,7 +15,7 @@ import org.ovirt.engine.core.sso.api.OAuthException;
 import org.ovirt.engine.core.sso.api.SsoConstants;
 import org.ovirt.engine.core.sso.api.SsoContext;
 import org.ovirt.engine.core.sso.api.SsoSession;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoService;
 
 public class InteractiveNextAuthServlet extends HttpServlet {
     private static final long serialVersionUID = 1188460579367588817L;
@@ -24,19 +24,19 @@ public class InteractiveNextAuthServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        ssoContext = SsoUtils.getSsoContext(config.getServletContext());
+        ssoContext = SsoService.getSsoContext(config.getServletContext());
     }
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Stack<InteractiveAuth> authStack = SsoUtils.getSsoSession(request).getAuthStack();
+        Stack<InteractiveAuth> authStack = SsoService.getSsoSession(request).getAuthStack();
 
         if (authStack == null || authStack.isEmpty()) {
-            SsoUtils.redirectToErrorPage(request,
+            SsoService.redirectToErrorPage(request,
                     response,
                     new OAuthException(
-                            SsoUtils.getSsoSession(request).isOpenIdScope()
+                            SsoService.getSsoSession(request).isOpenIdScope()
                                     ? SsoConstants.ERR_CODE_OPENID_LOGIN_REQUIRED
                                     : SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
                             ssoContext.getLocalizationUtils()
@@ -44,7 +44,7 @@ public class InteractiveNextAuthServlet extends HttpServlet {
                                             SsoConstants.APP_ERROR_AUTHENTICATION_REQUIRED,
                                             (Locale) request.getAttribute(SsoConstants.LOCALE))));
         } else {
-            SsoUtils.getSsoSession(request).setStatus(SsoSession.Status.inprogress);
+            SsoService.getSsoSession(request).setStatus(SsoSession.Status.inprogress);
             response.sendRedirect(authStack.pop().getAuthUrl(request, response));
         }
     }

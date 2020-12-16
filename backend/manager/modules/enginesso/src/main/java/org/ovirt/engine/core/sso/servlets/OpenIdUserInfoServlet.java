@@ -13,7 +13,7 @@ import org.ovirt.engine.core.sso.api.SsoConstants;
 import org.ovirt.engine.core.sso.api.SsoContext;
 import org.ovirt.engine.core.sso.api.SsoSession;
 import org.ovirt.engine.core.sso.openid.OpenIdService;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,22 +31,22 @@ public class OpenIdUserInfoServlet extends HttpServlet {
         try {
             log.debug("Entered OpenIdUserInfoServlet Query String: {}, Parameters : {}",
                     request.getQueryString(),
-                    SsoUtils.getRequestParameters(request));
+                    SsoService.getRequestParameters(request));
             String token = request.getParameter(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);
             if (token == null) {
                 token = getTokenFromHeader(request);
             }
             if (token == null) {
-                SsoUtils.sendJsonDataWithMessage(request,
+                SsoService.sendJsonDataWithMessage(request,
                         response,
                         SsoConstants.ERROR,
                         SsoConstants.ERR_CODE_INVALID_REQUEST,
                         false);
                 return;
             }
-            SsoSession ssoSession = SsoUtils.getSsoSessionFromRequest(request, token);
+            SsoSession ssoSession = SsoService.getSsoSessionFromRequest(request, token);
             if (!ssoSession.isActive()) {
-                SsoUtils.sendJsonDataWithMessage(request,
+                SsoService.sendJsonDataWithMessage(request,
                         response,
                         SsoConstants.ERR_CODE_INVALID_TOKEN,
                         SsoConstants.ERR_SESSION_EXPIRED_MSG,
@@ -55,12 +55,12 @@ public class OpenIdUserInfoServlet extends HttpServlet {
             }
 
             if (isEncryptedUserInfo(request, ssoSession)) {
-                SsoUtils.sendJsonData(response, buildEncodedJWTResponse(request, ssoSession), "application/jwt");
+                SsoService.sendJsonData(response, buildEncodedJWTResponse(request, ssoSession), "application/jwt");
             } else {
-                SsoUtils.sendJsonData(response, buildPlainJsonResponse(request, ssoSession));
+                SsoService.sendJsonData(response, buildPlainJsonResponse(request, ssoSession));
             }
         } catch (Exception ex) {
-            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
+            SsoService.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
 
     }
@@ -70,7 +70,7 @@ public class OpenIdUserInfoServlet extends HttpServlet {
             // it should be encrypted by default
             return true;
         }
-        SsoContext ssoContext = SsoUtils.getSsoContext(request);
+        SsoContext ssoContext = SsoService.getSsoContext(request);
         return ssoContext.getClienInfo(ssoSession.getClientId()).isEncryptedUserInfo();
     }
 

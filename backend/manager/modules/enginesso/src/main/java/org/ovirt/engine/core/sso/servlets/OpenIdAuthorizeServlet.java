@@ -17,7 +17,7 @@ import org.ovirt.engine.core.sso.api.InteractiveAuth;
 import org.ovirt.engine.core.sso.api.OAuthException;
 import org.ovirt.engine.core.sso.api.SsoConstants;
 import org.ovirt.engine.core.sso.api.SsoSession;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,14 +32,14 @@ public class OpenIdAuthorizeServlet extends OAuthAuthorizeServlet {
         try {
             handleRequest(request, response);
         } catch (Exception ex) {
-            SsoSession ssoSession = SsoUtils.getSsoSession(request, true);
+            SsoSession ssoSession = SsoService.getSsoSession(request, true);
             ssoSession.setRedirectUri(request.getParameter(SsoConstants.HTTP_PARAM_REDIRECT_URI));
             if (ex instanceof OAuthException &&
                     ((OAuthException) ex).getCode().equals(SsoConstants.ERR_CODE_INVALID_REQUEST) &&
                     ex.getMessage().equals(SsoConstants.ERR_REDIRECT_URI_NOTREG_MSG)) {
-                SsoUtils.sendJsonDataWithMessage(request, response, (OAuthException) ex);
+                SsoService.sendJsonDataWithMessage(request, response, (OAuthException) ex);
             } else {
-                SsoUtils.redirectToErrorPage(request, response, ex);
+                SsoService.redirectToErrorPage(request, response, ex);
             }
         }
     }
@@ -49,10 +49,10 @@ public class OpenIdAuthorizeServlet extends OAuthAuthorizeServlet {
             String clientId,
             String scope,
             String redirectUri) {
-        List<String> scopes = new ArrayList<>(SsoUtils.scopeAsList(scope));
+        List<String> scopes = new ArrayList<>(SsoService.scopeAsList(scope));
         // remove all unsupported scopes
         scopes.removeAll(unsupportedScopes);
-        SsoUtils.validateClientRequest(request, clientId, null, StringUtils.join(scopes, ' '), redirectUri);
+        SsoService.validateClientRequest(request, clientId, null, StringUtils.join(scopes, ' '), redirectUri);
     }
 
     protected SsoSession buildSsoSession(HttpServletRequest request)

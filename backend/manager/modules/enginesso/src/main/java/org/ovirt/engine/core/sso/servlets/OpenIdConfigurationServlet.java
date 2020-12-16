@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.http.conn.util.InetAddressUtils;
 import org.ovirt.engine.core.sso.api.SsoConstants;
 import org.ovirt.engine.core.sso.openid.OpenIdService;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoService;
 
 public class OpenIdConfigurationServlet extends HttpServlet {
 
@@ -54,9 +54,9 @@ public class OpenIdConfigurationServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            SsoUtils.sendJsonData(response, openIdService.get().getJson(buildResponse(request)));
+            SsoService.sendJsonData(response, openIdService.get().getJson(buildResponse(request)));
         } catch (Exception ex) {
-            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
+            SsoService.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
     }
 

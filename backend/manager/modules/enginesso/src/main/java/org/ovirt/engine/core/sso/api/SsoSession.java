@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoService;
 
 public class SsoSession implements Serializable, Cloneable {
     private static final long serialVersionUID = 6904401523209679500L;
@@ -179,10 +179,10 @@ public class SsoSession implements Serializable, Cloneable {
     }
 
     public void setScope(String scope) {
-        if (scopeAsList == null && !SsoUtils.strippedScopeAsList(SsoUtils.scopeAsList(scope)).isEmpty()) {
+        if (scopeAsList == null && !SsoService.strippedScopeAsList(SsoService.scopeAsList(scope)).isEmpty()) {
             this.scope = scope;
-            this.scopeAsList = SsoUtils.scopeAsList(scope);
-            restApiScope = SsoUtils.isRestApiScope(scopeAsList);
+            this.scopeAsList = SsoService.scopeAsList(scope);
+            restApiScope = SsoService.isRestApiScope(scopeAsList);
         }
     }
 

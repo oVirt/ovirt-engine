@@ -14,9 +14,9 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.sso.api.ClientInfo;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoService;
 
-public class DBUtils {
+public class SsoDao {
     public static final String DATA_SOURCE = "java:/ENGINEDataSource";
 
     public static Map<String, ClientInfo> getAllSsoClientsInfo() {
@@ -46,7 +46,7 @@ public class DBUtils {
                                         .withEncryptedUserInfo(rs.getBoolean("encrypted_userinfo"))
                                         .withClientNotificationCallback(
                                                 StringUtils.defaultIfEmpty(rs.getString("notification_callback"), ""))
-                                        .withScope(SsoUtils.scopeAsList(rs.getString("scope")))
+                                        .withScope(SsoService.scopeAsList(rs.getString("scope")))
                                         .withIsTrusted(rs.getBoolean("trusted"))
                                         .withNotificationCallbackProtocol(
                                                 rs.getString("notification_callback_protocol"))
@@ -82,7 +82,7 @@ public class DBUtils {
                     PreparedStatement ps = connection.prepareStatement(sql)) {
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        map.put(rs.getString("scope"), SsoUtils.scopeAsList(rs.getString("dependencies")));
+                        map.put(rs.getString("scope"), SsoService.scopeAsList(rs.getString("dependencies")));
                     }
                 }
             }

@@ -28,15 +28,15 @@ import org.ovirt.engine.core.sso.api.SsoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NegotiateAuthUtils {
-    public static final String STACK_ATTR = NegotiateAuthUtils.class.getName() + ".stack";
+public class NegotiateAuthService {
+    public static final String STACK_ATTR = NegotiateAuthService.class.getName() + ".stack";
     public static final String REQUEST_SCHEMES_KEY = "request_schemes";
-    private static Logger log = LoggerFactory.getLogger(NegotiateAuthUtils.class);
+    private static Logger log = LoggerFactory.getLogger(NegotiateAuthService.class);
     private Set<String> schemes;
     private List<AuthenticationProfile> profiles;
     private long caps = 0;
 
-    public NegotiateAuthUtils(final Collection<AuthenticationProfile> availableProfiles) {
+    public NegotiateAuthService(final Collection<AuthenticationProfile> availableProfiles) {
         caps |= Authn.Capabilities.AUTHENTICATE_NEGOTIATE_INTERACTIVE |
                 Authn.Capabilities.AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE;
 
@@ -63,7 +63,7 @@ public class NegotiateAuthUtils {
             throws IOException, ServletException {
 
         Deque<AuthenticationProfile> stack =
-                (Deque<AuthenticationProfile>) request.getAttribute(NegotiateAuthUtils.STACK_ATTR);
+                (Deque<AuthenticationProfile>) request.getAttribute(NegotiateAuthService.STACK_ATTR);
         request.getSession(true).setAttribute(REQUEST_SCHEMES_KEY, schemes);
         if (stack == null) {
             stack = new ArrayDeque<>();
@@ -73,9 +73,9 @@ public class NegotiateAuthUtils {
         AuthResult retVal = doAuth(request, response, stack);
 
         if (!stack.isEmpty()) {
-            request.setAttribute(NegotiateAuthUtils.STACK_ATTR, stack);
+            request.setAttribute(NegotiateAuthService.STACK_ATTR, stack);
         } else if (retVal.getToken() != null) {
-            request.removeAttribute(NegotiateAuthUtils.STACK_ATTR);
+            request.removeAttribute(NegotiateAuthService.STACK_ATTR);
         }
 
         return retVal;
@@ -132,21 +132,21 @@ public class NegotiateAuthUtils {
                                 .mput(
                                         Authz.InvokeKeys.QUERY_FLAGS,
                                         Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE);
-                        if (SsoUtils.getSsoContext(req)
+                        if (SsoService.getSsoContext(req)
                                 .getSsoLocalConfig()
                                 .getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
                             input.put(Authz.InvokeKeys.HTTP_SERVLET_REQUEST, req);
                         }
                         ExtMap outputMap = profile.getAuthz().invoke(input);
-                        token = SsoUtils.getTokenFromHeader(req);
-                        SsoSession ssoSession = SsoUtils.persistAuthInfoInContextWithToken(req,
+                        token = SsoService.getTokenFromHeader(req);
+                        SsoSession ssoSession = SsoService.persistAuthInfoInContextWithToken(req,
                                 token,
                                 null,
                                 profile.getName(),
                                 authRecord,
                                 outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
                         log.info("User {}@{} with profile [{}] successfully logged in with scopes : {} ",
-                                SsoUtils.getUserId(outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD)),
+                                SsoService.getUserId(outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD)),
                                 profile.getAuthzName(),
                                 profile.getName(),
                                 ssoSession.getScope());

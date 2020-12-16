@@ -58,11 +58,11 @@ import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SsoUtils {
+public class SsoService {
     // We need to create an HTTP client for each SSO client, as they may have different SSL configuration
     // parameters. They will be stored in this map, indexed by client id.
     private static final Map<String, CloseableHttpClient> CLIENTS = new HashMap<>();
-    private static Logger log = LoggerFactory.getLogger(SsoUtils.class);
+    private static Logger log = LoggerFactory.getLogger(SsoService.class);
     private static SecureRandom secureRandom = new SecureRandom();
 
     static {
@@ -143,7 +143,7 @@ public class SsoUtils {
             URLBuilder redirectUrlBuilder = new URLBuilder(getRedirectUrl(request));
             redirectUrlBuilder.addParameter(SsoConstants.ERROR, ex.getCode())
                     .addParameter(SsoConstants.ERROR_DESCRIPTION, ex.getMessage());
-            String state = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, "");
+            String state = SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, "");
             if (StringUtils.isNotEmpty(state)) {
                 redirectUrlBuilder.addParameter("state", state);
             }
@@ -305,7 +305,7 @@ public class SsoUtils {
             String clientId,
             String token,
             boolean mustExist) {
-        TokenCleanupUtility.cleanupExpiredTokens(request.getServletContext());
+        TokenCleanupService.cleanupExpiredTokens(request.getServletContext());
         SsoContext ssoContext = getSsoContext(request);
         SsoSession ssoSession = null;
         if (StringUtils.isNotEmpty(token)) {
@@ -345,7 +345,7 @@ public class SsoUtils {
         }
         // If the session has expired, attempt to extract the session from SsoContext persisted session
         if (ssoSession == null) {
-            String sessionIdToken = SsoUtils.getFormParameter(request, "sessionIdToken");
+            String sessionIdToken = SsoService.getFormParameter(request, "sessionIdToken");
             if (StringUtils.isNotEmpty(sessionIdToken)) {
                 ssoSession = getSsoContext(request).getSsoSessionById(sessionIdToken);
             }
@@ -398,8 +398,8 @@ public class SsoUtils {
     }
 
     public static Credentials getCredentials(HttpServletRequest request) {
-        return SsoUtils.translateUser(SsoUtils.getRequestParameter(request, "username"),
-                SsoUtils.getRequestParameter(request, "password"),
+        return SsoService.translateUser(SsoService.getRequestParameter(request, "username"),
+                SsoService.getRequestParameter(request, "password"),
                 getSsoContext(request));
     }
 
@@ -708,11 +708,11 @@ public class SsoUtils {
     private static boolean isRestApiScope(HttpServletRequest request) {
         boolean restApiScope;
         try {
-            restApiScope = SsoUtils.getSsoSession(request).isRestApiScope();
+            restApiScope = SsoService.getSsoSession(request).isRestApiScope();
         } catch (OAuthException ex) {
             restApiScope = false;
         }
-        return restApiScope || isRestApiScope(SsoUtils.scopeAsList(SsoUtils.getScopeRequestParameter(request, "")));
+        return restApiScope || isRestApiScope(SsoService.scopeAsList(SsoService.getScopeRequestParameter(request, "")));
     }
 
     public static boolean isRestApiScope(List<String> scopes) {

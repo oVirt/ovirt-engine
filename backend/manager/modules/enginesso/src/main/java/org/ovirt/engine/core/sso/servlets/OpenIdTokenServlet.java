@@ -15,7 +15,7 @@ import org.ovirt.engine.core.sso.api.OAuthException;
 import org.ovirt.engine.core.sso.api.SsoConstants;
 import org.ovirt.engine.core.sso.api.SsoSession;
 import org.ovirt.engine.core.sso.openid.OpenIdService;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,14 +31,14 @@ public class OpenIdTokenServlet extends OAuthTokenServlet {
         try {
             log.debug("Entered OpenIdTokenServlet Query String: {}, Parameters : {}",
                     request.getQueryString(),
-                    SsoUtils.getRequestParameters(request));
+                    SsoService.getRequestParameters(request));
             handleRequest(request, response);
         } catch (OAuthException ex) {
-            SsoUtils.sendJsonDataWithMessage(request, response, ex);
+            SsoService.sendJsonDataWithMessage(request, response, ex);
         } catch (AuthenticationException ex) {
-            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_ACCESS_DENIED, ex);
+            SsoService.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_ACCESS_DENIED, ex);
         } catch (Exception ex) {
-            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
+            SsoService.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
 
     }
@@ -48,15 +48,15 @@ public class OpenIdTokenServlet extends OAuthTokenServlet {
             HttpServletRequest request,
             HttpServletResponse response,
             String scope) throws Exception {
-        String[] clientIdAndSecret = SsoUtils.getClientIdClientSecret(request);
-        SsoUtils.validateClientRequest(request,
+        String[] clientIdAndSecret = SsoService.getClientIdClientSecret(request);
+        SsoService.validateClientRequest(request,
                 clientIdAndSecret[0],
                 clientIdAndSecret[1],
                 scope,
                 null);
         SsoSession ssoSession = handleIssueTokenForAuthCode(request, clientIdAndSecret[0], scope);
         log.debug("Sending json response");
-        SsoUtils.sendJsonData(response, buildResponse(request, ssoSession, clientIdAndSecret[0], clientIdAndSecret[1]));
+        SsoService.sendJsonData(response, buildResponse(request, ssoSession, clientIdAndSecret[0], clientIdAndSecret[1]));
     }
 
     @Override
@@ -71,8 +71,8 @@ public class OpenIdTokenServlet extends OAuthTokenServlet {
         log.debug("Entered issueTokenForPasswd");
         Credentials credentials = null;
         try {
-            String[] clientIdAndSecret = SsoUtils.getClientIdClientSecret(request);
-            SsoUtils.validateClientRequest(request,
+            String[] clientIdAndSecret = SsoService.getClientIdClientSecret(request);
+            SsoService.validateClientRequest(request,
                     clientIdAndSecret[0],
                     clientIdAndSecret[1],
                     scope,
@@ -83,7 +83,7 @@ public class OpenIdTokenServlet extends OAuthTokenServlet {
             credentials = getCredentials(request);
             SsoSession ssoSession = handleIssueTokenForPasswd(request, scope, credentials);
             log.debug("Sending json response");
-            SsoUtils.sendJsonData(response, buildResponse(request, ssoSession, clientId, clientSecret));
+            SsoService.sendJsonData(response, buildResponse(request, ssoSession, clientId, clientSecret));
         } catch (AuthenticationException ex) {
             String profile = "N/A";
             if (credentials != null) {

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.sso.api.Credentials;
 import org.ovirt.engine.core.sso.api.SsoConstants;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,10 +22,10 @@ public class InteractiveBasicEnforceServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Credentials credentials = SsoUtils.getUserCredentialsFromHeader(request);
+        Credentials credentials = SsoService.getUserCredentialsFromHeader(request);
         if (credentials != null) {
             log.debug("Credentials Obtained redirecting to url: {}", SsoConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI);
-            SsoUtils.getSsoSession(request).setTempCredentials(credentials);
+            SsoService.getSsoSession(request).setTempCredentials(credentials);
             response.sendRedirect(request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI);
         } else {
             response.setHeader("WWW-Authenticate", "Basic realm=\"" + realm + "\"");

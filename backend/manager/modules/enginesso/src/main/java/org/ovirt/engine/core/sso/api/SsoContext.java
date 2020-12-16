@@ -15,8 +15,8 @@ import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
-import org.ovirt.engine.core.sso.service.LocalizationUtils;
-import org.ovirt.engine.core.sso.service.NegotiateAuthUtils;
+import org.ovirt.engine.core.sso.service.LocalizationService;
+import org.ovirt.engine.core.sso.service.NegotiateAuthService;
 import org.ovirt.engine.core.sso.service.SsoExtensionsManager;
 import org.ovirt.engine.core.sso.utils.SsoLocalConfig;
 import org.slf4j.Logger;
@@ -27,8 +27,8 @@ public class SsoContext implements Serializable {
 
     private SsoLocalConfig ssoLocalConfig;
     private SsoExtensionsManager ssoExtensionsManager;
-    private NegotiateAuthUtils negotiateAuthUtils;
-    private LocalizationUtils localizationUtils;
+    private NegotiateAuthService negotiateAuthService;
+    private LocalizationService localizationService;
     private String ssoDefaultProfile;
     private List<String> ssoProfiles;
     private List<String> ssoProfilesSupportingPasswd;
@@ -138,12 +138,12 @@ public class SsoContext implements Serializable {
         this.ssoClientRegistry = ssoClientRegistry;
     }
 
-    public NegotiateAuthUtils getNegotiateAuthUtils() {
-        return negotiateAuthUtils;
+    public NegotiateAuthService getNegotiateAuthUtils() {
+        return negotiateAuthService;
     }
 
-    public void setNegotiateAuthUtils(NegotiateAuthUtils negotiateAuthUtils) {
-        this.negotiateAuthUtils = negotiateAuthUtils;
+    public void setNegotiateAuthUtils(NegotiateAuthService negotiateAuthService) {
+        this.negotiateAuthService = negotiateAuthService;
     }
 
     public SsoSession getSsoSession(String token) {
@@ -226,12 +226,12 @@ public class SsoContext implements Serializable {
         return scopeDependenciesMap.get(scope);
     }
 
-    public LocalizationUtils getLocalizationUtils() {
-        return localizationUtils;
+    public LocalizationService getLocalizationUtils() {
+        return localizationService;
     }
 
-    public void setLocalizationUtils(LocalizationUtils localizationUtils) {
-        this.localizationUtils = localizationUtils;
+    public void setLocalizationUtils(LocalizationService localizationService) {
+        this.localizationService = localizationService;
     }
 
     public void setEngineCertificate(Certificate engineCertificate) {

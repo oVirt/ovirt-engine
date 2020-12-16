@@ -32,8 +32,8 @@ import org.ovirt.engine.core.sso.utils.json.JsonExtMapMixIn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AuthenticationUtils {
-    private static Logger log = LoggerFactory.getLogger(AuthenticationUtils.class);
+public class AuthenticationService {
+    private static Logger log = LoggerFactory.getLogger(AuthenticationService.class);
 
     public static void loginOnBehalf(SsoContext ssoContext, HttpServletRequest request, String username)
             throws Exception {
@@ -56,7 +56,7 @@ public class AuthenticationUtils {
                 .configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
         mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
-        String authRecordJson = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_AUTH_RECORD, "");
+        String authRecordJson = SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_AUTH_RECORD, "");
         ExtMap authRecord;
         if (StringUtils.isNotEmpty(authRecordJson)) {
             authRecord = mapper.readValue(authRecordJson, ExtMap.class);
@@ -68,7 +68,7 @@ public class AuthenticationUtils {
                 new Credentials(username,
                         null,
                         profile,
-                        SsoUtils.getSsoContext(request).getSsoProfiles().contains(profile)),
+                        SsoService.getSsoContext(request).getSsoProfiles().contains(profile)),
                 authRecord,
                 false);
         log.info(
@@ -150,7 +150,7 @@ public class AuthenticationUtils {
             if (outputMap.<Integer> get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS ||
                     outputMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
                 if (interactive) {
-                    SsoUtils.getSsoSession(request).setChangePasswdCredentials(credentials);
+                    SsoService.getSsoSession(request).setChangePasswdCredentials(credentials);
                 }
                 log.debug("AuthenticationUtils.handleCredentials AUTHENTICATE_CREDENTIALS on authn failed");
                 String loginErrMsg = AuthnMessageMapper.mapMessageErrorCode(
@@ -158,9 +158,9 @@ public class AuthenticationUtils {
                         request,
                         credentials.getProfile(),
                         outputMap);
-                SsoSession ssoSession = SsoUtils.getSsoSession(request, false);
+                SsoSession ssoSession = SsoService.getSsoSession(request, false);
                 String sourceAddr = ssoSession == null ? null : ssoSession.getSourceAddr();
-                SsoUtils.notifyClientOfAuditLogEvent(ssoContext,
+                SsoService.notifyClientOfAuditLogEvent(ssoContext,
                         sourceAddr == null ? request.getRemoteAddr() : sourceAddr,
                         ssoContext.getSsoLocalConfig().getProperty("ENGINE_SSO_CLIENT_ID"),
                         Optional.ofNullable(credentials).map(Credentials::getUsernameWithProfile).orElse("N/A"),
@@ -177,7 +177,7 @@ public class AuthenticationUtils {
         ExtMap principalRecord = getPrincipalRecord(profile, authRecord, false, null);
 
         log.debug("AuthenticationUtils.handleCredentials saving data in session data");
-        return SsoUtils.persistAuthInfoInContextWithToken(request,
+        return SsoService.persistAuthInfoInContextWithToken(request,
                 credentials.getPassword(),
                 credentials.getProfile(),
                 authRecord,
@@ -238,12 +238,12 @@ public class AuthenticationUtils {
         mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
 
         Map<String, String> params = mapper.readValue(
-                SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_PARAMS),
+                SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_PARAMS),
                 HashMap.class);
 
         ExtMap principalRecord = getPrincipalRecord(profile, authRecord, true, params);
 
-        return SsoUtils.persistAuthInfoInContextWithToken(request,
+        return SsoService.persistAuthInfoInContextWithToken(request,
                 params.get(SsoConstants.HTTP_REQ_HEADER_OIDC_ACCESS_TOKEN),
                 credentials.getPassword(),
                 credentials.getProfile(),
@@ -271,7 +271,7 @@ public class AuthenticationUtils {
                         credentials.getNewCredentials()));
         if (outputMap.<Integer> get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS ||
                 outputMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
-            SsoUtils.getSsoSession(request).setChangePasswdCredentials(credentials);
+            SsoService.getSsoSession(request).setChangePasswdCredentials(credentials);
             log.debug("AuthenticationUtils.changePassword CREDENTIALS_CHANGE on authn failed");
             throw new AuthenticationException(
                     AuthnMessageMapper.mapMessageErrorCode(
@@ -317,13 +317,13 @@ public class AuthenticationUtils {
                         .<Properties> get(Base.ContextKeys.CONFIGURATION)
                         .getProperty(Authn.ConfigKeys.DEFAULT_PROFILE)))
                 .findFirst();
-        return defaultExtension.map(AuthenticationUtils::getProfileName).orElse(null);
+        return defaultExtension.map(AuthenticationService::getProfileName).orElse(null);
     }
 
     public static List<String> getAvailableProfiles(SsoExtensionsManager extensionsManager) {
         return extensionsManager.getExtensionsByService(Authn.class.getName())
                 .stream()
-                .map(AuthenticationUtils::getProfileName)
+                .map(AuthenticationService::getProfileName)
                 .collect(Collectors.toList());
     }
 
@@ -361,7 +361,7 @@ public class AuthenticationUtils {
                 .stream()
                 .filter(a -> (a.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES, 0L)
                         & capability) != 0)
-                .map(AuthenticationUtils::getProfileName)
+                .map(AuthenticationService::getProfileName)
                 .sorted()
                 .collect(Collectors.toList());
     }

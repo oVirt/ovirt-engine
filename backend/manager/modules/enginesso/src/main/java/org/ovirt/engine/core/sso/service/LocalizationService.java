@@ -8,15 +8,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class LocalizationUtils {
+public final class LocalizationService {
 
-    private static final Logger log = LoggerFactory.getLogger(LocalizationUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(LocalizationService.class);
     private String messageSource;
     private Locale defaultLocale;
     private ResourceBundle defaultResourceBundle;
     private Map<Locale, ResourceBundle> resourceBundlesByLocale;
 
-    public LocalizationUtils(final String fileName) {
+    public LocalizationService(final String fileName) {
         log.info("Start initializing {}", getClass().getSimpleName());
         messageSource = fileName.replaceAll("\\.properties$", "");
         resourceBundlesByLocale = new ConcurrentHashMap<>();

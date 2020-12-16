@@ -4,10 +4,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.api.extensions.aaa.Authn;
-import org.ovirt.engine.core.sso.service.AuthenticationUtils;
-import org.ovirt.engine.core.sso.service.ExternalOIDCUtils;
-import org.ovirt.engine.core.sso.service.NegotiateAuthUtils;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.AuthenticationService;
+import org.ovirt.engine.core.sso.service.ExternalOIDCService;
+import org.ovirt.engine.core.sso.service.NegotiateAuthService;
+import org.ovirt.engine.core.sso.service.SsoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +21,14 @@ public enum NonInteractiveAuth {
         @Override
         public AuthResult doAuth(HttpServletRequest request, HttpServletResponse response) throws Exception {
             log.debug("Performing Basic Auth");
-            Credentials credentials = SsoUtils.getUserCredentialsFromHeader(request);
+            Credentials credentials = SsoService.getUserCredentialsFromHeader(request);
             AuthResult retVal = new AuthResult();
-            if (credentials == null || !SsoUtils.areCredentialsValid(request, credentials)) {
+            if (credentials == null || !SsoService.areCredentialsValid(request, credentials)) {
                 retVal.setStatus(Authn.AuthResult.CREDENTIALS_INVALID);
             } else {
                 retVal.setCredentials(credentials);
-                AuthenticationUtils.handleCredentials(
-                        SsoUtils.getSsoContext(request),
+                AuthenticationService.handleCredentials(
+                        SsoService.getSsoContext(request),
                         request,
                         credentials);
                 retVal.setToken((String) request.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN));
@@ -51,7 +51,7 @@ public enum NonInteractiveAuth {
         @Override
         public AuthResult doAuth(HttpServletRequest request, HttpServletResponse response) throws Exception {
             log.debug("Performing Negotiate Auth");
-            NegotiateAuthUtils negoAuthUtils = SsoUtils.getSsoContext(request).getNegotiateAuthUtils();
+            NegotiateAuthService negoAuthUtils = SsoService.getSsoContext(request).getNegotiateAuthUtils();
             return negoAuthUtils.doAuth(request, response);
         }
     },
@@ -64,18 +64,18 @@ public enum NonInteractiveAuth {
         @Override
         public AuthResult doAuth(HttpServletRequest request, HttpServletResponse response) throws Exception {
             log.debug("Performing OIDC Basic Auth");
-            Credentials credentials = SsoUtils.getUserCredentialsFromHeader(request);
+            Credentials credentials = SsoService.getUserCredentialsFromHeader(request);
             if (credentials == null) {
                 // get credentials from request parameters
-                credentials = SsoUtils.getCredentials(request);
+                credentials = SsoService.getCredentials(request);
             }
             AuthResult retVal = new AuthResult();
-            if (!SsoUtils.areCredentialsValid(request, credentials)) {
+            if (!SsoService.areCredentialsValid(request, credentials)) {
                 retVal.setStatus(Authn.AuthResult.CREDENTIALS_INVALID);
             } else {
                 retVal.setCredentials(credentials);
-                ExternalOIDCUtils.handleCredentials(
-                        SsoUtils.getSsoContext(request),
+                ExternalOIDCService.handleCredentials(
+                        SsoService.getSsoContext(request),
                         request,
                         credentials);
                 retVal.setToken((String) request.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN));

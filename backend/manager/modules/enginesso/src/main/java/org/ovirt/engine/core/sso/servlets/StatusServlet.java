@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.sso.api.SsoConstants;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoService;
 
 public class StatusServlet extends HttpServlet {
     private static final long serialVersionUID = -5178735022948234147L;
@@ -22,6 +22,6 @@ public class StatusServlet extends HttpServlet {
         data.put("status", "active");
         data.put("status_description", "SSO Webapp Deployed");
         data.put("version", SsoConstants.OVIRT_SSO_VERSION);
-        SsoUtils.sendJsonData(response, data);
+        SsoService.sendJsonData(response, data);
     }
 }

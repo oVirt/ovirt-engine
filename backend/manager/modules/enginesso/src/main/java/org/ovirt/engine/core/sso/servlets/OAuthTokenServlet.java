@@ -25,10 +25,10 @@ import org.ovirt.engine.core.sso.api.OAuthException;
 import org.ovirt.engine.core.sso.api.SsoConstants;
 import org.ovirt.engine.core.sso.api.SsoContext;
 import org.ovirt.engine.core.sso.api.SsoSession;
-import org.ovirt.engine.core.sso.service.AuthenticationUtils;
-import org.ovirt.engine.core.sso.service.ExternalOIDCUtils;
-import org.ovirt.engine.core.sso.service.NegotiateAuthUtils;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.AuthenticationService;
+import org.ovirt.engine.core.sso.service.ExternalOIDCService;
+import org.ovirt.engine.core.sso.service.NegotiateAuthService;
+import org.ovirt.engine.core.sso.service.SsoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public class OAuthTokenServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) {
-        ssoContext = SsoUtils.getSsoContext(config.getServletContext());
+        ssoContext = SsoService.getSsoContext(config.getServletContext());
     }
 
     @Override
@@ -48,38 +48,38 @@ public class OAuthTokenServlet extends HttpServlet {
         try {
             log.debug("Entered OAuthTokenServlet Query String: {}, Parameters : {}",
                     maskPassword(request.getQueryString()),
-                    SsoUtils.getRequestParameters(request));
+                    SsoService.getRequestParameters(request));
             handleRequest(request, response);
         } catch (OAuthException ex) {
-            SsoUtils.sendJsonDataWithMessage(request, response, ex);
+            SsoService.sendJsonDataWithMessage(request, response, ex);
         } catch (AuthenticationException ex) {
-            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_ACCESS_DENIED, ex);
+            SsoService.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_ACCESS_DENIED, ex);
         } catch (Exception ex) {
-            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
+            SsoService.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
 
     }
 
     protected void handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String grantType = SsoUtils.getRequestParameter(request,
+        String grantType = SsoService.getRequestParameter(request,
                 SsoConstants.JSON_GRANT_TYPE,
                 SsoConstants.JSON_GRANT_TYPE);
-        String scope = SsoUtils.getScopeRequestParameter(request, "");
+        String scope = SsoService.getScopeRequestParameter(request, "");
 
         switch (grantType) {
         case "authorization_code":
             issueTokenForAuthCode(request, response, scope);
             break;
         case "password":
-            if (SsoUtils.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
-                ExternalOIDCUtils.issueTokenUsingExternalOIDC(ssoContext, request, response);
+            if (SsoService.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+                ExternalOIDCService.issueTokenUsingExternalOIDC(ssoContext, request, response);
             } else {
                 handlePasswordGrantType(request, response, scope);
             }
             break;
         case "urn:ovirt:params:oauth:grant-type:http":
-            if (SsoUtils.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
-                ExternalOIDCUtils.issueTokenUsingExternalOIDC(ssoContext, request, response);
+            if (SsoService.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+                ExternalOIDCService.issueTokenUsingExternalOIDC(ssoContext, request, response);
             } else {
                 issueTokenUsingHttpHeaders(request, response);
             }
@@ -91,22 +91,22 @@ public class OAuthTokenServlet extends HttpServlet {
     }
 
     protected void validateClientAcceptHeader(SsoSession ssoSession, HttpServletRequest request) {
-        SsoUtils.validateClientAcceptHeader(request);
+        SsoService.validateClientAcceptHeader(request);
     }
 
     protected void issueTokenForAuthCode(
             HttpServletRequest request,
             HttpServletResponse response,
             String scope) throws Exception {
-        String[] clientIdAndSecret = SsoUtils.getClientIdClientSecret(request);
-        SsoUtils.validateClientRequest(request,
+        String[] clientIdAndSecret = SsoService.getClientIdClientSecret(request);
+        SsoService.validateClientRequest(request,
                 clientIdAndSecret[0],
                 clientIdAndSecret[1],
                 scope,
                 null);
         SsoSession ssoSession = handleIssueTokenForAuthCode(request, clientIdAndSecret[0], scope);
         log.debug("Sending json response");
-        SsoUtils.sendJsonData(response, buildResponse(ssoSession));
+        SsoService.sendJsonData(response, buildResponse(ssoSession));
     }
 
     protected SsoSession handleIssueTokenForAuthCode(
@@ -114,12 +114,12 @@ public class OAuthTokenServlet extends HttpServlet {
             String clientId,
             String scope) {
         log.debug("Entered issueTokenForAuthCode");
-        String authCode = SsoUtils.getRequestParameter(request,
+        String authCode = SsoService.getRequestParameter(request,
                 SsoConstants.HTTP_PARAM_AUTHORIZATION_CODE,
                 SsoConstants.HTTP_PARAM_AUTHORIZATION_CODE);
         String accessToken = getTokenForAuthCode(authCode);
-        SsoUtils.validateRequestScope(request, accessToken, scope);
-        SsoSession ssoSession = SsoUtils.getSsoSession(request, clientId, accessToken, true);
+        SsoService.validateRequestScope(request, accessToken, scope);
+        SsoSession ssoSession = SsoService.getSsoSession(request, clientId, accessToken, true);
         validateClientAcceptHeader(ssoSession, request);
         return ssoSession;
     }
@@ -132,7 +132,7 @@ public class OAuthTokenServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response,
             String scope) throws Exception {
-        if (SsoUtils.scopeAsList(scope).contains("ovirt-ext=token:login-on-behalf")) {
+        if (SsoService.scopeAsList(scope).contains("ovirt-ext=token:login-on-behalf")) {
             issueTokenForLoginOnBehalf(request, response, scope);
         } else {
             issueTokenForPasswd(request, response, scope);
@@ -144,13 +144,13 @@ public class OAuthTokenServlet extends HttpServlet {
             HttpServletResponse response,
             String scope) throws Exception {
         log.debug("Entered issueTokenForLoginOnBehalf");
-        String[] clientIdAndSecret = SsoUtils.getClientIdClientSecret(request);
-        String username = SsoUtils.getRequestParameter(request, "username");
+        String[] clientIdAndSecret = SsoService.getClientIdClientSecret(request);
+        String username = SsoService.getRequestParameter(request, "username");
         log.debug("Attempting to issueTokenForLoginOnBehalf for client: {}, user: {}", clientIdAndSecret[0], username);
-        AuthenticationUtils.loginOnBehalf(ssoContext, request, username);
+        AuthenticationService.loginOnBehalf(ssoContext, request, username);
         String token = (String) request.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);
-        SsoUtils.validateRequestScope(request, token, scope);
-        SsoSession ssoSession = SsoUtils.getSsoSession(request, token, true);
+        SsoService.validateRequestScope(request, token, scope);
+        SsoSession ssoSession = SsoService.getSsoSession(request, token, true);
         if (ssoSession == null) {
             throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
                     ssoContext.getLocalizationUtils()
@@ -160,7 +160,7 @@ public class OAuthTokenServlet extends HttpServlet {
         }
         validateClientAcceptHeader(ssoSession, request);
         log.debug("Sending json response");
-        SsoUtils.sendJsonData(response, buildResponse(ssoSession));
+        SsoService.sendJsonData(response, buildResponse(ssoSession));
     }
 
     protected void issueTokenForPasswd(
@@ -173,7 +173,7 @@ public class OAuthTokenServlet extends HttpServlet {
             credentials = getCredentials(request);
             SsoSession ssoSession = handleIssueTokenForPasswd(request, scope, credentials);
             log.debug("Sending json response");
-            SsoUtils.sendJsonData(response, buildResponse(ssoSession));
+            SsoService.sendJsonData(response, buildResponse(ssoSession));
         } catch (AuthenticationException ex) {
             String profile = "N/A";
             if (credentials != null) {
@@ -191,8 +191,8 @@ public class OAuthTokenServlet extends HttpServlet {
     }
 
     protected Credentials getCredentials(HttpServletRequest request) {
-        return SsoUtils.translateUser(SsoUtils.getRequestParameter(request, "username"),
-                SsoUtils.getRequestParameter(request, "password"),
+        return SsoService.translateUser(SsoService.getRequestParameter(request, "username"),
+                SsoService.getRequestParameter(request, "password"),
                 ssoContext);
     }
 
@@ -200,13 +200,13 @@ public class OAuthTokenServlet extends HttpServlet {
             String scope,
             Credentials credentials) throws Exception {
         String token = null;
-        if (credentials != null && SsoUtils.areCredentialsValid(request, credentials)) {
-            AuthenticationUtils.handleCredentials(ssoContext, request, credentials, false);
+        if (credentials != null && SsoService.areCredentialsValid(request, credentials)) {
+            AuthenticationService.handleCredentials(ssoContext, request, credentials, false);
             token = (String) request.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);
         }
         log.debug("Attempting to issueTokenForPasswd for user: {}",
                 Optional.ofNullable(credentials).map(Credentials::getUsername).orElse("null"));
-        SsoSession ssoSession = SsoUtils.getSsoSessionFromRequest(request, token);
+        SsoSession ssoSession = SsoService.getSsoSessionFromRequest(request, token);
         if (ssoSession == null) {
             throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
                     ssoContext.getLocalizationUtils()
@@ -215,7 +215,7 @@ public class OAuthTokenServlet extends HttpServlet {
                                     (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         validateClientAcceptHeader(ssoSession, request);
-        SsoUtils.validateRequestScope(request, token, scope);
+        SsoService.validateRequestScope(request, token, scope);
         return ssoSession;
     }
 
@@ -232,13 +232,13 @@ public class OAuthTokenServlet extends HttpServlet {
             }
             if (authResult != null && authResult.getStatus() != Authn.AuthResult.SUCCESS) {
                 log.debug("Authentication failed using http headers");
-                List<String> schemes = (List<String>) request.getAttribute(NegotiateAuthUtils.REQUEST_SCHEMES_KEY);
+                List<String> schemes = (List<String>) request.getAttribute(NegotiateAuthService.REQUEST_SCHEMES_KEY);
                 for (String scheme : new HashSet<>(schemes == null ? Collections.emptyList() : schemes)) {
                     response.setHeader("WWW-Authenticate", scheme);
                 }
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             } else if (authResult != null && StringUtils.isNotEmpty(authResult.getToken())) {
-                SsoSession ssoSession = SsoUtils.getSsoSessionFromRequest(request, authResult.getToken());
+                SsoSession ssoSession = SsoService.getSsoSessionFromRequest(request, authResult.getToken());
                 if (ssoSession == null) {
                     throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
                             ssoContext.getLocalizationUtils()
@@ -248,7 +248,7 @@ public class OAuthTokenServlet extends HttpServlet {
                 }
                 validateClientAcceptHeader(ssoSession, request);
                 log.debug("Sending json response");
-                SsoUtils.sendJsonData(response, buildResponse(ssoSession));
+                SsoService.sendJsonData(response, buildResponse(ssoSession));
             } else {
                 throw new AuthenticationException(
                         ssoContext.getLocalizationUtils()

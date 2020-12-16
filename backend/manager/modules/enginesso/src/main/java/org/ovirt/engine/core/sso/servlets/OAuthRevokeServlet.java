@@ -15,8 +15,8 @@ import org.ovirt.engine.core.sso.api.OAuthException;
 import org.ovirt.engine.core.sso.api.SsoConstants;
 import org.ovirt.engine.core.sso.api.SsoContext;
 import org.ovirt.engine.core.sso.api.SsoSession;
-import org.ovirt.engine.core.sso.service.SsoUtils;
-import org.ovirt.engine.core.sso.service.TokenCleanupUtility;
+import org.ovirt.engine.core.sso.service.SsoService;
+import org.ovirt.engine.core.sso.service.TokenCleanupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class OAuthRevokeServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        ssoContext = SsoUtils.getSsoContext(config.getServletContext());
+        ssoContext = SsoService.getSsoContext(config.getServletContext());
     }
 
     @Override
@@ -36,37 +36,37 @@ public class OAuthRevokeServlet extends HttpServlet {
             throws ServletException, IOException {
         log.debug("Entered OAuthRevokeServlet QueryString: {}, Parameters : {}",
                 request.getQueryString(),
-                SsoUtils.getRequestParameters(request));
+                SsoService.getRequestParameters(request));
 
         try {
-            String token = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
-            String scope = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_SCOPE, "");
-            SsoUtils.validateClientAcceptHeader(request);
-            String[] clientIdAndSecret = SsoUtils.getClientIdClientSecret(request);
-            SsoUtils.validateClientRequest(request, clientIdAndSecret[0], clientIdAndSecret[1], scope, null);
+            String token = SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
+            String scope = SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_SCOPE, "");
+            SsoService.validateClientAcceptHeader(request);
+            String[] clientIdAndSecret = SsoService.getClientIdClientSecret(request);
+            SsoService.validateClientRequest(request, clientIdAndSecret[0], clientIdAndSecret[1], scope, null);
 
             SsoSession ssoSession = ssoContext.getSsoSession(token);
             if (ssoSession != null) {
                 Set<String> associatedClientIds = new TreeSet<>(ssoSession.getAssociatedClientIds());
-                boolean revokeAllScope = SsoUtils.scopeAsList(scope).contains("ovirt-ext=revoke:revoke-all");
+                boolean revokeAllScope = SsoService.scopeAsList(scope).contains("ovirt-ext=revoke:revoke-all");
                 if (revokeAllScope) {
-                    SsoUtils.validateRequestScope(request, token, scope);
+                    SsoService.validateRequestScope(request, token, scope);
                 } else {
                     ssoSession.getAssociatedClientIds().remove(clientIdAndSecret[0]);
                 }
                 if (revokeAllScope || ssoSession.getAssociatedClientIds().isEmpty()) {
                     log.info("User {}@{} with profile [{}] successfully logged out",
-                            SsoUtils.getUserId(ssoSession.getPrincipalRecord()),
+                            SsoService.getUserId(ssoSession.getPrincipalRecord()),
                             ssoContext.getUserAuthzName(ssoSession),
                             ssoSession.getProfile());
-                    TokenCleanupUtility.cleanupSsoSession(ssoContext, ssoSession, associatedClientIds);
+                    TokenCleanupService.cleanupSsoSession(ssoContext, ssoSession, associatedClientIds);
                 }
             }
-            SsoUtils.sendJsonData(response, new HashMap<>());
+            SsoService.sendJsonData(response, new HashMap<>());
         } catch (OAuthException ex) {
-            SsoUtils.sendJsonDataWithMessage(request, response, ex);
+            SsoService.sendJsonDataWithMessage(request, response, ex);
         } catch (Exception ex) {
-            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
+            SsoService.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
     }
 }

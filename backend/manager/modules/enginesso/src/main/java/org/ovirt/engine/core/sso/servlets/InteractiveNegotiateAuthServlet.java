@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.sso.api.SsoConstants;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class InteractiveNegotiateAuthServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        switch (SsoUtils.getSsoContext(request).getNegotiateAuthUtils().doAuth(request, response).getStatus()) {
+        switch (SsoService.getSsoContext(request).getNegotiateAuthUtils().doAuth(request, response).getStatus()) {
         case Authn.AuthResult.NEGOTIATION_UNAUTHORIZED:
             log.debug("External authentication failed redirecting to url: {}",
                     SsoConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI);

@@ -17,12 +17,12 @@ import org.ovirt.engine.core.sso.api.SsoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TokenCleanupUtility {
+public class TokenCleanupService {
     private static long lastCleanup = 0;
-    private static Logger log = LoggerFactory.getLogger(TokenCleanupUtility.class);
+    private static Logger log = LoggerFactory.getLogger(TokenCleanupService.class);
 
     public static synchronized void cleanupExpiredTokens(ServletContext ctx) {
-        SsoContext ssoContext = SsoUtils.getSsoContext(ctx);
+        SsoContext ssoContext = SsoService.getSsoContext(ctx);
         long currentTime = System.nanoTime();
         if (currentTime
                 - lastCleanup < (ssoContext.getSsoLocalConfig().getLong("SSO_HOUSE_KEEPING_INTERVAL") * 1000000000)) {
@@ -67,10 +67,10 @@ public class TokenCleanupUtility {
             if (ssoContext.getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
                 log.debug("Existing Session found for token: {}, invalidating session on external OP",
                         ssoSession.getAccessToken());
-                ExternalOIDCUtils.logout(ssoContext, ssoSession.getRefreshToken());
+                ExternalOIDCService.logout(ssoContext, ssoSession.getRefreshToken());
             }
             invokeAuthnLogout(ssoContext, ssoSession);
-            SsoUtils.notifyClientsOfLogoutEvent(ssoContext,
+            SsoService.notifyClientsOfLogoutEvent(ssoContext,
                     associateClientIds,
                     ssoSession.getAccessToken());
         } catch (Exception ex) {

@@ -39,7 +39,7 @@ public class AuthnMessageMapper {
         boolean changePasswordSupported = false;
         if (authResult == Authn.AuthResult.CREDENTIALS_EXPIRED) {
             if (outputMap.<String> get(Authn.InvokeKeys.CREDENTIALS_CHANGE_URL) != null ||
-                    SsoUtils.getSsoContext(request).getSsoProfilesSupportingPasswdChange().contains(profile)) {
+                    SsoService.getSsoContext(request).getSsoProfilesSupportingPasswdChange().contains(profile)) {
                 changePasswordSupported = true;
                 msg = SsoConstants.APP_ERROR_USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED;
             } else {

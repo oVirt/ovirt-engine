@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.ovirt.engine.core.sso.api.AuthenticationException;
 import org.ovirt.engine.core.sso.api.Credentials;
 import org.ovirt.engine.core.sso.api.SsoConstants;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,17 +23,17 @@ public class InteractiveBasicAuthServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         log.debug("Extracting basic auth credentials from header");
-        Credentials credentials = SsoUtils.getUserCredentialsFromHeader(request);
+        Credentials credentials = SsoService.getUserCredentialsFromHeader(request);
         boolean credentialsValid = false;
         try {
-            credentialsValid = credentials != null && SsoUtils.areCredentialsValid(request, credentials);
+            credentialsValid = credentials != null && SsoService.areCredentialsValid(request, credentials);
         } catch (AuthenticationException ex) {
             log.error("Error validating credentials: {}", ex.getMessage());
             log.debug("Exception", ex);
         }
         if (credentialsValid) {
             log.debug("Credentials Valid redirecting to url: {}", SsoConstants.INTERACTIVE_LOGIN_URI);
-            SsoUtils.getSsoSession(request).setTempCredentials(credentials);
+            SsoService.getSsoSession(request).setTempCredentials(credentials);
             response.sendRedirect(request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_URI);
         } else {
             log.debug("Redirecting to url: {}", SsoConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI);

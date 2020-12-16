@@ -48,9 +48,9 @@ import org.ovirt.engine.core.uutils.net.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExternalOIDCUtils {
+public class ExternalOIDCService {
 
-    private static Logger log = LoggerFactory.getLogger(ExternalOIDCUtils.class);
+    private static Logger log = LoggerFactory.getLogger(ExternalOIDCService.class);
 
     // Reference to the HTTP client used to send the requests to the SSO server:
     private static volatile CloseableHttpClient client;
@@ -74,7 +74,7 @@ public class ExternalOIDCUtils {
         try {
             AuthResult authResult = NonInteractiveAuth.OIDC.doAuth(request, response);
             if (authResult != null && StringUtils.isNotEmpty(authResult.getToken())) {
-                SsoSession ssoSession = SsoUtils.getSsoSessionFromRequest(request, authResult.getToken());
+                SsoSession ssoSession = SsoService.getSsoSessionFromRequest(request, authResult.getToken());
                 if (ssoSession == null) {
                     throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
                             ssoContext.getLocalizationUtils()
@@ -82,9 +82,9 @@ public class ExternalOIDCUtils {
                                             SsoConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED,
                                             (Locale) request.getAttribute(SsoConstants.LOCALE)));
                 }
-                SsoUtils.validateClientAcceptHeader(request);
+                SsoService.validateClientAcceptHeader(request);
                 log.debug("Sending json response");
-                SsoUtils.sendJsonData(response, buildResponse(ssoSession));
+                SsoService.sendJsonData(response, buildResponse(ssoSession));
             } else {
                 throw new AuthenticationException(
                         ssoContext.getLocalizationUtils()
@@ -110,7 +110,7 @@ public class ExternalOIDCUtils {
 
         SsoSession ssoSession = login(ssoContext, request, credentials);
         log.info("User {}@{} with profile [{}] successfully logged into external OP with scopes: {}",
-                SsoUtils.getUserId(ssoSession.getPrincipalRecord()),
+                SsoService.getUserId(ssoSession.getPrincipalRecord()),
                 ssoContext.getUserAuthzName(ssoSession),
                 ssoSession.getProfile(),
                 ssoSession.getScope());
@@ -122,7 +122,7 @@ public class ExternalOIDCUtils {
         String externalOidcTokenEndPoint = ssoContext.getSsoLocalConfig().getProperty("EXTERNAL_OIDC_TOKEN_END_POINT");
         String externalOidcClientId = ssoContext.getSsoLocalConfig().getProperty("EXTERNAL_OIDC_CLIENT_ID");
         String externalOidcClientSecret = ssoContext.getSsoLocalConfig().getProperty("EXTERNAL_OIDC_CLIENT_SECRET");
-        String scope = SsoUtils.getScopeRequestParameter(request, "");
+        String scope = SsoService.getScopeRequestParameter(request, "");
 
         HttpPost post = createPost(externalOidcTokenEndPoint);
         List<BasicNameValuePair> form = new ArrayList<>();
@@ -146,7 +146,7 @@ public class ExternalOIDCUtils {
         String accessToken = (String) response.get("access_token");
         request.setAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN, accessToken);
 
-        SsoSession ssoSession = SsoUtils.persistAuthInfoInContextWithToken(request,
+        SsoSession ssoSession = SsoService.persistAuthInfoInContextWithToken(request,
                 accessToken,
                 credentials.getPassword(),
                 credentials.getProfile(),
@@ -271,7 +271,7 @@ public class ExternalOIDCUtils {
             throws IOException, GeneralSecurityException {
         // Make sure the client is created:
         if (client == null) {
-            synchronized (ExternalOIDCUtils.class) {
+            synchronized (ExternalOIDCService.class) {
                 if (client == null) {
                     client = createClient(ssoContext);
                 }

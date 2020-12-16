@@ -20,7 +20,7 @@ import org.ovirt.engine.core.sso.api.SsoConstants;
 import org.ovirt.engine.core.sso.api.SsoContext;
 import org.ovirt.engine.core.sso.api.SsoSession;
 import org.ovirt.engine.core.sso.search.DirectorySearch;
-import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class OAuthTokenInfoServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) {
-        ssoContext = SsoUtils.getSsoContext(config.getServletContext());
+        ssoContext = SsoService.getSsoContext(config.getServletContext());
         for (DirectorySearch query : DirectorySearch.values()) {
             if (query.isPublicQuery()) {
                 directoryPublicQueries.put(query.getName(), query);
@@ -48,53 +48,53 @@ public class OAuthTokenInfoServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         log.debug("Entered OAuthTokenInfo QueryString: {}, Parameters : {}",
                 request.getQueryString(),
-                SsoUtils.getRequestParameters(request));
+                SsoService.getRequestParameters(request));
         boolean isValidateRequest = false;
         boolean isSearchAuthzRequest;
         boolean isPublicSearchAuthzRequest;
         try {
-            String scope = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_SCOPE, "");
-            isValidateRequest = SsoUtils.scopeAsList(scope).contains(SsoConstants.VALIDATE_SCOPE);
-            isSearchAuthzRequest = SsoUtils.scopeAsList(scope).contains(SsoConstants.AUTHZ_SEARCH_SCOPE);
-            isPublicSearchAuthzRequest = SsoUtils.scopeAsList(scope).contains(SsoConstants.PUBLIC_AUTHZ_SEARCH_SCOPE);
-            SsoUtils.validateClientAcceptHeader(request);
+            String scope = SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_SCOPE, "");
+            isValidateRequest = SsoService.scopeAsList(scope).contains(SsoConstants.VALIDATE_SCOPE);
+            isSearchAuthzRequest = SsoService.scopeAsList(scope).contains(SsoConstants.AUTHZ_SEARCH_SCOPE);
+            isPublicSearchAuthzRequest = SsoService.scopeAsList(scope).contains(SsoConstants.PUBLIC_AUTHZ_SEARCH_SCOPE);
+            SsoService.validateClientAcceptHeader(request);
 
             if (isValidateRequest) {
-                String token = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
-                SsoUtils.getSsoSession(request, null, token, true);
+                String token = SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
+                SsoService.getSsoSession(request, null, token, true);
                 log.debug("Sending json response");
-                SsoUtils.sendJsonData(response, Collections.emptyMap());
+                SsoService.sendJsonData(response, Collections.emptyMap());
             } else {
-                String[] clientIdAndSecret = SsoUtils.getClientIdClientSecret(request);
-                SsoUtils.validateClientRequest(request, clientIdAndSecret[0], clientIdAndSecret[1], null, null);
+                String[] clientIdAndSecret = SsoService.getClientIdClientSecret(request);
+                SsoService.validateClientRequest(request, clientIdAndSecret[0], clientIdAndSecret[1], null, null);
 
                 if (isSearchAuthzRequest || isPublicSearchAuthzRequest) {
                     validateQueryType(request);
                 }
 
                 if (!isPublicSearchAuthzRequest) {
-                    String token = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
-                    SsoUtils.validateRequestScope(request, token, scope);
-                    SsoUtils.getSsoSession(request, clientIdAndSecret[0], token, true)
+                    String token = SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
+                    SsoService.validateRequestScope(request, token, scope);
+                    SsoService.getSsoSession(request, clientIdAndSecret[0], token, true)
                             .getAssociatedClientIds()
                             .add(clientIdAndSecret[0]);
                 }
 
                 log.debug("Sending json response");
-                SsoUtils.sendJsonData(response,
+                SsoService.sendJsonData(response,
                         isSearchAuthzRequest || isPublicSearchAuthzRequest
                                 ? buildSearchResponse(request, isPublicSearchAuthzRequest)
                                 : buildResponse(request, clientIdAndSecret[0], scope));
             }
         } catch (OAuthException ex) {
-            SsoUtils.sendJsonDataWithMessage(request, response, ex, isValidateRequest);
+            SsoService.sendJsonDataWithMessage(request, response, ex, isValidateRequest);
         } catch (Exception ex) {
-            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
+            SsoService.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
     }
 
     private void validateQueryType(HttpServletRequest request) {
-        String queryType = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_SEARCH_QUERY_TYPE);
+        String queryType = SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_SEARCH_QUERY_TYPE);
         if (!directoryQueries.containsKey(queryType) && !directoryPublicQueries.containsKey(queryType)) {
             throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
                     String.format(
@@ -110,25 +110,25 @@ public class OAuthTokenInfoServlet extends HttpServlet {
             boolean isPublicSearchAuthzRequest) throws Exception {
         log.debug("Entered SearchDirectoryServlet Query String: {}, Parameters : {}",
                 request.getQueryString(),
-                SsoUtils.getRequestParameters(request));
+                SsoService.getRequestParameters(request));
         Map<String, Object> data = new HashMap<>();
         data.put("result",
                 isPublicSearchAuthzRequest ? directoryPublicQueries.get(
-                        SsoUtils.getRequestParameter(request,
+                        SsoService.getRequestParameter(request,
                                 SsoConstants.HTTP_PARAM_SEARCH_QUERY_TYPE))
                         .executeQuery(ssoContext, request)
                         : directoryQueries.get(
-                                SsoUtils.getRequestParameter(request,
+                                SsoService.getRequestParameter(request,
                                         SsoConstants.HTTP_PARAM_SEARCH_QUERY_TYPE))
                                 .executeQuery(ssoContext, request));
         return data;
     }
 
     private Map<String, Object> buildResponse(HttpServletRequest request, String clientId, String scope) {
-        String token = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
-        SsoSession ssoSession = SsoUtils.getSsoSession(request, clientId, token, true);
+        String token = SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
+        SsoSession ssoSession = SsoService.getSsoSession(request, clientId, token, true);
         String password = null;
-        if (SsoUtils.scopeAsList(scope).contains(SsoConstants.PASSWORD_ACCESS_SCOPE)) {
+        if (SsoService.scopeAsList(scope).contains(SsoConstants.PASSWORD_ACCESS_SCOPE)) {
             password = ssoSession.getPassword();
         }
         return buildResponse(ssoSession, password);

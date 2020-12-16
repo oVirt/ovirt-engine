@@ -5,7 +5,7 @@ import javax.servlet.http.HttpSessionListener;
 
 import org.ovirt.engine.core.sso.api.SsoConstants;
 import org.ovirt.engine.core.sso.api.SsoSession;
-import org.ovirt.engine.core.sso.service.TokenCleanupUtility;
+import org.ovirt.engine.core.sso.service.TokenCleanupService;
 
 public class SsoSessionListener implements HttpSessionListener {
 
@@ -16,6 +16,6 @@ public class SsoSessionListener implements HttpSessionListener {
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
-        TokenCleanupUtility.cleanupExpiredTokens(se.getSession().getServletContext());
+        TokenCleanupService.cleanupExpiredTokens(se.getSession().getServletContext());
     }
 }
