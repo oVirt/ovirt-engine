@@ -429,6 +429,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         clusterModel.getEnableBallooning().setEntity(cluster.isEnableBallooning());
         clusterModel.getBiosType().setSelectedItem(cluster.getBiosType());
         clusterModel.getArchitecture().setSelectedItem(cluster.getArchitecture());
+        clusterModel.getFipsMode().setSelectedItem(cluster.getFipsMode());
         clusterModel.getSerialNumberPolicy().setSelectedItem(cluster.getSerialNumberPolicy());
         if (SerialNumberPolicy.CUSTOM.equals(cluster.getSerialNumberPolicy())) {
             clusterModel.getCustomSerialNumber().setEntity(cluster.getCustomSerialNumber());
@@ -770,6 +771,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         } else {
             cluster.setArchitecture(null);
         }
+        cluster.setFipsMode(model.getFipsMode().getSelectedItem());
 
         if (model.getSpiceProxyEnabled().getEntity()) {
             cluster.setSpiceProxy(model.getSpiceProxy().getEntity());

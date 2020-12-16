@@ -1265,6 +1265,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ArchitectureType___undefined();
 
+    String FipsMode___UNDEFINED();
+
+    String FipsMode___DISABLED();
+
+    String FipsMode___ENABLED();
+
     String HostedEngineDeployConfiguration$Action___NONE();
 
     String HostedEngineDeployConfiguration$Action___DEPLOY();

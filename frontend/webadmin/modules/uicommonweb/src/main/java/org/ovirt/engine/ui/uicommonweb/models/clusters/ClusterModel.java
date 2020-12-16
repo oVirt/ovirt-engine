@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.FipsMode;
 import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
@@ -968,6 +969,16 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.biosType = biosType;
     }
 
+    private ListModel<FipsMode> fipsMode;
+
+    public ListModel<FipsMode> getFipsMode() {
+        return fipsMode;
+    }
+
+    public void setFipsMode(ListModel<FipsMode> value) {
+        fipsMode = value;
+    }
+
     @Override
     public void setEntity(Cluster value) {
         super.setEntity(value);
@@ -1341,6 +1352,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setBiosType(new ListModel<>());
         initBiosType();
 
+        setFipsMode(new ListModel<>());
+        initFipsMode();
+
         setVersion(new ListModel<>());
         getVersion().getSelectedItemChangedEvent().addListener(this);
         setMigrateOnErrorOption(MigrateOnErrorOptions.YES);
@@ -1516,6 +1530,35 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         firewallType.setItems(Arrays.asList(FirewallType.values()));
         firewallType.setIsChangeable(true);
         firewallType.setSelectedItem(FirewallType.FIREWALLD);
+    }
+
+    private void initFipsMode() {
+        ListModel<FipsMode> fipsModes = getFipsMode();
+
+        fipsModes.setItems(Arrays.asList(FipsMode.values()));
+        fipsModes.setIsChangeable(true);
+        if (getEntity() != null) {
+            fipsModes.setSelectedItem(getEntity().getFipsMode());
+        } else {
+            fipsModes.setSelectedItem(FipsMode.UNDEFINED);
+        }
+    }
+
+    private void updateFipsMode(Version version) {
+        ListModel<FipsMode> fipsModes = getFipsMode();
+        if (AsyncDataProvider.getInstance().isFipsModeSupportedByVersion(version)) {
+            fipsModes.setIsAvailable(true);
+            fipsModes.setIsChangeable(true);
+            if (getEntity() != null) {
+                fipsModes.setSelectedItem(getEntity().getFipsMode());
+            } else {
+                fipsModes.setSelectedItem(FipsMode.UNDEFINED);
+            }
+        } else {
+            fipsModes.setSelectedItem(FipsMode.UNDEFINED);
+            fipsModes.setIsAvailable(false);
+            fipsModes.setIsChangeable(false);
+        }
     }
 
     private void initLogMaxMemoryUsedThresholdType() {
@@ -1821,7 +1864,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             architectureSelectedItemChanged();
         } else if (sender == getMacPoolListModel()) {
             getMacPoolModel().setEntity(getMacPoolListModel().getSelectedItem());
-        }  else if (sender == getMigrationPolicies()) {
+        } else if (sender == getMigrationPolicies()) {
             migrationPoliciesChanged();
         }
     }
@@ -1903,6 +1946,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         refreshMigrationPolicies();
 
         updateMigrateEncrypted(version);
+
+        updateFipsMode(version);
 
         refreshAdditionalClusterFeaturesList();
 

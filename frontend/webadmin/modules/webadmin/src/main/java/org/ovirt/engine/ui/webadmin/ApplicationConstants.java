@@ -692,6 +692,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String clusterPopupArchitectureLabel();
 
+    String clusterPopupFipsModeLabel();
+
     String clusterPopupVersionLabel();
 
     String clusterSwitchTypeLabel();

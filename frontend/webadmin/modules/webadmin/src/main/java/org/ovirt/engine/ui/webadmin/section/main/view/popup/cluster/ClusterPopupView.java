@@ -6,6 +6,7 @@ import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.FipsMode;
 import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
@@ -523,6 +524,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     EntityModelCheckBoxEditor skipFencingIfGlusterQuorumNotMetCheckBox;
 
+    @UiField(provided = true)
+    @Path(value = "fipsMode.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<FipsMode> fipsModeEditor;
+
     private final Driver driver = GWT.create(Driver.class);
 
     @UiField
@@ -720,6 +726,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         migrationPolicyEditor.hideLabel();
         macPoolListEditor = new ListModelListBoxEditor<>(new NameRenderer<MacPool>());
         macPoolListEditor.setLabel(constants.clusterPopupMacPoolLabel());
+        fipsModeEditor = new ListModelListBoxEditor<>(new EnumRenderer<FipsMode>());
     }
 
     private void initCheckBoxEditors() {

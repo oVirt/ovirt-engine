@@ -495,6 +495,10 @@ public class AsyncDataProvider {
         return FeatureSupported.isTscFrequencySupported(version);
     }
 
+    public Boolean isFipsModeSupportedByVersion(Version version) {
+        return FeatureSupported.isFipsModeSupported(version);
+    }
+
     private void initMigrationSupportMap() {
         Frontend.getInstance().runQuery(QueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMigrationSupport),
