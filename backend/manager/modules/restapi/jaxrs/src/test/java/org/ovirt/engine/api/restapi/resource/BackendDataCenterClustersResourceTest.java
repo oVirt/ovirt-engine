@@ -21,6 +21,7 @@ import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.FipsMode;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -166,6 +167,7 @@ public class BackendDataCenterClustersResourceTest extends
         when(entity.getName()).thenReturn(NAMES[index]);
         when(entity.getDescription()).thenReturn(DESCRIPTIONS[index]);
         when(entity.getMigrationBandwidthLimitType()).thenReturn(MigrationBandwidthLimitType.AUTO);
+        when(entity.getFipsMode()).thenReturn(FipsMode.UNDEFINED);
         return entity;
     }
 

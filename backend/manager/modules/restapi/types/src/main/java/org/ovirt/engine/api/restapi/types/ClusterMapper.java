@@ -13,6 +13,7 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.ErrorHandling;
 import org.ovirt.engine.api.model.ExternalProvider;
+import org.ovirt.engine.api.model.FipsMode;
 import org.ovirt.engine.api.model.Ksm;
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.MemoryOverCommit;
@@ -184,6 +185,9 @@ public class ClusterMapper {
         if (model.isSetVncEncryption()) {
             entity.setVncEncryptionEnabled(model.isVncEncryption());
         }
+        if (model.isSetFipsMode() && model.getFipsMode() != null) {
+            entity.setFipsMode(map(model.getFipsMode(), null));
+        }
         return entity;
     }
 
@@ -280,6 +284,8 @@ public class ClusterMapper {
         if (entity.getGlusterTunedProfile() != null && !entity.getGlusterTunedProfile().isEmpty()) {
             model.setGlusterTunedProfile(entity.getGlusterTunedProfile());
         }
+        model.setFipsMode(map(entity.getFipsMode(), null));
+
         return model;
     }
 
@@ -362,6 +368,30 @@ public class ClusterMapper {
             template = template==null ? new ErrorHandling() : template;
             template.setOnError(value);
             return template;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.FipsMode.class, to = FipsMode.class)
+    public static FipsMode map(org.ovirt.engine.core.common.businessentities.FipsMode model, FipsMode template) {
+        switch (model) {
+            case DISABLED:
+                return FipsMode.DISABLED;
+            case ENABLED:
+                return FipsMode.ENABLED;
+            default:
+                return FipsMode.UNDEFINED;
+        }
+    }
+
+    @Mapping(from = FipsMode.class, to = org.ovirt.engine.core.common.businessentities.FipsMode.class)
+    public static org.ovirt.engine.core.common.businessentities.FipsMode map(FipsMode model, org.ovirt.engine.core.common.businessentities.FipsMode template) {
+        switch (model) {
+            case DISABLED:
+                return org.ovirt.engine.core.common.businessentities.FipsMode.DISABLED;
+            case ENABLED:
+                return org.ovirt.engine.core.common.businessentities.FipsMode.ENABLED;
+            default:
+                return org.ovirt.engine.core.common.businessentities.FipsMode.UNDEFINED;
         }
     }
 }
