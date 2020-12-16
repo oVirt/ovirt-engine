@@ -302,6 +302,12 @@ public class ClusterValidator {
                         && !allVdssInMaintenance);
     }
 
+    public ValidationResult updateFipsIsLegal() {
+        return ValidationResult.failWith(EngineMessage.CLUSTER_CANNOT_UPDATE_FIPS_VDS_MAINTENANCE)
+                .when(cluster.getFipsMode() != newCluster.getFipsMode()
+                        && !areAllVdssInMaintenance(allHostsForCluster.get()));
+    }
+
     /**
      * cannot change the processor architecture while there are attached hosts or VMs to the cluster
      */

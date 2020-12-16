@@ -697,7 +697,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 && validate(clusterValidator.nonDefaultBiosType())
                 && validate(clusterValidator.implicitAffinityGroup())
                 && validateClusterPolicy(oldCluster)
-                && validateConfiguration();
+                && validateConfiguration()
+                && validate(clusterValidator.updateFipsIsLegal());
     }
 
     private void addValidationVarAndMessage(String varName, Object varValue, EngineMessage message) {
