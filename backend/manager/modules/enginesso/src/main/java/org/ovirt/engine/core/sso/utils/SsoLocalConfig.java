@@ -2,8 +2,11 @@ package org.ovirt.engine.core.sso.utils;
 
 import java.io.File;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.ovirt.engine.core.uutils.config.ShellLikeConfd;
 
+@ApplicationScoped
 public class SsoLocalConfig extends ShellLikeConfd {
     // Default files for defaults and overridden values:
     private static final String DEFAULTS_PATH = "/usr/share/ovirt-engine/conf/engine.conf.defaults";

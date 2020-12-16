@@ -28,10 +28,13 @@ public class SsoContextListener implements ServletContextListener {
     @Inject
     private Instance<SsoDao> ssoDao;
 
+    @Inject
+    private Instance<SsoLocalConfig> ssoLocalConfig;
+
     @Override
     public void contextInitialized(ServletContextEvent event) {
         ServletContext ctx = event.getServletContext();
-        SsoLocalConfig localConfig = new SsoLocalConfig();
+        SsoLocalConfig localConfig = ssoLocalConfig.get();
 
         SsoContext ssoContext = new SsoContext();
         ssoContext.setSsoExtensionsManager(new SsoExtensionsManager(localConfig));

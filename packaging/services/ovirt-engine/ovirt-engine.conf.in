@@ -462,6 +462,18 @@ SSO_ALTERNATE_ENGINE_FQDNS=""
 # uses to communicate with the engine:
 SSO_CALLBACK_CLIENT_POOL_SIZE=10
 
+# The maximum allowed unique SSO client IDs used when dynamically loading missing client's info.
+# This very rare situation can take place when new SSO client is registered by ovirt-register-sso-client-tool
+# and is requested by authorisation flow for the first time without restarting ovirt-engine.
+# Sample real life scenario: new external(not configured by engine-setup) instance of Grafana is being added
+SSO_MAX_ALLOWED_MISSING_UNIQUE_CLIENTS=2
+
+# The maximum allowed attempts per minute to refresh missing SSO client info.
+# This very rare situation can take place when new SSO client is registered by ovirt-register-sso-client-tool
+# and is requested by authorisation flow for the first time without restarting ovirt-engine.
+# Sample real life scenario: new external(not configured by engine-setup) instance of Grafana is being added
+SSO_MAX_MISSING_CLIENT_REFRESH_ATTEMPTS_PER_MINUTE=5
+
 # The maximal allowed number of sessions per user, where -1 indicates that no limit has been set
 ENGINE_MAX_USER_SESSIONS=-1
 

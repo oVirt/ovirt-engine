@@ -11,7 +11,7 @@
 
     <artifactId>enginesso</artifactId>
     <packaging>war</packaging>
-    <name>ovirt-engine sso</name>
+    <name>oVirt Engine SSO</name>
     <description>oVirt engine sso</description>
 
     <dependencies>
