@@ -49,7 +49,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHTTPClient;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHttpClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
@@ -95,7 +95,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     private AnsibleExecutor ansibleExecutor;
 
     @Inject
-    private AnsibleRunnerHTTPClient runnerClient;
+    private AnsibleRunnerHttpClient runnerClient;
 
     private EngineLocalConfig config = EngineLocalConfig.getInstance();
 

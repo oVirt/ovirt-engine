@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 public class AnsibleRunnerLogger {
 
-    private static Logger logger = LoggerFactory.getLogger(AnsibleRunnerHTTPClient.class);
+    private static Logger logger = LoggerFactory.getLogger(AnsibleRunnerHttpClient.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
     private static final String NEW_LINE = System.getProperty("line.separator");
     private static final ObjectMapper mapper = new ObjectMapper();

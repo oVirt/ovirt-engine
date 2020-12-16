@@ -47,19 +47,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class AnsibleRunnerHTTPClient {
+public class AnsibleRunnerHttpClient {
 
     private static final Object inventoryLock = new Object();
     private static final Object executeLock = new Object();
     private static final String HOST_GROUP = "ovirt";
     private static final String API_VERSION = "/api/v1";
-    private static Logger log = LoggerFactory.getLogger(AnsibleRunnerHTTPClient.class);
+    private static Logger log = LoggerFactory.getLogger(AnsibleRunnerHttpClient.class);
 
     private ObjectMapper mapper;
     private HttpClient httpClient;
     private AnsibleRunnerLogger runnerLogger;
 
-    public AnsibleRunnerHTTPClient() {
+    public AnsibleRunnerHttpClient() {
         this.httpClient = HttpClientBuilder.create().build();
         this.mapper = new ObjectMapper();
     }

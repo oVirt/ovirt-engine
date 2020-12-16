@@ -42,20 +42,20 @@ public class AnsibleRunnerHttpClientTest {
     HttpClient httpClient;
 
     @InjectMocks
-    AnsibleRunnerHTTPClient client;
+    AnsibleRunnerHttpClient client;
 
     private static Stream<Arguments> statusesForPlaybook() {
         return Stream.of(
             Arguments.of(
-                new AnsibleRunnerHTTPClient.PlaybookStatus("ok", "running"),
+                new AnsibleRunnerHttpClient.PlaybookStatus("ok", "running"),
                 createHttpResponse("{\"status\": \"OK\", \"msg\": \"running\"}")
             ),
             Arguments.of(
-                new AnsibleRunnerHTTPClient.PlaybookStatus("notfound", "not found"),
+                new AnsibleRunnerHttpClient.PlaybookStatus("notfound", "not found"),
                 createHttpResponse("{\"status\": \"NOTFOUND\", \"msg\": \"not found\"}")
             ),
             Arguments.of(
-                new AnsibleRunnerHTTPClient.PlaybookStatus("unknown", "the artifacts directory is incomplete!"),
+                new AnsibleRunnerHttpClient.PlaybookStatus("unknown", "the artifacts directory is incomplete!"),
                 createHttpResponse("{\"status\": \"UNKNOWN\", \"msg\": \"The artifacts directory is incomplete!\"}")
             )
         );
@@ -108,7 +108,7 @@ public class AnsibleRunnerHttpClientTest {
     @ParameterizedTest(name = "Test playbook statuses: {0}")
     @MethodSource("statusesForPlaybook")
     public void getPlaybookStatus(
-        AnsibleRunnerHTTPClient.PlaybookStatus playbookStatus,
+        AnsibleRunnerHttpClient.PlaybookStatus playbookStatus,
         HttpResponse response
     ) throws IOException {
         when(httpClient.execute(any(HttpGet.class))).thenReturn(response);

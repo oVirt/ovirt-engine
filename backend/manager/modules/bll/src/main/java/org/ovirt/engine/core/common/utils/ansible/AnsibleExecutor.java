@@ -123,7 +123,7 @@ public class AnsibleExecutor {
 
         String playUuid = null;
         String msg = "";
-        AnsibleRunnerHTTPClient runnerClient = null;
+        AnsibleRunnerHttpClient runnerClient = null;
         try {
             runnerClient = ansibleClientFactory.create(command);
             ret.setLogFile(runnerClient.getLogger().getLogFile());
@@ -147,7 +147,7 @@ public class AnsibleExecutor {
                 Thread.sleep(POLL_INTERVAL);
 
                 // Get the current status of the playbook:
-                AnsibleRunnerHTTPClient.PlaybookStatus playbookStatus = runnerClient.getPlaybookStatus(playUuid);
+                AnsibleRunnerHttpClient.PlaybookStatus playbookStatus = runnerClient.getPlaybookStatus(playUuid);
                 String status = playbookStatus.getStatus();
                 msg = playbookStatus.getMsg();
                 // Process the events if the playbook is running:

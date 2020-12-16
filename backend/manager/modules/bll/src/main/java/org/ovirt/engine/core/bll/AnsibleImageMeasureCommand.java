@@ -13,14 +13,14 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHTTPClient;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHttpClient;
 
 @NonTransactiveCommandAttribute
 public class AnsibleImageMeasureCommand <T extends AnsibleImageMeasureCommandParameters> extends AnsibleCommandBase<T> {
     public static final Pattern DISK_TARGET_SIZE_PATTERN = Pattern.compile("required size: ([0-9]+).*", Pattern.DOTALL);
 
     @Inject
-    private AnsibleRunnerHTTPClient runnerClient;
+    private AnsibleRunnerHttpClient runnerClient;
 
     public AnsibleImageMeasureCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

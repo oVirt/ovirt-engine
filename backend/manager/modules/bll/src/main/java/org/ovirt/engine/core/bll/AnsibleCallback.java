@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AnsibleCommandParameters;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHTTPClient;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHttpClient;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerLogger;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,7 +35,7 @@ public class AnsibleCallback implements CommandCallback {
     private CommandCoordinatorUtil commandCoordinatorUtil;
 
     @Inject
-    private AnsibleRunnerHTTPClient runnerClient;
+    private AnsibleRunnerHttpClient runnerClient;
 
     @Inject
     private VdsDao vdsDao;
@@ -64,7 +64,7 @@ public class AnsibleCallback implements CommandCallback {
         String msg = "";
         int totalEvents;
         // Get the current status of the playbook:
-        AnsibleRunnerHTTPClient.PlaybookStatus playbookStatus = runnerClient.getPlaybookStatus(playUuid);
+        AnsibleRunnerHttpClient.PlaybookStatus playbookStatus = runnerClient.getPlaybookStatus(playUuid);
         String status = playbookStatus.getStatus();
         msg = playbookStatus.getMsg();
         // Process the events if the playbook is running:

@@ -9,9 +9,9 @@ public class AnsibleClientFactory {
     @Inject
     private AnsibleCommandLogFileFactory ansibleCommandLogFileFactory;
 
-    public AnsibleRunnerHTTPClient create(AnsibleCommandConfig command) {
+    public AnsibleRunnerHttpClient create(AnsibleCommandConfig command) {
         AnsibleRunnerLogger runnerLogger = ansibleCommandLogFileFactory.create(command);
-        AnsibleRunnerHTTPClient client = new AnsibleRunnerHTTPClient();
+        AnsibleRunnerHttpClient client = new AnsibleRunnerHttpClient();
         client.setLogger(runnerLogger);
         return client;
     }
