@@ -17,6 +17,7 @@ import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.sso.service.LocalizationService;
 import org.ovirt.engine.core.sso.service.NegotiateAuthService;
+import org.ovirt.engine.core.sso.service.SsoClientsRegistry;
 import org.ovirt.engine.core.sso.service.SsoExtensionsManager;
 import org.ovirt.engine.core.sso.utils.SsoLocalConfig;
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public class SsoContext implements Serializable {
     private List<String> ssoProfiles;
     private List<String> ssoProfilesSupportingPasswd;
     private List<String> ssoProfilesSupportingPasswdChange;
-    private Map<String, ClientInfo> ssoClientRegistry;
+    private SsoClientsRegistry ssoClientRegistry;
     private Map<String, SsoSession> ssoSessions = new ConcurrentHashMap<>();
     private Map<String, SsoSession> ssoSessionsById = new ConcurrentHashMap<>();
     private Map<String, AuthenticationProfile> profiles = null;
@@ -134,7 +135,7 @@ public class SsoContext implements Serializable {
         this.ssoProfilesSupportingPasswdChange = ssoProfiles;
     }
 
-    public void setSsoClientRegistry(Map<String, ClientInfo> ssoClientRegistry) {
+    public void setSsoClientRegistry(SsoClientsRegistry ssoClientRegistry) {
         this.ssoClientRegistry = ssoClientRegistry;
     }
 
@@ -176,7 +177,7 @@ public class SsoContext implements Serializable {
     }
 
     public ClientInfo getClienInfo(String clientId) {
-        return ssoClientRegistry.get(clientId);
+        return ssoClientRegistry.getClientInfo(clientId);
     }
 
     public String getTokenForAuthCode(String authCode) {

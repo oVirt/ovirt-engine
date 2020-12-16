@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.cert.CertificateFactory;
 
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -14,10 +16,17 @@ import org.ovirt.engine.core.sso.db.SsoDao;
 import org.ovirt.engine.core.sso.service.AuthenticationService;
 import org.ovirt.engine.core.sso.service.LocalizationService;
 import org.ovirt.engine.core.sso.service.NegotiateAuthService;
+import org.ovirt.engine.core.sso.service.SsoClientsRegistry;
 import org.ovirt.engine.core.sso.service.SsoExtensionsManager;
 import org.ovirt.engine.core.sso.utils.SsoLocalConfig;
 
 public class SsoContextListener implements ServletContextListener {
+
+    @Inject
+    private Instance<SsoClientsRegistry> ssoClientRegistry;
+
+    @Inject
+    private Instance<SsoDao> ssoDao;
 
     @Override
     public void contextInitialized(ServletContextEvent event) {
@@ -27,8 +36,8 @@ public class SsoContextListener implements ServletContextListener {
         SsoContext ssoContext = new SsoContext();
         ssoContext.setSsoExtensionsManager(new SsoExtensionsManager(localConfig));
         ssoContext.init(localConfig);
-        ssoContext.setSsoClientRegistry(SsoDao.getAllSsoClientsInfo());
-        ssoContext.setScopeDependencies(SsoDao.getAllSsoScopeDependencies());
+        ssoContext.setSsoClientRegistry(ssoClientRegistry.get());
+        ssoContext.setScopeDependencies(ssoDao.get().getAllSsoScopeDependencies());
         ssoContext.setSsoDefaultProfile(AuthenticationService.getDefaultProfile(ssoContext.getSsoExtensionsManager()));
         ssoContext.setSsoProfiles(AuthenticationService.getAvailableProfiles(ssoContext.getSsoExtensionsManager()));
         // required in login.jsp
