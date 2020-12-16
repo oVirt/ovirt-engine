@@ -29,8 +29,7 @@ public class DirectoryUtils {
                 namespace,
                 SearchParsingUtils.generateQueryMap(
                         query,
-                        Authz.QueryEntity.PRINCIPAL
-                ),
+                        Authz.QueryEntity.PRINCIPAL),
                 false,
                 false);
     }
@@ -79,17 +78,16 @@ public class DirectoryUtils {
             boolean groupsResolvingRecursive) {
         ExtMap inputMap = new ExtMap().mput(
                 Authz.InvokeKeys.QUERY_ENTITY,
-                Authz.QueryEntity.PRINCIPAL
-        ).mput(
-                Authz.InvokeKeys.QUERY_FLAGS,
-                queryFlagValue(groupsResolving, groupsResolvingRecursive)
-        ).mput(
-                Authz.InvokeKeys.QUERY_FILTER,
-                filter
-        ).mput(
-                Authz.InvokeKeys.NAMESPACE,
-                namespace
-        );
+                Authz.QueryEntity.PRINCIPAL)
+                .mput(
+                        Authz.InvokeKeys.QUERY_FLAGS,
+                        queryFlagValue(groupsResolving, groupsResolvingRecursive))
+                .mput(
+                        Authz.InvokeKeys.QUERY_FILTER,
+                        filter)
+                .mput(
+                        Authz.InvokeKeys.NAMESPACE,
+                        namespace);
         return populateRecords(
                 extension,
                 namespace,
@@ -105,17 +103,16 @@ public class DirectoryUtils {
             boolean groupsResolvingRecursive) {
         ExtMap inputMap = new ExtMap().mput(
                 Authz.InvokeKeys.QUERY_ENTITY,
-                Authz.QueryEntity.GROUP
-        ).mput(
-                Authz.InvokeKeys.QUERY_FLAGS,
-                queryFlagValue(groupsResolving, groupsResolvingRecursive)
-        ).mput(
-                Authz.InvokeKeys.QUERY_FILTER,
-                filter
-        ).mput(
-                Authz.InvokeKeys.NAMESPACE,
-                namespace
-        );
+                Authz.QueryEntity.GROUP)
+                .mput(
+                        Authz.InvokeKeys.QUERY_FLAGS,
+                        queryFlagValue(groupsResolving, groupsResolvingRecursive))
+                .mput(
+                        Authz.InvokeKeys.QUERY_FILTER,
+                        filter)
+                .mput(
+                        Authz.InvokeKeys.NAMESPACE,
+                        namespace);
         return populateRecords(
                 extension,
                 namespace,
@@ -152,40 +149,36 @@ public class DirectoryUtils {
         Object opaque = extension.invoke(
                 new ExtMap().mput(
                         Base.InvokeKeys.COMMAND,
-                        Authz.InvokeCommands.QUERY_OPEN
-                ).mput(
-                        Authz.InvokeKeys.NAMESPACE,
-                        namespace
-                ).mput(
-                        input
-                )
-        ).get(Authz.InvokeKeys.QUERY_OPAQUE);
+                        Authz.InvokeCommands.QUERY_OPEN)
+                        .mput(
+                                Authz.InvokeKeys.NAMESPACE,
+                                namespace)
+                        .mput(
+                                input))
+                .get(Authz.InvokeKeys.QUERY_OPAQUE);
         Collection<ExtMap> result = null;
         try {
             do {
                 result = extension.invoke(
                         new ExtMap().mput(
                                 Base.InvokeKeys.COMMAND,
-                                Authz.InvokeCommands.QUERY_EXECUTE
-                        ).mput(
-                                Authz.InvokeKeys.QUERY_OPAQUE,
-                                opaque
-                        ).mput(
-                                Authz.InvokeKeys.PAGE_SIZE,
-                                PAGE_SIZE
-                        )
-                ).get(Authz.InvokeKeys.QUERY_RESULT);
+                                Authz.InvokeCommands.QUERY_EXECUTE)
+                                .mput(
+                                        Authz.InvokeKeys.QUERY_OPAQUE,
+                                        opaque)
+                                .mput(
+                                        Authz.InvokeKeys.PAGE_SIZE,
+                                        PAGE_SIZE))
+                        .get(Authz.InvokeKeys.QUERY_RESULT);
             } while (result != null && handler.handle(result));
         } finally {
             extension.invoke(
                     new ExtMap().mput(
                             Base.InvokeKeys.COMMAND,
-                            Authz.InvokeCommands.QUERY_CLOSE
-                    ).mput(
-                            Authz.InvokeKeys.QUERY_OPAQUE,
-                            opaque
-                    )
-            );
+                            Authz.InvokeCommands.QUERY_CLOSE)
+                            .mput(
+                                    Authz.InvokeKeys.QUERY_OPAQUE,
+                                    opaque));
         }
     }
 

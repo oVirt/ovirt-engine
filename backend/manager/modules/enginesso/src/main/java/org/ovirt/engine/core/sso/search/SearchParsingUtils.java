@@ -50,11 +50,10 @@ public class SearchParsingUtils {
         List<ExtMap> filter = ids.stream().map(id -> createMapForKeyAndValue(key, id)).collect(Collectors.toList());
         result.mput(
                 QueryFilterRecord.OPERATOR,
-                QueryFilterOperator.OR
-                ).mput(
+                QueryFilterOperator.OR)
+                .mput(
                         QueryFilterRecord.FILTER,
-                        filter
-                );
+                        filter);
         return result;
     }
 
@@ -89,14 +88,11 @@ public class SearchParsingUtils {
                 if (negate) {
                     filter.add(new ExtMap().mput(
                             QueryFilterRecord.OPERATOR,
-                            QueryFilterOperator.NOT
-                            ).mput(
+                            QueryFilterOperator.NOT)
+                            .mput(
                                     QueryFilterRecord.FILTER,
                                     Arrays.asList(
-                                            createMapForKeyAndValue(field, value)
-                                            )
-                            )
-                            );
+                                            createMapForKeyAndValue(field, value))));
 
                 } else {
                     filter.add(createMapForKeyAndValue(field, value));
@@ -105,11 +101,10 @@ public class SearchParsingUtils {
             }
             result.mput(
                     QueryFilterRecord.OPERATOR,
-                    QueryFilterOperator.OR
-                    ).mput(
+                    QueryFilterOperator.OR)
+                    .mput(
                             QueryFilterRecord.FILTER,
-                            filter
-                    );
+                            filter);
         }
         return result;
     }
@@ -119,13 +114,15 @@ public class SearchParsingUtils {
         return queryPrefix;
     }
 
-    public static Collection<? extends Collection<String>> getIdsBatches(final ExtMap context, final Collection<String> ids) {
+    public static Collection<? extends Collection<String>> getIdsBatches(final ExtMap context,
+            final Collection<String> ids) {
 
         List<String> idsList = new ArrayList<>(ids);
         int chunk = context.<Integer> get(Authz.ContextKeys.QUERY_MAX_FILTER_SIZE, 100);
         List<List<String>> batchOfIdsList = new ArrayList<>();
         for (int counter = 0; counter < ids.size(); counter = counter + chunk) {
-            batchOfIdsList.add(idsList.subList(counter, counter + chunk > idsList.size() ? idsList.size() : counter + chunk));
+            batchOfIdsList
+                    .add(idsList.subList(counter, counter + chunk > idsList.size() ? idsList.size() : counter + chunk));
         }
         return batchOfIdsList;
     }
@@ -137,14 +134,13 @@ public class SearchParsingUtils {
     private static ExtMap createMapForKeyAndValue(ExtKey key, String value) {
         return new ExtMap().mput(
                 QueryFilterRecord.OPERATOR,
-                QueryFilterOperator.EQ
-                ).mput(
+                QueryFilterOperator.EQ)
+                .mput(
                         QueryFilterRecord.KEY,
-                        key
-                ).mput(
+                        key)
+                .mput(
                         key,
-                        value
-                );
+                        value);
     }
 
 }

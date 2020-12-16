@@ -15,12 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
+import org.ovirt.engine.core.sso.api.OAuthException;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.api.SsoContext;
+import org.ovirt.engine.core.sso.api.SsoSession;
 import org.ovirt.engine.core.sso.search.DirectorySearch;
-import org.ovirt.engine.core.sso.utils.OAuthException;
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoContext;
-import org.ovirt.engine.core.sso.utils.SsoSession;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
+import org.ovirt.engine.core.sso.service.SsoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,13 +81,14 @@ public class OAuthTokenInfoServlet extends HttpServlet {
                 }
 
                 log.debug("Sending json response");
-                SsoUtils.sendJsonData(response, isSearchAuthzRequest || isPublicSearchAuthzRequest ?
-                        buildSearchResponse(request, isPublicSearchAuthzRequest) :
-                        buildResponse(request, clientIdAndSecret[0], scope));
+                SsoUtils.sendJsonData(response,
+                        isSearchAuthzRequest || isPublicSearchAuthzRequest
+                                ? buildSearchResponse(request, isPublicSearchAuthzRequest)
+                                : buildResponse(request, clientIdAndSecret[0], scope));
             }
-        } catch(OAuthException ex) {
+        } catch (OAuthException ex) {
             SsoUtils.sendJsonDataWithMessage(request, response, ex, isValidateRequest);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
     }
@@ -97,30 +98,31 @@ public class OAuthTokenInfoServlet extends HttpServlet {
         if (!directoryQueries.containsKey(queryType) && !directoryPublicQueries.containsKey(queryType)) {
             throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
                     String.format(
-                            ssoContext.getLocalizationUtils().localize(
-                                    SsoConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
-                                    (Locale) request.getAttribute(SsoConstants.LOCALE)),
+                            ssoContext.getLocalizationUtils()
+                                    .localize(
+                                            SsoConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
+                                            (Locale) request.getAttribute(SsoConstants.LOCALE)),
                             SsoConstants.HTTP_PARAM_SEARCH_QUERY_TYPE));
         }
     }
 
     private Map<String, Object> buildSearchResponse(HttpServletRequest request,
-                                                    boolean isPublicSearchAuthzRequest) throws Exception {
+            boolean isPublicSearchAuthzRequest) throws Exception {
         log.debug("Entered SearchDirectoryServlet Query String: {}, Parameters : {}",
                 request.getQueryString(),
                 SsoUtils.getRequestParameters(request));
         Map<String, Object> data = new HashMap<>();
         data.put("result",
-                isPublicSearchAuthzRequest ?
-                        directoryPublicQueries.get(
+                isPublicSearchAuthzRequest ? directoryPublicQueries.get(
+                        SsoUtils.getRequestParameter(request,
+                                SsoConstants.HTTP_PARAM_SEARCH_QUERY_TYPE))
+                        .executeQuery(ssoContext, request)
+                        : directoryQueries.get(
                                 SsoUtils.getRequestParameter(request,
-                                        SsoConstants.HTTP_PARAM_SEARCH_QUERY_TYPE)).executeQuery(ssoContext, request) :
-                        directoryQueries.get(
-                                SsoUtils.getRequestParameter(request,
-                                        SsoConstants.HTTP_PARAM_SEARCH_QUERY_TYPE)).executeQuery(ssoContext, request));
+                                        SsoConstants.HTTP_PARAM_SEARCH_QUERY_TYPE))
+                                .executeQuery(ssoContext, request));
         return data;
     }
-
 
     private Map<String, Object> buildResponse(HttpServletRequest request, String clientId, String scope) {
         String token = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
@@ -144,13 +146,15 @@ public class OAuthTokenInfoServlet extends HttpServlet {
 
         Map<String, Object> ovirt = new HashMap<>();
         ovirt.put("version", SsoConstants.OVIRT_SSO_VERSION);
-        ovirt.put("principal_id", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.ID));
-        ovirt.put("email", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.EMAIL));
-        ovirt.put("namespace", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.NAMESPACE));
-        ovirt.put("first_name", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.FIRST_NAME));
-        ovirt.put("last_name", ssoSession.getPrincipalRecord().<String>get(Authz.PrincipalRecord.LAST_NAME));
-        ovirt.put("group_ids", ssoSession.getPrincipalRecord().<Collection>get(Authz.PrincipalRecord.GROUPS,
-            Collections.<ExtMap>emptyList()));
+        ovirt.put("principal_id", ssoSession.getPrincipalRecord().<String> get(Authz.PrincipalRecord.ID));
+        ovirt.put("email", ssoSession.getPrincipalRecord().<String> get(Authz.PrincipalRecord.EMAIL));
+        ovirt.put("namespace", ssoSession.getPrincipalRecord().<String> get(Authz.PrincipalRecord.NAMESPACE));
+        ovirt.put("first_name", ssoSession.getPrincipalRecord().<String> get(Authz.PrincipalRecord.FIRST_NAME));
+        ovirt.put("last_name", ssoSession.getPrincipalRecord().<String> get(Authz.PrincipalRecord.LAST_NAME));
+        ovirt.put("group_ids",
+                ssoSession.getPrincipalRecord()
+                        .<Collection> get(Authz.PrincipalRecord.GROUPS,
+                                Collections.<ExtMap> emptyList()));
         if (password != null) {
             ovirt.put("password", password);
         }

@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.api.extensions.aaa.Authn;
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.service.SsoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,18 +21,18 @@ public class InteractiveNegotiateAuthServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         switch (SsoUtils.getSsoContext(request).getNegotiateAuthUtils().doAuth(request, response).getStatus()) {
-            case Authn.AuthResult.NEGOTIATION_UNAUTHORIZED:
-                log.debug("External authentication failed redirecting to url: {}",
-                        SsoConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI);
-                response.sendRedirect(request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI);
-                break;
-            case Authn.AuthResult.SUCCESS:
-                log.debug("External authentication succeeded redirecting to module");
-                response.sendRedirect(request.getContextPath() + SsoConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI);
-                break;
-            case Authn.AuthResult.NEGOTIATION_INCOMPLETE:
-                log.debug("External authentication incomplete");
-                break;
+        case Authn.AuthResult.NEGOTIATION_UNAUTHORIZED:
+            log.debug("External authentication failed redirecting to url: {}",
+                    SsoConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI);
+            response.sendRedirect(request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI);
+            break;
+        case Authn.AuthResult.SUCCESS:
+            log.debug("External authentication succeeded redirecting to module");
+            response.sendRedirect(request.getContextPath() + SsoConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI);
+            break;
+        case Authn.AuthResult.NEGOTIATION_INCOMPLETE:
+            log.debug("External authentication incomplete");
+            break;
         }
     }
 }

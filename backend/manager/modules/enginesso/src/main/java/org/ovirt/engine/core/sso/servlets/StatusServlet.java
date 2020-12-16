@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.service.SsoUtils;
 
 public class StatusServlet extends HttpServlet {
     private static final long serialVersionUID = -5178735022948234147L;

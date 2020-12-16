@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
-import org.ovirt.engine.core.sso.utils.openid.OpenIdService;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.openid.OpenIdService;
+import org.ovirt.engine.core.sso.service.SsoUtils;
 
 public class OpenIdJwksServlet extends HttpServlet {
 
@@ -25,7 +25,7 @@ public class OpenIdJwksServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             SsoUtils.sendJsonData(response, openIdService.get().getJson(buildResponse()));
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
     }

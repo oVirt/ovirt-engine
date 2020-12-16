@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ovirt.engine.core.sso.utils.AuthenticationException;
-import org.ovirt.engine.core.sso.utils.Credentials;
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
+import org.ovirt.engine.core.sso.api.AuthenticationException;
+import org.ovirt.engine.core.sso.api.Credentials;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.service.SsoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

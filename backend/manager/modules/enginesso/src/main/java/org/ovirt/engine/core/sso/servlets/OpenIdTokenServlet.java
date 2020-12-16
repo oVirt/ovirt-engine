@@ -9,13 +9,13 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ovirt.engine.core.sso.utils.AuthenticationException;
-import org.ovirt.engine.core.sso.utils.Credentials;
-import org.ovirt.engine.core.sso.utils.OAuthException;
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoSession;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
-import org.ovirt.engine.core.sso.utils.openid.OpenIdService;
+import org.ovirt.engine.core.sso.api.AuthenticationException;
+import org.ovirt.engine.core.sso.api.Credentials;
+import org.ovirt.engine.core.sso.api.OAuthException;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.api.SsoSession;
+import org.ovirt.engine.core.sso.openid.OpenIdService;
+import org.ovirt.engine.core.sso.service.SsoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,11 +33,11 @@ public class OpenIdTokenServlet extends OAuthTokenServlet {
                     request.getQueryString(),
                     SsoUtils.getRequestParameters(request));
             handleRequest(request, response);
-        } catch(OAuthException ex) {
+        } catch (OAuthException ex) {
             SsoUtils.sendJsonDataWithMessage(request, response, ex);
-        } catch(AuthenticationException ex) {
+        } catch (AuthenticationException ex) {
             SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_ACCESS_DENIED, ex);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
 
@@ -90,9 +90,10 @@ public class OpenIdTokenServlet extends OAuthTokenServlet {
                 profile = credentials.getProfile() == null ? "N/A" : credentials.getProfile();
             }
             throw new AuthenticationException(String.format(
-                    ssoContext.getLocalizationUtils().localize(
-                            SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER_IN_DOMAIN,
-                            (Locale) request.getAttribute(SsoConstants.LOCALE)),
+                    ssoContext.getLocalizationUtils()
+                            .localize(
+                                    SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER_IN_DOMAIN,
+                                    (Locale) request.getAttribute(SsoConstants.LOCALE)),
                     credentials == null ? "N/A" : credentials.getUsername(),
                     profile,
                     ex.getMessage()));
@@ -100,9 +101,9 @@ public class OpenIdTokenServlet extends OAuthTokenServlet {
     }
 
     protected Map<String, Object> buildResponse(HttpServletRequest request,
-                                                SsoSession ssoSession,
-                                                String clientId,
-                                                String clientSecret) {
+            SsoSession ssoSession,
+            String clientId,
+            String clientSecret) {
         Map<String, Object> payload = buildResponse(ssoSession);
         payload.put("id_token", openIdService.get().createJWT(request, ssoSession, clientId, clientSecret));
         return payload;

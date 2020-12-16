@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoContext;
-import org.ovirt.engine.core.sso.utils.SsoSession;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
-import org.ovirt.engine.core.sso.utils.openid.OpenIdService;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.api.SsoContext;
+import org.ovirt.engine.core.sso.api.SsoSession;
+import org.ovirt.engine.core.sso.openid.OpenIdService;
+import org.ovirt.engine.core.sso.service.SsoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

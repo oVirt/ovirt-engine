@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.conn.util.InetAddressUtils;
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
-import org.ovirt.engine.core.sso.utils.openid.OpenIdService;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.openid.OpenIdService;
+import org.ovirt.engine.core.sso.service.SsoUtils;
 
 public class OpenIdConfigurationServlet extends HttpServlet {
 
@@ -26,8 +26,15 @@ public class OpenIdConfigurationServlet extends HttpServlet {
 
     static {
         staticConfig.put("claim_types_supported", Collections.singletonList("normal"));
-        staticConfig.put("claims_supported", Arrays.asList("sub", "iss", "auth_time", "name", "given_name", "family_name",
-                "preferred_username", "email"));
+        staticConfig.put("claims_supported",
+                Arrays.asList("sub",
+                        "iss",
+                        "auth_time",
+                        "name",
+                        "given_name",
+                        "family_name",
+                        "preferred_username",
+                        "email"));
         staticConfig.put("grant_types_supported", Arrays.asList("authorization_code", "password"));
         staticConfig.put("id_token_signing_alg_values_supported", Arrays.asList("HS256", "RS256"));
         staticConfig.put("request_object_signing_alg_values_supported", Collections.singletonList("none"));
@@ -38,7 +45,8 @@ public class OpenIdConfigurationServlet extends HttpServlet {
         staticConfig.put("response_types_supported", Collections.singletonList("code"));
         staticConfig.put("scopes_supported", Collections.singletonList("openid"));
         staticConfig.put("subject_types_supported", Arrays.asList("public", "pairwise"));
-        staticConfig.put("token_endpoint_auth_methods_supported", Arrays.asList("client_secret_basic", "client_secret_post"));
+        staticConfig.put("token_endpoint_auth_methods_supported",
+                Arrays.asList("client_secret_basic", "client_secret_post"));
         staticConfig.put("userinfo_signing_alg_values_supported", Collections.singletonList("RS256"));
         staticConfig.put("version", "1.0");
     }
@@ -47,7 +55,7 @@ public class OpenIdConfigurationServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             SsoUtils.sendJsonData(response, openIdService.get().getJson(buildResponse(request)));
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
     }

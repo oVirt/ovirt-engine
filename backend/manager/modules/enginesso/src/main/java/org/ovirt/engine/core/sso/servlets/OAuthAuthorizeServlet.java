@@ -15,13 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
-import org.ovirt.engine.core.sso.utils.InteractiveAuth;
-import org.ovirt.engine.core.sso.utils.OAuthBadRequestException;
-import org.ovirt.engine.core.sso.utils.OAuthException;
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoContext;
-import org.ovirt.engine.core.sso.utils.SsoSession;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
+import org.ovirt.engine.core.sso.api.InteractiveAuth;
+import org.ovirt.engine.core.sso.api.OAuthBadRequestException;
+import org.ovirt.engine.core.sso.api.OAuthException;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.api.SsoContext;
+import org.ovirt.engine.core.sso.api.SsoSession;
+import org.ovirt.engine.core.sso.service.SsoUtils;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +58,10 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         if (!responseType.equals("code")) {
             throw new OAuthBadRequestException(SsoConstants.ERR_CODE_INVALID_REQUEST,
                     String.format(
-                            ssoContext.getLocalizationUtils().localize(
-                                    SsoConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
-                                    (Locale) request.getAttribute(SsoConstants.LOCALE)),
+                            ssoContext.getLocalizationUtils()
+                                    .localize(
+                                            SsoConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
+                                            (Locale) request.getAttribute(SsoConstants.LOCALE)),
                             SsoConstants.JSON_RESPONSE_TYPE));
         }
         login(request, response, buildSsoSession(request));
@@ -113,14 +114,16 @@ public class OAuthAuthorizeServlet extends HttpServlet {
                 .contains("ovirt-ext=auth:identity")) {
             redirectUrl = new URLBuilder(SsoUtils.getRedirectUrl(request))
                     .addParameter(SsoConstants.ERROR, SsoConstants.ERR_OVIRT_CODE_NOT_AUTHENTICATED)
-                    .addParameter(SsoConstants.ERROR_DESCRIPTION, SsoConstants.ERR_CODE_NOT_AUTHENTICATED_MSG).build();
+                    .addParameter(SsoConstants.ERROR_DESCRIPTION, SsoConstants.ERR_CODE_NOT_AUTHENTICATED_MSG)
+                    .build();
         } else {
             ssoSession.setAuthStack(getAuthSeq(ssoSession));
             if (ssoSession.getAuthStack().isEmpty()) {
                 throw new OAuthException(SsoConstants.ERR_CODE_ACCESS_DENIED,
-                        ssoContext.getLocalizationUtils().localize(
-                                SsoConstants.APP_ERROR_NO_VALID_AUTHENTICATION_MECHANISM_FOUND,
-                                (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                        ssoContext.getLocalizationUtils()
+                                .localize(
+                                        SsoConstants.APP_ERROR_NO_VALID_AUTHENTICATION_MECHANISM_FOUND,
+                                        (Locale) request.getAttribute(SsoConstants.LOCALE)));
             }
             redirectUrl = request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_NEXT_AUTH_URI;
         }

@@ -20,13 +20,13 @@ public class AuthzUtils {
     private static final int QUERIES_RESULTS_LIMIT = 1000;
     private static final int PAGE_SIZE = 500;
 
-
     public static String getName(ExtensionProxy proxy) {
         return proxy.getContext().get(Base.ContextKeys.INSTANCE_NAME);
     }
 
     public static boolean supportsPasswordAuthentication(ExtensionProxy proxy) {
-        return (proxy.getContext().<Long>get(Authn.ContextKeys.CAPABILITIES, 0L) & Authn.Capabilities.AUTHENTICATE_PASSWORD) != 0;
+        return (proxy.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES, 0L)
+                & Authn.Capabilities.AUTHENTICATE_PASSWORD) != 0;
     }
 
     public static ExtMap fetchPrincipalRecord(
@@ -38,28 +38,26 @@ public class AuthzUtils {
                 extension,
                 new ExtMap().mput(
                         Authz.InvokeKeys.PRINCIPAL,
-                        principal
-                ),
+                        principal),
                 resolveGroups,
-                resolveGroupsRecursive
-        );
+                resolveGroupsRecursive);
     }
 
     private static ExtMap fetchPrincipalRecordImpl(
             final ExtensionProxy extension,
-            ExtMap m, boolean resolveGroups,
+            ExtMap m,
+            boolean resolveGroups,
             boolean resolveGroupsRecursive) {
         ExtMap ret = null;
         ExtMap output = extension.invoke(
                 m.mput(
                         Base.InvokeKeys.COMMAND,
-                        Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
-                ).mput(
-                        Authz.InvokeKeys.QUERY_FLAGS,
-                        (resolveGroups ? Authz.QueryFlags.RESOLVE_GROUPS : 0) |
-                                (resolveGroupsRecursive ? Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE : 0)
-                ));
-        if (output.<Integer>get(Authz.InvokeKeys.STATUS) == Authz.Status.SUCCESS) {
+                        Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD)
+                        .mput(
+                                Authz.InvokeKeys.QUERY_FLAGS,
+                                (resolveGroups ? Authz.QueryFlags.RESOLVE_GROUPS : 0) |
+                                        (resolveGroupsRecursive ? Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE : 0)));
+        if (output.<Integer> get(Authz.InvokeKeys.STATUS) == Authz.Status.SUCCESS) {
             ret = output.get(Authz.InvokeKeys.PRINCIPAL_RECORD);
         }
         return ret;
@@ -73,17 +71,16 @@ public class AuthzUtils {
             boolean groupsResolvingRecursive) {
         ExtMap inputMap = new ExtMap().mput(
                 Authz.InvokeKeys.QUERY_ENTITY,
-                Authz.QueryEntity.PRINCIPAL
-        ).mput(
-                Authz.InvokeKeys.QUERY_FLAGS,
-                queryFlagValue(groupsResolving, groupsResolvingRecursive)
-        ).mput(
-                Authz.InvokeKeys.QUERY_FILTER,
-                filter
-        ).mput(
-                Authz.InvokeKeys.NAMESPACE,
-                namespace
-        );
+                Authz.QueryEntity.PRINCIPAL)
+                .mput(
+                        Authz.InvokeKeys.QUERY_FLAGS,
+                        queryFlagValue(groupsResolving, groupsResolvingRecursive))
+                .mput(
+                        Authz.InvokeKeys.QUERY_FILTER,
+                        filter)
+                .mput(
+                        Authz.InvokeKeys.NAMESPACE,
+                        namespace);
         return populateRecords(
                 extension,
                 namespace,
@@ -99,17 +96,16 @@ public class AuthzUtils {
             boolean groupsResolvingRecursive) {
         ExtMap inputMap = new ExtMap().mput(
                 Authz.InvokeKeys.QUERY_ENTITY,
-                Authz.QueryEntity.GROUP
-        ).mput(
-                Authz.InvokeKeys.QUERY_FLAGS,
-                queryFlagValue(groupsResolving, groupsResolvingRecursive)
-        ).mput(
-                Authz.InvokeKeys.QUERY_FILTER,
-                filter
-        ).mput(
-                Authz.InvokeKeys.NAMESPACE,
-                namespace
-        );
+                Authz.QueryEntity.GROUP)
+                .mput(
+                        Authz.InvokeKeys.QUERY_FLAGS,
+                        queryFlagValue(groupsResolving, groupsResolvingRecursive))
+                .mput(
+                        Authz.InvokeKeys.QUERY_FILTER,
+                        filter)
+                .mput(
+                        Authz.InvokeKeys.NAMESPACE,
+                        namespace);
         return populateRecords(
                 extension,
                 namespace,
@@ -145,40 +141,36 @@ public class AuthzUtils {
         Object opaque = extension.invoke(
                 new ExtMap().mput(
                         Base.InvokeKeys.COMMAND,
-                        Authz.InvokeCommands.QUERY_OPEN
-                ).mput(
-                        Authz.InvokeKeys.NAMESPACE,
-                        namespace
-                ).mput(
-                        input
-                )
-        ).get(Authz.InvokeKeys.QUERY_OPAQUE);
+                        Authz.InvokeCommands.QUERY_OPEN)
+                        .mput(
+                                Authz.InvokeKeys.NAMESPACE,
+                                namespace)
+                        .mput(
+                                input))
+                .get(Authz.InvokeKeys.QUERY_OPAQUE);
         Collection<ExtMap> result = null;
         try {
             do {
                 result = extension.invoke(
                         new ExtMap().mput(
                                 Base.InvokeKeys.COMMAND,
-                                Authz.InvokeCommands.QUERY_EXECUTE
-                        ).mput(
-                                Authz.InvokeKeys.QUERY_OPAQUE,
-                                opaque
-                        ).mput(
-                                Authz.InvokeKeys.PAGE_SIZE,
-                                PAGE_SIZE
-                        )
-                ).get(Authz.InvokeKeys.QUERY_RESULT);
+                                Authz.InvokeCommands.QUERY_EXECUTE)
+                                .mput(
+                                        Authz.InvokeKeys.QUERY_OPAQUE,
+                                        opaque)
+                                .mput(
+                                        Authz.InvokeKeys.PAGE_SIZE,
+                                        PAGE_SIZE))
+                        .get(Authz.InvokeKeys.QUERY_RESULT);
             } while (result != null && handler.handle(result));
         } finally {
             extension.invoke(
                     new ExtMap().mput(
                             Base.InvokeKeys.COMMAND,
-                            Authz.InvokeCommands.QUERY_CLOSE
-                    ).mput(
-                            Authz.InvokeKeys.QUERY_OPAQUE,
-                            opaque
-                    )
-            );
+                            Authz.InvokeCommands.QUERY_CLOSE)
+                            .mput(
+                                    Authz.InvokeKeys.QUERY_OPAQUE,
+                                    opaque));
         }
     }
 
@@ -189,20 +181,17 @@ public class AuthzUtils {
             final boolean groupsResolving,
             final boolean groupsResolvingRecursive) {
         List<ExtMap> results = new ArrayList<>();
-        SearchParsingUtils.getIdsBatches(extension.getContext(), ids).forEach(
-                batch ->
-                        results.addAll(
+        SearchParsingUtils.getIdsBatches(extension.getContext(), ids)
+                .forEach(
+                        batch -> results.addAll(
                                 queryPrincipalRecords(
                                         extension,
                                         namespace,
                                         SearchParsingUtils.generateQueryMap(
                                                 batch,
-                                                Authz.QueryEntity.PRINCIPAL
-                                        ),
+                                                Authz.QueryEntity.PRINCIPAL),
                                         groupsResolving,
-                                        groupsResolvingRecursive
-                                )
-                        ));
+                                        groupsResolvingRecursive)));
         return results;
     }
 
@@ -213,17 +202,17 @@ public class AuthzUtils {
             final boolean groupsResolving,
             final boolean groupsResolvingRecursive) {
         Collection<ExtMap> results = new ArrayList<>();
-        SearchParsingUtils.getIdsBatches(extension.getContext(), ids).forEach(
-                batch -> results.addAll(
-                        queryGroupRecords(
-                                extension,
-                                namespace,
-                                SearchParsingUtils.generateQueryMap(
-                                        batch,
-                                        Authz.QueryEntity.GROUP
-                                ),
-                                groupsResolving,
-                                groupsResolvingRecursive)));
+        SearchParsingUtils.getIdsBatches(extension.getContext(), ids)
+                .forEach(
+                        batch -> results.addAll(
+                                queryGroupRecords(
+                                        extension,
+                                        namespace,
+                                        SearchParsingUtils.generateQueryMap(
+                                                batch,
+                                                Authz.QueryEntity.GROUP),
+                                        groupsResolving,
+                                        groupsResolvingRecursive)));
         return results;
     }
 

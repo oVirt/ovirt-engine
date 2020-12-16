@@ -11,12 +11,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ovirt.engine.core.sso.utils.OAuthException;
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoContext;
-import org.ovirt.engine.core.sso.utils.SsoSession;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
-import org.ovirt.engine.core.sso.utils.TokenCleanupUtility;
+import org.ovirt.engine.core.sso.api.OAuthException;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.api.SsoContext;
+import org.ovirt.engine.core.sso.api.SsoSession;
+import org.ovirt.engine.core.sso.service.SsoUtils;
+import org.ovirt.engine.core.sso.service.TokenCleanupUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

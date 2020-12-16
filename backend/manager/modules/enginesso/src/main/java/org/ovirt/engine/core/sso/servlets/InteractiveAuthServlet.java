@@ -10,13 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.sso.utils.AuthenticationException;
-import org.ovirt.engine.core.sso.utils.AuthenticationUtils;
-import org.ovirt.engine.core.sso.utils.Credentials;
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoContext;
-import org.ovirt.engine.core.sso.utils.SsoSession;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
+import org.ovirt.engine.core.sso.api.AuthenticationException;
+import org.ovirt.engine.core.sso.api.Credentials;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.api.SsoContext;
+import org.ovirt.engine.core.sso.api.SsoSession;
+import org.ovirt.engine.core.sso.service.AuthenticationUtils;
+import org.ovirt.engine.core.sso.service.SsoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,9 +94,10 @@ public class InteractiveAuthServlet extends HttpServlet {
             Credentials userCredentials) throws AuthenticationException {
         if (userCredentials == null || !SsoUtils.areCredentialsValid(request, userCredentials, true)) {
             throw new AuthenticationException(
-                    ssoContext.getLocalizationUtils().localize(
-                            SsoConstants.APP_ERROR_INVALID_CREDENTIALS,
-                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                    ssoContext.getLocalizationUtils()
+                            .localize(
+                                    SsoConstants.APP_ERROR_INVALID_CREDENTIALS,
+                                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         try {
             log.debug("Authenticating user using credentials");

@@ -3,9 +3,9 @@ package org.ovirt.engine.core.sso.context;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoSession;
-import org.ovirt.engine.core.sso.utils.TokenCleanupUtility;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.api.SsoSession;
+import org.ovirt.engine.core.sso.service.TokenCleanupUtility;
 
 public class SsoSessionListener implements HttpSessionListener {
 

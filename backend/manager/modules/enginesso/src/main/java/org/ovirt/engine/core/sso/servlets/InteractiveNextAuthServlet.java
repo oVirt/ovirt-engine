@@ -10,12 +10,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ovirt.engine.core.sso.utils.InteractiveAuth;
-import org.ovirt.engine.core.sso.utils.OAuthException;
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoContext;
-import org.ovirt.engine.core.sso.utils.SsoSession;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
+import org.ovirt.engine.core.sso.api.InteractiveAuth;
+import org.ovirt.engine.core.sso.api.OAuthException;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.api.SsoContext;
+import org.ovirt.engine.core.sso.api.SsoSession;
+import org.ovirt.engine.core.sso.service.SsoUtils;
 
 public class InteractiveNextAuthServlet extends HttpServlet {
     private static final long serialVersionUID = 1188460579367588817L;
@@ -33,14 +33,16 @@ public class InteractiveNextAuthServlet extends HttpServlet {
         Stack<InteractiveAuth> authStack = SsoUtils.getSsoSession(request).getAuthStack();
 
         if (authStack == null || authStack.isEmpty()) {
-            SsoUtils.redirectToErrorPage(request, response,
+            SsoUtils.redirectToErrorPage(request,
+                    response,
                     new OAuthException(
-                            SsoUtils.getSsoSession(request).isOpenIdScope() ?
-                                    SsoConstants.ERR_CODE_OPENID_LOGIN_REQUIRED :
-                                    SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
-                            ssoContext.getLocalizationUtils().localize(
-                                    SsoConstants.APP_ERROR_AUTHENTICATION_REQUIRED,
-                                    (Locale) request.getAttribute(SsoConstants.LOCALE))));
+                            SsoUtils.getSsoSession(request).isOpenIdScope()
+                                    ? SsoConstants.ERR_CODE_OPENID_LOGIN_REQUIRED
+                                    : SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
+                            ssoContext.getLocalizationUtils()
+                                    .localize(
+                                            SsoConstants.APP_ERROR_AUTHENTICATION_REQUIRED,
+                                            (Locale) request.getAttribute(SsoConstants.LOCALE))));
         } else {
             SsoUtils.getSsoSession(request).setStatus(SsoSession.Status.inprogress);
             response.sendRedirect(authStack.pop().getAuthUrl(request, response));

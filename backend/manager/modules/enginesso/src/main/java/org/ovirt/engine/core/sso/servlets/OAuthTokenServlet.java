@@ -17,18 +17,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.aaa.Authn;
-import org.ovirt.engine.core.sso.utils.AuthResult;
-import org.ovirt.engine.core.sso.utils.AuthenticationException;
-import org.ovirt.engine.core.sso.utils.AuthenticationUtils;
-import org.ovirt.engine.core.sso.utils.Credentials;
-import org.ovirt.engine.core.sso.utils.ExternalOIDCUtils;
-import org.ovirt.engine.core.sso.utils.NegotiateAuthUtils;
-import org.ovirt.engine.core.sso.utils.NonInteractiveAuth;
-import org.ovirt.engine.core.sso.utils.OAuthException;
-import org.ovirt.engine.core.sso.utils.SsoConstants;
-import org.ovirt.engine.core.sso.utils.SsoContext;
-import org.ovirt.engine.core.sso.utils.SsoSession;
-import org.ovirt.engine.core.sso.utils.SsoUtils;
+import org.ovirt.engine.core.sso.api.AuthResult;
+import org.ovirt.engine.core.sso.api.AuthenticationException;
+import org.ovirt.engine.core.sso.api.Credentials;
+import org.ovirt.engine.core.sso.api.NonInteractiveAuth;
+import org.ovirt.engine.core.sso.api.OAuthException;
+import org.ovirt.engine.core.sso.api.SsoConstants;
+import org.ovirt.engine.core.sso.api.SsoContext;
+import org.ovirt.engine.core.sso.api.SsoSession;
+import org.ovirt.engine.core.sso.service.AuthenticationUtils;
+import org.ovirt.engine.core.sso.service.ExternalOIDCUtils;
+import org.ovirt.engine.core.sso.service.NegotiateAuthUtils;
+import org.ovirt.engine.core.sso.service.SsoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +50,11 @@ public class OAuthTokenServlet extends HttpServlet {
                     maskPassword(request.getQueryString()),
                     SsoUtils.getRequestParameters(request));
             handleRequest(request, response);
-        } catch(OAuthException ex) {
+        } catch (OAuthException ex) {
             SsoUtils.sendJsonDataWithMessage(request, response, ex);
-        } catch(AuthenticationException ex) {
+        } catch (AuthenticationException ex) {
             SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_ACCESS_DENIED, ex);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
 
@@ -66,27 +66,27 @@ public class OAuthTokenServlet extends HttpServlet {
                 SsoConstants.JSON_GRANT_TYPE);
         String scope = SsoUtils.getScopeRequestParameter(request, "");
 
-        switch(grantType) {
-            case "authorization_code":
-                issueTokenForAuthCode(request, response, scope);
-                break;
-            case "password":
-                if (SsoUtils.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
-                    ExternalOIDCUtils.issueTokenUsingExternalOIDC(ssoContext, request, response);
-                } else {
-                    handlePasswordGrantType(request, response, scope);
-                }
-                break;
-            case "urn:ovirt:params:oauth:grant-type:http":
-                if (SsoUtils.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
-                    ExternalOIDCUtils.issueTokenUsingExternalOIDC(ssoContext, request, response);
-                } else {
-                    issueTokenUsingHttpHeaders(request, response);
-                }
-                break;
-            default:
-                throw new OAuthException(SsoConstants.ERR_CODE_UNSUPPORTED_GRANT_TYPE,
-                        SsoConstants.ERR_CODE_UNSUPPORTED_GRANT_TYPE_MSG);
+        switch (grantType) {
+        case "authorization_code":
+            issueTokenForAuthCode(request, response, scope);
+            break;
+        case "password":
+            if (SsoUtils.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+                ExternalOIDCUtils.issueTokenUsingExternalOIDC(ssoContext, request, response);
+            } else {
+                handlePasswordGrantType(request, response, scope);
+            }
+            break;
+        case "urn:ovirt:params:oauth:grant-type:http":
+            if (SsoUtils.getSsoContext(request).getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
+                ExternalOIDCUtils.issueTokenUsingExternalOIDC(ssoContext, request, response);
+            } else {
+                issueTokenUsingHttpHeaders(request, response);
+            }
+            break;
+        default:
+            throw new OAuthException(SsoConstants.ERR_CODE_UNSUPPORTED_GRANT_TYPE,
+                    SsoConstants.ERR_CODE_UNSUPPORTED_GRANT_TYPE_MSG);
         }
     }
 
@@ -153,9 +153,10 @@ public class OAuthTokenServlet extends HttpServlet {
         SsoSession ssoSession = SsoUtils.getSsoSession(request, token, true);
         if (ssoSession == null) {
             throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
-                    ssoContext.getLocalizationUtils().localize(
-                            SsoConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED_FOR_USERNAME_PASSWORD,
-                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                    ssoContext.getLocalizationUtils()
+                            .localize(
+                                    SsoConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED_FOR_USERNAME_PASSWORD,
+                                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         validateClientAcceptHeader(ssoSession, request);
         log.debug("Sending json response");
@@ -179,9 +180,10 @@ public class OAuthTokenServlet extends HttpServlet {
                 profile = credentials.getProfile() == null ? "N/A" : credentials.getProfile();
             }
             throw new AuthenticationException(String.format(
-                    ssoContext.getLocalizationUtils().localize(
-                            SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER_IN_DOMAIN,
-                            (Locale) request.getAttribute(SsoConstants.LOCALE)),
+                    ssoContext.getLocalizationUtils()
+                            .localize(
+                                    SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER_IN_DOMAIN,
+                                    (Locale) request.getAttribute(SsoConstants.LOCALE)),
                     credentials == null ? "N/A" : credentials.getUsername(),
                     profile,
                     ex.getMessage()));
@@ -207,9 +209,10 @@ public class OAuthTokenServlet extends HttpServlet {
         SsoSession ssoSession = SsoUtils.getSsoSessionFromRequest(request, token);
         if (ssoSession == null) {
             throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
-                    ssoContext.getLocalizationUtils().localize(
-                            SsoConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED_FOR_USERNAME_PASSWORD,
-                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                    ssoContext.getLocalizationUtils()
+                            .localize(
+                                    SsoConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED_FOR_USERNAME_PASSWORD,
+                                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         validateClientAcceptHeader(ssoSession, request);
         SsoUtils.validateRequestScope(request, token, scope);
@@ -238,25 +241,28 @@ public class OAuthTokenServlet extends HttpServlet {
                 SsoSession ssoSession = SsoUtils.getSsoSessionFromRequest(request, authResult.getToken());
                 if (ssoSession == null) {
                     throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
-                            ssoContext.getLocalizationUtils().localize(
-                                    SsoConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED,
-                                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                            ssoContext.getLocalizationUtils()
+                                    .localize(
+                                            SsoConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED,
+                                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
                 }
                 validateClientAcceptHeader(ssoSession, request);
                 log.debug("Sending json response");
                 SsoUtils.sendJsonData(response, buildResponse(ssoSession));
             } else {
                 throw new AuthenticationException(
-                        ssoContext.getLocalizationUtils().localize(
-                                SsoConstants.APP_ERROR_AUTHENTICATION_FAILED,
-                                (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                        ssoContext.getLocalizationUtils()
+                                .localize(
+                                        SsoConstants.APP_ERROR_AUTHENTICATION_FAILED,
+                                        (Locale) request.getAttribute(SsoConstants.LOCALE)));
             }
         } catch (Exception ex) {
             throw new AuthenticationException(
                     String.format(
-                            ssoContext.getLocalizationUtils().localize(
-                                    SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER,
-                                    (Locale) request.getAttribute(SsoConstants.LOCALE)),
+                            ssoContext.getLocalizationUtils()
+                                    .localize(
+                                            SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER,
+                                            (Locale) request.getAttribute(SsoConstants.LOCALE)),
                             ex.getMessage()));
         }
     }
@@ -290,8 +296,7 @@ public class OAuthTokenServlet extends HttpServlet {
     }
 
     private String maskPassword(String queryString) {
-        return StringUtils.isNotEmpty(queryString) ?
-                queryString.replaceAll("password=[^&]+", "password=***") :
-                queryString;
+        return StringUtils.isNotEmpty(queryString) ? queryString.replaceAll("password=[^&]+", "password=***")
+                : queryString;
     }
 }
