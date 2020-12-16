@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.sso.api.SsoConstants;
 import org.ovirt.engine.core.sso.api.SsoContext;
 import org.ovirt.engine.core.sso.api.SsoSession;
-import org.ovirt.engine.core.sso.openid.OpenIdService;
+import org.ovirt.engine.core.sso.service.OpenIdService;
 import org.ovirt.engine.core.sso.service.SsoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

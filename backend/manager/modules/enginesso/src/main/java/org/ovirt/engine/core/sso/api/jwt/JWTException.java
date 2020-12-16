@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.sso.openid.jwt;
+package org.ovirt.engine.core.sso.api.jwt;
 
 public class JWTException extends RuntimeException {
     public JWTException(ErrorCode errorCode, Throwable cause) {

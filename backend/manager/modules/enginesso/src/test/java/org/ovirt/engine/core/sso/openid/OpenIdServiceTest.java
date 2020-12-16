@@ -26,6 +26,7 @@ import org.mockito.Mockito;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.sso.api.SsoSession;
+import org.ovirt.engine.core.sso.service.OpenIdService;
 
 class OpenIdServiceTest {
 

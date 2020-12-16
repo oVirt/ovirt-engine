@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.sso.openid.jwt;
+package org.ovirt.engine.core.sso.api.jwt;
 
 import java.util.Date;
 

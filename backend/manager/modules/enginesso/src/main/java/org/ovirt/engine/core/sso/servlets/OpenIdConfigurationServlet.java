@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.conn.util.InetAddressUtils;
 import org.ovirt.engine.core.sso.api.SsoConstants;
-import org.ovirt.engine.core.sso.openid.OpenIdService;
+import org.ovirt.engine.core.sso.service.OpenIdService;
 import org.ovirt.engine.core.sso.service.SsoService;
 
 public class OpenIdConfigurationServlet extends HttpServlet {

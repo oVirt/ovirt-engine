@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.sso.api.SsoConstants;
-import org.ovirt.engine.core.sso.openid.OpenIdService;
+import org.ovirt.engine.core.sso.service.OpenIdService;
 import org.ovirt.engine.core.sso.service.SsoService;
 
 public class OpenIdJwksServlet extends HttpServlet {

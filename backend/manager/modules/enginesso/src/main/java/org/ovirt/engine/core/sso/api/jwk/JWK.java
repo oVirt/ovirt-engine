@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.sso.openid.jwk;
+package org.ovirt.engine.core.sso.api.jwk;
 
 import java.math.BigInteger;
 import java.security.interfaces.RSAMultiPrimePrivateCrtKey;

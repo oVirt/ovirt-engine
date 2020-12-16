@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.sso.openid;
+package org.ovirt.engine.core.sso.service;
 
 import java.io.IOException;
 import java.security.KeyPair;
@@ -20,15 +20,15 @@ import org.jboss.resteasy.jose.jws.JWSBuilder;
 import org.jboss.resteasy.jwt.JsonSerialization;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.sso.api.SsoSession;
-import org.ovirt.engine.core.sso.openid.jwk.JWK;
-import org.ovirt.engine.core.sso.openid.jwt.JWT;
-import org.ovirt.engine.core.sso.openid.jwt.JWTException;
+import org.ovirt.engine.core.sso.api.jwk.JWK;
+import org.ovirt.engine.core.sso.api.jwt.JWT;
+import org.ovirt.engine.core.sso.api.jwt.JWTException;
 
 @ApplicationScoped
 public class OpenIdService {
 
     public static final String OVIRT = "oVirt";
-    static final Supplier<KeyPair> DEFAULT_RSA_KEY_PAIR_GENERATOR = () -> {
+    public static final Supplier<KeyPair> DEFAULT_RSA_KEY_PAIR_GENERATOR = () -> {
         try {
             KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
             keyGenerator.initialize(1024);
@@ -47,7 +47,7 @@ public class OpenIdService {
     }
 
     // for testing
-    OpenIdService(Supplier<KeyPair> keyPairGenerator) {
+    public OpenIdService(Supplier<KeyPair> keyPairGenerator) {
         keyPair = keyPairGenerator.get();
     }
 
