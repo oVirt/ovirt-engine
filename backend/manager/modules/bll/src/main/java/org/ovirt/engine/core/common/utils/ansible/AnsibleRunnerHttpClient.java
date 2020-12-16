@@ -39,13 +39,15 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.TextNode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 @Singleton
 public class AnsibleRunnerHttpClient {
@@ -62,7 +64,10 @@ public class AnsibleRunnerHttpClient {
 
     public AnsibleRunnerHttpClient() {
         this.httpClient = HttpClientBuilder.create().build();
-        this.mapper = new ObjectMapper();
+        this.mapper = JsonMapper
+                .builder()
+                .findAndAddModules()
+                .build();
     }
 
     public void addHost(String hostname, int port) {
@@ -193,7 +198,7 @@ public class AnsibleRunnerHttpClient {
 
     public boolean isHostUnreachable(String playUuid){
         JsonNode events = getEvents(playUuid);
-        Iterator<JsonNode> it = events.get("data").get("events").getElements();
+        Iterator<JsonNode> it = events.get("data").get("events").iterator();
         while (it.hasNext()) {
             if (RunnerJsonNode.isEventUnreachable(it.next())) {
                 return true;
@@ -205,13 +210,13 @@ public class AnsibleRunnerHttpClient {
     public int processEvents(String playUuid, int lastEventId, BiConsumer<String, String> fn, String msg, Path logFile) {
         JsonNode responseNode = getEvents(playUuid);
         JsonNode eventNodes = RunnerJsonNode.eventNodes(responseNode);
-        Set<String> events = sortedEvents(eventNodes.getFieldNames(), lastEventId);
+        Set<String> events = sortedEvents(eventNodes.fieldNames(), lastEventId);
         for (String event : events) {
             String task = null;
             JsonNode currentNode = eventNodes.get(event);
             JsonNode taskNode = currentNode.get("task");
             if (taskNode != null) {
-                task = taskNode.getTextValue();
+                task = taskNode.textValue();
             }
             if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.isEventOk(currentNode)
                     || RunnerJsonNode.playbookStats(currentNode) || RunnerJsonNode.isEventFailed(currentNode)
@@ -231,7 +236,7 @@ public class AnsibleRunnerHttpClient {
                 if (RunnerJsonNode.isEventOk(currentNode)) {
                     if (taskNode != null) {
                         runnerLogger.log(readUrl(String.format("jobs/%1$s/events/%2$s", playUuid, event)));
-                        fn.accept(taskNode.getTextValue(), String.format("jobs/%1$s/events/%2$s", playUuid, event));
+                        fn.accept(taskNode.textValue(), String.format("jobs/%1$s/events/%2$s", playUuid, event));
                     }
                 } else if (RunnerJsonNode.isEventFailed(currentNode) || RunnerJsonNode.isEventError(currentNode)) {
                     JsonNode eventNode = getEvent(String.format("jobs/%1$s/events/%2$s", playUuid, event));

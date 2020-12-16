@@ -5,7 +5,7 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * This class is utility class for parsing the Json output of the Ansible runner service.
@@ -43,21 +43,21 @@ public final class RunnerJsonNode {
      * Return playbook status.
      */
     public static String status(JsonNode node) {
-        return node.get("status").getTextValue();
+        return node.get("status").textValue();
     }
 
     /**
      * Return playbook message.
      */
     public static String msg(JsonNode node) {
-        return node.get("msg").getTextValue();
+        return node.get("msg").textValue();
     }
 
     /**
      * Return playbook uuid.
      */
     public static String playUuid(JsonNode node) {
-        return node.get("data").get("play_uuid").getTextValue();
+        return node.get("data").get("play_uuid").textValue();
     }
 
     /**
@@ -101,7 +101,7 @@ public final class RunnerJsonNode {
      * Return number of total events.
      */
     public static int totalEvents(JsonNode node) {
-        return node.get("data").get("total_events").getIntValue();
+        return node.get("data").get("total_events").intValue();
     }
 
     /**
@@ -115,14 +115,14 @@ public final class RunnerJsonNode {
      * Return true if the event is 'runner_on_ok', which means it's event of the executed task in the playbook.
      */
     public static boolean isEventOk(JsonNode node) {
-        return node.get("event").getTextValue().equals("runner_on_ok");
+        return node.get("event").textValue().equals("runner_on_ok");
     }
 
     /**
      * Return true if the event is 'playbook_on_task_start', which means it's event of started.
      */
     public static boolean isEventStart(JsonNode node) {
-        return node.get("event").getTextValue().equals("playbook_on_task_start");
+        return node.get("event").textValue().equals("playbook_on_task_start");
     }
 
 
@@ -130,28 +130,28 @@ public final class RunnerJsonNode {
      * Return true if the event is 'error', which means it's event unexpectedly failed.
      */
     public static boolean isEventError(JsonNode node) {
-        return node.get("event").getTextValue().equals("error");
+        return node.get("event").textValue().equals("error");
     }
 
     /**
      * Return true if the event is 'runner_on_failed', which means it's event failed.
      */
     public static boolean isEventFailed(JsonNode node) {
-        return node.get("event").getTextValue().equals("runner_on_failed");
+        return node.get("event").textValue().equals("runner_on_failed");
     }
 
     /**
      * Return true if the event is 'runner_on_unreachable', which means the host is unreachable
      */
     public static boolean isEventUnreachable(JsonNode node) {
-        return node.get("event").getTextValue().equals("runner_on_unreachable");
+        return node.get("event").textValue().equals("runner_on_unreachable");
     }
 
     /**
      * Return true if the event is 'playbook_on_stats', which contains playbook statistics.
      */
     public static boolean playbookStats(JsonNode node) {
-        return node.get("event").getTextValue().equals("playbook_on_stats");
+        return node.get("event").textValue().equals("playbook_on_stats");
     }
 
     // Yum parsing, parse the output of the 'taskNode()' method.
@@ -278,7 +278,7 @@ public final class RunnerJsonNode {
      * Return base64 decoded 'content' attribute of the module.
      */
     public static String content(JsonNode node) {
-        return new String(Base64.getDecoder().decode(node.get("content").getTextValue()));
+        return new String(Base64.getDecoder().decode(node.get("content").textValue()));
     }
 
     /**
@@ -295,7 +295,7 @@ public final class RunnerJsonNode {
      * Return stdout value of the command task.
      */
     public static String getStdout(JsonNode node) {
-        return node.get("stdout").getTextValue();
+        return node.get("stdout").textValue();
     }
 
     /**
@@ -304,7 +304,7 @@ public final class RunnerJsonNode {
     public static String getStderr(JsonNode node) {
         JsonNode n = node.get("stderr");
         if (n != null) {
-            return n.getTextValue();
+            return n.textValue();
         }
 
         return null;

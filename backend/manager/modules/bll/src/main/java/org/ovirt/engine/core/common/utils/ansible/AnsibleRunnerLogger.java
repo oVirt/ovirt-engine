@@ -8,17 +8,19 @@ import java.nio.file.StandardOpenOption;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 public class AnsibleRunnerLogger {
 
     private static Logger logger = LoggerFactory.getLogger(AnsibleRunnerHttpClient.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
     private static final String NEW_LINE = System.getProperty("line.separator");
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = JsonMapper.builder().findAndAddModules().build();
 
     private Path logFile;
 
