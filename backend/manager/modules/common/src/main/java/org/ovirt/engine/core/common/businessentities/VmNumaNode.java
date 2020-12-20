@@ -14,7 +14,7 @@ public class VmNumaNode extends NumaNode {
 
     private List<Integer> vdsNumaNodeList = new ArrayList<>();
 
-    private NumaTuneMode numaTuneMode;
+    private NumaTuneMode numaTuneMode = NumaTuneMode.INTERLEAVE;
 
     /**
      * @return pNUMA node index

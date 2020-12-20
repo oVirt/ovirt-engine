@@ -238,6 +238,8 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         if (list != null && !list.isEmpty()) {
             String writeList = list.stream().map(i -> i.toString()).collect(Collectors.joining(","));
             _writer.writeElement(label, writeList);
+        } else {
+            _writer.writeElement(label, "");
         }
     }
 }

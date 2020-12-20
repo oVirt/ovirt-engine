@@ -112,12 +112,15 @@ public abstract class OvfOvirtReader extends OvfReader {
     }
 
     protected List<Integer> readIntegerList(XmlNode node, String label) {
-        String  valueList =  selectSingleNode(node, label, _xmlNS).innerText;
         List<Integer> integerList = new ArrayList<>();
-        if (valueList != null && !valueList.isEmpty()) {
-            String[] values = valueList.split(",");
-            for (String value : values) {
-                integerList.add(Integer.valueOf(value));
+        XmlNode xmlNode = selectSingleNode(node, label, _xmlNS);
+        if (xmlNode != null) {
+            String valueList = xmlNode.innerText;
+            if (valueList != null && !valueList.isEmpty()) {
+                String[] values = valueList.split(",");
+                for (String value : values) {
+                    integerList.add(Integer.valueOf(value));
+                }
             }
         }
         return integerList;
