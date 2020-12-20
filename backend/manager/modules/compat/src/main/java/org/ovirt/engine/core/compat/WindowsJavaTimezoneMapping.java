@@ -55,7 +55,8 @@ public class WindowsJavaTimezoneMapping {
             { "Venezuela Standard Time", "America/Caracas" }, { "Vladivostok Standard Time", "Asia/Vladivostok" },
             { "W. Australia Standard Time", "Australia/Perth" }, { "W. Central Africa Standard Time", "Africa/Lagos" },
             { "W. Europe Standard Time", "Europe/Berlin" }, { "West Asia Standard Time", "Asia/Tashkent" },
-            { "West Pacific Standard Time", "Pacific/Port_Moresby" }, { "Yakutsk Standard Time", "Asia/Yakutsk" }, };
+            { "West Pacific Standard Time", "Pacific/Port_Moresby" }, { "Yakutsk Standard Time", "Asia/Yakutsk" },
+            { "Turkey Standard Time", "Europe/Istanbul"} };
 
     private static final Map<String, String> windowsToJava = new HashMap<>();
     private static final Map<String, String> javaToWindows = new HashMap<>();
