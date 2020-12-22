@@ -217,16 +217,6 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         return template;
     }
 
-    @Override
-    public void enableSinglePCI(boolean enabled) {
-        super.enableSinglePCI(enabled);
-        if (enabled) {
-            getModel().setSingleQxlEnabled(template.getSingleQxlPci() && getModel().getIsQxlSupported());
-        } else {
-            getModel().setSingleQxlEnabled(false);
-        }
-    }
-
     @Override public int getMaxNameLength() {
         return UnitVmModel.VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT;
     }

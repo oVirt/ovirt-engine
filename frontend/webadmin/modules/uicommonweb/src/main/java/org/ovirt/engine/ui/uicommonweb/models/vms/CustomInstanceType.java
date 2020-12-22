@@ -174,16 +174,6 @@ public class CustomInstanceType implements InstanceType {
     }
 
     @Override
-    public void setSingleQxlPci(boolean value) {
-
-    }
-
-    @Override
-    public boolean getSingleQxlPci() {
-        return false;
-    }
-
-    @Override
     public boolean isSmartcardEnabled() {
         return false;
     }

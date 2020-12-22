@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.vms.CustomInstanceType;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
@@ -28,20 +27,6 @@ public class NewPoolInstanceTypeManager extends InstanceTypeManager {
             super.updateBalloon(vmBase, continueWithNext);
         } else if (continueWithNext) {
             updateRngDevice(vmBase);
-        }
-    }
-
-    @Override
-    protected void maybeSetSingleQxlPci(VmBase vmBase) {
-        boolean customInstanceTypeUsed = getModel().getInstanceTypes().getSelectedItem() instanceof CustomInstanceType;
-        boolean blankTemplateUsed =
-                getModel().getTemplateWithVersion().getSelectedItem() != null
-                        && getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion()
-                                .getId().equals(Guid.Empty);
-        if (customInstanceTypeUsed && blankTemplateUsed) {
-            maybeSetSingleQxlPciValue(getModel().getIsQxlSupported());
-        } else {
-            super.maybeSetSingleQxlPci(vmBase);
         }
     }
 }

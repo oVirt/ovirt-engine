@@ -155,7 +155,6 @@ public abstract class InstanceTypeManager {
         deactivateAndStartProgress();
         VmBase vmBase = getSource();
 
-        maybeSetSingleQxlPci(vmBase);
         updateWatchdog(vmBase, false);
         updateBalloon(vmBase, false);
         maybeSetEntity(model.getIsUsbEnabled(), vmBase.getUsbPolicy() != UsbPolicy.DISABLED);
@@ -508,20 +507,9 @@ public abstract class InstanceTypeManager {
                     maybeSetSelectedItem(model.getNumOfMonitors(), vmBase.getNumOfMonitors());
                     maybeSetEntity(model.getIsUsbEnabled(), vmBase.getUsbPolicy() != UsbPolicy.DISABLED);
                     maybeSetEntity(model.getIsSmartcardEnabled(), vmBase.isSmartcardEnabled());
-                    maybeSetSingleQxlPci(vmBase);
 
                     activate();
                 }));
-    }
-
-    protected void maybeSetSingleQxlPci(VmBase vmBase) {
-        maybeSetSingleQxlPciValue(vmBase.getSingleQxlPci());
-    }
-
-    protected void maybeSetSingleQxlPciValue(boolean value) {
-        if (alwaysEnabledFieldUpdate) {
-            model.setSingleQxlEnabled(value);
-        }
     }
 
 

@@ -47,7 +47,6 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("threads_per_cpu", entity.getThreadsPerCpu())
                 .addValue("os", entity.getOsId())
                 .addValue("num_of_monitors", entity.getNumOfMonitors())
-                .addValue("single_qxl_pci", entity.getSingleQxlPci())
                 .addValue("allow_console_reconnect", entity.isAllowConsoleReconnect())
                 .addValue("vm_type", entity.getVmType())
                 .addValue("priority", entity.getPriority())
@@ -114,7 +113,6 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setOsId(rs.getInt("os"));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
             entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));
-            entity.setSingleQxlPci(rs.getBoolean("single_qxl_pci"));
             entity.setDefaultDisplayType(DisplayType.forValue(rs.getInt("default_display_type")));
             entity.setDescription(rs.getString("description"));
             entity.setComment(rs.getString("free_text_comment"));

@@ -167,7 +167,6 @@ public abstract class AddVmCommandTestBase<T extends AddVmCommand<?>> extends Ba
         stat.setMaxMemorySizeMb(MAX_MEMORY_SIZE);
         vm.setStaticData(stat);
         vm.setDynamicData(dynamic);
-        vm.setSingleQxlPci(false);
     }
 
     private void initVmTemplate() {

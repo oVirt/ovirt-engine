@@ -626,7 +626,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private void prepareVmToPassValidate() {
         vmStatic.setName("vm1");
         vmStatic.setMemSizeMb(256);
-        vmStatic.setSingleQxlPci(false);
         mockVmDaoGetVm();
         mockSameNameQuery(false);
         mockValidateCustomProperties();

@@ -42,7 +42,6 @@ public class DisplayMapper {
                 : display;
 
         result.setMonitors(vmTemplate.getNumOfMonitors());
-        result.setSingleQxlPci(vmTemplate.getSingleQxlPci());
         result.setAllowOverride(vmTemplate.isAllowConsoleReconnect());
         result.setSmartcardEnabled(vmTemplate.isSmartcardEnabled());
         result.setKeyboardLayout(vmTemplate.getVncKeyboardLayout());
@@ -59,7 +58,6 @@ public class DisplayMapper {
                 : display;
 
         result.setMonitors(instanceType.getNumOfMonitors());
-        result.setSingleQxlPci(instanceType.getSingleQxlPci());
         result.setSmartcardEnabled(instanceType.isSmartcardEnabled());
 
         return result;

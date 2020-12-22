@@ -488,7 +488,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected boolean validateAddVmCommand() {
         return areParametersLegal()
-                && checkNumberOfMonitors() && checkSingleQxlDisplay()
+                && checkNumberOfMonitors()
                 && validate(VmValidator.checkPciAndIdeLimit(getParameters().getVm().getOs(),
                         getEffectiveCompatibilityVersion(),
                         getParameters().getVmStaticData().getNumOfMonitors(),
@@ -533,16 +533,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {
         Collection<DiskImage> disks = ImagesHandler.getDisksDummiesForStorageAllocations(disksList);
         return validate(storageDomainValidator.hasSpaceForNewDisks(disks));
-    }
-
-    protected boolean checkSingleQxlDisplay() {
-        if (!getParameters().getVmStaticData().getSingleQxlPci()
-                || getParameters().getVmStaticData().getDefaultDisplayType() == DisplayType.none) {
-            return true;
-        }
-        return validate(vmHandler.isSingleQxlDeviceLegal(
-                getParameters().getVm().getDefaultDisplayType(),
-                getParameters().getVm().getOs()));
     }
 
     protected boolean hostToRunExist() {

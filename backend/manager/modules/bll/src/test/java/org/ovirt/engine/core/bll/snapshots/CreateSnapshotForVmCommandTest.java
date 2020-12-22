@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.snapshots;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +40,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
 /** A test case for the {@link CreateAllSnapshotsFromVmCommand} class. */
@@ -108,6 +111,8 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
         doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(any());
         doReturn(getEmptyDiskList()).when(cmd).getDisksListForChecks();
         doReturn(getEmptyDiskList()).when(cmd).getDiskImagesForVm();
+        OsRepository osRepositoryMock = mock(OsRepository.class);
+        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepositoryMock);
     }
 
     @Test

@@ -353,12 +353,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    public void enableSinglePCI(boolean enabled) {
-        super.enableSinglePCI(enabled);
-        getModel().setSingleQxlEnabled(enabled);
-    }
-
-    @Override
     protected void updateNumaEnabled() {
         super.updateNumaEnabled();
         updateNumaEnabledHelper();

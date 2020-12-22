@@ -260,16 +260,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.icon = icon;
     }
 
-    private boolean singleQxlEnabled;
-
-    public boolean isSingleQxlEnabled() {
-        return singleQxlEnabled;
-    }
-
-    public void setSingleQxlEnabled(boolean value) {
-        singleQxlEnabled = value;
-    }
-
     /**
      * Note: We assume that this method is called only once, on the creation stage of the model. if this assumption is
      * changed (i.e the VM can attached/detached from a pool after the model is created), this method should be modified
@@ -1895,8 +1885,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getIsSoundcardEnabled().setEntity(false);
         getIsSoundcardEnabled().setIsChangeable(false);
 
-        getBehavior().enableSinglePCI(false);
-
         selectSsoMethod(SsoMethod.GUEST_AGENT);
 
         setEditingEnabled(new EntityModel<Boolean>());
@@ -2052,7 +2040,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getIsHighlyAvailable().setEntity(false);
         getIsAutoAssign().setEntity(true);
         getIsTemplatePublic().setEntity(true);
-        getBehavior().enableSinglePCI(false);
 
         isRngEnabled.setEntity(false);
         rngSourceUrandom.setEntity(true);
@@ -2498,18 +2485,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    public boolean getIsQxlSupported() {
-        // Enable Single PCI only on cluster 3.3 and high and on Linux OS
-        boolean isLinux = getIsLinuxOS();
-        boolean isQxl = getDisplayType().getSelectedItem() == DisplayType.qxl;
-        boolean isSpice = getGraphicsType().getSelectedItem() == GraphicsTypes.SPICE;
-
-        return isLinux && isQxl && isSpice;
-    }
-
     private void handleQxlClusterLevel() {
-        getBehavior().enableSinglePCI(getIsQxlSupported());
-
         if (getSelectedCluster() != null) {
             boolean isQxl = getDisplayType().getSelectedItem() == DisplayType.qxl;
             if (!isQxl) {

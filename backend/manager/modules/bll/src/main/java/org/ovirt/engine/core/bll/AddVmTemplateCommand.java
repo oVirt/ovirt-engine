@@ -741,12 +741,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        if (getParameters().getVm().getSingleQxlPci() &&
-                !validate(vmHandler.isSingleQxlDeviceLegal(
-                        getParameters().getVm().getDefaultDisplayType(), getParameters().getVm().getOs()))) {
-            return false;
-        }
-
         if (!validate(vmHandler.validateSmartCardDevice(getParameters().getMasterVm()))) {
             return false;
         }
@@ -920,7 +914,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getClusterId(),
                         getVmTemplateId(),
                         getParameters().getMasterVm().getNumOfMonitors(),
-                        getParameters().getMasterVm().getSingleQxlPci(),
                         VmTemplateStatus.Locked.getValue(),
                         getParameters().getMasterVm().getUsbPolicy().getValue(),
                         getParameters().getMasterVm().getTimeZone(),

@@ -1071,13 +1071,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (getParameters().getVmStaticData().getDefaultDisplayType() != DisplayType.none &&
-                vmFromParams.getSingleQxlPci() &&
-                !validate(vmHandler.isSingleQxlDeviceLegal(
-                        vmFromParams.getDefaultDisplayType(), vmFromParams.getOs()))) {
-            return false;
-        }
-
         if (!validate(vmHandler.validateSmartCardDevice(getParameters().getVmStaticData()))) {
             return false;
         }

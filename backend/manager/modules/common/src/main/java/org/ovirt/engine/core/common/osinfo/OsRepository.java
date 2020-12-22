@@ -251,8 +251,6 @@ public interface OsRepository {
      */
     Map<ArchitectureType, Integer> getDefaultOSes();
 
-    boolean isSingleQxlDeviceEnabled(int osId);
-
     /**
      * Checks if is recommended enable the HyperV optimizations
      * @return an boolean

@@ -11,7 +11,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmDeviceCommonUtils {
@@ -34,6 +37,7 @@ public class VmDeviceCommonUtils {
     /** Expected unit: MiB */
     public static final String SPEC_PARAM_SIZE = "size";
     public static final String SPEC_PARAM_NODE = "node";
+    public static final String VIDEO_HEADS = "heads";
 
     public static boolean isNetwork(VmDevice device) {
         return device.getType() == VmDeviceGeneralType.INTERFACE;
@@ -530,5 +534,11 @@ public class VmDeviceCommonUtils {
         }
         return getSpecParamsIntValue(memoryDevice, SPEC_PARAM_SIZE).isPresent()
                 && getSpecParamsIntValue(memoryDevice, SPEC_PARAM_NODE).isPresent();
+    }
+
+    public static boolean isSingleQxlPci(VmBase vmBase) {
+        OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+        return osRepository.isLinux(vmBase.getOsId()) && vmBase.getDefaultDisplayType() == DisplayType.qxl
+                && vmBase.getOrigin() != OriginType.KUBEVIRT && !vmBase.isHostedEngine();
     }
 }

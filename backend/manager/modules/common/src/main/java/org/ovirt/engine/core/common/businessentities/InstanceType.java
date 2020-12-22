@@ -73,10 +73,6 @@ public interface InstanceType extends BusinessEntity<Guid>, Nameable {
 
     void setTunnelMigration(Boolean value);
 
-    void setSingleQxlPci(boolean value);
-
-    boolean getSingleQxlPci();
-
     boolean isSmartcardEnabled();
 
     void setSmartcardEnabled(boolean smartcardEnabled);

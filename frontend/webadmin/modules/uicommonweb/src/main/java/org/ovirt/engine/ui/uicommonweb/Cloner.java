@@ -197,7 +197,6 @@ public final class Cloner {
         vm.setPredefinedProperties(instance.getPredefinedProperties());
         vm.setUserDefinedProperties(instance.getUserDefinedProperties());
         vm.setCustomProperties(instance.getCustomProperties());
-        vm.setSingleQxlPci(instance.getSingleQxlPci());
         vm.setMinAllocatedMem(instance.getMinAllocatedMem());
         vm.setGuestOsArch(instance.getGuestOsArch());
         vm.setGuestOsCodename(instance.getGuestOsCodename());

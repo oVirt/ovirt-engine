@@ -84,8 +84,6 @@ public interface NextRunFieldMessages extends ConstantsWithLookup {
 
     String initrdUrl();
 
-    String singleQxlPci();
-
     // Devices
 
     String memballoon();

@@ -271,14 +271,6 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         this.vmStatic.setNumOfMonitors(value);
     }
 
-    public boolean getSingleQxlPci() {
-        return this.vmStatic.getSingleQxlPci();
-    }
-
-    public void setSingleQxlPci(boolean value) {
-        this.vmStatic.setSingleQxlPci(value);
-    }
-
     public boolean getAllowConsoleReconnect() {
         return this.vmStatic.isAllowConsoleReconnect();
     }

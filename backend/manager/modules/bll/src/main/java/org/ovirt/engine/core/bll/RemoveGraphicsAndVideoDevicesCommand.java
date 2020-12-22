@@ -55,7 +55,6 @@ public class RemoveGraphicsAndVideoDevicesCommand extends RemoveGraphicsDeviceCo
         VmStatic vmStatic = vmStaticDao.get(getVmBaseId());
         if (vmStatic != null && vmStatic.getDefaultDisplayType() != DisplayType.none) {
             vmStatic.setDefaultDisplayType(DisplayType.none);
-            vmStatic.setSingleQxlPci(false);
             resourceManager.getVmManager(getVmBaseId()).update(vmStatic);
             return true;
         }
@@ -66,7 +65,6 @@ public class RemoveGraphicsAndVideoDevicesCommand extends RemoveGraphicsDeviceCo
         VmTemplate vmTemplate = vmTemplateDao.get(getVmBaseId());
         if (vmTemplate != null && vmTemplate.getDefaultDisplayType() != DisplayType.none) {
             vmTemplate.setDefaultDisplayType(DisplayType.none);
-            vmTemplate.setSingleQxlPci(false);
             vmTemplateDao.update(vmTemplate);
         }
     }

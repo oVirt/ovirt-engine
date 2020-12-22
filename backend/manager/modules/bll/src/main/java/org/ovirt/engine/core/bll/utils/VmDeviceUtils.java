@@ -562,10 +562,9 @@ public class VmDeviceUtils {
         boolean displayTypeChanged = oldVmBase.getDefaultDisplayType() != newVmBase.getDefaultDisplayType();
         boolean numOfMonitorsChanged = newVmBase.getDefaultDisplayType() == DisplayType.qxl &&
                 oldVmBase.getNumOfMonitors() != newVmBase.getNumOfMonitors();
-        boolean singleQxlChanged = oldVmBase.getSingleQxlPci() != newVmBase.getSingleQxlPci();
         boolean guestOsChanged = oldVmBase.getOsId() != newVmBase.getOsId();
 
-        if (displayTypeChanged || numOfMonitorsChanged || singleQxlChanged || guestOsChanged) {
+        if (displayTypeChanged || numOfMonitorsChanged || guestOsChanged) {
             removeVideoDevices(oldVmBase.getId());
             addVideoDevices(newVmBase, getNeededNumberOfVideoDevices(newVmBase));
         } else {
@@ -575,7 +574,7 @@ public class VmDeviceUtils {
     }
 
     private int getNeededNumberOfVideoDevices(VmBase vmBase) {
-        int maxMonitorsSpice = vmBase.getSingleQxlPci() ? SINGLE_QXL_MONITORS : vmBase.getNumOfMonitors();
+        int maxMonitorsSpice = VmDeviceCommonUtils.isSingleQxlPci(vmBase) ? SINGLE_QXL_MONITORS : vmBase.getNumOfMonitors();
         int maxMonitorsVnc = Math.max(VNC_MIN_MONITORS, vmBase.getNumOfMonitors());
 
         return Math.min(maxMonitorsSpice, maxMonitorsVnc);
@@ -610,7 +609,7 @@ public class VmDeviceUtils {
      * @return a map of device parameters
      */
     private Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {
-        return videoDeviceSettings.getVideoDeviceSpecParams(vmBase);
+        return videoDeviceSettings.getVideoDeviceSpecParams(vmBase, VmDeviceCommonUtils.isSingleQxlPci(vmBase));
     }
 
     /**

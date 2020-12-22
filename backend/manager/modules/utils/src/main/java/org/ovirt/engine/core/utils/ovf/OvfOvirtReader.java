@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -66,10 +65,6 @@ public abstract class OvfOvirtReader extends OvfReader {
             XmlNode node = getNode(list, "xsi:type", "ovf:OperatingSystemSection_Type");
             if (node != null) {
                 readOsSection(node);
-                if (!osRepository.isLinux(fullEntityOvfData.getVmBase().getOsId())
-                        || fullEntityOvfData.getVmBase().getDefaultDisplayType() != DisplayType.qxl) {
-                    fullEntityOvfData.getVmBase().setSingleQxlPci(false);
-                }
             }
 
             node = getNode(list, "xsi:type", "ovf:VirtualHardwareSection_Type");

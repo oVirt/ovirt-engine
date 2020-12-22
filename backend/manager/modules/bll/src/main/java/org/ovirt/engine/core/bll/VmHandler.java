@@ -830,16 +830,6 @@ public class VmHandler implements BackendService {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS).unless(legal);
     }
 
-    public ValidationResult isSingleQxlDeviceLegal(DisplayType displayType, int osId) {
-        if (displayType != DisplayType.qxl) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_DISPLAY_TYPE);
-        }
-        if (!osRepository.isSingleQxlDeviceEnabled(osId)) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_OS_TYPE);
-        }
-        return ValidationResult.VALID;
-    }
-
     /**
      * get max of allowed monitors from config config value is a comma separated list of integers
      */

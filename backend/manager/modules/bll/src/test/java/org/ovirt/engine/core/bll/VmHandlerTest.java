@@ -169,9 +169,9 @@ public class VmHandlerTest {
     public void testInValidUpdateOfStatusRestrictedEditableFieldOnRunningVm() {
         // Given
         VmStatic src = new VmStatic();
-        src.setSingleQxlPci(true);
+        src.setMultiQueuesEnabled(true);
         VmStatic dest = new VmStatic();
-        dest.setSingleQxlPci(false);
+        dest.setMultiQueuesEnabled(false);
 
         // When
         boolean updateIsValid = vmHandler.isUpdateValid(src, dest, VMStatus.Up, false);

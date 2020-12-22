@@ -68,7 +68,6 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getCustomSerialNumber()).thenReturn(customSerialNumber);
 
         when(model.getAllowConsoleReconnect().getEntity()).thenReturn(true);
-        when(model.isSingleQxlEnabled()).thenReturn(true);
         when(model.getTotalCPUCores().getEntity()).thenReturn(Integer.toString(TOTAL_CPU));
         when(model.getIsUsbEnabled().getEntity()).thenReturn(USB_ENABLED);
         when(model.getIsStateless().getEntity()).thenReturn(true);
@@ -143,7 +142,6 @@ public class BaseVmListModelTest extends BaseVmTest {
         assertEquals(NUM_OF_MONITORS, vm.getNumOfMonitors());
         assertEquals(SERIAL_NUMBER_POLICY, vm.getSerialNumberPolicy());
         assertEquals(CUSTOM_SERIAL_NUMBER, vm.getCustomSerialNumber());
-        assertTrue(vm.getSingleQxlPci());
         assertTrue(vm.isSmartcardEnabled());
         assertEquals(SSO_METHOD, vm.getSsoMethod());
         assertEquals(NUM_OF_SOCKETS, vm.getNumOfSockets());

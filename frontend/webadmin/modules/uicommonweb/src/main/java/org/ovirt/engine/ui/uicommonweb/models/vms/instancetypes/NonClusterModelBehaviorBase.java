@@ -36,8 +36,6 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
     }
 
     protected void initDisplayTypes(DisplayType selected, UnitVmModel.GraphicsTypes selectedGrahicsTypes) {
-        getModel().getDisplayType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> enableSinglePCI(getModel().getDisplayType().getSelectedItem() == DisplayType.qxl));
-
         List<Pair<GraphicsType, DisplayType>> allGraphicsAndDisplays = new ArrayList<>();
         for (GraphicsType graphicsType : GraphicsType.values()) {
             for (DisplayType displayType : DisplayType.values()) {

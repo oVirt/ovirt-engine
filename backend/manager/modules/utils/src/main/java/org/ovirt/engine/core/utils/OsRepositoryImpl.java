@@ -723,11 +723,6 @@ public enum OsRepositoryImpl implements OsRepository {
         return version == null ? "value" : "value." + version.toString();
     }
 
-    @Override
-    public boolean isSingleQxlDeviceEnabled(int osId) {
-        return isLinux(osId);
-    }
-
     public Map<String, Integer> getBackwardCompatibleNamesToIds() {
         return backwardCompatibleNamesToIds;
     }

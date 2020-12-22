@@ -31,11 +31,11 @@ public class VgamemVideoSettings {
      *
      * @return a map of device settings
      */
-    public Map<String, Integer> getQxlVideoDeviceSettings(VmBase vmBase) {
+    public Map<String, Integer> getQxlVideoDeviceSettings(VmBase vmBase, boolean isSingleQxlPci) {
         // Things are likely to completely change in future, so let's keep this
         // computation as simple as possible for now.
         Map<String, Integer> settings = new HashMap<>();
-        int heads = vmBase.getSingleQxlPci() ? vmBase.getNumOfMonitors() : 1;
+        int heads = isSingleQxlPci ? vmBase.getNumOfMonitors() : 1;
         int baseRam = BASE_RAM_SIZE * heads;
         int vramMultiplier = getVramMultiplier(vmBase);
         int vram = vramMultiplier == 0 ? DEFAULT_VRAM_SIZE : vramMultiplier * baseRam;

@@ -145,7 +145,6 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setCpuPerSocket(entity.getCpuPerSocket());
         staticVm.setThreadsPerCpu(entity.getThreadsPerCpu());
         staticVm.setNumOfMonitors(entity.getNumOfMonitors());
-        staticVm.setSingleQxlPci(entity.getSingleQxlPci());
         staticVm.setPriority(entity.getPriority());
         staticVm.setUsbPolicy(entity.getUsbPolicy());
         staticVm.setTunnelMigration(entity.getTunnelMigration());
@@ -379,7 +378,6 @@ public class VmMapper extends VmBaseMapper {
             model.setStopTime(DateMapper.map(entity.getLastStopTime(), null));
         }
         model.getDisplay().setMonitors(entity.getNumOfMonitors());
-        model.getDisplay().setSingleQxlPci(entity.getSingleQxlPci());
         model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
         model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
         model.getDisplay().setKeyboardLayout(entity.getDefaultVncKeyboardLayout());

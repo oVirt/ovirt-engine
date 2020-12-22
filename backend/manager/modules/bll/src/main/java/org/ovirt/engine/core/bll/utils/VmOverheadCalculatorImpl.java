@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 
 @Singleton
 public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
@@ -84,7 +85,7 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
      */
     @Override
     public int getPossibleOverheadInMb(VM vm) {
-        int videoRam = videoDeviceSettings.totalVideoRAMSizeMb(vm);
+        int videoRam = videoDeviceSettings.totalVideoRAMSizeMb(vm, VmDeviceCommonUtils.isSingleQxlPci(vm.getStaticData()));
         int cpuOverhead = 8 * vm.getNumOfCpus(true);
         int iothreadsOverhead = 8 * vm.getNumOfIoThreads();
 
@@ -132,7 +133,8 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
      */
     @Override
     public long getSnapshotMemorySizeInBytes(VM vm) {
-        long videoRam = (long)videoDeviceSettings.totalVideoRAMSizeMb(vm);
+        long videoRam = (long)videoDeviceSettings.totalVideoRAMSizeMb(vm,
+                VmDeviceCommonUtils.isSingleQxlPci(vm.getStaticData()));
         return (vm.getVmMemSizeMb() + 200 + videoRam) * 1024 * 1024;
     }
 }

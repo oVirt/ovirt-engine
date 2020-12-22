@@ -66,9 +66,4 @@ public class ExistingPoolInstanceTypeManager extends InstanceTypeManager {
     protected Guid getSelectedInstanceTypeId() {
         return super.getSelectedInstanceTypeId() == null ? pool.getInstanceTypeId() : super.getSelectedInstanceTypeId();
     }
-
-    protected void maybeSetSingleQxlPci(VmBase vmBase) {
-        maybeSetSingleQxlPciValue(pool.getSingleQxlPci());
-        getModel().setSingleQxlEnabled(pool.getSingleQxlPci() && getModel().getIsQxlSupported());
-    }
 }

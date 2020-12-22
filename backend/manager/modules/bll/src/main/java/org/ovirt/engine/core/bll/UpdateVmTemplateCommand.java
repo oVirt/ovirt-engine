@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -254,13 +253,6 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (returnValue) {
             returnValue = validate(VmValidator.validateCpuSockets(getParameters().getVmTemplateData(),
                     getVmTemplate().getCompatibilityVersion()));
-        }
-
-        if (returnValue && getParameters().getVmTemplateData().getSingleQxlPci() &&
-                getParameters().getVmTemplateData().getDefaultDisplayType() != DisplayType.none &&
-                !validate(vmHandler.isSingleQxlDeviceLegal(getParameters().getVmTemplateData().getDefaultDisplayType(),
-                        getParameters().getVmTemplateData().getOsId()))) {
-            returnValue = false;
         }
 
         // Check PCI and IDE limits are ok

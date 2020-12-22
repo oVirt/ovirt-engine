@@ -195,11 +195,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @CopyOnNewVersion
     @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
-    private boolean singleQxlPci;
-
-    @CopyOnNewVersion
-    @EditableVmField(onStatuses = VMStatus.Down)
-    @EditableVmTemplateField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_TIME_ZONE_SIZE)
     private String timeZone;
 
@@ -403,7 +398,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         vmType = VmType.Server;
         defaultDisplayType = DisplayType.qxl;
         ssoMethod = SsoMethod.GUEST_AGENT;
-        singleQxlPci = true;
         spiceFileTransferEnabled = true;
         spiceCopyPasteEnabled = true;
         vNumaNodeList = new ArrayList<>();
@@ -555,7 +549,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getCpuPerSocket(),
                 vmBase.getThreadsPerCpu(),
                 vmBase.getNumOfMonitors(),
-                vmBase.getSingleQxlPci(),
                 vmBase.getTimeZone(),
                 vmBase.getVmType(),
                 vmBase.getUsbPolicy(),
@@ -627,7 +620,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             int cpusPerSocket,
             int threadsPerCpu,
             int numOfMonitors,
-            boolean singleQxlPci,
             String timezone,
             VmType vmType,
             UsbPolicy usbPolicy,
@@ -697,7 +689,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.cpuPerSocket = cpusPerSocket;
         this.threadsPerCpu = threadsPerCpu;
         this.numOfMonitors = numOfMonitors;
-        this.singleQxlPci = singleQxlPci;
         this.timeZone = timezone;
         this.vmType = vmType;
         this.usbPolicy = usbPolicy;
@@ -938,14 +929,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     public void setNumOfMonitors(int value) {
         numOfMonitors = value;
-    }
-
-    public boolean getSingleQxlPci() {
-        return singleQxlPci;
-    }
-
-    public void setSingleQxlPci(boolean value) {
-        singleQxlPci = value;
     }
 
     public String getTimeZone() {
@@ -1198,7 +1181,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && numOfSockets == other.numOfSockets
                 && threadsPerCpu == other.threadsPerCpu
                 && numOfMonitors == other.numOfMonitors
-                && singleQxlPci == other.singleQxlPci
                 && origin == other.origin
                 && priority == other.priority
                 && stateless == other.stateless

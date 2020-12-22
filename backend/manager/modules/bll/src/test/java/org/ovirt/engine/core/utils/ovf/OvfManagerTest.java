@@ -314,7 +314,6 @@ public class OvfManagerTest {
         vm.setVmDescription("test-description");
         vm.setTimeZone("Israel Standard Time");
         vm.setDbGeneration(2L);
-        vm.setSingleQxlPci(false);
         vm.setClusterArch(ArchitectureType.x86_64);
         vm.setVmOs(EXISTING_OS_ID);
         vm.setClusterBiosType(BiosType.Q35_SEA_BIOS);

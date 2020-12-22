@@ -1448,12 +1448,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    public void enableSinglePCI(boolean enabled) {
-        if (!enabled) {
-            getModel().setSingleQxlEnabled(false);
-        }
-    }
-
     protected void updateRngDevice(Guid templateId) {
         Frontend.getInstance().runQuery(
                 QueryType.GetRngDevice,

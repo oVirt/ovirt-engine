@@ -90,9 +90,6 @@ public class VmBaseMapper {
             if (model.getDisplay().isSetMonitors()) {
                 entity.setNumOfMonitors(model.getDisplay().getMonitors());
             }
-            if (model.getDisplay().isSetSingleQxlPci()) {
-                entity.setSingleQxlPci(model.getDisplay().isSingleQxlPci());
-            }
             if (model.getDisplay().isSetSmartcardEnabled()) {
                 entity.setSmartcardEnabled(model.getDisplay().isSmartcardEnabled());
             }

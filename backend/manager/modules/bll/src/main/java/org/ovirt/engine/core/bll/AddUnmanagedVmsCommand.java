@@ -127,7 +127,6 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
                 ? vdsBrokerObjectsBuilder.parseIntVdsProperty(vmInfo.get(VdsProperties.maxMemSize))
                 : vmStatic.getMemSizeMb();
         vmStatic.setMaxMemorySizeMb(maxMemorySize);
-        vmStatic.setSingleQxlPci(false);
 
         setOsId(vmStatic, (String) vmInfo.get(VdsProperties.guest_os), defaultOsId);
         setDisplayType(vmStatic, (String) vmInfo.get(VdsProperties.displayType), defaultDisplayType);
@@ -186,8 +185,6 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
             } else {
                 vm.setDefaultDisplayType(DisplayType.qxl);
             }
-            // HE VM does not support that feature, disable it
-            vm.setSingleQxlPci(false);
             graphicsDevices.forEach(device -> vm.getManagedVmDeviceMap().put(device.getDeviceId(), device));
             VmDevice consoleDevice = vdsBrokerObjectsBuilder.buildConsoleDevice(vmStruct, vm.getId());
             if(consoleDevice != null){

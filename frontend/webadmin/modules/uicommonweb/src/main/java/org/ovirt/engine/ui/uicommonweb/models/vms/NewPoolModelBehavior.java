@@ -143,10 +143,4 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     public InstanceTypeManager getInstanceTypeManager() {
         return instanceTypeManager;
     }
-
-    @Override
-    public void enableSinglePCI(boolean enabled) {
-        super.enableSinglePCI(enabled);
-        getModel().setSingleQxlEnabled(enabled);
-    }
 }

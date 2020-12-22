@@ -455,9 +455,6 @@ public abstract class OvfReader implements IOvfBuilder {
     protected void readMonitorItem(XmlNode node) {
         vmBase.setNumOfMonitors(
                 Integer.parseInt(selectSingleNode(node, "rasd:VirtualQuantity", _xmlNS).innerText));
-        if (selectSingleNode(node, "rasd:SinglePciQxl", _xmlNS) != null) {
-            vmBase.setSingleQxlPci(Boolean.parseBoolean(selectSingleNode(node, "rasd:SinglePciQxl", _xmlNS).innerText));
-        }
 
         readManagedVmDevice(node, readDeviceId(node));
     }

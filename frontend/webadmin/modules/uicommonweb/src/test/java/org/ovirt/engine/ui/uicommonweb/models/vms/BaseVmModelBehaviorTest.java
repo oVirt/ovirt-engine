@@ -48,7 +48,6 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         vm.setMigrationDowntime(MIGRATION_DOWNTIME);
         vm.setSmartcardEnabled(true);
         vm.setDefaultBootSequence(BOOT_SEQUENCE);
-        vm.setSingleQxlPci(true);
         vm.setAutoConverge(true);
         vm.setMigrateCompressed(true);
         vm.setMigrateEncrypted(true);
@@ -94,7 +93,6 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
 
         UnitVmModel model = spy(createModel(behavior));
         doReturn(cluster).when(model).getSelectedCluster();
-        doReturn(true).when(model).isSingleQxlEnabled();
         model.initialize();
         model.getInstanceImages().setItems(new ArrayList<InstanceImageLineModel>());
 
@@ -166,7 +164,6 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         assertEquals(MIN_MEM, (int) model.getMinAllocatedMemory().getEntity());
         assertEquals(USB_ENABLED, model.getIsUsbEnabled().getEntity());
         assertEquals(NUM_OF_MONITORS, (int) model.getNumOfMonitors().getSelectedItem());
-        assertTrue(model.isSingleQxlEnabled());
         assertEquals(BOOT_SEQUENCE, model.getBootSequence());
         assertEquals(Integer.toString(TOTAL_CPU), model.getTotalCPUCores().getEntity());
         assertEquals(NUM_OF_SOCKETS, (int) model.getNumOfSockets().getSelectedItem());

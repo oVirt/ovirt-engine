@@ -480,14 +480,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    public void enableSinglePCI(boolean enabled) {
-        super.enableSinglePCI(enabled);
-        if (getInstanceTypeManager() != null) {
-            getInstanceTypeManager().maybeSetSingleQxlPci(vm.getStaticData());
-        }
-    }
-
-    @Override
     public ExistingVmInstanceTypeManager getInstanceTypeManager() {
         return (ExistingVmInstanceTypeManager) instanceTypeManager;
     }

@@ -112,7 +112,6 @@ public class EntityMapper {
         vmStatic.setClusterId(clusterId);
         // for kubevirt, cluster id and provider id are equals
         vmStatic.setProviderId(clusterId);
-        vmStatic.setSingleQxlPci(false);
         vmStatic.setOrigin(OriginType.KUBEVIRT);
         vmStatic.setOriginalTemplateName(source.getSpec().getTemplate().getMetadata().getName());
         vmStatic.setNamespace(metadata.getNamespace());

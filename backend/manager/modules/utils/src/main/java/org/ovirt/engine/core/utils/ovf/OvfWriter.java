@@ -440,7 +440,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                 _writer.writeElement(RASD_URI, "ResourceType", adjustHardwareResourceType(OvfHardware.Monitor));
                 // we should write number of monitors for each entry for backward compatibility
                 _writer.writeElement(RASD_URI, "VirtualQuantity", String.valueOf(numOfMonitors));
-                _writer.writeElement(RASD_URI, "SinglePciQxl", String.valueOf(vmBase.getSingleQxlPci()));
+                _writer.writeElement(RASD_URI, "SinglePciQxl", String.valueOf(VmDeviceCommonUtils.isSingleQxlPci(vmBase)));
                 writeVmDeviceInfo(vmDevice);
                 _writer.writeEndElement(); // item
                 if (i++ == numOfMonitors) {

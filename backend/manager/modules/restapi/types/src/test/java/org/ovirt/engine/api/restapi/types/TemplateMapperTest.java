@@ -90,7 +90,6 @@ public class TemplateMapperTest
         assertEquals(model.getOs().getCmdline(), transform.getOs().getCmdline());
         assertNotNull(model.getDisplay());
         assertEquals(model.getDisplay().getMonitors(), transform.getDisplay().getMonitors());
-        assertEquals(model.getDisplay().isSingleQxlPci(), transform.getDisplay().isSingleQxlPci());
         assertEquals(model.getDisplay().isAllowOverride(), transform.getDisplay().isAllowOverride());
         assertEquals(model.getDisplay().getKeyboardLayout(), transform.getDisplay().getKeyboardLayout());
         assertEquals(model.getTimeZone().getName(), transform.getTimeZone().getName());
