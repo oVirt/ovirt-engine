@@ -74,10 +74,10 @@ public class CommandCoordinatorUtil implements BackendService {
 
     /**
      * Checks if there are tasks existing on the storage pool
-     * @param storagePoolID Id of the storage pool
+     * @param storagePoolId the id of the storage pool
      */
-    public boolean hasTasksByStoragePoolId(Guid storagePoolID) {
-        return asyncTaskManager.get().hasTasksByStoragePoolId(storagePoolID);
+    public boolean hasTasksByStoragePoolId(Guid storagePoolId) {
+        return asyncTaskManager.get().hasTasksByStoragePoolId(storagePoolId);
     }
 
     /**

@@ -56,37 +56,39 @@ public class CleanFinishedTasksCommand<T extends StoragePoolParametersBase> exte
         }
 
         if (tasksIds == null) {
-            log.error("Failed to receive finished tasks IDs for storage pool '{}'", storagePoolId);
+            log.error("Failed to retrieve finished tasks IDs for storage pool '{}'", storagePoolId);
             return;
         }
 
-        boolean allTasksCleared = true;
-        for (Guid vdsmTaskID : tasksIds) {
-            log.info("Attempting to clear the finished task '{}'", vdsmTaskID);
+        boolean allTasksCleaned = true;
+        for (Guid vdsmTaskId : tasksIds) {
+            log.info("Attempting to clean up a finished task '{}'", vdsmTaskId);
 
             VDSReturnValue vdsReturnValue;
             try {
-                vdsReturnValue = commandCoordinator.clearTask(storagePoolId, vdsmTaskID);
-                if (commandCoordinator.removeByVdsmTaskId(vdsmTaskID) != 0) {
-                    log.info("Task '{}' removed from the database", vdsmTaskID);
+                vdsReturnValue = commandCoordinator.clearTask(storagePoolId, vdsmTaskId);
+                if (commandCoordinator.removeByVdsmTaskId(vdsmTaskId) != 0) {
+                    log.info("Task '{}' removed from the database", vdsmTaskId);
                 }
             } catch (VDSNetworkException e) {
-                log.error("Failed to clear task '{}' due to network issue: {}, terminate", vdsmTaskID, e.getMessage());
+                log.error("Failed to clean up the finished task '{}' due to network issue: {}",
+                        vdsmTaskId, e.getMessage());
                 return;
             } catch (RuntimeException e) {
-                log.error("Failed to clear task '{}': {}, continue to the next task", vdsmTaskID, e.getMessage());
-                allTasksCleared = false;
+                log.error("Failed to clean up the finished task '{}': {}, trying the next task",
+                        vdsmTaskId, e.getMessage());
+                allTasksCleaned = false;
                 continue;
             }
 
             if (!vdsReturnValue.getSucceeded()) {
-                log.error("Failed to clear task '{}', exception: {}, VDS error: {}",
-                        vdsmTaskID, vdsReturnValue.getExceptionString(), vdsReturnValue.getVdsError());
-                allTasksCleared = false;
+                log.error("Failed to clean up the finished task '{}', exception: {}, VDS error: {}",
+                        vdsmTaskId, vdsReturnValue.getExceptionString(), vdsReturnValue.getVdsError());
+                allTasksCleaned = false;
             }
         }
 
-        setSucceeded(allTasksCleared);
+        setSucceeded(allTasksCleaned);
     }
 
     @Override
