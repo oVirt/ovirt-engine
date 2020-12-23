@@ -193,6 +193,27 @@ class NumaPinningHelperTest {
                 + "33#20,44_34#21,45_35#21,45_36#22,46_37#22,46_38#23,47_39#23,47", output);
     }
 
+    @Test
+    public void testCpuPinningSingleThreadHardware() {
+        VM vm = new VM();
+        vm.setNumOfSockets(2);
+        vm.setThreadsPerCpu(1);
+        vm.setCpuPerSocket(5);
+
+        VDS host = new VDS();
+        host.setCpuSockets(2);
+        host.setCpuThreads(6);
+        host.setCpuCores(6);
+
+        List<VdsNumaNode> hostNodes = Arrays.asList(
+                createHostNumaNodeWithCpus(0, 1500, Arrays.asList(0, 2, 4, 6, 8, 10)),
+                createHostNumaNodeWithCpus(1, 1500, Arrays.asList(1, 3, 5, 7, 9, 11))
+        );
+
+        String output = NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes);
+        assertEquals("0#2_1#4_2#6_3#8_4#10_5#3_6#5_7#7_8#9_9#11", output);
+    }
+
     // TODO - add tests for multiple VMs
 
     private VmNumaNode createVmNumaNode(int index, List<Integer> hostNodeIndices) {

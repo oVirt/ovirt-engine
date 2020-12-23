@@ -18,9 +18,12 @@ import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NumaPinningHelper {
 
+    private static Logger log = LoggerFactory.getLogger(NumaPinningHelper.class);
     private List<VmNumaNodeData> vmNumaNodesData;
     private Map<Integer, HostNumaNodeData> hostNumaNodesData;
     private List<Runnable> commandStack;
@@ -211,6 +214,9 @@ public class NumaPinningHelper {
         if (vCpusPerNumaThread == 0) {
             return null;
         }
+        if (hostThreadsPerCore == 1) {
+            log.warn("The Host hardware is not entirely suitable to the auto-pinning feature");
+        }
         StringBuilder sb = new StringBuilder();
         Integer coresInNuma = null;
         int numaNodeNumber = 0;
@@ -222,9 +228,15 @@ public class NumaPinningHelper {
                     vCpusPerNumaThread = coresInNuma - 1;
                 }
             }
+            boolean singleThreaded = coresInNuma == cpusInNuma.size();
             for (int i = 1; i <= vCpusPerNumaThread; i++) {
                 final int pinnedCpus = ((i-1) + numaNodeNumber * vCpusPerNumaThread) * hostThreadsPerCore;
-                String pinning = String.format("#%d,%d_", cpusInNuma.get(i), cpusInNuma.get(i + coresInNuma));
+                String pinning;
+                if (singleThreaded) {
+                    pinning = String.format("#%d_", cpusInNuma.get(i));
+                } else {
+                    pinning = String.format("#%d,%d_", cpusInNuma.get(i), cpusInNuma.get(i + coresInNuma));
+                }
                 IntStream.range(0, hostThreadsPerCore).forEach(idx -> sb.append(pinnedCpus+idx).append(pinning));
             }
             numaNodeNumber++;
