@@ -1,20 +1,26 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -52,6 +58,8 @@ public class CleanFinishedTasksCommand<T extends StoragePoolParametersBase> exte
         try {
             tasksIds = commandCoordinatorUtil.getTasksIdsByStatus(storagePoolId, AsyncTaskStatusEnum.finished);
         } catch (RuntimeException e) {
+            log.error("Get SPM task statuses: calling VDSCommand '{}' with storagePoolId '{}' threw an exception: {}",
+                    VDSCommandType.SPMGetAllTasksStatuses, storagePoolId, e.getMessage());
             return;
         }
 
@@ -61,6 +69,7 @@ public class CleanFinishedTasksCommand<T extends StoragePoolParametersBase> exte
         }
 
         boolean allTasksCleaned = true;
+        List<Guid> failedToRemoveTasks = new ArrayList<>();
         for (Guid vdsmTaskId : tasksIds) {
             log.info("Attempting to clean up a finished task '{}'", vdsmTaskId);
 
@@ -77,6 +86,7 @@ public class CleanFinishedTasksCommand<T extends StoragePoolParametersBase> exte
             } catch (RuntimeException e) {
                 log.error("Failed to clean up the finished task '{}': {}, trying the next task",
                         vdsmTaskId, e.getMessage());
+                failedToRemoveTasks.add(vdsmTaskId);
                 allTasksCleaned = false;
                 continue;
             }
@@ -84,10 +94,12 @@ public class CleanFinishedTasksCommand<T extends StoragePoolParametersBase> exte
             if (!vdsReturnValue.getSucceeded()) {
                 log.error("Failed to clean up the finished task '{}', exception: {}, VDS error: {}",
                         vdsmTaskId, vdsReturnValue.getExceptionString(), vdsReturnValue.getVdsError());
+                failedToRemoveTasks.add(vdsmTaskId);
                 allTasksCleaned = false;
             }
         }
 
+        setActionReturnValue(failedToRemoveTasks);
         setSucceeded(allTasksCleaned);
     }
 
@@ -95,5 +107,26 @@ public class CleanFinishedTasksCommand<T extends StoragePoolParametersBase> exte
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.singletonList(new PermissionSubject(getStoragePoolId(),
                 VdcObjectType.StoragePool, getActionType().getActionGroup()));
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR__ACTION__CLEAR);
+        addValidationMessage(EngineMessage.VAR__TYPE__FINISHED_TASKS);
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        addCustomValue("DataCenterName", getStoragePool().getName());
+        if (getSucceeded()) {
+            return AuditLogType.VDS_ALERT_CLEAN_SPM_FINISHED_TASKS_SUCCESS;
+        }
+
+        List<Guid> failedToRemoveTasks = getActionReturnValue();
+        if (CollectionUtils.isEmpty(failedToRemoveTasks)) {
+            return AuditLogType.VDS_ALERT_CLEAN_SPM_FINISHED_TASKS_FAILURE;
+        }
+        addCustomValue("TaskGuids", StringUtils.join(failedToRemoveTasks, ", "));
+        return AuditLogType.VDS_ALERT_CLEAN_SPM_FINISHED_TASKS_FAILURE_PARTIAL;
     }
 }

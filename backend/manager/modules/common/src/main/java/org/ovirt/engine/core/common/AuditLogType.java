@@ -1291,6 +1291,10 @@ public enum AuditLogType {
     VDS_HOST_NOT_RESPONDING(9027, AuditLogSeverity.WARNING, AuditLogTimeInterval.MINUTE.getValue() * 3),
 
     VDS_ALERT_NOT_STOPPING_SPM_UNCLEARED_TASKS(9030, AuditLogSeverity.ERROR),
+    // SPM cleanup finished tasks
+    VDS_ALERT_CLEAN_SPM_FINISHED_TASKS_SUCCESS(9031, AuditLogSeverity.NORMAL),
+    VDS_ALERT_CLEAN_SPM_FINISHED_TASKS_FAILURE_PARTIAL(9032, AuditLogSeverity.ERROR),
+    VDS_ALERT_CLEAN_SPM_FINISHED_TASKS_FAILURE(9033, AuditLogSeverity.ERROR),
 
     TASK_STOPPING_ASYNC_TASK(9500, AuditLogTimeInterval.MINUTE.getValue()),
     TASK_CLEARING_ASYNC_TASK(9501, AuditLogTimeInterval.MINUTE.getValue()),
