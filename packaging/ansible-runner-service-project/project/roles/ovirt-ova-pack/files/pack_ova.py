@@ -45,6 +45,7 @@ def write_ovf(entity, ova_file, ovf):
     ova_file.write(tar_info.tobuf())
     ova_file.write(ovf if python2 else ovf.encode())
     pad_to_block_size(ova_file)
+    ova_file.flush()
     os.fsync(ova_file.fileno())
 
 
@@ -83,6 +84,7 @@ def write_disk_headers(ova_file, disks_info):
         ova_file.write(tar_info.tobuf())
         path_to_offset[disk_path] = str(ova_file.tell())
         ova_file.seek(disk_size, 1)
+    ova_file.flush()
     os.fsync(ova_file.fileno())
 
 
