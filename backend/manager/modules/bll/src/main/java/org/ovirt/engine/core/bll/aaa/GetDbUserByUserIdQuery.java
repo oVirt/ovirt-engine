@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.DbUserDao;
 
@@ -19,6 +20,17 @@ public class GetDbUserByUserIdQuery<P extends IdQueryParameters>
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(dbUserDao.get(getParameters().getId(), getParameters().isFiltered()));
+        DbUser currentUser = getUser();
+        if (!currentUser.isAdmin()) {
+            // unauthorized access
+            if (!currentUser.getId().equals(getParameters().getId())) {
+                getQueryReturnValue().setReturnValue(null);
+            } else {
+                // A non-admin user can get only its own data
+                getQueryReturnValue().setReturnValue(dbUserDao.get(currentUser.getId(), false));
+            }
+        } else {
+            getQueryReturnValue().setReturnValue(dbUserDao.get(getParameters().getId(), getParameters().isFiltered()));
+        }
     }
 }
