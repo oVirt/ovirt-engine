@@ -2,8 +2,8 @@
 - name: Set profile
   set_fact:
     profile: >
-            "{{ 'virtual-host' if ('null' in host_deploy_tuned_profile and host_deploy_virt_enabled|bool)
-            else host_deploy_tuned_profile }}"
+      "{{ 'virtual-host' if (host_deploy_tuned_profile is none and host_deploy_virt_enabled|bool)
+      else host_deploy_tuned_profile }}"
 
 - name: Get lastest tune package
   yum:
