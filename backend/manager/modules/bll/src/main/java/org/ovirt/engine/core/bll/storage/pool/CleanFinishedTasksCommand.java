@@ -19,7 +19,9 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -60,11 +62,14 @@ public class CleanFinishedTasksCommand<T extends StoragePoolParametersBase> exte
         } catch (RuntimeException e) {
             log.error("Get SPM task statuses: calling VDSCommand '{}' with storagePoolId '{}' threw an exception: {}",
                     VDSCommandType.SPMGetAllTasksStatuses, storagePoolId, e.getMessage());
+            handleError(e.getMessage());
             return;
         }
 
         if (tasksIds == null) {
-            log.error("Failed to retrieve finished tasks IDs for storage pool '{}'", storagePoolId);
+            String errorMsg = String.format("Failed to retrieve finished tasks IDs for storage pool '%s'", storagePoolId);
+            log.error(errorMsg);
+            handleError(errorMsg);
             return;
         }
 
@@ -82,25 +87,44 @@ public class CleanFinishedTasksCommand<T extends StoragePoolParametersBase> exte
             } catch (VDSNetworkException e) {
                 log.error("Failed to clean up the finished task '{}' due to network issue: {}",
                         vdsmTaskId, e.getMessage());
+                handleError(e.getMessage());
                 return;
             } catch (RuntimeException e) {
                 log.error("Failed to clean up the finished task '{}': {}, trying the next task",
                         vdsmTaskId, e.getMessage());
                 failedToRemoveTasks.add(vdsmTaskId);
                 allTasksCleaned = false;
+                handleError(e.getMessage());
                 continue;
             }
 
             if (!vdsReturnValue.getSucceeded()) {
+                VDSError vdsError = vdsReturnValue.getVdsError();
                 log.error("Failed to clean up the finished task '{}', exception: {}, VDS error: {}",
-                        vdsmTaskId, vdsReturnValue.getExceptionString(), vdsReturnValue.getVdsError());
+                        vdsmTaskId, vdsReturnValue.getExceptionString(), vdsError);
                 failedToRemoveTasks.add(vdsmTaskId);
                 allTasksCleaned = false;
+                handleVdsError(vdsError);
             }
         }
 
         setActionReturnValue(failedToRemoveTasks);
         setSucceeded(allTasksCleaned);
+    }
+
+    private void handleError(String errorMsg) {
+        EngineFault fault = getReturnValue().getFault();
+        fault.setMessage(errorMsg);
+
+        getReturnValue().getExecuteFailedMessages().add(errorMsg);
+    }
+
+    private void handleVdsError(VDSError vdsError) {
+        EngineFault fault = getReturnValue().getFault();
+        fault.setError(vdsError.getCode());
+        fault.setMessage(vdsError.getMessage());
+
+        getReturnValue().getExecuteFailedMessages().add(vdsError.getCode().toString());
     }
 
     @Override
