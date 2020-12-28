@@ -12,9 +12,11 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
+import org.ovirt.engine.core.bll.utils.ChipsetUpdater;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -25,6 +27,7 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.LabelDao;
+import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -43,6 +46,8 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     private NetworkDao networkDao;
     @Inject
     private VmNicDao vmNicDao;
+    @Inject
+    private VmDeviceDao vmDeviceDao;
     @Inject
     private ResourceManager resourceManager;
     @Inject
@@ -118,17 +123,47 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
         updateVmInterfaces();
 
-        VM vm = getVm();
-        vm.setClusterId(getClusterId());
-        clearDedicatedHosts(vm);
-        setCpuProfileFromNewCluster(vm);
-        resourceManager.getVmManager(getVmId()).update(vm.getStaticData());
+        updateVm(getVm());
 
         moveMacsToAnotherMacPoolIfNeeded();
         removeVmFromAllAssociatedAffinityGroups(getVmId());
         removeVmFromAllLabels(getVmId());
 
         setSucceeded(true);
+    }
+
+    private void updateVm(VM vm) {
+        if (isVmChipsetChange(vm)) {
+            handleChangedChipset(vm);
+        }
+
+        vm.setClusterId(getClusterId());
+        clearDedicatedHosts(vm);
+        setCpuProfileFromNewCluster(vm);
+        resourceManager.getVmManager(getVmId()).update(vm.getStaticData());
+    }
+
+    private void handleChangedChipset(VM vm) {
+        // if the cluster changes as a result of live migration to a different cluster, the VM is running and should
+        // keep using its current chipset, thus setting custom bios-type. otherwise, adjusting the VM to comply with the
+        // bios type of the new cluster in the longer term, once the VM stops pointing to the cluster's bios type, we
+        // can drop this code.
+        if (isInternalExecution()) {
+            vm.setCustomBiosType(vm.getClusterBiosType());
+            return;
+        }
+
+        getVmDeviceUtils().setVmDevices(vm.getStaticData());
+        if (ChipsetUpdater.updateChipset(vm, getCluster())) { // must be called before changing the cluster-id
+            vmDeviceDao.updateAllInBatch(vm.getManagedVmDeviceMap().values());
+            vmDeviceDao.removeAllUnmanagedDevicesByVmId(vm.getId());
+            getVmDeviceUtils().resetVmDevicesHash(getVmId());
+        }
+    }
+
+    private boolean isVmChipsetChange(VM vm) {
+        return vm.getCustomBiosType() == BiosType.CLUSTER_DEFAULT &&
+                !Objects.equals(vm.getClusterBiosType().getChipsetType(), getCluster().getBiosType().getChipsetType());
     }
 
     private void setCpuProfileFromNewCluster(VM vm) {

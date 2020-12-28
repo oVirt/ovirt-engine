@@ -128,7 +128,6 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
-import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
@@ -144,8 +143,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Inject
     private VmSlaPolicyUtils vmSlaPolicyUtils;
-    @Inject
-    private VmDevicesMonitoring vmDevicesMonitoring;
     @Inject
     private ResourceManager resourceManager;
     @Inject
@@ -515,10 +512,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     getVm().getName(),
                     getVm().getId());
             getVmDeviceUtils().removeVmDevicesAddress(getVmId());
-
-            VmDevicesMonitoring.Change change = vmDevicesMonitoring.createChange(System.nanoTime());
-            change.updateVm(getVmId(), VmDevicesMonitoring.EMPTY_HASH);
-            change.flush();
+            getVmDeviceUtils().resetVmDevicesHash(getVmId());
         }
     }
 
