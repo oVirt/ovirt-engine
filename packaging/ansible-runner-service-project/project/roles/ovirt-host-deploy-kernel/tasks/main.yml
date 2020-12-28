@@ -7,11 +7,12 @@
 - name: Detect if boot parameter is set when FIPS support is enabled
   set_fact:
     add_boot_param: "{{ host_deploy_kernel_cmdline_new | regex_search('fips\\s*=\\s*1') and not host_deploy_kernel_cmdline_new | regex_search('boot\\s*=') }}"
+  when: host_deploy_kernel_cmdline_new is not none
 
 - name: Fetch boot drive UUID
   shell: findmnt --output=UUID --noheadings --target=/boot
   register: uuid
-  when: add_boot_param|bool
+  when: add_boot_param is defined and add_boot_param|bool
   failed_when: not uuid.stdout
   tags:
     - skip_ansible_lint # E305
