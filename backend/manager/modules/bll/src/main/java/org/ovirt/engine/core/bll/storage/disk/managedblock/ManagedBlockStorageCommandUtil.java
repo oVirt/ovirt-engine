@@ -128,7 +128,7 @@ public class ManagedBlockStorageCommandUtil {
         });
     }
 
-    private VDSReturnValue attachManagedBlockStorageDisk(ManagedBlockStorageDisk disk, VDS vds) {
+    public VDSReturnValue attachManagedBlockStorageDisk(ManagedBlockStorageDisk disk, VDS vds) {
         ActionReturnValue returnValue = getConnectionInfo(disk, vds);
 
         if (!returnValue.getSucceeded()) {
@@ -207,5 +207,18 @@ public class ManagedBlockStorageCommandUtil {
         }
 
         return false;
+    }
+
+    public boolean disconnectManagedBlockStorageDeviceFromHost(DiskImage disk, Guid vdsId) {
+        DisconnectManagedBlockStorageDeviceParameters parameters =
+                new DisconnectManagedBlockStorageDeviceParameters();
+        parameters.setStorageDomainId(disk.getStorageIds().get(0));
+        parameters.setDiskId(disk.getId());
+        parameters.setVdsId(vdsId);
+
+        ActionReturnValue returnValue =
+                backend.runInternalAction(ActionType.DisconnectManagedBlockStorageDevice, parameters);
+
+        return returnValue.getSucceeded();
     }
 }
