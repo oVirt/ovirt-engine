@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 
 public class ChipsetUpdater {
 
-    public static boolean updateChipset(VM vm, ChipsetType oldChipsetType, Cluster cluster) {
-        return updateChipset(vm.getStaticData(), oldChipsetType, cluster);
+    public static boolean updateChipset(VM vm, Cluster cluster) {
+        return updateChipset(vm.getStaticData(), vm.getEffectiveBiosType().getChipsetType(), cluster);
     }
 
     public static boolean updateChipset(VmBase vmBase, ChipsetType oldChipsetType, Cluster cluster) {

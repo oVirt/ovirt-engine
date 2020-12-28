@@ -64,6 +64,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.MemoizingSupplier;
+import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 @Dependent
@@ -89,6 +90,9 @@ public class VmDeviceUtils {
     private OsRepository osRepository;
 
     private CompensationContext compensationContext;
+
+    @Inject
+    private VmDevicesMonitoring vmDevicesMonitoring;
 
     @Inject
     VmDeviceUtils(VmStaticDao vmStaticDao,
@@ -1326,6 +1330,12 @@ public class VmDeviceUtils {
                 device.setAddress("");
             }, vmDeviceDao, compensationContext);
         }
+    }
+
+    public void resetVmDevicesHash(Guid vmId) {
+        VmDevicesMonitoring.Change change = vmDevicesMonitoring.createChange(System.nanoTime());
+        change.updateVm(vmId, VmDevicesMonitoring.EMPTY_HASH);
+        change.flush();
     }
 
     /**
