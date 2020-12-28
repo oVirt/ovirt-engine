@@ -840,10 +840,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         if (getParameters().getTargetClusterId() != null) {
             ChangeVmClusterValidator changeVmClusterValidator = ChangeVmClusterValidator.create(
-                    this,
+                    getVm(),
                     getParameters().getTargetClusterId(),
-                    getVm().getCustomCompatibilityVersion());
-            if (!changeVmClusterValidator.validate()) {
+                    getVm().getCustomCompatibilityVersion(),
+                    getUserId());
+            if (!validate(changeVmClusterValidator.validate())) {
                 return false;
             }
         }

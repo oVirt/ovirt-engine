@@ -514,7 +514,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             log.info("Emulated machine or BIOS chipset type has changed for VM: {} ({}), clearing device addresses.",
                     getVm().getName(),
                     getVm().getId());
-            getVmDeviceUtils().removeVmDevicesAddress(vmDeviceDao.getVmDeviceByVmId(getVmId()));
+            getVmDeviceUtils().removeVmDevicesAddress(getVmId());
 
             VmDevicesMonitoring.Change change = vmDevicesMonitoring.createChange(System.nanoTime());
             change.updateVm(getVmId(), VmDevicesMonitoring.EMPTY_HASH);
