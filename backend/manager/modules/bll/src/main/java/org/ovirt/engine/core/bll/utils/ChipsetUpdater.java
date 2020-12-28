@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.utils;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
@@ -27,9 +29,10 @@ public class ChipsetUpdater {
             return false;
         }
 
-        boolean managedUpdated = updateDevicesForChipset(vmBase.getManagedDeviceMap().values(), newChipsetType);
-        boolean unmanagedUpdated = updateDevicesForChipset(vmBase.getUnmanagedDeviceList(), newChipsetType);
-        return managedUpdated || unmanagedUpdated;
+        List<VmDevice> devices = new ArrayList<>();
+        devices.addAll(vmBase.getManagedDeviceMap().values());
+        devices.addAll(vmBase.getUnmanagedDeviceList()); // TODO: this can probably be dropped
+        return updateDevicesForChipset(devices, newChipsetType);
     }
 
     private static boolean updateDevicesForChipset(Collection<VmDevice> devices, ChipsetType chipsetType) {

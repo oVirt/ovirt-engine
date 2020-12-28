@@ -22,6 +22,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class ChangeVmClusterValidator {
 
@@ -46,93 +47,96 @@ public class ChangeVmClusterValidator {
     @Inject
     private NetworkHelper networkHelper;
 
-    private VmCommand parentCommand;
+    private VM vm;
     private final Guid targetClusterId;
     private Version vmCompatibilityVersion;
+    private Guid userId;
 
-    public static ChangeVmClusterValidator create(VmCommand parentCommand,
+    public static ChangeVmClusterValidator create(VM vm,
             Guid targetClusterId,
-            Version vmCompatibilityVersion) {
-        return Injector.injectMembers(new ChangeVmClusterValidator(parentCommand, targetClusterId, vmCompatibilityVersion));
+            Version vmCompatibilityVersion,
+            Guid userId) {
+        return Injector.injectMembers(new ChangeVmClusterValidator(vm, targetClusterId, vmCompatibilityVersion, userId));
     }
 
-    ChangeVmClusterValidator(VmCommand parentCommand,
+    ChangeVmClusterValidator(VM vm,
             Guid targetClusterId,
-            Version vmCustomCompatibilityVersion) {
-        this.parentCommand = parentCommand;
+            Version vmCustomCompatibilityVersion,
+            Guid userId) {
+        this.vm = vm;
         this.targetClusterId = targetClusterId;
         this.vmCompatibilityVersion = vmCustomCompatibilityVersion;
+        this.userId = userId;
     }
 
-    protected boolean validate() {
-        VM vm = parentCommand.getVm();
+    protected ValidationResult validate() {
         if (vm == null) {
-            parentCommand.addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-            return false;
-        } else {
-            Cluster targetCluster = clusterDao.get(targetClusterId);
-            if (targetCluster == null) {
-                parentCommand.addValidationMessage(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
-                return false;
-            }
-
-            // Check that the target cluster is in the same data center.
-            if (!targetCluster.getStoragePoolId().equals(vm.getStoragePoolId())) {
-                parentCommand.addValidationMessage(EngineMessage.VM_CANNOT_MOVE_TO_CLUSTER_IN_OTHER_STORAGE_POOL);
-                return false;
-            }
-
-            if (vmCompatibilityVersion == null) {
-                vmCompatibilityVersion = targetCluster.getCompatibilityVersion();
-            }
-
-            List<VmNic> interfaces = vmNicDao.getAllForVm(vm.getId());
-
-            if (!validateDestinationClusterContainsNetworks(interfaces)) {
-                return false;
-            }
-
-            // Check if VM static parameters are compatible for new cluster.
-            ValidationResult isCpuSocketsValid = VmValidator.validateCpuSockets(vm.getStaticData(),
-                    vmCompatibilityVersion);
-            if (!isCpuSocketsValid.isValid()) {
-                return parentCommand.validate(isCpuSocketsValid);
-            }
-
-            // Check if the display type is supported
-            if (!parentCommand.validate(vmHandler.isGraphicsAndDisplaySupported(
-                    vm.getOs(),
-                    vmDeviceUtils.getGraphicsTypesOfEntity(vm.getId()),
-                    vm.getDefaultDisplayType(),
-                    vmCompatibilityVersion))) {
-                return false;
-            }
-
-            if (vmDeviceUtils.hasVirtioScsiController(vm.getId())) {
-                // Verify OS compatibility
-                if (!parentCommand.validate(vmHandler.isOsTypeSupportedForVirtioScsi
-                        (vm.getOs(), vmCompatibilityVersion))) {
-                    return false;
-                }
-            }
-
-            // A existing VM cannot be changed into a cluster without a defined architecture
-            if (targetCluster.getArchitecture() == ArchitectureType.undefined) {
-                return parentCommand.failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
-            } else if (targetCluster.getArchitecture() != vm.getClusterArch()) {
-                return parentCommand.failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CLUSTER_DIFFERENT_ARCHITECTURES);
-            }
-
-            // Cluster must have a cpu profile
-            List<CpuProfile> cpuProfiles = cpuProfileDao.getAllForCluster(
-                    targetClusterId, parentCommand.getUserId(), true, ActionGroup.ASSIGN_CPU_PROFILE);
-
-            if (cpuProfiles.isEmpty()) {
-                return parentCommand.failValidation(EngineMessage.ACTION_TYPE_CPU_PROFILE_EMPTY);
-            }
-
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
-        return true;
+
+        Cluster targetCluster = clusterDao.get(targetClusterId);
+        if (targetCluster == null) {
+            return new ValidationResult(EngineMessage.VM_CLUSTER_IS_NOT_VALID);
+        }
+
+        // Check that the target cluster is in the same data center.
+        if (!targetCluster.getStoragePoolId().equals(vm.getStoragePoolId())) {
+            return new ValidationResult(EngineMessage.VM_CANNOT_MOVE_TO_CLUSTER_IN_OTHER_STORAGE_POOL);
+        }
+
+        if (vmCompatibilityVersion == null) {
+            vmCompatibilityVersion = targetCluster.getCompatibilityVersion();
+        }
+
+        List<VmNic> interfaces = vmNicDao.getAllForVm(vm.getId());
+        ValidationResult destinationClusterContainsNetworks = validateDestinationClusterContainsNetworks(interfaces);
+        if (!destinationClusterContainsNetworks.isValid()) {
+            return destinationClusterContainsNetworks;
+        }
+
+        // Check if VM static parameters are compatible for new cluster.
+        ValidationResult isCpuSocketsValid = VmValidator.validateCpuSockets(vm.getStaticData(),
+                vmCompatibilityVersion);
+        if (!isCpuSocketsValid.isValid()) {
+            return isCpuSocketsValid;
+        }
+
+        // Check if the display type is supported
+        ValidationResult isGraphicsAndDisplaySupported = vmHandler.isGraphicsAndDisplaySupported(
+                vm.getOs(),
+                vmDeviceUtils.getGraphicsTypesOfEntity(vm.getId()),
+                vm.getDefaultDisplayType(),
+                vmCompatibilityVersion);
+        if (!isGraphicsAndDisplaySupported.isValid()) {
+            return isGraphicsAndDisplaySupported;
+        }
+
+        if (vmDeviceUtils.hasVirtioScsiController(vm.getId())) {
+            // Verify OS compatibility
+            ValidationResult isOsTypeSupportedForVirtioScsi = vmHandler.isOsTypeSupportedForVirtioScsi(vm.getOs(),
+                    vmCompatibilityVersion);
+            if (!isOsTypeSupportedForVirtioScsi.isValid()) {
+                return isOsTypeSupportedForVirtioScsi;
+            }
+        }
+
+        // A existing VM cannot be changed into a cluster without a defined architecture
+        if (targetCluster.getArchitecture() == ArchitectureType.undefined) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
+        }
+        if (targetCluster.getArchitecture() != vm.getClusterArch()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_CLUSTER_DIFFERENT_ARCHITECTURES);
+        }
+
+        // Cluster must have a cpu profile
+        List<CpuProfile> cpuProfiles = cpuProfileDao.getAllForCluster(
+                targetClusterId, userId, true, ActionGroup.ASSIGN_CPU_PROFILE);
+
+        if (cpuProfiles.isEmpty()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_CPU_PROFILE_EMPTY);
+        }
+
+        return ValidationResult.VALID;
     }
 
     /**
@@ -142,7 +146,7 @@ public class ChangeVmClusterValidator {
      * @param interfaces The NICs to check networks on.
      * @return Whether the destination cluster has all networks configured or not.
      */
-    private boolean validateDestinationClusterContainsNetworks(List<VmNic> interfaces) {
+    private ValidationResult validateDestinationClusterContainsNetworks(List<VmNic> interfaces) {
         List<Network> networks = networkDao.getAllForCluster(targetClusterId);
         StringBuilder missingNets = new StringBuilder();
         for (VmNic iface : interfaces) {
@@ -164,11 +168,10 @@ public class ChangeVmClusterValidator {
             }
         }
         if (missingNets.length() > 0) {
-            parentCommand.addValidationMessage(EngineMessage.MOVE_VM_CLUSTER_MISSING_NETWORK);
-            parentCommand.addValidationMessageVariable("networks", missingNets.toString());
-            return false;
+            String replacement = ReplacementUtils.createSetVariableString("networks", missingNets.toString());
+            return new ValidationResult(EngineMessage.MOVE_VM_CLUSTER_MISSING_NETWORK, replacement);
         }
 
-        return true;
+        return ValidationResult.VALID;
     }
 }
