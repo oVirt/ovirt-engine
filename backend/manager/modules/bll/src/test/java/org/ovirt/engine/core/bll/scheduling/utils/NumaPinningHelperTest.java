@@ -118,7 +118,7 @@ class NumaPinningHelperTest {
                         IntStream.concat(IntStream.range(16, 32), IntStream.range(48, 64)).boxed().collect(Collectors.toList()))
         );
 
-        assertThat(NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes)).isNull();
+        assertThat(NumaPinningHelper.getSapHanaCpuPinning(vm.getStaticData(), host.getDynamicData(), hostNodes)).isNull();
     }
 
     @Test
@@ -136,7 +136,7 @@ class NumaPinningHelperTest {
                 createHostNumaNodeWithCpus(1, 1500,
                         IntStream.concat(IntStream.range(16, 32), IntStream.range(48, 64)).boxed().collect(Collectors.toList()))
         );
-        vm.setCpuPinning(NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes));
+        vm.setCpuPinning(NumaPinningHelper.getSapHanaCpuPinning(vm.getStaticData(), host.getDynamicData(), hostNodes));
 
         assertEquals("0#1,33_1#1,33_2#2,34_3#2,34_4#17,49_5#17,49_6#18,50_7#18,50", vm.getCpuPinning());
     }
@@ -157,7 +157,7 @@ class NumaPinningHelperTest {
                         IntStream.concat(IntStream.range(16, 32), IntStream.range(48, 64)).boxed().collect(Collectors.toList()))
         );
 
-        String output = NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes);
+        String output = NumaPinningHelper.getSapHanaCpuPinning(vm.getStaticData(), host.getDynamicData(), hostNodes);
         assertEquals("0#1,33_1#1,33_2#2,34_3#2,34_4#3,35_5#3,35_6#4,36_7#4,36_8#5,37_9#5,37_10#6,38_11#6,38_"
                 + "12#7,39_13#7,39_14#8,40_15#8,40_16#9,41_17#9,41_18#10,42_19#10,42_20#11,43_21#11,43_22#12,44_"
                 + "23#12,44_24#13,45_25#13,45_26#14,46_27#14,46_28#15,47_29#15,47_30#17,49_31#17,49_32#18,50_"
@@ -186,7 +186,7 @@ class NumaPinningHelperTest {
                         IntStream.concat(IntStream.range(18, 24), IntStream.range(42, 48)).boxed().collect(Collectors.toList()))
         );
 
-        String output = NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes);
+        String output = NumaPinningHelper.getSapHanaCpuPinning(vm.getStaticData(), host.getDynamicData(), hostNodes);
         assertEquals("0#1,25_1#1,25_2#2,26_3#2,26_4#3,27_5#3,27_6#4,28_7#4,28_8#5,29_9#5,29_10#7,31_11#7,31_"
                 + "12#8,32_13#8,32_14#9,33_15#9,33_16#10,34_17#10,34_18#11,35_19#11,35_20#13,37_21#13,37_22#14,38_"
                 + "23#14,38_24#15,39_25#15,39_26#16,40_27#16,40_28#17,41_29#17,41_30#19,43_31#19,43_32#20,44_"
@@ -210,7 +210,7 @@ class NumaPinningHelperTest {
                 createHostNumaNodeWithCpus(1, 1500, Arrays.asList(1, 3, 5, 7, 9, 11))
         );
 
-        String output = NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNodes);
+        String output = NumaPinningHelper.getSapHanaCpuPinning(vm.getStaticData(), host.getDynamicData(), hostNodes);
         assertEquals("0#2_1#4_2#6_3#8_4#10_5#3_6#5_7#7_8#9_9#11", output);
     }
 

@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper.PinnedCpu;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class CpuPinningValidator {
@@ -33,10 +33,10 @@ public class CpuPinningValidator {
      * validation fails
      *
      * @param cpuPinning String to validate
-     * @param vmStatic   vm data, containing vcpu information
+     * @param vmBase   vm data, containing vcpu information
      * @return if the given cpuPinning is valid
      */
-    public static ValidationResult isCpuPinningValid(final String cpuPinning, VmStatic vmStatic) {
+    public static ValidationResult isCpuPinningValid(final String cpuPinning, VmBase vmBase) {
         if (StringUtils.isEmpty(cpuPinning)) {
             return ValidationResult.VALID;
         }
@@ -46,12 +46,12 @@ public class CpuPinningValidator {
         }
 
         // check if no dedicated vds was configured
-        if (vmStatic.getDedicatedVmForVdsList().isEmpty()) {
+        if (vmBase.getDedicatedVmForVdsList().isEmpty()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST);
         }
 
         Set<Integer> assignedVCpus = new HashSet<>();
-        int maxvCPU = vmStatic.getNumOfCpus();
+        int maxvCPU = vmBase.getNumOfCpus();
 
         // check if vcpu rules are valid
         for (PinnedCpu pinnedCpu : parseCpuPinning(cpuPinning)) {

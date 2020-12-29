@@ -381,6 +381,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
         if(!vmHandler.validateDedicatedVdsExistOnSameCluster(getVmTemplate()).isValid()) {
             getVmTemplate().setDedicatedVmForVdsList(Collections.emptyList());
+            getVmTemplate().setCpuPinning(null);
         }
 
         getVmTemplate().setStatus(VmTemplateStatus.Locked);

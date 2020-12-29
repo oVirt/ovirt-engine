@@ -535,6 +535,12 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @EditableVmTemplateField
     private boolean useTscFrequency;
 
+    @CopyOnNewVersion
+    @EditableVmField(onStatuses = VMStatus.Down)
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    @EditableVmTemplateField
+    private String cpuPinning;
+
     public VmBase(VmBase vmBase) {
         this(vmBase.getName(),
                 vmBase.getId(),
@@ -603,7 +609,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getLeaseStorageDomainId(),
                 vmBase.getResumeBehavior(),
                 vmBase.isMultiQueuesEnabled(),
-                vmBase.getUseTscFrequency());
+                vmBase.getUseTscFrequency(),
+                vmBase.getCpuPinning());
     }
 
     public VmBase(
@@ -674,7 +681,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             Guid leaseStorageDomainId,
             VmResumeBehavior resumeBehavior,
             boolean multiQueuesEnabled,
-            boolean useTscFrequency) {
+            boolean useTscFrequency,
+            String cpuPinning) {
         this();
         this.name = name;
         this.id = id;
@@ -744,6 +752,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.resumeBehavior = resumeBehavior;
         this.multiQueuesEnabled = multiQueuesEnabled;
         this.useTscFrequency = useTscFrequency;
+        this.cpuPinning = cpuPinning;
     }
 
     @Override
@@ -1091,6 +1100,14 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.multiQueuesEnabled = multiQueuesEnabled;
     }
 
+    public String getCpuPinning() {
+        return cpuPinning;
+    }
+
+    public void setCpuPinning(String cpuPinning) {
+        this.cpuPinning = cpuPinning;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -1151,7 +1168,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 customCompatibilityVersion,
                 resumeBehavior,
                 multiQueuesEnabled,
-                useTscFrequency
+                useTscFrequency,
+                cpuPinning
         );
     }
 
@@ -1221,7 +1239,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(resumeBehavior, other.resumeBehavior)
                 && Objects.equals(customCompatibilityVersion, other.customCompatibilityVersion)
                 && Objects.equals(multiQueuesEnabled, other.multiQueuesEnabled)
-                && Objects.equals(useTscFrequency, other.useTscFrequency);
+                && Objects.equals(useTscFrequency, other.useTscFrequency)
+                && Objects.equals(cpuPinning, other.cpuPinning);
     }
 
     public Guid getQuotaId() {

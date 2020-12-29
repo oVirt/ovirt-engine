@@ -97,7 +97,8 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("migration_policy_id", entity.getMigrationPolicyId())
                 .addValue("lease_sd_id", entity.getLeaseStorageDomainId())
                 .addValue("multi_queues_enabled", entity.isMultiQueuesEnabled())
-                .addValue("use_tsc_frequency", entity.getUseTscFrequency());
+                .addValue("use_tsc_frequency", entity.getUseTscFrequency())
+                .addValue("cpu_pinning", entity.getCpuPinning());
     }
 
     /**
@@ -176,6 +177,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setMigrationPolicyId(getGuid(rs, "migration_policy_id"));
             entity.setMultiQueuesEnabled(rs.getBoolean("multi_queues_enabled"));
             entity.setUseTscFrequency(rs.getBoolean("use_tsc_frequency"));
+            entity.setCpuPinning(rs.getString("cpu_pinning"));
         }
     }
 

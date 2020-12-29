@@ -984,7 +984,8 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.custom_compatibility_version as custom_compatibility_version,
     vm_templates.multi_queues_enabled AS multi_queues_enabled,
     vm_templates.use_tsc_frequency AS use_tsc_frequency,
-    vm_templates.is_template_sealed AS is_template_sealed
+    vm_templates.is_template_sealed AS is_template_sealed,
+    vm_templates.cpu_pinning AS cpu_pinning
 FROM vm_static AS vm_templates
 LEFT JOIN cluster
     ON vm_templates.cluster_id = cluster.cluster_id

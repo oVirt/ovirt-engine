@@ -114,7 +114,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                       Guid leaseStorageDomainId,
                       VmResumeBehavior resumeBehavior,
                       boolean multiQueuesEnabled,
-                      boolean useTscFrequency) {
+                      boolean useTscFrequency,
+                      String cpuPinning) {
         super(name,
                 vmtGuid,
                 clusterId,
@@ -182,7 +183,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 leaseStorageDomainId,
                 resumeBehavior,
                 multiQueuesEnabled,
-                useTscFrequency);
+                useTscFrequency,
+                cpuPinning);
 
         diskTemplateMap = new HashMap<>();
         diskImageMap = new HashMap<>();

@@ -79,7 +79,8 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_lease_sd_id UUID,
  v_multi_queues_enabled BOOLEAN,
  v_use_tsc_frequency BOOLEAN,
- v_is_template_sealed BOOLEAN)
+ v_is_template_sealed BOOLEAN,
+ v_cpu_pinning VARCHAR(4000))
 
 RETURNS VOID
    AS $procedure$
@@ -172,7 +173,8 @@ BEGIN
         lease_sd_id,
         multi_queues_enabled,
         use_tsc_frequency,
-        is_template_sealed)
+        is_template_sealed,
+        cpu_pinning)
     VALUES(
         v_child_count,
         v_creation_date,
@@ -247,7 +249,8 @@ BEGIN
         v_lease_sd_id,
         v_multi_queues_enabled,
         v_use_tsc_frequency,
-        v_is_template_sealed);
+        v_is_template_sealed,
+        v_cpu_pinning);
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
     INSERT INTO vm_ovf_generations(
@@ -342,7 +345,8 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_lease_sd_id UUID,
  v_multi_queues_enabled BOOLEAN,
  v_use_tsc_frequency BOOLEAN,
- v_is_template_sealed BOOLEAN)
+ v_is_template_sealed BOOLEAN,
+ v_cpu_pinning VARCHAR(4000))
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -419,7 +423,8 @@ BEGIN
       lease_sd_id = v_lease_sd_id,
       multi_queues_enabled = v_multi_queues_enabled,
       use_tsc_frequency = v_use_tsc_frequency,
-      is_template_sealed = v_is_template_sealed
+      is_template_sealed = v_is_template_sealed,
+      cpu_pinning = v_cpu_pinning
       WHERE vm_guid = v_vmt_guid
           AND entity_type = v_template_type;
 

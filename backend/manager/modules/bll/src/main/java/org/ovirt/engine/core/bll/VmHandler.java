@@ -32,6 +32,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
@@ -49,6 +50,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.CopyOnNewVersion;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -67,6 +69,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -121,6 +124,8 @@ import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
@@ -219,6 +224,12 @@ public class VmHandler implements BackendService {
 
     @Inject
     private VirtioWinLoader virtioWinLoader;
+
+    @Inject
+    private VdsDynamicDao vdsDynamicDao;
+
+    @Inject
+    private VdsNumaNodeDao vdsNumaNodeDao;
 
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
@@ -1273,6 +1284,12 @@ public class VmHandler implements BackendService {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SMARTCARD_NOT_SUPPORTED_WITHOUT_USB);
         }
         return ValidationResult.VALID;
+    }
+
+    public void updateCpuAndNumaPinning(VmBase vmBase, AutoPinningPolicy autoPinningPolicy) {
+        VdsDynamic host = vdsDynamicDao.get(vmBase.getDedicatedVmForVdsList().get(0));
+        NumaPinningHelper.applyAutoPinningPolicy(vmBase, autoPinningPolicy, host,
+                vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
     }
 
     public void autoSelectResumeBehavior(VmBase vmBase, Cluster cluster) {

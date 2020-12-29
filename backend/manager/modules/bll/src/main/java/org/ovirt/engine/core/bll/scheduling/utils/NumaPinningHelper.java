@@ -10,13 +10,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.NumaNode;
-import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
+import org.ovirt.engine.core.common.utils.NumaUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -206,10 +210,10 @@ public class NumaPinningHelper {
         return true;
     }
 
-    public static String getSapHanaCpuPinning(VM vm, VDS host, List<VdsNumaNode> numaNodes) {
-        int hostSockets = host.getCpuSockets();
-        int hostThreadsPerCore = host.getCpuThreads() / host.getCpuCores();
-        int vmNumCpus = vm.getNumOfCpus();
+    public static String getSapHanaCpuPinning(VmBase vmBase, VdsDynamic vdsDynamic, List<VdsNumaNode> numaNodes) {
+        int hostSockets = vdsDynamic.getCpuSockets();
+        int hostThreadsPerCore = vdsDynamic.getCpuThreads() / vdsDynamic.getCpuCores();
+        int vmNumCpus = vmBase.getNumOfCpus();
         int vCpusPerNumaThread = vmNumCpus / hostSockets / hostThreadsPerCore;
         if (vCpusPerNumaThread == 0) {
             return null;
@@ -243,6 +247,31 @@ public class NumaPinningHelper {
         }
         sb.deleteCharAt(sb.lastIndexOf("_"));
         return sb.toString();
+    }
+
+    public static void applyAutoPinningPolicy(VmBase vmBase, AutoPinningPolicy autoPinningPolicy, VdsDynamic vdsDynamic,
+            List<VdsNumaNode> hostNodes) {
+        if (autoPinningPolicy == null || autoPinningPolicy == AutoPinningPolicy.DISABLED) {
+            return;
+        }
+
+        // We assume identical topology of all assigned hosts
+        if (autoPinningPolicy == AutoPinningPolicy.ADJUST) {
+            vmBase.setNumOfSockets(vdsDynamic.getCpuSockets());
+            vmBase.setCpuPerSocket((vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets()) - 1);
+            vmBase.setThreadsPerCpu(vdsDynamic.getCpuThreads() / vdsDynamic.getCpuCores());
+        }
+
+        List<VmNumaNode> vmNumaNodes = NumaPinningHelper.initVmNumaNode(vmBase.getNumOfCpus(), hostNodes);
+        vmBase.setCpuPinning(NumaPinningHelper.getSapHanaCpuPinning(vmBase,
+                vdsDynamic,
+                hostNodes));
+        NumaUtils.setNumaListConfiguration(vmNumaNodes,
+                vmBase.getMemSizeMb(),
+                HugePageUtils.getHugePageSize(vmBase),
+                vmBase.getNumOfCpus(),
+                NumaTuneMode.STRICT);
+        vmBase.setvNumaNodeList(vmNumaNodes);
     }
 
     public static List<VmNumaNode> initVmNumaNode(int numCpus, List<VdsNumaNode> hostNodes) {

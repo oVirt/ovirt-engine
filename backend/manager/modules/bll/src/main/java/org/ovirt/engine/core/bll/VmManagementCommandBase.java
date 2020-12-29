@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -184,6 +185,13 @@ public abstract class VmManagementCommandBase<T extends VmManagementParametersBa
 
             vmStatic.setMigrationPolicyId(instanceType.getMigrationPolicyId());
 
+        }
+    }
+
+    protected void addCpuAndNumaPinning() {
+        if (getParameters().getAutoPinningPolicy() != AutoPinningPolicy.DISABLED) {
+            vmHandler.updateCpuAndNumaPinning(getParameters().getVm().getStaticData(),
+                    getParameters().getAutoPinningPolicy());
         }
     }
 

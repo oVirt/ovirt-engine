@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -274,6 +275,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         newVmStatic = getParameters().getVmStaticData();
+        addCpuAndNumaPinning();
         if (isRunningConfigurationNeeded()) {
             logNameChange();
             vmHandler.createNextRunSnapshot(
@@ -922,7 +924,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private void updateVmNumaNodes() {
-        if (!getParameters().isUpdateNuma()) {
+        if (!getParameters().isUpdateNuma() && getParameters().getAutoPinningPolicy() == AutoPinningPolicy.DISABLED) {
             return;
         }
 
@@ -1353,6 +1355,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (!isIsoPathExists(vmFromParams.getStaticData(), getVm().getStoragePoolId())){
             return failValidation(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
+        }
+
+        if (!validate(VmValidator.checkAutoPinningPolicy(getParameters().getVmStaticData(),
+                getParameters().getAutoPinningPolicy()))) {
+            return false;
         }
 
         return true;

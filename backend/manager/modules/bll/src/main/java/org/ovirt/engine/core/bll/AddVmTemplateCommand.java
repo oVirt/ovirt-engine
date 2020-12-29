@@ -970,7 +970,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getLeaseStorageDomainId(),
                         getParameters().getMasterVm().getResumeBehavior(),
                         getParameters().getMasterVm().isMultiQueuesEnabled(),
-                        getParameters().getMasterVm().getUseTscFrequency()));
+                        getParameters().getMasterVm().getUseTscFrequency(),
+                        getParameters().getMasterVm().getCpuPinning()));
         getVmTemplate().setOrigin(getParameters().getMasterVm().getOrigin());
         updateVmIcons();
         getVmTemplate().setSealed(getParameters().isSealTemplate());

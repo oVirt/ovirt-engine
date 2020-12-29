@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.validator.CpuPinningValidator.isCpuPinningValid;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -299,6 +301,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 getVmTemplate().getCompatibilityVersion())) {
             addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
             return failValidation(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+        }
+        // check cpuPinning
+        if (!validate(isCpuPinningValid(getVmTemplate().getCpuPinning(), getVmTemplate()))) {
+            return false;
         }
 
         boolean tpmEnabled = Boolean.TRUE.equals(getParameters().isTpmEnabled());
