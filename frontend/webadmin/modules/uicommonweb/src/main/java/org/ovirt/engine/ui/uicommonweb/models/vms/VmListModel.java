@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.ExportVmToOvaParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
+import org.ovirt.engine.core.common.action.RebootVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
@@ -1501,7 +1502,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     private void onReboot() {
-        onPowerAction(ActionType.RebootVm, vm -> new VmOperationParameterBase(vm.getId()));
+        onPowerAction(ActionType.RebootVm, vm -> new RebootVmParameters(vm.getId()));
     }
 
     private void pause() {

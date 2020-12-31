@@ -7,8 +7,8 @@ import org.ovirt.engine.core.bll.kubevirt.KubevirtMonitoring;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.RebootVmParameters;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
-import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
+public class RebootVmCommand<T extends RebootVmParameters> extends VmOperationCommandBase<T> {
 
     @Inject
     private ResourceManager resourceManager;
@@ -84,7 +84,7 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
             return true;
         }
 
-        if (isVmDuringBackup()) {
+        if (isVmDuringBackup() && !getParameters().isForceStop()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP);
         }
 

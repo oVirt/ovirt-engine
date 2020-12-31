@@ -61,6 +61,7 @@ import org.ovirt.engine.core.common.action.MigrateMultipleVmsParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
+import org.ovirt.engine.core.common.action.RebootVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
@@ -337,8 +338,9 @@ public class BackendVmResource
 
     @Override
     public Response reboot(Action action) {
+        boolean forceStop = action.isSetForce() ? action.isForce() : false;
         return doAction(ActionType.RebootVm,
-                        new VmOperationParameterBase(guid),
+                        new RebootVmParameters(guid, forceStop),
                         action);
     }
 
