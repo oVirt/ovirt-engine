@@ -7,7 +7,9 @@ import org.ovirt.engine.core.common.businessentities.ConnectionMethod;
 import org.ovirt.engine.core.common.businessentities.ExternalLocationInfo;
 import org.ovirt.engine.core.common.businessentities.HttpLocationInfo;
 import org.ovirt.engine.core.common.businessentities.LocationInfo;
+import org.ovirt.engine.core.common.businessentities.ManagedBlockStorageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 
 public class LocationInfoHelper {
     private LocationInfoHelper() {
@@ -40,6 +42,30 @@ public class LocationInfoHelper {
             return infoMap;
         }
 
+        if (locationInfo instanceof ManagedBlockStorageLocationInfo) {
+            ManagedBlockStorageLocationInfo info = (ManagedBlockStorageLocationInfo) locationInfo;
+            Map<String, Object> infoMap = new HashMap<>();
+            infoMap.put("lease", info.getLease());
+            infoMap.put("url", info.getUrl());
+            infoMap.put("generation", info.getGeneration());
+            infoMap.put("format", volumeFormatToString(info.getFormat()));
+            infoMap.put("is_zero", info.isZeroed());
+            infoMap.put("endpoint_type", "external");
+
+            return infoMap;
+        }
+
         throw new RuntimeException("Unsupported location info");
+    }
+
+    private static String volumeFormatToString(VolumeFormat format) {
+        switch (format) {
+        case COW:
+            return "cow";
+        case RAW:
+            return "raw";
+        default:
+            throw new RuntimeException("Invalid format");
+        }
     }
 }
