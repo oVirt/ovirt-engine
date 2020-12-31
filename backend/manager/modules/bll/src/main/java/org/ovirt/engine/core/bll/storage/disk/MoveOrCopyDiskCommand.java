@@ -159,7 +159,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     protected boolean validate() {
         return super.validate()
-                && diskContainsPreExtendSnapshots()
                 && isImageExist()
                 && checkOperationIsCorrect()
                 && checkOperationAllowedOnDiskContentType()
@@ -332,10 +331,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             return validate(diskValidator.isIsoDiskAttachedToAnyNonDownVm());
         }
         return validate(diskValidator.isDiskPluggedToAnyNonDownVm(false));
-    }
-
-    private boolean diskContainsPreExtendSnapshots() {
-        return validate(createDiskImagesValidator(getImage()).childDiskWasExtended(getStorageDomain()));
     }
 
     /**

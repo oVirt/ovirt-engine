@@ -23,7 +23,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -294,32 +293,6 @@ public class DiskValidatorTest {
         disk.getImage().setVolumeFormat(VolumeFormat.COW);
         assertThat(validator.isSparsifySupported(), failsWith(EngineMessage
                 .ACTION_TYPE_FAILED_DISK_SPARSIFY_NOT_SUPPORTED_FOR_COW));
-    }
-
-    @Test
-    public void canCopyDiskFails() {
-        StorageDomain domain = createStorageDomainForDisk(StorageType.ISCSI);
-        domain.setStorageFormat(StorageFormatType.V3);
-        disk.setSize(1000);
-
-        DiskImage child = createDiskImage();
-        child.setSize(1000);
-        child.setStorageIds(Collections.singletonList(domain.getId()));
-        DiskImage parent = createDiskImage();
-        parent.setId(Guid.newGuid());
-        parent.setSize(500);
-        parent.setStorageIds(Collections.singletonList(domain.getId()));
-
-        child.setParentId(parent.getParentId());
-
-        List<DiskImage> diskImages = new ArrayList<>(2);
-        diskImages.add(parent);
-        diskImages.add(child);
-
-        when(validator.getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId())).thenReturn(diskImages);
-
-        assertThat(diskImagesValidator.childDiskWasExtended(domain),
-                failsWith(EngineMessage.CANNOT_MOVE_DISK_SNAPSHOTS));
     }
 
     private LunDisk createLunDisk(ScsiGenericIO sgio) {
