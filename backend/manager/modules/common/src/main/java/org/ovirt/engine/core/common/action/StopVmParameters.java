@@ -22,6 +22,11 @@ public class StopVmParameters extends StopVmParametersBase implements Serializab
         setStopReason(reason);
     }
 
+    public StopVmParameters(Guid vmId, StopVmTypeEnum stopVmType, String reason, boolean forceStop) {
+        this(vmId, stopVmType, reason);
+        setForceStop(forceStop);
+    }
+
     public StopVmTypeEnum getStopVmType() {
         return stopVmType;
     }

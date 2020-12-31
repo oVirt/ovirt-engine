@@ -76,7 +76,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
             return false;
         }
 
-        if (isVmDuringBackup()) {
+        if (isVmDuringBackup() && !getParameters().isForceStop()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP);
         }
 

@@ -22,6 +22,11 @@ public class ShutdownVmParameters extends StopVmParametersBase implements Serial
         setStopReason(reason);
     }
 
+    public ShutdownVmParameters(Guid vmId, boolean waitBeforeShutdown, String reason, boolean forceStop) {
+        this(vmId, waitBeforeShutdown, reason);
+        setForceStop(forceStop);
+    }
+
     /**
      * If true: Before actually performing a shutdown within the guest, wait for a certain pertiod while an appropriate
      * message is displayed within the guest.
