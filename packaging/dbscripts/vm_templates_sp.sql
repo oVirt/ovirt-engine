@@ -79,6 +79,7 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_migration_policy_id UUID,
  v_lease_sd_id UUID,
  v_multi_queues_enabled BOOLEAN,
+ v_virtio_scsi_multi_queues_enabled BOOLEAN,
  v_use_tsc_frequency BOOLEAN,
  v_is_template_sealed BOOLEAN,
  v_cpu_pinning VARCHAR(4000))
@@ -173,6 +174,7 @@ BEGIN
         migration_policy_id,
         lease_sd_id,
         multi_queues_enabled,
+        virtio_scsi_multi_queues_enabled,
         use_tsc_frequency,
         is_template_sealed,
         cpu_pinning)
@@ -249,6 +251,7 @@ BEGIN
         v_migration_policy_id,
         v_lease_sd_id,
         v_multi_queues_enabled,
+        v_virtio_scsi_multi_queues_enabled,
         v_use_tsc_frequency,
         v_is_template_sealed,
         v_cpu_pinning);
@@ -346,6 +349,7 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_migration_policy_id UUID,
  v_lease_sd_id UUID,
  v_multi_queues_enabled BOOLEAN,
+ v_virtio_scsi_multi_queues_enabled BOOLEAN,
  v_use_tsc_frequency BOOLEAN,
  v_is_template_sealed BOOLEAN,
  v_cpu_pinning VARCHAR(4000))
@@ -424,6 +428,7 @@ BEGIN
       migration_policy_id = v_migration_policy_id,
       lease_sd_id = v_lease_sd_id,
       multi_queues_enabled = v_multi_queues_enabled,
+      virtio_scsi_multi_queues_enabled = v_virtio_scsi_multi_queues_enabled,
       use_tsc_frequency = v_use_tsc_frequency,
       is_template_sealed = v_is_template_sealed,
       cpu_pinning = v_cpu_pinning

@@ -725,6 +725,7 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_migration_policy_id UUID,
     v_lease_sd_id UUID,
     v_multi_queues_enabled BOOLEAN,
+    v_virtio_scsi_multi_queues_enabled BOOLEAN,
     v_use_tsc_frequency BOOLEAN,
     v_namespace VARCHAR(253))
   RETURNS VOID
@@ -809,6 +810,7 @@ INSERT INTO vm_static(description,
                       migration_policy_id,
                       lease_sd_id,
                       multi_queues_enabled,
+                      virtio_scsi_multi_queues_enabled,
                       use_tsc_frequency,
                       namespace)
     VALUES(v_description,
@@ -885,6 +887,7 @@ INSERT INTO vm_static(description,
            v_migration_policy_id,
            v_lease_sd_id,
            v_multi_queues_enabled,
+           v_virtio_scsi_multi_queues_enabled,
            v_use_tsc_frequency,
            v_namespace);
 
@@ -1088,6 +1091,7 @@ v_custom_compatibility_version VARCHAR(40),
 v_migration_policy_id UUID,
 v_lease_sd_id UUID,
 v_multi_queues_enabled BOOLEAN,
+v_virtio_scsi_multi_queues_enabled BOOLEAN,
 v_use_tsc_frequency BOOLEAN,
 v_namespace VARCHAR(253))
 
@@ -1171,6 +1175,7 @@ BEGIN
      migration_policy_id = v_migration_policy_id,
      lease_sd_id = v_lease_sd_id,
      multi_queues_enabled = v_multi_queues_enabled,
+     virtio_scsi_multi_queues_enabled = v_virtio_scsi_multi_queues_enabled,
      use_tsc_frequency = v_use_tsc_frequency,
      namespace = v_namespace
      WHERE vm_guid = v_vm_guid

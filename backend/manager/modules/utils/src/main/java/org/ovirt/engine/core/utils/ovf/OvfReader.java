@@ -645,6 +645,10 @@ public abstract class OvfReader implements IOvfBuilder {
                 val -> vmBase.setMultiQueuesEnabled(Boolean.parseBoolean(val)));
 
         consumeReadProperty(content,
+                VIRTIO_SCSI_MULTI_QUEUES_ENABLED,
+                val -> vmBase.setVirtioScsiMultiQueuesEnabled(Boolean.parseBoolean(val)));
+
+        consumeReadProperty(content,
                 USE_HOST_CPU,
                 val -> vmBase.setUseHostCpuFlags(Boolean.parseBoolean(val)));
 

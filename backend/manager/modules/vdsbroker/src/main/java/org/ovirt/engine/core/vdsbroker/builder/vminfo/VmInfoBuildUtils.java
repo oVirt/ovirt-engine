@@ -1522,6 +1522,10 @@ public class VmInfoBuildUtils {
         return multiQueueUtils.getOptimalNumOfQueuesPerVnic(numOfCpus);
     }
 
+    public int getNumOfScsiQueues(int numOfDisks, int numOfCpus) {
+        return multiQueueUtils.getNumOfScsiQueues(numOfDisks, numOfCpus);
+    }
+
     public boolean isInterfaceQueuable(VmDevice vmDevice, VmNic vmNic) {
         return multiQueueUtils.isInterfaceQueuable(vmDevice, vmNic);
     }

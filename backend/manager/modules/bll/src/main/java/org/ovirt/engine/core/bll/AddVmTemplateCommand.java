@@ -983,7 +983,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getResumeBehavior(),
                         getParameters().getMasterVm().isMultiQueuesEnabled(),
                         getParameters().getMasterVm().getUseTscFrequency(),
-                        getParameters().getMasterVm().getCpuPinning()));
+                        getParameters().getMasterVm().getCpuPinning(),
+                        getParameters().getMasterVm().isVirtioScsiMultiQueuesEnabled()));
         getVmTemplate().setOrigin(getParameters().getMasterVm().getOrigin());
         getVmTemplate().setEffectiveBiosType(getParameters().getMasterVm().getEffectiveBiosType());
         updateVmIcons();

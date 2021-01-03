@@ -383,6 +383,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @EditableVmTemplateField
     private boolean multiQueuesEnabled;
 
+    @CopyOnNewVersion
+    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmTemplateField
+    private boolean virtioScsiMultiQueuesEnabled;
+
     public VmBase() {
         name = "";
         interfaces = new ArrayList<>();
@@ -414,6 +419,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         description = "";
         comment = "";
         multiQueuesEnabled = true;
+        virtioScsiMultiQueuesEnabled = false;
     }
 
     @EditableVmField
@@ -616,7 +622,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getResumeBehavior(),
                 vmBase.isMultiQueuesEnabled(),
                 vmBase.getUseTscFrequency(),
-                vmBase.getCpuPinning());
+                vmBase.getCpuPinning(),
+                vmBase.isVirtioScsiMultiQueuesEnabled());
     }
 
     public VmBase(
@@ -688,7 +695,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             VmResumeBehavior resumeBehavior,
             boolean multiQueuesEnabled,
             boolean useTscFrequency,
-            String cpuPinning) {
+            String cpuPinning,
+            boolean virtioScsiMultiQueuesEnabled) {
         this();
         this.name = name;
         this.id = id;
@@ -757,6 +765,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.leaseStorageDomainId = leaseStorageDomainId;
         this.resumeBehavior = resumeBehavior;
         this.multiQueuesEnabled = multiQueuesEnabled;
+        this.virtioScsiMultiQueuesEnabled = virtioScsiMultiQueuesEnabled;
         this.useTscFrequency = useTscFrequency;
         this.cpuPinning = cpuPinning;
     }
@@ -1102,6 +1111,10 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         return multiQueuesEnabled;
     }
 
+    public boolean isVirtioScsiMultiQueuesEnabled() {
+        return virtioScsiMultiQueuesEnabled;
+    }
+
     public void setMultiQueuesEnabled(boolean multiQueuesEnabled) {
         this.multiQueuesEnabled = multiQueuesEnabled;
     }
@@ -1112,6 +1125,10 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     public void setCpuPinning(String cpuPinning) {
         this.cpuPinning = cpuPinning;
+    }
+
+    public void setVirtioScsiMultiQueuesEnabled(boolean virtioScsiMultiQueuesEnabled) {
+        this.virtioScsiMultiQueuesEnabled = virtioScsiMultiQueuesEnabled;
     }
 
     @Override
@@ -1175,7 +1192,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 resumeBehavior,
                 multiQueuesEnabled,
                 useTscFrequency,
-                cpuPinning
+                cpuPinning,
+                virtioScsiMultiQueuesEnabled
         );
     }
 
@@ -1246,7 +1264,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(customCompatibilityVersion, other.customCompatibilityVersion)
                 && Objects.equals(multiQueuesEnabled, other.multiQueuesEnabled)
                 && Objects.equals(useTscFrequency, other.useTscFrequency)
-                && Objects.equals(cpuPinning, other.cpuPinning);
+                && Objects.equals(cpuPinning, other.cpuPinning)
+                && Objects.equals(virtioScsiMultiQueuesEnabled, other.virtioScsiMultiQueuesEnabled);
     }
 
     public Guid getQuotaId() {

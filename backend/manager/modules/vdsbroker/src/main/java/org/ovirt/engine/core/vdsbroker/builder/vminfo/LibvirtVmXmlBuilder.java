@@ -1012,6 +1012,7 @@ public class LibvirtVmXmlBuilder {
         devices = processPayload(devices);
         devices.stream().filter(d -> d.getSpecParams() == null).forEach(d -> d.setSpecParams(Collections.emptyMap()));
         ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new CreateAdditionalControllersForDomainXml(devices));
+        Map<Integer, Map<VmDevice, Integer>> vmDeviceVirtioScsiUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(vm);
 
         writer.writeStartElement("devices");
 
@@ -1106,7 +1107,7 @@ public class LibvirtVmXmlBuilder {
                     }
                     break;
                 }
-                writeController(device);
+                writeController(device, vmDeviceVirtioScsiUnitMap);
                 break;
             case GRAPHICS:
                 writeGraphics(device);
@@ -1201,7 +1202,7 @@ public class LibvirtVmXmlBuilder {
         writeCdRom(cdromDevices);
         writeFloppy(floppyDevice);
         // we must write the disk after writing cd-rom and floppy to know reserved indices
-        writeDisks(diskDevices);
+        writeDisks(diskDevices, vmDeviceVirtioScsiUnitMap);
         writeHostdevDisks(hostDevDisks);
         writeLeases();
 
@@ -1373,11 +1374,10 @@ public class LibvirtVmXmlBuilder {
                 .forEach(dev -> writeInterface(dev, devIdToNic.get(dev.getId())));
     }
 
-    private void writeDisks(List<VmDevice> devices) {
+    private void writeDisks(List<VmDevice> devices, Map<Integer, Map<VmDevice, Integer>> vmDeviceVirtioScsiUnitMap) {
         Map<VmDeviceId, VmDevice> deviceIdToDevice = devices.stream()
                 .collect(Collectors.toMap(VmDevice::getId, dev -> dev));
         Map<Integer, Map<VmDevice, Integer>> vmDeviceSpaprVscsiUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(vm);
-        Map<Integer, Map<VmDevice, Integer>> vmDeviceVirtioScsiUnitMap = vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(vm);
         int hdIndex = -1;
         sdIndex = -1;
         int vdIndex = -1;
@@ -2023,7 +2023,7 @@ public class LibvirtVmXmlBuilder {
         }
     }
 
-    private void writeController(VmDevice device) {
+    private void writeController(VmDevice device, Map<Integer, Map<VmDevice, Integer>> vmDeviceVirtioScsiUnitMap) {
         writer.writeStartElement("controller");
         writer.writeAttributeString("type", device.getDevice());
 
@@ -2040,9 +2040,26 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("ports", ports.toString());
         }
         Object ioThreadId = device.getSpecParams().get(VdsProperties.ioThreadId);
-        if (ioThreadId != null) {
+
+        // Add multiple queues support to the virtio-scsi controller
+        String queues = null;
+
+        if ("virtio-scsi".equals(model) && vm.isVirtioScsiMultiQueuesEnabled()) {
+            int numOfDisks = 0;
+            if (index != null && vmDeviceVirtioScsiUnitMap.containsKey(index)) {
+                numOfDisks = vmDeviceVirtioScsiUnitMap.get(index).size();
+            }
+            queues = String.valueOf(vmInfoBuildUtils.getNumOfScsiQueues(numOfDisks, vm.getNumOfCpus()));
+        }
+
+        if (ioThreadId != null || queues != null) {
             writer.writeStartElement("driver");
-            writer.writeAttributeString("iothread", ioThreadId.toString());
+            if (queues != null) {
+                writer.writeAttributeString("queues", queues);
+            }
+            if (ioThreadId != null) {
+                writer.writeAttributeString("iothread", ioThreadId.toString());
+            }
             writer.writeEndElement();
         }
 

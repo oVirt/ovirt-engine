@@ -319,6 +319,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
 
         _writer.writeElement(MULTI_QUEUES_ENABLED, String.valueOf(vmBase.isMultiQueuesEnabled()));
+        _writer.writeElement(VIRTIO_SCSI_MULTI_QUEUES_ENABLED, String.valueOf(vmBase.isVirtioScsiMultiQueuesEnabled()));
         _writer.writeElement(USE_HOST_CPU, String.valueOf(vmBase.isUseHostCpuFlags()));
     }
 

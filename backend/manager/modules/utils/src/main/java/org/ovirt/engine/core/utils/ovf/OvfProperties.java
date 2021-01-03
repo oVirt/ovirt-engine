@@ -98,6 +98,7 @@ public interface OvfProperties {
     String ENGINE_XML = "EngineXml";
     String CPU_PINNING = "CpuPinning";
     String MULTI_QUEUES_ENABLED = "MultiQueuesEnabled";
+    String VIRTIO_SCSI_MULTI_QUEUES_ENABLED = "VirtioScsiMultiQueuesEnabled";
     String NUMA_TUNE_MODE = "NumaTuneMode";
 
     // Luns

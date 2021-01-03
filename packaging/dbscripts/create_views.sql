@@ -984,6 +984,7 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.resume_behavior AS resume_behavior,
     vm_templates.custom_compatibility_version as custom_compatibility_version,
     vm_templates.multi_queues_enabled AS multi_queues_enabled,
+    vm_templates.virtio_scsi_multi_queues_enabled AS virtio_scsi_multi_queues_enabled,
     vm_templates.use_tsc_frequency AS use_tsc_frequency,
     vm_templates.is_template_sealed AS is_template_sealed,
     vm_templates.cpu_pinning AS cpu_pinning
@@ -1451,6 +1452,7 @@ SELECT vm_static.vm_name AS vm_name,
     vm_dynamic.guest_containers AS guest_containers,
     image_details.has_illegal_images,
     vm_static.multi_queues_enabled AS multi_queues_enabled,
+    vm_static.virtio_scsi_multi_queues_enabled AS virtio_scsi_multi_queues_enabled,
     vm_static.use_tsc_frequency AS use_tsc_frequency,
     vm_static.namespace AS namespace
 FROM vm_static
@@ -1689,6 +1691,7 @@ SELECT DISTINCT vms.vm_name,
     vms.guest_containers as guest_containers,
     vms.has_illegal_images,
     vms.multi_queues_enabled,
+    vms.virtio_scsi_multi_queues_enabled,
     vms.use_tsc_frequency,
     vms.namespace
 FROM vms

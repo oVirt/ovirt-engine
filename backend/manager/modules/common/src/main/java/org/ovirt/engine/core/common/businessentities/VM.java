@@ -1827,8 +1827,16 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         return vmStatic.isMultiQueuesEnabled();
     }
 
+    public boolean isVirtioScsiMultiQueuesEnabled() {
+        return vmStatic.isVirtioScsiMultiQueuesEnabled();
+    }
+
     public void setMultiQueuesEnabled(boolean multiQueuesEnabled) {
         vmStatic.setMultiQueuesEnabled(multiQueuesEnabled);
+    }
+
+    public void setVirtioScsiMultiQueuesEnabled(boolean virtioScsiMultiQueuesEnabled) {
+        vmStatic.setVirtioScsiMultiQueuesEnabled(virtioScsiMultiQueuesEnabled);
     }
 
     public String getRuntimeName() {
