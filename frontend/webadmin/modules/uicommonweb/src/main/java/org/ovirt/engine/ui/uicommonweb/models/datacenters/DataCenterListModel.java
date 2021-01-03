@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -118,6 +119,16 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         privateRecoveryStorageCommand = value;
     }
 
+    private UICommand cleanupFinishedTasksCommand;
+
+    public UICommand getCleanupFinishedTasksCommand() {
+        return cleanupFinishedTasksCommand;
+    }
+
+    private void setCleanupFinishedTasksCommand(UICommand value) {
+        cleanupFinishedTasksCommand = value;
+    }
+
     protected Object[] getSelectedKeys() {
         if (getSelectedItems() == null) {
             return new Object[0];
@@ -188,6 +199,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         setForceRemoveCommand(tempVar);
         setRecoveryStorageCommand(new UICommand("RecoveryStorage", this)); //$NON-NLS-1$
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
+        setCleanupFinishedTasksCommand(new UICommand("CleanupFinishedTasks", this)); //$NON-NLS-1$
 
         updateActionAvailability();
 
@@ -408,6 +420,15 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             }
 
         }));
+    }
+
+    private void cleanupFinishedTasks() {
+        List<ActionParametersBase> parameters = getSelectedItems()
+                .stream()
+                .map(storagePool -> new StoragePoolParametersBase(storagePool.getId()))
+                .collect(Collectors.toList());
+
+        Frontend.getInstance().runMultipleAction(ActionType.CleanFinishedTasks, parameters, result -> {}, null);
     }
 
     public void onRecover() {
@@ -725,7 +746,8 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         ArrayList<StoragePool> items =
                 getSelectedItems() != null ? new ArrayList<>(getSelectedItems()) : new ArrayList<StoragePool>();
 
-        boolean isAllDown = items.stream().allMatch(item -> item.getStatus() != StoragePoolStatus.Up && item.getStatus() != StoragePoolStatus.Contend);
+        boolean isAllUp = items.stream().allMatch(this::isStoragePoolUp);
+        boolean isAllDown = items.stream().noneMatch(this::isStoragePoolUp);
         boolean isAllManaged = items.stream().allMatch(item -> item.isManaged());
 
         StoragePool storagePoolItem = getSelectedItem();
@@ -749,9 +771,17 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                 && storagePoolItem.getStatus() != StoragePoolStatus.Up
                 && storagePoolItem.isManaged());
 
+        getCleanupFinishedTasksCommand().setIsExecutionAllowed(!items.isEmpty()
+                && isAllUp
+                && isAllManaged);
+
         getNewCommand().setIsAvailable(true);
         getRemoveCommand().setIsAvailable(true);
         getForceRemoveCommand().setIsAvailable(true);
+    }
+
+    private boolean isStoragePoolUp(StoragePool storagePool) {
+        return storagePool.getStatus() == StoragePoolStatus.Up || storagePool.getStatus() == StoragePoolStatus.Contend;
     }
 
     private void updateIscsiBondListAvailability(StoragePool storagePool) {
@@ -785,6 +815,8 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             guide();
         } else if (command == getRecoveryStorageCommand()) {
             recoveryStorage();
+        } else if (command == getCleanupFinishedTasksCommand()) {
+            cleanupFinishedTasks();
         } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$

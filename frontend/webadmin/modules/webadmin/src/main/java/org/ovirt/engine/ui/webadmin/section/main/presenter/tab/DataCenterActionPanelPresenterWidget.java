@@ -71,6 +71,13 @@ public class DataCenterActionPanelPresenterWidget extends ActionPanelPresenterWi
                 return getModel().getRecoveryStorageCommand();
             }
         });
+
+        addMenuListItem(new WebAdminButtonDefinition<Void, StoragePool>(constants.cleanupFinishedTasks()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getCleanupFinishedTasksCommand();
+            }
+        });
     }
 
     public WebAdminButtonDefinition<Void, StoragePool> getNewButtonDefinition() {
