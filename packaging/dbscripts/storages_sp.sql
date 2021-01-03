@@ -1446,3 +1446,64 @@ BEGIN
     WHERE driver_options = v_driver_options;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+-- ----------------------------------------------------------------
+-- [external_leases] Table
+--
+CREATE OR REPLACE FUNCTION InsertExternalLease (
+    v_storage_domain_id UUID,
+    v_lease_id UUID
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    INSERT INTO external_leases (
+        storage_domain_id,
+        lease_id
+        )
+    VALUES (
+        v_storage_domain_id,
+        v_lease_id
+        );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION UpdateExternalLease (
+    v_lease_id UUID,
+    v_storage_domain_id UUID
+    )
+RETURNS VOID
+    AS $PROCEDURE$
+BEGIN
+    UPDATE external_leases
+    SET storage_domain_id = v_storage_domain_id
+    WHERE lease_id = v_lease_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteExternalLease (v_lease_id UUID)
+RETURNS VOID AS $PROCEDURE$
+DECLARE v_val UUID;
+
+BEGIN
+    SELECT id
+    INTO v_val
+    FROM external_leases
+    WHERE lease_id = v_lease_id
+    FOR UPDATE;
+
+    DELETE
+    FROM disk_leases
+    WHERE id = v_lease_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetExternalLease (v_lease_id UUID)
+RETURNS SETOF external_leases STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM external_leases
+    WHERE lease_id = v_lease_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
