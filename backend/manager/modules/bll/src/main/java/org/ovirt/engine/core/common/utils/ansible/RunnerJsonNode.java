@@ -3,7 +3,10 @@ package org.ovirt.engine.core.common.utils.ansible;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -246,6 +249,29 @@ public final class RunnerJsonNode {
      */
     public static JsonNode taskNode(JsonNode node) {
         return node.get("data").get("event_data").get("res");
+    }
+
+    /**
+     * For example, a task titled "Test" containing the following output:
+     * ok: [192.168.100.233] => {
+     *     "msg": "[WARNING] this is a debug msg"
+     * }
+     * will return: "Test: [WARNING] this is a debug message"
+     * Debug modules not containing severity type will return "Test: debug msg: this is a debug message"
+     */
+    public static String formatDebugMessage(String name, String output) {
+        List<String> severities = Arrays.asList("NORMAL", "WARNING", "ERROR", "ALERT");
+        output = output.substring(0, output.lastIndexOf("\""));
+        Pattern taskPattern = Pattern.compile("\"msg\": \"(?<message>.*)");
+        boolean hasSeverity = false;
+        if (severities.stream().anyMatch(output::contains)) {
+            taskPattern = Pattern.compile("(?<severity>\\[(NORMAL|WARNING|ERROR|ALERT)\\]) (?<message>.*)");
+            hasSeverity = true;
+        }
+        Matcher matcher = taskPattern.matcher(output);
+        matcher.find();
+        return hasSeverity ? String.format("%s: %s %s", name, matcher.group("severity"), matcher.group("message"))
+                : String.format("%s: debug msg: %s", name, matcher.group("message"));
     }
 
     /**

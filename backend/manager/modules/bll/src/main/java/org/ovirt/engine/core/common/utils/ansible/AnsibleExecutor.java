@@ -7,10 +7,13 @@ package org.ovirt.engine.core.common.utils.ansible;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
@@ -27,6 +30,8 @@ public class AnsibleExecutor {
     private static Logger log = LoggerFactory.getLogger(AnsibleExecutor.class);
     private static final int POLL_INTERVAL = 3000;
     private static final String SSH_TIMEOUT = "SSH timeout waiting for response";
+    private static Pattern taskPattern =
+            Pattern.compile("(?<title>.*) \\[(?<severity>NORMAL|WARNING|ERROR|ALERT)\\] (?<message>.*)");
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -97,8 +102,34 @@ public class AnsibleExecutor {
                 command,
                 timeout,
                 (String taskName, String eventUrl) -> {
-                    AuditLogable logable = createAuditLogable(command, taskName);
-                    auditLogDirector.log(logable, AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION);
+                    AuditLogType alType = AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION;
+                    String message = taskName;
+                    Matcher matcher = taskPattern.matcher(taskName);
+                    if (matcher.find()) {
+                        message = String.format("%s %s", matcher.group("title"), matcher.group("message"));
+                        AuditLogSeverity severity = AuditLogSeverity.valueOf(matcher.group("severity"));
+                        switch (severity) {
+                            case ERROR:
+                                alType = AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION_ERROR;
+                                break;
+                            case ALERT:
+                                alType = AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION_ALERT;
+                                break;
+                            case WARNING:
+                                alType = AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION_WARNING;
+                                break;
+                            case NORMAL:
+                            default:
+                                alType = AuditLogType.ANSIBLE_RUNNER_EVENT_NOTIFICATION;
+                                break;
+                        }
+                    }
+
+                    if (!message.contains("debug msg:")) {
+                        AuditLogable logable = createAuditLogable(command, message);
+                        auditLogDirector.log(logable, alType);
+                    }
+
                     try {
                         eventUrlConsumer.accept(taskName, eventUrl);
                     } catch (Exception ex) {
