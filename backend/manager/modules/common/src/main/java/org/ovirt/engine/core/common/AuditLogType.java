@@ -1196,6 +1196,11 @@ public enum AuditLogType {
     SYNC_DIRECT_LUNS_STARTED(1054, AuditLogSeverity.NORMAL),
     SYNC_DIRECT_LUNS_FINISHED(1055, AuditLogSeverity.NORMAL),
 
+    // Switch master storage domain
+    SWITCH_MASTER_STORAGE_DOMAIN(1480, AuditLogSeverity.NORMAL),
+    SWITCH_MASTER_STORAGE_DOMAIN_FAILED(1481, AuditLogSeverity.ERROR),
+    SWITCH_MASTER_STORAGE_DOMAIN_ON_SPM(1482, AuditLogSeverity.NORMAL),
+
     // ImageIO
     UPLOAD_IMAGE_CLIENT_ERROR(1060, AuditLogSeverity.ERROR),
     UPLOAD_IMAGE_XHR_TIMEOUT_ERROR(1061, AuditLogSeverity.ERROR),

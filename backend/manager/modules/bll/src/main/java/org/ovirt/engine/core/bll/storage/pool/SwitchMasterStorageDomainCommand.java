@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
@@ -51,6 +53,8 @@ public class SwitchMasterStorageDomainCommand<T extends SwitchMasterStorageDomai
 
     @Inject
     private AsyncTaskDao asyncTaskDao;
+    @Inject
+    private AuditLogDirector auditLogDirector;
     @Inject
     private StorageDomainDao storageDomainDao;
     @Inject
@@ -190,6 +194,7 @@ public class SwitchMasterStorageDomainCommand<T extends SwitchMasterStorageDomai
     }
 
     protected void updateRoleAndActivateDomain(StorageDomain sd, StorageDomainType type) {
+        log.info("Activating storage domain {}", sd.getName());
         sd.setStorageDomainType(type);
         StoragePoolIsoMap mapOfDomain = sd.getStoragePoolIsoMapData();
         mapOfDomain.setStatus(StorageDomainStatus.Active);
@@ -207,6 +212,11 @@ public class SwitchMasterStorageDomainCommand<T extends SwitchMasterStorageDomai
 
     protected boolean hasRunningTasks(Guid storagePoolId) {
         return !asyncTaskDao.getAsyncTaskIdsByStoragePoolId(storagePoolId).isEmpty();
+    }
+
+    private void addAuditLogCustomValues() {
+        addCustomValue("OldMaster", getCurrentMasterStorageDomain().getName());
+        addCustomValue("NewMaster", getStorageDomain().getName());
     }
 
     @Override
@@ -268,17 +278,22 @@ public class SwitchMasterStorageDomainCommand<T extends SwitchMasterStorageDomai
 
     @Override
     protected void endSuccessfully() {
+        addAuditLogCustomValues();
+        auditLogDirector.log(this, AuditLogType.SWITCH_MASTER_STORAGE_DOMAIN_ON_SPM);
         updateStoragePoolOnDB();
         commandCoordinatorUtil.removeAllCommandsInHierarchy(getCommandId());
+        auditLogDirector.log(this, AuditLogType.SWITCH_MASTER_STORAGE_DOMAIN);
         setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
         // Unlock the entities and ReconstructMaster is being called if necessary
+        addAuditLogCustomValues();
         updateRoleAndActivateDomain(getStorageDomain(), StorageDomainType.Data);
         updateRoleAndActivateDomain(getCurrentMasterStorageDomain(), StorageDomainType.Master);
         commandCoordinatorUtil.removeAllCommandsInHierarchy(getCommandId());
+        auditLogDirector.log(this, AuditLogType.SWITCH_MASTER_STORAGE_DOMAIN_FAILED);
         super.endWithFailure();
     }
 }
