@@ -51,19 +51,30 @@ class TicketEncoder():
             fields.append(k)
             data_to_sign += v.encode('utf-8')
         d['signedFields'] = ','.join(fields)
+
         signature = self._pkey.sign(
             data_to_sign,
-            # TODO replace PKCS1v15 with PSS if/when we know we do not
-            # need m2crypto compatibility.
             padding.PKCS1v15(),
-            # TODO Replace SHA1 with SHA256 if/when we know this is safe,
-            # compatibility-wise (also above).
             hashes.SHA1()
         )
         d['signature'] = base64.b64encode(signature).decode('ascii')
+
+        # Add a "v2" signature that's using PSS/SHA256
+        # TODO remove old 'signature' if/when it's not needed anymore
+        v2_signature = self._pkey.sign(
+            data_to_sign,
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()),
+                salt_length=padding.PSS.MAX_LENGTH,
+            ),
+            hashes.SHA256(),
+        )
+        d['v2_signature'] = base64.b64encode(v2_signature).decode('ascii')
+
         d['certificate'] = self._x509.public_bytes(
             encoding=serialization.Encoding.PEM
         ).decode('ascii')
+
         return base64.b64encode(json.dumps(d).encode('utf-8'))
 
 
@@ -140,11 +151,26 @@ class TicketDecoder():
             raise ValueError('Invalid ticket')
 
         pkey = x509cert.public_key()
-        if decoded['digest'] == 'sha1':
-            md = hashes.SHA1()
-        elif decoded['digest'] == 'sha256':
-            # TODO: Not implemented yet
+        if 'v2_signature' in decoded:
+            # v2 uses SHA256/PSS, even though 'digest' is sha1.
+            # If/when we do not need SHA1/PKCS1v15 anymore,
+            # we'll just ignore 'digest' and 'signature'. For now,
+            # if we have v2, we use only it.
+            # TODO: Analyze this from a security POV and decide if
+            # it's good enough. It's _not_ good enough if e.g.:
+            # 1. An attacker can break SHA1/PKCS1v15
+            # 2. An attacker can remove 'v2' from the ticket and
+            # force the code below to use the attacker-controlled
+            # SHA1/PKCS1v15 signature.
+            # Or something like that. I am not a security expert.
+            # If it's not good enough, it simply means that as long
+            # as we support also old "v1" 'signature', we are just
+            # as broken as without 'v2_signature' at all.
             md = hashes.SHA256()
+        elif decoded['digest'] == 'sha1':
+            # TODO somehow log the fact that we use "v1"?
+            # Notify the calling application?
+            md = hashes.SHA1()
         else:
             raise RuntimeError('Unknown message digest algorithm')
         hasher = hashes.Hash(md, backend=default_backend())
@@ -152,12 +178,23 @@ class TicketDecoder():
             hasher.update(decoded[field].encode('utf8'))
         digest = hasher.finalize()
         try:
-            res = pkey.verify(
-                base64.b64decode(decoded['signature']),
-                digest,
-                padding.PKCS1v15(),
-                utils.Prehashed(md),
-            )
+            if 'v2_signature' in decoded:
+                res = pkey.verify(
+                    base64.b64decode(decoded['v2_signature']),
+                    digest,
+                    padding.PSS(
+                        mgf=padding.MGF1(hashes.SHA256()),
+                        salt_length=padding.PSS.MAX_LENGTH,
+                    ),
+                    utils.Prehashed(md),
+                )
+            else:
+                res = pkey.verify(
+                    base64.b64decode(decoded['signature']),
+                    digest,
+                    padding.PKCS1v15(),
+                    utils.Prehashed(md),
+                )
             if res is not None:
                 raise RuntimeError('Certificate validation failed')
         except InvalidSignature:
