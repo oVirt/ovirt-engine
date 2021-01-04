@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -58,6 +59,8 @@ public class SwitchMasterStorageDomainCommand<T extends SwitchMasterStorageDomai
     private StoragePoolDao storagePoolDao;
     @Inject
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
     @Typed(SwitchMasterStorageDomainCommandCallback.class)
     private Instance<SwitchMasterStorageDomainCommandCallback> callbackProvider;
@@ -167,8 +170,6 @@ public class SwitchMasterStorageDomainCommand<T extends SwitchMasterStorageDomai
                         ActionType.SwitchMasterStorageDomain,
                         VdcObjectType.Storage,
                         getStorageDomainId()));
-                setCommandStatus(CommandStatus.SUCCEEDED);
-                setSucceeded(true);
             }
         } catch (EngineException e) {
             log.error("Switching the master role to storage domain '{}' failed: {}", getStorageDomainId(), e);
@@ -263,5 +264,21 @@ public class SwitchMasterStorageDomainCommand<T extends SwitchMasterStorageDomai
     @Override
     protected AsyncTaskType getTaskType() {
         return AsyncTaskType.switchMaster;
+    }
+
+    @Override
+    protected void endSuccessfully() {
+        updateStoragePoolOnDB();
+        commandCoordinatorUtil.removeAllCommandsInHierarchy(getCommandId());
+        setSucceeded(true);
+    }
+
+    @Override
+    protected void endWithFailure() {
+        // Unlock the entities and ReconstructMaster is being called if necessary
+        updateRoleAndActivateDomain(getStorageDomain(), StorageDomainType.Data);
+        updateRoleAndActivateDomain(getCurrentMasterStorageDomain(), StorageDomainType.Master);
+        commandCoordinatorUtil.removeAllCommandsInHierarchy(getCommandId());
+        super.endWithFailure();
     }
 }

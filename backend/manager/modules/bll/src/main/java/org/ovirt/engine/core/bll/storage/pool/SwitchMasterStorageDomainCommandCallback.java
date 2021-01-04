@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.SwitchMasterStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
@@ -68,20 +67,12 @@ public class SwitchMasterStorageDomainCommandCallback implements CommandCallback
 
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
-        getCommand(cmdId).updateStoragePoolOnDB();
-        commandCoordinatorUtil.retrieveCommand(cmdId).endAction();
+        getCommand(cmdId).endAction();
     }
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
-        // Unlock the entities and ReconstructMaster is being called if necessary
-        SwitchMasterStorageDomainCommand<SwitchMasterStorageDomainCommandParameters> command = getCommand(cmdId);
-        log.error("Switching master storage domain from {} to {} failed",
-                command.getParameters().getCurrentMasterStorageDomainId(),
-                command.getStorageDomainId());
-        command.updateRoleAndActivateDomain(command.getStorageDomain(), StorageDomainType.Data);
-        command.updateRoleAndActivateDomain(command.getCurrentMasterStorageDomain(), StorageDomainType.Master);
-        commandCoordinatorUtil.retrieveCommand(cmdId).endAction();
+        getCommand(cmdId).endAction();
     }
 
     private SwitchMasterStorageDomainCommand<SwitchMasterStorageDomainCommandParameters> getCommand(Guid cmdId) {
