@@ -96,7 +96,8 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
         createdDiskImage.setStorageIds(new ArrayList<>(Collections.singletonList(domainId)));
         createdDiskImage.setSize(SizeConverter.BYTES_IN_MB * 128);
         createdDiskImage.setVolumeFormat(VolumeFormat.RAW);
-        createdDiskImage.setVolumeType(VolumeType.Preallocated);
+        createdDiskImage.setVolumeType(getStorageDomain().getStorageType().isBlockDomain() ?
+                VolumeType.Preallocated : VolumeType.Sparse);
         createdDiskImage.setDescription("OVF store for domain " + domainId);
         Date creationDate = new Date();
         createdDiskImage.setCreationDate(creationDate);
