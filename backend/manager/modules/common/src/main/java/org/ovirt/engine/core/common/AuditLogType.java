@@ -75,6 +75,9 @@ public enum AuditLogType {
 
     // Ansible runner notification
     ANSIBLE_RUNNER_EVENT_NOTIFICATION(559),
+    ANSIBLE_RUNNER_EVENT_NOTIFICATION_ERROR(553, AuditLogSeverity.ERROR),
+    ANSIBLE_RUNNER_EVENT_NOTIFICATION_WARNING(554, AuditLogSeverity.WARNING),
+    ANSIBLE_RUNNER_EVENT_NOTIFICATION_ALERT(557, AuditLogSeverity.ALERT),
 
     // Ansible host execution
     VDS_ANSIBLE_INSTALL_STARTED(560),
