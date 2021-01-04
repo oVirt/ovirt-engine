@@ -37,7 +37,7 @@ public class BackendTemplateNicResource
     public Nic get() {
         VmNetworkInterface nic = lookupNic(guid);
         if (nic != null) {
-            return addLinks(populate(map(nic), nic));
+            return addLinks(populate(map(nic), nic), Template.class);
         }
         return notFound();
     }
