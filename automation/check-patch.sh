@@ -170,8 +170,9 @@ mkdir -p exported-artifacts/tests
 make clean \
     "EXTRA_BUILD_FLAGS=$EXTRA_BUILD_FLAGS"
 
-# execute packaging/setup tests
+# execute packaging tests
 automation/packaging-setup-tests.sh
+automation/packaging-pythonlib-tests.sh
 
 # perform quick validations
 make validations

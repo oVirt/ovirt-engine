@@ -468,7 +468,7 @@ install-packaging-files: \
 		EXCLUDE_GEN="$(GENERATED)" \
 		EXCLUDE="$$(echo $$(find packaging/setup/tests)) packaging/setup/plugins/README"
 
-	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON_DIR)" EXCLUDE_GEN="$(GENERATED)"
+	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON_DIR)" EXCLUDE="$$(echo $$(find packaging/pythonlib/tests))" EXCLUDE_GEN="$(GENERATED)"
 
 	# we should avoid make these directories dirty
 	$(MAKE) copy-recursive SOURCEDIR=packaging/dbscripts TARGETDIR="$(DESTDIR)$(DATA_DIR)/dbscripts" \
