@@ -36,7 +36,7 @@ public class PreferredHostsWeightPolicyUnitTest {
 
         VM vm = new VM();
         vm.setId(Guid.newGuid());
-        vm.setDedicatedVmForVdsList(host2.getId());
+        vm.setDedicatedVmForVdsList(Collections.singletonList(host2.getId()));
 
         List<VDS> hosts = new ArrayList<>();
         hosts.add(host1);

@@ -137,7 +137,6 @@ BEGIN
         quota_id,
         migration_support,
         is_disabled,
-        dedicated_vm_for_vds,
         is_smartcard_enabled,
         is_delete_protected,
         sso_method,
@@ -214,7 +213,6 @@ BEGIN
         v_quota_id,
         v_migration_support,
         v_is_disabled,
-        v_dedicated_vm_for_vds,
         v_is_smartcard_enabled,
         v_is_delete_protected,
         v_sso_method,
@@ -391,7 +389,6 @@ BEGIN
       _update_date = CURRENT_TIMESTAMP,
       quota_id = v_quota_id,
       migration_support = v_migration_support,
-      dedicated_vm_for_vds = v_dedicated_vm_for_vds,
       is_smartcard_enabled = v_is_smartcard_enabled,
       is_delete_protected = v_is_delete_protected,
       sso_method = v_sso_method,
@@ -489,7 +486,7 @@ RETURNS VOID
 BEGIN
         -- Get (and keep) a shared lock with "right to upgrade to exclusive"
         -- in order to force locking parent before children
-      SELECT   vm_guid INTO v_val
+      SELECT vm_guid INTO v_val
       FROM vm_static
       WHERE vm_guid = v_vmt_guid
       FOR UPDATE;

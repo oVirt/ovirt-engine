@@ -756,7 +756,6 @@ INSERT INTO vm_static(description,
                       time_zone,
                       auto_startup,
                       is_stateless,
-                      dedicated_vm_for_vds,
                       default_boot_sequence,
                       vm_type,
                       nice_level,
@@ -833,7 +832,6 @@ INSERT INTO vm_static(description,
            v_time_zone,
            v_auto_startup,
            v_is_stateless,
-           v_dedicated_vm_for_vds,
            v_default_boot_sequence,
            v_vm_type,
            v_nice_level,
@@ -1120,7 +1118,6 @@ BEGIN
      time_zone = v_time_zone,
      auto_startup = v_auto_startup,
      is_stateless = v_is_stateless,
-     dedicated_vm_for_vds = v_dedicated_vm_for_vds,
      vm_type = v_vm_type,
      nice_level = v_nice_level,
      cpu_shares = v_cpu_shares,
@@ -1223,24 +1220,23 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVmStatic() RETURNS SETOF vm_static STABLE
+Create or replace FUNCTION GetAllFromVmStatic() RETURNS SETOF vm_static_view STABLE
    AS $procedure$
 BEGIN
-RETURN QUERY SELECT vm_static.*
-   FROM vm_static
+RETURN QUERY SELECT vm_static_view.*
+   FROM vm_static_view
    WHERE entity_type = 'VM';
-
 END; $procedure$
 LANGUAGE plpgsql;
 
 
 
 
-Create or replace FUNCTION GetVmStaticWithoutIcon() RETURNS SETOF vm_static STABLE
+Create or replace FUNCTION GetVmStaticWithoutIcon() RETURNS SETOF vm_static_view STABLE
 AS $procedure$
 BEGIN
-RETURN QUERY SELECT vm_static.*
-   FROM vm_static
+RETURN QUERY SELECT vm_static_view.*
+   FROM vm_static_view
    WHERE entity_type = 'VM'
       AND (small_icon_id IS NULL OR large_icon_id IS NULL);
 END; $procedure$
@@ -1295,11 +1291,11 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmStaticByVmGuid(v_vm_guid UUID) RETURNS SETOF vm_static STABLE
+Create or replace FUNCTION GetVmStaticByVmGuid(v_vm_guid UUID) RETURNS SETOF vm_static_view STABLE
    AS $procedure$
 BEGIN
-RETURN QUERY SELECT vm_static.*
-   FROM vm_static
+RETURN QUERY SELECT vm_static_view.*
+   FROM vm_static_view
    WHERE vm_guid = v_vm_guid
        AND   entity_type = 'VM';
 
@@ -1308,11 +1304,11 @@ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION GetVmStaticByVmGuids(v_vm_guids UUID[]) RETURNS SETOF vm_static STABLE
+CREATE OR REPLACE FUNCTION GetVmStaticByVmGuids(v_vm_guids UUID[]) RETURNS SETOF vm_static_view STABLE
    AS $procedure$
 BEGIN
-RETURN QUERY SELECT vm_static.*
-   FROM vm_static
+RETURN QUERY SELECT vm_static_view.*
+   FROM vm_static_view
    WHERE vm_guid = ANY(v_vm_guids)
        AND entity_type = 'VM';
 END; $procedure$
@@ -1328,7 +1324,7 @@ BEGIN
    RETURN QUERY
       SELECT vm_name
       FROM vm_static
-      WHERE dedicated_vm_for_vds LIKE '%'||v_vds_id::text||'%'
+      WHERE vm_guid IN (SELECT vm_id FROM vm_host_pinning_map WHERE vds_id = v_vds_id)
           AND   migration_support = 2
           AND   entity_type = 'VM';
 
@@ -1337,29 +1333,29 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVmStaticByStoragePoolId(v_sp_id uuid) RETURNS SETOF vm_static STABLE
+Create or replace FUNCTION GetAllFromVmStaticByStoragePoolId(v_sp_id uuid) RETURNS SETOF vm_static_view STABLE
    AS $procedure$
 BEGIN
-RETURN QUERY SELECT vm_static.*
-   FROM vm_static INNER JOIN
-        cluster ON vm_static.cluster_id = cluster.cluster_id LEFT OUTER JOIN
-        storage_pool ON vm_static.cluster_id = cluster.cluster_id
+RETURN QUERY SELECT vm_static_view.*
+   FROM vm_static_view INNER JOIN
+        cluster ON vm_static_view.cluster_id = cluster.cluster_id LEFT OUTER JOIN
+        storage_pool ON vm_static_view.cluster_id = cluster.cluster_id
         AND cluster.storage_pool_id = storage_pool.id
    WHERE v_sp_id = storage_pool.id
-       AND   entity_type = 'VM';
+       AND entity_type = 'VM';
 
 END; $procedure$
 LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmStaticByName(v_vm_name VARCHAR(255)) RETURNS SETOF vm_static STABLE
+Create or replace FUNCTION GetVmStaticByName(v_vm_name VARCHAR(255)) RETURNS SETOF vm_static_view STABLE
    AS $procedure$
 BEGIN
-RETURN QUERY SELECT vm_static.*
-   FROM vm_static
+RETURN QUERY SELECT vm_static_view.*
+   FROM vm_static_view
    WHERE vm_name = v_vm_name
-       AND   entity_type = 'VM';
+       AND entity_type = 'VM';
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -1368,13 +1364,13 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmStaticByCluster(v_cluster_id UUID) RETURNS SETOF vm_static STABLE
+Create or replace FUNCTION GetVmStaticByCluster(v_cluster_id UUID) RETURNS SETOF vm_static_view STABLE
    AS $procedure$
 BEGIN
-RETURN QUERY SELECT vm_static.*
-   FROM vm_static
+RETURN QUERY SELECT vm_static_view.*
+   FROM vm_static_view
    WHERE cluster_id = v_cluster_id
-       AND   entity_type = 'VM';
+       AND entity_type = 'VM';
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -1737,7 +1733,7 @@ RETURNS VOID
    DECLARE
    v_vmt_guid  UUID;
 BEGIN
-      select   vm_static.vmt_guid INTO v_vmt_guid FROM vm_static WHERE vm_guid = v_vm_guid;
+      SELECT vm_static.vmt_guid INTO v_vmt_guid FROM vm_static WHERE vm_guid = v_vm_guid;
       UPDATE vm_static
       SET child_count =(SELECT COUNT(*) FROM vm_static WHERE vmt_guid = v_vmt_guid) -1
       WHERE vm_guid = v_vmt_guid;
@@ -2245,11 +2241,11 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmsWithLeaseOnStorageDomain(v_storage_domain_id UUID)
-RETURNS SETOF vm_static STABLE
+RETURNS SETOF vm_static_view STABLE
    AS $procedure$
 BEGIN
-    RETURN QUERY SELECT *
-    FROM vm_static
+    RETURN QUERY SELECT vm_static_view.*
+    FROM vm_static_view
     WHERE lease_sd_id = v_storage_domain_id
         AND entity_type = 'VM';
 END; $procedure$
@@ -2259,11 +2255,11 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetActiveVmsWithLeaseOnStorageDomain(v_storage_domain_id UUID)
-RETURNS SETOF vm_static STABLE
+RETURNS SETOF vm_static_view STABLE
    AS $procedure$
 BEGIN
     RETURN QUERY SELECT vs.*
-    FROM vm_static vs
+    FROM vm_static_view vs
     JOIN vm_dynamic vd ON vd.vm_guid = vs.vm_guid
     WHERE lease_sd_id = v_storage_domain_id
         AND vd.status <> 0;
@@ -2330,11 +2326,11 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmsStaticRunningOnVds(v_vds_id UUID)
-RETURNS SETOF vm_static STABLE
+RETURNS SETOF vm_static_view STABLE
    AS $procedure$
 BEGIN
     RETURN QUERY SELECT vs.*
-    FROM vm_static vs
+    FROM vm_static_view vs
     JOIN vm_dynamic vd ON vd.vm_guid = vs.vm_guid
     WHERE run_on_vds = v_vds_id;
 END; $procedure$

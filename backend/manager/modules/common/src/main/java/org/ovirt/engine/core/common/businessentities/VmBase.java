@@ -1301,11 +1301,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         dedicatedVmForVdsList = value;
     }
 
-    public void setDedicatedVmForVdsList(Guid value) {
-        dedicatedVmForVdsList = new LinkedList<>();
-        dedicatedVmForVdsList.add(value);
-    }
-
     public DisplayType getDefaultDisplayType() {
         return defaultDisplayType;
     }

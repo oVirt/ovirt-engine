@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Collections;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +28,7 @@ public class VmListModelTest extends BaseVmListModelTest {
 
         origVm = new VM();
         setUpOrigVm(origVm);
-        origVm.setDedicatedVmForVdsList(HOST_ID_2);
+        origVm.setDedicatedVmForVdsList(Collections.singletonList(HOST_ID_2));
         origVm.setMigrationSupport(MIGRATION_SUPPORT_2);
         origVm.setMigrationDowntime(MIGRATION_DOWNTIME_2);
     }

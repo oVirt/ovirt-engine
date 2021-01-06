@@ -1279,6 +1279,12 @@ FROM tags_user_group_map
 INNER JOIN tags
     ON tags_user_group_map.tag_id = tags.tag_id;
 
+CREATE OR REPLACE VIEW vm_static_view AS
+
+SELECT vm_static.*,
+    fn_get_dedicated_hosts_ids_by_vm_id(vm_static.vm_guid) AS dedicated_vm_for_vds
+FROM vm_static;
+
 CREATE OR REPLACE VIEW vms AS
 
 SELECT vm_static.vm_name AS vm_name,

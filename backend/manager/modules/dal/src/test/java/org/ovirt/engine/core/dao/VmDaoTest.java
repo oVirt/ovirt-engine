@@ -606,9 +606,13 @@ public class VmDaoTest extends BaseDaoTestCase<VmDao> {
 
         assertNotNull(vms);
         assertThat(vms)
-                .hasSize(2)
+                .hasSize(5)
                 .extracting(VM::getId)
-                .contains(FixturesTool.VM_RHEL5_POOL_57, FixturesTool.VM_RHEL5_POOL_52);
+                .contains(FixturesTool.VM_RHEL5_POOL_57,
+                        FixturesTool.VM_RHEL5_POOL_52,
+                        FixturesTool.VM_RHEL5_POOL_50,
+                        FixturesTool.VM_RHEL5_POOL_51,
+                        FixturesTool.VM_WITH_NO_ATTACHED_DISKS);
     }
 
 }

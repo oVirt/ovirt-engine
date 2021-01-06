@@ -131,7 +131,7 @@ public class InClusterUpgradeValidatorTest {
     @Test
     public void shouldCreateNiceValidationResult() {
         invalidVM.setCpuPinning("i am pinned");
-        invalidVM.setDedicatedVmForVdsList(Guid.newGuid());
+        invalidVM.setDedicatedVmForVdsList(Collections.singletonList(Guid.newGuid()));
         invalidVM.setMigrationSupport(PINNED_TO_HOST);
         invalidVM.setId(Guid.Empty);
         newHost1.setHostOs("invalid os");

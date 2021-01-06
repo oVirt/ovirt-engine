@@ -7,6 +7,7 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.fails
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ public class CpuPinningValidatorTest {
         vmStatic = new VmStatic();
         vmStatic.setNumOfSockets(6);
         vmStatic.setCpuPerSocket(2);
-        vmStatic.setDedicatedVmForVdsList(Guid.Empty);
+        vmStatic.setDedicatedVmForVdsList(Collections.singletonList(Guid.Empty));
     }
 
     @Test

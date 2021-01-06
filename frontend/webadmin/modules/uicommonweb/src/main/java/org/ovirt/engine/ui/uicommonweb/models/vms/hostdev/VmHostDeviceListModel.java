@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms.hostdev;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionType;
@@ -172,7 +173,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
     }
 
     private void pinVmToHost(Guid hostId, IFrontendActionAsyncCallback callback) {
-        getEntity().setDedicatedVmForVdsList(hostId);
+        getEntity().setDedicatedVmForVdsList(Collections.singletonList(hostId));
         Frontend.getInstance().runAction(ActionType.UpdateVm, new VmManagementParametersBase(getEntity().getStaticData()), callback);
     }
 

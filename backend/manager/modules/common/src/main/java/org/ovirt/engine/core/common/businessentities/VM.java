@@ -351,10 +351,6 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         vmStatic.setDedicatedVmForVdsList(value);
     }
 
-    public void setDedicatedVmForVdsList(Guid value) {
-        vmStatic.setDedicatedVmForVdsList(value);
-    }
-
     public Guid getClusterId() {
         return this.vmStatic.getClusterId();
     }

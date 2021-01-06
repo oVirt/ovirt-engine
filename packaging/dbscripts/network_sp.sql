@@ -1731,16 +1731,16 @@ CREATE OR REPLACE FUNCTION GetvmStaticByGroupIdAndNetwork (
     v_groupId UUID,
     v_networkName VARCHAR(50)
     )
-RETURNS SETOF vm_static STABLE AS $PROCEDURE$
+RETURNS SETOF vm_static_view STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
-    SELECT vm_static.*
-    FROM vm_static
+    SELECT vm_static_view.*
+    FROM vm_static_view
     INNER JOIN vm_interface_view
-        ON vm_static.vm_guid = vm_interface_view.vm_guid
+        ON vm_static_view.vm_guid = vm_interface_view.vm_guid
             AND network_name = v_networkName
-            AND vm_static.cluster_id = v_groupId;
+            AND vm_static_view.cluster_id = v_groupId;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

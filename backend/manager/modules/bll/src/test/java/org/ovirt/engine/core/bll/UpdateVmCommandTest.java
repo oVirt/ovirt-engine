@@ -292,7 +292,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         doReturn(false).when(command).isDedicatedVdsExistOnSameCluster(any());
 
-        vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
+        vmStatic.setDedicatedVmForVdsList(Collections.singletonList(Guid.newGuid()));
 
         assertFalse(command.validate(), "validate should have failed with invalid dedicated host.");
     }
@@ -305,7 +305,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         VDS vds = new VDS();
         vds.setClusterId(group.getId());
         when(vdsDao.get(any())).thenReturn(vds);
-        vmStatic.setDedicatedVmForVdsList(Guid.newGuid());
+        vmStatic.setDedicatedVmForVdsList(Collections.singletonList(Guid.newGuid()));
 
         command.initEffectiveCompatibilityVersion();
         ValidateTestUtils.runAndAssertValidateSuccess(command);

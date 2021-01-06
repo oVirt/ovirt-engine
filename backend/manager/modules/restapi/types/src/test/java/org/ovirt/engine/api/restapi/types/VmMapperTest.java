@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
@@ -228,7 +229,7 @@ public class VmMapperTest extends
     @Test
     public void testUpdateHostPinningPolicy() {
         final VmStatic vmTemplate = new VmStatic();
-        vmTemplate.setDedicatedVmForVdsList(Guid.newGuid());
+        vmTemplate.setDedicatedVmForVdsList(Collections.singletonList(Guid.newGuid()));
         final Vm vm = new Vm();
         vm.setPlacementPolicy(createPlacementPolicy(Guid.newGuid(), Guid.newGuid()));
         final VmStatic mappedVm = VmMapper.map(vm, vmTemplate);
