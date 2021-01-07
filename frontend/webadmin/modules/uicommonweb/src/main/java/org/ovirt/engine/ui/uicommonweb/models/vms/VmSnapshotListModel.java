@@ -817,6 +817,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         parameters.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
+        parameters.setAutoPinningPolicy(model.getAutoPinningPolicy().getSelectedItem());
 
         BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
 

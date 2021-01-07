@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -402,5 +403,23 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         return oldTemplateToSelect != null
                 ? oldTemplateToSelect
                 : computeNewTemplateWithVersionToSelect(newItems, addLatest);
+    }
+
+    @Override
+    protected void updateAutoPinningEnabled() {
+        getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.DISABLED);
+        if (getModel().getIsAutoAssign().getEntity() == null) {
+            return;
+        }
+
+        if (getModel().getIsAutoAssign().getEntity() || getModel().getDefaultHost().getSelectedItem() == null
+                || getModel().isVmAttachedToPool()) {
+            getModel().getAutoPinningPolicy().setIsChangeable(false);
+        } else {
+            getModel().getAutoPinningPolicy().setIsChangeable(true);
+            if (getModel().getVmType().getSelectedItem() == VmType.HighPerformance) {
+                getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.EXISTING);
+            }
+        }
     }
 }

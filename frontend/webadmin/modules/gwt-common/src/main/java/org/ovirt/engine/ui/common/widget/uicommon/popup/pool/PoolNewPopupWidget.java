@@ -61,7 +61,8 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
                 putOne(baseTemplateEditor, hiddenField()).
                 update(templateVersionNameEditor, hiddenField()).
                 putAll(detachableWidgets(), simpleField().detachable().visibleInAdvancedModeOnly()).
-                update(affinityTab, hiddenField());
+                update(affinityTab, hiddenField()).
+                update(autoPinningPolicyRow, hiddenField());
 
         updateOrAddToWidgetConfiguration(widgetConfiguration, detachableWidgets(), PopupWidgetConfig::detachable);
 

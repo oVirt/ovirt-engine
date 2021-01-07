@@ -14,6 +14,7 @@ import java.util.function.UnaryOperator;
 
 import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.Row;
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -779,6 +780,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("customCompatibilityVersion")
     public ListModelListBoxEditor<Version> customCompatibilityVersionEditor;
 
+    @UiField
+    protected Row autoPinningPolicyRow;
+
+    @UiField(provided = true)
+    InfoIcon autoPinningInfo;
+
+    @UiField(provided = true)
+    @Path(value = "autoPinningPolicy.selectedItem")
+    @WithElementId("autoPinningPolicy")
+    public ListModelListBoxOnlyEditor<AutoPinningPolicy> autoPinningPolicyEditor;
+
     // ==High Availability Tab==
     @UiField
     protected DialogTab highAvailabilityTab;
@@ -1125,6 +1137,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         spiceFileTransferEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         spiceCopyPasteEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         multiQueues = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        autoPinningPolicyEditor = new ListModelListBoxOnlyEditor<>(new EnumRenderer<AutoPinningPolicy>(), new ModeSwitchingVisibilityRenderer());
+        autoPinningInfo = new InfoIcon(templates.italicText(constants.autoPinningLabelExplanation()));
 
         initPoolSpecificWidgets();
         initTextBoxEditors();
@@ -2095,6 +2109,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         hostCpuEditor.setTabIndex(nextTabIndex++);
         tscFrequencyEditor.setTabIndexes(nextTabIndex++);
         customCompatibilityVersionEditor.setTabIndex(nextTabIndex++);
+        autoPinningPolicyEditor.setTabIndexes(nextTabIndex++);
 
         numaNodeCount.setTabIndex(nextTabIndex++);
         // ==High Availability Tab==

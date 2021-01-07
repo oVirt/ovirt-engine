@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -1615,6 +1616,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.fromGraphicsType(type));
             }
         }));
+    }
+
+    protected void updateAutoPinningEnabled() {
+        getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.DISABLED);
     }
 
     /**

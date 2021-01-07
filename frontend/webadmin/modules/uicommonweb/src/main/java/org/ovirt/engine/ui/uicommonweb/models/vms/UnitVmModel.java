@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -326,6 +327,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getMigrationDowntime().setIsChangeable(false);
             getMigrationPolicies().setIsChangeable(false);
             getCustomCompatibilityVersion().setIsChangeable(false);
+            getAutoPinningPolicy().setIsChangeable(false);
 
             // ==Resource Allocation Tab==
             getProvisioning().setIsChangeable(false);
@@ -1603,6 +1605,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.affinityGroupList = affinityGroupList;
     }
 
+    private NotChangableForVmInPoolListModel<AutoPinningPolicy> autoPinningPolicy;
+
+    public ListModel<AutoPinningPolicy> getAutoPinningPolicy() {
+        return autoPinningPolicy;
+    }
+
+    public void setAutoPinningPolicy(NotChangableForVmInPoolListModel<AutoPinningPolicy> autoPinningPolicy) {
+        this.autoPinningPolicy = autoPinningPolicy;
+    }
+
     public UnitVmModel(VmModelBehaviorBase behavior, ListModel<?> parentModel) {
         this.behavior = behavior;
         this.behavior.setModel(this);
@@ -1687,6 +1699,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setLease(new NotChangableForVmInPoolListModel<StorageDomain>());
         getLease().getSelectedItemChangedEvent().addListener(this);
         setResumeBehavior(new NotChangableForVmInPoolListModel<VmResumeBehavior>());
+        setAutoPinningPolicy(new NotChangableForVmInPoolListModel<AutoPinningPolicy>());
         setIsHighlyAvailable(new NotChangableForVmInPoolEntityModel<Boolean>());
         getIsHighlyAvailable().getEntityChangedEvent().addListener(this);
         setIsTemplatePublic(new NotChangableForVmInPoolEntityModel<Boolean>());
@@ -2059,6 +2072,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         updateResumeBehavior();
         updateAffinityLists();
         updateTpmEnabled();
+        initAutoPinningPolicy();
 
         behavior.initialize();
     }
@@ -2076,6 +2090,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateEmulatedMachines();
                 behavior.updateCustomCpu();
                 updateTscFrequency();
+                behavior.updateAutoPinningEnabled();
             } else if (sender == getTemplateWithVersion()) {
                 templateWithVersion_SelectedItemChanged(sender, args);
             } else if (sender == getTimeZone()) {
@@ -2148,6 +2163,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateHaAvailability();
                 behavior.updateMigrationAvailability();
                 behavior.updateNumaEnabled();
+                behavior.updateAutoPinningEnabled();
                 headlessModeChanged();
             }
         } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
@@ -2165,6 +2181,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateHaAvailability();
                 behavior.updateNumaEnabled();
                 behavior.updateMigrationAvailability();
+                behavior.updateAutoPinningEnabled();
             } else if (sender == getProvisioning()) {
                 provisioning_SelectedItemChanged(sender, args);
             } else if (sender == getProvisioningThin_IsSelected()) {
@@ -2246,6 +2263,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void vmTypeChanged() {
         behavior.vmTypeChanged(getVmType().getSelectedItem());
         updateTscFrequency();
+        behavior.updateAutoPinningEnabled();
     }
 
     private void watchdogModelSelectedItemChanged(Object sender, EventArgs args) {
@@ -2254,6 +2272,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         } else {
             getWatchdogAction().setIsChangeable(true);
         }
+    }
+
+    private void initAutoPinningPolicy() {
+        getAutoPinningPolicy().setItems(Arrays.asList(AutoPinningPolicy.values()));
+        behavior.updateAutoPinningEnabled();
     }
 
     protected void initNumOfMonitors() {

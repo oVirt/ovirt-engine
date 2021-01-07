@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -463,6 +464,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         if (model.getIsHeadlessModeEnabled().getEntity()) {
             parameters.getVmStaticData().setDefaultDisplayType(DisplayType.none);
         }
+        parameters.setAutoPinningPolicy(model.getAutoPinningPolicy().getSelectedItem());
         BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
             parameters.setVmId(new Guid(model.getVmId().getEntity()));
@@ -631,17 +633,26 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
 
         VmHighPerformanceConfigurationModel confirmModel = new VmHighPerformanceConfigurationModel();
 
-        // Handle CPU Pinning topology
-        final boolean isVmAssignedToSpecificHosts = !model.getIsAutoAssign().getEntity();
-        final boolean isVmCpuPinningSet = model.getCpuPinning().getIsChangable()
-                && model.getCpuPinning().getEntity() != null && !model.getCpuPinning().getEntity().isEmpty();
-        confirmModel.addRecommendationForCpuPinning(isVmAssignedToSpecificHosts, isVmCpuPinningSet);
+        if (model.getAutoPinningPolicy().getSelectedItem() == AutoPinningPolicy.DISABLED) {
+            // Handle CPU Pinning topology
+            final boolean isVmAssignedToSpecificHosts = !model.getIsAutoAssign().getEntity();
+            final boolean isVmCpuPinningSet =
+                    model.getCpuPinning().getIsChangable()
+                            && model.getCpuPinning().getEntity() != null
+                            && !model.getCpuPinning().getEntity().isEmpty();
+            confirmModel.addRecommendationForCpuPinning(isVmAssignedToSpecificHosts, isVmCpuPinningSet);
 
-        // Handle NUMA
-        final boolean isVmVirtNumaSet = model.getNumaEnabled().getEntity() && model.getNumaNodeCount().getEntity() > 0;
-        final boolean isVmVirtNumaPinned = model.getVmNumaNodes() != null && !model.getVmNumaNodes().isEmpty()
-                && model.getVmNumaNodes().stream().filter(x -> !x.getVdsNumaNodeList().isEmpty()).count() > 0;
-        confirmModel.addRecommendationForVirtNumaSetAndPinned(isVmVirtNumaSet, isVmVirtNumaPinned);
+            // Handle NUMA
+            final boolean isVmVirtNumaSet =
+                    model.getNumaEnabled().getEntity() && model.getNumaNodeCount().getEntity() > 0;
+            final boolean isVmVirtNumaPinned =
+                    model.getVmNumaNodes() != null
+                            && !model.getVmNumaNodes().isEmpty()
+                            && model.getVmNumaNodes().stream()
+                            .filter(x -> !x.getVdsNumaNodeList().isEmpty())
+                            .count() > 0;
+            confirmModel.addRecommendationForVirtNumaSetAndPinned(isVmVirtNumaSet, isVmVirtNumaPinned);
+        }
 
         // Handle Huge Pages
         KeyValueModel keyValue = model.getCustomPropertySheet();

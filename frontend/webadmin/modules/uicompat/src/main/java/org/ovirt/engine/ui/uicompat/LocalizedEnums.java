@@ -1771,5 +1771,11 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String CloudInitNetworkProtocol___ENI();
 
     String CloudInitNetworkProtocol___OPENSTACK_METADATA();
+
+    String AutoPinningPolicy___DISABLED();
+
+    String AutoPinningPolicy___EXISTING();
+
+    String AutoPinningPolicy___ADJUST();
 }
 

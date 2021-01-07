@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
@@ -520,6 +522,24 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     public void updateMaxMemory() {
         if (vm.getStatus() != VMStatus.Up) {
             super.updateMaxMemory();
+        }
+    }
+
+    @Override
+    protected void updateAutoPinningEnabled() {
+        getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.DISABLED);
+        if (getModel().getIsAutoAssign().getEntity() == null) {
+            return;
+        }
+
+        if (getModel().getIsAutoAssign().getEntity() || getModel().getDefaultHost().getSelectedItem() == null
+                || getModel().isVmAttachedToPool()) {
+            getModel().getAutoPinningPolicy().setIsChangeable(false);
+        } else {
+            getModel().getAutoPinningPolicy().setIsChangeable(true);
+            if (getModel().getVmType().getSelectedItem() == VmType.HighPerformance) {
+                getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.EXISTING);
+            }
         }
     }
 }

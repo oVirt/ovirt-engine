@@ -1181,6 +1181,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String multiQueuesLabelExplanation();
 
+    String autoPinningLabelExplanation();
+
+    String autoPinningLabel();
+
     String monitors();
 
     String lunAlreadyUsedWarning();

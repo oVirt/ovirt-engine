@@ -1887,6 +1887,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         if (model.getIsHeadlessModeEnabled().getEntity()) {
             params.getVmStaticData().setDefaultDisplayType(DisplayType.none);
         }
+        params.setAutoPinningPolicy(model.getAutoPinningPolicy().getSelectedItem());
         BuilderExecutor.build(
                 new Pair<>((UnitVmModel) getWindow(), getSelectedItem()),
                 params,

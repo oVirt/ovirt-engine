@@ -39,5 +39,6 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
             // builder leading to an infinite recursion
             model.getCustomCompatibilityVersion().setSelectedItem(vm.getCustomCompatibilityVersion());
         }
+        model.getCpuPinning().setEntity(vm.getCpuPinning());
     }
 }

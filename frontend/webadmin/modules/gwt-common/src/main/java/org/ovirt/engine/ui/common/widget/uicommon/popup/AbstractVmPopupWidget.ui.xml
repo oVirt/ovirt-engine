@@ -500,6 +500,15 @@
                     </b:Column>
                   </b:Row>
                 </g:FlowPanel>
+                <b:Row ui:field="autoPinningPolicyRow">
+                  <b:Column size="SM_6">
+                    <g:Label addStyleNames="{style.floatLeft}" text="{constants.autoPinningLabel}" />
+                    <d:InfoIcon ui:field="autoPinningInfo" addStyleNames="{style.infoIcon}"/>
+                  </b:Column>
+                  <b:Column size="SM_6">
+                    <e:ListModelListBoxOnlyEditor ui:field="autoPinningPolicyEditor" usePatternFly="true"/>
+                  </b:Column>
+                </b:Row>
               </b:Container>
             </t:content>
           </t:DialogTab>
