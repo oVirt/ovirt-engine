@@ -406,7 +406,7 @@ virtualization infrastructure for Servers and Desktops.
 %package -n python%{python3_pkgversion}-%{name}-lib
 Summary:	%{ovirt_product_name_short} library
 Group:		%{ovirt_product_group}
-Requires:	python3-m2crypto >= 0.28
+Requires:	python3-cryptography
 Requires:	python3-dateutil
 Requires:	python3-daemon >= 2.1.2
 
@@ -547,7 +547,7 @@ Requires:	python3-psycopg2
 Requires(pre):	shadow-utils
 Requires:	java-11-openjdk-headless >= 11.0.4
 Requires:	python3-pwquality
-Requires:	python3-m2crypto >= 0.28
+Requires:	python3-cryptography
 Requires:	python3-dnf
 
 # We can drop these conflicts when
