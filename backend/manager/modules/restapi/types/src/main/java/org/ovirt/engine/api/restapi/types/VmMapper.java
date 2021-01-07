@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.AuthorizedKey;
+import org.ovirt.engine.api.model.AutoPinningPolicy;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CloudInit;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
-import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.Display;
@@ -43,8 +43,6 @@ import org.ovirt.engine.api.model.TimeZone;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.model.VcpuPin;
-import org.ovirt.engine.api.model.VcpuPins;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmStatus;
@@ -179,11 +177,6 @@ public class VmMapper extends VmBaseMapper {
                 staticVm.setUseLatestVersion(vm.isUseLatestTemplateVersion());
             }
         }
-        if (vm.isSetCpu()) {
-            if (vm.getCpu().isSetCpuTune()) {
-                staticVm.setCpuPinning(cpuTuneToString(vm.getCpu().getCpuTune()));
-            }
-        }
 
         if (vm.isSetInitialization()) {
             staticVm.setVmInit(InitializationMapper.map(vm.getInitialization(), staticVm.getVmInit()));
@@ -275,7 +268,6 @@ public class VmMapper extends VmBaseMapper {
             os.setCmdline(entity.getKernelParams());
             model.setOs(os);
         }
-        model.getCpu().setCpuTune(stringToCpuTune(entity.getCpuPinning()));
 
         model.getCpu().setArchitecture(CPUMapper.map(entity.getClusterArch(), null));
 
@@ -756,6 +748,18 @@ public class VmMapper extends VmBaseMapper {
         }
     }
 
+    @Mapping(from = AutoPinningPolicy.class, to = org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.class)
+    public static org.ovirt.engine.core.common.businessentities.AutoPinningPolicy map(AutoPinningPolicy autoPinningPolicy, org.ovirt.engine.core.common.businessentities.AutoPinningPolicy template) {
+        switch (autoPinningPolicy) {
+        case EXISTING:
+            return org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.EXISTING;
+        case ADJUST:
+            return org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.ADJUST;
+        default:
+            return org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.DISABLED;
+        }
+    }
+
     @Mapping(from = BootSequence.class, to = Boot.class)
     public static Boot map(BootSequence bootSequence, Boot template) {
         Boot boot = template != null ? template : new Boot();
@@ -1059,60 +1063,6 @@ public class VmMapper extends VmBaseMapper {
         }
 
         return entity;
-    }
-
-    static String cpuTuneToString(final CpuTune tune) {
-        final StringBuilder builder = new StringBuilder();
-        VcpuPins pins = tune.getVcpuPins();
-        if (pins != null) {
-            boolean first = true;
-            for (final VcpuPin pin : pins.getVcpuPins()) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append("_");
-                }
-                builder.append(pin.getVcpu()).append('#').append(pin.getCpuSet());
-            }
-        }
-        return builder.toString();
-    }
-
-    /**
-     * Maps the stringified CPU-pinning to the API format.
-     */
-    static CpuTune stringToCpuTune(String cpuPinning) {
-        if(cpuPinning == null || cpuPinning.equals("")) {
-            return null;
-        }
-        final CpuTune cpuTune = new CpuTune();
-        VcpuPins pins = new VcpuPins();
-        for(String strCpu : cpuPinning.split("_")) {
-            VcpuPin pin = stringToVCpupin(strCpu);
-            pins.getVcpuPins().add(pin);
-        }
-        cpuTune.setVcpuPins(pins);
-
-        return cpuTune;
-    }
-
-    static VcpuPin stringToVCpupin(final String strCpu) {
-        final String[] strPin = strCpu.split("#");
-        if (strPin.length != 2) {
-            throw new IllegalArgumentException("Bad format: " + strCpu);
-        }
-        final VcpuPin pin = new VcpuPin();
-        try {
-            pin.setVcpu(Integer.parseInt(strPin[0]));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Bad format: " + strCpu, e);
-        }
-        if (strPin[1].matches("\\^?(\\d+(\\-\\d+)?)(,\\^?((\\d+(\\-\\d+)?)))*")) {
-            pin.setCpuSet(strPin[1]);
-        } else {
-            throw new IllegalArgumentException("Bad format: " + strPin[1]);
-        }
-        return pin;
     }
 
     public static UsbPolicy getUsbPolicyOnCreate(Usb usb) {

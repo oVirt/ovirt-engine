@@ -74,6 +74,7 @@ import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
@@ -137,6 +138,22 @@ public class BackendVmResource
             vm.setHost(null);
             vm.setPlacementPolicy(null);
         }
+    }
+
+    @Override
+    public Response autoPinCpuAndNumaNodes(Action action) {
+        VmManagementParametersBase params = new VmManagementParametersBase(getEntity(
+                org.ovirt.engine.core.common.businessentities.VM.class,
+                QueryType.GetVmByVmId,
+                new IdQueryParameters(guid), "VM: id=" + guid));
+        if (action.isOptimizeCpuSettings() == null) {
+            params.setAutoPinningPolicy(AutoPinningPolicy.EXISTING);
+        } else {
+            params.setAutoPinningPolicy(
+                    action.isOptimizeCpuSettings() ? AutoPinningPolicy.ADJUST : AutoPinningPolicy.EXISTING);
+        }
+
+        return performAction(ActionType.UpdateVm, params);
     }
 
     @Override

@@ -448,6 +448,7 @@ public class VmValidator {
         if (vmStatic.getDedicatedVmForVdsList().isEmpty() && autoPinningPolicy != AutoPinningPolicy.DISABLED) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_PIN_WITHOUT_HOST);
         }
+
         return ValidationResult.VALID;
     }
 }

@@ -266,11 +266,14 @@ public class NumaPinningHelper {
         vmBase.setCpuPinning(NumaPinningHelper.getSapHanaCpuPinning(vmBase,
                 vdsDynamic,
                 hostNodes));
-        NumaUtils.setNumaListConfiguration(vmNumaNodes,
-                vmBase.getMemSizeMb(),
-                HugePageUtils.getHugePageSize(vmBase),
-                vmBase.getNumOfCpus(),
-                NumaTuneMode.STRICT);
+        if (vmNumaNodes.size() > 0) {
+            NumaUtils.setNumaListConfiguration(
+                    vmNumaNodes,
+                    vmBase.getMemSizeMb(),
+                    HugePageUtils.getHugePageSize(vmBase),
+                    vmBase.getNumOfCpus(),
+                    NumaTuneMode.STRICT);
+        }
         vmBase.setvNumaNodeList(vmNumaNodes);
     }
 

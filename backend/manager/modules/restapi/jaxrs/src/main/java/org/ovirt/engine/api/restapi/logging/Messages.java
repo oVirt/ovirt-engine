@@ -43,6 +43,8 @@ public enum Messages {
 
     DISK_UPDATE_NOT_PERMITTED,
 
+    CPU_UPDATE_NOT_PERMITTED,
+
     // Reason and template to use when a value is out of range:
     VALUE_OUT_OF_RANGE_REASON,
     VALUE_OUT_OF_RANGE_DETAIL_TEMPLATE,

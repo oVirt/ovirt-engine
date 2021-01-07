@@ -433,7 +433,7 @@ public class BackendVmsResource extends
         IconHelper.setIconToParams(vm, params);
 
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
-        addAutoPinningPolicy(params);
+        addAutoPinningPolicy(vm, params);
         setupCloneTemplatePermissions(params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
@@ -576,7 +576,7 @@ public class BackendVmsResource extends
         params.setStorageDomainId(storageDomainId);
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDiskAttachments(), template.getId()));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
-        addAutoPinningPolicy(params);
+        addAutoPinningPolicy(vm, params);
         setupCloneTemplatePermissions(params);
         addDevicesToParams(params, vm, template, instanceType, staticVm, cluster);
         IconHelper.setIconToParams(vm, params);
@@ -598,7 +598,7 @@ public class BackendVmsResource extends
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setVmPayload(getPayload(vm));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
-        addAutoPinningPolicy(params);
+        addAutoPinningPolicy(vm, params);
         addDevicesToParams(params, vm, null, instanceType, staticVm, cluster);
         IconHelper.setIconToParams(vm, params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
@@ -615,20 +615,14 @@ public class BackendVmsResource extends
         return null;
     }
 
-    private void addAutoPinningPolicy(AddVmParameters params) {
+    private void addAutoPinningPolicy(Vm vm, VmManagementParametersBase params) {
         String autoPinningPolicy = ParametersHelper.getParameter(httpHeaders, uriInfo, AUTO_PINNING_POLICY);
         if (autoPinningPolicy != null && !autoPinningPolicy.isEmpty()) {
+            if (vm.isSetCpu() && (vm.getCpu().isSetTopology() || vm.getCpu().isSetCpuTune())) {
+                throw new WebFaultException(null, localize(Messages.CPU_UPDATE_NOT_PERMITTED), Response.Status.CONFLICT);
+            }
             try {
-                switch (AutoPinningPolicy.fromValue(autoPinningPolicy)) {
-                    case DISABLED:
-                        return;
-                    case EXISTING:
-                        params.setAutoPinningPolicy(org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.EXISTING);
-                        return;
-                    case ADJUST:
-                        params.setAutoPinningPolicy(org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.ADJUST);
-                        return;
-                }
+                params.setAutoPinningPolicy(VmMapper.map(AutoPinningPolicy.fromValue(autoPinningPolicy), null));
             } catch (Exception e) {
                 throw new WebFaultException(null, localize(Messages.INVALID_ENUM_REASON), Response.Status.BAD_REQUEST);
             }

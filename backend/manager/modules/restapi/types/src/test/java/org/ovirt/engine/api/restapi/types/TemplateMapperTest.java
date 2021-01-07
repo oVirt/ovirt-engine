@@ -9,12 +9,15 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootProtocol;
+import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.DisplayDisconnectAction;
 import org.ovirt.engine.api.model.InheritableBoolean;
 import org.ovirt.engine.api.model.NicConfiguration;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TimeZone;
+import org.ovirt.engine.api.model.VcpuPin;
+import org.ovirt.engine.api.model.VcpuPins;
 import org.ovirt.engine.api.model.VmStorageErrorResumeBehaviour;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
@@ -50,6 +53,14 @@ public class TemplateMapperTest
         while (from.getCpu().getTopology().getCores() == 0) {
             from.getCpu().getTopology().setCores(MappingTestHelper.rand(100));
         }
+        CpuTune cpuTune = new CpuTune();
+        VcpuPin pin = new VcpuPin();
+        pin.setVcpu(33);
+        pin.setCpuSet("1-4,6");
+        VcpuPins pins = new VcpuPins();
+        pins.getVcpuPins().add(pin);
+        cpuTune.setVcpuPins(pins);
+        from.getCpu().setCpuTune(cpuTune);
         from.setTimeZone(new TimeZone());
         from.getTimeZone().setName("Australia/Darwin");
         from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM);
