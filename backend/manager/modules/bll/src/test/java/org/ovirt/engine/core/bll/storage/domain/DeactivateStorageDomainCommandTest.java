@@ -194,7 +194,7 @@ public class DeactivateStorageDomainCommandTest extends BaseCommandTest {
         vm.setName("myRunningVmWithLease");
 
         mockDomain();
-        when(vmStaticDao.getAllRunningWithLeaseOnStorageDomain(domain.getId())).thenReturn(Collections.singletonList(vm));
+        when(vmStaticDao.getAllRunningNamesWithLeaseOnStorageDomain(domain.getId())).thenReturn(Collections.singletonList(vm.getName()));
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_RUNNING_VMS_WITH_LEASES);
         assertTrue(cmd.getReturnValue().getValidationMessages().contains(String.format("$vmNames %s", vm.getName())));
     }

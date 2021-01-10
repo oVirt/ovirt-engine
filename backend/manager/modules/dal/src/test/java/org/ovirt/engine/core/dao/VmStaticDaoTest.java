@@ -46,6 +46,8 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
             FixturesTool.HOST_ID,
             FixturesTool.GLUSTER_BRICK_SERVER1};
 
+    private static final String RUNNING_NAME_WITH_LEASE_ON_STORAGE_DOMAIN = "rhel5-pool-57";
+
     @Inject
     private SnapshotDao snapshotDao;
     @Inject
@@ -489,9 +491,8 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
 
     @Test
     public void testGetAllActiveWithLeaseOnForStorageDomain() {
-        List<Guid> runningVmsWithLeasesIds = dao.getAllRunningWithLeaseOnStorageDomain(FixturesTool.STORAGE_DOMAIN_NFS2_1)
-                .stream().map(VmBase::getId).collect(Collectors.toList());
-        assertThat(runningVmsWithLeasesIds, Matchers.contains(FixturesTool.VM_RHEL5_POOL_57));
+        List<String> runningVmsWithLeasesIds = dao.getAllRunningNamesWithLeaseOnStorageDomain(FixturesTool.STORAGE_DOMAIN_NFS2_1);
+        assertThat(runningVmsWithLeasesIds, Matchers.contains(RUNNING_NAME_WITH_LEASE_ON_STORAGE_DOMAIN));
     }
 
     @Test

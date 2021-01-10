@@ -2254,12 +2254,12 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetActiveVmsWithLeaseOnStorageDomain(v_storage_domain_id UUID)
-RETURNS SETOF vm_static_view STABLE
+Create or replace FUNCTION GetActiveVmNamesWithLeaseOnStorageDomain(v_storage_domain_id UUID)
+RETURNS SETOF varchar(255) STABLE
    AS $procedure$
 BEGIN
-    RETURN QUERY SELECT vs.*
-    FROM vm_static_view vs
+    RETURN QUERY SELECT vs.vm_name
+    FROM vm_static vs
     JOIN vm_dynamic vd ON vd.vm_guid = vs.vm_guid
     WHERE lease_sd_id = v_storage_domain_id
         AND vd.status <> 0;
