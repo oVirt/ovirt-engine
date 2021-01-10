@@ -35,7 +35,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
-import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -58,65 +57,65 @@ import com.google.inject.Inject;
 
 public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, StoragePool> {
 
-    private UICommand privateNewCommand;
+    private UICommand newCommand;
 
     public UICommand getNewCommand() {
-        return privateNewCommand;
+        return newCommand;
     }
 
     private void setNewCommand(UICommand value) {
-        privateNewCommand = value;
+        newCommand = value;
     }
 
-    private UICommand privateEditCommand;
+    private UICommand editCommand;
 
     @Override
     public UICommand getEditCommand() {
-        return privateEditCommand;
+        return editCommand;
     }
 
     private void setEditCommand(UICommand value) {
-        privateEditCommand = value;
+        editCommand = value;
     }
 
-    private UICommand privateRemoveCommand;
+    private UICommand removeCommand;
 
     public UICommand getRemoveCommand() {
-        return privateRemoveCommand;
+        return removeCommand;
     }
 
     private void setRemoveCommand(UICommand value) {
-        privateRemoveCommand = value;
+        removeCommand = value;
     }
 
-    private UICommand privateForceRemoveCommand;
+    private UICommand forceRemoveCommand;
 
     public UICommand getForceRemoveCommand() {
-        return privateForceRemoveCommand;
+        return forceRemoveCommand;
     }
 
     private void setForceRemoveCommand(UICommand value) {
-        privateForceRemoveCommand = value;
+        forceRemoveCommand = value;
     }
 
-    private UICommand privateGuideCommand;
+    private UICommand guideCommand;
 
     public UICommand getGuideCommand() {
-        return privateGuideCommand;
+        return guideCommand;
     }
 
     private void setGuideCommand(UICommand value) {
-        privateGuideCommand = value;
+        guideCommand = value;
     }
 
-    private UICommand privateRecoveryStorageCommand;
+    private UICommand recoveryStorageCommand;
 
     public UICommand getRecoveryStorageCommand() {
-        return privateRecoveryStorageCommand;
+        return recoveryStorageCommand;
     }
 
     private void setRecoveryStorageCommand(UICommand value) {
-        privateRecoveryStorageCommand = value;
+        recoveryStorageCommand = value;
     }
 
     private UICommand cleanupFinishedTasksCommand;
@@ -132,23 +131,23 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
     protected Object[] getSelectedKeys() {
         if (getSelectedItems() == null) {
             return new Object[0];
-        } else {
-            ArrayList<Object> objL = new ArrayList<>();
-            for (StoragePool a : getSelectedItems()) {
-                objL.add(a.getId());
-            }
-            return objL.toArray(new Object[] {});
         }
+
+        ArrayList<Object> objL = new ArrayList<>();
+        for (StoragePool storagePool : getSelectedItems()) {
+            objL.add(storagePool.getId());
+        }
+        return objL.toArray(new Object[] {});
     }
 
-    private Object privateGuideContext;
+    private Object guideContext;
 
     public Object getGuideContext() {
-        return privateGuideContext;
+        return guideContext;
     }
 
     public void setGuideContext(Object value) {
-        privateGuideContext = value;
+        guideContext = value;
     }
 
     private final DataCenterQuotaListModel quotaListModel;
@@ -180,8 +179,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         this.storageQosListModel = dataCenterStorageQosListModel;
         this.permissionListModel = permissionListModel;
         this.eventListModel = dataCenterEventListModel;
-        setDetailList(dataCenterNetworkQoSListModel, dataCenterHostNetworkQosListModel,
-                dataCenterCpuQosListModel);
+        setDetailList(dataCenterNetworkQoSListModel, dataCenterHostNetworkQosListModel, dataCenterCpuQosListModel);
         setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
         setApplicationPlace(WebAdminApplicationPlaces.dataCenterMainPlace);
 
@@ -257,11 +255,12 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.StoragePool,
+        SearchParameters parameters = new SearchParameters(
+                applySortOptions(getSearchString()),
+                SearchType.StoragePool,
                 isCaseSensitiveSearch());
-        tempVar.setMaxCount(getSearchPageSize());
-        super.syncSearch(QueryType.Search, tempVar);
-
+        parameters.setMaxCount(getSearchPageSize());
+        super.syncSearch(QueryType.Search, parameters);
     }
 
     @Override
@@ -331,11 +330,11 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         model.setHashName("remove_data_center"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (StoragePool a : getSelectedItems()) {
-            list.add(a.getName());
+        for (StoragePool storagePool : getSelectedItems()) {
+            list.add(storagePool.getName());
 
-            // If one of the Data Centers contain Storage Domain, show the warnning.
-            if (a.getStatus() != StoragePoolStatus.Uninitialized) {
+            // If one of the Data Centers contains a Storage Domain, show the warnning.
+            if (storagePool.getStatus() != StoragePoolStatus.Uninitialized) {
                 shouldAddressWarnning = true;
             }
         }
@@ -360,8 +359,8 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         model.getLatch().setIsChangeable(true);
 
         ArrayList<String> list = new ArrayList<>();
-        for (StoragePool a : getSelectedItems()) {
-            list.add(a.getName());
+        for (StoragePool storagePool : getSelectedItems()) {
+            list.add(storagePool.getName());
         }
         model.setItems(list);
 
@@ -385,18 +384,18 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(storageDomainList -> {
             windowModel.stopProgress();
             List<EntityModel> models = new ArrayList<>();
-            for (StorageDomain a : storageDomainList) {
-                if (a.getStorageDomainType() == StorageDomainType.Data
-                        && (a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)) {
+            for (StorageDomain storageDomain : storageDomainList) {
+                if (storageDomain.getStorageDomainType() == StorageDomainType.Data
+                        && (storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)) {
                     EntityModel tempVar = new EntityModel();
-                    tempVar.setEntity(a);
+                    tempVar.setEntity(storageDomain);
                     models.add(tempVar);
                 }
             }
             windowModel.setItems(models);
 
-            if (models.size() > 0) {
-                EntityModel entityModel = models.size() != 0 ? models.get(0) : null;
+            if (!models.isEmpty()) {
+                EntityModel entityModel = models.get(0);
                 if (entityModel != null) {
                     entityModel.setIsSelected(true);
                 }
@@ -418,7 +417,6 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                 UICommand tempVar4 = UICommand.createCancelUiCommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
                 windowModel.getCommands().add(tempVar4);
             }
-
         }));
     }
 
@@ -432,43 +430,39 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
     }
 
     public void onRecover() {
-
         final ConfirmationModel windowModel = (ConfirmationModel) getWindow();
         if (!windowModel.validate()) {
             return;
         }
 
         AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(storageDomainList -> {
-            for (StorageDomain a : storageDomainList) {
-                if (a.getStorageDomainType() == StorageDomainType.Master) {
+            for (StorageDomain storageDomain : storageDomainList) {
+                if (storageDomain.getStorageDomainType() == StorageDomainType.Master) {
                     break;
                 }
             }
-            List<StorageDomain> items = new ArrayList<>();
+            List<StorageDomain> storageDomains = new ArrayList<>();
             for (Object item : windowModel.getItems()) {
-                EntityModel<StorageDomain> a = (EntityModel<StorageDomain>) item;
-                if (a.getIsSelected()) {
-                    items.add(a.getEntity());
+                EntityModel<StorageDomain> entityModel = (EntityModel<StorageDomain>) item;
+                if (entityModel.getIsSelected()) {
+                    storageDomains.add(entityModel.getEntity());
                 }
             }
-            if (items.size() > 0) {
+
+            if (!storageDomains.isEmpty()) {
                 if (windowModel.getProgress() != null) {
                     return;
                 }
-                ArrayList<ActionParametersBase> parameters =
-                        new ArrayList<>();
-                for (StorageDomain a : items) {
-                    parameters.add(new ReconstructMasterParameters(getSelectedItem().getId(),
-                            a.getId()));
+                ArrayList<ActionParametersBase> parameters = new ArrayList<>();
+                for (StorageDomain storageDomain : storageDomains) {
+                    parameters.add(new ReconstructMasterParameters(getSelectedItem().getId(), storageDomain.getId()));
                 }
                 windowModel.startProgress();
                 Frontend.getInstance().runMultipleAction(ActionType.RecoveryStoragePool, parameters,
                         result -> {
-
                             ConfirmationModel localModel = (ConfirmationModel) result.getState();
                             localModel.stopProgress();
                             cancel();
-
                         }, windowModel);
             } else {
                 cancel();
@@ -485,8 +479,8 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         }
 
         ArrayList<ActionParametersBase> parameters = new ArrayList<>();
-        for (StoragePool a : getSelectedItems()) {
-            parameters.add(new StoragePoolParametersBase(a.getId()));
+        for (StoragePool storagePool : getSelectedItems()) {
+            parameters.add(new StoragePoolParametersBase(storagePool.getId()));
         }
 
         model.startProgress();
@@ -504,10 +498,10 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         if (!model.validate()) {
             return;
         }
-        StoragePoolParametersBase tempVar = new StoragePoolParametersBase(getSelectedItem().getId());
-        tempVar.setForceDelete(true);
-        ActionParametersBase parametersBase = tempVar;
-        Frontend.getInstance().runAction(ActionType.RemoveStoragePool, parametersBase);
+
+        StoragePoolParametersBase parameters = new StoragePoolParametersBase(getSelectedItem().getId());
+        parameters.setForceDelete(true);
+        Frontend.getInstance().runAction(ActionType.RemoveStoragePool, parameters);
         cancel();
     }
 
@@ -588,7 +582,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         } else if (getSelectedItem() != null
                 && getSelectedItem().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.HARD_ENFORCEMENT
                 && dcModel.getQuotaEnforceTypeListModel().getSelectedItem() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
-            checkForQuotaInDC(dcModel.getEntity(), this);
+            checkForQuotaInDC(dcModel.getEntity());
         } else if (dcModel.getIsNew()) {
             //New data center, check for name uniqueness.
             validateDataCenterName(dcModel);
@@ -616,12 +610,12 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                 ));
     }
 
-    private void checkForQuotaInDC(StoragePool storage_pool, final ICommandTarget commandTarget) {
+    private void checkForQuotaInDC(StoragePool storage_pool) {
         IdQueryParameters parameters = new IdQueryParameters(storage_pool.getId());
         Frontend.getInstance().runQuery(QueryType.GetQuotaByStoragePoolId,
                 parameters,
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
-                    if (((ArrayList<Quota>) returnValue.getReturnValue()).size() == 0) {
+                    if (((ArrayList<Quota>) returnValue.getReturnValue()).isEmpty()) {
                         promptNoQuotaInDCMessage();
                     } else {
                         onSaveInternal();
@@ -654,8 +648,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             return;
         }
 
-        StoragePool dataCenter =
-                model.getIsNew() ? new StoragePool() : (StoragePool) Cloner.clone(getSelectedItem());
+        StoragePool dataCenter = model.getIsNew() ? new StoragePool() : (StoragePool) Cloner.clone(getSelectedItem());
 
         // cancel confirm window if there is
         cancelConfirmation();
@@ -666,11 +659,9 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         dataCenter.setComment(model.getComment().getEntity());
         dataCenter.setIsLocal(model.getStoragePoolType().getSelectedItem());
         dataCenter.setCompatibilityVersion(model.getVersion().getSelectedItem());
-        dataCenter.setQuotaEnforcementType(model.getQuotaEnforceTypeListModel()
-                .getSelectedItem());
+        dataCenter.setQuotaEnforcementType(model.getQuotaEnforceTypeListModel().getSelectedItem());
 
         model.startProgress();
-
 
         if (model.getIsNew()) {
             // When adding a data center use sync action to be able present a Guide Me dialog afterwards.
@@ -684,9 +675,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         } else {
             // Use async action in order to close dialog immediately.
             Frontend.getInstance().runMultipleAction(ActionType.UpdateStoragePool,
-                new ArrayList<ActionParametersBase>(Arrays.asList(
-                    new StoragePoolManagementParameter(dataCenter))
-                ),
+                    new ArrayList<>(Arrays.asList(new StoragePoolManagementParameter(dataCenter))),
                     result -> {
                         DataCenterListModel localModel = (DataCenterListModel) result.getState();
                         localModel.postOnSaveInternal(result.getReturnValue().get(0));
@@ -703,7 +692,6 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         cancel();
 
         if (model.getIsNew() && returnValue != null && returnValue.getSucceeded()) {
-
             setGuideContext(returnValue.getActionReturnValue());
             updateActionAvailability();
             getGuideCommand().execute();
@@ -743,20 +731,21 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
     }
 
     private void updateActionAvailability() {
-        ArrayList<StoragePool> items =
-                getSelectedItems() != null ? new ArrayList<>(getSelectedItems()) : new ArrayList<StoragePool>();
+        ArrayList<StoragePool> storagePools = getSelectedItems() != null ?
+                new ArrayList<>(getSelectedItems()) : new ArrayList<>();
 
-        boolean isAllUp = items.stream().allMatch(this::isStoragePoolUp);
-        boolean isAllDown = items.stream().noneMatch(this::isStoragePoolUp);
-        boolean isAllManaged = items.stream().allMatch(item -> item.isManaged());
+        boolean isAllUp = storagePools.stream().allMatch(this::isStoragePoolUp);
+        boolean isAllDown = storagePools.stream().noneMatch(this::isStoragePoolUp);
+        boolean isAllManaged = storagePools.stream().allMatch(StoragePool::isManaged);
 
         StoragePool storagePoolItem = getSelectedItem();
-        boolean oneSelected = storagePoolItem != null && items.size() == 1;
+        boolean oneSelected = storagePoolItem != null && storagePools.size() == 1;
 
         getEditCommand().setIsExecutionAllowed(oneSelected
                 && storagePoolItem.isManaged());
 
-        getRemoveCommand().setIsExecutionAllowed(items.size() > 0 && isAllDown
+        getRemoveCommand().setIsExecutionAllowed(!storagePools.isEmpty()
+                && isAllDown
                 && isAllManaged);
 
         getForceRemoveCommand().setIsExecutionAllowed(oneSelected
@@ -767,11 +756,12 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                 || (oneSelected && storagePoolItem.isManaged()));
 
         getRecoveryStorageCommand().setIsExecutionAllowed(oneSelected
-                && !storagePoolItem.isLocal() && storagePoolItem.getStatus() != StoragePoolStatus.Uninitialized
+                && !storagePoolItem.isLocal()
+                && storagePoolItem.getStatus() != StoragePoolStatus.Uninitialized
                 && storagePoolItem.getStatus() != StoragePoolStatus.Up
                 && storagePoolItem.isManaged());
 
-        getCleanupFinishedTasksCommand().setIsExecutionAllowed(!items.isEmpty()
+        getCleanupFinishedTasksCommand().setIsExecutionAllowed(!storagePools.isEmpty()
                 && isAllUp
                 && isAllManaged);
 
@@ -785,18 +775,19 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
     }
 
     private void updateIscsiBondListAvailability(StoragePool storagePool) {
-        AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery<>(connections -> {
-            boolean hasIscsiStorage = false;
+        AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(
+                new AsyncQuery<>(connections -> {
+                    boolean hasIscsiStorage = false;
 
-            for (StorageServerConnections connection : connections) {
-                if (connection.getStorageType() == StorageType.ISCSI) {
-                    hasIscsiStorage = true;
-                    break;
-                }
-            }
+                    for (StorageServerConnections connection : connections) {
+                        if (connection.getStorageType() == StorageType.ISCSI) {
+                            hasIscsiStorage = true;
+                            break;
+                        }
+                    }
 
-            iscsiBondListModel.setIsAvailable(hasIscsiStorage);
-        }), storagePool.getId(), StorageType.ISCSI);
+                    iscsiBondListModel.setIsAvailable(hasIscsiStorage);
+                }), storagePool.getId(), StorageType.ISCSI);
     }
 
     @Override
