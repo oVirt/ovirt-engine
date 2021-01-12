@@ -74,6 +74,7 @@ public final class WebAdminApplicationPlaces {
     public static final String clusterAffinityLabelsSubTabPlace = clusterMainPlace + SUB_TAB_PREFIX + "affinity_labels"; //$NON-NLS-1$
     public static final String clusterCpuProfileSubTabPlace = clusterMainPlace + SUB_TAB_PREFIX + "cpu_profiles"; //$NON-NLS-1$
     public static final String clusterPermissionSubTabPlace = clusterMainPlace + SUB_TAB_PREFIX + "permissions"; //$NON-NLS-1$
+    public static final String clusterEventSubTabPlace = clusterMainPlace + SUB_TAB_PREFIX + "events"; //$NON-NLS-1$
 
     // VirtualMachine
 

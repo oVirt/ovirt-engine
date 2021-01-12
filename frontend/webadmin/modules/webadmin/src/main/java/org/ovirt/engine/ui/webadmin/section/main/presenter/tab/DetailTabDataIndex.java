@@ -32,6 +32,8 @@ public final class DetailTabDataIndex {
 
     public static final TabData CLUSTER_PERMISSIONS = new GroupedTabData(constants.clusterPermissionSubTabLabel(), 9); //$NON-NLS-1$
 
+    public static final TabData CLUSTER_EVENTS = new GroupedTabData(constants.clusterEventSubTabLabel(), 10); //$NON-NLS-1$
+
 
     // datacenter
 

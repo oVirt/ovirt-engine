@@ -402,6 +402,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String clusterGlusterHooksSubTabLabel();
 
+    String clusterEventSubTabLabel();
+
     String affinityGroupSubTabLabel();
 
     String affinityLabelsImplicitGroupInfo();

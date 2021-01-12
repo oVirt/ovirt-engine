@@ -257,6 +257,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterSu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterAffinityGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterAffinityLabelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterCpuProfilePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGlusterHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterHostPresenter;
@@ -545,6 +546,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.ClusterSubTabP
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterAffinityGroupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterAffinityLabelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterCpuProfileView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGlusterHookView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterHostView;
@@ -1001,6 +1003,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabClusterAffinityLabelPresenter.ViewDef.class,
                 SubTabClusterAffinityLabelView.class,
                 SubTabClusterAffinityLabelPresenter.ProxyDef.class);
+        bindPresenter(SubTabClusterEventPresenter.class,
+                SubTabClusterEventPresenter.ViewDef.class,
+                SubTabClusterEventView.class,
+                SubTabClusterEventPresenter.ProxyDef.class);
         bindSingletonPresenterWidget(
                 new TypeLiteral<SearchPanelPresenterWidget<Cluster, ClusterListModel<Void>>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<ClusterListModel<Void>>>(){},
