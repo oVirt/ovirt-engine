@@ -27,6 +27,7 @@ public class SubTabTemplateStorageView extends AbstractSubTabTreeView<StoragesTr
 
     @Override
     protected void initHeader() {
+        table.enableColumnResizing();
         table.addColumn(new EmptyColumn(), constants.domainNameStorage(), ""); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.domainTypeStorage(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.statusStorage(), "120px"); //$NON-NLS-1$
