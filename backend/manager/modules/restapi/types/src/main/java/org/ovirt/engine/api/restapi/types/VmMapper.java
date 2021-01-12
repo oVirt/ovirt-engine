@@ -117,6 +117,7 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setMigrateCompressed(entity.getMigrateCompressed());
         staticVm.setCustomProperties(entity.getCustomProperties());
         staticVm.setCustomEmulatedMachine(entity.getCustomEmulatedMachine());
+        staticVm.setCustomBiosType(entity.getCustomBiosType());
         staticVm.setCustomCpuName(entity.getCustomCpuName());
         staticVm.setConsoleDisconnectAction(entity.getConsoleDisconnectAction());
         staticVm.setSmallIconId(entity.getSmallIconId());
