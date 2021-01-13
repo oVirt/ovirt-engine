@@ -122,6 +122,9 @@ public class NumaMapper {
     @Mapping(from = NumaTuneMode.class, to = org.ovirt.engine.core.common.businessentities.NumaTuneMode.class)
     public static org.ovirt.engine.core.common.businessentities.NumaTuneMode map(NumaTuneMode mode,
             org.ovirt.engine.core.common.businessentities.NumaTuneMode incoming) {
+        if (mode == null) {
+            return VmNumaNode.DEFAULT_NUMA_TUNE;
+        }
         switch (mode) {
         case STRICT:
             return org.ovirt.engine.core.common.businessentities.NumaTuneMode.STRICT;
@@ -130,7 +133,7 @@ public class NumaMapper {
         case PREFERRED:
             return org.ovirt.engine.core.common.businessentities.NumaTuneMode.PREFERRED;
         default:
-            return null;
+            return VmNumaNode.DEFAULT_NUMA_TUNE;
         }
     }
 

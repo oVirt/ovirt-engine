@@ -12,9 +12,11 @@ public class VmNumaNode extends NumaNode {
 
     private static final long serialVersionUID = -8359874676349954401L;
 
+    public static final NumaTuneMode DEFAULT_NUMA_TUNE = NumaTuneMode.INTERLEAVE;
+
     private List<Integer> vdsNumaNodeList = new ArrayList<>();
 
-    private NumaTuneMode numaTuneMode = NumaTuneMode.INTERLEAVE;
+    private NumaTuneMode numaTuneMode = DEFAULT_NUMA_TUNE;
 
     /**
      * @return pNUMA node index

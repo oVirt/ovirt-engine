@@ -309,6 +309,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 // fail update vm if some fields could not be copied
                 throw new EngineException(EngineError.FAILED_UPDATE_RUNNING_VM);
             }
+        } else {
+            updateVmNumaNodes();
         }
 
         if ((getVm().isRunningOrPaused() || getVm().isPreviewSnapshot() || getVm().isSuspended()) && !shouldUpdateForHostedEngineOrKubevirt()) {
@@ -321,7 +323,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         updateVmNetworks();
-        updateVmNumaNodes();
         updateAffinityGroupsAndLabels();
         if (!updateVmLease()) {
             return;
