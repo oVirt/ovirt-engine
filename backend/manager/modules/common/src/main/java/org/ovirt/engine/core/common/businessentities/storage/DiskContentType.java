@@ -15,7 +15,8 @@ public enum DiskContentType implements Identifiable {
     HOSTED_ENGINE(5, "HEVD"),
     HOSTED_ENGINE_SANLOCK(6, "HESD"),
     HOSTED_ENGINE_METADATA(7, "HEMD"),
-    HOSTED_ENGINE_CONFIGURATION(8, "HECI");
+    HOSTED_ENGINE_CONFIGURATION(8, "HECI"),
+    BACKUP_SCRATCH(9, "SCRD");
 
     public static final String LEGACY_DISK_TYPE = "2";
 

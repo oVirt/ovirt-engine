@@ -1746,6 +1746,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String DiskContentType___HOSTED_ENGINE_CONFIGURATION();
 
+    String DiskContentType___BACKUP_SCRATCH();
+
     String VmResumeBehavior___AUTO_RESUME();
 
     String VmResumeBehavior___LEAVE_PAUSED();
