@@ -127,6 +127,7 @@ public class BackendVmPoolsResource
         params.setBalloonEnabled(balloonEnabled);
         params.getVmStaticData().setCustomProperties(pool.isSetVm() && pool.getVm().isSetCustomProperties() ?
                 CustomPropertiesParser.parse(pool.getVm().getCustomProperties().getCustomProperties()) : params.getVmStaticData().getCustomProperties());
+        params.setTpmEnabled(!VmHelper.getTpmDevicesForEntity(this, template.getId()).isEmpty());
 
         return performCreate(ActionType.AddVmPool,
                                params,

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
@@ -89,6 +90,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
     protected UnitVmModel initModel(VmModelBehaviorBase behavior) {
         final Cluster cluster = new Cluster();
         cluster.setCompatibilityVersion(CLUSTER_VERSION);
+        cluster.setBiosType(BiosType.Q35_SEA_BIOS);
 
         UnitVmModel model = spy(createModel(behavior));
         doReturn(cluster).when(model).getSelectedCluster();

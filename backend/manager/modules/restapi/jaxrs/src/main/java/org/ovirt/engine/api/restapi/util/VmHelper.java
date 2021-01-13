@@ -36,4 +36,11 @@ public class VmHelper {
                 new IdQueryParameters(id),
                 "GetRngDevice", true);
     }
+
+    public static List<String> getTpmDevicesForEntity(BackendResource resource, Guid id) {
+        return resource.getEntity(List.class,
+                QueryType.GetTpmDevices,
+                new IdQueryParameters(id),
+                "GetTpmDevices", true);
+    }
 }

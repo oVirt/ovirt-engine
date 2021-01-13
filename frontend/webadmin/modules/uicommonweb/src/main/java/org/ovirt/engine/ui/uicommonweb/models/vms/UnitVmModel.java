@@ -1730,7 +1730,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setDataCenterWithClustersList(new NotChangableForVmInPoolListModel<DataCenterWithCluster>());
         getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener(this);
 
-        setTpmEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
+        setTpmEnabled(new NotChangableForVmInPoolEntityModel<Boolean>(false));
 
         setBiosType(new ListModelWithClusterDefault<>(BiosType.CLUSTER_DEFAULT));
         getBiosType().getSelectedItemChangedEvent().addListener(this);
@@ -2071,6 +2071,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         initConsoleDisconnectAction();
         updateResumeBehavior();
         updateAffinityLists();
+        updateTpmEnabled();
 
         behavior.initialize();
     }
