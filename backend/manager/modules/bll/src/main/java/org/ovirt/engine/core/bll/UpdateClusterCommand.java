@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
@@ -62,6 +63,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.qualifiers.MomPolicyUpdate;
 import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
@@ -121,6 +123,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     private VmHandler vmHandler;
     @Inject
     private VmInitDao vmInitDao;
+    @Inject
+    private OsRepository osRepository;
 
     private List<VDS> allHostsForCluster;
 
@@ -532,8 +536,21 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                     getCluster()
             );
         }
+        if (originalVmStatic.getDefaultDisplayType() == DisplayType.bochs && !isBochsDisplaySupported(originalVmStatic)) {
+            updateParams.getVmStaticData().setDefaultDisplayType(DisplayType.vga);
+        }
 
         return updateParams;
+    }
+
+    private boolean isBochsDisplaySupported(VmStatic originalVmStatic) {
+        if (!originalVmStatic.getEffectiveBiosType().isOvmf()) {
+            return false;
+        }
+        Version effectiveCompatibilityVersion = CompatibilityVersionUtils.getEffective(originalVmStatic, getCluster());
+        return osRepository.getGraphicsAndDisplays(originalVmStatic.getOsId(), effectiveCompatibilityVersion).stream()
+                .map(Pair::getSecond)
+                .anyMatch(dt -> dt == DisplayType.bochs);
     }
 
     /**

@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.CopyOnNewVersion;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -781,14 +782,22 @@ public class VmHandler implements BackendService {
      *            Collection of graphics types (SPICE, VNC).
      * @param displayType
      *            Display type.
+     * @param biosType
+     *            Chipset/Firmware type.
      * @param clusterVersion
      *            The cluster version.
      */
     public ValidationResult isGraphicsAndDisplaySupported
-        (int osId, Collection<GraphicsType> graphics, DisplayType displayType, Version clusterVersion) {
-        return ValidationResult
-                .failWith(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS)
-                .unless(vmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, graphics, displayType));
+        (int osId, Collection<GraphicsType> graphics, DisplayType displayType, BiosType biosType, Version clusterVersion) {
+        if (!vmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, graphics, displayType)) {
+            return new ValidationResult(
+                    EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS);
+        }
+        if (displayType == DisplayType.bochs && !biosType.isOvmf()) {
+            return new ValidationResult(
+                    EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_FIRMWARE);
+        }
+        return ValidationResult.VALID;
     }
 
     /**

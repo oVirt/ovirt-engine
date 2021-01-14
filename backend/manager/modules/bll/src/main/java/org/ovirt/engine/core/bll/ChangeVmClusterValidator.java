@@ -106,6 +106,7 @@ public class ChangeVmClusterValidator {
                 vm.getOs(),
                 vmDeviceUtils.getGraphicsTypesOfEntity(vm.getId()),
                 vm.getDefaultDisplayType(),
+                vm.getEffectiveBiosType(),
                 vmCompatibilityVersion);
         if (!isGraphicsAndDisplaySupported.isValid()) {
             return isGraphicsAndDisplaySupported;

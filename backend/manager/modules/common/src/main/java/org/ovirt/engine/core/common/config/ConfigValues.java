@@ -1563,6 +1563,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Map.class)
     TpmDeviceSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    EnableBochsDisplay,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

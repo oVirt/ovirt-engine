@@ -746,6 +746,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(srcId),
                         getParameters().getGraphicsDevices()),
                 getParameters().getMasterVm().getDefaultDisplayType(),
+                getVm().getEffectiveBiosType(),
                 getVm().getCompatibilityVersion()))) {
             return false;
         }

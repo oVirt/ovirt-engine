@@ -249,6 +249,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             returnValue = validate(vmHandler.isGraphicsAndDisplaySupported(getParameters().getVmTemplateData().getOsId(),
                     vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
                     getParameters().getVmTemplateData().getDefaultDisplayType(),
+                    getParameters().getVmTemplateData().getEffectiveBiosType(),
                     getVmTemplate().getCompatibilityVersion()));
         }
 

@@ -688,6 +688,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                         getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()),
                         getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
+                vmFromParams.getEffectiveBiosType(),
                 getEffectiveCompatibilityVersion()))) {
             return false;
         }

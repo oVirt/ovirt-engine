@@ -6,11 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
@@ -36,16 +34,7 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
     }
 
     protected void initDisplayTypes(DisplayType selected, UnitVmModel.GraphicsTypes selectedGrahicsTypes) {
-        List<Pair<GraphicsType, DisplayType>> allGraphicsAndDisplays = new ArrayList<>();
-        for (GraphicsType graphicsType : GraphicsType.values()) {
-            for (DisplayType displayType : DisplayType.values()) {
-                if (displayType != DisplayType.none) {
-                    allGraphicsAndDisplays.add(new Pair<>(graphicsType, displayType));
-                }
-            }
-        }
-
-        getModel().initDisplayModels(allGraphicsAndDisplays);
+        getModel().initDisplayModels(new HashSet<>(Arrays.asList(DisplayType.values())));
         initGraphicsModel(selectedGrahicsTypes);
 
         if (getModel().getDisplayType().getItems().contains(selected)) {

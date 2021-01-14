@@ -83,6 +83,7 @@ public class DisplayMapper {
                             break;
                         case vga:
                         case cirrus:
+                        case bochs:
                             graphics.add(GraphicsType.VNC);
                             break;
                     }

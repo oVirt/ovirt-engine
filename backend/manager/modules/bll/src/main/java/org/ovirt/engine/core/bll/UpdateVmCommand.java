@@ -1151,6 +1151,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmId()),
                         getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
+                vmFromParams.getEffectiveBiosType(),
                 getEffectiveCompatibilityVersion()))) {
             return false;
         }

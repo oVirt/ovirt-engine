@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -1409,6 +1410,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         if (vmType == VmType.Server) {
             getModel().getIoThreadsEnabled().setEntity(true);
+            if (getModel().getDisplayType().getItems().contains(DisplayType.bochs)) {
+                getModel().getDisplayType().setSelectedItem(DisplayType.bochs);
+            }
         }
 
         // Configuration relevant only for High Performance

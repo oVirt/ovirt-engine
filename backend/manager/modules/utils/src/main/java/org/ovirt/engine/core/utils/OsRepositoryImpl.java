@@ -12,6 +12,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.ConsoleTargetType;
@@ -381,7 +382,9 @@ public enum OsRepositoryImpl implements OsRepository {
                 GraphicsType graphics = GraphicsType.fromString(pair.getFirst());
                 DisplayType display = DisplayType.valueOf(pair.getSecond());
 
-                graphicsAndDisplays.add(new Pair<>(graphics, display));
+                if (display != DisplayType.bochs || version != null && FeatureSupported.isBochsDisplayEnabled(version)) {
+                    graphicsAndDisplays.add(new Pair<>(graphics, display));
+                }
             }
         }
 

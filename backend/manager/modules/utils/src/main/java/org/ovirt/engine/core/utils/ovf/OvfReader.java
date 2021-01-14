@@ -868,8 +868,17 @@ public abstract class OvfReader implements IOvfBuilder {
 
         List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays =
                 osRepository.getGraphicsAndDisplays(vmBase.getOsId(), new Version(getVersion()));
-        GraphicsType graphicsType =
-                vmBase.getDefaultDisplayType() == DisplayType.vga ? GraphicsType.VNC : GraphicsType.SPICE;
+
+        GraphicsType graphicsType;
+        switch (vmBase.getDefaultDisplayType()) {
+            case vga:
+            case bochs:
+                graphicsType = GraphicsType.VNC;
+                break;
+            default:
+                graphicsType = GraphicsType.SPICE;
+        }
+
         GraphicsType supportedGraphicsType = null;
         for (Pair<GraphicsType, DisplayType> pair : graphicsAndDisplays) {
             if (pair.getSecond() == vmBase.getDefaultDisplayType()) {

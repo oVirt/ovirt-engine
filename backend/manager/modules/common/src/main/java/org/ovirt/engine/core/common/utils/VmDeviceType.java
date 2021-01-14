@@ -36,6 +36,7 @@ public enum VmDeviceType {
     SATA("sata"),
     ICH9("ich9"),
     TPM("tpm"),
+    BOCHS("bochs"),
     OTHER("other", "0"),
     UNKNOWN("unknown", "-1");
 

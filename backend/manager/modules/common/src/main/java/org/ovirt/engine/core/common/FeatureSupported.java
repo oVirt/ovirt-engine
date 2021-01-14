@@ -309,4 +309,15 @@ public class FeatureSupported {
     public static boolean isTpmDeviceSupported(Version version, ArchitectureType arch) {
         return supportedInConfig(ConfigValues.TpmDeviceSupported, version, arch);
     }
+
+    /**
+     * Checks if bochs display support enabled for the cluster version
+     *
+     * @param version
+     *            Compatibility version to check for.
+     */
+    public static boolean isBochsDisplayEnabled(Version version) {
+        return supportedInConfig(ConfigValues.EnableBochsDisplay, version);
+    }
+
 }

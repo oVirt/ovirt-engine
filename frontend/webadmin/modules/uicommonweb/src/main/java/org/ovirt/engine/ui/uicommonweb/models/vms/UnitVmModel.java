@@ -2155,6 +2155,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             } else if (sender == getLease()) {
                 updateResumeBehavior();
             } else if (sender == getBiosType()) {
+                updateDisplayAndGraphics();
                 updateTpmEnabled();
             }
         } else if (ev.matchesDefinition(ListModel.selectedItemsChangedEventDefinition)) {
@@ -2389,27 +2390,25 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void updateDisplayAndGraphics() {
         Cluster cluster = getSelectedCluster();
-        Integer osType = getOSType().getSelectedItem();
+        Integer osType = getOSType() != null ? getOSType().getSelectedItem() : null;
+        BiosType biosType = getBiosType() != null ? getBiosType().getSelectedItem() : null;
 
-        if (cluster == null || osType == null) {
+        if (cluster == null || osType == null || biosType == null) {
             return;
         }
 
-        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(
-                osType,
-                getCompatibilityVersion());
-        initDisplayModels(graphicsAndDisplays);
+        initDisplayModels(getSupportedDisplayTypes(osType, getEffectiveBiosType(biosType, cluster)));
     }
 
-    public void initDisplayModels(List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays) {
-        // get supported display types
-        Set<DisplayType> displayTypes = new LinkedHashSet<>();
-        for (Pair<GraphicsType, DisplayType> graphicsTypeDisplayTypePair : graphicsAndDisplays) {
-            if(graphicsTypeDisplayTypePair.getSecond() != DisplayType.none) {
-                displayTypes.add(graphicsTypeDisplayTypePair.getSecond());
-            }
-        }
+    private Set<DisplayType> getSupportedDisplayTypes(int osId, BiosType biosType) {
+        return AsyncDataProvider.getInstance().getGraphicsAndDisplays(osId, getCompatibilityVersion()).stream()
+                .map(Pair::getSecond)
+                .filter(dt -> dt != DisplayType.none)
+                .filter(dt -> biosType.isOvmf() || dt != DisplayType.bochs)
+                .collect(Collectors.toSet());
+    }
 
+    public void initDisplayModels(Set<DisplayType> displayTypes) {
         // set items and set selected one
         DisplayType selectedDisplayType = getDisplayType().getSelectedItem();
         if (displayTypes.contains(selectedDisplayType)) {

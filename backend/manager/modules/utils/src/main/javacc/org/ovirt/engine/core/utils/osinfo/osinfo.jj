@@ -184,7 +184,7 @@ void valueSpecifier() : {} {
     >
 |   < DISPLAY_TYPE
     :
-    ("qxl" | "cirrus" | "vga")
+    ("qxl" | "cirrus" | "vga" | "bochs")
     >
 |   < CHIPSET_CD_INTERFACE_TYPE
     :

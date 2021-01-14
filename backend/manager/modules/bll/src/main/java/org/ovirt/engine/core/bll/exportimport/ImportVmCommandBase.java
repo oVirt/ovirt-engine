@@ -259,6 +259,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         return validate(vmHandler.isGraphicsAndDisplaySupported(getParameters().getVm().getOs(),
                 getGraphicsTypesForVm(),
                 getVm().getDefaultDisplayType(),
+                getVm().getEffectiveBiosType(),
                 getEffectiveCompatibilityVersion()));
     }
 
