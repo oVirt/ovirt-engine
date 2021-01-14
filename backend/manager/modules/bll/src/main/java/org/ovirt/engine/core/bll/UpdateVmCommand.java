@@ -354,8 +354,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             updateRngDevice();
             updateGraphicsDevices();
             updateVmHostDevices();
-            updateDeviceAddresses();
-            clearUnmanagedDevices();
+            updateVmDevicesOnEmulatedMachineChange();
+            updateVmDevicesOnChipsetChange();
         }
         iconUtils.removeUnusedIcons(oldIconIds, getCompensationContextIfEnabledByCaller());
         vmHandler.updateVmInitToDB(getParameters().getVmStaticData(), getCompensationContextIfEnabledByCaller());
@@ -368,6 +368,25 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         compensationStateChanged();
 
         setSucceeded(true);
+    }
+
+    private void updateVmDevicesOnEmulatedMachineChange() {
+        if (isEmulatedMachineChanged()) {
+            log.info("Emulated machine has changed for VM: {} ({}), the device addresses will be removed.",
+                    getVm().getName(),
+                    getVm().getId());
+            getVmDeviceUtils().removeVmDevicesAddress(getVmId());
+            getVmDeviceUtils().resetVmDevicesHash(getVmId());
+        }
+    }
+
+    private void updateVmDevicesOnChipsetChange() {
+        if (isChipsetChanged()) {
+            log.info("BIOS chipset type has changed for VM: {} ({}), the devices will be converted to new chipset.",
+                    getVm().getName(),
+                    getVm().getId());
+            getVmDeviceUtils().convertVmDevicesToNewChipset(getVmId(), getParameters().getVmStaticData().getEffectiveBiosType().getChipsetType(), true);
+        }
     }
 
     private boolean shouldUpdateForHostedEngineOrKubevirt() {
@@ -510,25 +529,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     getVm().getId(),
                     rngDevs.isEmpty() ? null : rngDevs.get(0),
                     getParameters().getRngDevice());
-        }
-    }
-
-    private void updateDeviceAddresses() {
-        if (isEmulatedMachineChanged() || isChipsetChanged()) {
-            log.info("Emulated machine or BIOS chipset type has changed for VM: {} ({}), clearing device addresses.",
-                    getVm().getName(),
-                    getVm().getId());
-            getVmDeviceUtils().removeVmDevicesAddress(getVmId());
-            getVmDeviceUtils().resetVmDevicesHash(getVmId());
-        }
-    }
-
-    private void clearUnmanagedDevices() {
-        if (isChipsetChanged()) {
-            log.info("BIOS chipset type has changed for VM: {} ({}), removing its unmanaged devices.",
-                    getVm().getName(),
-                    getVm().getId());
-            vmDeviceDao.removeAllUnmanagedDevicesByVmId(getVmId());
         }
     }
 

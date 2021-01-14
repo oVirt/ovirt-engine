@@ -66,6 +66,8 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Dependent
 public class VmDeviceUtils {
@@ -77,6 +79,7 @@ public class VmDeviceUtils {
     private static final int COMPANION_USB_CONTROLLERS = 3;
     private static final int VNC_MIN_MONITORS = 1;
     private static final int SINGLE_QXL_MONITORS = 1;
+    private static final Logger log = LoggerFactory.getLogger(VmDeviceUtils.class);
 
     private final VmStaticDao vmStaticDao;
     private final VmDeviceDao vmDeviceDao;
@@ -1566,6 +1569,56 @@ public class VmDeviceUtils {
         vmDeviceDao.update(rngDeviceToUpdate.get());
     }
 
+    public void convertVmDevicesToNewChipset(Guid vmId, ChipsetType newChipsetType, boolean useCompensation) {
+        removeUnmanagedDevices(vmId, useCompensation);
+        convertVmDevicesToNewChipsetInternal(vmId, newChipsetType, useCompensation);
+        resetVmDevicesHash(vmId);
+    }
+
+    private void convertVmDevicesToNewChipsetInternal(Guid vmId, ChipsetType chipset, boolean useCompensation) {
+        log.info("Converting all devices for VM with id {} to new chipset {}", vmId, chipset);
+        List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmId);
+        for (VmDevice device : devices) {
+            if (useCompensation) {
+                CompensationUtils.<VmDeviceId, VmDevice> updateEntity(device, dev -> {
+                    convertVmDeviceToNewChipsetInternal(dev, chipset);
+                }, vmDeviceDao, compensationContext);
+            } else {
+                convertVmDeviceToNewChipsetInternal(device, chipset);
+            }
+        }
+
+        if (!useCompensation) {
+            vmDeviceDao.updateAllInBatch(devices);
+        }
+    }
+
+    private void convertVmDeviceToNewChipsetInternal(VmDevice device, ChipsetType newChipsetType) {
+        device.setAddress("");
+
+        if (device.getType() == VmDeviceGeneralType.CONTROLLER) {
+            if (VmDeviceType.IDE.getName().equals(device.getDevice())) {
+                if (ChipsetType.Q35.equals(newChipsetType)) {
+                    device.setDevice(VmDeviceType.SATA.getName());
+                }
+            } else if (VmDeviceType.SATA.getName().equals(device.getDevice())) {
+                if (ChipsetType.I440FX.equals(newChipsetType)) {
+                    device.setDevice(VmDeviceType.IDE.getName());
+                }
+            }
+        }
+    }
+
+    private void removeUnmanagedDevices(Guid vmId, boolean useCompensation) {
+        log.info("Removing all unmanaged devices for VM with id: {}", vmId);
+        if (useCompensation) {
+            List<VmDevice> devices = vmDeviceDao.getUnmanagedDevicesByVmId(vmId);
+            CompensationUtils.<VmDeviceId, VmDevice> removeEntities(devices, vmDeviceDao, compensationContext);
+        } else {
+            vmDeviceDao.removeAllUnmanagedDevicesByVmId(vmId);
+        }
+    }
+
     /**
      * Copy devices from the given VmDevice list to the destination VM/VmBase.
      */
@@ -1600,8 +1653,6 @@ public class VmDeviceUtils {
 
         final Cluster srcCluster = getCluster(srcVmBase.getClusterId());
         final Cluster dstCluster = getCluster(dstVmBase.getClusterId(), srcCluster);
-        ChipsetType srcChipsetType = srcVmBase.getEffectiveBiosType().getChipsetType();
-        ChipsetType dstChipsetType = dstVmBase.getEffectiveBiosType().getChipsetType();
 
         for (VmDevice device : srcDevices) {
             if (device.getSnapshotId() != null && !copySnapshotDevices) {
@@ -1623,14 +1674,6 @@ public class VmDeviceUtils {
                             // check here is source VM had CD (VM from snapshot)
                             String srcCdPath = (String) device.getSpecParams().get(VdsProperties.Path);
                             specParams.putAll(getCdDeviceSpecParams(srcCdPath, dstCdPath));
-                            if (dstChipsetType == ChipsetType.Q35 && !device.getAddress().contains("bus=0")) {
-                                device.setAddress("");
-                            }
-                            if (dstChipsetType == ChipsetType.I440FX
-                                    && !device.getAddress().contains("unit=0")
-                                    && !device.getAddress().contains("unit=1")) {
-                                device.setAddress("");
-                            }
                         } else { // CD already exists
                             continue;
                         }
@@ -1648,26 +1691,10 @@ public class VmDeviceUtils {
                         specParams = device.getSpecParams();
                     } else if (VmDeviceType.PCI.getName().equals(device.getDevice())) {
                         specParams = device.getSpecParams();
-                        if (ChipsetType.I440FX.equals(dstChipsetType)) {
-                            String model = (String) specParams.get(VdsProperties.Model);
-                            if (model != null && model.startsWith("pcie-")) {
-                                continue;
-                            }
-                        }
                     } else if (VmDeviceType.VIRTIOSCSI.getName().equals(device.getDevice())) {
                         hasVirtioScsi = true;
                         if (Boolean.FALSE.equals(isVirtioScsiEnabled)) {
                             continue;
-                        }
-                    } else if (VmDeviceType.IDE.getName().equals(device.getDevice())) {
-                        if (ChipsetType.Q35.equals(dstChipsetType)) {
-                            device.setDevice(VmDeviceType.SATA.getName());
-                            device.setAddress("");
-                        }
-                    } else if (VmDeviceType.SATA.getName().equals(device.getDevice())) {
-                        if (ChipsetType.I440FX.equals(dstChipsetType)) {
-                            device.setDevice(VmDeviceType.IDE.getName());
-                            device.setAddress("");
                         }
                     }
                     break;
@@ -1756,9 +1783,6 @@ public class VmDeviceUtils {
             }
             device.setId(new VmDeviceId(deviceId, dstId));
             device.setSpecParams(specParams);
-            if (srcChipsetType != dstChipsetType) {
-                device.setAddress("");
-            }
             vmDeviceDao.save(device);
         }
 

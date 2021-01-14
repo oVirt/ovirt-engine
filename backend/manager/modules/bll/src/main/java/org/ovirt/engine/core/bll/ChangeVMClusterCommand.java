@@ -12,7 +12,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
-import org.ovirt.engine.core.bll.utils.ChipsetUpdater;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
@@ -133,7 +132,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     }
 
     private void updateVm(VM vm) {
-        if (isVmChipsetChange(vm)) {
+        if (isChipsetChanged(vm)) {
             handleChangedChipset(vm);
         }
 
@@ -150,20 +149,21 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         // can drop this code.
         if (isInternalExecution()) {
             vm.setCustomBiosType(vm.getClusterBiosType());
+            vm.setEffectiveBiosType(vm.getCustomBiosType());
             return;
         }
 
-        getVmDeviceUtils().setVmDevices(vm.getStaticData());
-        if (ChipsetUpdater.updateChipset(vm, getCluster())) { // must be called before changing the cluster-id
-            vmDeviceDao.updateAllInBatch(vm.getManagedVmDeviceMap().values());
-            vmDeviceDao.removeAllUnmanagedDevicesByVmId(vm.getId());
-            getVmDeviceUtils().resetVmDevicesHash(getVmId());
-        }
+        log.info("BIOS chipset type has changed for VM: {} ({}), the devices will be converted to new chipset.",
+                getVm().getName(),
+                getVm().getId());
+        getVmDeviceUtils().convertVmDevicesToNewChipset(getVmId(), vm.getEffectiveBiosType().getChipsetType(), false);
     }
 
-    private boolean isVmChipsetChange(VM vm) {
-        return vm.getCustomBiosType() == BiosType.CLUSTER_DEFAULT &&
-                !Objects.equals(vm.getClusterBiosType().getChipsetType(), getCluster().getBiosType().getChipsetType());
+    private boolean isChipsetChanged(VM vm) {
+        if (vm.getCustomBiosType() != BiosType.CLUSTER_DEFAULT) {
+            return false;
+        }
+        return vm.getEffectiveBiosType().getChipsetType() != getCluster().getBiosType().getChipsetType();
     }
 
     private void setCpuProfileFromNewCluster(VM vm) {

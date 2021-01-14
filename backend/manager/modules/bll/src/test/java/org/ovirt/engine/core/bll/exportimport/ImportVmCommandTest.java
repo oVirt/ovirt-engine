@@ -334,7 +334,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         v.setSnapshots(new ArrayList<>(Collections.singletonList(activeSnapshot)));
         v.setDiskMap(Collections.singletonMap(activeImage.getId(), activeImage));
         v.setClusterId(Guid.Empty);
-
+        v.setCustomBiosType(BiosType.Q35_SEA_BIOS);
         return v;
     }
 

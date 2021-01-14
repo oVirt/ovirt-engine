@@ -84,6 +84,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -1068,6 +1069,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             addGraphicsDevice();
             getVmDeviceUtils().updateVirtioScsiController(getVm().getStaticData(),
                     getParameters().isVirtioScsiEnabled());
+            updateVmDevicesOnChipsetChange();
             return null;
         });
 
@@ -1199,6 +1201,22 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 getVmId(),
                 disks,
                 getSrcDeviceIdToTargetDeviceIdMapping());
+    }
+
+    private void updateVmDevicesOnChipsetChange() {
+        if (isChipsetChanged()) {
+            log.info("BIOS chipset type of source VM/template ({}) is different than BIOS chipset type of destination VM/template ({}), the devices will be converted to the new BIOS chipset type.",
+                    vmDevicesSourceId,
+                    getVm().getId());
+            getVmDeviceUtils().convertVmDevicesToNewChipset(getVmId(), getParameters().getVmStaticData().getEffectiveBiosType().getChipsetType(), false);
+        }
+    }
+
+    private boolean isChipsetChanged() {
+        VmBase sourceVmBase = getVmBase(vmDevicesSourceId);
+        return getParameters().getVmStaticData().getEffectiveBiosType().getChipsetType() != sourceVmBase
+                .getEffectiveBiosType()
+                .getChipsetType();
     }
 
     private boolean isLegalClusterId(Guid clusterId) {
@@ -1938,5 +1956,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                     .collect(Collectors.toList());
             labelDao.addVmToLabels(getVmId(), labelIds);
         }
+    }
+
+    private VmBase getVmBase(Guid vmId) {
+        VmStatic vmStatic = vmStaticDao.get(vmId);
+        return vmStatic != null ? vmStatic : vmTemplateDao.get(vmId);
     }
 }

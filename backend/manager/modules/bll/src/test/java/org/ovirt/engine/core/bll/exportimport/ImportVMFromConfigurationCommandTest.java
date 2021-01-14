@@ -42,6 +42,7 @@ import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.storage.ovfstore.DrMappingHelper;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -155,6 +156,9 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
 
     @Mock
     private BlockStorageDiscardFunctionalityHelper discardHelper;
+
+    @Mock
+    private VmDeviceUtils vmDeviceUtils;
 
     private ArgumentCaptor<VmStatic> vmStaticArgumentCaptor;
 
@@ -290,7 +294,13 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
                 EngineMessage.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
     }
 
-    private void testBiosType(BiosType biosType, Boolean custom, BiosType expectedCustomBiosType, BiosType expectedEffectiveBiosType) throws Exception {
+    private void testBiosType(BiosType biosType,
+            Boolean custom,
+            BiosType clusterBiosType,
+            BiosType expectedCustomBiosType,
+            BiosType expectedEffectiveBiosType,
+            boolean expectedChipsetChanged) throws Exception {
+        cluster.setBiosType(clusterBiosType);
         doNothing().when(cmd).processImages();
         doReturn(mock(CompensationContext.class)).when(cmd).getCompensationContext();
 
@@ -298,7 +308,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
         initCommand(getOvfEntityData());
         doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(any());
         doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(any());
-        when(validator.validateUnregisteredEntity(any())) .thenReturn(ValidationResult.VALID);
+        when(validator.validateUnregisteredEntity(any())).thenReturn(ValidationResult.VALID);
         when(validator.validateStorageExistForUnregisteredEntity(anyList(), anyBoolean(), any(), any()))
                 .thenReturn(ValidationResult.VALID);
         doReturn(ValidationResult.VALID).when(validator)
@@ -309,42 +319,65 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
         vmStaticArgumentCaptor = ArgumentCaptor.forClass(VmStatic.class);
         verify(vmStaticDao).save(vmStaticArgumentCaptor.capture());
         assertEquals(expectedCustomBiosType, vmStaticArgumentCaptor.getValue().getCustomBiosType(), "Custom bios type");
-        assertEquals(expectedEffectiveBiosType, vmStaticArgumentCaptor.getValue().getEffectiveBiosType(), "Effective bios type");
+        assertEquals(expectedEffectiveBiosType,
+                vmStaticArgumentCaptor.getValue().getEffectiveBiosType(),
+                "Effective bios type");
+        assertEquals(expectedChipsetChanged, cmd.chipsetChanged, "Chipset changed");
     }
 
     @Test
     public void testBiosTypeDefault() throws Exception {
-        testBiosType(null, null, BiosType.CLUSTER_DEFAULT, BiosType.I440FX_SEA_BIOS);
+        testBiosType(null, null, BiosType.I440FX_SEA_BIOS, BiosType.CLUSTER_DEFAULT, BiosType.I440FX_SEA_BIOS, false);
+    }
+
+    @Test
+    public void testBiosTypeDefaultWithChipsetChange() throws Exception {
+        testBiosType(null, null, BiosType.Q35_SEA_BIOS, BiosType.CLUSTER_DEFAULT, BiosType.Q35_SEA_BIOS, true);
     }
 
     @Test
     public void testBiosTypeDefaultQ35SeaBios() throws Exception {
-        testBiosType(BiosType.Q35_SEA_BIOS, null, BiosType.CLUSTER_DEFAULT, BiosType.Q35_SEA_BIOS);
+        testBiosType(BiosType.Q35_SEA_BIOS, null, BiosType.Q35_SEA_BIOS, BiosType.CLUSTER_DEFAULT, BiosType.Q35_SEA_BIOS, false);
+    }
+
+    @Test
+    public void testBiosTypeDefaultQ35SeaBiosWithChipsetChange() throws Exception {
+        testBiosType(BiosType.Q35_SEA_BIOS, null, BiosType.I440FX_SEA_BIOS, BiosType.CLUSTER_DEFAULT, BiosType.I440FX_SEA_BIOS, true);
     }
 
     @Test
     public void testBiosTypeDefaultQ35SecureBoot() throws Exception {
-        testBiosType(BiosType.Q35_SECURE_BOOT, null, BiosType.Q35_SECURE_BOOT, BiosType.Q35_SECURE_BOOT);
+        testBiosType(BiosType.Q35_SECURE_BOOT, null, BiosType.Q35_SEA_BIOS, BiosType.Q35_SECURE_BOOT, BiosType.Q35_SECURE_BOOT, false);
     }
 
     @Test
     public void testBiosTypeNotCustomQ35SeaBios() throws Exception {
-        testBiosType(BiosType.Q35_SEA_BIOS, false, BiosType.CLUSTER_DEFAULT, BiosType.Q35_SEA_BIOS);
+        testBiosType(BiosType.Q35_SEA_BIOS, false, BiosType.Q35_SEA_BIOS, BiosType.CLUSTER_DEFAULT, BiosType.Q35_SEA_BIOS, false);
+    }
+
+    @Test
+    public void testBiosTypeNotCustomQ35SeaBiosWithChipsetChange() throws Exception {
+        testBiosType(BiosType.Q35_SEA_BIOS, false, BiosType.I440FX_SEA_BIOS, BiosType.CLUSTER_DEFAULT, BiosType.I440FX_SEA_BIOS, true);
     }
 
     @Test
     public void testBiosTypeCustomQ35SeaBios() throws Exception {
-        testBiosType(BiosType.Q35_SEA_BIOS, true, BiosType.Q35_SEA_BIOS, BiosType.Q35_SEA_BIOS);
+        testBiosType(BiosType.Q35_SEA_BIOS, true, BiosType.I440FX_SEA_BIOS, BiosType.Q35_SEA_BIOS, BiosType.Q35_SEA_BIOS, false);
     }
 
     @Test
     public void testBiosTypeNotCustomQ35SecureBoot() throws Exception {
-        testBiosType(BiosType.Q35_SECURE_BOOT, false, BiosType.CLUSTER_DEFAULT, BiosType.Q35_SECURE_BOOT);
+        testBiosType(BiosType.Q35_SECURE_BOOT, false, BiosType.Q35_SEA_BIOS, BiosType.CLUSTER_DEFAULT, BiosType.Q35_SEA_BIOS, false);
+    }
+
+    @Test
+    public void testBiosTypeNotCustomQ35SecureBootWithChipsetChagned() throws Exception {
+        testBiosType(BiosType.Q35_SECURE_BOOT, false, BiosType.I440FX_SEA_BIOS, BiosType.CLUSTER_DEFAULT, BiosType.I440FX_SEA_BIOS, true);
     }
 
     @Test
     public void testBiosTypeCustomQ35SecureBoot() throws Exception {
-        testBiosType(BiosType.Q35_SECURE_BOOT, true, BiosType.Q35_SECURE_BOOT, BiosType.Q35_SECURE_BOOT);
+        testBiosType(BiosType.Q35_SECURE_BOOT, true, BiosType.I440FX_SEA_BIOS, BiosType.Q35_SECURE_BOOT, BiosType.Q35_SECURE_BOOT, false);
     }
 
     private ImportVmFromConfParameters createParametersWhenImagesExistOnTargetStorageDomain() {

@@ -31,7 +31,6 @@ import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
-import org.ovirt.engine.core.bll.utils.ChipsetUpdater;
 import org.ovirt.engine.core.bll.utils.CompatibilityVersionUpdater;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmUpdateType;
@@ -61,6 +60,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -126,6 +126,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private MacPool macPool;
 
     private Runnable logOnExecuteEndMethod = () -> {};
+
+    protected boolean chipsetChanged;
 
     ImportVmCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -362,6 +364,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         setVm(parameters.getVm());
         if (parameters.getVm() != null) {
             setVmId(parameters.getVm().getId());
+            if (getVm().getCustomBiosType() == BiosType.CLUSTER_DEFAULT) {
+                chipsetChanged = getVm().getEffectiveBiosType().getChipsetType() != getCluster().getBiosType().getChipsetType();
+            }
+            BiosTypeUtils.setEffective(getVm().getStaticData(), getCluster());
         }
     }
 
@@ -386,7 +392,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
         var updates = new CompatibilityVersionUpdater().updateVmCompatibilityVersion(getVm(), newVersion, getCluster());
 
-        if (ChipsetUpdater.updateChipset(getVm().getStaticData(), getCluster())) {
+        if (chipsetChanged) {
             updates.add(VmUpdateType.CHIPSET);
         }
 
@@ -525,6 +531,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             processImages();
             vmHandler.addVmInitToDB(getVm().getStaticData().getVmInit());
             discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
+            updateVmDevicesOnChipsetChange();
         } catch (RuntimeException e) {
             macPool.freeMacs(macsAdded);
             throw e;
@@ -755,6 +762,15 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         return getVm().getMemSizeMb();
+    }
+
+    private void updateVmDevicesOnChipsetChange() {
+        if (chipsetChanged) {
+            log.info("BIOS chipset type of imported VM ({}) is different than BIOS chipset type of destination cluster, the devices will be converted to the new BIOS chipset type.",
+                    getVm().getId(),
+                    getCluster().getId());
+            getVmDeviceUtils().convertVmDevicesToNewChipset(getVm().getId(), getVm().getEffectiveBiosType().getChipsetType(), false);
+        }
     }
 
     @Override
