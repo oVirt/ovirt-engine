@@ -5,6 +5,8 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+
     <ui:style>
         .container {
             max-height: 250px;
@@ -30,7 +32,7 @@
 
     <g:FlowPanel addStyleNames="{style.container}">
         <b:InputGroup>
-            <b:TextBox ui:field="searchBox" placeholder="Type to search" />
+            <b:TextBox ui:field="searchBox" placeholder="{constants.typeToSearchPlaceHolder}" />
             <b:InputGroupButton>
                 <b:Button ui:field="searchButton" icon="SEARCH"/>
             </b:InputGroupButton>
