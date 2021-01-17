@@ -7,15 +7,20 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskType;
 import org.ovirt.engine.core.common.vdscommands.VmBackupVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmCheckpointDao;
 
 public abstract class VmBackupConfigVDSCommandBase<P extends VmBackupVDSParameters> extends VdsBrokerCommand<P> {
     @Inject
     private VmCheckpointDao vmCheckpointDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     private Set<Guid> vmCheckpointDisksIds;
 
@@ -35,6 +40,16 @@ public abstract class VmBackupConfigVDSCommandBase<P extends VmBackupVDSParamete
             String backupMode = getDiskBackupMode(diskImage);
             if (backupMode != null) {
                 imageParams.put(VdsProperties.BACKUP_MODE, backupMode);
+            }
+
+            Map<Guid, String> scratchDisksMap = getParameters().getScratchDisksMap();
+            if (scratchDisksMap != null && scratchDisksMap.containsKey(diskImage.getId())) {
+                Map<String, Object> scratchDiskParams = new HashMap<>();
+                scratchDiskParams.put(VdsProperties.Path, scratchDisksMap.get(diskImage.getId()));
+                StorageDomainStatic sourceDomain = storageDomainStaticDao.get(diskImage.getStorageIds().get(0));
+                DiskType diskType = sourceDomain.getStorageType().isBlockDomain() ? DiskType.Block : DiskType.File;
+                scratchDiskParams.put(VdsProperties.Type, diskType.getName());
+                imageParams.put(VdsProperties.SCRATCH_DISK, scratchDiskParams);
             }
             return imageParams;
         }).toArray(HashMap[]::new);

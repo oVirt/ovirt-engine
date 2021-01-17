@@ -69,6 +69,7 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
@@ -235,7 +236,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             log.info("Skip checkpoint creation for VM '{}'", vmBackup.getVmId());
         }
 
-        updateVmBackupPhase(VmBackupPhase.STARTING);
+        // For live VM backup, scratch disks should be created and prepared
+        // for each disk in the backup.
+        VmBackupPhase nextPhase = isLiveBackup() ? VmBackupPhase.CREATING_SCRATCH_DISKS : VmBackupPhase.STARTING;
+        updateVmBackupPhase(nextPhase);
+
         persistCommandIfNeeded();
         setActionReturnValue(vmBackupId);
         setSucceeded(true);
@@ -246,6 +251,24 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         restoreCommandState();
 
         switch (getParameters().getVmBackup().getPhase()) {
+            case CREATING_SCRATCH_DISKS:
+                if (createScratchDisks()) {
+                    updateVmBackupPhase(VmBackupPhase.PREPARING_SCRATCH_DISK);
+                    log.info("Scratch disks created for the backup");
+                } else {
+                    setCommandStatus(CommandStatus.FAILED);
+                }
+                break;
+
+            case PREPARING_SCRATCH_DISK:
+                if (prepareScratchDisks()) {
+                    updateVmBackupPhase(VmBackupPhase.STARTING);
+                    log.info("Scratch disks prepared for the backup");
+                } else {
+                    setCommandStatus(CommandStatus.FAILED);
+                }
+                break;
+
             case STARTING:
                 boolean isBackupSucceeded = isLiveBackup() ? runLiveVmBackup() : runColdVmBackup();
                 if (isBackupSucceeded) {
@@ -459,9 +482,21 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         // Add the created checkpoint ID
         VmBackup vmBackup = getParameters().getVmBackup();
         vmBackup.setToCheckpointId(getParameters().getToCheckpointId());
+        VmBackupVDSParameters parameters = new VmBackupVDSParameters(
+                getVdsId(), vmBackup, getParameters().isRequireConsistency());
+
+        if (!getParameters().getScratchDisksMap().isEmpty()) {
+            // Scratch disk image is not needed for starting the backup,
+            // map the correlated backed-up disk ID to the created scratch disk path.
+            Map<Guid, String> diskIdToPath = getParameters().getScratchDisksMap()
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getSecond()));
+            parameters.setScratchDisksMap(diskIdToPath);
+        }
+
         try {
-            vdsRetVal = runVdsCommand(vdsCommandType,
-                    new VmBackupVDSParameters(getVdsId(), vmBackup, getParameters().isRequireConsistency()));
+            vdsRetVal = runVdsCommand(vdsCommandType, parameters);
             if (!vdsRetVal.getSucceeded()) {
                 EngineException engineException = new EngineException();
                 engineException.setVdsError(vdsRetVal.getVdsError());
@@ -501,7 +536,57 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         });
     }
 
-     @Override
+    private boolean createScratchDisks() {
+        VmBackupParameters parameters = new VmBackupParameters(getParameters().getVmBackup());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setEndProcedure(ActionParametersBase.EndProcedure.PARENT_MANAGED);
+
+        ActionReturnValue returnValue = runInternalAction(ActionType.CreateScratchDisks, parameters);
+        if (returnValue == null || !returnValue.getSucceeded()) {
+            return false;
+        }
+        getParameters().setScratchDisksMap(returnValue.getActionReturnValue());
+        return true;
+    }
+
+    private boolean prepareScratchDisks() {
+        for (Map.Entry<Guid, Pair<DiskImage, String>> entry : getParameters().getScratchDisksMap().entrySet()) {
+            DiskImage scratchDisk = entry.getValue().getFirst();
+            String imagePath = prepareImage(scratchDisk);
+
+            if (imagePath == null) {
+                log.error("Failed to prepare Scratch disk '{}'", scratchDisk.getId());
+                return false;
+            }
+
+            log.info("Scratch disk '{}' path is: '{}'", scratchDisk.getId(), imagePath);
+            Pair<DiskImage, String> diskImageWithPath = new Pair<>(scratchDisk, imagePath);
+            // Set the scratch disk image and path to the backed-up disk ID.
+            entry.setValue(diskImageWithPath);
+        }
+        return true;
+    }
+
+    private String prepareImage(DiskImage diskImage) {
+        log.info("Preparing image '{}/{}' on the VM host '{}'", diskImage.getId(), diskImage.getImageId(), getVdsId());
+        try {
+            VDSReturnValue vdsRetVal = imagesHandler.prepareImage(getStoragePoolId(),
+                    diskImage.getStorageIds().get(0),
+                    diskImage.getId(),
+                    diskImage.getImageId(),
+                    getVdsId());
+            return ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
+        } catch (EngineException e) {
+            log.error("Failed to prepare image '{}/{}' on the VM host '{}'",
+                    diskImage.getId(),
+                    diskImage.getImageId(),
+                    getVdsId());
+            return null;
+        }
+    }
+
+    @Override
     protected void endSuccessfully() {
         setSucceeded(true);
     }

@@ -5,6 +5,8 @@ import java.util.Arrays;
 public enum VmBackupPhase {
 
     INITIALIZING("Initializing"),
+    CREATING_SCRATCH_DISKS("Creating scratch disks"),
+    PREPARING_SCRATCH_DISK("Preparing scratch disks"),
     STARTING("Starting"),
     READY("Ready"),
     FINALIZING("Finalizing");
