@@ -381,6 +381,22 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     private void finalizeVmBackup() {
         cleanDisksBackupModeIfSupported();
         unlockDisks();
+        if (isLiveBackup()) {
+            removeScratchDisks();
+        }
+    }
+
+    private void removeScratchDisks() {
+        // Best effort to teardown and remove the scratch disks.
+        log.info("Remove all the scratch disks that were created for backup '{}'",
+                getParameters().getVmBackup().getId());
+        VmBackupParameters parameters = new VmBackupParameters(getParameters().getVmBackup());
+        parameters.setScratchDisksMap(getParameters().getScratchDisksMap());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
+
+        runInternalActionWithTasksContext(ActionType.RemoveScratchDisks, parameters);
     }
 
     private void removeCheckpointFromDb() {
