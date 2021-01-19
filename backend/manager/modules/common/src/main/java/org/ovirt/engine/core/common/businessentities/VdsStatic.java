@@ -111,6 +111,10 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     private String sshKeyFingerprint;
 
     @EditableVdsField
+    @Size(max = BusinessEntitiesDefinitions.SSH_PUBLIC_KEY_SIZE)
+    private String sshPublicKey;
+
+    @EditableVdsField
     private Guid hostProviderId;
 
     /**
@@ -354,6 +358,14 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.sshKeyFingerprint = sshKeyFingerprint;
     }
 
+    public String getSshPublicKey(){
+        return sshPublicKey;
+    }
+
+    public void setSshPublicKey(String sshPublicKey){
+        this.sshPublicKey = sshPublicKey;
+    }
+
     public String getConsoleAddress() {
         return consoleAddress;
     }
@@ -487,6 +499,8 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 uniqueId,
                 clusterId,
                 vdsType,
+                sshKeyFingerprint,
+                sshPublicKey,
                 disablePowerManagementPolicy,
                 hostProviderId,
                 currentKernelCmdline,
@@ -526,6 +540,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && Objects.equals(clusterId, other.clusterId)
                 && vdsType == other.vdsType
                 && Objects.equals(sshKeyFingerprint, other.sshKeyFingerprint)
+                && Objects.equals(sshPublicKey, other.sshPublicKey)
                 && disablePowerManagementPolicy == other.disablePowerManagementPolicy
                 && Objects.equals(hostProviderId, other.hostProviderId)
                 && Objects.equals(currentKernelCmdline, other.currentKernelCmdline)

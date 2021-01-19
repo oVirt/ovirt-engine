@@ -1297,6 +1297,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vdsStatic.setSshKeyFingerprint(sshKeyFingerprint);
     }
 
+    public String getSshPublicKey() {
+        return vdsStatic.getSshPublicKey();
+    }
+
+    public void setSshPublicKey(String sshPublicKey) {
+        vdsStatic.setSshPublicKey(sshPublicKey);
+    }
+
     public Guid getHostProviderId() {
         return vdsStatic.getHostProviderId();
     }

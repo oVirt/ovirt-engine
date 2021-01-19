@@ -1,0 +1,1 @@
+select fn_db_add_column('vds_static', 'ssh_public_key', 'VARCHAR(8192)');

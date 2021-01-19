@@ -366,6 +366,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setVdsSpmPriority(rs.getInt("vds_spm_priority"));
         entity.setAutoRecoverable(rs.getBoolean("recoverable"));
         entity.setSshKeyFingerprint(rs.getString("sshKeyFingerprint"));
+        entity.setSshPublicKey(rs.getString("ssh_public_key"));
         entity.setHostProviderId(getGuid(rs, "host_provider_id"));
         entity.setHardwareManufacturer(rs.getString("hw_manufacturer"));
         entity.setHardwareProductName(rs.getString("hw_product_name"));
