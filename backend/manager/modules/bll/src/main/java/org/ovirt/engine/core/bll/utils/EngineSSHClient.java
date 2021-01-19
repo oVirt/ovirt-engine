@@ -77,14 +77,14 @@ public class EngineSSHClient extends SSHClient {
         }
     }
 
-    public String getHostFingerprint(String digest) throws Exception {
+    public String getHostFingerprint(String digest) {
         return OpenSSHUtils.getKeyFingerprint(
             getHostKey(),
             digest == null ? Config.getValue(ConfigValues.SSHDefaultKeyDigest) : digest
         );
     }
 
-    public String getHostFingerprint() throws Exception {
+    public String getHostFingerprint() {
         return getHostFingerprint(null);
     }
 

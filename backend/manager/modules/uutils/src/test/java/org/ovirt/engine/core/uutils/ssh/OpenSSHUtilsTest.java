@@ -43,20 +43,6 @@ public class OpenSSHUtilsTest {
         assertTrue(OpenSSHUtils.checkKeyFingerprint(KEYS[0][1].replace("MD5:", ""), decodeKey(KEYS[0][0]), null));
     }
 
-    private static void testKeyString(final String keyEncoding, final String goodKeyString) throws Exception {
-        final PublicKey key = decodeKey(keyEncoding);
-        final String keyString = OpenSSHUtils.getKeyString(key, null);
-        assertEquals(goodKeyString, keyString);
-        assertEquals(key, OpenSSHUtils.decodeKeyString(keyString));
-    }
-
-    @Test
-    public void testKeyStrings() throws Exception {
-        for (String[] key : KEYS) {
-            testKeyString(key[0], key[3]);
-        }
-    }
-
     @Test
     public void testGoodKeyIsPublicKeyValid() {
         for (String[] key : KEYS) {

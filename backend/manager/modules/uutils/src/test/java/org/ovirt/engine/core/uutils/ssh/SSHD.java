@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.uutils.ssh;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -53,7 +52,7 @@ public class SSHD {
 
     static class MyKeyPairProvider implements KeyPairProvider {
         private static final Iterable<String> KEY_TYPES =
-                Collections.unmodifiableList(Collections.singletonList(SSH_RSA));
+                Collections.singletonList(SSH_RSA);
         KeyPair keyPair;
 
         public MyKeyPairProvider(KeyPair keyPair) {
@@ -66,7 +65,7 @@ public class SSHD {
         }
 
         @Override
-        public Iterable<KeyPair> loadKeys(SessionContext session) throws IOException, GeneralSecurityException {
+        public Iterable<KeyPair> loadKeys(SessionContext session) {
             List<KeyPair> ret = new LinkedList<>();
             ret.add(keyPair);
             return ret;

@@ -1,18 +1,12 @@
 package org.ovirt.engine.core.uutils.ssh;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.RSAPublicKeySpec;
-import java.util.Arrays;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
@@ -39,33 +33,6 @@ public class OpenSSHUtils {
             throw new IOException("Invalid ASN1 array");
         }
         return contents;
-    }
-
-    /**
-     * Convert a public key string to real public key.
-     */
-    public static PublicKey decodeKeyString(final String key) throws IOException, GeneralSecurityException {
-        String[] words = key.split("\\s+", 3);
-
-        if (words.length < 2 || !SSH_RSA.equals(words[0])) {
-            throw new GeneralSecurityException("Unsupported SSH public key");
-        }
-
-        try (
-                ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.decodeBase64(words[1]));
-                DataInputStream dataInputStream = new DataInputStream(inputStream)) {
-            if (!Arrays.equals(getByteArrayOfData(dataInputStream), SSH_RSA.getBytes(StandardCharsets.UTF_8))) {
-                throw new GeneralSecurityException("Unsupported SSH public key");
-            }
-
-            byte[] exponentBytes = getByteArrayOfData(dataInputStream);
-            byte[] modulusBytes = getByteArrayOfData(dataInputStream);
-
-            return KeyFactory.getInstance("RSA").generatePublic(
-                    new RSAPublicKeySpec(
-                            new BigInteger(modulusBytes),
-                            new BigInteger(exponentBytes)));
-        }
     }
 
     /**
@@ -174,8 +141,7 @@ public class OpenSSHUtils {
         return keyString;
     }
 
-    public static final boolean checkKeyFingerprint(String expected, final PublicKey key, StringBuilder actual)
-            throws Exception {
+    public static boolean checkKeyFingerprint(String expected, final PublicKey key, StringBuilder actual) {
         String digest = expected.split(":", 2)[0];
         try {
             if (digest.length() == 2) {
@@ -208,16 +174,12 @@ public class OpenSSHUtils {
         return result;
     }
 
-    public static final String getKeyFingerprint(final PublicKey key, String digest) {
+    public static String getKeyFingerprint(final PublicKey key, String digest) {
         if (digest == null) {
             digest = "SHA-256";
         }
 
         return KeyUtils.getFingerPrint(BuiltinDigests.fromAlgorithm(digest), key);
-    }
-
-    public static final String getKeyFingerprint(final PublicKey key) throws Exception {
-        return getKeyFingerprint(key, null);
     }
 
     /*
