@@ -385,7 +385,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     private void removeCheckpointFromDb() {
-        Guid vmCheckpointId = getParameters().getVmBackup().getToCheckpointId();
+        Guid vmCheckpointId = getParameters().getToCheckpointId();
         log.info("Remove VmCheckpoint entity '{}'", vmCheckpointId);
 
         TransactionSupport.executeInNewTransaction(() -> {
