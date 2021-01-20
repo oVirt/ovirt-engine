@@ -95,6 +95,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
+import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -247,19 +248,18 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             images.addAll(getVmDisksFromDB());
             setStoragePoolId(getVm().getStoragePoolId());
             isVmInDb = true;
+            BiosTypeUtils.setEffective(masterVm, getVm().getEffectiveBiosType());
         } else if (getCluster() != null && masterVm != null) {
             // template from image
             VM vm = new VM(masterVm, new VmDynamic(), null);
             vm.setClusterCompatibilityVersion(getCluster().getCompatibilityVersion());
             vm.setClusterBiosType(getCluster().getBiosType());
-            vm.setEffectiveBiosType(
-                    vm.getCustomBiosType() != BiosType.CLUSTER_DEFAULT ? vm.getCustomBiosType() : getCluster().getBiosType());
             setVm(vm);
             setStoragePoolId(getCluster().getStoragePoolId());
+            BiosTypeUtils.setEffective(masterVm, getCluster().getBiosType());
         } else {
             // instance types
-            masterVm.setEffectiveBiosType(
-                    masterVm.getCustomBiosType() != BiosType.CLUSTER_DEFAULT ? masterVm.getCustomBiosType() : BiosType.I440FX_SEA_BIOS);
+            BiosTypeUtils.setEffective(masterVm, BiosType.I440FX_SEA_BIOS);
         }
         updateDiskInfoDestinationMap();
         generateTargetDiskIds();

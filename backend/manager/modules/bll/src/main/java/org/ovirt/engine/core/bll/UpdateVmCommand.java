@@ -220,7 +220,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     compatibilityVersion, getVm().getStaticData());
         }
 
-        BiosTypeUtils.setEffective(getParameters().getVmStaticData(), getCluster());
+        BiosTypeUtils.setEffective(getParameters().getVmStaticData(), getCluster().getBiosType());
 
         vmHandler.updateDefaultTimeZone(getParameters().getVmStaticData());
 

@@ -367,7 +367,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             if (getVm().getCustomBiosType() == BiosType.CLUSTER_DEFAULT) {
                 chipsetChanged = getVm().getEffectiveBiosType().getChipsetType() != getCluster().getBiosType().getChipsetType();
             }
-            BiosTypeUtils.setEffective(getVm().getStaticData(), getCluster());
+            BiosTypeUtils.setEffective(getVm().getStaticData(), getCluster().getBiosType());
         }
     }
 

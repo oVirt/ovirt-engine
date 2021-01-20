@@ -279,7 +279,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
 
             setVmTemplateId(templateIdToUse);
-            BiosTypeUtils.setEffective(parameters.getVmStaticData(), getCluster());
+            BiosTypeUtils.setEffective(parameters.getVmStaticData(), getCluster().getBiosType());
 
             // API backward compatibility
             if (getVmDeviceUtils().shouldOverrideSoundDevice(
