@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -37,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -3828,22 +3829,31 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public void needsChipsetDependentVmDeviceChanges(Runnable noChanges, Runnable needsChanges) {
+
         Cluster cluster = getSelectedCluster();
-        BiosType vmBiosType = getBiosType().getSelectedItem();
+
         if (cluster.getArchitecture().getFamily() != ArchitectureType.x86) {
             noChanges.run();
             return;
         }
-        Guid templateId = getTemplateWithVersion().getSelectedItem().getTemplateVersion().getId();
-        ChipsetType chipsetType = getEffectiveBiosType(vmBiosType, cluster).getChipsetType();
-        AsyncQuery<Boolean> query = new AsyncQuery<>(conflicts -> {
-            if (!conflicts) {
-                noChanges.run();
-            } else {
-                needsChanges.run();
-            }
-        });
-        AsyncDataProvider.getInstance().isVmTemplateConflictsWithChipset(query, templateId, chipsetType);
+
+        if (getTemplateWithVersion().getSelectedItem().getTemplateVersion().getClusterId() == null) {
+            noChanges.run();
+            return;
+        }
+
+        VmBase tmpVmBase = new VmBase();
+        tmpVmBase.setCustomBiosType(getBiosType().getSelectedItem());
+        BiosType templateEffectiveType = getTemplateWithVersion().getSelectedItem().getTemplateVersion().getEffectiveBiosType();
+        BiosType clusterBiosType = cluster.getBiosType();
+
+        BiosTypeUtils.setEffective(tmpVmBase, clusterBiosType);
+
+        if (tmpVmBase.getEffectiveBiosType().getChipsetType() != templateEffectiveType.getChipsetType()) {
+            needsChanges.run();
+        } else {
+            noChanges.run();
+        }
     }
 
     private void updateTpmEnabled() {

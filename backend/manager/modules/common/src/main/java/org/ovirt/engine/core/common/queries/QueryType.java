@@ -205,7 +205,6 @@ public enum QueryType implements Serializable {
     GetSystemPermissions,
     GetVmTemplatesByBaseTemplateId,
     GetLatestTemplateInChain,
-    IsVmTemplateConflictsWithChipset(QueryAuthType.User),
 
     // VM Snapshot queries
     GetAllVmSnapshotsByVmId(QueryAuthType.User),

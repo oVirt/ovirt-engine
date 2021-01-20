@@ -152,7 +152,6 @@ import org.ovirt.engine.core.common.queries.GetVmFromOvaQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParameters;
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
-import org.ovirt.engine.core.common.queries.IdAndChipsetQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.IsDefaultRouteRoleNetworkAttachedToHostQueryParameters;
@@ -3492,12 +3491,6 @@ public class AsyncDataProvider {
 
     public boolean isVgpuPlacementSupported(Version version) {
         return (Boolean) getConfigValuePreConverted(ConfigValues.VgpuPlacementSupported, version.getValue());
-    }
-
-    public void isVmTemplateConflictsWithChipset(AsyncQuery<Boolean> aQuery, Guid vmTemplateId, ChipsetType chipset) {
-        aQuery.converterCallback = new CastingConverter<>();
-        Frontend.getInstance().runQuery(QueryType.IsVmTemplateConflictsWithChipset,
-                new IdAndChipsetQueryParameters(vmTemplateId, chipset), aQuery);
     }
 
 }
