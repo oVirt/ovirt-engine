@@ -220,7 +220,6 @@ public class AnsibleRunnerHttpClient {
             ) {
                 JsonNode okNode = readUrl(String.format("jobs/%1$s/events/%2$s", playUuid, event));
                 JsonNode data = okNode.get("data");
-                String action = data.get("event_data").get("task_action").asText();
 
                 // Log stdout:
                 String stdout = RunnerJsonNode.getStdout(data);
@@ -232,11 +231,8 @@ public class AnsibleRunnerHttpClient {
 
                 if (RunnerJsonNode.isEventOk(currentNode)) {
                     if (taskNode != null) {
-                        String taskText = action.equals("debug")
-                                ? RunnerJsonNode.formatDebugMessage(taskNode.textValue(), stdout)
-                                : taskNode.textValue();
                         runnerLogger.log(readUrl(String.format("jobs/%1$s/events/%2$s", playUuid, event)));
-                        fn.accept(taskText, String.format("jobs/%1$s/events/%2$s", playUuid, event));
+                        fn.accept(taskNode.textValue(), String.format("jobs/%1$s/events/%2$s", playUuid, event));
                     }
                 } else if (RunnerJsonNode.isEventFailed(currentNode) || RunnerJsonNode.isEventError(currentNode)) {
                     JsonNode eventNode = getEvent(String.format("jobs/%1$s/events/%2$s", playUuid, event));

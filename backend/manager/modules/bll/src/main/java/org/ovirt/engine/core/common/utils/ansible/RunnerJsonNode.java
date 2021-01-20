@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -248,21 +246,6 @@ public final class RunnerJsonNode {
      */
     public static JsonNode taskNode(JsonNode node) {
         return node.get("data").get("event_data").get("res");
-    }
-
-    /**
-     * For example, a task titled "Test" containing the following output:
-     * ok: [192.168.100.233] => {
-     *     "msg": "[WARNING] this is a debug msg"
-     * }
-     * will return: "Test: [WARNING] this is a debug message"
-     */
-    public static String formatDebugMessage(String name, String output) {
-        output = output.substring(0, output.lastIndexOf("\""));
-        Pattern taskPattern = Pattern.compile("(?<severity>\\[(NORMAL|WARNING|ERROR|ALERT)\\]) (?<message>.*)");
-        Matcher matcher  = taskPattern.matcher(output);
-        matcher.find();
-        return String.format("%s: %s %s", name, matcher.group("severity"), matcher.group("message"));
     }
 
     /**
