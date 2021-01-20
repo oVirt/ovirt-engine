@@ -5,7 +5,6 @@ import static org.ovirt.engine.core.common.businessentities.UserProfileProperty.
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -24,63 +23,44 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Singleton
 public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
 
-    private static class UserProfilePropertyView {
+    private static final RowMapper<UserProfileProperty> userProfilePropertyRowMapper =
+            (rs, rowNum) -> deserializeSshKeys(UserProfileProperty.builder()
+                    .withUserId(getGuidDefaultEmpty(rs, "user_id"))
+                    .withPropertyId(getGuidDefaultEmpty(rs, "property_id"))
+                    .withName(rs.getString("property_name"))
+                    .withType(UserProfileProperty.PropertyType.valueOf(rs.getString("property_type")))
+                    .withContent(Optional.ofNullable(rs.getString("property_content"))
+                            .orElse(NullNode.getInstance().asText()))
+                    .build());
 
-        private final UserProfileProperty property;
+    private static final RowMapper<UserSshKey> userSshKeyRowMapper = (rs, rowNum) -> new UserSshKey(
+            rs.getString("login_name"),
+            getGuidDefaultEmpty(rs, "user_id"),
+            deserializeSshKeys(rs.getString("property_content"))
+    );
 
-        private final String loginName;
-
-        public UserProfilePropertyView(UserProfileProperty property, String loginName) {
-            this.property = property;
-            this.loginName = loginName;
+    private static String deserializeSshKeys(String encodedKey) {
+        if (encodedKey == null) {
+            return "";
         }
 
-        public String getLoginName() {
-            return loginName;
-        }
-
-        public UserProfileProperty getProperty() {
-            return property;
-        }
+        return Optional
+                .ofNullable(SerializationFactory.getDeserializer().deserialize(
+                        encodedKey,
+                        String.class))
+                .orElse("");
     }
 
-    private static final RowMapper<UserProfilePropertyView> userProfilePropertyRowMapper = (rs, rowNum) -> {
-        UserProfileProperty prop = UserProfileProperty.builder()
-                .withUserId(getGuidDefaultEmpty(rs, "user_id"))
-                .withPropertyId(getGuidDefaultEmpty(rs, "property_id"))
-                .withName(rs.getString("property_name"))
-                .withType(UserProfileProperty.PropertyType.valueOf(rs.getString("property_type")))
-                .withContent(Optional.ofNullable(rs.getString("property_content"))
-                        .orElse(NullNode.getInstance().asText()))
-                .build();
-        UserProfilePropertyView entity = new UserProfilePropertyView(prop, rs.getString("login_name"));
-        return deserializeSshKeys(entity);
-    };
-
-    /**
-     * Repackage to public type because of GWT serialization.
-     * GWT serialization requires declaring all DTO in *.gwt.xml.
-     */
-    private static Optional<UserProfileProperty> toPublicEntity(UserProfilePropertyView view) {
-        return Optional.ofNullable(view).map(UserProfilePropertyView::getProperty);
-    }
-
-    private static UserProfilePropertyView deserializeSshKeys(UserProfilePropertyView view) {
-        if (!view.getProperty().isSshPublicKey()) {
+    private static UserProfileProperty deserializeSshKeys(UserProfileProperty view) {
+        if (!view.isSshPublicKey()) {
             return view;
         }
 
-        return new UserProfilePropertyView(
-                UserProfileProperty.builder()
-                        .from(view.getProperty())
-                        .withContent(Optional
-                                .ofNullable(SerializationFactory.getDeserializer().deserialize(
-                                        view.getProperty().getContent(),
-                                        String.class))
-                                .orElse(""))
-                        .build(),
-                view.getLoginName()
-        );
+        return UserProfileProperty.builder()
+                .from(view)
+                .withContent(deserializeSshKeys(view.getContent()))
+                .build();
+
     }
 
     private static String serializeSshKeys(String content, UserProfileProperty.PropertyType type) {
@@ -91,59 +71,43 @@ public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
         return content;
     }
 
-    private UserProfile reduceToProfile(Guid userId,
-            List<UserProfilePropertyView> props) {
-        if (props == null || props.isEmpty() || props.contains(null)) {
-            return new UserProfile(userId, Collections.emptyList());
-        }
-
-        return new UserProfile(
-                userId,
-                props.stream()
-                        .map(UserProfileDaoImpl::toPublicEntity)
-                        .flatMap(Optional::stream)
-                        .collect(Collectors.toList())
-        );
-    }
-
     @Override
     public UserProfileProperty get(Guid propertyId) {
         if (propertyId == null || Guid.Empty.equals(propertyId)) {
             return null;
         }
-        return toPublicEntity(getCallsHandler().executeRead(
+        return getCallsHandler().executeRead(
                 "GetUserProfileProperty",
                 userProfilePropertyRowMapper,
-                getCustomMapSqlParameterSource().addValue("property_id", propertyId))
-        ).orElse(null);
+                getCustomMapSqlParameterSource().addValue("property_id", propertyId));
     }
 
     @Override
-    public void save(UserProfileProperty prop) {
-        if (Guid.Empty.equals(prop.getPropertyId())) {
-            throw new IllegalArgumentException("Illegal UUID:" + Guid.Empty);
-        }
-        getCallsHandler().executeModification("InsertUserProfileProperty", createOptionMapper(prop));
+    public Guid save(UserProfileProperty prop) {
+        Guid id = Guid.newGuid();
+        getCallsHandler().executeModification(
+                "InsertUserProfileProperty",
+                createOptionMapper(prop)
+                        .addValue("property_id", id));
+        return id;
     }
 
     private MapSqlParameterSource createOptionMapper(UserProfileProperty prop) {
         return getCustomMapSqlParameterSource()
                 .addValue("user_id", prop.getUserId())
-                .addValue("property_id", prop.getPropertyId())
                 .addValue("property_name", prop.getName())
                 .addValue("property_type", prop.getType().name())
                 .addValue("property_content", serializeSshKeys(prop.getContent(), prop.getType()));
     }
 
     @Override
-    public void update(UserProfileProperty property, Guid newKeyId) {
-        if (Guid.Empty.equals(newKeyId)) {
-            throw new IllegalArgumentException("Illegal UUID:" + Guid.Empty);
-        }
-
-        getCallsHandler().executeModification("UpdateUserProfileProperty",
-                createOptionMapper(property).addValue("new_property_id", newKeyId));
-
+    public UserProfileProperty update(UserProfileProperty property) {
+        return getCallsHandler().executeRead(
+                "UpdateUserProfileProperty",
+                userProfilePropertyRowMapper,
+                createOptionMapper(property)
+                        .addValue("property_id", property.getPropertyId())
+                        .addValue("new_property_id", Guid.newGuid()));
     }
 
     @Override
@@ -154,11 +118,7 @@ public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
 
     @Override
     public List<UserProfileProperty> getAll(Guid userId) {
-        return getAllInternal(userId)
-                .stream()
-                .map(UserProfileDaoImpl::toPublicEntity)
-                .flatMap(Optional::stream)
-                .collect(Collectors.toList());
+        return getAllInternal(userId);
     }
 
     @Override
@@ -167,10 +127,10 @@ public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
             return new UserProfile();
         }
 
-        return reduceToProfile(userId, getAllInternal(userId));
+        return new UserProfile(userId, getAllInternal(userId));
     }
 
-    private List<UserProfilePropertyView> getAllInternal(Guid userId) {
+    private List<UserProfileProperty> getAllInternal(Guid userId) {
         if (userId == null || Guid.Empty.equals(userId)) {
             return Collections.emptyList();
         }
@@ -190,24 +150,21 @@ public class UserProfileDaoImpl extends BaseDao implements UserProfileDao {
         return getCallsHandler()
                 .executeReadList(
                         "GetAllPublicSshKeysFromUserProfiles",
-                        userProfilePropertyRowMapper,
+                        userSshKeyRowMapper,
                         getCustomMapSqlParameterSource()
-                ).stream()
-                .map(UserProfileDaoImpl::toSshKey)
-                .flatMap(Optional::stream)
-                .collect(Collectors.toList());
+                );
     }
 
-    private static Optional<UserSshKey> toSshKey(UserProfilePropertyView view) {
-        if (view == null || view.getProperty() == null || !view.getProperty().isSshPublicKey()) {
-            return Optional.empty();
+    @Override
+    public UserProfileProperty getByName(String propertyName, Guid userId) {
+        if (userId == null || Guid.Empty.equals(userId)) {
+            return null;
         }
-
-        return Optional.of(new UserSshKey(
-                view.getLoginName(),
-                view.getProperty().getUserId(),
-                view.getProperty().getContent()
-        ));
+        return getCallsHandler().executeRead(
+                "GetUserProfilePropertyByName",
+                userProfilePropertyRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("user_id", userId)
+                        .addValue("property_name", propertyName));
     }
-
 }

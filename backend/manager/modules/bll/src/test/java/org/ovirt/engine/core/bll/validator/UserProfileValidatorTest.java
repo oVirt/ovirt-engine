@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.core.bll.UserProfileTestHelper.emptyUser;
+import static org.ovirt.engine.core.common.businessentities.UserProfileProperty.PropertyType.JSON;
+import static org.ovirt.engine.core.common.businessentities.UserProfileProperty.PropertyType.SSH_PUBLIC_KEY;
 
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
@@ -24,6 +26,21 @@ class UserProfileValidatorTest {
     @Test
     void propertyProvided() {
         assertTrue(validator.propertyProvided(mock(UserProfileProperty.class)).isValid());
+    }
+
+    @Test
+    void propertyWithGivenNameAlreadyExists() {
+        UserProfile profile = UserProfile.builder()
+                .withProp(UserProfileProperty.builder()
+                        .withDefaultSshProp().build()
+                ).build();
+        assertFalse(validator.firstPropertyWithGivenName(SSH_PUBLIC_KEY.name(), profile).isValid());
+    }
+
+    @Test
+    void noPropertyWithGivenName() {
+        assertTrue(validator.firstPropertyWithGivenName(SSH_PUBLIC_KEY.name(), UserProfile.builder().build())
+                .isValid());
     }
 
     @Test
@@ -116,4 +133,25 @@ class UserProfileValidatorTest {
         UserProfileProperty sshProp = UserProfileProperty.builder().withDefaultSshProp().build();
         assertThat(validator.firstPublicSshKey(new UserProfile(), sshProp).isValid());
     }
+
+    @Test
+    void sameName() {
+        assertTrue(validator.sameName(SSH_PUBLIC_KEY.name(), SSH_PUBLIC_KEY.name(), Guid.Empty).isValid());
+    }
+
+    @Test
+    void differentName() {
+        assertFalse(validator.sameName(SSH_PUBLIC_KEY.name(), JSON.name(), Guid.Empty).isValid());
+    }
+
+    @Test
+    void sameType() {
+        assertTrue(validator.sameType(SSH_PUBLIC_KEY, SSH_PUBLIC_KEY, Guid.Empty).isValid());
+    }
+
+    @Test
+    void differentType() {
+        assertFalse(validator.sameType(SSH_PUBLIC_KEY, JSON, Guid.Empty).isValid());
+    }
+
 }

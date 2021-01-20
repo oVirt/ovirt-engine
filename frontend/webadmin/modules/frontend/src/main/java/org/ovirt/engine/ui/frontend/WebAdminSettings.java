@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.json.client.JSONBoolean;
@@ -21,8 +21,8 @@ import com.google.gwt.json.client.JSONValue;
 /**
  * Effectively immutable.
  */
-public class UserSettings {
-    private static final Logger logger = Logger.getLogger(UserSettings.class.getName());
+public class WebAdminSettings {
+    private static final Logger logger = Logger.getLogger(WebAdminSettings.class.getName());
 
     static final int CURRENT_VERSION = 1;
     static final String LOCAL_STORAGE_PERSISTENCE = "localStoragePersistence"; //$NON-NLS-1$
@@ -30,34 +30,31 @@ public class UserSettings {
     // 1 - support for hiding/swapping columns in grids
     static final String LOCAL_STORAGE_PERSISTENCE_VERSION = "localStoragePersistenceVersion"; //$NON-NLS-1$
     static final String LOCAL_STORAGE = "localStorage"; //$NON-NLS-1$
-    static final String WEB_ADMIN = "webAdmin"; //$NON-NLS-1$
-    private boolean localStoragePersistence;
-    private Map<String, String> localStorage;
-    private Integer localStoragePersistenceVersion;
-    private Map<String, String> originalUserOptions;
+    public static final String WEB_ADMIN = "webAdmin"; //$NON-NLS-1$
+    private final boolean localStoragePersistence;
+    private final Map<String, String> localStorage;
+    private final Integer localStoragePersistenceVersion;
+    private final UserProfileProperty originalUserOptions;
 
-    private UserSettings(boolean localStoragePersistence,
+    private WebAdminSettings(boolean localStoragePersistence,
             Integer localStoragePersistenceVersion,
             Map<String, String> localStorage,
-            Map<String, String> allEncodedUserOptions) {
-        this.originalUserOptions = Objects.requireNonNull(allEncodedUserOptions);
+            UserProfileProperty originalUserOptions) {
+        this.originalUserOptions = Objects.requireNonNull(originalUserOptions);
         this.localStorage = Objects.requireNonNull(localStorage);
         this.localStoragePersistence = localStoragePersistence;
         this.localStoragePersistenceVersion = localStoragePersistenceVersion;
     }
 
-    public static UserSettings from(DbUser loggedInUser) {
-        if (loggedInUser == null) {
-            return UserSettings.defaultSettings();
+    public static WebAdminSettings from(UserProfileProperty webAdminUserOption) {
+        if (webAdminUserOption == null) {
+            return WebAdminSettings.defaultSettings();
         }
-        return Builder.create().fromUser(loggedInUser).build();
+        return Builder.create().fromProperty(webAdminUserOption).build();
     }
 
-    public static UserSettings defaultSettings() {
-        return Builder.create()
-                .withStorage(Collections.emptyMap())
-                .withLocalStoragePersistence(true)
-                .build();
+    public static WebAdminSettings defaultSettings() {
+        return Builder.create().withDefaults().build();
     }
 
     /**
@@ -78,15 +75,12 @@ public class UserSettings {
     /**
      * Encode to map of (key, json string).
      */
-    public Map<String, String> encode() {
+    public UserProfileProperty encode() {
         return NativeParser.encode(this);
     }
 
-    /**
-     * Copy of the settings retrieved from {@linkplain DbUser#getUserOptions()}
-     */
-    public Map<String, String> getOriginalUserOptions() {
-        return new HashMap<>(originalUserOptions);
+    public UserProfileProperty getOriginalUserOptions() {
+        return originalUserOptions;
     }
 
     public static class Builder {
@@ -95,7 +89,11 @@ public class UserSettings {
         private Map<String, String> storage = Collections.emptyMap();
         private boolean localStoragePersistence;
         private Integer localStoragePersistenceVersion;
-        private Map<String, String> originalUserOptions = Collections.emptyMap();
+        private UserProfileProperty originalUserOptions = UserProfileProperty.builder()
+                .withTypeJson()
+                .withName(WEB_ADMIN)
+                .withContent("{}") //$NON-NLS-1$
+                .build();
 
         public Builder(Function<String, Parser> createParser) {
             this.createParser = createParser;
@@ -115,16 +113,21 @@ public class UserSettings {
             return this;
         }
 
-        public Builder fromUser(DbUser user) {
-            Parser parser = createParser.apply(user.getUserOptions().get(WEB_ADMIN));
+        public Builder fromProperty(UserProfileProperty webAdminProp) {
+            if (webAdminProp == null ||
+                    !WEB_ADMIN.equals(webAdminProp.getName()) ||
+                    !webAdminProp.isJsonProperty()) {
+                return withDefaults();
+            }
+            Parser parser = createParser.apply(webAdminProp.getContent());
             storage = parser.parseStorage();
             localStoragePersistence = parseLocalStoragePersistence(parser.getLocalStoragePersistence());
             localStoragePersistenceVersion = parseVersion(parser.getVersion());
-            originalUserOptions = user.getUserOptions();
+            originalUserOptions = webAdminProp;
             return this;
         }
 
-        public Builder fromSettings(UserSettings settings) {
+        public Builder fromSettings(WebAdminSettings settings) {
             this.storage = settings.getLocalStoragePersistedOnServer();
             this.localStoragePersistenceVersion = settings.getLocalStoragePersistenceVersion();
             this.localStoragePersistence = settings.isLocalStoragePersistedOnServer();
@@ -132,8 +135,8 @@ public class UserSettings {
             return this;
         }
 
-        public UserSettings build() {
-            return new UserSettings(localStoragePersistence, localStoragePersistenceVersion, storage,
+        public WebAdminSettings build() {
+            return new WebAdminSettings(localStoragePersistence, localStoragePersistenceVersion, storage,
                     originalUserOptions);
         }
 
@@ -164,6 +167,12 @@ public class UserSettings {
                 // null would trigger the migration
                 return CURRENT_VERSION;
             }
+        }
+
+        public Builder withDefaults() {
+            return withStorage(Collections.emptyMap())
+                    .withLocalStoragePersistence(true)
+                    .withCurrentVersion();
         }
     }
 
@@ -233,8 +242,10 @@ public class UserSettings {
         /**
          * Encode to map of (key, json string).
          */
-        public static Map<String, String> encode(UserSettings settings) {
-            JSONObject webAdminOptions = toJSONObject(settings.getOriginalUserOptions().get(WEB_ADMIN));
+        public static UserProfileProperty encode(WebAdminSettings settings) {
+            // use original content as base and overwrite known properties
+            // any unknown properties will be preserved
+            JSONObject webAdminOptions = toJSONObject(settings.getOriginalUserOptions().getContent());
 
             JSONObject newStorage = new JSONObject();
             for (Map.Entry<String, String> entry : settings.getLocalStoragePersistedOnServer().entrySet()) {
@@ -242,14 +253,17 @@ public class UserSettings {
             }
 
             webAdminOptions.put(LOCAL_STORAGE, newStorage);
-            webAdminOptions.put(LOCAL_STORAGE_PERSISTENCE, JSONBoolean.getInstance(settings.isLocalStoragePersistedOnServer()));
-            webAdminOptions.put(LOCAL_STORAGE_PERSISTENCE_VERSION, settings.getLocalStoragePersistenceVersion() != null ?
-                    new JSONNumber(settings.getLocalStoragePersistenceVersion()) :
-                    JSONNull.getInstance());
+            webAdminOptions.put(LOCAL_STORAGE_PERSISTENCE,
+                    JSONBoolean.getInstance(settings.isLocalStoragePersistedOnServer()));
+            webAdminOptions.put(LOCAL_STORAGE_PERSISTENCE_VERSION,
+                    settings.getLocalStoragePersistenceVersion() != null ?
+                            new JSONNumber(settings.getLocalStoragePersistenceVersion()) :
+                            JSONNull.getInstance());
 
-            Map<String, String> newOptions = new HashMap<>(settings.getOriginalUserOptions());
-            newOptions.put(WEB_ADMIN, JsonUtils.stringify(webAdminOptions.getJavaScriptObject()));
-            return newOptions;
+            return UserProfileProperty.builder()
+                    .from(settings.getOriginalUserOptions())
+                    .withContent(JsonUtils.stringify(webAdminOptions.getJavaScriptObject()))
+                    .build();
         }
 
         /**

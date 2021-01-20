@@ -1,13 +1,22 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
+import static org.ovirt.engine.api.restapi.resource.aaa.BackendUserOptionResource.addUserProperties;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
+import org.ovirt.engine.api.model.Properties;
+import org.ovirt.engine.api.model.Property;
 import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.api.model.UserOption;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
@@ -22,10 +31,10 @@ import org.ovirt.engine.api.restapi.resource.BackendAssignedRolesResource;
 import org.ovirt.engine.api.restapi.resource.BackendEventSubscriptionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendUserTagsResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
-import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
-import org.ovirt.engine.core.common.action.UpdateUserParameters;
+import org.ovirt.engine.core.common.action.UserProfilePropertyParameters;
+import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -56,7 +65,7 @@ public class BackendUserResource
             "permissions",
             "roles",
             "sshPublicKeys",
-            "tags"};
+            "tags" };
     private BackendUsersResource parent;
 
     public BackendUserResource(String id, BackendUsersResource parent) {
@@ -74,29 +83,110 @@ public class BackendUserResource
 
     @Override
     public User get() {
-        return performGet(QueryType.GetDbUserByUserId, new IdQueryParameters(guid), BaseResource.class);
+        return addUserProperties(
+                performGet(
+                        QueryType.GetDbUserByUserId,
+                        new IdQueryParameters(guid),
+                        BaseResource.class),
+                getOptionsResource().list());
     }
 
     @Override
     public User update(User user) {
         boolean mergeOptions = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, MERGE, false, false);
-        return performUpdate(user,
-                new QueryIdResolver<Guid>(QueryType.GetDbUserByUserId, IdQueryParameters.class),
-                ActionType.UpdateUserOptions,
-                new UpdateParametersProvider(mergeOptions));
+        validateUpdate(user, get());
+
+        Map<String, String> incomingPropertyValues = filterOutDuplicatedProperties(user.getUserOptions());
+        Map<String, UserOption> existingProperties = retrieveExistingProperties();
+        List<String> impactedProperties = calculateImpactedProperties(incomingPropertyValues, existingProperties);
+
+        // one-by-one decide which operation applies to given property
+        for (String name : impactedProperties) {
+            String incomingContent = incomingPropertyValues.get(name);
+            UserOption existingOption = existingProperties.get(name);
+
+            if (incomingContent != null) {
+                if (existingOption == null) {
+                    addNewUserProfileProperty(name, incomingContent);
+                } else {
+                    updateExistingUserProfileProperty(name, existingOption, incomingContent);
+                }
+            } else if (existingOption != null && !mergeOptions) {
+                removeUserProfileProperty(existingOption);
+            }
+        }
+
+        return get();
     }
 
-    public class UpdateParametersProvider implements ParametersProvider<User, DbUser> {
-        private boolean mergeOptions;
+    private void removeUserProfileProperty(UserOption existingOption) {
+        // in the default case (mergeOptions == false) all existing properties
+        // that are not included in the update are removed
+        performAction(ActionType.RemoveUserProfileProperty,
+                new IdParameters(Guid.createGuidFromStringDefaultEmpty(existingOption.getId())));
+    }
 
-        public UpdateParametersProvider(boolean mergeOptions) {
-            this.mergeOptions = mergeOptions;
-        }
+    /**
+     * Calculate all properties impacted by this operation.
+     * Each property on the list can be either updated, added or deleted.
+     * @param incomingPropertyValues properties sent in the request
+     * @param existingProperties properties currently stored in the DB
+     * @return list of unique property names
+     */
+    private List<String> calculateImpactedProperties(Map<String, String> incomingPropertyValues, Map<String, UserOption> existingProperties) {
+        return Stream.concat(
+                incomingPropertyValues.keySet().stream(),
+                existingProperties.keySet().stream())
+                .distinct()
+                .collect(Collectors.toList());
+    }
 
-        @Override
-        public ActionParametersBase getParameters(User model, DbUser entity) {
-            return new UpdateUserParameters(map(model, entity), mergeOptions);
-        }
+    /**
+     *
+     * @return map of (property name, property)
+     */
+    private Map<String, UserOption> retrieveExistingProperties() {
+        return getOptionsResource().list().getUserOptions().stream()
+                // properties from the DB are guaranteed to have unique names
+                .collect(Collectors.toMap(UserOption::getName, prop -> prop));
+    }
+
+    /**
+     * @return map of (property name, property value)
+     */
+    private Map<String, String> filterOutDuplicatedProperties(Properties properties) {
+        return Optional.ofNullable(properties)
+                .orElse(new Properties())
+                .getProperties()
+                .stream()
+                .collect(Collectors.toMap(Property::getName,
+                        Property::getValue,
+                        // each property name should be unique
+                        // filter out duplicates  using a merge function (last property wins)
+                        (firstValue, secondValue) -> secondValue));
+    }
+
+    private void updateExistingUserProfileProperty(String name, UserOption existingOption, String incomingContent) {
+        performAction(
+                ActionType.UpdateUserProfileProperty,
+                new UserProfilePropertyParameters(UserProfileProperty.builder()
+                        .withName(name)
+                        .withPropertyId(Guid.createGuidFromStringDefaultEmpty(existingOption.getId()))
+                        .withTypeJson()
+                        .withContent(incomingContent)
+                        .withUserId(guid)
+                        .build())
+        );
+    }
+
+    private void addNewUserProfileProperty(String name, String incomingContent) {
+        performAction(ActionType.AddUserProfileProperty,
+                new UserProfilePropertyParameters(UserProfileProperty.builder()
+                        .withName(name)
+                        .withTypeJson()
+                        .withContent(incomingContent)
+                        .withUserId(guid)
+                        .build()));
     }
 
     @Override
@@ -120,9 +210,9 @@ public class BackendUserResource
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                                                             QueryType.GetPermissionsOnBehalfByAdElementId,
-                                                             new IdQueryParameters(guid),
-                                                             User.class));
+                QueryType.GetPermissionsOnBehalfByAdElementId,
+                new IdQueryParameters(guid),
+                User.class));
     }
 
     @Override
@@ -146,8 +236,7 @@ public class BackendUserResource
         return inject(new BackendEventSubscriptionsResource(id));
     }
 
-    @Override
-    public UserOptionsResource getOptionsResource() {
-        return null;
+    @Override public UserOptionsResource getOptionsResource() {
+        return inject(new BackendUserOptionsResource(guid));
     }
 }

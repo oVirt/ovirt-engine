@@ -46,6 +46,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
 
     private final ApplicationLogManager applicationLogManager;
     private final AlertManager alertManager;
+    private ClientStorage clientStorage;
 
     public BaseApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
@@ -55,7 +56,8 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             LockInteractionManager lockInteractionManager,
             Frontend frontend, CurrentUserRole currentUserRole,
             ApplicationLogManager applicationLogManager,
-            AlertManager alertManager) {
+            AlertManager alertManager,
+            ClientStorage clientStorage) {
         this.typeResolver = typeResolver;
         this.frontendEventsHandler = frontendEventsHandler;
         this.frontendFailureEventListener = frontendFailureEventListener;
@@ -66,6 +68,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         this.currentUserRole = currentUserRole;
         this.applicationLogManager = applicationLogManager;
         this.alertManager = alertManager;
+        this.clientStorage = clientStorage;
     }
 
     @Override
@@ -202,7 +205,10 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         // after all model providers have been properly initialized
         Scheduler.get().scheduleDeferred(() -> {
             lockInteractionManager.showLoadingIndicator();
-            getLoginModel().autoLogin(loggedUser);
+            getLoginModel().autoLogin(loggedUser, userInfo.getWebAdminUserOption());
+            clientStorage.storeAllUserSettingsInLocalStorage(Frontend.getInstance()
+                    .getUserProfileManager()
+                    .getWebAdminSettings());
         });
 
         user.setUserInfo(userInfo);

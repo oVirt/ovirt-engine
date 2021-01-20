@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.system;
 
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.ui.frontend.UserSettings;
+import org.ovirt.engine.ui.frontend.WebAdminSettings;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.LocalStorage;
 
 /**
@@ -61,7 +60,7 @@ public interface ClientStorage extends LocalStorage {
      * Applies all supported keys from remote storage to local storage.
      * Existing keys are overridden. Unsupported keys are ignored.
      */
-    void storeAllUserSettingsInLocalStorage(DbUser upToDateUser, UserSettings userSettings);
+    void storeAllUserSettingsInLocalStorage(WebAdminSettings webAdminSettings);
 
     /**
      * Returns the value for the given key from session (transient) storage,

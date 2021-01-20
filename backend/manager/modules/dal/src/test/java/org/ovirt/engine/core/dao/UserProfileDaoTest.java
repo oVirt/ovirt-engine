@@ -3,7 +3,7 @@ package org.ovirt.engine.core.dao;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.ovirt.engine.core.common.businessentities.UserProfileProperty.PropertyType.SSH_PUBLIC_KEY;
 
 import java.util.List;
 
@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.businessentities.UserSshKey;
 import org.ovirt.engine.core.compat.Guid;
-import org.springframework.dao.DataIntegrityViolationException;
 
 public class UserProfileDaoTest extends BaseDaoTestCase<UserProfileDao> {
     private static final String existingLoginName = "userportal2@testportal.redhat.com@testportal.redhat.com";
@@ -82,6 +81,34 @@ public class UserProfileDaoTest extends BaseDaoTestCase<UserProfileDao> {
     }
 
     @Test
+    public void testGetSshPropertyByName() {
+        UserProfileProperty result = dao.getByName(existingSshProperty.getName(), existingSshProperty.getUserId());
+
+        assertThat(result).isEqualTo(existingSshProperty);
+        assertThat(result).hasSameClassAs(new UserProfileProperty());
+    }
+
+    @Test
+    void testGetByNameForNullName() {
+        assertThat(dao.getByName(null, Guid.newGuid())).isNull();
+    }
+
+    @Test
+    void testGetByNameForNullUser() {
+        assertThat(dao.getByName(SSH_PUBLIC_KEY.name(), null)).isNull();
+    }
+
+    @Test
+    void testGetByNameForEmptyUserId() {
+        assertThat(dao.getByName(SSH_PUBLIC_KEY.name(), Guid.Empty)).isNull();
+    }
+
+    @Test
+    void testGetByNameForMissingName() {
+        assertThat(dao.getByName("not_existing_prop", existingSshProperty.getUserId())).isNull();
+    }
+
+    @Test
     public void testSaveSshProperty() {
         UserProfileProperty newProp = UserProfileProperty.builder()
                 .withNewIdIfEmpty()
@@ -90,10 +117,14 @@ public class UserProfileDaoTest extends BaseDaoTestCase<UserProfileDao> {
                 .withContent("key4")
                 .build();
 
-        dao.save(newProp);
-        UserProfileProperty result = dao.get(newProp.getPropertyId());
+        Guid id = dao.save(newProp);
+        assertNotNull(id);
 
-        assertThat(result).isEqualTo(newProp);
+        UserProfileProperty result = dao.get(id);
+
+        assertThat(result).isEqualTo(UserProfileProperty.builder()
+                .from(newProp)
+                .withPropertyId(id).build());
     }
 
     @Test
@@ -106,20 +137,14 @@ public class UserProfileDaoTest extends BaseDaoTestCase<UserProfileDao> {
                 .withContent("[{}]")
                 .build();
 
-        dao.save(newProp);
-        UserProfileProperty result = dao.get(newProp.getPropertyId());
+        Guid id = dao.save(newProp);
+        assertNotNull(id);
 
-        assertThat(result).isEqualTo(newProp);
-    }
+        UserProfileProperty result = dao.get(id);
 
-    @Test
-    public void testSavePropsWithEmptyId() {
-        UserProfileProperty newProp = UserProfileProperty.builder()
-                .withDefaultSshProp()
-                .withPropertyId(Guid.Empty)
-                .build();
-
-        assertThrows(IllegalArgumentException.class, () -> dao.save(newProp));
+        assertThat(result).isEqualTo(UserProfileProperty.builder()
+                .from(newProp)
+                .withPropertyId(id).build());
     }
 
     @Test
@@ -128,16 +153,14 @@ public class UserProfileDaoTest extends BaseDaoTestCase<UserProfileDao> {
                 .from(existingSshProperty)
                 .withContent("key4")
                 .build();
-        Guid newId = Guid.newGuid();
 
-        dao.update(update, newId);
-        UserProfileProperty result = dao.get(newId);
+        UserProfileProperty result = dao.update(update);
 
         assertNotNull(result);
         assertThat(result).isEqualTo(
                 UserProfileProperty.builder()
                         .from(update)
-                        .withPropertyId(newId)
+                        .withPropertyId(result.getPropertyId())
                         .build());
     }
 
@@ -150,16 +173,7 @@ public class UserProfileDaoTest extends BaseDaoTestCase<UserProfileDao> {
                 .withContent("key4")
                 .build();
 
-        assertThrows(DataIntegrityViolationException.class, () -> dao.update(update, Guid.newGuid()));
-    }
-
-    @Test
-    public void testUpdatePropertyWithEmptyId() {
-        UserProfileProperty update = UserProfileProperty.builder()
-                .from(existingSshProperty)
-                .build();
-
-        assertThrows(IllegalArgumentException.class, () -> dao.update(update, Guid.Empty));
+        assertNull(dao.update(update));
     }
 
     @Test
@@ -199,8 +213,6 @@ public class UserProfileDaoTest extends BaseDaoTestCase<UserProfileDao> {
                 .build();
 
         assertThat(profile).isEqualTo(existingProfile);
-        assertThat(profile.getFirstSshPublicKeyProperty()).contains(existingSshProperty);
-        assertThat(profile.getFirstSshPublicKeyProperty().orElseThrow()).hasSameClassAs(new UserProfileProperty());
     }
 
     @Test

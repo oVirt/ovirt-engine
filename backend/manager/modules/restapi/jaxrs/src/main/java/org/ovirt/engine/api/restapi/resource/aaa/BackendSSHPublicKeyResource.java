@@ -1,62 +1,60 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
+import static org.ovirt.engine.core.common.businessentities.UserProfileProperty.PropertyType.SSH_PUBLIC_KEY;
+
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.SshPublicKey;
 import org.ovirt.engine.api.resource.aaa.SshPublicKeyResource;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.UserProfilePropertyParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.queries.UserProfilePropertyIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSSHPublicKeyResource
-        extends AbstractBackendSubResource<SshPublicKey, UserProfileProperty>
+        extends AbstractBackendUserProfilePropertyResource<SshPublicKey>
         implements SshPublicKeyResource {
 
     private final BackendSSHPublicKeysResource parent;
 
     public BackendSSHPublicKeyResource(String id, BackendSSHPublicKeysResource parent) {
-        super(id, SshPublicKey.class, UserProfileProperty.class);
+        super(id, SshPublicKey.class, SSH_PUBLIC_KEY);
         this.parent = parent;
     }
 
-    @Override
-    public SshPublicKey get() {
-        return performGet(QueryType.GetUserProfileProperty, new IdQueryParameters(guid));
-    }
-
-    @Override
-    protected SshPublicKey addParents(SshPublicKey pubkey) {
-        return parent.addParents(pubkey);
-    }
-
-    UserProfileProperty getEntity(Guid id) {
+    UserProfileProperty getProperty(Guid id) {
         return getEntity(
                 UserProfileProperty.class,
                 QueryType.GetUserProfileProperty,
-                new IdQueryParameters(id),
+                new UserProfilePropertyIdQueryParameters(id, getPropertyType()),
                 id.toString(),
                 true
         );
     }
 
+    /**
+     * Custom implementation required because a new entity is returned (this resource is immutable).
+     */
     @Override
     public SshPublicKey update(SshPublicKey update) {
-        UserProfileProperty existingEntity = getEntity(guid);
+        UserProfileProperty existingEntity = getProperty(guid);
         validateUpdate(update, map(existingEntity));
-        Guid newKeyId = performAction(ActionType.UpdateUserProfileProperty,
+        UserProfileProperty updated = performAction(
+                ActionType.UpdateUserProfileProperty,
                 new UserProfilePropertyParameters(map(update, existingEntity)),
-                Guid.class);
-        return addParents(addLinks(map(getEntity(newKeyId))));
+                UserProfileProperty.class);
+        if (updated == null) {
+            // nothing was updated - despite upfront validation the update was illegal
+            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST).build());
+        }
+        return addParents(addLinks(map(updated)));
     }
 
     @Override
-    public Response remove() {
-        get();
-        return performAction(ActionType.RemoveUserProfileProperty, new IdParameters(guid));
+    protected SshPublicKey addParents(SshPublicKey key) {
+        return parent.addParents(key);
     }
 }

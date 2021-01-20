@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -58,9 +57,6 @@ class AddUserProfilePropertyCommandTest extends BaseCommandTest {
         verify(userProfileDaoMock).save(
                 argThat((UserProfileProperty outputProp) -> {
                             checkAssertsForSshProp(inputProp, outputProp);
-
-                            assertThat(outputProp.getPropertyId()).isNotEqualTo(inputProp.getPropertyId());
-
                             checkAssertsForGenericProp(inputProp, outputProp);
                             return true;
                         }

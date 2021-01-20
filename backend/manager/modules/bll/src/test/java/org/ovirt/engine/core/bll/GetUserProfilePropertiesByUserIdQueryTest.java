@@ -4,18 +4,17 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.UserProfilePropertyIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
 class GetUserProfilePropertiesByUserIdQueryTest
-        extends AbstractUserQueryTest<IdQueryParameters, GetUserProfilePropertiesByUserIdQuery<IdQueryParameters>> {
+        extends AbstractUserQueryTest<UserProfilePropertyIdQueryParameters, GetUserProfilePropertiesByUserIdQuery<UserProfilePropertyIdQueryParameters>> {
 
     @Mock
     private UserProfileDao userProfileDaoMock;
@@ -24,6 +23,7 @@ class GetUserProfilePropertiesByUserIdQueryTest
     public void executeAsUser() {
         Guid userId = Guid.newGuid();
         when(getQueryParameters().getId()).thenReturn(userId);
+        when(getQueryParameters().getType()).thenReturn(UserProfileProperty.PropertyType.SSH_PUBLIC_KEY);
         when(getUser().getId()).thenReturn(userId);
 
         executeQueryInternal();
@@ -37,7 +37,16 @@ class GetUserProfilePropertiesByUserIdQueryTest
                 .withUserId(getUser().getId())
                 .build();
 
-        when(userProfileDaoMock.getAll(getQueryParameters().getId())).thenReturn(Collections.singletonList(prop));
+        // second property that should be filtered out
+        UserProfileProperty otherProp = UserProfileProperty.builder()
+                .withTypeJson()
+                .withName("OtherUnusedProp")
+                .withNewId()
+                .withContent("{}")
+                .withUserId(getUser().getId())
+                .build();
+
+        when(userProfileDaoMock.getAll(getQueryParameters().getId())).thenReturn(List.of(prop, otherProp));
 
         getQuery().executeQueryCommand();
 
@@ -61,6 +70,7 @@ class GetUserProfilePropertiesByUserIdQueryTest
         Guid userId = Guid.newGuid();
         Guid targetId = Guid.newGuid();
         when(getQueryParameters().getId()).thenReturn(targetId);
+        when(getQueryParameters().getType()).thenReturn(UserProfileProperty.PropertyType.SSH_PUBLIC_KEY);
         when(getUser().getId()).thenReturn(userId);
         when(getUser().isAdmin()).thenReturn(true);
 

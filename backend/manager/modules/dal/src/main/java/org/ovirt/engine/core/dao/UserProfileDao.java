@@ -11,9 +11,9 @@ public interface UserProfileDao extends Dao {
 
     UserProfileProperty get(Guid propertyId);
 
-    void save(UserProfileProperty property);
+    Guid save(UserProfileProperty property);
 
-    void update(UserProfileProperty property, Guid newKeyId);
+    UserProfileProperty update(UserProfileProperty property);
 
     void remove(Guid keyId);
 
@@ -22,4 +22,6 @@ public interface UserProfileDao extends Dao {
     UserProfile getProfile(Guid userId);
 
     List<UserSshKey> getAllPublicSshKeys();
+
+    UserProfileProperty getByName(String name, Guid userId);
 }

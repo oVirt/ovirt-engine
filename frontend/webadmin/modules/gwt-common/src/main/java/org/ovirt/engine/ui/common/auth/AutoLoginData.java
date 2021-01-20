@@ -1,14 +1,11 @@
 package org.ovirt.engine.ui.common.auth;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.WebAdminSettings;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 
 /**
  * Overlay type for {@code userInfo} global JS object.
@@ -38,8 +35,12 @@ public final class AutoLoginData extends JavaScriptObject {
         return this.isAdmin;
     }-*/;
 
-    private native JavaScriptObject getUserOptions() /*-{
-        return this.userOptions || {};
+    private native String getUserOptions() /*-{
+        return this.userOptions;
+    }-*/;
+
+    private native String getUserOptionsId() /*-{
+        return this.userOptionsId;
     }-*/;
 
     public DbUser getDbUser() {
@@ -48,20 +49,20 @@ public final class AutoLoginData extends JavaScriptObject {
         user.setDomain(getDomain());
         user.setLoginName(getUserName());
         user.setAdmin(isAdmin());
-        user.setUserOptions(deserializeOptions(getUserOptions()));
         return user;
     }
 
-    private Map<String, String> deserializeOptions(JavaScriptObject userOptions) {
-        JSONObject options = new JSONObject(getUserOptions());
-        Map<String, String> parsedOptions = new HashMap<>();
-        for(String key : options.keySet()) {
-            JSONString value = options.get(key).isString();
-            if (value != null) {
-                parsedOptions.put(key, value.stringValue());
-            }
+    public UserProfileProperty getWebAdminUserOption() {
+        if(getUserOptions() == null || getUserOptionsId() == null) {
+            return WebAdminSettings.defaultSettings().getOriginalUserOptions();
         }
-        return parsedOptions;
+        return UserProfileProperty.builder()
+                .withName(WebAdminSettings.WEB_ADMIN)
+                .withUserId(Guid.createGuidFromStringDefaultEmpty(getId()))
+                .withPropertyId(Guid.createGuidFromStringDefaultEmpty(getUserOptionsId()))
+                .withTypeJson()
+                .withContent(getUserOptions())
+                .build();
     }
 
     public native String getEngineSessionId() /*-{

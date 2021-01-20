@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
+import static org.ovirt.engine.api.restapi.resource.aaa.BackendUserOptionResource.addUserProperties;
 import static org.ovirt.engine.api.utils.ReflectionHelper.assignChildModel;
 
 import java.nio.charset.StandardCharsets;
@@ -123,7 +124,7 @@ public class BackendUsersResource
         for (DbUser entity : entities) {
             User user = map(entity);
             user = populate(user, entity);
-            user = addLinks(user, BaseResource.class);
+            user = addUserProperties(addLinks(user, BaseResource.class), getUserResource(user.getId()).getOptionsResource().list());
             collection.getUsers().add(user);
         }
         return collection;

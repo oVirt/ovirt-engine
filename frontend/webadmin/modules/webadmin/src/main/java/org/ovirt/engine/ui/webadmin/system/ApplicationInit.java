@@ -27,7 +27,6 @@ import com.google.inject.Provider;
 public class ApplicationInit extends BaseApplicationInit<LoginModel> implements PluginsReadyCallback {
 
     private final ApplicationDynamicMessages dynamicMessages;
-    private final ClientStorage clientStorage;
 
     private boolean pluginsReady = false;
 
@@ -47,17 +46,9 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> implements 
             ClientStorage clientStorage) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user,
                 loginModelProvider, lockInteractionManager, frontend, currentUserRole,
-                applicationLogManager, alertManager);
+                applicationLogManager, alertManager, clientStorage);
         this.dynamicMessages = dynamicMessages;
         pluginManager.setPluginsReadyCallback(this);
-        this.clientStorage = clientStorage;
-    }
-
-    @Override
-    protected void afterLogin() {
-        super.afterLogin();
-        clientStorage.storeAllUserSettingsInLocalStorage(Frontend.getInstance().getLoggedInUser(),
-                Frontend.getInstance().getUserSettings());
     }
 
     @Override

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -129,13 +130,14 @@ public class LoginModel extends Model {
         AsyncDataProvider.getInstance().initCache(this);
     }
 
-    public void autoLogin(DbUser user) {
+    public void autoLogin(DbUser user, UserProfileProperty webAdminOption) {
         loggingInAutomatically = true;
         getUserName().setEntity(user.getLoginName());
         getProfile().setSelectedItem(user.getDomain());
         disableLoginScreen();
         setLoggedUser(user);
         Frontend.getInstance().setLoggedInUser(user);
+        Frontend.getInstance().getUserProfileManager().setWebAdminUserOption(webAdminOption);
         raiseLoggedInEvent();
     }
 
