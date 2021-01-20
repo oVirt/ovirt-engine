@@ -48,14 +48,7 @@ public class AddUserProfilePropertyCommand<T extends UserProfilePropertyParamete
 
     @Override
     protected void executeCommand() {
-        UserProfileProperty prop = UserProfileProperty.builder()
-                .from(getParameters().getUserProfileProperty())
-                .withNewId()
-                .build();
-
-        userProfileDao.save(prop);
-
-        setActionReturnValue(prop.getPropertyId());
+        setActionReturnValue(userProfileDao.save(getParameters().getUserProfileProperty()));
         setSucceeded(true);
     }
 

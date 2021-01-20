@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UserProfilePropertyParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
 public class UpdateUserProfilePropertyCommand<T extends UserProfilePropertyParameters> extends CommandBase<T> {
@@ -51,13 +50,7 @@ public class UpdateUserProfilePropertyCommand<T extends UserProfilePropertyParam
 
     @Override
     protected void executeCommand() {
-        Guid newKeyId = Guid.newGuid();
-        userProfileDao.update(
-                UserProfileProperty.builder()
-                        .from(getParameters().getUserProfileProperty())
-                        .build(),
-                newKeyId);
-        setActionReturnValue(newKeyId);
+        setActionReturnValue(userProfileDao.update(getParameters().getUserProfileProperty()));
         setSucceeded(true);
     }
 

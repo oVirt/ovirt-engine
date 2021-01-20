@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -63,31 +62,6 @@ public class UserProfile implements Queryable {
         return properties.values().stream()
                 .filter(UserProfileProperty::isSshPublicKey)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * @return key ID of the first property with type
-     * {@linkplain UserProfileProperty.PropertyType#SSH_PUBLIC_KEY} or {@linkplain Guid#Empty} if none.
-     */
-    public Guid getSshPublicKeyId() {
-        return getFirstSshPublicKeyProperty()
-                .map(UserProfileProperty::getPropertyId)
-                .orElse(Guid.Empty);
-    }
-
-    public Optional<UserProfileProperty> getFirstSshPublicKeyProperty() {
-        return getSshProperties().stream()
-                .findFirst();
-    }
-
-    /**
-     * @return content of the first property with type
-     * {@linkplain UserProfileProperty.PropertyType#SSH_PUBLIC_KEY} or empty string if none.
-     */
-    public String getSshPublicKey() {
-        return getFirstSshPublicKeyProperty()
-                .map(UserProfileProperty::getContent)
-                .orElse("");
     }
 
     public List<UserProfileProperty> getProperties() {

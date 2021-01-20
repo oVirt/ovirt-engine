@@ -4,26 +4,21 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.validator.UserProfileValidator;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
-public class GetUserProfileQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetUserProfilePropertyByNameAndUserIdQuery<P extends IdAndNameQueryParameters> extends QueriesCommandBase<P> {
     @Inject
     private UserProfileDao userProfileDao;
 
     private final UserProfileValidator validator = new UserProfileValidator();
 
-    public GetUserProfileQuery(P parameters, EngineContext engineContext) {
+    public GetUserProfilePropertyByNameAndUserIdQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
 
     private boolean validate() {
-        return validate(
-                validator.authorized(
-                        getUser(),
-                        getParameters().getId()
-                )
-        );
+        return validate(validator.authorized(getUser(), getParameters().getId()));
     }
 
     @Override
@@ -32,6 +27,7 @@ public class GetUserProfileQuery<P extends IdQueryParameters> extends QueriesCom
             return;
         }
 
-        getQueryReturnValue().setReturnValue(userProfileDao.getProfile(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(userProfileDao.getByName(getParameters().getName(), getParameters().getId()));
     }
 }
+

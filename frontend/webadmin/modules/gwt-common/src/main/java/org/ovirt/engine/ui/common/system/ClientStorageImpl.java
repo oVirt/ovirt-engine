@@ -12,9 +12,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.UserSettings;
+import org.ovirt.engine.ui.frontend.WebAdminSettings;
 
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.user.client.Cookies;
@@ -103,7 +104,10 @@ public class ClientStorageImpl implements ClientStorage {
     }
 
     private boolean shouldSaveOnServer() {
-        return Frontend.getInstance().getUserSettings().isLocalStoragePersistedOnServer();
+        WebAdminSettings settings = Frontend.getInstance().getUserProfileManager().getWebAdminSettings();
+        return settings != null &&
+                settings.isLocalStoragePersistedOnServer() &&
+                settings.getLocalStoragePersistenceVersion() != null;
     }
 
     @Override
@@ -124,10 +128,12 @@ public class ClientStorageImpl implements ClientStorage {
         }
     }
 
-    private void uploadUserSettings(DbUser upToDateUser) {
-        Frontend.getInstance().uploadUserSettings(upToDateUser, result -> {
-            syncTimer.activate();
-        }, null);
+    private void uploadUserSettings(UserProfileProperty update) {
+        Frontend.getInstance().getUserProfileManager().uploadWebAdminSettings(
+                update,
+                result -> syncTimer.activate(),
+                null,
+                false);
     }
 
     private class ActivationTimer extends Timer {
@@ -178,9 +184,7 @@ public class ClientStorageImpl implements ClientStorage {
                 logger.finest("Sync in progress. Delay next sync."); //$NON-NLS-1$
                 activationTimer.delaySync();
                 return;
-            }
-
-            if (!active && lockExpirationTime <= now) {
+            } else if (!active) {
                 logger.warning("Sync lock has expired after[ms]: " + (now - deactivationTime)); //$NON-NLS-1$
             }
 
@@ -189,43 +193,39 @@ public class ClientStorageImpl implements ClientStorage {
             long optionExpirationTime = lastUserSync + MAX_OPTION_AGE;
             if (optionExpirationTime > now) {
                 // assume that:
-                // getLoggedInUser() returns correct/fully initialized instance fetched via request
                 // user settings are fresh-enough
-                doUpload();
+                doUpload(true);
                 logger.finest("Upload to the server started."); //$NON-NLS-1$
                 return;
             }
 
             logger.finest("Options are outdated. Reload user."); //$NON-NLS-1$
 
-            Frontend.getInstance().reloadUser(fetchedUser -> {
+            Frontend.getInstance().getUserProfileManager().reloadWebAdminSettings(settings -> {
                 lastUserSync = new Date().getTime();
-                doUpload();
+                doUpload(true);
             }, null);
-            return;
         }
 
-        private void doUpload() {
-            DbUser user = Frontend.getInstance().getLoggedInUser();
-            UserSettings settings = Frontend.getInstance().getUserSettings();
+        private void doUpload(boolean uploadChangedOnly) {
+            WebAdminSettings settings = Frontend.getInstance().getUserProfileManager().getWebAdminSettings();
             if (!settings.isLocalStoragePersistedOnServer()) {
                 // multi-browser scenario: 2nd browser disabled persistence
                 logger.info("Storage persistence disabled from other browser.Skip upload."); //$NON-NLS-1$
                 return;
             }
+
             Map<String, String> updated = getAllSupportedMappingsFromLocalStorage();
-            if (settings.getLocalStoragePersistedOnServer().equals(updated)) {
+            if (uploadChangedOnly && settings.getLocalStoragePersistedOnServer().equals(updated)) {
                 logger.finest("Options are already up-to-date.Skip upload."); //$NON-NLS-1$
                 return;
             }
-            Map<String, String> encodedOptions = UserSettings.Builder.create()
+            UserProfileProperty update = WebAdminSettings.Builder.create()
                     .fromSettings(settings)
                     .withStorage(updated)
                     .build()
                     .encode();
-            user.setUserOptions(encodedOptions);
-            uploadUserSettings(user);
-
+            uploadUserSettings(update);
         }
 
         public void trigger() {
@@ -236,31 +236,37 @@ public class ClientStorageImpl implements ClientStorage {
     }
 
     @Override
-    public void storeAllUserSettingsInLocalStorage(DbUser user, UserSettings userSettings) {
-        if (user == null || userSettings == null) {
-            logger.warning("Null user/settings. Nothing to store."); //$NON-NLS-1$
+    public void storeAllUserSettingsInLocalStorage(WebAdminSettings webAdminSettings) {
+        if (webAdminSettings == null) {
+            logger.warning("Null settings. Nothing to store."); //$NON-NLS-1$
             return;
         }
 
-        if (!userSettings.isLocalStoragePersistedOnServer()) {
+        if (!webAdminSettings.isLocalStoragePersistedOnServer()) {
             logger.info("Uploading settings from local storage to the server is disabled."); //$NON-NLS-1$
             return;
         }
 
-        if (userSettings.getLocalStoragePersistenceVersion() == null) {
-            logger.warning("Starting migration to user settings V1."); //$NON-NLS-1$
-            migrateToV1(userSettings);
+        if (webAdminSettings.getLocalStoragePersistenceVersion() == null || webAdminSettings.getOriginalUserOptions() == null) {
+            // version defaults to current version if no option, otherwise should be part of JSON content
+            // missing version indicates unexpected JSON content i.e. {}, [], null, etc
+            logger.severe("Invalid state. Cancel populating local storage."); //$NON-NLS-1$
+            return;
+        }
+        if (Guid.Empty.equals(webAdminSettings.getOriginalUserOptions().getPropertyId())) {
+            logger.warning("No webAdmin property on the server. Trigger standard upload to create the property."); //$NON-NLS-1$
+            syncTimer.doUpload(false);
             return;
         }
 
-        for (Map.Entry<String, String> entry : userSettings.getLocalStoragePersistedOnServer().entrySet()) {
+        for (Map.Entry<String, String> entry : webAdminSettings.getLocalStoragePersistedOnServer().entrySet()) {
             setLocalItem(entry.getKey(), entry.getValue());
         }
 
         // remove local keys not present on the server
         getAllKeysWithoutPrefix().stream()
                 .filter(this::isSupported)
-                .filter(key -> !userSettings.getLocalStoragePersistedOnServer().containsKey(key))
+                .filter(key -> !webAdminSettings.getLocalStoragePersistedOnServer().containsKey(key))
                 .forEach(this::removeLocalItem);
 
         logger.finest("Finished initial sync server -> local"); //$NON-NLS-1$
@@ -272,28 +278,9 @@ public class ClientStorageImpl implements ClientStorage {
                 .collect(
                         Collectors.toMap(
                                 key -> key,
-                                key -> getLocalItem(key)
+                                this::getLocalItem
                         )
                 );
-    }
-
-    private void migrateToV1(UserSettings settings) {
-        Map<String, String> migrated = getAllSupportedMappingsFromLocalStorage();
-        Map<String, String> encodedOptions = UserSettings.Builder.create()
-                .fromSettings(settings)
-                .withStorage(migrated)
-                .withLocalStoragePersistence(true)
-                .withCurrentVersion()
-                .build()
-                .encode();
-
-        syncTimer.deactivate();
-
-        Frontend.getInstance().reloadUser(fetchedUser -> {
-            lastUserSync = new Date().getTime();
-            fetchedUser.setUserOptions(encodedOptions);
-            uploadUserSettings(fetchedUser);
-        }, null);
     }
 
     private boolean isSupported(String key) {

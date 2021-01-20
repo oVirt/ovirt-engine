@@ -13,18 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 class UserProfileTest {
 
     @Test
-    void emptySshId() {
-        UserProfile profile = new UserProfile();
-        assertThat(profile.getSshPublicKeyId()).isEqualTo(Guid.Empty);
-    }
-
-    @Test
-    void emptySshPublicKey() {
-        UserProfile profile = new UserProfile();
-        assertThat(profile.getSshPublicKey()).isEmpty();
-    }
-
-    @Test
     void contentFromSshPropOnly() {
         UserProfileProperty sshProp = UserProfileProperty.builder()
                 .withDefaultSshProp()
@@ -41,11 +29,8 @@ class UserProfileTest {
                 .withProp(sshProp)
                 .withProp(jsonProp)
                 .build();
-        assertThat(profile.getSshPublicKey()).isEqualTo("ssh_content");
-        assertThat(profile.getSshPublicKeyId()).isEqualTo(Guid.Empty);
-        assertThat(profile.getFirstSshPublicKeyProperty()).isNotEmpty();
-        assertThat(profile.getFirstSshPublicKeyProperty())
-                .contains(UserProfileProperty.builder()
+        assertThat(profile.getSshProperties())
+                .containsOnly(UserProfileProperty.builder()
                         .from(sshProp)
                         .build());
     }

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
@@ -85,6 +86,12 @@ public class EditOptionsModel extends Model {
             // only work values require listeners
             this.originalPublicKey.setEntity(textInput);
             this.publicKey.setEntity(textInput);
+        }
+    }
+
+    public void setOriginalPublicKey(UserProfileProperty prop) {
+        if(prop != null) {
+            setOriginalPublicKey(prop.getContent());
         }
     }
 

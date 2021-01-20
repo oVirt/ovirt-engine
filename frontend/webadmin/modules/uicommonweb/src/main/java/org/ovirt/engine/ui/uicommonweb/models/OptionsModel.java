@@ -1,23 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import static org.ovirt.engine.core.common.action.ActionType.AddUserProfileProperty;
 import static org.ovirt.engine.core.common.action.ActionType.RemoveUserProfileProperty;
-import static org.ovirt.engine.core.common.action.ActionType.UpdateUserProfileProperty;
+import static org.ovirt.engine.core.common.businessentities.UserProfileProperty.PropertyType.SSH_PUBLIC_KEY;
 
 import java.util.Collections;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.action.ActionParametersBase;
-import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
-import org.ovirt.engine.core.common.action.UserProfilePropertyParameters;
-import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.UserSettings;
+import org.ovirt.engine.ui.frontend.WebAdminSettings;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.LocalStorage;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -30,8 +23,8 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
 
     private UICommand editCommand;
 
-    private UserProfile userProfile;
     private final LocalStorage localStorage;
+    private UserProfileProperty sshPublicKeyProp;
 
     @Inject
     public OptionsModel(LocalStorage localStorage) {
@@ -70,98 +63,94 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
         UICommand cancelCommand = UICommand.createCancelUiCommand(constants.cancel(), this);
         model.getCommands().add(cancelCommand);
 
-        AsyncDataProvider.getInstance().getUserProfile(model.asyncQuery(returnValue -> {
-            UserProfile profile = returnValue.getReturnValue();
-            setUserProfile(profile);
-            model.setOriginalPublicKey(getUserProfile().getSshPublicKey());
-        }));
+        Frontend.getInstance().getUserProfileManager()
+                .getUserProfileProperty(SSH_PUBLIC_KEY.name(), SSH_PUBLIC_KEY, prop -> {
+                    setSshPublicKeyProp(prop);
+                    model.setOriginalPublicKey(prop);
+                }, model);
 
-        Frontend.getInstance().reloadUser(user -> {
-            model.getOriginalStoragePersistedOnServer().setEntity(isLocalStoragePersistedOnServer());
-            model.getLocalStoragePersistedOnServer().setEntity(isLocalStoragePersistedOnServer());
+        Frontend.getInstance().getUserProfileManager().reloadWebAdminSettings(settings -> {
+            model.getOriginalStoragePersistedOnServer().setEntity(settings.isLocalStoragePersistedOnServer());
+            model.getLocalStoragePersistedOnServer().setEntity(settings.isLocalStoragePersistedOnServer());
         }, model);
     }
 
-    private boolean isLocalStoragePersistedOnServer() {
-        return Frontend.getInstance().getUserSettings().isLocalStoragePersistedOnServer();
+    private void setSshPublicKeyProp(UserProfileProperty prop) {
+        this.sshPublicKeyProp = prop;
+    }
+
+    private void confirmSsh(EditOptionsModel model, UserProfileProperty update) {
+        model.setOriginalPublicKey(model.getNewPublicKey());
+        model.setSshUploadSucceeded(true);
+        setSshPublicKeyProp(update);
+
+        if (model.isUploadComplete()) {
+            cancel();
+        }
     }
 
     private void onSave() {
         EditOptionsModel model = (EditOptionsModel) getWindow();
 
-        ActionType action = chooseUserProfileAction(model);
-        ActionParametersBase params = createParamsForAction(action, model.getNewPublicKey());
-        if (params != null) {
-            Frontend.getInstance().runAction(action, params, result -> {
-                model.setSshUploadSucceeded(result.getReturnValue().getSucceeded());
-                if (model.isUploadComplete()) {
-                    cancel();
-                }
-            }, model);
+        if (model.isSshKeyUpdated()) {
+            Frontend.getInstance().getUserProfileManager().uploadUserProfileProperty(
+                    toProp(model.getNewPublicKey()),
+                    (result, update) -> confirmSsh(model, update),
+                    model,
+                    true);
+        } else if (model.isSshKeyRemoved()) {
+            Frontend.getInstance().runAction(RemoveUserProfileProperty,
+                    new IdParameters(sshPublicKeyProp.getPropertyId()),
+                    result -> confirmSsh(model, null),
+                    model);
         } else {
             model.setSshUploadSucceeded(true);
         }
 
-        Frontend.getInstance().reloadUser(fetchedUser -> {
-            Map<String, String> storage = Collections.emptyMap();
-            if (model.getLocalStoragePersistedOnServer().getEntity()) {
-                storage = localStorage.getAllSupportedMappingsFromLocalStorage();
-            }
-            fetchedUser.setUserOptions(UserSettings.Builder.create()
-                    .fromUser(fetchedUser)
-                    .withLocalStoragePersistence(model.getLocalStoragePersistedOnServer().getEntity())
-                    // clear the storage on the server when persistence gets disabled
-                    // upload local state to the server otherwise
-                    .withStorage(storage)
-                    .build()
-                    .encode());
-            Frontend.getInstance().uploadUserSettings(fetchedUser, result -> {
-                model.setOptionsUploadSucceeded(result.getReturnValue().getSucceeded());
-                if (model.isUploadComplete()) {
-                    cancel();
-                }
-            }, model);
-        }, model);
-    }
-
-    private ActionParametersBase createParamsForAction(ActionType action, String newPublicKey) {
-        if (action == null) {
-            return null;
-        }
-        switch (action) {
-        case UpdateUserProfileProperty:
-            return buildUserProfilePropertyParams(getUserProfile().getSshPublicKeyId(), newPublicKey);
-        case AddUserProfileProperty:
-            return buildUserProfilePropertyParams(Guid.newGuid(), newPublicKey);
-        case RemoveUserProfileProperty:
-            return new IdParameters(getUserProfile().getSshPublicKeyId());
-        default:
-            return null;
-        }
-    }
-
-    private ActionType chooseUserProfileAction(EditOptionsModel model) {
-        if (!getUserProfile().getSshProperties().isEmpty()) {
-            if (model.isSshKeyUpdated()) {
-                return UpdateUserProfileProperty;
-            } else if (model.isSshKeyRemoved()) {
-                return RemoveUserProfileProperty;
-            }
-        } else if (model.isSshKeyUpdated()) {
-            return AddUserProfileProperty;
+        if (model.getLocalStoragePersistedOnServer().getEntity() == model.getOriginalStoragePersistedOnServer()
+                .getEntity()) {
+            // no change
+            model.setOptionsUploadSucceeded(true);
+            return;
         }
 
-        return null;
+        Map<String, String> storage = Collections.emptyMap();
+        if (model.getLocalStoragePersistedOnServer().getEntity()) {
+            storage = localStorage.getAllSupportedMappingsFromLocalStorage();
+        }
+        UserProfileProperty update = WebAdminSettings.Builder.create()
+                .fromSettings(Frontend.getInstance().getUserProfileManager().getWebAdminSettings())
+                .withLocalStoragePersistence(model.getLocalStoragePersistedOnServer().getEntity())
+                // clear the storage on the server when persistence gets disabled
+                // upload local state to the server otherwise
+                .withStorage(storage)
+                .build()
+                .encode();
+        Frontend.getInstance().getUserProfileManager().uploadWebAdminSettings(
+                update,
+                result -> {
+                    model.setOptionsUploadSucceeded(true);
+                    model.getOriginalStoragePersistedOnServer()
+                            .setEntity(model.getLocalStoragePersistedOnServer().getEntity());
+                    if (model.isUploadComplete()) {
+                        cancel();
+                    }
+                },
+                model,
+                true);
     }
 
-    private ActionParametersBase buildUserProfilePropertyParams(Guid guid,
-            String content) {
-        return new UserProfilePropertyParameters(UserProfileProperty.builder()
+    private UserProfileProperty toProp(String newPublicKey) {
+        if (sshPublicKeyProp != null) {
+            return UserProfileProperty.builder()
+                    .from(sshPublicKeyProp)
+                    .withContent(newPublicKey).build();
+        }
+        return UserProfileProperty.builder()
                 .withDefaultSshProp()
-                .withPropertyId(guid)
-                .withContent(content)
+                .withContent(newPublicKey)
                 .withUserId(Frontend.getInstance().getLoggedInUser().getId())
-                .build());
+                .build();
     }
 
     public UICommand getEditCommand() {
@@ -175,13 +164,5 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
 
     protected void cancel() {
         setWindow(null);
-    }
-
-    public UserProfile getUserProfile() {
-        return userProfile;
-    }
-
-    public void setUserProfile(UserProfile userProfile) {
-        this.userProfile = userProfile;
     }
 }

@@ -5,10 +5,10 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.validator.UserProfileValidator;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.UserProfilePropertyIdQueryParameters;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
-public class GetUserProfilePropertyQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetUserProfilePropertyQuery<P extends UserProfilePropertyIdQueryParameters> extends QueriesCommandBase<P> {
     @Inject
     private UserProfileDao userProfileDao;
 
@@ -25,7 +25,7 @@ public class GetUserProfilePropertyQuery<P extends IdQueryParameters> extends Qu
     @Override
     protected void executeQueryCommand() {
         UserProfileProperty prop = userProfileDao.get(getParameters().getId());
-        if (prop == null || !validate(prop)) {
+        if (prop == null || prop.getType() != getParameters().getType() || !validate(prop)) {
             return;
         }
 

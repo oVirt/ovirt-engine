@@ -19,8 +19,7 @@ public class UserProfileTestHelper {
     public static void checkAssertsForGenericProp(UserProfileProperty inputProp, UserProfileProperty outputProp) {
         assertThat(outputProp.getType()).as("type").isEqualTo(inputProp.getType());
         assertThat(outputProp.getUserId()).as("user ID").isEqualTo(inputProp.getUserId());
-
-        assertThat(outputProp.getPropertyId()).as("key ID").isNotEqualTo(Guid.Empty);
+        assertThat(outputProp.getPropertyId()).as("key ID").isEqualTo(outputProp.getPropertyId());
     }
 
     public static String buildValidationMessage(ActionReturnValue returnValue) {

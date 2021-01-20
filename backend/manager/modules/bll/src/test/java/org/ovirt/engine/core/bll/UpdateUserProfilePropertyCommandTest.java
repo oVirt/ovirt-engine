@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -53,6 +53,7 @@ class UpdateUserProfilePropertyCommandTest extends BaseCommandTest {
                 .build();
 
         when(userProfileDaoMock.get(propertyId)).thenReturn(existingProp);
+        when(userProfileDaoMock.update(any())).thenReturn(mock(UserProfileProperty.class));
 
         when(parameters.getUserProfileProperty()).thenReturn(inputProp);
         updateCommand.setCurrentUser(createWithId(userId));
@@ -64,17 +65,14 @@ class UpdateUserProfilePropertyCommandTest extends BaseCommandTest {
         verify(userProfileDaoMock).update(
                 argThat((UserProfileProperty outputProp) -> {
                             checkAssertsForSshProp(inputProp, outputProp);
-
-                            assertThat(outputProp.getPropertyId()).as("key ID").isEqualTo(inputProp.getPropertyId());
-
                             checkAssertsForGenericProp(inputProp, outputProp);
                             return true;
                         }
-                ),
-                any());
+                ));
         verify(userProfileDaoMock).get(propertyId);
         verifyNoMoreInteractions(userProfileDaoMock);
         assertTrue(updateCommand.getReturnValue().getSucceeded());
+        assertNotNull(updateCommand.getReturnValue().getActionReturnValue());
     }
 
     @Test

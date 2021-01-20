@@ -913,8 +913,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionType___CreateBrick();
 
-    String ActionType___UpdateUserOptions();
-
     String VdcObjectType___AdElements();
 
     String VdcObjectType___System();

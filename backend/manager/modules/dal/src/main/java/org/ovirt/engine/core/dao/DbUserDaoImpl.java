@@ -1,21 +1,13 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.NullNode;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.JsonHelper;
-import org.ovirt.engine.core.utils.SerializationFactory;
-import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -39,18 +31,8 @@ public class DbUserDaoImpl extends BaseDao implements DbUserDao {
         entity.setAdmin(rs.getBoolean("last_admin_check_status"));
         entity.setExternalId(rs.getString("external_id"));
         entity.setNamespace(rs.getString("namespace"));
-        // options column is backed by JSONB column type and guarantees valid JSON
-        entity.setUserOptions(toStringMap(rs.getString("options")));
         return entity;
     };
-
-    static Map<String, String> toStringMap(String options) {
-        return JsonHelper.jsonToMapUnchecked(options, JsonNode.class).entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey(),
-                        e -> SerializationFactory.getSerializer().serializeUnformattedJson(e.getValue())));
-    }
 
     private MapSqlParameterSource getDbUserParameterSource(DbUser user) {
         return getCustomMapSqlParameterSource()
@@ -64,18 +46,7 @@ public class DbUserDaoImpl extends BaseDao implements DbUserDao {
                 .addValue("username", user.getLoginName())
                 .addValue("last_admin_check_status", user.isAdmin())
                 .addValue("external_id", user.getExternalId())
-                .addValue("namespace", user.getNamespace())
-                .addValue("options", JsonHelper.mapToJsonUnchecked(toNestedMap(user.getUserOptions())));
-    }
-
-    public static Map<String, Object> toNestedMap(Map<String, String> userOptions) {
-        JsonObjectDeserializer deserializer = new JsonObjectDeserializer();
-        return userOptions.entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey(),
-                        e -> Optional.ofNullable(deserializer.deserializeUnformattedJson(e.getValue()))
-                                .orElse(NullNode.getInstance())));
+                .addValue("namespace", user.getNamespace());
     }
 
     @Override

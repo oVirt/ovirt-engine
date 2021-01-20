@@ -3,11 +3,8 @@ package org.ovirt.engine.core.common.businessentities.aaa;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -61,12 +58,6 @@ public class DbUser implements Queryable, Nameable {
     private String note;
 
     /**
-     * Expect (key,value) pairs where
-     * value is a string containing valid JSON node
-     */
-    private Map<String, String> userOptions;
-
-    /**
      * GUI flag only. Do not use for internal logic. The sole purpose of
      * calculating this field is for the GUI user to understand who is admin in
      * a snap on the user grid.
@@ -98,7 +89,6 @@ public class DbUser implements Queryable, Nameable {
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
             groupNames.add(directoryGroup.getName());
         }
-        userOptions = Collections.emptyMap();
     }
 
     public DbUser(DbUser dbUser) {
@@ -110,7 +100,6 @@ public class DbUser implements Queryable, Nameable {
             groupNames = Collections.emptyList();
             groupIds = Collections.emptyList();
             note = "";
-            userOptions = Collections.emptyMap();
         } else {
             id = dbUser.getId();
             externalId = dbUser.getExternalId();
@@ -125,7 +114,6 @@ public class DbUser implements Queryable, Nameable {
             groupIds = new ArrayList<>(dbUser.getGroupIds());
             groupNames = new ArrayList<>(dbUser.getGroupNames());
             isAdmin = dbUser.isAdmin();
-            setUserOptions(dbUser.getUserOptions());
         }
     }
 
@@ -238,18 +226,6 @@ public class DbUser implements Queryable, Nameable {
         this.groupIds = new HashSet<>(groupIds);
     }
 
-    public Map<String, String> getUserOptions() {
-        return Optional.ofNullable(userOptions)
-                .<Map<String, String>> map(HashMap::new)
-                .orElse(Collections.emptyMap());
-    }
-
-    public void setUserOptions(Map<String, String> userOptions) {
-        this.userOptions = Optional.ofNullable(userOptions)
-                .<Map<String, String>> map(HashMap::new)
-                .orElse(Collections.emptyMap());
-    }
-
     public Collection<Guid> getGroupIds() {
         if (groupIds == null) {
             groupIds = Collections.emptyList();
@@ -269,8 +245,7 @@ public class DbUser implements Queryable, Nameable {
                 firstName,
                 note,
                 lastName,
-                loginName,
-                userOptions
+                loginName
         );
     }
 
@@ -292,8 +267,7 @@ public class DbUser implements Queryable, Nameable {
                 && Objects.equals(note, other.note)
                 && Objects.equals(lastName, other.lastName)
                 && Objects.equals(loginName, other.loginName)
-                && Objects.equals(isAdmin, other.isAdmin)
-                && Objects.equals(userOptions, other.userOptions);
+                && Objects.equals(isAdmin, other.isAdmin);
 
     }
 

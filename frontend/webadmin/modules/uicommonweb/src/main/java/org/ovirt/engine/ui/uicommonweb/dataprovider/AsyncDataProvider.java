@@ -625,14 +625,6 @@ public class AsyncDataProvider {
         return diskInterfaces;
     }
 
-    public void getUserProfile(AsyncQuery<QueryReturnValue> aQuery) {
-        Frontend.getInstance().runQuery(
-                QueryType.GetUserProfile,
-                new IdQueryParameters(Frontend.getInstance().getLoggedInUser()
-                        .getId()).withoutRefresh(),
-                aQuery);
-    }
-
     public void getAAAProfilesListViaPublic(AsyncQuery<List<String>> aQuery, boolean passwordBasedOnly) {
         convertAAAProfilesResult(aQuery, passwordBasedOnly);
         Frontend.getInstance().runPublicQuery(QueryType.GetAAAProfileList, new QueryParametersBase(), aQuery);

@@ -5,7 +5,6 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
@@ -39,10 +38,6 @@ public class UserMapper {
             dom.setName(entity.getDomain());
             dom.setId(DirectoryEntryIdUtils.encode(dom.getName()));
             model.setDomain(dom);
-        }
-
-        if (!entity.getUserOptions().isEmpty()) {
-            model.setUserOptions(CustomPropertiesParser.fromMap(entity.getUserOptions()));
         }
         return model;
     }
@@ -99,9 +94,7 @@ public class UserMapper {
         if (model.isSetNamespace()) {
             entity.setNamespace(model.getNamespace());
         }
-        if (model.isSetUserOptions()) {
-            entity.setUserOptions(CustomPropertiesParser.toMap(model.getUserOptions()));
-        }
         return entity;
     }
+
 }
