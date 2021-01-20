@@ -1927,7 +1927,7 @@ public interface UIConstants extends Constants {
 
     String detachWarnningNote();
 
-    String removeDataCenterWarnningNote();
+    String removeDataCenterWarningNote();
 
     String back();
 

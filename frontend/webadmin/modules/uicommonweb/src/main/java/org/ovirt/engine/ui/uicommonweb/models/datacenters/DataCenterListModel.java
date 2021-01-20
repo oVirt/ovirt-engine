@@ -322,7 +322,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             return;
         }
 
-        boolean shouldAddressWarnning = false;
+        boolean shouldAddressWarning = false;
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeDataCenterTitle());
@@ -333,9 +333,9 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         for (StoragePool storagePool : getSelectedItems()) {
             list.add(storagePool.getName());
 
-            // If one of the Data Centers contains a Storage Domain, show the warnning.
+            // If one of the Data Centers contains a Storage Domain, show the warning.
             if (storagePool.getStatus() != StoragePoolStatus.Uninitialized) {
-                shouldAddressWarnning = true;
+                shouldAddressWarning = true;
             }
         }
         model.setItems(list);
@@ -344,8 +344,8 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         model.getCommands().add(tempVar);
         UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
-        if (shouldAddressWarnning) {
-            model.setNote(ConstantsManager.getInstance().getConstants().removeDataCenterWarnningNote());
+        if (shouldAddressWarning) {
+            model.setNote(ConstantsManager.getInstance().getConstants().removeDataCenterWarningNote());
         }
     }
 
