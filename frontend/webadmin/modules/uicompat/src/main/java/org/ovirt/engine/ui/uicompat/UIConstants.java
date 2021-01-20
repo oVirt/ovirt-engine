@@ -1925,7 +1925,7 @@ public interface UIConstants extends Constants {
 
     String eitherTotalOrReadWriteCanHaveValues();
 
-    String detachWarnningNote();
+    String detachWarningNote();
 
     String removeDataCenterWarningNote();
 

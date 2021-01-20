@@ -455,18 +455,18 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         setMsgOnDetach(model);
 
         List<String> list = new ArrayList<>();
-        boolean shouldAddressWarnning = false;
+        boolean shouldAddressWarning = false;
         for (StorageDomain item : getSelectedItems()) {
             list.add(item.getStorageName());
             if (item.getStorageDomainType().isDataDomain()) {
-                shouldAddressWarnning = true;
+                shouldAddressWarning = true;
                 break;
             }
         }
         model.setItems(list);
 
         if (containsLocalStorage(model)) {
-            shouldAddressWarnning = false;
+            shouldAddressWarning = false;
             model.getForce().setIsAvailable(true);
             model.getForce().setIsChangeable(true);
             model.setForceLabel(ConstantsManager.getInstance().getConstants().storageRemovePopupFormatLabel());
@@ -474,8 +474,8 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
             model.setNote(ConstantsManager.getInstance().getMessages().detachNote(getLocalStoragesFormattedString()));
         }
 
-        if (shouldAddressWarnning) {
-            model.setNote(ConstantsManager.getInstance().getConstants().detachWarnningNote());
+        if (shouldAddressWarning) {
+            model.setNote(ConstantsManager.getInstance().getConstants().detachWarningNote());
         }
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnDetach", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
