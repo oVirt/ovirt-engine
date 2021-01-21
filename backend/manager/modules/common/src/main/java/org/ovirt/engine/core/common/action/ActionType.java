@@ -591,6 +591,7 @@ public enum ActionType {
     DeleteVmCheckpoint(3302, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
     RedefineVmCheckpoint(3303, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
     AddVolumeBitmap(3304, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
+    CreateScratchDisk(3305, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
