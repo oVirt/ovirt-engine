@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.storage.TimeoutPolicyType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -19,6 +20,7 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
     private TransferType transferType = TransferType.Upload;
     private AddDiskParameters addDiskParameters;
     private Integer clientInactivityTimeout;
+    private TimeoutPolicyType timeoutPolicyType;
     private VolumeFormat volumeFormat;
     private Guid backupId;
     private TransferClientType transferClientType = TransferClientType.UNKNOWN;
@@ -103,6 +105,14 @@ public class TransferDiskImageParameters extends ImagesActionsParametersBase {
 
     public void setClientInactivityTimeout(Integer clientInactivityTimeout) {
         this.clientInactivityTimeout = clientInactivityTimeout;
+    }
+
+    public TimeoutPolicyType getTimeoutPolicyType() {
+        return timeoutPolicyType;
+    }
+
+    public void setTimeoutPolicyType(TimeoutPolicyType timeoutPolicy) {
+        this.timeoutPolicyType = timeoutPolicy;
     }
 
     public VolumeFormat getVolumeFormat() {

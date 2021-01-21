@@ -31,6 +31,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
     private Long bytesSent;
     private Long bytesTotal;
     private Integer clientInactivityTimeout;
+    private TimeoutPolicyType timeoutPolicy;
     private VolumeFormat imageFormat;
     private ImageTransferBackend backend;
 
@@ -171,6 +172,14 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
         this.clientInactivityTimeout = clientInactivityTimeout;
     }
 
+    public TimeoutPolicyType getTimeoutPolicy() {
+        return timeoutPolicy;
+    }
+
+    public void setTimeoutPolicy(TimeoutPolicyType timeoutPolicy) {
+        this.timeoutPolicy = timeoutPolicy;
+    }
+
     public VolumeFormat getImageFormat() {
         return imageFormat;
     }
@@ -235,6 +244,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 && Objects.equals(bytesSent, other.bytesSent)
                 && Objects.equals(bytesTotal, other.bytesTotal)
                 && Objects.equals(clientInactivityTimeout, other.clientInactivityTimeout)
+                && Objects.equals(timeoutPolicy, other.timeoutPolicy)
                 && Objects.equals(imageFormat, other.imageFormat)
                 && Objects.equals(transferClientType, other.transferClientType)
                 && Objects.equals(shallow, other.shallow)
@@ -257,6 +267,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 bytesSent,
                 bytesTotal,
                 clientInactivityTimeout,
+                timeoutPolicy,
                 imageFormat,
                 transferClientType,
                 shallow
@@ -279,6 +290,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
                 .append("bytesSent", getBytesSent())
                 .append("bytesTotal", getBytesTotal())
                 .append("clientInactivityTimeout", getClientInactivityTimeout())
+                .append("timeoutPolicy", getTimeoutPolicy())
                 .append("imageFormat", getImageFormat())
                 .append("transferClientType", getTransferClientType())
                 .append("shallow", isShallow())

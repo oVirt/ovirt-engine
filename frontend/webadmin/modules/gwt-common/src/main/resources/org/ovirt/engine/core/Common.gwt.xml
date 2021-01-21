@@ -302,6 +302,7 @@
         <include name="common/businessentities/storage/ImageStatus.java" />
         <include name="common/businessentities/storage/ImageTransfer.java" />
         <include name="common/businessentities/storage/ImageTransferPhase.java" />
+        <include name="common/businessentities/storage/TimeoutPolicyType.java" />
         <include name="common/businessentities/storage/TransferClientType.java" />
         <include name="common/businessentities/storage/TransferType.java" />
         <include name="common/businessentities/storage/LUNs.java" />

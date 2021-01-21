@@ -14,6 +14,7 @@ import org.ovirt.engine.api.restapi.types.ImageTransferMapper;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
+import org.ovirt.engine.core.common.businessentities.storage.TimeoutPolicyType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -61,6 +62,9 @@ public class BackendImageTransfersResource
         }
         if (imageTransfer.isSetInactivityTimeout()) {
             params.setClientInactivityTimeout(imageTransfer.getInactivityTimeout());
+        }
+        if (imageTransfer.isSetTimeoutPolicy()) {
+            params.setTimeoutPolicyType(TimeoutPolicyType.forString(imageTransfer.getTimeoutPolicy().value()));
         }
         if (imageTransfer.isSetFormat()) {
             params.setVolumeFormat(ImageTransferMapper.map(imageTransfer.getFormat(), null));

@@ -6,7 +6,9 @@ import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.ImageTransfer;
 import org.ovirt.engine.api.model.ImageTransferDirection;
 import org.ovirt.engine.api.model.ImageTransferPhase;
+import org.ovirt.engine.api.model.ImageTransferTimeoutPolicy;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.businessentities.storage.TimeoutPolicyType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 
@@ -76,6 +78,9 @@ public class ImageTransferMapper {
         if (entity.getClientInactivityTimeout() != null) {
             model.setInactivityTimeout(entity.getClientInactivityTimeout());
         }
+        if (entity.getTimeoutPolicy() != null) {
+            model.setTimeoutPolicy(mapTimeoutPolicy(entity.getTimeoutPolicy()));
+        }
         if (entity.getImageFormat() != null) {
             model.setFormat(map(entity.getImageFormat(), null));
         }
@@ -128,6 +133,17 @@ public class ImageTransferMapper {
             return ImageTransferDirection.UPLOAD;
         default:
             return null;
+        }
+    }
+
+    private static ImageTransferTimeoutPolicy mapTimeoutPolicy(TimeoutPolicyType type) {
+        switch (type) {
+            case CANCEL:
+                return ImageTransferTimeoutPolicy.CANCEL;
+            case PAUSE:
+                return ImageTransferTimeoutPolicy.PAUSE;
+            default:
+                return ImageTransferTimeoutPolicy.LEGACY;
         }
     }
 

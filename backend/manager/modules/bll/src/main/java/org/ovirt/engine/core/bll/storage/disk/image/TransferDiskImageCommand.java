@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTicketInformat
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBackend;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
+import org.ovirt.engine.core.common.businessentities.storage.TimeoutPolicyType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -418,6 +419,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         entity.setClientInactivityTimeout(getParameters().getClientInactivityTimeout() != null ?
                 getParameters().getClientInactivityTimeout() :
                 getTransferImageClientInactivityTimeoutInSeconds());
+        entity.setTimeoutPolicy(getParameters().getTimeoutPolicyType() != null ?
+                getParameters().getTimeoutPolicyType() : TimeoutPolicyType.LEGACY);
         entity.setImageFormat(getTransferImageFormat());
         entity.setBackend(getTransferBackend());
         entity.setBackupId(getParameters().getBackupId());
@@ -915,14 +918,25 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
      */
     private void stopTransferIfNecessary(ImageTransfer entity, long ts, Integer idleTimeFromTicket) {
         if (shouldAbortOnClientInactivityTimeout(entity, ts, idleTimeFromTicket)) {
-            if (getParameters().getTransferType() == TransferType.Download) {
-                // In download flows, we can cancel the transfer if there was no activity
-                // for a while, as the download is handled by the client.
-                auditLog(this, AuditLogType.DOWNLOAD_IMAGE_CANCELED_TIMEOUT);
+            switch (entity.getTimeoutPolicy()) {
+            case LEGACY:
+                if (getParameters().getTransferType() == TransferType.Download) {
+                    // In download flows, we can cancel the transfer if there was no activity
+                    // for a while, as the download is handled by the client.
+                    auditLog(this, AuditLogType.DOWNLOAD_IMAGE_CANCELED_TIMEOUT);
+                    updateEntityPhase(ImageTransferPhase.CANCELLED_SYSTEM);
+                } else {
+                    updateEntityPhaseToStoppedBySystem(AuditLogType.UPLOAD_IMAGE_PAUSED_BY_SYSTEM_TIMEOUT);
+                }
+                break;
+            case PAUSE:
+                auditLog(this, AuditLogType.TRANSFER_IMAGE_PAUSED_ON_TIMEOUT);
+                updateEntityPhase(ImageTransferPhase.PAUSED_SYSTEM);
+                break;
+            case CANCEL:
+                auditLog(this, AuditLogType.TRANSFER_IMAGE_CANCELED_ON_TIMEOUT);
                 updateEntityPhase(ImageTransferPhase.CANCELLED_SYSTEM);
-            } else {
-                updateEntityPhaseToStoppedBySystem(
-                        AuditLogType.UPLOAD_IMAGE_PAUSED_BY_SYSTEM_TIMEOUT);
+                break;
             }
         }
     }
