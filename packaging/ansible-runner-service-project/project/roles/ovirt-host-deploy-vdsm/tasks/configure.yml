@@ -19,7 +19,7 @@
 
 - name: Error configuring LVM filter
   debug:
-    msg: "Cannot configure LVM filter on host, please run: vdsm-tool config-lvm-filter"
+    msg: "[ERROR] Cannot configure LVM filter on host, please run: vdsm-tool config-lvm-filter"
   when:
     - el_ver|int >= 8
     - lvm_filter_result.rc != 0
