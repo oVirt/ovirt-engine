@@ -37,6 +37,7 @@ public class GetServerSSHKeyFingerprintQuery<P extends ServerParameters> extends
                 getServerFingerprint(getParameters().getServer(), getParameters().getPort()));
     }
 
+    //visible for unit test
     protected EngineSSHClient getEngineSSHClient() {
         return new EngineSSHClient();
     }

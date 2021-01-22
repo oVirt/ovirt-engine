@@ -32,7 +32,7 @@ public class GetServerSSHKeyFingerprintQueryTest extends AbstractQueryTest<Serve
     }
 
     @Test
-    public void testExecuteQueryCommnad() throws Exception {
+    public void testExecuteQueryCommand() throws Exception {
         when(getQueryParameters().getServer()).thenReturn(serverName);
         doReturn(fingerPrint).when(mockEngineSSHClient).getHostFingerprint();
         getQuery().executeQueryCommand();
@@ -43,7 +43,7 @@ public class GetServerSSHKeyFingerprintQueryTest extends AbstractQueryTest<Serve
     }
 
     @Test
-    public void testExecuteQueryCommnadFails() {
+    public void testExecuteQueryCommandFails() {
         getQuery().executeQueryCommand();
         String serverFingerprint = getQuery().getQueryReturnValue().getReturnValue();
 

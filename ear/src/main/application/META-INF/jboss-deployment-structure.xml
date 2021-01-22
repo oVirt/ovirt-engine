@@ -30,6 +30,7 @@
       <module name="org.slf4j" export="true"/>
       <module name="org.springframework" export="true"/>
       <module name="org.yaml.snakeyaml" export="true"/>
+      <module name="org.apache.sshd" export="true"/>
 
       <module name="com.fasterxml.jackson.core.jackson-core" export="true"/>
 

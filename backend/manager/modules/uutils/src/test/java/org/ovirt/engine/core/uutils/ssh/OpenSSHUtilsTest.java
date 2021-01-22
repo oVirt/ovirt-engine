@@ -1,47 +1,11 @@
 package org.ovirt.engine.core.uutils.ssh;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
-
-import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Test;
 
 public class OpenSSHUtilsTest {
-
-    private static PublicKey decodeKey(final String encoding) throws Exception {
-        final byte[] bytes = Base64.decodeBase64(encoding);
-        final KeyFactory factory = KeyFactory.getInstance("RSA");
-        final X509EncodedKeySpec spec = new X509EncodedKeySpec(bytes);
-        return factory.generatePublic(spec);
-    }
-
-    private static void testFingerprintString(final String keyEncoding, final String goodFingerprintString, String algo)
-            throws Exception {
-        final PublicKey key = decodeKey(keyEncoding);
-        final String fingerprintString = OpenSSHUtils.getKeyFingerprint(key, algo);
-        assertEquals(goodFingerprintString, fingerprintString);
-        StringBuilder actual = new StringBuilder();
-        assertTrue(OpenSSHUtils.checkKeyFingerprint(goodFingerprintString, key, actual));
-        assertEquals(goodFingerprintString, actual.toString());
-    }
-
-    @Test
-    public void testFingerprintStrings() throws Exception {
-        for (String[] key : KEYS) {
-            testFingerprintString(key[0], key[1], "MD5");
-            testFingerprintString(key[0], key[2], "SHA-256");
-        }
-    }
-
-    @Test
-    public void testFingerprintStringsMD5() throws Exception {
-        assertTrue(OpenSSHUtils.checkKeyFingerprint(KEYS[0][1].replace("MD5:", ""), decodeKey(KEYS[0][0]), null));
-    }
 
     @Test
     public void testGoodKeyIsPublicKeyValid() {

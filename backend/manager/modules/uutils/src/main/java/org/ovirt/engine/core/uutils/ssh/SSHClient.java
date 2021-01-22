@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.KeyPair;
-import java.security.PublicKey;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -21,6 +20,8 @@ import org.apache.sshd.client.channel.ClientChannel;
 import org.apache.sshd.client.channel.ClientChannelEvent;
 import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.ConnectFuture;
+import org.apache.sshd.client.keyverifier.AcceptAllServerKeyVerifier;
+import org.apache.sshd.client.keyverifier.ServerKeyVerifier;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.client.session.ClientSession.ClientSessionEvent;
 import org.apache.sshd.common.NamedFactory;
@@ -47,7 +48,7 @@ public class SSHClient implements Closeable {
     private KeyPair keyPair;
     private String host;
     private int port = DEFAULT_SSH_PORT;
-    private PublicKey hostKey;
+    private ServerKeyVerifier serverKeyVerifier = AcceptAllServerKeyVerifier.INSTANCE;
 
     /**
      * Create the client for testing using org.mockito.Mockito.
@@ -69,19 +70,6 @@ public class SSHClient implements Closeable {
         sshClient.setKexExtensionHandler(new DefaultClientKexExtensionHandler());
         CoreModuleProperties.HEARTBEAT_INTERVAL.set(sshClient, HEARTBEAT);
         return sshClient;
-    }
-
-    /**
-     * Destructor.
-     */
-    @Override
-    protected void finalize() {
-        try {
-            close();
-        } catch (IOException e) {
-            log.error("Finalize exception {}", ExceptionUtils.getRootCauseMessage(e));
-            log.debug("Exception", e);
-        }
     }
 
     /**
@@ -151,7 +139,6 @@ public class SSHClient implements Closeable {
     public void setHost(String host, int port) {
         this.host = host;
         this.port = port;
-        hostKey = null;
     }
 
     /**
@@ -240,15 +227,6 @@ public class SSHClient implements Closeable {
     }
 
     /**
-     * Get host key
-     *
-     * @return host key.
-     */
-    public PublicKey getHostKey() {
-        return hostKey;
-    }
-
-    /**
      * Connect to host.
      */
     public void connect() throws Exception {
@@ -257,13 +235,7 @@ public class SSHClient implements Closeable {
 
         try {
             client = createSshClient();
-
-            client.setServerKeyVerifier(
-                (sshClientSession, remoteAddress, serverKey) -> {
-                    hostKey = serverKey;
-                    return true;
-                });
-
+            client.setServerKeyVerifier(serverKeyVerifier);
             client.start();
 
             ConnectFuture cfuture = client.connect(user, host, port);
@@ -512,5 +484,9 @@ public class SSHClient implements Closeable {
         }
 
         log.debug("Executed: '{}'", command);
+    }
+
+    public void setServerKeyVerifier(ServerKeyVerifier serverKeyVerifier) {
+        this.serverKeyVerifier = serverKeyVerifier;
     }
 }

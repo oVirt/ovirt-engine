@@ -2,7 +2,6 @@ package org.ovirt.engine.core.uutils.ssh;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.security.KeyPair;
@@ -83,12 +82,5 @@ public class BasicTest extends TestCommon {
             client.executeCommand(helloCommand, null, out, null);
             assertEquals(helloResult, new String(out.toByteArray(), "UTF-8"));
         }
-    }
-
-    @Test
-    public void testHostKey() throws Exception {
-        assumeTrue(TestCommon.sshd != null);
-        client.connect();
-        assertEquals(TestCommon.sshd.getKey(), client.getHostKey());
     }
 }
