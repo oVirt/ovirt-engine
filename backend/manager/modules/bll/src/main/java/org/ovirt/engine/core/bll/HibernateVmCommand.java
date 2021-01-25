@@ -226,6 +226,10 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             return false;
         }
 
+        if (!validate(vmValidator.vmNotHavingNvdimmDevices())) {
+            return false;
+        }
+
         return true;
     }
 
