@@ -1,15 +1,22 @@
 package org.ovirt.engine.core.utils.ovf.xml;
 
 import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.ovirt.engine.core.uutils.xml.SecureDocumentBuilderFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -91,7 +98,20 @@ public class XmlDocument {
         }
     }
 
+    public Element createElement(String name) {
+        return doc.createElement(name);
+    }
+
     public String getOuterXml() {
         return outerXml;
     }
+
+    public String convertToString() throws TransformerException {
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer transformer = factory.newTransformer();
+        StringWriter writer = new StringWriter();
+        transformer.transform(new DOMSource(doc), new StreamResult(writer));
+        return writer.toString();
+    }
+
 }

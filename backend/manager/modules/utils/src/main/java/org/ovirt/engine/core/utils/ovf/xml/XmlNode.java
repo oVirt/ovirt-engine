@@ -69,4 +69,9 @@ public class XmlNode {
     public NodeList getChildNodes() {
         return node.getChildNodes();
     }
+
+    public XmlNode appendChild(Node child) {
+        return new XmlNode(node.appendChild(child));
+    }
+
 }
