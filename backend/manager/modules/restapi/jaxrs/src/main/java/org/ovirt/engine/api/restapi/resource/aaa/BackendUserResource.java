@@ -14,6 +14,7 @@ import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.EventSubscriptionsResource;
 import org.ovirt.engine.api.resource.aaa.DomainUserGroupsResource;
 import org.ovirt.engine.api.resource.aaa.SshPublicKeysResource;
+import org.ovirt.engine.api.resource.aaa.UserOptionsResource;
 import org.ovirt.engine.api.resource.aaa.UserResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedPermissionsResource;
@@ -143,5 +144,10 @@ public class BackendUserResource
     @Override
     public EventSubscriptionsResource getEventSubscriptionsResource() {
         return inject(new BackendEventSubscriptionsResource(id));
+    }
+
+    @Override
+    public UserOptionsResource getOptionsResource() {
+        return null;
     }
 }
