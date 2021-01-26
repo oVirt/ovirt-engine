@@ -228,7 +228,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vm.setOrigin(OriginType.OVIRT);
 
         doReturn(group).when(command).getCluster();
-        doReturn(group).when(command).getNewCluster();
         doReturn(vm).when(command).getVm();
         doReturn(ActionType.UpdateVm).when(command).getActionType();
         doReturn(false).when(command).isVirtioScsiEnabledForVm(any());

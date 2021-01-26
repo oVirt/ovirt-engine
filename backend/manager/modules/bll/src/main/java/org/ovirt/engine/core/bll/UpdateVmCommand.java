@@ -57,7 +57,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -221,7 +220,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     compatibilityVersion, getVm().getStaticData());
         }
 
-        BiosTypeUtils.setEffective(getParameters().getVmStaticData(), getNewCluster());
+        BiosTypeUtils.setEffective(getParameters().getVmStaticData(), getCluster());
 
         vmHandler.updateDefaultTimeZone(getParameters().getVmStaticData());
 
@@ -244,14 +243,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         updateUSB();
 
         if (getParameters().getVmStaticData().getCustomBiosType() == BiosType.CLUSTER_DEFAULT) {
-            getParameters().getVm().setClusterBiosType(getNewCluster().getBiosType());
+            getParameters().getVm().setClusterBiosType(getCluster().getBiosType());
         }
 
         getVmDeviceUtils().setCompensationContext(getCompensationContextIfEnabledByCaller());
-    }
-
-    protected Cluster getNewCluster() {
-        return clusterDao.get(getParameters().getVm().getClusterId());
     }
 
     private VmPropertiesUtils getVmPropertiesUtils() {
