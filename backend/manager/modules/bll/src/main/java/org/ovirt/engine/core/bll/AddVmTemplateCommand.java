@@ -237,7 +237,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     getParameters().getGraphicsDevices(),
                     getMasterVmCompatibilityVersion());
 
-            vmHandler.autoSelectResumeBehavior(masterVm, getCluster());
+            vmHandler.autoSelectResumeBehavior(masterVm);
 
             separateCustomProperties(masterVm);
         }

@@ -1301,15 +1301,7 @@ public class VmHandler implements BackendService {
                 vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
     }
 
-    public void autoSelectResumeBehavior(VmBase vmBase, Cluster cluster) {
-        if (cluster == null) {
-            return;
-        }
-
-        autoSelectResumeBehavior(vmBase, cluster.getCompatibilityVersion());
-    }
-
-    public void autoSelectResumeBehavior(VmBase vmBase, Version clusterVersion) {
+    public void autoSelectResumeBehavior(VmBase vmBase) {
         if (vmBase.isAutoStartup() && vmBase.getLeaseStorageDomainId() != null) {
             // since 4.2 the only supported resume behavior for HA vms with lease is kill
             vmBase.setResumeBehavior(VmResumeBehavior.KILL);

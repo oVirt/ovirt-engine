@@ -640,7 +640,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         }
 
-        vmHandler.autoSelectResumeBehavior(getVm().getStaticData(), getCluster());
+        vmHandler.autoSelectResumeBehavior(getVm().getStaticData());
 
         vmStaticDao.save(getVm().getStaticData());
         getCompensationContext().snapshotNewEntity(getVm().getStaticData());

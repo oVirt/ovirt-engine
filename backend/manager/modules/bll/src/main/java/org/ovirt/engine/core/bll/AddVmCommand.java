@@ -320,7 +320,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
         vmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
 
-        vmHandler.autoSelectResumeBehavior(getParameters().getVmStaticData(), getCluster());
+        vmHandler.autoSelectResumeBehavior(getParameters().getVmStaticData());
 
         // Fill the migration policy if it was omitted
         if (getParameters().getVmStaticData() != null &&

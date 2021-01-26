@@ -626,7 +626,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     }
 
     private void updateResumeBehavior(VmBase vmBase) {
-        vmHandler.autoSelectResumeBehavior(vmBase, getCluster());
+        vmHandler.autoSelectResumeBehavior(vmBase);
     }
 
     private String getEmulatedMachineOfHostInCluster(VDS vds) {

@@ -386,7 +386,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
 
         getVmTemplate().setStatus(VmTemplateStatus.Locked);
         getVmTemplate().setQuotaId(getParameters().getQuotaId());
-        vmHandler.autoSelectResumeBehavior(getVmTemplate(), getCluster());
+        vmHandler.autoSelectResumeBehavior(getVmTemplate());
         vmTemplateDao.save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         addDisksToDb();

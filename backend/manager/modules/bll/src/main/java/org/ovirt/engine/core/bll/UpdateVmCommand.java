@@ -226,7 +226,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         vmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData());
 
-        vmHandler.autoSelectResumeBehavior(getParameters().getVmStaticData(), getCluster());
+        vmHandler.autoSelectResumeBehavior(getParameters().getVmStaticData());
 
         vmHandler.autoSelectDefaultDisplayType(getVmId(),
                 getParameters().getVmStaticData(),
