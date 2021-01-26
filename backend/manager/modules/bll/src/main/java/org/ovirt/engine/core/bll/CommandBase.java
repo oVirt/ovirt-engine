@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -607,7 +606,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     public void handleChildCommands() {
         if (getCallback() != null) {
             List<Guid> childCommands = commandCoordinatorUtil.getChildCommandIds(getCommandId());
-            List<ActionParametersBase> parameters = new LinkedList<>();
+            ArrayList<ActionParametersBase> parameters = new ArrayList<>();
             for (Guid id : childCommands) {
                 CommandBase<?> command = commandCoordinatorUtil.retrieveCommand(id);
                 if (command.getParameters().getEndProcedure() == EndProcedure.PARENT_MANAGED

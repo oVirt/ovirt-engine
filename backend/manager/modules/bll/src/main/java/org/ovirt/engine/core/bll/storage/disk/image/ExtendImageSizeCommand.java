@@ -67,7 +67,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
             if (getParameters().getParentNotifiesCallback()) {
                 getReturnValue().getVdsmTaskIdList().add(taskId);
                 getReturnValue().getInternalVdsmTaskIdList().add(taskId);
-                getParameters().setVdsmTaskIds(Arrays.asList(taskId));
+                getParameters().setVdsmTaskIds(new ArrayList<>(Arrays.asList(taskId)));
                 persistCommand(getParameters().getParentCommand(), true);
             }
         } else {

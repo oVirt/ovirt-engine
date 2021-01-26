@@ -3,7 +3,6 @@ package org.ovirt.engine.core.common.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.constraints.Pattern;
@@ -54,11 +53,13 @@ public class ActionParametersBase implements Serializable, HasCorrelationId {
 
     private EntityInfo entityInfo;
 
-    private List<ActionParametersBase> imagesParameters;
+    // no interface here - concrete types are recommended for GWT serialization
+    private ArrayList<ActionParametersBase> imagesParameters;
 
     private boolean taskGroupSuccess;
 
-    private List<Guid> vdsmTaskIds;
+    // no interface here - concrete types are recommended for GWT serialization
+    private ArrayList<Guid> vdsmTaskIds;
 
     private Guid vdsRunningOn;
 
@@ -218,11 +219,11 @@ public class ActionParametersBase implements Serializable, HasCorrelationId {
         multipleAction = value;
     }
 
-    public List<ActionParametersBase> getImagesParameters() {
+    public ArrayList<ActionParametersBase> getImagesParameters() {
         return imagesParameters;
     }
 
-    public void setImagesParameters(List<ActionParametersBase> value) {
+    public void setImagesParameters(ArrayList<ActionParametersBase> value) {
         imagesParameters = value;
     }
 
@@ -253,11 +254,11 @@ public class ActionParametersBase implements Serializable, HasCorrelationId {
         entityInfo = value;
     }
 
-    public List<Guid> getVdsmTaskIds() {
+    public ArrayList<Guid> getVdsmTaskIds() {
         return vdsmTaskIds;
     }
 
-    public void setVdsmTaskIds(List<Guid> value) {
+    public void setVdsmTaskIds(ArrayList<Guid> value) {
         vdsmTaskIds = value;
     }
 
