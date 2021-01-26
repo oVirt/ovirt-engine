@@ -1,12 +1,14 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -35,6 +37,8 @@ public class CleanFinishedTasksCommand<T extends StoragePoolParametersBase> exte
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
     private StoragePoolDao storagePoolDao;
+
+    private Map<Guid, Boolean> taskCleanupStatuses = new HashMap<>();
 
     public CleanFinishedTasksCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -73,8 +77,9 @@ public class CleanFinishedTasksCommand<T extends StoragePoolParametersBase> exte
             return;
         }
 
-        boolean allTasksCleaned = true;
-        List<Guid> failedToRemoveTasks = new ArrayList<>();
+        // At the beginning all tasks are marked as "cleanup not done".
+        tasksIds.forEach(vdsmTaskId -> taskCleanupStatuses.put(vdsmTaskId, Boolean.FALSE));
+
         for (Guid vdsmTaskId : tasksIds) {
             log.info("Attempting to clean up a finished task '{}'", vdsmTaskId);
 
@@ -92,24 +97,22 @@ public class CleanFinishedTasksCommand<T extends StoragePoolParametersBase> exte
             } catch (RuntimeException e) {
                 log.error("Failed to clean up the finished task '{}': {}, trying the next task",
                         vdsmTaskId, e.getMessage());
-                failedToRemoveTasks.add(vdsmTaskId);
-                allTasksCleaned = false;
                 handleError(e.getMessage());
                 continue;
             }
 
-            if (!vdsReturnValue.getSucceeded()) {
+            if (vdsReturnValue.getSucceeded()) {
+                // Mark the task as "cleanup successfully finished".
+                taskCleanupStatuses.put(vdsmTaskId, Boolean.TRUE);
+            } else {
                 VDSError vdsError = vdsReturnValue.getVdsError();
                 log.error("Failed to clean up the finished task '{}', exception: {}, VDS error: {}",
                         vdsmTaskId, vdsReturnValue.getExceptionString(), vdsError);
-                failedToRemoveTasks.add(vdsmTaskId);
-                allTasksCleaned = false;
                 handleVdsError(vdsError);
             }
         }
 
-        setActionReturnValue(failedToRemoveTasks);
-        setSucceeded(allTasksCleaned);
+        setSucceeded(taskCleanupStatuses.values().stream().allMatch(Boolean::valueOf));
     }
 
     private void handleError(String errorMsg) {
@@ -146,11 +149,19 @@ public class CleanFinishedTasksCommand<T extends StoragePoolParametersBase> exte
             return AuditLogType.VDS_ALERT_CLEAN_SPM_FINISHED_TASKS_SUCCESS;
         }
 
-        List<Guid> failedToRemoveTasks = getActionReturnValue();
-        if (CollectionUtils.isEmpty(failedToRemoveTasks)) {
+        if (taskCleanupStatuses.values().stream().noneMatch(Boolean::valueOf)) {
+            // No task(s) that were indicated as cleaned successfully --> full failure.
             return AuditLogType.VDS_ALERT_CLEAN_SPM_FINISHED_TASKS_FAILURE;
         }
-        addCustomValue("TaskGuids", StringUtils.join(failedToRemoveTasks, ", "));
+
+        // Some task(s) were indicated as cleaned successfully --> partial failure. Find the failed tasks:
+        List<Guid> failedToCleanupTaskIds = taskCleanupStatuses.entrySet()
+                .stream()
+                .filter(Predicate.not(Map.Entry::getValue))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+
+        addCustomValue("TaskGuids", StringUtils.join(failedToCleanupTaskIds, ", "));
         return AuditLogType.VDS_ALERT_CLEAN_SPM_FINISHED_TASKS_FAILURE_PARTIAL;
     }
 }
