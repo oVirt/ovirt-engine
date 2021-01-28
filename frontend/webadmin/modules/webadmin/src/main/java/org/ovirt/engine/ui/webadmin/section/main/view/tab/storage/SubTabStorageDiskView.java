@@ -38,6 +38,7 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
     private static AbstractDiskSizeColumn<Disk> actualSizeColumn;
     private static AbstractTextColumn<Disk> allocationColumn;
     private static AbstractTextColumn<Disk> dateCreatedColumn;
+    private static AbstractTextColumn<Disk> dateModifiedColumn;
     private static AbstractColumn<Disk, Disk> statusColumn;
     private static AbstractTextColumn<Disk> typeColumn;
     private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
@@ -101,6 +102,8 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
 
         getTable().ensureColumnVisible(dateCreatedColumn, constants.creationDateDisk(), true, "150px"); //$NON-NLS-1$
 
+        getTable().ensureColumnVisible(dateModifiedColumn, constants.modificationDateDisk(), true, "150px"); //$NON-NLS-1$
+
         getTable().ensureColumnVisible(
                 DisksViewColumns.diskContainersIconColumn, "", true, "30px"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -122,6 +125,7 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
         actualSizeColumn = DisksViewColumns.getActualSizeColumn(null);
         allocationColumn = DisksViewColumns.getAllocationColumn(constants.empty());
         dateCreatedColumn = DisksViewColumns.getDateCreatedColumn(DiskConditionFieldAutoCompleter.CREATION_DATE);
+        dateModifiedColumn = DisksViewColumns.getDateModifiedColumn(DiskConditionFieldAutoCompleter.LAST_MODIFIED);
         statusColumn = DisksViewColumns.getStatusColumn(DiskConditionFieldAutoCompleter.STATUS);
         typeColumn = DisksViewColumns.getDiskStorageTypeColumn(DiskConditionFieldAutoCompleter.DISK_TYPE);
         cinderVolumeTypeColumn = DisksViewColumns.getCinderVolumeTypeColumn(null);
