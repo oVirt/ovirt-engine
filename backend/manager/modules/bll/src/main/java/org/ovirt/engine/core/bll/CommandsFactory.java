@@ -57,6 +57,7 @@ public final class CommandsFactory {
             "org.ovirt.engine.core.bll.scheduling.queries",
             "org.ovirt.engine.core.bll.snapshots",
             "org.ovirt.engine.core.bll.storage",
+            "org.ovirt.engine.core.bll.storage.backup",
             "org.ovirt.engine.core.bll.storage.connection",
             "org.ovirt.engine.core.bll.storage.connection.iscsibond",
             "org.ovirt.engine.core.bll.storage.disk",

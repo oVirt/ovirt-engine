@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.storage.backup;
 
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
 import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
@@ -19,6 +19,13 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.DisableInPrepareMode;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
+import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
+import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
@@ -705,11 +712,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 getCompensationContext());
     }
 
-    protected DiskExistenceValidator createDiskExistenceValidator(Set<Guid> disksGuids) {
+    public DiskExistenceValidator createDiskExistenceValidator(Set<Guid> disksGuids) {
         return Injector.injectMembers(new DiskExistenceValidator(disksGuids));
     }
 
-    protected DiskImagesValidator createDiskImagesValidator(List<DiskImage> disks) {
+    public DiskImagesValidator createDiskImagesValidator(List<DiskImage> disks) {
         return Injector.injectMembers(new DiskImagesValidator(disks));
     }
 
