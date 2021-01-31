@@ -16,6 +16,7 @@ import java.security.DigestOutputStream;
 import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.PublicKey;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
@@ -39,6 +40,7 @@ import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.kex.extension.DefaultClientKexExtensionHandler;
 import org.apache.sshd.common.signature.BuiltinSignatures;
 import org.apache.sshd.common.signature.Signature;
+import org.apache.sshd.core.CoreModuleProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +54,7 @@ public class SSHClient implements Closeable {
     private static final int DEFAULT_SSH_PORT = 22;
 
     private static final Logger log = LoggerFactory.getLogger(SSHClient.class);
+    private static final Duration HEARTBEAT = Duration.ofSeconds(2L);
 
     private SshClient client;
     private ClientSession session;
@@ -82,6 +85,7 @@ public class SSHClient implements Closeable {
                 BuiltinSignatures.rsaSHA256,
                 BuiltinSignatures.rsa));
         sshClient.setKexExtensionHandler(new DefaultClientKexExtensionHandler());
+        CoreModuleProperties.HEARTBEAT_INTERVAL.set(sshClient, HEARTBEAT);
         return sshClient;
     }
 
