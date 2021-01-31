@@ -12,6 +12,9 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.TrustAnchor;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAKey;
+import java.security.spec.MGF1ParameterSpec;
+import java.security.spec.PSSParameterSpec;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -68,8 +71,7 @@ public class TicketDecoder {
         this(null, null, peer);
     }
 
-    public String decode(String ticket)
-    throws GeneralSecurityException, IOException {
+    public String decode(String ticket) throws GeneralSecurityException, IOException {
         Certificate cert;
 
         Map<String, String> map = new ObjectMapper().readValue(
@@ -100,13 +102,23 @@ public class TicketDecoder {
             throw new GeneralSecurityException("Invalid ticket");
         }
 
-        Signature sig = Signature.getInstance(String.format("%swith%s", map.get("digest"), cert.getPublicKey().getAlgorithm()));
+        Signature sig;
+        if (map.containsKey("v2_signature")) {
+            sig = Signature.getInstance("RSASSA-PSS");
+            sig.setParameter(new PSSParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256,
+                    TicketEncoder.getSaltMaxLength((RSAKey)cert.getPublicKey()), PSSParameterSpec.TRAILER_FIELD_BC));
+        } else {
+            sig = Signature.getInstance(String.format("%swith%s", map.get("digest"),
+                    cert.getPublicKey().getAlgorithm()));
+        }
+
         sig.initVerify(cert.getPublicKey());
         for (String field : signedFields) {
             byte[] buf = map.get(field).getBytes(StandardCharsets.UTF_8);
             sig.update(buf);
         }
-        if (!sig.verify(Base64.decodeBase64(map.get("signature")))) {
+        if (!sig.verify(Base64.decodeBase64(map.containsKey("v2_signature") ?
+                map.get("v2_signature") : map.get("signature")))) {
             throw new GeneralSecurityException("Invalid ticket signature");
         }
 
@@ -116,7 +128,8 @@ public class TicketDecoder {
             Date validFrom = df.parse(map.get("validFrom"));
             Date validTo = df.parse(map.get("validTo"));
             Date now = new Date();
-            if (! (validFrom.getTime() - tollerance <= now.getTime() && now.getTime() <= validTo.getTime() + tollerance)) {
+            if (!(validFrom.getTime() - tollerance <= now.getTime() &&
+                    now.getTime() <= validTo.getTime() + tollerance)) {
                 throw new GeneralSecurityException("Ticket lifetime expired");
             }
         } catch (ParseException e) {
@@ -125,5 +138,4 @@ public class TicketDecoder {
 
         return map.get("data");
     }
-
 }
