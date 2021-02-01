@@ -231,4 +231,39 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertNotNull(host.getDevicePassthrough());
         assertTrue(host.getDevicePassthrough().isEnabled());
     }
+
+    @Test
+    public void testSshMapping(){
+        VDS vds = new VDS();
+        vds.setId(Guid.Empty);
+        String fingerprint = "SHA256:k8jEQ2H/h55LplHV5gZYYnySi9lwLWRCcAmdairOQNo";
+        String publicKey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDjW+q6cdFQeyUYj75IrZGoQ9iv7IJmYutJZwOtjo2Ni+Uc789zvXzOBcTiMV0oT4vni8I7JtKWo\n" +
+                "CWZcqPnzJFiIBFhpOsDj17GeRaw7eJPKU8pdFzBl9SLkUJG00M+8av3ePjK9ni0PZmrJ9vPUQRZTxaVkyK+Cjme+Z9bURFEW6fMpWxwFvvfUWqmjAZwEQ/HO7B/xb+Lvj50WG\n" +
+                "yiRSRJauFAG0bNEb4AP/JksFrkXyCQvI6wztzmVMQyy9NtQDN0GZakUMn3w3B+AbAphA0z4JtgoNZQ8YFuWyAM/EKEVgwbL65WKLiL6jfI2MOuJydGU8mnwW2OChLjOhherNk\n" +
+                "MWc0EGdwT7k7vxeKWhwAnXhPs+h3B/G2gSfGHgVKAaz7Q693OY1t98bSqPwoOivSpHTWlvW9OJkzGIa7gM9TQba26BkVcjx0e9LmmSoDRBzc9en2ZsyPTviNMIiVMrILwxHDL\n" +
+                "5H6oJQsoJDP93I9PLLiT6p5FJSIOI4gN06Kzc7c=";
+        Integer sshPort = 8987;
+        vds.setSshPort(sshPort);
+        String sshUser = "ovirt";
+        vds.setSshKeyFingerprint(fingerprint);
+        vds.setSshPublicKey(publicKey);
+        vds.setSshUsername(sshUser);
+
+        Host host = HostMapper.map(vds, (Host) null);
+
+        assertNotNull(host);
+        assertNotNull(host.getSsh());
+        assertEquals(publicKey, host.getSsh().getPublicKey());
+        assertEquals(fingerprint, host.getSsh().getFingerprint());
+        assertEquals(sshUser, host.getSsh().getUser().getUserName());
+        assertEquals(sshPort, host.getSsh().getPort());
+
+        VdsStatic vdsStatic = new VdsStatic();
+        HostMapper.map(host, vdsStatic);
+
+        assertEquals(fingerprint, vdsStatic.getSshKeyFingerprint());
+        assertEquals(publicKey, vdsStatic.getSshPublicKey());
+        assertEquals(sshUser, vdsStatic.getSshUsername());
+        assertEquals(sshPort.intValue(), vdsStatic.getSshPort());
+    }
 }
