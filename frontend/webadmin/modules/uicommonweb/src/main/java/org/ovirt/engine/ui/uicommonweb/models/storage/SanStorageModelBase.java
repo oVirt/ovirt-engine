@@ -308,8 +308,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         setSelectedLunWarning(constants.emptyString());
     }
 
-    private void postLogin( ActionReturnValue returnValue, SanStorageModelBase sanStorageModel) {
-        SanTargetModel sanTargetModel = sanStorageModel.targetsToConnect.remove(0);
+    private void postLogin(ActionReturnValue returnValue) {
+        if (targetsToConnect.isEmpty()) {
+            return;
+        }
+
+        SanTargetModel sanTargetModel = targetsToConnect.remove(0);
         boolean success = returnValue != null && returnValue.getSucceeded();
 
         if (success) {
@@ -317,8 +321,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             sanTargetModel.getLoginCommand().setIsExecutionAllowed(false);
         }
 
-        if (sanStorageModel.targetsToConnect.isEmpty()) {
-            sanStorageModel.updateInternal();
+        if (targetsToConnect.isEmpty()) {
+            updateInternal();
         }
     }
 
@@ -333,9 +337,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
 
-        final SanStorageModelBase sanStorageModel = this;
-        IFrontendActionAsyncCallback loginCallback =
-                result -> sanStorageModel.postLogin(result.getReturnValue(), sanStorageModel);
+        IFrontendActionAsyncCallback loginCallback = result -> postLogin(result.getReturnValue());
 
         for (int i = 0; i < targetsToConnect.size(); i++) {
             SanTargetModel model = targetsToConnect.get(i);
