@@ -271,7 +271,7 @@ public class SysprepHandler {
         timeZoneIndex.put("(GMT+02:00) GTB Standard Time", 130);
         timeZoneIndex.put("(GMT-10:00) Hawaiian Standard Time", 2);
         timeZoneIndex.put("(GMT+05:30) India Standard Time", 190);
-        timeZoneIndex.put("(GMT+03:00) Iran Standard Time", 160);
+        timeZoneIndex.put("(GMT+03:30) Iran Standard Time", 160);
         timeZoneIndex.put("(GMT+02:00) Israel Standard Time", 135);
         timeZoneIndex.put("(GMT+09:00) Korea Standard Time", 230);
         timeZoneIndex.put("(GMT-02:00) Mid-Atlantic Standard Time", 75);
