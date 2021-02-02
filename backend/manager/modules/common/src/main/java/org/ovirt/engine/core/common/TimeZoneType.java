@@ -59,7 +59,7 @@ public enum TimeZoneType {
             generalTimeZones.put("Europe/Bucharest", "(GMT+02:00) GTB Standard Time");
             generalTimeZones.put("Pacific/Honolulu", "(GMT-10:00) Hawaiian Standard Time");
             generalTimeZones.put("Asia/Calcutta", "(GMT+05:30) India Standard Time");
-            generalTimeZones.put("Asia/Tehran", "(GMT+03:00) Iran Standard Time");
+            generalTimeZones.put("Asia/Tehran", "(GMT+03:30) Iran Standard Time");
             generalTimeZones.put("Asia/Jerusalem", "(GMT+02:00) Israel Standard Time");
             generalTimeZones.put("Asia/Seoul", "(GMT+09:00) Korea Standard Time");
             // generalTimeZones.put("(GMT-02:00) Mid-Atlantic Standard Time", 75); // Not in Unicode CLDR list
