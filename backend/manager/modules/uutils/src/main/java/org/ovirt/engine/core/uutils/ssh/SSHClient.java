@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.KeyPair;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -24,10 +23,7 @@ import org.apache.sshd.client.keyverifier.AcceptAllServerKeyVerifier;
 import org.apache.sshd.client.keyverifier.ServerKeyVerifier;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.client.session.ClientSession.ClientSessionEvent;
-import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.kex.extension.DefaultClientKexExtensionHandler;
-import org.apache.sshd.common.signature.BuiltinSignatures;
-import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.core.CoreModuleProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,16 +53,6 @@ public class SSHClient implements Closeable {
      */
     SshClient createSshClient() {
         SshClient sshClient = SshClient.setUpDefaultClient();
-
-        /*
-         * FIXME: We need to enforce only RSA signatures, because all our code around fingerprints assumes only RSA
-         * public keys. This limitation can be removed when we will save all available host public keys into database
-         * and perform host key verification by comparing received key with keys in our database.
-         */
-        sshClient.setSignatureFactories(Arrays.<NamedFactory<Signature>> asList(
-                BuiltinSignatures.rsaSHA512,
-                BuiltinSignatures.rsaSHA256,
-                BuiltinSignatures.rsa));
         sshClient.setKexExtensionHandler(new DefaultClientKexExtensionHandler());
         CoreModuleProperties.HEARTBEAT_INTERVAL.set(sshClient, HEARTBEAT);
         return sshClient;
