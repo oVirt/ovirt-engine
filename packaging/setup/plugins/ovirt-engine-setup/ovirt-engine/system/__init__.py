@@ -17,6 +17,7 @@ from . import exportfs
 from . import image_upload
 from . import memcheck
 from . import nfs
+from . import selinux
 
 
 @util.export
@@ -26,6 +27,7 @@ def createPlugins(context):
     nfs.Plugin(context=context)
     exportfs.Plugin(context=context)
     image_upload.Plugin(context=context)
+    selinux.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
