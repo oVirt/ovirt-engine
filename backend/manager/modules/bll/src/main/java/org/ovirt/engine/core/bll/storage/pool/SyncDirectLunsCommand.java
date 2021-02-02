@@ -21,11 +21,17 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.ExtendVmDiskSizeVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
@@ -118,14 +124,10 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
 
     @Override
     protected void executeCommand() {
-        auditLog(this, AuditLogType.SYNC_DIRECT_LUNS_STARTED);
-        Set<LUNs> lunsToUpdateInDb = getLunsToUpdateInDb();
-        if (lunsToUpdateInDb.size() > 0) {
-            lunDao.updateAllInBatch(lunsToUpdateInDb);
-            log.info(lunsToUpdateInDb.stream().map(LUNs::getLUNId).collect(
-                    Collectors.joining(", ", "LUNs with IDs: [", "] were updated in the DB.")));
-        } else {
-            log.info("Could not find any LUNs to update.");
+        if (!syncDirectLuns()) {
+            setCommandStatus(CommandStatus.FAILED);
+            setSucceeded(false);
+            return;
         }
 
         setSucceeded(true);
@@ -155,6 +157,51 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
         return getIdsOfDirectLunsToSync()
                 .map(id -> new PermissionSubject(id, VdcObjectType.Disk, getActionType().getActionGroup()))
                 .collect(Collectors.toList());
+    }
+
+    private boolean syncDirectLuns() {
+        auditLog(this, AuditLogType.SYNC_DIRECT_LUNS_STARTED);
+        Set<LUNs> lunsToUpdateInDb = getLunsToUpdateInDb();
+        if (lunsToUpdateInDb.isEmpty()) {
+            log.info("Could not find any LUNs to update.");
+            return true;
+        }
+        lunDao.updateAllInBatch(lunsToUpdateInDb);
+        log.info(lunsToUpdateInDb.stream().map(LUNs::getLUNId).collect(
+                Collectors.joining(", ", "LUNs with IDs: [", "] were updated in the DB.")));
+        return updateLunDisksOnGuests(lunsToUpdateInDb);
+    }
+
+    private boolean updateLunDisksOnGuests(Set<LUNs> lunsToUpdateInDb) {
+        // This method updates the LUN disks on the guests while they are running.
+        for (LUNs lun : lunsToUpdateInDb) {
+            int lunSize = lun.getDeviceSize();
+            List<VM> pluggedVms = vmDao.getForDisk(lun.getDiskId(), false).get(Boolean.TRUE);
+            for (VM vm : pluggedVms) {
+                if (vm.getStatus() != VMStatus.Up || vm.getRunOnVds() == null) {
+                    continue;
+                }
+                VDSReturnValue returnValue;
+                ExtendVmDiskSizeVDSCommandParameters params =
+                        new ExtendVmDiskSizeVDSCommandParameters(vm.getRunOnVds(), vm.getId(), lun.getLUNId(), lunSize);
+                try {
+                    returnValue = runVdsCommand(VDSCommandType.ExtendVmDiskSize, params);
+                } catch (EngineException e) {
+                    log.error("Failed to update the size for LUN disk '{}' due to error, "
+                                    + "VM should be restarted to detect the new size: {}",
+                            lun.getDiskId(), e.getMessage());
+                    auditLog(this, AuditLogType.SYNC_DIRECT_LUNS_FAILED);
+                    return false;
+                }
+
+                if (returnValue.getSucceeded()) {
+                    addCustomValue("VmId", vm.getId().toString());
+                    addCustomValue("DiskId", lun.getDiskId().toString());
+                    auditLog(this, AuditLogType.SYNC_DIRECT_LUNS_FINISHED_ON_GUEST);
+                }
+            }
+        }
+        return true;
     }
 
     private Stream<Guid> getIdsOfDirectLunsToSync() {

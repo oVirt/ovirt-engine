@@ -120,6 +120,13 @@ public class VmDiskActionPanelPresenterWidget extends DetailActionPanelPresenter
                 return getDetailModel().getChangeQuotaCommand();
             }
         });
+
+        addMenuListItem(new UiCommandButtonDefinition<VM, Disk>(getSharedEventBus(), constants.refreshLUN()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRefreshLunCommand();
+            }
+        });
     }
 
     protected void attachActivationListenersForModel() {

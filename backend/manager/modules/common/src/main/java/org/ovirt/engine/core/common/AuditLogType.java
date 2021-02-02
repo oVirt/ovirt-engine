@@ -1195,6 +1195,8 @@ public enum AuditLogType {
     TRANSFER_IMAGE_CLEANED_UP(1053, AuditLogSeverity.NORMAL),
     SYNC_DIRECT_LUNS_STARTED(1054, AuditLogSeverity.NORMAL),
     SYNC_DIRECT_LUNS_FINISHED(1055, AuditLogSeverity.NORMAL),
+    SYNC_DIRECT_LUNS_FAILED(1056, AuditLogSeverity.ERROR),
+    SYNC_DIRECT_LUNS_FINISHED_ON_GUEST(1057, AuditLogSeverity.NORMAL),
 
     // Switch master storage domain
     SWITCH_MASTER_STORAGE_DOMAIN(1480, AuditLogSeverity.NORMAL),
