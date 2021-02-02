@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -81,13 +80,13 @@ public class NetworkImplementationDetailsUtils {
     }
 
     private Map<Guid, HostNetworkQos> calcQosByNetworkIdMap(Collection<Network> networks) {
-        Map<Guid, HostNetworkQos> networkIdsByQos = new HashMap<>();
+        Map<Guid, HostNetworkQos> qosByNetworkId = new HashMap<>();
         List<HostNetworkQos> allQos = effectiveHostNetworkQos.getAll();
-        allQos.forEach(qos -> {
-            Optional<Network> network = networks.stream().filter(net -> net.getQosId() == qos.getId()).findFirst();
-            network.ifPresent(net -> networkIdsByQos.put(net.getId(), qos));
+        networks.forEach(net -> {
+            var netQos = allQos.stream().filter(qos -> qos.getId().equals(net.getQosId())).findFirst();
+            netQos.ifPresent(qos -> qosByNetworkId.put(net.getId(), qos));
         });
-        return networkIdsByQos;
+        return qosByNetworkId;
     }
 
     private boolean isNetworkOutOfSync(VdsNetworkInterface iface, Network network, Cluster cluster, HostNetworkQos hostNetworkQos) {
