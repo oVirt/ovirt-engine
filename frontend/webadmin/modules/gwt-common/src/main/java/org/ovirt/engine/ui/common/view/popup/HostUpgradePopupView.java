@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.presenter.popup.HostUpgradePopupPresenterWidge
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.label.WarningNotificationLabel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.UpgradeConfirmationModel;
 
 import com.google.gwt.core.client.GWT;
@@ -31,6 +32,9 @@ public class HostUpgradePopupView extends AbstractModelBoundPopupView<UpgradeCon
     interface ViewIdHandler extends ElementIdHandler<HostUpgradePopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    @UiField
+    WarningNotificationLabel tsxRemovalInsecureCpuWarning;
 
     @UiField(provided = true)
     @Path(value = "reboot.entity")
@@ -58,8 +62,10 @@ public class HostUpgradePopupView extends AbstractModelBoundPopupView<UpgradeCon
     }
 
     @Override
-    public void edit(UpgradeConfirmationModel object) {
-        driver.edit(object);
+    public void edit(UpgradeConfirmationModel model) {
+        driver.edit(model);
+
+        tsxRemovalInsecureCpuWarning.setVisible(model.isClusterCpuInsecureAndAffectedByTsxRemoval());
     }
 
     @Override

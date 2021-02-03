@@ -82,6 +82,10 @@ public class SubTabClusterGeneralPresenter
                 updateAlerts(getView(), model);
             } else if (args.propertyName.contains("consoleAddressPartiallyOverridden")) { //$NON-NLS-1$
                 updateAlerts(getView(), model);
+            } else if (args.propertyName.equals(ClusterGeneralModel.CPU_VERB_PROPERTY_CHANGE)) { //$NON-NLS-1$
+                updateAlerts(getView(), model);
+            } else if (args.propertyName.equals(ClusterGeneralModel.CONFIGURED_CPU_VERB_PROPERTY_CHANGE)) {
+                updateAlerts(getView(), model);
             }
         });
     }
@@ -108,6 +112,10 @@ public class SubTabClusterGeneralPresenter
 
         if (model.isConsoleAddressPartiallyOverridden()) {
             view.addAlert(new Label(constants.consolePartiallyOverridden()));
+        }
+
+        if (model.isCpuConfigurationOutdated()) {
+            view.addAlert(new Label(messages.clusterCpuConfigurationOutdated(model.getCpuVerb(), model.getConfiguredCpuVerb())));
         }
     }
 

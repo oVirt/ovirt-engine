@@ -363,6 +363,7 @@
         <include name="common/utils/NumaUtils.java"/>
         <include name="common/utils/EmulatedMachineCommonUtils.java" />
         <include name="common/utils/ClusterEmulatedMachines.java" />
+        <include name="common/utils/CpuUtils.java" />
 
         <!-- TODO: Remove when UI will be refactored to use FenceProxySourceType -->
         <include name="common/utils/pm/FenceProxySourceTypeHelper.java"/>

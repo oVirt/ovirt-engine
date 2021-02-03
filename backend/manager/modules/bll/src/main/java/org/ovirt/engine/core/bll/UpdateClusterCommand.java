@@ -776,7 +776,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     private boolean canUpdateCompatibilityVersionOrCpu() {
         allHostsForCluster = vdsDao.getAllForCluster(oldCluster.getId());
         List<VDS> upVdss = allHostsForCluster.stream()
-                .filter(v -> v.getStatus() == VDSStatus.Up)
+                .filter(v -> v.getStatus().isEligibleForClusterCpuConfigurationChange())
                 .collect(Collectors.toList());
         boolean valid = true;
         List<String> lowerVersionHosts = new ArrayList<>();

@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
     <ui:style>
-        .messageLabel {
-            padding: 10px;
+        .rowSpacing {
+            margin-top: 10px;
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="450px" height="270px">
+    <d:SimpleDialogPanel width="450px" height="470px">
         <d:content>
-            <g:FlowPanel>
-                <g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}"/>
-                <ge:EntityModelCheckBoxEditor ui:field="reboot" visible="true" usePatternFly="true"/>
-            </g:FlowPanel>
+            <b:Container fluid="true">
+                <l:WarningNotificationLabel ui:field="tsxRemovalInsecureCpuWarning" text="{constants.tsxRemovalInsecureCpuWarning}" addStyleNames="{style.rowSpacing}" visible="false"/>
+                <g:Label ui:field="messageLabel"/>
+                <ge:EntityModelCheckBoxEditor ui:field="reboot" visible="true" addStyleNames="{style.rowSpacing}" usePatternFly="true"/>
+            </b:Container>
         </d:content>
     </d:SimpleDialogPanel>
 

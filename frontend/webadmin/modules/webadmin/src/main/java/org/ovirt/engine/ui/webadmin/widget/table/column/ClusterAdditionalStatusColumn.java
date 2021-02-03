@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import java.util.Objects;
+
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -55,7 +57,8 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
         boolean addSpace = false;
         if (object.isClusterCompatibilityLevelUpgradeNeeded()
                 || isDeprecated(object)
-                || object.hasHostWithMissingCpuFlags()) {
+                || object.hasHostWithMissingCpuFlags()
+                || isCpuConfigurationOutdated(object)) {
             images.append(getImageSafeHtml(IconType.EXCLAMATION));
             addSpace = true;
         }
@@ -104,6 +107,17 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
             addLineBreaks = true;
         }
 
+        if (isCpuConfigurationOutdated(object)) {
+            if (addLineBreaks) {
+                tooltip.appendHtmlConstant(constants.lineBreak());
+                tooltip.appendHtmlConstant(constants.lineBreak());
+            }
+            tooltip.append(getImageSafeHtml(IconType.EXCLAMATION));
+            tooltip.appendHtmlConstant(constants.space());
+            tooltip.appendEscaped(constants.clusterCpuConfigurationOutdatedWarning());
+            addLineBreaks = true;
+        }
+
         if (object.hasHostWithMissingCpuFlags()) {
             if (addLineBreaks) {
                 tooltip.appendHtmlConstant(constants.lineBreak());
@@ -133,6 +147,10 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
         builder.appendHtmlConstant(constants.lineBreak());
         builder.appendEscapedLines(object.getHostNamesOutOfSync());
         return builder.toSafeHtml();
+    }
+
+    private boolean isCpuConfigurationOutdated(Cluster cluster) {
+        return !Objects.equals(cluster.getCpuVerb(), cluster.getConfiguredCpuVerb());
     }
 
     @Override

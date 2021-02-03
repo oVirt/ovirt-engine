@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 
 import static org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel.ARCHITECTURE_PROPERTY_CHANGE;
-import static org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel.CONFIGURED_CPU_VERB_PROPERTY_CHANGE;
+import static org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel.CPU_VERB_PROPERTY_CHANGE;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -157,7 +157,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
         getModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if (args instanceof PropertyChangedEventArgs) {
                 String key = ((PropertyChangedEventArgs) args).propertyName;
-                if (key.equals(CONFIGURED_CPU_VERB_PROPERTY_CHANGE)) {
+                if (key.equals(CPU_VERB_PROPERTY_CHANGE)) {
                     updateCpuTypeInfo(cpuTypeWithInfo);
                 }
             }

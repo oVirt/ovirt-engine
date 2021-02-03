@@ -5,16 +5,21 @@ import java.util.Arrays;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.CpuUtils;
 
 public class UpgradeHostValidator {
 
     private VDS host;
 
-    public UpgradeHostValidator(VDS host) {
+    private Cluster cluster;
+
+    public UpgradeHostValidator(VDS host, Cluster cluster) {
         this.host = host;
+        this.cluster = cluster;
     }
 
     public ValidationResult hostExists() {
@@ -44,5 +49,11 @@ public class UpgradeHostValidator {
     public ValidationResult hostWasInstalled() {
         return ValidationResult.failWith(EngineMessage.CANNOT_UPGRADE_HOST_WITHOUT_OS)
                 .when(host.getHostOs() == null);
+    }
+
+    public ValidationResult clusterCpuSecureAndNotAffectedByTsxRemoval() {
+        return ValidationResult.failWith(EngineMessage.CANNOT_UPGRADE_HOST_CLUSTER_CPU_AFFECTED_BY_TSX_REMOVAL)
+                .when(CpuUtils.isCpuSecureAndAffectedByTsxRemoval(cluster.getCpuName())
+                        && !cluster.getCpuFlags().contains("-noTSX"));
     }
 }

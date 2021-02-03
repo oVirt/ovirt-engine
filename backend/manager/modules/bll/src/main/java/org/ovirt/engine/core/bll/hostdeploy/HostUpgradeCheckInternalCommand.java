@@ -39,7 +39,7 @@ public class HostUpgradeCheckInternalCommand<T extends VdsActionParameters> exte
 
     @Override
     protected boolean validate() {
-        UpgradeHostValidator validator = new UpgradeHostValidator(getVds());
+        UpgradeHostValidator validator = new UpgradeHostValidator(getVds(), getCluster());
 
         return validate(validator.hostExists())
                 && validate(validator.statusSupportedForHostUpgradeCheck());

@@ -50,4 +50,8 @@ public enum VDSStatus implements Identifiable {
     public boolean isEligibleForOnDemandCheckUpdates() {
         return this == Up || this == NonOperational || this == Maintenance;
     }
+
+    public boolean isEligibleForClusterCpuConfigurationChange() {
+        return this == Up || this == PreparingForMaintenance;
+    }
 }

@@ -124,6 +124,8 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     String clusterCpuTypeInfo(String cpuVerb);
 
+    String clusterCpuConfigurationOutdated(String cpuVerb, String configuredCpuVerb);
+
     String exportDomainDeprecationWarning();
 }
 

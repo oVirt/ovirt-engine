@@ -4,6 +4,8 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.utils.CpuUtils;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -80,5 +82,10 @@ public class UpgradeConfirmationModel extends ConfirmationModel {
                 getCancelCommand().execute();
             }
         });
+    }
+
+    public boolean isClusterCpuInsecureAndAffectedByTsxRemoval() {
+        return host.getClusterCompatibilityVersion().less(Version.v4_5)
+                && CpuUtils.isCpuInsecureAndAffectedByTsxRemoval(host.getClusterCpuName());
     }
 }

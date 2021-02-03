@@ -51,10 +51,11 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
 
     @Override
     protected boolean validate() {
-        UpgradeHostValidator validator = new UpgradeHostValidator(getVds());
+        UpgradeHostValidator validator = new UpgradeHostValidator(getVds(), getCluster());
 
         return validate(validator.hostExists())
-                && validate(validator.statusSupportedForHostUpgradeInternal());
+                && validate(validator.statusSupportedForHostUpgradeInternal())
+                && validate(validator.clusterCpuSecureAndNotAffectedByTsxRemoval());
     }
 
     @Override

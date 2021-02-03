@@ -43,11 +43,12 @@ public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsComm
 
     @Override
     protected boolean validate() {
-        UpgradeHostValidator validator = new UpgradeHostValidator(getVds());
+        UpgradeHostValidator validator = new UpgradeHostValidator(getVds(), getCluster());
 
         return validate(validator.hostExists())
                 && validate(validator.statusSupportedForHostUpgrade())
-                && validate(validator.updatesAvailable());
+                && validate(validator.updatesAvailable())
+                && validate(validator.clusterCpuSecureAndNotAffectedByTsxRemoval());
     }
 
     @Override

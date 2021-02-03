@@ -1795,6 +1795,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String hostRestartAfterUpgrade();
 
+    String tsxRemovalInsecureCpuWarning();
+
     String imageFormat();
 
     String imageBackingFile();
