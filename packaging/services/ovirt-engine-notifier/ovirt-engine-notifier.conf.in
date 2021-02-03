@@ -110,7 +110,8 @@ INTERVAL_IN_SECONDS=120
 IDLE_INTERVAL=30
 
 # Amount of days to keep dispatched events on history table. If 0, events remain on history table for ever.
-DAYS_TO_KEEP_HISTORY=0
+# CAUTION: Changing this value may affect upgrade time
+DAYS_TO_KEEP_HISTORY=7
 
 # Send a notification email after first failure to fetch notifications,
 # and then once every failedQueriesNotificationThreshold times.
