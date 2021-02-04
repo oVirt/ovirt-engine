@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.naming.InitialContext;
@@ -17,8 +18,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetEngineSessionIdForSsoTokenQueryParameters;
@@ -32,6 +31,9 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AnsibleServlet extends HttpServlet {
 
@@ -67,16 +69,17 @@ public class AnsibleServlet extends HttpServlet {
             );
 
             try {
-                JsonNode jsonRequest = getJsonFromRequest(request);
                 AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+                        .playbook(request.getParameter("playbook") + ".yml")
                         .variable("engine_url", engineUrl)
                         .variable("engine_token", token)
-                        .variable("engine_insecure", "true") // TODO: use CA
-                        .playbook(request.getParameter("playbook") + ".yml");
-                Iterator jsonIterator = jsonRequest.getFieldNames();
+                        .variable("engine_insecure", "true"); // TODO: use CA
+
+                JsonNode jsonRequest = getJsonFromRequest(request);
+                Iterator<Entry<String, JsonNode>> jsonIterator = jsonRequest.fields();
                 while (jsonIterator.hasNext()) {
-                    String name = (String) jsonIterator.next();
-                    commandConfig.variable(name, jsonRequest.get(name));
+                    Entry<String, JsonNode> entry = jsonIterator.next();
+                    commandConfig.variable(entry.getKey(), entry.getValue());
                 }
 
                 // Return from servlet:
