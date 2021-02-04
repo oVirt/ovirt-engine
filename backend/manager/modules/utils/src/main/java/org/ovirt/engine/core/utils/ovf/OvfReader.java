@@ -866,8 +866,9 @@ public abstract class OvfReader implements IOvfBuilder {
             return;
         }
 
+        Version effectiveCompatibilityVersion = vmBase.getCustomCompatibilityVersion() != null ? vmBase.getCustomCompatibilityVersion() : vmBase.getClusterCompatibilityVersionOrigin();
         List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays =
-                osRepository.getGraphicsAndDisplays(vmBase.getOsId(), new Version(getVersion()));
+                osRepository.getGraphicsAndDisplays(vmBase.getOsId(), effectiveCompatibilityVersion);
 
         GraphicsType graphicsType;
         switch (vmBase.getDefaultDisplayType()) {

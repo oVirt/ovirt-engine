@@ -382,7 +382,8 @@ public enum OsRepositoryImpl implements OsRepository {
                 GraphicsType graphics = GraphicsType.fromString(pair.getFirst());
                 DisplayType display = DisplayType.valueOf(pair.getSecond());
 
-                if (display != DisplayType.bochs || version != null && FeatureSupported.isBochsDisplayEnabled(version)) {
+                if (display != DisplayType.bochs ||
+                        (version != null && !version.isNotValid() && FeatureSupported.isBochsDisplayEnabled(version))) {
                     graphicsAndDisplays.add(new Pair<>(graphics, display));
                 }
             }
