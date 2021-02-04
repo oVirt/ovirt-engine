@@ -43,6 +43,8 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     public static final String ACTIVATE = "activate";
 
+    public static final String REBOOT = "reboot";
+
     public BackendHostsResource() {
         super(Host.class, VDS.class);
     }
@@ -117,9 +119,11 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         addParams.setHostedEngineDeployConfiguration(HostResourceParametersUtil.getHostedEngineDeployConfiguration(this));
         addParams = (AddVdsActionParameters) getMapper
             (Host.class, VdsOperationActionParameters.class).map(host, addParams);
-        //default value for 'activate' is true
+        // Default value for 'activate' and 'reboot' is true
         boolean activate = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, ACTIVATE, true, true);
         addParams.setActivateHost(activate);
+        boolean reboot = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, REBOOT, true, true);
+        addParams.setRebootHost(reboot);
         return performCreate(ActionType.AddVds,
                                addParams,
                                new QueryIdResolver<Guid>(QueryType.GetVdsByVdsId, IdQueryParameters.class));

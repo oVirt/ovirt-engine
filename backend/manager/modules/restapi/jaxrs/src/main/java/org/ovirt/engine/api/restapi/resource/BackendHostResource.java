@@ -158,6 +158,10 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         boolean activate = action.isSetActivate() ? action.isActivate() :
             ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, BackendHostsResource.ACTIVATE, true, false);
         params.setActivateHost(activate);
+        // Default value for 'reboot' is true
+        boolean reboot = action.isSetReboot() ? action.isReboot() :
+                ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, BackendHostsResource.REBOOT, true, true);
+        params.setRebootHost(reboot);
         return doAction(ActionType.UpdateVds,
                         params,
                         action);
@@ -217,10 +221,13 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
                 }
             }
         }
-        // by default activate the host after approval
+        // By default activate and reboot the host after approval
         boolean activate = action.isSetActivate() ? action.isActivate() :
             ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, BackendHostsResource.ACTIVATE, true, true);
         params.setActivateHost(activate);
+        boolean reboot = action.isSetReboot() ? action.isReboot() :
+                ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, BackendHostsResource.REBOOT, true, true);
+        params.setRebootHost(reboot);
 
         return doAction(ActionType.ApproveVds,
                         params,
