@@ -64,6 +64,7 @@
     <dozer.version>5.2.0</dozer.version>
     <cxf.version>2.2.7</cxf.version>
     <sshd-core.version>2.6.0</sshd-core.version>
+    <eddsa.version>0.3.0</eddsa.version>
     <vdsm-jsonrpc-java.version>1.6.0</vdsm-jsonrpc-java.version>
     <slf4j.version>1.7.22</slf4j.version>
     <gwt.version>2.9.0</gwt.version>
@@ -271,6 +272,11 @@
         <groupId>org.apache.sshd</groupId>
         <artifactId>sshd-core</artifactId>
         <version>${sshd-core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.i2p.crypto</groupId>
+        <artifactId>eddsa</artifactId>
+        <version>${eddsa.version}</version>
       </dependency>
       <dependency>
         <groupId>org.javassist</groupId>

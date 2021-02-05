@@ -10,6 +10,7 @@
   <dependencies>
     <module name="javax.api"/>
     <module name="org.slf4j"/>
+    <module name="net.i2p.crypto.eddsa"/>
   </dependencies>
 
 </module>

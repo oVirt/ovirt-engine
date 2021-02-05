@@ -31,6 +31,7 @@
       <module name="org.springframework" export="true"/>
       <module name="org.yaml.snakeyaml" export="true"/>
       <module name="org.apache.sshd" export="true"/>
+      <module name="net.i2p.crypto.eddsa" export="true"/>
 
       <module name="com.fasterxml.jackson.core.jackson-core" export="true"/>
 
