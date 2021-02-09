@@ -202,6 +202,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     EntityModelCheckBoxEditor activateHostAfterInstallEditor;
 
     @UiField(provided = true)
+    @Ignore
+    InfoIcon hostRebootInfoIcon;
+
+    @UiField(provided = true)
     @Path(value = "rebootHostAfterInstall.entity")
     @WithElementId("rebootHostAfterInstall")
     EntityModelCheckBoxEditor rebootHostAfterInstallEditor;
@@ -525,6 +529,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
                 new InfoIcon(templates.italicText(constants.discoveredHostInfoIcon()));
         hostAddressInfoIcon =
                 new InfoIcon(templates.italicText(constants.hostPopupHostAddressLabelHelpMessage()));
+        hostRebootInfoIcon =
+                new InfoIcon(templates.italicText(constants.rebootHostAfterInstallLabelHelpMessage()));
     }
 
     private void addStyles() {

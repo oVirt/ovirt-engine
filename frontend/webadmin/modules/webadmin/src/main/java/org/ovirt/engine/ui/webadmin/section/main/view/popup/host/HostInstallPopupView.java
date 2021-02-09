@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
@@ -22,6 +23,7 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.InstallModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 
@@ -80,6 +82,10 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @Path(value = "activateHostAfterInstall.entity")
     @WithElementId("activateHostAfterInstall")
     EntityModelCheckBoxEditor activateHostAfterInstallEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    InfoIcon hostRebootInfoIcon;
 
     @UiField(provided = true)
     @Path(value = "rebootHostAfterInstall.entity")
@@ -142,11 +148,13 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     private final Driver driver = GWT.create(Driver.class);
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
+    private static final ApplicationTemplates templates = AssetProvider.getTemplates();
 
     @Inject
     public HostInstallPopupView(EventBus eventBus) {
         super(eventBus);
         initEditors();
+        initInfoIcon();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         hideLabels();
         localize();
@@ -157,6 +165,11 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     private void hideLabels() {
         passwordEditor.hideLabel();
         publicKeyEditor.hideLabel();
+    }
+
+    private void initInfoIcon() {
+        hostRebootInfoIcon =
+                new InfoIcon(templates.italicText(constants.rebootHostAfterInstallLabelHelpMessage()));
     }
 
     void initEditors() {

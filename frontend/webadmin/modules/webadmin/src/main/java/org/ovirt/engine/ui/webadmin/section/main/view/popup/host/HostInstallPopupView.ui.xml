@@ -66,6 +66,16 @@
             margin-bottom: 10px
         }
 
+        .infoIcon {
+        float: left;
+        padding-left: 2px;
+        display: inline-block;
+        }
+
+        .inline {
+        display: inline-block;
+        }
+
     </ui:style>
 
     <d:SimpleDialogPanel width="750px" height="435px">
@@ -124,7 +134,9 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_12">
-                                        <ge:EntityModelCheckBoxEditor ui:field="rebootHostAfterInstallEditor" usePatternFly="true"/>
+                                        <ge:EntityModelCheckBoxEditor ui:field="rebootHostAfterInstallEditor" usePatternFly="true"
+                                                                      addStyleNames="{style.inline} {style.floatLeft}"/>
+                                        <d:InfoIcon ui:field="hostRebootInfoIcon" addStyleNames="{style.infoIcon}"/>
                                     </b:Column>
                                 </b:Row>
                             </b:Container>
