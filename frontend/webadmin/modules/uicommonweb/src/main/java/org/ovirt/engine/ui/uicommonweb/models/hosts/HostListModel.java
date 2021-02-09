@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.SetHaMaintenanceParameters;
+import org.ovirt.engine.core.common.action.SshHostRebootParameters;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsPowerDownParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
@@ -1420,7 +1421,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
-            VdsActionParameters params = new VdsActionParameters(vds.getId());
+            SshHostRebootParameters params = new SshHostRebootParameters(vds.getId());
             params.setPrevVdsStatus(vds.getStatus());
             list.add(params);
         }

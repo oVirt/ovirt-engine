@@ -104,11 +104,15 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     }
 
     protected void runSleepOnReboot() {
-        runSleepOnReboot(VDSStatus.NonResponsive);
+        runSleepOnReboot(false, VDSStatus.NonResponsive);
     }
 
-    protected void runSleepOnReboot(final VDSStatus status) {
-        ThreadPoolUtil.execute(() -> sleepOnReboot(status));
+    protected void runSleepOnReboot(boolean synchronous, final VDSStatus status) {
+        if (synchronous) {
+            sleepOnReboot(status);
+        } else {
+            ThreadPoolUtil.execute(() -> sleepOnReboot(status));
+        }
     }
 
     private void sleepOnReboot(final VDSStatus status) {

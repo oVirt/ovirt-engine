@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.SshHostRebootParameters;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -205,8 +206,11 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             configureManagementNetwork();
 
             if (getParameters().getRebootHost()) {
+                SshHostRebootParameters params = new SshHostRebootParameters(getParameters().getVdsId());
+                params.setPrevVdsStatus(getParameters().getPrevVdsStatus());
+                params.setWaitOnRebootSynchronous(true);
                 ActionReturnValue returnValue = runInternalAction(ActionType.SshHostReboot,
-                        getParameters(),
+                        params,
                         ExecutionHandler.createInternalJobContext());
                 if (!returnValue.getSucceeded()) {
                     setVdsStatus(VDSStatus.InstallFailed);

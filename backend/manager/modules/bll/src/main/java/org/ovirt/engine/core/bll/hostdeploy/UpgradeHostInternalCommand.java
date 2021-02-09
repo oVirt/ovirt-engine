@@ -16,7 +16,7 @@ import org.ovirt.engine.core.bll.validator.UpgradeHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.SshHostRebootParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -68,7 +68,7 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
                 setVdsStatus(VDSStatus.Installing);
                 upgradeManager.update(getVds(), getParameters().getTimeout());
                 if (vdsType == VDSType.oVirtNode || getParameters().isReboot()) {
-                    VdsActionParameters params = new VdsActionParameters(getVds().getId());
+                    SshHostRebootParameters params = new SshHostRebootParameters(getVds().getId());
                     params.setPrevVdsStatus(getParameters().getInitialStatus());
                     ActionReturnValue returnValue = runInternalAction(ActionType.SshHostReboot,
                             params,
