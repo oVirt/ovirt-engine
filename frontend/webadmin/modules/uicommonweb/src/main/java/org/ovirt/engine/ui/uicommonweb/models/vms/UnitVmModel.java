@@ -2157,6 +2157,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             } else if (sender == getBiosType()) {
                 updateDisplayAndGraphics();
                 updateTpmEnabled();
+            } else if (sender == getAutoPinningPolicy()) {
+                autoPinReset();
             }
         } else if (ev.matchesDefinition(ListModel.selectedItemsChangedEventDefinition)) {
             if (sender == getDefaultHost()) {
@@ -2208,6 +2210,49 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateCpuPinningChanged();
             }
         }
+    }
+
+    private void autoPinReset() {
+        AutoPinningPolicy autoPinningPolicy = getAutoPinningPolicy().getSelectedItem();
+        if (autoPinningPolicy == null) {
+            return;
+        }
+        switch(autoPinningPolicy) {
+            case DISABLED:
+                enableCpuFields();
+                enableCpuPinning();
+                break;
+            case EXISTING:
+                enableCpuFields();
+                disableCpuPinning();
+                break;
+            case ADJUST:
+                disableCpuFields();
+                disableCpuPinning();
+        }
+    }
+
+    private void enableCpuFields() {
+        getTotalCPUCores().setIsChangeable(true);
+        getNumOfSockets().setIsChangeable(true);
+        getCoresPerSocket().setIsChangeable(true);
+        getThreadsPerCore().setIsChangeable(true);
+    }
+
+    private void disableCpuFields() {
+        getTotalCPUCores().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
+        getNumOfSockets().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
+        getCoresPerSocket().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
+        getThreadsPerCore().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
+    }
+
+    private void enableCpuPinning() {
+        behavior.updateCpuPinningVisibility();
+    }
+
+    private void disableCpuPinning() {
+        getCpuPinning().setEntity("");
+        getCpuPinning().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
     }
 
     private void compatibilityVersionChanged(Object sender, EventArgs args) {
@@ -2276,6 +2321,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void initAutoPinningPolicy() {
+        getAutoPinningPolicy().getSelectedItemChangedEvent().addListener(this);
         getAutoPinningPolicy().setItems(Arrays.asList(AutoPinningPolicy.values()));
         behavior.updateAutoPinningEnabled();
     }

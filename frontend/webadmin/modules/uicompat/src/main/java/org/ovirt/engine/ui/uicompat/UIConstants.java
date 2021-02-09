@@ -1587,6 +1587,8 @@ public interface UIConstants extends Constants {
 
     String cpuPinningUnavailable();
 
+    String cpuChangesConflictWithAutoPin();
+
     String portMirroringNotSupportedExternalNetworks();
 
     String passthroughNotSupportedExternalNetworks();
