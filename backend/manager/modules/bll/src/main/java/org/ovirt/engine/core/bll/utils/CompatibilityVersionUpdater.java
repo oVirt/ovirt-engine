@@ -111,9 +111,9 @@ public class CompatibilityVersionUpdater {
         vmBase.setMemSizeMb(Math.min(vmBase.getMemSizeMb(), maxMemoryFromConfig));
         vmBase.setMinAllocatedMem(Math.min(vmBase.getMinAllocatedMem(), maxMemoryFromConfig));
 
-        return vmBase.getMaxMemorySizeMb() != oldMaxMem ||
+        return vmBase.getMaxMemorySizeMb() != oldMaxMem && oldMaxMem != 0 ||
                 vmBase.getMemSizeMb() != oldMemSize ||
-                vmBase.getMinAllocatedMem() != oldMinMem;
+                vmBase.getMinAllocatedMem() != oldMinMem && oldMinMem != 0;
     }
 
     private boolean updateCpuTopology(VmBase vmBase, Version newVersion, Cluster cluster) {
