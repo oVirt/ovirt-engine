@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -200,12 +201,10 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
         getParameters().getDirectLunIds().forEach(lun -> {
             List<VM> pluggedVms = vmDao.getForDisk(lun, false).get(Boolean.TRUE);
             if (pluggedVms != null && !pluggedVms.isEmpty()) {
-                Guid hostId = pluggedVms.get(0).getRunOnVds();
-                if (hostId == null) {
-                    hostId = vdsCommandsHelper.getHostForExecution(pluggedVms.get(0).getStoragePoolId());
-                }
-                luns.putIfAbsent(hostId, new HashSet<>());
-                luns.get(hostId).add(lun);
+                pluggedVms.stream().map(VM::getRunOnVds).filter(Objects::nonNull).forEach(hostId -> {
+                    luns.putIfAbsent(hostId, new HashSet<>());
+                    luns.get(hostId).add(lun);
+                });
             }
         });
         return luns;
