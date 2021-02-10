@@ -331,7 +331,7 @@ class Plugin(plugin.PluginBase):
         return (
             x509cert.not_valid_after.replace(tzinfo=None) -
             datetime.datetime.utcnow() <
-            datetime.timedelta(days=365)
+            datetime.timedelta(days=60)
         )
 
     SAN_extension_name = 'subjectAltName'
@@ -354,6 +354,19 @@ class Plugin(plugin.PluginBase):
             self.logger.debug('%s is missing', self.SAN_extension_name)
         return res
 
+    def _validity_period_short_enough(self, x509cert):
+        # input: x509cert: cryptography.x509.Certificate object
+        # return: bool
+        before = x509cert.not_valid_before
+        after = x509cert.not_valid_after
+        validity_in_days = ((after - before).days) - 1
+        self.logger.debug(
+            f"Certificate's validity is {validity_in_days} days. "
+            "HTTPS certificate validity shouldn't be longer than 398 days"
+        )
+        # HTTPS certificate validity shouldn't be longer than 398 days
+        return validity_in_days <= 398
+
     def _ok_to_renew_cert(self, pkcs12, name, extract):
         # input:
         # - pkcs12: A PKCS#12 file name
@@ -361,11 +374,13 @@ class Plugin(plugin.PluginBase):
         # - extract: bool. If True, we need to check the extracted cert
         # return: bool
         res = False
+        self.logger.debug("processing: '%s'", name)
         if os.path.exists(pkcs12):
             x509cert = self._extractPKCS12Certificate(pkcs12)
             if x509cert and (
                 self._expired(x509cert) or
-                not self._has_SAN(x509cert)
+                not self._has_SAN(x509cert) or
+                not self._validity_period_short_enough(x509cert)
             ):
                 if not extract:
                     res = True
@@ -619,9 +634,10 @@ class Plugin(plugin.PluginBase):
                     note=_(
                         'One or more of the certificates should be renewed, '
                         'because they expire soon, or include an invalid '
-                        'expiry date, or do not include the subjectAltName '
-                        'extension, which can cause them to be rejected by '
-                        'recent browsers and up to date hosts.\n'
+                        'expiry date, or they were created with validity '
+                        'period longer than 398 days, or do not include the '
+                        'subjectAltName extension, which can cause them to be '
+                        'rejected by recent browsers and up to date hosts.\n'
                         'See {url} for more details.\n'
                         'Renew certificates? '
                         '(@VALUES@) [@DEFAULT@]: '
