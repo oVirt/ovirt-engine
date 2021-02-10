@@ -368,7 +368,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
     }
 
     protected void confirmAndSaveOrUpdateVM(final UnitVmModel model) {
-        if (model.getTpmEnabled().getValueChanged() && !model.getTpmEnabled().getEntity()) {
+        if (model.getTpmOriginallyEnabled() && !model.getTpmEnabled().getEntity()) {
             Guid vmId = getcurrentVm().getId();
             if (vmId != null) {
                 Frontend.getInstance().runQuery(QueryType.HasTpmData, new IdQueryParameters(vmId),

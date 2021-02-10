@@ -1302,14 +1302,24 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.tscFrequency = tscFrequency;
     }
 
-    private TpmModel<Boolean> tpmEnabled;
+    private NotChangableForVmInPoolEntityModel<Boolean> tpmEnabled;
 
-    public TpmModel<Boolean> getTpmEnabled() {
+    public EntityModel<Boolean> getTpmEnabled() {
         return tpmEnabled;
     }
 
-    public void setTpmEnabled(TpmModel<Boolean> tpmEnabled) {
+    public void setTpmEnabled(NotChangableForVmInPoolEntityModel<Boolean> tpmEnabled) {
         this.tpmEnabled = tpmEnabled;
+    }
+
+    private boolean tpmOriginallyEnabled = true;
+
+    public boolean getTpmOriginallyEnabled() {
+        return tpmOriginallyEnabled;
+    }
+
+    public void setTpmOriginallyEnabled(boolean tpmOriginallyEnabled) {
+        this.tpmOriginallyEnabled = tpmOriginallyEnabled;
     }
 
     private NotChangableForVmInPoolListModel<MigrationSupport> migrationMode;
@@ -1733,7 +1743,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setDataCenterWithClustersList(new NotChangableForVmInPoolListModel<DataCenterWithCluster>());
         getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener(this);
 
-        setTpmEnabled(new TpmModel<Boolean>(false));
+        setTpmEnabled(new NotChangableForVmInPoolEntityModel<Boolean>(false));
 
         setBiosType(new ListModelWithClusterDefault<>(BiosType.CLUSTER_DEFAULT));
         getBiosType().getSelectedItemChangedEvent().addListener(this);
@@ -3498,28 +3508,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 super.setIsChangeable(value);
             }
             return this;
-        }
-    }
-
-    public class TpmModel<T> extends NotChangableForVmInPoolEntityModel<T> {
-        private boolean entityChanged = false;
-
-        public boolean getValueChanged() {
-            return entityChanged;
-        }
-
-        private void setValueChanged(boolean valueChanged) {
-            this.entityChanged = valueChanged;
-        }
-
-        public TpmModel(T entity) {
-            super(entity);
-        }
-
-        @Override
-        protected void onEntityChanged() {
-            setValueChanged(true);
-            super.onEntityChanged();
         }
     }
 

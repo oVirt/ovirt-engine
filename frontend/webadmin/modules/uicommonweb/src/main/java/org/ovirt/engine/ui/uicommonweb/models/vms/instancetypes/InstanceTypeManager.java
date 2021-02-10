@@ -309,7 +309,9 @@ public abstract class InstanceTypeManager {
                                 new AsyncQuery<QueryReturnValue>(rr -> {
                                     deactivate();
                                     List<String> tpmDevices = rr.getReturnValue();
-                                    getModel().getTpmEnabled().setEntity(!tpmDevices.isEmpty());
+                                    boolean tpmEnabled = !tpmDevices.isEmpty();
+                                    getModel().getTpmEnabled().setEntity(tpmEnabled);
+                                    getModel().setTpmOriginallyEnabled(tpmEnabled);
                                     activate();
 
                                     postDoUpdateManagedFieldsFrom(vmBase);

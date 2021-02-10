@@ -1371,7 +1371,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 new IdQueryParameters(vmId),
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
                     List<String> tpmDevices = returnValue.getReturnValue();
-                    getModel().getTpmEnabled().setEntity(!tpmDevices.isEmpty());
+                    boolean tpmEnabled = !tpmDevices.isEmpty();
+                    getModel().getTpmEnabled().setEntity(tpmEnabled);
+                    getModel().setTpmOriginallyEnabled(tpmEnabled);
                 }));
     }
 
