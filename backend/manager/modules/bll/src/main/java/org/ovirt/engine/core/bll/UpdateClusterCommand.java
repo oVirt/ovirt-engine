@@ -29,7 +29,6 @@ import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -172,9 +171,23 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
     private boolean shouldUpdateVmsAndTemplates() {
         return isVersionChanged()
-                || isBiosTypeChanged()
                 || isCpuNameChanged()
-                || oldCluster.getArchitecture() != getArchitecture();
+                || oldCluster.getArchitecture() != getArchitecture()
+                || getParameters().isChangeVmsChipsetToQ35();
+    }
+
+    private boolean shouldUpdateVmBase(VmBase vmBase) {
+        return isVersionChanged()
+                || isCpuNameChanged()
+                || oldCluster.getArchitecture() != getArchitecture()
+                || shouldUpdateVmsChipset(vmBase);
+    }
+
+    private boolean shouldUpdateVmsChipset(VmBase vmBase) {
+        return getParameters().isChangeVmsChipsetToQ35()
+                        && !vmBase.isHostedEngine()
+                        && vmBase.getBiosType() != null
+                        && vmBase.getBiosType().getChipsetType() == ChipsetType.I440FX;
     }
 
     private boolean isVersionChanged() {
@@ -183,16 +196,6 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
     private boolean isCpuNameChanged() {
         return !Objects.equals(oldCluster.getCpuName(), getCluster().getCpuName());
-    }
-
-    private boolean isBiosTypeChanged() {
-        try {
-            return FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
-                    && oldCluster.getBiosType() != getCluster().getBiosType();
-        } catch (IllegalArgumentException e) {
-            // Thrown by FeatureSupported. Ignore here, because validate() will fail in this case.
-            return false;
-        }
     }
 
     private void setVmInitToVms() {
@@ -338,7 +341,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         }
 
         if (getCluster().getArchitecture() != ArchitectureType.undefined &&
-                getCluster().getBiosType() == BiosType.CLUSTER_DEFAULT) {
+                getCluster().getBiosType() == null) {
             setDefaultBiosType();
         }
 
@@ -493,6 +496,9 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
     private void updateVms(List<Pair<String, String>> failedUpgradeEntities) {
         for (VmStatic vm : vmsLockedForUpdate) {
+            if (!shouldUpdateVmBase(vm)) {
+                continue;
+            }
             ActionReturnValue result = runInternalAction(
                     ActionType.UpdateVm,
                     createUpdateVmParameters(vm),
@@ -540,11 +546,14 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             updateParams.getVmStaticData().setDefaultDisplayType(DisplayType.vga);
         }
 
+        if (getParameters().isChangeVmsChipsetToQ35() && updateParams.getVmStaticData().getBiosType() == BiosType.I440FX_SEA_BIOS) {
+            updateParams.getVmStaticData().setBiosType(BiosType.Q35_SEA_BIOS);
+        }
         return updateParams;
     }
 
     private boolean isBochsDisplaySupported(VmStatic originalVmStatic) {
-        if (!originalVmStatic.getEffectiveBiosType().isOvmf()) {
+        if (originalVmStatic.getBiosType() == null || !originalVmStatic.getBiosType().isOvmf()) {
             return false;
         }
         Version effectiveCompatibilityVersion = CompatibilityVersionUtils.getEffective(originalVmStatic, getCluster());
@@ -576,6 +585,9 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
     private void updateTemplates(List<Pair<String, String>> failedUpgradeEntities) {
         for (VmTemplate template : templatesLockedForUpdate) {
+            if (!shouldUpdateVmBase(template)) {
+                continue;
+            }
             new CompatibilityVersionUpdater().updateTemplateCompatibilityVersion(template,
                     CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster),
                     getCluster());
@@ -588,6 +600,10 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
             updateRngDeviceIfNecessary(template.getId(), template.getCustomCompatibilityVersion(), parameters);
             updateResumeBehavior(template);
+
+            if (getParameters().isChangeVmsChipsetToQ35() && parameters.getVmTemplateData().getBiosType() == BiosType.I440FX_SEA_BIOS) {
+                parameters.getVmTemplateData().setBiosType(BiosType.Q35_SEA_BIOS);
+            }
 
             final ActionReturnValue result = runInternalAction(
                     ActionType.UpdateVmTemplate,

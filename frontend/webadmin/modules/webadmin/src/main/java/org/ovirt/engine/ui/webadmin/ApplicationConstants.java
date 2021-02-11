@@ -694,6 +694,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String clusterPopupBiosTypeLabel();
 
+    String clusterPopupBiosTypeInfoIcon();
+
     String clusterPopupArchitectureLabel();
 
     String clusterPopupFipsModeLabel();
@@ -922,6 +924,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String thinAllocation();
 
     String quotaClusterSubTabLabel();
+
+    String clusterChangeToQ35();
 
     String clusterEnableOvirtServiceLabel();
 

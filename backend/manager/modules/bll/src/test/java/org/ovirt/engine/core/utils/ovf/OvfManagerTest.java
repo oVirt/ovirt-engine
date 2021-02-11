@@ -325,7 +325,7 @@ public class OvfManagerTest {
         vm.setClusterArch(ArchitectureType.x86_64);
         vm.setVmOs(EXISTING_OS_ID);
         vm.setClusterBiosType(BiosType.Q35_SEA_BIOS);
-        vm.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
+        vm.setBiosType(BiosType.Q35_SEA_BIOS);
         initInterfaces(vm);
         return vm;
     }
@@ -412,7 +412,7 @@ public class OvfManagerTest {
         template.setClusterArch(ArchitectureType.x86_64);
         template.setOsId(EXISTING_OS_ID);
         template.setClusterBiosType(BiosType.Q35_SEA_BIOS);
-        template.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
+        template.setBiosType(BiosType.Q35_SEA_BIOS);
         return template;
     }
 
@@ -426,8 +426,8 @@ public class OvfManagerTest {
         vm.setOrigin(OriginType.OVIRT);
         vm.setDbGeneration(1L);
         vm.setClusterBiosType(BiosType.Q35_SEA_BIOS);
-        vm.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
         vm.setClusterArch(ArchitectureType.x86_64);
+        vm.setBiosType(BiosType.Q35_SEA_BIOS);
         Guid vmSnapshotId = Guid.newGuid();
 
         DiskImage disk1 = addTestDisk(vm, vmSnapshotId);

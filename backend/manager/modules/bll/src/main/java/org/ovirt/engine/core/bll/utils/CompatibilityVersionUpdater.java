@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -31,17 +30,7 @@ public class CompatibilityVersionUpdater {
      */
     public EnumSet<VmUpdateType> updateVmCompatibilityVersion(VM vm, Version newVersion, Cluster cluster) {
         vm.setClusterCompatibilityVersion(cluster.getCompatibilityVersion());
-        updateBiosType(vm, newVersion, cluster);
         return updateVmBaseCompatibilityVersion(vm.getStaticData(), newVersion, cluster);
-    }
-
-    // we should preserve the Q35_SECURE_BOOT settings to ensure the VM starts
-    private void updateBiosType(VM vm, Version newVersion, Cluster cluster) {
-        if (newVersion.greaterOrEquals(Version.v4_3)) {
-            if (vm.getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT && cluster.getBiosType() != BiosType.Q35_SECURE_BOOT) {
-                vm.setCustomBiosType(BiosType.Q35_SECURE_BOOT);
-            }
-        }
     }
 
     /**
@@ -74,9 +63,6 @@ public class CompatibilityVersionUpdater {
         }
         if (updateMigrationPolicy(vmBase, newVersion, cluster)) {
             updates.add(VmUpdateType.MIGRATION_POLICY);
-        }
-        if (updateBiosType(vmBase, newVersion)) {
-            updates.add(VmUpdateType.BIOS_TYPE);
         }
         if (updateDefaultDisplayType(vmBase, newVersion)) {
             updates.add(VmUpdateType.DEFAULT_DISPLAY_TYPE);
@@ -201,18 +187,6 @@ public class CompatibilityVersionUpdater {
                 newVersion.greaterOrEquals(Version.v4_3)) {
             vmBase.setMigrationPolicyId(cluster.getMigrationPolicyId());
             return !Objects.equals(NoMigrationPolicy.ID, vmBase.getMigrationPolicyId());
-        }
-        return false;
-    }
-
-    private boolean updateBiosType(VmBase vmBase, Version newVersion) {
-        if (!FeatureSupported.isBiosTypeSupported(newVersion) &&
-                vmBase.getCustomBiosType() != BiosType.CLUSTER_DEFAULT &&
-                vmBase.getCustomBiosType() != BiosType.I440FX_SEA_BIOS) {
-            var oldBiosType = vmBase.getCustomBiosType();
-            vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
-
-            return oldBiosType != BiosType.CLUSTER_DEFAULT;
         }
         return false;
     }

@@ -116,7 +116,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -187,7 +186,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private ImageType imageType;
     private Guid vmInterfacesSourceId;
     private VmTemplate vmDisksSource;
-    private Guid vmDevicesSourceId;
+    private VmBase vmDevicesSource;
     private List<StorageDomain> poolDomains;
 
     private Map<Guid, Guid> srcDiskIdToTargetDiskIdMapping = new HashMap<>();
@@ -279,7 +278,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
 
             setVmTemplateId(templateIdToUse);
-            BiosTypeUtils.setEffective(parameters.getVmStaticData(), getCluster().getBiosType());
 
             // API backward compatibility
             if (getVmDeviceUtils().shouldOverrideSoundDevice(
@@ -293,8 +291,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 parameters.setConsoleEnabled(false);
             }
 
-            vmDevicesSourceId =
+            Guid vmDevicesSourceId =
                     (getInstanceTypeId() != null) ? getInstanceTypeId() : parameters.getVmStaticData().getVmtGuid();
+            vmDevicesSource = getVmBase(vmDevicesSourceId);
+
+            if (parameters.getVmStaticData().getBiosType() == null) {
+                parameters.getVmStaticData().setBiosType(vmDevicesSource.getClusterId() == null ? getCluster().getBiosType() : vmDevicesSource.getBiosType());
+            }
+
             imageTypeId = parameters.getVmStaticData().getImageTypeId();
             vmInterfacesSourceId = parameters.getVmStaticData().getVmtGuid();
             vmDisksSource = getVmTemplate();
@@ -683,7 +687,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                         getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()),
                         getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
-                vmFromParams.getEffectiveBiosType(),
+                vmFromParams.getBiosType(),
                 getEffectiveCompatibilityVersion()))) {
             return false;
         }
@@ -810,13 +814,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(msgs);
         }
 
-        if (getCluster().getBiosType() == null || getCluster().getBiosType() == BiosType.CLUSTER_DEFAULT) {
+        if (vmDevicesSource.getClusterId() == null && (getCluster().getBiosType() == null)) {
             return failValidation(EngineMessage.CLUSTER_BIOS_TYPE_NOT_SET);
         }
 
         if (FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
-                && vmFromParams.getCustomBiosType() != BiosType.CLUSTER_DEFAULT
-                && vmFromParams.getCustomBiosType() != BiosType.I440FX_SEA_BIOS
+                && vmFromParams.getBiosType() != BiosType.I440FX_SEA_BIOS
                 && getCluster().getArchitecture() != ArchitectureType.undefined
                 && getCluster().getArchitecture().getFamily() != ArchitectureType.x86) {
             return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
@@ -1166,7 +1169,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected void copyVmDevices() {
-        getVmDeviceUtils().copyVmDevices(vmDevicesSourceId,
+        getVmDeviceUtils().copyVmDevices(vmDevicesSource.getId(),
                 getVmId(),
                 getSrcDeviceIdToTargetDeviceIdMapping(),
                 isSoundDeviceEnabled(),
@@ -1201,17 +1204,22 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     private void updateVmDevicesOnChipsetChange() {
         if (isChipsetChanged()) {
-            log.info("BIOS chipset type of source VM/template ({}) is different than BIOS chipset type of destination VM/template ({}), the devices will be converted to the new BIOS chipset type.",
-                    vmDevicesSourceId,
+            log.info(
+                    "BIOS chipset type of source VM/template ({}) is different than BIOS chipset type of destination VM/template ({}), the disks and devices will be converted to the new BIOS chipset type.",
+                    vmDevicesSource.getId(),
                     getVm().getId());
-            getVmDeviceUtils().convertVmDevicesToNewChipset(getVmId(), getParameters().getVmStaticData().getEffectiveBiosType().getChipsetType(), false);
+            getVmHandler().convertVmToNewChipset(getVmId(),
+                    getParameters().getVmStaticData().getBiosType().getChipsetType(),
+                    getCompensationContextIfEnabledByCaller());
         }
     }
 
     private boolean isChipsetChanged() {
-        VmBase sourceVmBase = getVmBase(vmDevicesSourceId);
-        return getParameters().getVmStaticData().getEffectiveBiosType().getChipsetType() != sourceVmBase
-                .getEffectiveBiosType()
+        if (vmDevicesSource.getClusterId() == null) {
+            return false;
+        }
+        return getParameters().getVmStaticData().getBiosType().getChipsetType() != vmDevicesSource
+                .getBiosType()
                 .getChipsetType();
     }
 
@@ -1786,7 +1794,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         boolean isOsSupportedForVirtIoScsi = vmValidationUtils.isDiskInterfaceSupportedByOs(
                 getParameters().getVm().getOs(),
                 getEffectiveCompatibilityVersion(),
-                getParameters().getVmStaticData().getEffectiveBiosType().getChipsetType(),
+                getParameters().getVmStaticData().getBiosType().getChipsetType(),
                 DiskInterface.VirtIO_SCSI);
 
         return virtioScsiEnabled != null ? virtioScsiEnabled : isOsSupportedForVirtIoScsi;
@@ -1852,13 +1860,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         vmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData());
 
         // Choose a proper default display type according to the cluster architecture
-        vmHandler.autoSelectDefaultDisplayType(vmDevicesSourceId,
+        vmHandler.autoSelectDefaultDisplayType(vmDevicesSource.getId(),
                 getParameters().getVmStaticData(),
                 getCluster(),
                 getParameters().getGraphicsDevices());
 
         // If not set by user, choose proper graphics device according to the cluster architecture
-        vmHandler.autoSelectGraphicsDevice(vmDevicesSourceId,
+        vmHandler.autoSelectGraphicsDevice(vmDevicesSource.getId(),
                 getParameters().getVmStaticData(),
                 getCluster(),
                 getParameters().getGraphicsDevices(),
@@ -1952,7 +1960,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
     }
 
-    private VmBase getVmBase(Guid vmId) {
+    VmBase getVmBase(Guid vmId) {
         VmStatic vmStatic = vmStaticDao.get(vmId);
         return vmStatic != null ? vmStatic : vmTemplateDao.get(vmId);
     }

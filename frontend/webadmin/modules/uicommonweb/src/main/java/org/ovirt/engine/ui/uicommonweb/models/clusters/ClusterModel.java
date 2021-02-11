@@ -16,6 +16,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.FipsMode;
 import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
@@ -968,6 +969,16 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.biosType = biosType;
     }
 
+    private EntityModel<Boolean> changeToQ35;
+
+    public EntityModel<Boolean> getChangeToQ35() {
+        return changeToQ35;
+    }
+
+    public void setChangeToQ35(EntityModel<Boolean> changeToQ35) {
+        this.changeToQ35 = changeToQ35;
+    }
+
     private ListModel<FipsMode> fipsMode;
 
     public ListModel<FipsMode> getFipsMode() {
@@ -1349,6 +1360,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getCPU().getSelectedItemChangedEvent().addListener(this);
 
         setBiosType(new ListModel<>());
+        setChangeToQ35(new EntityModel<>(false));
+        getBiosType().getSelectedItemChangedEvent().addListener(this);
         initBiosType();
 
         setFipsMode(new ListModel<>());
@@ -1515,11 +1528,12 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     public void initBiosType() {
-        boolean allowClusterDefault = getEntity() == null || BiosType.CLUSTER_DEFAULT == getEntity().getBiosType();
-        getBiosType().setItems(AsyncDataProvider.getInstance().getBiosTypeList());
-        if (!allowClusterDefault) {
-            getBiosType().getItems().remove(BiosType.CLUSTER_DEFAULT);
+        boolean allowClusterDefault = getEntity() == null || getEntity().getBiosType() == null;
+        ArrayList<BiosType> items = AsyncDataProvider.getInstance().getBiosTypeList();
+        if (allowClusterDefault) {
+            items.add(0, null);
         }
+        getBiosType().setItems(items);
         updateBiosType();
     }
 
@@ -1587,7 +1601,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getEffectiveVersion());
         }
         if (architecture == ArchitectureType.undefined || (!getBiosType().getIsChangable() && getBiosType().getSelectedItem() == null)) {
-            getBiosType().setSelectedItem(BiosType.CLUSTER_DEFAULT);
+            getBiosType().setSelectedItem(null);
             return;
         }
         if (getIsEdit() && architecture.equals(getEntity().getArchitecture())
@@ -1866,6 +1880,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             getMacPoolModel().setEntity(getMacPoolListModel().getSelectedItem());
         } else if (sender == getMigrationPolicies()) {
             migrationPoliciesChanged();
+        } else if (sender == getBiosType()) {
+            updateChangeToQ35();
         }
     }
 
@@ -2273,6 +2289,15 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     break;
                 }
             }
+        }
+    }
+
+
+    private void updateChangeToQ35() {
+        getChangeToQ35().setIsChangeable(getIsEdit() && getBiosType().getSelectedItem() != null
+                && getBiosType().getSelectedItem().getChipsetType() == ChipsetType.Q35);
+        if (!getChangeToQ35().getIsChangable()) {
+            getChangeToQ35().setEntity(false);
         }
     }
 

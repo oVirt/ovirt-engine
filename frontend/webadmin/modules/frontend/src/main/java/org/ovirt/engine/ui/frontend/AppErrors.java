@@ -63,6 +63,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VM_TEMPLATE_IS_LOCKED();
 
+    String VM_TEMPLATE_WITH_CLUSTER_WITHOUT_BIOS_TYPE();
+
+    String VM_TEMPLATE_WITHOUT_CLUSTER_WITH_BIOS_TYPE();
+
     String VM_TEMPLATE_IMAGE_IS_LOCKED();
 
     String VM_TEMPLATE_IMAGE_IS_ILLEGAL();

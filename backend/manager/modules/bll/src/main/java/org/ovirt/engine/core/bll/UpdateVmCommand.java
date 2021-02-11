@@ -95,7 +95,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
@@ -220,8 +219,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     compatibilityVersion, getVm().getStaticData());
         }
 
-        BiosTypeUtils.setEffective(getParameters().getVmStaticData(), getCluster().getBiosType());
-
         vmHandler.updateDefaultTimeZone(getParameters().getVmStaticData());
 
         vmHandler.autoSelectUsbPolicy(getParameters().getVmStaticData());
@@ -242,11 +239,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         updateUSB();
 
-        if (getParameters().getVmStaticData().getCustomBiosType() == BiosType.CLUSTER_DEFAULT) {
-            getParameters().getVm().setClusterBiosType(getCluster().getBiosType());
-        }
-
         getVmDeviceUtils().setCompensationContext(getCompensationContextIfEnabledByCaller());
+
+        if (getParameters().getVmStaticData().getBiosType() == null) {
+            getParameters().getVmStaticData().setBiosType(getVm().getBiosType());
+        }
     }
 
     private VmPropertiesUtils getVmPropertiesUtils() {
@@ -377,10 +374,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void updateVmDevicesOnChipsetChange() {
         if (isChipsetChanged()) {
-            log.info("BIOS chipset type has changed for VM: {} ({}), the devices will be converted to new chipset.",
+            log.info("BIOS chipset type has changed for VM: {} ({}), the disks and devices will be converted to new chipset.",
                     getVm().getName(),
                     getVm().getId());
-            getVmDeviceUtils().convertVmDevicesToNewChipset(getVmId(), getParameters().getVmStaticData().getEffectiveBiosType().getChipsetType(), true);
+            getVmHandler().convertVmToNewChipset(getVmId(), getParameters().getVmStaticData().getBiosType().getChipsetType(), getCompensationContextIfEnabledByCaller());
         }
     }
 
@@ -1147,7 +1144,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmId()),
                         getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
-                vmFromParams.getEffectiveBiosType(),
+                vmFromParams.getBiosType(),
                 getEffectiveCompatibilityVersion()))) {
             return false;
         }
@@ -1327,8 +1324,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (FeatureSupported.isBiosTypeSupported(getCluster().getCompatibilityVersion())
-                && vmFromParams.getCustomBiosType() != BiosType.CLUSTER_DEFAULT
-                && vmFromParams.getCustomBiosType() != BiosType.I440FX_SEA_BIOS
                 && getCluster().getArchitecture() != ArchitectureType.undefined
                 && getCluster().getArchitecture().getFamily() != ArchitectureType.x86) {
             return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
@@ -1513,9 +1508,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private boolean isChipsetChanged() {
-        BiosType newEffectiveBiosType = getParameters().getVmStaticData().getEffectiveBiosType();
-        BiosType oldEffectiveBiosType = getVm().getEffectiveBiosType();
-        return  newEffectiveBiosType.getChipsetType() != oldEffectiveBiosType.getChipsetType();
+        BiosType newBiosType = getParameters().getVmStaticData().getBiosType();
+        BiosType oldBiosType = getVm().getBiosType();
+        return  newBiosType.getChipsetType() != oldBiosType.getChipsetType();
     }
 
     @Override

@@ -383,7 +383,7 @@ public class TemplateGeneralModel extends AbstractGeneralModel<VmTemplate> {
         setTemplateId(template.getId().toString());
         setDescription(template.getDescription());
         setArchitecture(template.getClusterArch());
-        setBiosType(template.getEffectiveBiosType());
+        setBiosType(template.getBiosType());
         setQuotaName(template.getQuotaName() != null ? template.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(template.getQuotaEnforcementType() != null
                 && !template.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));

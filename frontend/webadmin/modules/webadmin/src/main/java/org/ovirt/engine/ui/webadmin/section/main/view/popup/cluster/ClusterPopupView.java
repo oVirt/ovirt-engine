@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelCheckBoxGroup;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
@@ -132,12 +133,20 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     ListModelListBoxEditor<ServerCpu> cpuEditor;
 
+    @UiField(provided = true)
+    InfoIcon biosTypeEditorInfoIcon;
+
     BiosTypeRenderer biosTypeRenderer;
 
     @UiField(provided = true)
     @Path(value = "biosType.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<BiosType> biosTypeEditor;
+    ListModelListBoxOnlyEditor<BiosType> biosTypeEditor;
+
+    @UiField(provided = true)
+    @Path(value = "changeToQ35.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor changeToQ35Editor;
 
     @UiField(provided = true)
     @Path(value = "version.selectedItem")
@@ -654,7 +663,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         });
 
         biosTypeRenderer = new BiosTypeRenderer(constants.autoDetect());
-        biosTypeEditor = new ListModelListBoxEditor<>(biosTypeRenderer);
+        biosTypeEditor = new ListModelListBoxOnlyEditor<>(biosTypeRenderer);
 
         versionEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Version>() {
             @Override
@@ -730,6 +739,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     }
 
     private void initCheckBoxEditors() {
+        changeToQ35Editor = new EntityModelCheckBoxEditor(Align.RIGHT);
         enableOvirtServiceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         enableGlusterServiceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
@@ -770,6 +780,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     }
 
     private void initInfoIcons() {
+        biosTypeEditorInfoIcon = new InfoIcon(templates.italicText(constants.clusterPopupBiosTypeInfoIcon()));
+
         memoryOptimizationInfo = new InfoIcon(templates.italicText(constants.clusterPopupMemoryOptimizationInfo()));
 
         cpuThreadsInfo = new InfoIcon(templates.italicText(constants.clusterPopupCpuThreadsInfo()));

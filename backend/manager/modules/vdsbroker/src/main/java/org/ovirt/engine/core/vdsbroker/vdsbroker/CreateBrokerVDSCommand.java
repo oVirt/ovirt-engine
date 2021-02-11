@@ -77,7 +77,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
         if (tpmData != null) {
             createInfo.put(VdsProperties.tpmData, tpmData);
         }
-        if (vm.getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT) {
+        if (vm.getBiosType() == BiosType.Q35_SECURE_BOOT) {
             String nvramData = vmInfoBuildUtils.nvramData(vm.getId());
             if (nvramData != null) {
                 createInfo.put(VdsProperties.nvramData, nvramData);

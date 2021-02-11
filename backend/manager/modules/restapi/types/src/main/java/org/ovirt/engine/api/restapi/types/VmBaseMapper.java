@@ -191,7 +191,7 @@ public class VmBaseMapper {
                 entity.setBootMenuEnabled(model.getBios().getBootMenu().isEnabled());
             }
             if (model.getBios().isSetType()) {
-                entity.setCustomBiosType(map(model.getBios().getType(), null));
+                entity.setBiosType(map(model.getBios().getType(), null));
             }
         }
         if (model.isSetCpuShares()) {
@@ -406,8 +406,8 @@ public class VmBaseMapper {
         model.getBios().setBootMenu(new BootMenu());
         model.getBios().getBootMenu().setEnabled(entity.isBootMenuEnabled());
 
-        if (entity.getCustomBiosType() != null) {
-            model.getBios().setType(map(entity.getCustomBiosType(), null));
+        if (entity.getBiosType() != null) {
+            model.getBios().setType(map(entity.getBiosType(), null));
         }
 
         if(entity.getTimeZone() != null) {
@@ -629,8 +629,6 @@ public class VmBaseMapper {
             return null;
         }
         switch (biosType) {
-            case CLUSTER_DEFAULT:
-                return org.ovirt.engine.core.common.businessentities.BiosType.CLUSTER_DEFAULT;
             case I440FX_SEA_BIOS:
                 return org.ovirt.engine.core.common.businessentities.BiosType.I440FX_SEA_BIOS;
             case Q35_SEA_BIOS:
@@ -650,8 +648,6 @@ public class VmBaseMapper {
             return null;
         }
         switch (biosType) {
-            case CLUSTER_DEFAULT:
-                return BiosType.CLUSTER_DEFAULT;
             case I440FX_SEA_BIOS:
                 return BiosType.I440FX_SEA_BIOS;
             case Q35_SEA_BIOS:

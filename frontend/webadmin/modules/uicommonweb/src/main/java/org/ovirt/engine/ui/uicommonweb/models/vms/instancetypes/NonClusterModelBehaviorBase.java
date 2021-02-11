@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -77,5 +78,12 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
     @Override
     public VmRngDevice.Source getUrandomOrRandomRngSource() {
         return VmRngDevice.Source.URANDOM;
+    }
+
+    @Override
+    protected void initializeBiosType() {
+        getModel().getBiosType().setItems(Arrays.asList((BiosType) null));
+        getModel().getBiosType().setSelectedItem(null);
+        getModel().getBiosType().setIsChangeable(false);
     }
 }

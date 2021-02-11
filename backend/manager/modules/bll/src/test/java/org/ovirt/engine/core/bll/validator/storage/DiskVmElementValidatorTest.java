@@ -151,9 +151,9 @@ public class DiskVmElementValidatorTest {
         vm.setStatus(VMStatus.Down);
         vm.setId(Guid.newGuid());
         vm.setVmOs(vmOs);
-        vm.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
+        vm.setBiosType(BiosType.I440FX_SEA_BIOS);
         // TODO: the test should be modified to Q35_SEA_BIOS bios type
-        vm.setEffectiveBiosType(BiosType.I440FX_SEA_BIOS);
+        vm.setBiosType(BiosType.I440FX_SEA_BIOS);
         return vm;
     }
 }

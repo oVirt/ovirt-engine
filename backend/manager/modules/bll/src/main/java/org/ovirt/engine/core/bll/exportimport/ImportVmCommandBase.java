@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -60,7 +59,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -127,8 +125,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     private Runnable logOnExecuteEndMethod = () -> {};
 
-    protected boolean chipsetChanged;
-
     ImportVmCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
@@ -152,7 +148,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
 
-        if (getCluster().getBiosType() == null || getCluster().getBiosType() == BiosType.CLUSTER_DEFAULT) {
+        if (getCluster().getBiosType() == null) {
             return failValidation(EngineMessage.CLUSTER_BIOS_TYPE_NOT_SET);
         }
 
@@ -261,7 +257,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         return validate(vmHandler.isGraphicsAndDisplaySupported(getParameters().getVm().getOs(),
                 getGraphicsTypesForVm(),
                 getVm().getDefaultDisplayType(),
-                getVm().getEffectiveBiosType(),
+                getVm().getBiosType(),
                 getEffectiveCompatibilityVersion()));
     }
 
@@ -350,11 +346,12 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         setVm(parameters.getVm());
         if (parameters.getVm() != null) {
             setVmId(parameters.getVm().getId());
-            if (getVm().getCustomBiosType() == BiosType.CLUSTER_DEFAULT) {
-                chipsetChanged = getVm().getEffectiveBiosType().getChipsetType() != getCluster().getBiosType().getChipsetType();
-            }
-            BiosTypeUtils.setEffective(getVm().getStaticData(), getCluster().getBiosType());
+            initBiosType();
         }
+    }
+
+    protected void initBiosType() {
+        // override in subclasses if needed
     }
 
     protected void updateVmVersion() {
@@ -377,10 +374,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         var updates = new CompatibilityVersionUpdater().updateVmCompatibilityVersion(getVm(), newVersion, getCluster());
-
-        if (chipsetChanged) {
-            updates.add(VmUpdateType.CHIPSET);
-        }
 
         if (!updates.isEmpty()) {
             logOnExecuteEnd(() -> {
@@ -517,7 +510,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             processImages();
             vmHandler.addVmInitToDB(getVm().getStaticData().getVmInit());
             discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
-            updateVmDevicesOnChipsetChange();
         } catch (RuntimeException e) {
             macPool.freeMacs(macsAdded);
             throw e;
@@ -748,15 +740,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         return getVm().getMemSizeMb();
-    }
-
-    private void updateVmDevicesOnChipsetChange() {
-        if (chipsetChanged) {
-            log.info("BIOS chipset type of imported VM ({}) is different than BIOS chipset type of destination cluster, the devices will be converted to the new BIOS chipset type.",
-                    getVm().getId(),
-                    getCluster().getId());
-            getVmDeviceUtils().convertVmDevicesToNewChipset(getVm().getId(), getVm().getEffectiveBiosType().getChipsetType(), false);
-        }
     }
 
     @Override

@@ -652,7 +652,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
         setArchitecture(vm.getClusterArch());
 
-        setBiosType(vm.getEffectiveBiosType());
+        setBiosType(vm.getBiosType());
 
         setDefaultDisplayType(translator.translate(vm.getDefaultDisplayType()));
 

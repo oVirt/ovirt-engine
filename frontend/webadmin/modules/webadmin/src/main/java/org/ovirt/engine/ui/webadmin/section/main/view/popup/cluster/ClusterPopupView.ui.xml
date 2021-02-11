@@ -190,6 +190,10 @@
         .max95Width {
             max-width: 95%;
         }
+
+        .bottomMargin {
+        	margin-bottom: 15px;
+    	}
     </ui:style>
 
     <d:SimpleDialogPanel width="860px" height="600px">
@@ -221,7 +225,18 @@
                                     <e:ListModelListBoxEditor ui:field="cpuEditor" label="{constants.clusterPopupCPUTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="biosTypeEditor" label="{constants.clusterPopupBiosTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                  <b:Column size="SM_6">
+                                    <g:Label text="{constants.clusterPopupBiosTypeLabel}" addStyleNames="{style.floatLeft}" />
+                                    <d:InfoIcon ui:field="biosTypeEditorInfoIcon" addStyleNames="{style.panelInfo}"/>
+                                  </b:Column>
+                                  <b:Column size="SM_6">
+                                    <e:ListModelListBoxOnlyEditor ui:field="biosTypeEditor" usePatternFly="true"/>
+                                  </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_12">
+                                        <ge:EntityModelCheckBoxEditor ui:field="changeToQ35Editor" label="{constants.clusterChangeToQ35}" removeFormGroup="true" usePatternFly="true" addStyleNames="{style.bottomMargin}"/>
+                                    </b:Column>
                                 </b:Row>
                                 <b:Row>
                                     <e:ListModelListBoxEditor ui:field="fipsModeEditor" label="{constants.clusterPopupFipsModeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />

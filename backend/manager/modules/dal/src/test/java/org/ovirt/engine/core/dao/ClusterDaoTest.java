@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
@@ -71,7 +70,6 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
         newGroup.setClusterPolicyProperties(new LinkedHashMap<>());
         newGroup.setDetectEmulatedMachine(true);
         newGroup.setEmulatedMachine("rhel6.4.0");
-        newGroup.setBiosType(BiosType.CLUSTER_DEFAULT);
         newGroup.setArchitecture(ArchitectureType.x86_64);
         newGroup.setGlusterCliBasedSchedulingOn(true);
         newGroup.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.CUSTOM);

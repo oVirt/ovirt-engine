@@ -478,6 +478,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return vmDeviceUtils;
     }
 
+    protected VmHandler getVmHandler() {
+        return vmHandler;
+    }
+
     protected SnapshotsManager getSnapshotsManager() {
         return snapshotsManager;
     }

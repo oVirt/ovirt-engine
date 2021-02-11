@@ -88,4 +88,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParameters> extends 
         return vmDeviceUtils;
     }
 
+    protected VmHandler getVmHandler() {
+        return vmHandler;
+    }
 }

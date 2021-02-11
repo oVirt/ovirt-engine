@@ -47,7 +47,7 @@ public class SaveVmExternalDataCommand<T extends SaveVmExternalDataParameters> e
     }
 
     private boolean hasSecureBoot() {
-        return getVm().getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT
+        return getVm().getBiosType() == BiosType.Q35_SECURE_BOOT
                 && FeatureSupported.isNvramPersistenceSupported(getVm().getCompatibilityVersion());
     }
 

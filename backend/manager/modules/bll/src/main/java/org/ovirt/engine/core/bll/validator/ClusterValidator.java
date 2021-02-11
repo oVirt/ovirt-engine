@@ -474,7 +474,6 @@ public class ClusterValidator {
         return ValidationResult.failWith(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY)
                 .when(FeatureSupported.isBiosTypeSupported(eCluster.getCompatibilityVersion())
                     && eCluster.getBiosType() != null
-                    && eCluster.getBiosType() != BiosType.CLUSTER_DEFAULT
                     && eCluster.getBiosType() != BiosType.I440FX_SEA_BIOS
                     && architecture.getFamily() != ArchitectureType.x86);
     }

@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameter
 import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters.Phase;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -109,6 +110,14 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         setStorageDomainId(getParameters().getDestDomainId());
         setStoragePoolId(getCluster() != null ? getCluster().getStoragePoolId() : null);
         adjustKVMDataForBlockSD();
+    }
+
+    @Override
+    protected void initBiosType() {
+        if (getVm().getOrigin() == OriginType.VMWARE && getVm().getBiosType() == null) {
+            getVm().setBiosType(BiosType.I440FX_SEA_BIOS);
+        }
+        super.initBiosType();
     }
 
     @Override

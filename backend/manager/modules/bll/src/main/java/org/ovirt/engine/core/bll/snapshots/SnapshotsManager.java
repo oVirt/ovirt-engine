@@ -342,7 +342,7 @@ public class SnapshotsManager {
                 vmExternalData.put(VmExternalDataKind.TPM, tpmData);
             }
         }
-        if (vm.getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT) {
+        if (vm.getBiosType() == BiosType.Q35_SECURE_BOOT) {
             String nvramData = vmDao.getNvramData(vm.getId()).getFirst();
             if (nvramData != null && !nvramData.equals("")) {
                 vmExternalData.put(VmExternalDataKind.NVRAM, nvramData);

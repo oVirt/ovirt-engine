@@ -714,8 +714,7 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_is_migrate_compressed BOOLEAN,
     v_is_migrate_encrypted BOOLEAN,
     v_custom_emulated_machine VARCHAR(40),
-    v_effective_bios_type INTEGER,
-    v_custom_bios_type INTEGER,
+    v_bios_type INTEGER,
     v_custom_cpu_name VARCHAR(40),
     v_small_icon_id UUID,
     v_large_icon_id UUID,
@@ -799,8 +798,7 @@ INSERT INTO vm_static(description,
                       is_migrate_compressed,
                       is_migrate_encrypted,
                       custom_emulated_machine,
-                      effective_bios_type,
-                      custom_bios_type,
+                      bios_type,
                       custom_cpu_name,
                       small_icon_id,
                       large_icon_id,
@@ -876,8 +874,7 @@ INSERT INTO vm_static(description,
            v_is_migrate_compressed,
            v_is_migrate_encrypted,
            v_custom_emulated_machine,
-           v_effective_bios_type,
-           v_custom_bios_type,
+           v_bios_type,
            v_custom_cpu_name,
            v_small_icon_id,
            v_large_icon_id,
@@ -1079,8 +1076,7 @@ v_is_auto_converge BOOLEAN,
 v_is_migrate_compressed BOOLEAN,
 v_is_migrate_encrypted BOOLEAN,
 v_custom_emulated_machine VARCHAR(40),
-v_effective_bios_type INTEGER,
-v_custom_bios_type INTEGER,
+v_bios_type INTEGER,
 v_custom_cpu_name VARCHAR(40),
 v_small_icon_id UUID,
 v_large_icon_id UUID,
@@ -1163,8 +1159,7 @@ BEGIN
      is_migrate_compressed = v_is_migrate_compressed,
      is_migrate_encrypted = v_is_migrate_encrypted,
      custom_emulated_machine = v_custom_emulated_machine,
-     effective_bios_type = v_effective_bios_type,
-     custom_bios_type = v_custom_bios_type,
+     bios_type = v_bios_type,
      custom_cpu_name = v_custom_cpu_name,
      small_icon_id = v_small_icon_id,
      large_icon_id = v_large_icon_id,
@@ -2474,7 +2469,7 @@ IF EXISTS remove_nvram_data_on_update
 CREATE OR REPLACE FUNCTION remove_nvram_data ()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF OLD.effective_bios_type = 4 AND NEW.effective_bios_type != 4 THEN
+    IF OLD.bios_type = 4 AND NEW.bios_type != 4 THEN
         DELETE FROM vm_nvram_data
         WHERE vm_id = OLD.vm_guid;
     END IF;

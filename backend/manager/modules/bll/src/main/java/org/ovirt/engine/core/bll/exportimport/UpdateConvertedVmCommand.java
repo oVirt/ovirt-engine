@@ -6,10 +6,14 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
+import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -18,7 +22,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
-import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +37,9 @@ public class UpdateConvertedVmCommand<T extends ConvertVmParameters> extends VmC
     @Inject
     private DiskVmElementDao diskVmElementDao;
     @Inject
-    private VmStaticDao vmStaticDao;
+    private VmDeviceUtils vmDeviceUtils;
+    @Inject
+    private VmHandler vmHandler;
 
     public UpdateConvertedVmCommand(Guid cmdId) {
         super(cmdId);
@@ -104,9 +109,19 @@ public class UpdateConvertedVmCommand<T extends ConvertVmParameters> extends VmC
 
     private void addExtraData(VM vm) {
         VmStatic vmStatic = getVm().getStaticData();
-        if (!vmStatic.getCustomBiosType().equals(vm.getCustomBiosType())) {
-            vmStatic.setCustomBiosType(vm.getCustomBiosType());
+
+        if (vm.getBiosType() == BiosType.I440FX_SEA_BIOS) {
+            if (getCluster().getBiosType().getChipsetType() == ChipsetType.Q35) {
+                vm.setBiosType(BiosType.Q35_SEA_BIOS);
+            }
+        }
+
+        if (vmStatic.getBiosType() != vm.getBiosType()) {
+            vmStatic.setBiosType(vm.getBiosType());
             getVmManager().update(vmStatic);
+            vmHandler.convertVmToNewChipset(vmStatic.getId(),
+                    vmStatic.getBiosType().getChipsetType(),
+                    getCompensationContextIfEnabledByCaller());
         }
     }
 

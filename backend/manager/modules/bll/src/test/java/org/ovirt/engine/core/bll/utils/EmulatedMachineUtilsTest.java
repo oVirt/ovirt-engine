@@ -11,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
@@ -31,30 +31,30 @@ public class EmulatedMachineUtilsTest {
 
     @Test
     public void testEffectiveEmulatedMachineWithCustomSet() {
-        final VmBase vmBase = new VmBase();
+        final VM vm = new VM();
         final Cluster cluster = new Cluster();
         cluster.setEmulatedMachine("cluster-pc-i440fx-rhel7.3.0");
-        vmBase.setCustomEmulatedMachine("testpc-i440fx-rhel7.3.0");
-        assertEquals("testpc-i440fx-rhel7.3.0", EmulatedMachineUtils.getEffective(vmBase, () -> cluster));
+        vm.setCustomEmulatedMachine("testpc-i440fx-rhel7.3.0");
+        assertEquals("testpc-i440fx-rhel7.3.0", EmulatedMachineUtils.getEffective(vm, () -> cluster));
     }
 
     @Test
     public void testEffectiveEmulatedMachineWithoutCustomSet() {
-        final VmBase vmBase = new VmBase();
-        vmBase.setEffectiveBiosType(BiosType.I440FX_SEA_BIOS);
+        final VM vm = new VM();
+        vm.setBiosType(BiosType.I440FX_SEA_BIOS);
         final Cluster cluster = new Cluster();
         cluster.setEmulatedMachine("cluster-pc-i440fx-rhel7.3.0");
-        assertEquals("cluster-pc-i440fx-rhel7.3.0", EmulatedMachineUtils.getEffective(vmBase, () -> cluster));
+        assertEquals("cluster-pc-i440fx-rhel7.3.0", EmulatedMachineUtils.getEffective(vm, () -> cluster));
     }
 
     @Test
     public void testEffectiveEmulatedMachineCCV() {
-        final VmBase vmBase = new VmBase();
-        vmBase.setEffectiveBiosType(BiosType.I440FX_SEA_BIOS);
+        final VM vm = new VM();
+        vm.setBiosType(BiosType.I440FX_SEA_BIOS);
         final Cluster cluster = new Cluster();
         cluster.setEmulatedMachine("pc-i440fx-rhel7.3.0");
-        vmBase.setCustomCompatibilityVersion(Version.v4_2);
-        assertEquals("pc-i440fx-rhel7.2.0", EmulatedMachineUtils.getEffective(vmBase, () -> cluster));
+        vm.setCustomCompatibilityVersion(Version.v4_2);
+        assertEquals("pc-i440fx-rhel7.2.0", EmulatedMachineUtils.getEffective(vm, () -> cluster));
     }
 
     @Test

@@ -15,7 +15,6 @@ import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -129,38 +128,10 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     }
 
     private void updateVm(VM vm) {
-        if (isChipsetChanged(vm)) {
-            handleChangedChipset(vm);
-        }
-
         vm.setClusterId(getClusterId());
         clearDedicatedHosts(vm);
         setCpuProfileFromNewCluster(vm);
         resourceManager.getVmManager(getVmId()).update(vm.getStaticData());
-    }
-
-    private void handleChangedChipset(VM vm) {
-        // if the cluster changes as a result of live migration to a different cluster, the VM is running and should
-        // keep using its current chipset, thus setting custom bios-type. otherwise, adjusting the VM to comply with the
-        // bios type of the new cluster in the longer term, once the VM stops pointing to the cluster's bios type, we
-        // can drop this code.
-        if (isInternalExecution()) {
-            vm.setCustomBiosType(vm.getClusterBiosType());
-            vm.setEffectiveBiosType(vm.getCustomBiosType());
-            return;
-        }
-
-        log.info("BIOS chipset type has changed for VM: {} ({}), the devices will be converted to new chipset.",
-                getVm().getName(),
-                getVm().getId());
-        getVmDeviceUtils().convertVmDevicesToNewChipset(getVmId(), vm.getEffectiveBiosType().getChipsetType(), false);
-    }
-
-    private boolean isChipsetChanged(VM vm) {
-        if (vm.getCustomBiosType() != BiosType.CLUSTER_DEFAULT) {
-            return false;
-        }
-        return vm.getEffectiveBiosType().getChipsetType() != getCluster().getBiosType().getChipsetType();
     }
 
     private void setCpuProfileFromNewCluster(VM vm) {

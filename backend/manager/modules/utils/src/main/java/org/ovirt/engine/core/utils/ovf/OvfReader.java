@@ -698,28 +698,12 @@ public abstract class OvfReader implements IOvfBuilder {
         // introduction of CLUSTER_DEFAULT:  0 == I440FX_SEA_BIOS and so on
         acceptNode(
                 val -> {
-                    vmBase.setCustomBiosType(BiosType.forValue(Integer.parseInt(val) + 1));
-                    vmBase.setEffectiveBiosType(vmBase.getCustomBiosType());
+                    vmBase.setBiosType(BiosType.forValue(Integer.parseInt(val) + 1));
                 },
                 () -> {
-                    vmBase.setEffectiveBiosType(BiosType.I440FX_SEA_BIOS);
-                    vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
+                    vmBase.setBiosType(BiosType.I440FX_SEA_BIOS);
                 },
                 biosTypeNode);
-        if (biosTypeNode != null) {
-            consumeReadXmlAttribute(biosTypeNode, "ovf:custom",
-                    val -> {
-                        if (!Boolean.parseBoolean(val)) {
-                            vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
-                        }
-                    },
-                    () -> {
-                        if (vmBase.getCustomBiosType() != BiosType.Q35_SECURE_BOOT
-                                && vmBase.getCustomBiosType() != BiosType.Q35_OVMF) {
-                            vmBase.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
-                        }
-                    });
-        }
     }
 
     private String escapedNewLines(String value) {

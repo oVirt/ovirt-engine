@@ -28,8 +28,12 @@ public class BiosTypeRenderer extends EnumRenderer<BiosType> {
 
     @Override
     public String render(BiosType biosType) {
-        if (biosType == BiosType.CLUSTER_DEFAULT && defaultString != null) {
+        if (biosType == null && defaultString != null) {
             return defaultString;
+        }
+
+        if (biosType == null) {
+            return "";
         }
 
         if (architectureType != null && BiosType.I440FX_SEA_BIOS.equals(biosType)) {

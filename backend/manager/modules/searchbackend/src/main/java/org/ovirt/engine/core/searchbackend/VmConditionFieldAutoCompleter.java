@@ -170,7 +170,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(CREATED_BY_USER_ID, "created_by_user_id");
         columnNameDict.put(NEXT_RUN_CONFIG_EXISTS, "next_run_config_exists");
         columnNameDict.put(HAS_ILLEGAL_IMAGES, "has_illegal_images");
-        columnNameDict.put(BIOS_TYPE, "custom_bios_type");
+        columnNameDict.put(BIOS_TYPE, "bios_type");
         columnNameDict.put(NAMESPACE, "namespace");
 
         // Override field names for purpose of sorting, if needed

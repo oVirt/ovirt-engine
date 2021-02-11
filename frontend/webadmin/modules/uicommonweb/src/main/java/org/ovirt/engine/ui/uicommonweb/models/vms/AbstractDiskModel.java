@@ -571,7 +571,7 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     public void updateInterfaceList(final Version clusterVersion) {
         AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getOs(), clusterVersion,
-                    getVm().getEffectiveBiosType().getChipsetType(), new AsyncQuery<>(
+                    getVm().getBiosType().getChipsetType(), new AsyncQuery<>(
                 diskInterfaces -> {
                     if (Boolean.FALSE.equals(getIsVirtioScsiEnabled().getEntity())) {
                         diskInterfaces.remove(DiskInterface.VirtIO_SCSI);

@@ -147,6 +147,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         List<MigrationPolicy> policies = AsyncDataProvider.getInstance().getMigrationPolicies(Version.getLast());
         policies.add(0, null);
         getModel().getMigrationPolicies().setItems(policies);
+        initializeBiosType();
+    }
+
+    protected void initializeBiosType() {
+        getModel().getBiosType().setItems(AsyncDataProvider.getInstance().getBiosTypeList());
     }
 
     protected Guid findDefaultStorageDomainForVmLease(Collection<Disk> disks) {
@@ -1335,6 +1340,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         getModel().getEmulatedMachine().setSelectedItem(oldVal);
                     }
                 }), cluster.getId());
+    }
+
+    protected void updateBiosType() {
     }
 
     /*

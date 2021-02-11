@@ -31,6 +31,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
@@ -448,6 +449,7 @@ public class VmInfoBuildUtilsTest {
     @Test
     public void testIsTabletEnabled() {
         VM vm = new VM();
+        vm.setBiosType(BiosType.Q35_SEA_BIOS);
         Map<GraphicsType, GraphicsInfo> m = new HashMap<>();
         vm.setGraphicsInfos(m);
         Map<String, Object> specs = new HashMap<>();

@@ -189,7 +189,7 @@ public class CompatibilityVersionUpdaterTest {
         vm.setId(Guid.newGuid());
         vm.setClusterArch(cluster.getArchitecture());
         vm.setMigrationPolicyId(Guid.newGuid());
-        vm.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
+        vm.setBiosType(BiosType.Q35_SEA_BIOS);
         vm.setDefaultDisplayType(DisplayType.vga);
         vm.setVmOs(OS_ID);
         vm.setClusterArch(ArchitectureType.x86_64);

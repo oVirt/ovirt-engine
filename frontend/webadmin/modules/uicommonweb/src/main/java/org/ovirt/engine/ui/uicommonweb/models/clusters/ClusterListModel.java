@@ -824,6 +824,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         final Network managementNetwork = model.getManagementNetwork().getSelectedItem();
         final ClusterOperationParameters clusterOperationParameters =
                 new ClusterOperationParameters(cluster, managementNetwork.getId());
+        clusterOperationParameters.setChangeVmsChipsetToQ35(model.getChangeToQ35().getEntity());
         final ActionType actionType = model.getIsNew() ? ActionType.AddCluster : ActionType.UpdateCluster;
         Frontend.getInstance().runAction(
                 actionType,

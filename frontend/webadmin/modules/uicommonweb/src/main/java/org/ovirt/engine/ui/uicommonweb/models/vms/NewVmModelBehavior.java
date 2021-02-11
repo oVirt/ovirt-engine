@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -421,5 +423,40 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.EXISTING);
             }
         }
+    }
+
+    @Override
+    protected void updateBiosType() {
+        Cluster cluster = getModel().getSelectedCluster();
+
+        if (cluster == null) {
+            return;
+        }
+
+        if (cluster.getArchitecture().getFamily() != ArchitectureType.x86) {
+            getModel().getBiosType().setIsChangeable(false, ConstantsManager.getInstance().getMessages().biosTypeSupportedForX86Only());
+        } else {
+            getModel().getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getCompatibilityVersion());
+        }
+
+        if (!getModel().getBiosType().getIsChangable()) {
+            getModel().getBiosType().setSelectedItem(cluster.getBiosType());
+            return;
+        }
+
+        if (basedOnCustomInstanceType()) {
+            TemplateWithVersion template = getModel().getTemplateWithVersion().getSelectedItem();
+
+            if (template == null) {
+                return;
+            }
+
+            if (template.getTemplateVersion().getClusterId() != null) {
+                getModel().getBiosType().setSelectedItem(template.getTemplateVersion().getBiosType());
+                return;
+            }
+        }
+
+        getModel().getBiosType().setSelectedItem(cluster.getBiosType());
     }
 }

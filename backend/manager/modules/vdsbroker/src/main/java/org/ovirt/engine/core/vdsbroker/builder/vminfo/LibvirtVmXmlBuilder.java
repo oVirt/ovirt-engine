@@ -682,10 +682,10 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         }
 
-        if (vm.getEffectiveBiosType().isOvmf()) {
+        if (vm.getBiosType().isOvmf()) {
             writer.writeStartElement("loader");
             writer.writeAttributeString("readonly", "yes");
-            boolean secureBoot = vm.getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT;
+            boolean secureBoot = vm.getBiosType() == BiosType.Q35_SECURE_BOOT;
             writer.writeAttributeString("secure", secureBoot ? "yes" : "no");
             writer.writeAttributeString("type", "pflash");
             writer.writeRaw("/usr/share/OVMF/OVMF_CODE.secboot.fd");
@@ -771,7 +771,7 @@ public class LibvirtVmXmlBuilder {
 
         boolean acpiEnabled = vm.getAcpiEnable();
         boolean kaslrEnabled = vmInfoBuildUtils.isKASLRDumpEnabled(vm.getVmOsId());
-        boolean secureBootEnabled = vm.getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT;
+        boolean secureBootEnabled = vm.getBiosType() == BiosType.Q35_SECURE_BOOT;
         if (!acpiEnabled && !hypervEnabled && !kaslrEnabled && !secureBootEnabled) {
             return;
         }
@@ -1202,7 +1202,7 @@ public class LibvirtVmXmlBuilder {
         }
 
         if (vm.getClusterArch().getFamily() == ArchitectureType.x86
-                && vm.getEffectiveBiosType().getChipsetType() == ChipsetType.Q35) {
+                && vm.getBiosType().getChipsetType() == ChipsetType.Q35) {
             writePciEControllers(pciERootExists, pciEPorts);
         }
 

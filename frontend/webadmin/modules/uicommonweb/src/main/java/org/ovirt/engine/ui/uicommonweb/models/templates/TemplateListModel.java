@@ -668,6 +668,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             templateId = ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate().getId();
         }
 
+
         confirmExternalDataDeletionAndSave(model, templateId, "OnSave", m -> onSave()); //$NON-NLS-1$
     }
 

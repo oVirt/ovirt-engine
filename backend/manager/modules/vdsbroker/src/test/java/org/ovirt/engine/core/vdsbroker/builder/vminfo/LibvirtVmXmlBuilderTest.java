@@ -213,8 +213,8 @@ public class LibvirtVmXmlBuilderTest {
         VM vm = mock(VM.class);
         when(vm.getId()).thenReturn(Guid.newGuid());
         when(vm.getClusterArch()).thenReturn(ArchitectureType.x86_64);
-        when(vm.getCustomBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
-        when(vm.getEffectiveBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
+        when(vm.getBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
+        when(vm.getBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
         when(vm.getBootSequence()).thenReturn(BootSequence.C);
         setVm(underTest, vm);
 
@@ -409,8 +409,8 @@ public class LibvirtVmXmlBuilderTest {
         Map<String, Map<String, String>> metadata = new HashMap<>();
         VM vm = mock(VM.class);
         when(vm.getClusterArch()).thenReturn(ArchitectureType.x86_64);
-        when(vm.getCustomBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
-        when(vm.getEffectiveBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
+        when(vm.getBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
+        when(vm.getBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
         when(vm.getBootSequence()).thenReturn(BootSequence.C);
 
         VmInfoBuildUtils buildUtils = setVmInfoBuildUtils(underTest);

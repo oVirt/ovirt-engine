@@ -45,7 +45,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -129,14 +128,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         vmHandler.autoSelectResumeBehavior(getParameters().getVmTemplateData());
 
         getVmDeviceUtils().setCompensationContext(getCompensationContextIfEnabledByCaller());
-        if (oldTemplate.getCustomBiosType() != getVmTemplate().getCustomBiosType()) {
-            if (getCluster() != null) {
-                BiosTypeUtils.setEffective(getVmTemplate(), getCluster().getBiosType());
-            } else {
-                BiosTypeUtils.setEffective(getVmTemplate(), BiosType.I440FX_SEA_BIOS);
-            }
-        } else {
-            getVmTemplate().setEffectiveBiosType(oldTemplate.getEffectiveBiosType());
+        if (getVmTemplate().getBiosType() == null) {
+            getVmTemplate().setBiosType(oldTemplate.getBiosType());
         }
     }
 
@@ -229,6 +222,14 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return failValidation(msgs);
         }
 
+        if (getVmTemplate().getClusterId() != null && getVmTemplate().getBiosType() == null) {
+            return failValidation(EngineMessage.VM_TEMPLATE_WITH_CLUSTER_WITHOUT_BIOS_TYPE);
+        }
+
+        if (getVmTemplate().getClusterId() == null && getVmTemplate().getBiosType() != null) {
+            return failValidation(EngineMessage.VM_TEMPLATE_WITHOUT_CLUSTER_WITH_BIOS_TYPE);
+        }
+
         if (!isInstanceType && !isBlankTemplate && returnValue) {
             return doClusterRelatedChecks();
         } else {
@@ -259,7 +260,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             returnValue = validate(vmHandler.isGraphicsAndDisplaySupported(getParameters().getVmTemplateData().getOsId(),
                     vmHandler.getResultingVmGraphics(getVmDeviceUtils().getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
                     getParameters().getVmTemplateData().getDefaultDisplayType(),
-                    getParameters().getVmTemplateData().getEffectiveBiosType(),
+                    getParameters().getVmTemplateData().getBiosType(),
                     getVmTemplate().getCompatibilityVersion()));
         }
 
@@ -636,16 +637,16 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     private void updateVmDevicesOnChipsetChange() {
         if (isChipsetChanged()) {
-            log.info("BIOS chipset type has changed for template: {} ({}), the devices will be converted to new chipset.",
+            log.info("BIOS chipset type has changed for template: {} ({}), the disks and devices will be converted to new chipset.",
                     getVmTemplate().getName(),
                     getVmTemplate().getId());
-            getVmDeviceUtils().convertVmDevicesToNewChipset(getVmTemplateId(), getVmTemplate().getEffectiveBiosType().getChipsetType(), true);
+            getVmHandler().convertVmToNewChipset(getVmTemplateId(), getVmTemplate().getBiosType().getChipsetType(), getCompensationContextIfEnabledByCaller());
         }
     }
 
     private boolean isChipsetChanged() {
-        BiosType newEffectiveBiosType = getVmTemplate().getEffectiveBiosType();
-        BiosType oldEffectiveBiosType = oldTemplate.getEffectiveBiosType();
+        BiosType newEffectiveBiosType = getVmTemplate().getBiosType();
+        BiosType oldEffectiveBiosType = oldTemplate.getBiosType();
         if (newEffectiveBiosType == null || oldEffectiveBiosType == null) {
             return false;
         }

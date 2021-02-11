@@ -36,7 +36,6 @@ import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
@@ -52,7 +51,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.core.common.utils.BiosTypeUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -502,13 +500,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         privateName = value;
     }
 
-    private ListModelWithClusterDefault<BiosType> biosType;
+    private NotChangableForVmInPoolListModel<BiosType> biosType;
 
-    public ListModelWithClusterDefault<BiosType> getBiosType() {
+    public ListModel<BiosType> getBiosType() {
         return biosType;
     }
 
-    private void setBiosType(ListModelWithClusterDefault<BiosType> value) {
+    private void setBiosType(NotChangableForVmInPoolListModel<BiosType> value) {
         biosType = value;
     }
 
@@ -1757,6 +1755,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getTemplateWithVersion().getSelectedItemChangedEvent().addListener(this);
 
         setInstanceTypes(new NotChangableForVmInPoolListModel<InstanceType>());
+        getInstanceTypes().getSelectedItemChangedEvent().addListener(this);
+
         setInstanceImages(new InstanceImagesModel(this, parentModel));
 
         setQuota(new NotChangableForVmInPoolListModel<Quota>());
@@ -1767,10 +1767,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setTpmEnabled(new NotChangableForVmInPoolEntityModel<Boolean>(false));
 
-        setBiosType(new ListModelWithClusterDefault<>(BiosType.CLUSTER_DEFAULT));
+        setBiosType(new NotChangableForVmInPoolListModel<>());
         getBiosType().getSelectedItemChangedEvent().addListener(this);
-        getBiosType().setItems(AsyncDataProvider.getInstance().getBiosTypeList());
-        getBiosType().setSelectedItem(BiosType.CLUSTER_DEFAULT);
 
         setEmulatedMachine(new NotChangableForVmInPoolListModel<String>());
 
@@ -2122,10 +2120,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 compatibilityVersionChanged(sender, args);
                 behavior.updateEmulatedMachines();
                 behavior.updateCustomCpu();
+                behavior.updateBiosType();
                 updateTscFrequency();
                 behavior.updateAutoPinningEnabled();
             } else if (sender == getTemplateWithVersion()) {
                 templateWithVersion_SelectedItemChanged(sender, args);
+                behavior.updateBiosType();
+            } else if (sender == getInstanceTypes()) {
+                behavior.updateBiosType();
             } else if (sender == getTimeZone()) {
                 timeZone_SelectedItemChanged(sender, args);
             } else if (sender == getOSType()) {
@@ -2485,10 +2487,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        initDisplayModels(getSupportedDisplayTypes(osType, getEffectiveBiosType(biosType, cluster)));
+        initDisplayModels(getSupportedDisplayTypes(osType, getBiosType().getSelectedItem()));
     }
 
     private Set<DisplayType> getSupportedDisplayTypes(int osId, BiosType biosType) {
+        if (biosType == null) {
+            return Collections.emptySet();
+        }
         return AsyncDataProvider.getInstance().getGraphicsAndDisplays(osId, getCompatibilityVersion()).stream()
                 .map(Pair::getSecond)
                 .filter(dt -> dt != DisplayType.none)
@@ -2581,7 +2586,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         updateSoundCard();
         updateResumeBehavior();
-        updateBiosType();
         updateTpmEnabled();
 
         getBehavior().updateOSValue(selectedOsId);
@@ -3783,24 +3787,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         migrateEncrypted.setClusterValue(encrypt);
     }
 
-    private void updateBiosType() {
-        Cluster cluster = getSelectedCluster();
-
-        if (cluster == null) {
-            return;
-        }
-
-        getBiosType().setClusterValue(cluster.getBiosType());
-        if (cluster.getArchitecture().getFamily() != ArchitectureType.x86) {
-            getBiosType().setIsChangeable(false, ConstantsManager.getInstance().getMessages().biosTypeSupportedForX86Only());
-        } else {
-            getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getCompatibilityVersion());
-        }
-        if (!getBiosType().getIsChangable()) {
-            getBiosType().setSelectedItem(BiosType.CLUSTER_DEFAULT);
-        }
-    }
-
     private void updateMigrateEncrypted() {
         Version version = getCompatibilityVersion();
         if (version == null || version.greaterOrEquals(Version.v4_4)) {
@@ -3844,13 +3830,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    private BiosType getEffectiveBiosType(BiosType vmBiosType, Cluster cluster) {
-        return cluster == null || vmBiosType != BiosType.CLUSTER_DEFAULT ? vmBiosType : cluster.getBiosType();
-    }
-
     public boolean secureBootEnabled() {
-        Cluster cluster = getSelectedCluster();
-        return getEffectiveBiosType(getBiosType().getSelectedItem(), cluster) == BiosType.Q35_SECURE_BOOT;
+        return getBiosType().getSelectedItem() == BiosType.Q35_SECURE_BOOT;
     }
 
     public void needsChipsetDependentVmDeviceChanges(Runnable noChanges, Runnable needsChanges) {
@@ -3867,14 +3848,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        VmBase tmpVmBase = new VmBase();
-        tmpVmBase.setCustomBiosType(getBiosType().getSelectedItem());
-        BiosType templateEffectiveType = getTemplateWithVersion().getSelectedItem().getTemplateVersion().getEffectiveBiosType();
-        BiosType clusterBiosType = cluster.getBiosType();
+        BiosType templateBiosType = getTemplateWithVersion().getSelectedItem().getTemplateVersion().getBiosType();
 
-        BiosTypeUtils.setEffective(tmpVmBase, clusterBiosType);
-
-        if (tmpVmBase.getEffectiveBiosType().getChipsetType() != templateEffectiveType.getChipsetType()) {
+        if (getBiosType().getSelectedItem().getChipsetType() != templateBiosType.getChipsetType()) {
             needsChanges.run();
         } else {
             noChanges.run();
@@ -3889,9 +3865,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getTpmEnabled().setEntity(false);
         } else if (cluster != null && cluster.getArchitecture() != null
                 && cluster.getArchitecture().getFamily() == ArchitectureType.x86
-                && getBiosType() != null
-                && getEffectiveBiosType(getBiosType().getSelectedItem(), cluster) != null
-                && !getEffectiveBiosType(getBiosType().getSelectedItem(), cluster).isOvmf()) {
+                && getBiosType().getSelectedItem() != null
+                && !getBiosType().getSelectedItem().isOvmf()) {
             getTpmEnabled().setIsChangeable(false, messages.uefiRequired());
             getTpmEnabled().setEntity(false);
         } else {

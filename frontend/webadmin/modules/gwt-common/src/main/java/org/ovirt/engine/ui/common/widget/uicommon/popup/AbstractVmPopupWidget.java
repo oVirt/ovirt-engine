@@ -311,8 +311,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private BiosTypeRenderer biosTypeRenderer;
 
-    private ClusterDefaultRenderer<BiosType> biosTypeClusterDefaultRenderer;
-
     @UiField(provided = true)
     @Path(value = "biosType.selectedItem")
     @WithElementId("biosType")
@@ -1619,8 +1617,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         providersEditor.setLabel(constants.providerLabel());
 
         biosTypeRenderer = new BiosTypeRenderer();
-        biosTypeClusterDefaultRenderer = new ClusterDefaultRenderer(biosTypeRenderer, BiosType.CLUSTER_DEFAULT);
-        biosTypeEditor = new ListModelListBoxEditor<>(biosTypeClusterDefaultRenderer, new ModeSwitchingVisibilityRenderer());
+        biosTypeEditor = new ListModelListBoxEditor<>(biosTypeRenderer, new ModeSwitchingVisibilityRenderer());
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
@@ -1864,7 +1861,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initClusterDefaultValueListener(autoConvergeRenderer, getModel().getAutoConverge());
         initClusterDefaultValueListener(migrateCompressedRenderer, getModel().getMigrateCompressed());
         initClusterDefaultValueListener(migrationPolicyRenderer, getModel().getMigrationPolicies());
-        initClusterDefaultValueListener(biosTypeClusterDefaultRenderer, getModel().getBiosType());
     }
 
     private void updateUrandomLabel(UnitVmModel model) {

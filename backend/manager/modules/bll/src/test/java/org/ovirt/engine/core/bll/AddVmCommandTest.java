@@ -92,7 +92,7 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     @Test
     public void isVirtioScsiEnabledDefaultedToTrue() {
         cmd.getParameters().getVm().setClusterId(cluster.getId());
-        cmd.getParameters().getVm().getStaticData().setEffectiveBiosType(BiosType.Q35_SEA_BIOS);
+        cmd.getParameters().getVm().getStaticData().setBiosType(BiosType.Q35_SEA_BIOS);
         cmd.initEffectiveCompatibilityVersion();
         when(vmValidationUtils.isDiskInterfaceSupportedByOs(anyInt(), any(), any(), eq(DiskInterface.VirtIO_SCSI)))
                 .thenReturn(true);

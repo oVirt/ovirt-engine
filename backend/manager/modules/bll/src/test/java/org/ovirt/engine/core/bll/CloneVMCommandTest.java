@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -9,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,9 +22,11 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -80,6 +84,13 @@ public class CloneVMCommandTest extends BaseCommandTest {
                 MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels,
                         new HashSet<>(Collections.singletonList(Version.v4_4)))
         );
+    }
+
+    @BeforeEach
+    public void setUp() {
+        VmBase vmBase = new VmBase();
+        vmBase.setBiosType(BiosType.Q35_SEA_BIOS);
+        doReturn(vmBase).when(cmd).getVmBase(any());
     }
 
     @Test

@@ -200,7 +200,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         assertEquals(HOST_ID, vm.getDedicatedVmForVdsList().get(0));
         assertEquals(VM_NAME, vm.getName());
         assertEquals(USB_POLICY, vm.getUsbPolicy());
-        assertEquals(BIOS_TYPE, vm.getCustomBiosType());
+        assertEquals(BIOS_TYPE, vm.getBiosType());
 
     }
 

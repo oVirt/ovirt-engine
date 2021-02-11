@@ -410,7 +410,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
                             setOS(getvm().getVmOsId());
                             setArchitecture(getvm().getClusterArch());
-                            setBiosType(getvm().getEffectiveBiosType());
+                            setBiosType(getvm().getBiosType());
 
                             setDefinedMemory(getvm().getVmMemSizeMb() + " MB"); //$NON-NLS-1$
                             setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB"); //$NON-NLS-1$

@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.CopyOnNewVersion;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -793,7 +794,7 @@ public class VmHandler implements BackendService {
             return new ValidationResult(
                     EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS);
         }
-        if (displayType == DisplayType.bochs && !biosType.isOvmf()) {
+        if (displayType == DisplayType.bochs && (biosType == null || !biosType.isOvmf())) {
             return new ValidationResult(
                     EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_FIRMWARE);
         }
@@ -1532,6 +1533,39 @@ public class VmHandler implements BackendService {
             return new KubevirtVmValidator();
         } else {
             return new ManagedVmValidator();
+        }
+    }
+
+    public void convertVmToNewChipset(Guid vmId, ChipsetType newChipsetType, CompensationContext compensationContext) {
+        convertVmDisksToNewChipset(vmId, newChipsetType, compensationContext);
+        vmDeviceUtils.convertVmDevicesToNewChipset(vmId, newChipsetType, compensationContext != null);
+    }
+
+    private void convertVmDisksToNewChipset(Guid vmId, ChipsetType newChipsetType, CompensationContext compensationContext) {
+        log.info("Converting all disks for VM with id {} to new chipset {}", vmId, newChipsetType);
+        List<DiskVmElement> diskVmElements = diskVmElementDao.getAllForVm(vmId);
+        for (DiskVmElement diskVmElement : diskVmElements) {
+            if (compensationContext != null) {
+                CompensationUtils.<VmDeviceId, DiskVmElement> updateEntity(diskVmElement, el -> {
+                    convertVmDiskToNewChipset(el, newChipsetType);
+                }, diskVmElementDao, compensationContext);
+            } else {
+                convertVmDiskToNewChipset(diskVmElement, newChipsetType);
+            }
+        }
+
+        if (compensationContext == null) {
+            for (DiskVmElement diskVmElement : diskVmElements) {
+                diskVmElementDao.update(diskVmElement);
+            }
+        }
+    }
+
+    private void convertVmDiskToNewChipset(DiskVmElement diskVmElement, ChipsetType newChipsetType) {
+        if (DiskInterface.IDE == diskVmElement.getDiskInterface() && ChipsetType.Q35 == newChipsetType) {
+            diskVmElement.setDiskInterface(DiskInterface.SATA);
+        } else if (DiskInterface.SATA == diskVmElement.getDiskInterface() && ChipsetType.I440FX == newChipsetType) {
+            diskVmElement.setDiskInterface(DiskInterface.IDE);
         }
     }
 

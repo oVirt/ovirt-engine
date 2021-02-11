@@ -1760,8 +1760,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionType___ResetGlusterVolumeBrick();
 
-    String BiosType___CLUSTER_DEFAULT();
-
     String BiosType___I440FX_SEA_BIOS();
 
     String BiosType___Q35_OVMF();

@@ -60,7 +60,7 @@ public interface NextRunFieldMessages extends ConstantsWithLookup {
 
     String customEmulatedMachine();
 
-    String effectiveBiosType();
+    String biosType();
 
     String customCpuName();
 

@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -66,13 +65,9 @@ public class AddClusterCommand<T extends ClusterOperationParameters>
         Cluster cluster = getCluster();
         cluster.setArchitecture(getArchitecture());
         setCpuFlags();
-        // Ensures the Bios Type is not null
-        if (cluster.getBiosType() == null) {
-            cluster.setBiosType(BiosType.CLUSTER_DEFAULT);
-        }
         // If the Bios Type has not been set, but the Architecture has
         // update the Bios Type with the correct default
-        if (cluster.getBiosType() == BiosType.CLUSTER_DEFAULT &&
+        if (cluster.getBiosType() == null &&
                 cluster.getArchitecture() != ArchitectureType.undefined) {
             setDefaultBiosType();
         }

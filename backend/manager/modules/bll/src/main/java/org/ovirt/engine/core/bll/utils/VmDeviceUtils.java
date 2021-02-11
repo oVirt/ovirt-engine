@@ -160,10 +160,11 @@ public class VmDeviceUtils {
      * Determine the bus interface (IDE, SCSI, SATA etc.) to be used for CD device in the given VM.
      */
     public String getCdInterface(VM vm) {
+        ChipsetType chipset = vm.getBiosType() == null ? null : vm.getBiosType().getChipsetType();
         return osRepository.getCdInterface(
                 vm.getOs(),
                 vm.getCompatibilityVersion(),
-                vm.getEffectiveBiosType().getChipsetType());
+                chipset);
     }
 
     /**
@@ -468,8 +469,9 @@ public class VmDeviceUtils {
     public void updateSoundDevice(VmBase oldVmBase, VmBase newVmBase, Version compatibilityVersion,
                                   Boolean isSoundDeviceEnabled) {
         boolean osChanged = oldVmBase.getOsId() != newVmBase.getOsId();
+        ChipsetType newChipset = newVmBase.getBiosType() == null ? null : newVmBase.getBiosType().getChipsetType();
         updateSoundDevice(newVmBase.getId(), newVmBase.getOsId(), compatibilityVersion,
-                newVmBase.getEffectiveBiosType().getChipsetType(), isSoundDeviceEnabled, osChanged);
+                newChipset, isSoundDeviceEnabled, osChanged);
     }
 
     /**
@@ -518,7 +520,8 @@ public class VmDeviceUtils {
      */
     public VmDevice addSoundDevice(VmBase vmBase, Supplier<Cluster> clusterSupplier) {
         Version compatibilityVersion = CompatibilityVersionUtils.getEffective(vmBase, clusterSupplier);
-        return addSoundDevice(vmBase.getId(), vmBase.getOsId(), compatibilityVersion, vmBase.getEffectiveBiosType().getChipsetType());
+        ChipsetType chipsetType = vmBase.getBiosType() == null ? null : vmBase.getBiosType().getChipsetType();
+        return addSoundDevice(vmBase.getId(), vmBase.getOsId(), compatibilityVersion, chipsetType);
     }
 
     /**
@@ -701,10 +704,10 @@ public class VmDeviceUtils {
      */
     public boolean isTpmDeviceSupported(VmBase vm, Cluster vmCluster) {
         final Version version = CompatibilityVersionUtils.getEffective(vm, vmCluster);
+        boolean isOvmf = vm.getBiosType() == null ? false : vm.getBiosType().isOvmf();
 
         return vmCluster == null || FeatureSupported.isTpmDeviceSupported(version, vmCluster.getArchitecture())
-                && (vmCluster.getArchitecture().getFamily() != ArchitectureType.x86
-                        || vm.getEffectiveBiosType().isOvmf());
+                && (vmCluster.getArchitecture().getFamily() != ArchitectureType.x86 || isOvmf);
     }
 
     /**
@@ -770,8 +773,8 @@ public class VmDeviceUtils {
      * Add given number of sets of USB controllers suitable for SPICE USB redirection to the VM.
      * For Q35 we ignore numberOfControllers and always create only one.
      */
-    public void addSpiceUsbControllers(Guid vmId, BiosType effectiveBiosType, int numberOfControllers) {
-        if (effectiveBiosType.getChipsetType() == ChipsetType.Q35) {
+    public void addSpiceUsbControllers(Guid vmId, ChipsetType chipset, int numberOfControllers) {
+        if (chipset == ChipsetType.Q35) {
             addManagedDevice(
                     new VmDeviceId(Guid.newGuid(), vmId),
                     VmDeviceGeneralType.CONTROLLER,
@@ -861,21 +864,24 @@ public class VmDeviceUtils {
 
         final int newNumberOfUsbSlots = Config.<Integer> getValue(ConfigValues.NumberOfUSBSlots);
 
+        ChipsetType oldChipset = oldVm.getBiosType() == null ? null : oldVm.getBiosType().getChipsetType();
+        ChipsetType newChipset = newVm.getBiosType() == null ? null : newVm.getBiosType().getChipsetType();
+
         if (UsbPolicy.DISABLED == newUsbPolicy && newVm.getVmType() == VmType.HighPerformance) {
             disableAnyUsb(oldVm, newVm);
             return;
         }
         if (UsbPolicy.DISABLED == oldUsbPolicy && UsbPolicy.ENABLED_NATIVE == newUsbPolicy) {
             disableNormalUsb(newVm.getId());
-            enableSpiceUsb(newVm.getId(), newVm.getEffectiveBiosType(), newNumberOfUsbSlots);
+            enableSpiceUsb(newVm.getId(), newChipset, newNumberOfUsbSlots);
             return;
         }
         if (UsbPolicy.ENABLED_NATIVE == oldUsbPolicy && UsbPolicy.ENABLED_NATIVE == newUsbPolicy) {
-            if (!oldVm.getEffectiveBiosType().getChipsetType().equals(newVm.getEffectiveBiosType().getChipsetType())) {
+            if (oldChipset != newChipset) {
                 disableSpiceUsb(newVm.getId());
-                enableSpiceUsb(newVm.getId(), newVm.getEffectiveBiosType(), newNumberOfUsbSlots);
+                enableSpiceUsb(newVm.getId(), newChipset, newNumberOfUsbSlots);
             } else {
-                updateSpiceUsb(newVm.getId(), newVm.getEffectiveBiosType(), oldNumberOfSlots, newNumberOfUsbSlots);
+                updateSpiceUsb(newVm.getId(), newChipset, oldNumberOfSlots, newNumberOfUsbSlots);
             }
             return;
         }
@@ -932,14 +938,14 @@ public class VmDeviceUtils {
         removeUsbControllers(vmId);
     }
 
-    private void enableSpiceUsb(Guid vmId, BiosType effectiveBiosType, int newNumberOfUsbSlots) {
+    private void enableSpiceUsb(Guid vmId, ChipsetType chipset, int newNumberOfUsbSlots) {
         if (newNumberOfUsbSlots > 0) {
-            addSpiceUsbControllers(vmId, effectiveBiosType, getNeededNumberOfUsbControllers(newNumberOfUsbSlots));
+            addSpiceUsbControllers(vmId, chipset, getNeededNumberOfUsbControllers(newNumberOfUsbSlots));
             addUsbSlots(vmId, newNumberOfUsbSlots);
         }
     }
 
-    private void updateSpiceUsb(Guid vmId, BiosType effectiveBiosType, int oldNumberOfSlots, int newNumberOfUsbSlots) {
+    private void updateSpiceUsb(Guid vmId, ChipsetType chipset, int oldNumberOfSlots, int newNumberOfUsbSlots) {
         if (oldNumberOfSlots > newNumberOfUsbSlots) {
             // Remove slots and controllers
             removeUsbSlots(vmId, oldNumberOfSlots - newNumberOfUsbSlots);
@@ -953,7 +959,7 @@ public class VmDeviceUtils {
             if (oldNumberOfSlots == 0) {
                 // there may be remaining of unmanaged controllers from previous versions
                 removeUsbControllers(vmId);
-                addSpiceUsbControllers(vmId, effectiveBiosType, getNeededNumberOfUsbControllers(newNumberOfUsbSlots));
+                addSpiceUsbControllers(vmId, chipset, getNeededNumberOfUsbControllers(newNumberOfUsbSlots));
             }
             addUsbSlots(vmId, newNumberOfUsbSlots - oldNumberOfSlots);
             return;
@@ -1056,7 +1062,8 @@ public class VmDeviceUtils {
         MemoizingSupplier<Cluster> clusterSupplier =
                 new MemoizingSupplier<>(() -> getCluster(vmBase.getClusterId()));
         Version version = CompatibilityVersionUtils.getEffective(vmBase, clusterSupplier);
-        return osRepository.getOsUsbControllerModel(vmBase.getOsId(), version, vmBase.getEffectiveBiosType().getChipsetType());
+        ChipsetType chipset = vmBase.getBiosType() == null ? null : vmBase.getBiosType().getChipsetType();
+        return osRepository.getOsUsbControllerModel(vmBase.getOsId(), version, chipset);
     }
 
     private String getUsbControllerModelName(VmDevice usbControllerDevice) {
@@ -1602,18 +1609,6 @@ public class VmDeviceUtils {
 
     private void convertVmDeviceToNewChipsetInternal(VmDevice device, ChipsetType newChipsetType) {
         device.setAddress("");
-
-        if (device.getType() == VmDeviceGeneralType.CONTROLLER) {
-            if (VmDeviceType.IDE.getName().equals(device.getDevice())) {
-                if (ChipsetType.Q35.equals(newChipsetType)) {
-                    device.setDevice(VmDeviceType.SATA.getName());
-                }
-            } else if (VmDeviceType.SATA.getName().equals(device.getDevice())) {
-                if (ChipsetType.I440FX.equals(newChipsetType)) {
-                    device.setDevice(VmDeviceType.IDE.getName());
-                }
-            }
-        }
     }
 
     private void removeUnmanagedDevices(Guid vmId, boolean useCompensation) {
@@ -2295,7 +2290,7 @@ public class VmDeviceUtils {
         if (hasTpmDevice(targetVmId)) {
             vmDao.copyTpmData(sourceVmId, targetVmId);
         }
-        if (getVmBase(targetVmId).getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT) {
+        if (getVmBase(targetVmId).getBiosType() == BiosType.Q35_SECURE_BOOT) {
             vmDao.copyNvramData(sourceVmId, targetVmId);
         }
     }

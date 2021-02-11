@@ -11,6 +11,7 @@ public class ClusterOperationParameters extends ClusterParametersBase {
     private Cluster cluster;
     private boolean internalCommand;
     private boolean forceResetEmulatedMachine = false;
+    private boolean changeVmsChipsetToQ35 = false;
     private Guid managementNetworkId;
 
     public ClusterOperationParameters(Cluster group) {
@@ -49,6 +50,14 @@ public class ClusterOperationParameters extends ClusterParametersBase {
 
     public boolean isForceResetEmulatedMachine() {
         return this.forceResetEmulatedMachine;
+    }
+
+    public void setChangeVmsChipsetToQ35(boolean editVmsBiosType) {
+        this.changeVmsChipsetToQ35 = editVmsBiosType;
+    }
+
+    public boolean isChangeVmsChipsetToQ35() {
+        return changeVmsChipsetToQ35;
     }
 
     public Guid getManagementNetworkId() {

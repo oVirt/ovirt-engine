@@ -254,7 +254,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         vm.setName("testVm");
         Guid clusterId = Guid.newGuid();
         vm.setClusterId(clusterId);
-        vm.setCustomBiosType(BiosType.Q35_SEA_BIOS);
+        vm.setBiosType(BiosType.Q35_SEA_BIOS);
         vm.setClusterCompatibilityVersion(Version.getLast());
         vm.setClusterCompatibilityVersionOrigin(Version.getLast());
         Guid spId = Guid.newGuid();
@@ -282,7 +282,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         v.setImages(new ArrayList<>(Arrays.asList(baseImage, activeImage)));
         v.setSnapshots(new ArrayList<>(Arrays.asList(baseSnapshot, activeSnapshot)));
         v.setClusterId(Guid.Empty);
-        v.setCustomBiosType(BiosType.Q35_SEA_BIOS);
+        v.setBiosType(BiosType.Q35_SEA_BIOS);
 
         return v;
     }
@@ -300,7 +300,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         v.setSnapshots(new ArrayList<>(Collections.singletonList(activeSnapshot)));
         v.setDiskMap(Collections.singletonMap(activeImage.getId(), activeImage));
         v.setClusterId(Guid.Empty);
-        v.setCustomBiosType(BiosType.Q35_SEA_BIOS);
+        v.setBiosType(BiosType.Q35_SEA_BIOS);
         return v;
     }
 
