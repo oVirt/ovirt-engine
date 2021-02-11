@@ -155,7 +155,9 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedNotAllDisksSupportsIncremental() {
+        mockVm(VMStatus.Up);
         mockVmDevice(true);
+        doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_DISABLED_FOR_DISKS))
                 .when(diskImagesValidator).incrementalBackupEnabled();
         ValidateTestUtils.runAndAssertValidateFailure(command,

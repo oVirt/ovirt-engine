@@ -141,10 +141,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_NOT_SUPPORTED);
             }
 
-            if (!validate(diskImagesValidator.incrementalBackupEnabled())) {
-                return false;
-            }
-
             if (vmCheckpointDao.get(getParameters().getVmBackup().getFromCheckpointId()) == null) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CHECKPOINT_NOT_EXIST,
                         String.format("$checkpointId %s", getParameters().getVmBackup().getFromCheckpointId()));
@@ -152,7 +148,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             if (!FeatureSupported.isBackupModeAndBitmapsOperationsSupported(getCluster().getCompatibilityVersion())) {
                 // Due to bz #1829829, Libvirt doesn't handle the case of mixing full and incremental
                 // backup under the same operation. This situation can happen when adding a new disk
-                // to a VM that already has a previous backup.
+                // to a VM that already has a previous backup or when RAW disks are part of the backup.
+                if (!validate(diskImagesValidator.incrementalBackupEnabled())) {
+                    return false;
+                }
+
                 Set<Guid> diskIds = getDisksNotInPreviousCheckpoint();
                 if (!diskIds.isEmpty()) {
                     return failValidation(
