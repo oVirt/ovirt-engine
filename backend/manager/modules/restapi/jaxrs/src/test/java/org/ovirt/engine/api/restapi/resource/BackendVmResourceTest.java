@@ -755,6 +755,16 @@ public class BackendVmResourceTest
     }
 
     @Test
+    public void testReset() {
+        setUriInfo(setUpActionExpectations(ActionType.ResetVm,
+                                           VmOperationParameterBase.class,
+                                           new String[] { "VmId" },
+                                           new Object[] { GUIDS[0] }));
+
+        verifyActionResponse(resource.reset(new Action()));
+    }
+
+    @Test
     public void testReorderMacAddresses() {
 
         setUpGetEntityExpectations(QueryType.GetVmByVmId,

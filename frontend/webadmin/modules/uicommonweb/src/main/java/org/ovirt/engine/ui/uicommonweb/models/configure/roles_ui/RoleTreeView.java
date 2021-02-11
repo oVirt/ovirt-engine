@@ -164,6 +164,7 @@ public class RoleTreeView {
 
                 categoryNode(getConstants().basicOperationsRoleTree(),
                         roleNode(ActionGroup.REBOOT_VM, getConstants().allowBasicVmOperationsRoleTreeTooltip()),
+                        roleNode(ActionGroup.RESET_VM, getConstants().allowBasicVmOperationsRoleTreeTooltip()),
                         roleNode(ActionGroup.STOP_VM, getConstants().allowBasicVmOperationsRoleTreeTooltip()),
                         roleNode(ActionGroup.SHUT_DOWN_VM, getConstants().allowBasicVmOperationsRoleTreeTooltip()),
                         roleNode(ActionGroup.HIBERNATE_VM, getConstants().allowBasicVmOperationsRoleTreeTooltip()),

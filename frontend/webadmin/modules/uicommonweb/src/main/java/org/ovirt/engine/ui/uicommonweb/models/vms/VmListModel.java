@@ -143,6 +143,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     private static final String SHUTDOWN = "Shutdown"; //$NON-NLS-1$
     private static final String STOP     = "Stop"; //$NON-NLS-1$
     private static final String REBOOT   = "Reboot"; //$NON-NLS-1$
+    private static final String RESET    = "Reset"; //$NON-NLS-1$
 
     public UICommand getNewVmCommand() {
         return newVMCommand;
@@ -221,6 +222,16 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     public void setRebootCommand(UICommand value) {
         privateRebootCommand = value;
+    }
+
+    private UICommand privateResetCommand;
+
+    public UICommand getResetCommand() {
+        return privateResetCommand;
+    }
+
+    public void setResetCommand(UICommand value) {
+        privateResetCommand = value;
     }
 
     private UICommand privateCancelMigrateCommand;
@@ -525,6 +536,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
         setShutdownCommand(new UICommand("Shutdown", this)); //$NON-NLS-1$
         setRebootCommand(new UICommand("Reboot", this)); //$NON-NLS-1$
+        setResetCommand(new UICommand("Reset", this)); //$NON-NLS-1$
         setEditConsoleCommand(new UICommand("EditConsoleCommand", this)); //$NON-NLS-1$
         setConsoleConnectCommand(new UICommand("ConsoleConnectCommand", this)); //$NON-NLS-1$
         setCancelMigrateCommand(new UICommand("CancelMigration", this)); //$NON-NLS-1$
@@ -1412,6 +1424,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         } else if (actionName.equals(REBOOT)) {
             model.setHelpTag(HelpTag.reboot_virtual_machine);
             model.setHashName("reboot_virtual_machine"); //$NON-NLS-1$
+        } else if (actionName.equals(RESET)) {
+            model.setHelpTag(HelpTag.reset_virtual_machine);
+            model.setHashName("reset_virtual_machine"); //$NON-NLS-1$
         }
 
         model.setMessage(message);
@@ -1503,6 +1518,17 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private void onReboot() {
         onPowerAction(ActionType.RebootVm, vm -> new RebootVmParameters(vm.getId()));
+    }
+
+    private void reset() {
+        UIConstants constants = ConstantsManager.getInstance().getConstants();
+        powerAction(RESET,
+                constants.resetVirtualMachinesTitle(),
+                constants.areYouSureYouWantToResetTheFollowingVirtualMachinesMsg());
+    }
+
+    private void onReset() {
+        onPowerAction(ActionType.ResetVm, vm -> new VmOperationParameterBase(vm.getId()));
     }
 
     private void pause() {
@@ -1982,6 +2008,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         getStopCommand().setIsExecutionAllowed(vmsSelected
                 && ActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.StopVm));
         getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.getInstance().isRebootCommandExecutionAllowed(items));
+        getResetCommand().setIsExecutionAllowed(vmsSelected
+                && ActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.ResetVm));
         getCancelMigrateCommand().setIsExecutionAllowed(vmsSelected
                 && ActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.CancelMigrateVm));
         getNewTemplateCommand().setIsExecutionAllowed(singleVmSelected
@@ -2091,6 +2119,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             shutdown();
         } else if (command == getRebootCommand()) {
             reboot();
+        } else if (command == getResetCommand()) {
+            reset();
         } else if (command == getNewTemplateCommand()) {
             newTemplate();
         } else if (command == getRunOnceCommand()) {
@@ -2144,6 +2174,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             onStop();
         } else if ("OnReboot".equals(command.getName())) { //$NON-NLS-1$
             onReboot();
+        } else if ("OnReset".equals(command.getName())) { //$NON-NLS-1$
+            onReset();
         } else if ("OnChangeCD".equals(command.getName())) { //$NON-NLS-1$
             onChangeCD();
         } else if (command.getName().equals("closeVncInfo") || // $NON-NLS-1$

@@ -205,7 +205,9 @@ public enum AuditLogType {
     USER_RUN_VM_ON_NON_DEFAULT_VDS(152, AuditLogSeverity.WARNING),
 
     USER_REBOOT_VM(157),
+    USER_RESET_VM(221),
     USER_FAILED_REBOOT_VM(158, AuditLogSeverity.ERROR),
+    USER_FAILED_RESET_VM(222, AuditLogSeverity.ERROR),
 
     USER_STOP_VM(33), // User issued stopVm command
     USER_STOP_SUSPENDED_VM(111),

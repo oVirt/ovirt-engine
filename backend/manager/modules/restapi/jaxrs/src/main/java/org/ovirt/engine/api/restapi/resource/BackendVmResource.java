@@ -362,6 +362,13 @@ public class BackendVmResource
     }
 
     @Override
+    public Response reset(Action action) {
+        return doAction(ActionType.ResetVm,
+                        new VmOperationParameterBase(guid),
+                        action);
+    }
+
+    @Override
     public Response undoSnapshot(Action action) {
         RestoreAllSnapshotsParameters restoreParams = new RestoreAllSnapshotsParameters(guid, SnapshotActionEnum.UNDO);
         Response response = doAction(ActionType.RestoreAllSnapshots,

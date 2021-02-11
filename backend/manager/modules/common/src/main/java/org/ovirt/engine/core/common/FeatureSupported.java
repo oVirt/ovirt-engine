@@ -340,4 +340,14 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.LiveSnapshotPerformFreezeInEngine, version);
     }
 
+    /**
+     * Checks if Reset-VM is supported
+     *
+     * @param version Compatibility version to check for.
+     * @return true if Reset-VM is supported.
+     */
+    public static boolean isVMResetSupported(Version version) {
+        return Version.v4_6.lessOrEquals(version);
+    }
+
 }

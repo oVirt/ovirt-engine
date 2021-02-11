@@ -628,6 +628,8 @@ public enum HelpTag {
 
     reboot_virtual_machine("reboot_virtual_machine", HelpTagType.WEBADMIN, "VMs main tab -> Reboot confirmation dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    reset_virtual_machine("reset_virtual_machine", HelpTagType.WEBADMIN, "VMs main tab -> Reset confirmation dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     remove_disk_snapshot("remove_disk_snapshot", HelpTagType.WEBADMIN, "Storage Tab > Snapshots Sub-Tab > Remove Disk Snapshot(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
     storage_qos("storage_qos", HelpTagType.UNKNOWN), //$NON-NLS-1$

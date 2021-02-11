@@ -605,6 +605,8 @@ public interface UIConstants extends Constants {
 
     String rebootVirtualMachinesTitle();
 
+    String resetVirtualMachinesTitle();
+
     String changeCDTitle();
 
     String consoleDisconnectedTitle();
@@ -744,6 +746,8 @@ public interface UIConstants extends Constants {
     String areYouSureYouWantToStopTheFollowingVirtualMachinesMsg();
 
     String areYouSureYouWantToRebootTheFollowingVirtualMachinesMsg();
+
+    String areYouSureYouWantToResetTheFollowingVirtualMachinesMsg();
 
     String thisFieldMustContainIpv4AddressInFormatMsg();
 

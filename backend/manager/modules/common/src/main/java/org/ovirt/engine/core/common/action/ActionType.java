@@ -16,6 +16,7 @@ public enum ActionType {
     RemoveVm(4, ActionGroup.DELETE_VM, QuotaDependency.STORAGE),
     UpdateVm(5, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.CLUSTER),
     RebootVm(6, ActionGroup.REBOOT_VM, QuotaDependency.NONE),
+    ResetVm(70, ActionGroup.RESET_VM, QuotaDependency.NONE),
     StopVm(7, ActionGroup.STOP_VM, QuotaDependency.BOTH),
     ShutdownVm(8, ActionGroup.SHUT_DOWN_VM, QuotaDependency.CLUSTER),
     ChangeDisk(9, ActionGroup.CHANGE_VM_CD, QuotaDependency.NONE),

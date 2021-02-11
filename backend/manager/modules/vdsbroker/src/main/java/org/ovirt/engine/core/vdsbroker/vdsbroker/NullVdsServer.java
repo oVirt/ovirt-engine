@@ -94,6 +94,10 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
+    @Override public StatusOnlyReturn reset(String vmId) {
+        return null;
+    }
+
     @Override public StatusOnlyReturn setDestroyOnReboot(String vmId) {
         return null;
     }

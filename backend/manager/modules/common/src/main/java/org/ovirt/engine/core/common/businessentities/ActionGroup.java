@@ -11,6 +11,7 @@ public enum ActionGroup {
     DELETE_VM(2, RoleType.USER, true, ApplicationMode.VirtOnly),
     EDIT_VM_PROPERTIES(3, RoleType.USER, true, ApplicationMode.VirtOnly),
     REBOOT_VM(17, RoleType.USER, true, ApplicationMode.VirtOnly),
+    RESET_VM(23, RoleType.USER, true, ApplicationMode.VirtOnly),
     STOP_VM(18, RoleType.USER, true, ApplicationMode.VirtOnly),
     SHUT_DOWN_VM(19, RoleType.USER, true, ApplicationMode.VirtOnly),
     HIBERNATE_VM(21, RoleType.USER, true, ApplicationMode.VirtOnly),

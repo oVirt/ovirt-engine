@@ -353,6 +353,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String rebootVm();
 
+    String resetVm();
+
     String pluggedVm();
 
     String nameVm();
