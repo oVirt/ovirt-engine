@@ -78,6 +78,8 @@ public interface NextRunFieldMessages extends ConstantsWithLookup {
 
     String multiQueuesEnabled();
 
+    String virtioScsiMultiQueuesEnabled();
+
     String kernelUrl();
 
     String kernelParams();

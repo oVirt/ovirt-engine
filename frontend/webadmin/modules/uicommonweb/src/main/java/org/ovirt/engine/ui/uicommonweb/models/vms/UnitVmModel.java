@@ -957,6 +957,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.multiQueues = multiQueues;
     }
 
+    private EntityModel<Boolean> virtioScsiMultiQueuesEnabled;
+
+    public EntityModel<Boolean> getVirtioScsiMultiQueuesEnabled() {
+        return virtioScsiMultiQueuesEnabled;
+    }
+
+    public void setVirtioScsiMultiQueuesEnabled(EntityModel<Boolean> virtioScsiMultiQueuesEnabled) {
+        this.virtioScsiMultiQueuesEnabled = virtioScsiMultiQueuesEnabled;
+    }
+
     private NotChangableForVmInPoolListModel<DisplayType> displayType;
 
     public ListModel<DisplayType> getDisplayType() {
@@ -1703,6 +1713,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getMemoryBalloonDeviceEnabled().setIsAvailable(false);
 
         setMultiQueues(new EntityModel<Boolean>(true));
+        setVirtioScsiMultiQueuesEnabled(new EntityModel<Boolean>(false));
 
         setSpiceProxyEnabled(new EntityModel<>(false));
         setSpiceProxy(new EntityModel<String>());
@@ -1895,6 +1906,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setIsVirtioScsiEnabled(new EntityModel<Boolean>());
         getIsVirtioScsiEnabled().setEntity(false);
         getIsVirtioScsiEnabled().setIsAvailable(false);
+        getIsVirtioScsiEnabled().getEntityChangedEvent().addListener(this);
 
         setProvisioningClone_IsSelected(new NotChangableForVmInPoolEntityModel<Boolean>());
         getProvisioningClone_IsSelected().getEntityChangedEvent().addListener(this);
@@ -2229,6 +2241,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 headlessModeChanged();
             } else if (sender == getCpuPinning()) {
                 behavior.updateCpuPinningChanged();
+            } else if (sender == getIsVirtioScsiEnabled()) {
+                updateVirtioScsiMultiQueue();
             }
         }
     }
@@ -2294,6 +2308,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         getMultiQueues().setIsAvailable(true);
+    }
+
+    public void updateVirtioScsiMultiQueue() {
+        boolean isChangeable = getIsVirtioScsiEnabled().getEntity();
+        if (!isChangeable) {
+            getVirtioScsiMultiQueuesEnabled().setEntity(false);
+        }
+        getVirtioScsiMultiQueuesEnabled().setIsChangeable(isChangeable, messages.virtioScsiRequired());
     }
 
     private void vmInitEnabledChanged() {

@@ -1177,6 +1177,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String multiQueuesLabel();
 
+    String virtioScsiMultiQueuesEnabled();
+
+    String isVirtioScsiMultiQueuesInfoIcon();
+
     String cpuPinningLabelExplanation();
 
     String diskFormatTypeMatrixInfo();

@@ -678,6 +678,12 @@
                     <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}"/>
                   </b:Column>
                 </b:Row>
+                <b:Row>
+                  <b:Column size="SM_12">
+                    <ge:EntityModelCheckBoxEditor ui:field="virtioScsiMultiQueuesEnabled" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.virtioScsiMultiQueuesEnabled}" />
+                    <d:InfoIcon ui:field="isVirtioScsiMultiQueuesInfoIcon" addStyleNames="{style.infoIcon}"/>
+                  </b:Column>
+                </b:Row>
                 <g:FlowPanel ui:field="disksAllocationPanel">
                   <b:Row>
                     <b:Column size="SM_12">

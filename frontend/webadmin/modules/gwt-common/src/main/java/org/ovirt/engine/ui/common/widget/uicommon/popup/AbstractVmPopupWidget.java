@@ -924,6 +924,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public InfoIcon isVirtioScsiEnabledInfoIcon;
 
     @UiField(provided = true)
+    @Path(value = "virtioScsiMultiQueuesEnabled.entity")
+    @WithElementId("virtioScsiMultiQueuesEnabled")
+    public EntityModelCheckBoxEditor virtioScsiMultiQueuesEnabled;
+
+    @UiField(provided = true)
+    @Ignore
+    public InfoIcon isVirtioScsiMultiQueuesInfoIcon;
+
+    @UiField(provided = true)
     @Ignore
     @WithElementId("disksAllocation")
     public DisksAllocationView disksAllocationView;
@@ -1105,6 +1114,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         ioThreadsInfo = new InfoIcon(multiLineItalicSafeHtml(constants.ioThreadsExplanation()));
         ioThreadsInfo.setTooltipMaxWidth(TooltipWidth.W420);
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        virtioScsiMultiQueuesEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cpuPinningInfo = new InfoIcon(multiLineItalicSafeHtml(constants.cpuPinningLabelExplanation()));
         cpuPinningInfo.setTooltipMaxWidth(TooltipWidth.W420);
         multiQueuesInfo = new InfoIcon(templates.italicText(constants.multiQueuesLabelExplanation()));
@@ -1112,6 +1122,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new InfoIcon(SafeHtmlUtils.fromTrustedString(constants.headlessModeExplanation()));
         isVirtioScsiEnabledInfoIcon =
                 new InfoIcon(templates.italicText(constants.isVirtioScsiEnabledInfo()));
+        isVirtioScsiMultiQueuesInfoIcon =
+                new InfoIcon(templates.italicText(constants.isVirtioScsiMultiQueuesInfoIcon()));
         final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getInstance().
                 getConfigValuePreConverted(ConfigValues.DefaultMaximumMigrationDowntime);
 
@@ -1742,6 +1754,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
+        object.getVirtioScsiMultiQueuesEnabled().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                isVirtioScsiMultiQueuesInfoIcon.setVisible(object.getVirtioScsiMultiQueuesEnabled().getIsAvailable());
+            }
+        });
+
         object.getEditingEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
             Boolean enabled = object.getEditingEnabled().getEntity();
             if (Boolean.FALSE.equals(enabled)) {
@@ -1811,8 +1829,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         });
 
         object.getIoThreadsEnabled().getEntityChangedEvent().addListener(
-                (ev, sender, args) -> ioThreadsPanel.setVisible(object.getIoThreadsEnabled().getEntity())
-        );
+                (ev, sender, args) -> ioThreadsPanel.setVisible(object.getIoThreadsEnabled().getEntity()));
 
         object.getCustomCompatibilityVersion().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateUrandomLabel(object));
 

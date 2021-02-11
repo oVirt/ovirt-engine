@@ -52,6 +52,7 @@ public class VirtioScsiUtil {
                     if (!isOsSupportVirtioScsi) {
                         model.getIsVirtioScsiEnabled().setEntity(false);
                         model.getIsVirtioScsiEnabled().setChangeProhibitionReason(constants.cannotEnableVirtioScsiForOs());
+                        model.getVirtioScsiMultiQueuesEnabled().setEntity(false);
                         callAfterUpdates();
                     } else {
                         AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(model.asyncQuery(returnValue -> {

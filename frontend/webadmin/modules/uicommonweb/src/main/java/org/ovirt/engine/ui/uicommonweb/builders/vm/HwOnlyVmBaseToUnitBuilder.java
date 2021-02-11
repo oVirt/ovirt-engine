@@ -30,5 +30,6 @@ public class HwOnlyVmBaseToUnitBuilder extends BaseSyncBuilder<VmBase, UnitVmMod
         model.setSecureBootOriginallyEnabled(vm.getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT);
         model.getHostCpu().setEntity(vm.isUseHostCpuFlags());
         model.getTscFrequency().setEntity(vm.getUseTscFrequency());
+        model.getVirtioScsiMultiQueuesEnabled().setEntity(vm.isVirtioScsiMultiQueuesEnabled());
     }
 }
