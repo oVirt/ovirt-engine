@@ -556,7 +556,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         model.getCommands().add(switchModeCommand);
 
 
-        UICommand onSaveCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
+        UICommand onSaveCommand = UICommand.createDefaultOkUiCommand("OnSaveConfirm", this); //$NON-NLS-1$
         model.getCommands().add(onSaveCommand);
 
         UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
@@ -653,12 +653,19 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
                 template.getTemplateVersionNumber());
     };
 
-    private void onSave() {
-        final UnitVmModel model = (UnitVmModel) getWindow();
+    private void onSaveConfirm() {
+        UnitVmModel model = (UnitVmModel) getWindow();
 
         if (!model.validate()) {
             return;
         }
+
+        confirmTpmDeletionAndSave(model, ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate().getId(),
+                "OnSave", m -> onSave()); //$NON-NLS-1$
+    }
+
+    private void onSave() {
+        UnitVmModel model = (UnitVmModel) getWindow();
 
         final String name = model.getName().getEntity();
 
@@ -944,6 +951,8 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             onExport();
         } else if ("OnExportOva".equals(command.getName())) { //$NON-NLS-1$
             onExportOva();
+        } else if ("OnSaveConfirm".equals(command.getName())) { //$NON-NLS-1$
+            onSaveConfirm();
         } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         } else if ("OnSaveVm".equals(command.getName())) { //$NON-NLS-1$

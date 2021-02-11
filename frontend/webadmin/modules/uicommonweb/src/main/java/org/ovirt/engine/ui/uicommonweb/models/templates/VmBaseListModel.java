@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -367,37 +368,37 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         }
     }
 
-    protected void confirmAndSaveOrUpdateVM(final UnitVmModel model) {
+    protected void confirmTpmDeletionAndSave(final UnitVmModel model, Guid vmId, String okCommandName,
+            Consumer<UnitVmModel> saveCommand) {
         if (model.getTpmOriginallyEnabled() && !model.getTpmEnabled().getEntity()) {
-            Guid vmId = getcurrentVm().getId();
             if (vmId != null) {
                 Frontend.getInstance().runQuery(QueryType.HasTpmData, new IdQueryParameters(vmId),
                         new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
                             if ((Boolean) returnValue.getReturnValue()) {
                                 ConfirmationModel confirmModel = new ConfirmationModel();
-                                confirmModel.setTitle(ConstantsManager.getInstance().getConstants()
-                                        .confirmTpmDataRemovalTitle());
-                                confirmModel.setMessage(ConstantsManager.getInstance().getConstants()
-                                        .confirmTpmDataRemovalMessage());
+                                confirmModel.setTitle(
+                                        ConstantsManager.getInstance().getConstants().confirmTpmDataRemovalTitle());
+                                confirmModel.setMessage(
+                                        ConstantsManager.getInstance().getConstants().confirmTpmDataRemovalMessage());
                                 confirmModel.setHelpTag(HelpTag.remove_tpm_data);
                                 confirmModel.setHashName("remove_tpm_data"); //$NON-NLS-1$
-                                confirmModel.getCommands().add(new UICommand("SaveOrUpdateVM", VmBaseListModel.this) //$NON-NLS-1$
-                                        .setTitle(ConstantsManager.getInstance().getConstants().ok()));
+                                confirmModel.getCommands().add(UICommand.createOkUiCommand(okCommandName, this));
                                 confirmModel.getCommands()
-                                        .add(UICommand.createCancelUiCommand("CancelConfirmation", VmBaseListModel.this) //$NON-NLS-1$
-                                                .setIsDefault(true));
+                                        .add(UICommand.createDefaultCancelUiCommand("CancelConfirmation", this)); //$NON-NLS-1$
                                 setConfirmWindow(null);
                                 setConfirmWindow(confirmModel);
                             } else {
-                                saveOrUpdateVM(model);
+                                saveCommand.accept(model);
                             }
                         }));
-            } else {
-                saveOrUpdateVM(model);
+                return;
             }
-        } else {
-            saveOrUpdateVM(model);
         }
+        saveCommand.accept(model);
+    }
+
+    protected void confirmAndSaveOrUpdateVM(final UnitVmModel model) {
+        confirmTpmDeletionAndSave(model, getcurrentVm().getId(), "SaveOrUpdateVM", this::saveOrUpdateVM); // $NON-NLS-1$
     }
 
     protected void saveOrUpdateVM(final UnitVmModel model) {
