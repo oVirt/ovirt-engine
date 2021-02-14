@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -157,11 +156,6 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
             for (VmDevice vmDevice : vmDevices) {
                 vmDeviceDao.remove(vmDevice.getId());
             }
-            List <Guid> newDedicatedVmForVds = vm.getDedicatedVmForVdsList().stream()
-                    .filter(x -> !x.equals(hostId))
-                    .collect(Collectors.toList());
-            vm.setDedicatedVmForVdsList(newDedicatedVmForVds);
-            vmStaticDao.update(vm.getStaticData());
         }
     }
 
