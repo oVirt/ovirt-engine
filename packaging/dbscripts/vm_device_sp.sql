@@ -93,23 +93,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION UpdateVmDeviceRuntimeInfo (
-    v_device_id UUID,
-    v_vm_id UUID,
-    v_address VARCHAR(255),
-    v_alias VARCHAR(255)
-    )
-RETURNS VOID AS $PROCEDURE$
-BEGIN
-    UPDATE vm_device
-    SET address = v_address,
-        alias = v_alias,
-        _update_date = current_timestamp
-    WHERE device_id = v_device_id
-        AND vm_id = v_vm_id;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION UpdateVmDeviceForHotPlugDisk (
     v_device_id UUID,
     v_vm_id UUID,
