@@ -42,7 +42,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.TagDao;
-import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
@@ -76,8 +75,6 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     private StoragePoolDao storagePoolDao;
     @Inject
     private StorageDomainDao storageDomainDao;
-    @Inject
-    private VdsDao vdsDao;
     @Inject
     private VmStaticDao vmStaticDao;
     @Inject
@@ -225,48 +222,58 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     @Override
     protected boolean validate() {
-        // check if vds id is valid
-        VDS vds = vdsDao.get(getVdsId());
+        VDS vds = getVds();
         if (vds == null) {
-            addValidationMessage(EngineMessage.VDS_INVALID_SERVER_ID);
-            return false;
+            return failValidation(EngineMessage.VDS_INVALID_SERVER_ID);
         }
 
         if (isForceRemovalOfUnmanagedHost(vds)) {
             return true;
         }
 
-        boolean returnValue = canRemoveVds(vds, getReturnValue().getValidationMessages());
-        StoragePool storagePool = storagePoolDao.getForVds(getParameters().getVdsId());
+        if (!statusLegalForRemove(vds)) {
+            return failValidation(EngineMessage.VDS_CANNOT_REMOVE_VDS_STATUS_ILLEGAL);
+        }
 
-        if (returnValue && storagePool != null && storagePool.isLocal()) {
-            if (!storageDomainDao.getAllForStoragePool(storagePool.getId()).isEmpty()) {
-                returnValue = failValidation(EngineMessage.VDS_CANNOT_REMOVE_HOST_WITH_LOCAL_STORAGE);
-            }
+        if (vds.getVmCount() > 0) {
+            return failValidation(EngineMessage.VDS_CANNOT_REMOVE_VDS_DETECTED_RUNNING_VM);
+        }
+
+        List<String> vmNamesPinnedToHost = vmStaticDao.getAllNamesPinnedToHost(vds.getId());
+        if (!vmNamesPinnedToHost.isEmpty()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS,
+                    String.format("$VmNames %s", StringUtils.join(vmNamesPinnedToHost, ',')));
+        }
+
+        StoragePool storagePool = storagePoolDao.getForVds(getParameters().getVdsId());
+        if (storagePool != null && storagePool.isLocal()
+                && !storageDomainDao.getAllForStoragePool(storagePool.getId()).isEmpty()) {
+            return failValidation(EngineMessage.VDS_CANNOT_REMOVE_HOST_WITH_LOCAL_STORAGE);
         }
 
         // Perform volume bricks on server and up server null check
-        if (returnValue && isGlusterEnabled()) {
+        if (isGlusterEnabled()) {
             upServer = glusterUtil.getUpServer(getClusterId());
             if (!getParameters().isForceAction()) {
                 // fail if host has bricks on a volume
                 if (hasVolumeBricksOnServer()) {
-                    returnValue = failValidation(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
-                } else if (upServer == null && clusterHasMultipleHosts()) {
+                    return failValidation(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                }
+                if (upServer == null && clusterHasMultipleHosts()) {
                     // fail if there is no up server in cluster, and if host being removed is not
                     // the last server in cluster
                     addValidationMessageVariable("clusterName", getCluster().getName());
-                    returnValue = failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
                 }
             } else {
                 // if force, cannot remove only if there are bricks on server and there is an up server.
                 if (hasVolumeBricksOnServer() && upServer != null) {
-                    returnValue = failValidation(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                    return failValidation(EngineMessage.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 }
             }
         }
 
-        return returnValue;
+        return true;
     }
 
     @Override
@@ -289,25 +296,6 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     private void removeVdsFromCollection() {
         runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(getVdsId()));
-    }
-
-    private boolean canRemoveVds(VDS vds, List<String> text) {
-        boolean returnValue = true;
-        if (!statusLegalForRemove(vds)) {
-            text.add(EngineMessage.VDS_CANNOT_REMOVE_VDS_STATUS_ILLEGAL.toString());
-            returnValue = false;
-        } else if (vds.getVmCount() > 0) {
-            text.add(EngineMessage.VDS_CANNOT_REMOVE_VDS_DETECTED_RUNNING_VM.toString());
-            returnValue = false;
-        } else {
-            List<String> vmNamesPinnedToHost = vmStaticDao.getAllNamesPinnedToHost(vds.getId());
-            if (!vmNamesPinnedToHost.isEmpty()) {
-                text.add(EngineMessage.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS.toString());
-                text.add(String.format("$VmNames %s", StringUtils.join(vmNamesPinnedToHost, ',')));
-                returnValue = false;
-            }
-        }
-        return returnValue;
     }
 
     private boolean isGlusterEnabled() {

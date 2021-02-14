@@ -36,7 +36,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
-import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -65,8 +64,6 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     protected GlusterUtil glusterUtil;
     @Inject
     protected GlusterDBUtils glusterDBUtils;
-    @Inject
-    private ProviderDao providerDao;
     @Inject
     private AlertDirector alertDirector;
     @Inject
