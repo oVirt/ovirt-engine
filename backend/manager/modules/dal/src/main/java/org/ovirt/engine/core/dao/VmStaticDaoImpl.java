@@ -106,15 +106,6 @@ public class VmStaticDaoImpl extends VmBaseDao<VmStatic> implements VmStaticDao 
     }
 
     @Override
-    public List<String> getAllNamesPinnedToHost(Guid host) {
-        RowMapper<String> mapper = (rs, rowNum) -> rs.getString("vm_name");
-
-        return getCallsHandler().executeReadList("GetNamesOfVmStaticDedicatedToVds", mapper,
-                getCustomMapSqlParameterSource()
-                        .addValue("vds_id", host));
-    }
-
-    @Override
     public void incrementDbGenerationForAllInStoragePool(Guid storagePoolId) {
         getCallsHandler().executeModification("IncrementDbGenerationForAllInStoragePool", getCustomMapSqlParameterSource()
                 .addValue("storage_pool_id", storagePoolId));

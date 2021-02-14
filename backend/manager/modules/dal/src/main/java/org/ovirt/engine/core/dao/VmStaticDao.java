@@ -45,15 +45,6 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
     List<VmStatic> getAllByGroupAndNetworkName(Guid group, String name);
 
     /**
-     * Get the names of VMs pinned to the specified host.
-     *
-     * @param host
-     *            The host's id.
-     * @return The names of the VMs which are pinned to the host, or empty if none.
-     */
-    List<String> getAllNamesPinnedToHost(Guid host);
-
-    /**
      * get the db generation for vm/template with the given guid
      *
      * @param id - vm/template id

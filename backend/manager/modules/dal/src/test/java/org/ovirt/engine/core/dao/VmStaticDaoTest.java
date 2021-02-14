@@ -254,12 +254,6 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
     }
 
     @Test
-    public void testGetAllNamesPinnedToHostReturnsNothingForRandomHost() {
-        assertTrue(dao.getAllNamesPinnedToHost(Guid.newGuid()).isEmpty());
-    }
-
-
-    @Test
     public void testGetDbGeneration() {
         Long version = dao.getDbGeneration(FixturesTool.VM_RHEL5_POOL_50);
         assertNotNull(version, "db generation shouldn't be null");
@@ -283,19 +277,6 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
         dao.incrementDbGeneration(FixturesTool.VM_RHEL5_POOL_50);
         Long version = dao.getDbGeneration(FixturesTool.VM_RHEL5_POOL_50);
         assertEquals(2, version.longValue(), "db generation wasn't incremented as expected");
-    }
-
-    @Test
-    public void testGetAllNamesPinnedToHostReturnsNothingForHostButNotPinned() {
-        assertTrue(dao.getAllNamesPinnedToHost(FixturesTool.HOST_ID).isEmpty());
-    }
-
-    @Test
-    public void testGetAllNamesPinnedToHostReturnsVmNameForHostPinned() {
-        List<String> namesPinnedToHost = dao.getAllNamesPinnedToHost(FixturesTool.VDS_RHEL6_NFS_SPM);
-
-        assertFalse(namesPinnedToHost.isEmpty());
-        assertTrue(namesPinnedToHost.contains(existingEntity.getName()));
     }
 
     /**

@@ -1991,6 +1991,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_DETECTED_PINNED_VMS();
 
+    String ACTION_TYPE_FAILED_DETECTED_ASSIGNED_HOST_DEVICES();
+
     String HOT_PLUG_CPU_IS_NOT_SUPPORTED();
 
     String HOT_PLUG_CPU_IS_NOT_SUPPORTED_FOR_GUEST_OS();

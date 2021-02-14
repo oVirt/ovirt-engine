@@ -1316,23 +1316,6 @@ LANGUAGE plpgsql;
 
 
 
-DROP TYPE IF EXISTS GetNamesOfVmStaticDedicatedToVds_rs CASCADE;
-CREATE TYPE GetNamesOfVmStaticDedicatedToVds_rs AS (vm_name CHARACTER VARYING);
-Create or replace FUNCTION GetNamesOfVmStaticDedicatedToVds(v_vds_id UUID) RETURNS SETOF GetNamesOfVmStaticDedicatedToVds_rs STABLE
-   AS $procedure$
-BEGIN
-   RETURN QUERY
-      SELECT vm_name
-      FROM vm_static
-      WHERE vm_guid IN (SELECT vm_id FROM vm_host_pinning_map WHERE vds_id = v_vds_id)
-          AND   migration_support = 2
-          AND   entity_type = 'VM';
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
 Create or replace FUNCTION GetAllFromVmStaticByStoragePoolId(v_sp_id uuid) RETURNS SETOF vm_static_view STABLE
    AS $procedure$
 BEGIN

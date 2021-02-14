@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -14,11 +15,11 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -148,19 +149,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         setSucceeded(true);
     }
 
-    private void removeHostAndHostDevicesFromVmReferences(Guid hostId) {
-        List<VM> vms = vmDao.getAllPinnedToHost(hostId);
-        for (VM vm : vms) {
-            List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(),
-                    VmDeviceGeneralType.HOSTDEV);
-            for (VmDevice vmDevice : vmDevices) {
-                vmDeviceDao.remove(vmDevice.getId());
-            }
-        }
-    }
-
     private void removeHostFromDB(Guid hostId) {
-        removeHostAndHostDevicesFromVmReferences(hostId);
         vdsStatisticsDao.remove(hostId);
         tagDao.detachVdsFromAllTags(hostId);
         vdsDynamicDao.remove(hostId);
@@ -233,10 +222,25 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
             return failValidation(EngineMessage.VDS_CANNOT_REMOVE_VDS_DETECTED_RUNNING_VM);
         }
 
-        List<String> vmNamesPinnedToHost = vmStaticDao.getAllNamesPinnedToHost(vds.getId());
-        if (!vmNamesPinnedToHost.isEmpty()) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS,
-                    String.format("$VmNames %s", StringUtils.join(vmNamesPinnedToHost, ',')));
+        List<VM> vms = vmDao.getAllPinnedToHost(vds.getId());
+        if (!vms.isEmpty()) {
+            List<String> vmNamesPinnedToHost = vms.stream()
+                    .filter(vm -> vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST)
+                    .map(VM::getName)
+                    .collect(Collectors.toList());
+            if (!vmNamesPinnedToHost.isEmpty()) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DETECTED_PINNED_VMS,
+                        String.format("$VmNames %s", StringUtils.join(vmNamesPinnedToHost, ',')));
+            }
+
+            List<String> vmNamesWithHostDevices = vms.stream()
+                    .filter(this::isVmAssignedWithHostDevices)
+                    .map(VM::getName)
+                    .collect(Collectors.toList());
+            if (!vmNamesWithHostDevices.isEmpty()) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DETECTED_ASSIGNED_HOST_DEVICES,
+                        String.format("$VmNames %s", StringUtils.join(vmNamesWithHostDevices, ',')));
+            }
         }
 
         StoragePool storagePool = storagePoolDao.getForVds(getParameters().getVdsId());
@@ -274,6 +278,10 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
         addValidationMessage(EngineMessage.VAR__TYPE__HOST);
+    }
+
+    private boolean isVmAssignedWithHostDevices(VM vm) {
+        return !vmDeviceDao.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.HOSTDEV).isEmpty();
     }
 
     @Override
