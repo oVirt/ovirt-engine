@@ -284,6 +284,10 @@ public class VmBaseMapper {
             entity.setMultiQueuesEnabled(model.isMultiQueuesEnabled());
         }
 
+        if (model.isSetVirtioScsiMultiQueuesEnabled()) {
+            entity.setVirtioScsiMultiQueuesEnabled(model.isVirtioScsiMultiQueuesEnabled());
+        }
+
         if (model.isSetCpu() && model.getCpu().isSetMode()) {
             entity.setUseHostCpuFlags(model.getCpu().getMode() == CpuMode.HOST_PASSTHROUGH);
         }
@@ -464,6 +468,8 @@ public class VmBaseMapper {
         model.setLease(StorageDomainLeaseMapper.map(entity.getLeaseStorageDomainId()));
 
         model.setMultiQueuesEnabled(entity.isMultiQueuesEnabled());
+
+        model.setVirtioScsiMultiQueuesEnabled(entity.isVirtioScsiMultiQueuesEnabled());
 
         if(entity.isUseHostCpuFlags()) {
             model.getCpu().setMode(CpuMode.HOST_PASSTHROUGH);

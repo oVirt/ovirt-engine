@@ -124,6 +124,7 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setBootMenuEnabled(entity.isBootMenuEnabled());
         staticVm.setMultiQueuesEnabled(entity.isMultiQueuesEnabled());
         staticVm.setUseHostCpuFlags(entity.isUseHostCpuFlags());
+        staticVm.setVirtioScsiMultiQueuesEnabled(entity.isVirtioScsiMultiQueuesEnabled());
         return doMapVmBaseHwPartToVmStatic(entity, staticVm, version);
     }
 
