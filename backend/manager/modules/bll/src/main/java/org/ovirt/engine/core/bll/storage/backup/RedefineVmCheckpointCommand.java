@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.dao.VmCheckpointDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointIds;
 
+@NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class RedefineVmCheckpointCommand<T extends VmBackupParameters> extends VmCommand<T> {
 

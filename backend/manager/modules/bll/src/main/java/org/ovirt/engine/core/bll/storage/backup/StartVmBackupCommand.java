@@ -219,8 +219,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
         if (isLiveBackup()) {
             log.info("Redefine previous VM checkpoints for VM '{}'", vmBackup.getVmId());
-            ActionReturnValue returnValue = runInternalAction(ActionType.RedefineVmCheckpoint, getParameters());
-            if (!returnValue.getSucceeded()) {
+            if (!redefineVmCheckpoints()) {
                 addCustomValue("backupId", vmBackupId.toString());
                 auditLogDirector.log(this, AuditLogType.VM_INCREMENTAL_BACKUP_FAILED_FULL_VM_BACKUP_NEEDED);
                 setCommandStatus(CommandStatus.FAILED);
@@ -296,6 +295,16 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         }
         persistCommandIfNeeded();
         return true;
+    }
+
+    private boolean redefineVmCheckpoints() {
+        VmBackupParameters parameters = new VmBackupParameters(getParameters().getVmBackup());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setEndProcedure(ActionParametersBase.EndProcedure.PARENT_MANAGED);
+
+        ActionReturnValue returnValue = runInternalAction(ActionType.RedefineVmCheckpoint, parameters);
+        return returnValue != null && returnValue.getSucceeded();
     }
 
     private boolean runColdVmBackup() {
