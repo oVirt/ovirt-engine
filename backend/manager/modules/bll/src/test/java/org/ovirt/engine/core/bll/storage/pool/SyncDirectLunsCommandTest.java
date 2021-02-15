@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 
@@ -55,6 +58,9 @@ public class SyncDirectLunsCommandTest {
 
     @Mock
     private VmDao vmDao;
+
+    @Mock
+    private StorageServerConnectionDao serverConnectionDao;
 
     private LUNs lun1;
     private LUNs lun2;
@@ -93,7 +99,7 @@ public class SyncDirectLunsCommandTest {
     public void testGetLunsToUpdateInDbWithoutDirectLunId() {
         command.getParameters().setDeviceList(Arrays.asList(lun1, lun2, lun3));
         mockLunToDiskIdsOfDirectLunsAttachedToVmsInPool(lun1, lun2);
-        assertEquals(Arrays.asList(lun1, lun2), command.getLunsToUpdateInDb());
+        assertTrue(CollectionUtils.isEqualCollection(Arrays.asList(lun1, lun2), command.getLunsToUpdateInDb()));
     }
 
     @Test
@@ -102,7 +108,7 @@ public class SyncDirectLunsCommandTest {
         mockLunToDiskIdsOfDirectLunsAttachedToVmsInPool(lun1, lun2);
         command.getParameters().setDirectLunIds(Collections.singleton(lun1.getDiskId()));
         when(diskLunMapDao.getDiskLunMapByDiskId(lun1.getDiskId())).thenReturn(disk1Lun1Map);
-        assertEquals(Collections.singletonList(lun1), command.getLunsToUpdateInDb());
+        assertEquals(Collections.singleton(lun1), command.getLunsToUpdateInDb());
     }
 
     @Test
@@ -110,7 +116,7 @@ public class SyncDirectLunsCommandTest {
         lun1.setVolumeGroupId(Guid.newGuid().toString());
         command.getParameters().setDeviceList(Arrays.asList(lun1, lun2, lun3));
         mockLunToDiskIdsOfDirectLunsAttachedToVmsInPool(lun1);
-        assertEquals(Collections.singletonList(lun1), command.getLunsToUpdateInDb());
+        assertEquals(Collections.singleton(lun1), command.getLunsToUpdateInDb());
     }
 
     @Test
