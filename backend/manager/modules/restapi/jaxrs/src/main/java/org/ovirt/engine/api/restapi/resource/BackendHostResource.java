@@ -525,6 +525,17 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
+    public Response discoverIscsi(Action action) {
+        //In terms of implementation, this method does the same as iscsiDiscover.
+        //But since the two are annotated differently in ovirt-engine-api-model,
+        //the SDKS will interpret the response differently.
+        //For iscsiDiscover, the SDKs will consider action.iscsiTargets in the Response object.
+        //For discoverIscsi, the SDKs will consider action.iscsiDetails in the Response object.
+        //This fixes https://bugzilla.redhat.com/1926819
+        return iscsiDiscover(action);
+    }
+
+    @Override
     public Response iscsiDiscover(Action action) {
         validateParameters(action, "iscsi.address");
 
