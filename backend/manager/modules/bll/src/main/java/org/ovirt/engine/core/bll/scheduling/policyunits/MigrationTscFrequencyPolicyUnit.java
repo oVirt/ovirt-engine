@@ -28,6 +28,9 @@ import org.slf4j.LoggerFactory;
 public class MigrationTscFrequencyPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(MigrationTscFrequencyPolicyUnit.class);
 
+    /* Taken from libvirt: 250 parts per million (ppm) is a half of NTP threshold */
+    private static final int TSC_TOLERANCE = 250;
+
     @Inject
     private VdsDao vdsDao;
 
@@ -53,10 +56,24 @@ public class MigrationTscFrequencyPolicyUnit extends PolicyUnitImpl {
         return hosts;
     }
 
-    private boolean vdsMatchesTscFrequency(PerHostMessages messages, VDS vmVds, VDS vds) {
-        boolean valid = vds.getTscFrequencyIntegral() != null
-                && vds.getTscFrequencyIntegral().equals(vmVds.getTscFrequencyIntegral());
+    private boolean tscFrequenciesWithinTolerance(String srcTscFrequency, String dstTscFrequency) {
+        if (srcTscFrequency == null || dstTscFrequency == null) {
+            return false;
+        }
 
+        try {
+            final long srcFrequency = Long.parseLong(srcTscFrequency);
+            final long dstFrequency = Long.parseLong(dstTscFrequency);
+            // The same check as in libvirt
+            final long tolerance = srcFrequency * TSC_TOLERANCE / 1000000;
+            return Math.abs(dstFrequency - srcFrequency) <= tolerance;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean vdsMatchesTscFrequency(PerHostMessages messages, VDS vmVds, VDS vds) {
+        boolean valid = tscFrequenciesWithinTolerance(vmVds.getTscFrequencyIntegral(), vds.getTscFrequencyIntegral());
         if (!valid) {
             log.debug("Host '{}' has a different TSC frequency than '{}', filtering out", vds.getName(), vmVds.getName());
             messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__TSC_FREQ_MISMATCH.toString());

@@ -42,8 +42,8 @@ class MigrationTscFrequencyPolicyUnitTest {
         messages = new PerHostMessages();
         VdsDao dao = mock(VdsDao.class);
         VDS vds = mock(VDS.class);
-        when(vds.getTscFrequency()).thenReturn("1234.5678");
-        when(vds.getTscFrequencyIntegral()).thenReturn("1234");
+        when(vds.getTscFrequency()).thenReturn("12345.6789");
+        when(vds.getTscFrequencyIntegral()).thenReturn("12345");
         when(dao.get(any())).thenReturn(vds);
         setDao(dao);
     }
@@ -136,9 +136,9 @@ class MigrationTscFrequencyPolicyUnitTest {
         when(host1.getId()).thenReturn(Guid.newGuid());
         when(host2.getId()).thenReturn(Guid.newGuid());
         when(host3.getId()).thenReturn(Guid.newGuid());
-        when(host1.getTscFrequencyIntegral()).thenReturn("1234");
-        when(host2.getTscFrequencyIntegral()).thenReturn("1234");
-        when(host3.getTscFrequencyIntegral()).thenReturn("1234");
+        when(host1.getTscFrequencyIntegral()).thenReturn("12345");
+        when(host2.getTscFrequencyIntegral()).thenReturn("12345");
+        when(host3.getTscFrequencyIntegral()).thenReturn("12345");
 
         List<VDS> filtered = underTest.filter(null, hosts, vm, messages);
 
@@ -160,9 +160,9 @@ class MigrationTscFrequencyPolicyUnitTest {
         when(host1.getId()).thenReturn(Guid.newGuid());
         when(host2.getId()).thenReturn(Guid.newGuid());
         when(host3.getId()).thenReturn(Guid.newGuid());
-        when(host1.getTscFrequencyIntegral()).thenReturn("1234");
-        when(host2.getTscFrequencyIntegral()).thenReturn("1235");
-        when(host3.getTscFrequencyIntegral()).thenReturn("1234");
+        when(host1.getTscFrequencyIntegral()).thenReturn("12345");
+        when(host2.getTscFrequencyIntegral()).thenReturn("12350");
+        when(host3.getTscFrequencyIntegral()).thenReturn("12346");
 
         List<VDS> filtered = underTest.filter(null, hosts, vm, messages);
 
