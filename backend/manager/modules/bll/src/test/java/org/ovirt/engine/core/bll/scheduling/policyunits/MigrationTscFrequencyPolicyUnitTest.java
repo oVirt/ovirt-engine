@@ -68,6 +68,7 @@ class MigrationTscFrequencyPolicyUnitTest {
     void testHostsVMNoTscFreq() throws NoSuchFieldException {
         VM vm = mock(VM.class);
         when(vm.getVmType()).thenReturn(VmType.HighPerformance);
+        when(vm.getUseTscFrequency()).thenReturn(true);
         VdsDao dao = mock(VdsDao.class);
         VDS vds = mock(VDS.class);
         when(vds.getTscFrequency()).thenReturn(null);
@@ -84,6 +85,7 @@ class MigrationTscFrequencyPolicyUnitTest {
     void testVmNotRunning() {
         VM vm = mock(VM.class);
         when(vm.getVmType()).thenReturn(VmType.HighPerformance);
+        when(vm.getUseTscFrequency()).thenReturn(true);
         when(vm.getRunOnVds()).thenReturn(null);
 
         VDS host1 = mock(VDS.class);
@@ -101,6 +103,7 @@ class MigrationTscFrequencyPolicyUnitTest {
     void testHostsWithoutTscFrequency() {
         VM vm = mock(VM.class);
         when(vm.getVmType()).thenReturn(VmType.HighPerformance);
+        when(vm.getUseTscFrequency()).thenReturn(true);
         when(vm.getRunOnVds()).thenReturn(Guid.newGuid());
 
         VDS host1 = mock(VDS.class);
@@ -124,6 +127,7 @@ class MigrationTscFrequencyPolicyUnitTest {
     void testHostsWithTscFrequency() {
         VM vm = mock(VM.class);
         when(vm.getVmType()).thenReturn(VmType.HighPerformance);
+        when(vm.getUseTscFrequency()).thenReturn(true);
 
         VDS host1 = mock(VDS.class);
         VDS host2 = mock(VDS.class);
@@ -146,6 +150,7 @@ class MigrationTscFrequencyPolicyUnitTest {
     void testHostsWithDifferentTscFrequency() {
         VM vm = mock(VM.class);
         when(vm.getVmType()).thenReturn(VmType.HighPerformance);
+        when(vm.getUseTscFrequency()).thenReturn(true);
         when(vm.getRunOnVds()).thenReturn(Guid.newGuid());
 
         VDS host1 = mock(VDS.class);

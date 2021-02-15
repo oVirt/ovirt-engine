@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -40,7 +39,7 @@ public class MigrationTscFrequencyPolicyUnit extends PolicyUnitImpl {
     public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
         // High-performance VMs can be only migrated to hosts with the same TSC frequency
         // There's no need to check for invtsc flag, because CpuLevelFilterPolicyUnit will take care of that
-        if (vm.getRunOnVds() != null && vm.getVmType() == VmType.HighPerformance) {
+        if (vm.getRunOnVds() != null && vm.getUseTscFrequency()) {
             VDS vmVds = vdsDao.get(vm.getRunOnVds());
             if (vmVds == null || vmVds.getTscFrequency() == null) {
                 return hosts;
