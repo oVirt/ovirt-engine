@@ -12,11 +12,11 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
 
     private Integer readRate;
 
-    private Integer readOps;
+    private Long readOps;
 
     private Integer writeRate;
 
-    private Integer writeOps;
+    private Long writeOps;
 
     private long actualSize;
 
@@ -38,11 +38,11 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
         readRate = rate;
     }
 
-    public Integer getReadOps() {
+    public Long getReadOps() {
         return readOps;
     }
 
-    public void setReadOps(Integer ops) {
+    public void setReadOps(Long ops) {
         readOps = ops;
     }
 
@@ -54,11 +54,11 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
         writeRate = rate;
     }
 
-    public Integer getWriteOps() {
+    public Long getWriteOps() {
         return writeOps;
     }
 
-    public void setWriteOps(Integer ops) {
+    public void setWriteOps(Long ops) {
         writeOps = ops;
     }
 

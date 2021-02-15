@@ -22,9 +22,9 @@ public class DiskImage extends DiskImageBase {
     private long apparentSizeInBytes;
     private Long initialSizeInBytes;
     private int readRateFromDiskImageDynamic;
-    private int readOpsFromDiskImageDynamic;
+    private long readOpsFromDiskImageDynamic;
     private int writeRateFromDiskImageDynamic;
-    private int writeOpsFromDiskImageDynamic;
+    private long writeOpsFromDiskImageDynamic;
 
     // Latency fields from DiskImageDynamic which are measured in seconds.
     private Double readLatency;
@@ -165,11 +165,11 @@ public class DiskImage extends DiskImageBase {
         this.readRateFromDiskImageDynamic = readRateFromDiskImageDynamic;
     }
 
-    public int getReadOps() {
+    public long getReadOps() {
         return readOpsFromDiskImageDynamic;
     }
 
-    public void setReadOps(int readOpsFromDiskImageDynamic) {
+    public void setReadOps(long readOpsFromDiskImageDynamic) {
         this.readOpsFromDiskImageDynamic = readOpsFromDiskImageDynamic;
     }
 
@@ -181,11 +181,11 @@ public class DiskImage extends DiskImageBase {
         this.writeRateFromDiskImageDynamic = writeRateFromDiskImageDynamic;
     }
 
-    public int getWriteOps() {
+    public long getWriteOps() {
         return writeOpsFromDiskImageDynamic;
     }
 
-    public void setWriteOps(int writeOpsFromDiskImageDynamic) {
+    public void setWriteOps(long writeOpsFromDiskImageDynamic) {
         this.writeOpsFromDiskImageDynamic = writeOpsFromDiskImageDynamic;
     }
 
