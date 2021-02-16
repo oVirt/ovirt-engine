@@ -1864,7 +1864,8 @@ CREATE OR REPLACE FUNCTION InsertVnicProfile (
     v_migratable BOOLEAN,
     v_custom_properties TEXT,
     v_description TEXT,
-    v_network_filter_id UUID
+    v_network_filter_id UUID,
+    v_failover_vnic_profile_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -1878,7 +1879,8 @@ BEGIN
         migratable,
         custom_properties,
         description,
-        network_filter_id
+        network_filter_id,
+        failover_vnic_profile_id
         )
     VALUES (
         v_id,
@@ -1890,7 +1892,8 @@ BEGIN
         v_migratable,
         v_custom_properties,
         v_description,
-        v_network_filter_id
+        v_network_filter_id,
+        v_failover_vnic_profile_id
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -1905,7 +1908,8 @@ CREATE OR REPLACE FUNCTION UpdateVnicProfile (
     v_migratable BOOLEAN,
     v_custom_properties TEXT,
     v_description TEXT,
-    v_network_filter_id UUID
+    v_network_filter_id UUID,
+    v_failover_vnic_profile_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -1920,7 +1924,8 @@ BEGIN
         custom_properties = v_custom_properties,
         description = v_description,
         _update_date = LOCALTIMESTAMP,
-        network_filter_id = v_network_filter_id
+        network_filter_id = v_network_filter_id,
+        failover_vnic_profile_id = v_failover_vnic_profile_id
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

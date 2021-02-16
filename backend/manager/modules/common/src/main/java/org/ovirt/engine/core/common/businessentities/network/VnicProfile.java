@@ -33,6 +33,7 @@ public class VnicProfile implements Queryable, BusinessEntity<Guid>, Nameable {
     private String description;
     private Map<String, String> customProperties;
     private Guid networkFilterId;
+    private Guid failoverVnicProfileId;
 
     @Override
     public Guid getId() {
@@ -117,6 +118,14 @@ public class VnicProfile implements Queryable, BusinessEntity<Guid>, Nameable {
         this.networkFilterId = networkFilterId;
     }
 
+    public Guid getFailoverVnicProfileId() {
+        return failoverVnicProfileId;
+    }
+
+    public void setFailoverVnicProfileId(Guid failoverVnicProfileId) {
+        this.failoverVnicProfileId = failoverVnicProfileId;
+    }
+
     @Override
     public Object getQueryableId() {
         return getId();
@@ -134,7 +143,8 @@ public class VnicProfile implements Queryable, BusinessEntity<Guid>, Nameable {
                 passthrough,
                 migratable,
                 description,
-                networkFilterId
+                networkFilterId,
+                failoverVnicProfileId
         );
     }
 
@@ -156,7 +166,8 @@ public class VnicProfile implements Queryable, BusinessEntity<Guid>, Nameable {
                 && passthrough == other.passthrough
                 && migratable == other.migratable
                 && Objects.equals(description, other.description)
-                && Objects.equals(networkFilterId, other.networkFilterId);
+                && Objects.equals(networkFilterId, other.networkFilterId)
+                && Objects.equals(failoverVnicProfileId, other.failoverVnicProfileId);
     }
 
     @Override
@@ -171,6 +182,7 @@ public class VnicProfile implements Queryable, BusinessEntity<Guid>, Nameable {
                 .append("customProperties", getCustomProperties())
                 .append("description", getDescription())
                 .append("networkFilterId", getNetworkFilterId())
+                .append("failoverVnicProfileId", getFailoverVnicProfileId())
                 .build();
     }
 }

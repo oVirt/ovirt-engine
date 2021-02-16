@@ -28,6 +28,7 @@ public class VnicProfileDaoTest extends BaseGenericDaoTestCase<Guid, VnicProfile
         vnicProfile.setNetworkFilterId(FixturesTool.VNIC_PROFILE_NETWORK_FILTER);
         vnicProfile.setMigratable(true);
         vnicProfile.setCustomProperties(Collections.emptyMap());
+        vnicProfile.setFailoverVnicProfileId(FixturesTool.VM_NETWORK_INTERFACE_PASSTHROUGH_PROFILE);
         return vnicProfile;
     }
 

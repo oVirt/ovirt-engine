@@ -42,7 +42,8 @@ public class VnicProfileDaoImpl extends DefaultGenericDao<VnicProfile, Guid> imp
                 .addValue("description", profile.getDescription())
                 .addValue("custom_properties",
                         SerializationFactory.getSerializer().serialize(profile.getCustomProperties()))
-                .addValue("network_filter_id", profile.getNetworkFilterId());
+                .addValue("network_filter_id", profile.getNetworkFilterId())
+                .addValue("failover_vnic_profile_id", profile.getFailoverVnicProfileId());
     }
 
     @Override
@@ -72,6 +73,7 @@ public class VnicProfileDaoImpl extends DefaultGenericDao<VnicProfile, Guid> imp
             entity.setMigratable(rs.getBoolean("migratable"));
             entity.setDescription(rs.getString("description"));
             entity.setNetworkFilterId(getGuid(rs, "network_filter_id"));
+            entity.setFailoverVnicProfileId(getGuid(rs, "failover_vnic_profile_id"));
             return entity;
         }
 
