@@ -1066,7 +1066,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!validate(vmHandler.isCpuSupported(
+        if (vmFromParams.getCustomCpuName() == null && !validate(vmHandler.isCpuSupported(
                 vmFromParams.getVmOsId(),
                 getEffectiveCompatibilityVersion(),
                 getCluster().getCpuName()))) {

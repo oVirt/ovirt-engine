@@ -676,7 +676,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (!validate(vmHandler.isCpuSupported(
+        if (vmFromParams.getCustomCpuName() == null && !validate(vmHandler.isCpuSupported(
                 vmFromParams.getVmOsId(),
                 getEffectiveCompatibilityVersion(),
                 getCluster().getCpuName()))) {
