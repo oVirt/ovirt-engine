@@ -15,8 +15,13 @@ public class DiskOperationsValidator {
 
     static final Map<ActionType, List<DiskContentType>> allowedCommandsOnTypes = new HashMap<>();
     static {
-        allowedCommandsOnTypes.put(ActionType.RemoveDisk, Arrays.asList(DiskContentType.DATA, DiskContentType.OVF_STORE,
-                DiskContentType.MEMORY_DUMP_VOLUME, DiskContentType.MEMORY_METADATA_VOLUME, DiskContentType.ISO));
+        allowedCommandsOnTypes.put(ActionType.RemoveDisk,
+                Arrays.asList(DiskContentType.DATA,
+                        DiskContentType.OVF_STORE,
+                        DiskContentType.MEMORY_DUMP_VOLUME,
+                        DiskContentType.MEMORY_METADATA_VOLUME,
+                        DiskContentType.ISO,
+                        DiskContentType.BACKUP_SCRATCH));
         allowedCommandsOnTypes.put(ActionType.UpdateDisk, Arrays.asList(DiskContentType.DATA));
         allowedCommandsOnTypes.put(ActionType.AttachDiskToVm, Arrays.asList(DiskContentType.DATA, DiskContentType.HOSTED_ENGINE));
         allowedCommandsOnTypes.put(ActionType.MoveOrCopyDisk, Arrays.asList(DiskContentType.DATA,
