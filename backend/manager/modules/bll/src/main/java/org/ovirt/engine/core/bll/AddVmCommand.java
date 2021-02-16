@@ -1173,7 +1173,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 isTpmEnabled(),
                 getParameters().isConsoleEnabled(),
                 isVirtioScsiEnabled(),
-                isBalloonEnabled(),
+                getParameters().isBalloonEnabled(),
                 getParameters().getGraphicsDevices().keySet(),
                 false,
                 getEffectiveCompatibilityVersion());

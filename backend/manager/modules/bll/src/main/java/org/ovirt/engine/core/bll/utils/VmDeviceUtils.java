@@ -1636,7 +1636,7 @@ public class VmDeviceUtils {
                               boolean isTpmEnabled,
                               Boolean isConsoleEnabled,
                               Boolean isVirtioScsiEnabled,
-                              boolean isBalloonEnabled,
+                              Boolean isBalloonEnabled,
                               Set<GraphicsType> graphicsToSkip,
                               boolean copySnapshotDevices,
                               boolean copyHostDevices,
@@ -1713,7 +1713,7 @@ public class VmDeviceUtils {
                     break;
 
                 case BALLOON:
-                    if (!isBalloonEnabled) {
+                    if (Boolean.FALSE.equals(isBalloonEnabled)) {
                         continue;
                     }
                     hasBalloon = true;
@@ -1812,7 +1812,7 @@ public class VmDeviceUtils {
             addVirtioScsiController(dstVmBase, getVmCompatibilityVersion(dstVmBase));
         }
 
-        if (isBalloonEnabled && !hasBalloon) {
+        if (Boolean.TRUE.equals(isBalloonEnabled) && !hasBalloon) {
             addMemoryBalloon(dstId);
         }
 
@@ -1831,7 +1831,7 @@ public class VmDeviceUtils {
                                      boolean isTpmEnabled,
                                      Boolean isConsoleEnabled,
                                      Boolean isVirtioScsiEnabled,
-                                     boolean isBalloonEnabled,
+                                     Boolean isBalloonEnabled,
                                      Set<GraphicsType> graphicsToSkip,
                                      boolean copySnapshotDevices,
                                      Version versionToUpdateRndDeviceWith) {

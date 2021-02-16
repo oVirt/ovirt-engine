@@ -120,11 +120,9 @@ public class BackendVmPoolsResource
         params.setSoundDeviceEnabled(pool.isSetSoundcardEnabled() ? pool.isSoundcardEnabled() : !VmHelper.getSoundDevicesForEntity(this, template.getId()).isEmpty());
         params.setRngDevice(pool.isSetVm() && pool.getVm().isSetRngDevice() ?
                 RngDeviceMapper.map(pool.getVm().getRngDevice(), null) : params.getRngDevice());
-        boolean balloonEnabled = pool.isSetVm() &&
-                pool.getVm().isSetMemoryPolicy() &&
-                pool.getVm().getMemoryPolicy().isSetBallooning() &&
-                pool.getVm().getMemoryPolicy().isBallooning();
-        params.setBalloonEnabled(balloonEnabled);
+        if (pool.isSetVm() && pool.getVm().isSetMemoryPolicy() && pool.getVm().getMemoryPolicy().isSetBallooning()) {
+            params.setBalloonEnabled(pool.getVm().getMemoryPolicy().isBallooning());
+        }
         params.getVmStaticData().setCustomProperties(pool.isSetVm() && pool.getVm().isSetCustomProperties() ?
                 CustomPropertiesParser.parse(pool.getVm().getCustomProperties().getCustomProperties()) : params.getVmStaticData().getCustomProperties());
         params.setTpmEnabled(!VmHelper.getTpmDevicesForEntity(this, template.getId()).isEmpty());

@@ -54,7 +54,6 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/resources/minimum/ram").put("value.4.2", "1024");
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
         preferences.node("/os/rhel7/devices/display/protocols").put("value", "VNC/vga,SPICE/qxl");
-        preferences.node("/os/rhel7/devices/balloon/enabled").put("value", "true");
         preferences.node("/os/rhel7/devices/audio/enabled").put("value", "true");
         preferences.node("/os/rhel7/devices/floppy/support").put("value", "true");
         preferences.node("/os/rhel7/sysprepPath").put("value", PATH_TO_SYSPREP);
