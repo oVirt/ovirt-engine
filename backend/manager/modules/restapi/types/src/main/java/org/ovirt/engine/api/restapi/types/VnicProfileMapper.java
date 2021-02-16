@@ -51,6 +51,10 @@ public class VnicProfileMapper {
             entity.setMigratable(model.isMigratable());
         }
 
+        if (model.isSetFailover() && model.getFailover().isSetId()) {
+            entity.setFailoverVnicProfileId(GuidUtils.asGuid(model.getFailover().getId()));
+        }
+
         if (model.isSetNetworkFilter()) {
             if (model.getNetworkFilter().isSetId()) {
                 entity.setNetworkFilterId(GuidUtils.asGuid(model.getNetworkFilter().getId()));
@@ -100,6 +104,12 @@ public class VnicProfileMapper {
         if (entity.isPassthrough()) {
             model.setMigratable(entity.isMigratable());
         }
+
+        if (entity.getFailoverVnicProfileId() != null) {
+            model.setFailover(new VnicProfile());
+            model.getFailover().setId(entity.getFailoverVnicProfileId().toString());
+        }
+
         return model;
     }
 

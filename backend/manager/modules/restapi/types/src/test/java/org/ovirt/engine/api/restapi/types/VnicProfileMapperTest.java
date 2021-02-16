@@ -28,5 +28,6 @@ public class VnicProfileMapperTest extends AbstractInvertibleMappingTest<VnicPro
         assertNotNull(transform.getCustomProperties());
         assertEquals(CustomPropertiesParser.parse(model.getCustomProperties().getCustomProperties()),
                 CustomPropertiesParser.parse(transform.getCustomProperties().getCustomProperties()));
+        assertEquals(model.getFailover().getId(), transform.getFailover().getId());
     }
 }
