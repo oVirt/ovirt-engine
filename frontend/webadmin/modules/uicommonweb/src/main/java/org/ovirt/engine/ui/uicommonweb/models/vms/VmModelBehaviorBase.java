@@ -833,19 +833,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Integer osType = getModel().getOSType().getSelectedItem();
 
         if (cluster != null && osType != null) {
-            updateMemoryBalloon(getModel().getCompatibilityVersion(), osType);
+            getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(true);
         }
-    }
-
-    protected void updateMemoryBalloon(Version clusterVersion, int osType) {
-        boolean isBalloonEnabled = AsyncDataProvider.getInstance().isBalloonEnabled(osType,
-                clusterVersion);
-
-        if (!isBalloonEnabled) {
-            getModel().getMemoryBalloonDeviceEnabled().setEntity(false);
-        }
-        getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(isBalloonEnabled);
-
     }
 
     protected void updateCpuSharesAvailability() {

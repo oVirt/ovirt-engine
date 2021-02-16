@@ -169,7 +169,6 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
         when(osRepository.getOsIdByUniqueName(any())).thenReturn(osId);
         when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.x86_64);
         when(osRepository.isWindows(anyInt())).thenReturn(false);
-        when(osRepository.isBalloonEnabled(anyInt(), any())).thenReturn(true);
         when(osRepository.isSoundDeviceEnabled(anyInt(), any())).thenReturn(true);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
 

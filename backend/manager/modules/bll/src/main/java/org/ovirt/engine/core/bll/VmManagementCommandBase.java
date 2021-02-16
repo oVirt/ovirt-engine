@@ -160,11 +160,7 @@ public abstract class VmManagementCommandBase<T extends VmManagementParametersBa
 
             List<VmDevice> vmDevices = getVmDeviceUtils().getMemoryBalloons(instanceType.getId());
             vmStatic.setMinAllocatedMem(instanceType.getMinAllocatedMem());
-            if (vmDevices.isEmpty()) {
-                getParameters().setBalloonEnabled(false);
-            } else if (osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(), getEffectiveCompatibilityVersion())) {
-                getParameters().setBalloonEnabled(true);
-            }
+            getParameters().setBalloonEnabled(!vmDevices.isEmpty());
 
             vmStatic.setMigrationPolicyId(instanceType.getMigrationPolicyId());
 

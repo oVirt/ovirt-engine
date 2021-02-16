@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -42,7 +40,6 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
-import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
@@ -66,7 +63,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -76,7 +72,6 @@ import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -93,8 +88,6 @@ public class BackendVmsResourceTest
     public static final String CERTIFICATE = "O=Redhat,CN=X.Y.Z.Q";
     private static final String CA_CERT = "dummy-cert";
 
-    private OsRepository osRepository;
-
     public BackendVmsResourceTest() {
         super(new BackendVmsResource(), SearchType.VM, "VMs : ");
     }
@@ -108,9 +101,6 @@ public class BackendVmsResourceTest
     @Override
     public void init() {
         super.init();
-        OsTypeMockUtils.mockOsTypes();
-        osRepository = mock(OsRepository.class);
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 
     @Test
@@ -349,9 +339,6 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[0] },
                 getTemplateEntity(0));
 
-
-        when(osRepository.isBalloonEnabled(anyInt(), any())).thenReturn(false);
-
         setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
@@ -377,6 +364,7 @@ public class BackendVmsResourceTest
         setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendVmsResource.CLONE, "true"));
         setUpTemplateDisksExpectations(GUIDS[1]);
         setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 1);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(1, 2);
@@ -464,6 +452,7 @@ public class BackendVmsResourceTest
     public void testClone() {
         setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendVmsResource.CLONE, "true"));
         setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 1);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(1, 2);
@@ -506,6 +495,7 @@ public class BackendVmsResourceTest
     public void testAddStatelessWithLatestTemplateVersion() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 1);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
@@ -575,6 +565,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[2] },
                 getEntity(2));
         setUpGetCaRootExpectations();
+        setUpGetBallooningExpectations(1, 1);
         Response response = collection.add(createModel(null));
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Vm);
@@ -615,6 +606,7 @@ public class BackendVmsResourceTest
     private void setupAddExpectations() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 1);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
@@ -942,6 +934,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 1);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(1, 2);
@@ -992,6 +985,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 1);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(1, 2);
@@ -1054,6 +1048,7 @@ public class BackendVmsResourceTest
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendVmsResource.CLONE_PERMISSIONS, Boolean.toString(copy));
         setUriInfo(uriInfo);
         setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 1);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
@@ -1111,6 +1106,7 @@ public class BackendVmsResourceTest
         setUriInfo(uriInfo);
         setUpTemplateDisksExpectations(GUIDS[1]);
         setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 1);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(1, 2);
@@ -1289,6 +1285,7 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
+        setUpGetBallooningExpectations(1, 1);
         setUpGetSoundcardExpectations(1);
         setUpGetRngDeviceExpectations(1);
         setUpGetConsoleExpectations(1);

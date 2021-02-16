@@ -1212,12 +1212,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
-        if (isBalloonEnabled() && !osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
-                getEffectiveCompatibilityVersion())) {
-            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
-            return failValidation(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
-        }
-
         if (isSoundDeviceEnabled() && !osRepository.isSoundDeviceEnabled(getParameters().getVmStaticData().getOsId(),
                 getEffectiveCompatibilityVersion())) {
             addValidationMessageVariable("clusterArch", getCluster().getArchitecture());

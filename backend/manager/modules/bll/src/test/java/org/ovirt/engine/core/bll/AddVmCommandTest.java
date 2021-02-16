@@ -142,16 +142,6 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
     }
 
     @Test
-    public void refuseBalloonOnPPC() {
-        setupCanAddPpcTest();
-        cmd.getParameters().setBalloonEnabled(true);
-        doNothing().when(cmd).initTemplateDisks();
-        cmd.init();
-
-        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
-    }
-
-    @Test
     public void refuseSoundDeviceOnPPC() {
         doNothing().when(cmd).initTemplateDisks();
         setupCanAddPpcTest();

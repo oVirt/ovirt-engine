@@ -11,7 +11,6 @@ import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Vm;
-import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalUrlParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -41,7 +40,6 @@ public class BackendExternalVmImportsResourceTest extends AbstractBackendBaseTes
     protected void init() {
         initBackendResource(resource);
         resource.setMappingLocator(mapperLocator);
-        OsTypeMockUtils.mockOsTypes();
     }
 
     @BeforeEach

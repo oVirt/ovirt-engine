@@ -56,8 +56,6 @@ public class OsQueryParameters extends QueryParametersBase {
 
     public enum OsRepositoryVerb {
         GetDisplayTypes,
-        GetBalloonSupportMap,
-        IsBalloonEnabled,
         HasNicHotplugSupport,
         GetNicHotplugSupportMap,
         GetDiskHotpluggableInterfacesMap,

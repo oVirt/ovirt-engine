@@ -81,7 +81,6 @@ import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -466,9 +465,7 @@ public class BackendVmsResource extends
 
         if (vm.isSetMemoryPolicy()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
-        } else if (shouldCopyDevice(SimpleDependencyInjector.getInstance().get(OsRepository.class).isBalloonEnabled(
-                vmStatic.getOsId(), cluster.getCompatibilityVersion()), templateId, instanceTypeId)
-                && (instanceTypeId != null || templateId != null)) {
+        } else if (instanceTypeId != null || templateId != null) {
             params.setBalloonEnabled(VmHelper.isMemoryBalloonEnabledForEntity(this, instanceTypeId != null ? instanceTypeId : templateId));
         }
 

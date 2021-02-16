@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ExistingBlankTemplateModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingInstanceTypeModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewInstanceTypeModelBehavior;
@@ -23,8 +22,6 @@ public class BalloonEnabled {
             return false;
         }
 
-        return deviceEnabled
-                && AsyncDataProvider.getInstance().isBalloonEnabled(osType,
-                model.getCompatibilityVersion());
+        return deviceEnabled;
     }
 }

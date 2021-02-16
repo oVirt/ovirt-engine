@@ -214,19 +214,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void refuseBalloonOnPPC() {
-        setupCanImportPpcTest();
-
-        addBalloonToVm(cmd.getVmFromExportDomain(null));
-        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cmd.getCluster().getCompatibilityVersion())).thenReturn(false);
-
-        assertFalse(cmd.validate());
-        assertTrue(cmd.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
-    }
-
-    @Test
     public void refuseSoundDeviceOnPPC() {
         setupCanImportPpcTest();
 
@@ -237,27 +224,6 @@ public class ImportVmCommandTest extends BaseCommandTest {
         assertTrue(cmd.getReturnValue()
                 .getValidationMessages()
                 .contains(EngineMessage.SOUND_DEVICE_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
-    }
-
-    @Test
-    public void acceptBalloon() {
-        setupDiskSpaceTest();
-
-        addBalloonToVm(cmd.getParameters().getVm());
-
-        cmd.getParameters().getVm().setClusterArch(ArchitectureType.x86_64);
-        Cluster cluster = new Cluster();
-        cluster.setId(Guid.newGuid());
-        cluster.setStoragePoolId(cmd.getParameters().getStoragePoolId());
-        cluster.setArchitecture(ArchitectureType.x86_64);
-        cluster.setCompatibilityVersion(Version.getLast());
-        doReturn(cluster).when(cmd).getCluster();
-        cmd.setClusterId(cluster.getId());
-        cmd.getParameters().setClusterId(cluster.getId());
-        osRepository.getGraphicsAndDisplays().get(0).put(Version.getLast(),
-                Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
-        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(true);
-        assertTrue(cmd.validateBallonDevice());
     }
 
     @Test

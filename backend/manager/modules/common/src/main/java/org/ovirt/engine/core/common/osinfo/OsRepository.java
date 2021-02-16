@@ -121,18 +121,6 @@ public interface OsRepository {
     int getVgamemMultiplier(int osId);
 
     /**
-     * @return map (osId -> compatibility version -> Boolean) that indicates balloon disabled for all OSs and
-     * compatibility versions
-     */
-    Map<Integer, Map<Version, Boolean>> getBalloonSupportMap();
-
-    /**
-     * Checks if is recommended enable the OS balloon.
-     * @return an boolean
-     */
-    boolean isBalloonEnabled(int osId, Version version);
-
-    /**
      * Checks if that OS network devices support hotplug.
      * @return an boolean
      */

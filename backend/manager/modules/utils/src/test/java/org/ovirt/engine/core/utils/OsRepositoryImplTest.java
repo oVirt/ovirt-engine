@@ -196,12 +196,6 @@ public class OsRepositoryImplTest {
     }
 
     @Test
-    public void testIsBalloonEnabled() {
-        assertTrue(OsRepositoryImpl.INSTANCE.isBalloonEnabled(777, null));
-        assertTrue(OsRepositoryImpl.INSTANCE.getBalloonSupportMap().get(777).get(null));
-    }
-
-    @Test
     public void testIsSoundDeviceEnabled() {
         assertTrue(OsRepositoryImpl.INSTANCE.isSoundDeviceEnabled(777, null));
         assertTrue(OsRepositoryImpl.INSTANCE.getSoundDeviceSupportMap().get(777).get(null));

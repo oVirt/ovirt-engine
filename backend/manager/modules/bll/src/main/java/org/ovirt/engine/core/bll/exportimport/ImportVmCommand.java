@@ -234,10 +234,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             }
         }
 
-        if (!validateBallonDevice()) {
-            return false;
-        }
-
         if (!validateSoundDevice()) {
             return false;
         }

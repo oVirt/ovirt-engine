@@ -232,7 +232,6 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         doReturn(ActionType.UpdateVm).when(command).getActionType();
         doReturn(false).when(command).isVirtioScsiEnabledForVm(any());
         doReturn(true).when(command).isBalloonEnabled();
-        doReturn(true).when(osRepository).isBalloonEnabled(vm.getVmOsId(), group.getCompatibilityVersion());
 
         doReturn(vmDeviceUtils).when(command).getVmDeviceUtils();
         doReturn(numaValidator).when(command).getNumaValidator();

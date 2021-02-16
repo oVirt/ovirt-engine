@@ -299,15 +299,6 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return false;
         }
 
-        if (returnValue) {
-            boolean balloonEnabled = Boolean.TRUE.equals(getParameters().isBalloonEnabled());
-            if (balloonEnabled && !osRepository.isBalloonEnabled(getParameters().getVmTemplateData().getOsId(),
-                    getVmTemplate().getCompatibilityVersion())) {
-                addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
-                return failValidation(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
-            }
-        }
-
         boolean soundDeviceEnabled = Boolean.TRUE.equals(getParameters().isSoundDeviceEnabled());
         if (soundDeviceEnabled && !osRepository.isSoundDeviceEnabled(getParameters().getVmTemplateData().getOsId(),
                 getVmTemplate().getCompatibilityVersion())) {

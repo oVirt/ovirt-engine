@@ -602,12 +602,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (isBalloonEnabled() && !osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
-                getEffectiveCompatibilityVersion())) {
-            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
-            return failValidation(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
-        }
-
         if (isSoundDeviceEnabled() && !osRepository.isSoundDeviceEnabled(getParameters().getVmStaticData().getOsId(),
                 getEffectiveCompatibilityVersion())) {
             addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
@@ -1799,9 +1793,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected boolean isBalloonEnabled() {
         Boolean balloonEnabled = getParameters().isBalloonEnabled();
-        return balloonEnabled != null ? balloonEnabled
-                : osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
-                        getEffectiveCompatibilityVersion());
+        return balloonEnabled != null ? balloonEnabled : true;
     }
 
     protected boolean isSoundDeviceEnabled() {

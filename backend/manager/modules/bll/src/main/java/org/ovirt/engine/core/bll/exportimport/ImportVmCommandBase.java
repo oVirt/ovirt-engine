@@ -292,20 +292,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
                 getUserIdIfExternal().orElse(null)));
     }
 
-    protected boolean validateBallonDevice() {
-        if (!VmDeviceCommonUtils.isBalloonDeviceExists(getVm().getManagedVmDeviceMap().values())) {
-            return true;
-        }
-
-        if (!osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
-                getEffectiveCompatibilityVersion())) {
-            addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
-            return failValidation(EngineMessage.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
-        }
-
-        return true;
-    }
-
     protected boolean validateSoundDevice() {
         if (!VmDeviceCommonUtils.isSoundDeviceExists(getVm().getManagedVmDeviceMap().values())) {
             return true;

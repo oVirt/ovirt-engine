@@ -63,7 +63,6 @@ void devices() : {} {
     | ("network" networkValue())
     | ("network.hotplugSupport" booleanValue())
     | ("disk.hotpluggableInterfaces" hardwareInterfacesValue())
-    | ("balloon.enabled" booleanValue())
     | ("audio" audioValue())
     | ("audio.enabled" booleanValue())
     | ("cdInterface" cdInterfaceValue())

@@ -143,10 +143,6 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
             return false;
         }
 
-        if (!validateBallonDevice()) {
-            return false;
-        }
-
         if (!validateSoundDevice()) {
             return false;
         }
