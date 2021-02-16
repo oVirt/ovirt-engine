@@ -1196,6 +1196,7 @@ fi
 %{engine_data}/firewalld/ovirt-common/
 %{engine_data}/setup/ovirt_engine_setup/engine/
 %config %{_sysconfdir}/httpd/conf.d/ovirt-disable-http-trace.conf
+%config %{_sysconfdir}/httpd/conf.d/ovirt-enable-strict-transport-security.conf
 
 
 %if %{ovirt_provides_jboss}
