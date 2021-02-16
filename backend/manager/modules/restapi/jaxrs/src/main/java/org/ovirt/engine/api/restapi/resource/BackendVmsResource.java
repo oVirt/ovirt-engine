@@ -463,7 +463,7 @@ public class BackendVmsResource extends
             params.setSoundDeviceEnabled(!VmHelper.getSoundDevicesForEntity(this, instanceTypeId != null ? instanceTypeId : templateId).isEmpty());
         }
 
-        if (vm.isSetMemoryPolicy()) {
+        if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
         } else if (instanceTypeId != null || templateId != null) {
             params.setBalloonEnabled(VmHelper.isMemoryBalloonEnabledForEntity(this, instanceTypeId != null ? instanceTypeId : templateId));
