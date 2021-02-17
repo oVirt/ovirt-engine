@@ -1324,6 +1324,9 @@ select fn_db_update_default_config_value('VncKeyboardLayoutValidValues','ar,da,d
 
 -- Enable TPM
 select fn_db_update_default_config_value('TpmDeviceSupported', '{"x86":"false","ppc":"false","s390x":"false"}', '{"x86":"true","ppc":"true","s390x":"false"}', '4.6', false);
+
+-- Enable NVRAM persistence
+select fn_db_update_default_config_value('NvramPersistenceSupported', 'false', 'true', '4.6', false);
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
