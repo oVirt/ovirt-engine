@@ -34,6 +34,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.slf4j.Logger;
@@ -54,6 +55,8 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
     private NetworkDao networkDao;
     @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+    @Inject
+    private VnicProfileViewDao vnicProfileViewDao;
 
     public NetworkPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -161,6 +164,10 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                 if (network.isExternal()) {
                     findPhysicalNetworkNotConnectedAndLinkedTo(network, hostNetworks).ifPresent(missingIfs::add);
                 }
+                if (skipNetworkExistenceCheckForVnicPassthrough) {
+                    findFailoverNetworkNotConnected(vmIf.getVnicProfileId(), networksByName, hostNetworks).ifPresent(
+                            missingIfs::add);
+                }
             }
 
             if (!found) {
@@ -202,6 +209,20 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
         Network physicalNetwork = networkDao.get(network.getProvidedBy().getPhysicalNetworkId());
 
         return Optional.ofNullable(hostNetworks.contains(physicalNetwork.getName()) ? null : physicalNetwork.getName());
+    }
+
+    private Optional<String> findFailoverNetworkNotConnected(Guid vnicProfileId,
+            Map<String, Network> networksByName,
+            List<String> hostNetworks) {
+        var profile = vnicProfileViewDao.get(vnicProfileId);
+        if (profile.getFailoverVnicProfileId() == null) {
+            return Optional.empty();
+        }
+
+        var failoverNetwork =
+                networksByName.get(vnicProfileViewDao.get(profile.getFailoverVnicProfileId()).getNetworkName());
+
+        return Optional.ofNullable(hostNetworks.contains(failoverNetwork.getName()) ? null : failoverNetwork.getName());
     }
 
     /**
