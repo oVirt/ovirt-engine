@@ -1564,6 +1564,9 @@ public enum ConfigValues {
     TpmDeviceSupported,
 
     @TypeConverterAttribute(Boolean.class)
+    NvramPersistenceSupported,
+
+    @TypeConverterAttribute(Boolean.class)
     EnableBochsDisplay,
 
     Invalid;

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -75,6 +76,12 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
         String tpmData = vmInfoBuildUtils.tpmData(vm.getId());
         if (tpmData != null) {
             createInfo.put(VdsProperties.tpmData, tpmData);
+        }
+        if (vm.getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT) {
+            String nvramData = vmInfoBuildUtils.nvramData(vm.getId());
+            if (nvramData != null) {
+                createInfo.put(VdsProperties.nvramData, nvramData);
+            }
         }
 
         return createInfo;

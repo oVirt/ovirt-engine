@@ -37,7 +37,7 @@ public class StopVmCommand<T extends StopVmParameters> extends StopVmCommandBase
 
     private boolean saveVmExternalData() {
         SaveVmExternalDataParameters parameters = new SaveVmExternalDataParameters(getVm().getId(),
-                () -> getVmManager().incFailedVmExternalDataRetrievalAttempts(), false);
+                getVmManager().getExternalDataStatus(), false);
         return runInternalAction(ActionType.SaveVmExternalData, parameters).getSucceeded();
     }
 

@@ -412,4 +412,27 @@ public interface VmDao extends Dao {
      * @param targetVmId id of the VM to copy the data to
      */
     void copyTpmData(Guid sourceVmId, Guid targetVmId);
+
+    /**
+     * Returns the secure boot NVRAM data for the specified VM.
+     *
+     * @param vmId the VM id
+     */
+    String getNvramData(Guid vmId);
+
+    /**
+     * Stores the specified secure boot NVRAM data for the given VM.
+     *
+     * @param vmId the VM id
+     * @param nvramData the data
+     */
+    void updateNvramData(Guid vmId, String nvramData);
+
+    /**
+     * Copies the specified NVRAM data from one VM to another one.
+     *
+     * @param sourceVmId id of the VM to copy the data from
+     * @param targetVmId id of the VM to copy the data to
+     */
+    void copyNvramData(Guid sourceVmId, Guid targetVmId);
 }

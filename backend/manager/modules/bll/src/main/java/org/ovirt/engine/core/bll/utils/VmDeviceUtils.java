@@ -2292,5 +2292,8 @@ public class VmDeviceUtils {
         if (hasTpmDevice(targetVmId)) {
             vmDao.copyTpmData(sourceVmId, targetVmId);
         }
+        if (getVmBase(targetVmId).getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT) {
+            vmDao.copyNvramData(sourceVmId, targetVmId);
+        }
     }
 }

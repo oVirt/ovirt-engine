@@ -311,6 +311,16 @@ public class FeatureSupported {
     }
 
     /**
+     * Check if NVRAM data persistence is supported.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if TPM device is supported.
+     */
+    public static boolean isNvramPersistenceSupported(Version version) {
+        return supportedInConfig(ConfigValues.NvramPersistenceSupported, version);
+    }
+
+    /**
      * Checks if bochs display support enabled for the cluster version
      *
      * @param version

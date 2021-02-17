@@ -1,31 +1,29 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.function.Supplier;
-
 import org.ovirt.engine.core.compat.Guid;
 
 public class SaveVmExternalDataParameters extends VmOperationParameterBase {
 
     private static final long serialVersionUID = 1L;
 
-    private Supplier<Integer> incrementMethod;
+    private ExternalDataStatus externalDataStatus;
     private boolean forceUpdate;
 
     public SaveVmExternalDataParameters() {
     }
 
-    public SaveVmExternalDataParameters(Guid vmId, Supplier<Integer> incrementMethod, boolean forceUpdate) {
+    public SaveVmExternalDataParameters(Guid vmId, ExternalDataStatus externalDataStatus, boolean forceUpdate) {
         super(vmId);
-        this.incrementMethod = incrementMethod;
+        this.externalDataStatus = externalDataStatus;
         this.forceUpdate = forceUpdate;
     }
 
-    public Supplier<Integer> getIncrementMethod() {
-        return incrementMethod;
+    public ExternalDataStatus getExternalDataStatus() {
+        return externalDataStatus;
     }
 
-    public void setIncrementMethod(Supplier<Integer> incrementMethod) {
-        this.incrementMethod = incrementMethod;
+    public void setExternalDataStatus(ExternalDataStatus externalDataStatus) {
+        this.externalDataStatus = externalDataStatus;
     }
 
     public boolean getForceUpdate() {

@@ -368,7 +368,7 @@ public class VmAnalyzer {
 
     boolean saveVmExternalData() {
         SaveVmExternalDataParameters parameters = new SaveVmExternalDataParameters(dbVm.getId(),
-                () -> getVmManager().incFailedVmExternalDataRetrievalAttempts(), true);
+                getVmManager().getExternalDataStatus(), true);
         return resourceManager.getEventListener().saveExternalData(parameters).getSucceeded();
     }
 

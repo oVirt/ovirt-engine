@@ -431,4 +431,28 @@ public class VmDaoImpl extends BaseDao implements VmDao {
                         .addValue("source_vm_id", sourceVmId)
                         .addValue("target_vm_id", targetVmId));
     }
+
+    @Override
+    public String getNvramData(Guid vmId) {
+        return getCallsHandler().executeRead("GetNvramData",
+                SingleColumnRowMapper.newInstance(String.class),
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_id", vmId));
+    }
+
+    @Override
+    public void updateNvramData(Guid vmId, String nvramData) {
+        getCallsHandler().executeModification("UpdateNvramData",
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_id", vmId)
+                        .addValue("nvram_data", nvramData));
+    }
+
+    @Override
+    public void copyNvramData(Guid sourceVmId, Guid targetVmId) {
+        getCallsHandler().executeModification("CopyNvramData",
+                getCustomMapSqlParameterSource()
+                        .addValue("source_vm_id", sourceVmId)
+                        .addValue("target_vm_id", targetVmId));
+    }
 }

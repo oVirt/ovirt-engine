@@ -33,10 +33,12 @@ public class GetVmExternalDataVDSCommand<P extends GetVmExternalDataVDSCommand.P
     public static class Parameters extends VdsAndVmIDVDSParametersBase {
 
         private boolean forceUpdate;
+        private String kind;
 
-        public Parameters(Guid vdsId, Guid vmId, boolean forceUpdate) {
+        public Parameters(Guid vdsId, Guid vmId, String kind, boolean forceUpdate) {
             super(vdsId, vmId);
             this.forceUpdate = forceUpdate;
+            this.kind = kind;
         }
 
         public boolean getForceUpdate() {
@@ -44,7 +46,7 @@ public class GetVmExternalDataVDSCommand<P extends GetVmExternalDataVDSCommand.P
         }
 
         public String getKind() {
-            return VdsProperties.tpm;
+            return kind;
         }
 
         @Override

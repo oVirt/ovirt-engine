@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.action.ExternalDataStatus;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -60,7 +61,7 @@ public class VmManager {
 
     private boolean coldReboot;
 
-    private Integer failedVmExternalDataRetrievalAttempts;
+    private ExternalDataStatus externalDataStatus;
 
     /**
      * vmOverhead contains the last known VM memory impact incl. QEMU overhead prediction.
@@ -90,7 +91,7 @@ public class VmManager {
         convertOperationProgress = -1;
         statistics = new VmStatistics(vmId);
         vmMemoryWithOverheadInMB = 0;
-        failedVmExternalDataRetrievalAttempts = Integer.valueOf(0);
+        externalDataStatus = new ExternalDataStatus();
     }
 
     @PostConstruct
@@ -308,7 +309,11 @@ public class VmManager {
         return vmDynamicDao.get(vmId).getStopReason();
     }
 
-    public Integer incFailedVmExternalDataRetrievalAttempts() {
-        return ++failedVmExternalDataRetrievalAttempts;
+    public ExternalDataStatus getExternalDataStatus() {
+        return externalDataStatus;
+    }
+
+    public void resetExternalDataStatus() {
+        externalDataStatus = new ExternalDataStatus();
     }
 }

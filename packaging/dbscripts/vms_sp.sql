@@ -2376,3 +2376,47 @@ BEGIN
     PERFORM UpdateTpmData(v_target_vm_id, GetTpmData(v_source_vm_id));
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetNvramData (
+    v_vm_id UUID
+)
+RETURNS TEXT STABLE AS $FUNCTION$
+BEGIN
+    RETURN
+    (
+        SELECT nvram_data
+        FROM vm_nvram_data
+        WHERE vm_id = v_vm_id
+    );
+END;$FUNCTION$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION UpdateNvramData (
+    v_vm_id UUID,
+    v_nvram_data TEXT
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    INSERT INTO vm_nvram_data (
+        vm_id,
+        nvram_data
+    )
+    VALUES (
+        v_vm_id,
+        v_nvram_data
+    )
+    ON CONFLICT (vm_id) DO
+    UPDATE
+    SET nvram_data = v_nvram_data;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION CopyNvramData (
+    v_source_vm_id UUID,
+    v_target_vm_id UUID
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    PERFORM UpdateNvramData(v_target_vm_id, GetNvramData(v_source_vm_id));
+END;$PROCEDURE$
+LANGUAGE plpgsql;
