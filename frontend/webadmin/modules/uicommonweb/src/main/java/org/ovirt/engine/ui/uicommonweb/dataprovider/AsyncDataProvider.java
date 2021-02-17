@@ -865,8 +865,8 @@ public class AsyncDataProvider {
         getConfigFromCache(tempVar, aQuery);
     }
 
-    public void getMaxNumOfVmCpus(AsyncQuery<Integer> aQuery, String version) {
-        aQuery.converterCallback = new DefaultValueConverter<>(1);
+    public void getMaxNumOfVmCpus(AsyncQuery<Map<String, Integer>> aQuery, String version) {
+        aQuery.converterCallback = new MapConverter<>();
         GetConfigurationValueParameters tempVar =
                 new GetConfigurationValueParameters(ConfigValues.MaxNumOfVmCpus);
         tempVar.setVersion(version);

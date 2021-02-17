@@ -1014,8 +1014,8 @@ select fn_db_update_config_value_for_versions_from_up_to('PredefinedVMProperties
 
 select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}', '4.2');
 select fn_db_update_config_value('HotUnplugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}','4.2');
-select fn_db_update_config_value('MaxNumOfVmCpus', '384', '4.2');
-select fn_db_update_config_value('MaxNumOfVmCpus', '512', '4.5');
+select fn_db_update_config_value_for_versions_from_up_to('MaxNumOfVmCpus', '{"x86":384,"ppc":384,"s390x":384}', '4.2', '4.4');
+select fn_db_update_config_value('MaxNumOfVmCpus', '{"x86":512,"ppc":384,"s390x":384}', '4.5');
 select fn_db_update_config_value('MaxNumOfCpuPerSocket', '254', '4.2');
 select fn_db_update_config_value_for_versions_from_up_to('VM64BitMaxMemorySizeInMB', '6291456', '4.2','4.5');
 select fn_db_update_config_value_for_versions_from_up_to('VMPpc64BitMaxMemorySizeInMB', '6291456', '4.4','4.5');

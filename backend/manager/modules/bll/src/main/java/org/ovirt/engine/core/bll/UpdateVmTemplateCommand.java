@@ -146,8 +146,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         boolean isBlankTemplate = isBlankTemplate();
 
         if (getCluster() == null && !(isInstanceType || isBlankTemplate)) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
-            return false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
 
         boolean returnValue = false;
@@ -266,7 +265,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         if (returnValue) {
             returnValue = validate(VmValidator.validateCpuSockets(getParameters().getVmTemplateData(),
-                    getVmTemplate().getCompatibilityVersion()));
+                    getVmTemplate().getCompatibilityVersion(),
+                    getCluster().getArchitecture()));
         }
 
         // Check PCI and IDE limits are ok

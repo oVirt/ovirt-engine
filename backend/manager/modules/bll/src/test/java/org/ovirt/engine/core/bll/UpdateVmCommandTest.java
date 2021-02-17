@@ -151,6 +151,14 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         return migrationMap;
     }
 
+    private static Map<String, Integer> createMaxNumberOfVmCpusMap() {
+        Map<String, Integer> maxVmCpusMap = new HashMap<>();
+        maxVmCpusMap.put("s390x", 384);
+        maxVmCpusMap.put("x86", 512);
+        maxVmCpusMap.put("ppc", 384);
+        return maxVmCpusMap;
+    }
+
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.MaxVmNameLength, 64),
@@ -162,7 +170,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
                 MockConfigDescriptor.of(ConfigValues.IsMigrationSupported, version, createMigrationMap()),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfCpuPerSocket, version, 16),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfThreadsPerCpu, version, 8),
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, version, 16),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, version, createMaxNumberOfVmCpusMap()),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, version, 16),
                 MockConfigDescriptor.of(ConfigValues.VM32BitMaxMemorySizeInMB, version, 20480),
                 MockConfigDescriptor.of(ConfigValues.VM64BitMaxMemorySizeInMB, version, 4194304),

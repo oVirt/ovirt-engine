@@ -146,6 +146,7 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
 
     private void addSnapshotToDB(Map<Guid, DiskImage> oldToNewImageMap, Snapshot snapshot) {
         VM oldVm = snapshotVmConfigurationHelper.getVmFromConfiguration(snapshot);
+        oldVm.setClusterArch(getVm().getClusterArch());
 
         List<DiskImage> newDiskImages = oldVm.getDiskList()
                 .stream()

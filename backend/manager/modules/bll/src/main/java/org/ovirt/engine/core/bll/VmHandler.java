@@ -1488,6 +1488,7 @@ public class VmHandler implements BackendService {
         final VM newVm = new VM();
         newVm.setStaticData(newVmStatic);
         newVm.setClusterBiosType(existingVm.getClusterBiosType());
+        newVm.setClusterArch(existingVm.getClusterArch());
 
         Set<String> changedFields = getChangedFieldsForStatus(
                 existingVm.getStaticData(),

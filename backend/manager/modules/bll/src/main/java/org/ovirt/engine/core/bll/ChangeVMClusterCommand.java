@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.LabelDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -45,8 +44,6 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     private NetworkDao networkDao;
     @Inject
     private VmNicDao vmNicDao;
-    @Inject
-    private VmDeviceDao vmDeviceDao;
     @Inject
     private ResourceManager resourceManager;
     @Inject

@@ -721,7 +721,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (!validate(VmValidator.validateCpuSockets(getParameters().getVmStaticData(),
-                getEffectiveCompatibilityVersion()))) {
+                getEffectiveCompatibilityVersion(),
+                getCluster().getArchitecture()))) {
             return false;
         }
 

@@ -13,8 +13,10 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -26,6 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -61,9 +64,18 @@ public class VmValidatorTest extends BaseCommandTest {
     private static final int MAX_NUM_CPUS_PER_SOCKET = 3;
     private static final int MAX_NUM_THREADS_PER_CPU = 2;
 
+    private static Map<String, Integer> createMaxNumberOfVmCpusMap() {
+        Map<String, Integer> maxVmCpusMap = new HashMap<>();
+        maxVmCpusMap.put("s390x", 384);
+        maxVmCpusMap.put("x86", MAX_NUM_CPUS);
+        maxVmCpusMap.put("ppc", 384);
+        return maxVmCpusMap;
+    }
+
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, COMPAT_VERSION_FOR_CPU_SOCKET_TEST, MAX_NUM_CPUS),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
+                        createMaxNumberOfVmCpusMap()),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets,
                         COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
                         MAX_NUM_SOCKETS),
@@ -175,55 +187,63 @@ public class VmValidatorTest extends BaseCommandTest {
     @Test
     public void testVmPassesCpuSocketValidation() {
         setVmCpuValues(1, 1, 1);
-        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST), isValid());
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
+                ArchitectureType.x86_64), isValid());
     }
 
     @Test
     public void testVmExceedsMaxNumOfVmCpus() {
         setVmCpuValues(2, 3, 3);
-        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
+                ArchitectureType.x86_64),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_CPU));
     }
 
     @Test
     public void testVmExceedsMaxNumOfSockets() {
         setVmCpuValues(MAX_NUM_SOCKETS + 1, 1, 1);
-        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
+                ArchitectureType.x86_64),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS));
     }
 
     @Test
     public void testVmExceedsMaxNumOfCpusPerSocket() {
         setVmCpuValues(1, MAX_NUM_CPUS_PER_SOCKET + 1, 1);
-        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
+                ArchitectureType.x86_64),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET));
     }
 
     @Test
     public void testVmExceedsMaxThreadsPerCpu() {
         setVmCpuValues(1, 1, MAX_NUM_THREADS_PER_CPU + 1);
-        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
+                ArchitectureType.x86_64),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MAX_THREADS_PER_CPU));
     }
 
     @Test
     public void testVmUnderMinNumOfSockets() {
         setVmCpuValues(1, -2, 1);
-        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
+                ArchitectureType.x86_64),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MIN_CPU_PER_SOCKET));
     }
 
     @Test
     public void testVmUnderMinNumOfCpusPerSocket() {
         setVmCpuValues(-2, 1, 1);
-        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
+                ArchitectureType.x86_64),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MIN_NUM_SOCKETS));
     }
 
     @Test
     public void testVmUnderMinNumOfThreadsPerCpu() {
         setVmCpuValues(1, 1, -2);
-        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST),
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
+                ArchitectureType.x86_64),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MIN_THREADS_PER_CPU));
     }
 

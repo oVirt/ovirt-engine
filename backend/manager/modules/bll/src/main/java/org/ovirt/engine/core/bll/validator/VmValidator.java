@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -377,15 +378,24 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
-    public static ValidationResult validateCpuSockets(VmBase vmBase, Version compatibilityVersion) {
+    /**
+     * @param vmBase - the VM/template to validate
+     * @param compatibilityVersion - the compatibility version of vmBase
+     * @param architecture - the cluster's architecture
+     * @return ValidationResult.VALID if the CPU topology on vmBase is valid, failed ValidationResult otherwise.
+     */
+    public static ValidationResult validateCpuSockets(VmBase vmBase, Version compatibilityVersion,
+            ArchitectureType architecture) {
         int num_of_sockets = vmBase.getNumOfSockets();
         int cpu_per_socket = vmBase.getCpuPerSocket();
         int threadsPerCpu = vmBase.getThreadsPerCpu();
 
         String version = compatibilityVersion.toString();
 
-        if ((num_of_sockets * cpu_per_socket * threadsPerCpu) >
-                Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus, version)) {
+        int vcpus = num_of_sockets * cpu_per_socket * threadsPerCpu;
+        Map<String, Integer> archToMaxNumOfVmCpus = Config.getValue(ConfigValues.MaxNumOfVmCpus, version);
+
+        if (vcpus > archToMaxNumOfVmCpus.get(architecture.getFamily().name())) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_CPU);
         }
         if (num_of_sockets > Config.<Integer> getValue(ConfigValues.MaxNumOfVmSockets, version)) {

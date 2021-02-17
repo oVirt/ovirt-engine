@@ -191,7 +191,7 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     ValidNumOfMonitors(ClientAccessLevel.User),
     @Reloadable
-    @TypeConverterAttribute(Integer.class)
+    @TypeConverterAttribute(Map.class)
     MaxNumOfVmCpus(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)

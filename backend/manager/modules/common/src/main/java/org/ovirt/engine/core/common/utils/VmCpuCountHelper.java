@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -69,12 +71,11 @@ public class VmCpuCountHelper {
     public static Integer calcMaxVCpu(VmBase vm, Version compatibilityVersion, ArchitectureType architecture) {
         ArchitectureType architectureFamily = architecture != null ? architecture.getFamily() : null;
 
-        Integer maxSockets = Config.<Integer>getValue(
-                ConfigValues.MaxNumOfVmSockets,
-                compatibilityVersion.getValue());
-        Integer maxVCpus = Config.<Integer>getValue(
+        Integer maxSockets = Config.getValue(ConfigValues.MaxNumOfVmSockets, compatibilityVersion.getValue());
+        Map<String, Integer> archToMaxVmCpus = Config.getValue(
                 ConfigValues.MaxNumOfVmCpus,
                 compatibilityVersion.getValue());
+        Integer maxVCpus = archToMaxVmCpus.get(architectureFamily.name());
 
         int threadsPerCore = vm.getThreadsPerCpu();
         int cpuPerSocket = vm.getCpuPerSocket();

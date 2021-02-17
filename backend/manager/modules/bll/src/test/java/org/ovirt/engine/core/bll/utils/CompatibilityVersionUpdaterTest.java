@@ -44,6 +44,14 @@ public class CompatibilityVersionUpdaterTest {
     private static final int OS_ID = 30;
     private static final int MAX_MEM = 4194304;
 
+    private static Map<String, Integer> createMaxNumberOfVmCpusMap() {
+        Map<String, Integer> maxVmCpusMap = new HashMap<>();
+        maxVmCpusMap.put("s390x", 384);
+        maxVmCpusMap.put("x86", 512);
+        maxVmCpusMap.put("ppc", 384);
+        return maxVmCpusMap;
+    }
+
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.SupportedClusterLevels, new HashSet<>(Version.ALL)),
@@ -52,7 +60,7 @@ public class CompatibilityVersionUpdaterTest {
                 MockConfigDescriptor.of(ConfigValues.UserDefinedVMProperties, Version.getLast(), "prop_2=^(true|false)$"),
 
                 MockConfigDescriptor.of(ConfigValues.VM64BitMaxMemorySizeInMB, Version.getLast(), MAX_MEM),
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), 384),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), createMaxNumberOfVmCpusMap()),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 16),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfCpuPerSocket, Version.getLast(), 254),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfThreadsPerCpu, Version.getLast(), 8),
@@ -141,7 +149,7 @@ public class CompatibilityVersionUpdaterTest {
 
         assertThat(updates).containsOnly(VmUpdateType.CPU_TOPOLOGY);
         assertThat(vm.getNumOfSockets()).isEqualTo(1);
-        assertThat(vm.getCpuPerSocket()).isEqualTo(48);
+        assertThat(vm.getCpuPerSocket()).isEqualTo(64);
         assertThat(vm.getThreadsPerCpu()).isEqualTo(8);
     }
 
@@ -184,6 +192,7 @@ public class CompatibilityVersionUpdaterTest {
         vm.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
         vm.setDefaultDisplayType(DisplayType.vga);
         vm.setVmOs(OS_ID);
+        vm.setClusterArch(ArchitectureType.x86_64);
 
         vm.setVmMemSizeMb(2048);
         vm.setMaxMemorySizeMb(4096);

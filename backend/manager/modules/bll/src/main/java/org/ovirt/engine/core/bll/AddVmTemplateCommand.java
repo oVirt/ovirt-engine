@@ -682,7 +682,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 && validateImages()
                 && validate(VmValidator.validateCpuSockets(
                         getParameters().getMasterVm(),
-                        getVm().getCompatibilityVersion()));
+                        getVm().getCompatibilityVersion(),
+                        getCluster().getArchitecture()));
     }
 
     protected boolean isVmStatusValid(VMStatus status) {

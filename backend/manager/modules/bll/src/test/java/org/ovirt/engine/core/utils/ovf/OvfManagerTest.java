@@ -80,15 +80,23 @@ public class OvfManagerTest {
     private static final int MIN_ENTITY_NAME_LENGTH = 3;
     private static final int MAX_ENTITY_NAME_LENGTH = 30;
 
+    private static Map<String, Integer> createMaxNumberOfVmCpusMap() {
+        Map<String, Integer> maxVmCpusMap = new HashMap<>();
+        maxVmCpusMap.put("s390x", 384);
+        maxVmCpusMap.put("x86", 16);
+        maxVmCpusMap.put("ppc", 384);
+        return maxVmCpusMap;
+    }
+
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.VdcVersion, "3.0.0.0"),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v4_2, 16),
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v4_2, 16),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v4_2, createMaxNumberOfVmCpusMap()),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v4_3, 16),
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v4_3, 16),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v4_3, createMaxNumberOfVmCpusMap()),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 16),
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), 16)
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), createMaxNumberOfVmCpusMap())
         );
     }
 
@@ -419,6 +427,7 @@ public class OvfManagerTest {
         vm.setDbGeneration(1L);
         vm.setClusterBiosType(BiosType.Q35_SEA_BIOS);
         vm.setCustomBiosType(BiosType.CLUSTER_DEFAULT);
+        vm.setClusterArch(ArchitectureType.x86_64);
         Guid vmSnapshotId = Guid.newGuid();
 
         DiskImage disk1 = addTestDisk(vm, vmSnapshotId);

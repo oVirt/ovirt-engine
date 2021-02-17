@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
 
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -606,9 +607,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void updateMaxNumOfVmCpus() {
         String version = getCompatibilityVersion().toString();
 
+        Function<Map<String, Integer>, Integer> getMaxCpus = archToLimit -> {
+            Cluster cluster = getModel().getSelectedCluster();
+            ArchitectureType architecture = cluster != null ? cluster.getArchitecture() : null;
+            return architecture != null ?
+                    archToLimit.get(architecture.getFamily().name())
+                    : archToLimit.values().stream().mapToInt(v -> v).max().orElse(1);
+        };
+
         AsyncDataProvider.getInstance().getMaxNumOfVmCpus(asyncQuery(
                 returnValue -> {
-                    maxCpus = returnValue;
+                    maxCpus = getMaxCpus.apply(returnValue);
                     postUpdateNumOfSockets2();
                 }), version);
     }
