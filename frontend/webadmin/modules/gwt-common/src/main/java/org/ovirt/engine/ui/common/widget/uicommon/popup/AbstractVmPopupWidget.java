@@ -1452,14 +1452,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                     @Override
                     public String getDisplayStringNullSafe(String data) {
                         if (data == null || data.trim().isEmpty()) {
-                            data = getDefaultEmulatedMachineLabel();
+                            data = ""; //$NON-NLS
                         }
                         return typeAheadNameTemplateNullSafe(data);
                     }
                 },
                 false,
                 new ModeSwitchingVisibilityRenderer(),
-                constants.clusterDefaultOption());
+                ""); //$NON-NLS
 
         customCpu = new ListModelTypeAheadChangeableListBoxEditor(
                 new ListModelTypeAheadChangeableListBoxEditor.NullSafeSuggestBoxRenderer() {
@@ -1797,7 +1797,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getIsRngEnabled().getPropertyChangedEvent().addListener((ev, sender, args) -> rngPanel.setVisible(object.getIsRngEnabled().getEntity()));
 
         object.getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
-            emulatedMachine.setNullReplacementString(getDefaultEmulatedMachineLabel());
             customCpu.setNullReplacementString(getDefaultCpuTypeLabel());
             updateUrandomLabel(object);
             biosTypeRenderer.setArchitectureType(getModel().getSelectedCluster() == null ? null : getModel().getSelectedCluster().getArchitecture());
@@ -1860,16 +1859,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 ? constants.rngSourceUrandom()
                 : constants.rngSourceRandom();
         rngSourceUrandom.setLabel(urandomSourceLabel);
-    }
-
-    private String getDefaultEmulatedMachineLabel() {
-        Cluster cluster = getModel().getSelectedCluster();
-        String newClusterEmulatedMachine = constants.clusterDefaultOption();
-        if (cluster != null) {
-            String emulatedMachine = (cluster.getEmulatedMachine() == null) ? "" : cluster.getEmulatedMachine(); //$NON-NLS-1$
-            newClusterEmulatedMachine +=  "(" + emulatedMachine + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        return newClusterEmulatedMachine;
     }
 
     private String getDefaultCpuTypeLabel() {
