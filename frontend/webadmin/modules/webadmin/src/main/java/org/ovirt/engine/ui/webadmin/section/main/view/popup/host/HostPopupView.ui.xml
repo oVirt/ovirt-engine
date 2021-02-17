@@ -185,6 +185,14 @@
         .controlLabelWithInfoIcon {
             padding-right: 5px;
         }
+
+        .fetchSshPublicKey {
+            height: 140px;
+            width: 100%;
+            padding-left: 5px;
+            line-height: normal;
+            font-family: "Courier New", Courier, monospace;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="915px" height="715px">
@@ -301,8 +309,8 @@
                                     <d:AdvancedParametersExpander ui:field="expander" usePatternFly="true" />
                                     <b:Column ui:field="expanderContent" size="SM_12">
                                       <ge:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor" usePatternFly="true" />
-                                      <g:Label ui:field="fingerprintLabel" />
-                                      <ge:StringEntityModelTextBoxEditor ui:field="fetchSshFingerprint" usePatternFly="true" />
+                                      <g:Label ui:field="publicKeyLabel" />
+                                      <ge:StringEntityModelTextArea ui:field="fetchSshPublicKey" addStyleNames="{style.fetchSshPublicKey}" />
                                       <g:SimplePanel ui:field="fetchPanel" addStyleNames="generalDialogComment" />
                                       <g:Label ui:field="fetchResult" addStyleNames="{style.fetchResultLabel}"/>
                                     </b:Column>

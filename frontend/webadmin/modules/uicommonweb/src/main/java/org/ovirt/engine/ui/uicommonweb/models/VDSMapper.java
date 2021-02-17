@@ -20,6 +20,9 @@ public enum VDSMapper implements BiFunction<VDS, HostModel, VDS> {
         host.setSshUsername(sshUsernameSet ? model.getUserName().getEntity() : null);
         boolean sshFpSet = model.getFetchSshFingerprint().getEntity() != null;
         host.setSshKeyFingerprint(!sshFpSet ? null : model.getFetchSshFingerprint().getEntity());
+        String sshPublicKeyValue = model.getFetchSshPublicKey().getEntity();
+        boolean sshPublicKeySet = sshPublicKeyValue != null && !sshPublicKeyValue.isEmpty();
+        host.setSshPublicKey(!sshPublicKeySet ? null : sshPublicKeyValue);
         host.setClusterId(model.getCluster().getSelectedItem().getId());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
 

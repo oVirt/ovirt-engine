@@ -1507,13 +1507,21 @@ public interface UIConstants extends Constants {
 
     String loadingFingerprint();
 
+    String loadingPublicKey();
+
     String errorLoadingFingerprint();
 
+    String errorLoadingPublicKey();
+
     String successLoadingFingerprint();
+
+    String successLoadingPublicKey();
 
     String fingerprintNotVerified();
 
     String fingerprintAddressError();
+
+    String publicKeyAddressError();
 
     String manageGlusterSwiftTitle();
 

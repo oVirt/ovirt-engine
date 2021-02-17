@@ -166,6 +166,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         privateFetchSshFingerprint = value;
     }
 
+    private EntityModel<String> privateFetchSshPublicKey;
+
+    public EntityModel<String> getFetchSshPublicKey(){
+        return privateFetchSshPublicKey;
+    }
+
+    public void setFetchSshPublicKey(EntityModel<String> value){
+        this.privateFetchSshPublicKey = value;
+    }
+
     private EntityModel<Integer> privateAuthSshPort;
 
     public EntityModel<Integer> getAuthSshPort() {
@@ -583,14 +593,14 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         return fenceAgents;
     }
 
-    private UICommand proxySSHFingerPrintCommand;
+    private UICommand proxySSHPublicKeyCommand;
 
-    public UICommand getSSHFingerPrint() {
-        return proxySSHFingerPrintCommand;
+    public UICommand getSSHPublicKey(){
+        return proxySSHPublicKeyCommand;
     }
 
-    public void setSSHFingerPrint(UICommand value) {
-        proxySSHFingerPrintCommand = value;
+    public void setSSHPublicKey(UICommand value){
+        this.proxySSHPublicKeyCommand =value;
     }
 
     private Integer postponedSpmPriority;
@@ -772,15 +782,15 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 updateProvisionedHosts();
             }
         }));
-        setSSHFingerPrint(new UICommand("fetch", new ICommandTarget() {    //$NON-NLS-1$
+        setSSHPublicKey(new UICommand("fetch", new ICommandTarget() { //$NON-NLS-1$
             @Override
             public void executeCommand(UICommand command) {
-                fetchSSHFingerprint();
+                fetchSSHPublicKey();
             }
 
             @Override
             public void executeCommand(UICommand uiCommand, Object... parameters) {
-                fetchSSHFingerprint();
+                fetchSSHPublicKey();
             }
         }));
 
@@ -800,6 +810,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getUserName().setIsChangeable(false);
         setFetchSshFingerprint(new EntityModel<String>());
         getFetchSshFingerprint().setEntity(""); //$NON-NLS-1$
+        setFetchSshPublicKey(new EntityModel<String>());
+        getFetchSshPublicKey().setEntity(""); //$NON-NLS-1$
         setUserPassword(new EntityModel<String>());
         getUserPassword().setEntity(""); //$NON-NLS-1$
         setPublicKey(new EntityModel<String>());
@@ -905,17 +917,17 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         }));
     }
 
-    private void fetchSSHFingerprint() {
+    private void fetchSSHPublicKey() {
         // Cleaning up fields for initialization
-        getFetchSshFingerprint().setEntity(""); //$NON-NLS-1$
+        getFetchSshPublicKey().setEntity(""); //$NON-NLS-1$
         getFetchResult().setEntity(""); //$NON-NLS-1$
 
-        AsyncQuery<String> aQuery = new AsyncQuery<>(fingerprint -> {
-            if (fingerprint != null && fingerprint.length() > 0) {
-                getFetchSshFingerprint().setEntity(fingerprint);
-                getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().successLoadingFingerprint());
+        AsyncQuery<String> aQuery = new AsyncQuery<>(publicKeyPem -> {
+            if (publicKeyPem != null && publicKeyPem.length() > 0) {
+                getFetchSshPublicKey().setEntity(publicKeyPem);
+                getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().successLoadingPublicKey());
             } else {
-                getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().errorLoadingFingerprint());
+                getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().errorLoadingPublicKey());
             }
         });
 
@@ -924,11 +936,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                 new LengthValidation(255),
                 new HostAddressValidation() });
         if (!getHost().getIsValid()) {
-            getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().fingerprintAddressError()
+            getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().publicKeyAddressError()
                     + getHost().getInvalidityReasons().get(0));
         } else {
-            getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().loadingFingerprint());
-            AsyncDataProvider.getInstance().getHostFingerprint(
+            getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().loadingPublicKey());
+            AsyncDataProvider.getInstance().getHostSshPublicKey(
                     aQuery,
                     getHost().getEntity(),
                     getAuthSshPort().getEntity());
@@ -1209,6 +1221,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getKernelCmdlineBootUuid().setEntity(vds.getBootUuid());
         getHost().setEntity(vds.getHostName());
         getFetchSshFingerprint().setEntity(vds.getSshKeyFingerprint());
+        getFetchSshPublicKey().setEntity(vds.getSshPublicKey());
         getUserName().setEntity(vds.getSshUsername());
         getAuthSshPort().setEntity(vds.getSshPort());
         if (StringHelper.isNotNullOrEmpty(vds.getKernelArgs())) {

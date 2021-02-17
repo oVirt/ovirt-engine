@@ -72,6 +72,7 @@ public enum QueryType implements Serializable {
     GetHostsForStorageOperation,
     GetEngineSSHPublicKey,
     GetServerSSHKeyFingerprint,
+    GetServerSSHPublicKey,
     GetFenceAgentById,
     GetFenceAgentsByVdsId,
     GetHostDevicesByHostId,

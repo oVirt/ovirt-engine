@@ -506,6 +506,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostPopupHostFingerprintLabel();
 
+    String hostPopupHostPublicKeyLabel();
+
     String hostPopupUsernameLabel();
 
     String hostPopupFqdnLabel();
@@ -2708,6 +2710,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String importedNetworks();
 
     String fetchingHostFingerprint();
+
+    String fetchingHostPublicKey();
 
     String networkQoSName();
 

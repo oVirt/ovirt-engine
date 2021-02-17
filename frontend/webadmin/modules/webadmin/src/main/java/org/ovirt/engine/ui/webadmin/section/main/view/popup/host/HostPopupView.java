@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextArea;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
@@ -128,9 +129,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     StringEntityModelTextBoxEditor userNameEditor;
 
     @UiField
-    @Path(value = "fetchSshFingerprint.entity")
-    @WithElementId("fetchSshFingerprint")
-    StringEntityModelTextBoxEditor fetchSshFingerprint;
+    @Path(value = "fetchSshPublicKey.entity")
+    @WithElementId("fetchSshPublicKey")
+    StringEntityModelTextArea fetchSshPublicKey;
 
     @UiField
     @Ignore
@@ -346,7 +347,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     @UiField
     @Ignore
-    Label fingerprintLabel;
+    Label publicKeyLabel;
 
     @UiField(provided = true)
     @Ignore
@@ -660,7 +661,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         rootPasswordLabel.setText(constants.hostPopupAuthLabelForExternalHost());
         rbPasswordLabel.setText(constants.hostPopupPasswordLabel());
         rbPublicKeyLabel.setText(constants.hostPopupPublicKeyLabel());
-        fingerprintLabel.setText(constants.hostPopupHostFingerprintLabel());
+        publicKeyLabel.setText(constants.hostPopupHostPublicKeyLabel());
         overrideIpTablesEditor.setLabel(constants.hostPopupOverrideIpTablesLabel());
         externalHostProviderEnabledEditor.setLabel(constants.hostPopupEnableExternalHostProvider());
         externalHostNameEditor.setLabel(constants.hostPopupExternalHostName());
@@ -731,7 +732,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
         object.getFetchResult().getEntityChangedEvent().addListener((ev, sender, args) -> {
             String fetchResultText = object.getFetchResult().getEntity();
-            if (ConstantsManager.getInstance().getConstants().errorLoadingFingerprint().equals(fetchResultText)) {
+            if (ConstantsManager.getInstance().getConstants().errorLoadingPublicKey().equals(fetchResultText)) {
                 fetchResult.addStyleName(style.fetchResultErrorLabel());
             } else {
                 fetchResult.removeStyleName(style.fetchResultErrorLabel());
@@ -807,7 +808,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             rbPassword.setValue(true);
             rbPassword.setFocus(true);
 
-            fetchSshFingerprint.hideLabel();
             object.setAuthenticationMethod(AuthenticationMethod.Password);
             displayPassPkWindow(true);
 
@@ -843,7 +843,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         userNameEditor.setEnabled(false);
         this.fenceAgentsEditor.edit(object.getFenceAgentListModel());
         this.proxySourceEditor.edit(object.getPmProxyPreferencesList());
-        addTextAndLinkAlert(fetchPanel, constants.fetchingHostFingerprint(), object.getSSHFingerPrint());
+        addTextAndLinkAlert(fetchPanel, constants.fetchingHostPublicKey(), object.getSSHPublicKey());
         providerSearchFilterLabel.setText(constants.hostPopupProviderSearchFilter());
         nameEditor.setFocus(true);
 

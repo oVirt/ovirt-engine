@@ -67,6 +67,10 @@ public class EngineSSHClient extends SSHClient {
                 Config.getValue(ConfigValues.SSHDefaultKeyDigest));
     }
 
+    public String getHostPublicKey() {
+        return OpenSSHUtils.getKeyString(hostPublicKeyHolder.get(), "");
+    }
+
     /**
      * Use default engine ssh key.
      */
@@ -79,7 +83,7 @@ public class EngineSSHClient extends SSHClient {
                         entry.getPrivateKey()));
     }
 
-    public static class OvirtSshKeyVerifier  implements ServerKeyVerifier {
+    public static class OvirtSshKeyVerifier implements ServerKeyVerifier {
 
         private final AtomicReference<VDS> vdsHolder;
         private final AtomicReference<PublicKey> hostPublicKeyHolder;
@@ -96,8 +100,7 @@ public class EngineSSHClient extends SSHClient {
                 if (StringUtils.isEmpty(vdsHolder.get().getSshKeyFingerprint())) {
                     String fingerprint = OpenSSHUtils.getKeyFingerprint(
                             serverKey,
-                            Config.getValue(ConfigValues.SSHDefaultKeyDigest)
-                    );
+                            Config.getValue(ConfigValues.SSHDefaultKeyDigest));
 
                     vdsHolder.get().setSshKeyFingerprint(fingerprint);
                     vdsHolder.get().setSshPublicKey(getKeyString(serverKey, null));
@@ -124,7 +127,7 @@ public class EngineSSHClient extends SSHClient {
                 PublicKey expectedPublicKey =
                         entry.resolvePublicKey(null, Collections.emptyMap(), PublicKeyEntryResolver.FAILING);
                 return KeyUtils.compareKeys(expectedPublicKey, serverKey);
-            } catch (IOException  | GeneralSecurityException e) {
+            } catch (IOException | GeneralSecurityException e) {
                 log.error("Error comparing ssh public keys: {}", ExceptionUtils.getRootCauseMessage(e));
                 log.debug("Error comparing ssh public keys", e);
                 return false;

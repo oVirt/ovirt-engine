@@ -1411,6 +1411,13 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    public void getHostSshPublicKey(AsyncQuery<String> aQuery, String hostAddress, Integer hostPort) {
+        aQuery.converterCallback = new StringConverter();
+        Frontend.getInstance().runQuery(QueryType.GetServerSSHPublicKey,
+                new ServerParameters(hostAddress, hostPort),
+                aQuery);
+    }
+
     public void getEngineSshPublicKey(AsyncQuery<String> aQuery) {
         aQuery.converterCallback = new StringConverter();
         Frontend.getInstance().runQuery(QueryType.GetEngineSSHPublicKey, new QueryParametersBase(), aQuery);
