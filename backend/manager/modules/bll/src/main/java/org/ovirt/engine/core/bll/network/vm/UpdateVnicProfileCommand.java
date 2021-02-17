@@ -42,7 +42,8 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
                 && validate(validator.passthroughNotChangedIfUsedByVms())
                 && validate(validator.passthroughProfileContainsSupportedProperties())
                 && validate(validator.passthroughProfileNoPortIsolation())
-                && validate(validator.validNetworkFilterId());
+                && validate(validator.validNetworkFilterId())
+                && validate(validator.validFailoverId());
     }
 
     @Override

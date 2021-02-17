@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -491,4 +492,68 @@ public class VnicProfileValidatorTest {
         when(vnicProfile.getNetworkQosId()).thenReturn(qosId);
         when(vnicProfile.getNetworkFilterId()).thenReturn(networkFilterId);
     }
+
+    @Test
+    public void emptyFailoverIdSuccess() {
+        when(vnicProfile.getFailoverVnicProfileId()).thenReturn(null);
+        assertThat(validator.validFailoverId(), isValid());
+    }
+
+    @Test
+    public void failoverProfilePassthroughFail() {
+        VnicProfile failoverProfile = new VnicProfile();
+        failoverProfile.setPassthrough(true);
+
+        when(vnicProfile.getFailoverVnicProfileId()).thenReturn(OTHER_GUID);
+        when(vnicProfileDao.get(OTHER_GUID)).thenReturn(failoverProfile);
+
+        assertThat(validator.validFailoverId(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_FAILOVER_VNIC_PROFILE_ID_IS_NOT_VALID));
+    }
+
+    @Test
+    public void failoverProfileExternalNetworkFail() {
+        Guid networkId = Guid.newGuid();
+        VnicProfile failoverProfile = new VnicProfile();
+        failoverProfile.setNetworkId(networkId);
+        Network externalNetwork = new Network();
+        externalNetwork.setProvidedBy(new ProviderNetwork());
+
+        when(vnicProfile.getFailoverVnicProfileId()).thenReturn(OTHER_GUID);
+        when(vnicProfileDao.get(OTHER_GUID)).thenReturn(failoverProfile);
+        when(networkDao.get(networkId)).thenReturn(externalNetwork);
+
+        assertThat(validator.validFailoverId(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_FAILOVER_VNIC_PROFILE_NOT_SUPPORTED_WITH_EXTERNAL_NETWORK));
+    }
+
+    @Test
+    public void failoverProfileSuccess() {
+        testProfileWithFailover(isValid(), true, true);
+    }
+
+    @Test
+    public void profileWithFailoverNotPassthroughFail() {
+        testProfileWithFailover(failsWith(EngineMessage.ACTION_TYPE_FAILED_FAILOVER_IS_SUPPORTED_ONLY_FOR_MIGRATABLE_PASSTROUGH),
+                false,
+                true);
+    }
+
+    @Test
+    public void profileWithFailoverNotMigratableFail() {
+        testProfileWithFailover(failsWith(EngineMessage.ACTION_TYPE_FAILED_FAILOVER_IS_SUPPORTED_ONLY_FOR_MIGRATABLE_PASSTROUGH),
+                true,
+                false);
+    }
+
+    private void testProfileWithFailover(Matcher<ValidationResult> matcher, boolean passthrough, boolean migratable) {
+        when(vnicProfile.isPassthrough()).thenReturn(passthrough);
+        when(vnicProfile.isMigratable()).thenReturn(migratable);
+        when(vnicProfile.getFailoverVnicProfileId()).thenReturn(OTHER_GUID);
+        when(vnicProfileDao.get(OTHER_GUID)).thenReturn(new VnicProfile());
+        when(networkDao.get(any())).thenReturn(new Network());
+
+        assertThat(validator.validFailoverId(), matcher);
+    }
+
 }

@@ -221,6 +221,26 @@ public class VnicProfileValidator {
                 .when(useDefaultNetworkFilterId && vnicProfile.getNetworkFilterId() != null);
     }
 
+    public ValidationResult validFailoverId() {
+        var failoverId = vnicProfile.getFailoverVnicProfileId();
+        if (failoverId == null) {
+            return ValidationResult.VALID;
+        }
+
+        var failoverProfile = Injector.get(VnicProfileDao.class).get(failoverId);
+        if (failoverProfile == null || failoverProfile.isPassthrough()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_FAILOVER_VNIC_PROFILE_ID_IS_NOT_VALID);
+        }
+
+        var failoverNetwork = Injector.get(NetworkDao.class).get(failoverProfile.getNetworkId());
+        if (failoverNetwork.isExternal()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_FAILOVER_VNIC_PROFILE_NOT_SUPPORTED_WITH_EXTERNAL_NETWORK);
+        }
+
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_FAILOVER_IS_SUPPORTED_ONLY_FOR_MIGRATABLE_PASSTROUGH)
+                .when(!vnicProfile.isPassthrough() || !vnicProfile.isMigratable());
+    }
+
     private Guid getNetworkFilterId() {
         return vnicProfile.getNetworkFilterId();
     }
