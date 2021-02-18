@@ -915,6 +915,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
+    protected void disableCpuPinningAutoPinningConflict() {
+        getModel().getCpuPinning().setEntity("");
+        getModel().getCpuPinning().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
+    }
+
     public void updateUseHostCpuAvailability() {
 
         boolean clusterSupportsHostCpu = getCompatibilityVersion() != null;

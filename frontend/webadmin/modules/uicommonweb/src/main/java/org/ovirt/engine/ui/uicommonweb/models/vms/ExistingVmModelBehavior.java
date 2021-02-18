@@ -542,4 +542,9 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             }
         }
     }
+
+    @Override
+    protected void disableCpuPinningAutoPinningConflict() {
+        getModel().getCpuPinning().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
+    }
 }

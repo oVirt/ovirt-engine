@@ -2272,8 +2272,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void disableCpuPinning() {
-        getCpuPinning().setEntity("");
-        getCpuPinning().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
+        behavior.disableCpuPinningAutoPinningConflict();
     }
 
     private void compatibilityVersionChanged(Object sender, EventArgs args) {
