@@ -526,6 +526,8 @@ public enum AuditLogType {
             AuditLogTimeInterval.HOUR.getValue() * 12),
     GLUSTER_VOLUME_HEAL_REFRESH_FAILED(4174, AuditLogSeverity.ERROR),
 
+    COPY_VOLUME_DATA_EXECUTION_HOST(4200, AuditLogSeverity.NORMAL),
+
     USER_FORCE_SELECTED_SPM(159),
     USER_VDS_RESTART(41),
     USER_FAILED_VDS_RESTART(107, AuditLogSeverity.ERROR),

@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -22,6 +23,11 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.common.vdscommands.CopyVolumeDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
@@ -30,6 +36,12 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
 
     @Inject
     private VdsmImagePoller poller;
+    @Inject
+    private AuditLogDirector auditLogDirector;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     public CopyDataCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -45,6 +57,8 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
                         getParameters().isCollapse(),
                         getParameters().isCopyBitmaps());
         parameters.setVdsId(getParameters().getVdsId());
+
+        logExecutionHost();
 
         vdsCommandsHelper.runVdsCommandWithFailover(VDSCommandType.CopyVolumeData,
                 parameters,
@@ -115,5 +129,20 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
         }
 
         return null;
+    }
+
+    private void logExecutionHost() {
+        AuditLogable loggable = new AuditLogableImpl();
+        VdsmImageLocationInfo destInfo = (VdsmImageLocationInfo) getParameters().getDstInfo();
+        String hostName = vdsStaticDao.get(getParameters().getVdsId()).getHostName();
+        String domainName = storageDomainStaticDao.get(destInfo.getStorageDomainId()).getStorageName();
+
+        loggable.setVdsId(getParameters().getVdsId());
+        loggable.setVdsName(hostName);
+        loggable.setStorageDomainId(destInfo.getStorageDomainId());
+        loggable.setStorageDomainName(domainName);
+        loggable.addCustomValue("diskId", destInfo.getImageGroupId().toString());
+        loggable.addCustomValue("imageId", destInfo.getImageId().toString());
+        auditLogDirector.log(loggable, AuditLogType.COPY_VOLUME_DATA_EXECUTION_HOST);
     }
 }
