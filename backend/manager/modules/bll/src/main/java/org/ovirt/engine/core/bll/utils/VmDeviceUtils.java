@@ -1633,7 +1633,7 @@ public class VmDeviceUtils {
                               List<VmDevice> srcDevices,
                               Map<Guid, Guid> srcDeviceIdToDstDeviceIdMapping,
                               boolean isSoundEnabled,
-                              boolean isTpmEnabled,
+                              Boolean isTpmEnabled,
                               Boolean isConsoleEnabled,
                               Boolean isVirtioScsiEnabled,
                               Boolean isBalloonEnabled,
@@ -1759,7 +1759,7 @@ public class VmDeviceUtils {
                     break;
 
                 case TPM:
-                    if (!isTpmEnabled) {
+                    if (Boolean.FALSE.equals(isTpmEnabled)) {
                         continue;
                     }
                     hasTpm = true;
@@ -1800,7 +1800,7 @@ public class VmDeviceUtils {
             addSoundDevice(dstVmBase, () -> dstCluster);
         }
 
-        if (isTpmEnabled && !hasTpm) {
+        if (Boolean.TRUE.equals(isTpmEnabled) && !hasTpm) {
             addTpmDevice(dstId);
         }
 
@@ -1828,7 +1828,7 @@ public class VmDeviceUtils {
                                      Guid dstId,
                                      Map<Guid, Guid> srcDeviceIdToDstDeviceIdMapping,
                                      boolean isSoundEnabled,
-                                     boolean isTpmEnabled,
+                                     Boolean isTpmEnabled,
                                      Boolean isConsoleEnabled,
                                      Boolean isVirtioScsiEnabled,
                                      Boolean isBalloonEnabled,

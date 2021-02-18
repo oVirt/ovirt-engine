@@ -1170,7 +1170,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 getVmId(),
                 getSrcDeviceIdToTargetDeviceIdMapping(),
                 isSoundDeviceEnabled(),
-                isTpmEnabled(),
+                getParameters().isTpmEnabled(),
                 getParameters().isConsoleEnabled(),
                 isVirtioScsiEnabled(),
                 getParameters().isBalloonEnabled(),

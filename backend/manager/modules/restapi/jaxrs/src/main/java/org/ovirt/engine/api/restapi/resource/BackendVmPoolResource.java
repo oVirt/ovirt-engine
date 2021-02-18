@@ -12,7 +12,6 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
-import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -91,10 +90,6 @@ public class BackendVmPoolResource
         return storageDomainId;
     }
 
-    private boolean isTpm(Guid id) {
-        return !VmHelper.getTpmDevicesForEntity(this, id).isEmpty();
-    }
-
     protected class UpdateParametersProvider implements ParametersProvider<VmPool, org.ovirt.engine.core.common.businessentities.VmPool> {
         @Override
         public ActionParametersBase getParameters(VmPool incoming,
@@ -109,12 +104,9 @@ public class BackendVmPoolResource
 
             final org.ovirt.engine.core.common.businessentities.VmPool entity = map(incoming, current);
             final VM vm = mapToVM(map(entity));
-            boolean isTpm = false;
 
             if (incoming.isSetTemplate()) {
-                Guid templateId = getTempalteId(incoming.getTemplate());
-                vm.setVmtGuid(templateId);
-                isTpm = isTpm(templateId);
+                vm.setVmtGuid(getTempalteId(incoming.getTemplate()));
             } else {
                 final VM existing = currentVmCount > 0
                                 ? getEntity(VM.class,
@@ -125,7 +117,6 @@ public class BackendVmPoolResource
                 if (existing != null) {
                     vm.setVmtGuid(existing.getVmtGuid());
                     vm.setVmInit(existing.getVmInit());
-                    isTpm = isTpm(existing.getId());
                 }
             }
 
@@ -150,7 +141,6 @@ public class BackendVmPoolResource
 
             final AddVmPoolParameters parameters = new AddVmPoolParameters(entity, vm, size);
             parameters.setStorageDomainId(getStorageDomainId(vm.getVmtGuid()));
-            parameters.setTpmEnabled(isTpm);
             return parameters;
         }
     }

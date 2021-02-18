@@ -127,12 +127,6 @@ public class BackendVmPoolsResourceTest extends
                 new Object[] { GUIDS[1] },
                 new ArrayList<>());
 
-        setUpGetEntityExpectations(QueryType.GetTpmDevices,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[1] },
-                new ArrayList<>());
-
         setUpGetRngDeviceExpectations(0);
         addCommonAddExpectations();
 
@@ -196,12 +190,6 @@ public class BackendVmPoolsResourceTest extends
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
-                new ArrayList<>());
-
-        setUpGetEntityExpectations(QueryType.GetTpmDevices,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[1] },
                 new ArrayList<>());
 
         addCommonAddExpectations();

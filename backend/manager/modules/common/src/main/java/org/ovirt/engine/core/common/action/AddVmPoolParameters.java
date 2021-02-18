@@ -72,7 +72,7 @@ public class AddVmPoolParameters extends VmPoolOperationParameters implements Ha
         return tpmEnabled;
     }
 
-    public void setTpmEnabled(boolean tpmEnabled) {
+    public void setTpmEnabled(Boolean tpmEnabled) {
         this.tpmEnabled = tpmEnabled;
     }
 
