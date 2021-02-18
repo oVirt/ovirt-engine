@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.ui.uicommonweb.builders.BaseSyncBuilder;
@@ -26,6 +27,7 @@ public class HwOnlyVmBaseToUnitBuilder extends BaseSyncBuilder<VmBase, UnitVmMod
         model.getEmulatedMachine().setSelectedItem(vm.getCustomEmulatedMachine());
         model.getCustomCpu().setSelectedItem(vm.getCustomCpuName());
         model.getBiosType().setSelectedItem(vm.getCustomBiosType());
+        model.setSecureBootOriginallyEnabled(vm.getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT);
         model.getHostCpu().setEntity(vm.isUseHostCpuFlags());
         model.getTscFrequency().setEntity(vm.getUseTscFrequency());
     }

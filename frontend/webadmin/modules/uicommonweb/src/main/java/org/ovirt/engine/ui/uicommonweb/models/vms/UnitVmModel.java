@@ -1322,6 +1322,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.tpmOriginallyEnabled = tpmOriginallyEnabled;
     }
 
+    private boolean secureBootOriginallyEnabled = true;
+
+    public boolean getSecureBootOriginallyEnabled() {
+        return secureBootOriginallyEnabled;
+    }
+
+    public void setSecureBootOriginallyEnabled(boolean secureBootOriginallyEnabled) {
+        this.secureBootOriginallyEnabled = secureBootOriginallyEnabled;
+    }
+
     private NotChangableForVmInPoolListModel<MigrationSupport> migrationMode;
 
     public ListModel<MigrationSupport> getMigrationMode() {
@@ -3810,6 +3820,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private BiosType getEffectiveBiosType(BiosType vmBiosType, Cluster cluster) {
         return cluster == null || vmBiosType != BiosType.CLUSTER_DEFAULT ? vmBiosType : cluster.getBiosType();
+    }
+
+    public boolean secureBootEnabled() {
+        Cluster cluster = getSelectedCluster();
+        return getEffectiveBiosType(getBiosType().getSelectedItem(), cluster) == BiosType.Q35_SECURE_BOOT;
     }
 
     public void needsChipsetDependentVmDeviceChanges(Runnable noChanges, Runnable needsChanges) {

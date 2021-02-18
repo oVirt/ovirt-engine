@@ -125,9 +125,11 @@ public interface UIConstants extends Constants {
 
     String editNextRunConfigurationTitle();
 
-    String confirmTpmDataRemovalTitle();
+    String confirmExternalDataRemovalTitle();
 
     String confirmTpmDataRemovalMessage();
+
+    String confirmNvramDataRemovalMessage();
 
     String configurationChangesForHighPerformanceVmTitle();
 

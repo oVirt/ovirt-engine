@@ -678,9 +678,7 @@ public enum HelpTag {
 
     errata("errata", HelpTagType.WEBADMIN, "System tree > Errata"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    reset_brick("reset_brick", HelpTagType.WEBADMIN, "Volumes Tab > Bricks Sub-Tab > Reset Bricks"), //$NON-NLS-1$ //$NON-NLS-2$
-
-    remove_tpm_data("remove_tpm_data", HelpTagType.WEBADMIN, "'VMs' main tab -> 'Edit VM' dialog -> 'Resource Allocation' sub tab -> 'TPM Device Enabled'"); //$NON-NLS-1$ //$NON-NLS-2$
+    reset_brick("reset_brick", HelpTagType.WEBADMIN, "Volumes Tab > Bricks Sub-Tab > Reset Bricks"); //$NON-NLS-1$ //$NON-NLS-2$
 
     public final String name;
 

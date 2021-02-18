@@ -368,37 +368,63 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         }
     }
 
-    protected void confirmTpmDeletionAndSave(final UnitVmModel model, Guid vmId, String okCommandName,
-            Consumer<UnitVmModel> saveCommand) {
+    private void confirmTpm(final UnitVmModel model, Guid vmId, String okCommandName, Consumer<UnitVmModel> saveCommand,
+            List<String> messages) {
         if (model.getTpmOriginallyEnabled() && !model.getTpmEnabled().getEntity()) {
-            if (vmId != null) {
-                Frontend.getInstance().runQuery(QueryType.HasTpmData, new IdQueryParameters(vmId),
-                        new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
-                            if ((Boolean) returnValue.getReturnValue()) {
-                                ConfirmationModel confirmModel = new ConfirmationModel();
-                                confirmModel.setTitle(
-                                        ConstantsManager.getInstance().getConstants().confirmTpmDataRemovalTitle());
-                                confirmModel.setMessage(
-                                        ConstantsManager.getInstance().getConstants().confirmTpmDataRemovalMessage());
-                                confirmModel.setHelpTag(HelpTag.remove_tpm_data);
-                                confirmModel.setHashName("remove_tpm_data"); //$NON-NLS-1$
-                                confirmModel.getCommands().add(UICommand.createOkUiCommand(okCommandName, this));
-                                confirmModel.getCommands()
-                                        .add(UICommand.createDefaultCancelUiCommand("CancelConfirmation", this)); //$NON-NLS-1$
-                                setConfirmWindow(null);
-                                setConfirmWindow(confirmModel);
-                            } else {
-                                saveCommand.accept(model);
-                            }
-                        }));
-                return;
-            }
+            Frontend.getInstance().runQuery(QueryType.HasTpmData, new IdQueryParameters(vmId),
+                    new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
+                        if ((Boolean) returnValue.getReturnValue()) {
+                            messages.add(ConstantsManager.getInstance().getConstants().confirmTpmDataRemovalMessage());
+                        }
+                        confirmNvram(model, vmId, okCommandName, saveCommand, messages);
+                    }));
+        } else {
+            confirmNvram(model, vmId, okCommandName, saveCommand, messages);
         }
-        saveCommand.accept(model);
+    }
+
+    private void confirmNvram(final UnitVmModel model, Guid vmId, String okCommandName,
+            Consumer<UnitVmModel> saveCommand, List<String> messages) {
+        if (model.getSecureBootOriginallyEnabled() && !model.secureBootEnabled()) {
+            Frontend.getInstance().runQuery(QueryType.HasNvramData, new IdQueryParameters(vmId),
+                    new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
+                        if ((Boolean) returnValue.getReturnValue()) {
+                            messages.add(
+                                    ConstantsManager.getInstance().getConstants().confirmNvramDataRemovalMessage());
+                        }
+                        confirmAndSave(model, vmId, okCommandName, saveCommand, messages);
+                    }));
+        } else {
+            confirmAndSave(model, vmId, okCommandName, saveCommand, messages);
+        }
+    }
+
+    private void confirmAndSave(final UnitVmModel model, Guid vmId, String okCommandName,
+            Consumer<UnitVmModel> saveCommand, List<String> messages) {
+        if (!messages.isEmpty()) {
+            ConfirmationModel confirmModel = new ConfirmationModel();
+            confirmModel.setTitle(ConstantsManager.getInstance().getConstants().confirmExternalDataRemovalTitle());
+            confirmModel.setMessage(String.join("\n\n", messages)); //$NON-NLS-1$
+            confirmModel.getCommands().add(UICommand.createOkUiCommand(okCommandName, this));
+            confirmModel.getCommands().add(UICommand.createDefaultCancelUiCommand("CancelConfirmation", this)); //$NON-NLS-1$
+            setConfirmWindow(null);
+            setConfirmWindow(confirmModel);
+        } else {
+            saveCommand.accept(model);
+        }
+    }
+
+    protected void confirmExternalDataDeletionAndSave(final UnitVmModel model, Guid vmId, String okCommandName,
+            Consumer<UnitVmModel> saveCommand) {
+        if (vmId != null) {
+            confirmTpm(model, vmId, okCommandName, saveCommand, new ArrayList<>(2));
+        } else {
+            saveCommand.accept(model);
+        }
     }
 
     protected void confirmAndSaveOrUpdateVM(final UnitVmModel model) {
-        confirmTpmDeletionAndSave(model, getcurrentVm().getId(), "SaveOrUpdateVM", this::saveOrUpdateVM); // $NON-NLS-1$
+        confirmExternalDataDeletionAndSave(model, getcurrentVm().getId(), "SaveOrUpdateVM", this::saveOrUpdateVM); // $NON-NLS-1$
     }
 
     protected void saveOrUpdateVM(final UnitVmModel model) {
