@@ -566,11 +566,12 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         parameters.setEndProcedure(ActionParametersBase.EndProcedure.PARENT_MANAGED);
 
         ActionReturnValue returnValue = runInternalAction(ActionType.CreateScratchDisks, parameters);
-        if (returnValue == null || !returnValue.getSucceeded()) {
+        if (returnValue == null) {
             return false;
         }
+
         getParameters().setScratchDisksMap(returnValue.getActionReturnValue());
-        return true;
+        return returnValue.getSucceeded();
     }
 
     private boolean prepareScratchDisks() {
