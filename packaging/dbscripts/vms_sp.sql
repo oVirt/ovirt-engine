@@ -2420,3 +2420,24 @@ BEGIN
     PERFORM UpdateNvramData(v_target_vm_id, GetNvramData(v_source_vm_id));
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+DROP TRIGGER
+IF EXISTS remove_nvram_data_on_update
+    ON vm_static;
+
+CREATE OR REPLACE FUNCTION remove_nvram_data ()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF OLD.effective_bios_type = 4 AND NEW.effective_bios_type != 4 THEN
+        DELETE FROM vm_nvram_data
+        WHERE vm_id = OLD.vm_guid;
+    END IF;
+    RETURN NEW;
+END;$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER remove_nvram_data_on_update AFTER
+UPDATE
+    ON vm_static
+FOR EACH ROW
+EXECUTE FUNCTION remove_nvram_data();
