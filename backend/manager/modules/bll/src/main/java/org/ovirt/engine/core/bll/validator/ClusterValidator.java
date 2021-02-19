@@ -326,6 +326,14 @@ public class ClusterValidator {
                 .when(!isOldCPUEmpty && !sameCpuNames && !isCpuUpdatable && hasVmOrHost);
     }
 
+    public ValidationResult canAutoDetectCpu() {
+        boolean oldCpuEmpty = StringUtils.isEmpty(cluster.getCpuName());
+        boolean newCpuEmpty = StringUtils.isEmpty(newCluster.getCpuName());
+        boolean hasVmOrHost = !allVmsForCluster.get().isEmpty() || !allHostsForCluster.get().isEmpty();
+        return ValidationResult.failWith(EngineMessage.CLUSTER_CANNOT_SET_CPU_AUTODETECTION)
+                .when(!oldCpuEmpty && newCpuEmpty && hasVmOrHost);
+    }
+
     /**
      * can't change cluster version when a VM is in preview
      */
@@ -506,5 +514,4 @@ public class ClusterValidator {
         }
         return volumes;
     }
-
 }

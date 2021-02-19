@@ -726,6 +726,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     private boolean validateCpuUpdatable(ClusterValidator clusterValidator) {
         boolean cpusExist = checkIfCpusExist();
         return validate(clusterValidator.cpuNotFound(cpusExist))
+                && validate(clusterValidator.canAutoDetectCpu())
                 && validate(clusterValidator.updateCpuIllegal(cpusExist, checkIfCpusSameManufacture(oldCluster)))
                 && validate(clusterValidator.architectureIsLegal(isArchitectureUpdatable()))
                 && validate(clusterValidator.cpuUpdatable());
