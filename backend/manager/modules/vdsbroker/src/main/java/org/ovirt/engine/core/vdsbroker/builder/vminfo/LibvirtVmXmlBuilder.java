@@ -2638,6 +2638,7 @@ public class LibvirtVmXmlBuilder {
         VnicProfile vnicProfile = vmInfoBuildUtils.getVnicProfile(nic.getVnicProfileId());
         Network network = vnicProfile != null ? vmInfoBuildUtils.getNetwork(vnicProfile.getNetworkId()) : null;
         boolean networkless = network == null;
+        boolean hasFailover = vnicProfile != null && vnicProfile.getFailoverVnicProfileId() != null;
 
         String alias = generateUserAliasForDevice(device);
         vnicMetadata.computeIfAbsent(alias, a -> new HashMap<>());
@@ -2698,6 +2699,12 @@ public class LibvirtVmXmlBuilder {
                 writer.writeEndElement();
             }
 
+            if (vnicProfile != null && device.getCustomProperties().remove("failover") != null) {
+                writer.writeStartElement("teaming");
+                writer.writeAttributeString("type", "persistent");
+                writer.writeEndElement();
+            }
+
             break;
 
         case "hostdev":
@@ -2721,6 +2728,13 @@ public class LibvirtVmXmlBuilder {
             sourceAddress.forEach(writer::writeAttributeString);
             writer.writeEndElement();
             writer.writeEndElement();
+            if (hasFailover) {
+                writer.writeStartElement("teaming");
+                writer.writeAttributeString("type", "transient");
+                writer.writeAttributeString("persistent",
+                        String.format("ua-%s", vnicProfile.getFailoverVnicProfileId()));
+                writer.writeEndElement();
+            }
             break;
         }
 
