@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.utils.CpuUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -2132,8 +2133,11 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             }
 
             AsyncDataProvider.getInstance().getCpuByFlags(new AsyncQuery<>(cpu -> {
-                getCPU().setSelectedItem(cpu != null ?
-                        Linq.firstOrNull(getCPU().getItems(), new Linq.ServerCpuPredicate(cpu.getCpuName())) : null);
+                String cpuName = cpu != null ? cpu.getCpuName() : CpuUtils.getCpuNameInVersion(oldSelectedCpu, getEffectiveVersion());
+
+                getCPU().setSelectedItem(cpuName != null ?
+                        Linq.firstOrNull(getCPU().getItems(), new Linq.ServerCpuPredicate(cpuName)) : null);
+
             }), flags, getEffectiveVersion());
         }
     }
