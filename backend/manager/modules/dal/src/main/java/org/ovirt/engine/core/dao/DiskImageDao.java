@@ -150,12 +150,12 @@ public interface DiskImageDao extends ReadDao<DiskImage, Guid> {
     Set<DiskImage> getAllSnapshotsForParents(Collection<Guid> parentIds);
 
     /**
-     * Return all metadata and memory disk images dumps of snapshots that are not on the given storage domain
+     * Return all metadata and memory disk images dumps on the given storage domain
      *
      * @param storageDomainId storage domain ID
      * @return List of disk images IDs
      */
-    List<Guid> getAllMetadataAndMemoryDisksOfSnapshotsOnDifferentStorageDomains(Guid storageDomainId);
+    List<Guid> getAllMetadataAndMemoryDisksForStorageDomain(Guid storageDomainId);
 
     /**
      * Returns all the disks of content type ISO residing on active domain in the specified storage pool

@@ -152,11 +152,11 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
     }
 
     @Override
-    public List<Guid> getAllMetadataAndMemoryDisksOfSnapshotsOnDifferentStorageDomains(Guid storageDomainId) {
+    public List<Guid> getAllMetadataAndMemoryDisksForStorageDomain(Guid storageDomainId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_domain_id", storageDomainId);
 
-        return getCallsHandler().executeReadList("GetMetadataAndMemoryDisksOfSnapshotsOnDifferentStorageDomains",
+        return getCallsHandler().executeReadList("GetAllMetadataAndMemoryDisksForStorageDomain",
                 createGuidMapper(),
                 parameterSource);
     }
