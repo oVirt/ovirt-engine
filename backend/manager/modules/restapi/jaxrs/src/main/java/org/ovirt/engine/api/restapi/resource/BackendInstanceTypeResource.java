@@ -78,6 +78,7 @@ public class BackendInstanceTypeResource
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, entity.getId()).isEmpty());
         model.setSoundcardEnabled(!VmHelper.getSoundDevicesForEntity(this, entity.getId()).isEmpty());
+        model.setTpmEnabled(!VmHelper.getTpmDevicesForEntity(this, entity.getId()).isEmpty());
         setRngDevice(model);
         return model;
     }
@@ -143,6 +144,9 @@ public class BackendInstanceTypeResource
                 if (incoming.getVirtioScsi().isSetEnabled()) {
                     updateParams.setVirtioScsiEnabled(incoming.getVirtioScsi().isEnabled());
                 }
+            }
+            if (incoming.isSetTpmEnabled()) {
+                updateParams.setTpmEnabled(incoming.isTpmEnabled());
             }
 
             DisplayHelper.setGraphicsToParams(incoming.getDisplay(), updateParams);

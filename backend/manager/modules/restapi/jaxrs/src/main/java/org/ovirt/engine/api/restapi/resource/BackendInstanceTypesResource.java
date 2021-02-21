@@ -76,8 +76,11 @@ public class BackendInstanceTypesResource
         addInstanceTypeParameters.setVirtioScsiEnabled(instanceType.isSetVirtioScsi() && instanceType.getVirtioScsi().isSetEnabled() ?
                 instanceType.getVirtioScsi().isEnabled() : null);
 
-        if(instanceType.isSetSoundcardEnabled()) {
+        if (instanceType.isSetSoundcardEnabled()) {
             addInstanceTypeParameters.setSoundDeviceEnabled(instanceType.isSoundcardEnabled());
+        }
+        if (instanceType.isSetTpmEnabled()) {
+            addInstanceTypeParameters.setTpmEnabled(instanceType.isTpmEnabled());
         }
 
         DisplayHelper.setGraphicsToParams(instanceType.getDisplay(), addInstanceTypeParameters);
@@ -127,6 +130,7 @@ public class BackendInstanceTypesResource
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, entity.getId()).isEmpty());
         model.setSoundcardEnabled(!VmHelper.getSoundDevicesForEntity(this, entity.getId()).isEmpty());
+        model.setTpmEnabled(!VmHelper.getTpmDevicesForEntity(this, entity.getId()).isEmpty());
         List<VmRngDevice> rngDevices = getRngDevices(entity.getId());
         if (rngDevices != null && !rngDevices.isEmpty()) {
             model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));

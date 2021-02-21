@@ -164,13 +164,16 @@ public class BackendTemplateResource
                 params.setUpdateRngDevice(true);
                 params.setRngDevice(RngDeviceMapper.map(incoming.getRngDevice(), null));
             }
-            if(incoming.isSetSoundcardEnabled()) {
+            if (incoming.isSetSoundcardEnabled()) {
                 params.setSoundDeviceEnabled(incoming.isSoundcardEnabled());
             }
             if (incoming.isSetVirtioScsi()) {
                 if (incoming.getVirtioScsi().isSetEnabled()) {
                     params.setVirtioScsiEnabled(incoming.getVirtioScsi().isEnabled());
                 }
+            }
+            if (incoming.isSetTpmEnabled()) {
+                params.setTpmEnabled(incoming.isTpmEnabled());
             }
 
             IconHelper.setIconToParams(incoming, params);
@@ -195,6 +198,7 @@ public class BackendTemplateResource
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, entity.getId()).isEmpty());
         model.setSoundcardEnabled(VmHelper.getSoundDevicesForEntity(this, entity.getId()).isEmpty());
+        model.setTpmEnabled(!VmHelper.getTpmDevicesForEntity(this, entity.getId()).isEmpty());
         setRngDevice(model);
         return model;
     }

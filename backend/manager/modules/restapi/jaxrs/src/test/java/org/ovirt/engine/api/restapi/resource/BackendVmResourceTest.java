@@ -203,6 +203,7 @@ public class BackendVmResourceTest
             setUpGetSoundcardExpectations(0);
             setUpGetRngDeviceExpectations(0);
             setUpGetVmOvfExpectations(0);
+            setUpGetTpmExpectations(0);
         }
         setUpGetEntityExpectations(1);
         setUpGetPayloadExpectations(0, 1);
@@ -239,6 +240,7 @@ public class BackendVmResourceTest
         setUpGetVmOvfExpectations(0);
         setUpGetVirtioScsiExpectations(0);
         setUpGetSoundcardExpectations(0);
+        setUpGetTpmExpectations(0);
         setUpGetRngDeviceExpectations(0);
         setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
@@ -265,6 +267,7 @@ public class BackendVmResourceTest
         setUpGetVmOvfExpectations(0);
         setUpGetVirtioScsiExpectations(0);
         setUpGetSoundcardExpectations(0);
+        setUpGetTpmExpectations(0);
         setUpGetRngDeviceExpectations(0);
 
 
@@ -292,6 +295,7 @@ public class BackendVmResourceTest
         setUpGetVirtioScsiExpectations(0);
         setUpGetSoundcardExpectations(0);
         setUpGetRngDeviceExpectations(0);
+        setUpGetTpmExpectations(0);
         setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] {},
@@ -317,6 +321,7 @@ public class BackendVmResourceTest
         setUpGetVirtioScsiExpectations(0);
         setUpGetSoundcardExpectations(0);
         setUpGetRngDeviceExpectations(0);
+        setUpGetTpmExpectations(0);
         setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[]{},
@@ -447,6 +452,7 @@ public class BackendVmResourceTest
         setUpGetVmOvfExpectations(0);
         setUpGetVirtioScsiExpectations(0);
         setUpGetSoundcardExpectations(0);
+        setUpGetTpmExpectations(0);
         setUpGetRngDeviceExpectations(0);
         setUpGetGraphicsExpectations(1);
     }
@@ -462,6 +468,7 @@ public class BackendVmResourceTest
         setUpGetConsoleExpectations(0);
         setUpGetVmOvfExpectations(0);
         setUpGetVirtioScsiExpectations(0);
+        setUpGetTpmExpectations(0);
         setUpGetSoundcardExpectations(0);
         setUpGetRngDeviceExpectations(0);
         setUpGetGraphicsExpectations(2);
@@ -1408,5 +1415,15 @@ public class BackendVmResourceTest
                 new String[]{"Name"},
                 new Object[]{NAMES[idx]},
                 host);
+    }
+
+    private void setUpGetTpmExpectations(int ... idxs) {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(QueryType.GetTpmDevices,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[idxs[i]] },
+                    new ArrayList<>());
+        }
     }
 }

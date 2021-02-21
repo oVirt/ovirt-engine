@@ -201,7 +201,7 @@ public class AddVmTemplateParameters extends VmTemplateManagementParameters impl
         return tpmEnabled;
     }
 
-    public void setTpmEnabled(boolean tpmEnabled) {
+    public void setTpmEnabled(Boolean tpmEnabled) {
         this.tpmEnabled = tpmEnabled;
     }
 

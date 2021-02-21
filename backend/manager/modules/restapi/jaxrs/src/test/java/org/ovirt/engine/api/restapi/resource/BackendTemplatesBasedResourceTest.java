@@ -118,6 +118,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
             setUpGetSoundcardExpectations(0, 1, 2);
             setUpGetRngDeviceExpectations(0, 1, 2);
             setUpGetBallooningExpectations(3);
+            setUpGetTpmExpectations(0, 1, 2);
         }
 
         setUpGetGraphicsExpectations(3);
@@ -196,5 +197,15 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
             idxs.add(i);
         }
         setUpGetBallooningExpectations(idxs.toArray(new Integer[times]));
+    }
+
+    protected void setUpGetTpmExpectations(int ... idxs) {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(QueryType.GetTpmDevices,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[idxs[i]] },
+                    new ArrayList<>());
+        }
     }
 }

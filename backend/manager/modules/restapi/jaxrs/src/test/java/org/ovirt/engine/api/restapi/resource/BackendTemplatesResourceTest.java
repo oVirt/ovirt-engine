@@ -84,6 +84,7 @@ public class BackendTemplatesResourceTest
         setUpGetSoundcardExpectations(0, 0, 1);
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
+        setUpGetTpmExpectations(0, 0);
 
         setUpCreationExpectations(ActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
@@ -135,6 +136,7 @@ public class BackendTemplatesResourceTest
         setUpGetSoundcardExpectations(0, 1);
         setUpGetRngDeviceExpectations(0);
         setUpGetBallooningExpectations(new Integer[] {0});
+        setUpGetTpmExpectations(0);
         setUpGetEntityExpectations(QueryType.GetVmByVmId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
@@ -170,6 +172,7 @@ public class BackendTemplatesResourceTest
         setUpGetConsoleExpectations(0, 0, 1);
         setUpGetSoundcardExpectations(1);
         setUpGetBallooningExpectations(0, 0);
+        setUpGetTpmExpectations(0, 0);
 
         setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
@@ -223,6 +226,7 @@ public class BackendTemplatesResourceTest
         setUpGetSoundcardExpectations(2, 2, 1);
         setUpGetRngDeviceExpectations(2, 2);
         setUpGetBallooningExpectations(2, 2);
+        setUpGetTpmExpectations(2);
 
             setUpGetEntityExpectations(QueryType.GetVmByVmId,
                                        IdQueryParameters.class,
@@ -273,6 +277,7 @@ public class BackendTemplatesResourceTest
         setUpGetSoundcardExpectations(0, 0, 1);
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
+        setUpGetTpmExpectations(0, 0);
 
         setUpCreationExpectations(ActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -320,6 +325,7 @@ public class BackendTemplatesResourceTest
         setUpGetSoundcardExpectations(0, 0, 1);
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
+        setUpGetTpmExpectations(0, 0);
 
         setUpCreationExpectations(ActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -365,6 +371,7 @@ public class BackendTemplatesResourceTest
         setUpGetSoundcardExpectations(0, 0, 1);
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
+        setUpGetTpmExpectations(0, 0);
 
         setUpCreationExpectations(ActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
@@ -415,6 +422,7 @@ public class BackendTemplatesResourceTest
         setUpGetSoundcardExpectations(0, 0, 1);
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
+        setUpGetTpmExpectations(0, 0);
 
         setUpGetEntityExpectations(QueryType.GetClusterByName,
                 NameQueryParameters.class,
@@ -485,6 +493,7 @@ public class BackendTemplatesResourceTest
         setUpGetConsoleExpectations(0, 0, 1);
         setUpGetSoundcardExpectations(1);
         setUpGetBallooningExpectations(0, 0);
+        setUpGetTpmExpectations(0, 0);
 
         setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
@@ -524,6 +533,7 @@ public class BackendTemplatesResourceTest
         setUpGetConsoleExpectations(0, 0, 1);
         setUpGetSoundcardExpectations(1);
         setUpGetBallooningExpectations(0, 0);
+        setUpGetTpmExpectations(0, 0);
 
         setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
@@ -699,5 +709,4 @@ public class BackendTemplatesResourceTest
         }
         return vmInits;
     }
-
 }

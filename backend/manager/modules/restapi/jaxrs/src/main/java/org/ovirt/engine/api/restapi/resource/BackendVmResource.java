@@ -632,6 +632,7 @@ public class BackendVmResource
         BackendVmDeviceHelper.setVirtioScsiController(this, model);
         BackendVmDeviceHelper.setSoundcard(this, model);
         BackendVmDeviceHelper.setRngDevice(this, model);
+        BackendVmDeviceHelper.setTpmDevice(this, model);
         parent.setVmOvfConfiguration(model, entity);
         return model;
     }
@@ -701,6 +702,9 @@ public class BackendVmResource
             if (incoming.isSetRngDevice()) {
                 params.setUpdateRngDevice(true);
                 params.setRngDevice(RngDeviceMapper.map(incoming.getRngDevice(), null));
+            }
+            if (incoming.isSetTpmEnabled()) {
+                params.setTpmEnabled(incoming.isTpmEnabled());
             }
 
             DisplayHelper.setGraphicsToParams(incoming.getDisplay(), params);

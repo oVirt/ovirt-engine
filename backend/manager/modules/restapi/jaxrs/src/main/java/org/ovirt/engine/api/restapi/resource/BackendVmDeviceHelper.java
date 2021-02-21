@@ -90,4 +90,8 @@ public class BackendVmDeviceHelper {
             vm.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));
         }
     }
+
+    public static void setTpmDevice(BackendResource resource, Vm vm) {
+        vm.setTpmEnabled(!VmHelper.getTpmDevicesForEntity(resource, new Guid(vm.getId())).isEmpty());
+    }
 }

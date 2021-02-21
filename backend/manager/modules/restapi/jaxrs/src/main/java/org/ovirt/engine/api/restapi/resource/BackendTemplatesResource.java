@@ -160,6 +160,7 @@ public class BackendTemplatesResource
             params.setUpdateRngDevice(true);
             params.setRngDevice(RngDeviceMapper.map(template.getRngDevice(), null));
         }
+        params.setTpmEnabled(template.isSetTpmEnabled() ? template.isTpmEnabled() : null);
 
         DisplayHelper.setGraphicsToParams(template.getDisplay(), params);
         boolean domainSet = template.isSetStorageDomain() && template.getStorageDomain().isSetId();
@@ -390,6 +391,7 @@ public class BackendTemplatesResource
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, entity.getId()).isEmpty());
         model.setSoundcardEnabled(!VmHelper.getSoundDevicesForEntity(this, entity.getId()).isEmpty());
+        model.setTpmEnabled(!VmHelper.getTpmDevicesForEntity(this, entity.getId()).isEmpty());
         List<VmRngDevice> rngDevices = getRngDevices(entity.getId());
         if (rngDevices != null && !rngDevices.isEmpty()) {
             model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));

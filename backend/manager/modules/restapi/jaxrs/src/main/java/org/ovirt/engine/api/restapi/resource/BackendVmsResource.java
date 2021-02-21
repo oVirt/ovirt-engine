@@ -401,7 +401,7 @@ public class BackendVmsResource extends
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
                 vm.getVirtioScsi().isEnabled() : null);
-        if(vm.isSetSoundcardEnabled()) {
+        if (vm.isSetSoundcardEnabled()) {
             params.setSoundDeviceEnabled(vm.isSoundcardEnabled());
         } else {
             params.setSoundDeviceEnabled(isVMDeviceTypeExist(configVm.getManagedVmDeviceMap(), VmDeviceGeneralType.SOUND));
@@ -414,6 +414,9 @@ public class BackendVmsResource extends
         if (vm.isSetRngDevice()) {
             params.setUpdateRngDevice(true);
             params.setRngDevice(RngDeviceMapper.map(vm.getRngDevice(), null));
+        }
+        if (vm.isSetTpmEnabled()) {
+            params.setTpmEnabled(vm.isTpmEnabled());
         }
 
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
@@ -457,7 +460,7 @@ public class BackendVmsResource extends
             params.setVirtioScsiEnabled(instanceTypeId != null ? !VmHelper.getVirtioScsiControllersForEntity(this, instanceTypeId).isEmpty() : null);
         }
 
-        if(vm.isSetSoundcardEnabled()) {
+        if (vm.isSetSoundcardEnabled()) {
             params.setSoundDeviceEnabled(vm.isSoundcardEnabled());
         } else if (instanceTypeId != null || templateId != null) {
             params.setSoundDeviceEnabled(!VmHelper.getSoundDevicesForEntity(this, instanceTypeId != null ? instanceTypeId : templateId).isEmpty());
@@ -480,6 +483,12 @@ public class BackendVmsResource extends
             params.setRngDevice(RngDeviceMapper.map(vm.getRngDevice(), null));
         } else if (instanceTypeId != null || templateId != null) {
             copyRngDeviceFromTemplateOrInstanceType(params, vmStatic, cluster, templateId, instanceTypeId);
+        }
+
+        if (vm.isSetTpmEnabled()) {
+            params.setTpmEnabled(vm.isTpmEnabled());
+        } else if (instanceTypeId != null || templateId != null) {
+            params.setTpmEnabled(!VmHelper.getTpmDevicesForEntity(this, instanceTypeId != null ? instanceTypeId : templateId).isEmpty());
         }
     }
 
@@ -752,6 +761,7 @@ public class BackendVmsResource extends
         BackendVmDeviceHelper.setSoundcard(this, model);
         BackendVmDeviceHelper.setCertificateInfo(this, model);
         BackendVmDeviceHelper.setRngDevice(this, model);
+        BackendVmDeviceHelper.setTpmDevice(this, model);
         setVmOvfConfiguration(model, entity);
         return model;
     }

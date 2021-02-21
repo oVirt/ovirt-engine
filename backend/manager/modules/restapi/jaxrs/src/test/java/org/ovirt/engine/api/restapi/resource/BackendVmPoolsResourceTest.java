@@ -289,5 +289,11 @@ public class BackendVmPoolsResourceTest extends
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 new ArrayList<>());
+
+        setUpGetEntityExpectations(QueryType.GetTpmDevices,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                new ArrayList<>());
     }
 }

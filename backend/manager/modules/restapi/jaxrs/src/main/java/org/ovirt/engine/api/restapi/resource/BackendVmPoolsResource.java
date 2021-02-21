@@ -125,6 +125,7 @@ public class BackendVmPoolsResource
         }
         params.getVmStaticData().setCustomProperties(pool.isSetVm() && pool.getVm().isSetCustomProperties() ?
                 CustomPropertiesParser.parse(pool.getVm().getCustomProperties().getCustomProperties()) : params.getVmStaticData().getCustomProperties());
+        params.setTpmEnabled(pool.isSetTpmEnabled() ? pool.isTpmEnabled() : null);
 
         return performCreate(ActionType.AddVmPool,
                                params,
@@ -150,6 +151,7 @@ public class BackendVmPoolsResource
             BackendVmDeviceHelper.setSoundcard(this, vm);
             BackendVmDeviceHelper.setCertificateInfo(this, vm);
             BackendVmDeviceHelper.setRngDevice(this, vm);
+            BackendVmDeviceHelper.setTpmDevice(this, vm);
             pool.setVm(vm);
         }
         // Legacy code

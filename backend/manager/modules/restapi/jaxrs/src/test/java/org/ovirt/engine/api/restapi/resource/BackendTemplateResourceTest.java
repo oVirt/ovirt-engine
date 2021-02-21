@@ -108,6 +108,7 @@ public class BackendTemplateResourceTest
             setUpGetVirtioScsiExpectations(0);
             setUpGetSoundcardExpectations(0);
             setUpGetRngDeviceExpectations(0);
+            setUpGetTpmExpectations(0);
         }
         setUpGetGraphicsExpectations(1);
 
@@ -184,6 +185,7 @@ public class BackendTemplateResourceTest
         setUpGetVirtioScsiExpectations(0);
         setUpGetSoundcardExpectations(0);
         setUpGetRngDeviceExpectations(0);
+        setUpGetTpmExpectations(0);
     }
 
     protected void setUpGetGraphicsExpectations(int times) {
@@ -202,6 +204,16 @@ public class BackendTemplateResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 true);
+    }
+
+    private void setUpGetTpmExpectations(int ... idxs) {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(QueryType.GetTpmDevices,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[idxs[i]] },
+                    new ArrayList<>());
+        }
     }
 
     @Test

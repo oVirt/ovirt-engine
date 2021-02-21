@@ -166,7 +166,8 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(0);
         setUpGetRngDeviceExpectations(0);
         setUpGetVmOvfExpectations(0);
-        setUpGetCertuficateExpectations(1, 0);
+        setUpGetTpmExpectations(0);
+        setUpGetCertificateExpectations(1, 0);
         setUpGetCaRootExpectations();
         setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
@@ -220,7 +221,8 @@ public class BackendVmsResourceTest
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(2, 0);
         setUpGetGraphicsExpectations(1);
-        setUpGetCertuficateExpectations(2, 0);
+        setUpGetCertificateExpectations(2, 0);
+        setUpGetTpmExpectations(0);
         setUpGetCaRootExpectations();
         setUpEntityQueryExpectations(QueryType.GetVmByVmId,
                                      IdQueryParameters.class,
@@ -276,7 +278,8 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(0, 0);
         setUpGetSoundcardExpectations(0, 0);
         setUpGetRngDeviceExpectations(0, 0);
-        setUpGetCertuficateExpectations(2, 0);
+        setUpGetTpmExpectations(0);
+        setUpGetCertificateExpectations(2, 0);
         setUpGetCaRootExpectations();
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(QueryType.GetClusterByName,
@@ -372,7 +375,8 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
-        setUpGetCertuficateExpectations(1, 2);
+        setUpGetCertificateExpectations(1, 2);
+        setUpGetTpmExpectations(2);
         setUpGetCaRootExpectations();
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -415,13 +419,14 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
-        setUpGetCertuficateExpectations(1, 2);
+        setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
         setUpGetConsoleExpectations(2, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(2);
         setUpGetRngDeviceExpectations(2);
+        setUpGetTpmExpectations(2);
         setUpEntityQueryExpectations(QueryType.GetVmConfigurationBySnapshot,
                 IdQueryParameters.class,
                 new String[]{"Id"},
@@ -460,7 +465,8 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
-        setUpGetCertuficateExpectations(1, 2);
+        setUpGetCertificateExpectations(1, 2);
+        setUpGetTpmExpectations(2);
         setUpGetCaRootExpectations();
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
@@ -498,13 +504,14 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 1);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
-        setUpGetCertuficateExpectations(1, 2);
+        setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
         setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(2, 1);
+        setUpGetTpmExpectations(2);
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
@@ -581,6 +588,7 @@ public class BackendVmsResourceTest
                 new Object[] { NAMES[1], GUIDS[3] },
                 getTemplateEntity(1));
         setupAddExpectations();
+        setUpGetTpmExpectations(1);
         setUpCreationExpectations(ActionType.AddVm,
                 AddVmParameters.class,
                 new String[] { "StorageDomainId" },
@@ -609,12 +617,13 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 1);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
-        setUpGetCertuficateExpectations(1, 2);
+        setUpGetCertificateExpectations(1, 2);
         setUpGetConsoleExpectations(1, 2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
+        setUpGetTpmExpectations(2);
         setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
@@ -629,13 +638,14 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 3);
         setUpGetBallooningExpectations(1, 3);
         setUpGetGraphicsExpectations(1);
-        setUpGetCertuficateExpectations(1, 3);
+        setUpGetCertificateExpectations(1, 3);
         setUpGetCaRootExpectations();
         setUpGetConsoleExpectations(3);
         setUpGetVmOvfExpectations(3);
         setUpGetVirtioScsiExpectations(3);
         setUpGetSoundcardExpectations(3);
         setUpGetRngDeviceExpectations(3);
+        setUpGetTpmExpectations(3);
         Vm model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
         model.setInitialization(new Initialization());
@@ -676,13 +686,14 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
-        setUpGetCertuficateExpectations(1, 2);
+        setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
         setUpGetConsoleExpectations(2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(2);
         setUpGetRngDeviceExpectations(2);
+        setUpGetTpmExpectations(2);
         Vm model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
         model.setInitialization(new Initialization());
@@ -718,13 +729,14 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
-        setUpGetCertuficateExpectations(1, 2);
+        setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
         setUpGetConsoleExpectations(2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(2);
         setUpGetRngDeviceExpectations(2);
+        setUpGetTpmExpectations(2);
         Vm model = createModel(null);
         org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
         model.setInitialization(new Initialization());
@@ -942,7 +954,8 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
-        setUpGetCertuficateExpectations(1, 2);
+        setUpGetTpmExpectations(2);
+        setUpGetCertificateExpectations(1, 2);
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
@@ -993,7 +1006,8 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
-        setUpGetCertuficateExpectations(1, 2);
+        setUpGetTpmExpectations(1, 2);
+        setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -1051,13 +1065,14 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 1);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
-        setUpGetCertuficateExpectations(1, 2);
+        setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
         setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
+        setUpGetTpmExpectations(2);
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -1109,7 +1124,7 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(1, 1);
         setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
-        setUpGetCertuficateExpectations(1, 2);
+        setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
 
         setUpGetConsoleExpectations(1, 2);
@@ -1117,6 +1132,7 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
+        setUpGetTpmExpectations(2);
         setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[]{"Id"},
@@ -1164,7 +1180,7 @@ public class BackendVmsResourceTest
 
         setUpGetGraphicsMultipleExpectations(3);
         setUpQueryExpectations("");
-        setUpGetCertuficateExpectations(1, 0);
+        setUpGetCertificateExpectations(1, 0);
         setUpGetCaRootExpectations();
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -1195,7 +1211,8 @@ public class BackendVmsResourceTest
             setUpGetVirtioScsiExpectations(0, 1, 2);
             setUpGetSoundcardExpectations(0, 1, 2);
             setUpGetRngDeviceExpectations(0, 1, 2);
-            setUpGetCertuficateExpectations(3);
+            setUpGetCertificateExpectations(3);
+            setUpGetTpmExpectations(0, 1, 2);
         }
 
         setUpQueryExpectations("");
@@ -1235,12 +1252,13 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(0, 1, 2);
         setUpGetSoundcardExpectations(0, 1, 2);
         setUpGetRngDeviceExpectations(0, 1, 2);
-        setUpGetCertuficateExpectations(3);
+        setUpGetCertificateExpectations(3);
+        setUpGetTpmExpectations(0, 1, 2);
         setUpGetCaRootExpectations();
         setUpQueryExpectations("");
     }
 
-    private void setUpGetCertuficateExpectations(int times) {
+    private void setUpGetCertificateExpectations(int times) {
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(QueryType.GetVdsCertificateSubjectByVmId,
                     IdQueryParameters.class,
@@ -1250,7 +1268,7 @@ public class BackendVmsResourceTest
         }
     }
 
-    private void setUpGetCertuficateExpectations(int times, int index) {
+    private void setUpGetCertificateExpectations(int times, int index) {
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(QueryType.GetVdsCertificateSubjectByVmId,
                     IdQueryParameters.class,
@@ -1533,6 +1551,7 @@ public class BackendVmsResourceTest
         if (diskAttachments != null){
             model.setDiskAttachments(diskAttachments);
         }
+        model.setTpmEnabled(false);
 
         return model;
     }
@@ -1736,5 +1755,15 @@ public class BackendVmsResourceTest
                 new String[]{"Name"},
                 new Object[]{NAMES[idx]},
                 host);
+    }
+
+    private void setUpGetTpmExpectations(int ... idxs) {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(QueryType.GetTpmDevices,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[idxs[i]] },
+                    new ArrayList<>());
+        }
     }
 }
