@@ -53,12 +53,13 @@ public class CreateScratchDisksCommand<T extends VmBackupParameters> extends VmC
 
     @Override
     protected void executeCommand() {
+        // Set the scratch disks map to return even in case of a failure.
+        setActionReturnValue(getParameters().getScratchDisksMap());
+
         for (DiskImage disk : getParameters().getVmBackup().getDisks()) {
             ActionReturnValue returnValue = addDisk(disk);
             if (!returnValue.getSucceeded() || returnValue.getActionReturnValue() == null) {
                 log.error("Failed to create Scratch disk for disk ID '{}'", disk.getId());
-                // Add the scratch disks map that contains the disks that already created for cleanup.
-                setActionReturnValue(getParameters().getScratchDisksMap());
                 return;
             }
 
@@ -68,7 +69,7 @@ public class CreateScratchDisksCommand<T extends VmBackupParameters> extends VmC
             // path will be updated after preparing the scratch disk.
             getParameters().getScratchDisksMap().put(disk.getId(), new Pair<>(scratchDiskImage, null));
         }
-        setActionReturnValue(getParameters().getScratchDisksMap());
+
         persistCommandIfNeeded();
         setSucceeded(true);
     }
