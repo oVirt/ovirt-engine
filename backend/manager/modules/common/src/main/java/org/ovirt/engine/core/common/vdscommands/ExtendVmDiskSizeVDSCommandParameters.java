@@ -16,12 +16,12 @@ public class ExtendVmDiskSizeVDSCommandParameters extends VdsAndVmIDVDSParameter
     private String lunGuid;
 
     public ExtendVmDiskSizeVDSCommandParameters(Guid vdsId,
-                                                Guid vmId,
-                                                Guid storagePoolId,
-                                                Guid storageDomainId,
-                                                Guid imageId,
-                                                Guid imageGroupId,
-                                                long newSize) {
+            Guid vmId,
+            Guid storagePoolId,
+            Guid storageDomainId,
+            Guid imageId,
+            Guid imageGroupId,
+            long newSize) {
         super(vdsId, vmId);
         this.storagePoolId = storagePoolId;
         this.storageDomainId = storageDomainId;
