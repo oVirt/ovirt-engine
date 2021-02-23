@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
@@ -11,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<Cluster> {
 
@@ -53,99 +55,113 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
 
     @Override
     public SafeHtml getEntityValue(Cluster object) {
-        SafeHtmlBuilder images = new SafeHtmlBuilder();
-        boolean addSpace = false;
+        ArrayList<SafeHtml> images = new ArrayList<>();
+
         if (object.isClusterCompatibilityLevelUpgradeNeeded()
                 || isDeprecated(object)
                 || object.hasHostWithMissingCpuFlags()
                 || isCpuConfigurationOutdated(object)) {
-            images.append(getImageSafeHtml(IconType.EXCLAMATION));
-            addSpace = true;
+            images.add(getImageSafeHtml(IconType.EXCLAMATION));
         }
+
         if (!object.getHostNamesOutOfSync().isEmpty()) {
-            if (addSpace) {
-                images.appendHtmlConstant(constants.space());
-            }
-            images.append(templates.brokenLinkRed());
+            images.add(templates.brokenLinkRed());
         }
+
         if (!object.isManaged()) {
-            if (addSpace) {
-                images.appendHtmlConstant(constants.space());
-            }
-            images.append(getImageSafeHtml(resources.container()));
+            images.add(getImageSafeHtml(resources.container()));
         }
-        return templates.image(images.toSafeHtml());
+
+        if (object.getClusterHostsAndVms().getHostsWithUpdateAvailable() > 0) {
+            images.add(getImageSafeHtml(resources.updateAvailableImage()));
+        }
+
+        if (images.isEmpty()) {
+          return SafeHtmlUtils.EMPTY_SAFE_HTML;
+        }
+        SafeHtmlBuilder entityImages = new SafeHtmlBuilder();
+        entityImages.append(images.remove(0));
+        for (SafeHtml safehtml : images) {
+            entityImages.appendHtmlConstant(constants.space());
+            entityImages.append(safehtml);
+        }
+        return templates.image(entityImages.toSafeHtml());
     }
 
     @Override
     public SafeHtml getEntityTooltip(Cluster object) {
-        SafeHtmlBuilder tooltip = new SafeHtmlBuilder();
-        boolean addLineBreaks = false;
+        ArrayList<SafeHtml> tooltips = new ArrayList<>();
+
         if (object.isClusterCompatibilityLevelUpgradeNeeded()) {
-            tooltip.append(getImageSafeHtml(IconType.EXCLAMATION));
-            tooltip.appendHtmlConstant(constants.space());
-            tooltip.appendHtmlConstant(constants.clusterLevelUpgradeNeeded());
-            addLineBreaks = true;
+            SafeHtmlBuilder tooltip = new SafeHtmlBuilder()
+                .append(getImageSafeHtml(IconType.EXCLAMATION))
+                .appendHtmlConstant(constants.space())
+                .appendHtmlConstant(constants.clusterLevelUpgradeNeeded());
+            tooltips.add(tooltip.toSafeHtml());
         }
 
         if (isDeprecated(object)) {
-            if (addLineBreaks) {
-                tooltip.appendHtmlConstant(constants.lineBreak());
-                tooltip.appendHtmlConstant(constants.lineBreak());
-            }
-            tooltip.append(getImageSafeHtml(IconType.EXCLAMATION));
-            tooltip.appendHtmlConstant(constants.space());
-            tooltip.appendEscaped(messages.cpuDeprecationWarning(object.getCpuName()));
-            addLineBreaks = true;
+            SafeHtmlBuilder tooltip = new SafeHtmlBuilder()
+                .append(getImageSafeHtml(IconType.EXCLAMATION))
+                .appendHtmlConstant(constants.space())
+                .appendEscaped(messages.cpuDeprecationWarning(object.getCpuName()));
+            tooltips.add(tooltip.toSafeHtml());
         }
+
         if (!object.getHostNamesOutOfSync().isEmpty()) {
-            if (addLineBreaks) {
-                tooltip.appendHtmlConstant(constants.lineBreak());
-                tooltip.appendHtmlConstant(constants.lineBreak());
-            }
-            tooltip.append(hostListText(object));
-            addLineBreaks = true;
+            SafeHtmlBuilder tooltip = new SafeHtmlBuilder()
+                .append(hostListText(object));
+            tooltips.add(tooltip.toSafeHtml());
         }
 
         if (isCpuConfigurationOutdated(object)) {
-            if (addLineBreaks) {
-                tooltip.appendHtmlConstant(constants.lineBreak());
-                tooltip.appendHtmlConstant(constants.lineBreak());
-            }
-            tooltip.append(getImageSafeHtml(IconType.EXCLAMATION));
-            tooltip.appendHtmlConstant(constants.space());
-            tooltip.appendEscaped(constants.clusterCpuConfigurationOutdatedWarning());
-            addLineBreaks = true;
+            SafeHtmlBuilder tooltip = new SafeHtmlBuilder()
+                .append(getImageSafeHtml(IconType.EXCLAMATION))
+                .appendHtmlConstant(constants.space())
+                .appendEscaped(constants.clusterCpuConfigurationOutdatedWarning());
+            tooltips.add(tooltip.toSafeHtml());
         }
 
         if (object.hasHostWithMissingCpuFlags()) {
-            if (addLineBreaks) {
-                tooltip.appendHtmlConstant(constants.lineBreak());
-                tooltip.appendHtmlConstant(constants.lineBreak());
-            }
-            tooltip.append(getImageSafeHtml(IconType.EXCLAMATION));
-            tooltip.appendHtmlConstant(constants.space());
-            tooltip.appendEscaped(constants.clusterHasHostWithMissingCpuFlagsWarning());
-            addLineBreaks = true;
+            SafeHtmlBuilder tooltip = new SafeHtmlBuilder()
+                .append(getImageSafeHtml(IconType.EXCLAMATION))
+                .appendHtmlConstant(constants.space())
+                .appendEscaped(constants.clusterHasHostWithMissingCpuFlagsWarning());
+            tooltips.add(tooltip.toSafeHtml());
         }
 
         if (!object.isManaged()) {
-            if (addLineBreaks) {
-                tooltip.appendHtmlConstant(constants.lineBreak());
-                tooltip.appendHtmlConstant(constants.lineBreak());
-            }
-            tooltip.appendHtmlConstant(constants.integratedWithContainerPlatform());
+            SafeHtmlBuilder tooltip = new SafeHtmlBuilder()
+                .appendHtmlConstant(constants.integratedWithContainerPlatform());
+            tooltips.add(tooltip.toSafeHtml());
         }
-        return tooltip.toSafeHtml();
+
+        if (object.getClusterHostsAndVms().getHostsWithUpdateAvailable() > 0) {
+            SafeHtmlBuilder tooltip = new SafeHtmlBuilder()
+                .appendHtmlConstant(constants.clusterHasUpgradableHosts());
+            tooltips.add(tooltip.toSafeHtml());
+        }
+
+        if (tooltips.isEmpty()) {
+          return SafeHtmlUtils.EMPTY_SAFE_HTML;
+        }
+        SafeHtmlBuilder entityTooltip = new SafeHtmlBuilder();
+        entityTooltip.append(tooltips.remove(0));
+        for (SafeHtml safeHtml : tooltips) {
+            entityTooltip.appendHtmlConstant(constants.lineBreak());
+            entityTooltip.appendHtmlConstant(constants.lineBreak());
+            entityTooltip.append(safeHtml);
+        }
+        return entityTooltip.toSafeHtml();
     }
 
     private SafeHtml hostListText(Cluster object) {
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        builder.append(templates.brokenLinkRed());
-        builder.appendHtmlConstant(constants.space());
-        builder.appendEscaped(constants.hostsOutOfSyncWarning());
-        builder.appendHtmlConstant(constants.lineBreak());
-        builder.appendEscapedLines(object.getHostNamesOutOfSync());
+        SafeHtmlBuilder builder = new SafeHtmlBuilder()
+            .append(templates.brokenLinkRed())
+            .appendHtmlConstant(constants.space())
+            .appendEscaped(constants.hostsOutOfSyncWarning())
+            .appendHtmlConstant(constants.lineBreak())
+            .appendEscapedLines(object.getHostNamesOutOfSync());
         return builder.toSafeHtml();
     }
 

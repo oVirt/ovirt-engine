@@ -1209,6 +1209,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String statusCluster();
 
+    String statusClusterUpgrade();
+
     String statusHost();
 
     String statusIconHost();
@@ -3593,6 +3595,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String clusterHasHostWithMissingCpuFlagsWarning();
 
     String clusterCpuConfigurationOutdatedWarning();
+
+    String clusterHasUpgradableHosts();
+
+    String clusterUpgradeInProgress();
 
     String vmCpuTypeDoesNotMatchClusterCpuType();
 

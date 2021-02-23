@@ -298,6 +298,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         ClusterHostsAndVMs entity = new ClusterHostsAndVMs();
         entity.setHosts(rs.getInt("hosts"));
         entity.setVms(rs.getInt("vms"));
+        entity.setHostsWithUpdateAvailable(rs.getInt("hosts_with_update_available"));
         entity.setClusterId(getGuid(rs, "cluster_id"));
         return entity;
     };
@@ -380,10 +381,10 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         for (Cluster cluster : clusters) {
             clustersById.put(cluster.getId(), cluster);
         }
-        List<ClusterHostsAndVMs> dataList = getCallsHandler().executeReadList("GetHostsAndVmsForClusters",
+        List<ClusterHostsAndVMs> dataList = getCallsHandler().executeReadList(
+                "GetHostsAndVmsForClusters",
                 clusterHostsAndVMsRowMapper,
-                getCustomMapSqlParameterSource()
-                        .addValue("cluster_ids", createArrayOf("uuid", clustersById.keySet().toArray())));
+                getCustomMapSqlParameterSource().addValue("cluster_ids", createArrayOf("uuid", clustersById.keySet().toArray())));
 
         for (ClusterHostsAndVMs clusterDetail : dataList) {
             clustersById.get(clusterDetail.getClusterId()).setClusterHostsAndVms(clusterDetail);
@@ -391,7 +392,6 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         //The VDS clusters have been updated, but we want to keep the order, so return the original list which is
         //in the right order.
         return clusters;
-
     }
 
     @Override
