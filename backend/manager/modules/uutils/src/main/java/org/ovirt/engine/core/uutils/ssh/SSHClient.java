@@ -7,7 +7,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.KeyPair;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.naming.AuthenticationException;
@@ -23,7 +27,9 @@ import org.apache.sshd.client.keyverifier.AcceptAllServerKeyVerifier;
 import org.apache.sshd.client.keyverifier.ServerKeyVerifier;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.client.session.ClientSession.ClientSessionEvent;
+import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.kex.extension.DefaultClientKexExtensionHandler;
+import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.core.CoreModuleProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +51,7 @@ public class SSHClient implements Closeable {
     private String host;
     private int port = DEFAULT_SSH_PORT;
     private ServerKeyVerifier serverKeyVerifier = AcceptAllServerKeyVerifier.INSTANCE;
+    private final List<NamedFactory<Signature>> expectedSignatures = new ArrayList<>();
 
     /**
      * Create the client for testing using org.mockito.Mockito.
@@ -53,6 +60,11 @@ public class SSHClient implements Closeable {
      */
     SshClient createSshClient() {
         SshClient sshClient = SshClient.setUpDefaultClient();
+
+        if (isAtLeastOneExpectedSignatureSet()) {
+            sshClient.setSignatureFactories(expectedSignatures);
+        }
+
         sshClient.setKexExtensionHandler(new DefaultClientKexExtensionHandler());
         CoreModuleProperties.HEARTBEAT_INTERVAL.set(sshClient, HEARTBEAT);
         return sshClient;
@@ -272,7 +284,7 @@ public class SSHClient implements Closeable {
 
         try {
             AuthFuture afuture;
-            if (keyPair != null) {
+            if (isKeyPairSet()) {
                 session.addPublicKeyIdentity(keyPair);
             } else if (password != null) {
                 session.addPasswordIdentity(password);
@@ -303,6 +315,10 @@ public class SSHClient implements Closeable {
         }
 
         log.debug("Authenticated: '{}'", this.getDisplayHost());
+    }
+
+    protected boolean isKeyPairSet() {
+        return keyPair != null;
     }
 
     /**
@@ -472,7 +488,15 @@ public class SSHClient implements Closeable {
         log.debug("Executed: '{}'", command);
     }
 
-    public void setServerKeyVerifier(ServerKeyVerifier serverKeyVerifier) {
+    protected void setServerKeyVerifier(ServerKeyVerifier serverKeyVerifier) {
         this.serverKeyVerifier = serverKeyVerifier;
+    }
+
+    protected final void addExpectedSignatures(NamedFactory<Signature>... expectedSignatures) {
+        this.expectedSignatures.addAll(Arrays.asList(Objects.requireNonNull(expectedSignatures)));
+    }
+
+    protected boolean isAtLeastOneExpectedSignatureSet() {
+        return !expectedSignatures.isEmpty();
     }
 }
