@@ -18,11 +18,11 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainClusterPresenter;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ClusterAdditionalStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.ClusterUpgradeStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class MainClusterView extends AbstractMainWithDetailsTableView<Cluster, ClusterListModel<Void>> implements
@@ -50,7 +50,6 @@ public class MainClusterView extends AbstractMainWithDetailsTableView<Cluster, C
         getTable().addColumn(additionalStatusColumn, constants.statusCluster(), "75px"); //$NON-NLS-1$
 
         AbstractTextColumn<Cluster> nameColumn = new AbstractLinkColumn<Cluster>(new FieldUpdater<Cluster, String>() {
-
             @Override
             public void update(int index, Cluster cluster, String value) {
                 Map<String, String> parameters = new HashMap<>();
@@ -59,7 +58,6 @@ public class MainClusterView extends AbstractMainWithDetailsTableView<Cluster, C
                 getPlaceTransitionHandler().handlePlaceTransition(
                         WebAdminApplicationPlaces.clusterGeneralSubTabPlace, parameters);
             }
-
         }) {
             @Override
             public String getValue(Cluster object) {
@@ -70,9 +68,7 @@ public class MainClusterView extends AbstractMainWithDetailsTableView<Cluster, C
         getTable().addColumn(nameColumn, constants.nameCluster(), "150px"); //$NON-NLS-1$
 
         CommentColumn<Cluster> commentColumn = new CommentColumn<>();
-        getTable().addColumnWithHtmlHeader(commentColumn,
-                SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
-                "75px"); //$NON-NLS-1$
+        getTable().addColumn(commentColumn, constants.commentLabel(), "75px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             AbstractTextColumn<Cluster> dataCenterColumn = new AbstractTextColumn<Cluster>() {
@@ -121,7 +117,6 @@ public class MainClusterView extends AbstractMainWithDetailsTableView<Cluster, C
                 return object.getClusterHostsAndVms().getHosts() + ""; //$NON-NLS-1$
             }
         };
-
         getTable().addColumn(hostCountColumn, constants.hostCount(), "150px"); //$NON-NLS-1$
 
         AbstractTextColumn<Cluster> vmCountColumn = new AbstractTextColumn<Cluster>() {
@@ -133,7 +128,9 @@ public class MainClusterView extends AbstractMainWithDetailsTableView<Cluster, C
                 return object.getClusterHostsAndVms().getVms() + ""; //$NON-NLS-1$
             }
         };
-
         getTable().addColumn(vmCountColumn, constants.vmCount(), "150px"); //$NON-NLS-1$
+
+        ClusterUpgradeStatusColumn upgradeStatusColumn = new ClusterUpgradeStatusColumn();
+        getTable().addColumn(upgradeStatusColumn, constants.statusClusterUpgrade(), "150px"); //$NON-NLS-1$
     }
 }

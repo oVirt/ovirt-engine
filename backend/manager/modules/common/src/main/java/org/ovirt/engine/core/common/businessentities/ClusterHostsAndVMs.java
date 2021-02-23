@@ -10,6 +10,7 @@ public class ClusterHostsAndVMs implements Queryable {
 
     private Guid clusterId;
     private int hosts;
+    private int hostsWithUpdateAvailable;
     private int vms;
 
     @Override
@@ -33,6 +34,14 @@ public class ClusterHostsAndVMs implements Queryable {
         this.hosts = hosts;
     }
 
+    public int getHostsWithUpdateAvailable() {
+      return hostsWithUpdateAvailable;
+    }
+
+    public void setHostsWithUpdateAvailable(int hostsWithUpdateAvailable) {
+      this.hostsWithUpdateAvailable = hostsWithUpdateAvailable;
+    }
+
     public int getVms() {
         return vms;
     }
@@ -46,7 +55,8 @@ public class ClusterHostsAndVMs implements Queryable {
         return Objects.hash(
                 hosts,
                 clusterId,
-                vms
+                vms,
+                hostsWithUpdateAvailable
         );
     }
 
@@ -61,7 +71,8 @@ public class ClusterHostsAndVMs implements Queryable {
         ClusterHostsAndVMs other = (ClusterHostsAndVMs) obj;
         return hosts == other.hosts
                 && Objects.equals(clusterId, other.clusterId)
-                && vms == other.vms;
+                && vms == other.vms
+                && hostsWithUpdateAvailable == other.hostsWithUpdateAvailable;
     }
 
 }

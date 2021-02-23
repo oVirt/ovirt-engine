@@ -634,7 +634,8 @@ DROP TYPE IF EXISTS host_vm_cluster_rs CASCADE;
 CREATE TYPE host_vm_cluster_rs AS (
         cluster_id UUID,
         hosts BIGINT,
-        vms BIGINT
+        vms BIGINT,
+        hosts_with_update_available BIGINT
         );
 
 CREATE OR REPLACE FUNCTION GetHostsAndVmsForClusters (v_cluster_ids UUID [])
@@ -653,7 +654,13 @@ BEGIN
             FROM vm_static vms
             WHERE vms.cluster_id = groups.cluster_id
                 AND vms.entity_type::TEXT = 'VM'::TEXT
-            ) AS vm_count
+            ) AS vm_count, -- TODO consider replacing with computed columns
+        (
+            SELECT COUNT(DISTINCT vds_dynamic.vds_id)
+            FROM vds_dynamic JOIN vds_static ON vds_static.vds_id = vds_dynamic.vds_id
+            WHERE vds_static.cluster_id = groups.cluster_id
+                AND vds_dynamic.is_update_available
+            ) AS hosts_with_update_available
     FROM cluster groups
     WHERE groups.cluster_id = ANY (v_cluster_ids)
     GROUP BY groups.cluster_id;
