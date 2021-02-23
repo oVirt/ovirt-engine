@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
@@ -201,8 +202,10 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
             }
         });
 
-        object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getVolumeType());
-        object.getVolumeFormat().setSelectedItem(((DiskImage) object.getDisk()).getVolumeFormat());
+        if (object.getDisk().getDiskStorageType() != DiskStorageType.LUN) {
+            object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getVolumeType());
+            object.getVolumeFormat().setSelectedItem(((DiskImage) object.getDisk()).getVolumeFormat());
+        }
     }
 
     @Override
