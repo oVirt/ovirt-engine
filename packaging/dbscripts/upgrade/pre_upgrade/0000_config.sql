@@ -851,7 +851,7 @@ select fn_db_add_config_value('SetupNetworksWaitTimeoutSeconds', '20', 'general'
 select fn_db_add_config_value('KubevirtProviderSupportEnabled', 'true', 'general');
 
 -- Sku -> Version mapping for Windows Update
-select fn_db_add_config_value('SkuToAVLevel', '', '4.4');
+select fn_db_add_config_value_for_versions_up_to('SkuToAVLevel', '', '4.5');
 
 -- UUID of this oVirt instance
 select fn_db_add_config_value('InstanceId', uuid_generate_v1()::varchar, 'general');

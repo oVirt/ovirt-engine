@@ -559,8 +559,8 @@ public class LibvirtVmXmlBuilder {
         final String product = Config.getValue(ConfigValues.OriginType);
         final String manufacturer = OriginType.valueOf(product) == OriginType.OVIRT ? "oVirt" : "Red Hat";
         final String productName = OriginType.valueOf(product) == OriginType.OVIRT ? "oVirt" : "RHV";
-        boolean skuToAVLevelExists = Config.valueExists(ConfigValues.SkuToAVLevel, vm.getCompatibilityVersion().toString())
-                && StringUtils.isNotEmpty(Config.getValue(ConfigValues.SkuToAVLevel, vm.getCompatibilityVersion().toString()));
+        boolean skuToAVLevelExists = StringUtils.isNotEmpty(
+                Config.getValue(ConfigValues.SkuToAVLevel, vm.getCompatibilityVersion().toString()));
         boolean version4_4orHigher = vm.getClusterCompatibilityVersion().greaterOrEquals(Version.v4_4);
 
         writer.writeStartElement("sysinfo");
