@@ -33,7 +33,7 @@ public class BackendTemplateNicsResource extends AbstractBackendNicsResource imp
         );
         for (VmNetworkInterface entity : entities) {
             Nic nic = populate(map(entity), entity);
-            nics.getNics().add(addLinks(nic));
+            nics.getNics().add(addLinks(nic, Template.class));
         }
         return nics;
     }
