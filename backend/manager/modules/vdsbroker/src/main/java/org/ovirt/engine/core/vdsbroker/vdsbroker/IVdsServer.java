@@ -594,4 +594,6 @@ public interface IVdsServer {
     DeviceInfoReturn attachManagedBlockStorageVolume(Guid volumeId, Map<String, Object> connectionInfo);
 
     StatusOnlyReturn detachManagedBlockStorageVolume(Guid volumeId);
+
+    VDSInfoReturn getLeaseStatus(String leaseUUID, String sdUUID);
 }

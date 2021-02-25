@@ -2620,4 +2620,18 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
     }
+
+    @Override
+    public VDSInfoReturn getLeaseStatus(String leaseUUID, String sdUUID) {
+        Map<String, Object> leaseDict = new HashMap<>();
+        leaseDict.put("lease_id", leaseUUID);
+        leaseDict.put("sd_id", sdUUID);
+
+        JsonRpcRequest request =
+                new RequestBuilder("Lease.status")
+                        .withParameter("lease", leaseDict)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new VDSInfoReturn(response);
+    }
 }

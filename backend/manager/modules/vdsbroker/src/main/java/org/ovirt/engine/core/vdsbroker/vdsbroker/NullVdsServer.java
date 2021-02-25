@@ -1076,6 +1076,10 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
+    @Override public VDSInfoReturn getLeaseStatus(String leaseUUID, String sdUUID) {
+        return null;
+    }
+
     @Override
     public GlusterVolumeGlobalOptionsInfoReturn glusterVolumeGlobalOptionsGet() {
         return null;

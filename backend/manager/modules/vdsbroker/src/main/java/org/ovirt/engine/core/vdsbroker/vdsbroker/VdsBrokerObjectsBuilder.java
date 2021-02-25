@@ -96,6 +96,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.LeaseJobStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -2734,6 +2735,21 @@ public class VdsBrokerObjectsBuilder {
     }
 
     public LeaseStatus buildLeaseStatus(Map<String, Object> struct) {
-        return new LeaseStatus(CollectionUtils.emptyListToNull(extractList(struct, "owners")));
+        List<Integer> owners = CollectionUtils.emptyListToNull(extractList(struct, "owners"));
+        LeaseStatus leaseStatus = new LeaseStatus(owners);
+
+        if (struct.get("metadata") != null) {
+            Map<String, Object> metadata = (Map<String, Object>) struct.get("metadata");
+            if (metadata != null) {
+                int generation = (Integer) metadata.computeIfAbsent("generation", key -> -1);
+                leaseStatus.setGeneration(generation);
+            }
+            if (metadata != null && metadata.get("job_status") != null) {
+                LeaseJobStatus jobStatus = LeaseJobStatus.forValue((String) metadata.get("job_status"));
+                leaseStatus.setJobStatus(jobStatus);
+            }
+        }
+
+        return leaseStatus;
     }
 }
