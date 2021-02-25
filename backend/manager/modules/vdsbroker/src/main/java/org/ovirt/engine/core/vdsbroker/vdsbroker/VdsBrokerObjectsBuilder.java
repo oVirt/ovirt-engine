@@ -451,6 +451,14 @@ public class VdsBrokerObjectsBuilder {
         return null;
     }
 
+    public String getTpmDataHash(Map<String, Object> struct) {
+        return (String) struct.get(VdsProperties.tpmHash);
+    }
+
+    public String getNvramDataHash(Map<String, Object> struct) {
+        return (String) struct.get(VdsProperties.nvramHash);
+    }
+
     public VmDynamic buildVMDynamicData(Map<String, Object> struct, VDS host) {
         VmDynamic vmdynamic = new VmDynamic();
         updateVMDynamicData(vmdynamic, struct, host);

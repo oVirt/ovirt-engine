@@ -60,8 +60,8 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
             }
 
             getVmsMonitoring().perform(fetchedVms, fetchTime, vdsManager, isStatistics());
-            Stream<VdsmVm> vdsmVmsToMonitor = filterVmsToDevicesMonitoring(fetchedVms);
-            processDevices(vdsmVmsToMonitor, fetchTime);
+            processDevices(filterVmsToDevicesMonitoring(fetchedVms), fetchTime);
+            processExternalData(filterVmsToDevicesMonitoring(fetchedVms));
         }
     }
 
@@ -172,5 +172,11 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
         return resourceManager.runVdsCommand(
                 VDSCommandType.GetAllVmStats,
                 new VdsIdVDSCommandParametersBase(vdsManager.getVdsId()));
+    }
+
+    private void processExternalData(Stream<VdsmVm> vms) {
+        VmExternalDataMonitoring dataMonitoring = getVmExternalDataMonitoring();
+        vms.forEach(vm -> dataMonitoring.updateVm(vm.getId(), vdsManager.getVdsId(), vm.getTpmDataHash(),
+                vm.getNvramDataHash()));
     }
 }

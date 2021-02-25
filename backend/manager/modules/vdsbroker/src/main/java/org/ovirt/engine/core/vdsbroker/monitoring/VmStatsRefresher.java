@@ -24,6 +24,8 @@ public abstract class VmStatsRefresher {
     private Instance<VmsMonitoring> vmsMonitoring;
     @Inject
     private Instance<VmDevicesMonitoring> vmDevicesMonitoring;
+    @Inject
+    private Instance<VmExternalDataMonitoring> vmExternalDataMonitoring;
 
     public VmStatsRefresher(VdsManager vdsManager) {
         this.vdsManager = vdsManager;
@@ -53,5 +55,9 @@ public abstract class VmStatsRefresher {
 
     protected VmDevicesMonitoring getVmDevicesMonitoring() {
         return vmDevicesMonitoring.get();
+    }
+
+    protected VmExternalDataMonitoring getVmExternalDataMonitoring() {
+        return vmExternalDataMonitoring.get();
     }
 }

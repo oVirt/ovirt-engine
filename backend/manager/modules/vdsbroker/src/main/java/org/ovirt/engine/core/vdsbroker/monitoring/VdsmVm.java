@@ -27,6 +27,8 @@ public class VdsmVm {
     /** Timestamp on the dynamic data we get from VDSM */
     private Double timestamp;
     private String devicesHash;
+    private String tpmDataHash;
+    private String nvramDataHash;
 
     // A map represents VM's LUN disks (LUN ID -> LUNs object)
     private Map<String, LUNs> lunsMap;
@@ -160,6 +162,24 @@ public class VdsmVm {
 
     public VdsmVm setDevicesHash(String devicesHash) {
         this.devicesHash = devicesHash;
+        return this;
+    }
+
+    public String getTpmDataHash() {
+        return tpmDataHash;
+    }
+
+    public VdsmVm setTpmDataHash(String tpmDataHash) {
+        this.tpmDataHash = tpmDataHash;
+        return this;
+    }
+
+    public String getNvramDataHash() {
+        return nvramDataHash;
+    }
+
+    public VdsmVm setNvramDataHash(String nvramDataHash) {
+        this.nvramDataHash = nvramDataHash;
         return this;
     }
 }

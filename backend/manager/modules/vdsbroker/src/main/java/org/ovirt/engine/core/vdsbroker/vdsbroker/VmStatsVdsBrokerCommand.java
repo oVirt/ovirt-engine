@@ -35,6 +35,8 @@ public abstract class VmStatsVdsBrokerCommand<P extends VdsIdVDSCommandParameter
         return new VdsmVm(vdsBrokerObjectsBuilder.getVdsmCallTimestamp(struct))
                 .setVmDynamic(vmDynamic)
                 .setDevicesHash(vdsBrokerObjectsBuilder.getVmDevicesHash(struct))
+                .setTpmDataHash(vdsBrokerObjectsBuilder.getTpmDataHash(struct))
+                .setNvramDataHash(vdsBrokerObjectsBuilder.getNvramDataHash(struct))
                 .setVmStatistics(vdsBrokerObjectsBuilder.buildVMStatisticsData(struct))
                 .setVmJobs(vdsBrokerObjectsBuilder.buildVmJobsData(struct))
                 .setInterfaceStatistics(vdsBrokerObjectsBuilder.buildInterfaceStatisticsData(struct))
