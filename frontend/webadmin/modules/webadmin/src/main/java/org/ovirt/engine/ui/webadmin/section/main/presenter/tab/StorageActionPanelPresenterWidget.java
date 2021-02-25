@@ -73,6 +73,12 @@ public class StorageActionPanelPresenterWidget extends ActionPanelPresenterWidge
                 return getModel().getScanDisksCommand();
             }
         });
+        addMenuListItem(new WebAdminButtonDefinition<Void, StorageDomain>(constants.selectStorageDomainAsMaster()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getSwitchMasterCommand();
+            }
+        });
     }
 
     public WebAdminButtonDefinition<Void, StorageDomain> getNewButtonDefinition() {

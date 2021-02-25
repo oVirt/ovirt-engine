@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
+import org.ovirt.engine.core.common.action.SwitchMasterStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -143,6 +144,16 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         scanDisksCommand = value;
     }
 
+    private UICommand switchMasterCommand;
+
+    public UICommand getSwitchMasterCommand() {
+        return switchMasterCommand;
+    }
+
+    private void setSwitchMasterCommand(UICommand value) {
+        switchMasterCommand = value;
+    }
+
     @Inject
     public StorageListModel(final StorageGeneralModel storageGeneralModel,
             final StorageDataCenterListModel storageDataCenterListModel,
@@ -197,6 +208,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         setUpdateOvfsCommand(new UICommand("UpdateOvfs", this)); //$NON-NLS-1$
         setDestroyCommand(new UICommand("Destroy", this)); //$NON-NLS-1$
         setScanDisksCommand(new UICommand("ScanDisks", this)); //$NON-NLS-1$
+        setSwitchMasterCommand(new UICommand("SwitchMaster", this)); //$NON-NLS-1$
 
         updateActionAvailability();
 
@@ -695,6 +707,15 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         }
     }
 
+    private void switchMaster() {
+        StorageDomain storageDomain = getSelectedItem();
+        if (storageDomain != null) {
+            Frontend.getInstance().runAction(ActionType.SwitchMasterStorageDomain,
+                    new SwitchMasterStorageDomainCommandParameters(storageDomain.getStoragePoolId(),
+                            storageDomain.getId()));
+        }
+    }
+
     private void onSave() {
         storageNameValidation();
     }
@@ -948,6 +969,15 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 && item.getStatus() == StorageDomainStatus.Active
                 && item.getStorageDomainType().isDataDomain());
 
+        getSwitchMasterCommand().setIsExecutionAllowed(item != null && items.size() == 1
+                // TODO: Remove after BZ 1911597 is resolved
+                && !items.get(0).getStorageType().equals(StorageType.GLUSTERFS)
+                && !items.get(0).getStorageType().isOpenStackDomain()
+                && !items.get(0).getStorageType().isManagedBlockStorage()
+                && item.getStatus() == StorageDomainStatus.Active
+                && item.getStorageDomainType().isDataDomain()
+                && !item.isBackup());
+
         getUpdateOvfsCommand().setIsExecutionAllowed(item != null && items.size() == 1
                 && item.getStorageDomainType().isDataDomain()
                 && item.getStatus() == StorageDomainStatus.Active);
@@ -956,6 +986,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         getDestroyCommand().setIsAvailable(true);
         getScanDisksCommand().setIsAvailable(true);
         getUpdateOvfsCommand().setIsAvailable(true);
+        getSwitchMasterCommand().setIsAvailable(true);
 
     }
 
@@ -997,6 +1028,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             destroy();
         } else if (command == getScanDisksCommand()) {
             scanDisks();
+        } else if (command == getSwitchMasterCommand()) {
+            switchMaster();
         } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             onSave();
         } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$

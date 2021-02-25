@@ -1403,6 +1403,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String scanDisksStorage();
 
+    String selectStorageDomainAsMaster();
+
     String statusStorage();
 
     String statusIconStorage();
