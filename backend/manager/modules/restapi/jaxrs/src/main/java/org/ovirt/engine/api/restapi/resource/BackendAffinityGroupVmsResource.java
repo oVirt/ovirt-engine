@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import javax.ws.rs.core.Response;
 
+import org.jboss.resteasy.specimpl.BuiltResponse;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.AffinityGroupVmResource;
@@ -36,7 +37,8 @@ public class BackendAffinityGroupVmsResource
 
     @Override
     public Response add(Vm vm) {
-        return editAffinityGroup(group -> group.getVmIds().add(asGuid(vm.getId())));
+        Response response = editAffinityGroup(group -> group.getVmIds().add(asGuid(vm.getId())));
+        return BuiltResponse.fromResponse(response).entity(vm).build();
     }
 
     @Override
