@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
@@ -42,9 +43,22 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
     private VdsStaticDao vdsStaticDao;
     @Inject
     private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private VdsCommandsHelper vdsCommandsHelper;
 
     public CopyDataCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        if (getParameters().getVdsId() != null) {
+            setVdsId(getParameters().getVdsId());
+        } else {
+            setVdsId(vdsCommandsHelper.getHostForExecution(getParameters().getStoragePoolId()));
+            getParameters().setVdsRunningOn(getVdsId());
+        }
     }
 
     @Override
@@ -56,7 +70,7 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
                         getParameters().getDstInfo(),
                         getParameters().isCollapse(),
                         getParameters().isCopyBitmaps());
-        parameters.setVdsId(getParameters().getVdsId());
+        parameters.setVdsId(getVdsId());
 
         logExecutionHost();
 
@@ -134,7 +148,7 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
     private void logExecutionHost() {
         AuditLogable loggable = new AuditLogableImpl();
         VdsmImageLocationInfo destInfo = (VdsmImageLocationInfo) getParameters().getDstInfo();
-        String hostName = vdsStaticDao.get(getParameters().getVdsId()).getHostName();
+        String hostName = vdsStaticDao.get(getVdsId()).getHostName();
         String domainName = storageDomainStaticDao.get(destInfo.getStorageDomainId()).getStorageName();
 
         loggable.setVdsId(getParameters().getVdsId());
