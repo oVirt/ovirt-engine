@@ -135,12 +135,11 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
         passwordColumn.setFieldUpdater((index, object, value) -> ((HostDetailModel) object.getEntity()).setPassword(value));
 
         hostsTable.addColumn(new AbstractEntityModelTextColumn<HostDetailModel>() {
-            //TODO consider using ssh public key instead of fingerprints
             @Override
             public String getText(HostDetailModel hostModel) {
-                return hostModel.getFingerprint();
+                return hostModel.getSshPublicKey();
             }
-        }, constants.hostsPopupFingerprint(), "300px"); //$NON-NLS-1$
+        }, constants.hostsPopupSshPublicKey(), "300px"); //$NON-NLS-1$
 
     }
 

@@ -44,7 +44,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private static final Guid server_id1 = new Guid("85c42b0d-c2b7-424a-ae72-5174c25da40b");
     private static final Guid server_id2 = new Guid("6a697a38-cc82-4399-a6fb-0ec79c0ff1d5");
     private static final Guid server_id3 = new Guid("7a797a38-cb32-4399-b6fb-21c79c03a1d6");
-    private static final String serverKeyFingerprint = "fingerprint";
+    private static final String serverSshPublicKey = "test-pk";
 
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;
@@ -106,15 +106,15 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.GlusterServersList), any())).thenReturn(returnValue);
         QueryReturnValue vdcReturnValue = getVdcReturnValue();
         when(backendInternal.runInternalQuery(
-                eq(QueryType.GetServerSSHKeyFingerprint), any(), any())).thenReturn(vdcReturnValue);
+                eq(QueryType.GetServerSSHPublicKey), any(), any())).thenReturn(vdcReturnValue);
         doReturn(params.getClusterId()).when(getQueryParameters()).getClusterId();
-        doReturn(true).when(getQueryParameters()).isServerKeyFingerprintRequired();
+        doReturn(true).when(getQueryParameters()).isServerPublicKeyRequired();
     }
 
     private QueryReturnValue getVdcReturnValue() {
         QueryReturnValue retValue = new QueryReturnValue();
         retValue.setSucceeded(true);
-        retValue.setReturnValue(serverKeyFingerprint);
+        retValue.setReturnValue(serverSshPublicKey);
         return retValue;
     }
 
@@ -127,7 +127,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
 
     private Map<String, String> getAddedServers() {
         Map<String, String> servers = new HashMap<>();
-        servers.put(TEST_SERVER3, serverKeyFingerprint);
+        servers.put(TEST_SERVER3, serverSshPublicKey);
         return servers;
     }
 

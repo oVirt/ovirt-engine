@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -425,8 +426,10 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
                 hostsModel.setMessage(ConstantsManager.getInstance().getConstants().emptyNewGlusterHosts());
             } else {
                 ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<>();
-                for (Map.Entry<String, String> host : hostMap.entrySet()) {
-                    HostDetailModel hostModel = new HostDetailModel(host.getKey(), host.getValue());
+                for (Map.Entry<String, Pair<String, String>> host : hostMap.entrySet()) {
+                    String sshPublicKey = host.getValue().getSecond();
+
+                    HostDetailModel hostModel = new HostDetailModel(host.getKey(), sshPublicKey);
                     hostModel.setName(host.getKey());
                     hostModel.setPassword("");//$NON-NLS-1$
                     EntityModel<HostDetailModel> entityModel = new EntityModel<>(hostModel);
@@ -456,7 +459,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
             VDS host = new VDS();
             host.setVdsName(hostDetailModel.getName());
             host.setHostName(hostDetailModel.getAddress());
-            host.setSshKeyFingerprint(hostDetailModel.getFingerprint());
+            host.setSshPublicKey(hostDetailModel.getSshPublicKey());
             host.setPort(54321);
             host.setSshPort(22); // TODO: get from UI, till than using defaults.
             host.setSshUsername("root"); //$NON-NLS-1$

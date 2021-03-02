@@ -201,7 +201,7 @@ public interface UIMessages extends Messages {
 
     String importClusterHostPasswordEmpty(String address);
 
-    String importClusterHostFingerprintEmpty(String address);
+    String importClusterHostSshPublicKeyEmpty(String address);
 
     String unreachableGlusterHosts(List<String> hosts);
 
@@ -427,7 +427,7 @@ public interface UIMessages extends Messages {
 
     String biosTypeSupportedForX86Only();
 
-    String glusterPeerNotMatchingHostFingerprint(String hostAddress, String glusterPeerAddress);
+    String glusterPeerNotMatchingHostSshPublicKey(String hostAddress, String glusterPeerAddress);
 
     String noTemplateNameDuplicatesAllowed();
 

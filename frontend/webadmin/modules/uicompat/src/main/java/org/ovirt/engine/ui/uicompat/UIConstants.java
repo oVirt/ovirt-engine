@@ -1507,21 +1507,15 @@ public interface UIConstants extends Constants {
 
     String errorTemplateCannotBeFoundMessage();
 
-    String loadingFingerprint();
-
     String loadingPublicKey();
 
-    String errorLoadingFingerprint();
+    String errorLoadingHostSshPublicKey();
 
     String errorLoadingPublicKey();
 
-    String successLoadingFingerprint();
-
     String successLoadingPublicKey();
 
-    String fingerprintNotVerified();
-
-    String fingerprintAddressError();
+    String sshPublicKeyNotVerified();
 
     String publicKeyAddressError();
 

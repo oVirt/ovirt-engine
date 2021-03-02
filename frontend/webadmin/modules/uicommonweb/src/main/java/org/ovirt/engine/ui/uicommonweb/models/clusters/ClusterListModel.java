@@ -848,28 +848,28 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         AsyncQuery<QueryReturnValue> aQuery = new AsyncQuery<>(result -> {
             getWindow().stopProgress();
 
-            QueryReturnValue returnValue = result;
-            if (returnValue == null) {
+            if (result == null) {
                 onEmptyGlusterHosts(clusterModel);
                 return;
-            } else if (!returnValue.getSucceeded()) {
+            } else if (!result.getSucceeded()) {
                 clusterModel.setMessage(Frontend.getInstance().getAppErrorsTranslator()
-                        .translateErrorTextSingle(returnValue.getExceptionString()));
+                        .translateErrorTextSingle(result.getExceptionString()));
                 return;
             }
 
-            Map<String, String> hostMap = returnValue.getReturnValue();
+            Map<String, String> hostMap = result.getReturnValue();
             if (hostMap == null) {
                 onEmptyGlusterHosts(clusterModel);
                 return;
             }
             if (hostMap.containsValue(null) || hostMap.containsValue("")){ //$NON-NLS-1$
-                onGlusterHostsWithoutFingerprint(hostMap, clusterModel);
+                onGlusterHostsWithoutPublicKey(hostMap, clusterModel);
                 return;
             }
             ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<>();
             for (Map.Entry<String, String> host : hostMap.entrySet()) {
-                HostDetailModel hostModel = new HostDetailModel(host.getKey(), host.getValue());
+                String sshPublicKey = host.getValue();
+                HostDetailModel hostModel = new HostDetailModel(host.getKey(), sshPublicKey);
                 hostModel.setName(host.getKey());
                 hostModel.setPassword("");//$NON-NLS-1$
                 EntityModel<HostDetailModel> entityModel = new EntityModel<>(hostModel);
@@ -881,17 +881,19 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         AsyncDataProvider.getInstance().getGlusterHosts(aQuery,
                 clusterModel.getGlusterHostAddress().getEntity(),
                 clusterModel.getGlusterHostPassword().getEntity(),
-                clusterModel.getGlusterHostFingerprint().getEntity());
+                clusterModel.getGlusterHostSshPublicKey().getEntity());
     }
 
     private void onEmptyGlusterHosts(ClusterModel clusterModel) {
         clusterModel.setMessage(ConstantsManager.getInstance().getConstants().emptyGlusterHosts());
     }
 
-    private void onGlusterHostsWithoutFingerprint(Map<String, String> hostMap, ClusterModel clusterModel) {
+    private void onGlusterHostsWithoutPublicKey(Map<String, String> hostMap, ClusterModel clusterModel) {
         ArrayList<String> problematicHosts = new ArrayList<>();
         for (Map.Entry<String, String> host : hostMap.entrySet()) {
-            if (host.getValue() == null || host.getValue().equals("")) { //$NON-NLS-1$
+
+            if (host.getValue() == null
+                    || host.getValue().equals("")) { //$NON-NLS-1$
                 problematicHosts.add(host.getKey());
             }
         }
@@ -965,7 +967,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             VDS host = new VDS();
             host.setVdsName(hostDetailModel.getName());
             host.setHostName(hostDetailModel.getAddress());
-            host.setSshKeyFingerprint(hostDetailModel.getFingerprint());
+            host.setSshPublicKey(hostDetailModel.getSshPublicKey());
             host.setPort(54321);
             host.setSshPort(22); // TODO: get from UI, till then using defaults.
             host.setSshUsername("root"); //$NON-NLS-1$

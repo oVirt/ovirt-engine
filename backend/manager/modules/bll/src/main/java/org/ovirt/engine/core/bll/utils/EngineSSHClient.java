@@ -67,11 +67,6 @@ public class EngineSSHClient extends SSHClient {
         }
     }
 
-    public String getHostFingerprint() {
-        return OpenSSHUtils.getKeyFingerprint(hostPublicKeyHolder.get(),
-                Config.getValue(ConfigValues.SSHDefaultKeyDigest));
-    }
-
     public String getHostPublicKey() {
         return OpenSSHUtils.getKeyString(hostPublicKeyHolder.get(), "");
     }

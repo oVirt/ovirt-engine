@@ -192,20 +192,17 @@ public class GlusterUtil {
      *            Privilege username to authenticate with server
      * @param password
      *            password of the server
-     * @param fingerprint
-     *            pre-approved fingerprint of the server. This is validated against the server before attempting
-     *            authentication using the root password.
-     * @return Map of peers of the server with key = peer name and value = SSH fingerprint of the peer
+     * @return Map of peers of the server with key = peer name and value = SSH public key of the peer
      * @throws AuthenticationException
      *             If SSH authentication with given root password fails
      */
-    public Map<String, String> getPeers(String server, String username, String password, String fingerprint)
+    public Map<String, String> getPeersWithSshPublicKeys(String server, String username, String password)
             throws AuthenticationException, IOException {
         try (final SSHClient client = getSSHClient()) {
             connect(client, server, username, password);
             authenticate(client);
             String serversXml = executePeerStatusCommand(client);
-            return getFingerprints(extractServers(serversXml));
+            return getPublicKeys(extractServers(serversXml));
         }
     }
 
@@ -316,20 +313,22 @@ public class GlusterUtil {
         return servers;
     }
 
-    protected Map<String, String> getFingerprints(Set<String> servers) {
-        QueryReturnValue returnValue;
-        Map<String, String> fingerprints = new HashMap<>();
+    protected Map<String, String> getPublicKeys(Set<String> servers) {
+        QueryReturnValue publicKeyReturnValue;
+        Map<String, String> publicKeys = new HashMap<>();
         for (String server : servers) {
-            returnValue = backend.
-                    runInternalQuery(QueryType.GetServerSSHKeyFingerprint,
-                            new ServerParameters(server), null);
-            if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
-                fingerprints.put(server, returnValue.getReturnValue().toString());
-            } else {
-                fingerprints.put(server, null);
+            publicKeyReturnValue = backend.runInternalQuery(QueryType.GetServerSSHPublicKey,
+                    new ServerParameters(server));
+
+            String publicKey = null;
+            if (publicKeyReturnValue != null && publicKeyReturnValue.getSucceeded()
+                    && publicKeyReturnValue.getReturnValue() != null) {
+                publicKey = publicKeyReturnValue.getReturnValue().toString();
             }
+            publicKeys.put(server, publicKey != null ? publicKey : "");
+
         }
-        return fingerprints;
+        return publicKeys;
     }
 
     protected Set<String> extractServers(String serversXml) {

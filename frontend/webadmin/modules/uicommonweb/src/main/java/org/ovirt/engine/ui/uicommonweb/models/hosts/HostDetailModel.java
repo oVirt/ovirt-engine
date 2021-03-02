@@ -9,17 +9,18 @@ public class HostDetailModel implements Serializable {
     private String name;
     private String address;
     private String password;
-    private String fingerprint;
     private String glusterPeerAddress;
-    private String glusterPeerAddressFingerprint;
+    private String glusterPeerAddressSSHPublicKey;
+    private String sshPublicKey;
+
     public HostDetailModel() {
 
     }
 
-    public HostDetailModel(String address, String shaFingerPrint) {
+    public HostDetailModel(String address, String sshPublicKeyPem) {
         setAddress(address);
         setGlusterPeerAddress(address);
-        setFingerprint(shaFingerPrint);
+        setSshPublicKey(sshPublicKeyPem);
     }
 
     public String getName() {
@@ -46,14 +47,6 @@ public class HostDetailModel implements Serializable {
         this.password = password;
     }
 
-    public String getFingerprint() {
-        return fingerprint;
-    }
-
-    public void setFingerprint(String fingerprint) {
-        this.fingerprint = fingerprint;
-    }
-
     public String getGlusterPeerAddress() {
         return glusterPeerAddress;
     }
@@ -62,12 +55,19 @@ public class HostDetailModel implements Serializable {
         this.glusterPeerAddress = glusterPeerAddress;
     }
 
-    public String getGlusterPeerAddressFingerprint() {
-        return glusterPeerAddressFingerprint;
+    public void setSshPublicKey(String sshPublicKey) {
+        this.sshPublicKey = sshPublicKey;
     }
 
-    public void setGlusterPeerAddressFingerprint(String glusterPeerAddressFingerprint) {
-        this.glusterPeerAddressFingerprint = glusterPeerAddressFingerprint;
+    public String getSshPublicKey() {
+        return sshPublicKey;
     }
 
+    public void setGlusterPeerAddressSSHPublicKey(String glusterPeerAddressSSHPublicKey) {
+        this.glusterPeerAddressSSHPublicKey = glusterPeerAddressSSHPublicKey;
+    }
+
+    public String getGlusterPeerAddressSSHPublicKey() {
+        return glusterPeerAddressSSHPublicKey;
+    }
 }

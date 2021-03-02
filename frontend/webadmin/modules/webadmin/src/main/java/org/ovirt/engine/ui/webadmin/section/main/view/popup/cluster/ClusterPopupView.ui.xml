@@ -49,7 +49,7 @@
             margin: 10px 5px;
         }
 
-        .fingerprintLabel textarea {
+        .publicKeyLabel textarea {
             height: 35px;
         }
 
@@ -272,7 +272,7 @@
                                     <ge:StringEntityModelTextBoxEditor ui:field="glusterHostAddressEditor" label="{constants.hostPopupHostAddressLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextAreaLabelEditor addStyleNames="{style.fingerprintLabel}" ui:field="glusterHostFingerprintEditor" label="{constants.hostPopupHostFingerprintLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
+                                    <ge:StringEntityModelTextAreaLabelEditor addStyleNames="{style.publicKeyLabel}" ui:field="glusterHostSshPublicKeyEditor" label="{constants.hostPopupHostPublicKeyLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
                                 </b:Row>
                                 <b:Row>
                                     <ge:StringEntityModelPasswordBoxEditor ui:field="glusterHostPasswordEditor" label="{constants.hostPopupPasswordLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />

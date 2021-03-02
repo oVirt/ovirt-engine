@@ -1395,13 +1395,6 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getHostFingerprint(AsyncQuery<String> aQuery, String hostAddress, Integer hostPort) {
-        aQuery.converterCallback = new StringConverter();
-        Frontend.getInstance().runQuery(QueryType.GetServerSSHKeyFingerprint,
-                new ServerParameters(hostAddress, hostPort),
-                aQuery);
-    }
-
     public void getHostSshPublicKey(AsyncQuery<String> aQuery, String hostAddress, Integer hostPort) {
         aQuery.converterCallback = new StringConverter();
         Frontend.getInstance().runQuery(QueryType.GetServerSSHPublicKey,
@@ -1414,9 +1407,9 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetEngineSSHPublicKey, new QueryParametersBase(), aQuery);
     }
 
-    public void getGlusterHosts(AsyncQuery aQuery, String hostAddress, String rootPassword, String fingerprint) {
+    public void getGlusterHosts(AsyncQuery aQuery, String hostAddress, String rootPassword, String sshPublicKey) {
         GlusterServersQueryParameters parameters = new GlusterServersQueryParameters(hostAddress, rootPassword);
-        parameters.setFingerprint(fingerprint);
+        parameters.setSshPublicKey(sshPublicKey);
         Frontend.getInstance().runQuery(QueryType.GetGlusterServersForImport,
                 parameters,
                 aQuery);
@@ -1440,13 +1433,14 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getGlusterHostsNewlyAdded(AsyncQuery<Map<String, String>> aQuery,
+    public void getGlusterHostsNewlyAdded(AsyncQuery<Map<String, Pair<String, String>>> aQuery,
             Guid clusterId,
-            boolean isFingerprintRequired) {
+            boolean isSshPublicKeyRequired) {
         aQuery.converterCallback = new CastingConverter<>();
-        Frontend.getInstance().runQuery(QueryType.GetAddedGlusterServers,
-                new AddedGlusterServersParameters(clusterId, isFingerprintRequired),
-                aQuery);
+        Frontend.getInstance()
+                .runQuery(QueryType.GetAddedGlusterServers,
+                        new AddedGlusterServersParameters(clusterId, isSshPublicKeyRequired),
+                        aQuery);
     }
 
     public void isAnyHostUpInCluster(AsyncQuery<Boolean> aQuery, String clusterName) {

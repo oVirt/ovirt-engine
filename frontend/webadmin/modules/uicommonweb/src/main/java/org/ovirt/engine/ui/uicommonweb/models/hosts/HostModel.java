@@ -156,16 +156,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         privatePkSection = value;
     }
 
-    private EntityModel<String> privateFetchSshFingerprint;
-
-    public EntityModel<String> getFetchSshFingerprint() {
-        return privateFetchSshFingerprint;
-    }
-
-    private void setFetchSshFingerprint(EntityModel<String> value) {
-        privateFetchSshFingerprint = value;
-    }
-
     private EntityModel<String> privateFetchSshPublicKey;
 
     public EntityModel<String> getFetchSshPublicKey(){
@@ -808,8 +798,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getUserName().setEntity(RootUserName);
         // TODO: remove setIsChangeable when configured ssh username is enabled
         getUserName().setIsChangeable(false);
-        setFetchSshFingerprint(new EntityModel<String>());
-        getFetchSshFingerprint().setEntity(""); //$NON-NLS-1$
         setFetchSshPublicKey(new EntityModel<String>());
         getFetchSshPublicKey().setEntity(""); //$NON-NLS-1$
         setUserPassword(new EntityModel<String>());
@@ -1220,7 +1208,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getComment().setEntity(vds.getComment());
         getKernelCmdlineBootUuid().setEntity(vds.getBootUuid());
         getHost().setEntity(vds.getHostName());
-        getFetchSshFingerprint().setEntity(vds.getSshKeyFingerprint());
         getFetchSshPublicKey().setEntity(vds.getSshPublicKey());
         getUserName().setEntity(vds.getSshUsername());
         getAuthSshPort().setEntity(vds.getSshPort());

@@ -24,9 +24,9 @@ public class MultipleHostsModel extends Model {
     private UICommand applyPasswordCommand;
 
     public MultipleHostsModel() {
-        setHosts(new ListModel<EntityModel<HostDetailModel>>());
-        setUseCommonPassword(new EntityModel<Boolean>());
-        setCommonPassword(new EntityModel<String>());
+        setHosts(new ListModel<>());
+        setUseCommonPassword(new EntityModel<>());
+        setCommonPassword(new EntityModel<>());
         setApplyPasswordCommand(new UICommand("ApplyPassword", this)); //$NON-NLS-1$
         setConfigureFirewall(true);
 
@@ -116,22 +116,21 @@ public class MultipleHostsModel extends Model {
                         .importClusterHostPasswordEmpty(host.getAddress()));
                 isValid = false;
                 break;
-            } else if (host.getFingerprint().trim().length() == 0) {
+            } else if (host.getSshPublicKey().trim().length() == 0) {
                 setMessage(ConstantsManager.getInstance()
                         .getMessages()
-                        .importClusterHostFingerprintEmpty(host.getAddress()));
+                        .importClusterHostSshPublicKeyEmpty(host.getAddress()));
                 isValid = false;
                 break;
             } else if (!host.getAddress().equals(host.getGlusterPeerAddress())) {
-                AsyncQuery<String> aQuery = new AsyncQuery<>(fingerprint -> {
-                    host.setGlusterPeerAddressFingerprint(fingerprint);
-                });
+                AsyncQuery<String> pkQuery = new AsyncQuery<>(host::setGlusterPeerAddressSSHPublicKey);
                 AsyncDataProvider.getInstance()
-                        .getHostFingerprint(aQuery, host.getAddress(), VdsStatic.DEFAULT_SSH_PORT);
-                if (!host.getFingerprint().equals(host.getGlusterPeerAddressFingerprint())) {
+                        .getHostSshPublicKey(pkQuery, host.getAddress(), VdsStatic.DEFAULT_SSH_PORT);
+
+                if (!host.getSshPublicKey().equals(host.getGlusterPeerAddressSSHPublicKey())) {
                     setMessage(ConstantsManager.getInstance()
                             .getMessages()
-                            .glusterPeerNotMatchingHostFingerprint(host.getAddress(),
+                            .glusterPeerNotMatchingHostSshPublicKey(host.getAddress(),
                                     host.getGlusterPeerAddress()));
                     isValid = false;
                     break;

@@ -40,8 +40,10 @@ public class GlusterUtilTest {
     private static final String USER = "root";
     private static final String PASSWORD = "password";
     private static final String WRONG_PASSWORD = "wrong_password";
-    private static final String FINGER_PRINT1 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:31";
-    private static final String FINGER_PRINT2 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:32";
+    private static final String SSH_PK_1 =
+            "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDCyjmpkot5oNiMOElWAXUTwiItYDegil5efQHp4fTPuGsm3BBJbfVXMyCVXR8aVV+/B2keDvCUaClXq18cYzMFLbMschSBqmQfnveDdFg59hGxIOV4VzAAK7p2az/jnPWKqtNgZvxTe7PNsJ/2bCAIvlpCH5/GlXiuDjWJNBrOaO9RyeHz79KYEggq2LdDmMepioCdzo3xObVXO5DLRYFz2J7zRyqJbshLvtsq/fmdBSmQEjUqu5gEmoqyajgBpxpkCdLza/uP1bmVwmCmYGH14xybfY8ocmODx52LUY2BYjFNGTQJyU+QmpDB3PlU8HJJs/n6VlpL7agpCEqVEX+XXc3i1qp5Wte2EGP4/U3r73onkl2UkxW0oMm/Fgi9G7dhJTfDVTbsm6caTUpx+l2+nkrIY/DS4g/srFcCF2UEv7xgTw5BWgR2KASIE9yYcgM1Q1AMB9u5MAcB28T+dCr3zPF903y9CeNsAbm9edG/+gFIx/0A15EvX4ld4rS1qnE=";
+    private static final String SSH_PK_2 =
+            "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMGxcFCjUP16rF7Ovnxx0uBvO0jo0MHzaw3worb9pd1uIW6ZFhadQ/SKrzowTwIuWcmWH4uE0DTBh1//9GPUeHo=";
     private static final String OUTPUT_XML =
             "<cliOutput><peerStatus><peer><uuid>85c42b0d-c2b7-424a-ae72-5174c25da40b</uuid><hostname>testserver1</hostname><connected>1</connected><state>3</state></peer>"
                     +
@@ -70,20 +72,20 @@ public class GlusterUtilTest {
     }
 
     @Test
-    public void testGetPeersWithFingerprint() throws AuthenticationException, IOException {
+    public void testGetPeersWithPublicKey() throws AuthenticationException, IOException {
         Map<String, String> expectedMap = new HashMap<>();
-        expectedMap.put(SERVER_NAME1, FINGER_PRINT1);
-        expectedMap.put(SERVER_NAME2, FINGER_PRINT2);
+        expectedMap.put(SERVER_NAME1, SSH_PK_1);
+        expectedMap.put(SERVER_NAME2, SSH_PK_2);
         doReturn(client).when(glusterUtil).getSSHClient();
         doNothing().when(glusterUtil).connect(client, SERVER_NAME1, USER, PASSWORD);
         doNothing().when(glusterUtil).authenticate(client);
-        doReturn(expectedMap).when(glusterUtil).getFingerprints(any());
-        Map<String, String> peers = glusterUtil.getPeers(SERVER_NAME1, USER, PASSWORD, FINGER_PRINT1);
+        doReturn(expectedMap).when(glusterUtil).getPublicKeys(any());
+        Map<String, String> peers = glusterUtil.getPeersWithSshPublicKeys(SERVER_NAME1, USER, PASSWORD);
         assertNotNull(peers);
         peers.containsKey(SERVER_NAME1);
-        assertEquals(FINGER_PRINT1, peers.get(SERVER_NAME1));
+        assertEquals(SSH_PK_1, peers.get(SERVER_NAME1));
         peers.containsKey(SERVER_NAME2);
-        assertEquals(FINGER_PRINT2, peers.get(SERVER_NAME2));
+        assertEquals(SSH_PK_2, peers.get(SERVER_NAME2));
     }
 
     @Test

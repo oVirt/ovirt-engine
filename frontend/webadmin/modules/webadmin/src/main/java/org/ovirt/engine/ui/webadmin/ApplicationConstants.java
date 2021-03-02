@@ -506,8 +506,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostPopupHostAddressLabelHelpMessage();
 
-    String hostPopupHostFingerprintLabel();
-
     String hostPopupHostPublicKeyLabel();
 
     String hostPopupUsernameLabel();
@@ -932,8 +930,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String clusterImportGlusterConfigurationLabel();
 
     String clusterImportGlusterConfigurationExplanationLabel();
-
-    String clusterImportGlusterFingerprintInfoLabel();
 
     String quotaStorageSubTabLabel();
 
@@ -2136,7 +2132,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostsPopupApply();
 
-    String hostsPopupFingerprint();
+    String hostsPopupSshPublicKey();
 
     String addTag();
 
@@ -2714,8 +2710,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String providerNetworks();
 
     String importedNetworks();
-
-    String fetchingHostFingerprint();
 
     String fetchingHostPublicKey();
 

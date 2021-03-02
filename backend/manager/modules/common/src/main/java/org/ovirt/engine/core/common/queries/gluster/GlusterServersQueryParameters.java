@@ -13,7 +13,7 @@ public class GlusterServersQueryParameters extends QueryParametersBase {
 
     private String password;
 
-    private String fingerprint;
+    private String sshPublicKey;
 
     public GlusterServersQueryParameters() {
     }
@@ -43,12 +43,11 @@ public class GlusterServersQueryParameters extends QueryParametersBase {
         this.password = password;
     }
 
-    public String getFingerprint() {
-        return fingerprint;
+    public String getSshPublicKey() {
+        return sshPublicKey;
     }
 
-    public void setFingerprint(String fingerprint) {
-        this.fingerprint = fingerprint;
+    public void setSshPublicKey(String sshPublicKey) {
+        this.sshPublicKey = sshPublicKey;
     }
-
 }

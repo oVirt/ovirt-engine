@@ -217,9 +217,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     StringEntityModelTextBoxEditor glusterHostAddressEditor;
 
     @UiField
-    @Path(value = "glusterHostFingerprint.entity")
+    @Path(value = "glusterHostSshPublicKey.entity")
     @WithElementId
-    StringEntityModelTextAreaLabelEditor glusterHostFingerprintEditor;
+    StringEntityModelTextAreaLabelEditor glusterHostSshPublicKeyEditor;
 
     @UiField
     @Path(value = "glusterHostPassword.entity")

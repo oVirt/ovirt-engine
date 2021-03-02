@@ -374,25 +374,23 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     public void setGlusterHostAddress(EntityModel<String> glusterHostAddress) {
         this.glusterHostAddress = glusterHostAddress;
     }
+    private EntityModel<String> glusterHostSshPublicKey;
 
-    private EntityModel<String> glusterHostFingerprint;
-
-    public EntityModel<String> getGlusterHostFingerprint() {
-        return glusterHostFingerprint;
+    public EntityModel<String> getGlusterHostSshPublicKey(){
+        return glusterHostSshPublicKey;
+    }
+    public void setGlusterHostSshPublicKey(EntityModel<String> glusterHostSshPublicKey){
+        this.glusterHostSshPublicKey = glusterHostSshPublicKey;
     }
 
-    public void setGlusterHostFingerprint(EntityModel<String> glusterHostFingerprint) {
-        this.glusterHostFingerprint = glusterHostFingerprint;
+    private Boolean hostSshPublicKeyVerified;
+
+    public Boolean isHostSshPublicKeyVerified() {
+        return hostSshPublicKeyVerified;
     }
 
-    private Boolean isFingerprintVerified;
-
-    public Boolean isFingerprintVerified() {
-        return isFingerprintVerified;
-    }
-
-    public void setIsFingerprintVerified(Boolean value) {
-        this.isFingerprintVerified = value;
+    public void setHostSshPublicKeyVerified(Boolean value) {
+        this.hostSshPublicKeyVerified = value;
     }
 
     private EntityModel<String> glusterHostPassword;
@@ -1145,14 +1143,14 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     && getEnableGlusterService().getEntity()) {
                 getIsImportGlusterConfiguration().setIsAvailable(true);
                 getGlusterHostAddress().setIsAvailable(true);
-                getGlusterHostFingerprint().setIsAvailable(true);
+                getGlusterHostSshPublicKey().setIsAvailable(true);
                 getGlusterHostPassword().setIsAvailable(true);
             } else {
                 getIsImportGlusterConfiguration().setIsAvailable(false);
                 getIsImportGlusterConfiguration().setEntity(false);
 
                 getGlusterHostAddress().setIsAvailable(false);
-                getGlusterHostFingerprint().setIsAvailable(false);
+                getGlusterHostSshPublicKey().setIsAvailable(false);
                 getGlusterHostPassword().setIsAvailable(false);
             }
             if (getEnableGlusterService().getEntity() != null
@@ -1652,20 +1650,20 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     private void initImportCluster() {
         setGlusterHostAddress(new EntityModel<>());
         getGlusterHostAddress().getEntityChangedEvent().addListener((ev, sender, args) -> {
-            setIsFingerprintVerified(false);
+            setHostSshPublicKeyVerified(false);
             if (getGlusterHostAddress().getEntity() == null
                     || getGlusterHostAddress().getEntity().trim().length() == 0) {
-                getGlusterHostFingerprint().setEntity(""); //$NON-NLS-1$
+                getGlusterHostSshPublicKey().setEntity(""); //$NON-NLS-1$
                 return;
             }
-            fetchFingerprint(
+            fetchHostSshPublicKey(
                     getGlusterHostAddress().getEntity(),
                     VdsStatic.DEFAULT_SSH_PORT);
         });
 
-        setGlusterHostFingerprint(new EntityModel<>());
-        getGlusterHostFingerprint().setEntity(""); //$NON-NLS-1$
-        setIsFingerprintVerified(false);
+        setHostSshPublicKeyVerified(false);
+        setGlusterHostSshPublicKey(new EntityModel<>());
+        getGlusterHostSshPublicKey().setEntity(""); //$NON-NLS-1$
         setGlusterHostPassword(new EntityModel<>());
 
         setIsImportGlusterConfiguration(new EntityModel<>());
@@ -1682,25 +1680,26 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
         getIsImportGlusterConfiguration().setIsAvailable(false);
         getGlusterHostAddress().setIsAvailable(false);
-        getGlusterHostFingerprint().setIsAvailable(false);
+        getGlusterHostSshPublicKey().setIsAvailable(false);
         getGlusterHostPassword().setIsAvailable(false);
 
         getIsImportGlusterConfiguration().setEntity(false);
     }
 
-    private void fetchFingerprint(String hostAddress, Integer hostPort) {
-        AsyncDataProvider.getInstance().getHostFingerprint(new AsyncQuery<>(fingerprint -> {
-            if (fingerprint != null && fingerprint.length() > 0) {
-                getGlusterHostFingerprint().setEntity(fingerprint);
-                setIsFingerprintVerified(true);
+    private void fetchHostSshPublicKey(String hostAddress, Integer hostPort) {
+        AsyncDataProvider.getInstance().getHostSshPublicKey(new AsyncQuery<>(publicKey -> {
+            if (publicKey != null && publicKey.length() > 0) {
+                getGlusterHostSshPublicKey().setEntity(publicKey);
+                setHostSshPublicKeyVerified(true);
             } else {
-                getGlusterHostFingerprint().setEntity(ConstantsManager.getInstance()
+                getGlusterHostSshPublicKey().setEntity(ConstantsManager.getInstance()
                         .getConstants()
-                        .errorLoadingFingerprint());
-                setIsFingerprintVerified(false);
+                        .errorLoadingHostSshPublicKey());
+                setHostSshPublicKeyVerified(false);
             }
         }), hostAddress, hostPort);
-        getGlusterHostFingerprint().setEntity(ConstantsManager.getInstance().getConstants().loadingFingerprint());
+
+        getGlusterHostSshPublicKey().setEntity(ConstantsManager.getInstance().getConstants().loadingPublicKey());
     }
 
     private void postInit() {
@@ -2305,8 +2304,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             setMessage(ConstantsManager.getInstance().getConstants().clusterServiceValidationMsg());
         } else if (getIsImportGlusterConfiguration().getEntity() && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
-                && !isFingerprintVerified()) {
-            setMessage(ConstantsManager.getInstance().getConstants().fingerprintNotVerified());
+                && !isHostSshPublicKeyVerified()) {
+            setMessage(ConstantsManager.getInstance().getConstants().sshPublicKeyNotVerified());
         } else {
             setMessage(null);
         }
@@ -2334,7 +2333,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 && (!getIsImportGlusterConfiguration().getEntity() || (getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
                 && getCustomSerialNumber().getIsValid()
-                && isFingerprintVerified()));
+                && isHostSshPublicKeyVerified()));
         setValidTab(TabName.GENERAL_TAB, generalTabValid);
 
         if (getVersion().getSelectedItem() != null) {
