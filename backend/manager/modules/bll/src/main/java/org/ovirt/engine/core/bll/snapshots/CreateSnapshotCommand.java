@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeClassification;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -228,25 +227,20 @@ public class CreateSnapshotCommand<T extends CreateSnapshotParameters> extends B
     }
 
     private boolean isSnapshotUsed(VM vm) {
-        if (vm.isRunningOrPaused() && vm.getStatus() != VMStatus.WaitForLaunch) {
+        if (vm.isRunningOrPaused()) {
             Set<Guid> volumeChain = imagesHandler.getVolumeChain(vm.getId(),
                     vm.getRunOnVds(),
                     getDiskImage());
 
-            if (volumeChain == null) {
-                log.warn("Could not retrieve chain, skipping deletion");
-                return true;
-            }
-
-            if (volumeChain.contains(getDiskImage().getImageId())) {
-                log.warn("Image '{}' appears to be in use by VM '{}', skipping deletion",
-                        getDiskImage().getImageId(),
-                        vm.getId());
-                return true;
+            if (volumeChain != null && !volumeChain.contains(getDiskImage().getImageId())) {
+                return false;
+            } else {
+                log.warn("Can not get image chain or image '{}' is still in the chain, skipping deletion",
+                        getDiskImage().getImageId());
             }
         }
 
-        return false;
+        return true;
     }
 
     protected DestroyImageParameters buildDestroyImageParameters(Guid imageGroupId, List<Guid> imageList) {
