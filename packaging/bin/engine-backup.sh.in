@@ -996,6 +996,11 @@ getOSVersion() {
 	python@PY_VERSION@ -c 'import platform; d = platform.linux_distribution(full_distribution_name=0); print("%s%s" % (d[0], d[1].split(".")[0]))'
 }
 
+looseVersion_le() {
+	# return 0 if first arg is <= second arg
+	python@PY_VERSION@ -c 'import sys; from distutils.version import LooseVersion; sys.exit(0 if LooseVersion(sys.argv[1]) <= LooseVersion(sys.argv[2]) else 1)' "$1" "$2"
+}
+
 createtar() {
 	local dir="$1"
 	local file="$2"
@@ -1285,7 +1290,7 @@ verifyVersion() {
 	done << __EOF__
 ${VALID_BACKUP_RESTORE_PAIRS}
 __EOF__
-	[ "${INSTALLED_VERSION_X_Y}" == "${BACKUP_VERSION_X_Y}" ] && ok=1
+	[ "${INSTALLED_VERSION_X_Y}" == "${BACKUP_VERSION_X_Y}" ] && looseVersion_le "${BACKUP_VERSION}" "${INSTALLED_VERSION}" && ok=1
 	if [ "${BACKUP_VERSION_X_Y}" = "4.3" ]; then
 		# Prevent upgrading from < 4.3.10.
 		# We already document to upgrade first to latest 4.3, before upgrading to 4.4.
