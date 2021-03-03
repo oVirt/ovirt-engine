@@ -36,9 +36,16 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
      */
     private boolean linked;
 
+    /**
+     * <code>true</code> if the vnic configuration on engine
+     * is identical to the vnic configuration on the VM.
+     */
+    private boolean synced;
+
     public VmNic() {
         super(new VmNetworkStatistics(), VmInterfaceType.pv.getValue());
         linked = true;
+        synced = true;
     }
 
     public void setVmId(Guid vmId) {
@@ -104,6 +111,14 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
         this.vnicProfileId = vnicProfileId;
     }
 
+    public boolean isSynced() {
+        return synced;
+    }
+
+    public void setSynced(boolean synced) {
+        this.synced = synced;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
@@ -114,6 +129,7 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
                 .append("macAddress", getMacAddress())
                 .append("linked", isLinked())
                 .append("vmId", getVmId())
+                .append("synced", isSynced())
                 .build();
     }
 
@@ -123,7 +139,8 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
                 super.hashCode(),
                 linked,
                 vmId,
-                vnicProfileId
+                vnicProfileId,
+                synced
         );
     }
 
@@ -139,7 +156,8 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
         return super.equals(obj)
                 && Objects.equals(vmId, other.vmId)
                 && Objects.equals(vnicProfileId, other.vnicProfileId)
-                && linked == other.linked;
+                && linked == other.linked
+                && synced == other.synced;
     }
 
     public boolean isPassthrough() {

@@ -121,6 +121,7 @@ public class VmNicDaoTest extends BaseGenericDaoTestCase<Guid, VmNic, VmNicDao> 
         vmNic.setSpeed(1000);
         vmNic.setType(3);
         vmNic.setMacAddress("01:C0:81:21:71:17");
+        vmNic.setSynced(true);
         return vmNic;
     }
 

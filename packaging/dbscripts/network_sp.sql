@@ -979,7 +979,8 @@ CREATE OR REPLACE FUNCTION InsertVmInterface (
     v_vnic_profile_id UUID,
     v_vm_guid UUID,
     v_type INT,
-    v_linked BOOLEAN
+    v_linked BOOLEAN,
+    v_synced BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -991,7 +992,8 @@ BEGIN
         vnic_profile_id,
         vm_guid,
         type,
-        linked
+        linked,
+        synced
         )
     VALUES (
         v_id,
@@ -1001,7 +1003,8 @@ BEGIN
         v_vnic_profile_id,
         v_vm_guid,
         v_type,
-        v_linked
+        v_linked,
+        v_synced
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -1014,7 +1017,8 @@ CREATE OR REPLACE FUNCTION UpdateVmInterface (
     v_vnic_profile_id UUID,
     v_vm_guid UUID,
     v_type INT,
-    v_linked BOOLEAN
+    v_linked BOOLEAN,
+    v_synced BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -1026,7 +1030,8 @@ BEGIN
         vm_guid = v_vm_guid,
         type = v_type,
         _update_date = LOCALTIMESTAMP,
-        linked = v_linked
+        linked = v_linked,
+        synced = v_synced
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
