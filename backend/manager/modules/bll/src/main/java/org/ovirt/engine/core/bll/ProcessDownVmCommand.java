@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -41,6 +42,7 @@ import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.slf4j.Logger;
@@ -76,6 +78,8 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
     @Inject
     private VmHandler vmHandler;
+    @Inject
+    private VmNicDao vmNicDao;
 
     protected ProcessDownVmCommand(Guid commandId) {
         super(commandId);
@@ -142,6 +146,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         }
 
         managedBlockStorageCommandUtil.disconnectManagedBlockStorageDisks(getVm(), vmHandler);
+        updateVnicsInSync();
     }
 
     private boolean releaseUsedHostDevices() {
@@ -169,6 +174,15 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         if (!getParameters().isSkipHostRefresh() && hostId != null) {
             runInternalAction(ActionType.RefreshHost, new VdsActionParameters(hostId));
         }
+    }
+
+    private void updateVnicsInSync() {
+        var vnics = getVm().getInterfaces()
+            .stream()
+            .map(iface -> (VmNic) iface)
+            .collect(Collectors.toList());
+        vnics.forEach(vnic -> vnic.setSynced(true));
+        vmNicDao.updateAllInBatch(vnics);
     }
 
     private boolean detachUsers() {
