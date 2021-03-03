@@ -5,8 +5,9 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.GenericDao;
+import org.ovirt.engine.core.dao.MassOperationsDao;
 
-public interface VmNicDao extends GenericDao<VmNic, Guid> {
+public interface VmNicDao extends GenericDao<VmNic, Guid>, MassOperationsDao<VmNic, Guid> {
     /**
      * Retrieves all interfaces for the given VM id.
      *
