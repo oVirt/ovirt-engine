@@ -46,6 +46,16 @@ public interface VmNicDao extends GenericDao<VmNic, Guid>, MassOperationsDao<VmN
     List<VmNic> getActiveForNetwork(Guid networkId);
 
     /**
+     * Retrieves all 'active' interfaces for the specified profile.
+     * An active interface is plugged and its VM is not down.
+     *
+     * @param vnicProfileId
+     *              vnic profile id
+     * @return the list of VmNetworkInterfaces
+     */
+    List<VmNic> getActiveForVnicProfile(Guid vnicProfileId);
+
+    /**
      * Retrieves the VmTemplate Network Interfaces that the given network is attached to.
      *
      * @param networkId

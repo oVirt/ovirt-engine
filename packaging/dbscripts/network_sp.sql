@@ -1091,6 +1091,17 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetActiveVmInterfacesByProfileId (v_profile_id UUID)
+RETURNS SETOF vm_interface STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT vm_interface.*
+    FROM vm_interfaces_plugged_on_vm_not_down_view as vm_interface
+    WHERE vm_interface.vnic_profile_id = v_profile_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetVmInterfacesByVmId (v_vm_id UUID)
 RETURNS SETOF vm_interface STABLE AS $PROCEDURE$
 BEGIN

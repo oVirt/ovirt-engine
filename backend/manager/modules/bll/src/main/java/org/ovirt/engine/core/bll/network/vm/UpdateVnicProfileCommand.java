@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -10,10 +12,14 @@ import org.ovirt.engine.core.bll.validator.VnicProfileValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 
 public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
@@ -21,6 +27,10 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
 
     @Inject
     private VnicProfileDao vnicProfileDao;
+    @Inject
+    private VmNicDao vmNicDao;
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     private VnicProfile oldVnicProfile;
 
@@ -50,8 +60,35 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
     @Override
     protected void executeCommand() {
         getOldVnicProfile();
+        markVnicsOutOfSync();
         vnicProfileDao.update(getVnicProfile());
         setSucceeded(true);
+    }
+
+    private void markVnicsOutOfSync() {
+        if (isNonLiveUpdate()) {
+            var vnics = vmNicDao.getActiveForVnicProfile(getVnicProfile().getId());
+            vnics.forEach(vnic -> vnic.setSynced(false));
+            vmNicDao.updateAllInBatch(vnics);
+            logVnicsOutOfSync(vnics);
+        }
+    }
+
+    private boolean isNonLiveUpdate() {
+        var prev = getOldVnicProfile();
+        var curr = getVnicProfile();
+        return !Objects.equals(prev.getNetworkId(), curr.getNetworkId()) ||
+            !Objects.equals(prev.getNetworkQosId(), curr.getNetworkQosId()) ||
+            !Objects.equals(prev.getCustomProperties(), curr.getCustomProperties()) ||
+            !Objects.equals(prev.getNetworkFilterId(), curr.getNetworkFilterId()) ||
+            !Objects.equals(prev.getFailoverVnicProfileId(), curr.getFailoverVnicProfileId());
+    }
+
+    private void logVnicsOutOfSync(List<VmNic> vnics) {
+        var logable = new AuditLogableImpl();
+        logable.addCustomValue("ProfileName", getVnicProfileName());
+        logable.addCustomValue("VnicNames", vnics.stream().map(VmNic::getName).collect(Collectors.joining(",")));
+        auditLogDirector.log(logable, AuditLogType.VNICS_OUT_OF_SYNC_ON_PROFILE_UPDATE);
     }
 
     @Override
