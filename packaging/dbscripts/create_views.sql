@@ -4063,3 +4063,13 @@ CREATE OR REPLACE VIEW iso_disks_as_repo_images AS
 
    WHERE bd.disk_content_type=4;
 
+
+CREATE OR REPLACE VIEW vm_interfaces_plugged_on_vm_not_down_view AS
+    SELECT vm_interface.*
+    FROM vm_interface
+    INNER JOIN vm_dynamic
+        ON vm_interface.vm_guid = vm_dynamic.vm_guid
+    INNER JOIN vm_device
+        ON vm_interface.id = vm_device.device_id
+    WHERE vm_dynamic.status <> 0
+        AND vm_device.is_plugged = true;

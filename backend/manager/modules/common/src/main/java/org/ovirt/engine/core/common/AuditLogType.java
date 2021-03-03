@@ -918,6 +918,7 @@ public enum AuditLogType {
     NETWORK_WITHOUT_INTERFACES(1128, AuditLogSeverity.WARNING),
     VNIC_PROFILE_UNSUPPORTED_FEATURES(1129, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.DAY.getValue()),
+    VNICS_OUT_OF_SYNC_ON_NETWORK_UPDATE(11291, AuditLogSeverity.ALERT),
     REMOVE_NETWORK_BY_LABEL_FAILED(1131, AuditLogSeverity.ERROR),
     LABEL_NETWORK(1132),
     LABEL_NETWORK_FAILED(1133, AuditLogSeverity.ERROR),

@@ -48,6 +48,11 @@ public class VmNicDaoImpl extends MassOperationsGenericDao<VmNic, Guid> implemen
                 VnicRowMapper.INSTANCE, getCustomMapSqlParameterSource().addValue("network_id", networkId));
     }
 
+    public List<VmNic> getActiveForNetwork(Guid networkId) {
+        return getCallsHandler().executeReadList("GetActiveVmInterfacesByNetworkId",
+            VnicRowMapper.INSTANCE, getCustomMapSqlParameterSource().addValue("network_id", networkId));
+    }
+
     @Override
     public List<VmNic> getAllForTemplatesByNetwork(Guid networkId) {
         return getCallsHandler().executeReadList("GetVmTemplateInterfacesByNetworkId",
