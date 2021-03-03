@@ -653,6 +653,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         ArrayList<DiskModel> list = new ArrayList<>();
 
         for (Disk disk : disks) {
+            if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+                continue;
+            }
+
             DiskModel diskModel = new DiskModel();
             diskModel.getAlias().setEntity(disk.getDiskAlias());
             diskModel.getVolumeType().setIsAvailable(false);
