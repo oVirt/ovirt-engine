@@ -135,6 +135,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             }
 
             getInterface().setSpeed(VmInterfaceType.forValue(getInterface().getType()).getSpeed());
+            getInterface().setSynced(getRequiredAction() == RequiredAction.UNPLUG || oldIface.isSynced());
 
             TransactionSupport.executeInNewTransaction(() -> {
                 bumpVmVersion();
