@@ -8,23 +8,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
-import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskExistenceValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -42,7 +38,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmCheckpointsVDSParameters;
-import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmCheckpointDao;
@@ -51,16 +46,12 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
-public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends VmCommand<T>
-        implements SerialChildExecutingCommand {
+public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends VmCommand<T> {
 
     @Inject
     private VmCheckpointDao vmCheckpointDao;
     @Inject
     private VmBackupDao vmBackupDao;
-    @Inject
-    @Typed(SerialChildCommandsExecutionCallback.class)
-    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     private VmCheckpoint vmCheckpoint;
 
@@ -114,26 +105,13 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
     @Override
     protected void executeCommand() {
         if (!redefineVmCheckpoints()) {
-            setCommandStatus(CommandStatus.FAILED);
             return;
         }
-        persistCommandIfNeeded();
-        setSucceeded(true);
-    }
-
-    @Override
-    public boolean performNextOperation(int completedChildCount) {
-        log.info("Deleting VmCheckpoint '{}'", vmCheckpoint.getId());
-        if (!deleteVmCheckpoint()) {
-            setCommandStatus(CommandStatus.FAILED);
-            return false;
-        }
-        setCommandStatus(CommandStatus.SUCCEEDED);
-        persistCommandIfNeeded();
-        return true;
+        setSucceeded(deleteVmCheckpoint());
     }
 
     private boolean deleteVmCheckpoint() {
+        log.info("Deleting VmCheckpoint '{}'", vmCheckpoint.getId());
         try {
             VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.DeleteVmCheckpoints,
                     new VmCheckpointsVDSParameters(getVdsId(),
@@ -144,7 +122,7 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
                 engineException.setVdsError(vdsRetVal.getVdsError());
                 throw engineException;
             }
-            updateNewRootCheckpoint();
+            updateNewRootCheckpointInDb();
             return true;
         } catch (EngineException e) {
             log.error("Failed to execute VM.delete_checkpoints: {}", e.getMessage());
@@ -152,7 +130,7 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
         }
     }
 
-    private void updateNewRootCheckpoint() {
+    private void updateNewRootCheckpointInDb() {
         // Get the checkpoint chain before removing the root checkpoint from it,
         // the chain is fetched from the DB and ordered from the new root to the leaf.
         List<VmCheckpoint> vmCheckpoints = vmCheckpointDao.getAllForVm(getParameters().getVmId());
@@ -173,7 +151,11 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
         VmBackup vmBackup = new VmBackup();
         vmBackup.setDisks(vmCheckpoint.getDisks());
         vmBackup.setVmId(getVmId());
+
         VmBackupParameters vmBackupParameters = new VmBackupParameters(vmBackup);
+        vmBackupParameters.setParentCommand(getActionType());
+        vmBackupParameters.setParentParameters(getParameters());
+        vmBackupParameters.setEndProcedure(ActionParametersBase.EndProcedure.PARENT_MANAGED);
 
         log.info("Redefine previous VM checkpoints for VM '{}'", getVmId());
         ActionReturnValue returnValue = runInternalAction(ActionType.RedefineVmCheckpoint, vmBackupParameters);
@@ -195,11 +177,6 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
                         .map(DiskImage::getId)
                         .collect(Collectors.toCollection(LinkedHashSet::new)) :
                 Collections.emptySet();
-    }
-
-    @Override
-    public CommandCallback getCallback() {
-        return callbackProvider.get();
     }
 
     @Override
