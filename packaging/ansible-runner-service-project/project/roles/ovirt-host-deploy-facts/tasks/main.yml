@@ -7,10 +7,16 @@
     tags:
       - skip_ansible_lint # E305
 
-  - name: Enable advanced virtualization module for relevant OS version
-    shell: "dnf -y module enable virt:{{ ansible_distribution_version }}"
+  - name: Find relevant advanced virtualization module version
+    set_fact:
+      virt_mod_ver: "{{ 'av' if '8.4' is version(ansible_distribution_version, '>=') else
+          ansible_distribution_version }}"
+
+  - name: Enable advanced virtualization module
+    shell: "dnf -y module enable virt:{{ virt_mod_ver }}"
     tags:
       - skip_ansible_lint # E305
+
   when:
     - host_deploy_origin_type != ovirt_origin_type
     - el_ver|int >= 8
