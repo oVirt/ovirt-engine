@@ -450,11 +450,8 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         if (cluster.supportsTrustedService()) {
             clusterModel.getEnableGlusterService().setIsChangeable(false);
         }
-        if (cluster.supportsVirtService()&& !cluster.supportsGlusterService()) {
-            clusterModel.getEnableTrustedService().setIsChangeable(true);
-        } else {
-            clusterModel.getEnableTrustedService().setIsChangeable(false);
-        }
+        clusterModel.getEnableTrustedService()
+                .setIsChangeable(cluster.supportsVirtService() && !cluster.supportsGlusterService());
 
         clusterModel.getOptimizeForSpeed()
                 .setEntity(OptimizationType.OPTIMIZE_FOR_SPEED == cluster.getOptimizationType());
@@ -689,7 +686,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                 onSaveInternal();
             }
 
-        }), model.getClusterId(), cluster);
+        }), cluster);
     }
 
     public void onPreSaveInternal(ClusterModel model) {
@@ -786,7 +783,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         cluster.getFencingPolicy().setFencingEnabled(model.getFencingEnabledModel().getEntity());
         cluster.getFencingPolicy().setSkipFencingIfSDActive(model.getSkipFencingIfSDActiveEnabled().getEntity());
         cluster.getFencingPolicy().setSkipFencingIfConnectivityBroken(model.getSkipFencingIfConnectivityBrokenEnabled().getEntity());
-        cluster.getFencingPolicy().setHostsWithBrokenConnectivityThreshold(model.getHostsWithBrokenConnectivityThreshold().getSelectedItem().intValue());
+        cluster.getFencingPolicy().setHostsWithBrokenConnectivityThreshold(model.getHostsWithBrokenConnectivityThreshold().getSelectedItem());
         cluster.getFencingPolicy().setSkipFencingIfGlusterBricksUp(model.getSkipFencingIfGlusterBricksUp().getEntity());
         cluster.getFencingPolicy().setSkipFencingIfGlusterQuorumNotMet(model.getSkipFencingIfGlusterQuorumNotMet().getEntity());
 
@@ -953,7 +950,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
     public void postOnSaveInternalWithImport(ActionReturnValue returnValue) {
         MultipleHostsModel hostsModel = (MultipleHostsModel) getWindow();
         if (returnValue != null && returnValue.getSucceeded()) {
-            hostsModel.getClusterModel().setClusterId((Guid) returnValue.getActionReturnValue());
+            hostsModel.getClusterModel().setClusterId(returnValue.getActionReturnValue());
             addHosts(hostsModel);
         }
     }
