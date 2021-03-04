@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.backup;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -195,11 +194,10 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
     }
 
     @Override
-    protected Map<String, Pair<String, String>> getSharedLocks() {
-        Map<String, Pair<String, String>> locks = new HashMap<>();
-        locks.put(getParameters().getVmCheckpoint().getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED));
-        return locks;
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getVmCheckpoint().getVmId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM,
+                        EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_A_BACKUP_CHECKPOINT_REMOVAL));
     }
 
     @Override

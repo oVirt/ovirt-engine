@@ -658,18 +658,12 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     @Override
-    protected Map<String, Pair<String, String>> getSharedLocks() {
-        Map<String, Pair<String, String>> locks = new HashMap<>();
-        locks.put(getParameters().getVmBackup().getVmId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED));
-        return locks;
-    }
-
-    @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
         getDiskIds().forEach(id -> locks.put(id.toString(),
                         LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISK_IS_LOCKED)));
+        locks.put(getParameters().getVmBackup().getVmId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP));
         return locks;
     }
 
