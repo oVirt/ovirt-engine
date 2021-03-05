@@ -1357,7 +1357,7 @@ RETURNS VARCHAR []  AS $PROCEDURE$
 BEGIN
 
 RETURN
-ARRAY ['4.2', '4.3', '4.4', '4.5'];
+ARRAY ['4.2', '4.3', '4.4', '4.5', '4.6'];
 
 END;$PROCEDURE$
 LANGUAGE plpgsql;
