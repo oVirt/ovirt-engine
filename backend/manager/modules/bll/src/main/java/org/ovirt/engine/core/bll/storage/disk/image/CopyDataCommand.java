@@ -148,11 +148,11 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
     private void logExecutionHost() {
         AuditLogable loggable = new AuditLogableImpl();
         VdsmImageLocationInfo destInfo = (VdsmImageLocationInfo) getParameters().getDstInfo();
-        String hostName = vdsStaticDao.get(getVdsId()).getHostName();
+        String vdsName = vdsStaticDao.get(getVdsId()).getName();
         String domainName = storageDomainStaticDao.get(destInfo.getStorageDomainId()).getStorageName();
 
         loggable.setVdsId(getParameters().getVdsId());
-        loggable.setVdsName(hostName);
+        loggable.setVdsName(vdsName);
         loggable.setStorageDomainId(destInfo.getStorageDomainId());
         loggable.setStorageDomainName(domainName);
         loggable.addCustomValue("diskId", destInfo.getImageGroupId().toString());
