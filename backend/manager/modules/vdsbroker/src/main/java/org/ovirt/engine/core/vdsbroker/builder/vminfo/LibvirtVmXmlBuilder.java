@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
@@ -1378,9 +1379,27 @@ public class LibvirtVmXmlBuilder {
     private void writeInterfaces(List<VmDevice> devices) {
         Map<VmDeviceId, VmNetworkInterface> devIdToNic = vm.getInterfaces().stream()
                 .collect(Collectors.toMap(nic -> new VmDeviceId(nic.getId(), nic.getVmId()), nic -> nic));
+        Map<Guid, VnicProfile> vnicProfilesById = Entities.businessEntitiesById(vmInfoBuildUtils.getAllVnicProfiles());
+
         devices.stream()
                 .sorted(Comparator.comparing(dev -> devIdToNic.get(dev.getId()).getMacAddress()))
-                .forEach(dev -> writeInterface(dev, devIdToNic.get(dev.getId())));
+                .forEach(dev -> {
+                            var nic = devIdToNic.get(dev.getId());
+                            writeInterface(dev, nic);
+
+                            var vnicProfile = vnicProfilesById.get(nic.getVnicProfileId());
+                            if (vnicProfile != null && vnicProfile.getFailoverVnicProfileId() != null) {
+                                writeFailoverInterface(vnicProfile.getFailoverVnicProfileId(), nic.getMacAddress());
+                            }
+                        }
+                );
+
+    }
+
+    private void writeFailoverInterface(Guid failoverId, String macAddress) {
+        var failoverDevice = VmDeviceCommonUtils.createFailoverVmDevice(failoverId, vm.getId());
+        var failoverNic = VmDeviceCommonUtils.createFailoverVmNic(failoverId, vm.getId(), macAddress);
+        writeInterface(failoverDevice, failoverNic);
     }
 
     private void writeDisks(List<VmDevice> devices, Map<Integer, Map<VmDevice, Integer>> vmDeviceVirtioScsiUnitMap) {

@@ -1396,6 +1396,10 @@ public class VmInfoBuildUtils {
         return vnicProfileDao.get(vnicProfileId);
     }
 
+    public List<VnicProfile> getAllVnicProfiles() {
+        return vnicProfileDao.getAll();
+    }
+
     public VdsStatistics getVdsStatistics(Guid hostId) {
         return vdsStatisticsDao.get(hostId);
     }
