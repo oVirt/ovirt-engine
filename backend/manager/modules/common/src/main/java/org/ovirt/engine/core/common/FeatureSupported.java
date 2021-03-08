@@ -330,4 +330,14 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.EnableBochsDisplay, version);
     }
 
+    /**
+     * Checks if freeze in engine for live snapshot support enabled for the cluster version
+     *
+     * @param version
+     *            Compatibility version to check for.
+     */
+    public static boolean isFreezeInEngineEnabled(Version version) {
+        return supportedInConfig(ConfigValues.LiveSnapshotPerformFreezeInEngine, version);
+    }
+
 }

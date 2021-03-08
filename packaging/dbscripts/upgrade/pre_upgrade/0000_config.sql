@@ -773,7 +773,6 @@ select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'true', '4
 -- Live Snapshot
 select fn_db_add_config_value('LiveSnapshotTimeoutInMinutes', '30', 'general');
 select fn_db_add_config_value('LiveSnapshotAllowInconsistent', 'true', 'general');
-select fn_db_add_config_value('LiveSnapshotPerformFreezeInEngine', 'false', 'general');
 
 -- VirtIO-Win drivers path
 select fn_db_add_config_value('VirtioWinIsoPath','/usr/share/virtio-win','general');
@@ -1338,6 +1337,10 @@ select fn_db_split_config_value('GlusterTunedProfile', 'rhs-high-throughput,rhs-
 
 -- Host device capabilities
 select fn_db_split_config_value('HostDevicePassthroughCapabilities', 'pci,scsi,usb_device', 'pci,scsi,usb_device,nvdimm', '4.4');
+
+-- Live Snapshot
+select fn_db_split_config_value('LiveSnapshotPerformFreezeInEngine', 'false', 'false', '4.4');
+
 ------------------------------------------------------------------------------------
 --                  Simple direct updates section
 ------------------------------------------------------------------------------------

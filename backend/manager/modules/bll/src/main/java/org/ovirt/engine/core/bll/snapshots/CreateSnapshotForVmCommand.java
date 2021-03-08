@@ -659,7 +659,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             return false; // irrelevant for snapshot taken as part of live storage migration
         }
 
-        if (Config.<Boolean>getValue(ConfigValues.LiveSnapshotPerformFreezeInEngine)) {
+        if (FeatureSupported.isFreezeInEngineEnabled(getVm().getClusterCompatibilityVersion())) {
             return true;
         }
 

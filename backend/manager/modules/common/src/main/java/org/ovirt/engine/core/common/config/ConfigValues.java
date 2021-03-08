@@ -1541,6 +1541,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     LiveSnapshotAllowInconsistent,
 
+    @Deprecated
     @TypeConverterAttribute(Boolean.class)
     LiveSnapshotPerformFreezeInEngine,
 
