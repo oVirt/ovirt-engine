@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -221,11 +222,18 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     public Network getNetwork() {
         if (getParameters().getNic().getVnicProfileId() != null && network == null) {
-            vnicProfile = vnicProfileDao.get(getParameters().getNic().getVnicProfileId());
+            vnicProfile = getVnicProfile();
             network = networkHelper.getNetworkByVnicProfile(vnicProfile);
         }
 
         return network;
+    }
+
+    private VnicProfile getVnicProfile() {
+        if (getParameters().getNic().getVnicProfileId() != null && vnicProfile == null) {
+            vnicProfile = vnicProfileDao.get(getParameters().getNic().getVnicProfileId());
+        }
+        return vnicProfile;
     }
 
     public String getInterfaceName() {
@@ -251,9 +259,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             throw new RuntimeException("Coding error: unknown enum value");
         }
 
+        var success = handleFailoverIfNeeded();
         // In any case, the device is updated
         updateDevice();
-        setSucceeded(true);
+        setSucceeded(success);
     }
 
     private void plugNic() {
@@ -438,6 +447,50 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         } else {
             vmDevice.setPlugged(getParameters().getAction() == PlugAction.PLUG);
             vmDeviceDao.update(vmDevice);
+        }
+    }
+
+    private boolean handleFailoverIfNeeded() {
+        var vnicProfile = getVnicProfile();
+        if (vnicProfile == null || vnicProfile.getFailoverVnicProfileId() == null || !getParameters().isWithFailover()
+                || !hotPlugVmNicRequired(getVm().getStatus())) {
+            return true;
+        }
+
+        var failoverId = vnicProfile.getFailoverVnicProfileId();
+        var failoverDevice = VmDeviceCommonUtils.createFailoverVmDevice(failoverId, getVmId());
+        var failoverNic = VmDeviceCommonUtils.createFailoverVmNic(failoverId,
+                getVmId(),
+                getParameters().getNic().getMacAddress());
+        boolean success;
+        try {
+            VDSReturnValue vdsReturnValue = runVdsCommand(getParameters().getAction().getvNicVdsCommandType(),
+                    new VmNicDeviceVDSParameters(getVdsId(),
+                            getVm(),
+                            failoverNic,
+                            failoverDevice));
+            success = vdsReturnValue.getSucceeded();
+        } catch (EngineException e) {
+            revertAfterFailoverOperationFail();
+            throw e;
+        }
+        if (!success) {
+            // Failover plug/unplug failed, we need to revert the VF action
+            revertAfterFailoverOperationFail();
+        }
+        return success;
+    }
+
+    private void revertAfterFailoverOperationFail() {
+        switch (getParameters().getAction()) {
+        case PLUG:
+            getParameters().setAction(PlugAction.UNPLUG);
+            unplugNic();
+            break;
+        case UNPLUG:
+            getParameters().setAction(PlugAction.PLUG);
+            plugNic();
+            break;
         }
     }
 

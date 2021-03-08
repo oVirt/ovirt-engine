@@ -9,6 +9,7 @@ public class ActivateDeactivateVmNicParameters extends VmOperationParameterBase 
     private VmNic nic;
     private PlugAction action;
     private boolean newNic;
+    private boolean withFailover = true;
 
     public ActivateDeactivateVmNicParameters() {
     }
@@ -44,12 +45,21 @@ public class ActivateDeactivateVmNicParameters extends VmOperationParameterBase 
         this.newNic = newNic;
     }
 
+    public boolean isWithFailover() {
+        return withFailover;
+    }
+
+    public void setWithFailover(boolean withFailover) {
+        this.withFailover = withFailover;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
                 .append("action", action)
                 .append("newNic", newNic)
                 .append("nic", nic)
+                .append("withFailover", withFailover)
                 .build();
     }
 }

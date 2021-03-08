@@ -366,6 +366,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             PlugAction plugAction) {
         ActivateDeactivateVmNicParameters parameters = new ActivateDeactivateVmNicParameters(nic, plugAction, false);
         parameters.setVmId(getParameters().getVmId());
+        parameters.setWithFailover(false);
         return parameters;
     }
 

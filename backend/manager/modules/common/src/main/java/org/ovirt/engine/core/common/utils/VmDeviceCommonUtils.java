@@ -19,7 +19,9 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -541,4 +543,27 @@ public class VmDeviceCommonUtils {
         return osRepository.isLinux(vmBase.getOsId()) && vmBase.getDefaultDisplayType() == DisplayType.qxl
                 && vmBase.getOrigin() != OriginType.KUBEVIRT && !vmBase.isHostedEngine();
     }
+
+
+    public static VmDevice createFailoverVmDevice(Guid failoverId, Guid vmId) {
+        VmDevice failoverDevice = new VmDevice();
+        failoverDevice.setDevice("bridge");
+        failoverDevice.setId(new VmDeviceId(failoverId, vmId));
+        Map<String, String> customProperties = new HashMap<>();
+        customProperties.put("failover", "failover");
+        failoverDevice.setCustomProperties(customProperties);
+        failoverDevice.setManaged(true);
+        return failoverDevice;
+    }
+
+    public static VmNic createFailoverVmNic(Guid failoverId, Guid vmId, String macAddress) {
+        VmNic failoverNic = new VmNic();
+        failoverNic.setVmId(vmId);
+        failoverNic.setLinked(true);
+        failoverNic.setVnicProfileId(failoverId);
+        failoverNic.setType(VmInterfaceType.pv.getValue());
+        failoverNic.setMacAddress(macAddress);
+        return failoverNic;
+    }
+
 }
