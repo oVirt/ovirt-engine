@@ -36,10 +36,10 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
-import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.UserProfileDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.uutils.crypto.ticket.TicketDecoder;
@@ -56,22 +56,17 @@ public class VMConsoleProxyServlet extends HttpServlet {
     private ResourceManager resourceManager;
     @Inject
     private VdsStaticDao vdsStaticDao;
+    @Inject
+    private UserProfileDao userProfileDao;
 
     private static final String VM_CONSOLE_PROXY_EKU = "1.3.6.1.4.1.2312.13.1.2.1.1";
 
     private static final Logger log = LoggerFactory.getLogger(VMConsoleProxyServlet.class);
 
-    // TODO: implmement key filtering based on input parameters
+    // TODO: implement key filtering based on input parameters
     private List<Map<String, String>> availablePublicKeys(String keyFingerPrint, String keyType, String keyContent) {
-        QueryReturnValue v = backend.runInternalQuery(QueryType.GetAllUserPublicSshKeys, new QueryParametersBase());
-
-        if (v == null || !v.getSucceeded()) {
-            return Collections.emptyList();
-        }
-
-        List<UserSshKey> userSshKeys = v.getReturnValue();
         List<Map<String, String>> jsonUsers = new ArrayList<>();
-        for (UserSshKey userSshKey : userSshKeys) {
+        for (UserSshKey userSshKey : userProfileDao.getAllPublicSshKeys()) {
             for (String publicKey : StringUtils.split(userSshKey.getContent(), "\n")) {
                 if (StringUtils.isNotBlank(publicKey)) {
                     Map<String, String> jsonUser = new HashMap<>();

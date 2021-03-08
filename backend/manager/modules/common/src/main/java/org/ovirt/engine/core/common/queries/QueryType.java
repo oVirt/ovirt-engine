@@ -246,7 +246,6 @@ public enum QueryType implements Serializable {
     GetUserProfilePropertiesByUserId(QueryAuthType.User),
     GetUserProfileProperty(QueryAuthType.User),
     GetUserProfilePropertyByNameAndUserId(QueryAuthType.User),
-    GetAllUserPublicSshKeys,
     IsPasswordDelegationPossible(QueryAuthType.User),
     GetDefaultAllowedOrigins,
 
