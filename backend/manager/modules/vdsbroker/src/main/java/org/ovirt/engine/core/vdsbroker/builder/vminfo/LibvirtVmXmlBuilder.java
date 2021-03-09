@@ -890,9 +890,13 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeNetworkInterfaceMetadata() {
-        vnicMetadata.forEach((mac, data) -> {
+        vnicMetadata.forEach((alias, data) -> {
             writer.writeStartElement(OVIRT_VM_URI, "device");
-            writer.writeAttributeString("mac_address", mac);
+            writer.writeAttributeString("alias", alias);
+            var mac = (String) data.remove("mac");
+            if (mac != null) {
+                writer.writeAttributeString("mac_address", mac);
+            }
             List<String> portMirroring = (List<String>) data.remove("portMirroring");
             if (portMirroring != null) {
                 writer.writeStartElement(OVIRT_VM_URI, "portMirroring");
@@ -2635,6 +2639,10 @@ public class LibvirtVmXmlBuilder {
         Network network = vnicProfile != null ? vmInfoBuildUtils.getNetwork(vnicProfile.getNetworkId()) : null;
         boolean networkless = network == null;
 
+        String alias = generateUserAliasForDevice(device);
+        vnicMetadata.computeIfAbsent(alias, a -> new HashMap<>());
+        vnicMetadata.get(alias).put("mac", nic.getMacAddress());
+
         switch (device.getDevice()) {
         case "bridge":
             writer.writeAttributeString("type", "bridge");
@@ -2759,20 +2767,17 @@ public class LibvirtVmXmlBuilder {
         List<String> portMirroring = (List<String>) profileData.get(VdsProperties.PORT_MIRRORING);
         if (portMirroring != null && !portMirroring.isEmpty()) {
             // store port mirroring in the metadata
-            vnicMetadata.computeIfAbsent(nic.getMacAddress(), mac -> new HashMap<>());
-            vnicMetadata.get(nic.getMacAddress()).put("portMirroring", portMirroring);
+            vnicMetadata.get(alias).put("portMirroring", portMirroring);
         }
 
         Map<String, String> runtimeCustomProperties = vm.getRuntimeDeviceCustomProperties().get(device.getId());
         if (runtimeCustomProperties != null && !runtimeCustomProperties.isEmpty()) {
             // store runtime custom properties in the metadata
-            vnicMetadata.computeIfAbsent(nic.getMacAddress(), mac -> new HashMap<>());
-            vnicMetadata.get(nic.getMacAddress()).put("runtimeCustomProperties", runtimeCustomProperties);
+            vnicMetadata.get(alias).put("runtimeCustomProperties", runtimeCustomProperties);
         }
 
         if (vnicProfile != null && vnicProfile.getCustomProperties() != null) {
-            vnicMetadata.computeIfAbsent(nic.getMacAddress(), mac -> new HashMap<>());
-            vnicMetadata.get(nic.getMacAddress()).putAll(vnicProfile.getCustomProperties());
+            vnicMetadata.get(alias).putAll(vnicProfile.getCustomProperties());
         }
 
         writer.writeStartElement("bandwidth");
