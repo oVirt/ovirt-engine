@@ -264,6 +264,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setCpuFlagsMissing(getCpuFlagsMissing());
         vds.setSupportedCpus(getSupportedCpus());
         vds.setBootUuid(getBootUuid());
+        vds.setCdChangePdiv(isCdChangePdiv());
         return vds;
     }
 
@@ -1872,5 +1873,13 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setBootUuid(String bootUuid) {
         vdsDynamic.setBootUuid(bootUuid);
+    }
+
+    public boolean isCdChangePdiv() {
+        return vdsDynamic.isCdChangePdiv();
+    }
+
+    public void setCdChangePdiv(boolean cdChangePdiv) {
+        vdsDynamic.setCdChangePdiv(cdChangePdiv);
     }
 }

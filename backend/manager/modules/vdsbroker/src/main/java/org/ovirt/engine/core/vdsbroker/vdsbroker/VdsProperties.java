@@ -573,4 +573,6 @@ public final class VdsProperties {
     public static final String TSC_SCALING = "tscScaling";
 
     public static final String BOOT_UUID = "boot_uuid";
+
+    public static final String CD_CHANGE_PDIV = "cd_change_pdiv";
 }

@@ -415,6 +415,7 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setTscScalingEnabled(rs.getBoolean("tsc_scaling"));
         entity.setFipsEnabled(rs.getBoolean("fips_enabled"));
         entity.setBootUuid(rs.getString("boot_uuid"));
+        entity.setCdChangePdiv(rs.getBoolean("cd_change_pdiv"));
         return entity;
     };
 }

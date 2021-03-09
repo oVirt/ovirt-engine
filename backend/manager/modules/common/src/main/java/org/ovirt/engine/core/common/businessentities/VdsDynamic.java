@@ -231,6 +231,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private String bootUuid;
 
+    private boolean cdChangePdiv;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -977,6 +979,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.bootUuid = bootUuid;
     }
 
+    public boolean isCdChangePdiv() {
+        return cdChangePdiv;
+    }
+
+    public void setCdChangePdiv(boolean cdChangePdiv) {
+        this.cdChangePdiv = cdChangePdiv;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -1056,7 +1066,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 tscFrequency,
                 tscScalingEnabled,
                 fipsEnabled,
-                bootUuid
+                bootUuid,
+                cdChangePdiv
         );
     }
 
@@ -1147,6 +1158,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(tscFrequency, other.tscFrequency)
                 && tscScalingEnabled == other.tscScalingEnabled
                 && fipsEnabled == other.fipsEnabled
-                && Objects.equals(bootUuid, other.bootUuid);
+                && Objects.equals(bootUuid, other.bootUuid)
+                && cdChangePdiv == other.cdChangePdiv;
     }
 }
