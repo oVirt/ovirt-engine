@@ -108,9 +108,24 @@ ENGINE_DEPLOYMENT_SCANNER=false
 
 #
 # Change following to true if you want to enable garbage collection debug
-# information (will be sent to the console.log file):
+# information (will be sent to the gc.log file):
 #
 ENGINE_VERBOSE_GC=false
+
+#
+# Defines  GC log level verbosity. Valid options: off, error, warning, info, debug, trace
+#
+ENGINE_VERBOSE_GC_LOG_LEVEL=info
+
+#
+# Defines GC logging max file size
+#
+ENGINE_VERBOSE_GC_LOG_FILE_SIZE=2M
+
+#
+# Defines max number of files used in the rotation for GC logging
+#
+ENGINE_VERBOSE_GC_LOG_FILES_NUMBER=50
 
 #
 # Extra system properties to be added to the java virtual machine

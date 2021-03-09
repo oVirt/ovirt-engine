@@ -367,9 +367,12 @@ class Daemon(service.Daemon):
         # Enable verbose garbage collection if required:
         if self._config.getboolean('ENGINE_VERBOSE_GC'):
             self._engineArgs.extend([
-                '-verbose:gc',
-                '-XX:+PrintGCTimeStamps',
-                '-XX:+PrintGCDetails',
+                '-Xlog:gc*=%s:file=%s/gc.log:time,uptime,level,tags:filesize=%s,filecount=%s' % (
+                    self._config.get('ENGINE_VERBOSE_GC_LOG_LEVEL'),
+                    self._config.get('ENGINE_LOG'),
+                    self._config.get('ENGINE_VERBOSE_GC_LOG_FILE_SIZE'),
+                    self._config.get('ENGINE_VERBOSE_GC_LOG_FILES_NUMBER'),
+                )
             ])
 
         # Specify special krb5.conf file if required
