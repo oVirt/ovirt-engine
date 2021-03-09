@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.ChangeDiskVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.compat.Version;
 
 public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends VmOperationCommandBase<T> {
 
@@ -81,12 +80,8 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
     @Override
     protected void perform() {
-        String iface = null;
-        int index = 0;
-        if (getVm().getCompatibilityVersion().greaterOrEquals(Version.v4_2)) {
-            iface = getVmDeviceUtils().getCdInterface(getVm());
-            index = VmDeviceCommonUtils.getCdDeviceIndex(iface);
-        }
+        String iface = getVmDeviceUtils().getCdInterface(getVm());
+        int index = VmDeviceCommonUtils.getCdDeviceIndex(iface);
         cdImagePath = cdPathWindowsToLinux(
                 getParameters().getCdImagePath(),
                 getVm().getStoragePoolId(),
