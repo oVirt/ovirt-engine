@@ -2338,37 +2338,39 @@ LANGUAGE plpgsql;
 
 
 
+DROP TYPE IF EXISTS VmExternalData_rs CASCADE;
+CREATE TYPE VmExternalData_rs AS (data TEXT, hash TEXT);
+
 CREATE OR REPLACE FUNCTION GetTpmData (
     v_vm_id UUID
 )
-RETURNS TEXT STABLE AS $FUNCTION$
-BEGIN
-    RETURN
-    (
-        SELECT tpm_data
-        FROM vm_external_data
-        WHERE vm_id = v_vm_id
-    );
-END;$FUNCTION$
-LANGUAGE plpgsql;
+RETURNS SETOF VmExternalData_rs STABLE AS $FUNCTION$
+    SELECT tpm_data, tpm_hash
+    FROM vm_external_data
+    WHERE vm_id = v_vm_id
+$FUNCTION$
+LANGUAGE sql;
 
 CREATE OR REPLACE FUNCTION UpdateTpmData (
     v_vm_id UUID,
-    v_tpm_data TEXT
+    v_tpm_data TEXT,
+    v_tpm_hash TEXT
 )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     INSERT INTO vm_external_data (
         device_id,
         vm_id,
-        tpm_data
+        tpm_data,
+        tpm_hash
     )
-    SELECT device_id, v_vm_id, v_tpm_data
+    SELECT device_id, v_vm_id, v_tpm_data, v_tpm_hash
     FROM vm_device
     WHERE v_tpm_data IS NOT NULL AND vm_id = v_vm_id AND type = 'tpm'
     ON CONFLICT (device_id, vm_id) DO
     UPDATE
-    SET tpm_data = v_tpm_data;
+    SET tpm_data = v_tpm_data,
+        tpm_hash = v_tpm_hash;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -2378,41 +2380,49 @@ CREATE OR REPLACE FUNCTION CopyTpmData (
 )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
-    PERFORM UpdateTpmData(v_target_vm_id, GetTpmData(v_source_vm_id));
+    INSERT INTO vm_external_data (
+        device_id,
+        vm_id,
+        tpm_data,
+        tpm_hash
+    )
+    SELECT device_id, v_target_vm_id, tpm_data, tpm_hash
+    FROM vm_device
+    WHERE vm_id = v_source_vm_id AND type = 'tpm';
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNvramData (
     v_vm_id UUID
 )
-RETURNS TEXT STABLE AS $FUNCTION$
-BEGIN
-    RETURN
-    (
-        SELECT nvram_data
-        FROM vm_nvram_data
-        WHERE vm_id = v_vm_id
-    );
-END;$FUNCTION$
-LANGUAGE plpgsql;
+RETURNS SETOF VmExternalData_rs AS $FUNCTION$
+    SELECT nvram_data, nvram_hash
+    FROM vm_nvram_data
+    WHERE vm_id = v_vm_id
+$FUNCTION$
+LANGUAGE sql;
 
 CREATE OR REPLACE FUNCTION UpdateNvramData (
     v_vm_id UUID,
-    v_nvram_data TEXT
+    v_nvram_data TEXT,
+    v_nvram_hash TEXT
 )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     INSERT INTO vm_nvram_data (
         vm_id,
-        nvram_data
+        nvram_data,
+        nvram_hash
     )
     VALUES (
         v_vm_id,
-        v_nvram_data
+        v_nvram_data,
+        v_nvram_hash
     )
     ON CONFLICT (vm_id) DO
     UPDATE
-    SET nvram_data = v_nvram_data;
+    SET nvram_data = v_nvram_data,
+        nvram_hash = v_nvram_hash;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -2422,7 +2432,14 @@ CREATE OR REPLACE FUNCTION CopyNvramData (
 )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
-    PERFORM UpdateNvramData(v_target_vm_id, GetNvramData(v_source_vm_id));
+    INSERT INTO vm_nvram_data (
+        vm_id,
+        nvram_data,
+        nvram_hash
+    )
+    SELECT v_target_vm_id, nvram_data, nvram_hash
+    FROM vm_nvram_data
+    WHERE vm_id = v_source_vm_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

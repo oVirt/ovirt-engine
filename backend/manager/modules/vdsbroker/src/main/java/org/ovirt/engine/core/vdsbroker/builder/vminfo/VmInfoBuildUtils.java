@@ -1353,11 +1353,11 @@ public class VmInfoBuildUtils {
     }
 
     public String tpmData(Guid vmId) {
-        return vmDao.getTpmData(vmId);
+        return vmDao.getTpmData(vmId).getFirst();
     }
 
     public String nvramData(Guid vmId) {
-        return vmDao.getNvramData(vmId);
+        return vmDao.getNvramData(vmId).getFirst();
     }
 
     public List<VmDevice> getVmDevices(Guid vmId) {

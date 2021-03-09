@@ -391,19 +391,22 @@ public interface VmDao extends Dao {
     List<String> getAllRunningNamesWithSpecificIsoAttached(Guid isoDiskId);
 
     /**
-     * Returns the TPM data for the specified VM.
+     * Retrieve TPM data for the specified VM.
      *
      * @param vmId the VM id
+     *
+     * @return Pair of data and its hash; any of the pair values can be null if not available
      */
-    String getTpmData(Guid vmId);
+    Pair<String, String> getTpmData(Guid vmId);
 
     /**
      * Stores the specified TPM data for the given VM.
      *
      * @param vmId the VM id
      * @param tpmData the data
+     * @param tpmDataHash hash of the data as obtained from the VDS
      */
-    void updateTpmData(Guid vmId, String tpmData);
+    void updateTpmData(Guid vmId, String tpmData, String tpmDataHash);
 
     /**
      * Copies the specified TPM data from one VM to another one.
@@ -417,16 +420,19 @@ public interface VmDao extends Dao {
      * Returns the secure boot NVRAM data for the specified VM.
      *
      * @param vmId the VM id
+     *
+     * @return Pair of data and its hash; any of the pair values can be null if not available
      */
-    String getNvramData(Guid vmId);
+    Pair<String, String> getNvramData(Guid vmId);
 
     /**
      * Stores the specified secure boot NVRAM data for the given VM.
      *
      * @param vmId the VM id
      * @param nvramData the data
+     * @param nvramDataHash hash of the data as obtained from the VDS
      */
-    void updateNvramData(Guid vmId, String nvramData);
+    void updateNvramData(Guid vmId, String nvramData, String nvramDataHash);
 
     /**
      * Copies the specified NVRAM data from one VM to another one.

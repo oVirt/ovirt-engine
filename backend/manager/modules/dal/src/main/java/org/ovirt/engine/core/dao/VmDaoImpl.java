@@ -408,20 +408,29 @@ public class VmDaoImpl extends BaseDao implements VmDao {
                 getCustomMapSqlParameterSource().addValue("iso_disk_id", isoDiskId));
     }
 
-    @Override
-    public String getTpmData(Guid vmId) {
-        return getCallsHandler().executeRead("GetTpmData",
-                SingleColumnRowMapper.newInstance(String.class),
-                getCustomMapSqlParameterSource()
-                        .addValue("vm_id", vmId));
+    private Pair<String, String> getExternalData(Guid vmId, String functionName) {
+        List<Pair<String, String>> resultRows = getCallsHandler().executeReadList(functionName,
+                (rs, i) -> new Pair<>(new String(rs.getString("data")), rs.getString("hash")),
+                getCustomMapSqlParameterSource().addValue("vm_id", vmId));
+        if (resultRows.isEmpty()) {
+            return new Pair<String, String>();
+        } else {
+            return resultRows.get(0);
+        }
     }
 
     @Override
-    public void updateTpmData(Guid vmId, String tpmData) {
+    public Pair<String, String> getTpmData(Guid vmId) {
+        return getExternalData(vmId, "GetTpmData");
+    }
+
+    @Override
+    public void updateTpmData(Guid vmId, String tpmData, String tpmDataHash) {
         getCallsHandler().executeModification("UpdateTpmData",
                 getCustomMapSqlParameterSource()
                         .addValue("vm_id", vmId)
-                        .addValue("tpm_data", tpmData));
+                        .addValue("tpm_data", tpmData)
+                        .addValue("tpm_hash", tpmDataHash));
     }
 
     @Override
@@ -433,19 +442,17 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
-    public String getNvramData(Guid vmId) {
-        return getCallsHandler().executeRead("GetNvramData",
-                SingleColumnRowMapper.newInstance(String.class),
-                getCustomMapSqlParameterSource()
-                        .addValue("vm_id", vmId));
+    public Pair<String, String> getNvramData(Guid vmId) {
+        return getExternalData(vmId, "GetNvramData");
     }
 
     @Override
-    public void updateNvramData(Guid vmId, String nvramData) {
+    public void updateNvramData(Guid vmId, String nvramData, String nvramDataHash) {
         getCallsHandler().executeModification("UpdateNvramData",
                 getCustomMapSqlParameterSource()
                         .addValue("vm_id", vmId)
-                        .addValue("nvram_data", nvramData));
+                        .addValue("nvram_data", nvramData)
+                        .addValue("nvram_hash", nvramDataHash));
     }
 
     @Override

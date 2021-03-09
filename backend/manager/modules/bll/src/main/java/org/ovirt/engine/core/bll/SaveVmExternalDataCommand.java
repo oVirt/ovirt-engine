@@ -115,13 +115,14 @@ public class SaveVmExternalDataCommand<T extends SaveVmExternalDataParameters> e
             } else {
                 externalDataStatus.setFinished(dataKind);
                 String data = ((VmExternalDataReturn) returnValue.getReturnValue()).data;
+                String hash = ((VmExternalDataReturn) returnValue.getReturnValue()).hash;
                 if (data != null) {
                     switch (dataKind) {
                         case VdsProperties.tpm:
-                            vmDao.updateTpmData(vmId, data);
+                            vmDao.updateTpmData(vmId, data, hash);
                             break;
                         case VdsProperties.nvram:
-                            vmDao.updateNvramData(vmId, data);
+                            vmDao.updateNvramData(vmId, data, hash);
                             break;
                         default:
                             log.error("Unexpected external data kind {}, data not stored: {}", dataKind, vmId);
