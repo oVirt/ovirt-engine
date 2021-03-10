@@ -119,7 +119,7 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
             storage = localStorage.getAllSupportedMappingsFromLocalStorage();
         }
         UserProfileProperty update = WebAdminSettings.Builder.create()
-                .fromSettings(Frontend.getInstance().getUserProfileManager().getWebAdminSettings())
+                .fromSettings(Frontend.getInstance().getWebAdminSettings())
                 .withLocalStoragePersistence(model.getLocalStoragePersistedOnServer().getEntity())
                 // clear the storage on the server when persistence gets disabled
                 // upload local state to the server otherwise

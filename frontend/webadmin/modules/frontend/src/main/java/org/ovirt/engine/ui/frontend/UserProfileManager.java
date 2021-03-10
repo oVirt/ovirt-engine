@@ -25,16 +25,12 @@ public class UserProfileManager {
     private static final Logger logger = Logger.getLogger(UserProfileManager.class.getName());
 
     private final Frontend frontend;
+
     /**
      * WebAdmin option fetched from the backend (contains encoded JSON).
-     * Data source for {@linkplain #webAdminSettings}.
+     * Data source for {@linkplain Frontend#getWebAdminSettings()}.
      */
     private UserProfileProperty webAdminUserOption;
-    /**
-     * Cached settings to be used by the UI.
-     * Contains parsed data from {@linkplain #webAdminUserOption}.
-     */
-    private WebAdminSettings webAdminSettings = WebAdminSettings.defaultSettings();
 
     public UserProfileManager(Frontend frontend) {
         this.frontend = frontend;
@@ -48,17 +44,8 @@ public class UserProfileManager {
         this.webAdminUserOption = option;
     }
 
-    /**
-     * Settings retrieved for currently logged-in user.
-     * Note that it may contain outdated settings (not in sync with the server).
-     * In order to refresh settings use {@linkplain #reloadWebAdminSettings(Consumer, Object)}
-     */
-    public WebAdminSettings getWebAdminSettings() {
-        if (frontend.getLoggedInUser() != null && !webAdminSettings.getOriginalUserOptions()
-                .equals(webAdminUserOption)) {
-            webAdminSettings = WebAdminSettings.from(webAdminUserOption);
-        }
-        return webAdminSettings;
+    public UserProfileProperty getWebAdminUserOption() {
+        return webAdminUserOption;
     }
 
     /**
@@ -76,7 +63,7 @@ public class UserProfileManager {
         }
         getUserProfileProperty(WebAdminSettings.WEB_ADMIN, JSON, prop -> {
             setWebAdminUserOption(prop);
-            callback.accept(getWebAdminSettings());
+            callback.accept(frontend.getWebAdminSettings());
         }, model);
 
     }
@@ -87,7 +74,7 @@ public class UserProfileManager {
             Object model) {
         frontend.runQuery(QueryType.GetUserProfilePropertyByNameAndUserId,
                 new IdAndNameQueryParameters(frontend.getLoggedInUser().getId(), name),
-                new AsyncQuery<QueryReturnValue>(model, (AsyncCallback<QueryReturnValue>) result -> {
+                new AsyncQuery<>(model, (AsyncCallback<QueryReturnValue>) result -> {
                     UserProfileProperty prop = result.getReturnValue();
                     if (prop != null && prop.getType().equals(type)) {
                         successCallback.accept(prop);
@@ -189,9 +176,7 @@ public class UserProfileManager {
         }
 
         updateUserProfileProperty(update,
-                result -> {
-                    successCallback.accept(result, result.getReturnValue().getActionReturnValue());
-                },
+                result -> successCallback.accept(result, result.getReturnValue().getActionReturnValue()),
                 result -> {
                     // for future use
                 },

@@ -46,7 +46,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
 
     private final ApplicationLogManager applicationLogManager;
     private final AlertManager alertManager;
-    private ClientStorage clientStorage;
+    private final ClientStorage clientStorage;
 
     public BaseApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
@@ -207,7 +207,6 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             lockInteractionManager.showLoadingIndicator();
             getLoginModel().autoLogin(loggedUser, userInfo.getWebAdminUserOption());
             clientStorage.storeAllUserSettingsInLocalStorage(Frontend.getInstance()
-                    .getUserProfileManager()
                     .getWebAdminSettings());
         });
 

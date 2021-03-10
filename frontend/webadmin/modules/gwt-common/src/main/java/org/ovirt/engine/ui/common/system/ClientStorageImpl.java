@@ -104,7 +104,7 @@ public class ClientStorageImpl implements ClientStorage {
     }
 
     private boolean shouldSaveOnServer() {
-        WebAdminSettings settings = Frontend.getInstance().getUserProfileManager().getWebAdminSettings();
+        WebAdminSettings settings = Frontend.getInstance().getWebAdminSettings();
         return settings != null &&
                 settings.isLocalStoragePersistedOnServer() &&
                 settings.getLocalStoragePersistenceVersion() != null;
@@ -208,7 +208,7 @@ public class ClientStorageImpl implements ClientStorage {
         }
 
         private void doUpload(boolean uploadChangedOnly) {
-            WebAdminSettings settings = Frontend.getInstance().getUserProfileManager().getWebAdminSettings();
+            WebAdminSettings settings = Frontend.getInstance().getWebAdminSettings();
             if (!settings.isLocalStoragePersistedOnServer()) {
                 // multi-browser scenario: 2nd browser disabled persistence
                 logger.info("Storage persistence disabled from other browser.Skip upload."); //$NON-NLS-1$

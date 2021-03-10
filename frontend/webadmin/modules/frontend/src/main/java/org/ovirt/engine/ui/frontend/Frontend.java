@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -122,6 +124,13 @@ public class Frontend implements HasHandlers {
     private DbUser currentUser;
 
     private final UserProfileManager userProfileManager = new UserProfileManager(this);
+
+    /**
+     * Cached settings to be used by the UI.
+     * Contains parsed data from {@linkplain UserProfileManager#getWebAdminUserOption()}.
+     */
+    private WebAdminSettings webAdminSettings = WebAdminSettings.defaultSettings();
+
 
     /**
      * Should queries be filtered.
@@ -1085,5 +1094,19 @@ public class Frontend implements HasHandlers {
 
     public UserProfileManager getUserProfileManager() {
         return userProfileManager;
+    }
+
+    /**
+     * Settings retrieved for currently logged-in user.
+     * Note that it may contain outdated settings (not in sync with the server).
+     * In order to refresh settings use {@linkplain UserProfileManager#reloadWebAdminSettings(Consumer, Object)}
+     */
+    public WebAdminSettings getWebAdminSettings() {
+        UserProfileProperty webAdminUserOption = getUserProfileManager().getWebAdminUserOption();
+        if (getLoggedInUser() != null &&
+                !webAdminSettings.getOriginalUserOptions().equals(webAdminUserOption)) {
+            webAdminSettings = WebAdminSettings.from(webAdminUserOption);
+        }
+        return webAdminSettings;
     }
 }
