@@ -13,8 +13,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
@@ -22,10 +20,13 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginData;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginDataManager;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 /**
  * WebAdmin GWT application host page servlet.
  * <p>
- * Note that this servlet <em>does</em> {@linkplain PluginDataManager#reloadData reload} UI plugin
+ * Note that this servlet <em>does</em> {@linkplain PluginDataManager#reloadData() reload} UI plugin
  * descriptor/configuration data as part of its request handling.
  */
 public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
@@ -97,7 +98,7 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
             ObjectNode dataObj = createObjectNode();
             dataObj.put("name", data.getName()); //$NON-NLS-1$
             dataObj.put("url", data.getUrl()); //$NON-NLS-1$
-            dataObj.put("config", data.mergeConfiguration()); //$NON-NLS-1$
+            dataObj.set("config", data.mergeConfiguration()); //$NON-NLS-1$
             dataObj.put("lazyLoad", data.isLazyLoad()); //$NON-NLS-1$
             dataObj.put("enabled", data.isEnabled()); //$NON-NLS-1$
             arr.add(dataObj);

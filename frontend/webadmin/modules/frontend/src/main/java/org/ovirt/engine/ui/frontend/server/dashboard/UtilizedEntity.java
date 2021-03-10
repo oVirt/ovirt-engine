@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.frontend.server.dashboard;
 
-import org.codehaus.jackson.annotate.JsonValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public class UtilizedEntity {
 

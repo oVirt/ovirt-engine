@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.frontend.server.gwt.plugin;
 
 import java.util.Objects;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
-import org.codehaus.jackson.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Immutable structure that contains UI plugin descriptor/configuration data and associated logic.
@@ -46,13 +46,11 @@ public class PluginData implements Comparable<PluginData> {
     }
 
     public JsonNode getDescriptorNode() {
-        // TODO should return a deep copy, see JACKSON-707
-        return descriptorNode;
+        return descriptorNode.deepCopy();
     }
 
     public JsonNode getConfigurationNode() {
-        // TODO should return a deep copy, see JACKSON-707
-        return configurationNode;
+        return configurationNode.deepCopy();
     }
 
     public long getDescriptorLastModified() {
@@ -107,12 +105,12 @@ public class PluginData implements Comparable<PluginData> {
 
     boolean checkRequiredNonEmptyStringNode(JsonNode root, String fieldName) {
         JsonNode target = root.path(fieldName);
-        return !target.isMissingNode() && target.isTextual() && !target.getTextValue().trim().isEmpty();
+        return !target.isMissingNode() && target.isTextual() && !target.textValue().trim().isEmpty();
     }
 
     boolean checkOptionalNonEmptyStringNode(JsonNode root, String fieldName) {
         JsonNode target = root.path(fieldName);
-        return !target.isMissingNode() ? target.isTextual() && !target.getTextValue().trim().isEmpty() : true;
+        return !target.isMissingNode() ? target.isTextual() && !target.textValue().trim().isEmpty() : true;
     }
 
     boolean checkOptionalObjectNode(JsonNode root, String fieldName) {
@@ -153,31 +151,31 @@ public class PluginData implements Comparable<PluginData> {
     }
 
     public String getName() {
-        return descriptorNode.path(ATT_NAME).getTextValue();
+        return descriptorNode.path(ATT_NAME).textValue();
     }
 
     public String getUrl() {
-        return descriptorNode.path(ATT_URL).getTextValue();
+        return descriptorNode.path(ATT_URL).textValue();
     }
 
     public String getResourcePath() {
         JsonNode target = descriptorNode.path(ATT_RESOURCEPATH);
-        return !target.isMissingNode() ? target.getTextValue() : null;
+        return !target.isMissingNode() ? target.textValue() : null;
     }
 
     public boolean isLazyLoad() {
         JsonNode target = descriptorNode.path(ATT_LAZYLOAD);
-        return !target.isMissingNode() ? target.getBooleanValue() : true;
+        return !target.isMissingNode() ? target.booleanValue() : true;
     }
 
     public boolean isEnabled() {
         JsonNode target = configurationNode.path(ATT_ENABLED);
-        return !target.isMissingNode() ? target.getBooleanValue() : true;
+        return !target.isMissingNode() ? target.booleanValue() : true;
     }
 
     public int getOrder() {
         JsonNode target = configurationNode.path(ATT_ORDER);
-        return !target.isMissingNode() ? target.getIntValue() : Integer.MAX_VALUE;
+        return !target.isMissingNode() ? target.intValue() : Integer.MAX_VALUE;
     }
 
     /**

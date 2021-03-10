@@ -23,10 +23,6 @@ import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +34,10 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginData;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -52,16 +52,11 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     @Mock
     private ObjectNode mockApplicationModeObject;
 
-    // Cannot use @Mock since ArrayNode is final
+    @Mock
     private ArrayNode mockPluginDefinitionsArray;
 
     @BeforeEach
     public void setUpMockRequest() {
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode mockPluginDef = mapper.createObjectNode();
-        mockPluginDef.put("foo", "bar"); //$NON-NLS-1$ //$NON-NLS-2$
-        mockPluginDefinitionsArray = mapper.createArrayNode();
-        mockPluginDefinitionsArray.add(mockPluginDef);
         when(mockApplicationModeObject.toString()).thenReturn(APPLICATION_MODE);
         when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_APPLICATION_MODE)).thenReturn(mockApplicationModeObject);
         when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_PLUGIN_DEFS)).thenReturn(mockPluginDefinitionsArray);

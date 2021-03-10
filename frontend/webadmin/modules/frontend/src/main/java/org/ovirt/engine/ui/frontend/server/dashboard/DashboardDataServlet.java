@@ -20,12 +20,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.infinispan.Cache;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.ui.frontend.server.dashboard.fake.FakeDataGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DashboardDataServlet extends HttpServlet {
     /**
