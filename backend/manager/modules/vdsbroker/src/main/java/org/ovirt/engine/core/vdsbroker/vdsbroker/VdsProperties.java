@@ -224,6 +224,7 @@ public final class VdsProperties {
     public static final String size = "size";
     public static final String lun_guid = "lunGUID";
     public static final String compat_version = "qcow2_compat";
+    public static final String drive_spec = "drive_spec";
 
     // Iso/Floppy related properties
     public static final String iso_list = "isolist";
