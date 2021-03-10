@@ -518,9 +518,13 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                     storagePoolIsoMapDao.updateStatus(newMasterMap.getId(), newMasterMap.getStatus());
                 }
                 updateStorageDomainStaticData(newMaster.getStorageStaticData());
-                getCompensationContext().snapshotEntityUpdated(getStorageDomain().getStorageStaticData());
-                getStorageDomain().setStorageDomainType(StorageDomainType.Data);
-                updateStorageDomainStaticData(getStorageDomain().getStorageStaticData());
+                // Not having a master storage domain may result in an arbitrary storage domain selected as the master,
+                // and we do not want to override its type.
+                if (!newMaster.getId().equals(getStorageDomain().getId())) {
+                    getCompensationContext().snapshotEntityUpdated(getStorageDomain().getStorageStaticData());
+                    getStorageDomain().setStorageDomainType(StorageDomainType.Data);
+                    updateStorageDomainStaticData(getStorageDomain().getStorageStaticData());
+                }
                 getCompensationContext().stateChanged();
                 return null;
             });

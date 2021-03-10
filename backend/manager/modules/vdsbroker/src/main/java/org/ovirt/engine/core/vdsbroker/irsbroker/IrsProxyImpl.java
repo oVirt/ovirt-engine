@@ -361,6 +361,17 @@ public class IrsProxyImpl implements IrsProxy {
         VDSReturnValue storagePoolInfoResult = resourceManager.runVdsCommand(
                 VDSCommandType.GetStoragePoolInfo, tempVar);
         if (storagePoolInfoResult.getSucceeded()) {
+            if (storagePoolInfoResult.getVdsError() != null &&
+                    storagePoolInfoResult.getVdsError().getCode() == EngineError.StoragePoolMasterNotFound) {
+                // In case there's no master storage domain on the database,
+                // select a temporary storage domain and treat it as the current master, so we can use reconstruct.
+                StorageDomain tempMaster = getStorageDomainForMaster(storagePool.getName(), domainsInDb);
+                if (tempMaster == null) {
+                    return;
+                }
+                reconstructMasterDomainIfNoMaster(tempMaster);
+            }
+
             KeyValuePairCompat<StoragePool, List<StorageDomain>> data =
                     (KeyValuePairCompat<StoragePool, List<StorageDomain>>) storagePoolInfoResult
                             .getReturnValue();
@@ -386,11 +397,31 @@ public class IrsProxyImpl implements IrsProxy {
                             .remove(new StoragePoolIsoMapId(domainInDb.getId(),
                                     storagePoolId));
                 }
-
             }
         }
 
         domainsInMaintenanceCheck(domainsInDb, storagePool);
+    }
+
+    /**
+     * Reconstructs the master domain when there's no master on the database.
+     */
+    private void reconstructMasterDomainIfNoMaster(StorageDomain sd) {
+        getEventQueue().submitEventSync(new Event(this.storagePoolId,
+                        sd.getId(), null, EventType.RECONSTRUCT, "No master storage domain was found in the database."),
+                () -> {
+                    log.warn("No master storage domain was found in the database, selecting one as master.");
+                    return getEventListener().masterDomainNotOperational(sd.getId(), storagePoolId, false, true);
+                });
+    }
+
+    private StorageDomain getStorageDomainForMaster(String storagePoolName, List<StorageDomain> storageDomains) {
+        if (storageDomains.isEmpty()) {
+            log.warn("Cannot elect new master, no storage domains were found for pool {}", storagePoolName);
+            return null;
+        }
+        return storageDomains.stream().filter(sd -> sd.getStorageDomainType() == StorageDomainType.Data).findFirst()
+                .orElse(null);
     }
 
     private void domainsInMaintenanceCheck(List<StorageDomain> storageDomains, StoragePool pool) {
