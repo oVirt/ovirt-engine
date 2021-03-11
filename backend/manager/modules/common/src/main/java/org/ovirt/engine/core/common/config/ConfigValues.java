@@ -1526,9 +1526,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     SetupNetworksWaitTimeoutSeconds,
 
-    @TypeConverterAttribute(Boolean.class)
-    KubevirtProviderSupportEnabled,
-
     @TypeConverterAttribute(String.class)
     SkuToAVLevel,
 

@@ -881,8 +881,6 @@ select fn_db_add_config_value('NumOfPciExpressPorts', '16', 'general');
 
 select fn_db_add_config_value('SetupNetworksWaitTimeoutSeconds', '20', 'general');
 
-select fn_db_add_config_value('KubevirtProviderSupportEnabled', 'true', 'general');
-
 -- Sku -> Version mapping for Windows Update
 select fn_db_add_config_value_for_versions_up_to('SkuToAVLevel', '', '4.6');
 
@@ -906,7 +904,6 @@ select fn_db_update_config_value('FenceStopStatusRetries','18','general');
 select fn_db_update_config_value('FencePowerWaitParam','apc=power_wait,apc_snmp=power_wait,bladecenter=power_wait,cisco_ucs=power_wait,drac5=power_wait,drac7=power_wait,eps=delay,hpblade=power_wait,ilo=power_wait,ilo2=power_wait,ilo3=power_wait,ilo4=power_wait,ilo_ssh=power_wait,ipmilan=power_wait,redfish=power_wait,rsa=power_wait,rsb=power_wait,wti=power_wait','general');
 select fn_db_update_config_value('GuestNicNamesBlacklist','lo[0-9]*,Loopback.*,tun[0-9]*,veth[0-9a-f]*','general');
 select fn_db_update_config_value_for_versions_from_up_to('IsIncrementalBackupSupported', 'true', '4.5', '4.6');
-select fn_db_update_config_value('KubevirtProviderSupportEnabled', 'true', 'general');
 select fn_db_update_config_value('EnableBochsDisplay','true','4.6');
 
 select fn_db_update_config_value('IPTablesConfig','

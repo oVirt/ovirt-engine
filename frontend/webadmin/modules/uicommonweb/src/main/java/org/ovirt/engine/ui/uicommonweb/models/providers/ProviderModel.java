@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -461,11 +460,6 @@ public class ProviderModel extends Model {
         getTenantName().setIsAvailable(false);
 
         List<ProviderType> providerTypes = new ArrayList<>(Arrays.asList(ProviderType.values()));
-
-        if (!(Boolean) AsyncDataProvider.getInstance()
-                .getConfigValuePreConverted(ConfigValues.KubevirtProviderSupportEnabled)) {
-            providerTypes.remove(ProviderType.KUBEVIRT);
-        }
 
         Collections.sort(providerTypes,
                 Comparator.comparing(t -> EnumTranslator.getInstance().translate(t), new LexoNumericComparator()));
