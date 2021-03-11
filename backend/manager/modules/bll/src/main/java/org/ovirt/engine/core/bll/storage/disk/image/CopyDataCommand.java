@@ -57,6 +57,7 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
             setVdsId(getParameters().getVdsId());
         } else {
             setVdsId(vdsCommandsHelper.getHostForExecution(getParameters().getStoragePoolId()));
+            getParameters().setVdsId(getVdsId());
             getParameters().setVdsRunningOn(getVdsId());
         }
     }
