@@ -289,4 +289,36 @@ public class VmNicValidatorTest {
 
         assertThat(validator.isNetworkSupportedByClusterSwitchType(cluster), matcher);
     }
+
+    @Test
+    public void withoutFailoverCluster45Success() {
+        failoverClusterVersionTest(isValid(), false, Version.v4_5);
+    }
+
+    @Test
+    public void withoutFailoverCluster46Success() {
+        failoverClusterVersionTest(isValid(), false, Version.v4_6);
+    }
+
+    @Test
+    public void withFailoverCluster45Fail() {
+        failoverClusterVersionTest(failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_INTERFACE_WITH_FAILOVER_IS_SUPPORTED_ONLY_IN_CLUSTER_4_6_AND_ABOVE),
+                true,
+                Version.v4_5);
+    }
+
+    @Test
+    public void withFailoverCluster46Success() {
+        failoverClusterVersionTest(isValid(), true, Version.v4_6);
+    }
+
+    private void failoverClusterVersionTest(Matcher<ValidationResult> matcher,
+            boolean hasFailover,
+            Version clusterVersion) {
+        validator.version = clusterVersion;
+        doReturn(vnicProfile).when(validator).getVnicProfile();
+        doReturn(hasFailover ? Guid.newGuid() : null).when(vnicProfile).getFailoverVnicProfileId();
+
+        assertThat(validator.isFailoverInSupportedClusterVersion(), matcher);
+    }
 }

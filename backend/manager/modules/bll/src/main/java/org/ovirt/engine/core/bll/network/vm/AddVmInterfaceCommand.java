@@ -166,7 +166,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
                 || !validate(nicValidator.profileValid(getVm().getClusterId()))
                 || !validate(nicValidator.typeMatchesProfile())
                 || !validate(nicValidator.passthroughIsLinked())
-                || !validate(nicValidator.validateProfileNotEmptyForHostedEngineVm(getVm()))) {
+                || !validate(nicValidator.validateProfileNotEmptyForHostedEngineVm(getVm()))
+                || !validate(nicValidator.isFailoverInSupportedClusterVersion())) {
             return false;
         }
 

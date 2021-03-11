@@ -151,4 +151,13 @@ public class VmNicValidator {
                 .when(cluster.getRequiredSwitchTypeForCluster().equals(SwitchType.OVS)
                         && !isVnicEmptyOrAttachedToExternalNetwork());
     }
+
+    public ValidationResult isFailoverInSupportedClusterVersion() {
+        if (getVnicProfile() == null || getVnicProfile().getFailoverVnicProfileId() == null) {
+            return ValidationResult.VALID;
+        }
+
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_VM_INTERFACE_WITH_FAILOVER_IS_SUPPORTED_ONLY_IN_CLUSTER_4_6_AND_ABOVE)
+                .when(version.less(Version.v4_6));
+    }
 }
