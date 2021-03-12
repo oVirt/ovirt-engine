@@ -112,6 +112,7 @@ public class VnicProfileViewDaoImpl extends DefaultReadDao<VnicProfileView, Guid
             entity.setCompatibilityVersion(new VersionRowMapper("compatibility_version").mapRow(rs, rowNum));
             entity.setNetworkFilterName(rs.getString("network_filter_name"));
             entity.setDataCenterId(getGuid(rs, "data_center_id"));
+            entity.setFailoverVnicProfileName(rs.getString("failover_vnic_profile_name"));
             return entity;
         }
 

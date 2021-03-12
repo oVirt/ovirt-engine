@@ -14,6 +14,7 @@ public class VnicProfileView extends VnicProfile {
     private Version compatibilityVersion;
     private String networkFilterName;
     private Guid dataCenterId;
+    private String failoverVnicProfileName;
 
     public static final VnicProfileView EMPTY = new VnicProfileView();
 
@@ -65,6 +66,14 @@ public class VnicProfileView extends VnicProfile {
         this.dataCenterId = id;
     }
 
+    public String getFailoverVnicProfileName() {
+        return failoverVnicProfileName;
+    }
+
+    public void setFailoverVnicProfileName(String failoverVnicProfileName) {
+        this.failoverVnicProfileName = failoverVnicProfileName;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -74,7 +83,8 @@ public class VnicProfileView extends VnicProfile {
                 networkName,
                 networkQosName,
                 networkFilterName,
-                dataCenterId
+                dataCenterId,
+                failoverVnicProfileName
         );
     }
 
@@ -93,6 +103,7 @@ public class VnicProfileView extends VnicProfile {
                 && Objects.equals(networkName, other.networkName)
                 && Objects.equals(networkQosName, other.networkQosName)
                 && Objects.equals(networkFilterName, other.networkFilterName)
-                && Objects.equals(dataCenterId, other.dataCenterId);
+                && Objects.equals(dataCenterId, other.dataCenterId)
+                && Objects.equals(failoverVnicProfileName, other.failoverVnicProfileName);
     }
 }

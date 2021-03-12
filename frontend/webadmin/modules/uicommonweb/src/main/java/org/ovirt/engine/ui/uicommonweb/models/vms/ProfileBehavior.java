@@ -50,6 +50,7 @@ public abstract class ProfileBehavior {
                         vnicProfiles.add(vnicProfile);
                         updateDescriptionForExternalNetwork(network, vnicProfile);
                     }
+                    updateDescriptionForFailoverVnicProfile(vnicProfile);
 
                 }
 
@@ -84,11 +85,20 @@ public abstract class ProfileBehavior {
     private void updateDescriptionForExternalNetwork(Network network, VnicProfileView vnicProfileView) {
         if (network.isExternal()) {
             UIConstants constants = ConstantsManager.getInstance().getConstants();
-            String description = vnicProfileView.getDescription();
-            vnicProfileView.setDescription(
-                    description != null ?
-                            description + constants.externalNetworkInfo() :
-                            constants.externalNetworkInfo());
+            updateDescription(vnicProfileView, constants.externalNetworkInfo());
         }
+    }
+
+    private void updateDescriptionForFailoverVnicProfile(VnicProfileView vnicProfileView) {
+        UIConstants constants = ConstantsManager.getInstance().getConstants();
+        String failoverName = vnicProfileView.getFailoverVnicProfileName();
+        if (failoverName != null) {
+            updateDescription(vnicProfileView, constants.failoverVnicProfile() + ": " + failoverName); //$NON-NLS-1$
+        }
+    }
+
+    private void updateDescription(VnicProfileView vnicProfileView, String descUpdate) {
+        String description = vnicProfileView.getDescription();
+        vnicProfileView.setDescription(description != null ? description + " - " + descUpdate : descUpdate); //$NON-NLS-1$
     }
 }

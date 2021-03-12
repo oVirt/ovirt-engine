@@ -2159,6 +2159,8 @@ public interface UIConstants extends Constants {
 
     String externalNetworkInfo();
 
+    String failoverVnicProfile();
+
     String consolidatedTitle();
 
     String separatedTitle();

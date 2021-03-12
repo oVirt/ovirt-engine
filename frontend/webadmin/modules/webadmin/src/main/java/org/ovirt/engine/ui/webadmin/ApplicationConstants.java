@@ -1127,6 +1127,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String migratableVnicProfile();
 
+    String failoverVnicProfile();
+
     String portMirroringVnicProfile();
 
     String customPropertiesVnicProfile();

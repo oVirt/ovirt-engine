@@ -131,6 +131,15 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         passthroughColumn.makeSortable();
         getTable().addColumn(passthroughColumn, constants.passthroughVnicProfile(), "100px"); //$NON-NLS-1$
 
+        AbstractTextColumn<VnicProfileView> failoverColumn = new AbstractTextColumn<VnicProfileView>() {
+            @Override
+            public String getValue(VnicProfileView object) {
+                return object.getFailoverVnicProfileName();
+            }
+        };
+        failoverColumn.makeSortable();
+        getTable().addColumn(failoverColumn, constants.failoverVnicProfile(), "150px"); //$NON-NLS-1$
+
         AbstractTextColumn<VnicProfileView> descriptionColumn =
                 new AbstractTextColumn<VnicProfileView>() {
                     @Override

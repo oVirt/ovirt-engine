@@ -2842,7 +2842,8 @@ SELECT vnic_profiles.id AS id,
     qos.name AS network_qos_name,
     storage_pool.name AS data_center_name,
     storage_pool.compatibility_version AS compatibility_version,
-    storage_pool.id AS data_center_id
+    storage_pool.id AS data_center_id,
+    failover_vnic_profiles.name AS failover_vnic_profile_name
 
 FROM vnic_profiles
 INNER JOIN network
@@ -2852,7 +2853,9 @@ LEFT JOIN qos
 INNER JOIN storage_pool
     ON network.storage_pool_id = storage_pool.id
 LEFT JOIN network_filter
-    ON vnic_profiles.network_filter_id = network_filter.filter_id;
+    ON vnic_profiles.network_filter_id = network_filter.filter_id
+LEFT JOIN vnic_profiles AS failover_vnic_profiles
+    ON vnic_profiles.failover_vnic_profile_id = failover_vnic_profiles.id;
 
 ----------------------------------------------
 -- Query Permissions
