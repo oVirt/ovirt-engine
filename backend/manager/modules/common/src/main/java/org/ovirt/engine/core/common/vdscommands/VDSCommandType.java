@@ -246,6 +246,7 @@ public enum VDSCommandType {
     AddExternalLease("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     RemoveExternalLease("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetLeaseStatus("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    FenceLeaseJob("org.ovirt.engine.core.vdsbroker.vdsbroker"),
 
     // Cold merge related commands
     PrepareMerge("org.ovirt.engine.core.vdsbroker.irsbroker"),

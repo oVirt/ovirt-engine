@@ -1081,6 +1081,11 @@ public class NullVdsServer implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturn fenceLeaseJob(String leaseUUID, String sdUUID, Map<String, Object> leaseMetadata) {
+        return null;
+    }
+
+    @Override
     public GlusterVolumeGlobalOptionsInfoReturn glusterVolumeGlobalOptionsGet() {
         return null;
     }

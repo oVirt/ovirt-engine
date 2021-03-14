@@ -2634,4 +2634,20 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request);
         return new VDSInfoReturn(response);
     }
+
+
+    @Override
+    public StatusOnlyReturn fenceLeaseJob(String leaseUUID, String sdUUID, Map<String, Object> leaseMetadata) {
+        Map<String, Object> leaseDict = new HashMap<>();
+        leaseDict.put("lease_id", leaseUUID);
+        leaseDict.put("sd_id", sdUUID);
+
+        JsonRpcRequest request =
+                new RequestBuilder("Lease.fence")
+                        .withParameter("lease", leaseDict)
+                        .withParameter("metadata", leaseMetadata)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
 }
