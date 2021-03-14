@@ -88,7 +88,7 @@ public class BackendVmNicFilterParameterResourceTest
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
-                ActionType.UpdateVmNicFilterParameter,
+                ActionType.UpdateVmNicFilterParameterLive,
                 VmNicFilterParameterParameters.class,
                 new String[] { "VmId" },
                 new Object[] { VM_ID },

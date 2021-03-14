@@ -76,7 +76,7 @@ public class BackendVmNicFilterParameterResource
         return performUpdate(
                 parameter,
                 new FilterParameterResolver(),
-                ActionType.UpdateVmNicFilterParameter,
+                ActionType.UpdateVmNicFilterParameterLive,
                 new UpdateParametersProvider()
         );
     }

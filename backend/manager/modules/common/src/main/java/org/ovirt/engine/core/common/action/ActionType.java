@@ -74,6 +74,7 @@ public enum ActionType {
     ImportVmFromExternalUrl(55, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     AddVmNicFilterParameter(60, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     UpdateVmNicFilterParameter(61, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
+    UpdateVmNicFilterParameterLive(610, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     RemoveVmNicFilterParameter(62, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     UpdateConvertedVm(63, QuotaDependency.NONE),
     RemoveUnregisteredVmTemplate(67, ActionGroup.DELETE_TEMPLATE, QuotaDependency.NONE),
