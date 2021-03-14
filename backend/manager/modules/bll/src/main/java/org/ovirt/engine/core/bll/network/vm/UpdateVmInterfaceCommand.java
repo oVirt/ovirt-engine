@@ -414,9 +414,10 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                             cloneContextWithNoCleanupCompensation());
                 } else {
                     parameter.setVmInterfaceId(getInterface().getId());
-                    runInternalAction(ActionType.AddVmNicFilterParameter,
+                    var actionReturnValue = runInternalAction(ActionType.AddVmNicFilterParameter,
                             new VmNicFilterParameterParameters(getParameters().getVmId(), parameter),
                             cloneContextWithNoCleanupCompensation());
+                    getReturnValue().setActionReturnValue(actionReturnValue.getActionReturnValue());
                 }
             }
             for (VmNicFilterParameter parameter : oldFilterParameters) {

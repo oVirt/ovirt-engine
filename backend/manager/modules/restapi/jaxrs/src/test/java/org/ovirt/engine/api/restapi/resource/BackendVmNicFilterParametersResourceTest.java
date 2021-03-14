@@ -118,7 +118,7 @@ public class BackendVmNicFilterParametersResourceTest
     public void testAddParameter() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(
-                ActionType.AddVmNicFilterParameter,
+                ActionType.AddVmNicFilterParameterLive,
                 VmNicFilterParameterParameters.class,
                 new String[] { "VmId" },
                 new Object[] { VM_ID },
@@ -153,7 +153,7 @@ public class BackendVmNicFilterParametersResourceTest
     private void doTestBadAddNic(boolean valid, boolean success, String detail) {
         setUriInfo(
             setUpActionExpectations(
-                ActionType.AddVmNicFilterParameter,
+                ActionType.AddVmNicFilterParameterLive,
                     VmNicFilterParameterParameters.class,
                 new String[] { "VmId" },
                 new Object[] { VM_ID },

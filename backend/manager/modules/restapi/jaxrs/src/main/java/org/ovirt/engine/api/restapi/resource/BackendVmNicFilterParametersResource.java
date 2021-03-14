@@ -49,7 +49,7 @@ public class BackendVmNicFilterParametersResource
         VmNicFilterParameter vmNicFilterParameter = map(parameter);
         vmNicFilterParameter.setVmInterfaceId(nicId);
         return performCreate(
-            ActionType.AddVmNicFilterParameter,
+            ActionType.AddVmNicFilterParameterLive,
             new VmNicFilterParameterParameters(vmId, vmNicFilterParameter),
             new NicNetworkFilterParameterResolver(parameter.getName())
         );

@@ -73,6 +73,7 @@ public enum ActionType {
     CancelConvertVm(51, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     ImportVmFromExternalUrl(55, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     AddVmNicFilterParameter(60, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
+    AddVmNicFilterParameterLive(600, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     UpdateVmNicFilterParameter(61, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     UpdateVmNicFilterParameterLive(610, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     RemoveVmNicFilterParameter(62, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
