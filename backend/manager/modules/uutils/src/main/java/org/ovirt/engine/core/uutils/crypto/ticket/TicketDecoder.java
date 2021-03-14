@@ -27,9 +27,10 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.commons.codec.binary.Base64;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
 import org.ovirt.engine.core.uutils.crypto.CertificateChain;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class TicketDecoder {
 
@@ -75,9 +76,8 @@ public class TicketDecoder {
         Certificate cert;
 
         Map<String, String> map = new ObjectMapper().readValue(
-            Base64.decodeBase64(ticket),
-            TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class)
-        );
+                Base64.decodeBase64(ticket),
+                TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class));
 
         if (peer != null) {
             cert = peer;
@@ -92,7 +92,7 @@ public class TicketDecoder {
         }
 
         if (eku != null) {
-            if (!((X509Certificate)cert).getExtendedKeyUsage().contains(eku)) {
+            if (!((X509Certificate) cert).getExtendedKeyUsage().contains(eku)) {
                 throw new GeneralSecurityException("Certificate is not authorized for action");
             }
         }
@@ -105,10 +105,14 @@ public class TicketDecoder {
         Signature sig;
         if (map.containsKey("v2_signature")) {
             sig = Signature.getInstance("RSASSA-PSS");
-            sig.setParameter(new PSSParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256,
-                    TicketEncoder.getSaltMaxLength((RSAKey)cert.getPublicKey()), PSSParameterSpec.TRAILER_FIELD_BC));
+            sig.setParameter(new PSSParameterSpec("SHA-256",
+                    "MGF1",
+                    MGF1ParameterSpec.SHA256,
+                    TicketEncoder.getSaltMaxLength((RSAKey) cert.getPublicKey()),
+                    PSSParameterSpec.TRAILER_FIELD_BC));
         } else {
-            sig = Signature.getInstance(String.format("%swith%s", map.get("digest"),
+            sig = Signature.getInstance(String.format("%swith%s",
+                    map.get("digest"),
                     cert.getPublicKey().getAlgorithm()));
         }
 
@@ -117,8 +121,8 @@ public class TicketDecoder {
             byte[] buf = map.get(field).getBytes(StandardCharsets.UTF_8);
             sig.update(buf);
         }
-        if (!sig.verify(Base64.decodeBase64(map.containsKey("v2_signature") ?
-                map.get("v2_signature") : map.get("signature")))) {
+        if (!sig.verify(Base64
+                .decodeBase64(map.containsKey("v2_signature") ? map.get("v2_signature") : map.get("signature")))) {
             throw new GeneralSecurityException("Invalid ticket signature");
         }
 

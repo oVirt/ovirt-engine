@@ -2,8 +2,9 @@ package org.ovirt.engine.core.sso.api.jwt;
 
 import java.util.Date;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.jboss.resteasy.jwt.JsonWebToken;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public final class JWT extends JsonWebToken {
     @JsonProperty("acr")

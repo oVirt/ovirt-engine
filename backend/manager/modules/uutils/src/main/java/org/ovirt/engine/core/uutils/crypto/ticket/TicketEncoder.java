@@ -21,7 +21,8 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.commons.codec.binary.Base64;
-import org.codehaus.jackson.map.ObjectMapper;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TicketEncoder {
 

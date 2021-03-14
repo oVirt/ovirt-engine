@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.host.provider.foreman;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ForemanHostGroup implements Serializable {
     private static final long serialVersionUID = -3099054972843803212L;

@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.DeserializationConfig.Feature;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.bll.host.provider.ContentHostProvider;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.BaseProviderProxy;
@@ -29,6 +27,9 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.queries.ErrataFilter;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.uutils.crypto.CryptMD5;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ForemanHostProviderProxy extends BaseProviderProxy implements HostProviderProxy {
 
@@ -57,7 +58,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
     public ForemanHostProviderProxy(Provider<?> hostProvider) {
         super(hostProvider);
-        objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     byte[] runHttpGetMethod(String relativeUrl) {

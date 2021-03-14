@@ -9,7 +9,6 @@ import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.codehaus.jackson.node.NullNode;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.businessentities.UserSshKey;
@@ -18,6 +17,8 @@ import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+
+import com.fasterxml.jackson.databind.node.NullNode;
 
 @Named
 @Singleton

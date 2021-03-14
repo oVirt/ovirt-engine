@@ -18,8 +18,9 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.spec.IvParameterSpec;
 
 import org.apache.commons.codec.binary.Base64;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class EnvelopeEncryptDecrypt {
 
@@ -45,22 +46,27 @@ public class EnvelopeEncryptDecrypt {
 
     /**
      * Encrypt a content using envelope.
-     * @param algo Cipher algorithm to use.
-     * @param bits Size of cipher key.
-     * @param cert Certificate to encrypt to (wrap key using public key).
-     * @param blockSize Adjust the size of content to blockSize.
-     * @param content Content to encrypt.
-     * @return Base64 value of envelope.
      *
-     * The blockSize is used in order to hide actual content size.
+     * @param algo
+     *            Cipher algorithm to use.
+     * @param bits
+     *            Size of cipher key.
+     * @param cert
+     *            Certificate to encrypt to (wrap key using public key).
+     * @param blockSize
+     *            Adjust the size of content to blockSize.
+     * @param content
+     *            Content to encrypt.
+     * @return Base64 value of envelope.
+     *         <p>
+     *         The blockSize is used in order to hide actual content size.
      */
     public static String encrypt(
-        String algo,
-        int bits,
-        Certificate cert,
-        int blockSize,
-        byte[] content
-    ) throws GeneralSecurityException, IOException {
+            String algo,
+            int bits,
+            Certificate cert,
+            int blockSize,
+            byte[] content) throws GeneralSecurityException, IOException {
         final String wrapAlgo = cert.getPublicKey().getAlgorithm() + "/" + PKEY_MODE_PADDING;
         final Base64 base64 = new Base64(0);
         final Map<String, String> map = new HashMap<>();
@@ -83,29 +89,34 @@ public class EnvelopeEncryptDecrypt {
         map.put(VERSION_KEY, VERSION);
         map.put(WRAP_ALGO_KEY, wrapAlgo);
         map.put(CIPHER_ALGO_KEY, algo);
-        map.put(ENCRYPTED_CONTENT_KEY, base64.encodeToString(cipher.doFinal(new ObjectMapper().writeValueAsString(env).getBytes(
-                StandardCharsets.UTF_8))));
+        map.put(ENCRYPTED_CONTENT_KEY,
+                base64.encodeToString(cipher.doFinal(new ObjectMapper().writeValueAsString(env)
+                        .getBytes(
+                                StandardCharsets.UTF_8))));
         map.put(IV_KEY, base64.encodeToString(cipher.getIV()));
         map.put(WRAPPED_KEY_KEY, base64.encodeToString(wrap.wrap(key)));
         map.put(WRAP_KEY_DIGEST_ALGO_KEY, PUBKEY_DIGEST_ALGO);
-        map.put(WRAP_KEY_DIGEST_KEY, base64.encodeToString(MessageDigest.getInstance(PUBKEY_DIGEST_ALGO).digest(cert.getPublicKey().getEncoded())));
+        map.put(WRAP_KEY_DIGEST_KEY,
+                base64.encodeToString(
+                        MessageDigest.getInstance(PUBKEY_DIGEST_ALGO).digest(cert.getPublicKey().getEncoded())));
         return base64.encodeToString(new ObjectMapper().writeValueAsString(map).getBytes(StandardCharsets.UTF_8));
     }
 
     /**
      * Decrypt a content using envelope.
-     * @param pkeyEntry A private key entry (key and certificate) to use for decryption.
-     * @param blob value of envelope.
+     *
+     * @param pkeyEntry
+     *            A private key entry (key and certificate) to use for decryption.
+     * @param blob
+     *            value of envelope.
      * @return content.
      */
     public static byte[] decrypt(
-        KeyStore.PrivateKeyEntry pkeyEntry,
-        String blob
-    ) throws GeneralSecurityException, IOException {
+            KeyStore.PrivateKeyEntry pkeyEntry,
+            String blob) throws GeneralSecurityException, IOException {
         final Map<String, String> map = new ObjectMapper().readValue(
-            Base64.decodeBase64(blob),
-            TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class)
-        );
+                Base64.decodeBase64(blob),
+                TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class));
 
         if (!ARTIFACT.equals(map.get(ARTIFACT_KEY))) {
             throw new IllegalArgumentException(String.format("Invalid artifact '%s'", map.get(ARTIFACT_KEY)));
@@ -115,12 +126,10 @@ public class EnvelopeEncryptDecrypt {
         }
 
         if (pkeyEntry.getCertificate() != null) {
-            if (
-                !MessageDigest.isEqual(
+            if (!MessageDigest.isEqual(
                     Base64.decodeBase64(map.get(WRAP_KEY_DIGEST_KEY)),
-                    MessageDigest.getInstance(map.get(WRAP_KEY_DIGEST_ALGO_KEY)).digest(pkeyEntry.getCertificate().getPublicKey().getEncoded())
-                )
-            ) {
+                    MessageDigest.getInstance(map.get(WRAP_KEY_DIGEST_ALGO_KEY))
+                            .digest(pkeyEntry.getCertificate().getPublicKey().getEncoded()))) {
                 throw new KeyException("Private key entry mismatch");
             }
         }
@@ -129,19 +138,16 @@ public class EnvelopeEncryptDecrypt {
         wrap.init(Cipher.UNWRAP_MODE, pkeyEntry.getPrivateKey());
         Cipher cipher = Cipher.getInstance(map.get(CIPHER_ALGO_KEY));
         cipher.init(
-            Cipher.DECRYPT_MODE,
-            wrap.unwrap(
-                Base64.decodeBase64(map.get(WRAPPED_KEY_KEY)),
-                cipher.getAlgorithm().split("/", 2)[0],
-                Cipher.SECRET_KEY
-            ),
-            new IvParameterSpec(Base64.decodeBase64(map.get(IV_KEY)))
-        );
+                Cipher.DECRYPT_MODE,
+                wrap.unwrap(
+                        Base64.decodeBase64(map.get(WRAPPED_KEY_KEY)),
+                        cipher.getAlgorithm().split("/", 2)[0],
+                        Cipher.SECRET_KEY),
+                new IvParameterSpec(Base64.decodeBase64(map.get(IV_KEY))));
 
         final Map<String, String> env = new ObjectMapper().readValue(
-            cipher.doFinal(Base64.decodeBase64(map.get(ENCRYPTED_CONTENT_KEY))),
-            TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class)
-        );
+                cipher.doFinal(Base64.decodeBase64(map.get(ENCRYPTED_CONTENT_KEY))),
+                TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class));
         return Base64.decodeBase64(env.get(CONTENT_KEY));
     }
 

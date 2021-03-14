@@ -3,9 +3,10 @@ package org.ovirt.engine.core.utils.serialization.json;
 import java.io.Serializable;
 import java.util.Objects;
 
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
+
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
  * This POJO can be serialized & deserialized by Jackson, and is used to test the jacson serialization & deserialization

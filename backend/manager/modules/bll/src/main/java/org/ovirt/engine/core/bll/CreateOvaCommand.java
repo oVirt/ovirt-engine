@@ -13,7 +13,6 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
@@ -44,6 +43,8 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute

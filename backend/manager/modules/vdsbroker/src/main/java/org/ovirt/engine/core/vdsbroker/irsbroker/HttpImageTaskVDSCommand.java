@@ -13,7 +13,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -30,6 +29,8 @@ import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class HttpImageTaskVDSCommand<T extends HttpRequestBase, P extends ImageHttpAccessVDSCommandParameters> extends VdsBrokerCommand<P> {
     private T method;

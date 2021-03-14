@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.host.provider.foreman;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,8 +11,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.bll.host.provider.ContentHostProvider;
 import org.ovirt.engine.core.common.businessentities.ErrataCount;
 import org.ovirt.engine.core.common.businessentities.ErrataCounts;
@@ -19,6 +19,8 @@ import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.queries.ErrataFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A base class for Katello providers
@@ -33,7 +35,7 @@ public abstract class KatelloProvider  implements ContentHostProvider {
     public KatelloProvider(ForemanHostProviderProxy provider) {
         this.provider = provider;
         objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Override

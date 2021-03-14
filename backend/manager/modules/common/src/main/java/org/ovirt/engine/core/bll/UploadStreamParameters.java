@@ -3,9 +3,10 @@ package org.ovirt.engine.core.bll;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class UploadStreamParameters extends ImagesContainterParametersBase {
     @JsonIgnore

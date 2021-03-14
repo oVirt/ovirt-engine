@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.sso.service;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,8 +16,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
@@ -31,6 +31,8 @@ import org.ovirt.engine.core.sso.search.AuthzUtils;
 import org.ovirt.engine.core.sso.utils.json.JsonExtMapMixIn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AuthenticationService {
     private static Logger log = LoggerFactory.getLogger(AuthenticationService.class);
@@ -53,9 +55,9 @@ public class AuthenticationService {
         }
 
         ObjectMapper mapper = new ObjectMapper()
-                .configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
-        mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+                .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .activateDefaultTyping(null);
+        mapper.addMixIn(ExtMap.class, JsonExtMapMixIn.class);
         String authRecordJson = SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_AUTH_RECORD, "");
         ExtMap authRecord;
         if (StringUtils.isNotEmpty(authRecordJson)) {
@@ -233,9 +235,9 @@ public class AuthenticationService {
         ExtensionProfile profile = getExtensionProfile(ssoContext, credentials.getProfile());
 
         ObjectMapper mapper = new ObjectMapper()
-                .configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
-        mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+                .configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE)
+                .addMixIn(ExtMap.class, JsonExtMapMixIn.class);
 
         Map<String, String> params = mapper.readValue(
                 SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_PARAMS),

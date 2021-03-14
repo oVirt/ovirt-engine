@@ -18,13 +18,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.servlet.ServletUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * This servlet serves the context-sensitve help mapping files (JSON format) to the web UI.
@@ -202,7 +203,7 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
      */
     protected static JsonNode merge(JsonNode destination, JsonNode source) {
 
-        Iterator<String> fieldNames = source.getFieldNames();
+        Iterator<String> fieldNames = source.fieldNames();
         while (fieldNames.hasNext()) {
 
             String fieldName = fieldNames.next();

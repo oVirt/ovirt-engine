@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.host.provider.foreman;
 
 import java.io.Serializable;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ForemanDiscoveredHost implements Serializable {
     private static final long serialVersionUID = -6900772579678185173L;

@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.compat.Guid;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class StorageJobCommandParameters extends ImagesActionsParametersBase implements HostJobCommandParameters {
     private Guid storageJobId;

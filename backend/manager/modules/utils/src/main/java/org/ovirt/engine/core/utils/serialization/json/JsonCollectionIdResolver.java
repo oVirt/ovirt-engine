@@ -3,10 +3,10 @@ package org.ovirt.engine.core.utils.serialization.json;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.codehaus.jackson.map.jsontype.impl.ClassNameIdResolver;
-import org.codehaus.jackson.map.type.TypeFactory;
-import org.codehaus.jackson.type.JavaType;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.jsontype.impl.ClassNameIdResolver;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class JsonCollectionIdResolver extends ClassNameIdResolver {
 

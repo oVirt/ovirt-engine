@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.host.provider.foreman;
 
 import java.util.Date;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ExternalErratum {
     @JsonProperty("errata_id")

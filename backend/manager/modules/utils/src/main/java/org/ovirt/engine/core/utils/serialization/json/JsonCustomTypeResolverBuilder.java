@@ -2,11 +2,12 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import java.util.Collection;
 
-import org.codehaus.jackson.map.MapperConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.jsontype.NamedType;
-import org.codehaus.jackson.map.jsontype.TypeIdResolver;
-import org.codehaus.jackson.type.JavaType;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 
 public class JsonCustomTypeResolverBuilder extends ObjectMapper.DefaultTypeResolverBuilder {
 
@@ -34,6 +35,7 @@ public class JsonCustomTypeResolverBuilder extends ObjectMapper.DefaultTypeResol
     @Override
     protected TypeIdResolver idResolver(MapperConfig<?> config,
                                         JavaType baseType,
+                                        PolymorphicTypeValidator polymorphicTypeValidator,
                                         Collection<NamedType> subtypes,
                                         boolean forSer,
                                         boolean forDeser) {
@@ -46,7 +48,7 @@ public class JsonCustomTypeResolverBuilder extends ObjectMapper.DefaultTypeResol
             idResolver = new JsonMapIdResolver(baseType, config.getTypeFactory());
         } else {
             // use the default resolver
-            idResolver = super.idResolver(config, baseType, subtypes, forSer, forDeser);
+            idResolver = super.idResolver(config, baseType, polymorphicTypeValidator, subtypes, forSer, forDeser);
         }
         return idResolver;
     }

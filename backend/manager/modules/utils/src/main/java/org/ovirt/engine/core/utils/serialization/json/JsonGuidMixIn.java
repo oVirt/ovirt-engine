@@ -1,18 +1,17 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.codehaus.jackson.annotate.JsonTypeInfo.As;
-import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
 import org.ovirt.engine.core.compat.Guid;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * This mix-in annotations class is used for annotating the {@link Guid} so the
  * non-default constructor can be used for deserializing it.
  */
 @SuppressWarnings("serial")
-@JsonTypeInfo(use = Id.CLASS, include = As.WRAPPER_ARRAY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.WRAPPER_ARRAY)
 public abstract class JsonGuidMixIn extends Guid {
 
     /**

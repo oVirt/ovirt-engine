@@ -2,13 +2,11 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import java.util.Collection;
 
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.codehaus.jackson.annotate.JsonTypeInfo.As;
-import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
-import org.codehaus.jackson.map.annotate.JsonTypeResolver;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 
 @SuppressWarnings("serial")
-@JsonTypeInfo(use = Id.CLASS, include = As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @JsonTypeResolver(JsonCustomTypeResolverBuilder.class)
 public abstract class JsonCollectionMixIn implements Collection {
 }

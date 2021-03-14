@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -38,6 +36,9 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * This test is designed to test that our business entities can be serialized/deserialized by Jackson correctly.
  */
@@ -45,16 +46,16 @@ public class JsonObjectSerializationEntitiesTest {
     public static Stream<BusinessEntity<?>> data() {
         RandomUtils random = RandomUtils.instance();
         VdsStatic vdsStatic = new VdsStatic(random.nextString(10),
-                                    random.nextString(10),
-                                    random.nextInt(),
-                                    random.nextInt(),
-                                    random.nextString(10),
-                                    Guid.newGuid(),
-                                    Guid.newGuid(),
-                                    random.nextString(10),
-                                    random.nextBoolean(),
-                                    random.nextEnum(VDSType.class),
-                                    Guid.newGuid());
+                random.nextString(10),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextString(10),
+                Guid.newGuid(),
+                Guid.newGuid(),
+                random.nextString(10),
+                random.nextBoolean(),
+                random.nextEnum(VDSType.class),
+                Guid.newGuid());
         return Stream.of(
                 vdsStatic,
                 randomVdsDynamic(),
@@ -66,8 +67,7 @@ public class JsonObjectSerializationEntitiesTest {
                 new StoragePoolIsoMap(Guid.newGuid(), Guid.newGuid(), random.nextEnum(StorageDomainStatus.class)),
                 randomRole(),
                 new IdContainerClass<>(new VdsSpmIdMap(Guid.newGuid(), Guid.newGuid(), random.nextInt())),
-                new IdContainerClass<>(Guid.newGuid())
-        );
+                new IdContainerClass<>(Guid.newGuid()));
     }
 
     private static StoragePool randomStoragePool() {
@@ -192,16 +192,16 @@ public class JsonObjectSerializationEntitiesTest {
     }
 
     private String serialize(Object obj) throws IOException {
-        ObjectMapper mapper = new ObjectMapper()
-                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
-        mapper.getSerializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator())
+                .addMixIn(ExtMap.class, JsonExtMapMixIn.class);
         return mapper.writeValueAsString(obj);
     }
 
     private <T> T deserialize(String json, Class<T> type) throws IOException {
-        ObjectMapper mapper = new ObjectMapper().configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
-        mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator())
+                .addMixIn(ExtMap.class, JsonExtMapMixIn.class);
         return mapper.readValue(json, type);
     }
 

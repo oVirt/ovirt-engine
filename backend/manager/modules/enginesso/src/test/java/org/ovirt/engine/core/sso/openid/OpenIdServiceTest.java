@@ -86,20 +86,20 @@ class OpenIdServiceTest {
         String msg = input.readContent(String.class);
         JsonNode responseJson = new ObjectMapper().readTree(msg);
         assertThat(responseJson.get("name").textValue()).isEqualTo("Alice");
-        assertThat(responseJson.get("familyName").textValue()).isEqualTo("Alice");
-        assertThat(responseJson.get("givenName").textValue()).isEqualTo("Alice");
+        assertThat(responseJson.get("family_name").textValue()).isEqualTo("Alice");
+        assertThat(responseJson.get("given_name").textValue()).isEqualTo("Alice");
         assertThat(responseJson.get("nonce").textValue()).isEqualTo("testNonce");
         assertThat(responseJson.get("jti").textValue()).isEqualTo("AliceID");
         assertThat(responseJson.get("aud").textValue()).isEqualTo(SSO_CLIENT_ID);
         assertThat(responseJson.get("sub").textValue()).isEqualTo("testUserIdWithProfile");
-        assertThat(responseJson.get("preferredUserName").textValue()).isEqualTo("testUserIdWithProfile");
+        assertThat(responseJson.get("preferred_username").textValue()).isEqualTo("testUserIdWithProfile");
         assertThat(responseJson.get("email").textValue()).isEqualTo("testUser@some.org");
         assertThat(responseJson.get("acr").textValue()).isEqualTo("0");
         String expectedIss = SCHEME + "://" + TEST_SERVER_NAME + ":" + TEST_SERVER_PORT;
         assertThat(responseJson.get("iss").textValue()).isEqualTo(expectedIss);
         assertThat(responseJson.get("exp").longValue()).isEqualTo(NOW.getTime() + 30000 * 60);
         assertThat(responseJson.get("iat").longValue()).isEqualTo(NOW.getTime());
-        assertThat(responseJson.get("authTime").longValue()).isEqualTo(NOW.getTime());
+        assertThat(responseJson.get("auth_time").longValue()).isEqualTo(NOW.getTime());
 
         assertThat(signatureVerifier.apply(input)).isTrue();
     }

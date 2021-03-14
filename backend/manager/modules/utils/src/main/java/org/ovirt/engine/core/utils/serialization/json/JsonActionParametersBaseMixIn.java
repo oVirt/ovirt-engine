@@ -2,16 +2,15 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import java.util.ArrayList;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.codehaus.jackson.annotate.JsonTypeInfo.As;
-import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 @SuppressWarnings("serial")
-@JsonTypeInfo(use = Id.CLASS, include = As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class JsonActionParametersBaseMixIn extends ActionParametersBase {
     /**
      * Ignore this method since Jackson will try to recursively dereference it and fail to serialize.
@@ -24,7 +23,7 @@ public abstract class JsonActionParametersBaseMixIn extends ActionParametersBase
     @Override
     public abstract ArrayList<ActionParametersBase> getImagesParameters();
 
-    @JsonDeserialize (using=ActionTypeDeserializer.class)
+    @JsonDeserialize(using=ActionTypeDeserializer.class)
     @Override
     public abstract void setParentCommand(ActionType value);
 

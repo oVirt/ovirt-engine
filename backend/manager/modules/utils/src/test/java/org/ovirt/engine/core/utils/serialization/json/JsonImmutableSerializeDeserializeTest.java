@@ -19,7 +19,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * Tests for {@link JsonObjectSerializer} and {@link JsonObjectDeserializer} with unmodifiable and immutable collections.
+ * Tests for {@link JsonObjectSerializer} and {@link JsonObjectDeserializer} with unmodifiable and immutable
+ * collections.
  */
 public class JsonImmutableSerializeDeserializeTest {
 
@@ -111,16 +112,13 @@ public class JsonImmutableSerializeDeserializeTest {
         Map<String, String> nonConcreteMap = new HashMap<>();
         nonConcreteMap.put("key2", "value2");
         params.setNonConcreteMap(nonConcreteMap);
-
         params.setSingletonSet(Collections.singleton("singletonSetValue"));
         params.setSingletonList(Collections.singletonList("singletonListValue"));
         params.setSingletonMap(Collections.singletonMap("singletonMapKey", "singletonMapValue"));
-
         params.setArraysAsList(Arrays.asList("arraysAsList1", "arraysAsList2"));
-
-        params.setUnmodifiableSet(Collections.unmodifiableSet(Collections.singleton("unmodifiableSetValue")));
-        params.setUnmodifiableList(Collections.unmodifiableList(Collections.singletonList("unmodifiableListValue")));
-        params.setUnmodifiableMap(Collections.unmodifiableMap(Collections.singletonMap("unmodifiableMapKey", "unmodifiableMapValue")));
+        params.setUnmodifiableSet(Collections.singleton("unmodifiableSetValue"));
+        params.setUnmodifiableList(Collections.singletonList("unmodifiableListValue"));
+        params.setUnmodifiableMap(Collections.singletonMap("unmodifiableMapKey", "unmodifiableMapValue"));
 
         JsonObjectSerializer serializer = new JsonObjectSerializer();
         String json = serializer.serialize(params);
@@ -136,9 +134,13 @@ public class JsonImmutableSerializeDeserializeTest {
         assertEquals(params.getConcreteMap().get("key1"), deserializedParams.getConcreteMap().get("key1"));
         assertNotNull(deserializedParams.getSingletonList());
         assertEquals(params.getSingletonList().get(0), deserializedParams.getSingletonList().get(0));
+        assertNotNull(deserializedParams.getArraysAsList());
+        assertEquals(params.getArraysAsList(), deserializedParams.getArraysAsList());
 
         String jsonFromDeserializedParams = serializer.serialize(deserializedParams);
+        final TestCollectionsParams deserialized2run = new JsonObjectDeserializer().deserialize(jsonFromDeserializedParams, TestCollectionsParams.class);
+        String normalizedJsonFromSerialization  = serializer.serialize(deserialized2run);
 
-        assertEquals(json, jsonFromDeserializedParams);
+        assertEquals(jsonFromDeserializedParams, normalizedJsonFromSerialization);
     }
 }

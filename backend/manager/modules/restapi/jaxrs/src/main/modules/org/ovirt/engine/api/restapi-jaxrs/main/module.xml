@@ -20,10 +20,6 @@ SPDX-License-Identifier: Apache-2.0
     <module name="org.apache.commons.codec"/>
     <module name="org.apache.commons.collections"/>
     <module name="org.apache.commons.lang"/>
-    <module name="org.codehaus.jackson.jackson-core-asl"/>
-    <module name="org.codehaus.jackson.jackson-jaxrs"/>
-    <module name="org.codehaus.jackson.jackson-mapper-asl"/>
-    <module name="org.codehaus.jackson.jackson-xc"/>
     <module name="org.jboss.resteasy.resteasy-jaxrs"/>
     <module name="org.ovirt.engine.api.interface-common-jaxrs"/>
     <module name="org.ovirt.engine.api.metamodel-server"/>
@@ -35,6 +31,10 @@ SPDX-License-Identifier: Apache-2.0
     <module name="org.ovirt.engine.core.utils"/>
     <module name="org.ovirt.engine.core.uutils"/>
     <module name="org.slf4j"/>
+    <module name="com.fasterxml.jackson.core.jackson-core"/>
+    <module name="com.fasterxml.jackson.core.jackson-databind"/>
+    <module name="com.fasterxml.jackson.core.jackson-annotations"/>
+    <module name="com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider"/>
   </dependencies>
 
 </module>

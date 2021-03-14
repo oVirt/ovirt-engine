@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.aaa;
 
 import java.util.ArrayList;
 
-import  javax.inject.Inject;
+import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;

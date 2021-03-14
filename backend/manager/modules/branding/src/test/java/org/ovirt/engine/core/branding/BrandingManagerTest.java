@@ -14,15 +14,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BrandingManagerTest {
     BrandingManager testManager;
@@ -61,7 +62,7 @@ public class BrandingManagerTest {
         JsonNode resultNode = mapper.readTree(parser);
         // There should be 6 key value pairs (2 from webadmin, 4 common)
         assertEquals(6, resultNode.size(), "Size should be 6"); //$NON-NLS-1$
-        assertEquals("Web Admin", resultNode.get("application_title").getTextValue()); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("Web Admin", resultNode.get("application_title").asText()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test

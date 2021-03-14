@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -21,6 +20,8 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SignStringParameters;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * It returns a signed ticket that allows to connect to websocket proxy (ovirt-websocket-proxy.py)

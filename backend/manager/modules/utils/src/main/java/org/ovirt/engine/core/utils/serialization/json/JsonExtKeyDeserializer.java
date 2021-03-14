@@ -1,16 +1,14 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
-import java.io.IOException;
-
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.KeyDeserializer;
 import org.ovirt.engine.api.extensions.ExtKey;
+
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.KeyDeserializer;
 
 public class JsonExtKeyDeserializer extends KeyDeserializer {
 
     @Override
-    public Object deserializeKey(String s, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+    public Object deserializeKey(String s, DeserializationContext deserializationContext) {
         String[] tokens = s.split(";");
         try {
             return new ExtKey(tokens[0], Class.forName(tokens[1]), tokens[2]);

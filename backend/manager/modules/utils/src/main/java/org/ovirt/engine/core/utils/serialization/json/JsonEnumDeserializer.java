@@ -2,11 +2,10 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.deser.std.EnumDeserializer;
-import org.codehaus.jackson.map.util.EnumResolver;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.deser.std.EnumDeserializer;
+import com.fasterxml.jackson.databind.util.EnumResolver;
 
 /**
  * Custom enum deserializer.
@@ -20,15 +19,15 @@ public class JsonEnumDeserializer extends EnumDeserializer {
         super(null);
     }
 
-    public JsonEnumDeserializer(EnumResolver<?> res) {
+    public JsonEnumDeserializer(EnumResolver res) {
         super(res);
     }
 
     @Override
     public Enum<?> deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException, JsonProcessingException {
+            throws IOException {
         try {
-            return super.deserialize(jp, ctxt);
+            return (Enum<?>) super.deserialize(jp, ctxt);
         } catch (Exception ex) {
             return null;
         }

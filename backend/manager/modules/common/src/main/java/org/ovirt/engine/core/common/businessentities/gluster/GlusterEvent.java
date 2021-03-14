@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GlusterEvent implements Serializable {
 

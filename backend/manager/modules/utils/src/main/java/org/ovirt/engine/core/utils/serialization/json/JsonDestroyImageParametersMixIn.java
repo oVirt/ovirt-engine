@@ -2,13 +2,14 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.compat.Guid;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 @SuppressWarnings("serial")
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public abstract class JsonDestroyImageParametersMixIn extends DestroyImageParameters {
 
     public JsonDestroyImageParametersMixIn(Guid vdsId,

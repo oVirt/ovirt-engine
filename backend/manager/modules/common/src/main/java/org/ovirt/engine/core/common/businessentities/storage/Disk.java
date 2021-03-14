@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * The disk is contains data from the {@link BaseDisk} and the storage specific details for the disk, which are

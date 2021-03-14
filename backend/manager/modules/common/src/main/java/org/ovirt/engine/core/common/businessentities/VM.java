@@ -10,7 +10,6 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -20,6 +19,8 @@ import org.ovirt.engine.core.common.locks.LockInfo;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, HasStoragePool, HasErrata, Nameable, Commented {
     private static final long serialVersionUID = -4078140531074414263L;

@@ -1,14 +1,15 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
+import static com.fasterxml.jackson.databind.DeserializationFeature.READ_ENUMS_USING_TO_STRING;
+import static com.fasterxml.jackson.databind.DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.DeserializationConfig.Feature;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.CollectionType;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -22,34 +23,42 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.SerializationException;
 import org.ovirt.engine.core.utils.SerializationFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.fasterxml.jackson.databind.type.CollectionType;
 
 /**
  * {@link Deserializer} implementation for deserializing JSON content.
  */
 public class JsonObjectDeserializer implements Deserializer {
+    private static final Logger log = LoggerFactory.getLogger(JsonObjectDeserializer.class);
 
     private static final ObjectMapper unformattedMapper = new ObjectMapper();
     private static final ObjectMapper formattedMapper;
     static {
         formattedMapper = new ObjectMapper();
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(Guid.class, JsonGuidMixIn.class);
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(ActionParametersBase.class,
+        formattedMapper.addMixIn(Guid.class, JsonGuidMixIn.class);
+        formattedMapper.addMixIn(ActionParametersBase.class,
                 JsonActionParametersBaseMixIn.class);
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(Queryable.class,
+        formattedMapper.addMixIn(Queryable.class,
                 JsonQueryableMixIn.class);
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(VM.class, JsonVmMixIn.class);
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(AddVmTemplateParameters.class,
+        formattedMapper.addMixIn(VM.class, JsonVmMixIn.class);
+        formattedMapper.addMixIn(AddVmTemplateParameters.class,
                 JsonAddVmTemplateParametersMixIn.class);
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(VmManagementParametersBase.class,
+        formattedMapper.addMixIn(VmManagementParametersBase.class,
                 JsonVmManagementParametersBaseMixIn.class);
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(VmBase.class, JsonVmBaseMixIn.class);
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(VmStatic.class, JsonVmStaticMixIn.class);
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(RunVmParams.class, JsonRunVmParamsMixIn.class);
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(EngineFault.class, JsonEngineFaultMixIn.class);
-        formattedMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        formattedMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
-        formattedMapper.enableDefaultTyping();
-        formattedMapper.setDeserializerProvider(new JsonObjectDeserializerProvider());
+        formattedMapper.addMixIn(VmBase.class, JsonVmBaseMixIn.class);
+        formattedMapper.addMixIn(VmStatic.class, JsonVmStaticMixIn.class);
+        formattedMapper.addMixIn(RunVmParams.class, JsonRunVmParamsMixIn.class);
+        formattedMapper.addMixIn(EngineFault.class, JsonEngineFaultMixIn.class);
+        formattedMapper.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
+        formattedMapper.configure(READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
+        formattedMapper.configure(READ_ENUMS_USING_TO_STRING, true);
+
+        formattedMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance);
     }
 
     @Override
@@ -74,7 +83,7 @@ public class JsonObjectDeserializer implements Deserializer {
         if (StringUtils.isEmpty(value)) {
             T instance;
             try {
-                instance = clazz.newInstance();
+                instance = clazz.getDeclaredConstructor().newInstance();
             } catch (Exception ex) {
                 instance = null;
             }
@@ -95,15 +104,17 @@ public class JsonObjectDeserializer implements Deserializer {
         return readJsonString(source, type, unformattedMapper);
     }
 
-    public JsonNode deserializeUnformattedJson(String source) throws SerializationException {
-        return readJsonString(source, JsonNode.class, unformattedMapper);
-    }
-
     public <T extends Serializable> List<T> deserializeUnformattedList(String source, Class<T> contentType) {
         try {
             CollectionType type = unformattedMapper.getTypeFactory().constructCollectionType(List.class, contentType);
             return unformattedMapper.readValue(source, type);
         } catch (IOException e) {
+            log.error("Cannot deserialize unformatted list {} because of {}",
+                    source,
+                    ExceptionUtils.getRootCauseMessage(e));
+            log.debug("Cannot deserialize unformatted list {}. Details {}",
+                    source,
+                    ExceptionUtils.getFullStackTrace(e));
             throw new SerializationException(e);
         }
     }
@@ -112,7 +123,9 @@ public class JsonObjectDeserializer implements Deserializer {
         try {
             return mapper.readValue(source.toString(), type);
         } catch (IOException e) {
-            throw new org.apache.commons.lang.SerializationException(e);
+            log.error("Cannot deserialize {} because of {}", source, ExceptionUtils.getRootCauseMessage(e));
+            log.debug("Cannot deserialize {}. Details {}", source, ExceptionUtils.getFullStackTrace(e));
+            throw new SerializationException(e);
         }
     }
 }

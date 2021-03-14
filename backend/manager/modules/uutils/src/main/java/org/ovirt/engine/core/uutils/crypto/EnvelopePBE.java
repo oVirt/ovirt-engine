@@ -12,8 +12,9 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class EnvelopePBE {
 
@@ -29,9 +30,8 @@ public class EnvelopePBE {
 
     public static boolean check(String blob, String password) throws IOException, GeneralSecurityException {
         final Map<String, String> map = new ObjectMapper().readValue(
-            Base64.decodeBase64(blob),
-            TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class)
-        );
+                Base64.decodeBase64(blob),
+                TypeFactory.defaultInstance().constructMapType(HashMap.class, String.class, String.class));
 
         if (!ARTIFACT.equals(map.get(ARTIFACT_KEY))) {
             throw new IllegalArgumentException(String.format("Invalid artifact '%s'", map.get(ARTIFACT_KEY)));
@@ -42,23 +42,23 @@ public class EnvelopePBE {
 
         byte[] salt = Base64.decodeBase64(map.get(SALT_KEY));
         return Arrays.equals(
-            Base64.decodeBase64(map.get(SECRET_KEY)),
-            SecretKeyFactory.getInstance(map.get(ALGORITHM_KEY)).generateSecret(
-                new PBEKeySpec(
-                    password.toCharArray(),
-                    salt,
-                    Integer.parseInt(map.get(ITERATIONS_KEY)),
-                    salt.length * 8
-                )
-            ).getEncoded()
-        );
+                Base64.decodeBase64(map.get(SECRET_KEY)),
+                SecretKeyFactory.getInstance(map.get(ALGORITHM_KEY))
+                        .generateSecret(
+                                new PBEKeySpec(
+                                        password.toCharArray(),
+                                        salt,
+                                        Integer.parseInt(map.get(ITERATIONS_KEY)),
+                                        salt.length * 8))
+                        .getEncoded());
     }
 
-    public static String encode(String algorithm, int keySize, int iterations, String randomProvider, String password) throws IOException, GeneralSecurityException {
+    public static String encode(String algorithm, int keySize, int iterations, String randomProvider, String password)
+            throws IOException, GeneralSecurityException {
         final Base64 base64 = new Base64(0);
         final Map<String, String> map = new HashMap<>();
 
-        byte[] salt = new byte[keySize/8];
+        byte[] salt = new byte[keySize / 8];
         SecureRandom.getInstance(randomProvider == null ? "NativePRNG" : randomProvider).nextBytes(salt);
 
         map.put(ARTIFACT_KEY, ARTIFACT);
@@ -67,18 +67,16 @@ public class EnvelopePBE {
         map.put(SALT_KEY, base64.encodeToString(salt));
         map.put(ITERATIONS_KEY, Integer.toString(iterations));
         map.put(
-            SECRET_KEY,
-            base64.encodeToString(
-                SecretKeyFactory.getInstance(algorithm).generateSecret(
-                    new PBEKeySpec(
-                        password.toCharArray(),
-                        salt,
-                        iterations,
-                        salt.length*8
-                    )
-                ).getEncoded()
-            )
-        );
+                SECRET_KEY,
+                base64.encodeToString(
+                        SecretKeyFactory.getInstance(algorithm)
+                                .generateSecret(
+                                        new PBEKeySpec(
+                                                password.toCharArray(),
+                                                salt,
+                                                iterations,
+                                                salt.length * 8))
+                                .getEncoded()));
         return base64.encodeToString(new ObjectMapper().writeValueAsString(map).getBytes(StandardCharsets.UTF_8));
     }
 }

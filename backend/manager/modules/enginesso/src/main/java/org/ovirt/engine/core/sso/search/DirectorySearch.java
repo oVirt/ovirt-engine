@@ -12,8 +12,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
@@ -24,6 +22,9 @@ import org.ovirt.engine.core.sso.service.SsoService;
 import org.ovirt.engine.core.sso.utils.json.JsonExtMapMixIn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public enum DirectorySearch {
     GetAvailableNameSpaces(SsoConstants.AVAILABLE_NAMESPACES_QUERY, false) {
@@ -114,9 +115,9 @@ public enum DirectorySearch {
 
     private static ObjectMapper initMapper() {
         ObjectMapper mapper = new ObjectMapper()
-                .configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
-        mapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE)
+                .addMixIn(ExtMap.class, JsonExtMapMixIn.class);
         return mapper;
     }
 

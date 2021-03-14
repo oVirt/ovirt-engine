@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.host.provider.foreman;
-import org.codehaus.jackson.annotate.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ForemanErrorWrapper {
     @JsonProperty("error")

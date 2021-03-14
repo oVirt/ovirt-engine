@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.CollectionType;
 import org.ovirt.engine.core.common.migration.ConvergenceConfig;
 import org.ovirt.engine.core.common.migration.ConvergenceItem;
 import org.ovirt.engine.core.common.migration.ConvergenceItemWithStallingLimit;
@@ -14,6 +12,9 @@ import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.utils.JsonHelper;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 
 public class MigrationPoliciesValueHelper extends StringValueHelper {
 

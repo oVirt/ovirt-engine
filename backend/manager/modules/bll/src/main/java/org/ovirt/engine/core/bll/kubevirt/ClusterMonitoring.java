@@ -10,7 +10,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.businessentities.KubevirtProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -26,6 +25,8 @@ import org.ovirt.engine.core.vdsbroker.monitoring.kubevirt.KubevirtMigrationMoni
 import org.ovirt.engine.core.vdsbroker.monitoring.kubevirt.SharedInformerFactoryProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;

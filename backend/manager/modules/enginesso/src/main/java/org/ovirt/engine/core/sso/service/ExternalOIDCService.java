@@ -30,8 +30,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authz;
@@ -47,6 +45,9 @@ import org.ovirt.engine.core.sso.utils.SsoLocalConfig;
 import org.ovirt.engine.core.uutils.net.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ExternalOIDCService {
 
@@ -263,7 +264,7 @@ public class ExternalOIDCService {
     }
 
     private static Map<String, Object> deserialize(String json) throws IOException {
-        return mapper.readValue(json, new TypeReference<Map<String, Object>>() {
+        return mapper.readValue(json, new TypeReference<>() {
         });
     }
 

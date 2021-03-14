@@ -3,14 +3,14 @@
  */
 package org.ovirt.engine.core.utils.serialization.json;
 
+import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig.Feature;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
@@ -27,39 +27,44 @@ import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.SerializationException;
 import org.ovirt.engine.core.utils.Serializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 
 /**
  * {@link Serializer} implementation for deserializing JSON content.
  */
 public class JsonObjectSerializer implements Serializer {
 
+    private static final Logger log = LoggerFactory.getLogger(JsonObjectSerializer.class);
     private static final ObjectMapper unformattedMapper = new ObjectMapper();
     private static final ObjectMapper formattedMapper;
     static {
         formattedMapper = new ObjectMapper();
-        formattedMapper.getSerializationConfig().addMixInAnnotations(Guid.class, JsonGuidMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(ActionParametersBase.class,
+        formattedMapper.addMixIn(Guid.class, JsonGuidMixIn.class);
+        formattedMapper.addMixIn(ActionParametersBase.class,
                 JsonActionParametersBaseMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(Queryable.class, JsonQueryableMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(VM.class, JsonVmMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(AddVmTemplateParameters.class,
+        formattedMapper.addMixIn(Queryable.class, JsonQueryableMixIn.class);
+        formattedMapper.addMixIn(VM.class, JsonVmMixIn.class);
+        formattedMapper.addMixIn(AddVmTemplateParameters.class,
                 JsonAddVmTemplateParametersMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(VmManagementParametersBase.class,
+        formattedMapper.addMixIn(VmManagementParametersBase.class,
                 JsonVmManagementParametersBaseMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(VmBase.class, JsonVmBaseMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(VmStatic.class, JsonVmStaticMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(VmPayload.class, JsonVmPayloadMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(RunVmParams.class, JsonRunVmParamsMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(EngineFault.class, JsonEngineFaultMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(Collection.class, JsonCollectionMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(Map.class, JsonMapMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(Cluster.class, JsonClusterMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(VdsDynamic.class, JsonVdsDynamicMixIn.class);
-        formattedMapper.getSerializationConfig()
-                .addMixInAnnotations(DestroyImageParameters.class, JsonDestroyImageParametersMixIn.class);
-
-        formattedMapper.configure(Feature.INDENT_OUTPUT, true);
-        formattedMapper.enableDefaultTyping();
+        formattedMapper.addMixIn(VmBase.class, JsonVmBaseMixIn.class);
+        formattedMapper.addMixIn(VmStatic.class, JsonVmStaticMixIn.class);
+        formattedMapper.addMixIn(VmPayload.class, JsonVmPayloadMixIn.class);
+        formattedMapper.addMixIn(RunVmParams.class, JsonRunVmParamsMixIn.class);
+        formattedMapper.addMixIn(EngineFault.class, JsonEngineFaultMixIn.class);
+        formattedMapper.addMixIn(Collection.class, JsonCollectionMixIn.class);
+        formattedMapper.addMixIn(Map.class, JsonMapMixIn.class);
+        formattedMapper.addMixIn(Cluster.class, JsonClusterMixIn.class);
+        formattedMapper.addMixIn(VdsDynamic.class, JsonVdsDynamicMixIn.class);
+        formattedMapper.addMixIn(DestroyImageParameters.class, JsonDestroyImageParametersMixIn.class);
+        formattedMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance);
+        formattedMapper.configure(INDENT_OUTPUT, true);
     }
 
     @Override
@@ -84,7 +89,9 @@ public class JsonObjectSerializer implements Serializer {
         try {
             return mapper.writeValueAsString(payload);
         } catch (IOException e) {
-            throw new org.apache.commons.lang.SerializationException(e);
+            log.error("Cannot serialize {} because {}", payload, ExceptionUtils.getRootCauseMessage(e));
+            log.debug("Cannot serialize {}. Details {}", payload, ExceptionUtils.getFullStackTrace(e));
+            throw new SerializationException(e);
         }
     }
 

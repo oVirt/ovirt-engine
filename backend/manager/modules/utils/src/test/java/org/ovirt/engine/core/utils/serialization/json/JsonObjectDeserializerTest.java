@@ -10,23 +10,23 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.SerializationException;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.utils.SerializationException;
 
 /**
  * Tests for {@link JsonObjectDeserializer}.
  */
 public class JsonObjectDeserializerTest {
 
-    private static enum Color {
+    private enum Color {
         UNKNOWN,
         BLUE,
         RED
     };
 
-    private static enum Kind {
+    private enum Kind {
         UNKNOWN,
         PERSON,
         ANIMAL

@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
@@ -20,6 +19,8 @@ import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Template
