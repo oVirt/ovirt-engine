@@ -1441,6 +1441,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String noneQos();
 
+    String noneFailover();
+
     String hostPasswordLabel();
 
     String hostPublicKeyLable();

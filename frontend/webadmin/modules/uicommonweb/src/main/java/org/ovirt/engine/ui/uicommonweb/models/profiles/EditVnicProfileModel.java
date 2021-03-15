@@ -70,6 +70,12 @@ public class EditVnicProfileModel extends VnicProfileModel {
     }
 
     @Override
+    protected void initSelectedFailoverProfile() {
+        getFailoverVnicProfile().setSelectedItem(Linq.firstOrNull(getFailoverVnicProfile().getItems(),
+                new Linq.IdPredicate<>(getProfile().getFailoverVnicProfileId())));
+    }
+
+    @Override
     protected void initSelectedNetworkFilter() {
         getNetworkFilter().setSelectedItem(Linq.firstOrNull(getNetworkFilter().getItems(),
                 new Linq.IdPredicate<>(getProfile().getNetworkFilterId())));

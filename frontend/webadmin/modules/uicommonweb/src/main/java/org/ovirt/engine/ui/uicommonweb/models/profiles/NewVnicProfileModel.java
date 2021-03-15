@@ -55,6 +55,11 @@ public class NewVnicProfileModel extends VnicProfileModel {
     }
 
     @Override
+    protected void initSelectedFailoverProfile() {
+        getFailoverVnicProfile().setSelectedItem(EMPTY_FAILOVER_VNIC_PROFILE);
+    }
+
+    @Override
     protected void updateChangeabilityIfVmsUsingTheProfile() {
         // Do nothing
     }

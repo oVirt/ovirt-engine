@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -14,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
+import org.ovirt.engine.ui.common.widget.renderer.FailoverVnicProfileRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NetworkFilterRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
@@ -72,6 +74,11 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     protected EntityModelCheckBoxEditor migratableEditor;
 
     @UiField(provided = true)
+    @Path(value = "failoverVnicProfile.selectedItem")
+    @WithElementId("failoverVnicProfile")
+    public ListModelListBoxEditor<VnicProfile> failoverVnicProfileEditor;
+
+    @UiField(provided = true)
     @Path("portMirroring.entity")
     @WithElementId("portMirroring")
     protected EntityModelCheckBoxEditor portMirroringEditor;
@@ -107,6 +114,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
         networkQoSEditor = new ListModelListBoxEditor<>(new NameRenderer<NetworkQoS>());
         networkFilterEditor = new ListModelListBoxEditor<>(new NetworkFilterRenderer(constants));
+        failoverVnicProfileEditor = new ListModelListBoxEditor<>(new FailoverVnicProfileRenderer(constants));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);

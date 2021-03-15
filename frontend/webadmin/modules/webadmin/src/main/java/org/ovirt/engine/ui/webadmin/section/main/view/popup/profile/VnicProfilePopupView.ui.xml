@@ -47,6 +47,9 @@
                     </b:Column>
                 </b:Row>
                 <b:Row>
+                    <e:ListModelListBoxEditor ui:field="failoverVnicProfileEditor" label="{constants.failoverVnicProfile}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
                     <b:Column size="SM_12">
                         <ge:EntityModelCheckBoxEditor ui:field="portMirroringEditor" label="{constants.portMirroringVnicProfile}" usePatternFly="true" />
                     </b:Column>

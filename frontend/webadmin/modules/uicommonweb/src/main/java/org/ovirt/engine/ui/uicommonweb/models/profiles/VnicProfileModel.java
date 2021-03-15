@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,7 @@ public abstract class VnicProfileModel extends Model {
     private ListModel<StoragePool> dataCenters;
     private ListModel<NetworkQoS> networkQoS;
     private ListModel<NetworkFilter> networkFilter;
+    private ListModel<VnicProfile> failoverVnicProfile;
     private VnicProfile vnicProfile = null;
     private final boolean customPropertiesVisible;
     private final Guid defaultQosId;
@@ -67,6 +69,7 @@ public abstract class VnicProfileModel extends Model {
     protected UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private static final NetworkFilter EMPTY_FILTER = new NetworkFilter();
+    protected static final VnicProfile EMPTY_FAILOVER_VNIC_PROFILE = new VnicProfile();
 
     public EntityModel<String> getName() {
         return name;
@@ -182,6 +185,7 @@ public abstract class VnicProfileModel extends Model {
         setPassthrough(new EntityModel<Boolean>());
         setMigratable(new EntityModel<Boolean>());
         setCustomPropertySheet(new KeyValueModel());
+        setFailoverVnicProfile(new ListModel<VnicProfile>());
         EntityModel<Boolean> publicUse = new EntityModel<>();
         publicUse.setEntity(true);
         setPublicUse(publicUse);
@@ -203,6 +207,7 @@ public abstract class VnicProfileModel extends Model {
 
 
         initPassthroughChangeListener();
+        initMigratableChangeListener();
 
         getPassthrough().setEntity(false);
         getMigratable().setEntity(false);
@@ -219,6 +224,14 @@ public abstract class VnicProfileModel extends Model {
             }
         });
         initCommands();
+    }
+
+    public ListModel<VnicProfile> getFailoverVnicProfile() {
+        return failoverVnicProfile;
+    }
+
+    public void setFailoverVnicProfile(ListModel<VnicProfile> failoverVnicProfile) {
+        this.failoverVnicProfile = failoverVnicProfile;
     }
 
     private void populateDataCenters(Guid dcId) {
@@ -251,6 +264,7 @@ public abstract class VnicProfileModel extends Model {
             updateNetworks(networks);
 
             removeAsyncOperationProgress();
+            initFailoverVnicProfiles(dataCenterId);
         }), dataCenterId);
     }
 
@@ -326,6 +340,8 @@ public abstract class VnicProfileModel extends Model {
         NetworkFilter networkFilter = getNetworkFilter().getSelectedItem();
         vnicProfile.setNetworkFilterId(networkFilter != null
                 ? networkFilter.getId() : null);
+        VnicProfile failoverVnicProfile = getFailoverVnicProfile().getSelectedItem();
+        vnicProfile.setFailoverVnicProfileId(failoverVnicProfile != null ? failoverVnicProfile.getId() : null);
         vnicProfile.setPortMirroring(getPortMirroring().getEntity());
         vnicProfile.setPassthrough(getPassthrough().getEntity());
         if (vnicProfile.isPassthrough()) {
@@ -413,7 +429,27 @@ public abstract class VnicProfileModel extends Model {
                 }));
     }
 
+    private void initFailoverVnicProfiles(Guid dcId) {
+        addAsyncOperationProgress();
+        AsyncDataProvider.getInstance().getVnicProfilesByDcId(new AsyncQuery<>(vnicProfiles -> {
+            List<VnicProfile> filteredProfiles = vnicProfiles.stream()
+                    .map(profileView -> (VnicProfile) profileView)
+                    .filter(vnicProfile -> !vnicProfile.isPassthrough())
+                    .filter(vnicProfile -> {
+                        Optional<Network> optNetwork = getNetworkForVnicProfile(vnicProfile.getNetworkId());
+                        return !optNetwork.isPresent() || !optNetwork.get().isExternal();
+                    })
+                    .collect(Collectors.toList());
+            filteredProfiles.add(EMPTY_FAILOVER_VNIC_PROFILE);
+            getFailoverVnicProfile().setItems(filteredProfiles);
+            initSelectedFailoverProfile();
+            removeAsyncOperationProgress();
+        }), dcId);
+    }
+
     protected abstract void initSelectedNetworkFilter();
+
+    protected abstract void initSelectedFailoverProfile();
 
     protected abstract void updateChangeabilityIfVmsUsingTheProfile();
 
@@ -445,7 +481,31 @@ public abstract class VnicProfileModel extends Model {
                  * */
                 getMigratable().setEntity(true);
             }
+            updateFailoverChangeability();
         });
+    }
+
+    private void initMigratableChangeListener() {
+        getMigratable().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            updateFailoverChangeability();
+        });
+    }
+
+    private void updateFailoverChangeability() {
+        boolean isPassthrough = getPassthrough().getEntity();
+        boolean isMigratable = getMigratable().getEntity();
+
+        if (isPassthrough && isMigratable) {
+            getFailoverVnicProfile().setIsChangeable(true);
+        } else {
+            getFailoverVnicProfile().setIsChangeable(false);
+            getFailoverVnicProfile().setSelectedItem(EMPTY_FAILOVER_VNIC_PROFILE);
+        }
+
+    }
+
+    private Optional<Network> getNetworkForVnicProfile(Guid profileId) {
+        return getNetwork().getItems().stream().filter(network -> network.getId().equals(profileId)).findFirst();
     }
 
     public boolean validate() {
