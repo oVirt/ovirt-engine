@@ -77,6 +77,7 @@ public enum ActionType {
     UpdateVmNicFilterParameter(61, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     UpdateVmNicFilterParameterLive(610, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     RemoveVmNicFilterParameter(62, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
+    RemoveVmNicFilterParameterLive(620, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     UpdateConvertedVm(63, QuotaDependency.NONE),
     RemoveUnregisteredVmTemplate(67, ActionGroup.DELETE_TEMPLATE, QuotaDependency.NONE),
     RemoveUnregisteredVm(68, ActionGroup.DELETE_VM, QuotaDependency.NONE),

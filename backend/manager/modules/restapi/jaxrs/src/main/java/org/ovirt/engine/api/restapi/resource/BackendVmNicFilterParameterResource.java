@@ -84,7 +84,7 @@ public class BackendVmNicFilterParameterResource
     @Override
     public Response remove() {
         return performAction(
-                ActionType.RemoveVmNicFilterParameter,
+                ActionType.RemoveVmNicFilterParameterLive,
                 new RemoveVmNicFilterParameterParameters(vmId, guid)
         );
     }

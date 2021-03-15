@@ -104,7 +104,7 @@ public class BackendVmNicFilterParameterResourceTest
     public void testRemove() {
         setUriInfo(
             setUpActionExpectations(
-                ActionType.RemoveVmNicFilterParameter,
+                ActionType.RemoveVmNicFilterParameterLive,
                     RemoveVmNicFilterParameterParameters.class,
                 new String[] { "VmId", "FilterParameterId" },
                 new Object[] { VM_ID, PARAMETER_ID },
@@ -128,7 +128,7 @@ public class BackendVmNicFilterParameterResourceTest
     protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUriInfo(
                 setUpActionExpectations(
-                        ActionType.RemoveVmNicFilterParameter,
+                        ActionType.RemoveVmNicFilterParameterLive,
                         RemoveVmNicFilterParameterParameters.class,
                         new String[] { "VmId", "FilterParameterId" },
                         new Object[] { VM_ID, PARAMETER_ID },
