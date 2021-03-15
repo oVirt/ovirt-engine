@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -62,6 +63,7 @@ public abstract class VnicProfileModel extends Model {
     private final boolean customPropertiesVisible;
     private final Guid defaultQosId;
     private NetworkQoS defaultQos;
+    private AtomicInteger asyncProgressCounter;
     protected UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private static final NetworkFilter EMPTY_FILTER = new NetworkFilter();
@@ -169,6 +171,7 @@ public abstract class VnicProfileModel extends Model {
         this.sourceModel = sourceModel;
         this.customPropertiesVisible = customPropertiesVisible;
         this.defaultQosId = defaultQosId;
+        this.asyncProgressCounter = new AtomicInteger(0);
 
         setName(new EntityModel<String>());
         setNetwork(new ListModel<Network>());
@@ -219,20 +222,26 @@ public abstract class VnicProfileModel extends Model {
     }
 
     private void populateDataCenters(Guid dcId) {
+        addAsyncOperationProgress();
         if (dcId == null) {
             SearchParameters tempVar = new SearchParameters("DataCenter:", SearchType.StoragePool); // $NON-NLS-1$
             Frontend.getInstance().runQuery(QueryType.Search, tempVar, new AsyncQuery<QueryReturnValue>(
-                    returnValue -> getDataCenters().setItems(returnValue.getReturnValue())));
+                    returnValue -> {
+                        getDataCenters().setItems(returnValue.getReturnValue());
+                        removeAsyncOperationProgress();
+                    }));
         } else {
             AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<StoragePool>(
-                    returnValue -> getDataCenters().setItems(Arrays.asList(returnValue))), dcId);
+                    returnValue -> {
+                        getDataCenters().setItems(Arrays.asList(returnValue));
+                        removeAsyncOperationProgress();
+                    }), dcId);
             getDataCenters().setIsChangeable(false);
         }
     }
 
     private void initNetworkList(Guid dataCenterId) {
-        startProgress();
-
+        addAsyncOperationProgress();
         AsyncDataProvider.getInstance().getNetworkList(new AsyncQuery<>(returnValue -> {
             Collection<Network> networks =
                     returnValue.stream().filter(Network::isVmNetwork).collect(Collectors.toList());
@@ -241,7 +250,7 @@ public abstract class VnicProfileModel extends Model {
 
             updateNetworks(networks);
 
-            stopProgress();
+            removeAsyncOperationProgress();
         }), dataCenterId);
     }
 
@@ -253,6 +262,18 @@ public abstract class VnicProfileModel extends Model {
                     .findFirst().get();
             getNetwork().setSelectedItem(selected);
             getNetwork().setIsChangeable(false);
+        }
+    }
+
+    private void addAsyncOperationProgress() {
+        if (this.asyncProgressCounter.getAndIncrement() == 0) {
+            startProgress();
+        }
+    }
+
+    private void removeAsyncOperationProgress() {
+        if (this.asyncProgressCounter.decrementAndGet() == 0) {
+            stopProgress();
         }
     }
 
@@ -343,7 +364,7 @@ public abstract class VnicProfileModel extends Model {
         GetDeviceCustomPropertiesParameters params = new GetDeviceCustomPropertiesParameters();
         params.setVersion(dcCompatibilityVersion);
         params.setDeviceType(VmDeviceGeneralType.INTERFACE);
-        startProgress();
+        addAsyncOperationProgress();
         Frontend.getInstance().runQuery(QueryType.GetDeviceCustomProperties,
                 params,
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
@@ -355,7 +376,7 @@ public abstract class VnicProfileModel extends Model {
 
                                 initCustomProperties();
                             }
-                            stopProgress();
+                            removeAsyncOperationProgress();
                         }));
     }
 
@@ -363,7 +384,7 @@ public abstract class VnicProfileModel extends Model {
         if (dcId == null) {
             return;
         }
-
+        addAsyncOperationProgress();
         AsyncDataProvider.getInstance().getAllNetworkQos(dcId, new AsyncQuery<>(networkQoSes -> {
             getNetworkQoS().setItems(networkQoSes);
             defaultQos =
@@ -372,10 +393,12 @@ public abstract class VnicProfileModel extends Model {
                             .findFirst()
                             .orElse(NetworkQoSModel.EMPTY_QOS);
             getNetworkQoS().setSelectedItem(defaultQos);
+            removeAsyncOperationProgress();
         }));
     }
 
     private void initNetworkFilterList(Version dcCompatibilityVersion) {
+        addAsyncOperationProgress();
         Frontend.getInstance().runQuery(QueryType.GetAllSupportedNetworkFiltersByVersion,
                 new VersionQueryParameters(dcCompatibilityVersion),
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
@@ -386,6 +409,7 @@ public abstract class VnicProfileModel extends Model {
                     getNetworkFilter().setItems(networkFilters);
 
                     initSelectedNetworkFilter();
+                    removeAsyncOperationProgress();
                 }));
     }
 
