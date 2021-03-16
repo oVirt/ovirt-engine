@@ -75,6 +75,11 @@ public class AnsibleConstants {
     public static final String IMPORT_OVA_PLAYBOOK = "ovirt-ova-import.yml";
 
     /**
+     * This is name of file which executes the ova-external-data via Ansible.
+     */
+    public static final String OVA_EXTERNAL_DATA_PLAYBOOK = "ovirt-ova-external-data.yml";
+
+    /**
      * This is name of file which executes the lvmcache via Ansible.
      */
     public static final String CREATE_BRICK_PLAYBOOK = "create-brick.yml";

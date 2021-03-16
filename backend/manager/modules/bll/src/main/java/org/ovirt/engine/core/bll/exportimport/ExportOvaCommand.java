@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -30,7 +29,6 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase<T> {
@@ -113,11 +111,6 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
                         String.format("$vdsName %s", getVdsName()),
                         String.format("$directory %s", getParameters().getDirectory()));
     }
-
-    protected boolean hasTpmDevice(Guid id) {
-        return !vmDeviceDao.getVmDeviceByVmIdAndType(id, VmDeviceGeneralType.TPM).isEmpty();
-    }
-
 
     protected void createOva() {
         ActionReturnValue returnValue = runInternalAction(ActionType.CreateOva,

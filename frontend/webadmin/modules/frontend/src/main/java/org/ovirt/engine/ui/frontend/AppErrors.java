@@ -1625,8 +1625,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VM_CANNOT_EXPORT_RAW_FORMAT();
 
-    String VM_TPM_DATA_EXPORT_IS_NOT_SUPPORTED();
-
     String VM_TEMPLATE_TPM_DATA_EXPORT_IS_NOT_SUPPORTED();
 
     String ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN();

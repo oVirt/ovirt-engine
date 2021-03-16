@@ -1,0 +1,12 @@
+#
+# Copyright oVirt Authors
+# SPDX-License-Identifier: Apache-2.0
+#
+---
+- name: Run query script
+  script: >
+    get_ova_data.py
+    "{{ ovirt_ova_path }}"
+  args:
+    executable: "{{ ansible_python_interpreter }}"
+  register: extraction_result

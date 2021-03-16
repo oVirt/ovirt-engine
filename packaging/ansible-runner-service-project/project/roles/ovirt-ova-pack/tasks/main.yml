@@ -6,6 +6,7 @@
     "{{ ova_file.dest }}"
     "{{ ovirt_ova_pack_ovf }}"
     "{{ ovirt_ova_pack_disks }}"
+    "{{ ovirt_ova_pack_tpm }}"
   args:
     executable: "{{ ansible_python_interpreter }}"
   register: packing_result

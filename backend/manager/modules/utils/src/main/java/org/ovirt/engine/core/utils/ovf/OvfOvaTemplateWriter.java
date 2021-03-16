@@ -12,7 +12,7 @@ public class OvfOvaTemplateWriter extends OvfOvaWriter {
     private VmTemplate template;
 
     public OvfOvaTemplateWriter(VmTemplate template, FullEntityOvfData fullEntityOvfData, Version version, OsRepository osRepository) {
-        super(template, fullEntityOvfData.getDiskImages(), version, osRepository);
+        super(template, fullEntityOvfData.getDiskImages(), version, template.getVmExternalData(), osRepository);
         this.template = template;
     }
 

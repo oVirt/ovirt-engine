@@ -13,7 +13,7 @@ public class OvfOvaVmWriter extends OvfOvaWriter {
     private VM vm;
 
     public OvfOvaVmWriter(VM vm, FullEntityOvfData fullEntityOvfData, Version version, OsRepository osRepository) {
-        super(vm.getStaticData(), fullEntityOvfData.getDiskImages(), version, osRepository);
+        super(vm.getStaticData(), fullEntityOvfData.getDiskImages(), version, vm.getVmExternalData(), osRepository);
         this.vm = vm;
     }
 

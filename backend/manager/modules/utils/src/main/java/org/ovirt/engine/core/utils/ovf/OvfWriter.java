@@ -86,6 +86,11 @@ public abstract class OvfWriter implements IOvfBuilder {
     @Override
     public void buildReference() {
         _writer.writeStartElement("References");
+        writeReferenceData();
+        _writer.writeEndElement();
+    }
+
+    protected void writeReferenceData() {
         _images.forEach(image -> {
             _writer.writeStartElement("File");
             writeFile(image);
@@ -96,7 +101,6 @@ public abstract class OvfWriter implements IOvfBuilder {
             writeFileForLunDisk(lun);
             _writer.writeEndElement();
         });
-        _writer.writeEndElement();
     }
 
     protected abstract void writeFile(DiskImage image);
@@ -387,6 +391,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         writeMonitors();
         writeGraphics();
         writeCd();
+        writeTpm();
         writeOtherDevices();
         _writer.writeEndElement();
     }
@@ -480,7 +485,26 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
     }
 
-    private void writeVmDeviceInfo(VmDevice vmDevice) {
+    private void writeTpm() {
+        Collection<VmDevice> devices = vmBase.getManagedDeviceMap().values();
+        for (VmDevice vmDevice : devices) {
+            if (vmDevice.getDevice().equals(VmDeviceType.TPM.getName())) {
+                _writer.writeStartElement("Item");
+                _writer.writeElement(RASD_URI, "Caption", "TPM");
+                _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.OTHER);
+                _writer.writeElement(RASD_URI, getInstaceIdTag(), vmDevice.getId().getDeviceId().toString());
+                writeTpmHostResource();
+                writeVmDeviceInfo(vmDevice);
+                _writer.writeEndElement(); // item
+                break; // only one TPM device is currently supported
+            }
+        }
+    }
+
+    protected void writeTpmHostResource() {
+    }
+
+    protected void writeVmDeviceInfo(VmDevice vmDevice) {
         _writer.writeElement(VMD_TYPE, String.valueOf(vmDevice.getType().getValue()));
         _writer.writeElement(VMD_DEVICE, String.valueOf(vmDevice.getDevice()));
         _writer.writeElement(VMD_ADDRESS, vmDevice.getAddress());

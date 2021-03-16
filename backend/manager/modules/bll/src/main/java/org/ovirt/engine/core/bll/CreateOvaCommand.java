@@ -11,6 +11,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AnsibleCommandParameters;
 import org.ovirt.engine.core.common.action.AnsibleImageMeasureCommandParameters;
 import org.ovirt.engine.core.common.action.CreateOvaParameters;
+import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -95,6 +97,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
             VmTemplate template = vmTemplateDao.get(getParameters().getEntityId());
             vmHandler.updateVmInitFromDB(template, true);
             vmDeviceUtils.setVmDevices(template);
+            template.setVmExternalData(getVmExternalData());
             List<VmNetworkInterface> interfaces = vmNetworkInterfaceDao.getAllForTemplate(template.getId());
             template.setInterfaces(interfaces);
             FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(template);
@@ -105,6 +108,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         default:
             VM vm = vmDao.get(getParameters().getEntityId());
             vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
+            vm.setVmExternalData(getVmExternalData());
             interfaces = vmNetworkInterfaceDao.getAllForVm(vm.getId());
             vm.setInterfaces(interfaces);
             vmDeviceUtils.setVmDevices(vm.getStaticData());
@@ -174,7 +178,10 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         return params;
     }
 
-    private AnsibleCommandParameters createPackOvaParameters(String ovf, Collection<DiskImage> disks, Map<Guid, String> diskIdToPath) {
+    private AnsibleCommandParameters createPackOvaParameters(String ovf,
+            Collection<DiskImage> disks,
+            Map<Guid, String> diskIdToPath,
+            String tpmData) {
         String encodedOvf = genOvfParameter(ovf);
         AnsibleCommandParameters params = new AnsibleCommandParameters();
         params.setHostId(getVdsId());
@@ -185,10 +192,11 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         Map<String, Object> vars = new HashMap<>();
         vars.put("target_directory", getParameters().getDirectory());
         vars.put("entity_type", getParameters().getEntityType().name().toLowerCase());
-        vars.put("ova_size", String.valueOf(calcOvaSize(disks, encodedOvf)));
+        vars.put("ova_size", String.valueOf(calcOvaSize(disks, tpmData, encodedOvf)));
         vars.put("ova_name", getParameters().getName());
         vars.put("ovirt_ova_pack_ovf", encodedOvf);
         vars.put("ovirt_ova_pack_disks", genDiskParameters(disks, diskIdToPath));
+        vars.put("ovirt_ova_pack_tpm", tpmData);
         params.setVariables(vars);
         return params;
     }
@@ -199,7 +207,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         String ovf = createOvf(disks);
         log.debug("Exporting OVF: {}", ovf);
         ActionReturnValue actionReturnValue = runInternalAction(ActionType.AnsiblePackOva,
-                createPackOvaParameters(ovf, disks, getParameters().getDiskIdToPath()),
+                createPackOvaParameters(ovf, disks, getParameters().getDiskIdToPath(), getTpmData()),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
         if (!actionReturnValue.getSucceeded()) {
             log.error("Failed to start Ansible Pack OVA playbook");
@@ -208,15 +216,34 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         setSucceeded(true);
     }
 
+    private String getTpmData() {
+        var tpmDataAndHash = vmDao.getTpmData(getParameters().getEntityId());
+        return tpmDataAndHash != null ? tpmDataAndHash.getFirst() : null;
+    }
+
+    private Map<VmExternalDataKind, String> getVmExternalData() {
+        Map<VmExternalDataKind, String> externalData = new HashMap<>();
+        String tpmData = getTpmData();
+        if (!StringUtils.isEmpty(tpmData)) {
+            externalData.put(VmExternalDataKind.TPM, tpmData);
+        }
+        return externalData;
+    }
+
     private void updateDiskVmElementFromDb(DiskImage diskImage) {
         diskHandler.updateDiskVmElementFromDb(diskImage, getParameters().getEntityId());
     }
 
-    private long calcOvaSize(Collection<DiskImage> disks, String ovf) {
+    private long calcOvaSize(Collection<DiskImage> disks, String tpmData, String ovf) {
         // 1 block for the OVF, 1 block per-disk and 2 null-blocks at the end
         return TAR_BLOCK_SIZE * (1 + disks.size() + 2)
-                + (int) Math.ceil(ovf.length() / (TAR_BLOCK_SIZE * 1.0)) * TAR_BLOCK_SIZE
+                + blockAlignedSize(ovf.length())
+                + (tpmData != null ? blockAlignedSize(tpmData.length()) : 0)
                 + disks.stream().mapToLong(DiskImage::getActualSizeInBytes).sum();
+    }
+
+    private long blockAlignedSize(long size) {
+        return (long) Math.ceil(size / (TAR_BLOCK_SIZE * 1.0)) * TAR_BLOCK_SIZE;
     }
 
     private String genOvfParameter(String ovf) {

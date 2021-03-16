@@ -99,7 +99,7 @@ def extract_disks(ova_path, image_paths, image_mappings):
             # extract the next disk to the corresponding image
             name = nts(info[0:100], 'utf-8', 'surrogateescape')
             size = nti(info[124:136])
-            if name.lower().endswith('ovf'):
+            if name.lower().endswith('ovf') or name.lower().endswith('dat'):
                 jump = size
                 # ovf is typically not aligned to 512 bytes blocks
                 remainder = size % TAR_BLOCK_SIZE

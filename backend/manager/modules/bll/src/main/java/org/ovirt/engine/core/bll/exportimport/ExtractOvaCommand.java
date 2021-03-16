@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.exportimport;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
@@ -19,15 +21,18 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHttpClient;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 
 @NonTransactiveCommandAttribute
@@ -38,9 +43,13 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     @Inject
     private AnsibleExecutor ansibleExecutor;
     @Inject
+    private AnsibleRunnerHttpClient runnerClient;
+    @Inject
     private VmHandler vmHandler;
     @Inject
     private VmTemplateHandler templateHandler;
+    @Inject
+    private VmDao vmDao;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
@@ -72,9 +81,10 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
             if (!succeeded) {
                 log.error("Failed to extract OVA file");
                 setCommandStatus(CommandStatus.FAILED);
-            } else {
-                setSucceeded(true);
+                return;
             }
+            storeExternalData(runAnsibleOvaExternalDataPlaybook());
+            setSucceeded(true);
         } catch(EngineException e) {
             log.error("Failed to extract OVA file", e);
             setCommandStatus(CommandStatus.FAILED);
@@ -126,6 +136,33 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
         return true;
     }
 
+    private String runAnsibleOvaExternalDataPlaybook() {
+        AnsibleCommandConfig command = new AnsibleCommandConfig()
+                .hosts(getVds())
+                .variable("ovirt_ova_path", getParameters().getOvaPath())
+                // /var/log/ovirt-engine/ova/ovirt-ova-external-data-ansible-{hostname}-{timestamp}.log
+                .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-ova-external-data-ansible")
+                .logFileName(getVds().getHostName())
+                .playAction("Get external data from OVA")
+                .playbook(AnsibleConstants.OVA_EXTERNAL_DATA_PLAYBOOK);
+
+        StringBuilder stdout = new StringBuilder();
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(
+                command,
+                log,
+                (eventName, eventUrl) -> stdout.append(runnerClient.getCommandStdout(eventUrl))
+        );
+
+        boolean succeeded = ansibleReturnValue.getAnsibleReturnCode() == AnsibleReturnCode.OK;
+        if (!succeeded) {
+            log.error("Failed to get external data from OVA: {}", ansibleReturnValue.getStderr());
+            throw new EngineException(EngineError.GeneralException, "Failed to get external data from OVA");
+        }
+
+        return stdout.toString();
+    }
+
     /**
      * @return a list with the corresponding mounted paths
      */
@@ -163,6 +200,17 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 image.getId(),
                 image.getImageId(),
                 getParameters().getProxyHostId());
+    }
+
+    private void storeExternalData(String stdout) {
+        Map<String, String> externalData = Arrays.stream(stdout.trim().split(";"))
+                .filter(s -> !StringUtils.isEmpty(s))
+                .map(s -> s.split("="))
+                .collect(Collectors.toMap(part -> part[0], part -> part[1]));
+        String tpmData = externalData.get("tpm");
+        if (!StringUtils.isEmpty(tpmData)) {
+            vmDao.updateTpmData(getVmId(), tpmData, null);
+        }
     }
 
     @Override

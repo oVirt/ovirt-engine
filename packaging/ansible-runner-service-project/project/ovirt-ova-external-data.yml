@@ -1,0 +1,12 @@
+#
+# Copyright oVirt Authors
+# SPDX-License-Identifier: Apache-2.0
+#
+---
+- hosts: all
+  remote_user: root
+  gather_facts: no
+
+  roles:
+    - python-ver-detect
+    - ovirt-ova-external-data

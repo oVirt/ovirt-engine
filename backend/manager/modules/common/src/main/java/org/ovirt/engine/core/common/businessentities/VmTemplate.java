@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -65,6 +66,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     @TransientField
     private BiosType clusterBiosType;
+
+    private Map<VmExternalDataKind, String> vmExternalData;
 
     public VmTemplate() {
         setNiceLevel(0);
@@ -413,6 +416,14 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     public void setClusterBiosType(BiosType clusterBiosType) {
         this.clusterBiosType = clusterBiosType;
+    }
+
+    public Map<VmExternalDataKind, String> getVmExternalData() {
+        return vmExternalData;
+    }
+
+    public void setVmExternalData(Map<VmExternalDataKind, String> vmExternalData) {
+        this.vmExternalData = vmExternalData;
     }
 
 }
