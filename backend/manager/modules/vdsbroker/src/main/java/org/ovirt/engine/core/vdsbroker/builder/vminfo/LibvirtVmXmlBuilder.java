@@ -424,6 +424,11 @@ public class LibvirtVmXmlBuilder {
             cpuType += ",-monitor";
         }
 
+        String cpuFlagsProperty = vmCustomProperties.get("extra_cpu_flags");
+        if (StringUtils.isNotEmpty(cpuFlagsProperty)) {
+            cpuType += "," + cpuFlagsProperty;
+        }
+
         String[] typeAndFlags = cpuType.split(",");
 
         switch(vm.getClusterArch().getFamily()) {
