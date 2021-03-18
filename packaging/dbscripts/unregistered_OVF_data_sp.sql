@@ -42,7 +42,8 @@ BEGIN
     SET ovf_data = vog.ovf_data
     FROM vm_ovf_generations vog
     WHERE vog.vm_guid = u.entity_guid
-        AND u.entity_guid = v_entity_guid;
+        AND u.entity_guid = v_entity_guid
+        AND v_ovf_data IS NULL;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
