@@ -660,8 +660,15 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             return;
         }
 
-        confirmExternalDataDeletionAndSave(model, ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate().getId(),
-                "OnSave", m -> onSave()); //$NON-NLS-1$
+        Guid templateId;
+
+        if (model.getBehavior().isBlankTemplateBehavior()) {
+            templateId = ((ExistingBlankTemplateModelBehavior) model.getBehavior()).getVmTemplate().getId();
+        } else {
+            templateId = ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate().getId();
+        }
+
+        confirmExternalDataDeletionAndSave(model, templateId, "OnSave", m -> onSave()); //$NON-NLS-1$
     }
 
     private void onSave() {
