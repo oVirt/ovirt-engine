@@ -35,7 +35,7 @@ UPDATE
     user_profiles
 SET property_id = uuid_generate_v1()
 WHERE
-    property_id IS NULL;
+    property_id IS NULL OR property_id = '00000000-0000-0000-0000-000000000000';
 ALTER TABLE user_profiles ALTER COLUMN property_id SET NOT NULL;
 
 
