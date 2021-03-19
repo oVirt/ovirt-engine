@@ -1340,6 +1340,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Fri Mar 19 2021 Martin Perina <mperina@redhat.com> - 4.4.5.11
+- Bump version to 4.4.5.11
+
 * Thu Mar 11 2021 Lev Veyde <lveyde@redhat.com> - 4.4.5.10
 - Bump version to 4.4.5.10
 
