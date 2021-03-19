@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
+import java.util.EnumMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
@@ -10,6 +10,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.qualifiers.VmDeleted;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -17,7 +18,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetVmExternalDataVDSCommand;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VmExternalDataReturn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,20 +37,20 @@ public class VmExternalDataMonitoring {
 
     private class ExternalDataHashes {
 
-        private Map<String, String> dataHashes;
+        private Map<VmExternalDataKind, String> dataHashes;
 
-        public String getDataHash(String dataKind) {
+        public String getDataHash(VmExternalDataKind dataKind) {
             return dataHashes.get(dataKind);
         }
 
-        public void setDataHash(String dataKind, String dataHash) {
+        public void setDataHash(VmExternalDataKind dataKind, String dataHash) {
             dataHashes.put(dataKind, dataHash);
         }
 
         public ExternalDataHashes(String tpmHash, String nvramHash) {
-            dataHashes = new TreeMap<>();
-            dataHashes.put(VdsProperties.tpm, tpmHash);
-            dataHashes.put(VdsProperties.nvram, nvramHash);
+            dataHashes = new EnumMap<>(VmExternalDataKind.class);
+            dataHashes.put(VmExternalDataKind.TPM, tpmHash);
+            dataHashes.put(VmExternalDataKind.NVRAM, nvramHash);
         }
     }
 
@@ -74,15 +74,15 @@ public class VmExternalDataMonitoring {
         if (tpmDataHash != null || nvramDataHash != null) {
             ExternalDataHashes externalDataHashes = vmHashes.computeIfAbsent(vmId,
                     k -> new ExternalDataHashes(vmDao.getTpmData(k).getSecond(), vmDao.getNvramData(k).getSecond()));
-            saveExternalData(vmId, vdsId, externalDataHashes, VdsProperties.tpm, tpmDataHash,
+            saveExternalData(vmId, vdsId, externalDataHashes, VmExternalDataKind.TPM, tpmDataHash,
                     (data, hash) -> vmDao.updateTpmData(vmId, data, hash));
-            saveExternalData(vmId, vdsId, externalDataHashes, VdsProperties.nvram, nvramDataHash,
+            saveExternalData(vmId, vdsId, externalDataHashes, VmExternalDataKind.NVRAM, nvramDataHash,
                     (data, hash) -> vmDao.updateNvramData(vmId, data, hash));
         }
     }
 
-    private void saveExternalData(Guid vmId, Guid vdsId, ExternalDataHashes externalDataHashes, String dataKind,
-            String newDataHash, BiConsumer<String, String> storeFunction) {
+    private void saveExternalData(Guid vmId, Guid vdsId, ExternalDataHashes externalDataHashes,
+            VmExternalDataKind dataKind, String newDataHash, BiConsumer<String, String> storeFunction) {
         if (newDataHash != null) {
             synchronized (externalDataHashes) {
                 if (newDataHash.equals(externalDataHashes.getDataHash(dataKind))) {

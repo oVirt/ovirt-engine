@@ -119,4 +119,9 @@ public interface OvfProperties {
     String USER_DOMAIN = "UserDomain";
     String USER_ROLES = "UserRoles";
     String ROLE_NAME = "RoleName";
+
+    // External data
+    String VM_EXTERNAL_DATA_ITEM = "VmExternalDataItem";
+    String VM_EXTERNAL_DATA_KIND = "kind";
+    String VM_EXTERNAL_DATA_CONTENT = "VmExternalDataContent";
 }

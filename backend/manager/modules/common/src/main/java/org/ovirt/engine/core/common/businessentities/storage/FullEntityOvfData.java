@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -29,6 +31,7 @@ public class FullEntityOvfData implements Serializable {
     private Set<DbUser> dbUsers = new HashSet<>();
     private Map<String, Set<String>> userToRoles = new HashMap<>();
     private List<Label> affinityLabelsNames = new ArrayList<>();
+    private Map<VmExternalDataKind, String> vmExternalData = new EnumMap<>(VmExternalDataKind.class);
 
     public FullEntityOvfData() {
     }
@@ -153,6 +156,10 @@ public class FullEntityOvfData implements Serializable {
         this.affinityLabelsNames = affinityLabelsNames;
     }
 
+    public Map<VmExternalDataKind, String> getVmExternalData() {
+        return vmExternalData;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -171,7 +178,8 @@ public class FullEntityOvfData implements Serializable {
                 && Objects.equals(affinityGroups, other.affinityGroups)
                 && Objects.equals(dbUsers, other.dbUsers)
                 && Objects.equals(userToRoles, other.userToRoles)
-                && Objects.equals(affinityLabelsNames, other.affinityLabelsNames);
+                && Objects.equals(affinityLabelsNames, other.affinityLabelsNames)
+                && Objects.equals(vmExternalData, other.vmExternalData);
     }
 
     @Override
@@ -186,6 +194,7 @@ public class FullEntityOvfData implements Serializable {
                 affinityGroups,
                 dbUsers,
                 userToRoles,
-                affinityLabelsNames);
+                affinityLabelsNames,
+                vmExternalData);
     }
 }

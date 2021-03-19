@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -33,9 +34,9 @@ public class GetVmExternalDataVDSCommand<P extends GetVmExternalDataVDSCommand.P
     public static class Parameters extends VdsAndVmIDVDSParametersBase {
 
         private boolean forceUpdate;
-        private String kind;
+        private VmExternalDataKind kind;
 
-        public Parameters(Guid vdsId, Guid vmId, String kind, boolean forceUpdate) {
+        public Parameters(Guid vdsId, Guid vmId, VmExternalDataKind kind, boolean forceUpdate) {
             super(vdsId, vmId);
             this.forceUpdate = forceUpdate;
             this.kind = kind;
@@ -45,7 +46,7 @@ public class GetVmExternalDataVDSCommand<P extends GetVmExternalDataVDSCommand.P
             return forceUpdate;
         }
 
-        public String getKind() {
+        public VmExternalDataKind getKind() {
             return kind;
         }
 

@@ -9,6 +9,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicket;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturn;
@@ -182,7 +183,7 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
-    @Override public VmExternalDataReturn getVmExternalData(String vmId, String kind, boolean forceUpdate) {
+    @Override public VmExternalDataReturn getVmExternalData(String vmId, VmExternalDataKind kind, boolean forceUpdate) {
         return null;
     }
 

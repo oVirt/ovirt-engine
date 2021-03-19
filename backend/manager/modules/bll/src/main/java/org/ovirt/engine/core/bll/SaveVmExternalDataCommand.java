@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ExternalDataStatus;
 import org.ovirt.engine.core.common.action.SaveVmExternalDataParameters;
+import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetVmExternalDataVDSCommand;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VmExternalDataReturn;
 
 
@@ -51,7 +51,7 @@ public class SaveVmExternalDataCommand<T extends SaveVmExternalDataParameters> e
                 && FeatureSupported.isNvramPersistenceSupported(getVm().getCompatibilityVersion());
     }
 
-    private boolean handleFailedExternalDataRetrieval(ExternalDataStatus externalDataStatus, String dataKind) {
+    private boolean handleFailedExternalDataRetrieval(ExternalDataStatus externalDataStatus, VmExternalDataKind dataKind) {
         if (externalDataStatus.incFailedRetrievalAttempts(dataKind) < MAX_DATA_RETRIEVAL_ATTEMPTS) {
             log.info("Failed to retrieve VM external {} data: {}", dataKind, getVmId());
             return false;
@@ -75,17 +75,17 @@ public class SaveVmExternalDataCommand<T extends SaveVmExternalDataParameters> e
      */
     @Override
     protected void executeCommand() {
-        List<String> dataToRetrieve = new ArrayList<>(2);
+        List<VmExternalDataKind> dataToRetrieve = new ArrayList<>(2);
         if (hasTpmDevice()) {
-            dataToRetrieve.add(VdsProperties.tpm);
+            dataToRetrieve.add(VmExternalDataKind.TPM);
         }
         if (hasSecureBoot()) {
-            dataToRetrieve.add(VdsProperties.nvram);
+            dataToRetrieve.add(VmExternalDataKind.NVRAM);
         }
 
         boolean succeeded = true;
         Guid vmId = getVmId();
-        for (String dataKind : dataToRetrieve) {
+        for (VmExternalDataKind dataKind : dataToRetrieve) {
             ExternalDataStatus externalDataStatus = getParameters().getExternalDataStatus();
             if (externalDataStatus.getFinished(dataKind)) {
                 continue;
@@ -118,10 +118,10 @@ public class SaveVmExternalDataCommand<T extends SaveVmExternalDataParameters> e
                 String hash = ((VmExternalDataReturn) returnValue.getReturnValue()).hash;
                 if (data != null) {
                     switch (dataKind) {
-                        case VdsProperties.tpm:
+                        case TPM:
                             vmDao.updateTpmData(vmId, data, hash);
                             break;
-                        case VdsProperties.nvram:
+                        case NVRAM:
                             vmDao.updateNvramData(vmId, data, hash);
                             break;
                         default:

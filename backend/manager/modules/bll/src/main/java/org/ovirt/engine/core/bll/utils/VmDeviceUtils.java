@@ -26,6 +26,7 @@ import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
@@ -2294,6 +2295,26 @@ public class VmDeviceUtils {
         }
         if (getVmBase(targetVmId).getEffectiveBiosType() == BiosType.Q35_SECURE_BOOT) {
             vmDao.copyNvramData(sourceVmId, targetVmId);
+        }
+    }
+
+    public void updateVmExternalData(VM vm) {
+        Map<VmExternalDataKind, String> vmExternalData = vm.getVmExternalData();
+        if (vmExternalData == null) {
+            return;
+        }
+        Guid vmId = vm.getId();
+        String tpmData = vmExternalData.get(VmExternalDataKind.TPM);
+        if (tpmData == null) {
+            vmDao.deleteTpmData(vmId);
+        } else {
+            vmDao.updateTpmData(vmId, tpmData, "");
+        }
+        String nvramData = vmExternalData.get(VmExternalDataKind.NVRAM);
+        if (nvramData == null) {
+            vmDao.deleteNvramData(vmId);
+        } else {
+            vmDao.updateNvramData(vmId, nvramData, "");
         }
     }
 }

@@ -2374,6 +2374,15 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION DeleteTpmData (
+    v_vm_id UUID
+)
+RETURNS VOID AS $PROCEDURE$
+    DELETE FROM vm_external_data
+    WHERE vm_id = v_vm_id
+$PROCEDURE$
+LANGUAGE sql;
+
 CREATE OR REPLACE FUNCTION CopyTpmData (
     v_source_vm_id UUID,
     v_target_vm_id UUID
@@ -2431,6 +2440,15 @@ BEGIN
         nvram_hash = v_nvram_hash;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DeleteNvramData (
+    v_vm_id UUID
+)
+RETURNS VOID AS $PROCEDURE$
+    DELETE FROM vm_nvram_data
+    WHERE vm_id = v_vm_id
+$PROCEDURE$
+LANGUAGE sql;
 
 CREATE OR REPLACE FUNCTION CopyNvramData (
     v_source_vm_id UUID,

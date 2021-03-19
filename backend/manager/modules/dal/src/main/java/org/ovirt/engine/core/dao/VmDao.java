@@ -409,6 +409,13 @@ public interface VmDao extends Dao {
     void updateTpmData(Guid vmId, String tpmData, String tpmDataHash);
 
     /**
+     * Deletes the TPM data for the given VM.
+     *
+     * @param vmId the VM id
+     */
+    void deleteTpmData(Guid vmId);
+
+    /**
      * Copies the specified TPM data from one VM to another one.
      *
      * @param sourceVmId id of the VM to copy the data from
@@ -433,6 +440,13 @@ public interface VmDao extends Dao {
      * @param nvramDataHash hash of the data as obtained from the VDS
      */
     void updateNvramData(Guid vmId, String nvramData, String nvramDataHash);
+
+    /**
+     * Deletes the NVRAM data for the given VM.
+     *
+     * @param vmId the VM id
+     */
+    void deleteNvramData(Guid vmId);
 
     /**
      * Copies the specified NVRAM data from one VM to another one.

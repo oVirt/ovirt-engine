@@ -2,10 +2,12 @@ package org.ovirt.engine.core.utils.ovf;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -188,6 +190,7 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         super.writeGeneralData();
         _writer.writeElement(CLUSTER_NAME, fullEntityOvfData.getClusterName());
         writeUserData();
+        writeVmExternalData();
     }
 
     private void writeUserData() {
@@ -214,6 +217,23 @@ public abstract class OvfOvirtWriter extends OvfWriter {
             _writer.writeEndElement();
         });
 
+        _writer.writeEndElement();
+    }
+
+    private void writeVmExternalData() {
+        Map<VmExternalDataKind, String> vmExternalData = fullEntityOvfData.getVmExternalData();
+        if (vmExternalData.isEmpty()) {
+            return;
+        }
+
+        _writer.writeStartElement("Section");
+        _writer.writeAttributeString(XSI_URI, "type", OVF_PREFIX + ":VmExternalDataSection_Type");
+        vmExternalData.forEach((kind, data) -> {
+                _writer.writeStartElement(OvfProperties.VM_EXTERNAL_DATA_ITEM);
+                _writer.writeAttributeString(OvfProperties.VM_EXTERNAL_DATA_KIND, kind.getExternal());
+                _writer.writeElement(OvfProperties.VM_EXTERNAL_DATA_CONTENT, data);
+                _writer.writeEndElement();
+        });
         _writer.writeEndElement();
     }
 

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -90,6 +91,11 @@ public abstract class OvfOvirtReader extends OvfReader {
             node = getNode(list, "xsi:type", "ovf:UserDomainsSection_Type");
             if (node != null) {
                 readUserDomainsSection(node);
+            }
+
+            node = getNode(list, "xsi:type", "ovf:VmExternalDataSection_Type");
+            if (node != null) {
+                readExternalDataSection(node);
             }
 
             node = getNode(list, "xsi:type", "ovf:NumaNodeSection_Type");
@@ -196,6 +202,16 @@ public abstract class OvfOvirtReader extends OvfReader {
 
         fullEntityOvfData.setDbUsers(dbUsers);
         fullEntityOvfData.setUserToRoles(userToRoles);
+    }
+
+    private void readExternalDataSection(@SuppressWarnings("unused") XmlNode section) {
+        Map<VmExternalDataKind, String> vmExternalData = fullEntityOvfData.getVmExternalData();
+        XmlNodeList list = selectNodes(section, OvfProperties.VM_EXTERNAL_DATA_ITEM);
+        for (XmlNode node : list) {
+            String kind = node.attributes.get(OvfProperties.VM_EXTERNAL_DATA_KIND).getValue();
+            String data = selectSingleNode(node, OvfProperties.VM_EXTERNAL_DATA_CONTENT).innerText;
+            vmExternalData.put(VmExternalDataKind.fromExternal(kind), data);
+        }
     }
 
     @Override

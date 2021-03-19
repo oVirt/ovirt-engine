@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -64,6 +65,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     private BiosType clusterBiosType;
     @TransientField
     private boolean differentTimeZone;
+    private Map<VmExternalDataKind, String> vmExternalData;
 
     public VM() {
         this(new VmStatic(), new VmDynamic(), new VmStatistics());
@@ -1911,5 +1913,13 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
 
     public void setLargeIconId(Guid largeIconId) {
         vmStatic.setLargeIconId(largeIconId);
+    }
+
+    public Map<VmExternalDataKind, String> getVmExternalData() {
+        return vmExternalData;
+    }
+
+    public void setVmExternalData(Map<VmExternalDataKind, String> vmExternalData) {
+        this.vmExternalData = vmExternalData;
     }
 }

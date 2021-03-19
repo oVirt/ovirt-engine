@@ -81,6 +81,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
     private boolean updateNuma;
     private String vmLargeIcon;
     private Version clusterLevelChangeFromVersion;
+    private Map<VmExternalDataKind, String> vmExternalData;
 
     /**
      * Extra flag to allow memory hot unplug. Memory hot unplug requires both this flag and {@link #applyChangesLater}
@@ -411,5 +412,13 @@ public class VmManagementParametersBase extends VmOperationParameterBase
 
     public AutoPinningPolicy getAutoPinningPolicy() {
         return autoPinningPolicy;
+    }
+
+    public Map<VmExternalDataKind, String> getVmExternalData() {
+        return vmExternalData;
+    }
+
+    public void setVmExternalData(Map<VmExternalDataKind, String> vmExternalData) {
+        this.vmExternalData = vmExternalData;
     }
 }

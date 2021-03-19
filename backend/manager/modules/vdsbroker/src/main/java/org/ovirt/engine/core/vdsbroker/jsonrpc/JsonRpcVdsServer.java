@@ -13,6 +13,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicket;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -400,10 +401,10 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public VmExternalDataReturn getVmExternalData(String vmId, String kind, boolean forceUpdate) {
+    public VmExternalDataReturn getVmExternalData(String vmId, VmExternalDataKind kind, boolean forceUpdate) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.getExternalData").withParameter("vmID", vmId)
-                        .withParameter("kind", kind)
+                        .withParameter("kind", kind.getExternal())
                         .withParameter("forceUpdate", forceUpdate)
                         .build();
         Map<String, Object> response =

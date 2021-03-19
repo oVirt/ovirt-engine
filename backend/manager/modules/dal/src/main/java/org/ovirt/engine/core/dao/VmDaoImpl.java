@@ -434,6 +434,13 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
+    public void deleteTpmData(Guid vmId) {
+        getCallsHandler().executeModification("DeleteTpmData",
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_id", vmId));
+    }
+
+    @Override
     public void copyTpmData(Guid sourceVmId, Guid targetVmId) {
         getCallsHandler().executeModification("CopyTpmData",
                 getCustomMapSqlParameterSource()
@@ -453,6 +460,13 @@ public class VmDaoImpl extends BaseDao implements VmDao {
                         .addValue("vm_id", vmId)
                         .addValue("nvram_data", nvramData)
                         .addValue("nvram_hash", nvramDataHash));
+    }
+
+    @Override
+    public void deleteNvramData(Guid vmId) {
+        getCallsHandler().executeModification("DeleteNvramData",
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_id", vmId));
     }
 
     @Override
