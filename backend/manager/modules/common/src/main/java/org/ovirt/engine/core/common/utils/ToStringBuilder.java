@@ -411,4 +411,13 @@ public class ToStringBuilder {
     private String filterValue(String value) {
         return value == null ? null : FILTERED_CONTENT;
     }
+
+    /**
+     * @return String that is under construction via this builder
+     * @see #build()
+     */
+    @Override
+    public String toString() {
+        return build();
+    }
 }
