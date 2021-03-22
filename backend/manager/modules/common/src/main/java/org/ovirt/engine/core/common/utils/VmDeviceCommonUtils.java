@@ -314,6 +314,8 @@ public class VmDeviceCommonUtils {
                     || VmDeviceType.VIRTIOSCSI.getName().equals(device);
         case HOSTDEV:
             return includeHostDev;
+        case TPM:
+            return true;
         default:
             return false;
         }
