@@ -377,6 +377,15 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             this.endSuccessfully();
             return;
         }
+
+        // If live migration of the disk was finished without errors but live merge
+        // failed we will consider this operation as successful.
+        if (getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.LIVE_MIGRATE_DISK_EXEC_COMPLETED) {
+            auditLog(this, AuditLogType.USER_MOVED_DISK_FINISHED_WITH_LEFTOVERS);
+            this.endSuccessfully();
+            return;
+        }
+
         super.endWithFailure();
         handleDestDisk();
 
