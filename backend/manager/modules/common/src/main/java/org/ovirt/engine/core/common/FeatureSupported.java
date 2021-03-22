@@ -239,6 +239,16 @@ public class FeatureSupported {
     }
 
     /**
+     * Check if backup using a single checkpoint is supported.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if backup using a single checkpoint is supported.
+     */
+    public static boolean isBackupSingleCheckpointSupported(Version version) {
+        return Version.v4_6.lessOrEquals(version);
+    }
+
+    /**
      * Check if v2 of OpenStack Image Service API is supported.
      * The API v2 is supported only in vdsm of oVirt >= 4.4
      *
