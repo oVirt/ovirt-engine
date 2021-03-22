@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -51,6 +52,12 @@ public class VmNetworkInterfaceDaoImpl extends DefaultReadDao<VmNetworkInterface
         return getCallsHandler().executeReadList("GetVmNetworkInterfaceToMonitorByVmId",
                 VmNetworkInterfaceMonitoringRowMapper.INSTANCE,
                 parameterSource);
+    }
+
+    @Override
+    public List<Guid> getAllWithVnicOutOfSync(Set<Guid> vmIds) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("ids", createArrayOfUUIDs(vmIds));
+        return getCallsHandler().executeReadList("GetVmIdsForVnicsOutOfSync", createGuidMapper(), parameterSource);
     }
 
     @Override

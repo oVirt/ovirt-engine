@@ -9,6 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,10 @@ import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 public class VmNetworkInterfaceDaoTest extends BaseDaoTestCase<VmNetworkInterfaceDao> {
+
+    @Inject
+    private VmNicDao vmNicDao;
+
     private static final Guid TEMPLATE_ID = FixturesTool.VM_TEMPLATE_RHEL5;
     private static final Guid VM_ID = FixturesTool.VM_RHEL5_POOL_57;
 
@@ -217,6 +224,26 @@ public class VmNetworkInterfaceDaoTest extends BaseDaoTestCase<VmNetworkInterfac
     public void testGetAllForNetwork() {
         List<VmNetworkInterface> result = dao.getAllForNetwork(FixturesTool.NETWORK_ENGINE);
         assertEquals(existingVmInterface, result.get(0));
+    }
+
+    @Test
+    public void testGetAllWithVnicOutOfSync() {
+        VmNetworkInterface iface = dao.get(FixturesTool.VM_NETWORK_INTERFACE);
+        assertNotNull(iface);
+        assertEquals(VM_ID, iface.getVmId());
+        assertTrue(iface.isSynced());
+        List<Guid> result = dao.getAllWithVnicOutOfSync(Set.of(VM_ID));
+        assertTrue(result.isEmpty());
+
+        iface.setSynced(false);
+        vmNicDao.update(iface);
+        result = dao.getAllWithVnicOutOfSync(Set.of(VM_ID));
+        assertEquals(1, result.size());
+
+        iface.setSynced(true);
+        vmNicDao.update(iface);
+        result = dao.getAllWithVnicOutOfSync(Set.of(VM_ID));
+        assertTrue(result.isEmpty());
     }
 
     private void assertCorrectResultForTemplate(List<VmNetworkInterface> result) {

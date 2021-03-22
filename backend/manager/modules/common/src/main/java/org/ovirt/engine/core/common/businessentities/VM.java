@@ -67,6 +67,9 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     private boolean differentTimeZone;
     private Map<VmExternalDataKind, String> vmExternalData;
 
+    @TransientField
+    private boolean vnicsOutOfSync;
+
     public VM() {
         this(new VmStatic(), new VmDynamic(), new VmStatistics());
     }
@@ -1921,5 +1924,13 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
 
     public void setVmExternalData(Map<VmExternalDataKind, String> vmExternalData) {
         this.vmExternalData = vmExternalData;
+    }
+
+    public boolean isVnicsOutOfSync() {
+        return vnicsOutOfSync;
+    }
+
+    public void setVnicsOutOfSync(boolean vnicsOutOfSync) {
+        this.vnicsOutOfSync = vnicsOutOfSync;
     }
 }

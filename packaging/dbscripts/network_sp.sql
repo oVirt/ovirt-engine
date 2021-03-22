@@ -2853,3 +2853,15 @@ BEGIN
     SELECT v_vds_id, unnest(v_plugin_types), unnest(v_provider_binding_host_ids);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetVmIdsForVnicsOutOfSync (v_ids UUID[])
+RETURNS SETOF UUID STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT DISTINCT vm_guid
+    FROM vm_interface
+    WHERE NOT synced
+    AND vm_guid = ANY(v_ids);
+END;$PROCEDURE$
+LANGUAGE plpgsql;

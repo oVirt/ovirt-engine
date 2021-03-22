@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao.network;
 
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -79,5 +80,15 @@ public interface VmNetworkInterfaceDao extends ReadDao<VmNetworkInterface, Guid>
      * @return the list of interfaces with partial data for monitoring
      */
     List<VmNetworkInterface> getAllForMonitoredVm(Guid vmId);
+
+    /**
+     * Retrieves only the VMs which have one or vNICs out of sync.
+     * An out of sync vNIC is a vNIC whose configuration has been updated on engine
+     * but the update cannot be applied on the VM until the vNIC is unplugged or the
+     * VM is restarted.
+     *
+     * @return list of VM ids
+     */
+    List<Guid> getAllWithVnicOutOfSync(Set<Guid> vmIds);
 
 }

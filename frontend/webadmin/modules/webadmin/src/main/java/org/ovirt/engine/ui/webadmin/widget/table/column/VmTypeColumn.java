@@ -90,6 +90,9 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
             if (clusterCpuChanged(vm) && !nextRunFields.contains("customCpuName")){ //$NON-NLS-1$
                 nextRunFields.add("clusterCpuChange"); //$NON-NLS-1$
             }
+            if (vm.isVnicsOutOfSync()) {
+                nextRunFields.add("interfaces"); //$NON-NLS-1$
+            }
             res.put(SafeHtmlUtils.EMPTY_SAFE_HTML, getNextRunChangedFieldsTooltip(nextRunFields));
         }
         return res;
@@ -105,7 +108,7 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
     }
 
     private static boolean configurationWillChangeAfterRestart(VM vm){
-        return clusterCpuChanged(vm) || vm.isNextRunConfigurationExists();
+        return clusterCpuChanged(vm) || vm.isNextRunConfigurationExists() || vm.isVnicsOutOfSync();
     }
 
     private SafeHtml getNextRunChangedFieldsTooltip(Set<String> changedFields) {

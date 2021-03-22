@@ -101,4 +101,6 @@ public interface NextRunFieldMessages extends ConstantsWithLookup {
     String virtioscsi();
 
     String graphicsProtocol();
+
+    String interfaces();
 }
