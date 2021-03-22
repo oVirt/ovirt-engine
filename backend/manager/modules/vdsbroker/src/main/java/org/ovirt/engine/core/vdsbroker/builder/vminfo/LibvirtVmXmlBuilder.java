@@ -2380,7 +2380,10 @@ public class LibvirtVmXmlBuilder {
             } else if (managedBlockStorageDisk.getCinderVolumeDriver() == CinderVolumeDriver.BLOCK) {
                 Map<String, Object> attachment =
                         (Map<String, Object>) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.ATTACHMENT);
-                metadata = Collections.singletonMap("GUID", (String)attachment.get(DeviceInfoReturn.SCSI_WWN));
+                metadata = Map.of(
+                        "GUID", (String)attachment.get(DeviceInfoReturn.SCSI_WWN),
+                        "managed", "true"
+                );
             }
 
             writer.writeAttributeString("dev", path);
