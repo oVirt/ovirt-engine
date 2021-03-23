@@ -31,6 +31,13 @@ public class VnicProfileDaoImpl extends DefaultGenericDao<VnicProfile, Guid> imp
     }
 
     @Override
+    public List<VnicProfile> getAllByFailoverVnicProfileId(Guid failoverId) {
+        return getCallsHandler().executeReadList("GetVnicProfilesByFailoverVnicProfileId",
+                VnicProfileRowMapper.INSTANCE,
+                getCustomMapSqlParameterSource().addValue("failover_vnic_profile_id", failoverId));
+    }
+
+    @Override
     protected MapSqlParameterSource createFullParametersMapper(VnicProfile profile) {
         return createIdParameterMapper(profile.getId())
                 .addValue("name", profile.getName())

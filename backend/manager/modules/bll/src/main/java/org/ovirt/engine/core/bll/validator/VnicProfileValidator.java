@@ -241,6 +241,15 @@ public class VnicProfileValidator {
                 .when(!vnicProfile.isPassthrough() || !vnicProfile.isMigratable());
     }
 
+    public ValidationResult validateProfileNotUpdatedIfFailover() {
+        var profiles = Injector.get(VnicProfileDao.class).getAllByFailoverVnicProfileId(vnicProfile.getId());
+        if (profiles.isEmpty()) {
+            return ValidationResult.VALID;
+        }
+        var replacements = ReplacementUtils.replaceWithNameable("ENTITIES_USING_FAILOVER", profiles);
+        return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_UPDATE_OF_FAILOVER_PROFILE_IS_NOT_SUPPORTED, replacements);
+    }
+
     private Guid getNetworkFilterId() {
         return vnicProfile.getNetworkFilterId();
     }

@@ -16,4 +16,13 @@ public interface VnicProfileDao extends GenericDao<VnicProfile, Guid> {
      * @return the list of vnic profiles
      */
     List<VnicProfile> getAllForNetwork(Guid networkId);
+
+    /**
+     * Retrieves all vnic profiles that use specified vnic profile as failover.
+     *
+     * @param failoverId
+     *            the vnic profile id
+     * @return the list of vnic profiles
+     */
+    List<VnicProfile> getAllByFailoverVnicProfileId(Guid failoverId);
 }

@@ -1965,6 +1965,17 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetVnicProfilesByFailoverVnicProfileId (v_failover_vnic_profile_id UUID)
+RETURNS SETOF vnic_profiles STABLE AS $PROCEDURE$
+BEGIN
+RETURN QUERY
+
+SELECT *
+FROM vnic_profiles
+WHERE failover_vnic_profile_id = v_failover_vnic_profile_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 ----------------------------------------------------------------------
 --  Vnic Profile View
 ----------------------------------------------------------------------
