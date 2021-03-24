@@ -2007,8 +2007,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String HOT_PLUG_CPU_IS_NOT_SUPPORTED_FOR_GUEST_OS();
 
-    String HOT_PLUG_CPU_IS_NOT_SUPPORTED_FOR_UEFI();
-
     String HOT_UNPLUG_CPU_IS_NOT_SUPPORTED();
 
     String HOT_UNPLUG_CPU_IS_NOT_SUPPORTED_FOR_GUEST_OS();
