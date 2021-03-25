@@ -63,7 +63,12 @@ public class VmBackupMapper {
 
     public static BackupPhase map(org.ovirt.engine.core.common.businessentities.VmBackupPhase action) {
         switch (action) {
+        // Creating and preparing scratch disks should be considered
+        // as the backup is still in INITIALIZING phase, scratch disks
+        // should be created before the backup can start.
         case INITIALIZING:
+        case CREATING_SCRATCH_DISKS:
+        case PREPARING_SCRATCH_DISK:
             return BackupPhase.INITIALIZING;
         case STARTING:
             return BackupPhase.STARTING;
