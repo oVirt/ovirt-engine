@@ -44,7 +44,7 @@ public class ResetVmCommand<T extends VmOperationParameterBase> extends VmOperat
         }
 
         if (!FeatureSupported.isVMResetSupported(getVm().getClusterCompatibilityVersion())) {
-            return false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_RESET_VM_IS_NOT_SUPPORTED);
         }
 
         if (!canRunActionOnNonManagedVm()) {
