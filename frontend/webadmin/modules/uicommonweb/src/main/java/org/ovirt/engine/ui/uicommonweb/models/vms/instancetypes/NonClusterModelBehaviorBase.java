@@ -34,12 +34,8 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
     }
 
     protected void initDisplayTypes(DisplayType selected, UnitVmModel.GraphicsTypes selectedGrahicsTypes) {
-        getModel().initDisplayModels(new HashSet<>(Arrays.asList(DisplayType.values())));
+        getModel().initDisplayModels(new HashSet<>(Arrays.asList(DisplayType.values())), selected);
         initGraphicsModel(selectedGrahicsTypes);
-
-        if (getModel().getDisplayType().getItems().contains(selected)) {
-            getModel().getDisplayType().setSelectedItem(selected);
-        }
 
         if (selected == DisplayType.none) {
             getModel().getDisplayType().setSelectedItem(DisplayType.qxl);
