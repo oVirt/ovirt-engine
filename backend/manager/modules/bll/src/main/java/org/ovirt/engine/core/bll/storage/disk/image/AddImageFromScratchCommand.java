@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.CreateSnapshotCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -147,7 +148,11 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                         getParameters().getDiskInfo().getContentType()
                 );
 
-        parameters.setImageInitialSizeInBytes(Optional.ofNullable(getInitialSize()).orElse(0L));
+        // The initial size of a backup scratch disk shouldn't be overridden.
+        parameters.setImageInitialSizeInBytes(
+                getParameters().getDiskInfo().getContentType().equals(DiskContentType.BACKUP_SCRATCH)
+                        ? getParameters().getDiskInfo().getInitialSizeInBytes()
+                        : Optional.ofNullable(getInitialSize()).orElse(0L));
         return parameters;
     }
 

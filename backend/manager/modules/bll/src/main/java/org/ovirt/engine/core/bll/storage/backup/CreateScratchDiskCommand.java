@@ -111,7 +111,8 @@ public class CreateScratchDiskCommand<T extends AddDiskParameters> extends Comma
                 throw e;
             }
         }
-        return disk.getSize();
+        // Initial size should be '0'.
+        return 0L;
     }
 
     private void endChildCommand(boolean succeeded) {
