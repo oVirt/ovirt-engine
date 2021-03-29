@@ -397,9 +397,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     private void finalizeVmBackup() {
         cleanDisksBackupModeIfSupported();
         unlockDisks();
-        // Scratch disks removal should occur even if the VM is in 'PAUSED' state,
-        // the VM can enter to 'PAUSED' state during the backup due to storage space issues etc..
-        if (getVm().getStatus().isUpOrPaused()) {
+        // Remove the created scratch disks
+        if (!getParameters().getScratchDisksMap().isEmpty()) {
             removeScratchDisks();
         }
     }
