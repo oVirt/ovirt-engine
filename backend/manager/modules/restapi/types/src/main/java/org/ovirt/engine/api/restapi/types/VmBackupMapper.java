@@ -24,9 +24,6 @@ public class VmBackupMapper {
         if (model.isSetToCheckpointId()) {
             entity.setToCheckpointId(GuidUtils.asGuid(model.getToCheckpointId()));
         }
-        if (model.isSetPhase()) {
-            entity.setPhase(map(model.getPhase()));
-        }
         if (model.isSetDisks()) {
             List<DiskImage> disks = model.getDisks().getDisks().stream().map(
                     d -> (DiskImage) DiskMapper.map(d, null)).collect(Collectors.toList());
@@ -78,20 +75,4 @@ public class VmBackupMapper {
             return null;
         }
     }
-
-    public static org.ovirt.engine.core.common.businessentities.VmBackupPhase map(BackupPhase action) {
-        switch (action) {
-        case INITIALIZING:
-            return org.ovirt.engine.core.common.businessentities.VmBackupPhase.INITIALIZING;
-        case STARTING:
-            return org.ovirt.engine.core.common.businessentities.VmBackupPhase.STARTING;
-        case READY:
-            return org.ovirt.engine.core.common.businessentities.VmBackupPhase.READY;
-        case FINALIZING:
-            return org.ovirt.engine.core.common.businessentities.VmBackupPhase.FINALIZING;
-        default:
-            return null;
-        }
-    }
-
 }
