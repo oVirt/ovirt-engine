@@ -155,8 +155,10 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (getSucceeded()) {
-            addCustomValue(LOGABLE_FIELD_NEW_MEMORY, String.valueOf(getParameters().getVm().getMemSizeMb()));
-            addCustomValue(LOGABLE_FIELD_PREVIOUS_MEMORY, String.valueOf(getVm().getMemSizeMb()));
+            int origMemSize = getVm().getMemSizeMb();
+            addCustomValue(LOGABLE_FIELD_NEW_MEMORY,
+                    String.valueOf(origMemSize + getParameters().getMemoryDeviceSizeMb()));
+            addCustomValue(LOGABLE_FIELD_PREVIOUS_MEMORY, String.valueOf(origMemSize));
             return AuditLogType.HOT_SET_MEMORY;
         } else {
             addCustomValue(LOGABLE_FIELD_ERROR_MESSAGE, getReturnValue().getFault().getMessage());
