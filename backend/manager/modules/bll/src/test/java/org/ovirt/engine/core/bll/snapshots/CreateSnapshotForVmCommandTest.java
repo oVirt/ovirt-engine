@@ -226,11 +226,21 @@ public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testVmUsesMdevTypeHook() {
+    public void testVmUsesMdevTypeHookFailure() {
+        cmd.getParameters().setSaveMemory(true);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USES_MDEV_TYPE_HOOK)).when(vmValidator)
                 .vmNotUsingMdevTypeHook();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_VM_USES_MDEV_TYPE_HOOK);
+    }
+
+    @Test
+    public void testVmUsesMdevTypeHookSucceess() {
+        cmd.getParameters().setSaveMemory(false);
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USES_MDEV_TYPE_HOOK)).when(vmValidator)
+                .vmNotUsingMdevTypeHook();
+        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     @Test
