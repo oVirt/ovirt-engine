@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -46,7 +47,8 @@ public class VmManager {
     private BiosType clusterBiosType;
     private Guid leaseStorageDomainId;
 
-    private final ReentrantLock lock;
+    /** Locks the VM for changes of its dynamic properties */
+    private final Lock vmLock;
     private Long vmDataChangedTime;
     /** how long to wait for a response for power-off operation, in nanoseconds */
     private long powerOffTimeout;
@@ -87,7 +89,7 @@ public class VmManager {
 
     VmManager(Guid vmId) {
         this.vmId = vmId;
-        lock = new ReentrantLock();
+        vmLock = new ReentrantLock();
         convertOperationProgress = -1;
         statistics = new VmStatistics(vmId);
         vmMemoryWithOverheadInMB = 0;
@@ -134,16 +136,16 @@ public class VmManager {
         return vmOverheadCalculator.getTotalRequiredMemMb(compose);
     }
 
-    public void lock() {
-        lock.lock();
+    public void lockVm() {
+        vmLock.lock();
     }
 
-    public void unlock() {
-        lock.unlock();
+    public void unlockVm() {
+        vmLock.unlock();
     }
 
-    public boolean trylock() {
-        return lock.tryLock();
+    public boolean tryLockVm() {
+        return vmLock.tryLock();
     }
 
     public void update(VmDynamic dynamic) {

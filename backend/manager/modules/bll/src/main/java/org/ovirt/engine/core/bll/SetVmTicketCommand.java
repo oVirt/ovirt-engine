@@ -143,7 +143,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         }
 
         VmManager vmManager = resourceManager.getVmManager(getParameters().getVmId());
-        vmManager.lock();
+        vmManager.lockVm();
 
         try {
             // Update the dynamic information of the virtual machine in memory (we need it
@@ -178,7 +178,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
                 }
             }
         } finally {
-            vmManager.unlock();
+            vmManager.unlockVm();
         }
     }
 

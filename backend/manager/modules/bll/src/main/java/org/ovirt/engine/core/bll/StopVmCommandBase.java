@@ -112,7 +112,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
      */
     private VDSReturnValue destroyMigratingVm() {
         // We must prevent VM monitoring from happening so it won't issue a migration rerun attempt
-        getVmManager().lock();
+        getVmManager().lockVm();
         try {
             VDSReturnValue returnValueFromDestination = null;
             try {
@@ -147,7 +147,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
             return returnValueFromSource != null ? returnValueFromSource : returnValueFromDestination;
         } finally {
-            getVmManager().unlock();
+            getVmManager().unlockVm();
         }
     }
 

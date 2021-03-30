@@ -12,12 +12,12 @@ public abstract class ManagingVmCommand<P extends VdsAndVmIDVDSParametersBase> e
 
     protected void executeVDSCommand() {
         vmManager = resourceManager.getVmManager(getParameters().getVmId());
-        vmManager.lock();
+        vmManager.lockVm();
         try {
             executeVmCommand();
             vmManager.updateVmDataChangedTime();
         } finally {
-            vmManager.unlock();
+            vmManager.unlockVm();
         }
     }
 

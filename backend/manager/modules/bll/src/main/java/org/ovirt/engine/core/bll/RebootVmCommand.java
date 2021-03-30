@@ -53,7 +53,7 @@ public class RebootVmCommand<T extends RebootVmParameters> extends VmOperationCo
         }
         if (isColdReboot()) {
             VmManager vmManager = resourceManager.getVmManager(getVmId());
-            vmManager.lock();
+            vmManager.lockVm();
             try {
                 ActionReturnValue returnValue =
                         runInternalAction(ActionType.ShutdownVm, new ShutdownVmParameters(getVmId(), false));
@@ -64,7 +64,7 @@ public class RebootVmCommand<T extends RebootVmParameters> extends VmOperationCo
                     vmDynamicDao.updateStatus(getVm().getId(), VMStatus.RebootInProgress);
                 }
             } finally {
-                vmManager.unlock();
+                vmManager.unlockVm();
             }
         } else {
             VDSReturnValue returnValue =
