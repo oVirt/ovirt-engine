@@ -49,6 +49,9 @@ public class VmManager {
 
     /** Locks the VM for changes of its dynamic properties */
     private final Lock vmLock;
+    /** Locks the VM devices for changes of their dynamic properties (addresses, plugged/unplugged) */
+    private final Lock vmDevicesLock;
+
     private Long vmDataChangedTime;
     /** how long to wait for a response for power-off operation, in nanoseconds */
     private long powerOffTimeout;
@@ -90,6 +93,7 @@ public class VmManager {
     VmManager(Guid vmId) {
         this.vmId = vmId;
         vmLock = new ReentrantLock();
+        vmDevicesLock = new ReentrantLock();
         convertOperationProgress = -1;
         statistics = new VmStatistics(vmId);
         vmMemoryWithOverheadInMB = 0;
@@ -146,6 +150,10 @@ public class VmManager {
 
     public boolean tryLockVm() {
         return vmLock.tryLock();
+    }
+
+    public Lock getVmDevicesLock() {
+        return vmDevicesLock;
     }
 
     public void update(VmDynamic dynamic) {

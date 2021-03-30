@@ -3,7 +3,9 @@ package org.ovirt.engine.core.vdsbroker.monitoring;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,6 +33,7 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.utils.NullableLock;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -40,7 +43,9 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.InjectorExtension;
 import org.ovirt.engine.core.utils.MockConfigExtension;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 
 @ExtendWith({MockitoExtension.class, MockConfigExtension.class, InjectorExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -56,6 +61,8 @@ public class VmDevicesMonitoringTest {
     private VdsManager vdsManager;
     @Mock
     private FullListAdapter fullListAdapter;
+    @Mock
+    private ResourceManager resourceManager;
 
     @InjectMocks
     private VmDevicesMonitoring vmDevicesMonitoring;
@@ -77,6 +84,9 @@ public class VmDevicesMonitoringTest {
         doReturn(initialHashes).when(vmDynamicDao).getAllDevicesHashes();
         doReturn(Version.getLast()).when(vdsManager).getCompatibilityVersion();
         doReturn(vdsManager).when(fullListAdapter).getVdsManager(any());
+        VmManager vmManagerMock = mock(VmManager.class);
+        doReturn(new NullableLock()).when(vmManagerMock).getVmDevicesLock();
+        doReturn(vmManagerMock).when(resourceManager).getVmManager(eq(VM_ID));
     }
 
     private static Map<String, Object> getDeviceInfo(Guid id, String deviceType, String device, String address) {

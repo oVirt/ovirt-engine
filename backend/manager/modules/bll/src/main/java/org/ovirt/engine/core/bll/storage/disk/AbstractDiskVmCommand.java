@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -43,7 +43,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.NullableLock;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -53,7 +53,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
-import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 import org.ovirt.engine.core.vdsbroker.libvirt.DomainXmlUtils;
@@ -77,6 +77,8 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
     @Inject
     private StorageHelperDirector storageHelperDirector;
+    @Inject
+    private ResourceManager resourceManager;
 
     protected AbstractDiskVmCommand(Guid commandId) {
         super(commandId);
@@ -272,16 +274,14 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     private void updateDeviceAddress(VmDevice vmDevice) {
         DiskInterface diskInterface = getDiskVmElement().getDiskInterface();
         if (diskInterface == DiskInterface.VirtIO_SCSI || diskInterface == DiskInterface.SPAPR_VSCSI) {
-            try (EngineLock vmDiskHotPlugEngineLock = lockVmDiskHotPlugWithWait()) {
-                String address = getScsiDiskAddress(vmDevice.getAddress(), diskInterface);
-                if (!Objects.equals(vmDevice.getAddress(), address)) {
-                    // Updating device's address immediately (instead of waiting to VmsMonitoring)
-                    // to prevent a duplicate unit value (i.e. ensuring a unique unit value).
-                    CompensationUtils.<VmDeviceId, VmDevice> updateEntity(vmDevice,
-                            dev -> dev.setAddress(address),
-                            vmDeviceDao,
-                            getCompensationContext());
-                }
+            String address = getScsiDiskAddress(vmDevice.getAddress(), diskInterface);
+            if (!Objects.equals(vmDevice.getAddress(), address)) {
+                // Updating device's address immediately (instead of waiting to VmsMonitoring)
+                // to prevent a duplicate unit value (i.e. ensuring a unique unit value).
+                CompensationUtils.<VmDeviceId, VmDevice> updateEntity(vmDevice,
+                        dev -> dev.setAddress(address),
+                        vmDeviceDao,
+                        getCompensationContext());
             }
         }
     }
@@ -349,15 +349,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         }
     }
 
-    protected EngineLock lockVmDiskHotPlugWithWait() {
-        EngineLock vmDiskHotPlugEngineLock = new EngineLock();
-        vmDiskHotPlugEngineLock.setExclusiveLocks(Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_HOT_PLUG,
-                        EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED)));
-        lockManager.acquireLockWait(vmDiskHotPlugEngineLock);
-        return vmDiskHotPlugEngineLock;
-    }
-
     @Override
     protected boolean shouldUpdateHostedEngineOvf() {
         return true;
@@ -365,5 +356,13 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected String getDeviceAliasForDisk(Disk disk) {
         return String.format("%s%s", DomainXmlUtils.USER_ALIAS_PREFIX, disk.getId());
+    }
+
+    protected Lock getVmDevicesLock(boolean runningVmChanges) {
+        if (runningVmChanges) {
+            log.debug("locking vm devices monitoring for {}", getVmId());
+            return resourceManager.getVmManager(getVmId()).getVmDevicesLock();
+        }
+        return new NullableLock();
     }
 }

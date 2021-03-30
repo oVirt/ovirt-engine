@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.disk;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 
 import javax.inject.Inject;
 
@@ -167,17 +168,24 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
 
     @Override
     protected void executeVmCommand() {
-        if (getVm().getStatus().isUpOrPaused()) {
-            updateDisksFromDb();
-            performPlugCommand(getPlugAction(), getDisk(), oldVmDevice);
+        boolean hotPlug = getVm().getStatus().isUpOrPaused();
+        Lock vmDevicesLock = getVmDevicesLock(hotPlug);
+        vmDevicesLock.lock();
+        try {
+            if (hotPlug) {
+                updateDisksFromDb();
+                performPlugCommand(getPlugAction(), getDisk(), oldVmDevice);
+            }
+
+            // At this point disk is already plugged to or unplugged from VM (depends on the command),
+            // so we can update the needed device properties
+            updateDeviceProperties();
+
+            vmStaticDao.incrementDbGeneration(getVm().getId());
+            setSucceeded(true);
+        } finally {
+            vmDevicesLock.unlock();
         }
-
-        // At this point disk is already plugged to or unplugged from VM (depends on the command),
-        // so we can update the needed device properties
-        updateDeviceProperties();
-
-        vmStaticDao.incrementDbGeneration(getVm().getId());
-        setSucceeded(true);
     }
 
     protected void updateDeviceProperties() {

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
+import java.util.concurrent.locks.Lock;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -112,27 +114,34 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
 
     @Override
     protected void executeVmCommand() {
-        if (diskShouldBeUnPlugged()) {
-            performPlugCommand(VDSCommandType.HotUnPlugDisk, disk, vmDevice);
-        }
-
-        TransactionSupport.executeInNewTransaction(() -> {
-            vmDeviceDao.remove(vmDevice.getId());
-            diskVmElementDao.remove(vmDevice.getId());
-
-            if (!disk.isDiskSnapshot() && disk.getDiskStorageType().isInternal()) {
-                // clears snapshot ID
-                imageDao.updateImageVmSnapshotId(((DiskImage) disk).getImageId(), null);
+        boolean hotUnplug = diskShouldBeUnplugged();
+        Lock vmDevicesLock = getVmDevicesLock(hotUnplug);
+        vmDevicesLock.lock();
+        try {
+            if (hotUnplug) {
+                performPlugCommand(VDSCommandType.HotUnPlugDisk, disk, vmDevice);
             }
 
-            vmStaticDao.incrementDbGeneration(getVm().getId());
-            return null;
-        });
+            TransactionSupport.executeInNewTransaction(() -> {
+                vmDeviceDao.remove(vmDevice.getId());
+                diskVmElementDao.remove(vmDevice.getId());
 
-        setSucceeded(true);
+                if (!disk.isDiskSnapshot() && disk.getDiskStorageType().isInternal()) {
+                    // clears snapshot ID
+                    imageDao.updateImageVmSnapshotId(((DiskImage) disk).getImageId(), null);
+                }
+
+                vmStaticDao.incrementDbGeneration(getVm().getId());
+                return null;
+            });
+
+            setSucceeded(true);
+        } finally {
+            vmDevicesLock.unlock();
+        }
     }
 
-    private boolean diskShouldBeUnPlugged() {
+    private boolean diskShouldBeUnplugged() {
         return Boolean.TRUE.equals(getParameters().isPlugUnPlug() && vmDevice.isPlugged()
                 && getVm().getStatus() != VMStatus.Down);
     }

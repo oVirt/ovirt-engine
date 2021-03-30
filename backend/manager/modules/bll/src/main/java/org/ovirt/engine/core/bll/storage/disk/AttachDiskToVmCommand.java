@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 
 import javax.inject.Inject;
 
@@ -228,25 +229,35 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         // update cached image
         vmHandler.updateDisksForVm(getVm(), Collections.singletonList(disk));
 
-        TransactionSupport.executeInNewTransaction(() -> {
-            vmDeviceDao.save(vmDevice);
-            diskVmElementDao.save(diskVmElement);
-            getCompensationContext().snapshotNewEntities(Arrays.asList(vmDevice, diskVmElement));
-            if (!isOperationPerformedOnDiskSnapshot() && disk.isAllowSnapshot()) {
-                updateDiskVmSnapshotId();
+        Lock vmDevicesLock = getVmDevicesLock(diskShouldBePlugged());
+        vmDevicesLock.lock();
+        try {
+            TransactionSupport.executeInNewTransaction(() -> {
+                vmDeviceDao.save(vmDevice);
+                diskVmElementDao.save(diskVmElement);
+                getCompensationContext().snapshotNewEntities(Arrays.asList(vmDevice, diskVmElement));
+                if (!isOperationPerformedOnDiskSnapshot() && disk.isAllowSnapshot()) {
+                    updateDiskVmSnapshotId();
+                }
+                getCompensationContext().stateChanged();
+                return null;
+            });
+
+            if (diskShouldBePlugged()) {
+                performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice);
             }
-            getCompensationContext().stateChanged();
-            return null;
-        });
 
-        if (getParameters().isPlugUnPlug() && getVm().getStatus() != VMStatus.Down && getVm().isManaged()) {
-            performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice);
+            if (!isOperationPerformedOnDiskSnapshot()) {
+                vmStaticDao.incrementDbGeneration(getVm().getId());
+            }
+            setSucceeded(true);
+        } finally {
+            vmDevicesLock.unlock();
         }
+    }
 
-        if (!isOperationPerformedOnDiskSnapshot()) {
-            vmStaticDao.incrementDbGeneration(getVm().getId());
-        }
-        setSucceeded(true);
+    private boolean diskShouldBePlugged() {
+        return getParameters().isPlugUnPlug() && getVm().getStatus() != VMStatus.Down && getVm().isManaged();
     }
 
     protected VmDevice createVmDevice() {

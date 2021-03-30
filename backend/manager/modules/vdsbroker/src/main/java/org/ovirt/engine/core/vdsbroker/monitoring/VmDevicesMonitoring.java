@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
@@ -39,6 +38,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,12 +165,17 @@ public class VmDevicesMonitoring {
          */
         public void updateVm(Guid vmId, String vdsmHash) {
             DevicesChange devicesChange = isVmDevicesChanged(vmId, vdsmHash, fetchTime);
-            if (devicesChange == DevicesChange.CHANGED) {
+            switch(devicesChange) {
+            case CHANGED:
+                if (!tryLockVmDevices(vmId)) {
+                    break;
+                }
                 lockTouchedVm(vmId);
-                addVmToSaveHash(vmId);
                 addVmToProcess(vmId);
-            } else if (devicesChange == DevicesChange.HASH_ONLY) {
+                // fallthrough
+            case HASH_ONLY:
                 addVmToSaveHash(vmId);
+            default:
             }
         }
 
@@ -222,10 +227,11 @@ public class VmDevicesMonitoring {
          * Process the changes and store the result in the DB.
          */
         public void flush() {
+            List<Guid> vmIdsToProcess = getVmsToProcess();
             try {
-                Map<String, Object>[] vmInfos = getVmInfo(vdsId, getVmsToProcess());
+                Map<String, Object>[] vmInfos = getVmInfo(vdsId, vmIdsToProcess);
                 if (vmInfos != null) {
-                    Arrays.stream(vmInfos).forEach(this::processFullList);
+                    Stream.of(vmInfos).forEach(this::processFullList);
                 }
                 getDevicesToProcess().forEach(device -> processDevice(this, device));
                 saveDevicesToDb(this);
@@ -234,6 +240,7 @@ public class VmDevicesMonitoring {
                 log.error("Exception:", ex);
             } finally {
                 unlockTouchedVms();
+                vmIdsToProcess.forEach(VmDevicesMonitoring.this::unlockVmDevices);
             }
         }
 
@@ -294,6 +301,9 @@ public class VmDevicesMonitoring {
 
     @Inject
     private VmDeviceDao vmDeviceDao;
+
+    @Inject
+    private ResourceManager resourceManager;
 
     private ConcurrentMap<Guid, DevicesStatus> vmDevicesStatuses = new ConcurrentHashMap<>();
     private ConcurrentMap<Guid, ReentrantLock> vmDevicesLocks = new ConcurrentHashMap<>();
@@ -718,4 +728,11 @@ public class VmDevicesMonitoring {
         }
     }
 
+    private boolean tryLockVmDevices(Guid vmId) {
+        return resourceManager.getVmManager(vmId).getVmDevicesLock().tryLock();
+    }
+
+    private void unlockVmDevices(Guid vmId) {
+        resourceManager.getVmManager(vmId).getVmDevicesLock().unlock();
+    }
 }
