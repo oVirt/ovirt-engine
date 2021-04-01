@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -38,6 +39,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -47,7 +49,9 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
 
     private static final String COMMA_DELIMITER = ", "; // $NON-NLS-1$
     private static final String DANGER = "text-danger"; // $NON-NLS-1$
+    private static final String WARNING = "text-warning"; // $NON-NLS-1$
     private static final String ROTATE_270 = "fa-rotate-270"; //$NON-NLS-1$
+    private static final String FA_STACK_4X = "fa-stack-4x"; //$NON-NLS-1$
     private static final String DL_HORIZONTAL = "dl-horizontal"; // $NON-NLS-1$
     private static final String NETWORK_DATA_ROW = "network-data-row"; // $NON-NLS-1$
     private static final String VM_NIC_OVERFLOW = "vm-nic-overflow"; // $NON-NLS-1$
@@ -261,11 +265,15 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         return networkInterface != null ? networkInterface.isPlugged() : false;
     }
 
+    private boolean isCardSynced(VmNetworkInterface networkInterface) {
+        return networkInterface != null && networkInterface.isSynced();
+    }
+
     @Override
     protected IsWidget createBodyPanel(SafeHtml header, VmNetworkInterface networkInterface) {
         checkBoxPanel.add(createExpandIconPanel());
         iconPanel.add(createLinkStatusPanel(isInterfaceUp(networkInterface)));
-        iconPanel.add(createCardPluggedStatusPanel(isCardPlugged(networkInterface)));
+        iconPanel.add(createCardPluggedStatusPanel(networkInterface));
         iconPanel.add(new NetworkIcon());
         descriptionHeaderPanel.getElement().setInnerSafeHtml(header);
         return bodyPanel;
@@ -389,32 +397,45 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         return infoExpand;
     }
 
-    private IsWidget createCardPluggedStatusPanel(boolean isPlugged) {
+    private IsWidget createCardPluggedStatusPanel(VmNetworkInterface vmNetworkInterface) {
         Span linkStatusPanel = new Span();
         Span icon = new Span();
         icon.addStyleName(Styles.ICON_STACK);
-        Italic plugItalic = new Italic();
-        plugItalic.addStyleName(Styles.FONT_AWESOME_BASE);
-        plugItalic.addStyleName(Styles.ICON_STACK_TOP);
-        plugItalic.addStyleName(ROTATE_270);
-        plugItalic.addStyleName(IconType.PLUG.getCssName());
+        Italic plugItalic = italicWithStyles(
+            Styles.FONT_AWESOME_BASE, Styles.ICON_STACK_TOP, ROTATE_270, IconType.PLUG.getCssName()
+        );
         icon.add(plugItalic);
-        if (!isPlugged) {
-            Italic unplugged = new Italic();
-            unplugged.addStyleName(Styles.FONT_AWESOME_BASE);
-            unplugged.addStyleName(Styles.ICON_STACK_TOP);
-            unplugged.addStyleName(DANGER);
-            unplugged.addStyleName(IconType.BAN.getCssName());
+        SafeHtmlBuilder tooltipText = new SafeHtmlBuilder();
+        if(isCardPlugged(vmNetworkInterface)) {
+            tooltipText.appendHtmlConstant(constants.pluggedNetworkInterface());
+        } else {
+            Italic unplugged = italicWithStyles(
+                Styles.FONT_AWESOME_BASE, Styles.ICON_STACK_TOP, DANGER, IconType.BAN.getCssName()
+            );
             icon.add(unplugged);
+            tooltipText.appendHtmlConstant(constants.unpluggedNetworkInterface());
+        }
+        if (!isCardSynced(vmNetworkInterface)) {
+            Italic outOfSync = italicWithStyles(
+                Styles.FONT_AWESOME_BASE, FA_STACK_4X, WARNING, Styles.PULL_RIGHT, IconType.WARNING.getCssName()
+            );
+            icon.add(outOfSync);
+            tooltipText.appendHtmlConstant(constants.lineBreak());
+            tooltipText.appendHtmlConstant(constants.configChangesPending());
         }
         linkStatusPanel.add(icon);
         linkStatusPanel.addStyleName(DOUBLE_SIZE);
         linkStatusPanel.addStyleName(STATUS_ICON);
 
-        String tooltipText = isPlugged ? constants.pluggedNetworkInterface() : constants.unpluggedNetworkInterface();
         WidgetTooltip tooltip = new WidgetTooltip(linkStatusPanel);
-        tooltip.setHtml(SafeHtmlUtils.fromString(tooltipText));
+        tooltip.setHtml(tooltipText.toSafeHtml());
         return tooltip;
+    }
+
+    private Italic italicWithStyles(String... styles) {
+        Italic italic = new Italic();
+        Arrays.stream(styles).forEach(italic::addStyleName);
+        return italic;
     }
 
     @Override

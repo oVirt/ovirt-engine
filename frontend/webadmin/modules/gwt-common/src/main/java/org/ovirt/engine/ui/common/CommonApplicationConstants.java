@@ -1944,4 +1944,6 @@ public interface CommonApplicationConstants extends Constants {
     String tpmDeviceLabel();
 
     String typeToSearchPlaceHolder();
+
+    String configChangesPending();
 }
