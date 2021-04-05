@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
+import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicket;
@@ -82,6 +83,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 
 @NonTransactiveCommandAttribute
@@ -171,7 +173,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 && validate(diskImagesValidator.diskImagesNotIllegal())
                 && validate(storageDomainValidator.isDomainExistAndActive());
         if (isBackup()) {
-            return isValid && validate(isVmBackupExists()) && validate(isFormatApplicableForBackup());
+            return isValid && validate(isVmBackupReady()) && validate(isFormatApplicableForBackup());
         }
         return isValid
                 && validateActiveDiskPluggedToAnyNonDownVm(diskImage, diskValidator)
@@ -182,9 +184,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return diskImage.isDiskSnapshot() || validate(diskValidator.isDiskPluggedToAnyNonDownVm(false));
     }
 
-    private ValidationResult isVmBackupExists() {
+    private ValidationResult isVmBackupReady() {
         if (getBackup() == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_NOT_EXIST);
+        }
+        if (!getBackup().getPhase().equals(VmBackupPhase.READY)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_NOT_READY,
+                    ReplacementUtils.createSetVariableString("vmBackupPhase", getBackup().getPhase()));
         }
         return ValidationResult.VALID;
     }
