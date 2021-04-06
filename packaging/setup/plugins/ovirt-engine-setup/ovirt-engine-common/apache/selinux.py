@@ -30,6 +30,15 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup(self):
+        self.environment.setdefault(
+            osetupcons.SystemEnv.SELINUX_BOOLEANS,
+            []
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         before=(
             osetupcons.Stages.SETUP_SELINUX,
