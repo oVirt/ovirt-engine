@@ -392,7 +392,7 @@ public class VmMapper extends VmBaseMapper {
         if (entity.getVmInit() != null) {
             model.setInitialization(InitializationMapper.map(entity.getVmInit(), null));
         }
-        model.setNextRunConfigurationExists(entity.isNextRunConfigurationExists());
+        model.setNextRunConfigurationExists(entity.isNextRunConfigurationExists() || entity.isVnicsOutOfSync());
         model.setNumaTuneMode(NumaMapper.map(getVmNumaTuneIfApplies(entity.getvNumaNodeList()), null));
 
         if (entity.getProviderId() != null) {
