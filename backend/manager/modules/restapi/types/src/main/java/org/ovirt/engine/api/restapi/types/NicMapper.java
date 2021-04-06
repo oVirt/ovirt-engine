@@ -67,6 +67,7 @@ public class NicMapper {
         model.setLinked(entity.isLinked());
         model.setInterface(map(entity.getType()));
         model.setPlugged(entity.isPlugged());
+        model.setSynced(entity.isSynced());
 
         if (entity.getVnicProfileId() != null) {
             model.setVnicProfile(new VnicProfile());
