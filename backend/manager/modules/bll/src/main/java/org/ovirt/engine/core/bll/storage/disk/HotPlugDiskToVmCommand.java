@@ -144,11 +144,9 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
     }
 
     private boolean checkCanPerformPlugUnPlugDisk() {
-        if (getVm().getStatus().isUpOrPaused()) {
-            setVdsId(getVm().getRunOnVds());
-            if (!isDiskSupportedForPlugUnPlug(getDiskVmElement(), disk.getDiskAlias())) {
-                return false;
-            }
+        if (getVm().getStatus().isUpOrPaused()
+                && !isDiskSupportedForPlugUnPlug(getDiskVmElement(), disk.getDiskAlias())) {
+            return false;
         }
 
         if (getPlugAction() == VDSCommandType.HotPlugDisk && oldVmDevice.isPlugged()) {
@@ -177,8 +175,8 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
                 performPlugCommand(getPlugAction(), getDisk(), oldVmDevice);
             }
 
-            // At this point disk is already plugged to or unplugged from VM (depends on the command),
-            // so we can update the needed device properties
+            // At this point the disk is already plugged to or unplugged from VM
+            // (depends on the command), so we can update the needed device properties
             updateDeviceProperties();
 
             vmStaticDao.incrementDbGeneration(getVm().getId());
@@ -192,7 +190,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
         VmDevice device = vmDeviceDao.get(oldVmDevice.getId());
         device.setPlugged(true);
         device.setAlias(getDeviceAliasForDisk(disk));
-        vmDeviceDao.updateHotPlugDisk(device);
+        vmDeviceDao.update(device);
     }
 
     @Override

@@ -248,12 +248,4 @@ public class VmDeviceDaoImpl extends
                 .addValue("device_id", vmDevice.getDeviceId());
     }
 
-    @Override
-    public void updateHotPlugDisk(VmDevice vmDevice) {
-        MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
-                .addValue("is_plugged", vmDevice.isPlugged())
-                .addValue("alias", vmDevice.getAlias());
-        getCallsHandler().executeModification("UpdateVmDeviceForHotPlugDisk", paramsForUpdate);
-    }
-
 }

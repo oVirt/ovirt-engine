@@ -80,10 +80,4 @@ public interface VmDeviceDao extends GenericDao<VmDevice, VmDeviceId>, MassOpera
      */
     void removeAllUnmanagedDevicesByVmId(Guid vmId);
 
-    /**
-     * Runs an update for the device according to fields that were updated during
-     * HotPlugDisk
-     */
-    void updateHotPlugDisk(VmDevice vmDevice);
-
 }
