@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -60,6 +61,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
@@ -77,6 +79,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -113,6 +116,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     private VmStaticDao vmStaticDao;
     @Inject
     private Instance<AddDiskCommandCallback> callbackProvider;
+    @Inject
+    private ImageDao imageDao;
 
     @Inject
     private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
@@ -294,7 +299,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 checkExceedingMaxBlockDiskSize() &&
                 canAddShareableDisk() &&
                 validate(diskVmElementValidator.isVirtIoScsiValid(vm)) &&
-                validate(diskVmElementValidator.isDiskInterfaceSupported(getVm()));
+                validate(diskVmElementValidator.isDiskInterfaceSupported(getVm())) &&
+                validateDiskImageNotExisting(((DiskImage) getParameters().getDiskInfo()).getImageId());
 
         if (returnValue && vm != null) {
             StoragePool sp = getStoragePool(); // Note this is done according to the VM's spId.
@@ -306,6 +312,15 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         return returnValue;
+    }
+
+    private boolean validateDiskImageNotExisting(Guid imageId) {
+        Image image = imageDao.get(imageId);
+
+        if (image != null && !Guid.isNullOrEmpty(image.getId())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_ALREADY_EXISTS);
+        }
+        return true;
     }
 
     private boolean validateShareableDiskOnGlusterDomain() {
@@ -749,8 +764,16 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!isFloatingDisk() && getDiskVmElement() != null && getDiskVmElement().isBoot()) {
-            return Collections.singletonMap(getParameters().getVmId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+            Map<String, Pair<String, String>> locks = new HashMap<>();
+            locks.put(getParameters().getVmId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT,
+                            EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+            if (getParameters().getDiskInfo() != null && !Guid.isNullOrEmpty(getParameters().getDiskInfo().getId())) {
+                locks.put(getParameters().getDiskInfo().getId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
+                                EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+            }
+            return locks;
         }
         return null;
     }

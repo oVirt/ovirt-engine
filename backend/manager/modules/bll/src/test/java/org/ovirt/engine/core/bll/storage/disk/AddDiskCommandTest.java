@@ -69,6 +69,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
@@ -131,6 +132,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Mock
     private QuotaValidator quotaValidator;
+
+    @Mock
+    private ImageDao imageDao;
 
     /**
      * The command under test.
@@ -852,6 +856,32 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(true).when(command).checkIfImageDiskCanBeAdded(any(), any());
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    @Test
+    public void testValidateDiskImageNotExisting() {
+        Guid imageId = Guid.newGuid();
+        Guid diskId = Guid.newGuid();
+
+        DiskImage disk = new DiskImage();
+
+        disk.setSize(1);
+        disk.setShareable(true);
+        disk.setVolumeFormat(VolumeFormat.RAW);
+        disk.setImageId(imageId);
+        disk.setId(diskId);
+        disk.setStorageTypes(Collections.singletonList(StorageType.ISCSI));
+
+        Guid storageId = Guid.newGuid();
+        mockStorageDomain(storageId);
+
+        command.getParameters().setDiskInfo(disk);
+        command.getParameters().setVmId(Guid.Empty);
+        command.getParameters().setPlugDiskToVm(false);
+        command.getParameters().setStorageDomainId(storageId);
+
+        doReturn(disk.getImage()).when(imageDao).get(imageId);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_IMAGE_ALREADY_EXISTS);
     }
 
     @Test
