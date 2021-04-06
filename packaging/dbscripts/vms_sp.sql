@@ -2379,16 +2379,22 @@ CREATE OR REPLACE FUNCTION CopyTpmData (
     v_target_vm_id UUID
 )
 RETURNS VOID AS $PROCEDURE$
+DECLARE
+    v_device_id UUID := (SELECT device_id
+                         FROM vm_device
+                         WHERE vm_id = v_target_vm_id AND type = 'tpm');
 BEGIN
-    INSERT INTO vm_external_data (
-        device_id,
-        vm_id,
-        tpm_data,
-        tpm_hash
-    )
-    SELECT device_id, v_target_vm_id, tpm_data, tpm_hash
-    FROM vm_device
-    WHERE vm_id = v_source_vm_id AND type = 'tpm';
+    IF v_device_id IS NOT NULL THEN
+        INSERT INTO vm_external_data (
+            device_id,
+            vm_id,
+            tpm_data,
+            tpm_hash
+        )
+        SELECT v_device_id, v_target_vm_id, tpm_data, tpm_hash
+        FROM vm_external_data
+        WHERE vm_id = v_source_vm_id;
+    END IF;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
