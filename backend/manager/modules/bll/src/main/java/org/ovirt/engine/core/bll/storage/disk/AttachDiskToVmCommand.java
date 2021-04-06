@@ -243,8 +243,9 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
                 return null;
             });
 
-            if (diskShouldBePlugged()) {
-                performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice);
+            if (diskShouldBePlugged() && performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice)) {
+                // updates the PCI address
+                vmDeviceDao.update(vmDevice);
             }
 
             if (!isOperationPerformedOnDiskSnapshot()) {

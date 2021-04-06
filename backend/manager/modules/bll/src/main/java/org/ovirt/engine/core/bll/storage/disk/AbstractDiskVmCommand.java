@@ -17,7 +17,6 @@ import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.storage.disk.managedblock.ManagedBlockStorageCommandUtil;
-import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -28,7 +27,6 @@ import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -49,7 +47,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
@@ -72,8 +69,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     @Inject
     private DiskVmElementDao diskVmElementDao;
     @Inject
-    private VmDeviceDao vmDeviceDao;
-    @Inject
     private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
     @Inject
     private StorageHelperDirector storageHelperDirector;
@@ -88,9 +83,16 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         super(parameters, commandContext);
     }
 
-    protected void performPlugCommand(VDSCommandType commandType,
+    /**
+     * @param commandType HotPlugDisk/HotUnPlugDisk
+     * @param disk the disk to hot-plug or hot-unplug
+     * @param vmDevice the disk's device
+     * @return true if the device address has changed, false otherwise
+     */
+    protected boolean performPlugCommand(VDSCommandType commandType,
             Disk disk,
             VmDevice vmDevice) {
+        boolean addressChanged = false;
         switch (disk.getDiskStorageType()) {
         case LUN:
             LunDisk lunDisk = (LunDisk) disk;
@@ -127,7 +129,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         }
 
         if (commandType == VDSCommandType.HotPlugDisk) {
-            updateDeviceAddress(vmDevice);
+            addressChanged = updateDeviceAddress(vmDevice);
         }
 
         disk.setDiskVmElements(Collections.singleton(getDiskVmElement()));
@@ -138,6 +140,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                         vmDevice,
                         getDiskVmElement().getDiskInterface(),
                         getDiskVmElement().isPassDiscard()));
+        return addressChanged;
     }
 
     private IStorageHelper getStorageHelper(StorageType storageType) {
@@ -271,18 +274,17 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return cinderBroker;
     }
 
-    private void updateDeviceAddress(VmDevice vmDevice) {
+    private boolean updateDeviceAddress(VmDevice vmDevice) {
         DiskInterface diskInterface = getDiskVmElement().getDiskInterface();
-        if (diskInterface == DiskInterface.VirtIO_SCSI || diskInterface == DiskInterface.SPAPR_VSCSI) {
+        switch (diskInterface) {
+        case VirtIO_SCSI:
+        case SPAPR_VSCSI:
             String address = getScsiDiskAddress(vmDevice.getAddress(), diskInterface);
-            if (!Objects.equals(vmDevice.getAddress(), address)) {
-                // Updating device's address immediately (instead of waiting to VmsMonitoring)
-                // to prevent a duplicate unit value (i.e. ensuring a unique unit value).
-                CompensationUtils.<VmDeviceId, VmDevice> updateEntity(vmDevice,
-                        dev -> dev.setAddress(address),
-                        vmDeviceDao,
-                        getCompensationContext());
-            }
+            boolean addressChanged = !Objects.equals(vmDevice.getAddress(), address);
+            vmDevice.setAddress(address);
+            return addressChanged;
+        default:
+            return false;
         }
     }
 

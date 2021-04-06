@@ -190,6 +190,7 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
         VmDevice device = vmDeviceDao.get(oldVmDevice.getId());
         device.setPlugged(true);
         device.setAlias(getDeviceAliasForDisk(disk));
+        device.setAddress(oldVmDevice.getAddress());
         vmDeviceDao.update(device);
     }
 
