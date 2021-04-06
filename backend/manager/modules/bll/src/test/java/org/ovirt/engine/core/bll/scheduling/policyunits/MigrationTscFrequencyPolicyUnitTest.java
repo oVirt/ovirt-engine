@@ -15,9 +15,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.internal.util.reflection.FieldSetter;
+import org.mockito.internal.configuration.plugins.Plugins;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.plugins.MemberAccessor;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -32,13 +33,14 @@ import org.ovirt.engine.core.dao.VdsDao;
 class MigrationTscFrequencyPolicyUnitTest {
 
     private PendingResourceManager pendingResourceManager = new PendingResourceManager();
+    private final MemberAccessor accessor = Plugins.getMemberAccessor();
 
     @InjectMocks
     public MigrationTscFrequencyPolicyUnit underTest = new MigrationTscFrequencyPolicyUnit(null, pendingResourceManager);
     private PerHostMessages messages;
 
     @BeforeEach
-    void setUp() throws NoSuchFieldException {
+    void setUp() throws NoSuchFieldException, IllegalAccessException {
         messages = new PerHostMessages();
         VdsDao dao = mock(VdsDao.class);
         VDS vds = mock(VDS.class);
@@ -49,7 +51,7 @@ class MigrationTscFrequencyPolicyUnitTest {
     }
 
     @AfterEach
-    void tearDown() throws NoSuchFieldException {
+    void tearDown() throws NoSuchFieldException, IllegalAccessException {
         setDao(null);
     }
 
@@ -65,7 +67,7 @@ class MigrationTscFrequencyPolicyUnitTest {
     }
 
     @Test
-    void testHostsVMNoTscFreq() throws NoSuchFieldException {
+    void testHostsVMNoTscFreq() throws NoSuchFieldException, IllegalAccessException {
         VM vm = mock(VM.class);
         when(vm.getVmType()).thenReturn(VmType.HighPerformance);
         when(vm.getUseTscFrequency()).thenReturn(true);
@@ -172,8 +174,8 @@ class MigrationTscFrequencyPolicyUnitTest {
         assertEquals(1, messages.getMessages().size());
     }
 
-    private void setDao(VdsDao dao) throws NoSuchFieldException {
+    private void setDao(VdsDao dao) throws NoSuchFieldException, IllegalAccessException {
         Field propField = MigrationTscFrequencyPolicyUnit.class.getDeclaredField("vdsDao");
-        FieldSetter.setField(underTest, propField, dao);
+        accessor.set(propField, underTest, dao);
     }
 }
