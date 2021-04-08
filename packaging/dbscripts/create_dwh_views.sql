@@ -264,7 +264,9 @@ SELECT vds_interface_statistics.id AS host_interface_id,
     vds_interface_statistics.rx_rate AS receive_rate_percent,
     vds_interface_statistics.tx_rate AS transmit_rate_percent,
     vds_interface_statistics.rx_total AS received_total_byte,
-    vds_interface_statistics.tx_total AS transmitted_total_byte
+    vds_interface_statistics.tx_total AS transmitted_total_byte,
+    vds_interface_statistics.rx_drop AS received_dropped_total_packets,
+    vds_interface_statistics.tx_drop AS transmitted_dropped_total_packets
 FROM vds_interface_statistics;
 
 CREATE OR REPLACE VIEW dwh_vm_configuration_history_view AS
@@ -390,7 +392,9 @@ SELECT vm_interface_statistics.id AS vm_interface_id,
     vm_interface_statistics.rx_rate AS receive_rate_percent,
     vm_interface_statistics.tx_rate AS transmit_rate_percent,
     vm_interface_statistics.rx_total AS received_total_byte,
-    vm_interface_statistics.tx_total AS transmitted_total_byte
+    vm_interface_statistics.tx_total AS transmitted_total_byte,
+    vm_interface_statistics.rx_drop AS received_dropped_total_packets,
+    vm_interface_statistics.tx_drop AS transmitted_dropped_total_packets
 FROM vm_interface_statistics;
 
 CREATE OR REPLACE VIEW dwh_vm_disk_configuration_history_view AS
