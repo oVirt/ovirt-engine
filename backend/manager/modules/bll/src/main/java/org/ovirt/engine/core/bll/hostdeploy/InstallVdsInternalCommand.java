@@ -55,7 +55,6 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHttpClient;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -266,7 +265,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             VDS vds = getVds();
             boolean isGlusterServiceSupported = hostCluster.supportsGlusterService();
             String tunedProfile = isGlusterServiceSupported ? hostCluster.getGlusterTunedProfile() : null;
-            Version clusterVersion = hostCluster.getCompatibilityVersion();
+            String clusterVersion = hostCluster.getCompatibilityVersion().getValue();
             AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                     .hosts(vds)
                     .variable("host_deploy_cluster_version", clusterVersion)
