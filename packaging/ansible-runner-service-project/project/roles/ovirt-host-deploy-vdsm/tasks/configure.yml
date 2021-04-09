@@ -17,7 +17,7 @@
   when: el_ver|int >= 8
   ignore_errors: true
 
-- name: Error configuring LVM filter
+- name: Check for LVM filter configuration error
   debug:
     msg: "[ERROR] Cannot configure LVM filter on host, please run: vdsm-tool config-lvm-filter"
   when:
