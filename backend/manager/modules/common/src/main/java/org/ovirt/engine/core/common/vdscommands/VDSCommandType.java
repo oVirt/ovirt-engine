@@ -243,6 +243,7 @@ public enum VDSCommandType {
     GetVmLeaseInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HotPlugLease("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HotUnplugLease("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    AddExternalLease("org.ovirt.engine.core.vdsbroker.vdsbroker"),
 
     // Cold merge related commands
     PrepareMerge("org.ovirt.engine.core.vdsbroker.irsbroker"),

@@ -617,7 +617,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
     }
 
     @Override
-    public LeaseTaskInfoReturn addLease(String leaseUUID, String sdUUID) {
+    public LeaseTaskInfoReturn addLease(String leaseUUID, String sdUUID, Map<String, Object> leaseMetadata) {
         Map<String, Object> leaseDict = new HashMap<>();
         leaseDict.put("lease_id", leaseUUID);
         leaseDict.put("sd_id", sdUUID);
@@ -625,6 +625,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
         JsonRpcRequest request =
                 new RequestBuilder("Lease.create")
                           .withParameter("lease", leaseDict)
+                          .withParameter("metadata", leaseMetadata)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new LeaseTaskInfoReturn(response);

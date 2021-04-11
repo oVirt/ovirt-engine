@@ -2,16 +2,15 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.vdscommands.VmLeaseVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.AddExternalLeaseVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.irsbroker.LeaseTaskInfoReturn;
 
-public class AddVmLeaseVDSCommand<T extends VmLeaseVDSParameters> extends IrsBrokerCommand<T> {
-
+public class AddExternalLeaseVDSCommand<T extends AddExternalLeaseVDSParameters> extends IrsBrokerCommand<T> {
     private LeaseTaskInfoReturn returnValue;
 
-    public AddVmLeaseVDSCommand(T parameters) {
+    public AddExternalLeaseVDSCommand(T parameters) {
         super(parameters);
     }
 
@@ -20,7 +19,8 @@ public class AddVmLeaseVDSCommand<T extends VmLeaseVDSParameters> extends IrsBro
         returnValue = getIrsProxy().addLease(
                 getParameters().getLeaseId().toString(),
                 getParameters().getStorageDomainId().toString(),
-                null);
+                getParameters().getMetadata());
+
         proceedProxyReturnValue();
 
         Guid taskID = new Guid(returnValue.getTaskId());
@@ -33,4 +33,5 @@ public class AddVmLeaseVDSCommand<T extends VmLeaseVDSParameters> extends IrsBro
     protected Status getReturnStatus() {
         return returnValue.getStatus();
     }
+
 }
