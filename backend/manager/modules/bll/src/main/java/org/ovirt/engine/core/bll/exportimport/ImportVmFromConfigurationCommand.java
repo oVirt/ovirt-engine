@@ -27,8 +27,6 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
-import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
@@ -175,11 +173,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     @Override
     protected boolean isExternalMacsToBeReported() {
         return !getParameters().isReassignBadMacs();
-    }
-
-    @Override
-    protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override
