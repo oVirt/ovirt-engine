@@ -390,7 +390,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().isTpmEnabled(),
                         getParameters().isConsoleEnabled(),
                         getParameters().isVirtioScsiEnabled(),
-                        getVmDeviceUtils().hasMemoryBalloon(getVmId()),
                         graphicsToSkip,
                         false,
                         getEffectiveCompatibilityVersion());
@@ -404,7 +403,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().isTpmEnabled(),
                         getParameters().isConsoleEnabled(),
                         getParameters().isVirtioScsiEnabled(),
-                        Boolean.TRUE.equals(getParameters().isBalloonEnabled()),
                         graphicsToSkip,
                         false,
                         getEffectiveCompatibilityVersion());
@@ -992,7 +990,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().isMultiQueuesEnabled(),
                         getParameters().getMasterVm().getUseTscFrequency(),
                         getParameters().getMasterVm().getCpuPinning(),
-                        getParameters().getMasterVm().isVirtioScsiMultiQueuesEnabled()));
+                        getParameters().getMasterVm().isVirtioScsiMultiQueuesEnabled(),
+                        getParameters().getMasterVm().isBalloonEnabled()));
         getVmTemplate().setOrigin(getParameters().getMasterVm().getOrigin());
         getVmTemplate().setBiosType(getParameters().getMasterVm().getBiosType());
         updateVmIcons();

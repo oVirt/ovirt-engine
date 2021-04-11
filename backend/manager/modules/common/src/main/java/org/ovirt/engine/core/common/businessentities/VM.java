@@ -1925,4 +1925,12 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     public void setVnicsOutOfSync(boolean vnicsOutOfSync) {
         this.vnicsOutOfSync = vnicsOutOfSync;
     }
+
+    public boolean isBalloonEnabled() {
+        return vmStatic.isBalloonEnabled();
+    }
+
+    public void setBalloonEnabled(boolean balloonEnabled) {
+        vmStatic.setBalloonEnabled(balloonEnabled);
+    }
 }

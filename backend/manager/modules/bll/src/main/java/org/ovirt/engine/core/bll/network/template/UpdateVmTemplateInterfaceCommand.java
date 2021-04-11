@@ -126,7 +126,6 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
                 getTemplateDiskVmElements(),
                 getVmDeviceUtils().hasVirtioScsiController(getVmTemplate().getId()),
                 getVmDeviceUtils().hasWatchdog(getVmTemplate().getId()),
-                getVmDeviceUtils().hasMemoryBalloon(getVmTemplate().getId()),
                 getVmDeviceUtils().hasSoundDevice(getVmTemplate().getId())));
     }
 

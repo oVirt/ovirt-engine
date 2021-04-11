@@ -385,7 +385,6 @@ public class AddDiskCommandTest extends BaseCommandTest {
         doReturn(true).when(command).checkImageConfiguration();
         doReturn(false).when(command).isVirtioScsiControllerAttached(any());
         doReturn(false).when(command).hasWatchdog(any());
-        doReturn(false).when(command).isBalloonEnabled(any());
         doReturn(false).when(command).isSoundDeviceEnabled(any());
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(true).when(command).validateQuota();
@@ -764,7 +763,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockMaxPciSlots();
 
         // use maximum slots for PCI. validate expected to succeed.
-        mockOtherVmDisks(vm, MAX_PCI_SLOTS - 2, DiskInterface.VirtIO);
+        mockOtherVmDisks(vm, MAX_PCI_SLOTS - 3, DiskInterface.VirtIO);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
 
         LunDisk newDisk = createISCSILunDisk();

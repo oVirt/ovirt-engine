@@ -228,7 +228,6 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         addVmParams.setPoolId(getParameters().getVmPoolId());
         addVmParams.setDiskInfoDestinationMap(buildDiskInfoDestinationMap());
         addVmParams.setConsoleEnabled(deviceExists(VmDeviceGeneralType.CONSOLE));
-        addVmParams.setBalloonEnabled(deviceExists(VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON));
         addVmParams.setTpmEnabled(deviceExists(VmDeviceGeneralType.TPM));
         addVmParams.setSoundDeviceEnabled(deviceExists(VmDeviceGeneralType.SOUND));
         addVmParams.setVirtioScsiEnabled(deviceExists(VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI));

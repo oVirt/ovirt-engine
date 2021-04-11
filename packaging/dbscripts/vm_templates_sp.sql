@@ -81,7 +81,8 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_virtio_scsi_multi_queues_enabled BOOLEAN,
  v_use_tsc_frequency BOOLEAN,
  v_is_template_sealed BOOLEAN,
- v_cpu_pinning VARCHAR(4000))
+ v_cpu_pinning VARCHAR(4000),
+ v_balloon_enabled BOOLEAN)
 
 RETURNS VOID
    AS $procedure$
@@ -175,7 +176,8 @@ BEGIN
         virtio_scsi_multi_queues_enabled,
         use_tsc_frequency,
         is_template_sealed,
-        cpu_pinning)
+        cpu_pinning,
+        balloon_enabled)
     VALUES(
         v_child_count,
         v_creation_date,
@@ -251,7 +253,8 @@ BEGIN
         v_virtio_scsi_multi_queues_enabled,
         v_use_tsc_frequency,
         v_is_template_sealed,
-        v_cpu_pinning);
+        v_cpu_pinning,
+        v_balloon_enabled);
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
     INSERT INTO vm_ovf_generations(
@@ -348,7 +351,8 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_virtio_scsi_multi_queues_enabled BOOLEAN,
  v_use_tsc_frequency BOOLEAN,
  v_is_template_sealed BOOLEAN,
- v_cpu_pinning VARCHAR(4000))
+ v_cpu_pinning VARCHAR(4000),
+ v_balloon_enabled BOOLEAN)
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -426,7 +430,8 @@ BEGIN
       virtio_scsi_multi_queues_enabled = v_virtio_scsi_multi_queues_enabled,
       use_tsc_frequency = v_use_tsc_frequency,
       is_template_sealed = v_is_template_sealed,
-      cpu_pinning = v_cpu_pinning
+      cpu_pinning = v_cpu_pinning,
+      balloon_enabled = v_balloon_enabled
       WHERE vm_guid = v_vmt_guid
           AND entity_type = v_template_type;
 

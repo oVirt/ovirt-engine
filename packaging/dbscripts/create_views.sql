@@ -986,7 +986,8 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.virtio_scsi_multi_queues_enabled AS virtio_scsi_multi_queues_enabled,
     vm_templates.use_tsc_frequency AS use_tsc_frequency,
     vm_templates.is_template_sealed AS is_template_sealed,
-    vm_templates.cpu_pinning AS cpu_pinning
+    vm_templates.cpu_pinning AS cpu_pinning,
+    vm_templates.balloon_enabled AS balloon_enabled
 FROM vm_static AS vm_templates
 LEFT JOIN cluster
     ON vm_templates.cluster_id = cluster.cluster_id
@@ -1452,7 +1453,8 @@ SELECT vm_static.vm_name AS vm_name,
     vm_static.multi_queues_enabled AS multi_queues_enabled,
     vm_static.virtio_scsi_multi_queues_enabled AS virtio_scsi_multi_queues_enabled,
     vm_static.use_tsc_frequency AS use_tsc_frequency,
-    vm_static.namespace AS namespace
+    vm_static.namespace AS namespace,
+    vm_static.balloon_enabled AS balloon_enabled
 FROM vm_static
 INNER JOIN vm_dynamic
     ON vm_static.vm_guid = vm_dynamic.vm_guid
@@ -1690,7 +1692,8 @@ SELECT DISTINCT vms.vm_name,
     vms.multi_queues_enabled,
     vms.virtio_scsi_multi_queues_enabled,
     vms.use_tsc_frequency,
-    vms.namespace
+    vms.namespace,
+    vms.balloon_enabled
 FROM vms
 LEFT JOIN tags_vm_map_view
     ON vms.vm_guid = tags_vm_map_view.vm_id

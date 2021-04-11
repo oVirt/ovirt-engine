@@ -281,7 +281,6 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         updateVmParams.setUpdateWatchdog(true);
         updateVmParams.setTpmEnabled(false);
         updateVmParams.setSoundDeviceEnabled(false);
-        updateVmParams.setBalloonEnabled(false);
         updateVmParams.setVirtioScsiEnabled(false);
         updateVmParams.setClearPayload(true);
         updateVmParams.setUpdateRngDevice(true);
@@ -297,9 +296,6 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
                     break;
                 case SOUND:
                     updateVmParams.setSoundDeviceEnabled(true);
-                    break;
-                case BALLOON:
-                    updateVmParams.setBalloonEnabled(true);
                     break;
                 case CONTROLLER:
                     if (VmDeviceType.VIRTIOSCSI.getName().equals(device.getDevice())) {

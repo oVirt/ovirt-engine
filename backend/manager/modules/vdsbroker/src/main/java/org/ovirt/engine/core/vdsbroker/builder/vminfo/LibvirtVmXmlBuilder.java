@@ -967,6 +967,7 @@ public class LibvirtVmXmlBuilder {
         writeRunAndPauseMetadata();
         writePayloadMetadata();
         writeResumeBehaviorMetadata();
+        writeBalloonMetadata();
         writer.writeEndElement();
     }
 
@@ -1006,6 +1007,10 @@ public class LibvirtVmXmlBuilder {
         Version version = vm.getCompatibilityVersion();
         writer.writeRaw(String.valueOf(version.getMajor()) + "." + String.valueOf(version.getMinor()));
         writer.writeEndElement();
+    }
+
+    private void writeBalloonMetadata() {
+        writer.writeElement(OVIRT_VM_URI, "ballooningEnabled", String.valueOf(vm.isBalloonEnabled()));
     }
 
     private void writePowerEvents() {

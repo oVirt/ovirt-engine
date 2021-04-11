@@ -100,6 +100,7 @@ public interface OvfProperties {
     String MULTI_QUEUES_ENABLED = "MultiQueuesEnabled";
     String VIRTIO_SCSI_MULTI_QUEUES_ENABLED = "VirtioScsiMultiQueuesEnabled";
     String NUMA_TUNE_MODE = "NumaTuneMode";
+    String BALLOON_ENABLED = "BalloonEnabled";
 
     // Luns
     String LUN_ID = "lun_id";

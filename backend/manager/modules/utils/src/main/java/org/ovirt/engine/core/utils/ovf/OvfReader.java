@@ -71,6 +71,7 @@ public abstract class OvfReader implements IOvfBuilder {
     private String version;
     private final VmBase vmBase;
     private String lastReadEntry = "";
+    private boolean hasBalloonDevice;
 
     public OvfReader(
             XmlDocument document,
@@ -279,6 +280,9 @@ public abstract class OvfReader implements IOvfBuilder {
         } else {
             int resourceType = getResourceType(node, VMD_RESOURCE_TYPE);
             vmDevice.setType(VmDeviceGeneralType.forValue(VmDeviceType.getoVirtDevice(resourceType)));
+        }
+        if (vmDevice.getType() == VmDeviceGeneralType.BALLOON) {
+            hasBalloonDevice = true;
         }
         if (selectSingleNode(node, VMD_DEVICE, _xmlNS) != null
                 && !StringUtils.isEmpty(selectSingleNode(node, VMD_DEVICE, _xmlNS).innerText)) {
@@ -520,6 +524,7 @@ public abstract class OvfReader implements IOvfBuilder {
         return Guid.newGuid();
     }
 
+    // must be called after readHardwareSection
     protected void readGeneralData(XmlNode content) {
         consumeReadProperty(content, DESCRIPTION, val -> vmBase.setDescription(val));
         consumeReadProperty(content, COMMENT, val -> vmBase.setComment(val));
@@ -651,6 +656,10 @@ public abstract class OvfReader implements IOvfBuilder {
         consumeReadProperty(content,
                 USE_HOST_CPU,
                 val -> vmBase.setUseHostCpuFlags(Boolean.parseBoolean(val)));
+
+        consumeReadProperty(content, BALLOON_ENABLED,
+                val -> vmBase.setBalloonEnabled(Boolean.parseBoolean(val)),
+                () -> vmBase.setBalloonEnabled(hasBalloonDevice));
 
         readVmInit(content);
     }

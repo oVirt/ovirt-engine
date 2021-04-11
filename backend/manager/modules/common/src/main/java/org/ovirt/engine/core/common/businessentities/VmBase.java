@@ -384,6 +384,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @EditableVmTemplateField
     private boolean virtioScsiMultiQueuesEnabled;
 
+    @CopyOnNewVersion
+    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmTemplateField
+    private boolean balloonEnabled;
+
     public VmBase() {
         name = "";
         interfaces = new ArrayList<>();
@@ -414,6 +419,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         comment = "";
         multiQueuesEnabled = true;
         virtioScsiMultiQueuesEnabled = false;
+        balloonEnabled = true;
     }
 
     @EditableVmField
@@ -616,7 +622,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.isMultiQueuesEnabled(),
                 vmBase.getUseTscFrequency(),
                 vmBase.getCpuPinning(),
-                vmBase.isVirtioScsiMultiQueuesEnabled());
+                vmBase.isVirtioScsiMultiQueuesEnabled(),
+                vmBase.isBalloonEnabled());
     }
 
     public VmBase(
@@ -688,7 +695,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             boolean multiQueuesEnabled,
             boolean useTscFrequency,
             String cpuPinning,
-            boolean virtioScsiMultiQueuesEnabled) {
+            boolean virtioScsiMultiQueuesEnabled,
+            boolean balloonEnabled) {
         this();
         this.name = name;
         this.id = id;
@@ -759,6 +767,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.virtioScsiMultiQueuesEnabled = virtioScsiMultiQueuesEnabled;
         this.useTscFrequency = useTscFrequency;
         this.cpuPinning = cpuPinning;
+        this.balloonEnabled = balloonEnabled;
     }
 
     @Override
@@ -1122,6 +1131,14 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.virtioScsiMultiQueuesEnabled = virtioScsiMultiQueuesEnabled;
     }
 
+    public boolean isBalloonEnabled() {
+        return balloonEnabled;
+    }
+
+    public void setBalloonEnabled(boolean balloonEnabled) {
+        this.balloonEnabled = balloonEnabled;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -1183,7 +1200,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 multiQueuesEnabled,
                 useTscFrequency,
                 cpuPinning,
-                virtioScsiMultiQueuesEnabled
+                virtioScsiMultiQueuesEnabled,
+                balloonEnabled
         );
     }
 
@@ -1254,7 +1272,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(multiQueuesEnabled, other.multiQueuesEnabled)
                 && Objects.equals(useTscFrequency, other.useTscFrequency)
                 && Objects.equals(cpuPinning, other.cpuPinning)
-                && Objects.equals(virtioScsiMultiQueuesEnabled, other.virtioScsiMultiQueuesEnabled);
+                && Objects.equals(virtioScsiMultiQueuesEnabled, other.virtioScsiMultiQueuesEnabled)
+                && Objects.equals(balloonEnabled, other.balloonEnabled);
     }
 
     public Guid getQuotaId() {

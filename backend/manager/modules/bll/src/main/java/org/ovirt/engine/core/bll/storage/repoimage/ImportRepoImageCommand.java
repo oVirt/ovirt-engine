@@ -264,8 +264,6 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
             masterVm.setDefaultDisplayType(defaultDisplayType);
         }
 
-        parameters.setBalloonEnabled(true);
-
         ActionReturnValue addVmTemplateReturnValue =
                 backend.runInternalAction(ActionType.AddVmTemplate,
                         parameters,

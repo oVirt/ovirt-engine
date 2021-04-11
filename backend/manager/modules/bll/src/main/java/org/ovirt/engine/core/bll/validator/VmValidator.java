@@ -320,12 +320,14 @@ public class VmValidator {
             List<DiskVmElement> diskVmElements,
             boolean virtioScsiEnabled,
             boolean hasWatchdog,
-            boolean isBalloonEnabled,
             boolean isSoundDeviceEnabled) {
 
         // this adds: monitors + 2 * (interfaces with type rtl_pv) + (all other
         // interfaces) + (all disks that are not IDE)
         int pciInUse = monitorsNumber;
+
+        // Balloon controller requires one PCI slot
+        pciInUse += 1;
 
         for (VmNic a : interfaces) {
             if (a.getType() != null && VmInterfaceType.forValue(a.getType()) == VmInterfaceType.rtl8139_pv) {
@@ -344,9 +346,6 @@ public class VmValidator {
 
         // VmWatchdog controller requires one PCI slot
         pciInUse += hasWatchdog ? 1 : 0;
-
-        // Balloon controller requires one PCI slot
-        pciInUse += isBalloonEnabled ? 1 : 0;
 
         // Sound device controller requires one PCI slot
         pciInUse += isSoundDeviceEnabled ? 1 : 0;

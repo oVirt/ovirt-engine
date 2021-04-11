@@ -283,7 +283,6 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     diskVmElements,
                     getVmDeviceUtils().hasVirtioScsiController(getParameters().getVmTemplateData().getId()),
                     hasWatchdog(getParameters().getVmTemplateData().getId()),
-                    getVmDeviceUtils().hasMemoryBalloon(getParameters().getVmTemplateData().getId()),
                     isSoundDeviceEnabled()))) {
                 returnValue = false;
             }
@@ -468,9 +467,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             getVmDeviceUtils().updateUsbSlots(oldTemplate, oldCluster, getVmTemplate(), newCluster);
         }
         getVmDeviceUtils().updateVirtioScsiController(getVmTemplate(), getParameters().isVirtioScsiEnabled());
-        if (getParameters().isBalloonEnabled() != null) {
-            getVmDeviceUtils().updateMemoryBalloon(getVmTemplateId(), getParameters().isBalloonEnabled());
-        }
+        getVmDeviceUtils().addMemoryBalloonIfNeeded(getVmTemplateId());
         getVmDeviceUtils().updateVideoDevices(oldTemplate, getParameters().getVmTemplateData());
     }
 

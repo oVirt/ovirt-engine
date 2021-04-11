@@ -316,7 +316,6 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         parameters.setTpmEnabled(getParameters().isTpmEnabled());
         parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
         parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
-        parameters.setBalloonEnabled(getParameters().isBalloonEnabled());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
 
         VmRngDevice rngDevice = getParameters().getRngDevice();

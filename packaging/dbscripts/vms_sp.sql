@@ -726,7 +726,8 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_multi_queues_enabled BOOLEAN,
     v_virtio_scsi_multi_queues_enabled BOOLEAN,
     v_use_tsc_frequency BOOLEAN,
-    v_namespace VARCHAR(253))
+    v_namespace VARCHAR(253),
+    v_balloon_enabled BOOLEAN)
   RETURNS VOID
    AS $procedure$
 DECLARE
@@ -810,7 +811,8 @@ INSERT INTO vm_static(description,
                       multi_queues_enabled,
                       virtio_scsi_multi_queues_enabled,
                       use_tsc_frequency,
-                      namespace)
+                      namespace,
+                      balloon_enabled)
     VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
@@ -886,7 +888,8 @@ INSERT INTO vm_static(description,
            v_multi_queues_enabled,
            v_virtio_scsi_multi_queues_enabled,
            v_use_tsc_frequency,
-           v_namespace);
+           v_namespace,
+           v_balloon_enabled);
 
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE
@@ -1089,7 +1092,8 @@ v_lease_sd_id UUID,
 v_multi_queues_enabled BOOLEAN,
 v_virtio_scsi_multi_queues_enabled BOOLEAN,
 v_use_tsc_frequency BOOLEAN,
-v_namespace VARCHAR(253))
+v_namespace VARCHAR(253),
+v_balloon_enabled BOOLEAN)
 
 RETURNS VOID
 
@@ -1172,7 +1176,8 @@ BEGIN
      multi_queues_enabled = v_multi_queues_enabled,
      virtio_scsi_multi_queues_enabled = v_virtio_scsi_multi_queues_enabled,
      use_tsc_frequency = v_use_tsc_frequency,
-     namespace = v_namespace
+     namespace = v_namespace,
+     balloon_enabled = v_balloon_enabled
      WHERE vm_guid = v_vm_guid
          AND entity_type = 'VM';
 

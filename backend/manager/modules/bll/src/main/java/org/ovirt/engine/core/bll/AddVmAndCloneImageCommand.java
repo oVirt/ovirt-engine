@@ -468,7 +468,6 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 getParameters().isTpmEnabled(),
                 getParameters().isConsoleEnabled(),
                 isVirtioScsiEnabled(),
-                isBalloonEnabled(),
                 getParameters().getGraphicsDevices().keySet(),
                 false,
                 getVmDeviceUtils().canCopyHostDevices(getSourceVmId(), getVm().getStaticData()),

@@ -492,7 +492,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                         getDiskVmElements(),
                         isVirtioScsiEnabled(),
                         hasWatchdog(),
-                        isBalloonEnabled(),
                         isSoundDeviceEnabled()))
                 && canAddVm(destStorages.values())
                 && hostToRunExist();
@@ -1176,7 +1175,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 getParameters().isTpmEnabled(),
                 getParameters().isConsoleEnabled(),
                 isVirtioScsiEnabled(),
-                getParameters().isBalloonEnabled(),
                 getParameters().getGraphicsDevices().keySet(),
                 false,
                 getEffectiveCompatibilityVersion());
@@ -1798,11 +1796,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 DiskInterface.VirtIO_SCSI);
 
         return virtioScsiEnabled != null ? virtioScsiEnabled : isOsSupportedForVirtIoScsi;
-    }
-
-    protected boolean isBalloonEnabled() {
-        Boolean balloonEnabled = getParameters().isBalloonEnabled();
-        return balloonEnabled != null ? balloonEnabled : true;
     }
 
     protected boolean isSoundDeviceEnabled() {

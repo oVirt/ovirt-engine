@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -15,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -157,10 +155,7 @@ public abstract class VmManagementCommandBase<T extends VmManagementParametersBa
             vmStatic.setMigrationDowntime(instanceType.getMigrationDowntime());
             vmStatic.setPriority(instanceType.getPriority());
             vmStatic.setTunnelMigration(instanceType.getTunnelMigration());
-
-            List<VmDevice> vmDevices = getVmDeviceUtils().getMemoryBalloons(instanceType.getId());
             vmStatic.setMinAllocatedMem(instanceType.getMinAllocatedMem());
-            getParameters().setBalloonEnabled(!vmDevices.isEmpty());
 
             vmStatic.setMigrationPolicyId(instanceType.getMigrationPolicyId());
 

@@ -1153,21 +1153,11 @@ public class VmDeviceUtils {
      */
 
     /**
-     * Enable/disable memory balloon device in the VM.
-     *
-     * @param isBalloonEnabled    true/false to enable/disable device respectively, null to leave it untouched
+     * Enable memory balloon device in the VM.
      */
-    public void updateMemoryBalloon(Guid vmId, Boolean isBalloonEnabled) {
-        if (isBalloonEnabled == null) {
-            return; //we don't want to update the device
-        }
-
-        if (isBalloonEnabled) {
-            if (!hasMemoryBalloon(vmId)) {
-                addMemoryBalloon(vmId);
-            }
-        } else {
-            removeMemoryBalloons(vmId);
+    public void addMemoryBalloonIfNeeded(Guid vmId) {
+        if (!hasMemoryBalloon(vmId)) {
+            addMemoryBalloon(vmId);
         }
     }
 
@@ -1193,13 +1183,6 @@ public class VmDeviceUtils {
      */
     public List<VmDevice> getMemoryBalloons(Guid vmId) {
         return vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.BALLOON);
-    }
-
-    /**
-     * Remove all memory balloon devices from the VM.
-     */
-    public void removeMemoryBalloons(Guid vmId) {
-        removeVmDevices(getMemoryBalloons(vmId), 1);
     }
 
     /**
@@ -1478,7 +1461,7 @@ public class VmDeviceUtils {
         updateCdPath(oldVmBase, newVmBase);
         updateVideoDevices(oldVmBase, newVmBase);
         updateUsbSlots(oldVmBase, oldVmCluster, newVmBase, newVmCluster);
-        updateMemoryBalloon(newVmBase.getId(), params.isBalloonEnabled());
+        addMemoryBalloonIfNeeded(newVmBase.getId());
         updateSoundDevice(oldVmBase, newVmBase, oldVm.getCompatibilityVersion(),
                 params.isSoundDeviceEnabled());
         updateTpmDevice(newVmBase, newVmCluster, params.isTpmEnabled());
@@ -1497,7 +1480,6 @@ public class VmDeviceUtils {
         params.setSoundDeviceEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.SOUND));
         params.setConsoleEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONSOLE));
         params.setVirtioScsiEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI));
-        params.setBalloonEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.BALLOON));
 
         updateVmGraphicDevicesInParameters(params, devices);
         updateWatchdogInParameters(params, devices);
@@ -1634,7 +1616,6 @@ public class VmDeviceUtils {
                               Boolean isTpmEnabled,
                               Boolean isConsoleEnabled,
                               Boolean isVirtioScsiEnabled,
-                              Boolean isBalloonEnabled,
                               Set<GraphicsType> graphicsToSkip,
                               boolean copySnapshotDevices,
                               boolean copyHostDevices,
@@ -1711,9 +1692,6 @@ public class VmDeviceUtils {
                     break;
 
                 case BALLOON:
-                    if (Boolean.FALSE.equals(isBalloonEnabled)) {
-                        continue;
-                    }
                     hasBalloon = true;
                     specParams.putAll(getMemoryBalloonSpecParams());
                     break;
@@ -1810,7 +1788,7 @@ public class VmDeviceUtils {
             addVirtioScsiController(dstVmBase, getVmCompatibilityVersion(dstVmBase));
         }
 
-        if (Boolean.TRUE.equals(isBalloonEnabled) && !hasBalloon) {
+        if (!hasBalloon) {
             addMemoryBalloon(dstId);
         }
 
@@ -1829,7 +1807,6 @@ public class VmDeviceUtils {
                                      Boolean isTpmEnabled,
                                      Boolean isConsoleEnabled,
                                      Boolean isVirtioScsiEnabled,
-                                     Boolean isBalloonEnabled,
                                      Set<GraphicsType> graphicsToSkip,
                                      boolean copySnapshotDevices,
                                      Version versionToUpdateRndDeviceWith) {
@@ -1839,7 +1816,7 @@ public class VmDeviceUtils {
         List<VmDevice> srcDevices = vmDeviceDao.getVmDeviceByVmId(srcId);
 
         copyVmDevices(srcId, dstId, srcVmBase, dstVmBase, srcDevices, srcDeviceIdToDstDeviceIdMapping,
-                isSoundEnabled, isTpmEnabled, isConsoleEnabled, isVirtioScsiEnabled, isBalloonEnabled,
+                isSoundEnabled, isTpmEnabled, isConsoleEnabled, isVirtioScsiEnabled,
                 graphicsToSkip, copySnapshotDevices, canCopyHostDevices(srcVmBase, dstVmBase),
                 versionToUpdateRndDeviceWith);
     }

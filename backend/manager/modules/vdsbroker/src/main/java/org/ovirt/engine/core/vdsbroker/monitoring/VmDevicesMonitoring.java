@@ -597,7 +597,9 @@ public class VmDevicesMonitoring {
             }
 
             if (device.isManaged()) {
-                if (device.isPlugged()) {
+                // We skip balloon device as it's not hot-pluggable/unpluggable and we always have it.
+                // The balloon can be added to a running VM in the DB on upgrade.
+                if (device.isPlugged() && device.getType() != VmDeviceGeneralType.BALLOON) {
                     device.setPlugged(Boolean.FALSE);
                     device.setAddress("");
                     change.addDeviceToUpdate(device);

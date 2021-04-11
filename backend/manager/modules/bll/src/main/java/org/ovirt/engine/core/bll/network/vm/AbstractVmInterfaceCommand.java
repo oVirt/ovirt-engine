@@ -98,7 +98,6 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
                 vm.getNumOfMonitors(), allInterfaces, diskVmElements,
                 getVmDeviceUtils().hasVirtioScsiController(getVmId()),
                 getVmDeviceUtils().hasWatchdog(getVmId()),
-                getVmDeviceUtils().hasMemoryBalloon(getVmId()),
                 getVmDeviceUtils().hasSoundDevice(getVmId())));
     }
 

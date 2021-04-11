@@ -57,7 +57,6 @@ public class VmUpdater {
 
         AddVmParameters params = new AddVmParameters(vmStatic);
         params.setSoundDeviceEnabled(false);
-        params.setBalloonEnabled(false);
         params.setVirtioScsiEnabled(false);
 
         // at some point we may want to call AddUnmanagedVm
