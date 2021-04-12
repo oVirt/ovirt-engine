@@ -8,7 +8,7 @@
 
     - name: Find latest available redhat-release version
       set_fact:
-        virt_mod_ver: "{{ 'av' if '8.4' is version(item.version, '>=') else item.version }}"
+        virt_mod_ver: "{{ 'av' if item.version is version('8.4', '>=') else item.version }}"
       when:
         - virt_mod_ver | default('0') != 'av'
         - virt_mod_ver | default('0') is version (item.version, '<')
