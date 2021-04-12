@@ -93,10 +93,9 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
                 getParameters().getCdImagePath(),
                 getVm().getStoragePoolId(),
                 getVm().getRunOnVds());
-        VDS currentHost = vdsDao.get(getVm().getRunOnVds());
         ChangeDiskVDSCommandParameters params;
 
-        if (currentHost.isCdChangePdiv()) {
+        if (useCdChangeWithPdiv()) {
             String diskPath = getParameters().getCdImagePath();
             // An empty 'diskPath' means eject CD.
             Guid diskGuid = StringUtils.isEmpty(diskPath) ? null : Guid.createGuidFromString(diskPath);
@@ -114,6 +113,24 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
         setActionReturnValue(runVdsCommand(VDSCommandType.ChangeDisk, params).getReturnValue());
         vmHandler.updateCurrentCd(getVm(), getParameters().getCdImagePath());
         setSucceeded(true);
+    }
+
+    /**
+     * Determines, if the new way for changing CD, which uses image PDIV instead of path, can be used.
+     *
+     * To use new change CD, following conditions have to be met:
+     *  - host doing CD change has to support it,
+     *  - we are able to get image ID from provided parameters and determine image PDIV.
+     *
+     * Specifying CD image as a path instead of its UUID is the case of images stored on ISO domains.
+     * In such case fall back to old CD change. This works, as ISO domain can be only on file-based SD,
+     * where old CD change works without problems.
+     */
+    private boolean useCdChangeWithPdiv() {
+        VDS currentHost = vdsDao.get(getVm().getRunOnVds());
+        String diskPath = getParameters().getCdImagePath();
+        boolean supportsPdiv = diskPath.matches(ValidationUtils.GUID) || StringUtils.isEmpty(diskPath);
+        return currentHost.isCdChangePdiv() && supportsPdiv;
     }
 
     @Override
