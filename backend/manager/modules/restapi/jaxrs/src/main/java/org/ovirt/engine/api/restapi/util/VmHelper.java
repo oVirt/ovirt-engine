@@ -23,13 +23,6 @@ public class VmHelper {
                 "GetSoundDevices", true);
     }
 
-    public static Boolean isMemoryBalloonEnabledForEntity(BackendResource resource, Guid id) {
-        return resource.getEntity(Boolean.class,
-                QueryType.IsBalloonEnabled,
-                new IdQueryParameters(id),
-                "IsBalloonEnabled", true);
-    }
-
     public static List<VmRngDevice> getRngDevicesForEntity(BackendResource resource, Guid id) {
         return resource.getEntity(List.class,
                 QueryType.GetRngDevice,

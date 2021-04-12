@@ -179,10 +179,6 @@ public class BackendTemplateResource
             IconHelper.setIconToParams(incoming, params);
             DisplayHelper.setGraphicsToParams(incoming.getDisplay(), params);
 
-            if (incoming.isSetMemoryPolicy() && incoming.getMemoryPolicy().isSetBallooning()) {
-                params.setBalloonEnabled(incoming.getMemoryPolicy().isBallooning());
-            }
-
             return getMapper(modelType, UpdateVmTemplateParameters.class).map(incoming, params);
         }
     }
@@ -205,7 +201,6 @@ public class BackendTemplateResource
 
     @Override
     protected Template deprecatedPopulate(Template model, VmTemplate entity) {
-        MemoryPolicyHelper.setupMemoryBalloon(model, this);
         return model;
     }
 

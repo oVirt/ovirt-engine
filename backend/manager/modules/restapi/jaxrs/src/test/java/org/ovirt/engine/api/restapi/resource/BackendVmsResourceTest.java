@@ -159,7 +159,6 @@ public class BackendVmsResourceTest
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 0);
-        setUpGetBallooningExpectations(1, 0);
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(0);
         setUpGetVirtioScsiExpectations(0);
@@ -219,7 +218,6 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(0, 0);
         setUpGetSoundcardExpectations(0, 0);
         setUpGetRngDeviceExpectations(0, 0);
-        setUpGetBallooningExpectations(2, 0);
         setUpGetGraphicsExpectations(1);
         setUpGetCertificateExpectations(2, 0);
         setUpGetTpmExpectations(0);
@@ -271,7 +269,6 @@ public class BackendVmsResourceTest
     public void testAddFromScratchNamedCluster() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(2, 0);
-        setUpGetBallooningExpectations(2, 0);
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(0, 0);
         setUpGetVmOvfExpectations(0, 0);
@@ -367,8 +364,6 @@ public class BackendVmsResourceTest
         setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendVmsResource.CLONE, "true"));
         setUpTemplateDisksExpectations(GUIDS[1]);
         setUpGetPayloadExpectations(1, 2);
-        setUpGetBallooningExpectations(1, 1);
-        setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
@@ -417,7 +412,6 @@ public class BackendVmsResourceTest
         vmConfiguration.setDiskMap(diskImageMap);
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
-        setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
@@ -457,8 +451,6 @@ public class BackendVmsResourceTest
     public void testClone() {
         setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendVmsResource.CLONE, "true"));
         setUpGetPayloadExpectations(1, 2);
-        setUpGetBallooningExpectations(1, 1);
-        setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
@@ -501,8 +493,6 @@ public class BackendVmsResourceTest
     public void testAddStatelessWithLatestTemplateVersion() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
-        setUpGetBallooningExpectations(1, 1);
-        setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
@@ -572,7 +562,6 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[2] },
                 getEntity(2));
         setUpGetCaRootExpectations();
-        setUpGetBallooningExpectations(1, 1);
         Response response = collection.add(createModel(null));
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Vm);
@@ -614,8 +603,6 @@ public class BackendVmsResourceTest
     private void setupAddExpectations() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
-        setUpGetBallooningExpectations(1, 1);
-        setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertificateExpectations(1, 2);
         setUpGetConsoleExpectations(1, 2);
@@ -636,7 +623,6 @@ public class BackendVmsResourceTest
     public void testAddFromConfigurationWithRegenerateTrue() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 3);
-        setUpGetBallooningExpectations(1, 3);
         setUpGetGraphicsExpectations(1);
         setUpGetCertificateExpectations(1, 3);
         setUpGetCaRootExpectations();
@@ -684,7 +670,6 @@ public class BackendVmsResourceTest
     public void testAddFromConfiguration() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
-        setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
@@ -727,7 +712,6 @@ public class BackendVmsResourceTest
     public void testAddFromConfigurationNamedCluster() {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
-        setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
@@ -946,8 +930,6 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
-        setUpGetBallooningExpectations(1, 1);
-        setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
@@ -998,8 +980,6 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
-        setUpGetBallooningExpectations(1, 1);
-        setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
@@ -1062,8 +1042,6 @@ public class BackendVmsResourceTest
         uriInfo = addMatrixParameterExpectations(uriInfo, BackendVmsResource.CLONE_PERMISSIONS, Boolean.toString(copy));
         setUriInfo(uriInfo);
         setUpGetPayloadExpectations(1, 2);
-        setUpGetBallooningExpectations(1, 1);
-        setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
@@ -1121,8 +1099,6 @@ public class BackendVmsResourceTest
         setUriInfo(uriInfo);
         setUpTemplateDisksExpectations(GUIDS[1]);
         setUpGetPayloadExpectations(1, 2);
-        setUpGetBallooningExpectations(1, 1);
-        setUpGetBallooningExpectations(1, 2);
         setUpGetGraphicsExpectations(1);
         setUpGetCertificateExpectations(1, 2);
         setUpGetCaRootExpectations();
@@ -1205,7 +1181,6 @@ public class BackendVmsResourceTest
             populates.add("true");
             when(httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER)).thenReturn(populates);
             setUpGetPayloadExpectations(3);
-            setUpGetBallooningExpectations(3);
             setUpGetConsoleExpectations(0, 1, 2);
             setUpGetVmOvfExpectations(0, 1, 2);
             setUpGetVirtioScsiExpectations(0, 1, 2);
@@ -1245,7 +1220,6 @@ public class BackendVmsResourceTest
 
     private void setUpAllContentExpectations() throws Exception{
         setUpGetPayloadExpectations(3);
-        setUpGetBallooningExpectations(3);
         setUpGetGraphicsMultipleExpectations(3);
         setUpGetConsoleExpectations(0, 1, 2);
         setUpGetVmOvfExpectations(0, 1, 2);
@@ -1303,7 +1277,6 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
-        setUpGetBallooningExpectations(1, 1);
         setUpGetSoundcardExpectations(1);
         setUpGetRngDeviceExpectations(1);
         setUpGetConsoleExpectations(1);
@@ -1645,26 +1618,6 @@ public class BackendVmsResourceTest
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },
                     payload);
-        }
-    }
-
-    private void setUpGetBallooningExpectations(int times) {
-        for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(QueryType.IsBalloonEnabled,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[i] },
-                    true);
-        }
-    }
-
-    private void setUpGetBallooningExpectations(int times, int index) {
-        for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(QueryType.IsBalloonEnabled,
-                    IdQueryParameters.class,
-                    new String[] { "Id" },
-                    new Object[] { GUIDS[index] },
-                    true);
         }
     }
 

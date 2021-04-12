@@ -466,12 +466,6 @@ public class BackendVmsResource extends
             params.setSoundDeviceEnabled(!VmHelper.getSoundDevicesForEntity(this, instanceTypeId != null ? instanceTypeId : templateId).isEmpty());
         }
 
-        if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
-            params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
-        } else if (instanceTypeId != null || templateId != null) {
-            params.setBalloonEnabled(VmHelper.isMemoryBalloonEnabledForEntity(this, instanceTypeId != null ? instanceTypeId : templateId));
-        }
-
         if (vm.isSetConsole()) {
             params.setConsoleEnabled(vm.getConsole().isEnabled());
         } else if (templateId != null || instanceTypeId != null) {
@@ -755,7 +749,6 @@ public class BackendVmsResource extends
     @Override
     protected Vm doPopulate(Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
         BackendVmDeviceHelper.setPayload(this, model);
-        MemoryPolicyHelper.setupMemoryBalloon(model, this);
         BackendVmDeviceHelper.setConsoleDevice(this, model);
         BackendVmDeviceHelper.setVirtioScsiController(this, model);
         BackendVmDeviceHelper.setSoundcard(this, model);

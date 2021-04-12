@@ -141,7 +141,6 @@ public class BackendVmResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         setUpGetPayloadExpectations(0, 1);
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
         setUpGetCaRootExpectations();
@@ -155,7 +154,6 @@ public class BackendVmResourceTest
         setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendVmResource.NEXT_RUN));
         setUpGetEntityNextRunExpectations();
         setUpGetPayloadExpectations(0, 1);
-        setUpGetBallooningExpectations();
         setUpGetNextRunGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
         setUpGetCaRootExpectations();
@@ -171,7 +169,6 @@ public class BackendVmResourceTest
             setUriInfo(setUpBasicUriExpectations());
             setUpGetEntityExpectations(1);
             setUpGetPayloadExpectations(0, 1);
-            setUpGetBallooningExpectations();
             setUpGetGraphicsExpectations(1);
 
             Vm vm = resource.get();
@@ -207,7 +204,6 @@ public class BackendVmResourceTest
         }
         setUpGetEntityExpectations(1);
         setUpGetPayloadExpectations(0, 1);
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
         setUpGetCaRootExpectations();
@@ -233,8 +229,6 @@ public class BackendVmResourceTest
         setUpGetEntityForUpdateExpectations(3);
 
         setUpGetPayloadExpectations(0, 2);
-        setUpGetBallooningExpectations();
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(2);
         setUpGetConsoleExpectations(0);
         setUpGetVmOvfExpectations(0);
@@ -259,9 +253,6 @@ public class BackendVmResourceTest
 
         setUpGetPayloadExpectations(0, 1);
         setUpGetNoPayloadExpectations(0, 1);
-
-        setUpGetBallooningExpectations();
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(2);
         setUpGetConsoleExpectations(0);
         setUpGetVmOvfExpectations(0);
@@ -287,8 +278,6 @@ public class BackendVmResourceTest
         setUpGetEntityForUpdateExpectations(3);
 
         setUpGetPayloadExpectations(0, 2);
-        setUpGetBallooningExpectations();
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(2);
         setUpGetConsoleExpectations(0);
         setUpGetVmOvfExpectations(0);
@@ -313,8 +302,6 @@ public class BackendVmResourceTest
         setUpGetEntityForUpdateExpectations(3);
 
         setUpGetPayloadExpectations(0, 2);
-        setUpGetBallooningExpectations();
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(2);
         setUpGetConsoleExpectations(0);
         setUpGetVmOvfExpectations(0);
@@ -445,8 +432,6 @@ public class BackendVmResourceTest
         setUpGetEntityForUpdateExpectations(3);
 
         setUpGetPayloadExpectations(0, 2);
-        setUpGetBallooningExpectations();
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(0);
         setUpGetVmOvfExpectations(0);
@@ -463,8 +448,6 @@ public class BackendVmResourceTest
         setUpGetEntityForUpdateExpectations(3);
 
         setUpGetPayloadExpectations(0, 2);
-        setUpGetBallooningExpectations();
-        setUpGetBallooningExpectations();
         setUpGetConsoleExpectations(0);
         setUpGetVmOvfExpectations(0);
         setUpGetVirtioScsiExpectations(0);
@@ -509,7 +492,6 @@ public class BackendVmResourceTest
         setUpGetEntityForUpdateExpectations(2);
 
         setUpGetPayloadExpectations(0, 1);
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
@@ -527,7 +509,6 @@ public class BackendVmResourceTest
         setUpGetEntityForUpdateExpectations(2);
 
         setUpGetPayloadExpectations(0, 1);
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
 
         setUriInfo(setUpBasicUriExpectations());
@@ -1064,7 +1045,6 @@ public class BackendVmResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0, 1);
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         setUpActionExpectations(ActionType.RemoveVm, RemoveVmParameters.class, new String[] {
                 "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
@@ -1075,7 +1055,6 @@ public class BackendVmResourceTest
     public void testRemoveForced() {
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0, 1);
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
             ActionType.RemoveVm,
@@ -1095,7 +1074,6 @@ public class BackendVmResourceTest
     public void testRemoveDetachOnly() {
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0, 1);
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
             ActionType.RemoveVm,
@@ -1115,7 +1093,6 @@ public class BackendVmResourceTest
     public void testRemoveForcedIncomplete() {
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0, 1);
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
             ActionType.RemoveVm,
@@ -1163,7 +1140,6 @@ public class BackendVmResourceTest
     protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations();
         setUpGetPayloadExpectations(0, 1);
-        setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         setUriInfo(setUpActionExpectations(ActionType.RemoveVm,
                 RemoveVmParameters.class,
@@ -1332,14 +1308,6 @@ public class BackendVmResourceTest
                                        new Object[] { GUIDS[index] },
                                        null);
         }
-    }
-
-    private void setUpGetBallooningExpectations() {
-        setUpGetEntityExpectations(QueryType.IsBalloonEnabled,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[0] },
-                true);
     }
 
     protected void setUpGetGraphicsExpectations(int times) {

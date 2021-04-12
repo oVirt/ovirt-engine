@@ -54,7 +54,6 @@ public class BackendInstanceTypeResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetGraphicsExpectations(1);
         setUpGetEntityExpectations(1);
-        setUpGetBallooningExpectations();
 
         verifyModel(resource.get(), 0);
     }
@@ -76,7 +75,6 @@ public class BackendInstanceTypeResourceTest
     public void testGetConsoleAware(boolean allContent) {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        setUpGetBallooningExpectations();
 
         if (allContent) {
             List<String> populates = new ArrayList<>();
@@ -129,7 +127,6 @@ public class BackendInstanceTypeResourceTest
     public void testUpdate() {
         setUpGetGraphicsExpectations(1);
         setUpUpdateExpectations();
-        setUpGetBallooningExpectations();
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
@@ -192,18 +189,10 @@ public class BackendInstanceTypeResourceTest
         }
     }
 
-    protected void setUpGetBallooningExpectations() {
-        setUpGetEntityExpectations(QueryType.IsBalloonEnabled,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[0] },
-                true);
-    }
     @Test
     public void testRemove() {
         setUpGetGraphicsExpectations(1);
         setUpGetEntityExpectations(1);
-        setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(
                 ActionType.RemoveVmTemplate,
                 VmTemplateManagementParameters.class,

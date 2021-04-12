@@ -120,9 +120,6 @@ public class BackendVmPoolsResource
         params.setSoundDeviceEnabled(pool.isSetSoundcardEnabled() ? pool.isSoundcardEnabled() : !VmHelper.getSoundDevicesForEntity(this, template.getId()).isEmpty());
         params.setRngDevice(pool.isSetVm() && pool.getVm().isSetRngDevice() ?
                 RngDeviceMapper.map(pool.getVm().getRngDevice(), null) : params.getRngDevice());
-        if (pool.isSetVm() && pool.getVm().isSetMemoryPolicy() && pool.getVm().getMemoryPolicy().isSetBallooning()) {
-            params.setBalloonEnabled(pool.getVm().getMemoryPolicy().isBallooning());
-        }
         params.getVmStaticData().setCustomProperties(pool.isSetVm() && pool.getVm().isSetCustomProperties() ?
                 CustomPropertiesParser.parse(pool.getVm().getCustomProperties().getCustomProperties()) : params.getVmStaticData().getCustomProperties());
         params.setTpmEnabled(pool.isSetTpmEnabled() ? pool.isTpmEnabled() : null);
@@ -145,7 +142,6 @@ public class BackendVmPoolsResource
             Vm vm = VmMapper.map(vmModel, new Vm());
             DisplayHelper.adjustDisplayData(this, vm, false);
             BackendVmDeviceHelper.setPayload(this, vm);
-            MemoryPolicyHelper.setupMemoryBalloon(vm, this);
             BackendVmDeviceHelper.setConsoleDevice(this, vm);
             BackendVmDeviceHelper.setVirtioScsiController(this, vm);
             BackendVmDeviceHelper.setSoundcard(this, vm);

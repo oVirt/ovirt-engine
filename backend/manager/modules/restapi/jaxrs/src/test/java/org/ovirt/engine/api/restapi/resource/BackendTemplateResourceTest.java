@@ -66,7 +66,6 @@ public class BackendTemplateResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetGraphicsExpectations(1);
         setUpGetEntityExpectations(1);
-        setUpGetBallooningExpectations();
 
         verifyModel(resource.get(), 0);
     }
@@ -98,7 +97,6 @@ public class BackendTemplateResourceTest
     public void testGetConsoleAware(boolean allContent) {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        setUpGetBallooningExpectations();
 
         if (allContent) {
             List<String> populates = new ArrayList<>();
@@ -198,14 +196,6 @@ public class BackendTemplateResourceTest
         }
     }
 
-    protected void setUpGetBallooningExpectations() {
-        setUpGetEntityExpectations(QueryType.IsBalloonEnabled,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[0] },
-                true);
-    }
-
     private void setUpGetTpmExpectations(int ... idxs) {
         for (int i = 0; i < idxs.length; i++) {
             setUpGetEntityExpectations(QueryType.GetTpmDevices,
@@ -221,7 +211,6 @@ public class BackendTemplateResourceTest
         setUpGetGraphicsExpectations(0);
         setUpGetGraphicsExpectations(1);
         setUpUpdateExpectations();
-        setUpGetBallooningExpectations();
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
@@ -237,7 +226,6 @@ public class BackendTemplateResourceTest
     public void testRemove() {
         setUpGetEntityExpectations(1);
         setUpGetGraphicsExpectations(1);
-        setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(ActionType.RemoveVmTemplate,
                 VmTemplateManagementParameters.class,
                 new String[] { "VmTemplateId" },
@@ -270,7 +258,6 @@ public class BackendTemplateResourceTest
     protected void doTestBadRemove(boolean valid, boolean success, String detail) {
         setUpGetEntityExpectations(1);
         setUpGetGraphicsExpectations(1);
-        setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(ActionType.RemoveVmTemplate,
                 VmTemplateManagementParameters.class,
                 new String[] { "VmTemplateId" },
@@ -343,7 +330,6 @@ public class BackendTemplateResourceTest
     @Test
     public void testUpdateUploadIcon() {
         setUpGetGraphicsExpectations(1);
-        setUpGetBallooningExpectations();
         setUpUpdateExpectations();
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateVmTemplate,
@@ -362,7 +348,6 @@ public class BackendTemplateResourceTest
     public void testUpdateUseExistingIcons() {
         setUpGetGraphicsExpectations(1);
         setUpUpdateExpectations();
-        setUpGetBallooningExpectations();
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,

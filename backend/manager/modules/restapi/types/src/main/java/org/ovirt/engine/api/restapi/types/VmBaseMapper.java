@@ -155,6 +155,9 @@ public class VmBaseMapper {
             }
             entity.setDedicatedVmForVdsList(new LinkedList<>(hostGuidsSet));
         }
+        if (model.isSetMemoryPolicy() && model.getMemoryPolicy().isSetBallooning()) {
+            entity.setBalloonEnabled(model.getMemoryPolicy().isBallooning());
+        }
     }
 
     /**
@@ -351,6 +354,7 @@ public class VmBaseMapper {
         MemoryPolicy policy = new MemoryPolicy();
         policy.setGuaranteed((long)entity.getMinAllocatedMem() * (long)BYTES_PER_MB);
         policy.setMax((long)entity.getMaxMemorySizeMb() * (long)BYTES_PER_MB);
+        policy.setBallooning(entity.isBalloonEnabled());
         model.setMemoryPolicy(policy);
 
         if (entity.getCustomCompatibilityVersion() != null) {

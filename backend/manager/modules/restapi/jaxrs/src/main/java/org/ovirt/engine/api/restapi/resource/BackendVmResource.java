@@ -645,7 +645,6 @@ public class BackendVmResource
         }
         BackendVmDeviceHelper.setPayload(this, model);
         BackendVmDeviceHelper.setCertificateInfo(this, model);
-        MemoryPolicyHelper.setupMemoryBalloon(model, this);
         return model;
     }
 
@@ -684,9 +683,6 @@ public class BackendVmResource
                 } else {
                     params.setClearPayload(true);
                 }
-            }
-            if (incoming.isSetMemoryPolicy() && incoming.getMemoryPolicy().isSetBallooning()) {
-               params.setBalloonEnabled(incoming.getMemoryPolicy().isBallooning());
             }
             if (incoming.isSetConsole() && incoming.getConsole().isSetEnabled()) {
                 params.setConsoleEnabled(incoming.getConsole().isEnabled());
