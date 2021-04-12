@@ -33,7 +33,6 @@ public class RunVmParams extends VmOperationParameterBase {
     private String floppyPath;
     private InitializationType initializationType;
     private Boolean runAsStateless;
-    private boolean balloonEnabled;
     private boolean runInUnknownStatus;
     private boolean attachWgt;
     private boolean initialize;
@@ -64,7 +63,6 @@ public class RunVmParams extends VmOperationParameterBase {
                 && Objects.equals(floppyPath, other.floppyPath)
                 && initializationType == other.initializationType
                 && Objects.equals(runAsStateless, other.runAsStateless)
-                && balloonEnabled == other.balloonEnabled
                 && attachWgt == other.attachWgt
                 && initialize == other.initialize;
     }
@@ -78,7 +76,6 @@ public class RunVmParams extends VmOperationParameterBase {
                 floppyPath,
                 initializationType,
                 runAsStateless,
-                balloonEnabled,
                 attachWgt,
                 initialize
         );
@@ -122,14 +119,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setRunAsStateless(Boolean value) {
         runAsStateless = value;
-    }
-
-    public boolean isBalloonEnabled() {
-        return this.balloonEnabled;
-    }
-
-    public void setBalloonEnabled(boolean isBalloonEnabled) {
-        this.balloonEnabled = isBalloonEnabled;
     }
 
     public RunVmFlow getCachedFlow() {

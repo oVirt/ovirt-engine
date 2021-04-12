@@ -31,7 +31,6 @@ public enum QueryType implements Serializable {
     GetSnapshotBySnapshotId(QueryAuthType.User),
     GetVmsByDiskGuid,
     GetVmPayload(QueryAuthType.User),
-    IsBalloonEnabled(QueryAuthType.User),
     GetSoundDevices(QueryAuthType.User),
     GetVmsByVnicProfileId,
     GetTemplatesByVnicProfileId,

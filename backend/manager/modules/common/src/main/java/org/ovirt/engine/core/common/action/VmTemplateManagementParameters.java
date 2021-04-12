@@ -19,7 +19,6 @@ public class VmTemplateManagementParameters extends VmTemplateParameters impleme
     private VmWatchdog watchdog;
     private boolean updateWatchdog;
     private Boolean virtioScsiEnabled;
-    private Boolean balloonEnabled;
 
     /**
      * This attribute contains information about graphics devices.
@@ -72,14 +71,6 @@ public class VmTemplateManagementParameters extends VmTemplateParameters impleme
 
     public void setVirtioScsiEnabled(Boolean virtioScsiEnabled) {
         this.virtioScsiEnabled = virtioScsiEnabled;
-    }
-
-    public Boolean isBalloonEnabled() {
-        return balloonEnabled;
-    }
-
-    public void setBalloonEnabled(Boolean balloonEnabled) {
-        this.balloonEnabled = balloonEnabled;
     }
 
     @Override

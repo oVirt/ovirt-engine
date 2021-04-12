@@ -25,7 +25,6 @@ public class AddVmPoolParameters extends VmPoolOperationParameters implements Ha
     private Boolean tpmEnabled;
     private Boolean consoleEnabled;
     private Boolean virtioScsiEnabled;
-    private Boolean balloonEnabled;
     private VmRngDevice rngDevice;
     private Map<GraphicsType, GraphicsDevice> graphicsDevices;
     private String vmLargeIcon;
@@ -98,14 +97,6 @@ public class AddVmPoolParameters extends VmPoolOperationParameters implements Ha
 
     public void setRngDevice(VmRngDevice rngDevice) {
         this.rngDevice = rngDevice;
-    }
-
-    public Boolean isBalloonEnabled() {
-        return balloonEnabled;
-    }
-
-    public void setBalloonEnabled(Boolean isBallonEnabled) {
-        this.balloonEnabled = isBallonEnabled;
     }
 
     public String getVmLargeIcon() {

@@ -91,9 +91,6 @@ public class VmManagementParametersBase extends VmOperationParameterBase
      */
     private boolean memoryHotUnplugEnabled;
 
-    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.BALLOON, type = VmDeviceType.MEMBALLOON)
-    private Boolean balloonEnabled;
-
     @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.WATCHDOG, type = VmDeviceType.WATCHDOG)
     private Optional<VmWatchdog> watchdog = new Optional<>();
 
@@ -180,7 +177,6 @@ public class VmManagementParametersBase extends VmOperationParameterBase
 
         setSoundDeviceEnabled(baseParams.isSoundDeviceEnabled());
         setConsoleEnabled(baseParams.isConsoleEnabled());
-        setBalloonEnabled(baseParams.isBalloonEnabled());
         setVirtioScsiEnabled(baseParams.isVirtioScsiEnabled());
         setUpdateNuma(baseParams.isUpdateNuma());
         setUpdateRngDevice(baseParams.isUpdateRngDevice());
@@ -256,14 +252,6 @@ public class VmManagementParametersBase extends VmOperationParameterBase
 
     public void setClearPayload(boolean clearPayload) {
         this.clearPayload = clearPayload;
-    }
-
-    public Boolean isBalloonEnabled() {
-        return balloonEnabled;
-    }
-
-    public void setBalloonEnabled(Boolean isBallonEnabled) {
-        this.balloonEnabled = isBallonEnabled;
     }
 
     public VmWatchdog getWatchdog() {
