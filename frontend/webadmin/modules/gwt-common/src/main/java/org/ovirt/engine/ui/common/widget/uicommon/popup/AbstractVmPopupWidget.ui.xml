@@ -605,10 +605,10 @@
                 </b:Row>
                 <b:Row>
                   <b:Column size="SM_5">
-                    <ge:EntityModelCheckBoxEditor ui:field="isMemoryBalloonDeviceEnabled" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.memoryBalloonDeviceEnabled}" />
+                    <ge:EntityModelCheckBoxEditor ui:field="isMemoryBalloonEnabled" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.memoryBalloonDeviceEnabled}" />
                   </b:Column>
                   <b:Column size="SM_1">
-                    <ge:EntityModelDetachableWidget ui:field="isMemoryBalloonDeviceEnabledDetachable" usePatternFly="true" />
+                    <ge:EntityModelDetachableWidget ui:field="isMemoryBalloonEnabledDetachable" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
                 <b:Row>

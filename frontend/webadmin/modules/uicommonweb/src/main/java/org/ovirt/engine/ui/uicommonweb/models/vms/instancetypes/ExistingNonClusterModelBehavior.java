@@ -60,10 +60,6 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
         updateConsoleDevice(entity.getId());
         initPriority(entity.getPriority());
 
-        Frontend.getInstance().runQuery(QueryType.IsBalloonEnabled, new IdQueryParameters(entity.getId()),
-                new AsyncQuery<QueryReturnValue>(returnValue -> getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue())
-        ));
-
         getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(returnValue -> getModel().getIsVirtioScsiEnabled().setEntity(returnValue)), entity.getId());
 
 
@@ -96,12 +92,7 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
 
     public void doBuild() {
         buildModel(entity, (source, destination) -> {
-            Frontend.getInstance().runQuery(QueryType.IsBalloonEnabled, new IdQueryParameters(entity.getId()), new AsyncQuery<>(
-                    (QueryReturnValue returnValue) -> getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue())
-            ));
-
             getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(returnValue -> getModel().getIsVirtioScsiEnabled().setEntity(returnValue)), entity.getId());
-
 
             getInstance().getWatchdogByVmId(new AsyncQuery<QueryReturnValue>(returnValue -> {
                 @SuppressWarnings("unchecked")

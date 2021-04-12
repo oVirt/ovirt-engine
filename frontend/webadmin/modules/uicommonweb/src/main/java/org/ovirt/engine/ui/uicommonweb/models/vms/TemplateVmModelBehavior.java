@@ -12,13 +12,10 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
-import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommentVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
@@ -75,11 +72,6 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                                     initTemplate();
                                                     initCdImage();
                                                 }), template.getId());
-
-                                        Frontend.getInstance().runQuery(QueryType.IsBalloonEnabled, new IdQueryParameters(template.getId()), new AsyncQuery<>(
-                                                (QueryReturnValue returnValue) ->
-                                                        getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue())
-                                        ));
 
                                         AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery<>(
                                                 returnValue -> getModel().getIsVirtioScsiEnabled().setEntity(returnValue)), template.getId());

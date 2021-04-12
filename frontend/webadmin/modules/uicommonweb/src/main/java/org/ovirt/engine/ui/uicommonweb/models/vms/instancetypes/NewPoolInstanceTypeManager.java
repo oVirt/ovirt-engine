@@ -20,13 +20,4 @@ public class NewPoolInstanceTypeManager extends InstanceTypeManager {
                     : getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
         }
     }
-
-    @Override
-    protected void updateBalloon(VmBase vmBase, boolean continueWithNext) {
-        if (!isSourceCustomInstanceType()) {
-            super.updateBalloon(vmBase, continueWithNext);
-        } else if (continueWithNext) {
-            updateRngDevice(vmBase);
-        }
-    }
 }

@@ -44,7 +44,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.BalloonEnabled;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportOvaModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.HasDiskWindow;
@@ -512,7 +511,6 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         AddVmParameters parameters = new AddVmParameters(vm);
         parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-        parameters.setBalloonEnabled(balloonEnabled(model));
         parameters.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         parameters.setTpmEnabled(model.getTpmEnabled().getEntity());
@@ -614,10 +612,6 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         BuilderExecutor.build(model, vm.getStaticData(),
                 new FullUnitToVmBaseBuilder());
         BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
-    }
-
-    protected boolean balloonEnabled(UnitVmModel model) {
-        return BalloonEnabled.balloonEnabled(model);
     }
 
     protected void setVmWatchdogToParams(final UnitVmModel model, VmManagementParametersBase updateVmParams) {

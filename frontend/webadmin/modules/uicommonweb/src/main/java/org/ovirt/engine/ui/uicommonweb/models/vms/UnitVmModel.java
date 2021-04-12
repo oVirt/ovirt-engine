@@ -935,14 +935,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.isSealed = isSealed;
     }
 
-    private EntityModel<Boolean> memoryBalloonDeviceEnabled;
+    private EntityModel<Boolean> memoryBalloonEnabled;
 
-    public EntityModel<Boolean> getMemoryBalloonDeviceEnabled() {
-        return memoryBalloonDeviceEnabled;
+    public EntityModel<Boolean> getMemoryBalloonEnabled() {
+        return memoryBalloonEnabled;
     }
 
-    public void setMemoryBalloonDeviceEnabled(EntityModel<Boolean> memoryBalloonDeviceEnabled) {
-        this.memoryBalloonDeviceEnabled = memoryBalloonDeviceEnabled;
+    public void setMemoryBalloonEnabled(EntityModel<Boolean> memoryBalloonEnabled) {
+        this.memoryBalloonEnabled = memoryBalloonEnabled;
     }
 
     private EntityModel<Boolean> multiQueues;
@@ -1706,9 +1706,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setCdImage(new NotChangableForVmInPoolSortedListModel<>(new LexoNumericNameableComparator<>()));
         getCdImage().setIsChangeable(false);
 
-        setMemoryBalloonDeviceEnabled(new EntityModel<Boolean>());
-        getMemoryBalloonDeviceEnabled().setEntity(true);
-        getMemoryBalloonDeviceEnabled().setIsAvailable(false);
+        setMemoryBalloonEnabled(new EntityModel<Boolean>());
+        getMemoryBalloonEnabled().setEntity(true);
+        getMemoryBalloonEnabled().setIsAvailable(false);
 
         setMultiQueues(new EntityModel<Boolean>(true));
         setVirtioScsiMultiQueuesEnabled(new EntityModel<Boolean>(false));

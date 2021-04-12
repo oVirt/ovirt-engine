@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.builders.template;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.ui.uicommonweb.builders.BaseSyncBuilder;
-import org.ovirt.engine.ui.uicommonweb.models.vms.BalloonEnabled;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 public class UnitToAddVmTemplateParametersBuilder<T extends AddVmTemplateParameters> extends BaseSyncBuilder<UnitVmModel, T> {
@@ -15,7 +14,6 @@ public class UnitToAddVmTemplateParametersBuilder<T extends AddVmTemplateParamet
                 source.getDisksAllocationModel().getImageToDestinationDomainMap());
         destination.setSoundDeviceEnabled(source.getIsSoundcardEnabled().getEntity());
         destination.setTpmEnabled(source.getTpmEnabled().getEntity());
-        destination.setBalloonEnabled(BalloonEnabled.balloonEnabled(source));
         destination.setCopyVmPermissions(source.getCopyPermissions().getEntity());
         destination.setSealTemplate(source.getSealTemplate().getEntity());
         destination.setConsoleEnabled(source.getIsConsoleDeviceEnabled().getEntity());

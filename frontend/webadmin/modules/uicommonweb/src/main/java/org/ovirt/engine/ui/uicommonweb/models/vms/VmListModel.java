@@ -1906,7 +1906,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         params.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         params.setTpmEnabled(model.getTpmEnabled().getEntity());
         params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-        params.setBalloonEnabled(balloonEnabled(model));
         params.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         params.setUpdateNuma(model.isNumaChanged());
         params.setAffinityGroups(model.getAffinityGroupList().getSelectedItems());

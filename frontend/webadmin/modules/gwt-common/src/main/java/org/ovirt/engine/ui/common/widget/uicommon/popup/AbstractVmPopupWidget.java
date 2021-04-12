@@ -891,11 +891,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public EntityModelDetachableWidget isIoThreadsEnabledDetachable;
 
     @UiField(provided = true)
-    @Path(value = "memoryBalloonDeviceEnabled.entity")
-    EntityModelCheckBoxEditor isMemoryBalloonDeviceEnabled;
+    @Path(value = "memoryBalloonEnabled.entity")
+    EntityModelCheckBoxEditor isMemoryBalloonEnabled;
 
     @UiField(provided = true)
-    public EntityModelDetachableWidget isMemoryBalloonDeviceEnabledDetachable;
+    public EntityModelDetachableWidget isMemoryBalloonEnabledDetachable;
 
     @UiField(provided = true)
     @Path(value = "tpmEnabled.entity")
@@ -1106,7 +1106,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         ssoMethodNone = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
         ssoMethodGuestAgent = new EntityModelRadioButtonEditor("ssoMethod", new ModeSwitchingVisibilityRenderer());//$NON-NLS-1$
         copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        isMemoryBalloonDeviceEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        isMemoryBalloonEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isIoThreadsEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         numOfIoThreadsEditor = StringEntityModelTextBoxOnlyEditor.newTrimmingEditor(new ModeSwitchingVisibilityRenderer());
         ioThreadsInfo = new InfoIcon(multiLineItalicSafeHtml(constants.ioThreadsExplanation()));
@@ -1217,7 +1217,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isHighlyAvailableEditorWithDetachable = new EntityModelDetachableWidget(isHighlyAvailableEditor, Align.IGNORE);
 
         detachablePriorityEditor = new EntityModelDetachableWidgetWithLabel(priorityEditor);
-        isMemoryBalloonDeviceEnabledDetachable = new EntityModelDetachableWidget(isMemoryBalloonDeviceEnabled);
+        isMemoryBalloonEnabledDetachable = new EntityModelDetachableWidget(isMemoryBalloonEnabled);
         isIoThreadsEnabledDetachable = new EntityModelDetachableWidget(isIoThreadsEnabled);
 
         final EnableableFormLabel physMemGuarLabel = new EnableableFormLabel(constants.physMemGuarVmPopup());
@@ -2256,7 +2256,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 corePerSocketEditorWithDetachable,
                 threadsPerCoreEditorWithInfoIcon,
                 isHighlyAvailableEditorWithDetachable,
-                isMemoryBalloonDeviceEnabledDetachable,
+                isMemoryBalloonEnabledDetachable,
                 isIoThreadsEnabledDetachable,
                 detachablePriorityEditor,
                 migrationModeEditorWithDetachable,

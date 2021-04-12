@@ -154,7 +154,7 @@ public class InstanceTypeAttachDetachManager implements IEventListener<EventArgs
                 model.getMigrationPolicies(),
                 model.getPriority(),
                 model.getMinAllocatedMemory(),
-                model.getMemoryBalloonDeviceEnabled(),
+                model.getMemoryBalloonEnabled(),
                 model.getNumOfIoThreads(),
                 model.getIoThreadsEnabled());
 

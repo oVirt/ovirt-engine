@@ -156,7 +156,6 @@ public abstract class InstanceTypeManager {
         VmBase vmBase = getSource();
 
         updateWatchdog(vmBase, false);
-        updateBalloon(vmBase, false);
         maybeSetEntity(model.getIsUsbEnabled(), vmBase.getUsbPolicy() != UsbPolicy.DISABLED);
 
         activate();
@@ -272,6 +271,7 @@ public abstract class InstanceTypeManager {
 
         model.setSelectedMigrationDowntime(vmBase.getMigrationDowntime());
         model.selectMigrationPolicy(vmBase.getMigrationPolicyId());
+        maybeSetEntity(model.getMemoryBalloonEnabled(), vmBase.isBalloonEnabled());
         priorityUtil.initPriority(vmBase.getPriority(), new PriorityUtil.PriorityUpdatingCallbacks() {
             @Override
             public void beforeUpdates() {
@@ -382,26 +382,8 @@ public abstract class InstanceTypeManager {
         activate();
 
         if (continueWithNext) {
-            updateBalloon(vmBase, true);
-        }
-    }
-
-    protected void updateBalloon(final VmBase vmBase, final boolean continueWithNext) {
-        if (model.getMemoryBalloonDeviceEnabled().getIsChangable() && model.getMemoryBalloonDeviceEnabled().getIsAvailable()) {
-            Frontend.getInstance().runQuery(QueryType.IsBalloonEnabled, new IdQueryParameters(vmBase.getId()),
-                    new AsyncQuery<QueryReturnValue>(returnValue -> {
-                        deactivate();
-                        getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue());
-                        activate();
-                        if (continueWithNext) {
-                            updateRngDevice(vmBase);
-                        }
-                    }
-            ));
-        } else if (continueWithNext) {
             updateRngDevice(vmBase);
         }
-
     }
 
     protected void updateRngDevice(final VmBase vmBase) {

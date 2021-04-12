@@ -851,7 +851,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Integer osType = getModel().getOSType().getSelectedItem();
 
         if (cluster != null && osType != null) {
-            getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(true);
+            getModel().getMemoryBalloonEnabled().setIsAvailable(true);
         }
     }
 
@@ -1453,7 +1453,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             }
 
             // Resource allocation tab
-            getModel().getMemoryBalloonDeviceEnabled().setEntity(false);
+            getModel().getMemoryBalloonEnabled().setEntity(false);
             getModel().getIoThreadsEnabled().setEntity(true);
             if (getModel().getMultiQueues().getIsAvailable()) {
                 getModel().getMultiQueues().setEntity(true);

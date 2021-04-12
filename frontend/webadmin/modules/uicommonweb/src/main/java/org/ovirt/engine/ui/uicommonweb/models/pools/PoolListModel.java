@@ -443,7 +443,6 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
         param.setTpmEnabled(model.getTpmEnabled().getEntity());
         param.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
 
-        param.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
         if(model.getIsHeadlessModeEnabled().getEntity()) {
             param.getVmStaticData().setDefaultDisplayType(DisplayType.none);
        }
