@@ -28,6 +28,7 @@ import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -701,8 +702,9 @@ public class VmDeviceUtils {
     public boolean isTpmDeviceSupported(VmBase vm, Cluster vmCluster) {
         final Version version = CompatibilityVersionUtils.getEffective(vm, vmCluster);
 
-        return (vmCluster == null || FeatureSupported.isTpmDeviceSupported(version, vmCluster.getArchitecture()))
-                && vm.getEffectiveBiosType().isOvmf();
+        return vmCluster == null || FeatureSupported.isTpmDeviceSupported(version, vmCluster.getArchitecture())
+                && (vmCluster.getArchitecture().getFamily() != ArchitectureType.x86
+                        || vm.getEffectiveBiosType().isOvmf());
     }
 
     /**
