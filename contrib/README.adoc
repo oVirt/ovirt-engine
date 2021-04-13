@@ -79,6 +79,6 @@ For example to create an entry in the log with the message
     log-event.sh my event message
 ```
 
-= TODO
+== TODO
 - should we create an rpm for contrib - ovirt-engine-contrib?
  or just install with the rpm under /.../lib/ovirt-engine/contrib
