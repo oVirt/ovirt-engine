@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UpdateDiskParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -60,12 +59,6 @@ public class EditDiskModel extends AbstractDiskModel {
                 getSize().setEntity(lunDisk.getLun().getDeviceSize());
                 getSizeExtend().setIsAvailable(false);
                 getHost().setIsAvailable(false);
-                break;
-            case CINDER:
-                CinderDisk cinderDisk = (CinderDisk) getDisk();
-                getDiskStorageType().setEntity(DiskStorageType.CINDER);
-                getSize().setEntity((int) cinderDisk.getSizeInGigabytes());
-                getSizeExtend().setIsChangeable(true);
                 break;
             case MANAGED_BLOCK_STORAGE:
                 ManagedBlockStorageDisk managedBlockDisk = (ManagedBlockStorageDisk) getDisk();
@@ -130,11 +123,6 @@ public class EditDiskModel extends AbstractDiskModel {
     }
 
     @Override
-    protected CinderDisk getCinderDisk() {
-        return (CinderDisk) getDisk();
-    }
-
-    @Override
     protected ManagedBlockStorageDisk getManagedBlockDisk() {
         return (ManagedBlockStorageDisk) getDisk();
     }
@@ -181,7 +169,6 @@ public class EditDiskModel extends AbstractDiskModel {
         getDataCenter().setIsChangeable(false);
         getVolumeType().setIsChangeable(false);
         getSize().setIsChangeable(false);
-        getCinderVolumeType().setIsChangeable(false);
 
         if (!isEditEnabled()) {
             getIsShareable().setIsChangeable(false);
@@ -202,8 +189,4 @@ public class EditDiskModel extends AbstractDiskModel {
         // do nothing
     }
 
-    @Override
-    protected void updateCinderVolumeTypes() {
-        getCinderVolumeType().setSelectedItem(getDisk().getCinderVolumeType());
-    }
 }

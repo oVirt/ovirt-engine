@@ -793,7 +793,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             diskModel.getStorageDomain().setIsChangeable(false);
             diskModel.getDiskProfile().setIsChangeable(false);
             diskModel.getDiskProfile().setChangeProhibitionReason(
-                    ConstantsManager.getInstance().getConstants().notSupportedForCinderOrManagedBlockDisks());
+                    ConstantsManager.getInstance().getConstants().notSupportedForManagedBlockDisks());
         }
     }
 

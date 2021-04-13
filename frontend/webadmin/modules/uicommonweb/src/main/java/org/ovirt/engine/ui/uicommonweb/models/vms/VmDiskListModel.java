@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -478,13 +477,8 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     private boolean isDiskLocked(Disk disk) {
-        switch (disk.getDiskStorageType()) {
-            case IMAGE:
-                return ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
-            case CINDER:
-                return ((CinderDisk) disk).getImageStatus() == ImageStatus.LOCKED;
-        }
-        return false;
+        return disk.getDiskStorageType() == DiskStorageType.IMAGE &&
+                ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
     }
 
     private boolean isSingleDiskSelected() {
