@@ -57,7 +57,7 @@ the existing disks that the user is importing.
 
 For example, to force one of the disks to be preallocated:
 
-[source]
+[source, xml]
 ----
 POST /storagedomains/{storagedomain:id}/vms/{vm:id}/import;collapse_snapshots=true
 <action>
@@ -89,7 +89,7 @@ and this data is not always needed by the user.
 The default is `true` for backward compatibility.
 The parameter `report_status` is available both on getting the list of a host storages or a specific host storage:
 
-[source]
+[source, xml]
 ----
 GET /hosts/{host:id}/storage
 GET /hosts/{host:id}/storage/{storage:id}
@@ -98,7 +98,7 @@ GET /hosts/{host:id}/storage/{storage:id}
 For example, to skip the LUN status check, set `report_status` to false:
 (The `status` field of the LUN will not be present in the response)
 
-[source]
+[source, xml]
 ----
 GET /hosts/{host:id}/storage/{storage:id};report_status=false
 
@@ -124,7 +124,7 @@ GET /hosts/{host:id}/storage/{storage:id};report_status=false
 For example, to get the LUN status, set `report_status` to true:
 (The `status` field of the LUN will be present in the response)
 
-[source]
+[source, xml]
 ----
 GET /hosts/{host:id}/storage/{storage:id};report_status=true
 
@@ -218,7 +218,7 @@ type, which contains a `state` string describing the status and another
 virtual machine that is paused due to an IO error is currently reported
 as follows:
 
-[source]
+[source, xml]
 ----
 <vm>
   ...
@@ -235,7 +235,7 @@ by enum types. When the additional `detail` string is needed it has been
 replaced with an additional `status_detail` attribute. So, for example,
 the status of the same virtual machine will now be reported as follows:
 
-[source]
+[source, xml]
 ----
 <vm>
   ...
@@ -252,7 +252,7 @@ the `vnic_profile` element, so when creating or updating a NIC instead
 of specifying the network and port mirroring configuration, these are
 previusly specified creating a VNIC profile:
 
-[source]
+[source, xml]
 ----
 POST /vnicprofiles
 <vnic_profile>
@@ -264,7 +264,7 @@ POST /vnicprofiles
 
 And then the NIC is created or referencing the existing VNIC profile:
 
-[source]
+[source, xml]
 ----
 PUT /vms/{vm:id}/nics/{nic:id}
 <nic>
@@ -299,7 +299,7 @@ ago. It has been completely removed now.
 Before version 3.6 the API had the possibility to pin a VM to a single
 host, using the `placement_policy` element of the VM entity:
 
-[source]
+[source, xml]
 ----
 PUT /vms/{vm:id}
 <vm>
@@ -312,7 +312,7 @@ PUT /vms/{vm:id}
 In version 3.6 this capability was enhanced to support multiple
 hosts, and to do so a new `hosts` element was added:
 
-[source]
+[source, xml]
 ----
 PUT /vms/{vm:id}
 <vm>
@@ -341,7 +341,7 @@ In 4.0 it the `capabilities` service has been completely removed, and
 replaced by the new `clusterlevels` service. To find the permits
 supported by cluster level 4.0 a request like this should be used:
 
-[source]
+[source, xml]
 ----
 GET /clusterlevels/4.0
 ----
@@ -349,7 +349,7 @@ GET /clusterlevels/4.0
 The result will be a document containing the information specific to
 that cluster level, in particular the set of supported permits:
 
-[source,xml]
+[source, xml]
 ----
 <cluster_level id="4.0" href="/clusterlevels/4.0">
   ...
@@ -383,7 +383,7 @@ This old element has now been completely removed.
 The VM resource used to contain a `timezone` element to represent the
 time zone. This element only allowed a string:
 
-[source]
+[source, xml]
 ----
 <vm>
    <timezone>Europe/Madrid</timezone>
@@ -393,7 +393,7 @@ time zone. This element only allowed a string:
 This doesn't allow extension, and as a it was necessary to add the UTC
 offset, it was replaced with a new structured `time_zone` element:
 
-[source]
+[source, xml]
 ----
 <vm>
   <time_zone>
@@ -413,7 +413,7 @@ guest agent, like the IP addresses and the fully qualified host name.
 This information is also available in other places. For example, the IP
 addresses are available within VM resource:
 
-[source]
+[source, xml]
 ----
 GET /vms/{vm:id}
 <vm>
@@ -429,7 +429,7 @@ GET /vms/{vm:id}
 And also within the NIC resource, using the newer `reported_devices`
 element:
 
-[source]
+[source, xml]
 ----
 GET /vms/{vm:id}/nics/{nic:id}
 <nic>
@@ -455,7 +455,7 @@ To remove this duplication the `guest_info` element has been removed.
 To support the fully qualified domain name a new `fqdn` element has been
 added to the VM resource:
 
-[source]
+[source, xml]
 ----
 GET /vms/{vm:id}
 <vm>
@@ -471,7 +471,7 @@ contain.
 The `cpu` element used to have an `id` attribute that indicates the type
 of CPU:
 
-[source]
+[source, xml]
 ----
 <cpu id="Intel Conroe Family">
   <architecture>X86_64</architecture>
@@ -483,7 +483,7 @@ This is in contradiction with the rest of the elements of the API
 model, where the `id` attribute is used for opaque identifiers. This
 `id` attribute has been replaced with a new `type` element:
 
-[source]
+[source, xml]
 ----
 <cpu>
   <type>Intel Conroe Family</type>
@@ -495,7 +495,7 @@ model, where the `id` attribute is used for opaque identifiers. This
 
 In the past the CPU topology element used attributes for its properties:
 
-[source]
+[source, xml]
 ----
 <cpu>
   <topology sockets="1" cores="1" threads="1"/>
@@ -506,7 +506,7 @@ In the past the CPU topology element used attributes for its properties:
 This is contrary to the common practice in the API. They have been
 replaced by inner elements:
 
-[source]
+[source, xml]
 ----
 <cpu>
   <topology>
@@ -522,7 +522,7 @@ replaced by inner elements:
 
 In the past the VCPU pin element used attributes for its properties:
 
-[source]
+[source, xml]
 ----
 <cpu_tune>
   <vcpu_pin vcpu="0" cpu_set="0"/>
@@ -532,7 +532,7 @@ In the past the VCPU pin element used attributes for its properties:
 This is contrary to the common practice in the API. They have been
 replaced by inner elements:
 
-[source]
+[source, xml]
 ----
 <cpu_tune>
   <vcpu_pin>
@@ -546,7 +546,7 @@ replaced by inner elements:
 
 In the past the `version` element used attributes for its properties:
 
-[source]
+[source, xml]
 ----
 <version major="3" minor="5" ../>
 ----
@@ -554,7 +554,7 @@ In the past the `version` element used attributes for its properties:
 This is contrary to the common practice in the API. They have been
 replaced by inner elements:
 
-[source]
+[source, xml]
 ----
 <version>
   <major>3</minor>
@@ -567,7 +567,7 @@ replaced by inner elements:
 
 In the past the `overcommit` element used attributes for its properties:
 
-[source]
+[source, xml]
 ----
 <memory_policy>
   <overcommit percent="100"/>
@@ -578,7 +578,7 @@ In the past the `overcommit` element used attributes for its properties:
 This is contrary to the common practice in the API. They have been
 replaced by inner elements:
 
-[source]
+[source, xml]
 ----
 <memory_policy>
   <overcommit>
@@ -592,7 +592,7 @@ replaced by inner elements:
 
 In the past the `console` element used attributes for its properties:
 
-[source]
+[source, xml]
 ----
 <console enabled="true"/>
 ----
@@ -600,7 +600,7 @@ In the past the `console` element used attributes for its properties:
 This is contrary to the common practice in the API. They have been
 replaced by inner elements:
 
-[source]
+[source, xml]
 ----
 <console>
   <enabled>true</enabled>
@@ -611,7 +611,7 @@ replaced by inner elements:
 
 In the past the VIRTIO ISCSI element used attributes for its properties:
 
-[source]
+[source, xml]
 ----
 <virtio_scsi enabled="true"/>
 ----
@@ -619,7 +619,7 @@ In the past the VIRTIO ISCSI element used attributes for its properties:
 This is contrary to the common practice in the API. They have been
 replaced by inner elements:
 
-[source]
+[source, xml]
 ----
 <virtio_scsi>
   <enabled>true</enabled>
@@ -630,7 +630,7 @@ replaced by inner elements:
 
 The power management `type` property was represented as an attribute:
 
-[source]
+[source, xml]
 ----
 <agent type="apc">
   <username>myuser</username>
@@ -641,7 +641,7 @@ The power management `type` property was represented as an attribute:
 This is contrary to the common practice in the API. It has been
 replaced with an inner element:
 
-[source]
+[source, xml]
 ----
 <agent>
   <type>apc</type>
@@ -655,7 +655,7 @@ replaced with an inner element:
 In the past the power management agent options element used attributes
 for its properties:
 
-[source]
+[source, xml]
 ----
 <options>
   <option name="port" value="22"/>
@@ -667,7 +667,7 @@ for its properties:
 This is contrary to the common practice in the API. They have been
 replaced with inner elements:
 
-[source]
+[source, xml]
 ----
 <options>
   <option>
@@ -686,7 +686,7 @@ replaced with inner elements:
 
 In the past the IP address element used attributes for its properties:
 
-[source]
+[source, xml]
 ----
 <ip address="192.168.122.1" netmask="255.255.255.0"/>
 ----
@@ -694,7 +694,7 @@ In the past the IP address element used attributes for its properties:
 This is contrary to the common practice in the API. They have been
 replaced with inner elements:
 
-[source]
+[source, xml]
 ----
 <ip>
   <address>192.168.122.1</address>
@@ -706,7 +706,7 @@ replaced with inner elements:
 
 In the past the MAC address element used attributes for its properties:
 
-[source]
+[source, xml]
 ----
 <mac address="66:f2:c5:5f:bb:8d"/>
 ----
@@ -714,7 +714,7 @@ In the past the MAC address element used attributes for its properties:
 This is contrary to the common practice in the API. They have been
 replaced by inner elements:
 
-[source]
+[source, xml]
 ----
 <mac>
   <address>66:f2:c5:5f:bb:8d</address>
@@ -725,7 +725,7 @@ replaced by inner elements:
 
 In the past the boot device element used attributes for its properties:
 
-[source]
+[source, xml]
 ----
 <boot dev="cdrom"/>
 ----
@@ -733,7 +733,7 @@ In the past the boot device element used attributes for its properties:
 This is contrary to the common practice in the API. They have been
 replaced by inner elements:
 
-[source]
+[source, xml]
 ----
 <boot>
   <dev>cdrom</dev>
@@ -744,7 +744,7 @@ replaced by inner elements:
 
 The operating system `type` property was represented as an attribute:
 
-[source]
+[source, xml]
 ----
 <os type="other">
   ...
@@ -754,7 +754,7 @@ The operating system `type` property was represented as an attribute:
 This is contrary to the common practice in the API. It has been
 replaced with an inner element:
 
-[source]
+[source, xml]
 ----
 <os>
   <type>other</type>
@@ -769,7 +769,7 @@ parameter to indicate that the data of the host should be refreshed
 (calling VDSM to reload host capabilities and devices) before retrieving
 it from the database:
 
-[source]
+[source, xml]
 ----
 GET /hosts/{host:id};force
 ----
@@ -779,7 +779,7 @@ but kept for backwards compatibility. It has been completely removed
 now. Applications that require this functionality should perform two
 requests, first one to refresh the host:
 
-[source]
+[source, xml]
 ----
 POST /hosts/{host:id}/refresh
 <action/>
@@ -787,7 +787,7 @@ POST /hosts/{host:id}/refresh
 
 And then one to retrieve it, without the `force` parameter:
 
-[source]
+[source, xml]
 ----
 ET /hosts/{host:id}
 ----
@@ -797,7 +797,7 @@ ET /hosts/{host:id}
 The host power management configuration used to be part of the host
 resource, using embedded configuration elements:
 
-[source]
+[source, xml]
 ----
 <power_management type="apc">
   <enabled>true</enabled>
@@ -812,8 +812,7 @@ resource, using embedded configuration elements:
 ----
 
 This has been changed some time ago, in order to support multiple power
-management agents, introducing a new
-`/hosts/{host:id}fenceagents`collection.
+management agents, introducing a new `/hosts/{host:id}fenceagents` collection.
 
 The old `type` attribute, the old `address`, `username` and `password`
 elements, and the inner `agents` element directly inside
@@ -830,7 +829,7 @@ element. For example, to specify that the virtual machine should first
 try to boot from CDROM and then from hard disk the following request was
 used:
 
-[source]
+[source, xml]
 ----
 POST /vms/{vm:id}/start
 <action>
@@ -853,7 +852,7 @@ values here is the boot device, not the boot sequence. To fix this
 inconsistence this has been replaced with a single `boot` element that
 can contain multiple devices:
 
-[source]
+[source, xml]
 ----
 POST /vms/{vm:id}/start
 <action>
@@ -877,7 +876,7 @@ parameters of the operations to add and remove virtual machines.
 The `disks.clone` element was used to indicate that the disks of a new
 virtual machine have to be cloned:
 
-[source]
+[source, xml]
 ----
 POST /vms
 <vm>
@@ -891,7 +890,7 @@ POST /vms
 This has been now removed, and replaced by a new `clone` matrix
 parameter:
 
-[source]
+[source, xml]
 ----
 POST /vms;clone=true
 <vm>
@@ -903,7 +902,7 @@ The `disks.detach_only` element was used to indicate that when removing
 a virtual machine the disks don't have to be removed, but just detached
 from the virtual machine:
 
-[source]
+[source, xml]
 ----
 DELETE /vms/{vm:id}
 <action>
@@ -918,7 +917,7 @@ DELETE /vms/{vm:id}
 This has been now removed, and replaced by a new `detach_only` matrix
 parameter:
 
-[source]
+[source, xml]
 ----
 DELETE /vms/{vm:id};detach_only=true
 ----
@@ -936,7 +935,7 @@ The logical units that are part of a volume group used to be reported as
 an unbounded number of `logical_unit` elements. For example, when
 reporting the details of a storage domain:
 
-[source]
+[source, xml]
 ----
 GET /storagedomains/{storagedomain:id}
 <storage_domain>
@@ -960,7 +959,7 @@ This is contrary to the usual practice in the API, as list of elements
 are always wrapped with an element. This has been fixed now, so the list
 of logical units will be wrapped with the `logical_units` element:
 
-[source]
+[source, xml]
 ----
 GET /storagedomains/{storagedomain:id}
 <storage_domain>
@@ -988,7 +987,7 @@ This element isn't really part of the representation of snapshots, but
 a parameter of the operation that imports a virtual machine from an
 export storage domain:
 
-[source]
+[source, xml]
 ----
 POST /storagedomains/{sd:id}/vms/{vm:id}/import
 <action>
@@ -1003,7 +1002,7 @@ POST /storagedomains/{sd:id}/vms/{vm:id}/import
 This has been now removed, and replaced by a new `collapse_snapshots`
 matrix parameter:
 
-[source]
+[source, xml]
 ----
 POST /storagedomains/{sd:id}/vms/{vm:id}/import;collapse_snapshots
 <action/>
@@ -1015,7 +1014,7 @@ The host storage collection used the `storage` and `host_storage`
 elements and the `Storage` and `HostStorage` complex types to report the
 storage associated to a host:
 
-[source]
+[source, xml]
 ----
 GET /hosts/{host:id}/storage
 <host_storage>
@@ -1034,7 +1033,7 @@ outer element is a plural name and the inner element is the same name
 but in singular. This has now been changed to use `host_storages` as the
 outer element and `host_storage` as the inner element:
 
-[source]
+[source, xml]
 ----
 GET /hosts/{host:id}/storage
 <host_storages>
@@ -1053,7 +1052,7 @@ GET /hosts/{host:id}/storage
 This element isn't really part of the representation of permissions, but
 a parameter of the operations to create virtual machines or templates:
 
-[source]
+[source, xml]
 ----
 POST /vms
 <vm>
@@ -1065,7 +1064,7 @@ POST /vms
 </action>
 ----
 
-[source]
+[source, xml]
 ----
 POST /templates
 <template>
@@ -1080,7 +1079,7 @@ POST /templates
 This has been now removed, and replaced by a new `clone_permissions`
 matrix parameter:
 
-[source]
+[source, xml]
 ----
 POST /vms;clone_permissions
 <vm>
@@ -1088,7 +1087,7 @@ POST /vms;clone_permissions
 </vm>
 ----
 
-[source]
+[source, xml]
 ----
 POST /templates;clone_permissions
 <template>
@@ -1103,7 +1102,7 @@ collection of `source` elements wrapped by an element with a name
 reflecting its use. For example, the required random number generator
 sources of a cluster used to be reported as follows:
 
-[source]
+[source, xml]
 ----
 GET /clusters/{cluster:id}
 <cluster>
@@ -1118,7 +1117,7 @@ GET /clusters/{cluster:id}
 And the random number generator sources suported by a host used to be
 reported as follows:
 
-[source]
+[source, xml]
 ----
 GET /hosts/{host:id}
 <host>
@@ -1137,7 +1136,7 @@ wrapped by a name in plural and elements by the same name in singular.
 This has been now fixed. The required random number generator sources
 will now be reported as follows:
 
-[source]
+[source, xml]
 ----
 GET /clusters/{cluster:id}
 <cluster>
@@ -1152,7 +1151,7 @@ GET /clusters/{cluster:id}
 And the random number generator sources supported by a host will be
 reported as follows:
 
-[source]
+[source, xml]
 ----
 GET /hosts/{host:id}
 <host>
@@ -1175,7 +1174,7 @@ The relationship bettween a tag and it's parent tag used to be
 represented using an intermedite `parent` tag, that in turn contains
 another `tag` element:
 
-[source]
+[source, xml]
 ----
 <tag>
   <name>mytag</name>
@@ -1188,7 +1187,7 @@ another `tag` element:
 This structure has been simplified so that only one `parent` element is
 used now:
 
-[source]
+[source, xml]
 ----
 <tag>
   <name>mytag</name>
@@ -1202,7 +1201,7 @@ In the past the specification of scheduling policies for clusters was
 based in built-in names and thresholds. For example a cluster that used
 the *evenly distributed* scheduling policy was represented as follows:
 
-[source]
+[source, xml]
 ----
 <cluster>
   <name>mycluster</name>
@@ -1219,7 +1218,7 @@ collection where scheduling policies can be defined with arbitrary names
 and properties. For example, the same scheduling policy is represented
 as follows in that top level collection:
 
-[source]
+[source, xml]
 ----
 <scheduling_policy>
   <name>evenly_distributed</name>
@@ -1239,7 +1238,7 @@ as follows in that top level collection:
 The representation of the cluster references the scheduling policy with
 its identifier:
 
-[source]
+[source, xml]
 ----
 <cluster>
   <name>mycluster</name>
@@ -1256,7 +1255,7 @@ when retrieving, creating or updating a cluster is to reference an
 existing one using its identifier. For example, when retrieving a
 cluster only the `id` (and `href`) will be populated:
 
-[source]
+[source, xml]
 ----
 GET /clusters/{cluster:id}
 <cluster>
@@ -1275,12 +1274,12 @@ bricks, but parameters of the operations to add and remove bricks. They have
 now been removed, and replaced by a new `replica_count` and `stripe_count`
 matrix parameters:
 
-[source]
+[source, xml]
 ----
 POST .../bricks;replica_count=3;stripe_count=2
 ----
 
-[source]
+[source, xml]
 ----
 DELETE .../bricks;replica_count=3
 ----
@@ -1291,7 +1290,7 @@ The statistics used to be represented using a `type` element that
 indicates the kind of statistic (gauge, counter, etc) and also a `type`
 attribute that indicates the type of the values (integer, string, etc):
 
-[source]
+[source, xml]
 ----
 <statistic>
   <type>GAUGE</type>
@@ -1306,7 +1305,7 @@ attribute that indicates the type of the values (integer, string, etc):
 To avoid the use of the `type` concept for both things the first has
 been replaced by `kind`, and both `kind` and `type` are now elements:
 
-[source]
+[source, xml]
 ----
 <statistic>
   <kind>GAUGE</kind>
@@ -1324,7 +1323,7 @@ been replaced by `kind`, and both `kind` and `type` are now elements:
 In the past the way to specify the virtual to physical CPU pinning of a
 virtual machie was to use multiple `vcpu_pin` elements:
 
-[source]
+[source, xml]
 ----
 <vm>
   <cpu>
@@ -1341,7 +1340,7 @@ In order to conform to the common practice in other parts of the API
 this has been changed to use a wrapper element, in this case
 `vcpu_pins`:
 
-[source]
+[source, xml]
 ----
 <vm>
   <cpu>
@@ -1362,7 +1361,7 @@ The operation that removes a data center supports a `force` parameter.
 In order to use it the `DELETE` operation used to support an optional
 action parameter:
 
-[source]
+[source, xml]
 ----
 DELETE /datacenters/{datacenter:id}
 <action>
@@ -1372,7 +1371,7 @@ DELETE /datacenters/{datacenter:id}
 
 This optional action parameter has been replaced with an optional parameter:
 
-[source]
+[source, xml]
 ----
 DELETE /datacenters/{datacenter:id}?force=true
 ----
@@ -1383,7 +1382,7 @@ The operation that removes a host supports a `force` parameter. In
 order to use it the `DELETE` operation used to support an optional
 action parameter:
 
-[source]
+[source, xml]
 ----
 DELETE /host/{host:id}
 <action>
@@ -1394,7 +1393,7 @@ DELETE /host/{host:id}
 This optional action parameter has been replaced with an optional matrix
 parameter:
 
-[source]
+[source, xml]
 ----
 DELETE /host/{host:id};force=true
 ----
@@ -1406,7 +1405,7 @@ The operation that removes a storage domain supports the `force`,
 `DELETE` method using the representation of the storage domain as the
 body:
 
-[source]
+[source, xml]
 ----
 DELETE /storagedomains/{storagedomain:id}
 <storage_domain>
@@ -1428,14 +1427,14 @@ equivalent matrix parameters, and the operation doesn't now accept a
 body. For example, now the correct way to delete a storage domain with
 the `force` parameter is the following:
 
-[source]
+[source, xml]
 ----
 DELETE /storagedomain/{storagedomain:id};host=myhost;force=true
 ----
 
 To delete with the `destroy` parameter:
 
-[source]
+[source, xml]
 ----
 DELETE /storagedomain/{storagedomain:id};host=myhost;destroy=true
 ----
@@ -1446,7 +1445,7 @@ The operation that removes a storage server connection supports a
 `host` parameter. In order to use it the `DELETE` method used to
 support an optional action parameter:
 
-[source]
+[source, xml]
 ----
 DELETE /storageconnections/{storageconnection:id}
 <action>
@@ -1459,7 +1458,7 @@ DELETE /storageconnections/{storageconnection:id}
 This optional action parameter has been replaced with an optional matrix
 parameter:
 
-[source]
+[source, xml]
 ----
 DELETE /storageconnections/{storageconnection:id};host=myhost
 ----
@@ -1470,7 +1469,7 @@ The operation that removes a template disk supports the `force` and
 `storage_domain` parameters. In order to use it them the `DELETE` method
 used to support an optional action parameter:
 
-[source]
+[source, xml]
 ----
 DELETE /templates/{template:id}/disks/{disk:id}
 <action>
@@ -1483,12 +1482,12 @@ In version 4 of the API this operation has been moved to the new
 `diskattachments` collection, and the request body has been replaced
 with the query parameters `force` and `storage_domain`:
 
-[source]
+[source, xml]
 ----
 DELETE /templates/{template:id}/disksattachments/{attachment:id}?force=true
 ----
 
-[source]
+[source, xml]
 ----
 DELETE /templates/{template:id}/disksattachments/{attachment:id}?storage_domain=123
 ----
@@ -1502,7 +1501,7 @@ is no longer able to remove disks completely from the system, which
 was prone to user errors and had unreverseable consequences.
 To remove a disk, instead use the `/disk/{disk:id}` API:
 
-[source]
+[source, xml]
 ----
 DELETE /disks/{disk:id}
 ----
@@ -1513,7 +1512,7 @@ The operation that removes a virtual machine supports a `force`
 parameter. In order to use it the `DELETE` method used to support an
 optional action parameter:
 
-[source]
+[source, xml]
 ----
 DELETE /vms/{vm:id}
 <action>
@@ -1524,7 +1523,7 @@ DELETE /vms/{vm:id}
 This optional action parameter has been replaced with an optional matrix
 parameter:
 
-[source]
+[source, xml]
 ----
 DELETE /vms/{vm:id};force=true
 ----
@@ -1535,7 +1534,7 @@ The operation that removes multiple Gluster bricks was implemented using
 the `DELETE` method and passing the list of bricks as the body of the
 request:
 
-[source]
+[source, xml]
 ----
 DELETE /clusters/{cluster:id}/glustervolumes/{volume:id}/bricks
 <bricks>
@@ -1549,7 +1548,7 @@ This is problematic because the `DELETE` method shouldn't have a body,
 so it has been replaced with a new `remove` action that uses the `POST`
 method:
 
-[source]
+[source, xml]
 ----
 POST /clusters/{cluster:id}/glustervolumes/{volume:id}/bricks/remove
 <bricks>
@@ -1564,7 +1563,7 @@ POST /clusters/{cluster:id}/glustervolumes/{volume:id}/bricks/remove
 The element was kept for backward compatibility. Use
 `scheduling_policy.name` instead.
 
-[source]
+[source, xml]
 ----
 POST /schedulingpolicies
 <scheduling_policy>
@@ -1574,7 +1573,7 @@ POST /schedulingpolicies
 </scheduling_policy>
 ----
 
-[source]
+[source, xml]
 ----
 PUT /schedulingpolicies/{schedulingpolicy:id}
 <scheduling_policy>
@@ -1592,7 +1591,7 @@ such field is vm.type. But this field is inherited by snapshot,
 and snapshot type is different than vm type. So a new field has been
 added to snapshot entity: `snapshot.snapshot_type`.
 
-[source]
+[source, xml]
 ----
 <snapshot>
   ...
@@ -1649,7 +1648,7 @@ The top level `capabilities` collection has been replaced by the new
 information that isn't available in the model, like the list of CPU
 types available for each cluster level:
 
-[source]
+[source, xml]
 ----
 GET /clusterlevels
 ----
@@ -1677,7 +1676,7 @@ for all the cluster levels supported by the system:
 Each specific cluster level has it's own subresource, identified by the
 version itself:
 
-[source]
+[source, xml]
 ----
 GET /clusterlevels/3.6
 ----
@@ -1712,7 +1711,7 @@ are attached to: `interface` and `bootable`.
 To find what disks are attached to a virtual machine, for example, send
 a request like this:
 
-[source]
+[source, xml]
 ----
 GET /vms/{vm:id}/diskattachments
 ----
@@ -1738,7 +1737,7 @@ Adding disks to a virtual machine or template uses the new
 `disk_attachment` element as well:
 request like this:
 
-[source]
+[source, xml]
 ----
 POST /vms/123/diskattachments
 ----
@@ -1809,7 +1808,7 @@ In version 3 of the API the operation to discover unregistered storage
 domains used to receive a list of iSCSI targets, using multiple
 `iscsi_target` elements:
 
-[source]
+[source, xml]
 ----
 POST /hosts/{host:id}/unregisteredstoragedomaindiscover
 <action>
@@ -1825,7 +1824,7 @@ In version 4 of the API all repeating elements, like `iscsi_target`
 in this case, are wrapped with another element, `iscsi_targets` in
 case. So the same request should now look like this:
 
-[source]
+[source, xml]
 ----
 POST /hosts/{host:id}/unregisteredstoragedomaindiscover
 <action>
