@@ -1,8 +1,42 @@
-= Developer mode installation
+= oVirt Engine - Open Virtualization Manager
 
-== Preparations
+Welcome to the oVirt Engine - Open Virtualization Manager source repository.
 
-=== Prerequisites
+This repository is hosted on [gerrit.ovirt.org:ovirt-engine](https://gerrit.ovirt.org/#/admin/projects/ovirt-engine)
+and a **backup** of it is hosted on [GitHub:ovirt-engine](https://github.com/oVirt/ovirt-engine)
+
+
+== How to contribute
+
+=== Submitting patches
+
+Patches are welcome!
+
+Please submit patches to [gerrit.ovirt.org:ovirt-engine](https://gerrit.ovirt.org/#/admin/projects/ovirt-engine).
+If you are not familiar with the review process for Gerrit patches you can read about
+[Working with oVirt Gerrit](https://ovirt.org/develop/dev-process/working-with-gerrit.html)
+on the [oVirt](https://ovirt.org/) website.
+
+**NOTE**: We might not notice pull requests that you create on Github, because we only use Github for backups.
+
+
+=== Found a bug or documentation issue?
+To submit a bug or suggest an enhancement for oVirt Engine please use
+[oVirt Bugzilla for ovirt-engine product](https://bugzilla.redhat.com/enter_bug.cgi?product=ovirt-engine).
+
+If you find a documentation issue on the oVirt website please navigate and click "Report an issue on GitHub" in the page footer.
+
+
+== Still need help?
+If you have any other questions, please join [oVirt Users forum / mailing list](https://lists.ovirt.org/admin/lists/users.ovirt.org/) and ask there.
+
+
+
+== Developer mode installation
+
+=== Preparations
+
+==== Prerequisites
 
 Install the following system components:
 
@@ -36,11 +70,11 @@ Install the following system components:
 - python-docker-py (optional)
 - python2-isort (optional)
 
-=== Note on Java versions
+==== Note on Java versions
 
 The project is built and run using java 11. 4.3 branches and earlier are excluded.
 
-=== Prepare your dev environment for java 11
+==== Prepare your dev environment for java 11
 
 - Use `alternatives` command to configure `java` and `javac` to version 11:
 ```console
@@ -151,13 +185,12 @@ Optional packages for Fedora:
         python2-isort \
         python2-pep8
 
-=== System settings
+==== System settings
 
 Build locales requires at least 10240 file descriptors, create the
 following file, replace <user> with user that is used for building,
 and logout/login:
 
-[source]
 ./etc/security/limits.d/10-nofile.conf
 ----
 <user> hard nofile 10240
@@ -188,7 +221,7 @@ Finally, apply changes using:
 If compiling in a virtual machine, javac might experience difficulties on guests with dynamically growing RAM so it's
 better to have VM's starting allocation and maximum allocation set to the same value.
 
-=== PostgreSQL accessibility
+==== PostgreSQL accessibility
 
 Initialize PostgreSQL configuration files:
 
@@ -228,7 +261,7 @@ If you want to connect from the outside, set also:
 
 Enable and start (`systemctl enable postgresql --now`).
 
-=== Database creation
+==== Database creation
 
 Create database for ovirt-engine, usually the following sequence should
 work to create a user named `engine` that owns database named `engine`:
@@ -246,7 +279,7 @@ Enable uuid-ossp extension for the database:
   engine=# CREATE EXTENSION "uuid-ossp";
   engine=# \q
 
-=== Ansible Runner Service configration
+==== Ansible Runner Service configration
 
 Since oVirt 4.4 the engine is integrated with Ansible Runner Service. To properly integrate the development
 environment with the Ansible Runner Service, you need to edit `/etc/ansible-runner-service/config.yaml` file
@@ -270,9 +303,9 @@ After edditing the file, make sure you've restarted the Ansible Runner Service s
   # systemctl restart ansible-runner-service
   # systemctl enable ansible-runner-service
 
-== Development
+=== Development
 
-=== Environment
+==== Environment
 
 Development environment is supported only under non-root account. Do
 not run this sequence as root.
@@ -286,7 +319,7 @@ product with same `PREFIX/database`.
 From this point on, the `"${PREFIX}"` will be used to mark the prefix
 in which you selected to install the development environment.
 
-=== Build
+==== Build
 
 To build and install ovirt-engine at your home folder under ovirt-engine
 directory execute the following command:
@@ -298,7 +331,7 @@ intend to install the environment.
 
 NOTE: Add SKIP_CHECKS=1 to disable tests.
 
-==== Build targets
+===== Build targets
 
 all:: Build project.
 clean:: Clean project.
@@ -309,9 +342,9 @@ maven:: Force execution of maven.
 generated-files:: Create file from templates (.in files).
 +
   When creating new templates, generated files will be automatically appears in .gitignore, updated .gitignore should be part of commiting new templates.
-+
 
-==== Build customization
+
+===== Build customization
 
 The following `Makefile` environment variables are available for build
 customization:
@@ -421,7 +454,7 @@ If you want to disable WildFly overlay configuration completely, please
 set to empty string. Default is
 `/usr/share/ovirt-engine-wildfly-overlay/modules`.
 
-== Setup
+=== Setup
 
 To setup the product use the following command:
 
@@ -435,19 +468,19 @@ During engine setup, a certificate has to be issued and you will be asked for a
 hostname. If you want to upload and download images from administration portal,
 it has to be the name by which your machine is accessible from the outside.
 
-== JBoss
+=== JBoss
 
 If you want to use different WildFly/EAP installation, specify it at
 `--jboss-home=` parameter of setup.
 
-== Environment
+=== Environment
 
 OVIRT_ENGINE_JAVA_HOME:: Select a specific Java home.
 
 OVIRT_ENGINE_JAVA_HOME_FORCE:: Set to non zero to bypass Java
 compatibility check.
 
-== Refresh
+=== Refresh
 
 If there are no significant changes, such as file structure or database
 schema, there is no need to run the setup again, `make install-dev
@@ -463,7 +496,7 @@ The `${PREFIX}/bin/engine-cleanup` tool is also available to cleanup the
 environment, it is useful for application changes, less for packaging
 changes.
 
-== Service administration
+=== Service administration
 
 Most utilities and services are operational, including PKI, host deploy.
 
@@ -479,14 +512,14 @@ Access using HTTP or HTTPS:
 - http://<server>:8080
 - https://<server>:8443
 
-== Remote debug
+=== Remote debug
 
 By default, debug address is `127.0.0.1:8787`. If you want to make engine accessible to the remote debugger, after
 running engine-setup edit the following file: ${PREFIX}/etc/ovirt-engine/engine.conf.d/10-setup-protocols.conf:
 
  ENGINE_DEBUG_ADDRESS=0.0.0.0:8787
 
-== Running instance management (JMX)
+=== Running instance management (JMX)
 
 ovirt-engine service supports jmx as management interface. Actually, this is
 the standard jboss jmx interface, while authentication can be done using any
@@ -525,7 +558,7 @@ world, add `${PREFIX}/etc/ovirt-engine/engine.conf.d/20-setup-jmx-debug.conf` wi
 
   ENGINE_JMX_INTERFACE=public
 
-== DAO tests
+=== DAO tests
 
 Create empty database for DAO tests refer to <<Database creation>>.
 
@@ -543,7 +576,7 @@ Run build as:
     -D engine.db.password=engine \
     -D engine.db.url=jdbc:postgresql://localhost/engine_dao_tests"
 
-== VM console
+=== VM console
 
 After the environment is setup and installed, some adjustments are required.
 
@@ -556,7 +589,7 @@ If selinux is enabled on your machine, set type on vmconsole helper using:
 
 $ sudo chcon --type=bin_t "${PREFIX}/libexec/ovirt-vmconsole-proxy-helper/ovirt-vmconsole-list.py"
 
-== ovirt-imageio
+=== ovirt-imageio
 
 After setup, you need to run ovirt-imageio manually if you want to upload and
 download images via the administration portal. To run ovirt-imageio, run the
@@ -583,7 +616,7 @@ And install a drop-in configuration file to override engine developement setup:
   [handler_logfile]
   args = ('/home/username/ovirt-engine/log/ovirt-imageio/daemon.log',)
 
-== RPM packaging
+=== RPM packaging
 
   $ make dist
   $ rpmbuild -ts @tarball@
