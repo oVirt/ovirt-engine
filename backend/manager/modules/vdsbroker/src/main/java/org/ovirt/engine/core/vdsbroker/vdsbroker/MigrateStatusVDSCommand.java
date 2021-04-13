@@ -12,7 +12,7 @@ public class MigrateStatusVDSCommand<P extends MigrateStatusVDSCommandParameters
     protected void executeVdsBrokerCommand() {
         MigrateStatusReturn retVal = getBroker().migrateStatus(getParameters().getVmId().toString());
         status = retVal.getStatus();
-        setReturnValue(retVal.getDowntime());
+        setReturnValue(retVal);
         proceedProxyReturnValue();
     }
 

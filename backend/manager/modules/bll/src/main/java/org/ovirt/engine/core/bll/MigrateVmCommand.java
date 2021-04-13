@@ -80,6 +80,7 @@ import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateStatusReturn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,6 +118,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     /** Used to log the migration error. */
     private EngineError migrationErrorCode;
+    private String migrationErrorMessage;
 
     private Integer actualDowntime;
     private Object actualDowntimeLock = new Object();
@@ -155,6 +157,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         if (migrationErrorCode != null) {
             return " due to an Error: " +
                     backend.getVdsErrorsTranslator().translateErrorTextSingle(migrationErrorCode.name(), true);
+        } else if (migrationErrorMessage != null) {
+            return " due to an Error: " + migrationErrorMessage;
         }
         return " ";
     }
@@ -573,7 +577,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             VDSReturnValue retVal = runVdsCommand(VDSCommandType.MigrateStatus,
                     new MigrateStatusVDSCommandParameters(getDestinationVdsId(), getVmId()));
             if (retVal != null && retVal.getReturnValue() != null) {
-                setActualDowntime((int) retVal.getReturnValue());
+                Integer downtime = ((MigrateStatusReturn) retVal.getReturnValue()).getDowntime();
+                if (downtime != null) {
+                    setActualDowntime(downtime);
+                }
             }
         } catch (EngineException e) {
             migrationErrorCode = e.getErrorCode();
@@ -938,7 +945,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     protected void determineMigrationFailureForAuditLog() {
         if (getVm() != null && getVm().getStatus() == VMStatus.Up) {
             try {
-                runVdsCommand(VDSCommandType.MigrateStatus, new MigrateStatusVDSCommandParameters(getVdsId(), getVmId()));
+                VDSReturnValue retVal = runVdsCommand(VDSCommandType.MigrateStatus,
+                        new MigrateStatusVDSCommandParameters(getVdsId(), getVmId()));
+                if (retVal != null && retVal.getReturnValue() != null) {
+                    migrationErrorMessage = ((MigrateStatusReturn) retVal.getReturnValue()).getMessage();
+                }
             } catch (EngineException e) {
                 migrationErrorCode = e.getErrorCode();
             }
