@@ -286,9 +286,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                             items1.stream().anyMatch(new Linq.IdPredicate<>(a.getId()))) {
                         continue;
                     }
-                    if (a.getStorageDomainType() == StorageDomainType.Volume) {
-                        addToList = true;
-                    } else if (a.getStorageDomainType() == getStorageDomainType()) {
+                    if (a.getStorageDomainType() == getStorageDomainType()) {
                         if (getStorageDomainType() == StorageDomainType.Data) {
                             if (getEntity().getStoragePoolFormatType() == null) {
                                 addToList = true;

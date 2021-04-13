@@ -332,11 +332,7 @@ public class DisksAllocationModel extends EntityModel {
             diskModel.getVolumeFormat().setIsChangeable(isVolumeFormatChangeable);
             diskModel.getAlias().setIsChangeable(isAliasChangeable);
 
-            boolean isCinder = diskModel.getDisk().getDiskStorageType() == DiskStorageType.CINDER;
-            if (isCinder) {
-                diskModel.getVolumeFormat().setIsChangeable(false);
-                diskModel.getVolumeFormat().setSelectedItem(VolumeFormat.RAW);
-            } else if (isThinProvisioning) {
+            if (isThinProvisioning) {
                 diskModel.getVolumeFormat().setSelectedItem(VolumeFormat.COW);
             }
         }

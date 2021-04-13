@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -297,8 +296,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
 
             vmListModel.setIsAvailable(!isTemplateDisk(disk));
             templateListModel.setIsAvailable(isTemplateDisk(disk));
-            storageListModel.setIsAvailable(disk.getDiskStorageType() == DiskStorageType.IMAGE ||
-                    disk.getDiskStorageType() == DiskStorageType.CINDER);
+            storageListModel.setIsAvailable(disk.getDiskStorageType() == DiskStorageType.IMAGE);
         }
     }
 
@@ -551,13 +549,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
     }
 
     private boolean isDiskLocked(Disk disk) {
-        switch (disk.getDiskStorageType()) {
-            case IMAGE:
-                return ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
-            case CINDER:
-                return ((CinderDisk) disk).getImageStatus() == ImageStatus.LOCKED;
-        }
-        return false;
+        return disk.getDiskStorageType() == DiskStorageType.IMAGE &&
+                ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
     }
 
     private boolean isTemplateDisk(Disk disk) {
@@ -573,7 +566,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
                 return false;
             }
 
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE || disk.getDiskStorageType() == DiskStorageType.CINDER) {
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 ImageStatus imageStatus = ((DiskImage) disk).getImageStatus();
                 if (imageStatus == ImageStatus.LOCKED) {
                     return false;

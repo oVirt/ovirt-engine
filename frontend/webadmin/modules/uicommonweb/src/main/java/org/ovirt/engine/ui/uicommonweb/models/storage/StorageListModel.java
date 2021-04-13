@@ -899,7 +899,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                      storage.getStorageDomainType() == StorageDomainType.ISO;
             boolean isDataCenterAvailable = storage.getStorageType() != StorageType.GLANCE;
             boolean isGeneralAvailable = storage.getStorageType() != StorageType.GLANCE;
-            boolean isCinderStorage = storage.getStorageType().isCinderDomain();
             boolean isManagedBlockStorage = storage.getStorageType().isManagedBlockStorage();
             boolean isGlusterStorage = storage.getStorageType() == StorageType.GLUSTERFS;
 
@@ -921,9 +920,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             vmRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             templateRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskImageRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
-            diskListModel.setIsAvailable(isDataStorage || isCinderStorage || isManagedBlockStorage);
-            registerDiskListModel.setIsAvailable(isCinderStorage);
-            snapshotListModel.setIsAvailable(isDataStorage || isCinderStorage);
+            diskListModel.setIsAvailable(isDataStorage || isManagedBlockStorage);
+            snapshotListModel.setIsAvailable(isDataStorage);
             diskProfileListModel.setIsAvailable(isDataStorage);
             drListModel.setIsAvailable(isGlusterStorage);
             leaseListModel.setIsAvailable(isDataStorage);
@@ -991,8 +989,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     }
 
     private boolean isEditAvailable(StorageDomain storageDomain) {
-        if (storageDomain == null || (storageDomain.getStorageType().isCinderDomain() && !storageDomain.getStorageType()
-                .isManagedBlockStorage())) {
+        if (storageDomain == null || !storageDomain.getStorageType().isManagedBlockStorage()) {
             return false;
         }
 
