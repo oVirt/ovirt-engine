@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
-import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -250,7 +249,7 @@ public class ProviderModel extends Model {
     }
 
     private boolean isTypeOpenStack() {
-        return isTypeOpenStackImage() || isTypeOpenStackVolume() || isTypeOpenStackNetwork();
+        return isTypeOpenStackImage() || isTypeOpenStackNetwork();
     }
 
     private boolean isTypeOpenStackNetwork() {
@@ -259,10 +258,6 @@ public class ProviderModel extends Model {
 
     private boolean isTypeOpenStackImage() {
         return getType().getSelectedItem() == ProviderType.OPENSTACK_IMAGE;
-    }
-
-    private boolean isTypeOpenStackVolume() {
-        return getType().getSelectedItem() == ProviderType.OPENSTACK_VOLUME;
     }
 
     private boolean isTypeExternalNetwork() {
@@ -315,8 +310,6 @@ public class ProviderModel extends Model {
             return "http://localhost:9696"; //$NON-NLS-1$
         case OPENSTACK_IMAGE:
             return "http://localhost:9292"; //$NON-NLS-1$
-        case OPENSTACK_VOLUME:
-            return "http://localhost:8776"; //$NON-NLS-1$
         case VMWARE:
             return ""; //$NON-NLS-1$
         case KVM:
@@ -435,11 +428,7 @@ public class ProviderModel extends Model {
             getRequiresAuthentication().setEntity(isVmware || isKubevirt || Boolean.valueOf(requiresAuth));
             getRequiresAuthentication().setIsChangeable(!requiresAuth);
 
-            boolean isCinder = isTypeOpenStackVolume();
-            getDataCenter().setIsAvailable(isCinder || isVmware || isKvm || isXen);
-            if (isCinder) {
-                updateDatacentersForVolumeProvider();
-            }
+            getDataCenter().setIsAvailable(isVmware || isKvm || isXen);
 
             getVmwarePropertiesModel().setIsAvailable(isVmware);
             getKvmPropertiesModel().setIsAvailable(isKvm);
@@ -574,10 +563,6 @@ public class ProviderModel extends Model {
         }));
     }
 
-    protected void updateDatacentersForVolumeProvider() {
-        // implemented on sub-classes
-    }
-
     private boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
         getType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
@@ -639,8 +624,6 @@ public class ProviderModel extends Model {
             properties.setAutoSync(autoSync.getEntity());
         } else if (isTypeOpenStackImage()) {
             provider.setAdditionalProperties(new OpenStackImageProviderProperties());
-        } else if (isTypeOpenStackVolume()) {
-            provider.setAdditionalProperties(new OpenStackVolumeProviderProperties(getDataCenter().getSelectedItem().getId()));
         } else if (isTypeVmware()) {
             provider.setAdditionalProperties(getVmwarePropertiesModel().getVmwareVmProviderProperties(
                     dataCenter.getSelectedItem() != null ? dataCenter.getSelectedItem().getId() : null));

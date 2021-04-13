@@ -117,7 +117,6 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
             networkListModel.setIsAvailable(provider.getType()
                     .getProvidedTypes()
                     .contains(VdcObjectType.Network));
-            secretListModel.setIsAvailable(provider.getType() == ProviderType.OPENSTACK_VOLUME);
         }
     }
 
@@ -148,7 +147,6 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
 
         getAddCommand().setIsAvailable(true);
         getRemoveCommand().setIsAvailable(true);
-        getForceRemoveCommand().setIsAvailable(isSelectedProviderOfType(ProviderType.OPENSTACK_VOLUME));
     }
 
     private boolean isSelectedProviderOfType(ProviderType providerType) {

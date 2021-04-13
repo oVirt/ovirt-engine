@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -44,12 +43,6 @@ public class RemoveProvidersModel extends ConfirmationModel {
             getLatch().setIsAvailable(true);
             getLatch().setIsChangeable(true);
             setMessage(ConstantsManager.getInstance().getConstants().forceRemoveProvider());
-            ProviderType providerType = providers.get(0).getType();
-            switch (providerType) {
-                case OPENSTACK_VOLUME:
-                    setNote(ConstantsManager.getInstance().getConstants().forceRemoveCinderProvider());
-                    break;
-            }
         }
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand(CMD_REMOVE, this);

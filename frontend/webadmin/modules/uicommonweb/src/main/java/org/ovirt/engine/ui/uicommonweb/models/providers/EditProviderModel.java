@@ -11,17 +11,14 @@ import org.ovirt.engine.core.common.businessentities.OpenStackApiVersionType;
 import org.ovirt.engine.core.common.businessentities.OpenStackProtocolType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.Uri;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -173,18 +170,4 @@ public class EditProviderModel extends ProviderModel {
         }
     }
 
-    @Override
-    protected void updateDatacentersForVolumeProvider() {
-        getDataCenter().setIsChangeable(false);
-        AsyncDataProvider.getInstance().getStorageDomainByName(new AsyncQuery<>(storageDomainStatic -> AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(dataCenters -> {
-            if (dataCenters != null && !dataCenters.isEmpty()) {
-                getDataCenter().setSelectedItem(dataCenters.get(0));
-            } else {
-                StoragePool noneStoragePool = new StoragePool();
-                noneStoragePool.setId(Guid.Empty);
-                noneStoragePool.setName("(none)"); //$NON-NLS-1$
-                getDataCenter().setSelectedItem(noneStoragePool);
-            }
-        }), storageDomainStatic.getId())), provider.getName());
-    }
 }
