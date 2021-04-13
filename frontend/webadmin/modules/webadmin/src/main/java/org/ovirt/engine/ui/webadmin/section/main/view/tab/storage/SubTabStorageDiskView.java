@@ -41,7 +41,6 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
     private static AbstractTextColumn<Disk> dateModifiedColumn;
     private static AbstractColumn<Disk, Disk> statusColumn;
     private static AbstractTextColumn<Disk> typeColumn;
-    private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
     private static AbstractImageResourceColumn<Disk> shareableDiskColumn;
     private static DiskContainersColumn diskContainersColumn;
@@ -70,7 +69,6 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
         }
 
         boolean isDataStorage = storageDomain.getStorageDomainType().isDataDomain();
-        boolean isCinderStorage = storageDomain.getStorageType().isCinderDomain();
 
         getTable().enableColumnResizing();
 
@@ -96,9 +94,6 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
 
         getTable().ensureColumnVisible(
                 storageDomainsColumn, constants.storageDomainDisk(), true, "170px"); //$NON-NLS-1$
-
-        getTable().ensureColumnVisible(cinderVolumeTypeColumn, constants.cinderVolumeTypeDisk(), isCinderStorage,
-                "90px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(dateCreatedColumn, constants.creationDateDisk(), true, "150px"); //$NON-NLS-1$
 
@@ -128,7 +123,6 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
         dateModifiedColumn = DisksViewColumns.getDateModifiedColumn(DiskConditionFieldAutoCompleter.LAST_MODIFIED);
         statusColumn = DisksViewColumns.getStatusColumn(DiskConditionFieldAutoCompleter.STATUS);
         typeColumn = DisksViewColumns.getDiskStorageTypeColumn(DiskConditionFieldAutoCompleter.DISK_TYPE);
-        cinderVolumeTypeColumn = DisksViewColumns.getCinderVolumeTypeColumn(null);
         descriptionColumn = DisksViewColumns.getDescriptionColumn(DiskConditionFieldAutoCompleter.DESCRIPTION);
         shareableDiskColumn = DisksViewColumns.getShareableDiskColumn();
         diskContainersColumn = DisksViewColumns.getdiskContainersColumn(null);

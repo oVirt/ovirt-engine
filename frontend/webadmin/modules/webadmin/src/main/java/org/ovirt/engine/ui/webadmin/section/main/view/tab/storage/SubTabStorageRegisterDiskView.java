@@ -46,9 +46,6 @@ public class SubTabStorageRegisterDiskView extends AbstractSubTabTableView<Stora
                 DisksViewColumns.getSizeColumn(null), constants.provisionedSizeDisk(), true, "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.getCinderVolumeTypeColumn(null), constants.cinderVolumeTypeDisk(), true, "150px"); //$NON-NLS-1$
-
-        getTable().ensureColumnVisible(
                 DisksViewColumns.getDateCreatedColumn(null), constants.creationDateDisk(), true, "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(

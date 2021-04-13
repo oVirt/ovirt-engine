@@ -66,7 +66,6 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
     private static AbstractTextColumn<Disk> lunProductIdColumn;
     private static AbstractTextColumn<Disk> qoutaColumn;
     private static AbstractTextColumn<Disk> diskStorageTypeColumn;
-    private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
     private static AbstractTextColumn<Disk> contentTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
     private static AbstractImageResourceColumn<Disk> shareableDiskColumn;
@@ -147,40 +146,39 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
         boolean all = diskType == null;
         boolean images = diskType == DiskStorageType.IMAGE;
         boolean luns = diskType == DiskStorageType.LUN;
-        boolean cinder = diskType == DiskStorageType.CINDER;
         boolean managedBlock = diskType == DiskStorageType.MANAGED_BLOCK_STORAGE;
-        ensureColumnsVisible(all, images, luns, cinder, managedBlock);
+        ensureColumnsVisible(all, images, luns, managedBlock);
     }
 
-    private void ensureColumnsVisible(boolean all, boolean images, boolean luns, boolean cinder, boolean managedBlock) {
+    private void ensureColumnsVisible(boolean all, boolean images, boolean luns, boolean managedBlock) {
         getTable().ensureColumnVisible(
-                aliasColumn, constants.aliasDisk(), all || images || luns || cinder || managedBlock,
+                aliasColumn, constants.aliasDisk(), all || images || luns || managedBlock,
                 "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                idColumn, constants.idDisk(), all || images || luns || cinder || managedBlock,
+                idColumn, constants.idDisk(), all || images || luns || managedBlock,
                 "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
                 shareableDiskColumn,
                 new ImageResourceHeader(shareableDiskColumn.getDefaultImage(),
                         SafeHtmlUtils.fromSafeConstant(constants.shareable())),
-                all || images || luns || cinder || managedBlock, "30px"); //$NON-NLS-1$
+                all || images || luns || managedBlock, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                DisksViewColumns.diskContainersIconColumn, "", all || images || luns || cinder || managedBlock, //$NON-NLS-1$
+                DisksViewColumns.diskContainersIconColumn, "", all || images || luns || managedBlock, //$NON-NLS-1$
                 "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                diskContainersColumn, constants.attachedToDisk(), all || images || luns || cinder || managedBlock,
+                diskContainersColumn, constants.attachedToDisk(), all || images || luns || managedBlock,
                 "125px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                storageDomainsColumn, constants.storageDomainsDisk(), images || cinder || managedBlock,
+                storageDomainsColumn, constants.storageDomainsDisk(), images || managedBlock,
                 "180px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                sizeColumn, constants.provisionedSizeDisk(), all || images || luns || cinder || managedBlock,
+                sizeColumn, constants.provisionedSizeDisk(), all || images || luns || managedBlock,
                 "110px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
@@ -188,17 +186,14 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
                 "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                cinderVolumeTypeColumn, constants.cinderVolumeTypeDisk(), cinder || managedBlock, "80px"); //$NON-NLS-1$
-
-        getTable().ensureColumnVisible(
-                dateCreatedColumn, constants.creationDateDisk(), images || cinder || managedBlock,
+                dateCreatedColumn, constants.creationDateDisk(), images || managedBlock,
                 "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                dateModifiedColumn, constants.modificationDateDisk(), images || cinder || managedBlock, "120px"); //$NON-NLS-1$
+                dateModifiedColumn, constants.modificationDateDisk(), images || managedBlock, "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                statusColumn, constants.statusDisk(), images || cinder || managedBlock|| all,
+                statusColumn, constants.statusDisk(), images || managedBlock || all,
                 "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
@@ -228,7 +223,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
                 "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                descriptionColumn, constants.descriptionDisk(), all || images || luns || cinder || managedBlock,
+                descriptionColumn, constants.descriptionDisk(), all || images || luns || managedBlock,
                 "90px"); //$NON-NLS-1$
     }
 
@@ -261,7 +256,6 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
         lunProductIdColumn = DisksViewColumns.getLunProductIdColumn(null);
         qoutaColumn = DisksViewColumns.getQoutaColumn(DiskConditionFieldAutoCompleter.QUOTA);
         diskStorageTypeColumn = DisksViewColumns.getDiskStorageTypeColumn(DiskConditionFieldAutoCompleter.DISK_TYPE);
-        cinderVolumeTypeColumn = DisksViewColumns.getCinderVolumeTypeColumn(null);
         contentTypeColumn = DisksViewColumns.getContentColumn(DiskConditionFieldAutoCompleter.DISK_CONTENT_TYPE);
         descriptionColumn = DisksViewColumns.getDescriptionColumn(DiskConditionFieldAutoCompleter.DESCRIPTION);
         shareableDiskColumn = DisksViewColumns.getShareableDiskColumn();
