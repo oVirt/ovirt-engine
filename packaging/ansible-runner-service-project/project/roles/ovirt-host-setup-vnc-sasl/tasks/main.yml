@@ -27,4 +27,4 @@
     state: present
     line: 'vnc_sasl=1'
   notify:
-    restart libvirtd
+    populate service facts and restart libvirtd

@@ -1,6 +1,9 @@
-- name: populate service facts for sasl libvirtd restart
+- name: populate service facts and restart libvirtd
   service_facts:
   register: services_in_vnc_sasl
+  changed_when: True
+  notify:
+    restart libvirtd
 
 # libvirtd may not be started automatically on hosts >= 4.4 if not
 # already running.
