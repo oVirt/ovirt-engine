@@ -1912,6 +1912,9 @@ public class LibvirtVmXmlBuilder {
 
     private void writeTpm(VmDevice device) {
         writer.writeStartElement("tpm");
+        if (vm.getClusterArch().getFamily() == ArchitectureType.x86) {
+            writer.writeAttributeString("model", "tpm-crb");
+        }
         writeAlias(device);
         writer.writeStartElement("backend");
         writer.writeAttributeString("type", "emulator");
