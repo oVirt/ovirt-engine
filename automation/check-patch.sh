@@ -39,6 +39,12 @@ if [ -z "${MILESTONE}" ] || { [ -n "${MILESTONE}" ] && [ "${MILESTONE}" != "mast
 	BUILD_GWT=1
 fi
 
+# Check asciidoc documentation
+for doc in $(find . -name "*.adoc"); do
+	echo "Checking asciidoc ${doc}"
+	asciidoc "${doc}"
+done
+
 # Check for copyright notices in files that do not also include an SPDX tag.
 non_removed_files=$( \
 	git show --pretty="format:" --name-status | \
