@@ -534,7 +534,7 @@ select fn_db_add_config_value('ServerCPUList',
         || '4:IBM z14:sie,model_z14-base:z14-base:s390x;',
     '4.6');
 
-select fn_db_add_config_value('ServerRebootTimeout','300','general');
+select fn_db_add_config_value('ServerRebootTimeout','600','general');
 select fn_db_add_config_value('SetupNetworksPollingTimeout','3','general');
 select fn_db_add_config_value('SignCertTimeoutInSeconds','30','general');
 --Handling Script name for signing
@@ -1329,6 +1329,10 @@ select fn_db_update_default_config_value('TpmDeviceSupported', '{"x86":"false","
 
 -- Enable NVRAM persistence
 select fn_db_update_default_config_value('NvramPersistenceSupported', 'false', 'true', '4.6', false);
+
+-- Increase default ServerRebootTimeout from 5 to 10 minutes
+select fn_db_update_default_config_value('ServerRebootTimeout', '300', '600', 'general', false);
+
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
