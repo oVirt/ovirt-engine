@@ -124,6 +124,7 @@ keystore() {
 	local password="$1"
 
 	"${KEYTOOL}" \
+		-J-Dcom.redhat.fips=false \
 		-delete \
 		-noprompt \
 		-alias ${CA_FILE}cert \
@@ -131,6 +132,7 @@ keystore() {
 		-storepass "${password}" \
 		> /dev/null 2>&1
 	"${KEYTOOL}" \
+		-J-Dcom.redhat.fips=false \
 		-import \
 		-noprompt \
 		-trustcacerts \

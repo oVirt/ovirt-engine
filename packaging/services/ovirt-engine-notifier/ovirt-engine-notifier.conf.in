@@ -60,6 +60,10 @@ NOTIFIER_PROPERTIES=""
 NOTIFIER_PROPERTIES="${NOTIFIER_PROPERTIES} \"jboss.modules.system.pkgs=org.jboss.byteman,org.ovirt.engine.core.logutils\""
 NOTIFIER_PROPERTIES="${NOTIFIER_PROPERTIES} \"java.util.logging.config.file=${ENGINE_USR}/conf/notifier-logging.properties\""
 
+# We need to disable FIPS configuration of OpenJDK to be able to work with
+# file system keystores and interoperability with openssl
+NOTIFIER_PROPERTIES="${NOTIFIER_PROPERTIES} com.redhat.fips=false"
+
 #
 # Extra Java arguments to be added to command-line.
 #

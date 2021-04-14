@@ -785,8 +785,12 @@ class Plugin(plugin.PluginBase):
         truststore_password = config.get(
             'ENGINE_EXTERNAL_PROVIDERS_TRUST_STORE_PASSWORD'
         )
+
+        # We need to disable FIPS configuration of OpenJDK to be able to work
+        # with file system keystores and interoperability with openssl
         command = (
             'keytool',
+            '-J-Dcom.redhat.fips=false',
             '-import',
             '-alias',
             OvnEnv.PROVIDER_NAME,

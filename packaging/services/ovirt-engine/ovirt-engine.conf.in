@@ -153,6 +153,10 @@ ENGINE_PROPERTIES="${ENGINE_PROPERTIES} jsse.enableSNIExtension=false"
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} resteasy.preferJacksonOverJsonB=true"
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} jackson.deserialization.whitelist.packages=org,com,java,javax"
 
+# We need to disable FIPS configuration of OpenJDK to be able to work with
+# file system keystores and interoperability with openssl
+ENGINE_PROPERTIES="${ENGINE_PROPERTIES} com.redhat.fips=false"
+
 #
 # Extra Java arguments to be added to command-line.
 #

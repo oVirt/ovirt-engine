@@ -6,6 +6,10 @@ PACKAGE_VERSION="@PACKAGE_VERSION@"
 DISPLAY_VERSION="@DISPLAY_VERSION@"
 ENGINE_LOG="@ENGINE_LOG@"
 
+# We need to disable FIPS configuration of OpenJDK to be able to work with
+# file system keystores and interoperability with openssl
+export JAVA_TOOL_OPTIONS="-Dcom.redhat.fips=false"
+
 die() {
 	local m="$1"
 	echo "FATAL: ${m}" >&2
