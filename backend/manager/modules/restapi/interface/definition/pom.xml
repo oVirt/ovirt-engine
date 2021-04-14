@@ -238,55 +238,32 @@
       </plugin>
 
       <plugin>
-        <groupId>org.jvnet.jaxb2.maven2</groupId>
-        <artifactId>maven-jaxb2-plugin</artifactId>
-        <version>0.14.0</version>
-        <executions>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jaxb2-maven-plugin</artifactId>
+        <version>2.5.0</version>
 
+        <executions>
           <!-- Generate the Java code from the XML schema of version 4 of the API: -->
           <execution>
             <id>xjc-v4</id>
             <phase>generate-sources</phase>
             <goals>
-              <goal>generate</goal>
+              <goal>xjc</goal>
             </goals>
             <configuration>
-              <generateDirectory>${project.basedir}/target/generated-sources/xjc-v4</generateDirectory>
-              <generatePackage>org.ovirt.engine.api.model</generatePackage>
               <extension>true</extension>
-              <schemaDirectory>${project.basedir}/target/generated-resources/v4</schemaDirectory>
-              <schemaIncludes>
-                <include>api.xsd</include>
-              </schemaIncludes>
-              <bindingDirectory>${project.basedir}/src/main/schema</bindingDirectory>
-              <bindingIncludes>
-                <include>api.xjb</include>
-              </bindingIncludes>
+              <packageName>org.ovirt.engine.api.model</packageName>
+              <extension>true</extension>
+              <xjbSources>
+                <xjbSource>src/main/schema/api.xjb</xjbSource>
+              </xjbSources>
+              <sources>
+                <source>${project.basedir}/target/generated-resources/v4/api.xsd</source>
+              </sources>
+              <outputDirectory>${project.basedir}/target/generated-sources/xjc-v4</outputDirectory>
+              <clearOutputDir>false</clearOutputDir>
             </configuration>
           </execution>
-
-          <!-- Generate the Java code from the XML schema of version 3 of the API: -->
-          <execution>
-            <id>xjc-v3</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <configuration>
-              <generateDirectory>${project.basedir}/target/generated-sources/xjc-v3</generateDirectory>
-              <generatePackage>org.ovirt.engine.api.v3.types</generatePackage>
-              <extension>true</extension>
-              <schemaDirectory>${project.basedir}/src/main/resources/v3</schemaDirectory>
-              <schemaIncludes>
-                <include>api.xsd</include>
-              </schemaIncludes>
-              <bindingDirectory>${project.basedir}/src/main/resources/v3</bindingDirectory>
-              <bindingIncludes>
-                <include>api.xjb</include>
-              </bindingIncludes>
-            </configuration>
-          </execution>
-
         </executions>
       </plugin>
 
@@ -304,7 +281,6 @@
             </goals>
             <configuration>
               <sources>
-                <source>${project.build.directory}/generated-sources/xjc-v3</source>
                 <source>${project.build.directory}/generated-sources/xjc-v4</source>
                 <source>${project.build.directory}/generated-sources/model</source>
               </sources>

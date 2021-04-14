@@ -77,9 +77,7 @@
     <commons-configuration.version>1.6</commons-configuration.version>
     <commons-jxpath.version>1.3</commons-jxpath.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <jaxb-xjc.version>2.3</jaxb-xjc.version>
-    <jaxb-impl.version>2.3.1</jaxb-impl.version>
-    <jaxb-core.version>2.3.0</jaxb-core.version>
+    <jaxb.version>2.3.1</jaxb.version>
     <jbosssx-bare.version>2.0.4</jbosssx-bare.version>
     <infinispan.version>9.4.18.Final</infinispan.version>
     <snakeyaml.version>1.17</snakeyaml.version>
@@ -158,13 +156,13 @@
       <dependency>
         <groupId>javax.xml.bind</groupId>
         <artifactId>jaxb-api</artifactId>
-        <version>${jaxb-impl.version}</version>
+        <version>${jaxb.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>
-        <version>${jaxb-impl.version}</version>
+        <version>${jaxb.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
