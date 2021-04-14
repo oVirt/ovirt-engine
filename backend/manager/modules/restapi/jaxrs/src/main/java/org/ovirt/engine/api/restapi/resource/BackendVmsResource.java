@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
+import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.AutoPinningPolicy;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
@@ -28,6 +30,7 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.DiskAttachments;
 import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.GraphicsConsoles;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.Payload;
@@ -41,6 +44,7 @@ import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.api.restapi.resource.utils.LinksTreeNode;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
@@ -57,6 +61,8 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -96,6 +102,8 @@ public class BackendVmsResource extends
     public static final String AUTO_PINNING_POLICY = "auto_pinning_policy";
     private static final String LEGAL_CLUSTER_COMPATIBILITY_VERSIONS =
             Version.ALL.stream().map(Version::toString).collect(Collectors.joining(", "));
+    private static final String CURRENT_GRAPHICS_CONSOLES = "current_graphics_consoles";
+    private static final String GRAPHICS_CONSOLES = "graphics_consoles";
 
     public BackendVmsResource() {
         super(Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
@@ -641,6 +649,7 @@ public class BackendVmsResource extends
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         boolean includeData = details.contains(DetailHelper.MAIN);
         boolean includeSize = details.contains("size");
+        boolean includeCurrentGraphicsConsoles = details.contains(CURRENT_GRAPHICS_CONSOLES);
 
         List<Guid> vmIds = entities.stream().map(VM::getId).collect(Collectors.toList());
         if (includeData) {
@@ -665,6 +674,13 @@ public class BackendVmsResource extends
 
             for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
                 Vm vm = map(entity);
+                if (includeCurrentGraphicsConsoles) {
+                    GraphicsConsoles consoles = new GraphicsConsoles();
+                    for (Map.Entry<GraphicsType, GraphicsInfo> entry : entity.getGraphicsInfos().entrySet()) {
+                        consoles.getGraphicsConsoles().add(VmMapper.map(entry, null));
+                    }
+                    vm.setGraphicsConsoles(consoles);
+                }
                 DisplayHelper.adjustDisplayData(this, vm, vmsGraphicsDevices, false);
                 DisplayHelper.addDisplayCertificate(this, vm);
                 removeRestrictedInfo(vm);
@@ -675,6 +691,40 @@ public class BackendVmsResource extends
             collection.setSize((long) entities.size());
         }
         return collection;
+    }
+
+    @Override
+    public void follow(ActionableResource entity, LinksTreeNode linksTree) {
+        super.follow(entity, linksTree);
+        if(DetailHelper.getDetails(httpHeaders, uriInfo).contains(CURRENT_GRAPHICS_CONSOLES)) {
+            // "?detail=current_graphics_consoles" provides the same output as
+            // "?current&follow=graphics_consoles" and similar as "current" flag will
+            // overwrite the default output of "?follow=graphics_consoles"
+            findGraphicsConsoles(linksTree).ifPresent(node -> node.setFollowed(true));
+        }
+    }
+
+    /**
+     * This is a special case of searching the the links tree: we know that graphics_consoles must be the direct child
+     * of the root.
+     */
+    private Optional<LinksTreeNode> findGraphicsConsoles(LinksTreeNode linksTree) {
+        String consoleLink = normalizeLinkName(GRAPHICS_CONSOLES);
+        for (LinksTreeNode node : linksTree.getChildren()) {
+            if (normalizeLinkName(node.getElement()).equals(consoleLink)) {
+                return Optional.of(node);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Links that differ only on case or underscore position are treated the same by the framework. Examples:
+     * graphics_console, graphicsconsoles, gra_phics_con_soles, GRapHIC_Consoles. Normalize the name by forcing lower
+     * case and removing all underscores.
+     */
+    private static String normalizeLinkName(String name) {
+        return name.toLowerCase().replaceAll("_", "");
     }
 
     protected InstanceType lookupInstance(Template template) {

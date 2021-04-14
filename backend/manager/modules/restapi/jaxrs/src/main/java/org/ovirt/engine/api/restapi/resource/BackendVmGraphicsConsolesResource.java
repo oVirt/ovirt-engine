@@ -29,7 +29,7 @@ public class BackendVmGraphicsConsolesResource
         extends AbstractBackendCollectionResource<GraphicsConsole, VM>
         implements VmGraphicsConsolesResource {
 
-    private static final String CURRENT = "current";
+    public static final String CURRENT = "current";
 
     private final Guid guid;
 
