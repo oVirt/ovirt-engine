@@ -3,30 +3,19 @@ package org.ovirt.engine.core.bll.storage.disk;
 import java.io.File;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmOperationCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.ChangeDiskVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VdsDao;
 
 public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends VmOperationCommandBase<T> {
-
-    @Inject
-    private IsoDomainListSynchronizer isoDomainListSynchronizer;
-
-    @Inject
-    private VdsDao vdsDao;
 
     private String cdImagePath;
 
@@ -127,10 +116,9 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
      * where old CD change works without problems.
      */
     private boolean useCdChangeWithPdiv() {
-        VDS currentHost = vdsDao.get(getVm().getRunOnVds());
         String diskPath = getParameters().getCdImagePath();
-        boolean supportsPdiv = diskPath.matches(ValidationUtils.GUID) || StringUtils.isEmpty(diskPath);
-        return currentHost.isCdChangePdiv() && supportsPdiv;
+        boolean supportsPdiv = StringUtils.isEmpty(diskPath) || diskPath.matches(ValidationUtils.GUID);
+        return getVds().isCdChangePdiv() && supportsPdiv;
     }
 
     @Override
