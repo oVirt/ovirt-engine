@@ -47,11 +47,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String NonOperationalReason___HOST_FEATURES_INCOMPATIBILE_WITH_CLUSTER();
 
-    String NonOperationalReason___LIBRBD_PACKAGE_NOT_AVAILABLE();
-
     String NonOperationalReason___VDS_CANNOT_CONNECT_TO_GLUSTERFS();
-
-    String NonOperationalReason___LIBVIRT_SECRETS_REGISTRATION_FAILURE();
 
     String NonOperationalReason___KUBEVIRT_NOT_SCHEDULABLE();
 
@@ -1538,8 +1534,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String StorageDomainType___Image();
 
-    String StorageDomainType___Volume();
-
     String StorageDomainType___ManagedBlockStorage();
 
     String VmTemplateStatus___OK();
@@ -1669,8 +1663,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String ExternalNetworkPluginType___OVIRT_PROVIDER_OVN();
 
     String ProviderType___OPENSTACK_IMAGE();
-
-    String ProviderType___OPENSTACK_VOLUME();
 
     String GlusterVolumeType___DISTRIBUTE();
 

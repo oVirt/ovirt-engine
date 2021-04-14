@@ -821,8 +821,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String originalAllocationDisk();
 
-    String cinderVolumeTypeDisk();
-
     String interfaceDisk();
 
     String logicalNameDisk();
@@ -1067,8 +1065,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String directLunDisk();
 
-    String cinderDisk();
-
     String managedBlockDisk();
 
     String storageIscsiPopupLunToTargetsTabLabel();
@@ -1212,8 +1208,6 @@ public interface CommonApplicationConstants extends Constants {
     String imageDisksLabel();
 
     String lunDisksLabel();
-
-    String cinderDisksLabel();
 
     String managedBlockDisksLabel();
 
@@ -1476,8 +1470,6 @@ public interface CommonApplicationConstants extends Constants {
     String ignitionScriptInfo();
 
     String diskInterfaceInfo();
-
-    String cinderVolumeTypeInfoIcon();
 
     String scsiReservationInfoIcon();
 

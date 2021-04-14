@@ -1183,8 +1183,6 @@ public interface UIConstants extends Constants {
 
     String noActiveStorageDomainsInDC();
 
-    String noCinderStorageDomainsInDC();
-
     String noManagedBlockDomainsInDC();
 
     String relevantDCnotActive();
@@ -2138,8 +2136,6 @@ public interface UIConstants extends Constants {
     String noGeoRepSessionForGlusterVolume();
 
     String forceRemoveProvider();
-
-    String forceRemoveCinderProvider();
 
     String both();
 
