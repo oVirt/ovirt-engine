@@ -83,15 +83,6 @@
                     <e:ListModelListBoxEditor ui:field="volumeTypeEditor" label="{constants.allocationDisk}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>
-                    <e:ListModelListBoxEditor ui:field="cinderVolumeTypeEditor" label="{constants.cinderVolumeTypeDisk}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8">
-                        <e:WidgetDecorator>
-                            <b:Column size="SM_1">
-                                <d:InfoIcon ui:field="cinderVolumeTypeInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
-                            </b:Column>
-                        </e:WidgetDecorator>
-                    </e:ListModelListBoxEditor>
-                </b:Row>
-                <b:Row>
                     <e:ListModelListBoxEditor ui:field="diskProfileEditor" label="{constants.diskProfileVmDiskPopup}" usePatternFly="true" labelColSize="SM_4" widgetColSize="SM_8" />
                 </b:Row>
                 <b:Row>

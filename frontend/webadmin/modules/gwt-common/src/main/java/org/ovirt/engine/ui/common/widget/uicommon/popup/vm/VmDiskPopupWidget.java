@@ -179,10 +179,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
     @UiField(provided = true)
     @Ignore
-    InfoIcon cinderVolumeTypeInfoIcon;
-
-    @UiField(provided = true)
-    @Ignore
     InfoIcon scsiReservationInfoIcon;
 
     @UiField
@@ -259,7 +255,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
         hostInfoIcon = new InfoIcon(SafeHtmlUtils.fromString(constants.hostToUseToolTip()));
         interfaceInfoIcon = new InfoIcon(templates.italicText(constants.diskInterfaceInfo()));
-        cinderVolumeTypeInfoIcon = new InfoIcon(templates.italicText(constants.cinderVolumeTypeInfoIcon()));
         scsiReservationInfoIcon = new InfoIcon(templates.italicText(constants.scsiReservationInfoIcon()));
     }
 
@@ -333,16 +328,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                     if (disk.getIsNew()) {
                         disk.getDiskStorageType().setEntity(DiskStorageType.LUN);
                         revealStorageView(disk);
-                        revealDiskPanel(disk);
-                    }
-                });
-
-        radioButtonPanel.addRadioButton(constants.cinderDisk(),
-                disk.getDisk() != null && disk.getDisk().getDiskStorageType() == DiskStorageType.CINDER,
-                disk.getIsNew() || disk.getDisk().getDiskStorageType() == DiskStorageType.CINDER,
-                event -> {
-                    if (disk.getIsNew()) {
-                        disk.getDiskStorageType().setEntity(DiskStorageType.CINDER);
                         revealDiskPanel(disk);
                     }
                 });

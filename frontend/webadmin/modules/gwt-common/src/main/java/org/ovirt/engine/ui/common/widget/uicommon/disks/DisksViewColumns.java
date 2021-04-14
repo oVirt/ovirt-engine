@@ -50,7 +50,6 @@ public class DisksViewColumns {
 
     private static final Predicate<Disk> diskImagePredicate =
             disk -> disk.getDiskStorageType() == DiskStorageType.IMAGE ||
-                    disk.getDiskStorageType() == DiskStorageType.CINDER ||
                     disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE;
 
     public static AbstractTextColumn<Disk> getAliasColumn(String sortBy) {
@@ -527,17 +526,6 @@ public class DisksViewColumns {
             @Override
             protected DiskStorageType getRawValue(Disk object) {
                 return object.getDiskStorageType();
-            }
-        };
-
-        return makeSortable(column, sortBy);
-    }
-
-    public static final AbstractTextColumn<Disk> getCinderVolumeTypeColumn(String sortBy) {
-        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
-            @Override
-            public String getValue(Disk object) {
-                return object.getCinderVolumeType();
             }
         };
 
