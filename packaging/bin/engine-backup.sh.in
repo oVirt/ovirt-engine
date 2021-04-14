@@ -168,8 +168,7 @@ BACKUP_PATHS="/etc/ovirt-engine
 /etc/firewalld/services/ovirt-provider-ovn.xml
 /etc/firewalld/services/ovn-central-firewall-service.xml
 /var/lib/openvswitch
-/etc/grafana
-/var/lib/grafana"
+/etc/grafana"
 
 # Add /var/lib/ovirt-engine except a few
 VAR_LIB_OVIRT_ENGINE_EXCLUSIONS="/var/lib/ovirt-engine/backups
@@ -1095,7 +1094,11 @@ backupSQLiteDB() {
 	local backup_file="$1"
 	local db_file="$2"
 
-	sqlite3 "${db_file}" ".backup ${backup_file}" 2>> "${LOG}" || logdie "failed to backup ${db_file} with sqlite3"
+	# Backup with sqlite, attempt to lock for up to 10 seconds
+	sqlite3 "${db_file}" << __EOF__ 2>> "${LOG}" || logdie "failed to backup ${db_file} with sqlite3"
+.timeout 10000
+.backup ${backup_file}
+__EOF__
 	chown --reference="${db_file}" "${backup_file}" 2>> "${LOG}" || logdie "chown failed"
 	chmod --reference="${db_file}" "${backup_file}" 2>> "${LOG}" || logdie "chmod failed"
 }
