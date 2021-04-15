@@ -3863,10 +3863,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (version != null && version.less(Version.v4_5)) {
             getTpmEnabled().setIsChangeable(false, messages.availableInVersionOrHigher(Version.v4_5.toString()));
             getTpmEnabled().setEntity(false);
-        } else if (cluster != null && cluster.getArchitecture() != null
-                && cluster.getArchitecture().getFamily() == ArchitectureType.x86
-                && getBiosType().getSelectedItem() != null
-                && !getBiosType().getSelectedItem().isOvmf()) {
+        } else if (cluster == null || cluster.getArchitecture() == null
+                || cluster.getArchitecture().getFamily() == ArchitectureType.x86
+                        && (getBiosType().getSelectedItem() == null || !getBiosType().getSelectedItem().isOvmf())) {
             getTpmEnabled().setIsChangeable(false, messages.uefiRequired());
             getTpmEnabled().setEntity(false);
         } else {
