@@ -43,9 +43,10 @@ public class ClusterUpgradeStatusColumn extends AbstractColumn<Cluster, Cluster>
                 return null; // will be rendered by progress column
             }
 
-            return object.getClusterHostsAndVms().getHostsWithUpdateAvailable() > 0
-                ? constants.clusterHasUpgradableHosts()
-                : constants.empty();
+            return object.getClusterHostsAndVms() != null
+                    && object.getClusterHostsAndVms().getHostsWithUpdateAvailable() > 0
+                            ? constants.clusterHasUpgradableHosts()
+                            : constants.empty();
         }
     }
 

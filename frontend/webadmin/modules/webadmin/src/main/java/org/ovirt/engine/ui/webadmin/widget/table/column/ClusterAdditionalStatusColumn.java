@@ -72,7 +72,7 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
             images.add(getImageSafeHtml(resources.container()));
         }
 
-        if (object.getClusterHostsAndVms().getHostsWithUpdateAvailable() > 0) {
+        if (object.getClusterHostsAndVms() != null && object.getClusterHostsAndVms().getHostsWithUpdateAvailable() > 0) {
             images.add(getImageSafeHtml(resources.updateAvailableImage()));
         }
 
@@ -136,7 +136,7 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
             tooltips.add(tooltip.toSafeHtml());
         }
 
-        if (object.getClusterHostsAndVms().getHostsWithUpdateAvailable() > 0) {
+        if (object.getClusterHostsAndVms() != null && object.getClusterHostsAndVms().getHostsWithUpdateAvailable() > 0) {
             SafeHtmlBuilder tooltip = new SafeHtmlBuilder()
                 .appendHtmlConstant(constants.clusterHasUpgradableHosts());
             tooltips.add(tooltip.toSafeHtml());
