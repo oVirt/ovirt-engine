@@ -5,12 +5,14 @@ ovirt_vdsm_trust_store: '/etc/pki/vdsm'
 # Certificate files (relative to certificate paths):
 ovirt_vdsm_cert_file: 'certs/vdsmcert.pem'
 ovirt_qemu_cert_file: 'libvirt-migrate/server-cert.pem'
+ovirt_qemu_client_cert_file: 'libvirt-migrate/client-cert.pem'
 ovirt_vdsm_spice_cert_file: 'libvirt-spice/server-cert.pem'
 ovirt_libvirt_default_client_cert_file: 'clientcert.pem'
 
 # Certificate keys (relative to certificate paths):
 ovirt_vdsm_key_file: 'keys/vdsmkey.pem'
 ovirt_qemu_key_file: 'libvirt-migrate/server-key.pem'
+ovirt_qemu_client_key_file: 'libvirt-migrate/client-key.pem'
 ovirt_vdsm_spice_key_file: 'libvirt-spice/server-key.pem'
 ovirt_libvirt_default_client_key_file: 'private/clientkey.pem'
 ovirt_vdsm_key_pending_file: 'keys/vdsmkey.pending.pem'

@@ -112,7 +112,7 @@
     loop_control:
       loop_var: filedest
 
-  - name: Add QEMU cert file
+  - name: Add QEMU server cert file
     copy:
       src: "{{ ovirt_pki_dir }}/certs-qemu/{{ ovirt_vds_hostname }}.cer"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_cert_file }}"
@@ -120,6 +120,12 @@
       group: 'kvm'
       remote_src: no
       mode: preserve
+
+  - name: Add QEMU client cert file link
+    file:
+      src: "{{ ovirt_qemu_cert_file | basename }}"
+      dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_client_cert_file }}"
+      state: link
 
   - name: Set vdsm key path
     set_fact:
@@ -144,7 +150,7 @@
     set_fact:
       qemukey_path: "{{ vdsmkeys.results[1].path  }}"
 
-  - name: Add QEMU key file
+  - name: Add QEMU server key file
     copy:
       src: "{{ qemukey_path }}"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_key_file }}"
@@ -152,6 +158,12 @@
       group: 'qemu'
       mode: 0440
       remote_src: yes
+
+  - name: Add QEMU client key file link
+    file:
+      src: "{{ ovirt_qemu_key_file | basename }}"
+      dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_client_key_file }}"
+      state: link
 
   always:
     - name: Remove temp file

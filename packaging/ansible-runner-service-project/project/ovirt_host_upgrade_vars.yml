@@ -15,6 +15,7 @@ ovirt_vdsm_cert_file: 'certs/vdsmcert.pem'
 ovirt_vdsm_spice_cert_file: 'libvirt-spice/server-cert.pem'
 ovirt_libvirt_default_client_cert_file: 'clientcert.pem'
 ovirt_qemu_cert_file: 'libvirt-migrate/server-cert.pem'
+ovirt_qemu_client_cert_file: 'libvirt-migrate/client-cert.pem'
 
 # Certificate keys (relative to certificate paths):
 ## vdsm
@@ -24,6 +25,7 @@ ovirt_libvirt_default_client_key_file: 'private/clientkey.pem'
 ovirt_vdsm_key_pending_file: 'keys/vdsmkey.pending.pem'
 ovirt_qemu_key_pending_file: 'libvirt-migrate/server-key.pending.pem'
 ovirt_qemu_key_file: 'libvirt-migrate/server-key.pem'
+ovirt_qemu_client_key_file: 'libvirt-migrate/client-key.pem'
 
 # CA files (relative to certificate paths):
 ## vdsm
