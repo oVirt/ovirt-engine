@@ -79,6 +79,13 @@
     .bottomMargin {
         margin-bottom: 15px;
     }
+
+    .tabAnchorStyle {
+        white-space: normal !important;
+        height: max-content !important;
+        min-height: 50px;
+        padding-bottom: 11px;
+    }
     </ui:style>
 
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
@@ -108,7 +115,7 @@
             </b:Container>
         </t:header>
         <t:tab>
-            <t:DialogTab ui:field="generalTab" label="{constants.GeneralVmPopup}">
+            <t:DialogTab ui:field="generalTab" label="{constants.GeneralVmPopup}" tabAnchorStyle="{style.tabAnchorStyle}">
                 <t:content>
                     <b:Container addStyleNames="{style.container}" fluid="true">
                       <b:Row>
@@ -191,7 +198,7 @@
             </t:DialogTab>
         </t:tab>
         <t:tab>
-            <t:DialogTab ui:field="systemTab" label="{constants.systemVmPopup}">
+            <t:DialogTab ui:field="systemTab" label="{constants.systemVmPopup}" tabAnchorStyle="{style.tabAnchorStyle}">
                 <t:content>
                   <b:Container addStyleNames="{style.container}" fluid="true">
                     <b:Row>
@@ -259,7 +266,7 @@
             </t:DialogTab>
         </t:tab>
         <t:tab>
-            <t:DialogTab ui:field="poolTab" label="{constants.poolVmPopup}">
+            <t:DialogTab ui:field="poolTab" label="{constants.poolVmPopup}" tabAnchorStyle="{style.tabAnchorStyle}">
                 <t:content>
                   <b:Container addStyleNames="{style.container}" fluid="true">
                     <b:Row>
@@ -273,7 +280,7 @@
             </t:DialogTab>
         </t:tab>
         <t:tab>
-            <t:DialogTab ui:field="initialRunTab" label="{constants.initialRunVmPopup}">
+            <t:DialogTab ui:field="initialRunTab" label="{constants.initialRunVmPopup}" tabAnchorStyle="{style.tabAnchorStyle}">
               <t:content>
                 <b:Container addStyleNames="{style.container}" fluid="true">
                   <b:Row>
@@ -287,7 +294,7 @@
             </t:DialogTab>
         </t:tab>
         <t:tab>
-          <t:DialogTab ui:field="consoleTab" label="{constants.consoleVmPopup}">
+          <t:DialogTab ui:field="consoleTab" label="{constants.consoleVmPopup}" tabAnchorStyle="{style.tabAnchorStyle}">
             <t:content>
               <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
@@ -394,7 +401,7 @@
           </t:DialogTab>
         </t:tab>
         <t:tab>
-          <t:DialogTab ui:field="hostTab" label="{constants.hostVmPopup}">
+          <t:DialogTab ui:field="hostTab" label="{constants.hostVmPopup}" tabAnchorStyle="{style.tabAnchorStyle}">
             <t:content>
               <b:Container addStyleNames="{style.container}" fluid="true">
                 <g:FlowPanel ui:field="startRunningOnPanel">
@@ -514,7 +521,7 @@
           </t:DialogTab>
         </t:tab>
         <t:tab>
-          <t:DialogTab ui:field="highAvailabilityTab" label="{constants.highAvailVmPopup}">
+          <t:DialogTab ui:field="highAvailabilityTab" label="{constants.highAvailVmPopup}" tabAnchorStyle="{style.tabAnchorStyle}">
             <t:content>
               <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
@@ -567,7 +574,7 @@
           </t:DialogTab>
         </t:tab>
         <t:tab>
-          <t:DialogTab ui:field="resourceAllocationTab" label="{constants.resourceAllocVmPopup}">
+          <t:DialogTab ui:field="resourceAllocationTab" label="{constants.resourceAllocVmPopup}" tabAnchorStyle="{style.tabAnchorStyle}">
             <t:content>
               <b:Container addStyleNames="{style.container}" fluid="true">
                 <g:FlowPanel ui:field="cpuAllocationPanel">
@@ -698,7 +705,7 @@
           </t:DialogTab>
         </t:tab>
         <t:tab>
-          <t:DialogTab ui:field="bootOptionsTab" label="{constants.bootOptionsVmPopup}">
+          <t:DialogTab ui:field="bootOptionsTab" label="{constants.bootOptionsVmPopup}" tabAnchorStyle="{style.tabAnchorStyle}">
             <t:content>
               <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
@@ -751,7 +758,7 @@
           </t:DialogTab>
         </t:tab>
         <t:tab>
-          <t:DialogTab ui:field="rngDeviceTab" label="{constants.rngDeviceTab}">
+          <t:DialogTab ui:field="rngDeviceTab" label="{constants.rngDeviceTab}" tabAnchorStyle="{style.tabAnchorStyle}">
             <t:content>
               <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
@@ -789,7 +796,7 @@
           </t:DialogTab>
         </t:tab>
         <t:tab>
-          <t:DialogTab ui:field="customPropertiesTab" label="{constants.customPropsVmPopup}">
+          <t:DialogTab ui:field="customPropertiesTab" label="{constants.customPropsVmPopup}" tabAnchorStyle="{style.tabAnchorStyle}">
             <t:content>
               <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
@@ -802,7 +809,7 @@
           </t:DialogTab>
         </t:tab>
         <t:tab>
-          <t:DialogTab ui:field="iconTab" label="{constants.iconTabVmPopup}">
+          <t:DialogTab ui:field="iconTab" label="{constants.iconTabVmPopup}" tabAnchorStyle="{style.tabAnchorStyle}">
             <t:content>
               <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
@@ -815,7 +822,7 @@
           </t:DialogTab>
         </t:tab>
         <t:tab>
-          <t:DialogTab ui:field="foremanTab" label="{constants.foremanLabel}">
+          <t:DialogTab ui:field="foremanTab" label="{constants.foremanLabel}" tabAnchorStyle="{style.tabAnchorStyle}">
             <t:content>
               <b:Container addStyleNames="{style.container}" fluid="true">
                 <b:Row>
@@ -826,7 +833,7 @@
           </t:DialogTab>
         </t:tab>
         <t:tab>
-          <t:DialogTab ui:field="affinityTab" label="{constants.affinity}">
+          <t:DialogTab ui:field="affinityTab" label="{constants.affinity}" tabAnchorStyle="{style.tabAnchorStyle}">
             <t:content>
               <b:Container addStyleNames="{style.container}" fluid="true">
                 <w:AffinityGroupSelectionWithListWidget ui:field="affinityGroupSelectionWidget" />
