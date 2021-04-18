@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -681,16 +680,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     vm.setClusterBiosType(getSelectedBiosType());
                     diskModel.setVm(vm);
                     break;
-                case CINDER:
-                    CinderDisk cinderDisk = (CinderDisk) disk;
-                    diskModel.setSize(new EntityModel<>((int) cinderDisk.getSizeInGigabytes()));
-                    ListModel volumeTypes = new ListModel();
-                    volumeTypes.setItems(new ArrayList<>(Collections.singletonList(cinderDisk.getVolumeType())), cinderDisk.getVolumeType());
-                    diskModel.setVolumeType(volumeTypes);
-                    ListModel volumeFormats = new ListModel();
-                    volumeFormats.setItems(new ArrayList<>(Collections.singletonList(cinderDisk.getVolumeFormat())), cinderDisk.getVolumeFormat());
-                    diskModel.setVolumeFormat(volumeFormats);
-                    break;
                 case MANAGED_BLOCK_STORAGE:
                     ManagedBlockStorageDisk managedBlockDisk = (ManagedBlockStorageDisk) disk;
                     diskModel.setSize(new EntityModel<>((int) managedBlockDisk.getSizeInGigabytes()));
@@ -765,7 +754,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 diskModel.getStorageDomain().setChangeProhibitionReason(
                         constants.noActiveTargetStorageDomainAvailableMsg());
             }
-            initStorageDomainForType(StorageType.CINDER, DiskStorageType.CINDER, disks, storageDomains);
             initStorageDomainForType(StorageType.MANAGED_BLOCK_STORAGE,
                     DiskStorageType.MANAGED_BLOCK_STORAGE,
                     disks,
