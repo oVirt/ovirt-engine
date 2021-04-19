@@ -9,7 +9,7 @@
 
   - name: Find relevant advanced virtualization module version
     set_fact:
-      virt_mod_ver: "{{ 'av' if ansible_distribution_version is version('8.4'', '>=') else
+      virt_mod_ver: "{{ 'av' if ansible_distribution_version is version('8.4', '>=') else
           ansible_distribution_version }}"
 
   - name: Enable advanced virtualization module
