@@ -136,6 +136,16 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             return false;
         }
 
+        // Validate that the host supports building checkpoint XML for redefinition
+        // and creating scratch disks on shared storage.
+        // Those feature introduced together with the support for cold backup so if the
+        // host supports cold backup it supports scratch disks on shared storage also.
+        if (!getVds().isColdBackupEnabled()) {
+            return failValidation(
+                    EngineMessage.CANNOT_START_BACKUP_USING_OUTDATED_HOST,
+                    String.format("$vdsName %s", getVdsName()));
+        }
+
         if (getParameters().getVmBackup().getFromCheckpointId() != null) {
             if (!FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_NOT_SUPPORTED);

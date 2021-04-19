@@ -119,6 +119,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedVmNotQualifiedForBackup() {
         mockVm(VMStatus.PoweringUp);
+        mockVds(true, true);
         mockVmDevice(true);
         doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
         doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
@@ -130,7 +131,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedBackupAlreadyInProgress() {
         mockVm(VMStatus.Up);
-        mockVds(true);
+        mockVds(true, true);
         mockVmDevice(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(List.of(mockVmBackup()));
         doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
@@ -142,7 +143,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedVdsNotSupportBackup() {
-        mockVds(false);
+        mockVds(false, true);
         mockVm(VMStatus.Up);
         mockVmDevice(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(new ArrayList<>());
@@ -154,8 +155,22 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
 
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
+    public void validateFailedVdsNotSupportScratchDisksOnSharedStorage() {
+        mockVds(true, false);
+        mockVm(VMStatus.Up);
+        mockVmDevice(true);
+        when(vmBackupDao.getAllForVm(vmId)).thenReturn(new ArrayList<>());
+        doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
+        doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.CANNOT_START_BACKUP_USING_OUTDATED_HOST);
+    }
+
+    @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedNotAllDisksSupportsIncremental() {
         mockVm(VMStatus.Up);
+        mockVds(true, true);
         mockVmDevice(true);
         doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_DISABLED_FOR_DISKS))
@@ -168,6 +183,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedMixedBackup() {
         mockVm(VMStatus.Up);
+        mockVds(true, true);
         mockVmDevice(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(List.of(mockVmBackup()));
         doReturn(Set.of(diskImages)).when(command).getDisksNotInPreviousCheckpoint();
@@ -180,7 +196,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateMixedBackupAllowed() {
         command.getCluster().setCompatibilityVersion(Version.getLast());
-        mockVds(true);
+        mockVds(true, true);
         mockVm(VMStatus.Up);
         mockVmDevice(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(new ArrayList<>());
@@ -193,6 +209,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedMissingCheckpoint() {
         mockVm(VMStatus.Up);
+        mockVds(true, true);
         mockVmDevice(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(List.of(mockVmBackup()));
         ValidateTestUtils.runAndAssertValidateFailure(command,
@@ -202,7 +219,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateVmQualifiedForBackup() {
-        mockVds(true);
+        mockVds(true, true);
         mockVm(VMStatus.Up);
         mockVmDevice(true);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(new ArrayList<>());
@@ -214,7 +231,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedVmDeviceNotActive() {
-        mockVds(true);
+        mockVds(true, true);
         mockVm(VMStatus.Up);
         mockVmDevice(false);
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(new ArrayList<>());
@@ -266,9 +283,10 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
     }
 
-    private void mockVds(Boolean backupEnabled) {
+    private void mockVds(Boolean backupEnabled, Boolean coldBackupEnabled) {
         VDS vds = new VDS();
         vds.setBackupEnabled(backupEnabled);
+        vds.setColdBackupEnabled(coldBackupEnabled);
         when(vdsDao.get(any())).thenReturn(vds);
     }
 
