@@ -47,6 +47,7 @@ import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.BiosTypeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.MigrationPolicyNameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.SystemDefaultRenderer;
@@ -56,6 +57,7 @@ import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
+import org.ovirt.engine.ui.uicompat.MigrationPoliciesTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -564,6 +566,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final ApplicationMessages messages = AssetProvider.getMessages();
+    private static final MigrationPoliciesTranslator translator = MigrationPoliciesTranslator.getInstance();
 
     @Inject
     public ClusterPopupView(EventBus eventBus) {
@@ -731,7 +734,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         migrationBandwidthLimitTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<MigrationBandwidthLimitType>());
         migrationBandwidthLimitTypeEditor.hideLabel();
-        migrationPolicyEditor = new ListModelListBoxEditor<>(new NameRenderer());
+        migrationPolicyEditor = new ListModelListBoxEditor<>(new MigrationPolicyNameRenderer());
         migrationPolicyEditor.hideLabel();
         macPoolListEditor = new ListModelListBoxEditor<>(new NameRenderer<MacPool>());
         macPoolListEditor.setLabel(constants.clusterPopupMacPoolLabel());
@@ -904,7 +907,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             MigrationPolicy selectedPolicy = object.getMigrationPolicies().getSelectedItem();
             if (selectedPolicy != null) {
                 migrationPolicyDetails.setHTML(
-                        templates.migrationPolicyDetails(selectedPolicy.getName(), selectedPolicy.getDescription())
+                        templates.migrationPolicyDetails(translator.getName(selectedPolicy), translator.getDescription(selectedPolicy))
                 );
             } else {
                 migrationPolicyDetails.setText(""); //$NON-NLS-1$

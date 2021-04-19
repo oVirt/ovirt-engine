@@ -55,6 +55,7 @@
     <suppress checks="MethodName" files="ApplicationResources.java"/>
     <suppress checks="MethodName" files="ApplicationResourcesWithLookup.java"/>
     <suppress checks="MethodName" files="LocalizedEnums.java"/>
+    <suppress checks="MethodName" files="LocalizedMigrationPolicies.java"/>
     <suppress checks="MethodName" files="SpiceRedKeys.java"/>
 
     <!-- Other GWT-related classes -->

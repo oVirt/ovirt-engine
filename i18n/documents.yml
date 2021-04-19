@@ -20,6 +20,7 @@ documents:
   - file: frontend/webadmin/modules/gwt-common/src/main/resources/org/ovirt/engine/ui/common/CommonApplicationConstants.properties
   - file: frontend/webadmin/modules/gwt-common/src/main/resources/org/ovirt/engine/ui/common/CommonApplicationMessages.properties
     escapeSingleQuotes: true
+  - file: frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/LocalizedMigrationPolicies.properties
   - file: frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/LocalizedEnums.properties
   - file: frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/NextRunFieldMessages.properties
   - file: frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/SpiceRedKeys.properties

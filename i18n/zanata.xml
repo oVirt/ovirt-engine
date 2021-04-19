@@ -27,6 +27,7 @@
     frontend/webadmin/modules/frontend/src/main/resources/org/ovirt/engine/ui/frontend/AppErrors.properties,
     frontend/webadmin/modules/gwt-common/src/main/resources/org/ovirt/engine/ui/common/CommonApplicationConstants.properties,
     frontend/webadmin/modules/gwt-common/src/main/resources/org/ovirt/engine/ui/common/CommonApplicationMessages.properties,
+    frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/LocalizedMigrationPolicies.properties,
     frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/LocalizedEnums.properties,
     frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/NextRunFieldMessages.properties,
     frontend/webadmin/modules/uicompat/src/main/resources/org/ovirt/engine/ui/uicompat/SpiceRedKeys.properties,

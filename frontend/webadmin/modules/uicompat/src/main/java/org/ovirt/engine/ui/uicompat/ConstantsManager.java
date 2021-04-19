@@ -18,6 +18,7 @@ public abstract class ConstantsManager {
     public abstract UIMessages getMessages();
     public abstract LocalizedEnums getEnums();
     public abstract NextRunFieldMessages getNextRunFieldMessages();
+    public abstract LocalizedMigrationPolicies getMigrationPolicies();
 
     static class GwtConstantsManager extends ConstantsManager {
 
@@ -25,6 +26,7 @@ public abstract class ConstantsManager {
         private static UIMessages messages;
         private static LocalizedEnums enums;
         private static NextRunFieldMessages nextRunFieldMessages;
+        private static LocalizedMigrationPolicies migrationPolicies;
 
         @Override
         public UIConstants getConstants() {
@@ -56,6 +58,14 @@ public abstract class ConstantsManager {
                 nextRunFieldMessages = GWT.create(NextRunFieldMessages.class);
             }
             return nextRunFieldMessages;
+        }
+
+        @Override
+        public LocalizedMigrationPolicies getMigrationPolicies() {
+            if (migrationPolicies == null) {
+                migrationPolicies = GWT.create(LocalizedMigrationPolicies.class);
+            }
+            return migrationPolicies;
         }
     }
 }
