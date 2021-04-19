@@ -19,6 +19,7 @@ import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.UpdateHostNicVfsConfigParameters;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
@@ -31,11 +32,6 @@ import org.ovirt.engine.core.common.businessentities.network.Vlan;
 public class HostNicMapper {
     private static final String OPTIONS_DELIMITER = "\\ ";
     private static final String OPTIONS_EQ = "\\=";
-    private static final String[] BONDING_MODS = new String[]{"Active-Backup",
-                                                              "Load balance (balance-xor)",
-                                                              null,
-                                                              "Dynamic link aggregation (802.3ad)",
-                                                              "Adaptive transmit load balancing (balance-tlb)"};
 
     @Mapping(from = HostNic.class, to = VdsNetworkInterface.class)
     public static VdsNetworkInterface map(HostNic model, VdsNetworkInterface template) {
@@ -312,8 +308,15 @@ public class HostNicMapper {
     private static String getType(final String[] optionPair) {
         if (!StringUtils.isEmpty(optionPair[0]) && optionPair[0].equals("mode") && !StringUtils.isEmpty(optionPair[1])) {
             Integer mode = tryParse(optionPair[1]);
-            if(mode != null && mode > 0 && mode < 6){
-                return BONDING_MODS[mode - 1];
+            if(mode != null){
+                /*
+                 *  Return the description of this bond-mode, as it appears in BondMode enum
+                 *  in the Engine (truncating the unnecessary "(Mode x") prefix from it).
+                 *
+                 *  This solution is temporary, the final solution will include creating
+                 *  a parallel enum in the API layer and using its values here.
+                 */
+                return BondMode.values()[mode].getDescription().substring(9);
             }
         }
         return null;
