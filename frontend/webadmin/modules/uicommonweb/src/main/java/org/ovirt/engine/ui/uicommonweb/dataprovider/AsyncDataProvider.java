@@ -265,6 +265,9 @@ public class AsyncDataProvider {
     // cached sound device enabled by map
     private Map<Integer, Map<Version, Boolean>> soundDeviceSupportMap;
 
+    // cached TPM allowed for OS map
+    private Map<Integer, Boolean> tpmAllowedForOsMap;
+
     // cached windows OS
     private List<Integer> windowsOsIds;
     // cached OS Architecture
@@ -338,6 +341,7 @@ public class AsyncDataProvider {
         initMigrationPolicies();
         initCpuMap();
         initImageioProxyUri();
+        initTpmAllowedForOsMap();
     }
 
     private void initMigrationPolicies() {
@@ -3248,4 +3252,13 @@ public class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(ConfigValues.VgpuPlacementSupported, version.getValue());
     }
 
+    public Boolean isTpmAllowedForOs(Integer osId) {
+        return osId != null && tpmAllowedForOsMap.get(osId);
+    }
+
+    private void initTpmAllowedForOsMap() {
+        Frontend.getInstance().runQuery(QueryType.OsRepository,
+                new OsQueryParameters(OsRepositoryVerb.GetTpmAllowedMap),
+                new AsyncQuery<QueryReturnValue>(result -> tpmAllowedForOsMap = result.getReturnValue()));
+    }
 }

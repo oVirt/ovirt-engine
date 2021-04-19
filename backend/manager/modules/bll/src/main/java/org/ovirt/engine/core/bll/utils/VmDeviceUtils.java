@@ -703,6 +703,10 @@ public class VmDeviceUtils {
      * Check if a TPM device is supported for the given VM in the given cluster.
      */
     public boolean isTpmDeviceSupported(VmBase vm, Cluster vmCluster) {
+        if (!osRepository.isTpmAllowed(vm.getOsId())) {
+            return false;
+        }
+
         final Version version = CompatibilityVersionUtils.getEffective(vm, vmCluster);
         boolean isOvmf = vm.getBiosType() == null ? false : vm.getBiosType().isOvmf();
 

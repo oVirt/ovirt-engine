@@ -311,4 +311,15 @@ public interface OsRepository {
      * @param osId operation system id
      */
     boolean requiresOvirtGuestAgentChannel(int osId);
+
+    /**
+     * @return a map from OS id to TPM-allowed Booleans
+     */
+    Map<Integer, Boolean> getTpmAllowedMap();
+
+    /**
+     * Checks if the operating system supports virtual TPM.
+     * @param osId operation system id
+     */
+    boolean isTpmAllowed(int osId);
 }

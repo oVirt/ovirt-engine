@@ -78,6 +78,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel6/id").put("value", "999");
         preferences.node("/os/rhel6/devices/usb/controller").put("value", "nec-xhci");
         preferences.node("/os/rhel6/devices/usb/controller").put("value.4.2", "none");
+        preferences.node("/os/rhel7/devices/tpmAllowed").put("value", "true");
         OsRepositoryImpl.INSTANCE.init(preferences);
     }
 
@@ -366,5 +367,13 @@ public class OsRepositoryImplTest {
                 null,
                 ChipsetType.I440FX);
         assertNull(model);
+    }
+
+    @Test
+    public void testTpmAllowed() {
+        assertTrue(OsRepositoryImpl.INSTANCE.isTpmAllowed(777));
+        assertTrue(OsRepositoryImpl.INSTANCE.isTpmAllowed(888));
+        assertFalse(OsRepositoryImpl.INSTANCE.isTpmAllowed(999));
+        assertFalse(OsRepositoryImpl.INSTANCE.isTpmAllowed(666));
     }
 }

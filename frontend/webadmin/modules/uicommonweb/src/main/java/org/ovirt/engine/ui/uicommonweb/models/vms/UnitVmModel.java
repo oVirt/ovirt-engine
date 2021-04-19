@@ -2677,6 +2677,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         initGraphicsConsoles();
 
         updateSoundCard();
+        updateTpmEnabled();
     }
 
     private void updateIconAccordingToOs() {
@@ -3862,6 +3863,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         Version version = getCompatibilityVersion();
         if (version != null && version.less(Version.v4_5)) {
             getTpmEnabled().setIsChangeable(false, messages.availableInVersionOrHigher(Version.v4_5.toString()));
+            getTpmEnabled().setEntity(false);
+        } else if (!AsyncDataProvider.getInstance().isTpmAllowedForOs(getOSType().getSelectedItem())) {
+            getTpmEnabled().setIsChangeable(false, constants.guestOsVersionNotSupported());
             getTpmEnabled().setEntity(false);
         } else if (cluster == null || cluster.getArchitecture() == null
                 || cluster.getArchitecture().getFamily() == ArchitectureType.x86

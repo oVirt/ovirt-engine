@@ -599,6 +599,20 @@ public enum OsRepositoryImpl implements OsRepository {
                         .toLowerCase().split(",")));
     }
 
+    @Override
+    public boolean isTpmAllowed(int osId) {
+        return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "devices.tpmAllowed", null), false);
+    }
+
+    @Override
+    public Map<Integer, Boolean> getTpmAllowedMap() {
+        Map<Integer, Boolean> tpmAllowedMap = new HashMap<>();
+        for (Integer osId : getOsIds()) {
+            tpmAllowedMap.put(osId, isTpmAllowed(osId));
+        }
+        return tpmAllowedMap;
+    }
+
     private boolean getBoolean(String value, boolean defaultValue) {
         return value == null ? defaultValue : Boolean.parseBoolean(value);
     }

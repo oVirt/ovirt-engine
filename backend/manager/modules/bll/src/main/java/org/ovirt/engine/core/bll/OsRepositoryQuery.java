@@ -82,6 +82,9 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case GetVmInitMap:
                 setReturnValue(osRepository.getVmInitMap());
                 break;
+            case GetTpmAllowedMap:
+                setReturnValue(osRepository.getTpmAllowedMap());
+                break;
         }
     }
 }

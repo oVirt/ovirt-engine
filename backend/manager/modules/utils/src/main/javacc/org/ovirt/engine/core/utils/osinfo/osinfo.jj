@@ -75,6 +75,7 @@ void devices() : {} {
     | ("memoryHotplug.specialBlock" booleanValue())
     | ("legacyVirtio" booleanValue())
     | ("ovirtGuestAgentChannel" booleanValue())
+    | ("tpmAllowed" booleanValue())
     )
 }
 
