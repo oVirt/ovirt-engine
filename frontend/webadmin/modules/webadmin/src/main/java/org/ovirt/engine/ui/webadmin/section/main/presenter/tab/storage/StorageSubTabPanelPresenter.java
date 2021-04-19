@@ -64,7 +64,6 @@ public class StorageSubTabPanelPresenter extends
         mapping.put(DetailTabDataIndex.STORAGE_IMAGES, mainModel.getIsoListModel());
         mapping.put(DetailTabDataIndex.STORAGE_DISKS, mainModel.getDiskListModel());
         mapping.put(DetailTabDataIndex.STORAGE_SNAPSHOTS, mainModel.getSnapshotListModel());
-        mapping.put(DetailTabDataIndex.STORAGE_REGISTER_DISKS, mainModel.getRegisterDiskListModel());
         mapping.put(DetailTabDataIndex.STORAGE_LEASE, mainModel.getLeaseListModel());
         mapping.put(DetailTabDataIndex.STORAGE_DISK_PROFILES, mainModel.getDiskProfileListModel());
         mapping.put(DetailTabDataIndex.STORAGE_DR, mainModel.getDRListModel());

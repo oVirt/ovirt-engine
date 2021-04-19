@@ -166,7 +166,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             final StorageTemplateListModel storageTemplateListModel,
             final StorageIsoListModel storageIsoListModel,
             final StorageDiskListModel storageDiskListModel,
-            final StorageRegisterDiskListModel storageRegisterDiskListModel,
             final StorageSnapshotListModel storageSnapshotListModel,
             final DiskProfileListModel diskProfileListModel,
             final StorageEventListModel storageEventListModel,
@@ -184,7 +183,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         this.templateListModel = storageTemplateListModel;
         this.isoListModel = storageIsoListModel;
         this.diskListModel = storageDiskListModel;
-        this.registerDiskListModel = storageRegisterDiskListModel;
         this.snapshotListModel = storageSnapshotListModel;
         this.diskProfileListModel = diskProfileListModel;
         this.drListModel = storageDRListModel;
@@ -228,7 +226,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         templateListModel.setIsAvailable(false);
         isoListModel.setIsAvailable(false);
         diskListModel.setIsAvailable(false);
-        registerDiskListModel.setIsAvailable(false);
         snapshotListModel.setIsAvailable(false);
         diskProfileListModel.setIsAvailable(false);
         drListModel.setIsAvailable(false);
@@ -247,7 +244,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         list.add(leaseListModel);
         list.add(isoListModel);
         list.add(diskListModel);
-        list.add(registerDiskListModel);
         list.add(snapshotListModel);
         list.add(diskProfileListModel);
         list.add(drListModel);
@@ -267,7 +263,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     private final StorageTemplateListModel templateListModel;
     private final StorageIsoListModel isoListModel;
     private final StorageDiskListModel diskListModel;
-    private final StorageRegisterDiskListModel registerDiskListModel;
     private final StorageSnapshotListModel snapshotListModel;
     private final DiskProfileListModel diskProfileListModel;
     private final StorageDRListModel drListModel;
@@ -2113,10 +2108,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
     public StorageSnapshotListModel getSnapshotListModel() {
         return snapshotListModel;
-    }
-
-    public StorageRegisterDiskListModel getRegisterDiskListModel() {
-        return registerDiskListModel;
     }
 
     public StorageLeaseListModel getLeaseListModel() {
