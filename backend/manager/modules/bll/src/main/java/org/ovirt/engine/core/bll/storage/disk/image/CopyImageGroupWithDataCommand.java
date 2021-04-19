@@ -126,7 +126,10 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
     }
 
     private void createVolume() {
-        populateDiskSnapshotsInfoFromStorage();
+        if (getActionType() != ActionType.CopyManagedBlockDisk) {
+            populateDiskSnapshotsInfoFromStorage();
+        }
+
         CreateVolumeContainerCommandParameters parameters = new CreateVolumeContainerCommandParameters(
                 getParameters().getStoragePoolId(),
                 getParameters().getDestDomain(),

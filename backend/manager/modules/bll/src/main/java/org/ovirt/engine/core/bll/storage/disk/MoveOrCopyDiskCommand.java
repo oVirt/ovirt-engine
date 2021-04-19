@@ -383,7 +383,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             getReturnValue().setFault(vdcRetValue.getFault());
         } else {
             setSucceeded(true);
-            if (isCopyOperation() && !isTemplate()) {
+            if (isCopyOperation() && !isTemplate() && !isManagedBlockCopy()) {
                 imagesHandler.addDiskImageWithNoVmDevice(getImage());
             }
         }
@@ -531,6 +531,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         } else {
             parameters.setCopyVolumeType(CopyVolumeType.LeafVol);
         }
+        parameters.setStoragePoolId(getStoragePoolId());
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setDiskProfileId(getImage().getDiskProfileId());
@@ -622,6 +623,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected boolean setAndValidateDiskProfiles() {
+        if (isManagedBlockCopy()) {
+            return true;
+        }
+
         getImage().setDiskProfileId(getParameters().getDiskProfileId());
         return validate(diskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getImage(),
                 getParameters().getStorageDomainId()), getCurrentUser()));
@@ -718,6 +723,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private boolean isCopyOperation() {
         return ImageOperation.Copy == getParameters().getOperation();
+    }
+
+    private boolean isManagedBlockCopy() {
+        return storageDomainDao.get(getParameters().getStorageDomainId()).getStorageType() == StorageType.MANAGED_BLOCK_STORAGE;
     }
 
     protected QuotaValidator createQuotaValidator(Guid quotaId) {

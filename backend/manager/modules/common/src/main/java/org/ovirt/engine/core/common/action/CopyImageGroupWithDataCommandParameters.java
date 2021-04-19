@@ -18,6 +18,11 @@ public class CopyImageGroupWithDataCommandParameters extends ImagesActionsParame
     private VolumeType destinationVolumeType;
     private CopyStage stage = CopyStage.DEST_CREATION;
 
+    // MBS
+    private String sourcePath;
+    private String targetPath;
+    private Guid leaseStorageId;
+
     public CopyImageGroupWithDataCommandParameters() {
     }
 
@@ -108,7 +113,33 @@ public class CopyImageGroupWithDataCommandParameters extends ImagesActionsParame
         this.destImages = destImages;
     }
 
+    public String getSourcePath() {
+        return sourcePath;
+    }
+
+    public void setSourcePath(String sourcePath) {
+        this.sourcePath = sourcePath;
+    }
+
+    public String getTargetPath() {
+        return targetPath;
+    }
+
+    public void setTargetPath(String targetPath) {
+        this.targetPath = targetPath;
+    }
+
+    public Guid getLeaseStorageId() {
+        return leaseStorageId;
+    }
+
+    public void setLeaseStorageId(Guid leaseStorageId) {
+        this.leaseStorageId = leaseStorageId;
+    }
+
     public enum CopyStage {
-        DEST_CREATION, DATA_COPY, UPDATE_VOLUME
+        DEST_CREATION, DATA_COPY, UPDATE_VOLUME,
+        // MBS
+        LEASE_CREATION, DETACH_VOLUME
     }
 }

@@ -40,7 +40,13 @@ public class ManagedBlockStorageDomainValidator {
                 ActionType.CreateSnapshotForVm,
                 ActionType.RemoveSnapshot,
                 ActionType.TryBackToAllSnapshotsOfVm,
-                ActionType.RestoreAllSnapshots
+                ActionType.RestoreAllSnapshots,
+                ActionType.CopyData,
+                ActionType.CopyImageGroupVolumesData,
+                ActionType.CopyImageGroup,
+                ActionType.CopyImageGroupWithData,
+                ActionType.CopyManagedBlockDisk,
+                ActionType.MoveOrCopyDisk
         ));
         EngineLocalConfig config = EngineLocalConfig.getInstance();
         isDataBaseInitialized = Boolean.parseBoolean(config.getProperty(CINDERLIB_DB_ENABLE));

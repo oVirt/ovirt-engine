@@ -360,4 +360,15 @@ public class FeatureSupported {
         return Version.v4_6.lessOrEquals(version);
     }
 
+    /**
+     * Checks if host can perform copy on Managed Block Storage disks
+     *
+     * @param vds the host
+     * @return true if the host can perform the copy
+     */
+    public static boolean isHostSupportsMBSCopy(VDS vds) {
+        return vds != null && vds.getConnectorInfo() != null
+                && Version.v4_6.greaterOrEquals(vds.getClusterCompatibilityVersion());
+    }
+
 }

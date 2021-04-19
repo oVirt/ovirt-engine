@@ -353,6 +353,7 @@ public enum ActionType {
     CopyData(1033, QuotaDependency.STORAGE),
     CopyImageGroupVolumesData(1034, QuotaDependency.STORAGE),
     CopyImageGroupWithData(1035, QuotaDependency.STORAGE),
+    CopyManagedBlockDisk(1050, QuotaDependency.NONE),
     GlusterStorageSync(1036, QuotaDependency.NONE),
     GlusterStorageGeoRepSyncInternal(1037, QuotaDependency.NONE),
     ScheduleGlusterStorageSync(1038, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),

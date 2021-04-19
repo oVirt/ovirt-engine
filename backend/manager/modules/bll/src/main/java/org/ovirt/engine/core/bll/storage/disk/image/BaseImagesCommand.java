@@ -12,9 +12,11 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -141,7 +144,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected boolean isDataOperationsByHSM() {
-        return getStorageDomain().getStorageStaticData().getStorageDomainType().isDataDomain();
+        return getStorageDomain().getStorageStaticData().getStorageDomainType().isDataDomain() ||
+                getStorageDomain().getStorageStaticData().getStorageDomainType() == StorageDomainType.ManagedBlockStorage;
     }
 
     protected boolean performImageVdsmOperation() {
@@ -353,7 +357,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     @Override
     protected void endSuccessfully() {
-        if (getDestinationDiskImage() != null) {
+        if (getDestinationDiskImage() != null && !getDestinationDiskImage().getStorageTypes().get(0).isManagedBlockStorage()) {
             Guid storagePoolId = getDestinationDiskImage().getStoragePoolId() != null ? getDestinationDiskImage()
                     .getStoragePoolId() : Guid.Empty;
             setStoragePoolId(storagePoolId);
@@ -389,6 +393,16 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                 if (!getParameters().isLeaveLocked()) {
                     getDestinationDiskImage().setImageStatus(ImageStatus.OK);
                 }
+
+                // This is a hack for managed block storage -> image copy,
+                // the purpose is convert the disk storage type back to IMAGE
+                if (getActionType() == ActionType.CopyImageGroup
+                        && isImageDomain(getDestinationDiskImage().getStorageTypes().get(0))
+                        && getDiskImage().getStorageTypes().get(0).isManagedBlockStorage()) {
+                    DiskImage diskImage = DiskImage.copyOf(getDestinationDiskImage());
+                    baseDiskDao.update(diskImage);
+                }
+
                 imageDao.update(getDestinationDiskImage().getImage());
             }
         }
@@ -398,6 +412,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         }
 
         setSucceeded(true);
+    }
+
+    private boolean isImageDomain(StorageType storageType) {
+        return storageType.isBlockDomain() || storageType.isFileDomain();
     }
 
     protected void setQcowCompatByQemuImageInfo(Guid storagePoolId,
