@@ -70,15 +70,19 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         }
     }
 
-    @Override
-    protected void executeCommand() {
-        prepareParameters();
-        persistCommandIfNeeded();
+    protected void createVolumes() {
         if (getParameters().isCollapse()) {
             createVolume();
         } else {
             cloneStructureNotCollapsed();
         }
+    }
+
+    @Override
+    protected void executeCommand() {
+        prepareParameters();
+        persistCommandIfNeeded();
+        createVolumes();
 
         setSucceeded(true);
     }
@@ -148,36 +152,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
     @Override
     public boolean performNextOperation(int completedChildCount) {
         if (getParameters().getStage() == CopyStage.DEST_CREATION) {
-            updateStage(CopyStage.DATA_COPY);
-            Integer weight = getParameters().getOperationsJobWeight().get(CopyStage.DATA_COPY.name());
-            if (getParameters().isCollapse()) {
-                CopyDataCommandParameters parameters = new CopyDataCommandParameters(getParameters().getStoragePoolId(),
-                        buildImageLocationInfo(getParameters().getSrcDomain(), getParameters().getImageGroupID(),
-                                getParameters().getImageId()),
-                        buildImageLocationInfo(getParameters().getDestDomain(), getParameters().getDestImageGroupId(),
-                                getParameters().getDestinationImageId()), true);
-
-                parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-                parameters.setParentCommand(getActionType());
-                parameters.setParentParameters(getParameters());
-                parameters.setJobWeight(weight);
-                runInternalAction(ActionType.CopyData, parameters);
-            } else {
-                CopyImageGroupVolumesDataCommandParameters p = new CopyImageGroupVolumesDataCommandParameters(
-                        getParameters().getStoragePoolId(),
-                        getParameters().getSrcDomain(),
-                        getParameters().getImageGroupID(),
-                        getParameters().getDestDomain(),
-                        getActionType(),
-                        getParameters()
-                );
-                p.setDestImageGroupId(getParameters().getDestImageGroupId());
-                p.setDestImageId(getParameters().getDestinationImageId());
-                p.setDestImages(getParameters().getDestImages());
-                p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-                p.setJobWeight(weight);
-                runInternalAction(ActionType.CopyImageGroupVolumesData, p);
-            }
+            copyData();
             return true;
         } else if (getParameters().getStage() == CopyStage.DATA_COPY) {
             updateStage(CopyStage.UPDATE_VOLUME);
@@ -212,6 +187,40 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         }
 
         return false;
+    }
+
+    protected void copyData() {
+        updateStage(CopyStage.DATA_COPY);
+        Integer weight = getParameters().getOperationsJobWeight().get(CopyStage.DATA_COPY.name());
+
+        if (getParameters().isCollapse()) {
+            CopyDataCommandParameters parameters = new CopyDataCommandParameters(getParameters().getStoragePoolId(),
+                    buildImageLocationInfo(getParameters().getSrcDomain(), getParameters().getImageGroupID(),
+                            getParameters().getImageId()),
+                    buildImageLocationInfo(getParameters().getDestDomain(), getParameters().getDestImageGroupId(),
+                            getParameters().getDestinationImageId()), true);
+
+            parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+            parameters.setParentCommand(getActionType());
+            parameters.setParentParameters(getParameters());
+            parameters.setJobWeight(weight);
+            runInternalAction(ActionType.CopyData, parameters);
+        } else {
+            CopyImageGroupVolumesDataCommandParameters p = new CopyImageGroupVolumesDataCommandParameters(
+                    getParameters().getStoragePoolId(),
+                    getParameters().getSrcDomain(),
+                    getParameters().getImageGroupID(),
+                    getParameters().getDestDomain(),
+                    getActionType(),
+                    getParameters()
+            );
+            p.setDestImageGroupId(getParameters().getDestImageGroupId());
+            p.setDestImageId(getParameters().getDestinationImageId());
+            p.setDestImages(getParameters().getDestImages());
+            p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+            p.setJobWeight(weight);
+            runInternalAction(ActionType.CopyImageGroupVolumesData, p);
+        }
     }
 
     private Long determineTotalImageInitialSize(DiskImage sourceImage,
