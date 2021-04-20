@@ -269,7 +269,7 @@ public class UpdateClusterCommandTest {
         clusterHasVds();
         cpuFlagsMissing();
         architectureIsUpdatable();
-        validateFailedWithReason(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
+        validateFailedWithReason(EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_HOSTS_MISSING_FLAGS);
     }
 
     @Test

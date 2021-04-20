@@ -797,7 +797,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 .collect(Collectors.toList());
         boolean valid = true;
         List<String> lowerVersionHosts = new ArrayList<>();
-        List<String> lowCpuHosts = new ArrayList<>();
+        List<String> hostsWithMissingFlags = new ArrayList<>();
         List<String> incompatibleEmulatedMachineHosts = new ArrayList<>();
         for (VDS vds : upVdss) {
             if (!VersionSupport.checkClusterVersionSupported(
@@ -808,7 +808,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             }
             if (getCluster().supportsVirtService() && !missingServerCpuFlags(vds).isEmpty()) {
                 valid = false;
-                lowCpuHosts.add(vds.getName());
+                hostsWithMissingFlags.add(vds.getName());
             }
             if (!isSupportedEmulatedMachinesMatchClusterLevel(vds)) {
                 valid = false;
@@ -820,10 +820,10 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                     String.join(", ", lowerVersionHosts),
                     EngineMessage.CLUSTER_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
         }
-        if (!lowCpuHosts.isEmpty()) {
+        if (!hostsWithMissingFlags.isEmpty()) {
             addValidationVarAndMessage("host",
-                    String.join(", ", lowCpuHosts),
-                    EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_LOWER_HOSTS);
+                    String.join(", ", hostsWithMissingFlags),
+                    EngineMessage.CLUSTER_CANNOT_UPDATE_CPU_WITH_HOSTS_MISSING_FLAGS);
         }
         if (!incompatibleEmulatedMachineHosts.isEmpty()) {
             addValidationVarAndMessage("host",
