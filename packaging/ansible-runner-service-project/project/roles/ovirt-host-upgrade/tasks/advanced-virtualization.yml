@@ -25,9 +25,9 @@
           tags:
             - skip_ansible_lint # E305
 
-      when:
-        - virt_mod_ver != 'av'
-        - virt_mod_ver is version (ansible_distribution_version, '>')
+      when: >
+        virt_mod_ver == 'av' and ansible_distribution_version is version ('8.4', '<') or
+        virt_mod_ver != 'av' and virt_mod_ver is version (ansible_distribution_version, '>')
 
   when:
     - host_deploy_origin_type != ovirt_origin_type
