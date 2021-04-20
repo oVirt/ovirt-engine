@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -1343,6 +1344,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateBiosType() {
+        Cluster cluster = getModel().getSelectedCluster();
+
+        if (cluster == null) {
+            return;
+        }
+
+        if (cluster.getArchitecture().getFamily() != ArchitectureType.x86) {
+            getModel().getBiosType().setIsChangeable(false, ConstantsManager.getInstance().getMessages().biosTypeSupportedForX86Only());
+        } else {
+            getModel().getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getCompatibilityVersion());
+        }
     }
 
     /*
