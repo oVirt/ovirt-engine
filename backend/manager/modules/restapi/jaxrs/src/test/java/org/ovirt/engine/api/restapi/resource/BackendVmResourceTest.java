@@ -1168,11 +1168,11 @@ public class BackendVmResourceTest
                 new String[]{"memory.installed", "memory.used", "memory.free", "memory.buffered", "memory.cached",
                         "cpu.current.guest", "cpu.current.hypervisor", "cpu.current.total", "migration.progress",
                         "network.current.total", "cpu.usage.history", "memory.usage.history", "network.usage.history",
-                        "disks.usage", "elapsed.time"},
+                        "disks.usage", "elapsed.time", "memory.unused"},
                 new BigDecimal[]{asDec(10 * Mb), asDec(2 * Mb), asDec(5 * Mb), asDec(2 * Mb), asDec(1 * Mb),
                         asDec(30), asDec(40), asDec(70), asDec(50),
                         asDec(10), asDec(3), asDec(6), asDec(9),
-                        null, asDec(600)}
+                        null, asDec(600), asDec(1 * Mb)}
         );
         Statistic adopted = query.adopt(new Statistic());
         assertTrue(adopted.isSetVm());

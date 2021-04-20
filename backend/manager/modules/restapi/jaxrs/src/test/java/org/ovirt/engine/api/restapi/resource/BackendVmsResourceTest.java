@@ -1454,6 +1454,7 @@ public class BackendVmsResourceTest
         entity.setGuestMemoryFree(5120L);
         entity.setGuestMemoryBuffered(2048L);
         entity.setGuestMemoryCached(1024L);
+        entity.setGuestMemoryUnused(1024L);
         entity.setUsageNetworkPercent(10);
         entity.setCpuUsageHistory(Arrays.asList(1, 2, 3));
         entity.setMemoryUsageHistory(Arrays.asList(4, 5, 6));

@@ -263,6 +263,7 @@ public final class VdsProperties {
     public static final String vm_guest_mem_buffered = "mem_buffers";
     public static final String vm_guest_mem_cached = "mem_cached";
     public static final String vm_guest_mem_free = "mem_free";
+    public static final String vm_guest_mem_unused = "mem_unused";
     public static final String vm_guest_mem_stats = "memoryStats";
     public static final String vm_usage_mem_percent = "memUsage";
     public static final String vm_migration_progress_percent = "migrationProgress";

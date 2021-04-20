@@ -880,6 +880,9 @@ public class VdsBrokerObjectsBuilder {
             if (sub.containsKey(VdsProperties.vm_guest_mem_free)) {
                 vm.setGuestMemoryFree(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_free).toString()));
             }
+            if (sub.containsKey(VdsProperties.vm_guest_mem_unused)) {
+                vm.setGuestMemoryUnused(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_unused).toString()));
+            }
         }
 
         // ------------- vm migration statistics -----------------------

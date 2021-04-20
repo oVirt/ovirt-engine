@@ -153,6 +153,16 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
     }
 
+    private boolean guestMemInfoUsingUnusedMem;
+
+    public boolean isGuestMemInfoUsingUnusedMem() {
+        return guestMemInfoUsingUnusedMem;
+    }
+
+    public void setGuestMemInfoUsingUnusedMem(boolean value) {
+        guestMemInfoUsingUnusedMem = value;
+    }
+
     private String minAllocatedMemory;
 
     public String getMinAllocatedMemory() {
@@ -638,12 +648,21 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setDefinedMemory(vm.getVmMemSizeMb() + " MB"); //$NON-NLS-1$
         setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
-        if(vm.isRunningOrPaused() && vm.getGuestMemoryBuffered() != null && vm.getGuestMemoryCached() != null  && vm.getGuestMemoryFree() != null) {
-            setGuestFreeCachedBufferedMemInfo((vm.getGuestMemoryFree() / 1024L) + " / " // $NON-NLS-1$
-                                            + (vm.getGuestMemoryBuffered() / 1024L)  + " / " // $NON-NLS-1$
-                                            + (vm.getGuestMemoryCached() / 1024L) + " MB"); //$NON-NLS-1$
-        } else {
-            setGuestFreeCachedBufferedMemInfo(null); // Handled in form
+        if(vm.isRunningOrPaused() && vm.getGuestMemoryFree() != null) {
+            // If old OGA guest memory reported. Zero checks is for windows OGA.
+            if (vm.getGuestMemoryBuffered() != null && vm.getGuestMemoryCached() != null && vm.getGuestMemoryBuffered() != 0 && vm.getGuestMemoryCached() != 0) {
+                setGuestMemInfoUsingUnusedMem(false);
+                setGuestFreeCachedBufferedMemInfo((vm.getGuestMemoryFree() / 1024L) + " / " // $NON-NLS-1$
+                                                + (vm.getGuestMemoryBuffered() / 1024L)  + " / " // $NON-NLS-1$
+                                                + (vm.getGuestMemoryCached() / 1024L) + " MB"); //$NON-NLS-1$
+            } else if (vm.getGuestMemoryUnused() != null && vm.getGuestMemoryUnused() != 0) {
+                setGuestMemInfoUsingUnusedMem(true);
+                setGuestFreeCachedBufferedMemInfo((vm.getGuestMemoryFree() / 1024L) + " / " // $NON-NLS-1$
+                                                + ((vm.getGuestMemoryFree() - vm.getGuestMemoryUnused()) / 1024L )
+                                                + " MB"); // $NON-NLS-1$
+            } else {
+                setGuestFreeCachedBufferedMemInfo(null); // Handled in form
+            }
         }
 
         setOS(AsyncDataProvider.getInstance().getOsName(vm.getVmOsId()));

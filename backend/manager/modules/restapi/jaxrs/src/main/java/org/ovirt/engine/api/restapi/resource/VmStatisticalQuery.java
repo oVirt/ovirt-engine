@@ -17,6 +17,7 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<Vm, org.ovirt.e
     private static final Statistic MEM_FREE              = create("memory.free",            "Memory free (agent)",     GAUGE, BYTES,   INTEGER);
     private static final Statistic MEM_BUFFERED          = create("memory.buffered",        "Memory buffered (agent)", GAUGE, BYTES,   INTEGER);
     private static final Statistic MEM_CACHED            = create("memory.cached",          "Memory cached (agent)",   GAUGE, BYTES,   INTEGER);
+    private static final Statistic MEM_UNUSED            = create("memory.unused",          "Memory unused (agent)",   GAUGE, BYTES,   INTEGER);
     private static final Statistic CPU_GUEST             = create("cpu.current.guest",      "CPU used by guest",       GAUGE, PERCENT, DECIMAL);
     private static final Statistic CPU_OVERHEAD          = create("cpu.current.hypervisor", "CPU overhead",            GAUGE, PERCENT, DECIMAL);
     private static final Statistic CPU_TOTAL             = create("cpu.current.total",      "Total CPU used",          GAUGE, PERCENT, DECIMAL);
@@ -43,6 +44,8 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<Vm, org.ovirt.e
         long memFree = entity.getGuestMemoryFree() == null ? 0 : entity.getGuestMemoryFree() * Kb;
         long memBuffered = entity.getGuestMemoryBuffered() == null ? 0 : entity.getGuestMemoryBuffered() * Kb;
         long memCached = entity.getGuestMemoryCached() == null ? 0 : entity.getGuestMemoryCached() * Kb;
+        long memUnused = entity.getGuestMemoryUnused() == null ?
+                memFree - memBuffered - memCached : entity.getGuestMemoryUnused() * Kb;
         long migrationProgress = entity.getMigrationProgressPercent() == null ? 0 : entity.getMigrationProgressPercent();
         int networkUsagePercent = entity.getUsageNetworkPercent() == null ? 0 : entity.getUsageNetworkPercent();
         String disksUsage = s.getDisksUsage() == null ? "" : s.getDisksUsage();
@@ -62,6 +65,7 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<Vm, org.ovirt.e
           setDatum(clone(MEM_BUFFERED), memBuffered),
           setDatum(clone(MEM_CACHED), memCached),
           setDatum(clone(MEM_FREE), memFree),
+          setDatum(clone(MEM_UNUSED), memUnused),
           setDatum(clone(NETWORK_TOTAL), networkUsagePercent),
           setDatum(clone(DISKS_USAGE), disksUsage),
           setDatum(clone(ELAPSED_TIME), elapsedTime)

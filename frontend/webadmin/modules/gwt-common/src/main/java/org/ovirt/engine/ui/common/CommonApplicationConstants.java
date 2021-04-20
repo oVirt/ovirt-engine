@@ -383,6 +383,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String guestFreeCachedBufferedMemInfo();
 
+    String guestFreeCachedBufferedCombinedMemInfo();
+
     String numOfCpuCoresVm();
 
     String highlyAvailableVm();

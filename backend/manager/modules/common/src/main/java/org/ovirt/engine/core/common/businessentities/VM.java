@@ -1709,6 +1709,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         vmStatistics.setGuestMemoryFree(guestMemoryFree);
     }
 
+    public Long getGuestMemoryUnused() {
+        return vmStatistics.getGuestMemoryUnused();
+    }
+
+    public void setGuestMemoryUnused(Long guestMemoryUnused) {
+        vmStatistics.setGuestMemoryUnused(guestMemoryUnused);
+    }
+
     public Guid getProviderId() {
         return vmStatic.getProviderId();
     }

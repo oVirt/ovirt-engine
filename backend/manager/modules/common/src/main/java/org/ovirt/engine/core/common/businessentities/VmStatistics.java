@@ -28,6 +28,9 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     private Long guestMemoryCached;
     private Long guestMemoryBuffered;
     private Long guestMemoryFree;
+    // used to calculate the cached+buffered (guestMemoryFree - guestMemoryUnused),
+    // reported by QGA instead of cached and buffered.
+    private Long guestMemoryUnused;
 
     public VmStatistics() {
         cpuSys = 0.0;
@@ -58,7 +61,8 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 memoryUsageHistory,
                 guestMemoryFree,
                 guestMemoryBuffered,
-                guestMemoryCached
+                guestMemoryCached,
+                guestMemoryUnused
         );
     }
 
@@ -85,7 +89,8 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 && Objects.equals(memoryUsageHistory, other.memoryUsageHistory)
                 && Objects.equals(guestMemoryBuffered, other.guestMemoryBuffered)
                 && Objects.equals(guestMemoryCached, other.guestMemoryCached)
-                && Objects.equals(guestMemoryFree, other.guestMemoryFree);
+                && Objects.equals(guestMemoryFree, other.guestMemoryFree)
+                && Objects.equals(guestMemoryUnused, other.guestMemoryUnused);
     }
 
     public Double getCpuSys() {
@@ -251,6 +256,14 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         this.guestMemoryFree = guestMemoryFree;
     }
 
+    public Long getGuestMemoryUnused() {
+        return guestMemoryUnused;
+    }
+
+    public void setGuestMemoryUnused(Long guestMemoryUnused) {
+        this.guestMemoryUnused = guestMemoryUnused;
+    }
+
     /**
      * Update data that was received from VDSM
      * @param vmStatistics - the reported statistics from VDSM
@@ -281,6 +294,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         setGuestMemoryBuffered(vmStatistics.getGuestMemoryBuffered());
         setGuestMemoryCached(vmStatistics.getGuestMemoryCached());
         setGuestMemoryFree(vmStatistics.getGuestMemoryFree());
+        setGuestMemoryUnused(vmStatistics.getGuestMemoryUnused());
 
         // -------- migration --------------
         if (updateMigrationProgress) {

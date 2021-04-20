@@ -106,30 +106,42 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 10, 0));
         formBuilder.addFormItem(new FormItem(constants.definedMemoryVm(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 1, 1));
-        formBuilder.addFormItem(new FormItem(constants.guestFreeCachedBufferedMemInfo(), guestFreeCachedBufferedMemInfo, 2, 1)
-            .withDefaultValue(constants.notConfigured(), () -> getModel().getGuestFreeCachedBufferedMemInfo() == null));
+        formBuilder.addFormItem(new FormItem(constants.guestFreeCachedBufferedMemInfo(),
+                guestFreeCachedBufferedMemInfo, 2, 1) {
+            @Override
+            public boolean getIsAvailable() {
+                return !getModel().isGuestMemInfoUsingUnusedMem();
+            }
+        }.withDefaultValue(constants.notConfigured(), () -> getModel().getGuestFreeCachedBufferedMemInfo() == null));
+        formBuilder.addFormItem(new FormItem(constants.guestFreeCachedBufferedCombinedMemInfo(),
+                guestFreeCachedBufferedMemInfo, 3, 1) {
+            @Override
+            public boolean getIsAvailable() {
+                return getModel().isGuestMemInfoUsingUnusedMem();
+            }
+        }.withDefaultValue(constants.notConfigured(), () -> getModel().getGuestFreeCachedBufferedMemInfo() == null));
         WidgetTooltip cpuInfoWithTooltip = new WidgetTooltip(cpuInfo);
         cpuInfoWithTooltip.setHtml(SafeHtmlUtils.fromString(constants.numOfCpuCoresTooltip()));
-        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfoWithTooltip, 3, 1));
-        formBuilder.addFormItem(new FormItem(constants.GuestCpuCount(), guestCpuCount, 4, 1));
-        formBuilder.addFormItem(new FormItem(constants.GuestCpuType(), guestCpuTypeWithWarn, 5, 1));
-        formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 6, 1));
-        formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 7, 1));
-        formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 8, 1));
-        formBuilder.addFormItem(new FormItem(constants.createdByUserVm(), createdByUser, 9, 1) {
+        formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfoWithTooltip, 4, 1));
+        formBuilder.addFormItem(new FormItem(constants.GuestCpuCount(), guestCpuCount, 5, 1));
+        formBuilder.addFormItem(new FormItem(constants.GuestCpuType(), guestCpuTypeWithWarn, 6, 1));
+        formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 7, 1));
+        formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 8, 1));
+        formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 9, 1));
+        formBuilder.addFormItem(new FormItem(constants.createdByUserVm(), createdByUser, 0, 2) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().getHasCreatedByUser();
             }
         });
 
-        formBuilder.addFormItem(new FormItem(constants.originVm(), origin, 0, 2));
-        formBuilder.addFormItem(new FormItem(constants.runOnVm(), defaultHost, 1, 2));
-        formBuilder.addFormItem(new FormItem(constants.customPropertiesVm(), customProperties, 2, 2));
-        formBuilder.addFormItem(new FormItem(constants.clusterCompatibilityVersionVm(), compatibilityVersion, 3, 2));
-        formBuilder.addFormItem(new FormItem(constants.vmId(), vmId, 4, 2));
+        formBuilder.addFormItem(new FormItem(constants.originVm(), origin, 1, 2));
+        formBuilder.addFormItem(new FormItem(constants.runOnVm(), defaultHost, 2, 2));
+        formBuilder.addFormItem(new FormItem(constants.customPropertiesVm(), customProperties, 3, 2));
+        formBuilder.addFormItem(new FormItem(constants.clusterCompatibilityVersionVm(), compatibilityVersion, 4, 2));
+        formBuilder.addFormItem(new FormItem(constants.vmId(), vmId, 5, 2));
 
-        formBuilder.addFormItem(new FormItem(constants.quotaVm(), quotaName, 5, 2) {
+        formBuilder.addFormItem(new FormItem(constants.quotaVm(), quotaName, 6, 2) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().isQuotaAvailable();
@@ -138,21 +150,21 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
             String quotaName = getModel().getQuotaName();
             return quotaName == null || "".equals(quotaName);
         }));
-        formBuilder.addFormItem(new FormItem(constants.domainVm(), domain, 6, 2) {
+        formBuilder.addFormItem(new FormItem(constants.domainVm(), domain, 7, 2) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().getHasDomain();
             }
         });
 
-        formBuilder.addFormItem(new FormItem(constants.fqdn(), fqdn, 7, 2) {
+        formBuilder.addFormItem(new FormItem(constants.fqdn(), fqdn, 8, 2) {
             @Override
             public boolean getIsAvailable() {
                 String fqdn = getModel().getFqdn();
                 return !(fqdn == null || fqdn.isEmpty());
             }
         });
-        formBuilder.addFormItem(new FormItem(constants.timeZoneVm(), timeZone, 8, 2 ) {
+        formBuilder.addFormItem(new FormItem(constants.timeZoneVm(), timeZone, 9, 2 ) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().getHasTimeZone();
