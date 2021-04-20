@@ -2203,5 +2203,7 @@ public interface UIConstants extends Constants {
 
     String mixedTargetDomains();
 
+    String uefiRequired();
+
     String guestOsVersionNotSupported();
 }

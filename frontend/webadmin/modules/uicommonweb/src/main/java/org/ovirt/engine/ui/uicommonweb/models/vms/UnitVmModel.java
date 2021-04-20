@@ -3870,7 +3870,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         } else if (cluster == null || cluster.getArchitecture() == null
                 || cluster.getArchitecture().getFamily() == ArchitectureType.x86
                         && (getBiosType().getSelectedItem() == null || !getBiosType().getSelectedItem().isOvmf())) {
-            getTpmEnabled().setIsChangeable(false, messages.uefiRequired());
+            getTpmEnabled().setIsChangeable(false, constants.uefiRequired());
             getTpmEnabled().setEntity(false);
         } else {
             getTpmEnabled().setIsChangeable(true);
