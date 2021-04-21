@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.network.dc.AddNetworkCommand;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,11 +29,6 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
 
     public AddNetworkOnProviderCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-    }
-
-    @Override
-    protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties;
     }
 
     private Provider<?> getProvider() {
