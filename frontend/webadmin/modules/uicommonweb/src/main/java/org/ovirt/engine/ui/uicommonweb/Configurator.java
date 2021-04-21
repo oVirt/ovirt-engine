@@ -41,7 +41,7 @@ public abstract class Configurator {
         setSpiceVersion(new Version(4, 4));
         setBackendPort("8700"); //$NON-NLS-1$
         setLogLevel("INFO"); //$NON-NLS-1$
-        setPollingTimerInterval(5000);
+        setPollingTimerInterval(10000);
     }
 
     protected static final String DEFAULT_USB_FILTER = "-1,-1,-1,-1,0"; //$NON-NLS-1$
