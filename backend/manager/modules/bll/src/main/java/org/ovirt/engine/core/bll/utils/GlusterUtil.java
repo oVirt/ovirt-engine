@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -42,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -55,6 +58,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParamet
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dao.AuditLogDao;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
@@ -112,6 +116,9 @@ public class GlusterUtil {
 
     @Inject
     private InterfaceDao interfaceDao;
+
+    @Inject
+    private ClusterDao clusterDao;
 
     /**
      * Returns a server that is in {@link VDSStatus#Up} status.<br>
@@ -584,6 +591,37 @@ public class GlusterUtil {
                 return EngineMessage.ACTION_TYPE_FAILED_INVALID_GLUSTER_OPTIONS;
         }
         return null;
+    }
+
+    public GlusterVolumeEntity getGlusterVolInfoFromVolumePath(String volumePath) {
+        String[] pathElements = volumePath.split(StorageConstants.GLUSTER_VOL_SEPARATOR);
+        if (pathElements.length != 2) {
+            // return empty as volume name could not be determined
+            log.warn("Volume name could not be determined from storage connection '{}' ", volumePath);
+            return null;
+        }
+        String volumeName = pathElements[1];
+        String hostName = pathElements[0];
+        String hostAddress;
+
+        hostAddress = resolveHostName(hostName);
+        if (hostAddress == null) {
+            log.warn("Host name could not be determined from storage connection '{}' ", hostName);
+            return null;
+        }
+        Guid clusterId = clusterDao.getClusterIdForHostByNameOrAddress(hostName, hostAddress);
+        if (Guid.isNullOrEmpty(clusterId)) {
+            return null;
+        }
+        return glusterDBUtils.getGlusterVolInfoByClusterIdAndVolName(clusterId, volumeName);
+    }
+
+    protected String resolveHostName(String hostName) {
+        try {
+            return InetAddress.getByName(hostName).getHostAddress();
+        } catch (UnknownHostException e) {
+            return null;
+        }
     }
 
 }

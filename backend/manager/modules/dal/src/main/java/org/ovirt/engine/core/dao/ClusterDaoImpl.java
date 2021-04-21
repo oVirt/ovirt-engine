@@ -416,4 +416,13 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 clusterRowMapper,
                 getCustomMapSqlParameterSource().addValue("id", defaultNetworkProviderId));
     }
+
+    @Override
+    public Guid getClusterIdForHostByNameOrAddress(String hostName, String hostAddress) {
+        return getCallsHandler().executeRead("GetClusterIdForHostByNameOrAddress",
+                SingleColumnRowMapper.newInstance(Guid.class),
+                getCustomMapSqlParameterSource()
+                   .addValue("vds_name", hostName)
+                   .addValue("host_address", hostAddress));
+    }
 }

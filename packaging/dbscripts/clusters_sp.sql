@@ -707,3 +707,18 @@ BEGIN
     WHERE cv.default_network_provider_id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetClusterIdForHostByNameOrAddress (v_vds_name VARCHAR(255), v_host_address VARCHAR(39))
+RETURNS SETOF UUID STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+        SELECT vds_static.cluster_id
+        FROM vds_static
+        JOIN vds_interface ON vds_static.vds_id = vds_interface.vds_id
+        WHERE vds_static.vds_name = v_vds_name
+            OR vds_interface.addr = v_host_address
+            OR vds_interface.ipv6_address = v_host_address
+        LIMIT 1;
+END;$PROCEDURE$
+LANGUAGE plpgsql;

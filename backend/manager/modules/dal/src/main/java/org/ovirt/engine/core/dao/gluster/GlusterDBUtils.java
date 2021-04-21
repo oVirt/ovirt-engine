@@ -206,4 +206,9 @@ public class GlusterDBUtils {
 
         return false;
     }
+
+    public GlusterVolumeEntity getGlusterVolInfoByClusterIdAndVolName(Guid clusterId, String volumeName) {
+        return glusterVolumeDao.getByName(clusterId, volumeName);
+    }
+
 }

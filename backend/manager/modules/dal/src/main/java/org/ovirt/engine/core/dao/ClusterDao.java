@@ -221,4 +221,13 @@ public interface ClusterDao extends GenericDao<Cluster, Guid>, SearchDao<Cluster
      * @return all Cluster records using the given defaultNetworkProviderId.
      */
     List<Cluster> getAllClustersByDefaultNetworkProviderId(Guid defaultNetworkProviderId);
+
+    /**
+     * Retrieves the cluster id dedicated to vds name or vds address
+     *
+     * @param hostName the hostname
+     * @param hostAddress ip address for the host
+     * @return clusterId cluster id
+     */
+    Guid getClusterIdForHostByNameOrAddress(String hostName, String hostAddress);
 }
