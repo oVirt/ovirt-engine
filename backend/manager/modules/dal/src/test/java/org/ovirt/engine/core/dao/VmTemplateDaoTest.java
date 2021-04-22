@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -39,6 +40,7 @@ public class VmTemplateDaoTest extends BaseGenericDaoTestCase<Guid, VmTemplate, 
         newVmTemplate.setId(Guid.newGuid());
         newVmTemplate.setName("NewVmTemplate");
         newVmTemplate.setClusterId(FixturesTool.CLUSTER);
+        newVmTemplate.setBiosType(BiosType.Q35_SEA_BIOS);
         newVmTemplate.setClusterArch(ArchitectureType.x86_64);
         newVmTemplate.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
         newVmTemplate.setSmallIconId(FixturesTool.SMALL_ICON_ID);

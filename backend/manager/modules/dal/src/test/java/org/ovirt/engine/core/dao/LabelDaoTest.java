@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
@@ -412,6 +413,7 @@ public class LabelDaoTest extends BaseDaoTestCase<LabelDao> {
         VmStatic vm = new VmStatic();
         vm.setId(Guid.newGuid());
         vm.setClusterId(clusterId);
+        vm.setBiosType(BiosType.Q35_SEA_BIOS);
         vm.setCpuProfileId(cpuProfileDao.getAllForCluster(clusterId).get(0).getId());
 
         vmDao.save(vm);
