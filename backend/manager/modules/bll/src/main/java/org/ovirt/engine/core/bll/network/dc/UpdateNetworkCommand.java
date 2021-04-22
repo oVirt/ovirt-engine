@@ -113,7 +113,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
             if (networkChangedToNonVmNetwork()) {
                 removeVnicProfiles();
-            } else if (isMtuUpdated()) {
+            } else if (isMtuUpdated() || isVlanUpdated()) {
                 var vnics = vmNicDao.getActiveForNetwork(getNetwork().getId());
                 vnics.forEach(vnic -> vnic.setSynced(false));
                 vmNicDao.updateAllInBatch(vnics);
@@ -140,6 +140,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     private boolean isMtuUpdated() {
         return NetworkUtils.getVmMtuActualValue(getOldNetwork()) != NetworkUtils.getVmMtuActualValue(getNetwork());
+    }
+
+    private boolean isVlanUpdated() {
+        return !Objects.equals(getOldNetwork().getVlanId(), getNetwork().getVlanId());
     }
 
     private void applyNetworkChangesToHosts() {
