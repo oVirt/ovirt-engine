@@ -9,6 +9,7 @@ import java.security.KeyPair;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,7 @@ import javax.naming.TimeLimitExceededException;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.sshd.client.SshClient;
+import org.apache.sshd.client.auth.pubkey.UserAuthPublicKeyFactory;
 import org.apache.sshd.client.channel.ClientChannel;
 import org.apache.sshd.client.channel.ClientChannelEvent;
 import org.apache.sshd.client.future.AuthFuture;
@@ -29,6 +31,7 @@ import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.client.session.ClientSession.ClientSessionEvent;
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.kex.extension.DefaultClientKexExtensionHandler;
+import org.apache.sshd.common.signature.BuiltinSignatures;
 import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.core.CoreModuleProperties;
 import org.slf4j.Logger;
@@ -63,6 +66,18 @@ public class SSHClient implements Closeable {
 
         if (isAtLeastOneExpectedSignatureSet()) {
             sshClient.setSignatureFactories(expectedSignatures);
+        }
+
+        // Engine uses RSA based SSH keys, so we always need to allow ssh-rsa2 public keys for authentication
+        // against FIPS enabled host
+        if (isKeyPairSet()) {
+            UserAuthPublicKeyFactory clientPubKeyFactory = new UserAuthPublicKeyFactory();
+            clientPubKeyFactory.setSignatureFactories(
+                    Arrays.asList(
+                            BuiltinSignatures.rsaSHA512,
+                            BuiltinSignatures.rsaSHA256,
+                            BuiltinSignatures.rsa));
+            sshClient.setUserAuthFactories(Collections.singletonList(clientPubKeyFactory));
         }
 
         sshClient.setKexExtensionHandler(new DefaultClientKexExtensionHandler());
