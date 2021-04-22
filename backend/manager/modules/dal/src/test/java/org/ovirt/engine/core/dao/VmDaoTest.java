@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -49,11 +50,13 @@ public class VmDaoTest extends BaseDaoTestCase<VmDao> {
         VM newVm = new VM();
         newVm.setId(Guid.newGuid());
         newVm.setClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
+        newVm.setBiosType(BiosType.Q35_SEA_BIOS);
         newVm.setVmtGuid(FixturesTool.VM_TEMPLATE_RHEL5);
 
         VmStatic newVmStatic = new VmStatic();
         newVmStatic.setName("New Virtual Machine");
         newVmStatic.setClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
+        newVmStatic.setBiosType(BiosType.Q35_SEA_BIOS);
         newVmStatic.setVmtGuid(FixturesTool.VM_TEMPLATE_RHEL5);
     }
 
@@ -566,6 +569,7 @@ public class VmDaoTest extends BaseDaoTestCase<VmDao> {
         VmStatic vmStatic = new VmStatic();
         vmStatic.setId(id);
         vmStatic.setClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
+        vmStatic.setBiosType(BiosType.Q35_SEA_BIOS);
         vmStatic.setName("HostedEngine");
         vmStatic.setOrigin(OriginType.HOSTED_ENGINE);
         vmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_1);
