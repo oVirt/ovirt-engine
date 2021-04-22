@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
-import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -63,7 +62,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
-import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -90,8 +88,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     @Inject
     private StoragePoolDao storagePoolDao;
     @Inject
-    private HostNetworkQosDao qosDao;
-    @Inject
     private VmNicDao vmNicDao;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
@@ -117,7 +113,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
             if (networkChangedToNonVmNetwork()) {
                 removeVnicProfiles();
-            } else if (isMtuUpdated() || isQosUpdated()) {
+            } else if (isMtuUpdated()) {
                 var vnics = vmNicDao.getActiveForNetwork(getNetwork().getId());
                 vnics.forEach(vnic -> vnic.setSynced(false));
                 vmNicDao.updateAllInBatch(vnics);
@@ -144,13 +140,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     private boolean isMtuUpdated() {
         return NetworkUtils.getVmMtuActualValue(getOldNetwork()) != NetworkUtils.getVmMtuActualValue(getNetwork());
-    }
-
-    private boolean isQosUpdated() {
-        List<HostNetworkQos> allQos = qosDao.getAll();
-        var oldQos = allQos.stream().filter(qos -> qos.getId().equals(getOldNetwork().getQosId())).findFirst();
-        var newQos = allQos.stream().filter(qos -> qos.getId().equals(getNetwork().getQosId())).findFirst();
-        return !oldQos.equals(newQos);
     }
 
     private void applyNetworkChangesToHosts() {
