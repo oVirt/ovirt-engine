@@ -250,6 +250,14 @@ public class VnicProfileValidator {
         return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_UPDATE_OF_FAILOVER_PROFILE_IS_NOT_SUPPORTED, replacements);
     }
 
+    public ValidationResult failoverNotChangedIfUsedByVms() {
+        if (Objects.equals(vnicProfile.getFailoverVnicProfileId(), getOldVnicProfile().getFailoverVnicProfileId())) {
+            return ValidationResult.VALID;
+        }
+
+        return vnicProfileNotUsedByVms();
+    }
+
     private Guid getNetworkFilterId() {
         return vnicProfile.getNetworkFilterId();
     }

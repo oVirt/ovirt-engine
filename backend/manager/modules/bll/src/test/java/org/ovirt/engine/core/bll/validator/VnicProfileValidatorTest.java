@@ -556,4 +556,20 @@ public class VnicProfileValidatorTest {
         assertThat(validator.validFailoverId(), matcher);
     }
 
+    @Test
+    public void failoverDidNotChange() {
+        assertThat(validator.failoverNotChangedIfUsedByVms(), isValid());
+    }
+
+    @Test
+    public void failoverChangeNotSupported() {
+        VnicProfile updatedVnicProfile = mock(VnicProfile.class);
+        when(vnicProfile.getFailoverVnicProfileId()).thenReturn(DEFAULT_GUID);
+        when(updatedVnicProfile.getFailoverVnicProfileId()).thenReturn(OTHER_GUID);
+        when(vnicProfileDao.get(any())).thenReturn(updatedVnicProfile);
+
+        mockVmsUsingVnicProfile(Collections.singletonList(mock(VM.class)));
+        assertThat(validator.failoverNotChangedIfUsedByVms(), failsWithVnicProfileInUse());
+    }
+
 }

@@ -54,7 +54,8 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
                 && validate(validator.passthroughProfileNoPortIsolation())
                 && validate(validator.validNetworkFilterId())
                 && validate(validator.validFailoverId())
-                && validate(validator.validateProfileNotUpdatedIfFailover());
+                && validate(validator.validateProfileNotUpdatedIfFailover())
+                && validate(validator.failoverNotChangedIfUsedByVms());
     }
 
     @Override

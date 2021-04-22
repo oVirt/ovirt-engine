@@ -64,6 +64,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
                     if (vms != null && !vms.isEmpty()) {
                         getPortMirroring().setIsChangeable(false, constants.portMirroringNotChangedIfUsedByVms());
                         getPassthrough().setIsChangeable(false, constants.passthroughNotChangedIfUsedByVms());
+                        getFailoverVnicProfile().setIsChangeable(false, constants.failoverNotChangedIfUsedByVms());
                     }
                     stopProgress();
                 }));

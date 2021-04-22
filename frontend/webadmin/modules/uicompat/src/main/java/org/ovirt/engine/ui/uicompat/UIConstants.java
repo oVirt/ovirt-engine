@@ -1611,6 +1611,8 @@ public interface UIConstants extends Constants {
 
     String passthroughNotChangedIfUsedByVms();
 
+    String failoverNotChangedIfUsedByVms();
+
     String vmLowPriority();
 
     String vmMediumPriority();
