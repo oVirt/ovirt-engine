@@ -546,6 +546,14 @@ public class VnicProfileValidatorTest {
                 false);
     }
 
+    @Test
+    public void failoverIdPointingToSelfFail() {
+        when(vnicProfile.getFailoverVnicProfileId()).thenReturn(DEFAULT_GUID);
+        when(vnicProfile.getId()).thenReturn(DEFAULT_GUID);
+        assertThat(validator.validFailoverId(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_FAILOVER_VNIC_PROFILE_ID_CANNOT_POINT_TO_SELF));
+    }
+
     private void testProfileWithFailover(Matcher<ValidationResult> matcher, boolean passthrough, boolean migratable) {
         when(vnicProfile.isPassthrough()).thenReturn(passthrough);
         when(vnicProfile.isMigratable()).thenReturn(migratable);

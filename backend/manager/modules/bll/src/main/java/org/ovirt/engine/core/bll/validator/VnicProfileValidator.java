@@ -227,6 +227,10 @@ public class VnicProfileValidator {
             return ValidationResult.VALID;
         }
 
+        if (Objects.equals(vnicProfile.getId(), failoverId)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_FAILOVER_VNIC_PROFILE_ID_CANNOT_POINT_TO_SELF);
+        }
+
         var failoverProfile = Injector.get(VnicProfileDao.class).get(failoverId);
         if (failoverProfile == null || failoverProfile.isPassthrough()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_FAILOVER_VNIC_PROFILE_ID_IS_NOT_VALID);

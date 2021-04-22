@@ -434,6 +434,8 @@ public abstract class VnicProfileModel extends Model {
         AsyncDataProvider.getInstance().getVnicProfilesByDcId(new AsyncQuery<>(vnicProfiles -> {
             List<VnicProfile> filteredProfiles = vnicProfiles.stream()
                     .map(profileView -> (VnicProfile) profileView)
+                    .filter(vnicProfileLocal -> vnicProfile == null || !Objects.equals(vnicProfile.getId(),
+                            vnicProfileLocal.getId()))
                     .filter(vnicProfile -> !vnicProfile.isPassthrough())
                     .filter(vnicProfile -> {
                         Optional<Network> optNetwork = getNetworkForVnicProfile(vnicProfile.getNetworkId());
