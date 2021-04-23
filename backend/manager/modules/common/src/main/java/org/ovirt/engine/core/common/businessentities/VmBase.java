@@ -623,7 +623,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getUseTscFrequency(),
                 vmBase.getCpuPinning(),
                 vmBase.isVirtioScsiMultiQueuesEnabled(),
-                vmBase.isBalloonEnabled());
+                vmBase.isBalloonEnabled(),
+                vmBase.getBiosType());
     }
 
     public VmBase(
@@ -696,7 +697,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             boolean useTscFrequency,
             String cpuPinning,
             boolean virtioScsiMultiQueuesEnabled,
-            boolean balloonEnabled) {
+            boolean balloonEnabled,
+            BiosType biosType) {
         this();
         this.name = name;
         this.id = id;
@@ -768,6 +770,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.useTscFrequency = useTscFrequency;
         this.cpuPinning = cpuPinning;
         this.balloonEnabled = balloonEnabled;
+        this.biosType = biosType;
     }
 
     @Override

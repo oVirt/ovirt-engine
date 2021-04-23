@@ -991,9 +991,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getUseTscFrequency(),
                         getParameters().getMasterVm().getCpuPinning(),
                         getParameters().getMasterVm().isVirtioScsiMultiQueuesEnabled(),
-                        getParameters().getMasterVm().isBalloonEnabled()));
+                        getParameters().getMasterVm().isBalloonEnabled(),
+                        getParameters().getMasterVm().getBiosType()));
         getVmTemplate().setOrigin(getParameters().getMasterVm().getOrigin());
-        getVmTemplate().setBiosType(getParameters().getMasterVm().getBiosType());
         updateVmIcons();
         getVmTemplate().setSealed(getParameters().isSealTemplate());
         vmTemplateDao.save(getVmTemplate());
