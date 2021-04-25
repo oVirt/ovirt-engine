@@ -40,5 +40,6 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
             model.getCustomCompatibilityVersion().setSelectedItem(vm.getCustomCompatibilityVersion());
         }
         model.getCpuPinning().setEntity(vm.getCpuPinning());
+        model.getVirtioScsiMultiQueuesEnabled().setEntity(vm.isVirtioScsiMultiQueuesEnabled());
     }
 }
