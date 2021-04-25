@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -95,6 +96,13 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
             return validateVds();
         }
 
+        // Floating direct LUNs, and direct LUNs that attached to non-running VMs, don't require synchronization.
+        Set<Guid> filterFloatingLuns = getParameters().getDirectLunIds()
+                .stream()
+                .filter(this::isDirectLunAttachedToRunningVm)
+                .collect(Collectors.toSet());
+        getParameters().setDirectLunIds(filterFloatingLuns);
+
         lunsPerHost = getLunsToScanOnHost();
         try {
             for (Map.Entry<Guid, Set<Guid>> hostInfo : lunsPerHost.entrySet()) {
@@ -163,7 +171,7 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
         auditLog(this, AuditLogType.SYNC_DIRECT_LUNS_STARTED);
         Set<LUNs> lunsToUpdateInDb = getLunsToUpdateInDb();
         if (lunsToUpdateInDb.isEmpty()) {
-            log.info("Could not find any LUNs to update.");
+            log.info("Could not find any attached LUNs to update.");
             return true;
         }
         lunDao.updateAllInBatch(lunsToUpdateInDb);
@@ -172,11 +180,16 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
         return updateLunDisksOnGuests(lunsToUpdateInDb);
     }
 
+    private boolean isDirectLunAttachedToRunningVm (Guid directLunId) {
+        List<VM> pluggedVms = getPluggedVms(directLunId);
+        return pluggedVms != null && pluggedVms.stream().map(VM::getRunOnVds).anyMatch(Objects::nonNull);
+    }
+
     private boolean updateLunDisksOnGuests(Set<LUNs> lunsToUpdateInDb) {
         // This method updates the LUN disks on the guests while they are running.
         for (LUNs lun : lunsToUpdateInDb) {
             int lunSize = lun.getDeviceSize();
-            List<VM> pluggedVms = vmDao.getForDisk(lun.getDiskId(), false).get(Boolean.TRUE);
+            List<VM> pluggedVms = getPluggedVms(lun.getDiskId());
             for (VM vm : pluggedVms) {
                 if (vm.getStatus() != VMStatus.Up || vm.getRunOnVds() == null) {
                     continue;
@@ -204,6 +217,10 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
         return true;
     }
 
+    private List<VM> getPluggedVms(Guid diskId) {
+        return vmDao.getForDisk(diskId, false).get(Boolean.TRUE);
+    }
+
     private Stream<Guid> getIdsOfDirectLunsToSync() {
         Set<Guid> lunIds = getParameters().getDirectLunIds();
         return lunIds.isEmpty() ? getLunToDiskIdsOfDirectLunsAttachedToVmsInPool().values().stream() : lunIds.stream();
@@ -212,8 +229,13 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
     protected Set<LUNs> getLunsToUpdateInDb() {
         Map<String, Guid> lunToDirectLunIds;
         if (getParameters().getDirectLunIds().isEmpty()) {
+            // Fetch all the direct LUNs attached to VMs in the storage pool,
+            // regardless of whether the user selected them or not.
             lunToDirectLunIds = getLunToDiskIdsOfDirectLunsAttachedToVmsInPool();
-            return getLuns(getParameters().getVdsId(), lunToDirectLunIds);
+            if (lunToDirectLunIds != null && !lunToDirectLunIds.isEmpty()) {
+                return getLuns(getParameters().getVdsId(), lunToDirectLunIds);
+            }
+            return Collections.emptySet();
         }
 
         if (getParameters().getVdsId() != null || lunsPerHost.isEmpty()) {
@@ -248,7 +270,7 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
         Map<Guid, Set<Guid>> luns = new HashMap<>();
 
         getParameters().getDirectLunIds().forEach(lun -> {
-            List<VM> pluggedVms = vmDao.getForDisk(lun, false).get(Boolean.TRUE);
+            List<VM> pluggedVms = getPluggedVms(lun);
             if (pluggedVms != null && !pluggedVms.isEmpty()) {
                 pluggedVms.stream().map(VM::getRunOnVds).filter(Objects::nonNull).forEach(hostId -> {
                     luns.putIfAbsent(hostId, new HashSet<>());
