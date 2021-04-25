@@ -107,6 +107,9 @@ public class StorageModule extends AbstractGinModule {
                         } else if (lastExecutedCommand.getName().equals("OnSave") //$NON-NLS-1$
                                   || lastExecutedCommand.getName().equals("OnImport")) { //$NON-NLS-1$
                             return forceCreateConfirmPopupProvider.get();
+                        } else if (lastExecutedCommand.getName().equals("HandleISOForNFS") //$NON-NLS-1$
+                                || lastExecutedCommand.getName().equals("HandleISOForPosix")) { //$NON-NLS-1$
+                            return defaultConfirmPopupProvider.get();
                         } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
                         }

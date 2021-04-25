@@ -1064,6 +1064,19 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             onDestroy();
         } else if ("OnSaveSanStorage".equals(command.getName())) { //$NON-NLS-1$
             onSaveSanStorage();
+        } else if ("SaveNewNfsStorage".equals(command.getName())) { //$NON-NLS-1$
+            saveNewNfsStorage();
+            cancelConfirm();
+        } else if ("SaveNewPosixStorage".equals(command.getName())) { //$NON-NLS-1$
+            saveNewPosixStorage();
+            cancelConfirm();
+        } else if ("HandleISOForNFS".equals(command.getName())){ //$NON-NLS-1$
+            handleIsoDomain("SaveNewNfsStorage"); //$NON-NLS-1$
+        } else if ("HandleISOForPosix".equals(command.getName())) { //$NON-NLS-1$
+            handleIsoDomain("SaveNewPosixStorage"); //$NON-NLS-1$
+        } else if ("CancelAll".equals(command.getName())) { //$NON-NLS-1$
+            cancelConfirm();
+            cancel();
         }
     }
 
@@ -1108,6 +1121,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 if (storages != null && storages.size() > 0) {
                     posixModel.getPath().setIsValid(false);
                     handleDomainAlreadyExists(storages.get(0).getStorageName());
+                } else if (storageDomain.getStorageDomainType() == StorageDomainType.ISO) {
+                    UICommand handleISOType = UICommand.createDefaultOkUiCommand("HandleISOForPosix", this); //$NON-NLS-1$
+                    handleISOType.execute();
                 } else {
                     saveNewPosixStorage();
                 }
@@ -1299,6 +1315,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 if (storages != null && storages.size() > 0) {
                     nfsModel.getPath().setIsValid(false);
                     handleDomainAlreadyExists(storages.get(0).getStorageName());
+                } else if (storageDomain.getStorageDomainType() == StorageDomainType.ISO){
+                    UICommand handleISOType = UICommand.createDefaultOkUiCommand("HandleISOForNFS", this); //$NON-NLS-1$
+                    handleISOType.execute();
                 } else {
                     saveNewNfsStorage();
                 }
@@ -1517,6 +1536,26 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             }
             updateStorageDomain();
         }
+    }
+
+    private void handleIsoDomain(String command) {
+        ConfirmationModel confirmationModel = new ConfirmationModel();
+        confirmationModel.setTitle(ConstantsManager.getInstance().getConstants().areYouSureTitle());
+        confirmationModel.setMessage(ConstantsManager.getInstance().getMessages().creatingIsoDomainDeprecatedMessage());
+        confirmationModel.setAlertType(ConfirmationModel.AlertType.INFO);
+        confirmationModel.setHelpTag(HelpTag.create_iso_domain);
+        confirmationModel.setHashName("create_iso_domain"); //$NON-NLS-1$
+        setConfirmWindow(confirmationModel);
+
+        UICommand onApprove = new UICommand(command, this); //$NON-NLS-1$
+        onApprove.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        onApprove.setIsDefault(true);
+        confirmationModel.getCommands().add(onApprove);
+
+        UICommand cancel = new UICommand("CancelAll", this); //$NON-NLS-1$
+        cancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancel.setIsCancel(true);
+        confirmationModel.getCommands().add(cancel);
     }
 
     private void handleDomainAlreadyExists(String storageName) {

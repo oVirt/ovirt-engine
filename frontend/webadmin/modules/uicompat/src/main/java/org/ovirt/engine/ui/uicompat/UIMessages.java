@@ -457,4 +457,6 @@ public interface UIMessages extends Messages {
     String removeStorageDomainFromDataCenterWithMemoryVolumesOnMultipleSDs(String storageDomainName, String diskIds);
 
     String virtioScsiRequired();
+
+    String creatingIsoDomainDeprecatedMessage();
 }

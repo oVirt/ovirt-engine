@@ -680,7 +680,9 @@ public enum HelpTag {
 
     errata("errata", HelpTagType.WEBADMIN, "System tree > Errata"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    reset_brick("reset_brick", HelpTagType.WEBADMIN, "Volumes Tab > Bricks Sub-Tab > Reset Bricks"); //$NON-NLS-1$ //$NON-NLS-2$
+    reset_brick("reset_brick", HelpTagType.WEBADMIN, "Volumes Tab > Bricks Sub-Tab > Reset Bricks"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    create_iso_domain("create_iso_domain", HelpTagType.WEBADMIN, "Storage Tab > New Domain > Confirm ISO domain type"); //$NON-NLS-1$ //$NON-NLS-2$
 
     public final String name;
 
