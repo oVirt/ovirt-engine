@@ -73,6 +73,9 @@ public class ExportVmTemplateToOvaCommand<T extends ExportOvaParameters> extends
         if (getEntity() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
+        if (hasTpmDevice(getVmTemplateId())) {
+            return failValidation(EngineMessage.VM_TEMPLATE_TPM_DATA_EXPORT_IS_NOT_SUPPORTED);
+        }
 
         return super.validate();
     }

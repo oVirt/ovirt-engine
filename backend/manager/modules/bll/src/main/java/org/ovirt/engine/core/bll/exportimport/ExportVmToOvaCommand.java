@@ -58,7 +58,6 @@ public class ExportVmToOvaCommand<T extends ExportVmToOvaParameters> extends Exp
     private DiskImageDao diskImageDao;
     @Inject
     private DiskVmElementDao diskVmElementDao;
-
     private List<DiskImage> cachedDisks;
     private String cachedVmIsBeingExportedMessage;
 
@@ -94,6 +93,9 @@ public class ExportVmToOvaCommand<T extends ExportVmToOvaParameters> extends Exp
     protected boolean validate() {
         if (getEntity() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+        if (hasTpmDevice(getVmId())) {
+            return failValidation(EngineMessage.VM_TPM_DATA_EXPORT_IS_NOT_SUPPORTED);
         }
         return super.validate();
     }
