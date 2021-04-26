@@ -605,6 +605,20 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public boolean isQ35Supported(int osId) {
+        String supported = getValueByVersion(idToUnameLookup.get(osId), "q35Support", null);
+        // possible values: "false", "insecure", "true"
+        return !supported.equalsIgnoreCase("false");
+    }
+
+    @Override
+    public boolean isSecureBootSupported(int osId) {
+        String supported = getValueByVersion(idToUnameLookup.get(osId), "q35Support", null);
+        // possible values: "false", "insecure", "true"
+        return supported.equalsIgnoreCase("true");
+    }
+
+    @Override
     public Map<Integer, Boolean> getTpmAllowedMap() {
         Map<Integer, Boolean> tpmAllowedMap = new HashMap<>();
         for (Integer osId : getOsIds()) {

@@ -23,6 +23,8 @@ import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
+import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -460,4 +462,19 @@ public class VmValidator {
 
         return ValidationResult.VALID;
     }
+
+    public ValidationResult isBiosTypeSupported(OsRepository osRepository) {
+        if (vm.getBiosType().getChipsetType() == ChipsetType.Q35 && !osRepository.isQ35Supported(vm.getVmOsId())) {
+            return new ValidationResult(EngineMessage.Q35_NOT_SUPPORTED_BY_GUEST_OS,
+                    String.format("$guestOS %1$s", osRepository.getOsName(vm.getVmOsId())));
+        }
+
+        if (vm.getBiosType() == BiosType.Q35_SECURE_BOOT && !osRepository.isSecureBootSupported(vm.getVmOsId())) {
+            return new ValidationResult(EngineMessage.SECURE_BOOT_NOT_SUPPORTED_BY_GUEST_OS,
+                    String.format("$guestOS %1$s", osRepository.getOsName(vm.getVmOsId())));
+        }
+
+        return ValidationResult.VALID;
+    }
+
 }

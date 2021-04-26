@@ -824,6 +824,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
         }
 
+        VmValidator vmValidator = new VmValidator(vmFromParams);
+
+        if (!validate(vmValidator.isBiosTypeSupported(osRepository))) {
+            return false;
+        }
+
         if (!validate(validateAffinityGroups())) {
             return false;
         }

@@ -40,6 +40,7 @@ void attribute() : {} {
     | (<PRODUCT_KEY>  stringValue())
     | (<VM_INIT_TYPE>) stringValue()
     | ("isTimezoneTypeInteger" booleanValue())
+    | ("q35Support" q35SupportValue())
     | resources()
     | devices()
     )
@@ -129,6 +130,10 @@ void usbControllerModelValue() : {} {
 
 void consoleTargetTypeValue() : {} {
     valueSpecifier() ("serial" | "virtio" | "sclp")
+}
+
+void q35SupportValue() : {} {
+    valueSpecifier() ("true" | "insecure" | "false")
 }
 
 void valueSpecifier() : {} {

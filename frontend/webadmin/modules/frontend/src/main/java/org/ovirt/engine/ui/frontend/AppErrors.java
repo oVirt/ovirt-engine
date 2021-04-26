@@ -2899,6 +2899,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY();
 
+    String Q35_NOT_SUPPORTED_BY_GUEST_OS();
+
+    String SECURE_BOOT_NOT_SUPPORTED_BY_GUEST_OS();
+
     String VM_ICON_DATAURL_MALFORMED();
 
     String PROVIDED_VM_ICON_OF_UNKNOWN_TYPE();

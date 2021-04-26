@@ -1330,6 +1330,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
         }
 
+        if (!validate(vmValidator.isBiosTypeSupported(osRepository))) {
+            return false;
+        }
+
         if (vmFromDB.getVmPoolId() != null) {
             VmPool vmPool = vmPoolDao.get(vmFromDB.getVmPoolId());
             if (vmPool == null || !vmPool.isStateful()) {

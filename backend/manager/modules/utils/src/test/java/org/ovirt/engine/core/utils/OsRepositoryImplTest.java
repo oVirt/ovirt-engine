@@ -61,6 +61,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/devices/audio").put("value", SOUND_DEVICE);
         preferences.node("/os/rhel7/devices/cdInterface").put("value", CD_INTERFACE);
         preferences.node("/os/rhel7/isTimezoneTypeInteger").put("value", "false");
+        preferences.node("/os/rhel7/q35Support").put("value", "true");
         preferences.node("/os/bados/id").put("value", "666");
         preferences.node("/os/bados/derivedFrom").put("value", "nonExistingOs");
         preferences.node("/os/rhel8/id").put("value", "888");
@@ -69,6 +70,7 @@ public class OsRepositoryImplTest {
         preferences.node("/backwardCompatibility").put("Windows8", "20");
         preferences.node("/os/windows_7/id").put("value", "11");
         preferences.node("/os/windows_7/sysprepFileName").put("value", UNATTEND_XML);
+        preferences.node("/os/windows_7/q35Support").put("value", "insecure");
         preferences.node("/os/windows_7/devices/hyperv/enabled").put("value", "true");
         preferences.node("/os/windows_8/cpu/unsupported").put("value", "conroe, opteron_g1");
         preferences.node("/os/windows_8/sysprepFileName").put("value", UNATTEND_XML);
@@ -76,6 +78,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/windows_xp/sysprepFileName").put("value", SYSPREP_INF);
         preferences.node("/os/rhel7/devices/usb/controller").put("value", "nec-xhci,q35/qemu-xhci");
         preferences.node("/os/rhel6/id").put("value", "999");
+        preferences.node("/os/rhel6/q35Support").put("value", "false");
         preferences.node("/os/rhel6/devices/usb/controller").put("value", "nec-xhci");
         preferences.node("/os/rhel6/devices/usb/controller").put("value.4.2", "none");
         preferences.node("/os/rhel7/devices/tpmAllowed").put("value", "true");
@@ -375,5 +378,15 @@ public class OsRepositoryImplTest {
         assertTrue(OsRepositoryImpl.INSTANCE.isTpmAllowed(888));
         assertFalse(OsRepositoryImpl.INSTANCE.isTpmAllowed(999));
         assertFalse(OsRepositoryImpl.INSTANCE.isTpmAllowed(666));
+    }
+
+    @Test
+    public void testQ35Supported() {
+        assertTrue(OsRepositoryImpl.INSTANCE.isQ35Supported(777));
+        assertTrue(OsRepositoryImpl.INSTANCE.isQ35Supported(11));
+        assertFalse(OsRepositoryImpl.INSTANCE.isQ35Supported(999));
+        assertTrue(OsRepositoryImpl.INSTANCE.isSecureBootSupported(777));
+        assertFalse(OsRepositoryImpl.INSTANCE.isSecureBootSupported(11));
+        assertFalse(OsRepositoryImpl.INSTANCE.isSecureBootSupported(999));
     }
 }

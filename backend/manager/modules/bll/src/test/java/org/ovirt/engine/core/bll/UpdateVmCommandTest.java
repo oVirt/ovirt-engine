@@ -207,6 +207,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         when(osRepository.isWindows(osId)).thenReturn(false);
         when(osRepository.getArchitectureFromOS(osId)).thenReturn(ArchitectureType.x86_64);
         when(osRepository.isCpuSupported(anyInt(), any(), any())).thenReturn(true);
+        when(osRepository.isQ35Supported(anyInt())).thenReturn(true);
 
         when(vmValidationUtils.isOsTypeSupported(anyInt(), any())).thenReturn(true);
         when(vmValidationUtils.isGraphicsAndDisplaySupported(anyInt(), any(), any(), any())).thenReturn(true);
@@ -228,9 +229,10 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         group.setId(clusterId);
         group.setCompatibilityVersion(version);
         group.setArchitecture(ArchitectureType.x86_64);
-        group.setBiosType(BiosType.I440FX_SEA_BIOS);
+        group.setBiosType(BiosType.Q35_SEA_BIOS);
         vm.setClusterId(clusterId);
         vm.setClusterArch(ArchitectureType.x86_64);
+        vm.setBiosType(BiosType.Q35_SEA_BIOS);
         vm.setVmMemSizeMb(MEMORY_SIZE);
         vm.setMaxMemorySizeMb(MAX_MEMORY_SIZE);
         vm.setOrigin(OriginType.OVIRT);

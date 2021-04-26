@@ -322,4 +322,16 @@ public interface OsRepository {
      * @param osId operation system id
      */
     boolean isTpmAllowed(int osId);
+
+    /**
+     * Checks if the operating system supports Q35 chipset
+     * @param osId operation system id
+     */
+    boolean isQ35Supported(int osId);
+
+    /**
+     * Checks if the operating system supports SecureBoot
+     * @param osId operation system id
+     */
+    boolean isSecureBootSupported(int osId);
 }
