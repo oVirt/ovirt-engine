@@ -389,6 +389,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
                         diskId, volumeId, getPostUpdateOvfStoreDescription(size));
                 storageDomainOvfInfoDao.update(storageDomainOvfInfo);
                 ovfDisk.setLastModified(updateDate);
+                ovfDisk.setSize(size);
                 imageDao.update(ovfDisk.getImage());
                 return true;
             }
