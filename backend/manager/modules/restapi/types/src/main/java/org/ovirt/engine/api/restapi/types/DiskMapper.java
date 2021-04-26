@@ -493,6 +493,8 @@ public class DiskMapper {
             return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE_METADATA;
         case HOSTED_ENGINE_CONFIGURATION:
             return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.HOSTED_ENGINE_CONFIGURATION;
+        case BACKUP_SCRATCH:
+            return org.ovirt.engine.core.common.businessentities.storage.DiskContentType.BACKUP_SCRATCH;
         default:
             throw new IllegalArgumentException("Unknown disk content type \"" + contentType + "\"");
         }
@@ -521,6 +523,8 @@ public class DiskMapper {
             return DiskContentType.HOSTED_ENGINE_METADATA;
         case HOSTED_ENGINE_CONFIGURATION:
             return DiskContentType.HOSTED_ENGINE_CONFIGURATION;
+        case BACKUP_SCRATCH:
+            return DiskContentType.BACKUP_SCRATCH;
         default:
             throw new IllegalArgumentException("Unknown disk content type \"" + contentType + "\"");
         }
