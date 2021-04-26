@@ -1,0 +1,12 @@
+---
+- name: Add QEMU migration client cert file link
+  file:
+    src: server-cert.pem
+    dest: /etc/pki/vdsm/libvirt-migrate/client-cert.pem
+    state: link
+
+- name: Add QEMU migration client key file link
+  file:
+    src: server-key.pem
+    dest: /etc/pki/vdsm/libvirt-migrate/client-key.pem
+    state: link
