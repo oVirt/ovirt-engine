@@ -1485,15 +1485,15 @@ RETURNS VOID AS $PROCEDURE$
 DECLARE v_val UUID;
 
 BEGIN
-    SELECT id
+    SELECT lease_id
     INTO v_val
     FROM external_leases
     WHERE lease_id = v_lease_id
     FOR UPDATE;
 
     DELETE
-    FROM disk_leases
-    WHERE id = v_lease_id;
+    FROM external_leases
+    WHERE lease_id = v_lease_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
