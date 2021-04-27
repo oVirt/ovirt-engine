@@ -160,7 +160,7 @@
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="replaceHostTab" label="{constants.replaceHostLabel}">
+                    <t:DialogTab ui:field="replaceHostTab" label="{constants.replaceHostLabel}" visible="false">
                         <t:content>
                             <b:Container fluid="true">
                                 <b:Row addStyleNames="{style.topElement}">

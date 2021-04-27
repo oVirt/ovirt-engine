@@ -17,7 +17,7 @@ public class ReplaceHostConfiguration implements  Serializable {
     }
 
     public ReplaceHostConfiguration.Action getDeployAction() {
-        return deployAction;
+        return ReplaceHostConfiguration.Action.NONE;
     }
 
     /**
