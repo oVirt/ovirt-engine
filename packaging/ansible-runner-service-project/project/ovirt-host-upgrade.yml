@@ -44,9 +44,17 @@
         ignore_errors: yes
         register: contains_san
 
+      - name: Check if QEMU migration client certificates are present
+        stat:
+          path: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_client_cert_file }}"
+        register: qemu_client_cert_stat
+
       - name: Set enrollment variable
         set_fact:
-          do_host_cert_enrollment: "{{ ('error' in iscorrect.results | map(attribute='stdout') | join(' '))  or contains_san.failed }}"
+          do_host_cert_enrollment: >-
+            {{ ('error' in iscorrect.results | map(attribute='stdout') | join(' '))
+            or contains_san.failed
+            or not qemu_client_cert_stat.stat.exists }}
       when: not ansible_check_mode
 
   roles:
