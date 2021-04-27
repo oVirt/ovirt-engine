@@ -426,31 +426,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     @Override
     protected void updateBiosType() {
         super.updateBiosType();
-
-        Cluster cluster = getModel().getSelectedCluster();
-
-        if (cluster == null) {
-            return;
-        }
-
-        if (!getModel().getBiosType().getIsChangable()) {
-            getModel().getBiosType().setSelectedItem(cluster.getBiosType());
-            return;
-        }
-
-        if (basedOnCustomInstanceType()) {
-            TemplateWithVersion template = getModel().getTemplateWithVersion().getSelectedItem();
-
-            if (template == null) {
-                return;
-            }
-
-            if (template.getTemplateVersion().getClusterId() != null) {
-                getModel().getBiosType().setSelectedItem(template.getTemplateVersion().getBiosType());
-                return;
-            }
-        }
-
-        getModel().getBiosType().setSelectedItem(cluster.getBiosType());
+        super.selectBiosTypeFromTemplate();
     }
 }

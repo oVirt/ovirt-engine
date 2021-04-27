@@ -1358,6 +1358,37 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     /*
+     * Used in new vm and new vm pool to select the value from the current template
+     */
+    protected void selectBiosTypeFromTemplate() {
+        Cluster cluster = getModel().getSelectedCluster();
+
+        if (cluster == null) {
+            return;
+        }
+
+        if (!getModel().getBiosType().getIsChangable()) {
+            getModel().getBiosType().setSelectedItem(cluster.getBiosType());
+            return;
+        }
+
+        if (basedOnCustomInstanceType()) {
+            TemplateWithVersion template = getModel().getTemplateWithVersion().getSelectedItem();
+
+            if (template == null) {
+                return;
+            }
+
+            if (template.getTemplateVersion().getClusterId() != null) {
+                getModel().getBiosType().setSelectedItem(template.getTemplateVersion().getBiosType());
+                return;
+            }
+        }
+
+        getModel().getBiosType().setSelectedItem(cluster.getBiosType());
+    }
+
+    /*
      * Updates the cpu model combobox after a cluster change occurs
      */
 

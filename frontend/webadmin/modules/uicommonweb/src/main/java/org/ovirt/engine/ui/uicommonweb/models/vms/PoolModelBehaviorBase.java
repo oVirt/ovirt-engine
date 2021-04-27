@@ -175,6 +175,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 getModel().updateResumeBehavior();
 
                 getModel().getHostCpu().setEntity(isHostCpuValueStillBasedOnTemp() ? vmBase.isUseHostCpuFlags() : false);
+                getModel().getBiosType().setSelectedItem(vmBase.getBiosType());
             });
         }
     }
