@@ -2865,3 +2865,13 @@ BEGIN
     AND vm_guid = ANY(v_ids);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION SetVmInterfacesSyncedForVm (v_vm_id UUID)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE vm_interface
+    SET synced = true
+    WHERE vm_interface.vm_guid = v_vm_id;
+
+END;$PROCEDURE$
+LANGUAGE plpgsql;

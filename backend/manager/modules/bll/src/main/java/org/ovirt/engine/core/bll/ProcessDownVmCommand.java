@@ -145,7 +145,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         }
 
         managedBlockStorageCommandUtil.disconnectManagedBlockStorageDisks(getVm(), vmHandler);
-        updateVnicsInSync();
+        vmNicDao.setVmInterfacesSyncedForVm(getVmId());
     }
 
     private boolean releaseUsedHostDevices() {
@@ -173,12 +173,6 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         if (!getParameters().isSkipHostRefresh() && hostId != null) {
             runInternalAction(ActionType.RefreshHost, new VdsActionParameters(hostId));
         }
-    }
-
-    private void updateVnicsInSync() {
-        var vnics = vmNicDao.getAllForVm(getVmId());
-        vnics.forEach(vnic -> vnic.setSynced(true));
-        vmNicDao.updateAllInBatch(vnics);
     }
 
     private boolean detachUsers() {

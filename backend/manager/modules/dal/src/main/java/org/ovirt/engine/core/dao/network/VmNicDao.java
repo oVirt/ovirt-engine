@@ -56,6 +56,13 @@ public interface VmNicDao extends GenericDao<VmNic, Guid>, MassOperationsDao<VmN
     List<VmNic> getActiveForVnicProfile(Guid vnicProfileId);
 
     /**
+     * Sets all vm interfaces of specified vm to synced
+     *
+     * @param vmId vm id
+     */
+    void setVmInterfacesSyncedForVm(Guid vmId);
+
+    /**
      * Retrieves the VmTemplate Network Interfaces that the given network is attached to.
      *
      * @param networkId
