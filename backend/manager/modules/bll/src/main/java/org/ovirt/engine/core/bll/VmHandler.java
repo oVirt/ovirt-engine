@@ -1569,6 +1569,27 @@ public class VmHandler implements BackendService {
         }
     }
 
+    public Boolean getMigrateEncrypted(VM vm, Cluster cluster) {
+        Version version = vm.getCompatibilityVersion();
+        if (version == null) {
+            return null;
+        }
+
+        if (!FeatureSupported.isMigrateEncryptedSupported(version)) {
+            return null;
+        }
+
+        if (vm.getMigrateEncrypted() != null) {
+            return vm.getMigrateEncrypted();
+        }
+
+        if (cluster.getMigrateEncrypted() != null) {
+            return cluster.getMigrateEncrypted();
+        }
+
+        return Config.getValue(ConfigValues.DefaultMigrationEncryption);
+    }
+
     private interface VmNameValidator {
         boolean isVmWithSameNameExistStatic(VmStatic vm, Guid storagePoolId);
     }

@@ -71,7 +71,6 @@ import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -395,7 +394,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         Boolean autoConverge = getAutoConverge();
         Boolean migrateCompressed = getMigrateCompressed();
-        Boolean migrateEncrypted = getMigrateEncrypted();
+        Boolean migrateEncrypted = vmHandler.getMigrateEncrypted(getVm(), getCluster());
         Boolean enableGuestEvents = null;
         Integer maxIncomingMigrations = null;
         Integer maxOutgoingMigrations = null;
@@ -622,27 +621,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
 
         return Config.getValue(ConfigValues.DefaultMigrationCompression);
-    }
-
-    private Boolean getMigrateEncrypted() {
-        Version version = getVm().getCompatibilityVersion();
-        if (version == null) {
-            return null;
-        }
-
-        if (!FeatureSupported.isMigrateEncryptedSupported(version)) {
-            return null;
-        }
-
-        if (getVm().getMigrateEncrypted() != null) {
-            return getVm().getMigrateEncrypted();
-        }
-
-        if (getCluster().getMigrateEncrypted() != null) {
-            return getCluster().getMigrateEncrypted();
-        }
-
-        return Config.getValue(ConfigValues.DefaultMigrationEncryption);
     }
 
     private int getMaximumMigrationDowntime() {

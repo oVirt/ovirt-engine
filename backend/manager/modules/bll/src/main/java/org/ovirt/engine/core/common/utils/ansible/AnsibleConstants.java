@@ -83,6 +83,12 @@ public class AnsibleConstants {
      *  This is the name of file which executes Replace Gluster
      */
     public static final String REPLACE_GLUSTER_PLAYBOOK = "replace-gluster.yml";
+
+    /**
+     *  This is the name of file which executes host-fix-encrypted-migrations via Ansible
+     */
+    public static final String HOST_MIGRATION_CERTS = "ovirt-host-fix-encrypted-migrations.yml";
+
     /**
      * Name of the task where VDSM_ID is loaded, so we can distinguish this task and parse it.
      */

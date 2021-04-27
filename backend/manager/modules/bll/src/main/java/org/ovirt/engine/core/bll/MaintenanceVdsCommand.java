@@ -32,9 +32,15 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageBundler;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -52,6 +58,10 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     private VdsDao vdsDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private VmHandler vmHandler;
+    @Inject
+    private AnsibleExecutor ansibleExecutor;
 
     public MaintenanceVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -120,6 +130,10 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     protected boolean migrateAllVms(ExecutionContext parentContext, boolean HAOnly) {
 
         boolean succeeded = true;
+
+        if (shouldSetMigrationClientCerts()) {
+            runAnsibleMigrationCerts();
+        }
 
         List<VM> vmsToMigrate = new ArrayList<>();
         for (VM vm : vms) {
@@ -214,6 +228,26 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         return true;
     }
 
+    private void runAnsibleMigrationCerts() {
+        AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
+                .hosts(getVds())
+                // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-migration-certs-{hostname}-{correlationid}-{timestamp}.log
+                .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
+                .logFilePrefix("ovirt-host-mgmt-ansible-migration-certs")
+                .logFileName(getVds().getHostName())
+                .playbook(AnsibleConstants.HOST_MIGRATION_CERTS)
+                .playAction(String.format("Setting certs to allow migrations for host %1$s", getVds().getName()));
+
+        AnsibleReturnValue ansibleReturnValue = ansibleExecutor.runCommand(commandConfig);
+        if (ansibleReturnValue.getAnsibleReturnCode() != AnsibleReturnCode.OK) {
+            String warning = String.format("Failed to set the migration certificates on host '%1$s'.", getVds().getHostName());
+            log.warn(warning);
+            setVdsName(getVds().getName());
+            addCustomValue("LogFile", ansibleReturnValue.getLogFile().toString());
+            auditLogDirector.log(this, AuditLogType.VDS_ANSIBLE_HOST_MIGRATION_CERTS_FAILED);
+        }
+    }
+
     @Override
     protected boolean validate() {
         boolean result = executeValidation();
@@ -296,5 +330,14 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
     private boolean isSucceededWithoutReasonGiven(){
         return isSucceededWithHA() && !haMaintenanceFailed && StringUtils.isEmpty(getVds().getMaintenanceReason());
+    }
+
+    private boolean shouldSetMigrationClientCerts() {
+        return getCluster().getCompatibilityVersion().less(Version.v4_6)
+                && vms.stream().anyMatch(this::getMigrateEncrypted);
+    }
+
+    private boolean getMigrateEncrypted(VM vm) {
+        return Boolean.TRUE.equals(vmHandler.getMigrateEncrypted(vm, getCluster()));
     }
 }
