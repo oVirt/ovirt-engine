@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -177,10 +176,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     }
 
     private void updateVnicsInSync() {
-        var vnics = getVm().getInterfaces()
-            .stream()
-            .map(iface -> (VmNic) iface)
-            .collect(Collectors.toList());
+        var vnics = vmNicDao.getAllForVm(getVmId());
         vnics.forEach(vnic -> vnic.setSynced(true));
         vmNicDao.updateAllInBatch(vnics);
     }
