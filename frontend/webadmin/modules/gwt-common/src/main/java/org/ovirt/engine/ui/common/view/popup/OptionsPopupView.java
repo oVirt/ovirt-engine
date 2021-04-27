@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EditOptionsModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasChangeHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -69,16 +70,25 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
         consolePublicKeyInfoIcon.setText(SafeHtmlUtils.fromString(constants.consolePublicKeyMessage()));
         consolePublicKeyInfoIcon.setTabIndex(1);
 
-        SafeHtmlBuilder itemBuilder = new SafeHtmlBuilder();
-        itemBuilder.append(templates.listItem(SafeHtmlUtils.fromString(constants.hideDisplayColumns())));
-        itemBuilder.append(templates.listItem(SafeHtmlUtils.fromString(constants.swapColumns())));
-        localStoragePersistedOnServerInfoIcon.setText(templates.unorderedList(itemBuilder.toSafeHtml()));
+        localStoragePersistedOnServerInfoIcon.setText(createTooltip());
         localStoragePersistedOnServerInfoIcon.setTabIndex(1);
         // set it explicitly - the index would be auto-generated anyway
         // see UiCommonEditorVisitor
         localStoragePersistedOnServerCheckBox.asCheckBox().setTabIndex(1);
 
         driver.initialize(this);
+    }
+
+    private SafeHtml createTooltip() {
+        SafeHtmlBuilder listItemBuilder = new SafeHtmlBuilder();
+        listItemBuilder.append(templates.listItem(SafeHtmlUtils.fromString(constants.hideDisplayColumns())));
+        listItemBuilder.append(templates.listItem(SafeHtmlUtils.fromString(constants.swapColumns())));
+
+        SafeHtmlBuilder tooltipBuilder = new SafeHtmlBuilder();
+        tooltipBuilder.append(templates.text(constants.persistGridSettingsOnServerTooltip()));
+        tooltipBuilder.append(templates.unorderedList(listItemBuilder.toSafeHtml()));
+
+        return tooltipBuilder.toSafeHtml();
     }
 
     @Override

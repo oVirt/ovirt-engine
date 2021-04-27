@@ -331,6 +331,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String persistGridSettingsOnServer();
 
+    String persistGridSettingsOnServerTooltip();
+
     String hideDisplayColumns();
 
     String swapColumns();
