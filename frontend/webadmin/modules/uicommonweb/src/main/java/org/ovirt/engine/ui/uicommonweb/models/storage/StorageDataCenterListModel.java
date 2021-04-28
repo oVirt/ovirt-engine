@@ -222,6 +222,9 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                             addToAttachCandidateDatacenters(dataCenter, addDatacenter);
                             break;
                         case ManagedBlockStorage:
+                            addDatacenter = dataCenter.getStatus() == StoragePoolStatus.Up;
+                            addToAttachCandidateDatacenters(dataCenter, addDatacenter);
+                            break;
                         case ISO:
                             AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery<>(
                                             storageDomain -> {
