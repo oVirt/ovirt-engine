@@ -207,6 +207,7 @@ public class AnsibleRunnerHttpClient {
         JsonNode responseNode = getEvents(playUuid);
         JsonNode eventNodes = RunnerJsonNode.eventNodes(responseNode);
         Set<String> events = sortedEvents(eventNodes.fieldNames(), lastEventId);
+        String eventInfo = "";
         for (String event : events) {
             String task = null;
             JsonNode currentNode = eventNodes.get(event);
@@ -252,9 +253,9 @@ public class AnsibleRunnerHttpClient {
                     }
                 }
             }
+            eventInfo = event;
         }
-
-        return RunnerJsonNode.totalEvents(responseNode);
+        return eventInfo.isEmpty() ? lastEventId : Integer.valueOf(eventInfo.split("-")[0]);
     }
 
     private SortedSet<String> sortedEvents(Iterator<String> it, int lastEventId) {
