@@ -2353,7 +2353,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void vmTypeChanged() {
         behavior.vmTypeChanged(getVmType().getSelectedItem());
         updateTscFrequency();
-        behavior.updateAutoPinningEnabled();
     }
 
     private void watchdogModelSelectedItemChanged(Object sender, EventArgs args) {

@@ -532,16 +532,26 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             return;
         }
 
-        if (getModel().getIsAutoAssign().getEntity() || getModel().getDefaultHost().getSelectedItem() == null
-                || getModel().isVmAttachedToPool()) {
+        if (isAutoPinningNotChangeable()) {
             getModel().getAutoPinningPolicy().setIsChangeable(false);
         } else {
             getModel().getAutoPinningPolicy().setIsChangeable(true);
-            if (getModel().getVmType().getSelectedItem() == VmType.HighPerformance) {
-                getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.EXISTING);
-            }
         }
     }
+
+    @Override
+    public void vmTypeChanged(VmType vmType) {
+        super.vmTypeChanged(vmType);
+        changeAutoPinningVmTypeChanged();
+    }
+
+    private void changeAutoPinningVmTypeChanged() {
+        getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.DISABLED);
+        if (!isAutoPinningNotChangeable() && getModel().getVmType().getSelectedItem() == VmType.HighPerformance) {
+            getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.EXISTING);
+        }
+    }
+
 
     @Override
     protected void disableCpuPinningAutoPinningConflict() {

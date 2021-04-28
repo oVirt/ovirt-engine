@@ -412,8 +412,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             return;
         }
 
-        if (getModel().getIsAutoAssign().getEntity() || getModel().getDefaultHost().getSelectedItem() == null
-                || getModel().isVmAttachedToPool()) {
+        if (isAutoPinningNotChangeable()) {
             getModel().getAutoPinningPolicy().setIsChangeable(false);
         } else {
             getModel().getAutoPinningPolicy().setIsChangeable(true);

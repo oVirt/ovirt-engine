@@ -1499,6 +1499,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         } else {
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.MIGRATABLE);
         }
+        updateAutoPinningEnabled();
     }
 
     protected void updateRngDevice(Guid templateId) {
@@ -1672,6 +1673,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateAutoPinningEnabled() {
         getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.DISABLED);
+    }
+
+    protected boolean isAutoPinningNotChangeable() {
+        return getModel().getIsAutoAssign().getEntity() || getModel().getDefaultHost().getSelectedItem() == null
+                || getModel().isVmAttachedToPool();
     }
 
     /**
