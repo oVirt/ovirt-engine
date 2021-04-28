@@ -84,7 +84,7 @@ public class DiskOperationsHelper {
             return;
         }
 
-        if (disks == null || disks.isEmpty() || disks.get(0).getDiskStorageType() != DiskStorageType.IMAGE) {
+        if (disks == null || disks.isEmpty()) {
             disableMoveAndCopyCommands(moveCommand, copyCommand);
             return;
         }
@@ -98,14 +98,20 @@ public class DiskOperationsHelper {
         for (DiskImage disk : disks) {
 
             boolean isCopyOrMoveAllowed = isCopyAllowed || isMoveAllowed;
-            boolean isImage = disk.getDiskStorageType() == DiskStorageType.IMAGE;
+            boolean isImageDisk = disk.getDiskStorageType() == DiskStorageType.IMAGE;
+            boolean isManagedBlockDisk = disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE;
             boolean isImageStatusOK = disk.getImageStatus() == ImageStatus.OK;
             boolean isTheSameDataCenter = dataCenterId.equals(disk.getStoragePoolId());
             boolean isOvf = disk.isOvfStore();
 
-            if (!isCopyOrMoveAllowed || !isImage || !isImageStatusOK || !isTheSameDataCenter || isOvf) {
+            if (!isCopyOrMoveAllowed || !(isImageDisk || isManagedBlockDisk) || !isImageStatusOK ||
+                    !isTheSameDataCenter || isOvf) {
                 disableMoveAndCopyCommands(moveCommand, copyCommand);
                 return;
+            }
+
+            if (isManagedBlockDisk) {
+                isMoveAllowed = false;
             }
 
             VmEntityType vmEntityType = disk.getVmEntityType();

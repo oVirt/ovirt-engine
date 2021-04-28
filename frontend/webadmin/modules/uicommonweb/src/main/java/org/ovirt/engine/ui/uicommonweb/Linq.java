@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
@@ -66,6 +67,13 @@ public final class Linq {
         boolean isActive = storageDomain.getStatus() == StorageDomainStatus.Active;
 
         return isData && isActive;
+    }
+
+    public static boolean isManagedBlockActiveStorageDomain(StorageDomain storageDomain) {
+        boolean isManagedBlock = storageDomain.getStorageDomainType() == StorageDomainType.ManagedBlockStorage;
+        boolean isActive = storageDomain.getStatus() == StorageDomainStatus.Active;
+
+        return isManagedBlock && isActive;
     }
 
     public static <TSource> TSource firstOrNull(Collection<TSource> source) {

@@ -36,6 +36,8 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
     @Override
     public void init(ArrayList<DiskImage> diskImages) {
         setDiskImages(diskImages);
+        // Currently only the copy operation is supported for managed block disks.
+        setAllowedForManagedBlockDisks(false);
 
         AsyncDataProvider.getInstance().getDiskList(new AsyncQuery<>(list -> {
             onInitAllDisks(list);
@@ -88,7 +90,9 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
             return;
         }
 
-        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery<>(storageDomains -> onInitStorageDomains(storageDomains)), ((DiskImage) disk).getStoragePoolId());
+        AsyncDataProvider.getInstance().getStorageDomainList(
+                new AsyncQuery<>(this::onInitStorageDomains),
+                ((DiskImage) disk).getStoragePoolId());
     }
 
     @Override
