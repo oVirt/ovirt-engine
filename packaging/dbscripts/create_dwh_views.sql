@@ -84,6 +84,7 @@ SELECT cluster_id AS cluster_id,
     description AS cluster_description,
     storage_pool_id AS datacenter_id,
     cpu_name,
+    count_threads_as_cores AS count_threads_as_cores,
     compatibility_version,
     _create_date AS create_date,
     _update_date AS update_date
