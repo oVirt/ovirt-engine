@@ -22,7 +22,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -450,14 +449,6 @@ public class VmValidator {
 
         if (!vm.isQualifyToMigrate()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING);
-        }
-
-        return ValidationResult.VALID;
-    }
-
-    public static ValidationResult checkAutoPinningPolicy(VmStatic vmStatic, AutoPinningPolicy autoPinningPolicy) {
-        if (vmStatic.getDedicatedVmForVdsList().isEmpty() && autoPinningPolicy != AutoPinningPolicy.DISABLED) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_PIN_WITHOUT_HOST);
         }
 
         return ValidationResult.VALID;

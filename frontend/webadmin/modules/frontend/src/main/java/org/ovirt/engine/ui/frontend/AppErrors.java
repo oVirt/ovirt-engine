@@ -3129,6 +3129,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_CANNOT_PIN_WITHOUT_HOST();
 
+    String ACTION_TYPE_CANNOT_PIN_ADJUST_SINGLE_CORE();
+
     String ACTION_TYPE_FAILED_MASTER_ROLE_IS_BEING_SWITCHED();
 
     String VAR__TYPE__STORAGE__DOMAIN__SWITCH_MASTER();

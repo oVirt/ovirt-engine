@@ -1536,6 +1536,23 @@ public class VmHandler implements BackendService {
         }
     }
 
+    public ValidationResult validateAutoPinningPolicy(VmBase vmBase, AutoPinningPolicy autoPinningPolicy) {
+        if (vmBase.getDedicatedVmForVdsList().isEmpty() && autoPinningPolicy != AutoPinningPolicy.DISABLED) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_PIN_WITHOUT_HOST);
+        }
+
+        if (autoPinningPolicy != AutoPinningPolicy.ADJUST) {
+            return ValidationResult.VALID;
+        }
+        boolean singleCoreHostFound = vmBase.getDedicatedVmForVdsList().stream()
+                .map(vdsId -> vdsDynamicDao.get(vdsId))
+                .anyMatch(vdsDynamic -> vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets() == 1);
+        if (singleCoreHostFound) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_PIN_ADJUST_SINGLE_CORE);
+        }
+        return ValidationResult.VALID;
+    }
+
     public void convertVmToNewChipset(Guid vmId, ChipsetType newChipsetType, CompensationContext compensationContext) {
         convertVmDisksToNewChipset(vmId, newChipsetType, compensationContext);
         vmDeviceUtils.convertVmDevicesToNewChipset(vmId, newChipsetType, compensationContext != null);
