@@ -62,7 +62,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     private Hosts listGlusterOnly() {
         if (isFiltered()) {
             return mapGlusterOnlyCollection(getBackendCollection(QueryType.GetAllHosts,
-                    new QueryParametersBase()));
+                    new QueryParametersBase(), SearchType.VDS));
         } else {
             return mapGlusterOnlyCollection(getBackendCollection(SearchType.VDS));
         }
@@ -71,7 +71,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     private Hosts listAll() {
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllHosts,
-                    new QueryParametersBase()));
+                    new QueryParametersBase(), SearchType.VDS));
         }
 
         String migrationTargetOf = ParametersHelper.getParameter(httpHeaders, uriInfo, MIGRATION_TARGET_OF);
