@@ -406,13 +406,13 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    protected void updateAutoPinningEnabled() {
+    protected void updateAutoPinning() {
         getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.DISABLED);
         if (getModel().getIsAutoAssign().getEntity() == null) {
             return;
         }
 
-        if (isAutoPinningNotChangeable()) {
+        if (!isAutoPinningPossible()) {
             getModel().getAutoPinningPolicy().setIsChangeable(false);
         } else {
             getModel().getAutoPinningPolicy().setIsChangeable(true);

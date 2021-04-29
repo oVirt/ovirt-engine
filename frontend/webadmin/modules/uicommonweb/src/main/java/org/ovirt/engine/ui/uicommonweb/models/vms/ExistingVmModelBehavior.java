@@ -526,13 +526,13 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    protected void updateAutoPinningEnabled() {
+    protected void updateAutoPinning() {
         getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.DISABLED);
         if (getModel().getIsAutoAssign().getEntity() == null) {
             return;
         }
 
-        if (isAutoPinningNotChangeable()) {
+        if (!isAutoPinningPossible()) {
             getModel().getAutoPinningPolicy().setIsChangeable(false);
         } else {
             getModel().getAutoPinningPolicy().setIsChangeable(true);
@@ -542,12 +542,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     @Override
     public void vmTypeChanged(VmType vmType) {
         super.vmTypeChanged(vmType);
-        changeAutoPinningVmTypeChanged();
-    }
-
-    private void changeAutoPinningVmTypeChanged() {
-        getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.DISABLED);
-        if (!isAutoPinningNotChangeable() && getModel().getVmType().getSelectedItem() == VmType.HighPerformance) {
+        if (isAutoPinningPossible() && getModel().getVmType().getSelectedItem() == VmType.HighPerformance) {
             getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.EXISTING);
         }
     }

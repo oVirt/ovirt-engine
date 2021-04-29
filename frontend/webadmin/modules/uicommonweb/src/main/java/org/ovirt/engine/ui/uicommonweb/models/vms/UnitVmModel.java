@@ -2122,7 +2122,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateCustomCpu();
                 behavior.updateBiosType();
                 updateTscFrequency();
-                behavior.updateAutoPinningEnabled();
+                behavior.updateAutoPinning();
             } else if (sender == getTemplateWithVersion()) {
                 templateWithVersion_SelectedItemChanged(sender, args);
                 behavior.updateBiosType();
@@ -2201,7 +2201,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateHaAvailability();
                 behavior.updateMigrationAvailability();
                 behavior.updateNumaEnabled();
-                behavior.updateAutoPinningEnabled();
+                behavior.updateAutoPinning();
                 headlessModeChanged();
             }
         } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
@@ -2219,7 +2219,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateHaAvailability();
                 behavior.updateNumaEnabled();
                 behavior.updateMigrationAvailability();
-                behavior.updateAutoPinningEnabled();
+                behavior.updateAutoPinning();
             } else if (sender == getProvisioning()) {
                 provisioning_SelectedItemChanged(sender, args);
             } else if (sender == getProvisioningThin_IsSelected()) {
@@ -2366,7 +2366,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void initAutoPinningPolicy() {
         getAutoPinningPolicy().getSelectedItemChangedEvent().addListener(this);
         getAutoPinningPolicy().setItems(Arrays.asList(AutoPinningPolicy.values()));
-        behavior.updateAutoPinningEnabled();
+        behavior.updateAutoPinning();
     }
 
     protected void initNumOfMonitors() {
