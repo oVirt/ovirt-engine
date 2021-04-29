@@ -36,13 +36,14 @@
             'cert': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_cert_file }}"
         register: iscorrect
 
-      - name: Check if host certificate contains subject alternative name
-        openssl_certificate:
-          provider: assertonly
+      - name: Get host certificate info
+        openssl_certificate_info:
           path: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_cert_file }}"
-          subject_alt_name: "{{ ovirt_vds_hostname }}"
-        ignore_errors: yes
-        register: contains_san
+        register: host_certificate
+
+      - name: Check if host certificate contains subject alternative name
+        set_fact:
+          contains_san: "{{ host_certificate['subject_alt_name'] is search(ovirt_vds_hostname) }}"
 
       - name: Check if QEMU migration client certificates are present
         stat:
@@ -53,7 +54,7 @@
         set_fact:
           do_host_cert_enrollment: >-
             {{ ('error' in iscorrect.results | map(attribute='stdout') | join(' '))
-            or contains_san.failed
+            or not contains_san
             or not qemu_client_cert_stat.stat.exists }}
       when: not ansible_check_mode
 
