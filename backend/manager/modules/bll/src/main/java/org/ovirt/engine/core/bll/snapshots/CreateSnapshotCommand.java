@@ -165,7 +165,7 @@ public class CreateSnapshotCommand<T extends CreateSnapshotParameters> extends B
             parameters.setImageInitialSizeInBytes(getParameters().getInitialSizeInBytes());
         }
 
-        if (imagesHandler.shouldUseDiskBitmaps(getStoragePool().getCompatibilityVersion(), getImageGroupId())
+        if (imagesHandler.shouldUseDiskBitmaps(getStoragePool().getCompatibilityVersion(), getDiskImage())
                 && !getParameters().isLiveSnapshot()) {
             parameters.setShouldAddBitmaps(true);
         }

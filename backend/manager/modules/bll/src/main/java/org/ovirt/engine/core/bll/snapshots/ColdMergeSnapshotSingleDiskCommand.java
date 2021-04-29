@@ -161,7 +161,7 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
         ColdMergeCommandParameters parameters = new ColdMergeCommandParameters(
                 getDiskImage().getStoragePoolId(), subchainInfo);
         if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskStep.MERGE
-                && imagesHandler.shouldUseDiskBitmaps(getVm().getCompatibilityVersion(), getImageGroupId())) {
+                && imagesHandler.shouldUseDiskBitmaps(getVm().getCompatibilityVersion(), getDiskImage())) {
             parameters.setMergeBitmaps(true);
         }
         parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
