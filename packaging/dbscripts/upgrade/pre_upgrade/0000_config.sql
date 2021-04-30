@@ -647,6 +647,8 @@ select fn_db_add_config_value('AutoRecoveryAllowedTypes','{"storage domains":"tr
 select fn_db_add_config_value('ClientModeSpiceDefault','Native','general');
 -- VNC client mode default settings (Native, NoVnc)
 select fn_db_add_config_value('ClientModeVncDefault','Native','general');
+-- VNC client mode default settings for non managed vms (Native, NoVnc)
+select fn_db_add_config_value('ClientModeVncDefaultNonManagedVm','NoVnc','general');
 -- System level default console (vnc, spice)
 select fn_db_add_config_value('ClientModeConsoleDefault','vnc','general');
 -- RDP client mode default settings (Auto, Native, Plugin)

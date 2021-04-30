@@ -36,7 +36,9 @@ public class VncConsoleModel extends ConsoleModel {
 
         boolean webBasedClientsSupported =
                 ((ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class)).webBasedClientsSupported();
-        ClientConsoleMode desiredMode = readDefaultConsoleClientMode();
+        ClientConsoleMode desiredMode =
+                myVm.isManaged() ? readDefaultConsoleClientMode(ConfigValues.ClientModeVncDefault)
+                        : readDefaultConsoleClientMode(ConfigValues.ClientModeVncDefaultNonManagedVm);
         if (desiredMode == ClientConsoleMode.NoVnc && !webBasedClientsSupported) {
             desiredMode = ClientConsoleMode.Native; // fallback
         }
@@ -47,9 +49,9 @@ public class VncConsoleModel extends ConsoleModel {
      * Safely determine the default client mode for VNC.
      * @return default VNC client mode read from engine config or 'Native' if there is a problem when retrieving the value.
      */
-    private ClientConsoleMode readDefaultConsoleClientMode() {
+    private ClientConsoleMode readDefaultConsoleClientMode(ConfigValues key) {
         try {
-            return ClientConsoleMode.valueOf((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.ClientModeVncDefault));
+            return ClientConsoleMode.valueOf((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(key));
         } catch (Exception e) {
             return ClientConsoleMode.Native;
         }

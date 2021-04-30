@@ -1002,6 +1002,9 @@ public enum ConfigValues {
     ClientModeVncDefault(ClientAccessLevel.User),
 
     @TypeConverterAttribute(String.class)
+    ClientModeVncDefaultNonManagedVm(ClientAccessLevel.User),
+
+    @TypeConverterAttribute(String.class)
     ClientModeConsoleDefault(ClientAccessLevel.User),
 
     @Reloadable
