@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.inject.Instance;
@@ -297,8 +297,8 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
         DiskImage targetDisk = DiskImage.copyOf(sourceDisk);
         targetDisk.setId(getParameters().getDestinationImageId());
         targetDisk.setImageId(getParameters().getDestinationImageId());
-        targetDisk.setStorageTypes(List.of(StorageType.MANAGED_BLOCK_STORAGE));
-        targetDisk.setStorageIds(List.of(getParameters().getDestDomain()));
+        targetDisk.setStorageTypes(Arrays.asList(StorageType.MANAGED_BLOCK_STORAGE));
+        targetDisk.setStorageIds(Arrays.asList(getParameters().getDestDomain()));
         targetDisk.setDiskAlias(getParameters().getDiskAlias());
         targetDisk.setDiskDescription(getParameters().getDescription());
 
