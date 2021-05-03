@@ -316,6 +316,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return failValidation(EngineMessage.TPM_DEVICE_REQUESTED_ON_NOT_SUPPORTED_PLATFORM);
         }
 
+        if (!validate(VmValidator.isBiosTypeSupported(getVmTemplate(), getCluster(), osRepository))) {
+            return false;
+        }
+
         return returnValue;
     }
 

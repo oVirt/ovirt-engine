@@ -20,10 +20,12 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.ActionUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -454,18 +456,30 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult isBiosTypeSupported(OsRepository osRepository) {
-        if (vm.getBiosType().getChipsetType() == ChipsetType.Q35 && !osRepository.isQ35Supported(vm.getVmOsId())) {
-            return new ValidationResult(EngineMessage.Q35_NOT_SUPPORTED_BY_GUEST_OS,
-                    String.format("$guestOS %1$s", osRepository.getOsName(vm.getVmOsId())));
+    public static ValidationResult isBiosTypeSupported(VmBase vmBase, Cluster cluster, OsRepository osRepository) {
+        if (FeatureSupported.isBiosTypeSupported(cluster.getCompatibilityVersion())
+                && vmBase.getBiosType() != BiosType.I440FX_SEA_BIOS
+                && cluster.getArchitecture() != ArchitectureType.undefined
+                && cluster.getArchitecture().getFamily() != ArchitectureType.x86) {
+            return new ValidationResult(EngineMessage.NON_DEFAULT_BIOS_TYPE_FOR_X86_ONLY);
         }
 
-        if (vm.getBiosType() == BiosType.Q35_SECURE_BOOT && !osRepository.isSecureBootSupported(vm.getVmOsId())) {
+        if (vmBase.getBiosType().getChipsetType() == ChipsetType.Q35
+                && !osRepository.isQ35Supported(vmBase.getOsId())) {
+            return new ValidationResult(EngineMessage.Q35_NOT_SUPPORTED_BY_GUEST_OS,
+                    String.format("$guestOS %1$s", osRepository.getOsName(vmBase.getOsId())));
+        }
+
+        if (vmBase.getBiosType() == BiosType.Q35_SECURE_BOOT && !osRepository.isSecureBootSupported(vmBase.getOsId())) {
             return new ValidationResult(EngineMessage.SECURE_BOOT_NOT_SUPPORTED_BY_GUEST_OS,
-                    String.format("$guestOS %1$s", osRepository.getOsName(vm.getVmOsId())));
+                    String.format("$guestOS %1$s", osRepository.getOsName(vmBase.getOsId())));
         }
 
         return ValidationResult.VALID;
+    }
+
+    public ValidationResult isBiosTypeSupported(Cluster cluster, OsRepository osRepository) {
+        return isBiosTypeSupported(vm.getStaticData(), cluster, osRepository);
     }
 
 }
