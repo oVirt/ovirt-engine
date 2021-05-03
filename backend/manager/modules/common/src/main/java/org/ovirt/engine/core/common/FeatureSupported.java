@@ -71,10 +71,12 @@ public class FeatureSupported {
     /**
      * Check if the asynchronous live snapshot is supported for the given version
      * @param version Compatibility version to check for.
+     * @param vds The VDS the snapshot is going to be performed on.
      * @return {@code true} if asynchronous live snapshot is supported for this version.
      */
-    public static boolean isAsyncLiveSnapshotSupported(Version version) {
-        return version.greaterOrEquals(Version.v4_4);
+    public static boolean isAsyncLiveSnapshotSupported(Version version, VDS vds) {
+        final Version minVersion = Version.v4_4;
+        return version.greaterOrEquals(minVersion) || vds.getSupportedClusterVersionsSet().contains(minVersion);
     }
 
     /**

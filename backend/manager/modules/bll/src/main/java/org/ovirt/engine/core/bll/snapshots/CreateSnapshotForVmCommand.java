@@ -403,7 +403,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         params.setParentParameters(getParameters());
         params.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
         params.setShouldFreezeOrThaw(shouldFreezeOrThaw);
-        if (!FeatureSupported.isAsyncLiveSnapshotSupported(getVm().getClusterCompatibilityVersion())) {
+        if (!FeatureSupported.isAsyncLiveSnapshotSupported(getVm().getClusterCompatibilityVersion(), getVds())) {
             params.setLegacyFlow(true);
         }
         params.setCachedSelectedActiveDisks(cachedSelectedActiveDisks);
