@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll.snapshots;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -21,6 +23,7 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
+import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
@@ -135,7 +138,13 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         // In this method, we build a mapping between the command step and the command Id. As the last
         // command in the children command list is the current step being executed, we always put that
         // command as the value of the current step.
-        List<Guid> childCommandIds = commandCoordinatorUtil.getChildCommandIds(getCommandId());
+        List<Guid> childCommandIds = commandCoordinatorUtil
+                .getChildCommandIds(getCommandId())
+                .stream()
+                .map(guid -> commandCoordinatorUtil.getCommandEntity(guid))
+                .sorted(Comparator.comparing(CommandEntity::getCreatedAt))
+                .map(CommandEntity::getId)
+                .collect(Collectors.toList());
         if (childCommandIds.size() != parameters.getChildCommands().size()) {
             parameters.getChildCommands().put(parameters.getCommandStep(), childCommandIds.get(childCommandIds.size()-1));
         }
