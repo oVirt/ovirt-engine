@@ -73,12 +73,6 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
                 }
             } catch (EngineException e) {
                 log.error("Engine exception thrown while sending live snapshot command", e);
-                if (e.getErrorCode() == EngineError.imageErr || e.getErrorCode() == EngineError.SNAPSHOT_FAILED) {
-                    // In this case, we are not certain whether merge is currently running or
-                    // whether one of the relevant volumes already removed from the chain. In these cases,
-                    // we want to verify the current state; therefore, we consider the merge to be running.
-                    liveSnapshotRunning = true;
-                }
             } finally {
                 if (liveSnapshotRunning) {
                     setSucceeded(true);
