@@ -436,6 +436,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         entity.setShallow(getParameters().isShallow());
         imageTransferDao.save(entity);
 
+        log.info("Starting image transfer: {}", entity);
+
         if (isImageProvided()) {
             handleImageIsReadyForTransfer();
         } else {
