@@ -31,12 +31,10 @@ export MAVEN_OPTS
 
 BUILD_UT=0
 RUN_DAO_TESTS=0
-BUILD_GWT=0
 
 if [ -z "${MILESTONE}" ] || { [ -n "${MILESTONE}" ] && [ "${MILESTONE}" != "master" ]; }; then
 	BUILD_UT=1
 	RUN_DAO_TESTS=1
-	BUILD_GWT=1
 fi
 
 # Check asciidoc documentation
@@ -112,11 +110,6 @@ dao_tests_paths_search_string=$(IFS='|'; echo "${dao_tests_paths[*]}")
 
 if git show --pretty="format:" --name-only | egrep -q "\.(xml|java)$"; then
     BUILD_UT=1
-fi
-
-if git show --pretty="format:" --name-only | egrep -q \
-    "^(frontend/webadmin|${common_modules_search_string})"; then
-    BUILD_GWT=1
 fi
 
 if git show --pretty="format:" --name-only | egrep \
@@ -212,20 +205,13 @@ rpmbuild \
 yum-builddep output/*src.rpm
 
 # create the rpms
-# default runs without GWT
-RPM_BUILD_MODE="ovirt_build_quick"
-
-if [[ $BUILD_GWT -eq 1 ]]; then
-    RPM_BUILD_MODE="ovirt_build_draft"
-fi
-
 rpmbuild \
     -D "_rpmdir $PWD/output" \
     -D "_topmdir $PWD/rpmbuild" \
     ${SUFFIX:+-D "release_suffix ${SUFFIX}"} \
     -D "ovirt_build_ut $BUILD_UT" \
     -D "ovirt_build_extra_flags $EXTRA_BUILD_FLAGS" \
-    ${OVIRT_BUILD_QUICK:+-D "${RPM_BUILD_MODE} 1"} \
+    ${OVIRT_BUILD_QUICK:+-D "ovirt_build_draft 1"} \
     --rebuild output/*.src.rpm
 
 # Store any relevant artifacts in exported-artifacts for the ci system to
