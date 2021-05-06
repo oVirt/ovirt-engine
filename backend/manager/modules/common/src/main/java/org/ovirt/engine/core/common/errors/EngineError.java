@@ -66,6 +66,7 @@ public enum EngineError {
     freezeErr(76),
     thawErr(77),
     ReplicationNotInProgress(88),
+    InvalidParameter(91),
     recovery(99),
     GeneralException(100),
     StorageException(200),
