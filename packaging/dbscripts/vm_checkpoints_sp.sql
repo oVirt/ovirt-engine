@@ -99,6 +99,17 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetVmCheckpointByVmCheckpointParentId (v_checkpoint_id UUID)
+RETURNS SETOF vm_checkpoints STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM vm_checkpoints
+    WHERE parent_id = v_checkpoint_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 ----------------------------------------------------------------
 -- [vm_checkpoint_disk_map] Table
 ----------------------------------------------------------------------

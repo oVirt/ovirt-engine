@@ -20,6 +20,15 @@ public interface VmCheckpointDao extends GenericDao<VmCheckpoint, Guid> {
     List<VmCheckpoint> getAllForVm(Guid id);
 
     /**
+     * Retrieves the child of the given checkpoint ID.
+     *
+     * @param checkpointId
+     *            the checkpoint id
+     * @return child of the given checkpoint
+     */
+    VmCheckpoint getChildCheckpoint(Guid checkpointId);
+
+    /**
      * Adds the specified disk to checkpoint.
      *
      * @param checkpointId the checkpoint id

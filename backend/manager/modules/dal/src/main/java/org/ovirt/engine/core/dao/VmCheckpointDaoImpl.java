@@ -67,6 +67,13 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
     }
 
     @Override
+    public VmCheckpoint getChildCheckpoint(Guid checkpointId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("checkpoint_id", checkpointId);
+        return getCallsHandler()
+                .executeRead("GetVmCheckpointByVmCheckpointParentId", vmCheckpointRowMapper, parameterSource);
+    }
+
+    @Override
     public void addDiskToCheckpoint(Guid backupId, Guid diskId) {
         getCallsHandler().executeModification("InsertVmCheckpointDiskMap",
                 getCustomMapSqlParameterSource()

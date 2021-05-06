@@ -75,11 +75,6 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
                     String.format("$checkpointId %s", getParameters().getVmCheckpoint().getId()));
         }
 
-        if (vmCheckpoint.getParentId() != null) {
-            return failValidation(EngineMessage.CANNOT_DELETE_NON_ROOT_CHECKPOINT,
-                    String.format("$checkpointId %s", getParameters().getVmCheckpoint().getId()));
-        }
-
         if (!getVm().getStatus().equals(VMStatus.Up)) {
             return failValidation(EngineMessage.CANNOT_DELETE_CHECKPOINT_VM_SHOULD_BE_IN_UP_STATUS);
         }
@@ -103,7 +98,7 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
 
     @Override
     protected void executeCommand() {
-        if (!redefineVmCheckpoints()) {
+        if (!redefineVmCheckpoint()) {
             return;
         }
         setSucceeded(deleteVmCheckpoint());
@@ -121,7 +116,7 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
                 engineException.setVdsError(vdsRetVal.getVdsError());
                 throw engineException;
             }
-            updateNewRootCheckpointInDb();
+            updateCheckpointsChainInDb();
             return true;
         } catch (EngineException e) {
             log.error("Failed to execute VM.delete_checkpoints: {}", e.getMessage());
@@ -129,25 +124,22 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
         }
     }
 
-    private void updateNewRootCheckpointInDb() {
-        // Get the checkpoint chain before removing the root checkpoint from it,
-        // the chain is fetched from the DB and ordered from the new root to the leaf.
-        List<VmCheckpoint> vmCheckpoints = vmCheckpointDao.getAllForVm(getParameters().getVmId());
-
+    private void updateCheckpointsChainInDb() {
+        VmCheckpoint childVmCheckpoint = vmCheckpointDao.getChildCheckpoint(vmCheckpoint.getId());
         TransactionSupport.executeInNewTransaction(() -> {
-            if (vmCheckpoints.size() > 1) {
-                // Get the new root checkpoint of the chain.
-                VmCheckpoint newRootCheckpoint = vmCheckpoints.get(1);
-                newRootCheckpoint.setParentId(null);
-                vmCheckpointDao.update(newRootCheckpoint);
+            if (childVmCheckpoint != null) {
+                // Removed checkpoint isn't the leaf checkpoint.
+                childVmCheckpoint.setParentId(vmCheckpoint.getParentId());
+                vmCheckpointDao.update(childVmCheckpoint);
             }
             vmCheckpointDao.remove(vmCheckpoint.getId());
             return null;
         });
     }
 
-    private boolean redefineVmCheckpoints() {
+    private boolean redefineVmCheckpoint() {
         VmBackup vmBackup = new VmBackup();
+        vmBackup.setFromCheckpointId(vmCheckpoint.getId());
         vmBackup.setDisks(vmCheckpoint.getDisks());
         vmBackup.setVmId(getVmId());
 
@@ -156,7 +148,7 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
         vmBackupParameters.setParentParameters(getParameters());
         vmBackupParameters.setEndProcedure(ActionParametersBase.EndProcedure.PARENT_MANAGED);
 
-        log.info("Redefine previous VM checkpoints for VM '{}'", getVmId());
+        log.info("Redefine VM checkpoint '{}' for VM '{}'", vmCheckpoint.getId(), getVmId());
         ActionReturnValue returnValue = runInternalAction(ActionType.RedefineVmCheckpoint, vmBackupParameters);
         return returnValue.getSucceeded();
     }
