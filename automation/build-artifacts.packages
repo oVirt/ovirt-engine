@@ -13,6 +13,7 @@ postgresql-contrib
 postgresql-jdbc
 postgresql-server
 python3-ansible-lint
+python3-distro
 python3-mock
 python3-pycodestyle
 python3-psycopg2

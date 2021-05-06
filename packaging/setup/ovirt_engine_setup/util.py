@@ -15,6 +15,8 @@ import grp
 import pwd
 import re
 
+import distro
+
 from otopi import constants as otopicons
 from otopi import plugin
 from otopi import util
@@ -265,6 +267,21 @@ def getPackageManager(logger=None):
                     'No supported package manager found in your system'
                 )
             )
+
+
+@util.export
+def is_ovirt_packaging_supported_distro():
+    """Return True if running on a Linux Distribution supported by oVirt
+    packaging. In the past, also gentoo was supported by oVirt, only in
+    developer-mode.
+    """
+    # Previously, we used platform.linux_distribution, but this was removed
+    # in Python 3.8: https://bugs.python.org/issue1322
+    # Also, it does not include 'like' or 'variety'.
+    # Python 3.10 added Add platform.freedesktop_os_release, but we can't use
+    # that, as EL8 has 3.6. So we rely for now on pypi's 'distro'.
+    id_and_like = [distro.id()] + distro.like().split(' ')
+    return any(dist in id_and_like for dist in ('rhel', 'fedora'))
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

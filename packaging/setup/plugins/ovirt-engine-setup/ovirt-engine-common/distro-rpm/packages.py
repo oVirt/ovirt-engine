@@ -14,7 +14,6 @@ Package upgrade plugin.
 import datetime
 import gettext
 import os
-import platform
 
 from otopi import constants as otopicons
 from otopi import plugin
@@ -266,9 +265,6 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
         self._shouldResultVersionLock = False
         self._enabled = False
-        self._distribution = platform.linux_distribution(
-            full_distribution_name=0
-        )[0]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -303,7 +299,7 @@ class Plugin(plugin.PluginBase):
             not self.environment[
                 osetupcons.CoreEnv.DEVELOPER_MODE
             ] and
-            self._distribution in ('redhat', 'fedora', 'centos')
+            osetuputil.is_ovirt_packaging_supported_distro()
         ),
     )
     def _setup(self):

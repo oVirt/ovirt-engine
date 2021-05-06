@@ -264,6 +264,7 @@ BuildRequires:	java-11-openjdk-devel >= 11.0.4
 BuildRequires:	javapackages-tools
 BuildRequires:	make
 BuildRequires:	python3-devel
+BuildRequires:	python3-distro
 BuildRequires:	systemd
 BuildRequires:	unzip
 BuildRequires:	ovirt-jboss-modules-maven-plugin >= 2.0.1
@@ -478,6 +479,7 @@ Requires:	python3-libxml2
 Requires:	logrotate
 Requires:	python3-otopi >= 1.9.0
 Requires:	python3-paramiko
+Requires:	python3-distro
 Requires(pre):	shadow-utils
 Conflicts:	%{name}-dwh < 4.4.0
 Conflicts:	%{name}-dwh-setup < 4.4.0

@@ -10,7 +10,6 @@
 import datetime
 import gettext
 import os
-import platform
 import random
 import re
 import shutil
@@ -449,9 +448,7 @@ class Provisioning(base.Base):
         self.command.detect('psql')
 
     def supported(self):
-        return platform.linux_distribution(
-            full_distribution_name=0
-        )[0] in ('redhat', 'fedora', 'centos')
+        return osetuputil.is_ovirt_packaging_supported_distro()
 
     def validate(self):
         if not self.services.exists(

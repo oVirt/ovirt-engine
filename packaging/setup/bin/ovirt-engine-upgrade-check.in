@@ -11,7 +11,6 @@
 import sys
 import os
 import time
-import platform
 import optparse
 import gettext
 import glob
@@ -118,9 +117,7 @@ def main():
     setup_packages = get_setup_packages()
 
     try:
-        if platform.linux_distribution(
-            full_distribution_name=0
-        )[0] not in ('redhat', 'fedora', 'centos'):
+        if not osetuputil.is_ovirt_packaging_supported_distro():
             raise RuntimeError(_('Unsupported distribution'))
 
         exit = 1

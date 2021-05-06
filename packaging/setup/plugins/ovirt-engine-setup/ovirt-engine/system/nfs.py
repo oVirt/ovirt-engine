@@ -14,7 +14,6 @@ NFS and RPCbind services configuration plugin.
 
 import gettext
 import os
-import platform
 
 from otopi import constants as otopicons
 from otopi import filetransaction
@@ -47,9 +46,6 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-        self._distribution = platform.linux_distribution(
-            full_distribution_name=0
-        )[0]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -98,7 +94,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _late_setup(self):
-        if self._distribution not in ('redhat', 'fedora', 'centos'):
+        if not osetuputil.is_ovirt_packaging_supported_distro():
             self.logger.warning(
                 _('Unsupported distribution disabling nfs export')
             )

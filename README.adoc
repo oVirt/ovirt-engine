@@ -69,6 +69,7 @@ Install the following system components:
 - python-pep8 / pep8 (optional)
 - python-docker-py (optional)
 - python2-isort (optional)
+- python3-distro
 
 ==== Note on Java versions
 

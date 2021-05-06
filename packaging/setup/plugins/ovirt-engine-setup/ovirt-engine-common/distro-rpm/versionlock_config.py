@@ -11,7 +11,6 @@
 
 
 import os
-import platform
 
 from otopi import constants as otopicons
 from otopi import filetransaction
@@ -40,10 +39,7 @@ class Plugin(plugin.PluginBase):
             os.path.exists(YUM_VERSIONLOCK_CONF) and
             not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] and
             not self.environment[osetupcons.CoreEnv.OFFLINE_PACKAGER] and
-            platform.linux_distribution(full_distribution_name=0)[0] in (
-                'redhat',
-                'centos'
-            )
+            osetuputil.is_ovirt_packaging_supported_distro()
         )
     )
     def _misc(self):

@@ -11,12 +11,12 @@
 
 
 import gettext
-import platform
 
 from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
@@ -35,9 +35,6 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-        self._distribution = platform.linux_distribution(
-            full_distribution_name=0
-        )[0]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -45,8 +42,8 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
         ),
-        condition=lambda self: self._distribution in (
-            'redhat', 'fedora', 'centos',
+        condition=lambda self: (
+            osetuputil.is_ovirt_packaging_supported_distro()
         ),
     )
     def _title_s_packages(self):
