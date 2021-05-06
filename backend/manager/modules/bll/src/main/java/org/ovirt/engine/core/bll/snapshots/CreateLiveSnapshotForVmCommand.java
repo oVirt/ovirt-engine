@@ -54,7 +54,6 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
 
     @Override
     protected void executeCommand() {
-        boolean liveSnapshotRunning = false;
         if (getParameters().isLegacyFlow()) {
             performLiveSnapshotDeprecated();
             thawVm();
@@ -67,19 +66,16 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
                     getParameters().setHostJobId(jobId);
                     persistCommand(getParameters().getParentCommand(), true);
                     log.debug("Live snapshot started successfully");
-                    liveSnapshotRunning = true;
+                    setSucceeded(true);
                 } else {
                     log.error("Failed to start live snapshot on VDS");
+                    setCommandStatus(CommandStatus.FAILED);
+                    setSucceeded(false);
                 }
             } catch (EngineException e) {
                 log.error("Engine exception thrown while sending live snapshot command", e);
-            } finally {
-                if (liveSnapshotRunning) {
-                    setSucceeded(true);
-                } else {
-                    setCommandStatus(CommandStatus.FAILED);
-                    handleVdsLiveSnapshotFailure(new EngineException(EngineError.SNAPSHOT_FAILED));
-                }
+                setCommandStatus(CommandStatus.FAILED);
+                handleVdsLiveSnapshotFailure(e);
             }
         }
     }
@@ -169,8 +165,10 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
     private void handleVmFailure(EngineException e, AuditLogType auditLogType, String warnMessage) {
         log.warn(warnMessage, e.getMessage());
         log.debug("Exception", e);
-        addCustomValue("SnapshotName", getSnapshotName());
+        addCustomValue("SnapshotName", getParameters().getSnapshot().getDescription());
         addCustomValue("VmName", getVmName());
+        String translatedError = backend.getVdsErrorsTranslator().translateErrorTextSingle(e.getVdsError().getCode().toString());
+        addCustomValue("DueToError", translatedError.isEmpty() ? "" : " due to: " + translatedError);
         updateCallStackFromThrowable(e);
         auditLogDirector.log(this, auditLogType);
     }

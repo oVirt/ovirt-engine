@@ -918,5 +918,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
     String GlusterVolumeResetBrickStartFailed();
 
     String INVALID_HA_VM_LEASE();
+
+    String InvalidParameter();
 }
 
