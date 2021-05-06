@@ -358,6 +358,12 @@ Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 2.4.1
 Requires:	ovirt-dependencies >= 4.4.2
+
+# cinderlib integration
+# https://bugzilla.redhat.com/1955375
+Requires:	ceph-common
+Requires:	python3-cinderlib
+
 %{?extra_main_requires}
 
 # We can't require exactly the same version and release of the
