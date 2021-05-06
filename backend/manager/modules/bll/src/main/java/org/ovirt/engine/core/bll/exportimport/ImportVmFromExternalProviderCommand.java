@@ -114,7 +114,7 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     @Override
     protected void initBiosType() {
-        if (getVm().getOrigin() == OriginType.VMWARE && getVm().getBiosType() == null) {
+        if (getVm().getBiosType() == null) {
             getVm().setBiosType(BiosType.I440FX_SEA_BIOS);
         }
         super.initBiosType();
