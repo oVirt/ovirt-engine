@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 
 public enum DisplayType {
+    @Deprecated
     cirrus(VmDeviceType.CIRRUS),
     qxl(VmDeviceType.QXL),
     vga(VmDeviceType.VGA),
