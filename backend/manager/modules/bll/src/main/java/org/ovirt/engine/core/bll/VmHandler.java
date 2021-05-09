@@ -35,6 +35,7 @@ import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.utils.CompensationUtils;
@@ -232,6 +233,9 @@ public class VmHandler implements BackendService {
 
     @Inject
     private VdsNumaNodeDao vdsNumaNodeDao;
+
+    @Inject
+    private DiskHandler diskHandler;
 
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
@@ -505,8 +509,7 @@ public class VmHandler implements BackendService {
 
     public void updateDisksVmDataForVm(VM vm) {
         for (Disk disk : vm.getDiskMap().values()) {
-            DiskVmElement dve = diskVmElementDao.get(new VmDeviceId(disk.getId(), vm.getId()));
-            disk.setDiskVmElements(Collections.singletonList(dve));
+            diskHandler.updateDiskVmElementFromDb(disk, vm.getId());
         }
     }
 

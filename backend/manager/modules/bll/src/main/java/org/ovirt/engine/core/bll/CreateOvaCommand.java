@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -50,6 +51,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     protected AuditLogDirector auditLogDirector;
     @Inject
     private VmHandler vmHandler;
+    @Inject
+    private DiskHandler diskHandler;
     @Inject
     private VmDeviceUtils vmDeviceUtils;
     @Inject
@@ -192,6 +195,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
 
     private void packOva() {
         List<DiskImage> disks = getParameters().getDisks();
+        disks.forEach(this::updateDiskVmElementFromDb);
         String ovf = createOvf(disks);
         log.debug("Exporting OVF: {}", ovf);
         ActionReturnValue actionReturnValue = runInternalAction(ActionType.AnsiblePackOva,
@@ -202,6 +206,10 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
             throw new EngineException(EngineError.GeneralException, "Failed to pack ova");
         }
         setSucceeded(true);
+    }
+
+    private void updateDiskVmElementFromDb(DiskImage diskImage) {
+        diskHandler.updateDiskVmElementFromDb(diskImage, getParameters().getEntityId());
     }
 
     private long calcOvaSize(Collection<DiskImage> disks, String ovf) {
