@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LeaseJobStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmLeaseVDSParameters;
@@ -101,6 +102,16 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
         destDomainType = storageDomainDao.get(getParameters().getDestDomain()).getStorageDomainType();
 
         super.init();
+    }
+
+    @Override
+    protected boolean validate() {
+        if (getParameters().getVdsRunningOn() == null) {
+            log.error("No hosts available for copy were found");
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_HOSTS_FOUND);
+        }
+
+        return super.validate();
     }
 
     @Override
@@ -189,6 +200,12 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
         parameters.setJobWeight(weight);
 
         runInternalActionWithTasksContext(ActionType.CopyData, parameters);
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR__ACTION__COPY);
+        addValidationMessage(EngineMessage.VAR__TYPE__DISK);
     }
 
     private void createJobLease() {
