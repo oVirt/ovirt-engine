@@ -24,6 +24,7 @@ from otopi import filetransaction
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common import pki_utils
 
 
 def _(m):
@@ -207,12 +208,13 @@ class EnrollCert(base.Base):
     def logger(self):
         return self._plugin.logger
 
-    def _genCsr(self):
-        private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=self._key_size,
-            backend=default_backend(),
-        )
+    def _genCsr(self, private_key=None):
+        if private_key is None:
+            private_key = rsa.generate_private_key(
+                public_exponent=65537,
+                key_size=self._key_size,
+                backend=default_backend(),
+            )
         rsa_private_key_pem = private_key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.PKCS8,
@@ -401,15 +403,36 @@ class EnrollCert(base.Base):
         pass
 
     def enroll_cert(self):
-        cert = None
-
         self.logger.debug('enroll_cert')
-        self._need_cert = not os.path.exists(self._cert_file)
-        self._need_key = not os.path.exists(self._key_file)
 
-        if self._need_key:
-            self._key, self._csr, self._pubkey = self._genCsr()
+        cert = None
+        self._need_cert = True
+        if os.path.exists(self._cert_file):
+            self._need_cert = False
+            cert = pki_utils.x509_load_cert(self._cert_file)
+            if pki_utils.ok_to_renew_cert(
+                self.logger,
+                cert,
+                None,
+                self._base_name,
+                True,
+            ):
+                self._need_cert = True
+
+        private_key = None
+        self._need_key = True
+        if os.path.exists(self._key_file):
+            with open(self._key_file, 'rb') as f:
+                private_key = serialization.load_pem_private_key(
+                    f.read(),
+                    password=None,
+                    backend=default_backend(),
+                )
+            self._need_key = False
+        else:
             self._need_cert = True
+
+        self._key, self._csr, self._pubkey = self._genCsr(private_key)
 
         if self._need_cert:
             self._remote_name = '{name}-{fqdn}'.format(

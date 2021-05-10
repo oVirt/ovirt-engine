@@ -11,19 +11,14 @@
 
 
 import binascii
-import datetime
 import gettext
 import os
 import random
 import re
 
 from cryptography import x509
-from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.x509.extensions import ExtensionNotFound
 
 from otopi import constants as otopicons
 from otopi import filetransaction
@@ -38,6 +33,7 @@ from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup.engine_common import constants as oengcommcons
+from ovirt_engine_setup.engine_common import pki_utils
 
 from ovirt_setup_lib import dialog
 
@@ -131,15 +127,6 @@ class Plugin(plugin.PluginBase):
             group='ca_pki',
             fileList=files,
         )
-
-    def _x509_load_cert(self, fname):
-        # input: fname: File name
-        # return: cryptography.x509.Certificate object
-        with open(fname, 'rb') as f:
-            return x509.load_pem_x509_certificate(
-                f.read(),
-                backend=default_backend(),
-            )
 
     def _extractPKCS12CertificateString(self, pkcs12):
         # input: pkcs12: A PKCS#12 file name
@@ -302,133 +289,22 @@ class Plugin(plugin.PluginBase):
         },
     )
 
-    def _expired(self, x509cert):
-        # input: x509cert: cryptography.x509.Certificate object
-        # return: bool
-
-        #
-        # LEGACY NOTE
-        # Since 3.0 and maybe before the CA certificate's
-        # notBefore attribute was set using timezone offset
-        # instead of Z
-        # in this case we need to reissue CA certificate.
-        #
-        # py cryptography does not currently allow getting
-        # a certificate's notBefore/notAfter timezone - its
-        # docs say it returns "A naïve datetime". So we can't
-        # use it to verify old certs' timezone. Hopefully that's
-        # not needed anymore, because upgrade to 3.5.4 should have
-        # prompted the user to renew PKI, and even if they initially
-        # postponed this renewal, by now it should have been done.
-        # CA Cert is set to expire in 10 years.
-        # The only risk is with people that used the old code and
-        # still didn't renew.
-        # TODO: Either decide that this is ok and remove above
-        # comment, or implement this check - either by fixing
-        # py cryptography to support timezones or by using other
-        # means, such as calling the openssl utility, e.g.
-        # openssl x509 -in ca.pem -noout -startdate
-        return (
-            x509cert.not_valid_after.replace(tzinfo=None) -
-            datetime.datetime.utcnow() <
-            datetime.timedelta(days=60)
-        )
-
-    SAN_extension_name = 'subjectAltName'
-
-    def _has_SAN(self, x509cert):
-        # input: x509cert: cryptography.x509.Certificate object
-        # return: bool
-        res = False
-        try:
-            ext = x509cert.extensions.get_extension_for_oid(
-                x509.oid.ExtensionOID.SUBJECT_ALTERNATIVE_NAME
-            )
-            res = True
-            self.logger.debug(
-                '%s: %s',
-                self.SAN_extension_name,
-                ext.value[0].value,
-            )
-        except ExtensionNotFound:
-            self.logger.debug('%s is missing', self.SAN_extension_name)
-        return res
-
-    def _validity_period_short_enough(self, x509cert):
-        # input: x509cert: cryptography.x509.Certificate object
-        # return: bool
-        before = x509cert.not_valid_before
-        after = x509cert.not_valid_after
-        validity_in_days = ((after - before).days) - 1
-        self.logger.debug(
-            f"Certificate's validity is {validity_in_days} days. "
-            "HTTPS certificate validity shouldn't be longer than 398 days"
-        )
-        # HTTPS certificate validity shouldn't be longer than 398 days
-        return validity_in_days <= 398
-
     def _ok_to_renew_cert(self, pkcs12, name, extract):
         # input:
         # - pkcs12: A PKCS#12 file name
         # - name: A base name (--name param of pki-* scripts)
         # - extract: bool. If True, we need to check the extracted cert
         # return: bool
-        res = False
         self.logger.debug("processing: '%s'", name)
-        if os.path.exists(pkcs12):
-            x509cert = self._extractPKCS12Certificate(pkcs12)
-            if x509cert and (
-                self._expired(x509cert) or
-                not self._has_SAN(x509cert) or
-                not self._validity_period_short_enough(x509cert)
-            ):
-                if not extract:
-                    res = True
-                else:
-                    internal = False
-                    try:
-                        if self._x509_load_cert(
-                            oenginecons.FileLocations.
-                            OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-                        ).public_key().verify(
-                            x509cert.signature,
-                            x509cert.tbs_certificate_bytes,
-                            padding.PKCS1v15(),
-                            x509cert.signature_hash_algorithm,
-                        ) is not None:
-                            raise RuntimeError('Certificate validation failed')
-                        internal = True
-                    except InvalidSignature:
-                        pass
-                    if internal:
-                        self.logger.debug(
-                            'certificate is an internal certificate'
-                        )
-
-                        # sanity check, make sure user did not manually
-                        # change cert
-                        extracted_x509cert = self._x509_load_cert(
-                            os.path.join(
-                                (
-                                    oenginecons.FileLocations.
-                                    OVIRT_ENGINE_PKICERTSDIR
-                                ),
-                                '%s.cer' % name,
-                            )
-                        )
-
-                        if (
-                            extracted_x509cert.public_bytes(
-                                encoding=serialization.Encoding.PEM
-                            )
-                        ) == (
-                            x509cert.public_bytes(
-                                encoding=serialization.Encoding.PEM
-                            )
-                        ):
-                            self.logger.debug('certificate is sane')
-                            res = True
-        return res
+        return os.path.exists(pkcs12) and pki_utils.ok_to_renew_cert(
+            self.logger,
+            self._extractPKCS12Certificate(pkcs12),
+            pki_utils.x509_load_cert(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            ),
+            name,
+            extract,
+        )
 
     def _enrollCertificates(self, renew, uninstall_files):
         for entry in self.environment[oenginecons.PKIEnv.ENTITIES]:
@@ -611,7 +487,7 @@ class Plugin(plugin.PluginBase):
     )
     def _customization_upgrade(self):
         if True in [
-            self._expired(self._x509_load_cert(cert))
+            pki_utils.cert_expires(pki_utils.x509_load_cert(cert))
             for cert in self._CA_FILES
             if os.path.exists(cert)
         ] + [
@@ -744,7 +620,7 @@ class Plugin(plugin.PluginBase):
         # country in post install file. Load it from CA certificate.
         #
         if self.environment[oenginecons.PKIEnv.ORG] is None:
-            ca = self._x509_load_cert(
+            ca = pki_utils.x509_load_cert(
                 oenginecons.FileLocations.
                 OVIRT_ENGINE_PKI_ENGINE_CA_CERT
             )
@@ -834,7 +710,7 @@ class Plugin(plugin.PluginBase):
             for ca_file in self._CA_FILES:
                 if (
                     os.path.exists(ca_file) and
-                    self._expired(self._x509_load_cert(ca_file))
+                    pki_utils.cert_expires(pki_utils.x509_load_cert(ca_file))
                 ):
                     self._renewed_ca_files.add(ca_file)
                     self.logger.info(_('Renewing CA: %s'), ca_file)
@@ -1020,7 +896,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _closeup(self):
-        x509cert = self._x509_load_cert(
+        x509cert = pki_utils.x509_load_cert(
             oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
         )
         self.dialog.note(
