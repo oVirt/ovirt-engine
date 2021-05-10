@@ -232,10 +232,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         updateParametersVmFromInstanceType();
 
-        // we always need to verify new or existing numa nodes with the updated VM configuration
-        if (!getParameters().isUpdateNuma()) {
-            getParameters().getVm().setvNumaNodeList(vmNumaNodeDao.getAllVmNumaNodeByVmId(getParameters().getVmId()));
-        }
+        initNuma();
 
         updateUSB();
 
@@ -936,6 +933,18 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         addLogMessages(backend.runInternalAction(ActionType.SetVmNumaNodes, params));
 
+    }
+
+    private void initNuma() {
+        List<VmNumaNode> vNumaNodeList = vmNumaNodeDao.getAllVmNumaNodeByVmId(getParameters().getVmId());
+        if (getVm() != null) {
+            getVm().setvNumaNodeList(vNumaNodeList);
+        }
+
+        // we always need to verify new or existing numa nodes with the updated VM configuration
+        if (!getParameters().isUpdateNuma()) {
+            getParameters().getVm().setvNumaNodeList(vNumaNodeList);
+        }
     }
 
     private void updateUSB() {

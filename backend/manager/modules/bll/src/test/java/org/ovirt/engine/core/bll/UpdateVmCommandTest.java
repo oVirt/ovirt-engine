@@ -72,6 +72,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
@@ -142,6 +143,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private CloudInitHandler cloudInitHandler;
     @Mock
     private AffinityValidator affinityValidator;
+    @Mock
+    private VmNumaNodeDao vmNumaNodeDao;
 
     private static Map<String, String> createMigrationMap() {
         Map<String, String> migrationMap = new HashMap<>();
@@ -221,6 +224,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         when(affinityValidator.validateAffinityUpdateForVm(any(), any(), any(), any()))
                 .thenReturn(AffinityValidator.Result.VALID);
+        when(vmNumaNodeDao.getAllVmNumaNodeByVmId(any())).thenReturn(Collections.emptyList());
 
         vm = new VM();
         vmStatic = command.getParameters().getVmStaticData();
