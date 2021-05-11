@@ -107,21 +107,28 @@ public class UpdateConvertedVmCommand<T extends ConvertVmParameters> extends VmC
         getVmDeviceUtils().addImportedDevices(vmStatic, false, false);
     }
 
-    private void addExtraData(VM vm) {
-        VmStatic vmStatic = getVm().getStaticData();
+    private void addExtraData(VM ovfVm) {
+        VmStatic oldVm = getVm().getStaticData();
+        VmStatic newVm = new VmStatic(oldVm);
 
-        if (vm.getBiosType() == BiosType.I440FX_SEA_BIOS) {
-            if (getCluster().getBiosType().getChipsetType() == ChipsetType.Q35) {
-                vm.setBiosType(BiosType.Q35_SEA_BIOS);
-            }
+        if (newVm.getBiosType() != ovfVm.getBiosType()) {
+            newVm.setBiosType(ovfVm.getBiosType());
         }
 
-        if (vmStatic.getBiosType() != vm.getBiosType()) {
-            vmStatic.setBiosType(vm.getBiosType());
-            getVmManager().update(vmStatic);
-            vmHandler.convertVmToNewChipset(vmStatic.getId(),
-                    vmStatic.getBiosType().getChipsetType(),
-                    getCompensationContextIfEnabledByCaller());
+        if (newVm.getBiosType() == BiosType.I440FX_SEA_BIOS
+                && getCluster().getBiosType().getChipsetType() == ChipsetType.Q35) {
+            newVm.setBiosType(BiosType.Q35_SEA_BIOS);
+        }
+
+        if (oldVm.getBiosType() != newVm.getBiosType()) {
+            getVmManager().update(newVm);
+
+            if (oldVm.getBiosType().getChipsetType() != newVm.getBiosType().getChipsetType()) {
+                vmHandler.convertVmToNewChipset(oldVm,
+                        newVm,
+                        getCluster(),
+                        null);
+            }
         }
     }
 

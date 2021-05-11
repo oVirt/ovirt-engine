@@ -461,17 +461,21 @@ public class VmDeviceUtils {
 
     /**
      * Update sound device in the new VM, if its state should be different from the old VM. Recreate the device in any
-     * case, if OS has been changed.
+     * case, if OS or chipset has been changed.
      *
      * @param compatibilityVersion  cluster compatibility version
      * @param isSoundDeviceEnabled  true/false to enable/disable device respectively, null to leave it untouched
      */
     public void updateSoundDevice(VmBase oldVmBase, VmBase newVmBase, Version compatibilityVersion,
                                   Boolean isSoundDeviceEnabled) {
-        boolean osChanged = oldVmBase.getOsId() != newVmBase.getOsId();
+
+        ChipsetType oldChipset = oldVmBase.getBiosType() == null ? null : oldVmBase.getBiosType().getChipsetType();
         ChipsetType newChipset = newVmBase.getBiosType() == null ? null : newVmBase.getBiosType().getChipsetType();
+
+        boolean chipsetChanged = oldChipset != newChipset;
+        boolean osChanged = oldVmBase.getOsId() != newVmBase.getOsId();
         updateSoundDevice(newVmBase.getId(), newVmBase.getOsId(), compatibilityVersion,
-                newChipset, isSoundDeviceEnabled, osChanged);
+                newChipset, isSoundDeviceEnabled, osChanged || chipsetChanged);
     }
 
     /**
@@ -857,11 +861,10 @@ public class VmDeviceUtils {
     /**
      * Update USB slots and controllers in the new VM, if USB policy of the new VM differs from one of the old VM.
      * @param oldVm old configuration, may not be null, won't be modified
-     * @param oldVmCluster old cluster
      * @param newVm new configuration, may not be null, only devices if this entity will be modified
      * @param newVmCluster new cluster
      */
-    public void updateUsbSlots(VmBase oldVm, Cluster oldVmCluster, VmBase newVm, Cluster newVmCluster) {
+    public void updateUsbSlots(VmBase oldVm, VmBase newVm, Cluster newVmCluster) {
         final UsbPolicy oldUsbPolicy = oldVm.getUsbPolicy();
         final UsbPolicy newUsbPolicy = newVm.getUsbPolicy();
         final int oldNumberOfSlots = getUsbSlots(oldVm.getId()).size();
@@ -1464,7 +1467,7 @@ public class VmDeviceUtils {
 
         updateCdPath(oldVmBase, newVmBase);
         updateVideoDevices(oldVmBase, newVmBase);
-        updateUsbSlots(oldVmBase, oldVmCluster, newVmBase, newVmCluster);
+        updateUsbSlots(oldVmBase, newVmBase, newVmCluster);
         addMemoryBalloonIfNeeded(newVmBase.getId());
         updateSoundDevice(oldVmBase, newVmBase, oldVm.getCompatibilityVersion(),
                 params.isSoundDeviceEnabled());
@@ -1542,7 +1545,7 @@ public class VmDeviceUtils {
     public void updateVmDevicesOnRun(VM vm) {
         if (vm != null) {
             Cluster cluster = getCluster(vm.getClusterId());
-            updateUsbSlots(vm.getStaticData(), cluster, vm.getStaticData(), cluster);
+            updateUsbSlots(vm.getStaticData(), vm.getStaticData(), cluster);
             removeLeftOverDevices(vm.getStaticData());
             updateRngDevice(vm);
         }
@@ -1595,6 +1598,7 @@ public class VmDeviceUtils {
 
     private void convertVmDeviceToNewChipsetInternal(VmDevice device, ChipsetType newChipsetType) {
         device.setAddress("");
+        // note that a chipset change is handled for sound and usb in updateSoundDevice and updateUsbSlots methods
     }
 
     private void removeUnmanagedDevices(Guid vmId, boolean useCompensation) {
@@ -1774,10 +1778,14 @@ public class VmDeviceUtils {
             addCdDevice(dstId, dstCdPath);
         }
 
-        updateUsbSlots(srcVmBase, srcCluster, dstVmBase, dstCluster);
+        updateUsbSlots(srcVmBase, dstVmBase, dstCluster);
 
-        if (isSoundEnabled && !hasSound) {
-            addSoundDevice(dstVmBase, () -> dstCluster);
+        if (isSoundEnabled) {
+            if (hasSound) {
+                updateSoundDevice(srcVmBase, dstVmBase, CompatibilityVersionUtils.getEffective(dstVmBase,  dstCluster), isSoundEnabled);
+            } else {
+                addSoundDevice(dstVmBase, () -> dstCluster);
+            }
         }
 
         if (Boolean.TRUE.equals(isTpmEnabled) && !hasTpm) {

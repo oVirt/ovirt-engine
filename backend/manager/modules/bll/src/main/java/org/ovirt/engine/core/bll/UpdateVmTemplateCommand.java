@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BiosType;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -458,18 +457,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         getVmDeviceUtils().updateTpmDevice(getVmTemplate(), getCluster(), getParameters().isTpmEnabled());
         getVmDeviceUtils().updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
-        if (oldTemplate.getUsbPolicy() != getVmTemplate().getUsbPolicy() || oldTemplate.getVmType() != getVmTemplate().getVmType()) {
-            Cluster newCluster = getCluster();
-            Cluster oldCluster = null;
-            if (oldTemplate.getClusterId() != null) {
-                if (oldTemplate.getClusterId().equals(newCluster.getId())) {
-                    oldCluster = newCluster;
-                } else {
-                    oldCluster = oldTemplate.getClusterId() != null ? clusterDao.get(oldTemplate.getClusterId()) : null;
-                }
-            }
-            getVmDeviceUtils().updateUsbSlots(oldTemplate, oldCluster, getVmTemplate(), newCluster);
-        }
+        getVmDeviceUtils().updateUsbSlots(oldTemplate, getVmTemplate(), getCluster());
         getVmDeviceUtils().updateVirtioScsiController(getVmTemplate(), getParameters().isVirtioScsiEnabled());
         getVmDeviceUtils().addMemoryBalloonIfNeeded(getVmTemplateId());
         getVmDeviceUtils().updateVideoDevices(oldTemplate, getParameters().getVmTemplateData());

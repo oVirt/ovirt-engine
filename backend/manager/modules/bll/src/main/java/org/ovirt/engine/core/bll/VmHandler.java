@@ -1560,6 +1560,18 @@ public class VmHandler implements BackendService {
         return ValidationResult.VALID;
     }
 
+    public void convertVmToNewChipset(VmBase oldVmBase,
+            VmBase newVmBase,
+            Cluster cluster,
+            CompensationContext compensationContext) {
+        vmDeviceUtils.updateSoundDevice(oldVmBase,
+                newVmBase,
+                CompatibilityVersionUtils.getEffective(newVmBase, cluster),
+                vmDeviceUtils.hasSoundDevice(oldVmBase.getId()));
+        vmDeviceUtils.updateUsbSlots(oldVmBase, newVmBase, cluster);
+        convertVmToNewChipset(newVmBase.getId(), newVmBase.getBiosType().getChipsetType(), compensationContext);
+    }
+
     public void convertVmToNewChipset(Guid vmId, ChipsetType newChipsetType, CompensationContext compensationContext) {
         convertVmDisksToNewChipset(vmId, newChipsetType, compensationContext);
         vmDeviceUtils.convertVmDevicesToNewChipset(vmId, newChipsetType, compensationContext != null);
