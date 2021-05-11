@@ -112,13 +112,13 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
         return true;
     }
 
-    private void copyVolumeData(Guid image, int imageIndex) {
+    private void copyVolumeData(Guid imageId, int imageIndex) {
         LocationInfo destLocationInfo;
 
         if (getParameters().getDestImages().isEmpty()) {
             destLocationInfo = buildImageLocationInfo(getParameters().getDestDomain(),
                             getParameters().getImageGroupID(),
-                            image,
+                            imageId,
                             getParameters().isLive());
         } else {
             destLocationInfo = buildImageLocationInfo(getParameters().getDestDomain(),
@@ -130,21 +130,21 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
         CopyDataCommandParameters parameters = new CopyDataCommandParameters(getParameters().getStoragePoolId(),
                 buildImageLocationInfo(getParameters().getSrcDomain(),
                         getParameters().getImageGroupID(),
-                        image,
+                        imageId,
                         getParameters().isLive()),
                 destLocationInfo,
                 false);
         parameters.setVdsId(getParameters().getVdsId());
         parameters.setVdsRunningOn(getParameters().getVdsRunningOn());
 
-        if (imagesHandler.shouldUseDiskBitmaps(getStoragePool().getCompatibilityVersion(), getDiskImage(image))) {
+        if (imagesHandler.shouldUseDiskBitmaps(getStoragePool().getCompatibilityVersion(), getDiskImage(imageId))) {
             parameters.setCopyBitmaps(true);
         }
 
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
-        parameters.setJobWeight(getParameters().getOperationsJobWeight().get(image.toString()));
+        parameters.setJobWeight(getParameters().getOperationsJobWeight().get(imageId.toString()));
         runInternalActionWithTasksContext(ActionType.CopyData, parameters);
     }
 
