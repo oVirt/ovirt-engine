@@ -137,8 +137,7 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
         parameters.setVdsId(getParameters().getVdsId());
         parameters.setVdsRunningOn(getParameters().getVdsRunningOn());
 
-        DiskImage diskImage = diskImageDao.get(image);
-        if (imagesHandler.shouldUseDiskBitmaps(getStoragePool().getCompatibilityVersion(), diskImage)) {
+        if (imagesHandler.shouldUseDiskBitmaps(getStoragePool().getCompatibilityVersion(), getDiskImage(image))) {
             parameters.setCopyBitmaps(true);
         }
 
@@ -147,6 +146,11 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
         parameters.setParentParameters(getParameters());
         parameters.setJobWeight(getParameters().getOperationsJobWeight().get(image.toString()));
         runInternalActionWithTasksContext(ActionType.CopyData, parameters);
+    }
+
+    private DiskImage getDiskImage(Guid imageId) {
+        DiskImage diskImage = diskImageDao.get(imageId);
+        return diskImage != null ? diskImage : diskImageDao.getSnapshotById(imageId);
     }
 
     @Override
