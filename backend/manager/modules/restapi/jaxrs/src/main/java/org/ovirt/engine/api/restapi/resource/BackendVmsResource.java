@@ -207,6 +207,7 @@ public class BackendVmsResource extends
                 }
 
                 updateMaxMemoryIfUnspecified(vm, staticVm);
+                updateMinAllocatedMemoryIfUnspecified(vm, staticVm);
 
                 if (Guid.Empty.equals(template.getId()) && !vm.isSetOs()) {
                     staticVm.setOsId(OsRepository.AUTO_SELECT_OS);
@@ -278,6 +279,12 @@ public class BackendVmsResource extends
         }
     }
 
+    private void updateMinAllocatedMemoryIfUnspecified(Vm vm, VmStatic vmStatic) {
+        if (!(vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetGuaranteed()) && vm.isSetMemory()) {
+            vmStatic.setMinAllocatedMem(vmStatic.getMemSizeMb());
+        }
+    }
+
     private void validateIconParameters(Vm vm) {
         if (!IconHelper.validateIconParameters(vm)) {
             throw new BaseBackendResource.WebFaultException(null,
@@ -308,6 +315,7 @@ public class BackendVmsResource extends
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getVmConfiguration(snapshotId);
         getMapper(Vm.class, VmStatic.class).map(vm, vmConfiguration.getStaticData());
         updateMaxMemoryIfUnspecified(vm, vmConfiguration.getStaticData());
+        updateMinAllocatedMemoryIfUnspecified(vm, vmConfiguration.getStaticData());
         // If vm passed in the call has disks attached on them,
         // merge their data with the data of the disks on the configuration
         // The parameters to AddVmFromSnapshot hold an array list of Disks
