@@ -397,6 +397,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                 // This is a hack for managed block storage -> image copy,
                 // the purpose is convert the disk storage type back to IMAGE
                 if (getActionType() == ActionType.CopyImageGroup
+                        && !getParameters().isImportEntity()
                         && isImageDomain(getDestinationDiskImage().getStorageTypes().get(0))
                         && getDiskImage().getStorageTypes().get(0).isManagedBlockStorage()) {
                     DiskImage diskImage = DiskImage.copyOf(getDestinationDiskImage());
