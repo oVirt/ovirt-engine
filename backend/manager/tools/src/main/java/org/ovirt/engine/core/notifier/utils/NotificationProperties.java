@@ -199,6 +199,8 @@ public class NotificationProperties extends ShellLikeConfd {
 
             if (!StringUtils.isEmpty(value)) {
                 ret = new InternetAddress(value);
+            } else {
+                ret = new InternetAddress();
             }
 
             return ret;
