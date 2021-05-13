@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.hostedengine;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -10,14 +11,12 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -25,7 +24,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmStaticDao;
 
 public class HostedEngineHelper {
     private VM hostedEngineVm;
@@ -33,9 +31,6 @@ public class HostedEngineHelper {
 
     @Inject
     private VmDao vmDao;
-
-    @Inject
-    private VmStaticDao vmStaticDao;
 
     @Inject
     private VdsSpmIdMapDao vdsSpmIdMapDao;
@@ -51,14 +46,18 @@ public class HostedEngineHelper {
 
     @PostConstruct
     private void init() {
-        List<VmStatic> byName = vmStaticDao.getAllByName(Config.getValue(ConfigValues.HostedEngineVmName));
-        if (byName != null && !byName.isEmpty()) {
-            VmStatic vmStatic = byName.get(0);
-            hostedEngineVm = vmDao.get(vmStatic.getId());
-            vmHandler.updateDisksFromDb(hostedEngineVm);
-        }
+        List<OriginType> hostedEngineOriginTypes = Arrays.asList(
+                OriginType.HOSTED_ENGINE,
+                OriginType.MANAGED_HOSTED_ENGINE);
+        List<VM> hostedEngineVms = vmDao.getVmsByOrigins(hostedEngineOriginTypes);
+        hostedEngineVms.stream().findFirst().ifPresent(this::setHostedEngineVm);
 
         initHostedEngineStorageDomain();
+    }
+
+    private void setHostedEngineVm(VM hostedEngineVm) {
+        vmHandler.updateDisksFromDb(hostedEngineVm);
+        this.hostedEngineVm = hostedEngineVm;
     }
 
     public boolean isVmManaged() {
