@@ -45,7 +45,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -394,11 +393,18 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * The following method should check if os of guest is supported for disk hot plug/unplug operation
      */
     protected boolean isDiskSupportedForPlugUnPlug(DiskVmElement diskVmElement, String diskAlias) {
-        if (diskVmElement.getDiskInterface() == DiskInterface.IDE) {
+        switch (diskVmElement.getDiskInterface()) {
+        case IDE:
             addValidationMessageVariable("diskAlias", diskAlias);
             addValidationMessageVariable("vmName", getVm().getName());
             return failValidation(EngineMessage.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED);
+        case SPAPR_VSCSI:
+            addValidationMessageVariable("diskAlias", diskAlias);
+            addValidationMessageVariable("vmName", getVm().getName());
+            return failValidation(EngineMessage.HOT_PLUG_SPAPR_VSCSI_DISK_IS_NOT_SUPPORTED);
+        default:
         }
+
         Set<String> diskHotpluggableInterfaces = osRepository.getDiskHotpluggableInterfaces(getVm().getOs(),
                 getVm().getCompatibilityVersion());
 
