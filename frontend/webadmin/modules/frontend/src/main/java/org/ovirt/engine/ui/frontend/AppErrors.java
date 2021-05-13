@@ -209,6 +209,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String TEMPLATE_IMAGE_NOT_EXIST();
 
+    String TPM_DEVICE_REQUESTED_ON_NOT_SUPPORTED_PLATFORM();
+
     String VM_CANNOT_REMOVE_CLUSTER_VMS_DETECTED();
 
     String VMT_CANNOT_REMOVE_CLUSTER_VMTS_DETECTED();
