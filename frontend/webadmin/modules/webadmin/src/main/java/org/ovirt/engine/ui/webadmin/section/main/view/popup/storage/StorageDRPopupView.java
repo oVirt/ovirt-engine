@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import org.apache.commons.lang3.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageSyncSchedule;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -116,7 +115,7 @@ public class StorageDRPopupView extends
             @Override
             protected String renderNullSafe(GlusterGeoRepSession geoRepSession) {
                 if (geoRepSession == null) {
-                    return StringUtils.EMPTY;
+                    return "";
                 } else {
                     return messages.geoRepRemoteSessionName(geoRepSession.getSlaveHostName(),
                             geoRepSession.getSlaveVolumeName());
