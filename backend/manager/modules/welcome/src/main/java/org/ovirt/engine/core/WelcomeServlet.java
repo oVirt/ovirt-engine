@@ -43,7 +43,12 @@ public class WelcomeServlet extends HttpServlet {
     private static final String LOCALE_KEYS = "localeKeys";
 
     /**
-     * The request attribute containing the section map.
+     * The request attribute containing the preamble html.
+     */
+    private static final String PREAMBLE = "preamble";
+
+    /**
+     * The request attribute containing the section html.
      */
     private static final String SECTIONS = "sections";
 
@@ -143,8 +148,11 @@ public class WelcomeServlet extends HttpServlet {
                             ConfigCommon.defaultConfigurationVersion)).getReturnValue();
             request.setAttribute("sso_credential_change_url", getCredentialsChangeUrl(request));
             request.setAttribute(VERSION, oVirtVersion != null ? oVirtVersion : "myVersion");
-            request.setAttribute(SECTIONS, brandingManager
-                    .getWelcomeSections((Locale) request.getAttribute(LocaleFilter.LOCALE)));
+
+            Locale locale = (Locale) request.getAttribute(LocaleFilter.LOCALE);
+            request.setAttribute(PREAMBLE, brandingManager.getWelcomePreambleSection(locale));
+            request.setAttribute(SECTIONS, brandingManager.getWelcomeSections(locale));
+
             log.debug("Including to ovirt-engine.jsp");
             RequestDispatcher dispatcher = request.getRequestDispatcher(WelcomeUtils.WELCOME_PAGE_JSP_URI);
             response.setContentType("text/html;charset=UTF-8");

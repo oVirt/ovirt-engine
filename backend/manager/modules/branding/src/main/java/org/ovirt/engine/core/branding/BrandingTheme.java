@@ -68,6 +68,11 @@ public class BrandingTheme {
     private static final String VERSION_KEY = "version"; //$NON-NLS-1$
 
     /**
+     * The key used to read the welcome page preamble template.
+     */
+    private static final String PREAMBLE_TEMPLATE_KEY = "welcome_preamble"; //$NON-NLS-1$
+
+    /**
      * The key used to read the welcome page template.
      */
     private static final String TEMPLATE_KEY = "welcome"; //$NON-NLS-1$
@@ -324,11 +329,15 @@ public class BrandingTheme {
         String lastProcessedBundle = null;
         try {
             File themeDirectory = new File(filePath);
-            URLClassLoader urlLoader = new URLClassLoader(
-                    new URL[] {
-                            themeDirectory.toURI().toURL() });
+            URLClassLoader urlLoader = new URLClassLoader(new URL[] { themeDirectory.toURI().toURL() });
             final String messageFileNames = brandingProperties.getProperty(name);
-            if (messageFileNames != null) {
+            if (messageFileNames == null) {
+                log.warn("Theme '{}' has no property defined for key '{}'", //$NON-NLS-1$
+                        this.getPath(),
+                        name);
+            } else if (StringUtils.isBlank(messageFileNames)) {
+                log.debug("Theme '{}' does not extend key '{}'", this.getPath(), name); //$NON-NLS-1$
+            } else {
                 //The values can be a comma separated list of file names, split them and load each of them.
                 for (String fileName: messageFileNames.split(",")) {
                     fileName = lastProcessedBundle = fileName.trim();
@@ -337,10 +346,6 @@ public class BrandingTheme {
                             : messageFileNames;
                     result.add(ResourceBundle.getBundle(bundleName, locale, urlLoader));
                 }
-            } else {
-                log.warn("Theme '{}' has no property defined for key '{}'", //$NON-NLS-1$
-                        this.getPath(),
-                        name);
             }
         } catch (IOException e) {
             // Unable to load messages resource bundle.
@@ -363,16 +368,15 @@ public class BrandingTheme {
      * @return The raw template string.
      */
     public String getWelcomePageSectionTemplate() {
-        String result = "";
-        try {
-            final String templateFileName = filePath + "/" + brandingProperties.getProperty(TEMPLATE_KEY); //$NON-NLS-1$
-            result = readTemplateFile(templateFileName);
-        } catch (IOException ioe) {
-            log.error("Unable to load welcome template", ioe); //$NON-NLS-1$
-        } catch (NullPointerException e) {
-            log.error("Unable to locate welcome template key in branding properties", e); //$NON-NLS-1$
-        }
-        return result;
+        return readTemplateFile(TEMPLATE_KEY);
+    }
+
+    /**
+     * Return the raw welcome preamble template as a string.
+     * @return The raw template string.
+     */
+    public String getWelcomePreambleTemplate() {
+        return readTemplateFile(PREAMBLE_TEMPLATE_KEY);
     }
 
     /**
@@ -380,26 +384,34 @@ public class BrandingTheme {
      * If a line starts with '#' it is considered a comment and will not end up in the output.
      * @param fileName The name of the file to read.
      * @return The contents of the file as a string.
-     * @throws IOException if unable to read the template file.
      */
-    private String readTemplateFile(final String fileName) throws IOException {
-        StringBuilder templateBuilder = new StringBuilder();
-
-        try (
-            InputStream in = new FileInputStream(fileName);
-            Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
-            BufferedReader bufferedReader= new BufferedReader(reader);
-        ){
-            String currentLine;
-            while ((currentLine = bufferedReader.readLine()) != null) {
-                if (!currentLine.startsWith("#")) { // # is comment.
-                    templateBuilder.append(currentLine);
-                    templateBuilder.append("\n"); //$NON-NLS-1$
-                }
-            }
+    private String readTemplateFile(final String templateKey) {
+        String templateKeyValue = brandingProperties.getProperty(templateKey);
+        if (StringUtils.isBlank(templateKeyValue)) {
+            return "";
         }
 
-        return templateBuilder.toString();
+        try {
+            String templateFileName = filePath + "/" + templateKeyValue; //$NON-NLS-1$
+            StringBuilder templateBuilder = new StringBuilder();
+            try (
+                InputStream in = new FileInputStream(templateFileName);
+                Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
+                BufferedReader bufferedReader= new BufferedReader(reader);
+            ){
+                String currentLine;
+                while ((currentLine = bufferedReader.readLine()) != null) {
+                    if (!currentLine.startsWith("#")) { // # is comment.
+                        templateBuilder.append(currentLine);
+                        templateBuilder.append("\n"); //$NON-NLS-1$
+                    }
+                }
+            }
+            return templateBuilder.toString();
+        } catch (IOException ioe) {
+            log.error("Unable to load template {}={}", templateKey, templateKeyValue, ioe); //$NON-NLS-1$
+            return "";
+        }
     }
 
     /**

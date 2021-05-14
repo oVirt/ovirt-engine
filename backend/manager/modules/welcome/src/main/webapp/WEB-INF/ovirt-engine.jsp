@@ -73,8 +73,13 @@
                     <c:remove var="error_description" scope="session"/>
                 </c:if>
 
+                <div class="pf-l-stack__item welcome-preamble-template">
+                    <%-- This is where the __welcome-preamble__ template is inserted --%>
+                    ${requestScope['preamble'].toString()}
+                </div>
+
                 <div class="pf-l-stack__item welcome-template">
-                    <%-- This is where the __welcome__ page template is inserted --%>
+                    <%-- This is where the __welcome__ template is inserted --%>
                     ${requestScope['sections'].toString()}
                 </div>
 

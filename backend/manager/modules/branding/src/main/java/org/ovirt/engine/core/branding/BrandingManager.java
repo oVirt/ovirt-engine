@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +32,11 @@ public class BrandingManager {
      * The prefix of the keys in the properties.
      */
     public static final String WELCOME = "welcome";
+
+    /**
+     * The prefix of the keys in the properties.
+     */
+    public static final String WELCOME_PREAMBLE = "welcome_preamble";
 
     /**
      * The default branding path.
@@ -286,13 +292,41 @@ public class BrandingManager {
      */
     public String getWelcomeSections(final Locale locale) {
         getEngineGrafanaAccessUrl();
+        return getSection(
+            WELCOME,
+            locale,
+            BrandingTheme::getWelcomePageSectionTemplate,
+            BrandingTheme::shouldReplaceWelcomePageSectionTemplate);
+    }
 
-        Map<String, String> messageMap = getMessageMap(WELCOME, locale);
+    /**
+     * Look up the welcome preamble section of the top branding theme. The message keys are translated in the language of
+     * the passed in {@code Locale}
+     * @param locale The {@code Locale} to use to look up the appropriate messages.
+     * @return An HTML string to be placed in the welcome page.
+     */
+    public String getWelcomePreambleSection(final Locale locale) {
+        return getSection(
+            WELCOME_PREAMBLE,
+            locale,
+            BrandingTheme::getWelcomePreambleTemplate,
+            theme -> true);
+    }
+
+    protected String getSection(
+        String prefix,
+        final Locale locale,
+        Function<BrandingTheme, String> getTemplate,
+        Function<BrandingTheme, Boolean> shouldReplaceTemplate
+    ) {
+        Map<String, String> messageMap = getMessageMap(prefix, locale);
         List<BrandingTheme> brandingThemes = getBrandingThemes();
+
         StringBuilder templateBuilder = new StringBuilder();
         for (BrandingTheme theme: brandingThemes) {
-            String template = theme.getWelcomePageSectionTemplate();
+            String template = getTemplate.apply(theme);
             String replacedTemplate = template;
+
             Matcher keyMatcher = TEMPLATE_PATTERN.matcher(template);
             while (keyMatcher.find()) {
                 String key = keyMatcher.group(1);
@@ -304,8 +338,9 @@ public class BrandingManager {
                 }
             }
             replacedTemplate = replacedTemplate.replaceAll(USER_LOCALE_HOLDER, locale.toString());
-            if (theme.shouldReplaceWelcomePageSectionTemplate()) {
-                //Clear the template builder as the theme wants to replace instead of append to the template.
+
+            // Clear the template builder as the theme wants to replace instead of append to the template.
+            if (shouldReplaceTemplate.apply(theme)) {
                 templateBuilder = new StringBuilder();
             }
             templateBuilder.append(replacedTemplate);
