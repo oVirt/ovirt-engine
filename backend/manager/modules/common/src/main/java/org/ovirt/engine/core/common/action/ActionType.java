@@ -72,6 +72,7 @@ public enum ActionType {
     ConvertOva(50, QuotaDependency.NONE),
     CancelConvertVm(51, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     ImportVmFromExternalUrl(55, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
+    ImportVmTemplateFromExternalUrl(57, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
     AddVmNicFilterParameter(60, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     AddVmNicFilterParameterLive(600, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     UpdateVmNicFilterParameter(61, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),

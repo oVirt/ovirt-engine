@@ -226,7 +226,8 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
         CommandContext commandCtx = null;
 
         try {
-            Map<String, String> values = Collections.singletonMap(VdcObjectType.VM.name().toLowerCase(), getVmName());
+            Map<String, String> values = Collections.singletonMap(VdcObjectType.VmTemplate.name().toLowerCase(),
+                    getVmTemplateName());
 
             Step conversionStep = executionHandler.addSubStep(getExecutionContext(),
                     getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
@@ -240,7 +241,8 @@ public class ImportVmTemplateFromOvaCommand<T extends ImportVmTemplateFromOvaPar
             commandCtx = cloneContext().withoutCompensationContext().withExecutionContext(ctx).withoutLock();
 
         } catch (RuntimeException e) {
-            log.error("Failed to create command context of converting VM '{}': {}", getVmName(), e.getMessage());
+            log.error("Failed to create command context of converting template '{}': {}",
+                    getVmTemplateName(), e.getMessage());
             log.debug("Exception", e);
         }
 

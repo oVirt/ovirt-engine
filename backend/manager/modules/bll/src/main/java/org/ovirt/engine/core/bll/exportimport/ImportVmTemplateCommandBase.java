@@ -351,6 +351,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
         checkTrustedService();
         incrementDbGeneration();
         logOnExecuteEndMethod.run();
+        setActionReturnValue(getVmTemplate());
         setSucceeded(true);
     }
 
