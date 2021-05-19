@@ -280,7 +280,7 @@ Requires(pre):	shadow-utils
 # fix engine to work with current and new WildFly version and only afterwards
 # bump the requirement (otherwise we would need to pass wildfly,
 # wildfly-overlay and ovirt-engine through the change queue at once)
-Requires:	ovirt-engine-wildfly-overlay >= 22
+Requires:	ovirt-engine-wildfly-overlay >= 23
 Requires:	ansible >= 2.9.0, ansible < 2.10.0
 %else
 Requires:	eap7-wildfly >= 7.3.0
