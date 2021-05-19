@@ -24,6 +24,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateAllTemplateDisksParameters;
@@ -147,6 +148,7 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
         createParams.setStorageDomainId(templateDisk.getStorageIds().get(0));
         createParams.setParentCommand(getActionType());
         createParams.setParentParameters(getParameters());
+        createParams.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         createParams.setVmSnapshotId(vmSnapshotId);
         return createParams;
     }
@@ -185,6 +187,7 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
         createParams.setDescription(imageFromParams.getDiskDescription());
         createParams.setParentCommand(getActionType());
         createParams.setParentParameters(getParameters());
+        createParams.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         createParams.setQuotaId(imageFromParams.getQuotaId());
         createParams.setDiskProfileId(imageFromParams.getDiskProfileId());
         createParams.setVolumeFormat(imageFromParams.getVolumeFormat());
@@ -232,9 +235,7 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
 
     @Override
     public CommandCallback getCallback() {
-        return getParameters().isUseCinderCommandCallback() ?
-                callbackProvider.get() :
-                null;
+        return callbackProvider.get();
     }
 
     @Override
