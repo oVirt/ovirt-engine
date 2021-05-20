@@ -188,6 +188,16 @@ public class FeatureSupported {
     public static boolean isVgpuPlacementSupported(Version version) {
         return supportedInConfig(ConfigValues.VgpuPlacementSupported, version);
     }
+
+    /**
+     * Check if vGPU framebuffer is supported
+     *
+     * @param version Compatibility version to check for.
+     */
+    public static boolean isVgpuFramebufferSupported(Version version) {
+        return supportedInConfig(ConfigValues.VgpuFramebufferSupported, version);
+    }
+
     /**
      * Skip commit network changes is supported for
      * - host supporting commitOnSuccess (>= 4.3)

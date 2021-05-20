@@ -1514,6 +1514,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     VgpuPlacementSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    VgpuFramebufferSupported,
+
     @TypeConverterAttribute(Integer.class)
     GlusterVolumeFreeSpaceThresholdInPercent,
 

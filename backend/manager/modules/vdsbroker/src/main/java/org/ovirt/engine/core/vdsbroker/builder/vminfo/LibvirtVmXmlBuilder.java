@@ -1308,6 +1308,9 @@ public class LibvirtVmXmlBuilder {
                 // Nvidia vGPU VNC console is only supported on RHEL >= 7.6
                 // See https://bugzilla.redhat.com/show_bug.cgi?id=1633623 for details and discussion
                 writer.writeAttributeString("display", "on");
+                if (FeatureSupported.isVgpuFramebufferSupported(vm.getCompatibilityVersion())) {
+                    writer.writeAttributeString("ramfb", "on");
+                }
             }
 
             writer.writeStartElement("source");

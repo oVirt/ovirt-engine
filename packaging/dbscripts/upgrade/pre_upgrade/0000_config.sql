@@ -781,9 +781,12 @@ select fn_db_add_config_value('LiveSnapshotAllowInconsistent', 'true', 'general'
 -- VirtIO-Win drivers path
 select fn_db_add_config_value('VirtioWinIsoPath','/usr/share/virtio-win','general');
 
--- vGPU placement
+-- vGPU
 select fn_db_add_config_value_for_versions_up_to('VgpuPlacementSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('VgpuPlacementSupported', 'true', '4.6');
+select fn_db_add_config_value_for_versions_up_to('VgpuFramebufferSupported', 'false', '4.4');
+select fn_db_add_config_value_for_versions_up_to('VgpuFramebufferSupported', 'true', '4.6');
+
 
 -- engine-backup
 -- not in ConfigValues enum, used on python side, do not delete

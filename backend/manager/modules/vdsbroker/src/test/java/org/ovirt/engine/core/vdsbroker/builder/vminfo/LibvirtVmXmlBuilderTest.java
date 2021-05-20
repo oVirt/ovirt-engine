@@ -78,9 +78,11 @@ public class LibvirtVmXmlBuilderTest {
 
     @SuppressWarnings("unused")
     public static Stream<MockConfigDescriptor<?>> vgpuPlacementNotSupported() {
-        return Stream.concat(
-                Stream.of(MockConfigDescriptor.of(ConfigValues.VgpuPlacementSupported, Version.v4_3, Boolean.FALSE)),
-                Stream.of(MockConfigDescriptor.of(ConfigValues.VgpuPlacementSupported, Version.v4_2, Boolean.FALSE)));
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.VgpuFramebufferSupported, Version.v4_5, Boolean.TRUE),
+                MockConfigDescriptor.of(ConfigValues.VgpuFramebufferSupported, Version.v4_3, Boolean.FALSE),
+                MockConfigDescriptor.of(ConfigValues.VgpuPlacementSupported, Version.v4_5, Boolean.FALSE),
+                MockConfigDescriptor.of(ConfigValues.VgpuPlacementSupported, Version.v4_3, Boolean.FALSE),
+                MockConfigDescriptor.of(ConfigValues.VgpuPlacementSupported, Version.v4_2, Boolean.FALSE));
     }
 
     public static Stream<MockConfigDescriptor<?>> tscConfig() {
@@ -95,7 +97,7 @@ public class LibvirtVmXmlBuilderTest {
         XmlTextWriter writer = mock(XmlTextWriter.class);
         Map<String, String> properties = new HashMap<>();
 
-        setUpMdevTest(underTest, writer, properties);
+        setUpMdevTest(underTest, writer, properties, Version.v4_3);
         VM vm = getVm(underTest);
 
         VmDevice device = mock(VmDevice.class);
@@ -121,7 +123,7 @@ public class LibvirtVmXmlBuilderTest {
         XmlTextWriter writer = mock(XmlTextWriter.class);
         Map<String, String> properties = new HashMap<>();
 
-        setUpMdevTest(underTest, writer, properties);
+        setUpMdevTest(underTest, writer, properties, Version.v4_3);
         VM vm = getVm(underTest);
 
         underTest.writeVGpu();
@@ -133,6 +135,7 @@ public class LibvirtVmXmlBuilderTest {
         setMdevDisplayOn(underTest, vm);
         underTest.writeVGpu();
         verify(writer, times(1)).writeAttributeString("display", "on");
+        verify(writer, times(0)).writeAttributeString("ramfb", "on");
 
         // display="on" is inserted for each mdev
         reset(writer);
@@ -190,6 +193,23 @@ public class LibvirtVmXmlBuilderTest {
         setMdevDisplayOn(underTest, vm2);
         underTest.writeVGpu();
         verify(writer, times(0)).writeAttributeString("display", "on");
+    }
+
+    @Test
+    @MockedConfig("vgpuPlacementNotSupported")
+    void testMdevRamfb() throws NoSuchFieldException, IllegalAccessException {
+        LibvirtVmXmlBuilder underTest = mock(LibvirtVmXmlBuilder.class);
+        XmlTextWriter writer = mock(XmlTextWriter.class);
+        Map<String, String> properties = new HashMap<>();
+
+        setUpMdevTest(underTest, writer, properties, Version.v4_5);
+        VM vm = getVm(underTest);
+
+        when(vm.getCustomProperties()).thenReturn("mdev_type=nvidia28");
+        setMdevDisplayOn(underTest, vm);
+        underTest.writeVGpu();
+        verify(writer, times(1)).writeAttributeString("display", "on");
+        verify(writer, times(1)).writeAttributeString("ramfb", "on");
     }
 
     @Test
@@ -383,11 +403,11 @@ public class LibvirtVmXmlBuilderTest {
         accessor.set(mdevDisplayOnField, underTest, MDevTypesUtils.isMdevDisplayOn(vm));
     }
 
-    private void setUpMdevTest(LibvirtVmXmlBuilder underTest, XmlTextWriter writer, Map<String, String> properties) throws NoSuchFieldException, IllegalAccessException {
+    private void setUpMdevTest(LibvirtVmXmlBuilder underTest, XmlTextWriter writer, Map<String, String> properties, Version compatibilityVersion) throws NoSuchFieldException, IllegalAccessException {
         doCallRealMethod().when(underTest).writeVGpu();
         Map<String, Map<String, String>> metadata = new HashMap<>();
         VM vm = mock(VM.class);
-        when(vm.getCompatibilityVersion()).thenReturn(Version.v4_3);
+        when(vm.getCompatibilityVersion()).thenReturn(compatibilityVersion);
         setVm(underTest, vm);
         setProperties(underTest, properties);
         setMdevDisplayOn(underTest, vm);
