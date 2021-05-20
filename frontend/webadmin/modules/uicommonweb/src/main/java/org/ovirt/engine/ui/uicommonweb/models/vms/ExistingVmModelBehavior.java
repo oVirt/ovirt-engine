@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
@@ -536,14 +535,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getAutoPinningPolicy().setIsChangeable(false);
         } else {
             getModel().getAutoPinningPolicy().setIsChangeable(true);
-        }
-    }
-
-    @Override
-    public void vmTypeChanged(VmType vmType) {
-        super.vmTypeChanged(vmType);
-        if (isAutoPinningPossible() && getModel().getVmType().getSelectedItem() == VmType.HighPerformance) {
-            getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.EXISTING);
         }
     }
 

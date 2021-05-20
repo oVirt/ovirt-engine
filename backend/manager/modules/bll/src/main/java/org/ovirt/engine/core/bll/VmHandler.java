@@ -1540,6 +1540,10 @@ public class VmHandler implements BackendService {
     }
 
     public ValidationResult validateAutoPinningPolicy(VmBase vmBase, AutoPinningPolicy autoPinningPolicy) {
+        if (autoPinningPolicy == AutoPinningPolicy.EXISTING) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_AUTO_PIN_EXISTING_NOT_SUPPORTED);
+        }
+
         if (vmBase.getDedicatedVmForVdsList().isEmpty() && autoPinningPolicy != AutoPinningPolicy.DISABLED) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_PIN_WITHOUT_HOST);
         }

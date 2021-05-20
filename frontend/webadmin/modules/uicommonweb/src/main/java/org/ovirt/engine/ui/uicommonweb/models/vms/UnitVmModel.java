@@ -2365,7 +2365,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void initAutoPinningPolicy() {
         getAutoPinningPolicy().getSelectedItemChangedEvent().addListener(this);
-        getAutoPinningPolicy().setItems(Arrays.asList(AutoPinningPolicy.values()));
+        ArrayList<AutoPinningPolicy> policies = new ArrayList<>(Arrays.asList(AutoPinningPolicy.values()));
+        policies.remove(AutoPinningPolicy.EXISTING);
+        getAutoPinningPolicy().setItems(policies);
         behavior.updateAutoPinning();
     }
 

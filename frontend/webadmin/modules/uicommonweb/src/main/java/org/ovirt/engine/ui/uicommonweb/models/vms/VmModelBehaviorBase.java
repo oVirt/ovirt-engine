@@ -1499,7 +1499,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         } else {
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.MIGRATABLE);
         }
-        updateAutoPinning();
     }
 
     protected void updateRngDevice(Guid templateId) {

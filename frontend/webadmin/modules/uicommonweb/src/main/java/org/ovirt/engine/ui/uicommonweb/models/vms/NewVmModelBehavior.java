@@ -416,9 +416,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getAutoPinningPolicy().setIsChangeable(false);
         } else {
             getModel().getAutoPinningPolicy().setIsChangeable(true);
-            if (getModel().getVmType().getSelectedItem() == VmType.HighPerformance) {
-                getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.EXISTING);
-            }
         }
     }
 
