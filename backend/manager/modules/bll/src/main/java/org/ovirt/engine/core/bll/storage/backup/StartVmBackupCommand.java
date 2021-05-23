@@ -165,6 +165,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         if (!getVm().getStatus().isQualifiedForVmBackup()) {
             return failValidation(EngineMessage.CANNOT_START_BACKUP_VM_SHOULD_BE_IN_UP_OR_DOWN_STATUS);
         }
+
+        if (!validate(snapshotsValidator.vmNotInPreview(getVm().getId()))) {
+            return false;
+        }
+
         if (isLiveBackup()) {
             // Validate that the host supports building checkpoint XML for redefinition
             // and creating scratch disks on shared storage.

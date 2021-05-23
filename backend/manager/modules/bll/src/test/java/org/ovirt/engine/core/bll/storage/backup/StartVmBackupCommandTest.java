@@ -22,6 +22,7 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskExistenceValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
@@ -69,6 +70,8 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @Mock
     private DiskImagesValidator diskImagesValidator;
     @Mock
+    private SnapshotsValidator snapshotsValidator;
+    @Mock
     private VmBackupDao vmBackupDao;
     @Mock
     private VmCheckpointDao vmCheckpointDao;
@@ -97,6 +100,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
         mockDisksImages();
         doReturn(diskExistenceValidator).when(command).createDiskExistenceValidator(any());
         doReturn(diskImagesValidator).when(command).createDiskImagesValidator(any());
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any());
     }
 
     @Test
@@ -237,6 +241,21 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
         when(vmBackupDao.getAllForVm(vmId)).thenReturn(new ArrayList<>());
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_DISKS_ARE_NOT_ACTIVE);
+    }
+
+    @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
+    public void validateVmInPreview() {
+        mockVds(true, true);
+        mockVm(VMStatus.Up);
+        mockVmDevice(true);
+        when(vmBackupDao.getAllForVm(vmId)).thenReturn(new ArrayList<>());
+        doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
+        doReturn(new VmCheckpoint()).when(vmCheckpointDao).get(any());
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW)).when(snapshotsValidator)
+                .vmNotInPreview(any());
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
     }
 
     private VmBackup mockVmBackup() {
