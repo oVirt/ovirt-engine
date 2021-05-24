@@ -6,6 +6,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
+import org.ovirt.engine.core.common.businessentities.VmCheckpointState;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -30,7 +31,8 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
         return createIdParameterMapper(entity.getId())
                 .addValue("vm_id", entity.getVmId())
                 .addValue("parent_id", entity.getParentId())
-                .addValue("_create_date", entity.getCreationDate());
+                .addValue("_create_date", entity.getCreationDate())
+                .addValue("state", entity.getState().getName());
     }
 
     @Override
@@ -48,6 +50,7 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
         entity.setParentId(getGuid(rs, "parent_id"));
         entity.setVmId(getGuid(rs, "vm_id"));
         entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_create_date")));
+        entity.setState(VmCheckpointState.forName(rs.getString("state")));
         return entity;
     };
 
@@ -56,7 +59,8 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("checkpoint_id", entity.getId())
                 .addValue("vm_id", entity.getVmId())
-                .addValue("parent_id", entity.getParentId());
+                .addValue("parent_id", entity.getParentId())
+                .addValue("state", entity.getState().getName());
         getCallsHandler().executeModification("UpdateVmCheckpoint", parameterSource);
     }
 
@@ -92,6 +96,14 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
     public void removeAllCheckpointsByVmId(Guid vmId) {
         getCallsHandler().executeModification("DeleteAllCheckpointsByVmId",
                 getCustomMapSqlParameterSource().addValue("vm_id", vmId));
+    }
+
+    @Override
+    public void invalidateAllCheckpointsByVmId(Guid vmId) {
+        getCallsHandler().executeModification("InvalidateAllCheckpointsByVmId",
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_id", vmId)
+                        .addValue("state", VmCheckpointState.INVALID.getName()));
     }
 
     @Override

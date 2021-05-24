@@ -18,7 +18,8 @@ CREATE OR REPLACE FUNCTION InsertVmCheckpoint (
     v_checkpoint_id UUID,
     v_vm_id UUID,
     v_parent_id UUID,
-    v__create_date TIMESTAMP WITH TIME ZONE
+    v__create_date TIMESTAMP WITH TIME ZONE,
+    v_state TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -26,13 +27,15 @@ BEGIN
         checkpoint_id,
         vm_id,
         parent_id,
-        _create_date
+        _create_date,
+        state
         )
     VALUES (
         v_checkpoint_id,
         v_vm_id,
         v_parent_id,
-        v__create_date
+        v__create_date,
+        v_state
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -40,14 +43,16 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION UpdateVmCheckpoint (
     v_checkpoint_id UUID,
     v_vm_id UUID,
-    v_parent_id UUID
+    v_parent_id UUID,
+    v_state TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE vm_checkpoints
     SET checkpoint_id = v_checkpoint_id,
         vm_id = v_vm_id,
-        parent_id = v_parent_id
+        parent_id = v_parent_id,
+        state = v_state
     WHERE checkpoint_id = v_checkpoint_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -107,6 +112,18 @@ BEGIN
     SELECT *
     FROM vm_checkpoints
     WHERE parent_id = v_checkpoint_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION InvalidateAllCheckpointsByVmId (
+    v_vm_id UUID,
+    v_state TEXT
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE vm_checkpoints
+    SET state = v_state
+    WHERE vm_id = v_vm_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

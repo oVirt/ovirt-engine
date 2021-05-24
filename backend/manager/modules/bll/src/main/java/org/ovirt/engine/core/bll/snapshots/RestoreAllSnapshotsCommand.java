@@ -57,6 +57,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -74,6 +75,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmCheckpointDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.OvfUtils;
@@ -104,6 +106,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     private DiskImageDao diskImageDao;
     @Inject
     private ImageDao imageDao;
+    @Inject
+    protected VmCheckpointDao vmCheckpointDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
@@ -188,6 +192,11 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         }
 
         removeSnapshotsFromDB();
+        // Deleting snapshots modifies the checkpoints,
+        // so they cannot be used for future incremental backups.
+        if (getParameters().getSnapshotAction() == SnapshotActionEnum.COMMIT) {
+            invalidateAllVmCheckpoints();
+        }
         succeeded = updateLeaseInfoIfNeeded() && succeeded;
 
         if (shouldInvokeChildCommand(cinderDisksToRestore, cinderVolumesToRemove, managedBlockStorageDisksToRestore)) {
@@ -261,6 +270,20 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                     (srcLeaseDomainId != null && dstLeaseDomainId == null);
         default:
             return false;
+        }
+    }
+
+    private void invalidateAllVmCheckpoints() {
+        // When a snapshot is committed and restored we cannot tell which
+        // checkpoint was taken on which snapshot. Invalidate all the VM previous
+        // checkpoints, so a full VM backup should be taken after restoring a snapshot.
+        List<VmCheckpoint> vmCheckpoints = vmCheckpointDao.getAllForVm(getVmId());
+
+        if (vmCheckpoints != null && !vmCheckpoints.isEmpty()) {
+            log.info("Invalidating all VM '{}' checkpoints, full VM backup is now needed.", getVmName());
+            vmCheckpointDao.invalidateAllCheckpointsByVmId(getVmId());
+            // TODO: Remove checkpoints when we have a way to remove checkpoints
+            // when vm is down.
         }
     }
 

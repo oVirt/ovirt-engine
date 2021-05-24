@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
+import org.ovirt.engine.core.common.businessentities.VmCheckpointState;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -141,10 +142,17 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_NOT_SUPPORTED);
             }
 
-            if (vmCheckpointDao.get(getParameters().getVmBackup().getFromCheckpointId()) == null) {
+            VmCheckpoint fromCheckpoint = vmCheckpointDao.get(getParameters().getVmBackup().getFromCheckpointId());
+            if (fromCheckpoint == null) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CHECKPOINT_NOT_EXIST,
                         String.format("$checkpointId %s", getParameters().getVmBackup().getFromCheckpointId()));
             }
+
+            if (fromCheckpoint.getState().equals(VmCheckpointState.INVALID)) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CHECKPOINT_INVALID,
+                        String.format("$checkpointId %s", getParameters().getVmBackup().getFromCheckpointId()));
+            }
+
             if (!FeatureSupported.isBackupModeAndBitmapsOperationsSupported(getCluster().getCompatibilityVersion())) {
                 // Due to bz #1829829, Libvirt doesn't handle the case of mixing full and incremental
                 // backup under the same operation. This situation can happen when adding a new disk
@@ -505,6 +513,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         }
         vmCheckpoint.setVmId(getParameters().getVmBackup().getVmId());
         vmCheckpoint.setCreationDate(new Date());
+        vmCheckpoint.setState(VmCheckpointState.CREATED);
 
         TransactionSupport.executeInNewTransaction(() -> {
             vmCheckpointDao.save(vmCheckpoint);

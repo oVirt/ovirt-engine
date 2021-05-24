@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.api.model.Checkpoint;
+import org.ovirt.engine.api.model.CheckpointState;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
@@ -45,6 +46,20 @@ public class VmCheckpointMapper {
         if (entity.getCreationDate() != null) {
             model.setCreationDate(DateMapper.map(entity.getCreationDate(), null));
         }
+        if (entity.getState() != null) {
+            model.setState(map(entity.getState()));
+        }
         return model;
+    }
+
+    public static CheckpointState map(org.ovirt.engine.core.common.businessentities.VmCheckpointState action) {
+        switch (action) {
+            case CREATED:
+                return CheckpointState.CREATED;
+            case INVALID:
+                return CheckpointState.INVALID;
+            default:
+                return null;
+        }
     }
 }
