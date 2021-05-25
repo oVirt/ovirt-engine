@@ -16,6 +16,7 @@ public class VmNetworkInterface extends VmNic {
     private String vmName;
     private boolean plugged;
     private String qosName;
+    private String failoverVnicProfileName;
 
     /** when this object represents a NIC that is attached to VM which is defined
      *  in a remote environment, this field contains the name of the network in
@@ -37,6 +38,7 @@ public class VmNetworkInterface extends VmNic {
         setVmId(iface.getVmId());
         setVmName(iface.getVmName());
         setStatistics(new VmNetworkStatistics(iface.getStatistics()));
+        setFailoverVnicProfileName(iface.getFailoverVnicProfileName());
     }
 
     @Override
@@ -107,6 +109,14 @@ public class VmNetworkInterface extends VmNic {
         this.remoteNetworkName = remoteNetworkName;
     }
 
+    public String getFailoverVnicProfileName() {
+        return failoverVnicProfileName;
+    }
+
+    public void setFailoverVnicProfileName(String failoverVnicProfileName) {
+        this.failoverVnicProfileName = failoverVnicProfileName;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
@@ -124,6 +134,7 @@ public class VmNetworkInterface extends VmNic {
                 .append("vmId", getVmId())
                 .append("vmName", getVmName())
                 .append("QoSName", getQosName())
+                .append("failoverVnicProfileName", getFailoverVnicProfileName())
                 .append("remoteNetworkName", getRemoteNetworkName())
                 .build();
     }
@@ -137,7 +148,8 @@ public class VmNetworkInterface extends VmNic {
                 portMirroring,
                 vmName,
                 plugged,
-                qosName
+                qosName,
+                failoverVnicProfileName
         );
     }
 
@@ -156,6 +168,7 @@ public class VmNetworkInterface extends VmNic {
                 && portMirroring == other.portMirroring
                 && Objects.equals(vmName, other.vmName)
                 && plugged == other.plugged
-                && Objects.equals(qosName, other.qosName);
+                && Objects.equals(qosName, other.qosName)
+                && Objects.equals(failoverVnicProfileName, other.failoverVnicProfileName);
     }
 }

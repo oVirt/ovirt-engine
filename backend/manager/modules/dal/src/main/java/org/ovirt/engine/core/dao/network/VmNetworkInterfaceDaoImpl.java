@@ -113,6 +113,7 @@ public class VmNetworkInterfaceDaoImpl extends DefaultReadDao<VmNetworkInterface
             entity.setPlugged(rs.getBoolean("is_plugged"));
             entity.setPortMirroring(rs.getBoolean("port_mirroring"));
             entity.setQosName(rs.getString("qos_name"));
+            entity.setFailoverVnicProfileName(rs.getString("failover_vnic_profile_name"));
             return entity;
         }
 

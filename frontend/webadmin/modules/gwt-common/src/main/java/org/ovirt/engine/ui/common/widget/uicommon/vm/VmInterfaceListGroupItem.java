@@ -32,6 +32,8 @@ import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxTotalRenderer;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.network.NetworkIcon;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.gwt.dom.client.DListElement;
 import com.google.gwt.dom.client.Document;
@@ -65,6 +67,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
+    private static final UIConstants uiConstants = ConstantsManager.getInstance().getConstants();
     private static final ContextMenuPanelPopup popup = new ContextMenuPanelPopup(true);
 
     private ExpandableListViewItem infoExpand;
@@ -203,6 +206,11 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
                 SafeHtmlUtils.fromString(findGuestAgentDataForInterface(networkInterface).getInterfaceName() != null ?
                         findGuestAgentDataForInterface(networkInterface).getInterfaceName()
                         : constants.unAvailablePropertyLabel()), dl);
+        if (!StringHelper.isNullOrEmpty(networkInterface.getFailoverVnicProfileName())) {
+            addDetailItem(SafeHtmlUtils.fromSafeConstant(uiConstants.failoverVnicProfile()),
+                    SafeHtmlUtils.fromString(networkInterface.getFailoverVnicProfileName()), dl);
+        }
+
         column.getElement().appendChild(dl);
         content.add(column);
     }

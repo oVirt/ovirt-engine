@@ -2385,7 +2385,8 @@ SELECT vm_interface_statistics.rx_rate,
     vm_static.cluster_id AS cluster_id,
     vm_static.entity_type AS vm_entity_type,
     vnic_profiles.name AS vnic_profile_name,
-    qos.name AS qos_name
+    qos.name AS qos_name,
+    failover_vnic_profile.name AS failover_vnic_profile_name
 FROM vm_interface_statistics
 INNER JOIN vm_interface
     ON vm_interface_statistics.id = vm_interface.id
@@ -2400,6 +2401,8 @@ LEFT JOIN (
             ON network.id = vnic_profiles.network_id
         ) LEFT JOIN qos
         ON vnic_profiles.network_qos_id = qos.id
+        LEFT JOIN vnic_profiles as failover_vnic_profile
+        ON vnic_profiles.failover_vnic_profile_id = failover_vnic_profile.id
     )
     ON vnic_profiles.id = vm_interface.vnic_profile_id
 WHERE entity_type = 'VM'
@@ -2435,7 +2438,8 @@ SELECT vm_interface_statistics.rx_rate,
     vm_templates.cluster_id AS cluster_id,
     vm_templates.entity_type AS vm_entity_type,
     vnic_profiles.name AS vnic_profile_name,
-    qos.name AS qos_name
+    qos.name AS qos_name,
+    failover_vnic_profile.name AS failover_vnic_profile_name
 FROM vm_interface_statistics
 RIGHT JOIN vm_interface
     ON vm_interface_statistics.id = vm_interface.id
@@ -2450,6 +2454,8 @@ LEFT JOIN (
             ON network.id = vnic_profiles.network_id
         ) LEFT JOIN qos
         ON vnic_profiles.network_qos_id = qos.id
+        LEFT JOIN vnic_profiles as failover_vnic_profile
+        ON vnic_profiles.failover_vnic_profile_id = failover_vnic_profile.id
     )
     ON vnic_profiles.id = vm_interface.vnic_profile_id
 WHERE vm_templates.entity_type = 'TEMPLATE';
