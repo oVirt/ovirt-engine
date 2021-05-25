@@ -2162,7 +2162,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             } else if (sender == getMigrationMode()) {
                 behavior.updateCpuPinningVisibility();
                 behavior.updateHaAvailability();
-                behavior.updateNumaEnabled();
                 updateTscFrequency();
             } else if (sender == getMigrationPolicies()) {
                 updateMigrationRelatedFields();
