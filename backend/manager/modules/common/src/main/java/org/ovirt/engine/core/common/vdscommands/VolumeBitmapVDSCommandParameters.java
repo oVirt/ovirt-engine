@@ -2,16 +2,16 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class ColdVmBackupVDSCommandParameters extends StorageJobVdsCommandParameters {
+public class VolumeBitmapVDSCommandParameters extends StorageJobVdsCommandParameters {
     private Guid imageGroupId;
     private Guid imageId;
     private Integer generation;
     private String bitmapName;
 
-    public ColdVmBackupVDSCommandParameters() {}
+    public VolumeBitmapVDSCommandParameters() {}
 
-    public ColdVmBackupVDSCommandParameters(Guid storageDomainId, Guid vdsId, Guid jobId, Guid imageGroupId,
-            Guid imageId, Integer generation, String bitmapName) {
+    public VolumeBitmapVDSCommandParameters(Guid storageDomainId, Guid vdsId, Guid jobId, Guid imageGroupId,
+                                            Guid imageId, Integer generation, String bitmapName) {
         super(storageDomainId, vdsId, jobId);
         setImageGroupId(imageGroupId);
         setImageId(imageId);

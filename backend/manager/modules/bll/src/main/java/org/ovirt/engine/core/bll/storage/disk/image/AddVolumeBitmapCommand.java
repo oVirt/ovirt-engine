@@ -15,9 +15,9 @@ import org.ovirt.engine.core.common.businessentities.HostJobInfo;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
-import org.ovirt.engine.core.common.vdscommands.ColdVmBackupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.common.vdscommands.VolumeBitmapVDSCommandParameters;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -52,7 +52,7 @@ public class AddVolumeBitmapCommand<T extends AddVolumeBitmapCommandParameters> 
         try {
             vdsReturnValue = vdsCommandsHelper.runVdsCommandWithFailover(
                     VDSCommandType.AddVolumeBitmap,
-                    new ColdVmBackupVDSCommandParameters(
+                    new VolumeBitmapVDSCommandParameters(
                             info.getStorageDomainId(),
                             getParameters().getVdsId(),
                             getParameters().getStorageJobId(),

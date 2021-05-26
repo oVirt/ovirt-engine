@@ -983,6 +983,11 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
+    @Override
+    public StatusOnlyReturn removeBitmap(String jobId, Map<String, Object> volInfo, String bitmapName) {
+        return null;
+    }
+
     @Override public NbdServerURLReturn startNbdServer(String serverId, Map<String, Object> nbdServerConfig) {
         return null;
     }

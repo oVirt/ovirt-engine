@@ -5,11 +5,11 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.vdscommands.VolumeBitmapVDSCommandParameters;
 
-public class AddVolumeBitmapVDSCommand<P extends VolumeBitmapVDSCommandParameters> extends VdsBrokerCommand<P> {
+public class RemoveVolumeBitmapVDSCommand<P extends VolumeBitmapVDSCommandParameters> extends VdsBrokerCommand<P> {
 
     private StatusOnlyReturn result;
 
-    public AddVolumeBitmapVDSCommand(P parameters) {
+    public RemoveVolumeBitmapVDSCommand(P parameters) {
         super(parameters);
     }
 
@@ -20,7 +20,8 @@ public class AddVolumeBitmapVDSCommand<P extends VolumeBitmapVDSCommandParameter
         volume.put("img_id", getParameters().getImageGroupId().toString());
         volume.put("vol_id", getParameters().getImageId().toString());
         volume.put("generation", getParameters().getGeneration());
-        result = getBroker().addBitmap(getParameters().getJobId().toString(), volume, getParameters().getBitmapName());
+
+        result = getBroker().removeBitmap(getParameters().getJobId().toString(), volume, getParameters().getBitmapName());
         proceedProxyReturnValue();
     }
 

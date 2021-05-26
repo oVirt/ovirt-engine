@@ -549,6 +549,8 @@ public interface IVdsServer {
 
     StatusOnlyReturn addBitmap(String jobId, Map<String, Object> volInfo, String bitmapName);
 
+    StatusOnlyReturn removeBitmap(String jobId, Map<String, Object> volInfo, String bitmapName);
+
     NbdServerURLReturn startNbdServer(String serverId, Map<String, Object> nbdServerConfig);
 
     StatusOnlyReturn stopNbdServer(String serverId);
