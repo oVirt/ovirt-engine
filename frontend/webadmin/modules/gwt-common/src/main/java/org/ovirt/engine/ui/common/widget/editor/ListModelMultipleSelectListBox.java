@@ -27,7 +27,7 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
     /**
      * The current selected list of typed values.
      */
-    protected final List<T> selectedList = new ArrayList<>();
+    protected List<T> selectedList = new ArrayList<>();
 
     protected List<T> lastValues;
 
@@ -46,6 +46,9 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
         if (values != null && lastValues != null && lastValues.equals(values)) {
             return;
         }
+
+        // Create new array instance for ListModel::setSelectedItems equal check.
+        selectedList = new ArrayList<>(selectedList);
         if (fromClick) {
             // Click event can only be one value;
             T value = values.get(0);
