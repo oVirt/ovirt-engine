@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskExistenceValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -25,10 +26,14 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.action.VmCheckpointParameters;
+import org.ovirt.engine.core.common.action.VolumeBitmapCommandParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
+import org.ovirt.engine.core.common.businessentities.VmCheckpointState;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -38,6 +43,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmCheckpointsVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmCheckpointDao;
 import org.ovirt.engine.core.di.Injector;
@@ -51,6 +57,10 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
     private VmCheckpointDao vmCheckpointDao;
     @Inject
     private VmBackupDao vmBackupDao;
+    @Inject
+    private DiskImageDao diskImageDao;
+    @Inject
+    private VdsCommandsHelper vdsCommandsHelper;
 
     private VmCheckpoint vmCheckpoint;
 
@@ -75,10 +85,6 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
                     String.format("$checkpointId %s", getParameters().getVmCheckpoint().getId()));
         }
 
-        if (!getVm().getStatus().equals(VMStatus.Up)) {
-            return failValidation(EngineMessage.CANNOT_DELETE_CHECKPOINT_VM_SHOULD_BE_IN_UP_STATUS);
-        }
-
         if (!vmBackupDao.getAllForVm(getVmId()).isEmpty()) {
             return failValidation(EngineMessage.CANNOT_START_BACKUP_ALREADY_IN_PROGRESS);
         }
@@ -98,14 +104,19 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
 
     @Override
     protected void executeCommand() {
+        if (!isLiveDeleteCheckpoint()) {
+            setSucceeded(coldDeleteVmCheckpoint());
+            return;
+        }
+
         if (!redefineVmCheckpoint()) {
             return;
         }
-        setSucceeded(deleteVmCheckpoint());
+        setSucceeded(liveDeleteVmCheckpoint());
     }
 
-    private boolean deleteVmCheckpoint() {
-        log.info("Deleting VmCheckpoint '{}'", vmCheckpoint.getId());
+    private boolean liveDeleteVmCheckpoint() {
+        log.info("Live deleting VM checkpoint '{}'", vmCheckpoint.getId());
         try {
             VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.DeleteVmCheckpoints,
                     new VmCheckpointsVDSParameters(getVdsId(),
@@ -122,6 +133,68 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
             log.error("Failed to execute VM.delete_checkpoints: {}", e.getMessage());
             return false;
         }
+    }
+
+    private boolean coldDeleteVmCheckpoint() {
+        log.info("Cold deleting VM checkpoint '{}'", vmCheckpoint.getId());
+        Guid vdsId = vdsCommandsHelper.getHostForExecution(getStoragePoolId(), VDS::isColdBackupEnabled);
+        if (Guid.isNullOrEmpty(vdsId)) {
+            log.error("Failed to find a host to run remove bitmap operation for VM '{}'", getVmName());
+            return false;
+        }
+
+        log.info("Invalidating VM '{}' checkpoint '{}'.", getVmName(), vmCheckpoint.getId());
+        TransactionSupport.executeInNewTransaction(() -> {
+            vmCheckpoint.setState(VmCheckpointState.INVALID);
+            vmCheckpointDao.update(vmCheckpoint);
+            return null;
+        });
+
+        // All the bitmaps should be removed from all the disks volumes that were part of the backup.
+        boolean bitmapsRemoved = true;
+        List<DiskImage> checkpointDisks = vmCheckpointDao.getDisksByCheckpointId(vmCheckpoint.getId());
+        for (DiskImage diskImage : checkpointDisks) {
+            bitmapsRemoved &= removeBitmapFromDisk(diskImage.getImageId(), vdsId);
+        }
+        // Removing the checkpoint from the Engine database if all bitmaps were removed.
+        if (bitmapsRemoved) {
+            updateCheckpointsChainInDb();
+        }
+        return bitmapsRemoved;
+    }
+
+    private boolean removeBitmapFromDisk(Guid imageId, Guid vdsId) {
+        boolean bitmapsRemoved = true;
+        List<DiskImage> diskImages = diskImageDao.getAllSnapshotsForLeaf(imageId);
+
+        // Remove the bitmap from all the disk snapshots.
+        for (DiskImage image : diskImages) {
+            VdsmImageLocationInfo locationInfo = new VdsmImageLocationInfo(
+                    image.getStorageIds().get(0),
+                    image.getId(),
+                    image.getImageId(),
+                    null);
+
+            VolumeBitmapCommandParameters parameters =
+                    new VolumeBitmapCommandParameters(
+                            getStoragePoolId(),
+                            locationInfo,
+                            vmCheckpoint.getId().toString());
+            parameters.setVdsId(vdsId);
+            parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
+            parameters.setParentCommand(getActionType());
+            parameters.setParentParameters(getParameters());
+
+            ActionReturnValue returnValue = runInternalActionWithTasksContext(ActionType.RemoveVolumeBitmap, parameters);
+            if (!returnValue.getSucceeded()) {
+                log.error("Failed to remove checkpoint '{}' bitmap '{}' from disk '{}'",
+                        vmCheckpoint.getId(),
+                        vmCheckpoint.getId(),
+                        image.getId());
+                bitmapsRemoved = false;
+            }
+        }
+        return bitmapsRemoved;
     }
 
     private void updateCheckpointsChainInDb() {
@@ -168,6 +241,10 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
                         .map(DiskImage::getId)
                         .collect(Collectors.toCollection(LinkedHashSet::new)) :
                 Collections.emptySet();
+    }
+
+    private boolean isLiveDeleteCheckpoint() {
+        return getVm().getStatus() == VMStatus.Up;
     }
 
     @Override
