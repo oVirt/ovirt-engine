@@ -1671,7 +1671,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateAutoPinning() {
-        getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.DISABLED);
+        getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.NONE);
     }
 
     protected boolean isAutoPinningPossible() {

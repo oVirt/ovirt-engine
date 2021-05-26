@@ -150,7 +150,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
      *  Update VM - if null preserve current configuration
      */
     private List<Label> affinityLabels;
-    private AutoPinningPolicy autoPinningPolicy = AutoPinningPolicy.DISABLED;
+    private AutoPinningPolicy autoPinningPolicy = AutoPinningPolicy.NONE;
 
     public VmManagementParametersBase() {
     }

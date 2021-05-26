@@ -163,7 +163,7 @@ public abstract class VmManagementCommandBase<T extends VmManagementParametersBa
     }
 
     protected void addCpuAndNumaPinning() {
-        if (getParameters().getAutoPinningPolicy() != AutoPinningPolicy.DISABLED) {
+        if (getParameters().getAutoPinningPolicy() != AutoPinningPolicy.NONE) {
             vmHandler.updateCpuAndNumaPinning(getParameters().getVm().getStaticData(),
                     getParameters().getAutoPinningPolicy());
         }

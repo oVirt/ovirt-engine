@@ -753,11 +753,11 @@ public class VmMapper extends VmBaseMapper {
     public static org.ovirt.engine.core.common.businessentities.AutoPinningPolicy map(AutoPinningPolicy autoPinningPolicy, org.ovirt.engine.core.common.businessentities.AutoPinningPolicy template) {
         switch (autoPinningPolicy) {
         case EXISTING:
-            return org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.EXISTING;
+            return org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.PIN;
         case ADJUST:
-            return org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.ADJUST;
+            return org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.RESIZE_AND_PIN;
         default:
-            return org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.DISABLED;
+            return org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.NONE;
         }
     }
 

@@ -1540,22 +1540,22 @@ public class VmHandler implements BackendService {
     }
 
     public ValidationResult validateAutoPinningPolicy(VmBase vmBase, AutoPinningPolicy autoPinningPolicy) {
-        if (autoPinningPolicy == AutoPinningPolicy.EXISTING) {
+        if (autoPinningPolicy == AutoPinningPolicy.PIN) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_AUTO_PIN_EXISTING_NOT_SUPPORTED);
         }
 
-        if (vmBase.getDedicatedVmForVdsList().isEmpty() && autoPinningPolicy != AutoPinningPolicy.DISABLED) {
+        if (vmBase.getDedicatedVmForVdsList().isEmpty() && autoPinningPolicy != AutoPinningPolicy.NONE) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_PIN_WITHOUT_HOST);
         }
 
-        if (autoPinningPolicy != AutoPinningPolicy.ADJUST) {
+        if (autoPinningPolicy != AutoPinningPolicy.RESIZE_AND_PIN) {
             return ValidationResult.VALID;
         }
         boolean singleCoreHostFound = vmBase.getDedicatedVmForVdsList().stream()
                 .map(vdsId -> vdsDynamicDao.get(vdsId))
                 .anyMatch(vdsDynamic -> vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets() == 1);
         if (singleCoreHostFound) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_PIN_ADJUST_SINGLE_CORE);
+            return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_RESIZE_AND_PIN_SINGLE_CORE);
         }
         return ValidationResult.VALID;
     }

@@ -2255,15 +2255,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
         switch(autoPinningPolicy) {
-            case DISABLED:
+            case NONE:
                 enableCpuFields();
                 enableCpuPinning();
                 break;
-            case EXISTING:
+            case PIN:
                 enableCpuFields();
                 disableCpuPinning();
                 break;
-            case ADJUST:
+            case RESIZE_AND_PIN:
                 disableCpuFields();
                 disableCpuPinning();
         }
@@ -2366,7 +2366,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void initAutoPinningPolicy() {
         getAutoPinningPolicy().getSelectedItemChangedEvent().addListener(this);
         ArrayList<AutoPinningPolicy> policies = new ArrayList<>(Arrays.asList(AutoPinningPolicy.values()));
-        policies.remove(AutoPinningPolicy.EXISTING);
+        policies.remove(AutoPinningPolicy.PIN);
         getAutoPinningPolicy().setItems(policies);
         behavior.updateAutoPinning();
     }

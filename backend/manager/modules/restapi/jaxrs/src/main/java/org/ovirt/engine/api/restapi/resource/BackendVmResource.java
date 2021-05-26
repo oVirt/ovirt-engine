@@ -147,10 +147,10 @@ public class BackendVmResource
                 QueryType.GetVmByVmId,
                 new IdQueryParameters(guid), "VM: id=" + guid));
         if (action.isOptimizeCpuSettings() == null) {
-            params.setAutoPinningPolicy(AutoPinningPolicy.EXISTING);
+            params.setAutoPinningPolicy(AutoPinningPolicy.PIN);
         } else {
             params.setAutoPinningPolicy(
-                    action.isOptimizeCpuSettings() ? AutoPinningPolicy.ADJUST : AutoPinningPolicy.EXISTING);
+                    action.isOptimizeCpuSettings() ? AutoPinningPolicy.RESIZE_AND_PIN : AutoPinningPolicy.PIN);
         }
 
         return performAction(ActionType.UpdateVm, params);

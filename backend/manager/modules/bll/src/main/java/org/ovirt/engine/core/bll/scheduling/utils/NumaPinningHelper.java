@@ -251,12 +251,12 @@ public class NumaPinningHelper {
 
     public static void applyAutoPinningPolicy(VmBase vmBase, AutoPinningPolicy autoPinningPolicy, VdsDynamic vdsDynamic,
             List<VdsNumaNode> hostNodes) {
-        if (autoPinningPolicy == null || autoPinningPolicy == AutoPinningPolicy.DISABLED) {
+        if (autoPinningPolicy == null || autoPinningPolicy == AutoPinningPolicy.NONE) {
             return;
         }
 
         // We assume identical topology of all assigned hosts
-        if (autoPinningPolicy == AutoPinningPolicy.ADJUST) {
+        if (autoPinningPolicy == AutoPinningPolicy.RESIZE_AND_PIN) {
             vmBase.setNumOfSockets(vdsDynamic.getCpuSockets());
             vmBase.setCpuPerSocket((vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets()) - 1);
             vmBase.setThreadsPerCpu(vdsDynamic.getCpuThreads() / vdsDynamic.getCpuCores());

@@ -918,7 +918,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private void updateVmNumaNodes() {
-        if (!getParameters().isUpdateNuma() && getParameters().getAutoPinningPolicy() == AutoPinningPolicy.DISABLED) {
+        if (!getParameters().isUpdateNuma() && getParameters().getAutoPinningPolicy() == AutoPinningPolicy.NONE) {
             return;
         }
 
