@@ -240,7 +240,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     private CreateSnapshotForVmParameters buildCreateSnapshotParameters() {
         CreateSnapshotForVmParameters parameters = new CreateSnapshotForVmParameters(
                 getSourceVmId(),
-                StorageConstants.LCV_AUTO_GENERATED_SNAPSHOT_DESCRIPTION,
+                StorageConstants.CLONE_VM_AUTO_GENERATED_SNAPSHOT_DESCRIPTION,
                 false);
         parameters.setShouldBeLogged(false);
         parameters.setParentCommand(getActionType());
