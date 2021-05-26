@@ -3,14 +3,14 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddVolumeBitmapCommandParameters extends StorageJobCommandParameters {
+public class VolumeBitmapCommandParameters extends StorageJobCommandParameters {
     private String bitmapName;
     private VdsmImageLocationInfo volInfo;
 
-    public AddVolumeBitmapCommandParameters() {
+    public VolumeBitmapCommandParameters() {
     }
 
-    public AddVolumeBitmapCommandParameters(Guid storagePoolId, VdsmImageLocationInfo volInfo, String bitmapName) {
+    public VolumeBitmapCommandParameters(Guid storagePoolId, VdsmImageLocationInfo volInfo, String bitmapName) {
         setStoragePoolId(storagePoolId);
         setVolInfo(volInfo);
         setBitmapName(bitmapName);

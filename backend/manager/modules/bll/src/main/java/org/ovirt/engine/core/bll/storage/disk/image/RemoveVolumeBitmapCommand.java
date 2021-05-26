@@ -9,19 +9,19 @@ import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 @InternalCommandAttribute
-public class AddVolumeBitmapCommand<T extends VolumeBitmapCommandParameters> extends
+public class RemoveVolumeBitmapCommand<T extends VolumeBitmapCommandParameters> extends
         VolumeBitmapCommandBase<T> {
 
-    public AddVolumeBitmapCommand(Guid commandId) {
+    public RemoveVolumeBitmapCommand(Guid commandId) {
         super(commandId);
     }
 
-    public AddVolumeBitmapCommand(T parameters, CommandContext commandContext) {
+    public RemoveVolumeBitmapCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
 
     @Override
     protected VDSCommandType getBitmapAction() {
-        return VDSCommandType.AddVolumeBitmap;
+        return VDSCommandType.RemoveVolumeBitmap;
     }
 }

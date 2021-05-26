@@ -40,9 +40,9 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.AddVolumeBitmapCommandParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
+import org.ovirt.engine.core.common.action.VolumeBitmapCommandParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -351,11 +351,12 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                     diskImage.getImageId(),
                     null);
 
-            AddVolumeBitmapCommandParameters parameters =
-                    new AddVolumeBitmapCommandParameters(
+            VolumeBitmapCommandParameters parameters =
+                    new VolumeBitmapCommandParameters(
                             getStoragePoolId(),
                             locationInfo,
                             getParameters().getToCheckpointId().toString());
+            parameters.setVdsId(getParameters().getVdsRunningOn());
             parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
             parameters.setParentCommand(getActionType());
             parameters.setParentParameters(getParameters());
