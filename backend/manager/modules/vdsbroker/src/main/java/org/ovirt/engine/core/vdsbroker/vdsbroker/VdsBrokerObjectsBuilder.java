@@ -1018,6 +1018,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setKvmEnabled(assignBoolValue(struct, VdsProperties.kvm_enabled));
         vds.setBackupEnabled(assignBoolValue(struct, VdsProperties.BACKUP_ENABLED));
         vds.setColdBackupEnabled(assignBoolValue(struct, VdsProperties.COLD_BACKUP_ENABLED));
+        vds.setClearBitmapsEnabled(assignBoolValue(struct, VdsProperties.CLEAR_BITMAPS_ENABLED));
         if (struct.containsKey(VdsProperties.domain_versions)) { //Older VDSMs do not return that
             Set<StorageFormatType> domain_versions = Stream.of((Object[]) struct.get(VdsProperties.domain_versions))
                     .map(o -> (Integer) o)

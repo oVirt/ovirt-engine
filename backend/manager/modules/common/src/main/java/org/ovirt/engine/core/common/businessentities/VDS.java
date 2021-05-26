@@ -1757,6 +1757,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vdsDynamic.setColdBackupEnabled(value);
     }
 
+    public Boolean isClearBitmapsEnabled() {
+        return vdsDynamic.isClearBitmapsEnabled();
+    }
+
+    public void setClearBitmapsEnabled(Boolean value) {
+        vdsDynamic.setClearBitmapsEnabled(value);
+    }
+
     public Set<StorageFormatType> getSupportedDomainVersions() {
         return vdsDynamic.getSupportedDomainVersions();
     }

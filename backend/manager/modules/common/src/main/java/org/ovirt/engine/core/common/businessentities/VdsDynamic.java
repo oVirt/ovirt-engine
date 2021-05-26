@@ -216,6 +216,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean coldBackupEnabled;
 
+    private boolean clearBitmapsEnabled;
+
     @Valid
     private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
@@ -939,6 +941,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.coldBackupEnabled = coldBackupEnabled;
     }
 
+    public boolean isClearBitmapsEnabled() {
+        return clearBitmapsEnabled;
+    }
+
+    public void setClearBitmapsEnabled(boolean clearBitmapsEnabled) {
+        this.clearBitmapsEnabled = clearBitmapsEnabled;
+    }
+
     public Map<String, Object> getSupportedBlockSize() {
         return supportedBlockSize;
     }
@@ -1061,6 +1071,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 connectorInfo,
                 backupEnabled,
                 coldBackupEnabled,
+                clearBitmapsEnabled,
                 supportedDomainVersions,
                 supportedBlockSize,
                 tscFrequency,
@@ -1153,6 +1164,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(connectorInfo, other.connectorInfo)
                 && backupEnabled == other.backupEnabled
                 && coldBackupEnabled == other.coldBackupEnabled
+                && clearBitmapsEnabled == other.clearBitmapsEnabled
                 && Objects.equals(supportedDomainVersions, other.supportedDomainVersions)
                 && Objects.equals(supportedBlockSize, other.supportedBlockSize)
                 && Objects.equals(tscFrequency, other.tscFrequency)
