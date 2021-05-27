@@ -72,19 +72,37 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
      * get the entities according to the filter and intersect them with those resulted from running the search query
      */
     protected List<Q> getBackendCollection(QueryType query, QueryParametersBase queryParams, SearchType searchType) {
-        List<Q> filteredList = getBackendCollection(entityType, query, queryParams);
-        // check if we got search expression in the URI
+        // get the search predicate from the URL
         String search = ParametersHelper.getParameter(httpHeaders, uriInfo, QueryHelper.CONSTRAINT_PARAMETER);
-        if (search != null) {
-            List<Q> searchList = getBackendCollection(searchType);
-
-            // Note that it is key to pass here first the search list and then the filtered list, as we want to make
-            // sure that the order of the search list is preserved, as the user my have specified 'sort by ...' as one
-            // of the search criteria.
-            return safeIntersection(searchList, filteredList);
-        } else {
-            return filteredList;
+        // if no search predicate provided - return the result of the filtered query as is
+        if (search == null) {
+            return getBackendCollection(entityType, query, queryParams);
+        } else { // if search predicate is provided - proceed by checking for 'max' parameter:
+            int max = ParametersHelper
+                    .getIntegerParameter(httpHeaders, uriInfo, MAX, Integer.MAX_VALUE, Integer.MAX_VALUE);
+            // if 'max' parameter does not exist - return the intersection between the
+            // filtered-query and the search query with no need for additional manipulation
+            if (max == Integer.MAX_VALUE) {
+                return intersect(query, queryParams, searchType);
+            } else { // if 'max' parameter does exists:
+                // 1. Remove 'max' from parameters
+                ParametersHelper.removeParameter(MAX);
+                // 2. Get filtered-query and search-query results, and intersect them
+                List<Q> results = intersect(query, queryParams, searchType);
+                // 3. Manually apply 'max' to the result set
+                return results.subList(0, max);
+            }
         }
+    }
+
+    /**
+     * Execute the filtered-query, execute the search query and return an intersection of the results - i.e the elements
+     * which exist in both lists result-sets (identified by their ids)
+     */
+    private List<Q> intersect(QueryType query, QueryParametersBase queryParams, SearchType searchType) {
+        List<Q> filteredList = getBackendCollection(entityType, query, queryParams);
+        List<Q> searchList = getBackendCollection(searchType);
+        return safeIntersection(searchList, filteredList);
     }
 
     /**
