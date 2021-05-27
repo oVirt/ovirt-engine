@@ -10,7 +10,11 @@ if [[ $? -eq 0 ]]; then
     base=${localized#target/normalized/}
 
     diff --ignore-matching-lines='^#' "${localized}" "../${base}" > /dev/null 2>&1
-    if [[ $? -eq 1 ]]; then
+    diff_status=$?
+    if [[ $diff_status -eq 2 ]]; then
+      echo "New translation! Copying \"${base}\" to the repo"
+      cp ${localized} "../${base}"
+    elif [[ $diff_status -eq 1 ]]; then
       echo "Found changes! Copying \"${base}\" to the repo"
       cp ${localized} "../${base}"
     else
