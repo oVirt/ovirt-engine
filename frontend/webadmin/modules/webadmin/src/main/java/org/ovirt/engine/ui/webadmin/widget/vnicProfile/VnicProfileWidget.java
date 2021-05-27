@@ -47,6 +47,7 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
 
     @UiField(provided = true)
     @Path(value = "publicUse.entity")
+    @WithElementId
     public EntityModelCheckBoxEditor publicUseEditor;
 
     @UiField(provided = true)

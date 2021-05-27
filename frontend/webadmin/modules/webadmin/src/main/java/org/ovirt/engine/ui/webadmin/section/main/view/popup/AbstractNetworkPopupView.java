@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -70,23 +71,32 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<AbstractNetworkPopupView<?>> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField
+    @WithElementId
     public SimpleDialogPanel mainPanel;
 
     @UiField
     @Ignore
+    @WithElementId
     public Label mainLabel;
 
     @UiField
     @Ignore
+    @WithElementId
     public Label externalLabel;
 
     @UiField
     @Ignore
+    @WithElementId
     public Label physicalNetworkLabel;
 
     @UiField
     @Ignore
+    @WithElementId
     public Label assignLabel;
 
     @UiField(provided = true)
@@ -95,22 +105,27 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public ListModelListBoxEditor<StoragePool> dataCenterEditor;
 
     @Path(value = "name.entity")
+    @WithElementId
     public StringEntityModelTextBoxOnlyEditor nameEditor;
 
     @UiField(provided = true)
     @Ignore
+    @WithElementId
     public EntityModelWidgetWithInfo nameWidget;
 
     @UiField
     @Ignore
+    @WithElementId
     public Label nameWarningLabel;
 
     @UiField
     @Path(value = "description.entity")
+    @WithElementId
     public StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField
     @Path(value = "comment.entity")
+    @WithElementId
     public StringEntityModelTextBoxEditor commentEditor;
 
     @UiField(provided = true)
@@ -153,29 +168,36 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @UiField(provided = true)
     @Path(value = "isVmNetwork.entity")
+    @WithElementId
     public final EntityModelCheckBoxEditor isVmNetworkEditor;
 
     @UiField(provided = true)
     @Path(value = "portIsolation.entity")
+    @WithElementId
     public final EntityModelCheckBoxEditor portIsolationEditor;
 
     @UiField(provided = true)
     @Path(value = "hasVLanTag.entity")
+    @WithElementId
     public final EntityModelCheckBoxEditor vlanTagging;
 
     @UiField
     @Path(value = "VLanTag.entity")
+    @WithElementId
     public IntegerEntityModelTextBoxOnlyEditor vlanTag;
 
     @UiField
     @Path(value = "mtuSelector.selectedItem")
+    @WithElementId
     public ListModelRadioGroupEditor<MtuSelector> mtuSelectorEditor;
 
     @Path(value = "mtu.entity")
+    @WithElementId
     public IntegerEntityModelTextBoxOnlyEditor mtuEditor;
 
     @UiField
     @Path(value = "portSecuritySelector.selectedItem")
+    @WithElementId
     public ListModelListBoxEditor<PortSecuritySelectorValue> portSecuritySelectorEditor;
 
     @UiField(provided = true)
@@ -190,24 +212,30 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @UiField
     @Path(value = "networkLabel.selectedItem")
+    @WithElementId
     public ListModelSuggestBoxEditor networkLabel;
 
     @UiField(provided = true)
     @Path(value = "qos.selectedItem")
+    @WithElementId
     public ListModelListBoxEditor<HostNetworkQos> qosEditor;
 
     @UiField
+    @WithElementId
     public UiCommandButton addQosButton;
 
     @UiField(provided = true)
     @Ignore
+    @WithElementId
     public final EntityModelCellTable<ListModel<NetworkClusterModel>> clustersTable;
 
     @UiField
+    @WithElementId
     public Container attachContainer;
 
     @UiField
     @Ignore
+    @WithElementId
     public HTML messageLabel;
 
     @UiField(provided = true)
@@ -221,29 +249,36 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @UiField
     @Ignore
+    @WithElementId
     public VnicProfilesEditor profilesEditor;
 
     @UiField
     @Ignore
+    @WithElementId
     protected DialogTab generalTab;
 
     @UiField
     @Ignore
+    @WithElementId
     protected DialogTab clusterTab;
 
     @UiField
     @Ignore
+    @WithElementId
     protected DialogTab profilesTab;
 
     @UiField
     @Ignore
+    @WithElementId
     protected DialogTab subnetTab;
 
     @UiField
+    @WithElementId
     DialogTabPanel tabPanel;
 
     @UiField
     @Ignore
+    @WithElementId
     public Label profilesLabel;
 
     private static final ApplicationTemplates templates = AssetProvider.getTemplates();
@@ -283,6 +318,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         shouldSetDnsConfigurationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         portSecuritySelectorEditor = new ListModelListBoxEditor<>();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         initEntityModelCellTable();
         localize();
 
