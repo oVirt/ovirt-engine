@@ -112,6 +112,7 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
     @Override
     public AuditLogType getAuditLogTypeValue() {
         addCustomValue("VmName", getVm().getName());
+        addCustomValue("backupId", getParameters().getVmBackup().getId().toString());
         return getSucceeded() ? AuditLogType.VM_BACKUP_FINALIZED : AuditLogType.VM_BACKUP_FAILED_TO_FINALIZE;
     }
 }
