@@ -62,6 +62,7 @@ public class DetachNetworkToClusterCommand<T extends AttachNetworkToClusterParam
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
+        addCustomValue("NetworkName", getNetwork().getName());
         return getSucceeded() ? AuditLogType.NETWORK_DETACH_NETWORK_TO_CLUSTER
                 : AuditLogType.NETWORK_DETACH_NETWORK_TO_CLUSTER_FAILED;
     }
