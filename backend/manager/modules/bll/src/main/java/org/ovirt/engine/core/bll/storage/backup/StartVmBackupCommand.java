@@ -209,7 +209,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     public Set<Guid> getDisksNotInPreviousCheckpoint() {
         return getDiskIds().stream()
-                .filter(diskId -> !getFromCheckpointDisksIds().contains(diskId))
+                .filter(diskId ->
+                        !getFromCheckpointDisksIds(getParameters().getVmBackup().getFromCheckpointId()).contains(diskId))
                 .collect(Collectors.toSet());
     }
 
@@ -480,23 +481,21 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         }
     }
 
-    private DiskBackupMode getBackupModeForDisk(Guid diskId, Guid checkpointId) {
-        if (checkpointId == null) {
+    private DiskBackupMode getBackupModeForDisk(Guid diskId, Guid fromCheckpointId) {
+        if (fromCheckpointId == null) {
             return DiskBackupMode.Full;
-        } else if (!getFromCheckpointDisksIds().contains(diskId)) {
+        }
+        if (!getFromCheckpointDisksIds(fromCheckpointId).contains(diskId)) {
             log.warn("Disk ID {} isn't included in checkpoint ID {}, a full backup will be performed for the disk.",
-                    diskId, checkpointId);
+                    diskId, fromCheckpointId);
             return DiskBackupMode.Full;
         }
         return DiskBackupMode.Incremental;
     }
 
-    public Set<Guid> getFromCheckpointDisksIds() {
+    private Set<Guid> getFromCheckpointDisksIds(Guid fromCheckpointId) {
         if (fromCheckpointDisksIds == null) {
-            List<DiskImage> checkpointDisks =
-                    vmCheckpointDao.getDisksByCheckpointId(getParameters().getVmBackup().getFromCheckpointId());
-
-            fromCheckpointDisksIds = checkpointDisks
+            fromCheckpointDisksIds = vmCheckpointDao.getDisksByCheckpointId(fromCheckpointId)
                     .stream()
                     .map(DiskImage::getId)
                     .collect(Collectors.toCollection(HashSet::new));
