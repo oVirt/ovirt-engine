@@ -281,11 +281,9 @@ Requires(pre):	shadow-utils
 # bump the requirement (otherwise we would need to pass wildfly,
 # wildfly-overlay and ovirt-engine through the change queue at once)
 Requires:	ovirt-engine-wildfly-overlay >= 23
-Requires:	ansible >= 2.9.0, ansible < 2.10.0
 %else
 Requires:	eap7-wildfly >= 7.3.0
 Requires:	rhvm = %{version}-%{release}
-Requires:	ansible = 2.9.18
 %endif
 
 Requires:	%{name}-backend = %{version}-%{release}
@@ -296,6 +294,7 @@ Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
 Requires:	%{name}-ui-extensions >= 1.0.4
+Requires:	ansible >= 2.9.21, ansible < 2.10.0
 Requires:	ansible-runner-service >= 1.0.6
 Requires:	apache-commons-compress
 Requires:	apache-commons-configuration
