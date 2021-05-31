@@ -484,7 +484,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         if (checkpointId == null) {
             return DiskBackupMode.Full;
         } else if (!getFromCheckpointDisksIds().contains(diskId)) {
-            log.warn("Disk ID {} doesn't include in checkpoint ID {}, a full back will be taken for it.",
+            log.warn("Disk ID {} isn't included in checkpoint ID {}, a full backup will be performed for the disk.",
                     diskId, checkpointId);
             return DiskBackupMode.Full;
         }

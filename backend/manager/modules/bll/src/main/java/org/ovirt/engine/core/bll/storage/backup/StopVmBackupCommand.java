@@ -58,7 +58,7 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
             vmBackupDao.update(vmBackup);
             setSucceeded(true);
         } else {
-            log.info("Failed to stop VmBackup '{}'", vmBackup.getId());
+            log.error("Failed to stop VmBackup '{}'", vmBackup.getId());
         }
     }
 
@@ -79,7 +79,7 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
             }
             return true;
         } catch (EngineException e) {
-            log.error("Failed to execute VM.stopBackup: {}", e);
+            log.error("Failed to execute VM.stopBackup operation", e);
             return false;
         }
     }
