@@ -67,10 +67,9 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
             return true;
         }
 
-        VDSReturnValue vdsRetVal;
         try {
             getParameters().getVmBackup().setDisks(getDisks());
-            vdsRetVal = runVdsCommand(VDSCommandType.StopVmBackup,
+            VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.StopVmBackup,
                     new VmBackupVDSParameters(getVdsId(), getParameters().getVmBackup()));
             if (!vdsRetVal.getSucceeded()) {
                 EngineException engineException = new EngineException();
@@ -102,7 +101,7 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        final List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
         vmBackup.getDisks().forEach(
                 disk -> permissionList.add(
                         new PermissionSubject(disk.getId(), VdcObjectType.Disk, ActionGroup.BACKUP_DISK)));
