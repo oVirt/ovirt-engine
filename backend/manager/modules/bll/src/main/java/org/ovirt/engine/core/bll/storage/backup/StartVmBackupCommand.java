@@ -575,9 +575,10 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     private void restoreCommandState() {
-        getParameters().setVmBackup(vmBackupDao.get(getParameters().getVmBackup().getId()));
-        getParameters().getVmBackup().setDisks(
-                vmBackupDao.getDisksByBackupId(getParameters().getVmBackup().getId()));
+        Guid backupId = getParameters().getVmBackup().getId();
+        VmBackup vmBackup = vmBackupDao.get(backupId);
+        vmBackup.setDisks(vmBackupDao.getDisksByBackupId(backupId));
+        getParameters().setVmBackup(vmBackup);
     }
 
     private void updateVmBackupPhase(VmBackupPhase phase) {
