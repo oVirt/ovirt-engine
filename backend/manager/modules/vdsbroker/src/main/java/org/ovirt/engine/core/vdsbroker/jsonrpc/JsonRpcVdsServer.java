@@ -2477,10 +2477,10 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturn sealDisks(String templateId, String jobId, String storagePoolId, List<Map<String, Object>> images) {
+    public StatusOnlyReturn sealDisks(String vmId, String jobId, String storagePoolId, List<Map<String, Object>> images) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.seal")
-                        .withParameter("vmID", templateId)
+                        .withParameter("vmID", vmId)
                         .withParameter("job_id", jobId)
                         .withParameter("sp_id", storagePoolId)
                         .withOptionalParameterAsList("images", images)

@@ -1036,7 +1036,7 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
-    @Override public StatusOnlyReturn sealDisks(String templateId,
+    @Override public StatusOnlyReturn sealDisks(String vmId,
             String jobId,
             String storagePoolId,
             List<Map<String, Object>> images) {

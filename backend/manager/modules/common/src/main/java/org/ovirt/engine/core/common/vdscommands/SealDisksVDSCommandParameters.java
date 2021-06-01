@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class SealDisksVDSCommandParameters extends VdsIdVDSCommandParametersBase {
 
-    private Guid templateId;
+    private Guid entityId;
     private Guid jobId;
     private Guid storagePoolId;
     private List<LocationInfo> images = new ArrayList<>();
@@ -19,12 +19,12 @@ public class SealDisksVDSCommandParameters extends VdsIdVDSCommandParametersBase
     public SealDisksVDSCommandParameters() {
     }
 
-    public Guid getTemplateId() {
-        return templateId;
+    public Guid getEntityId() {
+        return entityId;
     }
 
-    public void setTemplateId(Guid templateId) {
-        this.templateId = templateId;
+    public void setEntityId(Guid entityId) {
+        this.entityId = entityId;
     }
 
     public Guid getJobId() {
@@ -54,7 +54,7 @@ public class SealDisksVDSCommandParameters extends VdsIdVDSCommandParametersBase
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
-                .append("templateId", templateId)
+                .append("entityId", entityId)
                 .append("jobId", jobId)
                 .append("images", images);
     }

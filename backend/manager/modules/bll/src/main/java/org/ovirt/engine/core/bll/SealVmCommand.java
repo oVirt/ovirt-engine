@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.action.SealVmTemplateParameters;
+import org.ovirt.engine.core.common.action.SealVmParameters;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -23,7 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 @InternalCommandAttribute
-public class SealVmTemplateCommand<T extends SealVmTemplateParameters> extends VmTemplateCommand<T> implements HostJobCommand {
+public class SealVmCommand<T extends SealVmParameters> extends VmCommand<T> implements HostJobCommand {
 
     private List<DiskImage> diskImages;
 
@@ -34,11 +34,11 @@ public class SealVmTemplateCommand<T extends SealVmTemplateParameters> extends V
     @Inject
     private VdsCommandsHelper vdsCommandsHelper;
 
-    public SealVmTemplateCommand(Guid commandId) {
+    public SealVmCommand(Guid commandId) {
         super(commandId);
     }
 
-    public SealVmTemplateCommand(T parameters, CommandContext cmdContext) {
+    public SealVmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         if (getParameters().getHostJobId() == null) {
             getParameters().setHostJobId(Guid.newGuid());
@@ -47,9 +47,8 @@ public class SealVmTemplateCommand<T extends SealVmTemplateParameters> extends V
 
     private List<DiskImage> getDiskImages() {
         if (diskImages == null) {
-            vmTemplateHandler.updateDisksFromDb(getVmTemplate());
-            diskImages = DisksFilter.filterImageDisks(getVmTemplate().getDiskTemplateMap().values(),
-                    DisksFilter.ONLY_NOT_SHAREABLE);
+            vmHandler.updateDisksFromDb(getVm());
+            diskImages = DisksFilter.filterImageDisks(getVm().getDiskList(), DisksFilter.ONLY_NOT_SHAREABLE);
         }
         return diskImages;
     }
@@ -75,7 +74,7 @@ public class SealVmTemplateCommand<T extends SealVmTemplateParameters> extends V
 
     private SealDisksVDSCommandParameters buildSealDisksVDSCommandParameters() {
         SealDisksVDSCommandParameters parameters = new SealDisksVDSCommandParameters();
-        parameters.setEntityId(getParameters().getVmTemplateId());
+        parameters.setEntityId(getParameters().getVmId());
         parameters.setJobId(getParameters().getHostJobId());
         parameters.setStoragePoolId(getDiskImages().get(0).getStoragePoolId());
         getDiskImages().forEach(parameters::addImage);
@@ -100,7 +99,7 @@ public class SealVmTemplateCommand<T extends SealVmTemplateParameters> extends V
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__SEAL);
-        addValidationMessage(EngineMessage.VAR__TYPE__VM_TEMPLATE);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM);
     }
 
 }

@@ -576,7 +576,7 @@ public interface IVdsServer {
 
     StatusOnlyReturn amendVolume(String jobId, Map<String, Object> volInfo, Map<String, Object> volAttr);
 
-    StatusOnlyReturn sealDisks(String templateId, String jobId, String storagePoolId, List<Map<String, Object>> images);
+    StatusOnlyReturn sealDisks(String vmId, String jobId, String storagePoolId, List<Map<String, Object>> images);
 
     DomainXmlListReturn dumpxmls(List<String> vmIds);
 

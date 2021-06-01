@@ -11,6 +11,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmParameters extends VmManagementParametersBase {
+
+    public enum Phase {
+        CREATE_VM,
+        SEAL
+    }
+
     private static final long serialVersionUID = 8641610721114989096L;
 
     private Guid diskOperatorAuthzPrincipalDbId;
@@ -20,6 +26,8 @@ public class AddVmParameters extends VmManagementParametersBase {
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
     // Declare which disks should be attached (AttachDiskToVm is called separately)
     private List<DiskVmElement> disksToAttach = new ArrayList<>();
+
+    private Phase phase = Phase.CREATE_VM;
 
     public AddVmParameters() {
     }
@@ -79,4 +87,13 @@ public class AddVmParameters extends VmManagementParametersBase {
     public void setDisksToAttach(List<DiskVmElement> disksToAttach) {
         this.disksToAttach = disksToAttach;
     }
+
+    public Phase getPhase() {
+        return phase;
+    }
+
+    public void setPhase(Phase phase) {
+        this.phase = phase;
+    }
+
 }

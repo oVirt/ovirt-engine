@@ -27,6 +27,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -53,9 +54,11 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
+import org.ovirt.engine.core.common.action.AddVmParameters.Phase;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
@@ -63,6 +66,7 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
+import org.ovirt.engine.core.common.action.SealVmParameters;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -149,7 +153,8 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
  */
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommandBase<T> implements QuotaStorageDependent, QuotaVdsDependent {
+public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommandBase<T>
+        implements QuotaStorageDependent, QuotaVdsDependent, SerialChildExecutingCommand {
 
     private static final Base64 BASE_64 = new Base64(0, null);
 
@@ -233,8 +238,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private IconUtils iconUtils;
 
     @Inject
-    @Typed(ConcurrentChildCommandsExecutionCallback.class)
-    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
+    @Typed(SerialChildCommandsExecutionCallback.class)
+    private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
 
     private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> {
     };
@@ -1913,7 +1918,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     public CommandCallback getCallback() {
-        return getParameters().isUseCinderCommandCallback() ? callbackProvider.get() : null;
+        return callbackProvider.get();
     }
 
     private InClusterUpgradeValidator getClusterUpgradeValidator() {
@@ -1955,4 +1960,56 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         VmStatic vmStatic = vmStaticDao.get(vmId);
         return vmStatic != null ? vmStatic : vmTemplateDao.get(vmId);
     }
+
+    private boolean shouldSealVm() {
+        return getVmTemplate().isSealed() && !osRepository.isWindows(getVm().getOs())
+                && getParameters().getPoolId() == null;
+    }
+
+    @Override
+    public boolean performNextOperation(int completedChildCount) {
+        if (!shouldSealVm()) {
+            return false;
+        }
+
+        switch (getParameters().getPhase()) {
+            case CREATE_VM:
+                getParameters().setPhase(Phase.SEAL);
+                break;
+
+            case SEAL:
+                return false;
+        }
+        persistCommandIfNeeded();
+        executeNextOperation();
+        return true;
+    }
+
+    private void executeNextOperation() {
+        switch (getParameters().getPhase()) {
+            case SEAL:
+                sealVm();
+                break;
+        }
+    }
+
+    private void sealVm() {
+        ActionReturnValue returnValue = runInternalAction(ActionType.SealVm,
+                buildSealVmParameters(),
+                ExecutionHandler.createDefaultContextForTasks(getContext()));
+
+        if (!returnValue.getSucceeded()) {
+            throw new EngineException(returnValue.getFault().getError(), returnValue.getFault().getMessage());
+        }
+    }
+
+    private SealVmParameters buildSealVmParameters() {
+        SealVmParameters parameters = new SealVmParameters();
+        parameters.setVmId(getVmId());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
+        return parameters;
+    }
+
 }

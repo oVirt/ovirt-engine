@@ -18,7 +18,7 @@ public class SealDisksVDSCommand<P extends SealDisksVDSCommandParameters> extend
     @Override
     protected void executeVdsBrokerCommand() {
         result = getBroker().sealDisks(
-                getParameters().getTemplateId().toString(),
+                getParameters().getEntityId().toString(),
                 getParameters().getJobId().toString(),
                 getParameters().getStoragePoolId().toString(),
                 getParameters().getImages().stream().map(this::mapToEndpoint).collect(Collectors.toList()));
