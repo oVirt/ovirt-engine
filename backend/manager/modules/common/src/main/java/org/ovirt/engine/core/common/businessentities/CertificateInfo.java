@@ -4,22 +4,24 @@ import java.io.Serializable;
 
 public class CertificateInfo implements Serializable {
 
+    public static final String SHA256_NAME = "SHA-256";
+    public static final String SHA256_ALGO = "SHA256";
     private static final long serialVersionUID = 3805409159359700576L;
     private String payload;
     private String subject;
     private String issuer;
-    private String sha1Fingerprint;
+    private String sha256Fingerprint;
     private boolean selfSigned;
 
     public CertificateInfo() {
     }
 
-    public CertificateInfo(String payload, String subject, String issuer, boolean selfSigned, String sha1Fingerprint) {
+    public CertificateInfo(String payload, String subject, String issuer, boolean selfSigned, String sha256Fingerprint) {
         this.payload = payload;
         this.subject = subject;
         this.issuer = issuer;
         this.selfSigned = selfSigned;
-        this.sha1Fingerprint = sha1Fingerprint;
+        this.sha256Fingerprint = sha256Fingerprint;
     }
 
     public String getPayload() {
@@ -54,12 +56,12 @@ public class CertificateInfo implements Serializable {
         this.selfSigned = selfSigned;
     }
 
-    public String getSHA1Fingerprint() {
-        return sha1Fingerprint;
+    public String getSHA256Fingerprint() {
+        return sha256Fingerprint;
     }
 
-    public void setSHA1Fingerprint(String sha1Fingerprint) {
-        this.sha1Fingerprint = sha1Fingerprint;
+    public void setSHA256Fingerprint(String sha256Fingerprint) {
+        this.sha256Fingerprint = sha256Fingerprint;
     }
 
 }

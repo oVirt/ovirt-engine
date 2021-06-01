@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 import static org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions.GENERAL_MAX_SIZE;
 import static org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT;
 import static org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT;
+import static org.ovirt.engine.core.common.businessentities.CertificateInfo.SHA256_NAME;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -767,11 +768,11 @@ public class ProviderModel extends Model {
         if (certInfo.getSelfSigned()) {
             confirmationModel.setMessage(
                     ConstantsManager.getInstance().getMessages().approveRootCertificateTrust(
-                            certInfo.getSubject(), certInfo.getSHA1Fingerprint()));
+                            certInfo.getSubject(), certInfo.getSHA256Fingerprint(), SHA256_NAME));
         } else {
             confirmationModel.setMessage(
                     ConstantsManager.getInstance().getMessages().approveCertificateTrust(
-                            certInfo.getSubject(), certInfo.getIssuer(), certInfo.getSHA1Fingerprint()));
+                        certInfo.getSubject(), certInfo.getIssuer(), certInfo.getSHA256Fingerprint(), SHA256_NAME));
         }
         confirmationModel.setTitle(ConstantsManager.getInstance().getConstants().importProviderCertificateTitle());
         confirmationModel.setHelpTag(HelpTag.import_provider_certificate);

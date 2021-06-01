@@ -323,9 +323,9 @@ public interface UIMessages extends Messages {
 
     String threadsAsCoresPerSocket(int cores, int threads);
 
-    String approveCertificateTrust(String subject, String issuer, String sha1Fingerprint);
+    String approveCertificateTrust(String subject, String issuer, String shaFingerprint, String shaName);
 
-    String approveRootCertificateTrust(String subject, String sha1Fingerprint);
+    String approveRootCertificateTrust(String subject, String shaFingerprint, String shaName);
 
     String geoRepForceTitle(String action);
 

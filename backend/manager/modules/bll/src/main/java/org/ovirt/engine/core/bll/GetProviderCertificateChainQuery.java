@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.common.businessentities.CertificateInfo.SHA256_ALGO;
+
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.cert.Certificate;
@@ -58,8 +60,8 @@ public class GetProviderCertificateChainQuery<P extends ProviderQueryParameters>
     }
 
     private CertificateInfo createCertificateInfo(X509Certificate cert) throws GeneralSecurityException {
-        MessageDigest sha1 = MessageDigest.getInstance("SHA1");
-        sha1.update(cert.getEncoded());
+        MessageDigest sha256 = MessageDigest.getInstance(SHA256_ALGO);
+        sha256.update(cert.getEncoded());
 
         boolean selfSigned = false;
         try {
@@ -71,7 +73,7 @@ public class GetProviderCertificateChainQuery<P extends ProviderQueryParameters>
 
         return new CertificateInfo(new Base64(0).encodeToString(cert.getEncoded()),
                 cert.getSubjectX500Principal().toString(), cert.getIssuerX500Principal().toString(),
-                selfSigned, Hex.encodeHexString(sha1.digest()));
+                selfSigned, Hex.encodeHexString(sha256.digest()));
     }
 
 }
