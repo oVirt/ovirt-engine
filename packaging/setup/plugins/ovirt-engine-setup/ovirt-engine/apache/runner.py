@@ -61,6 +61,7 @@ class Plugin(plugin.PluginBase):
                     port: {port}
                     target_user: root
                     log_path: '/var/log/ovirt-engine'
+                    ssh_checks: False
                 ''').format(
                     playbooks_root_dir=project_dir,
                     pki_path=pki_path,
