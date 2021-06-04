@@ -631,6 +631,10 @@ ovirt_build_quick:: Quick build, best for syntax checks. Default is `0`.
 ovirt_build_minimal:: Build minimal Firefox only package. Default is
 `0`.
 
+ovirt_build_user_agent:: When using quick or minimal build, build only
+for this user agent. Default is `gecko1_8` (Firefox). To build for
+Chrome use `safari`.
+
 ovirt_build_gwt:: Build GWT components. Default is `1`.
 
 ovirt_build_all_user_agents:: Build GWT components for all supported
@@ -639,6 +643,12 @@ browsers. Default is `1`.
 ovirt_build_locales:: Build GWT components for all supported locales.
 Default is `1`.
 
-Example:
+Examples:
 
-  # rpmbuild -D"ovirt_build_minimal 1" -tb @tarball@
+Build minimal rpm package for Firefox::
+
+    $ rpmbuild -D"ovirt_build_minimal 1" -tb @tarball@
+
+Build minimal rpm package for Chrome or Safari::
+
+    $ rpmbuild -D"ovirt_build_minimal 1" -D"ovirt_build_user_agent safari" -tb @tarball@
