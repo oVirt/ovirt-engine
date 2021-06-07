@@ -1443,8 +1443,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      * @return true if next run snapshot is needed because of memory change
      */
     private boolean memoryNextRunSnapshotRequired() {
-        return VMStatus.Down != getVm().getStatus()
-                && oldVm.getMemSizeMb() != getParameters().getVm().getMemSizeMb();
+        return VMStatus.Down != getVm().getStatus() && oldVm.getMemSizeMb() > getParameters().getVm().getMemSizeMb();
     }
 
     private boolean isClusterLevelChange() {
