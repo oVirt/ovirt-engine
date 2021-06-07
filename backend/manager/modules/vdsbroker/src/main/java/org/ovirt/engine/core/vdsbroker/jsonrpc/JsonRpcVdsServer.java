@@ -2340,6 +2340,17 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturn clearBitmaps(String jobId, Map<String, Object> volInfo) {
+        JsonRpcRequest request =
+                new RequestBuilder("SDM.clear_bitmaps")
+                        .withParameter("job_id", jobId)
+                        .withParameter("vol_info", volInfo)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
     public NbdServerURLReturn startNbdServer(String serverId, Map<String, Object> nbdServerConfig) {
         JsonRpcRequest request =
                 new RequestBuilder("NBD.start_server")

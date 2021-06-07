@@ -988,6 +988,11 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
+    @Override
+    public StatusOnlyReturn clearBitmaps(String jobId, Map<String, Object> volInfo) {
+        return null;
+    }
+
     @Override public NbdServerURLReturn startNbdServer(String serverId, Map<String, Object> nbdServerConfig) {
         return null;
     }
