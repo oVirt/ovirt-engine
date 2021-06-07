@@ -33,7 +33,11 @@ public abstract class VolumeBitmapCommandBase<T extends VolumeBitmapCommandParam
         if (!Guid.isNullOrEmpty(getParameters().getVdsId())) {
             vdsId = getParameters().getVdsId();
         } else {
-            vdsId = vdsCommandsHelper.getHostForExecution(getParameters().getStoragePoolId(), VDS::isColdBackupEnabled);
+            vdsId = getBitmapAction().equals(VDSCommandType.ClearVolumeBitmaps)
+                    ? vdsCommandsHelper.getHostForExecution(getParameters().getStoragePoolId(),
+                            VDS::isClearBitmapsEnabled)
+                    : vdsCommandsHelper.getHostForExecution(getParameters().getStoragePoolId(),
+                            VDS::isColdBackupEnabled);
         }
         setVdsId(vdsId);
         getParameters().setVdsId(getVdsId());
@@ -68,7 +72,7 @@ public abstract class VolumeBitmapCommandBase<T extends VolumeBitmapCommandParam
                 info.getImageGroupId(),
                 info.getImageId(),
                 info.getGeneration(),
-                getParameters().getBitmapName());
+                getBitmapAction() != VDSCommandType.ClearVolumeBitmaps ? getParameters().getBitmapName() : null);
         parameters.setVdsId(getVdsId());
 
         VDSReturnValue vdsReturnValue;
