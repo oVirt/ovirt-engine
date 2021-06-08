@@ -57,7 +57,7 @@ Install the following system components:
 - python3-daemon
 - python3-otopi >= 1.1.0
 - python3-ovirt-setup-lib
-- maven-3 >= 3.5
+- maven >= 3.5
 - ansible >= 2.9.0
 - ansible-runner-service-dev >= 1.0.6
 - ovirt-ansible-roles >= 1.2.0
