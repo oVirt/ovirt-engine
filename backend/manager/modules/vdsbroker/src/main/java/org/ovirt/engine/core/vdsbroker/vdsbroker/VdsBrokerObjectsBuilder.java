@@ -2674,6 +2674,7 @@ public class VdsBrokerObjectsBuilder {
         for (String mDevName : mDevParams.keySet()) {
             Integer availableInstances = null;
             String description = null;
+            String humanReadableName = null;
             if (mDevParams.get(mDevName) instanceof Map) {
                 Map<String, Object> mDevParam = (Map<String, Object>) mDevParams.get(mDevName);
                 if (mDevParam.containsKey(VdsProperties.MDEV_AVAILABLE_INSTANCES)) {
@@ -2686,8 +2687,11 @@ public class VdsBrokerObjectsBuilder {
                 if (mDevParam.containsKey(VdsProperties.MDEV_DESCRIPTION)) {
                     description = mDevParam.get(VdsProperties.MDEV_DESCRIPTION).toString();
                 }
+                if (mDevParam.containsKey(VdsProperties.MDEV_NAME)) {
+                    humanReadableName = mDevParam.get(VdsProperties.MDEV_NAME).toString();
+                }
             }
-            mdevs.add(new MDevType(mDevName, availableInstances, description));
+            mdevs.add(new MDevType(mDevName, humanReadableName, availableInstances, description));
         }
         return mdevs;
     }

@@ -38,6 +38,7 @@ public class HostDeviceMapper {
             for (org.ovirt.engine.core.common.businessentities.MDevType mDevEntity : entity.getMdevTypes()) {
                 MDevType mDev = new MDevType();
                 mDev.setName(mDevEntity.getName());
+                mDev.setHumanReadableName(mDevEntity.getHumanReadableName());
                 mDev.setAvailableInstances(mDevEntity.getAvailableInstances());
                 mDev.setDescription(mDevEntity.getDescription());
                 mDevsList.add(mDev);

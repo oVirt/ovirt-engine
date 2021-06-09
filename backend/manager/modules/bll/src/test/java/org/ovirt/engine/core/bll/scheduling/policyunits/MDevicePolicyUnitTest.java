@@ -173,6 +173,6 @@ public class MDevicePolicyUnitTest {
     }
 
     private MDevType mDevType(String name, Integer availableInstances) {
-        return new MDevType(name, availableInstances, null);
+        return new MDevType(name, null, availableInstances, null);
     }
 }

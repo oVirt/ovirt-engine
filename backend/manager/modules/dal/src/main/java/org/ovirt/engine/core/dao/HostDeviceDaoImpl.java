@@ -164,7 +164,7 @@ public class HostDeviceDaoImpl extends MassOperationsGenericDao<HostDevice, Host
                     String[] mdevNames = mdevs.split(",");
                     List<MDevType> mdevTypes = new ArrayList<>();
                     for (String mdevName : mdevNames) {
-                        mdevTypes.add(new MDevType(mdevName, null, null));
+                        mdevTypes.add(new MDevType(mdevName, null, null, null));
                     }
                     device.setMdevTypes(mdevTypes);
                 }

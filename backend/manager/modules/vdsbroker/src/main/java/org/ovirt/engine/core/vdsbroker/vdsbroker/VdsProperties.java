@@ -484,6 +484,7 @@ public final class VdsProperties {
     public static final String MDEV = "mdev";
     public static final String MDEV_AVAILABLE_INSTANCES = "available_instances";
     public static final String MDEV_DESCRIPTION = "description";
+    public static final String MDEV_NAME = "name";
     public static final String PRODUCT_NAME = "product";
     public static final String PRODUCT_ID = "product_id";
     public static final String VENDOR_NAME = "vendor";
