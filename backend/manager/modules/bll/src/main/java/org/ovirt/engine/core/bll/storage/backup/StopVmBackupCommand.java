@@ -58,11 +58,11 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
     protected void executeCommand() {
         log.info("Stopping VmBackup '{}'", vmBackup.getId());
         if (stopVmBackup()) {
-            vmBackup.setPhase(VmBackupPhase.FINALIZING);
-            vmBackupDao.update(vmBackup);
+            updateVmBackupPhase(VmBackupPhase.FINALIZING);
             setSucceeded(true);
         } else {
             log.error("Failed to stop VmBackup '{}'", vmBackup.getId());
+            updateVmBackupPhase(VmBackupPhase.FAILED);
         }
     }
 
@@ -95,6 +95,11 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
 
     private boolean isColdBackup() {
         return getVm().getStatus() == VMStatus.Down;
+    }
+
+    private void updateVmBackupPhase(VmBackupPhase phase) {
+        vmBackup.setPhase(phase);
+        vmBackupDao.update(vmBackup);
     }
 
     @Override

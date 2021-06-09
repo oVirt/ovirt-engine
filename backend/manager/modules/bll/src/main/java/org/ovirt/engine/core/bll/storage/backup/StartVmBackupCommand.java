@@ -249,6 +249,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 addCustomValue("backupId", vmBackupId.toString());
                 auditLogDirector.log(this, AuditLogType.VM_INCREMENTAL_BACKUP_FAILED_FULL_VM_BACKUP_NEEDED);
                 setCommandStatus(CommandStatus.FAILED);
+                updateVmBackupPhase(VmBackupPhase.FAILED);
                 return;
             }
             log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmBackup.getVmId());
@@ -288,6 +289,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                     log.info("Scratch disks created for the backup");
                 } else {
                     setCommandStatus(CommandStatus.FAILED);
+                    updateVmBackupPhase(VmBackupPhase.FAILED);
                 }
                 break;
 
@@ -297,6 +299,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                     log.info("Scratch disks prepared for the backup");
                 } else {
                     setCommandStatus(CommandStatus.FAILED);
+                    updateVmBackupPhase(VmBackupPhase.FAILED);
                 }
                 break;
 
@@ -307,6 +310,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                     log.info("Ready to start image transfers");
                 } else {
                     setCommandStatus(CommandStatus.FAILED);
+                    updateVmBackupPhase(VmBackupPhase.FAILED);
                 }
                 break;
 
@@ -316,6 +320,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             case FINALIZING:
                 finalizeVmBackup();
                 setCommandStatus(CommandStatus.SUCCEEDED);
+                updateVmBackupPhase(VmBackupPhase.SUCCEEDED);
+                break;
+
+            case FAILED:
+                setCommandStatus(CommandStatus.FAILED);
                 break;
         }
         persistCommandIfNeeded();
@@ -707,7 +716,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 if (!getSucceeded()) {
                     return AuditLogType.VM_BACKUP_FAILED;
                 }
-                if (vmBackup.getPhase() == VmBackupPhase.FINALIZING) {
+                if (vmBackup.getPhase() == VmBackupPhase.SUCCEEDED) {
                     return AuditLogType.VM_BACKUP_SUCCEEDED;
                 }
         }

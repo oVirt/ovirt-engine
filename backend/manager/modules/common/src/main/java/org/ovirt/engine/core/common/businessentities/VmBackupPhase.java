@@ -9,7 +9,9 @@ public enum VmBackupPhase {
     PREPARING_SCRATCH_DISK("Preparing scratch disks"),
     STARTING("Starting"),
     READY("Ready"),
-    FINALIZING("Finalizing");
+    FINALIZING("Finalizing"),
+    SUCCEEDED("Succeeded"),
+    FAILED("Failed");
 
     private String name;
 
