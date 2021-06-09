@@ -591,6 +591,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__TYPE__COMPUTER_ACCOUNT();
 
+    String VAR__TYPE__VM_BACKUP();
+
     String VAR__TYPE__VM_TEMPLATE();
 
     String VAR__ENTITIES__VM_TEMPLATES();

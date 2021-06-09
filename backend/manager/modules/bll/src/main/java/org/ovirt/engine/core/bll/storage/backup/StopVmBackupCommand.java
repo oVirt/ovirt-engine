@@ -47,6 +47,10 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
 
     @Override
     protected boolean validate() {
+        if (vmBackup.getPhase() != VmBackupPhase.READY) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_NOT_READY,
+                    String.format("$vmBackupPhase %s", vmBackup.getPhase()));
+        }
         return true;
     }
 
@@ -96,7 +100,7 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__STOP);
-        addValidationMessage(EngineMessage.VAR__ACTION__BACKUP);
+        addValidationMessage(EngineMessage.VAR__TYPE__VM_BACKUP);
     }
 
     @Override
