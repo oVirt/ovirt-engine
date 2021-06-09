@@ -73,8 +73,8 @@ public class DiskImagesValidator {
         return diskImagesNotInStatus(ImageStatus.LOCKED, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 
-    protected DiskImage getExistingDisk(Guid id) {
-        return getDiskImageDao().get(id);
+    protected Disk getExistingDisk(Guid id) {
+        return getDiskDao().get(id);
     }
 
     /**
@@ -86,7 +86,7 @@ public class DiskImagesValidator {
 
         List<String> existingDisksAliases = new ArrayList<>();
         for (DiskImage diskImage : diskImages) {
-            DiskImage existingDisk = getExistingDisk(diskImage.getId());
+            Disk existingDisk = getExistingDisk(diskImage.getId());
             if (existingDisk != null) {
                 existingDisksAliases.add(diskImage.getDiskAlias().isEmpty() ? existingDisk.getDiskAlias() : diskImage.getDiskAlias());
             }
@@ -339,5 +339,9 @@ public class DiskImagesValidator {
 
     protected StorageDomainStaticDao getStorageDomainStaticDao() {
         return Injector.get(StorageDomainStaticDao.class);
+    }
+
+    protected DiskDao getDiskDao() {
+        return Injector.get(DiskDao.class);
     }
 }
