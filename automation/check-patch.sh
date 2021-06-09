@@ -29,11 +29,10 @@ source automation/jvm-opts.sh
 MAVEN_OPTS="$MAVEN_OPTS $JVM_MEM_OPTS"
 export MAVEN_OPTS
 
-BUILD_UT=0
+BUILD_UT=1
 RUN_DAO_TESTS=0
 
 if [ -z "${MILESTONE}" ] || { [ -n "${MILESTONE}" ] && [ "${MILESTONE}" != "master" ]; }; then
-	BUILD_UT=1
 	RUN_DAO_TESTS=1
 fi
 
@@ -107,10 +106,6 @@ dao_tests_paths=("backend/manager/modules/dal" \
 
 #create a search string with OR on all paths
 dao_tests_paths_search_string=$(IFS='|'; echo "${dao_tests_paths[*]}")
-
-if git show --pretty="format:" --name-only | egrep -q "\.(xml|java)$"; then
-    BUILD_UT=1
-fi
 
 if git show --pretty="format:" --name-only | egrep \
     "(sql|${dao_tests_paths_search_string})" | \
