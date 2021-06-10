@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.backup;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,6 +65,9 @@ public class RedefineVmCheckpointCommand<T extends VmBackupParameters> extends V
         VDSReturnValue listVdsReturnValue = performVmCheckpointsOperation(VDSCommandType.ListVmCheckpoints,
                 new VdsAndVmIDVDSParametersBase(getVdsId(), getVmId()));
         List<Guid> definedCheckpointsIds = (List<Guid>) listVdsReturnValue.getReturnValue();
+        definedCheckpointsIds.sort(
+                Comparator.comparingInt(
+                        checkpoints.stream().map(VmCheckpoint::getId).collect(Collectors.toList())::indexOf));
         List<VmCheckpoint> checkpointsToSync = getCheckpointIdsToSync(checkpoints, definedCheckpointsIds);
 
         if (checkpointsToSync == null) {
