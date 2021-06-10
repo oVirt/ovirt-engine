@@ -205,7 +205,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     private void storeExternalData(String stdout) {
         Map<String, String> externalData = Arrays.stream(stdout.trim().split(";"))
                 .filter(s -> !StringUtils.isEmpty(s))
-                .map(s -> s.split("="))
+                .map(s -> s.split("=", 2))
                 .collect(Collectors.toMap(part -> part[0], part -> part[1]));
         String tpmData = externalData.get("tpm");
         if (!StringUtils.isEmpty(tpmData)) {
