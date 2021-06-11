@@ -605,7 +605,7 @@ class Plugin(plugin.PluginBase):
             enable_logging,
             desired_permissions
         )
-        desired_gid = grp.getgrnam('hugetlbfs').gr_gid
+        desired_gid = grp.getgrnam('openvswitch').gr_gid
         current_gid = os.stat(file_path).st_gid
         if desired_gid != current_gid:
             if enable_logging:
