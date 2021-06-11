@@ -621,6 +621,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     public boolean isVmDuringBackup() {
         List<VmBackup> vmBackups = vmBackupDao.getAllForVm(getVmId());
-        return vmBackups != null && !vmBackups.isEmpty();
+
+        return !CollectionUtils.isEmpty(vmBackups) && vmBackups
+                .stream()
+                .anyMatch(vmBackup -> vmBackup.getPhase().isBackupInProgress());
     }
 }

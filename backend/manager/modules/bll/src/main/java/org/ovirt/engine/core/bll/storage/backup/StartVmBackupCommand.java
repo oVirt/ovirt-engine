@@ -203,8 +203,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 return failValidation(EngineMessage.ACTION_TYPE_BITMAPS_OPERATION_ARE_NOT_SUPPORTED);
             }
         }
-        if (!vmBackupDao.getAllForVm(getVmId()).isEmpty()) {
-            return failValidation(EngineMessage.CANNOT_START_BACKUP_ALREADY_IN_PROGRESS);
+        if (isVmDuringBackup()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP);
         }
         return true;
     }

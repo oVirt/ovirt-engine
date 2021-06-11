@@ -23,6 +23,10 @@ public enum VmBackupPhase {
         return name;
     }
 
+    public boolean isBackupInProgress() {
+        return this != SUCCEEDED && this != FAILED;
+    }
+
     public static VmBackupPhase forName(String name) {
         return Arrays.stream(values()).filter(val -> val.name.equals(name)).findAny().orElse(null);
     }

@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
+import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
 import org.ovirt.engine.core.common.businessentities.VmCheckpointState;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -138,10 +139,14 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
         mockVm(VMStatus.Up);
         mockVds(true, true);
         mockVmDevice(true);
-        when(vmBackupDao.getAllForVm(vmId)).thenReturn(List.of(mockVmBackup()));
+
+        VmBackup vmBackup = mockVmBackup();
+        vmBackup.setPhase(VmBackupPhase.STARTING);
+        when(vmBackupDao.getAllForVm(vmId)).thenReturn(List.of(vmBackup));
+
         doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
         ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.CANNOT_START_BACKUP_ALREADY_IN_PROGRESS);
+                EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP);
     }
 
     @Test

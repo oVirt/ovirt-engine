@@ -85,8 +85,8 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
                     String.format("$checkpointId %s", getParameters().getVmCheckpoint().getId()));
         }
 
-        if (!vmBackupDao.getAllForVm(getVmId()).isEmpty()) {
-            return failValidation(EngineMessage.CANNOT_START_BACKUP_ALREADY_IN_PROGRESS);
+        if (isVmDuringBackup()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP);
         }
 
         DiskExistenceValidator diskExistenceValidator = createDiskExistenceValidator(getDiskIds());
@@ -95,11 +95,7 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
         }
 
         DiskImagesValidator diskImagesValidator = createDiskImagesValidator(vmCheckpoint.getDisks());
-        if (!validate(diskImagesValidator.diskImagesNotLocked())) {
-            return false;
-        }
-
-        return true;
+        return validate(diskImagesValidator.diskImagesNotLocked());
     }
 
     @Override
