@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.ovirt.engine.ui.common.DisplayUncaughtUIExceptions;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
+import org.ovirt.engine.ui.common.logging.ApplicationLogManager;
+import org.ovirt.engine.ui.common.widget.AlertManager;
 import org.ovirt.engine.ui.webadmin.plugin.api.ApiOptions;
 import org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions;
 
@@ -55,6 +58,12 @@ public class PluginManager implements HasHandlers {
 
     private static final Logger logger = Logger.getLogger(PluginManager.class.getName());
 
+    private static final Logger pluginLogger = Logger.getLogger(Plugin.class.getName());
+
+    private ApplicationLogManager applicationLogManager;
+
+    private AlertManager alertManager;
+
     // Maps plugin names to corresponding object representations
     private final Map<String, Plugin> plugins = new HashMap<>();
 
@@ -73,8 +82,14 @@ public class PluginManager implements HasHandlers {
     private PluginsReadyCallback pluginsReadyCallback;
 
     @Inject
-    public PluginManager(PluginUiFunctions uiFunctions, CurrentUser user, EventBus eventBus) {
+    public PluginManager(PluginUiFunctions uiFunctions,
+            ApplicationLogManager applicationLogManager,
+            AlertManager alertManager,
+            CurrentUser user,
+            EventBus eventBus) {
         this.uiFunctions = uiFunctions;
+        this.applicationLogManager = applicationLogManager;
+        this.alertManager = alertManager;
         this.user = user;
         this.eventBus = eventBus;
         exposePluginApi();
@@ -410,10 +425,20 @@ public class PluginManager implements HasHandlers {
         return plugin != null ? plugin.getMetaData().getConfigObject() : null;
     }
 
+    void reportFatalError(String message) {
+        Exception e = new PluginException(message);
+        applicationLogManager.logUncaughtException(e);
+
+        if (DisplayUncaughtUIExceptions.getValue()) {
+            alertManager.showUncaughtExceptionAlert(e);
+        }
+    }
+
     private native void exposePluginApi() /*-{
         var ctx = this;
         var uiFunctions = ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::uiFunctions;
         var user = ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::user;
+        var logger = @org.ovirt.engine.ui.webadmin.plugin.PluginManager::pluginLogger;
 
         var validatePluginAction = function(pluginName) {
             return ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::validatePluginAction(Ljava/lang/String;Z)(pluginName,false);
@@ -612,8 +637,23 @@ public class PluginManager implements HasHandlers {
                 if (validateSafePluginAction(this.pluginName)) {
                     return uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::getRootTagNode()();
                 }
+            },
+            logger: function() {
+                  return {
+                     info: function(message) {
+                         logger.@java.util.logging.Logger::info(Ljava/lang/String;)(message);
+                     },
+                     warning: function(message) {
+                         logger.@java.util.logging.Logger::warning(Ljava/lang/String;)(message);
+                     },
+                     severe: function(message) {
+                         logger.@java.util.logging.Logger::severe(Ljava/lang/String;)(message);
+                     }
+                }
+            },
+            reportFatalError: function(message) {
+                 ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::reportFatalError(Ljava/lang/String;)(message);
             }
-
         };
 
         // Give init function the pluginApi prototype for later instantiation
