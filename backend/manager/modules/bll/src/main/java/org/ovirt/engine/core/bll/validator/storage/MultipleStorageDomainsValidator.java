@@ -162,6 +162,15 @@ public class MultipleStorageDomainsValidator {
     }
 
     /**
+     * Validates that all target domains have enough space for the copied disks.
+     * @return {@link ValidationResult#VALID} if the target domain has enough free space, or a {@link ValidationResult}
+     * if the domain is low on space.
+     */
+    public ValidationResult targetDomainHasSpaceForDisks(Collection<DiskImage> diskImages) {
+        return validOrFirstFailure(entry -> getStorageDomainValidator(entry).hasSpaceForDisksWithSnapshots(diskImages));
+    }
+
+    /**
      * Validates if there is a managed block storage domain and if it supports the operation.
      * @return {@link ValidationResult#VALID} if there are managed block storage domains that support the operation,
      * or a {@link ValidationResult} in case there is a managed block storage domain that doesn't support the operation.

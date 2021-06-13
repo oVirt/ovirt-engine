@@ -276,7 +276,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             } else {
                 getImage().getSnapshots().addAll(diskImageDao.getAllSnapshotsForLeaf(getImage().getImageId()));
             }
-            return validate(storageDomainsValidator.allDomainsHaveSpaceForDisksWithSnapshots(Collections.singletonList(getImage())));
+            return validate(storageDomainsValidator.targetDomainHasSpaceForDisks(Collections.singletonList(getImage())));
         }
         return false;
     }
