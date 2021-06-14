@@ -90,7 +90,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
                 // 2. Get filtered-query and search-query results, and intersect them
                 List<Q> results = intersect(query, queryParams, searchType);
                 // 3. Manually apply 'max' to the result set
-                return results.subList(0, max);
+                return results.subList(0, max <= results.size() ? max : results.size());
             }
         }
     }
