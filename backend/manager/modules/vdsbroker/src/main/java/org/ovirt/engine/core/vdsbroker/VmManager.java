@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -74,6 +75,8 @@ public class VmManager {
      * The value is computed (and persisted for future use)
      */
     private int vmMemoryWithOverheadInMB;
+
+    private VMStatus lastStatusBeforeMigration;
 
     @Inject
     private VmDeviceDao vmDeviceDao;
@@ -325,5 +328,13 @@ public class VmManager {
 
     public void resetExternalDataStatus() {
         externalDataStatus = new ExternalDataStatus();
+    }
+
+    public VMStatus getLastStatusBeforeMigration() {
+        return lastStatusBeforeMigration;
+    }
+
+    public void setLastStatusBeforeMigration(VMStatus lastStatusBeforeMigration) {
+        this.lastStatusBeforeMigration = lastStatusBeforeMigration;
     }
 }

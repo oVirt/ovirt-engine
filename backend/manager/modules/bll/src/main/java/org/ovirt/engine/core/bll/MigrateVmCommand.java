@@ -374,6 +374,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private boolean migrateVm() {
+        getVmManager().setLastStatusBeforeMigration(getVm().getStatus());
         setActionReturnValue(vdsBroker
                 .runAsyncVdsCommand(
                         VDSCommandType.Migrate,

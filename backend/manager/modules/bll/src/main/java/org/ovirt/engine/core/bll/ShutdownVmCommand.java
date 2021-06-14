@@ -88,7 +88,8 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
     }
 
     private boolean canShutdownVm() {
-        return getVm().getStatus() == VMStatus.Up &&
-                (Boolean.TRUE.equals(getVm().getAcpiEnable()) || getVm().getHasAgent());
+        return (getVm().getStatus() == VMStatus.Up
+                || getVm().getStatus().isMigrating() && getVmManager().getLastStatusBeforeMigration() == VMStatus.Up)
+                && (Boolean.TRUE.equals(getVm().getAcpiEnable()) || getVm().getHasAgent());
     }
 }

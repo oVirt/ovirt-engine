@@ -222,6 +222,15 @@ public enum VMStatus implements Identifiable {
     }
 
     /**
+     * Check whether the VM is migrating to or from another host.
+     *
+     * @return true if the status is one of the Migrating* ones
+     */
+    public boolean isMigrating() {
+        return EnumSet.of(MigratingFrom, MigratingTo).contains(this);
+    }
+
+    /**
      * Sole purpose of this enum is allow to pass multiple VMStatus items to {@link EditableVmField} annotation
      * without the need of enumerating them.
      */
