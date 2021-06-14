@@ -92,6 +92,7 @@ public class ImportVmTemplateFromExternalUrlCommand<P extends ImportVmTemplateFr
 
         prm.setForceOverride(true);
         prm.setCopyCollapse(true);
+        prm.setImportAsNewEntity(getParameters().isImportAsNewEntity());
 
         for (DiskImage disk : vmTemplate.getDiskTemplateMap().values()) {
             if (getParameters().getQuotaId() != null) {

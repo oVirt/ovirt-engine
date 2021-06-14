@@ -62,6 +62,9 @@ public class BackendExternalTemplateImportsResource extends BackendResource impl
         parameters.setClusterId(clusterId);
         parameters.setQuotaId(getQuotaId(templateImport));
         parameters.setCpuProfileId(getCpuProfileId(templateImport));
+        if (templateImport.isSetClone()) {
+            parameters.setImportAsNewEntity(templateImport.isClone());
+        }
         return parameters;
     }
 

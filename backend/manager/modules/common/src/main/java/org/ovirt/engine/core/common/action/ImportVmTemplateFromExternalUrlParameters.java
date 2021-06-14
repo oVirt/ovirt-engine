@@ -20,6 +20,7 @@ public class ImportVmTemplateFromExternalUrlParameters extends ActionParametersB
 
     @NotNull
     private Guid clusterId;
+    private boolean importAsNewEntity;
 
     public String getUrl() {
         return url;
@@ -75,5 +76,13 @@ public class ImportVmTemplateFromExternalUrlParameters extends ActionParametersB
 
     public void setClusterId(Guid clusterId) {
         this.clusterId = clusterId;
+    }
+
+    public boolean isImportAsNewEntity() {
+        return importAsNewEntity;
+    }
+
+    public void setImportAsNewEntity(boolean importAsNewEntity) {
+        this.importAsNewEntity = importAsNewEntity;
     }
 }
