@@ -1730,8 +1730,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void updateMaxMemory() {
         final Integer memoryMb = getModel().getMemSize().getEntity();
         if (memoryMb != null) {
-            getModel().getMaxMemorySize().setEntity(
-                    VmCommonUtils.getMaxMemorySizeDefault(memoryMb));
+            int calculatedMaxMemory = VmCommonUtils.getMaxMemorySizeDefault(memoryMb);
+            int allowedMaxMemory = AsyncDataProvider.getInstance()
+                    .getMaxMaxMemorySize(getModel().getOSType().getSelectedItem(), getCompatibilityVersion());
+            getModel().getMaxMemorySize().setEntity(Math.min(calculatedMaxMemory, allowedMaxMemory));
         }
     }
 
