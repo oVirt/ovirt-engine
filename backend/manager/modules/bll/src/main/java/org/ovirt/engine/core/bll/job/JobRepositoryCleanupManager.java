@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Responsible for clearing completed jobs from the database by running a fixed scheduled job
- * each {@code ConfigValues.JobCleanupRateInMinutes} minutes.
+ * each {@link ConfigValues#JobCleanupRateInMinutes} minutes.
  */
 @Singleton
 public class JobRepositoryCleanupManager implements BackendService {
@@ -39,7 +39,7 @@ public class JobRepositoryCleanupManager implements BackendService {
     }
 
     /**
-     * Initializes the Job Cleanup scheduler
+     * Initializes the Job Cleanup scheduler.
      */
     @PostConstruct
     public void initialize() {
@@ -58,8 +58,8 @@ public class JobRepositoryCleanupManager implements BackendService {
     /**
      * Removes completed jobs:
      * <ul>
-     * <li>The successful jobs will be deleted after {@code ConfigValues#SucceededJobCleanupTimeInMinutes}.</li>
-     * <li>The failed jobs will be deleted after {@code ConfigValues#FailedJobCleanupTimeInMinutes}.</li>
+     * <li>The successful jobs will be deleted after {@link ConfigValues#SucceededJobCleanupTimeInMinutes}.</li>
+     * <li>The failed jobs will be deleted after {@link ConfigValues#FailedJobCleanupTimeInMinutes}.</li>
      * </ul>
      */
     private void cleanCompletedJob() {

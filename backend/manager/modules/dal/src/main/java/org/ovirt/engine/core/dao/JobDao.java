@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
+import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface JobDao extends GenericDao<Job, Guid>, SearchDao<Job> {
@@ -65,34 +66,35 @@ public interface JobDao extends GenericDao<Job, Guid>, SearchDao<Job> {
      *
      * @param sinceDate
      *            the date to delete jobs older than
-     * @param statusesAsList
-     *            a comma separated list of statuses {@link #ExecutionStatus}
+     * @param statusesList
+     *            a comma separated list of statuses {@link JobExecutionStatus}
      */
     void deleteJobOlderThanDateWithStatus(Date sinceDate, List<JobExecutionStatus> statusesList);
 
     /**
-     * Updates {@code Job} and {@code Step} entries with status {@code ExecutionStatus.STARTED} to
-     * {@code ExecutionStatus.UNKNOWN} for {@code Job} without external tasks.
+     * Updates {@link Job} and {@link Step} entries with status {@link JobExecutionStatus#STARTED} to
+     * {@link JobExecutionStatus#UNKNOWN} for {@link Job} without external tasks.
      *
      * @param updateTime
-     *            The update time to set for {@code Job} end time and last update time and for {@code Step} end time.
+     *            The update time to set for {@link Job} end time and last update time and for {@link Step} end time.
      */
     void updateStartedExecutionEntitiesToUnknown(Date updateTime);
 
     /**
      * Deletes completed jobs.
-     * Successful jobs has {@code ExecutionStatus.FINISHED} status.
-     * Failed jobs has either {@code ExecutionStatus.FINISHED, ExecutionStatus.ABORTED, ExecutionStatus.UNKNOWN} status.
+     * Successful jobs have {@link JobExecutionStatus#FINISHED} status.
+     * Failed jobs have one of the following statuses:
+     * {@link JobExecutionStatus#FAILED}, {@link JobExecutionStatus#ABORTED}, {@link JobExecutionStatus#UNKNOWN}.
      *
      * @param succeededJobs
-     *            the date which successful jobs with older end time will be deleted.
+     *            all successful jobs having older end time than this date will be deleted.
      * @param failedJobs
-     *            the date which failed jobs with older end time will be deleted.
+     *            all failed jobs having older end time than this date will be deleted.
      */
     void deleteCompletedJobs(Date succeededJobs, Date failedJobs);
 
     /**
-     * Checks if a job has step associated with VDSM task
+     * Checks if a job has step associated with VDSM task.
      *
      * @param jobId
      *            The job id to search by
