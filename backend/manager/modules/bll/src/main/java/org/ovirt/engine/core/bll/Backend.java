@@ -39,6 +39,7 @@ import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
+import org.ovirt.engine.core.bll.storage.backup.DbEntityCleanupManager;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.utils.ThreadPoolMonitoringService;
 import org.ovirt.engine.core.common.EngineWorkingMode;
@@ -273,6 +274,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         initJobRepository();
 
         serviceLoader.load(JobRepositoryCleanupManager.class);
+
+        serviceLoader.load(DbEntityCleanupManager.class);
 
         serviceLoader.load(AutoRecoveryManager.class);
 

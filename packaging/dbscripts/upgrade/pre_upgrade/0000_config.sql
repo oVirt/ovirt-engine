@@ -113,6 +113,12 @@ select fn_db_add_config_value('EnableVdsLoadBalancing','true','general');
 --Handling Backup Awareness.
 select fn_db_add_config_value('BackupCheckPeriodInHours','6','general');
 select fn_db_add_config_value('BackupAlertPeriodInDays','1','general');
+select fn_db_add_config_value('DbEntitiesCleanupRateInMinutes','10','general');
+select fn_db_add_config_value('SucceededBackupCleanupTimeInMinutes','15','general');
+select fn_db_add_config_value('FailedBackupCleanupTimeInMinutes','30','general');
+select fn_db_add_config_value('SucceededImageTransferCleanupTimeInMinutes','15','general');
+select fn_db_add_config_value('FailedImageTransferCleanupTimeInMinutes','30','general');
+
 --Handling Engine working mode
 select fn_db_add_config_value('EngineMode','Active','general');
 --Handling Use Default Credentials

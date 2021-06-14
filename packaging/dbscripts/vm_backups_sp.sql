@@ -160,3 +160,27 @@ BEGIN
     );
 END;$FUNCTION$
 LANGUAGE plpgsql;
+
+-----------------------------------------------------------
+-- Cleanup backup entities by create time and phase
+-----------------------------------------------------------
+CREATE OR REPLACE FUNCTION DeleteCompletedBackupsOlderThanDate (
+    v_succeeded_end_time TIMESTAMP WITH TIME ZONE,
+    v_failed_end_time TIMESTAMP WITH TIME ZONE
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE
+    FROM vm_backups
+    WHERE (
+            (
+                _create_date < v_succeeded_end_time
+                AND phase = 'Succeeded'
+                )
+            OR (
+                _create_date < v_failed_end_time
+                AND phase = 'Failed'
+                )
+            );
+END;$PROCEDURE$
+LANGUAGE plpgsql;

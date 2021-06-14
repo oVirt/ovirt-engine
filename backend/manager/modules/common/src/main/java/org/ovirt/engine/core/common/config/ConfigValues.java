@@ -1387,6 +1387,21 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     BackupAlertPeriodInDays,
 
+    @TypeConverterAttribute(Integer.class)
+    DbEntitiesCleanupRateInMinutes,
+
+    @TypeConverterAttribute(Integer.class)
+    SucceededBackupCleanupTimeInMinutes,
+
+    @TypeConverterAttribute(Integer.class)
+    FailedBackupCleanupTimeInMinutes,
+
+    @TypeConverterAttribute(Integer.class)
+    SucceededImageTransferCleanupTimeInMinutes,
+
+    @TypeConverterAttribute(Integer.class)
+    FailedImageTransferCleanupTimeInMinutes,
+
     @TypeConverterAttribute(List.class)
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     HostDevicePassthroughCapabilities(ClientAccessLevel.Admin),

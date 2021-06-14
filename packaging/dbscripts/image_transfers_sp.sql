@@ -204,3 +204,27 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+
+-----------------------------------------------------------
+-- Cleanup image transfer entities by last updated time and phase
+-----------------------------------------------------------
+CREATE OR REPLACE FUNCTION DeleteCompletedImageTransfersOlderThanDate (
+    v_succeeded_end_time TIMESTAMP WITH TIME ZONE,
+    v_failed_end_time TIMESTAMP WITH TIME ZONE
+    )
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE
+    FROM image_transfers
+    WHERE (
+            (
+                last_updated < v_succeeded_end_time
+                AND phase = 9
+                )
+            OR (
+                last_updated < v_failed_end_time
+                AND phase = 10
+                )
+            );
+END;$PROCEDURE$
+LANGUAGE plpgsql;

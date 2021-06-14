@@ -137,4 +137,12 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
     public List<ImageTransfer> getAllWithQuery(String query) {
         return getJdbcTemplate().query(query, createEntityRowMapper());
     }
+
+    @Override
+    public void deleteCompletedImageTransfers(Date succeededImageTransfers, Date failedImageTransfers) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("succeeded_end_time", succeededImageTransfers)
+                .addValue("failed_end_time", failedImageTransfers);
+        getCallsHandler().executeModification("DeleteCompletedImageTransfersOlderThanDate", parameterSource);
+    }
 }

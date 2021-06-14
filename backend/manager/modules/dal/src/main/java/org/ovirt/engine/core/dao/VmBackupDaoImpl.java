@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Named;
@@ -109,5 +110,13 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
         return getCallsHandler().executeReadList("GetDisksByVmBackupId",
                 DiskImageDaoImpl.DiskImageRowMapper.instance,
                 getCustomMapSqlParameterSource().addValue("backup_id", backupId));
+    }
+
+    @Override
+    public void deleteCompletedBackups(Date succeededBackups, Date failedBackups) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("succeeded_end_time", succeededBackups)
+                .addValue("failed_end_time", failedBackups);
+        getCallsHandler().executeModification("DeleteCompletedBackupsOlderThanDate", parameterSource);
     }
 }
