@@ -146,7 +146,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
     protected void initImportClonedTemplateDisks() {
         for (DiskImage image : getImages()) {
             // Update the virtual size with value queried from 'qemu-img info'
-            updateDiskSizeByQcowImageInfo(image);
+            updateDiskSizeByQcowImageInfo(image, image.getStorageIds().get(0));
             if (getParameters().isImportAsNewEntity()) {
                 generateNewDiskId(image);
                 updateManagedDeviceMap(image, getVmTemplate().getManagedDeviceMap());
