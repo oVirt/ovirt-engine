@@ -141,6 +141,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
         params.setSkipChecks(true);
         params.setSkipLock(true);
         params.setShouldBeLogged(true);
+        params.setCorrelationId(getCorrelationId());
         return runInternalAction(ActionType.DeactivateStorageDomain, params,
                 ExecutionHandler.createInternalJobContext(getContext()));
     }
