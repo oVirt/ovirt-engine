@@ -266,6 +266,8 @@ public class UploadImageModel extends Model implements ICommandTarget {
     }
 
     public void onUpload() {
+        setConnection(createRequest(), false);
+
         if (flush()) {
             if (getProgress() != null) {
                 return;
@@ -279,14 +281,21 @@ public class UploadImageModel extends Model implements ICommandTarget {
         }
     }
 
-    private void onTest() {
-        String url = AsyncDataProvider.getInstance().getImageioProxyUri() + "/info/"; //$NON-NLS-1$
-        RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, url);
+    private void handleConnectionError(boolean isTest, Throwable ex) {
+        if (isTest) {
+            getTestResponse().getEntityChangedEvent().raise(this, EventArgs.EMPTY);
+            log.severe("Connection to ovirt-imageio-image has failed:" + ex.getMessage()); //$NON-NLS-1$
+        } else {
+            log.info("Failed to initiate ovirt-imageio session for image uploading:" + ex.getMessage()); //$NON-NLS-1$
+        }
+    }
+
+    private void setConnection(RequestBuilder requestBuilder, boolean isTest) {
         try {
             requestBuilder.sendRequest(null, new RequestCallback() {
                 @Override
                 public void onError(Request request, Throwable ex) {
-                    onTestError(ex);
+                    handleConnectionError(isTest, ex);
                 }
 
                 @Override
@@ -294,18 +303,22 @@ public class UploadImageModel extends Model implements ICommandTarget {
                     try {
                         getTestResponse().setEntity(response);
                     } catch (IllegalArgumentException ex) {
-                        onTestError(ex);
+                        handleConnectionError(isTest, ex);
                     }
                 }
             });
         } catch (RequestException ex) {
-            onTestError(ex);
+            handleConnectionError(isTest, ex);
         }
     }
 
-    private void onTestError(Throwable ex) {
-        getTestResponse().getEntityChangedEvent().raise(this, EventArgs.EMPTY);
-        log.severe("Connection to ovirt-imageio-image has failed:" + ex.getMessage()); //$NON-NLS-1$
+    private void onTest() {
+        setConnection(createRequest(), true);
+    }
+
+    private RequestBuilder createRequest() {
+        String url = AsyncDataProvider.getInstance().getImageioProxyUri() + "/info/"; //$NON-NLS-1$
+        return new RequestBuilder(RequestBuilder.GET, url);
     }
 
     public boolean flush() {
