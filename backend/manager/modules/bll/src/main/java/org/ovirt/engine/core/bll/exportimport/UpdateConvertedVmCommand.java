@@ -116,7 +116,8 @@ public class UpdateConvertedVmCommand<T extends ConvertVmParameters> extends VmC
         }
 
         if (newVm.getBiosType() == BiosType.I440FX_SEA_BIOS
-                && getCluster().getBiosType().getChipsetType() == ChipsetType.Q35) {
+                && getCluster().getBiosType().getChipsetType() == ChipsetType.Q35
+                && osRepository.isQ35Supported(newVm.getOsId())) {
             newVm.setBiosType(BiosType.Q35_SEA_BIOS);
         }
 

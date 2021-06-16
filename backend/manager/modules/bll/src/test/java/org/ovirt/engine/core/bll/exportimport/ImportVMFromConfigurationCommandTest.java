@@ -84,7 +84,10 @@ import org.w3c.dom.Element;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implements OvfProperties {
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
-        return Stream.of(MockConfigDescriptor.of(ConfigValues.DefaultGeneralTimeZone, "Etc/GMT"));
+        return Stream.of(
+                MockConfigDescriptor.of(ConfigValues.DefaultGeneralTimeZone, "Etc/GMT"),
+                MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, Version.v4_6, true)
+        );
     }
 
     private Guid vmId = Guid.newGuid();
@@ -170,6 +173,8 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
         when(osRepository.getArchitectureFromOS(anyInt())).thenReturn(ArchitectureType.x86_64);
         when(osRepository.isWindows(anyInt())).thenReturn(false);
         when(osRepository.isSoundDeviceEnabled(anyInt(), any())).thenReturn(true);
+        when(osRepository.isQ35Supported(anyInt())).thenReturn(true);
+        when(osRepository.isSecureBootSupported(anyInt())).thenReturn(true);
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
 
         doReturn(osRepository).when(ovfManager).getOsRepository();

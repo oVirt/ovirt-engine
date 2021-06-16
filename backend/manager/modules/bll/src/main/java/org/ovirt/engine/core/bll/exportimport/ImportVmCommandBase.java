@@ -35,6 +35,7 @@ import org.ovirt.engine.core.bll.utils.CompatibilityVersionUpdater;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmUpdateType;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -153,6 +154,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         updateVmVersion();
+
+        if (!validate(VmValidator.isBiosTypeSupported(getVm().getStaticData(), getCluster(), osRepository))) {
+            return false;
+        }
 
         if (getParameters().getStoragePoolId() != null
                 && !getParameters().getStoragePoolId().equals(getCluster().getStoragePoolId())) {

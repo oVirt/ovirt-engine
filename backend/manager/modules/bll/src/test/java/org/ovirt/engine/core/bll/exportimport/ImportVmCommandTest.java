@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -106,7 +107,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
 
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
-                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false)
+                MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false),
+                MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, Version.v4_6, true)
         );
     }
 
@@ -118,6 +120,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         displayTypeMap.put(osId, new HashMap<>());
         displayTypeMap.get(osId).put(null, Collections.singletonList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
+        when(osRepository.isQ35Supported(anyInt())).thenReturn(true);
+        when(osRepository.isSecureBootSupported(anyInt())).thenReturn(true);
     }
 
     @BeforeEach
@@ -156,10 +160,12 @@ public class ImportVmCommandTest extends BaseCommandTest {
         cluster.setClusterId(cmd.getParameters().getClusterId());
         cluster.setCompatibilityVersion(Version.getLast());
         cluster.setBiosType(BiosType.Q35_SEA_BIOS);
+        cluster.setArchitecture(ArchitectureType.x86_64);
         doReturn(cluster).when(cmd).getCluster();
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void insufficientDiskSpaceWithCollapse() {
         setupDiskSpaceTest();
         doReturn(true).when(cmd).validateImages(any());
@@ -170,6 +176,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void insufficientDiskSpaceWithSnapshots() {
         setupDiskSpaceTest();
         doReturn(true).when(cmd).validateImages(any());
@@ -203,6 +210,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     private void setupCanImportPpcTest() {
         setupDiskSpaceTest();
 
+        cmd.getParameters().getVm().setBiosType(BiosType.I440FX_SEA_BIOS);
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         Cluster cluster = new Cluster();
         cluster.setStoragePoolId(cmd.getParameters().getStoragePoolId());
@@ -214,6 +222,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void refuseSoundDeviceOnPPC() {
         setupCanImportPpcTest();
 
@@ -227,6 +236,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     }
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void lowThresholdStorageSpace() {
         setupDiskSpaceTest();
         doReturn(true).when(cmd).validateImages(any());
@@ -434,6 +444,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     /* Test import images with empty Guid is failing */
 
     @Test
+    @MockedConfig("mockConfiguration")
     public void testEmptyGuidFails() {
         DiskImage diskImage = cmd.getParameters().getVm().getImages().get(0);
         diskImage.setVmSnapshotId(Guid.Empty);
