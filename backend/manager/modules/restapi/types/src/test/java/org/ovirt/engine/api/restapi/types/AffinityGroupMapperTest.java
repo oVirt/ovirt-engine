@@ -316,6 +316,38 @@ public class AffinityGroupMapperTest extends AbstractInvertibleMappingTest<Affin
     }
 
     @Test
+    public void testBrokenRestOutput() {
+        org.ovirt.engine.core.common.scheduling.AffinityGroup entity =
+                new org.ovirt.engine.core.common.scheduling.AffinityGroup();
+        entity.setId(Guid.Empty);
+        entity.setClusterId(Guid.Empty);
+        entity.setVmEnforcing(false);
+        entity.setBroken(true);
+
+        AffinityGroup model = new AffinityGroup();
+
+        AffinityGroupMapper.map(entity, model);
+
+        assertEquals(true, model.isBroken());
+    }
+
+    @Test
+    public void testBrokenNegRestOutput() {
+        org.ovirt.engine.core.common.scheduling.AffinityGroup entity =
+                new org.ovirt.engine.core.common.scheduling.AffinityGroup();
+        entity.setId(Guid.Empty);
+        entity.setClusterId(Guid.Empty);
+        entity.setVmEnforcing(false);
+        entity.setBroken(false);
+
+        AffinityGroup model = new AffinityGroup();
+
+        AffinityGroupMapper.map(entity, model);
+
+        assertEquals(false, model.isBroken());
+    }
+
+    @Test
     public void testVmAffinityDisabledRestOutput() {
         org.ovirt.engine.core.common.scheduling.AffinityGroup entity =
                 new org.ovirt.engine.core.common.scheduling.AffinityGroup();

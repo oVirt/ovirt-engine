@@ -27,6 +27,7 @@ public class AffinityGroupMapper {
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
         model.setDescription(entity.getDescription());
+        model.setBroken(entity.getBroken());
 
         // These two fields are maintained to keep the backwards compatibility
         // with version 4 of the API and will be removed in future.
