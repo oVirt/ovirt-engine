@@ -2161,7 +2161,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 threadsPerCore_EntityChanged(sender, args);
             } else if (sender == getMigrationMode()) {
                 behavior.updateCpuPinningVisibility();
-                behavior.updateHaAvailability();
                 updateTscFrequency();
             } else if (sender == getMigrationPolicies()) {
                 updateMigrationRelatedFields();
@@ -2197,8 +2196,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         } else if (ev.matchesDefinition(ListModel.selectedItemsChangedEventDefinition)) {
             if (sender == getDefaultHost()) {
                 defaultHost_SelectedItemChanged(sender, args);
-                behavior.updateHaAvailability();
-                behavior.updateMigrationAvailability();
                 behavior.updateNumaEnabled();
                 behavior.updateAutoPinning();
                 headlessModeChanged();
@@ -2215,9 +2212,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             } else if (sender == getIsAutoAssign()) {
                 behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
-                behavior.updateHaAvailability();
                 behavior.updateNumaEnabled();
-                behavior.updateMigrationAvailability();
                 behavior.updateAutoPinning();
             } else if (sender == getProvisioning()) {
                 provisioning_SelectedItemChanged(sender, args);
@@ -2230,7 +2225,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                     getProvisioning().setEntity(true);
                 }
             } else if (sender == getIsHighlyAvailable()) {
-                behavior.updateMigrationAvailability();
                 updateResumeBehavior();
             } else if (sender == getIsSubTemplate()) {
                 behavior.isSubTemplateEntityChanged();

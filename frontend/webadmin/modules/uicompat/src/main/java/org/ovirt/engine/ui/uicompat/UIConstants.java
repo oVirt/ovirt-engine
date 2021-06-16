@@ -1671,11 +1671,7 @@ public interface UIConstants extends Constants {
 
     String hostChangeClusterTimeOut();
 
-    String hostNonMigratable();
-
     String noHaWhenHostedEngineUsed();
-
-    String hostIsHa();
 
     String trustedServiceDisabled();
 

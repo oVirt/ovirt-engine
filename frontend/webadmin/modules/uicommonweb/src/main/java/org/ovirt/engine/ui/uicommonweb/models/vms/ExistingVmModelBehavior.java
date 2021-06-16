@@ -104,6 +104,12 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     asyncQuery((QueryReturnValue returnValue) ->
                             setDedicatedHostsNames((List<String>) returnValue.getReturnValue())));
         }
+
+        if (getVm().isHostedEngine()) {
+            getModel().getIsHighlyAvailable().setEntity(false);
+            getModel().getIsHighlyAvailable().setIsChangeable(false);
+            getModel().getIsHighlyAvailable().setChangeProhibitionReason(constants.noHaWhenHostedEngineUsed());
+        }
     }
 
     private void loadDataCenter() {
@@ -503,17 +509,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         updateNumaEnabledHelper();
         if (Boolean.TRUE.equals(getModel().getNumaEnabled().getEntity()) && getModel().getVmNumaNodes() != null) {
             getModel().getNumaNodeCount().setEntity(getModel().getVmNumaNodes().size());
-        }
-    }
-
-    @Override
-    public void updateHaAvailability() {
-        super.updateHaAvailability();
-
-        if (getVm() != null && getVm().isHostedEngine()) {
-            getModel().getIsHighlyAvailable().setEntity(false);
-            getModel().getIsHighlyAvailable().setIsChangeable(false);
-            getModel().getIsHighlyAvailable().setChangeProhibitionReason(constants.noHaWhenHostedEngineUsed());
         }
     }
 
