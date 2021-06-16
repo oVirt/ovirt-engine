@@ -7,54 +7,49 @@
 	compress
 }
 
-"@ENGINE_LOG@/host-deploy"/*.log {
+# ovirt-host-mgmt-ansible-[0-9]*.log matches host update logs. [0-9] matches timestamp, whereas in check-for-updates
+# logs an additional 'check' comes before the timestamp
+# using ctime so that files will be removed 30 days from when their metadata was changed
+"@ENGINE_LOG@/host-deploy/ovirt-host-deploy*.log" "@ENGINE_LOG@/host-deploy/ovirt-enroll-certs*.log"
+"@ENGINE_LOG@/host-deploy/ovirt-host-mgmt-ansible-[0-9]*.log" "@ENGINE_LOG@/ova/*.log" "@ENGINE_LOG@/db-manual/*.log" {
 	monthly
 	missingok
 	compress
 	nocreate
 	rotate 1
+	sharedscripts
+	postrotate
+	    /usr/bin/find @ENGINE_LOG@/host-deploy/ -name "ovirt-host-deploy*.log.*" -type f -ctime +30 -delete
+	    /usr/bin/find @ENGINE_LOG@/host-deploy/ -name "ovirt-enroll-certs*.log.*" -type f -ctime +30 -delete
+	    /usr/bin/find @ENGINE_LOG@/host-deploy/ -name "ovirt-host-mgmt-ansible-[0-9]*.log.*" -type f -ctime +30 -delete
+	    /usr/bin/find @ENGINE_LOG@/ova/ -name "ovirt*.log.*" -type f -ctime +30 -delete
+	endscript
 }
 
-"@ENGINE_LOG@/ansible"/*.log {
-	monthly
-	missingok
-	compress
-	nocreate
-	rotate 1
-}
-
-"@ENGINE_LOG@/ova"/*.log {
-	monthly
-	missingok
-	compress
-	nocreate
-	rotate 1
-}
-
-"@ENGINE_LOG@/dump"/*.hprof {
+"@ENGINE_LOG@/host-deploy/ovirt-host-mgmt-ansible-check*.log" "@ENGINE_LOG@/dump/*.hprof"  {
 	daily
 	missingok
 	compress
 	nocreate
 	rotate 1
+	sharedscripts
+	postrotate
+	    /usr/bin/find @ENGINE_LOG@/host-deploy/ -name "ovirt-host-mgmt-ansible-check*.log.*" -type f -mtime +1 -delete
+	endscript
 }
-"@ENGINE_LOG@/db-manual"/*.log {
+
+"@ENGINE_LOG@/brick-setup/*.log" {
 	monthly
 	missingok
 	compress
 	nocreate
 	rotate 1
+	postrotate
+	    /usr/bin/find @ENGINE_LOG@/brick-setup/ -name "ovirt-gluster-brick*.log.*" -type f -mtime +30 -delete
+	endscript
 }
 
-"@ENGINE_LOG@/brick-setup"/*.log {
-	monthly
-	missingok
-	compress
-	nocreate
-	rotate 1
-}
-
-"@ENGINE_LOG@/cinderlib"/*.log {
+"@ENGINE_LOG@/cinderlib/*.log" {
 	monthly
 	missingok
 	compress

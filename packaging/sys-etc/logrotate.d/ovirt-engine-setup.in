@@ -1,4 +1,4 @@
-"@ENGINE_LOG@/setup/*.log {
+"@ENGINE_LOG@/setup/.log" {
 	monthly
 	missingok
 	compress
