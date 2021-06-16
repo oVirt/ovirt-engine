@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host;
 
 import org.ovirt.engine.ui.common.presenter.AbstractTabbedModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
@@ -12,13 +11,10 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
 
     public interface ViewDef extends AbstractTabbedModelBoundPopupPresenterWidget.ViewDef<HostModel> {
 
-        HasClickHandlers getUpdateHostsButton();
-
         /**
          * Switch to the power management tab.
          */
         void showPowerManagement();
-        void setHostProviderVisibility(boolean visible);
         HasClickHandlers getKernelCmdlineResetButton();
         HasClickHandlers getAddAffinityGroupButton();
         HasClickHandlers getAddAffinityLabelButton();
@@ -32,10 +28,7 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
     @Override
     public void init(final HostModel model) {
         super.init(model);
-        addUpdateHostsListener(model);
         addPowerManagementListener(model);
-        addHostProviderListener(model);
-        addRadioButtonsListeners(model);
         addKernelCmdlineResetListener(model);
         addAddAffinityButtonListeners(model);
     }
@@ -47,21 +40,6 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
     private void addAddAffinityButtonListeners(final HostModel model) {
         registerHandler(getView().getAddAffinityGroupButton().addClickHandler(event -> model.addAffinityGroup()));
         registerHandler(getView().getAddAffinityLabelButton().addClickHandler(event -> model.addAffinityLabel()));
-    }
-
-    private void addRadioButtonsListeners(final HostModel model) {
-        registerHandler(
-                ((HostPopupView)getView()).rbDiscoveredHost.asRadioButton().addClickHandler(event -> {
-                    if (((HostPopupView)getView()).rbDiscoveredHost.asRadioButton().getValue()) {
-                        model.getIsDiscoveredHosts().setEntity(true);
-                    }
-                }));
-        registerHandler(
-                ((HostPopupView)getView()).rbProvisionedHost.asRadioButton().addClickHandler(event -> {
-                    if (((HostPopupView)getView()).rbProvisionedHost.asRadioButton().getValue()) {
-                        model.getIsDiscoveredHosts().setEntity(false);
-                    }
-                }));
     }
 
     private void addPowerManagementListener(final HostModel model) {
@@ -76,15 +54,4 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
         });
     }
 
-    private void addUpdateHostsListener(final HostModel model) {
-        registerHandler(getView().getUpdateHostsButton().addClickHandler(event -> model.getUpdateHostsCommand().execute()));
-    }
-
-    private void addHostProviderListener(final HostModel model) {
-        model.getProviderSearchFilter().getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                getView().setHostProviderVisibility(model.getProviderSearchFilter().getIsAvailable());
-            }
-        });
-    }
 }

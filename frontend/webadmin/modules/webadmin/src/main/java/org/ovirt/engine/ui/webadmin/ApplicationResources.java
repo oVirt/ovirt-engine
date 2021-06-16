@@ -176,9 +176,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/icn_play.png")
     ImageResource runVmImage();
 
-    @Source("images/search_button.png")
-    ImageResource searchButtonImage();
-
     @Source("images/split_up.png")
     ImageResource splitUpImage();
 

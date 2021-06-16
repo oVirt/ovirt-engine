@@ -213,15 +213,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostProviderTabLabel();
 
-    String discoveredHostsLabel();
-
-    String provisionedHostsLabel();
-
     String hostProviderType();
-
-    String hostGroupsLabel();
-
-    String computeResourceLabel();
 
     String computeLabel();
 
@@ -528,11 +520,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostPopupEnableExternalHostProvider();
 
-    String hostPopupExternalHostName();
+    String hostPopupEnableExternalHostProviderHelpMessage();
 
     String hostPopupUpdateHosts();
-
-    String hostPopupProviderSearchFilter();
 
     String hostPopupPmEnabledLabel();
 
@@ -2344,12 +2334,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String checkConnectivityInfoPart1();
 
     String checkConnectivityInfoPart2();
-
-    String providerSearchInfo();
-
-    String provisionedHostInfo();
-
-    String discoveredHostInfoIcon();
 
     String commitChangesInfoPart1();
 

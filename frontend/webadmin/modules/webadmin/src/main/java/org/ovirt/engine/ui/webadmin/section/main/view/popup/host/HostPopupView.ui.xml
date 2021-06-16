@@ -120,15 +120,6 @@
             width: 230px;
         }
 
-        .searchButton {
-            float: right;
-            top: -41px;
-            position: relative;
-            line-height: 30px;
-            width: 30px;
-            height: 26px;
-        }
-
         .searchFilter {
             padding-right: 25px;
         }
@@ -207,46 +198,13 @@
                                 </b:Row>
                                 <b:Row>
                                     <b:Column size="SM_6">
-                                        <ge:EntityModelCheckBoxEditor ui:field="externalHostProviderEnabledEditor" usePatternFly="true"/>
+                                        <ge:EntityModelCheckBoxEditor ui:field="externalHostProviderEnabledEditor" usePatternFly="true"  addStyleNames="{style.inline} {style.floatLeft}"/>
+                                        <d:InfoIcon ui:field="externalHostProviderEnabledEditorInfoIcon" addStyleNames="{style.infoIcon}"/>
                                     </b:Column>
                                     <b:Column size="SM_6">
                                         <e:ListModelListBoxEditor ui:field="providersEditor" usePatternFly="true"/>
                                     </b:Column>
                                 </b:Row>
-                                <b:Row>
-                                    <b:Column size="SM_11" offset="SM_1" ui:field="discoveredHostSection" >
-                                        <ge:EntityModelRadioButtonEditor ui:field="rbDiscoveredHost" label="{constants.discoveredHostsLabel}" addStyleNames="{style.floatLeft}" />
-                                        <d:InfoIcon ui:field="discoveredHostInfoIcon" addStyleNames="{style.infoIcon}" />
-                                    </b:Column>
-                                </b:Row>
-                                <b:Row>
-                                    <b:Column size="SM_11" offset="SM_1" ui:field="provisionedHostSection" >
-                                        <ge:EntityModelRadioButtonEditor ui:field="rbProvisionedHost" label="{constants.provisionedHostsLabel}" addStyleNames="{style.floatLeft}" />
-                                        <d:InfoIcon ui:field="provisionedHostInfoIcon" addStyleNames="{style.infoIcon}" />
-                                    </b:Column>
-                                </b:Row>
-                                <b:Row ui:field="searchProviderRow">
-                                        <e:ListModelListBoxEditor ui:field="externalHostNameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
-                                        <b:Column size="SM_6">
-                                            <l:EnableableFormLabel ui:field="providerSearchFilterLabel" addStyleNames="{style.floatLeft}" />
-                                            <d:InfoIcon ui:field="providerSearchInfoIcon" addStyleNames="{style.infoIcon}" />
-                                        </b:Column>
-                                        <b:Column size="SM_6">
-                                            <ge:StringEntityModelTextBoxEditor ui:field="providerSearchFilterEditor" usePatternFly="true"/>
-                                            <g:Image ui:field="updateHostsButton" addStyleNames="{style.icon} {style.searchButton}" />
-                                        </b:Column>
-                                </b:Row>
-                                <g:FlowPanel ui:field="discoveredHostPanel">
-                                    <b:Row>
-                                        <e:ListModelTypeAheadListBoxEditor ui:field="externalDiscoveredHostsEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                    </b:Row>
-                                    <b:Row>
-                                        <e:ListModelTypeAheadListBoxEditor ui:field="externalHostGroupsEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                    </b:Row>
-                                    <b:Row>
-                                        <e:ListModelTypeAheadListBoxEditor ui:field="externalComputeResourceEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                                    </b:Row>
-                                </g:FlowPanel>
                                 <b:Row addStyleNames="{style.generalTabTopDecorator}" />
                                 <b:Row addStyleNames="{style.topElement}">
                                     <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>

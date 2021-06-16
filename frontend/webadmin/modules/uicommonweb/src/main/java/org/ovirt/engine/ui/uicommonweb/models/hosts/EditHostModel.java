@@ -59,10 +59,6 @@ public class EditHostModel extends HostModel {
     }
 
     @Override
-    protected void updateProvisionedHosts() {
-    }
-
-    @Override
     public boolean showExternalProviderPanel() {
         return true;
     }
