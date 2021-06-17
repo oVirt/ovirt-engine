@@ -34,7 +34,23 @@ public class VmCommonUtils {
      * @return true, if memory is to be hotplugged, false otherwise
      */
     public static boolean isMemoryToBeHotplugged(VM source, VM destination) {
-        return source.getMemSizeMb() < destination.getMemSizeMb();
+        if (source.getMemSizeMb() >= destination.getMemSizeMb()) {
+            return false;
+        }
+        ArchitectureType clusterArch = destination.getClusterArch();
+        if (clusterArch == null) {
+            clusterArch = source.getClusterArch();
+        }
+        if (clusterArch == null) {
+            // Nothing known about the architecture, let's assume it's valid.
+            // If it is not, it will fail later in VM update validation.
+            return true;
+        }
+        final int hotplugMemorySizeFactor = clusterArch.getHotplugMemorySizeFactorMb();
+        if ((destination.getMemSizeMb() - source.getMemSizeMb()) % hotplugMemorySizeFactor == 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
