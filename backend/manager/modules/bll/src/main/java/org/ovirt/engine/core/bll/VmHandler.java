@@ -1351,7 +1351,9 @@ public class VmHandler implements BackendService {
         final List<GraphicsType> graphicsTypes = vmDeviceUtils.getGraphicsTypesOfEntity(srcEntityId);
         final Set<GraphicsType> resultingVmGraphics = getResultingVmGraphics(graphicsTypes, graphicsDevices);
 
-        if (parametersStaticData.getVmType() == VmType.Server && parametersStaticData.getBiosType().isOvmf()) {
+        if (parametersStaticData.getVmType() == VmType.Server &&
+                parametersStaticData.getBiosType() != null &&
+                parametersStaticData.getBiosType().isOvmf()) {
             Set<GraphicsType> bochsGraphics = displayGraphicsSupport.get(DisplayType.bochs);
             if (bochsGraphics != null && bochsGraphics.containsAll(resultingVmGraphics)) {
                 defaultDisplayType = DisplayType.bochs;
