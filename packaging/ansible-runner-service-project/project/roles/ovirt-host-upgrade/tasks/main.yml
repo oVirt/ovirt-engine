@@ -34,7 +34,16 @@
     state: absent
   when: node_host|bool
 
-# Ignoring empty lines and the title "Obsoleting packages"
+- name: Upgrade packages
+  yum:
+    name: '*'
+    state: latest
+  register: updated_packages
+  when: not node_host| bool
+  tags:
+    - skip_ansible_lint # E403
+
+## Ignoring empty lines and the title "Obsoleting packages"
 - name: Upgrade packages
   yum:
     name: "{{ item }}"
@@ -46,7 +55,7 @@
   - updatecheck
   - skip_ansible_lint # E403
   register: updated_packages
-  when: item and item != "Obsoleting"
+  when: node_host| bool
 
 - name: Check if image was updated
   set_fact:

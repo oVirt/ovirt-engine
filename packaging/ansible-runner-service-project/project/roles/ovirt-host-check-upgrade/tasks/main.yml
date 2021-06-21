@@ -1,6 +1,6 @@
 ---
 - name: Check for system updates (remove empty lines) on EL7
-  shell: yum check-update -q --exclude=ansible | grep '[0-9]' | cut -d ' ' -f1 | sed '/^$/d' >> /tmp/yum_updates
+  shell: yum check-update -q --exclude=ansible | grep '^[a-zA-Z0-9\_\-]\+[.][a-zA-Z0-9\_\-]\+' | cut -d ' ' -f1 | sed '/^$/d' >> /tmp/yum_updates
   register: yum_updates_res
   when: el_ver|int == 7
   failed_when: "'rc' in yum_updates_res and yum_updates_res.rc == 1"
@@ -8,8 +8,12 @@
   - updatecheck
   - skip_ansible_lint # E305
 
+# Grep for packages of the following form ensures package name starts at the beginning of a line, contains only
+# valid package name characters, and is made of a valid package name form
+# For example, Packages that will be found: redhat-virtualization-host-image-update.noarch, tar-1.32-6.fc33.x86_64
+# NetworkManager.x86_64, cockpit.x86_64
 - name: Check for system updates (remove empty lines)
-  shell: yum check-update -q --excludepkgs=ansible | grep '[0-9]' | cut -d ' ' -f1 | sed '/^$/d' >> /tmp/yum_updates
+  shell: yum check-update -q | grep '^[a-zA-Z0-9\_\-]\+[.][a-zA-Z0-9\_\-]\+' | cut -d ' ' -f1 | sed '/^$/d' >> /tmp/yum_updates
   register: yum_updates_res
   when: el_ver|int != 7
   failed_when: "'rc' in yum_updates_res and yum_updates_res.rc == 1"
