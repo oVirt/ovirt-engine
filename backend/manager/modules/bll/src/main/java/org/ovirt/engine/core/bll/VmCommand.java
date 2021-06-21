@@ -317,14 +317,18 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected boolean removeMemoryDisks(Snapshot snapshot) {
-        RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(snapshot.getMemoryDiskId());
+        return removeMemoryDisks(snapshot.getMemoryDiskId(), snapshot.getMetadataDiskId());
+    }
+
+    protected boolean removeMemoryDisks(Guid memoryDiskId, Guid metadataDiskId) {
+        RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(memoryDiskId);
         removeMemoryDumpDiskParameters.setShouldBeLogged(false);
         ActionReturnValue retVal = runInternalAction(ActionType.RemoveDisk, removeMemoryDumpDiskParameters);
         if (!retVal.getSucceeded()) {
             return false;
         }
 
-        RemoveDiskParameters removeMemoryMetadataDiskParameters = new RemoveDiskParameters(snapshot.getMetadataDiskId());
+        RemoveDiskParameters removeMemoryMetadataDiskParameters = new RemoveDiskParameters(metadataDiskId);
         removeMemoryMetadataDiskParameters.setShouldBeLogged(false);
         retVal = runInternalAction(ActionType.RemoveDisk, removeMemoryMetadataDiskParameters);
         if (!retVal.getSucceeded()) {

@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StopVmParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.OriginType;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -45,6 +44,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
     @Inject
     private SnapshotDao snapshotDao;
+
     @Inject
     private KubevirtMonitoring kubevirt;
 
@@ -164,7 +164,13 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
             setSucceeded(true);
             return;
         }
+
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
+
+        boolean snapshotContainsMemory = getActiveSnapshot().containsMemory();
+        Guid snapshotMemoryDiskId = getActiveSnapshot().getMemoryDiskId();
+        Guid snapshotMetadataDiskId = getActiveSnapshot().getMetadataDiskId();
+
         suspendedVm = getVm().getStatus() == VMStatus.Suspended;
         if (suspendedVm) {
             endVmCommand();
@@ -172,13 +178,11 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         } else {
             super.executeVmCommand();
         }
-        vmStaticDao.incrementDbGeneration(getVm().getId());
-        removeMemoryDisksIfNeeded(getActiveSnapshot());
-    }
 
-    private void removeMemoryDisksIfNeeded(Snapshot snapshot) {
-        if (snapshot.containsMemory()) {
-            removeMemoryDisks(snapshot);
+        vmStaticDao.incrementDbGeneration(getVm().getId());
+
+        if (snapshotContainsMemory) {
+            removeMemoryDisks(snapshotMemoryDiskId, snapshotMetadataDiskId);
         }
     }
 
