@@ -463,6 +463,7 @@ public enum QueryType implements Serializable {
     GetDefaultConfigurationVersion(QueryAuthType.User),
     GetProductVersion(QueryAuthType.User),
     OsRepository(QueryAuthType.User),
+    GetTimeZones(QueryAuthType.User),
     GetArchitectureCapabilities(QueryAuthType.User),
 
     // Providers

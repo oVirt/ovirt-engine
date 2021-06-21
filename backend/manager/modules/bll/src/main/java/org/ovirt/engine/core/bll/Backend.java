@@ -43,6 +43,7 @@ import org.ovirt.engine.core.bll.storage.backup.DbEntityCleanupManager;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.utils.ThreadPoolMonitoringService;
 import org.ovirt.engine.core.common.EngineWorkingMode;
+import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -69,6 +70,7 @@ import org.ovirt.engine.core.common.utils.EngineThreadPools;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.DateTime;
+import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.DbConnectionUtil;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -87,6 +89,7 @@ import org.ovirt.engine.core.utils.ErrorTranslatorImpl;
 import org.ovirt.engine.core.utils.OsRepositoryImpl;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 import org.ovirt.engine.core.utils.osinfo.OsInfoPreferencesLoader;
+import org.ovirt.engine.core.utils.timezone.TimeZoneReader;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmMigrationProgressMonitoring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -237,6 +240,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         // we need to initialize os-info before the compensations take place because of VmPoolCommandBase#osRepository
         initOsRepository();
+
+        initTimeZones();
 
         // When getting a proxy to this bean using JBoss embedded, the initialize method is called for each method
         // invocation on the proxy, as it is called by setup method which is @PostConstruct - the initialized flag
@@ -670,6 +675,15 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         OsRepository osRepository = OsRepositoryImpl.INSTANCE;
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
         osInfoDao.populateDwhOsInfo(osRepository.getOsNames());
+    }
+
+    private void initTimeZones() {
+        TimeZoneReader.INSTANCE.init(FileSystems.getDefault()
+                .getPath(EngineLocalConfig.getInstance().getEtcDir().getAbsolutePath(),
+                        TimeZoneReader.INSTANCE.DIR_NAME));
+        TimeZoneType.WINDOWS_TIMEZONE.init(TimeZoneReader.INSTANCE.getWindowsTimezones());
+        TimeZoneType.GENERAL_TIMEZONE.init(TimeZoneReader.INSTANCE.getGeneralTimezones());
+        WindowsJavaTimezoneMapping.init(TimeZoneReader.INSTANCE.getWindowsToJavaTimezones());
     }
 
     private void logExecution(String sessionId, String details) {

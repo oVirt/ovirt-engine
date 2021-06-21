@@ -569,7 +569,7 @@ public abstract class OvfReader implements IOvfBuilder {
         fixDiskVmElements();
 
         // due to dependency on vmBase.getOsId() must be read AFTER readOsSection
-        consumeReadProperty(content, TIMEZONE, val -> vmBase.setTimeZone(val), () -> {
+        consumeReadProperty(content, TIMEZONE, val -> vmBase.setTimeZone(mapTimeZone(val)), () -> {
             if (osRepository.isWindows(vmBase.getOsId())) {
                 vmBase.setTimeZone(Config.getValue(ConfigValues.DefaultWindowsTimeZone));
             } else {
@@ -664,6 +664,22 @@ public abstract class OvfReader implements IOvfBuilder {
         readVmInit(content);
     }
 
+    private String mapTimeZone(String timezone) {
+        // changes timezones mappings that existed before and valid only to non-windows, to mappings that is valid to
+        // both non-windows and windows
+        switch (timezone) {
+        case "America/Indianapolis":
+            return "America/New_York";
+        case "US Eastern Standard Time (Indiana)":
+            return "Eastern Standard Time";
+        case "Atlantic/Reykjavik":
+            return "Etc/GMT";
+        case "Iceland Standard Time":
+            return "Greenwich Standard Time";
+        }
+        return timezone;
+    }
+
     protected void consumeReadProperty(XmlNode content, String propertyKey, Consumer<String> then) {
         consumeReadProperty(content, propertyKey, then, null);
     }
@@ -733,7 +749,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 vmInit.setDomain(node.attributes.get("ovf:domain").getValue());
             }
             if (node.attributes.get("ovf:timeZone") != null) {
-                vmInit.setTimeZone(node.attributes.get("ovf:timeZone").getValue());
+                vmInit.setTimeZone(mapTimeZone(node.attributes.get("ovf:timeZone").getValue()));
             }
             if (node.attributes.get("ovf:authorizedKeys") != null) {
                 vmInit.setAuthorizedKeys(escapedNewLines(node.attributes.get("ovf:authorizedKeys").getValue()));

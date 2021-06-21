@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.compat.DayOfWeek;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -157,10 +158,10 @@ public class GlusterVolumeSnapshotModel extends EntityModel<GlusterVolumeEntity>
     }
 
     private void initTimeZones() {
-        Map<String, String> timeZones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
+        Map<String, String> timeZones = AsyncDataProvider.getInstance().getTimezones(TimeZoneType.GENERAL_TIMEZONE);
         getTimeZones().setItems(timeZones.entrySet());
         getTimeZones().setSelectedItem(Linq.firstOrNull(timeZones.entrySet(),
-                item -> item.getValue().startsWith("(GMT) Greenwich"))); //$NON-NLS-1$
+                item -> item.getKey().equals("Etc/GMT"))); //$NON-NLS-1$
     }
 
     public EntityModel<String> getDataCenter() {

@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -157,6 +158,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
+import org.ovirt.engine.core.common.queries.TimeZoneQueryParameters;
+import org.ovirt.engine.core.common.queries.TimeZoneQueryParameters.TimeZoneVerb;
 import org.ovirt.engine.core.common.queries.ValidateVmMacsParameters;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameters;
@@ -234,6 +237,12 @@ public class AsyncDataProvider {
 
     // cached OS names
     private Map<Integer, String> osNames;
+
+    // cached general timezones
+    private Map<String, String> generalTimezones;
+
+    // cached windows timezones
+    private Map<String, String> windowsTimezones;
 
     // OS default icons
     private Map<Integer, VmIconIdSizePair> osIdToDefaultIconIdMap;
@@ -321,6 +330,7 @@ public class AsyncDataProvider {
     public void initCache(final LoginModel loginModel) {
         cacheConfigValues(new AsyncQuery<>(returnValue -> getDefaultConfigurationVersion(loginModel)));
         initOsNames();
+        initTimezones();
         initOsDefaultIconIds();
         initUniqueOsNames();
         initLinuxOsTypes();
@@ -2427,6 +2437,26 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetOsNames),
                 new AsyncQuery<QueryReturnValue>(returnValue -> osNames = returnValue.getReturnValue()));
+    }
+
+    private void initTimezones() {
+        Frontend.getInstance().runQuery(QueryType.GetTimeZones,
+                new TimeZoneQueryParameters(TimeZoneVerb.GetGeneralTimezones),
+                new AsyncQuery<QueryReturnValue>(returnValue -> generalTimezones = returnValue.getReturnValue()));
+
+        Frontend.getInstance().runQuery(QueryType.GetTimeZones,
+                new TimeZoneQueryParameters(TimeZoneVerb.GetWindowsTimezones),
+                new AsyncQuery<QueryReturnValue>(returnValue -> windowsTimezones = returnValue.getReturnValue()));
+    }
+
+    public Map<String, String> getTimezones(TimeZoneType timeZoneType) {
+        switch (timeZoneType) {
+            case GENERAL_TIMEZONE:
+                return generalTimezones;
+            case WINDOWS_TIMEZONE:
+            default:
+                return windowsTimezones;
+        }
     }
 
     private void initOsDefaultIconIds() {

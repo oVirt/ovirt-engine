@@ -1056,6 +1056,7 @@ fi
 %{engine_etc}/branding/00-ovirt.brand
 %{engine_etc}/engine.conf.d/
 %{engine_etc}/cinderlib/
+%{engine_etc}/timezones/
 %config %{engine_data}/cinderlib/logger.conf
 %config %attr(0700,%{engine_user},%{engine_group}) %{engine_etc}/cinderlib/ssh_known_hosts
 
@@ -1103,6 +1104,7 @@ fi
 %dir %{engine_data}/ui-plugins
 %dir %{engine_ear}
 %{engine_data}/conf/osinfo-defaults.properties
+%{engine_data}/conf/timezones-defaults.properties
 %{engine_data}/conf/sysprep/
 %{engine_data}/files/
 %{engine_data}/icons/

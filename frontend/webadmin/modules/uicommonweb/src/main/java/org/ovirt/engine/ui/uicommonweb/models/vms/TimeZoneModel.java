@@ -20,7 +20,7 @@ public class TimeZoneModel {
 
     static {
         for (TimeZoneType timeZoneType : TimeZoneType.values()) {
-            mapListModels(timeZoneType, timeZoneType.getTimeZoneList());
+            mapListModels(timeZoneType, AsyncDataProvider.getInstance().getTimezones(timeZoneType));
         }
     }
 
@@ -54,13 +54,13 @@ public class TimeZoneModel {
         if (isDefault()) {
             String defaultTimeZoneKey = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(timeZoneType.getDefaultTimeZoneConfigurationKey());
             // check if default timezone is correct
-            if (!timeZoneType.getTimeZoneList().containsKey(defaultTimeZoneKey)) {
+            if (!AsyncDataProvider.getInstance().getTimezones(timeZoneType).containsKey(defaultTimeZoneKey)) {
                 // if not show GMT
                 defaultTimeZoneKey = timeZoneType.getUltimateFallback();
             }
-            return timeZoneType.getTimeZoneList().get(defaultTimeZoneKey);
+            return AsyncDataProvider.getInstance().getTimezones(timeZoneType).get(defaultTimeZoneKey);
         } else {
-            return timeZoneType.getTimeZoneList().get(timeZoneKey);
+            return AsyncDataProvider.getInstance().getTimezones(timeZoneType).get(timeZoneKey);
         }
     }
 }

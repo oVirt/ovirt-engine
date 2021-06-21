@@ -215,15 +215,15 @@ public class VmInitModel extends Model {
         getCustomScript().setEntity("");
         getActiveDirectoryOU().setEntity("");
 
-        Map<String, String> timezones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
+        Map<String, String> timezones = AsyncDataProvider.getInstance().getTimezones(TimeZoneType.GENERAL_TIMEZONE);
         getTimeZoneList().setItems(timezones.entrySet());
         getTimeZoneList().setSelectedItem(Linq.firstOrNull(timezones.entrySet(),
-                item -> item.getValue().startsWith("(GMT) Greenwich"))); //$NON-NLS-1$
+                item -> item.getKey().equals("Etc/GMT"))); //$NON-NLS-1$
 
-        Map<String, String> windowsTimezones = TimeZoneType.WINDOWS_TIMEZONE.getTimeZoneList();
+        Map<String, String> windowsTimezones = AsyncDataProvider.getInstance().getTimezones(TimeZoneType.WINDOWS_TIMEZONE);
         getWindowsSysprepTimeZone().setItems(windowsTimezones.entrySet());
         getWindowsSysprepTimeZone().setSelectedItem(Linq.firstOrNull(windowsTimezones.entrySet(),
-                item -> item.getValue().startsWith("(GMT) Greenwich"))); //$NON-NLS-1$
+                item -> item.getKey().equals("GMT Standard Time"))); //$NON-NLS-1$
 
         isWindowsOS = vm != null ? AsyncDataProvider.getInstance().isWindowsOsType(vm.getOsId()) : true;
 

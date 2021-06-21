@@ -1,0 +1,9 @@
+timezones configuration directory
+
+Only *.properties are considered.
+
+Files are sorted by name, last wins.
+
+Product defaults is available at 00-defaults.properties.
+
+Create your own configuration to override product defaults.

@@ -1034,7 +1034,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 }
 
                 if (schedule.getRecurrence() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN) {
-                    Map<String, String> timeZones = TimeZoneType.GENERAL_TIMEZONE.getTimeZoneList();
+                    Map<String, String> timeZones = AsyncDataProvider.getInstance().getTimezones(TimeZoneType.GENERAL_TIMEZONE);
                     snapshotModel.getTimeZones().setSelectedItem(Linq.firstOrNull(timeZones.entrySet(),
                             item -> item.getKey().startsWith(schedule.getTimeZone())));
                 }

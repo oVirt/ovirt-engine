@@ -530,6 +530,8 @@ install-layout: \
 
 	ln -sf "$(DATA_DIR)/conf/osinfo-defaults.properties" "$(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d/00-defaults.properties"
 
+	ln -sf "$(DATA_DIR)/conf/timezones-defaults.properties" "$(DESTDIR)$(PKG_SYSCONF_DIR)/timezones/00-defaults.properties"
+
 gwt-debug:
 	$(MVN) -pl "frontend/webadmin/modules/webadmin" \
 		$(DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS) \

@@ -124,7 +124,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                 _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "domain", vmInit.getDomain());
             }
             if (vmInit.getTimeZone() != null) {
-                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "timeZone", vmInit.getTimeZone());
+                _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "timeZone", mapTimeZone(vmInit.getTimeZone()));
             }
             if (vmInit.getAuthorizedKeys() != null) {
                 _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "authorizedKeys", escapeNewLines(vmInit.getAuthorizedKeys()));
@@ -224,7 +224,7 @@ public abstract class OvfWriter implements IOvfBuilder {
 
         _writer.writeElement(NUM_OF_IOTHREADS, String.valueOf(vmBase.getNumOfIoThreads()));
 
-        _writer.writeElement(TIMEZONE, vmBase.getTimeZone());
+        _writer.writeElement(TIMEZONE, mapTimeZone(vmBase.getTimeZone()));
         _writer.writeElement(DEFAULT_BOOT_SEQUENCE, String.valueOf(vmBase.getDefaultBootSequence().getValue()));
 
         if (!StringUtils.isBlank(vmBase.getInitrdUrl())) {
@@ -401,6 +401,18 @@ public abstract class OvfWriter implements IOvfBuilder {
         if (deviceId != null && vmDevice != null && vmDevice.getAddress() != null) {
             writeVmDeviceInfo(vmDevice);
         }
+    }
+
+    private String mapTimeZone(String timezone) {
+        // map non-windows timezone that was added in 4.4.8 and didn't existed before to known timezone
+        // to support importing OVA in older versions from exported version >= 4.4.8
+        if (timezone != null) {
+            switch (timezone) {
+                case "Atlantic/South_Georgia":
+                    return "Etc/GMT";
+            }
+        }
+        return timezone;
     }
 
     private void writeOtherDevices() {
