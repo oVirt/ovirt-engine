@@ -59,7 +59,6 @@ public class WindowsJavaTimezoneMapping {
             { "Turkey Standard Time", "Europe/Istanbul"} };
 
     private static final Map<String, String> windowsToJava = new HashMap<>();
-    private static final Map<String, String> javaToWindows = new HashMap<>();
 
     static {
         for (String[] zone : zones) {
@@ -67,7 +66,6 @@ public class WindowsJavaTimezoneMapping {
             String java = zone[1];
 
             windowsToJava.put(win, java);
-            javaToWindows.put(java, win);
         }
     }
 
