@@ -13,24 +13,11 @@ RETURNS void AS $PROCEDURE$
 DECLARE v_sql TEXT;
 
 BEGIN
-    IF (
-            NOT EXISTS (
-                SELECT 1
-                FROM information_schema.columns
-                WHERE table_schema = 'public'
-                    AND table_name ilike v_table
-                    AND column_name ilike v_column
-                )
-            ) THEN
-    BEGIN
-        v_sql := 'ALTER TABLE ' || v_table || ' ADD COLUMN ' || v_column || ' ' || v_column_def;
-
+        v_sql := 'ALTER TABLE ' || v_table || ' ADD COLUMN IF NOT EXISTS ' || v_column || ' ' || v_column_def;
         EXECUTE v_sql;
-    END;
-END
 
-IF ;END;$PROCEDURE$
-    LANGUAGE plpgsql;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
 
 -- delete a column from a table and all its dependencied
 CREATE OR REPLACE FUNCTION fn_db_drop_column (
@@ -41,25 +28,8 @@ RETURNS void AS $PROCEDURE$
 DECLARE v_sql TEXT;
 
 BEGIN
-    IF (
-            EXISTS (
-                SELECT 1
-                FROM information_schema.columns
-                WHERE table_schema = 'public'
-                    AND table_name ilike v_table
-                    AND column_name ilike v_column
-                )
-            ) THEN
-    BEGIN
-        v_sql := 'ALTER TABLE ' || v_table || ' DROP COLUMN ' || v_column;
-
+        v_sql := 'ALTER TABLE ' || v_table || ' DROP COLUMN IF EXISTS ' || v_column;
         EXECUTE v_sql;
-    END;
-    ELSE
-        RAISE EXCEPTION 'Table % or Column % does not exist.',
-            v_table,
-            v_column;
-    END IF;
 
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -404,13 +374,7 @@ LANGUAGE plpgsql;
     RETURNS void AS $PROCEDURE$
 
     BEGIN
-        IF EXISTS (
-                SELECT 1
-                FROM pg_constraint
-                WHERE conname ilike v_constraint
-                ) THEN
-            EXECUTE 'ALTER TABLE ' || v_table || ' DROP CONSTRAINT ' || v_constraint || ' CASCADE';
-        END IF;
+            EXECUTE 'ALTER TABLE ' || v_table || ' DROP CONSTRAINT IF EXISTS ' || v_constraint || ' CASCADE';
 
     END;$PROCEDURE$
     LANGUAGE plpgsql;
