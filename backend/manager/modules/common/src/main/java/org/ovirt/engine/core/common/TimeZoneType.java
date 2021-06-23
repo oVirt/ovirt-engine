@@ -18,23 +18,21 @@ public enum TimeZoneType {
         @Override
         protected Map<String, String> initializeTimeZoneList() {
             Map<String, String> generalTimeZones = new HashMap<>();
-            generalTimeZones.put("Etc/GMT", "(GMT+00:00) GMT Standard Time");
+            generalTimeZones.put("Etc/GMT", "(GMT+00:00) Greenwich Standard Time");
             generalTimeZones.put("Asia/Kabul", "(GMT+04:30) Afghanistan Standard Time");
             generalTimeZones.put("America/Anchorage", "(GMT-09:00) Alaskan Standard Time");
             generalTimeZones.put("Asia/Riyadh", "(GMT+03:00) Arab Standard Time");
             generalTimeZones.put("Asia/Dubai", "(GMT+04:00) Arabian Standard Time");
             generalTimeZones.put("Asia/Baghdad", "(GMT+03:00) Arabic Standard Time");
             generalTimeZones.put("America/Halifax", "(GMT-04:00) Atlantic Standard Time");
-            // generalTimeZones.put("Asia/Baku", "(GMT+04:00) Azerbaijan Standard Time"); // Not in Sysprep documentation
             generalTimeZones.put("Atlantic/Azores", "(GMT-10:00) Azores Standard Time");
             generalTimeZones.put("America/Regina", "(GMT-06:00) Canada Central Standard Time");
             generalTimeZones.put("Atlantic/Cape_Verde", "(GMT-01:00) Cape Verde Standard Time");
             generalTimeZones.put("Asia/Yerevan", "(GMT+04:00) Caucasus Standard Time");
             generalTimeZones.put("Australia/Adelaide", "(GMT+09:30) Cen. Australia Standard Time");
-            generalTimeZones.put("Australia/Darwin", "(GMT+09:30) Cen. Australia Standard Time");
+            generalTimeZones.put("Australia/Darwin", "(GMT+09:30) AUS Central Standard Time");
             generalTimeZones.put("America/Guatemala", "(GMT-06:00) Central America Standard Time");
-            generalTimeZones.put("Asia/Almaty", "(GMT+06:00) Central Asia Standard Time");
-            // generalTimeZones.put("America/Cuiaba", "(GMT-04:00) Central Brazilian Standard Time "); // Not in Sysprep documentation
+            generalTimeZones.put("Asia/Dhaka", "(GMT+06:00) Central Asia Standard Time");
             generalTimeZones.put("Europe/Budapest", "(GMT+01:00) Central Europe Standard Time");
             generalTimeZones.put("Europe/Warsaw", "(GMT+01:00) Central European Standard Time");
             generalTimeZones.put("Pacific/Guadalcanal", "(GMT+11:00) Central Pacific Standard Time");
@@ -53,7 +51,7 @@ public enum TimeZoneType {
             generalTimeZones.put("Pacific/Fiji", "(GMT+12:00) Fiji Standard Time");
             generalTimeZones.put("Europe/Helsinki", "(GMT+02:00) FLE Standard Time");
             generalTimeZones.put("Asia/Tbilisi", "(GMT+04:00) Georgian Standard Time");
-            generalTimeZones.put("Europe/London", "(GMT+00:00) London Standard Time"); // Updated display name
+            generalTimeZones.put("Europe/London", "(GMT+00:00) GMT Standard Time");
             generalTimeZones.put("America/Godthab", "(GMT-03:00) Greenland Standard Time");
             generalTimeZones.put("Atlantic/Reykjavik", "(GMT+00:00) Iceland Standard Time"); // Updated display name
             generalTimeZones.put("Europe/Bucharest", "(GMT+02:00) GTB Standard Time");
@@ -62,7 +60,6 @@ public enum TimeZoneType {
             generalTimeZones.put("Asia/Tehran", "(GMT+03:30) Iran Standard Time");
             generalTimeZones.put("Asia/Jerusalem", "(GMT+02:00) Israel Standard Time");
             generalTimeZones.put("Asia/Seoul", "(GMT+09:00) Korea Standard Time");
-            // generalTimeZones.put("(GMT-02:00) Mid-Atlantic Standard Time", 75); // Not in Unicode CLDR list
             generalTimeZones.put("America/Denver", "(GMT-07:00) Mountain Standard Time");
             generalTimeZones.put("Asia/Rangoon", "(GMT+06:30) Myanmar Standard Time");
             generalTimeZones.put("Asia/Novosibirsk", "(GMT+06:00) N. Central Asia Standard Time");
@@ -75,7 +72,7 @@ public enum TimeZoneType {
             generalTimeZones.put("America/Los_Angeles", "(GMT-08:00) Pacific Standard Time");
             generalTimeZones.put("Europe/Paris", "(GMT+01:00) Romance Standard Time");
             generalTimeZones.put("Europe/Moscow", "(GMT+03:00) Russian Standard Time");
-            generalTimeZones.put("America/Cayenne", "(GMT-03:00) SA Eastern Standard Time");
+            generalTimeZones.put("America/Buenos_Aires", "(GMT-03:00) SA Eastern Standard Time");
             generalTimeZones.put("America/Bogota", "(GMT-05:00) SA Pacific Standard Time");
             generalTimeZones.put("America/La_Paz", "(GMT-04:00) SA Western Standard Time");
             generalTimeZones.put("Pacific/Apia", "(GMT-11:00) Samoa Standard Time");
@@ -88,7 +85,7 @@ public enum TimeZoneType {
             generalTimeZones.put("Asia/Tokyo", "(GMT+09:00) Tokyo Standard Time");
             generalTimeZones.put("Pacific/Tongatapu", "(GMT+13:00) Tonga Standard Time");
             generalTimeZones.put("America/Indianapolis", "(GMT-05:00) US Eastern Standard Time (Indiana)"); // Updated display name
-            generalTimeZones.put("America/Phoenix", "(GMT-07:00) US Mountain Standard Time (Arizona)"); // Updated display name
+            generalTimeZones.put("America/Phoenix", "(GMT-07:00) US Mountain Standard Time");
             generalTimeZones.put("Asia/Vladivostok", "(GMT+10:00) Vladivostok Standard Time");
             generalTimeZones.put("Australia/Perth", "(GMT+08:00) W. Australia Standard Time");
             generalTimeZones.put("Africa/Lagos", "(GMT+01:00) W. Central Africa Standard Time");
@@ -96,7 +93,7 @@ public enum TimeZoneType {
             generalTimeZones.put("Asia/Tashkent", "(GMT+05:00) West Asia Standard Time");
             generalTimeZones.put("Pacific/Port_Moresby", "(GMT+10:00) West Pacific Standard Time");
             generalTimeZones.put("Asia/Yakutsk", "(GMT+09:00) Yakutsk Standard Time");
-            generalTimeZones.put("America/Caracas", "(GMT-04:30) Venezuelan Standard Time");
+            generalTimeZones.put("America/Caracas", "(GMT-04:30) Venezuela Standard Time");
             generalTimeZones.put("Europe/Istanbul", "(GMT+03:00) Turkey Standard Time");
             generalTimeZones.put("Australia/Sydney", "(GMT+10:00) AUS Eastern Standard Time");
 
@@ -184,7 +181,7 @@ public enum TimeZoneType {
             windowsTimeZones.put("Venezuela Standard Time", "(GMT-04:30) Venezuela Standard Time");
             windowsTimeZones.put("Turkey Standard Time", "(GMT+03:00) Turkey Standard Time");
             windowsTimeZones.put("AUS Eastern Standard Time", "(GMT+10:00) AUS Eastern Standard Time");
-
+            windowsTimeZones.put("AUS Central Standard Time", "(GMT+09:30) AUS Central Standard Time");
             return sortMapByValue(windowsTimeZones);
         }
     };

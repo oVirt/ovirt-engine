@@ -21,23 +21,23 @@ public class WindowsJavaTimezoneMapping {
             { "Central Europe Standard Time", "Europe/Budapest" },
             { "Central European Standard Time", "Europe/Warsaw" },
             { "Central Pacific Standard Time", "Pacific/Guadalcanal" }, { "Central Standard Time", "America/Chicago" },
-            { "Central Standard Time", "America/Mexico_City" }, { "China Standard Time", "Asia/Shanghai" },
+            { "China Standard Time", "Asia/Shanghai" },
             { "Central Standard Time (Mexico)", "America/Mexico_City" },
             { "Dateline Standard Time", "Etc/GMT+12" }, { "E. Africa Standard Time", "Africa/Nairobi" },
-            { "E. Australia Standard Time", "Australia/Brisbane" }, { "E. Europe Standard Time", "Europe/Minsk" },
+            { "E. Australia Standard Time", "Australia/Brisbane" }, { "E. Europe Standard Time", "Asia/Nicosia" },
             { "E. South America Standard Time", "America/Sao_Paulo" }, { "Eastern Standard Time", "America/New_York" },
             { "Egypt Standard Time", "Africa/Cairo" }, { "Ekaterinburg Standard Time", "Asia/Yekaterinburg" },
             { "FLE Standard Time", "Europe/Helsinki" }, { "Fiji Standard Time", "Pacific/Fiji" },
-            { "GMT Standard Time", "Europe/London" }, { "GTB Standard Time", "Europe/Istanbul" },
+            { "GMT Standard Time", "Europe/London" }, { "GTB Standard Time", "Europe/Bucharest" },
             { "Georgian Standard Time", "Asia/Tbilisi" }, { "Greenland Standard Time", "America/Godthab" },
-            { "Greenwich Standard Time", "Africa/Reykjavik" }, { "Hawaiian Standard Time", "Pacific/Honolulu" },
+            { "Greenwich Standard Time", "Etc/GMT" }, { "Hawaiian Standard Time", "Pacific/Honolulu" },
             { "India Standard Time", "Asia/Calcutta" }, { "Iran Standard Time", "Asia/Tehran" },
             { "Israel Standard Time", "Asia/Jerusalem" }, { "Jordan Standard Time", "Asia/Amman" },
             { "Korea Standard Time", "Asia/Seoul" }, { "Mauritius Standard Time", "Indian/Mauritius" },
-            { "Mexico Standard Time", "America/Mexico_City" }, { "Mexico Standard Time", "America/Chihuahua" },
+            { "Mexico Standard Time", "America/Mexico_City" },
             { "Mid-Atlantic Standard Time", "Atlantic/South_Georgia" }, { "Middle East Standard Time", "Asia/Beirut" },
             { "Montevideo Standard Time", "America/Montevideo" }, { "Morocco Standard Time", "Africa/Casablanca" },
-            { "Mountain Standard Time", "America/Denver" }, { "Mountain Standard Time", "America/Chihuahua" },
+            { "Mountain Standard Time", "America/Denver" },
             { "Myanmar Standard Time", "Asia/Rangoon" }, { "N. Central Asia Standard Time", "Asia/Novosibirsk" },
             { "Namibia Standard Time", "Africa/Windhoek" }, { "Nepal Standard Time", "Asia/Katmandu" },
             { "New Zealand Standard Time", "Pacific/Auckland" }, { "Newfoundland Standard Time", "America/St_Johns" },
@@ -56,7 +56,7 @@ public class WindowsJavaTimezoneMapping {
             { "W. Australia Standard Time", "Australia/Perth" }, { "W. Central Africa Standard Time", "Africa/Lagos" },
             { "W. Europe Standard Time", "Europe/Berlin" }, { "West Asia Standard Time", "Asia/Tashkent" },
             { "West Pacific Standard Time", "Pacific/Port_Moresby" }, { "Yakutsk Standard Time", "Asia/Yakutsk" },
-            { "Turkey Standard Time", "Europe/Istanbul"} };
+            { "Turkey Standard Time", "Europe/Istanbul"}};
 
     private static final Map<String, String> windowsToJava = new HashMap<>();
 
