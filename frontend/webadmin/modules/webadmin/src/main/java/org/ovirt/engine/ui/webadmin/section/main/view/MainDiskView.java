@@ -174,7 +174,7 @@ public class MainDiskView extends AbstractMainWithDetailsTableView<Disk, DiskLis
                 "125px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
-                storageDomainsColumn, constants.storageDomainsDisk(), images || managedBlock,
+                storageDomainsColumn, constants.storageDomainsDisk(), all || images || managedBlock,
                 "180px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
