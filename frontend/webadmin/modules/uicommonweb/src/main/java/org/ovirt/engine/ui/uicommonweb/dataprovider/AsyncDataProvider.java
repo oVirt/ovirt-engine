@@ -36,9 +36,6 @@ import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
-import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
-import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.Label;
@@ -126,7 +123,6 @@ import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetConnectionsByDataCenterAndStorageTypeParameters;
 import org.ovirt.engine.core.common.queries.GetCpuByFlagsParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
-import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
 import org.ovirt.engine.core.common.queries.GetHostsForStorageOperationParameters;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.GetManagedBlockStorageDomainsByDriversParameters;
@@ -2147,45 +2143,6 @@ public class AsyncDataProvider {
 
             return list;
         }
-    }
-
-    public void getExternalProviderHostList(AsyncQuery<List<VDS>> aQuery,
-            Guid providerId,
-            boolean filterOutExistingHosts,
-            String searchFilter) {
-        aQuery.converterCallback = new ListConverter<>();
-        GetHostListFromExternalProviderParameters params = new GetHostListFromExternalProviderParameters();
-        params.setFilterOutExistingHosts(filterOutExistingHosts);
-        params.setProviderId(providerId);
-        params.setSearchFilter(searchFilter);
-        Frontend.getInstance().runQuery(QueryType.GetHostListFromExternalProvider,
-                params,
-                aQuery);
-    }
-
-    public void getExternalProviderDiscoveredHostList(AsyncQuery<List<ExternalDiscoveredHost>> aQuery,
-            Provider provider) {
-        aQuery.converterCallback = new ListConverter<>();
-        ProviderQueryParameters params = new ProviderQueryParameters();
-        params.setProvider(provider);
-        Frontend.getInstance().runQuery(QueryType.GetDiscoveredHostListFromExternalProvider, params, aQuery);
-    }
-
-    public void getExternalProviderHostGroupList(AsyncQuery<List<ExternalHostGroup>> aQuery, Provider provider) {
-        aQuery.converterCallback = new ListConverter<>();
-
-        ProviderQueryParameters params = new ProviderQueryParameters();
-        params.setProvider(provider);
-        Frontend.getInstance().runQuery(QueryType.GetHostGroupsFromExternalProvider, params, aQuery);
-    }
-
-    public void getExternalProviderComputeResourceList(AsyncQuery<List<ExternalComputeResource>> aQuery,
-            Provider provider) {
-        aQuery.converterCallback = new ListConverter<>();
-
-        ProviderQueryParameters params = new ProviderQueryParameters();
-        params.setProvider(provider);
-        Frontend.getInstance().runQuery(QueryType.GetComputeResourceFromExternalProvider, params, aQuery);
     }
 
     public void getAllProvidersByProvidedEntity(AsyncQuery<List<Provider<?>>> query,
