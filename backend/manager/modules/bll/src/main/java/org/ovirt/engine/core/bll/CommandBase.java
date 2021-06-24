@@ -525,8 +525,8 @@ public abstract class CommandBase<T extends ActionParametersBase>
             } catch (TransactionRolledbackLocalException e) {
                 log.info("endAction: Transaction was aborted in {}", this.getClass().getName());
             } finally {
-                endStepsAndJobIfNeeded();
                 freeLockEndAction();
+                endStepsAndJobIfNeeded();
                 // NOTE: this update persists updates made during the endSuccessfully()/endWithFailure() execution.
                 // The update is done intentionally after the freeLock() call, change with care.
                 updateCommandIfNeeded();
