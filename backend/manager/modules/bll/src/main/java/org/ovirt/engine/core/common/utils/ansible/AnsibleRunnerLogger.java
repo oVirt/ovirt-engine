@@ -77,8 +77,10 @@ public class AnsibleRunnerLogger {
     }
 
     private void write(String str, Object... params) {
-        try {
+        if (params != null && params.length > 0) {
             str = String.format(str, params);
+        }
+        try {
             Files.write(logFile, str.getBytes(), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
             Files.write(logFile, NEW_LINE.getBytes(), StandardOpenOption.APPEND);
         } catch (IOException ex) {
