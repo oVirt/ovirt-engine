@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -74,6 +75,21 @@ public class SnapshotVmConfigurationHelper {
         vmHandler.updateDisksForVm(vm, vm.getImages());
 
         return vm;
+    }
+
+    /**
+     * Retrieves and returns VM static next run configuration if it exists.
+     *
+     * @param vmId id of the VM
+     * @return VM static next run configuration, or null if it doesn't exist
+     */
+    public VmStatic getVmStaticFromNextRunConfiguration(Guid vmId) {
+        final Snapshot snapshot = snapshotDao.get(vmId, Snapshot.SnapshotType.NEXT_RUN);
+        if (snapshot == null) {
+            return null;
+        }
+        final VM vm = getVmFromConfiguration(snapshot);
+        return vm.getStaticData();
     }
 
     private VM getVmWithConfiguration(String configuration, Guid vmId) {

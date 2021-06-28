@@ -6,11 +6,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HotUnplugMemoryParameters;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -27,9 +24,6 @@ public class HotUnplugMemoryCommand<P extends HotUnplugMemoryParameters> extends
 
     @Inject
     private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
-
-    @Inject
-    private SnapshotDao snapshotDao;
 
     public HotUnplugMemoryCommand(P parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -79,7 +73,8 @@ public class HotUnplugMemoryCommand<P extends HotUnplugMemoryParameters> extends
     }
 
     private void updateNextRunConfiguration(int memoryAfterHotUnplugMb, int minMemoryAfterHotUnplugMb) {
-        final VmStatic nextRunConfigurationStatic = getNextRunConfiguration();
+        final VmStatic nextRunConfigurationStatic = snapshotVmConfigurationHelper
+                .getVmStaticFromNextRunConfiguration(getVmId());
         if (nextRunConfigurationStatic == null) {
             return;
         }
@@ -95,15 +90,6 @@ public class HotUnplugMemoryCommand<P extends HotUnplugMemoryParameters> extends
                     getVm(), nextRunConfigurationStatic, null, getCompensationContext());
             return null;
         });
-    }
-
-    private VmStatic getNextRunConfiguration() {
-        final Snapshot snapshot = snapshotDao.get(getVmId(), Snapshot.SnapshotType.NEXT_RUN);
-        if (snapshot == null) {
-            return null;
-        }
-        final VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(snapshot);
-        return vm.getStaticData();
     }
 
     @Override

@@ -1436,10 +1436,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     MaxMemorySlots,
 
-    /** User can only hot plug multiples of this value. */
-    @TypeConverterAttribute(Integer.class)
-    HotPlugMemoryBlockSizeMb,
-
     @TypeConverterAttribute(String.class)
     HostedEngineVmName,
 

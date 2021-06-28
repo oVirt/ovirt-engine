@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.IconUtils;
@@ -85,8 +86,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -187,6 +186,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
     @Inject
     private AffinityValidator affinityValidator;
+    @Inject
+    private SnapshotVmConfigurationHelper snapshotVmConfigurationHelper;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -565,18 +566,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (VmCommonUtils.isMemoryToBeHotplugged(getVm(), newVm)) {
             // Temporarily setting to the currentMemory. It will be increased in hotPlugMemory().
             newVmStatic.setMemSizeMb(currentMemory);
-
-            final int memoryAddedMb = newAmountOfMemory - currentMemory;
-            final int factor = Config.<Integer>getValue(ConfigValues.HotPlugMemoryBlockSizeMb);
-            final boolean memoryDividable = memoryAddedMb % factor == 0;
-            if (!memoryDividable) {
-                addCustomValue("memoryAdded", String.valueOf(memoryAddedMb));
-                addCustomValue("requiredFactor", String.valueOf(factor));
-                auditLogDirector.log(this, AuditLogType.FAILED_HOT_SET_MEMORY_NOT_DIVIDABLE);
-                return;
-            }
-
-            hotPlugMemory(memoryAddedMb);
+            hotPlugMemory(newAmountOfMemory - currentMemory);
 
             // Hosted engine VM does not care if hotplug failed. The requested memory size is serialized
             // into the OVF store and automatically used during the next HE VM start
@@ -1186,6 +1176,32 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        final int memorySizeChangeMb = vmFromParams.getMemSizeMb() - vmFromDB.getMemSizeMb();
+        if (isHotSetEnabled() && getVm().getStatus() != VMStatus.Down) {
+            if (getVm().isNextRunConfigurationExists()) {
+                final VmStatic nextRunConfigurationStatic = snapshotVmConfigurationHelper
+                        .getVmStaticFromNextRunConfiguration(getVmId());
+                if (nextRunConfigurationStatic != null
+                        && vmFromParams.getMemSizeMb() != nextRunConfigurationStatic.getMemSizeMb()
+                        && nextRunConfigurationStatic.getMemSizeMb() != vmFromDB.getMemSizeMb()) {
+                    return failValidation(EngineMessage.HOT_CHANGE_MEMORY_WITH_NEXT_RUN);
+                }
+            }
+            if (memorySizeChangeMb > 0) {
+                // Check the DB version here to prevent NullPointerException
+                if (!FeatureSupported.hotPlugMemory(vmFromDB.getCompatibilityVersion(), vmFromDB.getClusterArch())) {
+                    return failValidation(EngineMessage.HOT_PLUG_MEMORY_IS_NOT_SUPPORTED);
+                }
+
+                final int factor = getVm().getClusterArch().getHotplugMemorySizeFactorMb();
+                if (memorySizeChangeMb % factor != 0) {
+                    addValidationMessageVariable("memoryAdded", String.valueOf(memorySizeChangeMb));
+                    addValidationMessageVariable("requiredFactor", String.valueOf(factor));
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOT_PLUGGED_MEMORY_MUST_BE_DIVIDABLE_BY);
+                }
+            }
+        }
+
         if (isVirtioScsiEnabled())  {
             // Verify OS compatibility
             if (!validate(vmHandler.isOsTypeSupportedForVirtioScsi
@@ -1297,7 +1313,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(msgs);
         }
 
-        final boolean isMemoryHotUnplug = vmFromDB.getMemSizeMb() > vmFromParams.getMemSizeMb()
+        final boolean isMemoryHotUnplug = memorySizeChangeMb < 0
                 && isHotSetEnabled()
                 && getParameters().isMemoryHotUnplugEnabled();
         if (isMemoryHotUnplug
@@ -1318,14 +1334,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     ReplacementUtils.createSetVariableString("memory", vmFromParams.getMemSizeMb()));
         }
 
-        if (vmFromDB.getMemSizeMb() != vmFromParams.getMemSizeMb() &&
-                vmFromDB.isRunning() &&
-                isHotSetEnabled() &&
-                HugePageUtils.isBackedByHugepages(vmFromDB.getStaticData()) &&
-                (vmFromDB.getMemSizeMb() < vmFromParams.getMemSizeMb() ||
-                        (vmFromDB.getMemSizeMb() > vmFromParams.getMemSizeMb() &&
-                                getParameters().isMemoryHotUnplugEnabled()))
-                ) {
+        if (memorySizeChangeMb != 0 && vmFromDB.isRunning() && isHotSetEnabled()
+                && HugePageUtils.isBackedByHugepages(vmFromDB.getStaticData())
+                && (memorySizeChangeMb > 0 || (memorySizeChangeMb < 0 && getParameters().isMemoryHotUnplugEnabled()))) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_MEMORY_HOT_SET_NOT_SUPPORTED_FOR_HUGE_PAGES);
         }
 
@@ -1440,7 +1451,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      * @return true if next run snapshot is needed because of memory change
      */
     private boolean memoryNextRunSnapshotRequired() {
-        return VMStatus.Down != getVm().getStatus() && oldVm.getMemSizeMb() > getParameters().getVm().getMemSizeMb();
+        final int memoryChange = getParameters().getVm().getMemSizeMb() - oldVm.getMemSizeMb();
+        return VMStatus.Down != getVm().getStatus()
+                && ((memoryChange < 0 && !getParameters().isMemoryHotUnplugEnabled())
+                        || memoryChange % getVm().getClusterArch().getHotplugMemorySizeFactorMb() != 0);
     }
 
     private boolean isClusterLevelChange() {

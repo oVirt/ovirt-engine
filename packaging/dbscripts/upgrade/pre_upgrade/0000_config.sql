@@ -837,7 +837,6 @@ select fn_db_add_config_value('GlusterPeerStatusCommand', 'gluster peer status -
 select fn_db_add_config_value('HighUtilizationForScheduling', '90', 'general');
 select fn_db_add_config_value('HighVmCountForEvenGuestDistribute', '10', 'general');
 select fn_db_add_config_value('HostsInReserve', '0', 'general');
-select fn_db_add_config_value('HotPlugMemoryBlockSizeMb', '256', 'general');
 select fn_db_add_config_value('MaxCpuLimitQosValue', '100', 'general');
 select fn_db_add_config_value('MaxIopsUpperBoundQosValue', '1000000', 'general');
 select fn_db_add_config_value('MaxReadIopsUpperBoundQosValue', '1000000', 'general');

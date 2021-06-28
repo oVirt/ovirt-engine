@@ -162,6 +162,14 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         return maxVmCpusMap;
     }
 
+    private static Map<String, String> createHotPlugMemorySupportedMap() {
+        Map<String, String> hotPlugMemoryMap = new HashMap<>();
+        hotPlugMemoryMap.put("s390x", "false");
+        hotPlugMemoryMap.put("x86", "true");
+        hotPlugMemoryMap.put("ppc", "true");
+        return hotPlugMemoryMap;
+    }
+
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.MaxVmNameLength, 64),
@@ -178,7 +186,8 @@ public class UpdateVmCommandTest extends BaseCommandTest {
                 MockConfigDescriptor.of(ConfigValues.VM32BitMaxMemorySizeInMB, version, 20480),
                 MockConfigDescriptor.of(ConfigValues.VM64BitMaxMemorySizeInMB, version, 4194304),
                 MockConfigDescriptor.of(ConfigValues.VMPpc64BitMaxMemorySizeInMB, version, 1048576),
-                MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, version, true)
+                MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, version, true),
+                MockConfigDescriptor.of(ConfigValues.HotPlugMemorySupported, version, createHotPlugMemorySupportedMap())
         );
     }
 
@@ -608,6 +617,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vmStatic.setMemSizeMb(vm.getMaxMemorySizeMb() + 1024);
 
         command.initEffectiveCompatibilityVersion();
+        vm.setClusterCompatibilityVersion(version);
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_MAX_MEMORY_CANNOT_BE_SMALLER_THAN_MEMORY_SIZE);
     }
