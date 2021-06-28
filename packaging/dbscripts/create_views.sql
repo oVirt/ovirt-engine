@@ -1517,6 +1517,7 @@ SELECT vm_dynamic.*,
     vm_static.num_of_sockets,
     vm_static.cpu_per_socket,
     vm_static.threads_per_cpu,
+    vm_static.priority,
     vm_static.lease_sd_id,
     vm_static.fn_get_num_of_vcpus AS num_of_cpus -- use of function as an attribute
 FROM vm_dynamic

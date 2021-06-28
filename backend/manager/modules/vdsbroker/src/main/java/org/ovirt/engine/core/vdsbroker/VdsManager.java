@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,6 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
@@ -944,8 +944,8 @@ public class VdsManager {
                     autoRestartUnknownVmsIteration % (skippedIterationsBeforeRetry + 1) == 0) {
                 resourceManager.getEventListener().restartVmsWithLease(vms.stream()
                         .filter(vm -> vm.getLeaseStorageDomainId() != null)
+                        .sorted(Comparator.comparing(VM::getPriority).reversed())
                         .map(VM::getId)
-                        .sorted(Injector.injectMembers(new VmsOnHostComparator(getVdsId())))
                         .collect(Collectors.toList()));
             }
         } finally {
