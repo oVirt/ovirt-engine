@@ -12,8 +12,6 @@ import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
-import org.ovirt.engine.core.common.businessentities.BiosType;
-import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -115,22 +113,10 @@ public class UpdateConvertedVmCommand<T extends ConvertVmParameters> extends VmC
             newVm.setBiosType(ovfVm.getBiosType());
         }
 
-        if (newVm.getBiosType() == BiosType.I440FX_SEA_BIOS
-                && getCluster().getBiosType().getChipsetType() == ChipsetType.Q35
-                && osRepository.isQ35Supported(newVm.getOsId())) {
-            newVm.setBiosType(BiosType.Q35_SEA_BIOS);
-        }
-
-        if (oldVm.getBiosType() != newVm.getBiosType()) {
-            getVmManager().update(newVm);
-
-            if (oldVm.getBiosType().getChipsetType() != newVm.getBiosType().getChipsetType()) {
-                vmHandler.convertVmToNewChipset(oldVm,
-                        newVm,
-                        getCluster(),
-                        null);
-            }
-        }
+        vmHandler.updateToQ35(oldVm,
+                newVm,
+                getCluster(),
+                null);
     }
 
     private void deleteV2VJob() {
