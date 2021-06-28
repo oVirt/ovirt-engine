@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Named;
@@ -177,13 +176,11 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
-    public Map<Guid, VM> getAllRunningByVds(Guid id) {
-        List<VM> vms = getCallsHandler().executeReadList("GetVmsRunningByVds",
+    public List<VM> getAllRunningByVds(Guid id) {
+        return getCallsHandler().executeReadList("GetVmsRunningByVds",
                  vmMonitoringRowMapper,
                  getCustomMapSqlParameterSource()
                         .addValue("vds_id", id));
-        return vms.stream()
-                .collect(Collectors.toMap(VM::getId, Function.identity()));
     }
 
     @Override
@@ -381,6 +378,7 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         entity.setNumOfSockets(rs.getInt("num_of_sockets"));
         entity.setCpuPerSocket(rs.getInt("cpu_per_socket"));
         entity.setThreadsPerCpu(rs.getInt("threads_per_cpu"));
+        entity.setLeaseStorageDomainId(getGuid(rs, "lease_sd_id"));
         entity.setDynamicData(VmDynamicDaoImpl.getRowMapper().mapRow(rs, rowNum));
 
         return entity;

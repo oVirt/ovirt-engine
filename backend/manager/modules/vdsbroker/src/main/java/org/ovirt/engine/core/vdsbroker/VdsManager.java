@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -55,6 +56,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -121,6 +123,9 @@ public class VdsManager {
 
     @Inject
     private VmDynamicDao vmDynamicDao;
+
+    @Inject
+    private VmDao vmDao;
 
     @Inject
     private VdsStatisticsDao vdsStatisticsDao;
@@ -904,7 +909,7 @@ public class VdsManager {
                 if (cachedVds.getStatus() == VDSStatus.Maintenance) {
                     saveToDb = false;
                 } else {
-                    List<VmDynamic> vmsRunningOnVds = vmDynamicDao.getAllRunningForVds(getVdsId());
+                    List<VM> vmsRunningOnVds = vmDao.getAllRunningByVds(getVdsId());
                     if (cachedVds.getStatus() != VDSStatus.NonResponsive) {
                         setStatus(VDSStatus.NonResponsive, cachedVds);
                         moveVmsToUnknown(vmsRunningOnVds);
@@ -926,7 +931,7 @@ public class VdsManager {
         }
     }
 
-    private void restartVmsWithLeaseIfNeeded(List<VmDynamic> vms) {
+    private void restartVmsWithLeaseIfNeeded(List<VM> vms) {
         if (vms.isEmpty() || !autoStartVmsWithLeasesLock.tryLock()) {
             return;
         }
@@ -938,8 +943,8 @@ public class VdsManager {
             if (autoRestartUnknownVmsIteration >= 0 &&
                     autoRestartUnknownVmsIteration % (skippedIterationsBeforeRetry + 1) == 0) {
                 resourceManager.getEventListener().restartVmsWithLease(vms.stream()
-                        .map(VmDynamic::getId)
-                        .filter(vmId -> resourceManager.getVmManager(vmId).getLeaseStorageDomainId() != null)
+                        .filter(vm -> vm.getLeaseStorageDomainId() != null)
+                        .map(VM::getId)
                         .sorted(Injector.injectMembers(new VmsOnHostComparator(getVdsId())))
                         .collect(Collectors.toList()));
             }
@@ -1097,12 +1102,12 @@ public class VdsManager {
         return System.currentTimeMillis() > nextMaintenanceAttemptTime;
     }
 
-    private void moveVmsToUnknown(List<VmDynamic> vms) {
+    private void moveVmsToUnknown(List<VM> vms) {
         if (vms.isEmpty()) {
             return;
         }
 
-        List<Guid> vmIds = vms.stream().map(VmDynamic::getId).collect(Collectors.toList());
+        List<Guid> vmIds = vms.stream().map(VM::getId).collect(Collectors.toList());
         vmIds.forEach(resourceManager::removeAsyncRunningVm);
         getVmDynamicDao().updateVmsToUnknown(vmIds);
 

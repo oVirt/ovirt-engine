@@ -322,7 +322,7 @@ public class VmDaoTest extends BaseDaoTestCase<VmDao> {
      */
     @Test
     public void testGetAllRunningForVds() {
-        Map<Guid, VM> result = dao.getAllRunningByVds(FixturesTool.VDS_RHEL6_NFS_SPM);
+        List<VM> result = dao.getAllRunningByVds(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());

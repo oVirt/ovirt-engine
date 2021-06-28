@@ -46,7 +46,6 @@ public class VmManager {
     private Version clusterCompatibilityVersion;
     private ArchitectureType clusterArchitecture;
     private BiosType clusterBiosType;
-    private Guid leaseStorageDomainId;
 
     /** Locks the VM for changes of its dynamic properties */
     private final Lock vmLock;
@@ -124,7 +123,6 @@ public class VmManager {
         clusterCompatibilityVersion = cluster.getCompatibilityVersion();
         clusterArchitecture = cluster.getArchitecture();
         clusterBiosType = cluster.getBiosType();
-        leaseStorageDomainId = vmStatic.getLeaseStorageDomainId();
 
         vmMemoryWithOverheadInMB = estimateOverhead(vmStatic);
     }
@@ -302,10 +300,6 @@ public class VmManager {
 
     public void setClusterArchitecture(ArchitectureType clusterArchitecture) {
         this.clusterArchitecture = clusterArchitecture;
-    }
-
-    public Guid getLeaseStorageDomainId() {
-        return leaseStorageDomainId;
     }
 
     public long getPowerOffTimeout() {
