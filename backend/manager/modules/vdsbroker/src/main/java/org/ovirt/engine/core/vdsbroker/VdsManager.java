@@ -909,7 +909,7 @@ public class VdsManager {
                 if (cachedVds.getStatus() == VDSStatus.Maintenance) {
                     saveToDb = false;
                 } else {
-                    List<VM> vmsRunningOnVds = vmDao.getAllRunningByVds(getVdsId());
+                    List<VM> vmsRunningOnVds = vmDao.getMonitoredVmsRunningByVds(getVdsId());
                     if (cachedVds.getStatus() != VDSStatus.NonResponsive) {
                         setStatus(VDSStatus.NonResponsive, cachedVds);
                         moveVmsToUnknown(vmsRunningOnVds);

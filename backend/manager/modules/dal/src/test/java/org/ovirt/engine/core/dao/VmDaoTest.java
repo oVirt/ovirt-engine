@@ -321,8 +321,8 @@ public class VmDaoTest extends BaseDaoTestCase<VmDao> {
      * Ensures that it retrieves all VMs running on the specified VDS.
      */
     @Test
-    public void testGetAllRunningForVds() {
-        List<VM> result = dao.getAllRunningByVds(FixturesTool.VDS_RHEL6_NFS_SPM);
+    public void testGetMonitoredVmsRunningByVds() {
+        List<VM> result = dao.getMonitoredVmsRunningByVds(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());

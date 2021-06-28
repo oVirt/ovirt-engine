@@ -176,7 +176,7 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
-    public List<VM> getAllRunningByVds(Guid id) {
+    public List<VM> getMonitoredVmsRunningByVds(Guid id) {
         return getCallsHandler().executeReadList("GetVmsRunningByVds",
                  vmMonitoringRowMapper,
                  getCustomMapSqlParameterSource()

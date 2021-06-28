@@ -171,7 +171,7 @@ public interface VmDao extends Dao {
      *            the VDS id
      * @return the list of VMs
      */
-    List<VM> getAllRunningByVds(Guid vds);
+    List<VM> getMonitoredVmsRunningByVds(Guid vds);
 
     /**
      * Finds the list of VMs using the supplied query.
