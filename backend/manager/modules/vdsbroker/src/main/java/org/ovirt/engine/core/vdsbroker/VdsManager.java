@@ -942,11 +942,12 @@ public class VdsManager {
             // we don't want to restart VMs with lease too frequently
             if (autoRestartUnknownVmsIteration >= 0 &&
                     autoRestartUnknownVmsIteration % (skippedIterationsBeforeRetry + 1) == 0) {
-                resourceManager.getEventListener().restartVmsWithLease(vms.stream()
+                var vmIdsToRestart = vms.stream()
                         .filter(vm -> vm.getLeaseStorageDomainId() != null)
                         .sorted(Comparator.comparing(VM::getPriority).reversed())
                         .map(VM::getId)
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList());
+                resourceManager.getEventListener().restartVmsWithLease(vmIdsToRestart, getVdsId());
             }
         } finally {
             autoStartVmsWithLeasesLock.unlock();

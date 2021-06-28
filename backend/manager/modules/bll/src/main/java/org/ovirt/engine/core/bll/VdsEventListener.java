@@ -608,13 +608,14 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void restartVmsWithLease(List<Guid> vmIds) {
+    public void restartVmsWithLease(List<Guid> vmIds, Guid hostId) {
         if (vmIds.isEmpty()) {
             return;
         }
 
         EngineLock engineLock = new EngineLock(Collections.emptyMap(), Collections.emptyMap());
         ThreadPoolUtil.execute(() -> {
+            log.info("trying to run VMs with a lease on a non-responding host {} elsewhere", hostId);
             for (Guid vmId : vmIds) {
                 resourceManagerProvider.get().removeAsyncRunningVm(vmId);
                 backend.runInternalAction(

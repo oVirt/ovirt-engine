@@ -86,7 +86,7 @@ public interface IVdsEventListener {
 
     void refreshHostCapabilities(Guid hostId);
 
-    void restartVmsWithLease(List<Guid> vmIds);
+    void restartVmsWithLease(List<Guid> vmIds, Guid hostId);
 
     Map<String, Pair<String, String>> getVdsPoolAndStorageConnectionsLock(Guid vdsId);
 
