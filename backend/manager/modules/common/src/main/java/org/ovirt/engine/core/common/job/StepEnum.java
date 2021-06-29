@@ -38,6 +38,8 @@ public enum StepEnum {
     COPY_VOLUME,
     AMEND_VOLUME,
     REMOVE_DEVICE_FROM_DOMAIN,
+    UPDATE_OVF,
+    DEACTIVATE_STORAGE_DOMAIN,
 
     /**
      * Maps VDSM tasks type to {@code StepEnum} so it can be resolvable as readable description

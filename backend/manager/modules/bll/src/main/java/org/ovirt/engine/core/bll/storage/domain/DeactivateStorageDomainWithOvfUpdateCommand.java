@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
+import java.util.Collections;
+
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
@@ -9,6 +11,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute.CommandCompensat
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -26,10 +29,13 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.constants.StorageConstants;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -91,7 +97,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
             getParameters().setCommandStep(DeactivateStorageDomainWithOvfUpdateStep.UPDATE_OVF_STORE);
             runInternalAction(ActionType.UpdateOvfStoreForStorageDomain,
                     createUpdateOvfStoreParams(),
-                    cloneContext().withoutCompensationContext());
+                    createStepsContext(StepEnum.UPDATE_OVF));
             getParameters().setNextCommandStep(
                     DeactivateStorageDomainWithOvfUpdateStep.DEACTIVATE_STORAGE_DOMAIN
             );
@@ -143,7 +149,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
         params.setShouldBeLogged(true);
         params.setCorrelationId(getCorrelationId());
         return runInternalAction(ActionType.DeactivateStorageDomain, params,
-                ExecutionHandler.createInternalJobContext(getContext()));
+                createStepsContext(StepEnum.DEACTIVATE_STORAGE_DOMAIN));
     }
 
     @Override
@@ -180,4 +186,17 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
 
         setSucceeded(true);
     }
+
+    private CommandContext createStepsContext(StepEnum step) {
+        Step addedStep = executionHandler.addSubStep(getExecutionContext(),
+                getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
+                step,
+                ExecutionMessageDirector.resolveStepMessage(step, Collections.emptyMap()));
+        ExecutionContext ctx = new ExecutionContext();
+        ctx.setStep(addedStep);
+        ctx.setMonitored(true);
+        return ExecutionHandler.createDefaultContextForTasks(getContext(), getLock())
+                .withExecutionContext(ctx);
+    }
+
 }
