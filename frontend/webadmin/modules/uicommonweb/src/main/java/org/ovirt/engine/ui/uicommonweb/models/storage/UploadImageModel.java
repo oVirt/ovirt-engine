@@ -266,7 +266,6 @@ public class UploadImageModel extends Model implements ICommandTarget {
     }
 
     public void onUpload() {
-        setConnection(createRequest(), false);
 
         if (flush()) {
             if (getProgress() != null) {
@@ -274,6 +273,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             }
 
             if (!isResumeUpload) {
+                setConnection(createRequest(), false);
                 initiateNewUpload();
             } else {
                 initiateResumeUpload();
