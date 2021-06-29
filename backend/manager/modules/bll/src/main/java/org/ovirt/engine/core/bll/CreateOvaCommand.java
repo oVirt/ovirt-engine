@@ -181,7 +181,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     private AnsibleCommandParameters createPackOvaParameters(String ovf,
             Collection<DiskImage> disks,
             Map<Guid, String> diskIdToPath,
-            String tpmData) {
+            String tpmData,
+            String nvramData) {
         String encodedOvf = genOvfParameter(ovf);
         AnsibleCommandParameters params = new AnsibleCommandParameters();
         params.setHostId(getVdsId());
@@ -192,11 +193,12 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         Map<String, Object> vars = new HashMap<>();
         vars.put("target_directory", getParameters().getDirectory());
         vars.put("entity_type", getParameters().getEntityType().name().toLowerCase());
-        vars.put("ova_size", String.valueOf(calcOvaSize(disks, tpmData, encodedOvf)));
+        vars.put("ova_size", String.valueOf(calcOvaSize(disks, tpmData, nvramData, encodedOvf)));
         vars.put("ova_name", getParameters().getName());
         vars.put("ovirt_ova_pack_ovf", encodedOvf);
         vars.put("ovirt_ova_pack_disks", genDiskParameters(disks, diskIdToPath));
         vars.put("ovirt_ova_pack_tpm", tpmData);
+        vars.put("ovirt_ova_pack_nvram", nvramData);
         params.setVariables(vars);
         return params;
     }
@@ -207,7 +209,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         String ovf = createOvf(disks);
         log.debug("Exporting OVF: {}", ovf);
         ActionReturnValue actionReturnValue = runInternalAction(ActionType.AnsiblePackOva,
-                createPackOvaParameters(ovf, disks, getParameters().getDiskIdToPath(), getTpmData()),
+                createPackOvaParameters(ovf, disks, getParameters().getDiskIdToPath(), getTpmData(), getNvramData()),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
         if (!actionReturnValue.getSucceeded()) {
             log.error("Failed to start Ansible Pack OVA playbook");
@@ -221,11 +223,20 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         return tpmDataAndHash != null ? tpmDataAndHash.getFirst() : null;
     }
 
+    private String getNvramData() {
+        var nvramDataAndHash = vmDao.getNvramData(getParameters().getEntityId());
+        return nvramDataAndHash != null ? nvramDataAndHash.getFirst() : null;
+    }
+
     private Map<VmExternalDataKind, String> getVmExternalData() {
         Map<VmExternalDataKind, String> externalData = new HashMap<>();
         String tpmData = getTpmData();
         if (!StringUtils.isEmpty(tpmData)) {
             externalData.put(VmExternalDataKind.TPM, tpmData);
+        }
+        String nvramData = getNvramData();
+        if (!StringUtils.isEmpty(nvramData)) {
+            externalData.put(VmExternalDataKind.NVRAM, nvramData);
         }
         return externalData;
     }
@@ -234,11 +245,12 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         diskHandler.updateDiskVmElementFromDb(diskImage, getParameters().getEntityId());
     }
 
-    private long calcOvaSize(Collection<DiskImage> disks, String tpmData, String ovf) {
+    private long calcOvaSize(Collection<DiskImage> disks, String tpmData, String nvramData, String ovf) {
         // 1 block for the OVF, 1 block per-disk and 2 null-blocks at the end
         return TAR_BLOCK_SIZE * (1 + disks.size() + 2)
                 + blockAlignedSize(ovf.length())
                 + (tpmData != null ? blockAlignedSize(tpmData.length()) : 0)
+                + (nvramData != null ? blockAlignedSize(nvramData.length()) : 0)
                 + disks.stream().mapToLong(DiskImage::getActualSizeInBytes).sum();
     }
 

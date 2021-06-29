@@ -211,6 +211,10 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
         if (!StringUtils.isEmpty(tpmData)) {
             vmDao.updateTpmData(getVmId(), tpmData, null);
         }
+        String nvramData = externalData.get("nvram");
+        if (!StringUtils.isEmpty(nvramData)) {
+            vmDao.updateNvramData(getVmId(), nvramData, null);
+        }
     }
 
     @Override

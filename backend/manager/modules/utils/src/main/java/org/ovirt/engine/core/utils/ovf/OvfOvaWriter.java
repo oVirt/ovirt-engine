@@ -49,6 +49,12 @@ public abstract class OvfOvaWriter extends OvfWriter {
             writeExternalDataFile("tpm.dat", tpmDataSize);
             _writer.writeEndElement();
         }
+        int nvramDataSize = getVmExternalDataSize(VmExternalDataKind.NVRAM);
+        if (nvramDataSize > 0) {
+            _writer.writeStartElement("File");
+            writeExternalDataFile("nvram.dat", nvramDataSize);
+            _writer.writeEndElement();
+        }
     }
 
     private int getVmExternalDataSize(VmExternalDataKind kind) {

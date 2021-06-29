@@ -28,6 +28,7 @@ public class AnsiblePackOvaCommand <T extends AnsibleCommandParameters> extends 
                 .variable("ovirt_ova_pack_ovf", vars.get("ovirt_ova_pack_ovf"))
                 .variable("ovirt_ova_pack_disks", vars.get("ovirt_ova_pack_disks"))
                 .variable("ovirt_ova_pack_tpm", vars.get("ovirt_ova_pack_tpm"))
+                .variable("ovirt_ova_pack_nvram", vars.get("ovirt_ova_pack_nvram"))
                 // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-export-ova-ansible")
