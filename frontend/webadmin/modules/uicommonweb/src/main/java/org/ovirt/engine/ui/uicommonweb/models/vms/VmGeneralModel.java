@@ -153,6 +153,19 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
     }
 
+    private String guestFreeCachedBufferedCombinedMemInfo;
+
+    public String getGuestFreeCachedBufferedCombinedMemInfo() {
+        return guestFreeCachedBufferedCombinedMemInfo;
+    }
+
+    public void setGuestFreeCachedBufferedCombinedMemInfo(String value) {
+        if (!Objects.equals(guestFreeCachedBufferedCombinedMemInfo, value)) {
+            guestFreeCachedBufferedCombinedMemInfo = value;
+            onPropertyChanged(new PropertyChangedEventArgs("GuestFreeCachedBufferedCombinedMemInfo")); //$NON-NLS-1$
+        }
+    }
+
     private boolean guestMemInfoUsingUnusedMem;
 
     public boolean isGuestMemInfoUsingUnusedMem() {
@@ -657,11 +670,12 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
                                                 + (vm.getGuestMemoryCached() / 1024L) + " MB"); //$NON-NLS-1$
             } else if (vm.getGuestMemoryUnused() != null && vm.getGuestMemoryUnused() != 0) {
                 setGuestMemInfoUsingUnusedMem(true);
-                setGuestFreeCachedBufferedMemInfo((vm.getGuestMemoryFree() / 1024L) + " / " // $NON-NLS-1$
-                                                + ((vm.getGuestMemoryFree() - vm.getGuestMemoryUnused()) / 1024L )
-                                                + " MB"); // $NON-NLS-1$
+                setGuestFreeCachedBufferedCombinedMemInfo((vm.getGuestMemoryFree() / 1024L) + " / " // $NON-NLS-1$
+                                                        + ((vm.getGuestMemoryFree() - vm.getGuestMemoryUnused()) / 1024L )
+                                                        + " MB"); // $NON-NLS-1$
             } else {
                 setGuestFreeCachedBufferedMemInfo(null); // Handled in form
+                setGuestFreeCachedBufferedCombinedMemInfo(null); // Handled in form
             }
         }
 

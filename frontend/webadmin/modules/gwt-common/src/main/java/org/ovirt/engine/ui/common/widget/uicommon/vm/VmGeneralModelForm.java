@@ -66,6 +66,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     StringValueLabel vmId = new StringValueLabel();
     StringValueLabel fqdn = new StringValueLabel();
     StringValueLabel guestFreeCachedBufferedMemInfo = new StringValueLabel();
+    StringValueLabel guestFreeCachedBufferedCombinedMemInfo = new StringValueLabel();
     StringValueLabel timeZone = new StringValueLabel();
 
     BooleanLabel isHighlyAvailable;
@@ -114,12 +115,12 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
             }
         }.withDefaultValue(constants.notConfigured(), () -> getModel().getGuestFreeCachedBufferedMemInfo() == null));
         formBuilder.addFormItem(new FormItem(constants.guestFreeCachedBufferedCombinedMemInfo(),
-                guestFreeCachedBufferedMemInfo, 3, 1) {
+                guestFreeCachedBufferedCombinedMemInfo, 3, 1) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().isGuestMemInfoUsingUnusedMem();
             }
-        }.withDefaultValue(constants.notConfigured(), () -> getModel().getGuestFreeCachedBufferedMemInfo() == null));
+        }.withDefaultValue(constants.notConfigured(), () -> getModel().getGuestFreeCachedBufferedCombinedMemInfo() == null));
         WidgetTooltip cpuInfoWithTooltip = new WidgetTooltip(cpuInfo);
         cpuInfoWithTooltip.setHtml(SafeHtmlUtils.fromString(constants.numOfCpuCoresTooltip()));
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfoWithTooltip, 4, 1));

@@ -34,7 +34,6 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
     private String description;
     private String template;
     private String definedMemory;
-    private String guestFreeCachedBufferedMemInfo;
     private String minAllocatedMemory;
     private String os;
     private String defaultDisplayType;
@@ -143,23 +142,6 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         setDefinedMemory(vm.getVmMemSizeMb() + " MB"); //$NON-NLS-1$
         setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
-        if(vm.isRunningOrPaused() && vm.getGuestMemoryFree() != null) {
-            // If old OGA guest memory reported. Zero checks is for windows OGA.
-            if (vm.getGuestMemoryBuffered() != null && vm.getGuestMemoryCached() != null && vm.getGuestMemoryBuffered() != 0 && vm.getGuestMemoryCached() != 0) {
-                setGuestMemInfoUsingUnusedMem(false);
-                setGuestFreeCachedBufferedMemInfo((vm.getGuestMemoryFree() / 1024L) + " / " // $NON-NLS-1$
-                    + (vm.getGuestMemoryBuffered() / 1024L)  + " / " // $NON-NLS-1$
-                    + (vm.getGuestMemoryCached() / 1024L) + " MB"); //$NON-NLS-1$
-            } else if (vm.getGuestMemoryUnused() != null && vm.getGuestMemoryUnused() != 0) {
-                setGuestMemInfoUsingUnusedMem(true);
-                setGuestFreeCachedBufferedMemInfo((vm.getGuestMemoryFree() / 1024L) + " / " // $NON-NLS-1$
-                        + ((vm.getGuestMemoryFree() - vm.getGuestMemoryUnused()) / 1024L )
-                        + " MB"); // $NON-NLS-1$
-            } else {
-                setGuestFreeCachedBufferedMemInfo(null); // Handled in form
-            }
-        }
-
         setOS(AsyncDataProvider.getInstance().getOsName(vm.getVmOsId()));
 
         setDefaultDisplayType(translator.translate(vm.getDefaultDisplayType()));
@@ -264,27 +246,6 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
             definedMemory = value;
             onPropertyChanged(new PropertyChangedEventArgs("DefinedMemory")); //$NON-NLS-1$
         }
-    }
-
-    public String getGuestFreeCachedBufferedMemInfo() {
-        return guestFreeCachedBufferedMemInfo;
-    }
-
-    public void setGuestFreeCachedBufferedMemInfo(String value) {
-        if (!Objects.equals(guestFreeCachedBufferedMemInfo, value)) {
-            guestFreeCachedBufferedMemInfo = value;
-            onPropertyChanged(new PropertyChangedEventArgs("GuestFreeCachedBufferedMemInfo")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean guestMemInfoUsingUnusedMem;
-
-    public boolean isGuestMemInfoUsingUnusedMem() {
-        return guestMemInfoUsingUnusedMem;
-    }
-
-    public void setGuestMemInfoUsingUnusedMem(boolean value) {
-        guestMemInfoUsingUnusedMem = value;
     }
 
     public String getMinAllocatedMemory() {
