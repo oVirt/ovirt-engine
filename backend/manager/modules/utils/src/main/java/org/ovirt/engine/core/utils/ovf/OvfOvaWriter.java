@@ -128,7 +128,6 @@ public abstract class OvfOvaWriter extends OvfWriter {
             return 67;
         case 1002:
         case 2002:
-        case 1502: // AlmaLinux
         case 5: // Other Linux
             return 36;
         case 3: // Windows 2003

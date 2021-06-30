@@ -330,6 +330,10 @@ public abstract class OvfOvirtReader extends OvfReader {
         XmlNode node = selectSingleNode(section, "Description");
         if (node != null) {
             int osId = osRepository.getOsIdByUniqueName(node.innerText);
+            if ("Alma Linux 8+".equals(node.innerText)) {
+                // map AlmaLinux 8+ that was dropped to Other Linux (kernel 4.x)
+                osId = 33;
+            }
             fullEntityOvfData.getVmBase().setOsId(osId);
             setClusterArch(osRepository.getArchitectureFromOS(osId));
         } else {

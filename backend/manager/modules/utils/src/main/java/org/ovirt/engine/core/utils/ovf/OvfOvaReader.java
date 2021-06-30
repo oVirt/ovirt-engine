@@ -71,9 +71,14 @@ public abstract class OvfOvaReader extends OvfReader {
 
     protected void readOsSection(XmlNode section) {
         XmlAttribute ovirtOsId = section.attributes.get("ovirt:id");
-        int osId = ovirtOsId != null ?
-                Integer.parseInt(ovirtOsId.getValue())
-                : mapOsId(section.attributes.get("ovf:id").getValue());
+        int osId;
+        if (ovirtOsId != null) {
+            int parsedInt = Integer.parseInt(ovirtOsId.getValue());
+            // map AlmaLinux 8+ that was dropped to Other Linux (kernel 4.x)
+            osId = parsedInt == 1502 ? 33 : parsedInt;
+        } else {
+            osId = mapOsId(section.attributes.get("ovf:id").getValue());
+        }
         vm.setOsId(osId);
         setClusterArch(osRepository.getArchitectureFromOS(osId));
     }
