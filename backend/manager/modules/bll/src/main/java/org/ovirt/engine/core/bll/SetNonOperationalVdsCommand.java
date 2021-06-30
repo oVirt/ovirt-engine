@@ -119,6 +119,8 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
             return AuditLogType.VDS_VERSION_NOT_SUPPORTED_FOR_CLUSTER;
         case CLUSTER_VERSION_INCOMPATIBLE_WITH_CLUSTER:
             return AuditLogType.VDS_CLUSTER_VERSION_NOT_SUPPORTED;
+        case CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION:
+            return AuditLogType.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION;
         case VM_NETWORK_IS_BRIDGELESS:
             return AuditLogType.VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS;
         case GLUSTER_COMMAND_FAILED:

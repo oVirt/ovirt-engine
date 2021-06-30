@@ -7,6 +7,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String NonOperationalReason___GENERAL();
 
+    String NonOperationalReason___CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION();
+
     String NonOperationalReason___CPU_TYPE_INCOMPATIBLE_WITH_CLUSTER();
 
     String NonOperationalReason___STORAGE_DOMAIN_UNREACHABLE();

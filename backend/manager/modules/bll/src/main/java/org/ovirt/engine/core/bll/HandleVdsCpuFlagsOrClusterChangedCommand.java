@@ -50,45 +50,47 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                 getVds().getCpuFlags(),
                 getVds().getClusterCompatibilityVersion()));
 
-        if (getMaxServerCpu() != null) {
-            updateClusterCpuInfo(getMaxServerCpu().getCpuName(), getMaxServerCpu().getArchitecture());
-        } else {
-            log.error("Could not find server cpu for server '{}' ({}), flags: '{}'",
-                    getVds().getName(),
-                    getVdsId(),
-                    getVds().getCpuFlags());
-        }
-
-        if (maxServerFound() && !architecturesMatch() ) {
-            addCustomValue("VdsArchitecture", getMaxServerCpu().getArchitecture().name());
-            addCustomValue("ClusterArchitecture", getCluster().getArchitecture().name());
-
+        if (!maxServerFound()) {
             SetNonOperationalVdsParameters params = new SetNonOperationalVdsParameters(getVdsId(),
-                    NonOperationalReason.ARCHITECTURE_INCOMPATIBLE_WITH_CLUSTER);
+                    NonOperationalReason.CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION);
 
             runInternalAction(ActionType.SetNonOperationalVds,
                     params,
                     ExecutionHandler.createInternalJobContext(getContext()));
         } else {
-            List<String> missingFlags = getCpuFlagsManagerHandler().missingClusterCpuFlags(
-                    getCluster().getCpuFlags(),
-                    getVds().getCpuFlags());
-            if (vdsContainsFlags() && !cpuFlagsMatch(missingFlags)) {
-                addCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
-                if (missingFlags.contains("nx")) {
-                    auditLogDirector.log(this, AuditLogType.CPU_FLAGS_NX_IS_MISSING);
-                }
+            updateClusterCpuInfo(getMaxServerCpu().getCpuName(), getMaxServerCpu().getArchitecture());
+
+            if (!architecturesMatch()) {
+                addCustomValue("VdsArchitecture", getMaxServerCpu().getArchitecture().name());
+                addCustomValue("ClusterArchitecture", getCluster().getArchitecture().name());
+
                 SetNonOperationalVdsParameters params = new SetNonOperationalVdsParameters(getVdsId(),
-                       NonOperationalReason.CPU_TYPE_INCOMPATIBLE_WITH_CLUSTER);
+                        NonOperationalReason.ARCHITECTURE_INCOMPATIBLE_WITH_CLUSTER);
+
                 runInternalAction(ActionType.SetNonOperationalVds,
-                       params,
-                       ExecutionHandler.createInternalJobContext(getContext()));
+                        params,
+                        ExecutionHandler.createInternalJobContext(getContext()));
             } else {
-                // if no need to change to non operational then don't log the command
-                setCommandShouldBeLogged(false);
+                List<String> missingFlags = getCpuFlagsManagerHandler().missingClusterCpuFlags(
+                        getCluster().getCpuFlags(),
+                        getVds().getCpuFlags());
+
+                if (!cpuFlagsMatch(missingFlags)) {
+                    addCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
+                    if (missingFlags.contains("nx")) {
+                        auditLogDirector.log(this, AuditLogType.CPU_FLAGS_NX_IS_MISSING);
+                    }
+                    SetNonOperationalVdsParameters params = new SetNonOperationalVdsParameters(getVdsId(),
+                            NonOperationalReason.CPU_TYPE_INCOMPATIBLE_WITH_CLUSTER);
+                    runInternalAction(ActionType.SetNonOperationalVds,
+                            params,
+                            ExecutionHandler.createInternalJobContext(getContext()));
+                } else {
+                    // if no need to change to non operational then don't log the command
+                    setCommandShouldBeLogged(false);
+                }
             }
         }
-
         setSucceeded(true);
     }
 
