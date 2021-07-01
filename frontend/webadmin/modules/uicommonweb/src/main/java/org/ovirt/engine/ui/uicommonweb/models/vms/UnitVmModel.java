@@ -2570,7 +2570,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         updateMigrationOptions();
-        handleQxlClusterLevel();
+        updateSpiceFeatures();
 
         updateWatchdogModels();
         updateBootMenu();
@@ -2597,37 +2597,22 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    private void handleQxlClusterLevel() {
+    private void updateSpiceFeatures() {
         if (getSelectedCluster() != null) {
-            boolean isQxl = getDisplayType().getSelectedItem() == DisplayType.qxl;
-            if (!isQxl) {
-                handleQxlChangeProhibitionReason(
-                        getSpiceFileTransferEnabled(),
-                        getCompatibilityVersion().toString(),
-                        false);
-            }
-            getSpiceFileTransferEnabled().setIsChangeable(isQxl);
-
             GraphicsTypes selectedGraphics = getGraphicsType().getSelectedItem();
-            boolean spiceCopyPasteToggle = selectedGraphics != null
+            boolean isSpiceUsed = selectedGraphics != null
                     && selectedGraphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE);
-            if (!spiceCopyPasteToggle) {
-                handleQxlChangeProhibitionReason(
-                        getSpiceCopyPasteEnabled(),
-                        getCompatibilityVersion().toString(),
-                        isQxl);
+            if (!isSpiceUsed) {
+                setSpiceFeatureProhibitionReason(getSpiceFileTransferEnabled());
+                setSpiceFeatureProhibitionReason(getSpiceCopyPasteEnabled());
             }
-            getSpiceCopyPasteEnabled().setIsChangeable(spiceCopyPasteToggle);
+            getSpiceFileTransferEnabled().setIsChangeable(isSpiceUsed);
+            getSpiceCopyPasteEnabled().setIsChangeable(isSpiceUsed);
         }
-
     }
 
-    private void handleQxlChangeProhibitionReason(EntityModel<Boolean> checkbox, String version, boolean isQxl) {
-        if (isQxl) {
-            checkbox.setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().optionNotSupportedClusterVersionTooOld(version));
-        } else {
-            checkbox.setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().optionRequiresSpiceEnabled());
-        }
+    private void setSpiceFeatureProhibitionReason(EntityModel<Boolean> checkbox) {
+        checkbox.setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().optionRequiresSpiceEnabled());
     }
 
     private void templateWithVersion_SelectedItemChanged(Object sender, EventArgs args) {
@@ -2659,7 +2644,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         getBehavior().updateDefaultTimeZone();
 
-        handleQxlClusterLevel();
+        updateSpiceFeatures();
 
         updateWatchdogModels(osType);
 
@@ -2815,7 +2800,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getIsSmartcardEnabled().setEntity(false);
         }
 
-        handleQxlClusterLevel();
+        updateSpiceFeatures();
         getIsUsbEnabled().setIsChangeable(graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE));
         getIsSmartcardEnabled().setIsChangeable(graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE));
         getVncKeyboardLayout().setIsAvailable(graphics.getBackingGraphicsTypes().contains(GraphicsType.VNC));
