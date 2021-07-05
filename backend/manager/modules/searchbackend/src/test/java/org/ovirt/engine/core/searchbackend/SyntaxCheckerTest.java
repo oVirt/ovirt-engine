@@ -238,6 +238,9 @@ public class SyntaxCheckerTest {
     public void testEvents() {
         testValidSql("Events: ",
                 "SELECT * FROM ((SELECT  audit_log.* FROM  audit_log   WHERE not deleted)  ORDER BY audit_log_id DESC ) as T1 OFFSET (1 -1) LIMIT 0");
+        testValidSql("Events: Templates.name=Blank",
+                "SELECT * FROM (SELECT * FROM audit_log WHERE ( audit_log_id IN (SELECT distinct audit_log.audit_log_id FROM  audit_log   LEFT OUTER JOIN vms_with_tags ON audit_log.vm_id=vms_with_tags.vm_guid    LEFT OUTER JOIN vm_templates_storage_domain ON vms_with_tags.vmt_guid=vm_templates_storage_domain.vmt_guid    WHERE  vm_templates_storage_domain.name LIKE Blank  AND not deleted))  ORDER BY audit_log_id DESC ) as T1 OFFSET (1 -1) LIMIT 0");
+
     }
 
     @Test

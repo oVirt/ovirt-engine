@@ -36,7 +36,9 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
                 // TODO : try to generalize those cases
                 || (origText.toLowerCase().startsWith(SearchObjects.VM_PLU_OBJ_NAME.toLowerCase())
                 && origText.toLowerCase().contains(SearchObjects.VDC_CLUSTER_OBJ_NAME.toLowerCase())
-                && getCrossRefObjList().contains(SearchObjects.VDS_OBJ_NAME));
+                && getCrossRefObjList().contains(SearchObjects.VDS_OBJ_NAME))
+                || (origText.toLowerCase().startsWith(SearchObjects.AUDIT_PLU_OBJ_NAME.toLowerCase())
+                && origText.toLowerCase().contains(SearchObjects.TEMPLATE_PLU_OBJ_NAME.toLowerCase()));
     }
 
     public int getMaxCount() {
