@@ -99,7 +99,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("multi_queues_enabled", entity.isMultiQueuesEnabled())
                 .addValue("use_tsc_frequency", entity.getUseTscFrequency())
                 .addValue("cpu_pinning", entity.getCpuPinning())
-                .addValue("virtio_scsi_multi_queues_enabled", entity.isVirtioScsiMultiQueuesEnabled())
+                .addValue("virtio_scsi_multi_queues", entity.getVirtioScsiMultiQueues())
                 .addValue("balloon_enabled", entity.isBalloonEnabled());
     }
 
@@ -180,7 +180,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setMultiQueuesEnabled(rs.getBoolean("multi_queues_enabled"));
             entity.setUseTscFrequency(rs.getBoolean("use_tsc_frequency"));
             entity.setCpuPinning(rs.getString("cpu_pinning"));
-            entity.setVirtioScsiMultiQueuesEnabled(rs.getBoolean("virtio_scsi_multi_queues_enabled"));
+            entity.setVirtioScsiMultiQueues(rs.getInt("virtio_scsi_multi_queues"));
             entity.setBalloonEnabled(rs.getBoolean("balloon_enabled"));
         }
     }

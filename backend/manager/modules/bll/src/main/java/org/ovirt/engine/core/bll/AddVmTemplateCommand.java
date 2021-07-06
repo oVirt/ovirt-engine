@@ -990,7 +990,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().isMultiQueuesEnabled(),
                         getParameters().getMasterVm().getUseTscFrequency(),
                         getParameters().getMasterVm().getCpuPinning(),
-                        getParameters().getMasterVm().isVirtioScsiMultiQueuesEnabled(),
+                        getParameters().getMasterVm().getVirtioScsiMultiQueues(),
                         getParameters().getMasterVm().isBalloonEnabled(),
                         getParameters().getMasterVm().getBiosType()));
         getVmTemplate().setOrigin(getParameters().getMasterVm().getOrigin());

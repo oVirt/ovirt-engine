@@ -288,7 +288,7 @@ public class VmBaseMapper {
         }
 
         if (model.isSetVirtioScsiMultiQueuesEnabled()) {
-            entity.setVirtioScsiMultiQueuesEnabled(model.isVirtioScsiMultiQueuesEnabled());
+            entity.setVirtioScsiMultiQueues(model.isVirtioScsiMultiQueuesEnabled() ? -1 : 0);
         }
 
         if (model.isSetCpu() && model.getCpu().isSetMode()) {
@@ -473,7 +473,7 @@ public class VmBaseMapper {
 
         model.setMultiQueuesEnabled(entity.isMultiQueuesEnabled());
 
-        model.setVirtioScsiMultiQueuesEnabled(entity.isVirtioScsiMultiQueuesEnabled());
+        model.setVirtioScsiMultiQueuesEnabled(entity.getVirtioScsiMultiQueues() == -1);
 
         if(entity.isUseHostCpuFlags()) {
             model.getCpu().setMode(CpuMode.HOST_PASSTHROUGH);

@@ -649,9 +649,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 MULTI_QUEUES_ENABLED,
                 val -> vmBase.setMultiQueuesEnabled(Boolean.parseBoolean(val)));
 
-        consumeReadProperty(content,
-                VIRTIO_SCSI_MULTI_QUEUES_ENABLED,
-                val -> vmBase.setVirtioScsiMultiQueuesEnabled(Boolean.parseBoolean(val)));
+        readVirtioScsiMultiQueues(content);
 
         consumeReadProperty(content,
                 USE_HOST_CPU,
@@ -733,6 +731,27 @@ public abstract class OvfReader implements IOvfBuilder {
 
     private String escapedNewLines(String value) {
         return value.replaceAll("\\\\n", "\n");
+    }
+
+    private void readVirtioScsiMultiQueues(XmlNode content) {
+
+        XmlNode virtioScsiMultiQueuesNode = selectSingleNode(content, VIRTIO_SCSI_MULTI_QUEUES_ENABLED);
+        if (virtioScsiMultiQueuesNode == null) {
+            return;
+        }
+        boolean isVirtioMultiQueuesEnabled = Boolean.parseBoolean(virtioScsiMultiQueuesNode.innerText);
+        if (isVirtioMultiQueuesEnabled) {
+            XmlAttribute virtioScsiMultiQueuesNodeNumberAttribute =
+                    virtioScsiMultiQueuesNode.attributes.get("ovf:queues");
+            if (virtioScsiMultiQueuesNodeNumberAttribute == null) {
+                vmBase.setVirtioScsiMultiQueues(-1);
+            } else {
+                vmBase.setVirtioScsiMultiQueues(
+                        Integer.parseInt(virtioScsiMultiQueuesNodeNumberAttribute.getValue()));
+            }
+        } else {
+            vmBase.setVirtioScsiMultiQueues(0);
+        }
     }
 
     private void readVmInit(XmlNode content) {

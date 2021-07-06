@@ -1777,5 +1777,11 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String AutoPinningPolicy___PIN();
 
     String AutoPinningPolicy___RESIZE_AND_PIN();
+
+    String VirtioMultiQueueType___DISABLED();
+
+    String VirtioMultiQueueType___AUTOMATIC();
+
+    String VirtioMultiQueueType___CUSTOM();
 }
 

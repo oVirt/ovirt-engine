@@ -107,6 +107,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
+import org.ovirt.engine.ui.uicommonweb.models.VirtioMultiQueueType;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
@@ -769,6 +770,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public ListModelListBoxOnlyEditor<UnitVmModel.CpuSharesAmount> cpuSharesAmountSelectionEditor;
 
     @UiField(provided = true)
+    @Path(value = "virtioScsiMultiQueueTypeSelection.selectedItem")
+    @WithElementId("virtioScsiMultiQueueTypeSelection")
+    public ListModelListBoxOnlyEditor<VirtioMultiQueueType> virtioScsiMultiQueueSelectionEditor;
+
+    @UiField(provided = true)
     @Path(value = "cpuSharesAmount.entity")
     @WithElementId("cpuSharesAmount")
     public IntegerEntityModelTextBoxOnlyEditor cpuSharesAmountEditor;
@@ -888,6 +894,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public StringEntityModelTextBoxOnlyEditor numOfIoThreadsEditor;
 
     @UiField(provided = true)
+    @Path(value = "numOfVirtioScsiMultiQueues.entity")
+    @WithElementId("numOfVirtioScsiMultiQueuesEditor")
+    public IntegerEntityModelTextBoxOnlyEditor numOfVirtioScsiMultiQueuesEditor;
+
+    @UiField(provided = true)
     public EntityModelDetachableWidget isIoThreadsEnabledDetachable;
 
     @UiField(provided = true)
@@ -920,11 +931,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Ignore
     public InfoIcon isVirtioScsiEnabledInfoIcon;
-
-    @UiField(provided = true)
-    @Path(value = "virtioScsiMultiQueuesEnabled.entity")
-    @WithElementId("virtioScsiMultiQueuesEnabled")
-    public EntityModelCheckBoxEditor virtioScsiMultiQueuesEnabled;
 
     @UiField(provided = true)
     @Ignore
@@ -1112,7 +1118,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         ioThreadsInfo = new InfoIcon(multiLineItalicSafeHtml(constants.ioThreadsExplanation()));
         ioThreadsInfo.setTooltipMaxWidth(TooltipWidth.W420);
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        virtioScsiMultiQueuesEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cpuPinningInfo = new InfoIcon(multiLineItalicSafeHtml(constants.cpuPinningLabelExplanation()));
         cpuPinningInfo.setTooltipMaxWidth(TooltipWidth.W420);
         multiQueuesInfo = new InfoIcon(templates.italicText(constants.multiQueuesLabelExplanation()));
@@ -1283,6 +1288,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         numOfVmsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         cpuPinning = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         cpuSharesAmountEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        numOfVirtioScsiMultiQueuesEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+
         kernel_pathEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         initrd_pathEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         kernel_parametersEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
@@ -1613,6 +1620,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         cpuSharesAmountSelectionEditor =
                 new ListModelListBoxOnlyEditor<>(new EnumRenderer<UnitVmModel.CpuSharesAmount>(), new ModeSwitchingVisibilityRenderer());
 
+        virtioScsiMultiQueueSelectionEditor =
+                new ListModelListBoxOnlyEditor<>(new EnumRenderer<VirtioMultiQueueType>(), new ModeSwitchingVisibilityRenderer());
+
         providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider<OpenstackNetworkProviderProperties>>());
         providersEditor.setLabel(constants.providerLabel());
 
@@ -1748,12 +1758,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         object.getIsVirtioScsiEnabled().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                 isVirtioScsiEnabledInfoIcon.setVisible(object.getIsVirtioScsiEnabled().getIsAvailable());
-            }
-        });
-
-        object.getVirtioScsiMultiQueuesEnabled().getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                isVirtioScsiMultiQueuesInfoIcon.setVisible(object.getVirtioScsiMultiQueuesEnabled().getIsAvailable());
             }
         });
 
@@ -2132,6 +2136,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         tpmEnabledEditor.setTabIndex(nextTabIndex++);
         numOfIoThreadsEditor.setTabIndex(nextTabIndex++);
         multiQueues.setTabIndex(nextTabIndex++);
+        numOfVirtioScsiMultiQueuesEditor.setTabIndex(nextTabIndex++);
         nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);
 
         // ==Boot Options Tab==

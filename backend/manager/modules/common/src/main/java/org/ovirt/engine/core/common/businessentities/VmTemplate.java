@@ -116,7 +116,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                       boolean multiQueuesEnabled,
                       boolean useTscFrequency,
                       String cpuPinning,
-                      boolean virtioScsiMultiQueuesEnabled,
+                      int virtioScsiMultiQueues,
                       boolean balloonEnabled,
                       BiosType biosType) {
         super(name,
@@ -187,7 +187,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 multiQueuesEnabled,
                 useTscFrequency,
                 cpuPinning,
-                virtioScsiMultiQueuesEnabled,
+                virtioScsiMultiQueues,
                 balloonEnabled,
                 biosType);
 

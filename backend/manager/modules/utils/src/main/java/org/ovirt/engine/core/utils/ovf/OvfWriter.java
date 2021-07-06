@@ -323,9 +323,21 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
 
         _writer.writeElement(MULTI_QUEUES_ENABLED, String.valueOf(vmBase.isMultiQueuesEnabled()));
-        _writer.writeElement(VIRTIO_SCSI_MULTI_QUEUES_ENABLED, String.valueOf(vmBase.isVirtioScsiMultiQueuesEnabled()));
+        writeVirtioMultiQueues();
+
         _writer.writeElement(USE_HOST_CPU, String.valueOf(vmBase.isUseHostCpuFlags()));
         _writer.writeElement(BALLOON_ENABLED, String.valueOf(vmBase.isBalloonEnabled()));
+    }
+
+    protected void writeVirtioMultiQueues() {
+        int numOfQueues = vmBase.getVirtioScsiMultiQueues();
+        _writer.writeStartElement(VIRTIO_SCSI_MULTI_QUEUES_ENABLED);
+        if (numOfQueues > 0) {
+            _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "queues", String.valueOf(numOfQueues));
+        }
+        String virtioMultiQueueEnabled = String.valueOf(numOfQueues != 0);
+        _writer.writeRaw(virtioMultiQueueEnabled);
+        _writer.writeEndElement();
     }
 
     protected void writeCustomEmulatedMachine() {

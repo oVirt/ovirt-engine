@@ -2096,20 +2096,24 @@ public class LibvirtVmXmlBuilder {
         Object ioThreadId = device.getSpecParams().get(VdsProperties.ioThreadId);
 
         // Add multiple queues support to the virtio-scsi controller
-        String queues = null;
+        int queues = 0;
 
-        if ("virtio-scsi".equals(model) && vm.isVirtioScsiMultiQueuesEnabled()) {
-            int numOfDisks = 0;
-            if (index != null && vmDeviceVirtioScsiUnitMap.containsKey(index)) {
-                numOfDisks = vmDeviceVirtioScsiUnitMap.get(index).size();
+        if ("virtio-scsi".equals(model)) {
+            if (vm.getVirtioScsiMultiQueues() == -1) {
+                int numOfDisks = 0;
+                if (index != null && vmDeviceVirtioScsiUnitMap.containsKey(index)) {
+                    numOfDisks = vmDeviceVirtioScsiUnitMap.get(index).size();
+                }
+                queues = vmInfoBuildUtils.getNumOfScsiQueues(numOfDisks, vm.getNumOfCpus());
+            } else if (vm.getVirtioScsiMultiQueues() > 0) {
+                queues = vm.getVirtioScsiMultiQueues();
             }
-            queues = String.valueOf(vmInfoBuildUtils.getNumOfScsiQueues(numOfDisks, vm.getNumOfCpus()));
         }
 
-        if (ioThreadId != null || queues != null) {
+        if (ioThreadId != null || queues > 0) {
             writer.writeStartElement("driver");
-            if (queues != null) {
-                writer.writeAttributeString("queues", queues);
+            if (queues > 0) {
+                writer.writeAttributeString("queues", String.valueOf(queues));
             }
             if (ioThreadId != null) {
                 writer.writeAttributeString("iothread", ioThreadId.toString());

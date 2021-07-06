@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.VirtioMultiQueueType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
@@ -52,7 +53,7 @@ public class VirtioScsiUtil {
                     if (!isOsSupportVirtioScsi) {
                         model.getIsVirtioScsiEnabled().setEntity(false);
                         model.getIsVirtioScsiEnabled().setChangeProhibitionReason(constants.cannotEnableVirtioScsiForOs());
-                        model.getVirtioScsiMultiQueuesEnabled().setEntity(false);
+                        model.getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.DISABLED);
                         callAfterUpdates();
                     } else {
                         AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(model.asyncQuery(returnValue -> {

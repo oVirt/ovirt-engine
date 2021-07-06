@@ -71,6 +71,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
+import org.ovirt.engine.ui.uicommonweb.models.VirtioMultiQueueType;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VmNumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
@@ -955,14 +956,25 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.multiQueues = multiQueues;
     }
 
-    private EntityModel<Boolean> virtioScsiMultiQueuesEnabled;
+    private NotChangableForVmInPoolEntityModel<Integer> numOfVirtioScsiMultiQueues;
 
-    public EntityModel<Boolean> getVirtioScsiMultiQueuesEnabled() {
-        return virtioScsiMultiQueuesEnabled;
+    public EntityModel<Integer> getNumOfVirtioScsiMultiQueues() {
+        return numOfVirtioScsiMultiQueues;
     }
 
-    public void setVirtioScsiMultiQueuesEnabled(EntityModel<Boolean> virtioScsiMultiQueuesEnabled) {
-        this.virtioScsiMultiQueuesEnabled = virtioScsiMultiQueuesEnabled;
+    public void setNumOfVirtioScsiMultiQueues(NotChangableForVmInPoolEntityModel<Integer> numOfVirtioScsiMultiQueues) {
+        this.numOfVirtioScsiMultiQueues = numOfVirtioScsiMultiQueues;
+    }
+
+    private NotChangableForVmInPoolListModel<VirtioMultiQueueType> virtioScsiMultiQueueTypeSelection;
+
+    public ListModel<VirtioMultiQueueType> getVirtioScsiMultiQueueTypeSelection() {
+        return virtioScsiMultiQueueTypeSelection;
+    }
+
+    public void setVirtioScsiMultiQueueTypeSelection(
+            NotChangableForVmInPoolListModel<VirtioMultiQueueType> virtioScsiMultiQueueTypeSelection) {
+        this.virtioScsiMultiQueueTypeSelection = virtioScsiMultiQueueTypeSelection;
     }
 
     private NotChangableForVmInPoolListModel<DisplayType> displayType;
@@ -1711,7 +1723,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getMemoryBalloonEnabled().setIsAvailable(false);
 
         setMultiQueues(new EntityModel<Boolean>(true));
-        setVirtioScsiMultiQueuesEnabled(new EntityModel<Boolean>(false));
 
         setSpiceProxyEnabled(new EntityModel<>(false));
         setSpiceProxy(new EntityModel<String>());
@@ -1925,6 +1936,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getCpuSharesAmountSelection().setItems(Arrays.asList(CpuSharesAmount.values()));
         getCpuSharesAmountSelection().getSelectedItemChangedEvent().addListener(this);
         getCpuSharesAmountSelection().setSelectedItem(CpuSharesAmount.DISABLED);
+
+
+        setNumOfVirtioScsiMultiQueues(new NotChangableForVmInPoolEntityModel<Integer>());
+        getNumOfVirtioScsiMultiQueues().setIsChangeable(false);
+
+        setVirtioScsiMultiQueueTypeSelection(new NotChangableForVmInPoolListModel<>());
+        getVirtioScsiMultiQueueTypeSelection().setItems(Arrays.asList(VirtioMultiQueueType.values()));
+        getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.DISABLED);
+        getVirtioScsiMultiQueueTypeSelection().getSelectedItemChangedEvent().addListener(this);
+
 
         setIsSoundcardEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         getIsSoundcardEnabled().setEntity(false);
@@ -2167,6 +2188,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 updateMigrationRelatedFields();
             } else if (sender == getCpuSharesAmountSelection()) {
                 behavior.updateCpuSharesAmountChangeability();
+            } else if (sender == getVirtioScsiMultiQueueTypeSelection()) {
+                virtioScsiMultiQueueSelectedItemChanged();
             } else if (sender == getBaseTemplate()) {
                 behavior.baseTemplateSelectedItemChanged();
             } else if (sender == getWatchdogModel()) {
@@ -2238,9 +2261,18 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             } else if (sender == getCpuPinning()) {
                 behavior.updateCpuPinningChanged();
             } else if (sender == getIsVirtioScsiEnabled()) {
-                updateVirtioScsiMultiQueue();
+                virtioScsiChanged();
             }
         }
+    }
+
+    private void virtioScsiChanged() {
+        boolean isVirtioScsiEnabled = getIsVirtioScsiEnabled().getEntity();
+        if (!isVirtioScsiEnabled) {
+            getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.DISABLED);
+        }
+        getVirtioScsiMultiQueueTypeSelection()
+                .setIsChangeable(isVirtioScsiEnabled, messages.virtioScsiRequired());
     }
 
     private void autoPinReset() {
@@ -2306,12 +2338,17 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getMultiQueues().setIsAvailable(true);
     }
 
-    public void updateVirtioScsiMultiQueue() {
-        boolean isChangeable = getIsVirtioScsiEnabled().getEntity();
-        if (!isChangeable) {
-            getVirtioScsiMultiQueuesEnabled().setEntity(false);
-        }
-        getVirtioScsiMultiQueuesEnabled().setIsChangeable(isChangeable, messages.virtioScsiRequired());
+    private void virtioScsiMultiQueueSelectedItemChanged() {
+        getNumOfVirtioScsiMultiQueues()
+                .setEntity(null);
+
+        // if the user choose CUSTOM and wrote invalid value, then switched back for example to DISABLED
+        // the input should not appear with red border
+        getNumOfVirtioScsiMultiQueues().setIsValid(true);
+
+        boolean changeable =
+                getVirtioScsiMultiQueueTypeSelection().getSelectedItem() == VirtioMultiQueueType.CUSTOM;
+        getNumOfVirtioScsiMultiQueues().setIsChangeable(changeable);
     }
 
     private void vmInitEnabledChanged() {
@@ -3171,6 +3208,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                     , new IntegerValidation(0, 262144)});
         }
 
+        if (getNumOfVirtioScsiMultiQueues().getIsAvailable()) {
+            if (getVirtioScsiMultiQueueTypeSelection().getSelectedItem() == VirtioMultiQueueType.CUSTOM) {
+                getNumOfVirtioScsiMultiQueues().validateEntity(
+                        new IValidation[] { new NotEmptyValidation(), new IntegerValidation(1, 262144) });
+            } else {
+                getNumOfVirtioScsiMultiQueues().setIsValid(true);
+            }
+        }
+
         setValidTab(TabName.CUSTOM_PROPERTIES_TAB, isValidTab(TabName.CUSTOM_PROPERTIES_TAB) &&
                 getCustomPropertySheet().validate());
 
@@ -3200,8 +3246,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             });
         }
 
+        boolean virtioScsiMultiQueuesValid = getNumOfVirtioScsiMultiQueues().getIsValid();
+
         setValidTab(TabName.RESOURCE_ALLOCATION_TAB, isValidTab(TabName.RESOURCE_ALLOCATION_TAB) &&
-                getNumOfIoThreads().getIsValid());
+                getNumOfIoThreads().getIsValid() && virtioScsiMultiQueuesValid);
 
         // Minimum 'Physical Memory Guaranteed' is 1MB
         validateMemorySize(getMemSize(), Integer.MAX_VALUE, 1);

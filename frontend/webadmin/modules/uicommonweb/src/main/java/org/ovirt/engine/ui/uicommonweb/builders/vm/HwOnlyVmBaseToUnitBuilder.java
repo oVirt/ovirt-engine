@@ -4,13 +4,14 @@ import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.ui.uicommonweb.builders.BaseSyncBuilder;
+import org.ovirt.engine.ui.uicommonweb.models.VirtioMultiQueueType;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 public class HwOnlyVmBaseToUnitBuilder extends BaseSyncBuilder<VmBase, UnitVmModel> {
     @Override
     protected void build(VmBase vm, UnitVmModel model) {
         model.getMemSize().setEntity(vm.getMemSizeMb());
-        model.getMaxMemorySize().setEntity(vm.getMaxMemorySizeMb()  );
+        model.getMaxMemorySize().setEntity(vm.getMaxMemorySizeMb());
         model.getIoThreadsEnabled().setEntity(vm.getNumOfIoThreads() != 0);
         model.getNumOfIoThreads().setEntity(Integer.toString(vm.getNumOfIoThreads()));
         model.getMinAllocatedMemory().setEntity(vm.getMinAllocatedMem());
@@ -30,7 +31,15 @@ public class HwOnlyVmBaseToUnitBuilder extends BaseSyncBuilder<VmBase, UnitVmMod
         model.getBiosType().setSelectedItem(vm.getBiosType());
         model.getHostCpu().setEntity(vm.isUseHostCpuFlags());
         model.getTscFrequency().setEntity(vm.getUseTscFrequency());
-        model.getVirtioScsiMultiQueuesEnabled().setEntity(vm.isVirtioScsiMultiQueuesEnabled());
+        int queues = vm.getVirtioScsiMultiQueues();
+        if (queues == -1) {
+            model.getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.AUTOMATIC);
+        } else if (queues == 0) {
+            model.getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.DISABLED);
+        } else {
+            model.getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.CUSTOM);
+            model.getNumOfVirtioScsiMultiQueues().setEntity(queues);
+        }
         model.getMemoryBalloonEnabled().setEntity(vm.isBalloonEnabled());
     }
 }

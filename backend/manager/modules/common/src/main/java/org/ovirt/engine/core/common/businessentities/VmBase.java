@@ -379,10 +379,17 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @EditableVmTemplateField
     private boolean multiQueuesEnabled;
 
+
+    /**
+     * Number of virtio-scsi multi-queues, possible values are:
+     * -1 - virtio-scsi multi-queues will be automatically set
+     * > 0 - number of queues
+     */
+
     @CopyOnNewVersion
     @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
-    private boolean virtioScsiMultiQueuesEnabled;
+    private int virtioScsiMultiQueues;
 
     @CopyOnNewVersion
     @EditableVmField(onStatuses = VMStatus.Down)
@@ -418,7 +425,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         description = "";
         comment = "";
         multiQueuesEnabled = true;
-        virtioScsiMultiQueuesEnabled = false;
+        virtioScsiMultiQueues = 0;
         balloonEnabled = true;
     }
 
@@ -622,7 +629,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.isMultiQueuesEnabled(),
                 vmBase.getUseTscFrequency(),
                 vmBase.getCpuPinning(),
-                vmBase.isVirtioScsiMultiQueuesEnabled(),
+                vmBase.getVirtioScsiMultiQueues(),
                 vmBase.isBalloonEnabled(),
                 vmBase.getBiosType());
     }
@@ -696,7 +703,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             boolean multiQueuesEnabled,
             boolean useTscFrequency,
             String cpuPinning,
-            boolean virtioScsiMultiQueuesEnabled,
+            int virtioScsiMultiQueues,
             boolean balloonEnabled,
             BiosType biosType) {
         this();
@@ -766,7 +773,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.leaseStorageDomainId = leaseStorageDomainId;
         this.resumeBehavior = resumeBehavior;
         this.multiQueuesEnabled = multiQueuesEnabled;
-        this.virtioScsiMultiQueuesEnabled = virtioScsiMultiQueuesEnabled;
+        this.virtioScsiMultiQueues = virtioScsiMultiQueues;
         this.useTscFrequency = useTscFrequency;
         this.cpuPinning = cpuPinning;
         this.balloonEnabled = balloonEnabled;
@@ -1114,8 +1121,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         return multiQueuesEnabled;
     }
 
-    public boolean isVirtioScsiMultiQueuesEnabled() {
-        return virtioScsiMultiQueuesEnabled;
+    public int getVirtioScsiMultiQueues() {
+        return virtioScsiMultiQueues;
     }
 
     public void setMultiQueuesEnabled(boolean multiQueuesEnabled) {
@@ -1130,8 +1137,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.cpuPinning = cpuPinning;
     }
 
-    public void setVirtioScsiMultiQueuesEnabled(boolean virtioScsiMultiQueuesEnabled) {
-        this.virtioScsiMultiQueuesEnabled = virtioScsiMultiQueuesEnabled;
+    public void setVirtioScsiMultiQueues(int virtioScsiMultiQueues) {
+        this.virtioScsiMultiQueues = virtioScsiMultiQueues;
     }
 
     public boolean isBalloonEnabled() {
@@ -1203,7 +1210,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 multiQueuesEnabled,
                 useTscFrequency,
                 cpuPinning,
-                virtioScsiMultiQueuesEnabled,
+                virtioScsiMultiQueues,
                 balloonEnabled
         );
     }
@@ -1275,7 +1282,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(multiQueuesEnabled, other.multiQueuesEnabled)
                 && Objects.equals(useTscFrequency, other.useTscFrequency)
                 && Objects.equals(cpuPinning, other.cpuPinning)
-                && Objects.equals(virtioScsiMultiQueuesEnabled, other.virtioScsiMultiQueuesEnabled)
+                && virtioScsiMultiQueues == other.virtioScsiMultiQueues
                 && Objects.equals(balloonEnabled, other.balloonEnabled);
     }
 

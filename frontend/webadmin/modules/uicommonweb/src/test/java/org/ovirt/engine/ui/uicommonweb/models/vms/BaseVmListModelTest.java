@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.VirtioMultiQueueType;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 
@@ -118,6 +119,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         // casting to object to prevent java.lang.ClassCastException:
         // class org.mockito.codegen.Object$MockitoMock$296545603 cannot be cast to class org.ovirt.engine.core.common.businessentities.BiosType
         when((Object) model.getBiosType().getSelectedItem()).thenReturn(BIOS_TYPE);
+        when(model.getVirtioScsiMultiQueueTypeSelection().getSelectedItem()).thenReturn(VirtioMultiQueueType.DISABLED);
     }
 
     protected void setUpOrigVm(VM origVm) {

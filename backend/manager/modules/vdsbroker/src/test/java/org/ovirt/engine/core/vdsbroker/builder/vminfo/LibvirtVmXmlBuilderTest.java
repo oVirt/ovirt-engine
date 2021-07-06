@@ -45,6 +45,7 @@ import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockedConfig;
 import org.ovirt.engine.core.utils.ovf.xml.XmlTextWriter;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 public class LibvirtVmXmlBuilderTest {
     MockitoSession mockito;
@@ -374,6 +375,36 @@ public class LibvirtVmXmlBuilderTest {
         verify(writer, times(1)).writeAttributeString("function", "4");
     }
 
+    @Test
+    @MockedConfig("hotPlugCpuNotSupported")
+    void testControllerVirioScsiQueues() throws NoSuchFieldException, IllegalAccessException {
+        LibvirtVmXmlBuilder underTest = mock(LibvirtVmXmlBuilder.class);
+        XmlTextWriter writer = mock(XmlTextWriter.class);
+        Map<String, String> properties = new HashMap<>();
+        VmDevice device = mock(VmDevice.class);
+        VmInfoBuildUtils buildUtils = setVmInfoBuildUtils(underTest);
+
+        setupControllerVirtioScsiQueuesTest(underTest, writer, properties, device, buildUtils);
+        VM vm = getVm(underTest);
+        when(vm.getVirtioScsiMultiQueues()).thenReturn(5);
+        underTest.writeDevices();
+        verify(writer, times(1)).writeStartElement("driver");
+        verify(writer, times(1)).writeAttributeString("queues", "5");
+
+        reset(writer);
+        when(vm.getVirtioScsiMultiQueues()).thenReturn(0);
+
+        underTest.writeDevices();
+        verify(writer, times(0)).writeStartElement("driver");
+
+        reset(writer);
+        when(vm.getVirtioScsiMultiQueues()).thenReturn(-1);
+        when(buildUtils.getNumOfScsiQueues(0, 0)).thenReturn(33);
+        underTest.writeDevices();
+        verify(writer, times(1)).writeStartElement("driver");
+        verify(writer, times(1)).writeAttributeString("queues", "33");
+    }
+
     private VmInfoBuildUtils setVmInfoBuildUtils(LibvirtVmXmlBuilder underTest) throws NoSuchFieldException, IllegalAccessException {
         Field vmInfoBuildUtils = LibvirtVmXmlBuilder.class.getDeclaredField("vmInfoBuildUtils");
         VmInfoBuildUtils buildUtils = mock(VmInfoBuildUtils.class);
@@ -471,6 +502,35 @@ public class LibvirtVmXmlBuilderTest {
         Map<String, HostDevice> devMap = new HashMap<>();
         devMap.put("testScsi", hostDev);
         when(hostDeviceSupplier.get()).thenReturn(devMap);
+
+        setVm(underTest, vm);
+        setProperties(underTest, properties);
+        setInterface(underTest, "sd");
+        setWriter(underTest, writer);
+        setMetadata(underTest, metadata);
+        setVolumeLeases(underTest, new ArrayList<>());
+    }
+
+    private void setupControllerVirtioScsiQueuesTest(LibvirtVmXmlBuilder underTest,
+            XmlTextWriter writer,
+            Map<String, String> properties,
+            VmDevice device,
+            VmInfoBuildUtils buildUtils) throws NoSuchFieldException, IllegalAccessException {
+        doCallRealMethod().when(underTest).writeDevices();
+        Map<String, Map<String, String>> metadata = new HashMap<>();
+        VM vm = mock(VM.class);
+        when(vm.getClusterArch()).thenReturn(ArchitectureType.x86_64);
+        when(vm.getBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
+        when(vm.getBootSequence()).thenReturn(BootSequence.C);
+        when(vm.getCompatibilityVersion()).thenReturn(Version.v4_5);
+        when(device.isPlugged()).thenReturn(true);
+        when(device.getType()).thenReturn(VmDeviceGeneralType.CONTROLLER);
+        when(device.getDevice()).thenReturn("testScsi");
+        Map<String, Object> m = new HashMap<>();
+        m.put(VdsProperties.Model, "virtio-scsi");
+        when(device.getSpecParams().get(VdsProperties.Model)).thenReturn(m);
+
+        when(buildUtils.getVmDevices(any())).thenReturn(Collections.singletonList(device));
 
         setVm(underTest, vm);
         setProperties(underTest, properties);
