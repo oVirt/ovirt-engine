@@ -286,6 +286,118 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase<AffinityGroupDao> {
                 .containsOnly(FixturesTool.VM_RHEL5_POOL_50, FixturesTool.VM_RHEL5_POOL_57);
     }
 
+    @Test
+    public void testAddVmForExistingAffinityGroup() {
+        AffinityGroup existing = dao.get(FixturesTool.EXISTING_AFFINITY_GROUP_ID);
+        assertEquals(NUM_OF_VMS_IN_EXISTING_AFFINITY_GROUP, existing.getVmEntityNames().size());
+        dao.insertAffinityVm(existing.getId(), FixturesTool.VM_RHEL5_POOL_51);
+        AffinityGroup fetched = dao.get(existing.getId());
+        assertEquals(NUM_OF_VMS_IN_EXISTING_AFFINITY_GROUP + 1, fetched.getVmEntityNames().size());
+    }
+
+    @Test
+    public void testRemoveVmForExistingAffinityGroup() {
+        AffinityGroup existing = dao.get(FixturesTool.EXISTING_AFFINITY_GROUP_ID);
+        dao.insertAffinityVm(existing.getId(), FixturesTool.VM_RHEL5_POOL_51);
+        existing = dao.get(existing.getId());
+        int numOfVms = existing.getVmEntityNames().size();
+        dao.deleteAffinityVm(existing.getId(), FixturesTool.VM_RHEL5_POOL_51);
+        AffinityGroup fetched = dao.get(existing.getId());
+        assertEquals(numOfVms - 1, fetched.getVmEntityNames().size());
+    }
+
+    @Test
+    public void testAddHostForExistingAffinityGroup() {
+        AffinityGroup existing = dao.get(FixturesTool.EXISTING_AFFINITY_GROUP_ID);
+        int numOfhosts = existing.getVdsEntityNames().size();
+        dao.insertAffinityHost(existing.getId(), FixturesTool.VDS_RHEL6_NFS_SPM);
+        AffinityGroup fetched = dao.get(existing.getId());
+        assertEquals(numOfhosts + 1, fetched.getVdsEntityNames().size());
+    }
+
+    @Test
+    public void testRemoveHostForExistingAffinityGroup() {
+        AffinityGroup existing = dao.get(FixturesTool.EXISTING_AFFINITY_GROUP_ID);
+        int numOfhosts = existing.getVdsEntityNames().size();
+        dao.deleteAffinityHost(existing.getId(), FixturesTool.VDS_RHEL6_NFS_SPM);
+        AffinityGroup fetched = dao.get(existing.getId());
+        assertEquals(numOfhosts - 1, fetched.getVdsEntityNames().size());
+    }
+
+    @Test
+    public void testAddVmLabelForExistingAffinityGroup() {
+        Guid labelId1= Guid.newGuid();
+
+        labelDao.save(new LabelBuilder()
+                .id(labelId1)
+                .name("label1")
+                .vm(FixturesTool.VM_RHEL5_POOL_50)
+                .vm(FixturesTool.VM_RHEL5_POOL_57)
+                .build());
+
+        AffinityGroup existing = dao.get(FixturesTool.AFFINITY_GROUP_3);
+        int numOfVmLabels = existing.getVmLabelNames().size();
+        dao.insertAffinityVmLabel(existing.getId(), labelId1);
+        AffinityGroup fetched = dao.get(existing.getId());
+        assertEquals(numOfVmLabels + 1, fetched.getVmLabelNames().size());
+    }
+
+    @Test
+    public void testRemoveVmLabelForExistingAffinityGroup() {
+        Guid labelId1= Guid.newGuid();
+
+        labelDao.save(new LabelBuilder()
+                .id(labelId1)
+                .name("label1")
+                .vm(FixturesTool.VM_RHEL5_POOL_50)
+                .vm(FixturesTool.VM_RHEL5_POOL_57)
+                .build());
+
+        AffinityGroup existing = dao.get(FixturesTool.AFFINITY_GROUP_3);
+        dao.insertAffinityVmLabel(existing.getId(), labelId1);
+        existing = dao.get(existing.getId());
+        int numOfVmLabels = existing.getVmLabelNames().size();
+        dao.deleteAffinityVmLabel(existing.getId(), labelId1);
+        AffinityGroup fetched = dao.get(existing.getId());
+        assertEquals(numOfVmLabels - 1, fetched.getVmLabelNames().size());
+    }
+
+    @Test
+    public void testAddHostLabelForExistingAffinityGroup() {
+        Guid labelId1= Guid.newGuid();
+
+        labelDao.save(new LabelBuilder()
+                .id(labelId1)
+                .name("label1")
+                .host(FixturesTool.VDS_RHEL6_NFS_SPM)
+                .build());
+
+        AffinityGroup existing = dao.get(FixturesTool.AFFINITY_GROUP_3);
+        int numOfHostLabels = existing.getHostLabelNames().size();
+        dao.insertAffinityHostLabel(existing.getId(), labelId1);
+        AffinityGroup fetched = dao.get(existing.getId());
+        assertEquals(numOfHostLabels + 1, fetched.getHostLabelNames().size());
+    }
+
+    @Test
+    public void testRemoveHostLabelForExistingAffinityGroup() {
+        Guid labelId1= Guid.newGuid();
+
+        labelDao.save(new LabelBuilder()
+                .id(labelId1)
+                .name("label1")
+                .host(FixturesTool.VDS_RHEL6_NFS_SPM)
+                .build());
+
+        AffinityGroup existing = dao.get(FixturesTool.AFFINITY_GROUP_3);
+        dao.insertAffinityHostLabel(existing.getId(), labelId1);
+        existing = dao.get(existing.getId());
+        int numOfHostLabels = existing.getHostLabelNames().size();
+        dao.deleteAffinityHostLabel(existing.getId(), labelId1);
+        AffinityGroup fetched = dao.get(existing.getId());
+        assertEquals(numOfHostLabels - 1, fetched.getHostLabelNames().size());
+    }
+
     private boolean equals(AffinityGroup affinityGroup, AffinityGroup other) {
         return Objects.equals(affinityGroup.getClusterId(), other.getClusterId())
                 && Objects.equals(affinityGroup.getDescription(), other.getDescription())

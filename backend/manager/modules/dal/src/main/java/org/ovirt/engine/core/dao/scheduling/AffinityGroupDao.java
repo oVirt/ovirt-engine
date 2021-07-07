@@ -51,4 +51,44 @@ public interface AffinityGroupDao extends GenericDao<AffinityGroup, Guid> {
      * Adds the host to specified affinity groups and removes it from all other affinity groups
      */
     void setAffinityGroupsForHost(Guid hostId, List<Guid> groupIds);
+
+    /**
+     * Adds the VM to specified affinity group.
+     */
+    void insertAffinityVm(Guid affinityId, Guid vmId);
+
+    /**
+     * Removes the VM from specified affinity group.
+     */
+    void deleteAffinityVm(Guid affinityId, Guid vmId);
+
+    /**
+     * Adds the host to specified affinity group.
+     */
+    void insertAffinityHost(Guid affinityId, Guid vdsId);
+
+    /**
+     * Removes the host from specified affinity group.
+     */
+    void deleteAffinityHost(Guid affinityId, Guid vdsId);
+
+    /**
+     * Adds the VM label to specified affinity group.
+     */
+    void insertAffinityVmLabel(Guid affinityId, Guid labelId);
+
+    /**
+     * Removes the VM label from specified affinity group.
+     */
+    void deleteAffinityVmLabel(Guid affinityId, Guid labelId);
+
+    /**
+     * Adds the host label to specified affinity group.
+     */
+    void insertAffinityHostLabel(Guid affinityId, Guid labelId);
+
+    /**
+     * Removes the host label from specified affinity group.
+     */
+    void deleteAffinityHostLabel(Guid affinityId, Guid labelId);
 }

@@ -145,50 +145,22 @@ BEGIN
 
     FOREACH o IN ARRAY v_vm_ids
     LOOP
-        INSERT INTO affinity_group_members(
-            affinity_group_id,
-            vm_id
-        )
-        VALUES (
-            v_id,
-            o
-        );
+        PERFORM InsertAffinityVm(v_id, o);
     END LOOP;
 
     FOREACH o IN ARRAY v_vds_ids
     LOOP
-        INSERT INTO affinity_group_members(
-            affinity_group_id,
-            vds_id
-        )
-        VALUES (
-            v_id,
-            o
-        );
+        PERFORM InsertAffinityHost(v_id, o);
     END LOOP;
 
     FOREACH o IN ARRAY v_vm_label_ids
     LOOP
-        INSERT INTO affinity_group_members(
-            affinity_group_id,
-            vm_label_id
-        )
-        VALUES (
-            v_id,
-            o
-        );
+        PERFORM InsertAffinityVmLabel(v_id, o);
     END LOOP;
 
     FOREACH o IN ARRAY v_host_label_ids
     LOOP
-        INSERT INTO affinity_group_members(
-            affinity_group_id,
-            host_label_id
-        )
-        VALUES (
-            v_id,
-            o
-        );
+        PERFORM InsertAffinityHostLabel(v_id, o);
     END LOOP;
 
 END;$PROCEDURE$
@@ -305,3 +277,127 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+-- Set a VM for affinity group
+CREATE OR REPLACE FUNCTION InsertAffinityVm (
+    v_affinity_group_id UUID,
+    v_vm_id UUID
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    INSERT INTO affinity_group_members(
+        affinity_group_id,
+        vm_id
+    )
+    VALUES (
+        v_affinity_group_id,
+        v_vm_id
+    );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+
+-- Delete a VM for affinity group
+CREATE OR REPLACE FUNCTION DeleteAffinityVm (
+    v_affinity_group_id UUID,
+    v_vm_id UUID
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE FROM affinity_group_members
+    WHERE affinity_group_id = v_affinity_group_id
+        AND vm_id = v_vm_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+-- Set a host for affinity group
+CREATE OR REPLACE FUNCTION InsertAffinityHost (
+    v_affinity_group_id UUID,
+    v_vds_id UUID
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    INSERT INTO affinity_group_members(
+        affinity_group_id,
+        vds_id
+    )
+    VALUES (
+        v_affinity_group_id,
+        v_vds_id
+    );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+-- Delete a host for affinity group
+CREATE OR REPLACE FUNCTION DeleteAffinityHost (
+    v_affinity_group_id UUID,
+    v_vds_id UUID
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE FROM affinity_group_members
+    WHERE affinity_group_id = v_affinity_group_id
+        AND vds_id = v_vds_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+-- Set a VM label for affinity group
+CREATE OR REPLACE FUNCTION InsertAffinityVmLabel (
+    v_affinity_group_id UUID,
+    v_vm_label_id UUID
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    INSERT INTO affinity_group_members(
+        affinity_group_id,
+        vm_label_id
+    )
+    VALUES (
+        v_affinity_group_id,
+        v_vm_label_id
+    );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+-- Delete a VM label for affinity group
+CREATE OR REPLACE FUNCTION DeleteAffinityVmLabel (
+    v_affinity_group_id UUID,
+    v_vm_label_id UUID
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE FROM affinity_group_members
+    WHERE affinity_group_id = v_affinity_group_id
+        AND vm_label_id = v_vm_label_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+-- Set a host label for affinity group
+CREATE OR REPLACE FUNCTION InsertAffinityHostLabel (
+    v_affinity_group_id UUID,
+    v_host_label_id UUID
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    INSERT INTO affinity_group_members(
+        affinity_group_id,
+        host_label_id
+    )
+    VALUES (
+        v_affinity_group_id,
+        v_host_label_id
+    );
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+-- Delete a host label for affinity group
+CREATE OR REPLACE FUNCTION DeleteAffinityHostLabel (
+    v_affinity_group_id UUID,
+    v_host_label_id UUID
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    DELETE FROM affinity_group_members
+    WHERE affinity_group_id = v_affinity_group_id
+        AND host_label_id = v_host_label_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;

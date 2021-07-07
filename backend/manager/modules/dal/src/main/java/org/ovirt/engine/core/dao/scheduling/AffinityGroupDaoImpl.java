@@ -100,6 +100,70 @@ public class AffinityGroupDaoImpl extends DefaultGenericDao<AffinityGroup, Guid>
     }
 
     @Override
+    public void insertAffinityVm(Guid affinityId, Guid vmId){
+        getCallsHandler().executeModification("InsertAffinityVm",
+                getCustomMapSqlParameterSource()
+                        .addValue("affinity_group_id", affinityId)
+                        .addValue("vm_id", vmId));
+    }
+
+    @Override
+    public void deleteAffinityVm(Guid affinityId, Guid vmId){
+        getCallsHandler().executeModification("DeleteAffinityVm",
+                getCustomMapSqlParameterSource()
+                        .addValue("affinity_group_id", affinityId)
+                        .addValue("vm_id", vmId));
+    }
+
+    @Override
+    public void insertAffinityHost(Guid affinityId, Guid vdsId){
+        getCallsHandler().executeModification("InsertAffinityHost",
+                getCustomMapSqlParameterSource()
+                        .addValue("affinity_group_id", affinityId)
+                        .addValue("vds_id", vdsId));
+    }
+
+    @Override
+    public void deleteAffinityHost(Guid affinityId, Guid vdsId) {
+        getCallsHandler().executeModification("DeleteAffinityHost",
+                getCustomMapSqlParameterSource()
+                        .addValue("affinity_group_id", affinityId)
+                        .addValue("vds_id", vdsId));
+    }
+
+    @Override
+    public void insertAffinityVmLabel(Guid affinityId, Guid labelId) {
+        getCallsHandler().executeModification("InsertAffinityVmLabel",
+                getCustomMapSqlParameterSource()
+                        .addValue("affinity_group_id", affinityId)
+                        .addValue("vm_label_id", labelId));
+    }
+
+    @Override
+    public void deleteAffinityVmLabel(Guid affinityId, Guid labelId) {
+        getCallsHandler().executeModification("DeleteAffinityVmLabel",
+                getCustomMapSqlParameterSource()
+                        .addValue("affinity_group_id", affinityId)
+                        .addValue("vm_label_id", labelId));
+    }
+
+    @Override
+    public void insertAffinityHostLabel(Guid affinityId, Guid labelId) {
+        getCallsHandler().executeModification("InsertAffinityHostLabel",
+                getCustomMapSqlParameterSource()
+                        .addValue("affinity_group_id", affinityId)
+                        .addValue("host_label_id", labelId));
+    }
+
+    @Override
+    public void deleteAffinityHostLabel(Guid affinityId, Guid labelId) {
+        getCallsHandler().executeModification("DeleteAffinityHostLabel",
+                getCustomMapSqlParameterSource()
+                        .addValue("affinity_group_id", affinityId)
+                        .addValue("host_label_id", labelId));
+    }
+
+    @Override
     protected MapSqlParameterSource createFullParametersMapper(AffinityGroup entity) {
         return createIdParameterMapper(entity.getId())
                 .addValue("name", entity.getName())
