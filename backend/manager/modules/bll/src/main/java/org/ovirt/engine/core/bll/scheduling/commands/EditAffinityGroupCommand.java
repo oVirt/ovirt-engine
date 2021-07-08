@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParam
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
-public class EditAffinityGroupCommand extends AffinityGroupCRUDCommand {
+public class EditAffinityGroupCommand <T extends AffinityGroupCRUDParameters> extends AffinityGroupCRUDCommand<T> {
 
     @Inject
     private AffinityGroupDao affinityGroupDao;
@@ -21,7 +21,7 @@ public class EditAffinityGroupCommand extends AffinityGroupCRUDCommand {
     @Inject
     private VmStaticDao vmStaticDao;
 
-    public EditAffinityGroupCommand(AffinityGroupCRUDParameters parameters, CommandContext cmdContext) {
+    public EditAffinityGroupCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
 

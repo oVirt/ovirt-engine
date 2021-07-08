@@ -512,6 +512,14 @@ public enum ActionType {
     AddAffinityGroup(1950, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
     EditAffinityGroup(1951, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
     RemoveAffinityGroup(1952, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
+    AddVmToAffinityGroup(1953, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
+    RemoveVmFromAffinityGroup(1954, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
+    AddHostToAffinityGroup(1955, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
+    RemoveHostFromAffinityGroup(1956, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
+    AddVmLabelToAffinityGroup(1957, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
+    RemoveVmLabelFromAffinityGroup(1958, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
+    AddHostLabelToAffinityGroup(1959, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
+    RemoveHostLabelFromAffinityGroup(1960, ActionGroup.MANIPULATE_AFFINITY_GROUPS, false, QuotaDependency.NONE),
 
     // ISCSI Bonds
     AddIscsiBond(2000, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),

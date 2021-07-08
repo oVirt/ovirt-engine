@@ -30,10 +30,11 @@ import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
-public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroupCRUDParameters> {
+public abstract class AffinityGroupCRUDCommand <T extends AffinityGroupCRUDParameters> extends CommandBase<T> {
 
-    private static final String Entity_VM = "VM";
-    private static final String Entity_VDS = "VDS";
+    protected static final String Entity_VM = "VM";
+    protected static final String Entity_VDS = "VDS";
+    protected static final String Entity_LABEL = "LABEL";
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -49,7 +50,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
 
     AffinityGroup affinityGroup = null;
 
-    public AffinityGroupCRUDCommand(AffinityGroupCRUDParameters parameters, CommandContext cmdContext) {
+    public AffinityGroupCRUDCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
 

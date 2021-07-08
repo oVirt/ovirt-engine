@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
-public class AddAffinityGroupCommand extends AffinityGroupCRUDCommand {
+public class AddAffinityGroupCommand extends AffinityGroupCRUDCommand<AffinityGroupCRUDParameters> {
 
     @Inject
     private AffinityGroupDao affinityGroupDao;
