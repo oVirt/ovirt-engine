@@ -47,7 +47,7 @@ public class CompatibilityVersionUpdaterTest {
     private static Map<String, Integer> createMaxNumberOfVmCpusMap() {
         Map<String, Integer> maxVmCpusMap = new HashMap<>();
         maxVmCpusMap.put("s390x", 384);
-        maxVmCpusMap.put("x86", 512);
+        maxVmCpusMap.put("x86", 710);
         maxVmCpusMap.put("ppc", 384);
         return maxVmCpusMap;
     }
@@ -134,7 +134,7 @@ public class CompatibilityVersionUpdaterTest {
         var updates = performUpdate();
 
         assertThat(updates).containsOnly(VmUpdateType.CPU_TOPOLOGY);
-        assertThat(vm.getNumOfSockets()).isEqualTo(3);
+        assertThat(vm.getNumOfSockets()).isEqualTo(11);
         assertThat(vm.getCpuPerSocket()).isEqualTo(16);
         assertThat(vm.getThreadsPerCpu()).isEqualTo(4);
     }
@@ -149,7 +149,7 @@ public class CompatibilityVersionUpdaterTest {
 
         assertThat(updates).containsOnly(VmUpdateType.CPU_TOPOLOGY);
         assertThat(vm.getNumOfSockets()).isEqualTo(1);
-        assertThat(vm.getCpuPerSocket()).isEqualTo(64);
+        assertThat(vm.getCpuPerSocket()).isEqualTo(88);
         assertThat(vm.getThreadsPerCpu()).isEqualTo(8);
     }
 

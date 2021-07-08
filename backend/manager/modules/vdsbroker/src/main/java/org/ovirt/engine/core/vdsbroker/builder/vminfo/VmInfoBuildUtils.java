@@ -1652,4 +1652,15 @@ public class VmInfoBuildUtils {
         }
         return size;
     }
+
+    public static int maxNumberOfVcpus(VM vm) {
+        return FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(),
+                vm.getClusterArch()) ? VmCpuCountHelper.calcMaxVCpu(vm, vm.getClusterCompatibilityVersion())
+                        : vm.getNumOfCpus();
+    }
+
+    public static boolean isVmWithHighNumberOfX86Vcpus(VM vm) {
+        return vm.getClusterArch().getFamily() == ArchitectureType.x86
+                && maxNumberOfVcpus(vm) >= VmCpuCountHelper.HIGH_NUMBER_OF_X86_VCPUS;
+    }
 }

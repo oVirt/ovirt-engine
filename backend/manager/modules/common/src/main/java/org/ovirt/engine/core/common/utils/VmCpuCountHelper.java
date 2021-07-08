@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.utils;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -13,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VmCpuCountHelper {
+    public static final int HIGH_NUMBER_OF_X86_VCPUS = 256;
     private static final int maxBitWidth = 8;
     private static final Logger log = LoggerFactory.getLogger(VmCpuCountHelper.class);
 
@@ -25,15 +28,31 @@ public class VmCpuCountHelper {
         return clusterArchitecture == null ? null : clusterArchitecture.getFamily();
     }
 
-    static Integer calcMaxVCpu(ArchitectureType architecture, Integer maxSockets, Integer maxVCpus,
-                                      int threadsPerCore, int cpuPerSocket) {
+    private static boolean canHighNumberOfX86Vcpus(BiosType biosType) {
+        return biosType != null && biosType.getChipsetType() == ChipsetType.Q35;
+    }
+
+    private static Integer alignedMaxVCpu(Integer maxVCpus, Integer maxSockets, int threadsPerCore,
+            int cpuPerSocket) {
+        final int threadsPerSocket = cpuPerSocket * threadsPerCore;
+        if (threadsPerSocket > maxVCpus) {
+            return maxVCpus;
+        }
+        final Integer numberOfSockets = Math.min(maxSockets, maxVCpus / threadsPerSocket);
+        return threadsPerSocket * numberOfSockets;
+    }
+
+    static Integer calcMaxVCpu(ArchitectureType architecture, Integer maxSockets, Integer maxVCpus, int threadsPerCore,
+            int cpuPerSocket, BiosType biosType) {
         if (architecture == null || architecture == ArchitectureType.x86) {
             // As described in https://bugzilla.redhat.com/1406243#c13, the
             // maximum number of vCPUs is limited by thread and core numbers on
             // x86, to fit into an 8-bit APIC ID value organized by certain
             // rules. That limit is going to be removed once x2APIC is used.
             int oneSocketBitWidth = bitWidth(threadsPerCore) + bitWidth(cpuPerSocket);
-            if (oneSocketBitWidth > maxBitWidth) {
+            if (canHighNumberOfX86Vcpus(biosType)) {
+                maxVCpus = alignedMaxVCpu(maxVCpus, maxSockets, threadsPerCore, cpuPerSocket);
+            } else if (oneSocketBitWidth > maxBitWidth) {
                 log.warn("{} cores with {} threads may be too many for the VM to be able to run",
                         cpuPerSocket, threadsPerCore);
             } else {
@@ -46,15 +65,13 @@ public class VmCpuCountHelper {
                     apicVCpusLimit -= cpuPerSocket * threadsPerCore;
                 }
                 if (maxVCpus < apicVCpusLimit) {
-                    // The value must be multiplication of cpuPerSocket * threadsPerCore.
-                    maxVCpus = (maxVCpus / (cpuPerSocket * threadsPerCore)) * (cpuPerSocket * threadsPerCore);
+                    maxVCpus = alignedMaxVCpu(maxVCpus, maxSockets, threadsPerCore, cpuPerSocket);
                 } else {
                     maxVCpus = apicVCpusLimit;
                 }
             }
         } else {
-            maxVCpus = cpuPerSocket * threadsPerCore *
-                    Math.min(maxSockets, maxVCpus / (cpuPerSocket * threadsPerCore));
+            maxVCpus = alignedMaxVCpu(maxVCpus, maxSockets, threadsPerCore, cpuPerSocket);
         }
         return maxVCpus;
     }
@@ -79,7 +96,8 @@ public class VmCpuCountHelper {
 
         int threadsPerCore = vm.getThreadsPerCpu();
         int cpuPerSocket = vm.getCpuPerSocket();
-        return calcMaxVCpu(architectureFamily, maxSockets, maxVCpus, threadsPerCore, cpuPerSocket);
+        final BiosType biosType = vm.getBiosType();
+        return calcMaxVCpu(architectureFamily, maxSockets, maxVCpus, threadsPerCore, cpuPerSocket, biosType);
     }
 
     /**
@@ -116,7 +134,8 @@ public class VmCpuCountHelper {
     public static boolean validateCpuCounts(VM vm) {
         ArchitectureType architecture = architectureFamily(vm);
         if (architecture == null || architecture == ArchitectureType.x86) {
-            return bitWidth(vm.getThreadsPerCpu()) + bitWidth(vm.getCpuPerSocket()) <= maxBitWidth;
+            return canHighNumberOfX86Vcpus(vm.getBiosType())
+                    || bitWidth(vm.getThreadsPerCpu()) + bitWidth(vm.getCpuPerSocket()) <= maxBitWidth;
         }
         return true;
     }

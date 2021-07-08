@@ -66,7 +66,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -399,9 +398,7 @@ public class LibvirtVmXmlBuilder {
     private void writevCpu() {
         writer.writeStartElement("vcpu");
         writer.writeAttributeString("current", String.valueOf(vm.getNumOfCpus()));
-        writer.writeRaw(FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) ?
-                VmCpuCountHelper.calcMaxVCpu(vm, vm.getClusterCompatibilityVersion()).toString()
-                : String.valueOf(vm.getNumOfCpus()));
+        writer.writeRaw(String.valueOf(VmInfoBuildUtils.maxNumberOfVcpus(vm)));
         writer.writeEndElement();
     }
 
@@ -464,9 +461,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("topology");
             writer.writeAttributeString("cores", Integer.toString(vm.getCpuPerSocket()));
             writer.writeAttributeString("threads", Integer.toString(vm.getThreadsPerCpu()));
-            int vcpus = FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) ?
-                    VmCpuCountHelper.calcMaxVCpu(vm, vm.getClusterCompatibilityVersion())
-                    : vm.getNumOfCpus();
+            int vcpus = VmInfoBuildUtils.maxNumberOfVcpus(vm);
             writer.writeAttributeString("sockets", String.valueOf(vcpus / vm.getCpuPerSocket() / vm.getThreadsPerCpu()));
             writer.writeEndElement();
         }
@@ -847,6 +842,12 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         }
 
+        if (VmInfoBuildUtils.isVmWithHighNumberOfX86Vcpus(vm)) {
+            writer.writeStartElement("ioapic");
+            writer.writeAttributeString("driver", "qemu");
+            writer.writeEndElement();
+        }
+
         writer.writeEndElement();
     }
 
@@ -1048,6 +1049,8 @@ public class LibvirtVmXmlBuilder {
         if (vm.getClusterArch() == ArchitectureType.ppc64 || vm.getClusterArch() == ArchitectureType.ppc64le) {
             writeEmulator();
         }
+
+        writeIommu();
 
         Map<DiskInterface, Integer> controllerIndexMap =
                 ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
@@ -1503,6 +1506,18 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("emulator");
         writer.writeAttributeString("text", String.format("/usr/bin/qemu-system-%s", vm.getClusterArch()));
         writer.writeEndElement();
+    }
+
+    private void writeIommu() {
+        if (VmInfoBuildUtils.isVmWithHighNumberOfX86Vcpus(vm)) {
+            writer.writeStartElement("iommu");
+            writer.writeAttributeString("model", "intel");
+            writer.writeStartElement("driver");
+            writer.writeAttributeString("intremap", "on");
+            writer.writeAttributeString("eim", "on");
+            writer.writeEndElement();
+            writer.writeEndElement();
+        }
     }
 
     private void writeSpiceVmcChannel() {

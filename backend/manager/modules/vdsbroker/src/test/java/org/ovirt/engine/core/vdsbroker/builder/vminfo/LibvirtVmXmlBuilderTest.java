@@ -85,6 +85,17 @@ public class LibvirtVmXmlBuilderTest {
                 MockConfigDescriptor.of(ConfigValues.VgpuPlacementSupported, Version.v4_2, Boolean.FALSE));
     }
 
+    @SuppressWarnings("unused")
+    public static Stream<MockConfigDescriptor<?>> hotPlugCpuNotSupported() {
+        Map<String, String> hotPlugCpuMap = new HashMap<>();
+        hotPlugCpuMap.put("s390x", "false");
+        hotPlugCpuMap.put("x86", "false");
+        hotPlugCpuMap.put("ppc", "false");
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.HotPlugCpuSupported, Version.v4_5, hotPlugCpuMap),
+                MockConfigDescriptor.of(ConfigValues.HotPlugCpuSupported, Version.v4_3, hotPlugCpuMap),
+                MockConfigDescriptor.of(ConfigValues.HotPlugCpuSupported, Version.v4_2, hotPlugCpuMap));
+    }
+
     public static Stream<MockConfigDescriptor<?>> tscConfig() {
         return Stream.of(MockConfigDescriptor.of(ConfigValues.SendSMPOnRunVm, false));
     }
@@ -213,6 +224,7 @@ public class LibvirtVmXmlBuilderTest {
     }
 
     @Test
+    @MockedConfig("hotPlugCpuNotSupported")
     void testNoneVideo() throws NoSuchFieldException, IllegalAccessException {
         LibvirtVmXmlBuilder underTest = mock(LibvirtVmXmlBuilder.class);
         XmlTextWriter writer = mock(XmlTextWriter.class);
@@ -236,6 +248,7 @@ public class LibvirtVmXmlBuilderTest {
         VM vm = mock(VM.class);
         when(vm.getId()).thenReturn(Guid.newGuid());
         when(vm.getClusterArch()).thenReturn(ArchitectureType.x86_64);
+        when(vm.getCompatibilityVersion()).thenReturn(Version.v4_5);
         when(vm.getBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
         when(vm.getBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
         when(vm.getBootSequence()).thenReturn(BootSequence.C);
@@ -291,6 +304,7 @@ public class LibvirtVmXmlBuilderTest {
     }
 
     @Test
+    @MockedConfig("hotPlugCpuNotSupported")
     void testHostdevScsiDisk() throws NoSuchFieldException, IllegalAccessException {
         LibvirtVmXmlBuilder underTest = mock(LibvirtVmXmlBuilder.class);
         XmlTextWriter writer = mock(XmlTextWriter.class);
@@ -432,6 +446,7 @@ public class LibvirtVmXmlBuilderTest {
         Map<String, Map<String, String>> metadata = new HashMap<>();
         VM vm = mock(VM.class);
         when(vm.getClusterArch()).thenReturn(ArchitectureType.x86_64);
+        when(vm.getCompatibilityVersion()).thenReturn(Version.v4_5);
         when(vm.getBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
         when(vm.getBiosType()).thenReturn(BiosType.I440FX_SEA_BIOS);
         when(vm.getBootSequence()).thenReturn(BootSequence.C);
