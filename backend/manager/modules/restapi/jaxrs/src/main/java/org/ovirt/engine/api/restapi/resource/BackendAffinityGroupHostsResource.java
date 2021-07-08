@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
+import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupMemberChangeParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -45,11 +45,8 @@ public class BackendAffinityGroupHostsResource extends AbstractBackendCollection
 
     @Override
     public Response add(Host host) {
-        AffinityGroup affinityGroup = getEntity();
-
-        affinityGroup.getVdsIds().add(asGuid(host.getId()));
-        return performAction(ActionType.EditAffinityGroup, new AffinityGroupCRUDParameters(affinityGroup.getId(),
-                affinityGroup));
+        return performAction(ActionType.AddHostToAffinityGroup,
+                new AffinityGroupMemberChangeParameters(affinityGroupId, asGuid(host.getId())));
     }
 
     @Override

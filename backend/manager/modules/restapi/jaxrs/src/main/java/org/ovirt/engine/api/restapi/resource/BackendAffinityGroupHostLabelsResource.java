@@ -6,7 +6,9 @@ import org.ovirt.engine.api.model.AffinityLabel;
 import org.ovirt.engine.api.model.AffinityLabels;
 import org.ovirt.engine.api.resource.AffinityGroupHostLabelResource;
 import org.ovirt.engine.api.resource.AffinityGroupHostLabelsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupMemberChangeParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAffinityGroupHostLabelsResource
@@ -35,7 +37,8 @@ public class BackendAffinityGroupHostLabelsResource
 
     @Override
     public Response add(AffinityLabel label) {
-        return editAffinityGroup(group -> group.getHostLabels().add(asGuid(label.getId())));
+        return performAction(ActionType.AddHostLabelToAffinityGroup,
+                new AffinityGroupMemberChangeParameters(getAffinityGroupId(), asGuid(label.getId())));
     }
 
     @Override

@@ -14,7 +14,7 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
+import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupMemberChangeParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -46,10 +46,9 @@ public class BackendAffinityGroupVmsResourceTest
     @Test
     public void testAddVMToAffinityGroup() {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(false);
 
-        setUriInfo(setUpActionExpectations(ActionType.EditAffinityGroup,
-                AffinityGroupCRUDParameters.class,
+        setUriInfo(setUpActionExpectations(ActionType.AddVmToAffinityGroup,
+                AffinityGroupMemberChangeParameters.class,
                 new String[] {},
                 new Object[] {},
                 true,

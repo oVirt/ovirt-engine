@@ -1,10 +1,11 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.AffinityLabel;
 import org.ovirt.engine.api.resource.AffinityGroupHostLabelResource;
+import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupMemberChangeParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAffinityGroupHostLabelResource
@@ -17,10 +18,7 @@ public class BackendAffinityGroupHostLabelResource
 
     @Override
     public Response remove() {
-        return editAffinityGroup(group -> {
-            if (!group.getHostLabels().remove(asGuid(id))) {
-                throw new WebApplicationException(Response.Status.NOT_FOUND);
-            }
-        });
+        return performAction(ActionType.RemoveHostLabelFromAffinityGroup,
+                new AffinityGroupMemberChangeParameters(getAffinityGroupId(), asGuid(id)));
     }
 }

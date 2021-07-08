@@ -4,18 +4,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
-import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
-import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class BackendAffinityGroupSubListResource<R extends BaseResource, Q>
@@ -50,13 +47,6 @@ public abstract class BackendAffinityGroupSubListResource<R extends BaseResource
         }
 
         return result;
-    }
-
-    public Response editAffinityGroup(Consumer<AffinityGroup> modifier) {
-        AffinityGroup affinityGroup = getAffinityGroup();
-        modifier.accept(affinityGroup);
-        return performAction(ActionType.EditAffinityGroup,
-                new AffinityGroupCRUDParameters(affinityGroup.getId(), affinityGroup));
     }
 
     public Guid getAffinityGroupId() {

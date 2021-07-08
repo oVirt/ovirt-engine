@@ -8,9 +8,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
+import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupMemberChangeParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -24,11 +22,10 @@ public class BackendAffinityGroupVmResourceTest
     @Test
     public void testRemove() {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetGroupExpectations();
         setUriInfo(
             setUpActionExpectations(
-                ActionType.EditAffinityGroup,
-                AffinityGroupCRUDParameters.class,
+                ActionType.RemoveVmFromAffinityGroup,
+                AffinityGroupMemberChangeParameters.class,
                 new String[] {},
                 new Object[] {},
                 true,
@@ -36,16 +33,6 @@ public class BackendAffinityGroupVmResourceTest
             )
         );
         verifyRemove(resource.remove());
-    }
-
-    private void setUpGetGroupExpectations() {
-        setUpGetEntityExpectations(
-            QueryType.GetAffinityGroupById,
-            IdQueryParameters.class,
-            new String[] { "Id" },
-            new Object[] { GUIDS[0] },
-            getGroup()
-        );
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM getEntity(int index) {
