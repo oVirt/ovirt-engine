@@ -43,6 +43,18 @@
   tags:
     - skip_ansible_lint # E403
 
+- name: populate service facts
+  service_facts:
+
+- name: Stop services
+  service:
+    name: "{{ item }}"
+    state: stopped
+  loop:
+  - ovirt-ha-agent.service
+  - ovirt-ha-broker.service
+  when: "item in ansible_facts.services"
+
 ## Ignoring empty lines and the title "Obsoleting packages"
 - name: Upgrade packages
   yum:
@@ -56,6 +68,13 @@
   - skip_ansible_lint # E403
   register: updated_packages
   when: node_host| bool
+
+- name: Start ovirt-ha-agent service
+  service:
+    name: ovirt-ha-agent
+    enabled: yes
+    state: restarted
+  when: ansible_facts.services["ovirt-ha-agent.service"] is defined
 
 - name: Check if image was updated
   set_fact:
