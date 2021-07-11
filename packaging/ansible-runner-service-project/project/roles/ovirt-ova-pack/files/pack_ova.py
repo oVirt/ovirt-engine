@@ -58,8 +58,18 @@ def write_file(name, ova_file, data):
 def convert_disks(ova_path):
     for path, offset in six.iteritems(path_to_offset):
         print("converting disk: %s, offset %s" % (path, offset))
-        output = check_output(['losetup', '--find', '--show', '-o', offset,
-                               ova_path])
+        start_time = time.time()
+        while True:
+            try:
+                output = check_output(['losetup', '--find', '--show', '-o',
+                                       offset, ova_path])
+            except CalledProcessError:
+                if time.time() - start_time > 10:
+                    raise
+                time.sleep(1)
+            else:
+                break
+
         loop = from_bytes(output.splitlines()[0])
         loop_stat = os.stat(loop)
         call(['udevadm', 'settle'])
@@ -117,6 +127,4 @@ with io.open(ova_path, "wb") as ova_file:
         write_disk_headers(ova_file, disks_info.split('+'))
     # write two null blocks at the end of the file
     write_null_blocks(ova_file)
-    ova_file.flush()
-    os.fsync(ova_file.fileno())
 convert_disks(ova_path)
