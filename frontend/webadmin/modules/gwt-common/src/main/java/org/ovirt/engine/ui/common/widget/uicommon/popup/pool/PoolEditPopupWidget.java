@@ -62,6 +62,7 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
 
         templateWithVersionEditor.setEnabled(true);
 
+        isSealedEditor.setEnabled(true);
         multiQueues.setEnabled(true);
     }
 

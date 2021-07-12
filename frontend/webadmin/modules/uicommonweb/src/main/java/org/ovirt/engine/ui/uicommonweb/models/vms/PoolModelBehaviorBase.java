@@ -44,6 +44,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     public void initialize() {
         super.initialize();
 
+        getModel().getIsSealed().setIsAvailable(true);
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
 
         getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(true);
@@ -97,6 +98,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     @Override
     public void templateWithVersion_SelectedItemChanged() {
+        super.templateWithVersion_SelectedItemChanged();
         updateCdImage();
     }
 

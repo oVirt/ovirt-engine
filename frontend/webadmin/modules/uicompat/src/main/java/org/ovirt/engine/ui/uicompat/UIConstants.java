@@ -2200,4 +2200,6 @@ public interface UIConstants extends Constants {
     String uefiRequired();
 
     String guestOsVersionNotSupported();
+
+    String sealWindowsUnavailable();
 }

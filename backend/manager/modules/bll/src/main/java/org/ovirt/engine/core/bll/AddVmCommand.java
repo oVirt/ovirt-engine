@@ -1962,8 +1962,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private boolean shouldSealVm() {
-        return getVmTemplate().isSealed() && !osRepository.isWindows(getVm().getOs())
-                && getParameters().getPoolId() == null;
+        return getParameters().getSeal() != null ? getParameters().getSeal()
+                : getVmTemplate().isSealed() && !osRepository.isWindows(getVm().getOs())
+                        && getParameters().getPoolId() == null;
     }
 
     @Override

@@ -510,6 +510,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         vm.setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
         AddVmParameters parameters = new AddVmParameters(vm);
         parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
+        parameters.setSeal(model.getIsSealed().getEntity());
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         parameters.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());

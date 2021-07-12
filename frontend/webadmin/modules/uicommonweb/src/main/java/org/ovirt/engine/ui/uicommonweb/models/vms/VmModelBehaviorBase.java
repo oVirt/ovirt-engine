@@ -254,7 +254,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                               BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
     }
 
-    public void templateWithVersion_SelectedItemChanged() {}
+    public void templateWithVersion_SelectedItemChanged() {
+        updateSeal();
+    }
 
     public abstract void postDataCenterWithClusterSelectedItemChanged();
 
@@ -263,6 +265,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public abstract void provisioning_SelectedItemChanged();
 
     public void oSType_SelectedItemChanged() {
+        updateSeal();
     }
 
     public void updateMinAllocatedMemory() {
@@ -1666,6 +1669,33 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     .getMaxMaxMemorySize(getModel().getOSType().getSelectedItem(), getCompatibilityVersion());
             getModel().getMaxMemorySize().setEntity(Math.min(calculatedMaxMemory, allowedMaxMemory));
         }
+    }
+
+    protected void updateSeal() {
+        if (!getModel().getIsSealed().getIsAvailable()) {
+            return;
+        }
+
+        if (getModel().getIsWindowsOS()) {
+            getModel().getIsSealed().setEntity(false);
+            getModel().getIsSealed().setIsChangeable(false,
+                    ConstantsManager.getInstance().getConstants().sealWindowsUnavailable());
+            return;
+        }
+
+        getModel().getIsSealed().setIsChangeable(true);
+
+        TemplateWithVersion selectedTemplateWithVersion = getModel().getTemplateWithVersion().getSelectedItem();
+        if (selectedTemplateWithVersion == null) {
+            getModel().getIsSealed().setEntity(false);
+            return;
+        }
+        VmTemplate template = selectedTemplateWithVersion.getTemplateVersion();
+        getModel().getIsSealed().setEntity(isSealByDefault(template));
+    }
+
+    protected boolean isSealByDefault(VmTemplate template) {
+        return template.isSealed();
     }
 
     protected abstract class UpdateTemplateWithVersionListener implements IEventListener<EventArgs> {

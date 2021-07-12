@@ -28,6 +28,7 @@ public class AddVmPoolParameters extends VmPoolOperationParameters implements Ha
     private VmRngDevice rngDevice;
     private Map<GraphicsType, GraphicsDevice> graphicsDevices;
     private String vmLargeIcon;
+    private Boolean seal;
 
     public AddVmPoolParameters() {
     }
@@ -105,6 +106,14 @@ public class AddVmPoolParameters extends VmPoolOperationParameters implements Ha
 
     public void setVmLargeIcon(String vmLargeIcon) {
         this.vmLargeIcon = vmLargeIcon;
+    }
+
+    public Boolean getSeal() {
+        return seal;
+    }
+
+    public void setSeal(Boolean seal) {
+        this.seal = seal;
     }
 
     @Override

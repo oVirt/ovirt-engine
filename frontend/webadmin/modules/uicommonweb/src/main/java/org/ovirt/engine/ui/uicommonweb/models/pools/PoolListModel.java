@@ -438,6 +438,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
                 .getImageToDestinationDomainMap());
         param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+        param.setSeal(model.getIsSealed().getEntity());
 
         param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         param.setTpmEnabled(model.getTpmEnabled().getEntity());

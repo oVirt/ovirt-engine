@@ -22,6 +22,7 @@ public class AddVmParameters extends VmManagementParametersBase {
     private Guid diskOperatorAuthzPrincipalDbId;
     private Guid poolId;
     private boolean useCollapse;
+    private Boolean seal;
     private Map<Guid, Guid> srcDiskIdToTargetDiskIdMapping = new HashMap<>();
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
     // Declare which disks should be attached (AttachDiskToVm is called separately)
@@ -62,6 +63,14 @@ public class AddVmParameters extends VmManagementParametersBase {
 
     public void setUseCollapse(boolean useCollapse) {
         this.useCollapse = useCollapse;
+    }
+
+    public Boolean getSeal() {
+        return seal;
+    }
+
+    public void setSeal(Boolean seal) {
+        this.seal = seal;
     }
 
     public Map<Guid, Guid> getSrcDiskIdToTargetDiskIdMapping() {

@@ -41,6 +41,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     public void initialize() {
         super.initialize();
 
+        getModel().getIsSealed().setIsAvailable(true);
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
         getModel().getVmType().setIsChangeable(true);
         getModel().getVmId().setIsAvailable(true);
@@ -134,6 +135,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     @Override
     public void templateWithVersion_SelectedItemChanged() {
+        super.templateWithVersion_SelectedItemChanged();
         TemplateWithVersion selectedTemplateWithVersion = getModel().getTemplateWithVersion().getSelectedItem();
         if (selectedTemplateWithVersion != null) {
             VmTemplate selectedTemplate = selectedTemplateWithVersion.getTemplateVersion();

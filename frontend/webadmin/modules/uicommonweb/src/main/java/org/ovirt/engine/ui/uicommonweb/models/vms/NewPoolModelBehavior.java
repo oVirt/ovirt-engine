@@ -44,6 +44,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
                 return !getModel().getPoolStateful().getEntity();
             }
         });
+        getModel().getPoolStateful().getEntityChangedEvent().addListener((ev, sender, args) -> updateSeal());
     }
 
     @Override
@@ -143,6 +144,11 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     @Override
     protected List<Cluster> filterClusters(List<Cluster> clusters) {
         return AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusters);
+    }
+
+    @Override
+    protected boolean isSealByDefault(VmTemplate template) {
+        return getModel().getPoolStateful().getEntity() && super.isSealByDefault(template);
     }
 
     @Override
