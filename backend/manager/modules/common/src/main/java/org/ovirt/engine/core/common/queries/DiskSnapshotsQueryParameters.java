@@ -13,15 +13,25 @@ public class DiskSnapshotsQueryParameters extends IdQueryParameters {
     // are filtered out. For backward compatibility we must keep the default false.
     private boolean includeActive;
 
+    // If true, query will include snapshots of disks belonging to templates within
+    // the storage-domain
+    private boolean includeTemplate;
+
     public DiskSnapshotsQueryParameters() {
     }
 
-    public DiskSnapshotsQueryParameters(Guid id, boolean includeActive) {
+    public DiskSnapshotsQueryParameters(Guid id, boolean includeActive, boolean includeTemplate) {
         super(id);
         this.includeActive = includeActive;
+        this.includeTemplate = includeTemplate;
     }
 
     public boolean getIncludeActive() {
         return includeActive;
     }
+
+    public boolean isIncludeTemplate() {
+        return includeTemplate;
+    }
+
 }

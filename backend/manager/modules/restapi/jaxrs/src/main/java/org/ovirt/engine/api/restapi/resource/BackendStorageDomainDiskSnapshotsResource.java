@@ -18,6 +18,7 @@ public class BackendStorageDomainDiskSnapshotsResource
         implements DiskSnapshotsResource {
 
     protected static final String INCLUDE_ACTIVE = "include_active";
+    protected static final String INCLUDE_TEMPLATE = "include_template";
 
     Guid storageDomainId;
 
@@ -29,7 +30,7 @@ public class BackendStorageDomainDiskSnapshotsResource
     @Override
     public DiskSnapshots list() {
             return mapCollection(getBackendCollection(QueryType.GetAllDiskSnapshotsByStorageDomainId,
-                    new DiskSnapshotsQueryParameters(this.storageDomainId, includeActive())));
+                    new DiskSnapshotsQueryParameters(this.storageDomainId, includeActive(), includeTemplate())));
     }
 
     protected DiskSnapshots mapCollection(List<Disk> entities) {
@@ -58,6 +59,10 @@ public class BackendStorageDomainDiskSnapshotsResource
 
     private boolean includeActive() {
         return ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, INCLUDE_ACTIVE, true, false);
+    }
+
+    private boolean includeTemplate() {
+        return ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, INCLUDE_TEMPLATE, true, false);
     }
 
 }

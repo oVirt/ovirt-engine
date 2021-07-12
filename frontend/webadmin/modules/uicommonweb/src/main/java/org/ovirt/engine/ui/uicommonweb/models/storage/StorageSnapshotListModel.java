@@ -84,7 +84,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
 
         super.syncSearch();
 
-        DiskSnapshotsQueryParameters parameters = new DiskSnapshotsQueryParameters(getEntity().getId(), false);
+        DiskSnapshotsQueryParameters parameters = new DiskSnapshotsQueryParameters(getEntity().getId(), false, false);
         parameters.setRefresh(getIsQueryFirstTime());
 
         Frontend.getInstance().runQuery(QueryType.GetAllDiskSnapshotsByStorageDomainId, parameters,
