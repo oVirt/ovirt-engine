@@ -38,6 +38,10 @@ public class VmNextRunConfigurationModel extends ConfirmationModel {
         this.applyLater = applyLater;
     }
 
+    public boolean isAnythingPluggable() {
+        return isCpuPluggable() || isMemoryPluggable() || isVmLeaseUpdated();
+    }
+
     public boolean isCpuPluggable() {
         return cpuPluggable;
     }

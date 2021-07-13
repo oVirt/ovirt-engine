@@ -160,7 +160,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     }
 
     private void setVisibilityToHotChanges(VmNextRunConfigurationModel object) {
-        hotplugPanel.setVisible(object.isCpuPluggable() || object.isMemoryPluggable() || object.isVmLeaseUpdated());
+        hotplugPanel.setVisible(object.isAnythingPluggable());
         applyNowCpuMessage.setVisible(object.isCpuPluggable());
         applyNowMemoryMessage.setVisible(object.isMemoryPluggable());
         applyNowMinAllocatedMemoryMessage.setVisible(object.isMinAllocatedMemoryPluggable());

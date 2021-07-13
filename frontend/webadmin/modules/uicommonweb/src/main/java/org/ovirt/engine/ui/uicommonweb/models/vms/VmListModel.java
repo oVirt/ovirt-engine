@@ -2185,7 +2185,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             if (!model.validate()) {
                 return;
             }
-            updateExistingVm(model.getApplyLater().getEntity());
+            updateExistingVm(!model.isAnythingPluggable() || model.getApplyLater().getEntity());
             cancelConfirmation();
         } else if ("ClearCpuPinning".equals(command.getName())) { // $NON-NLS-1$
             clearCpuPinning();
