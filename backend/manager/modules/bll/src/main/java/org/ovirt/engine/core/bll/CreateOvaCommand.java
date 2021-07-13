@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
@@ -183,7 +185,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
             Map<Guid, String> diskIdToPath,
             String tpmData,
             String nvramData) {
-        String encodedOvf = genOvfParameter(ovf);
+        String encodedOvf = encode(ovf);
         AnsibleCommandParameters params = new AnsibleCommandParameters();
         params.setHostId(getVdsId());
         params.setPlayAction("Pack OVA");
@@ -258,17 +260,23 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         return (long) Math.ceil(size / (TAR_BLOCK_SIZE * 1.0)) * TAR_BLOCK_SIZE;
     }
 
-    private String genOvfParameter(String ovf) {
-        // replace " characters with \\\"  and \n string to their unicode equivalent
-        return ovf.replaceAll("\"", "\\\\\\\\\\\\\"").replaceAll("&amp;#10", "&#10");
+    private String encode(String str) {
+        // replace " characters with \\\" and \n string with their unicode equivalent
+        return str.replaceAll("\"", "\\\\\\\\\\\\\"").replaceAll("&amp;#10", "&#10");
     }
 
     private String genDiskParameters(Collection<DiskImage> disks, Map<Guid, String> diskIdToPath) {
-        return disks.stream()
-                .map(disk -> String.format("%s::%s",
-                        diskIdToPath.get(disk.getId()),
-                        String.valueOf(disk.getActualSizeInBytes())))
-                .collect(Collectors.joining("+"));
+        var diskPathToSize = disks.stream()
+                .collect(Collectors.toMap(
+                        disk -> diskIdToPath.get(disk.getId()),
+                        disk -> disk.getActualSizeInBytes()));
+        String json;
+        try {
+            json = new ObjectMapper().writeValueAsString(diskPathToSize);
+        } catch (IOException e) {
+            throw new RuntimeException("failed to serialize disk info");
+        }
+        return encode(json);
     }
 
     private void teardown() {

@@ -1,4 +1,5 @@
 import io
+import json
 import os
 import pwd
 import sys
@@ -88,11 +89,7 @@ def convert_disks(ova_path):
 
 
 def write_disk_headers(ova_file, disks_info):
-    for disk_info in disks_info:
-        # disk_info is of the following structure: <full path>::<size in bytes>
-        idx = disk_info.index('::')
-        disk_path = disk_info[:idx]
-        disk_size = int(disk_info[idx+2:])
+    for disk_path, disk_size in six.iteritems(disks_info):
         print("skipping disk: path=%s size=%d" % (disk_path, disk_size))
         disk_name = os.path.basename(disk_path)
         tar_info = create_tar_info(disk_name, disk_size)
@@ -123,8 +120,7 @@ with io.open(ova_path, "wb") as ova_file:
         write_file("tpm.dat", ova_file, tpm_data)
     if len(nvram_data) > 0:
         write_file("nvram.dat", ova_file, nvram_data)
-    if len(disks_info) > 0:
-        write_disk_headers(ova_file, disks_info.split('+'))
+    write_disk_headers(ova_file, json.loads(disks_info))
     # write two null blocks at the end of the file
     write_null_blocks(ova_file)
 convert_disks(ova_path)
