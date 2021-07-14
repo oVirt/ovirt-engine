@@ -133,6 +133,7 @@ LEFT JOIN storage_pool
     ON storage_pool.id = storage_pool_iso_map.storage_pool_id
 LEFT JOIN image_transfers
     ON images.image_group_id = image_transfers.disk_id
+    AND image_transfers.phase NOT IN (9, 10)
 LEFT JOIN entity_step_progress
     ON images.image_group_id = entity_step_progress.entity_id
 WHERE images.image_guid != '00000000-0000-0000-0000-000000000000';
