@@ -23,11 +23,6 @@ public class VmCpuCountHelper {
         return n == 0 ? 0 : 32 - Integer.numberOfLeadingZeros(n - 1);
     }
 
-    private static ArchitectureType architectureFamily(VM vm) {
-        ArchitectureType clusterArchitecture = vm.getClusterArch();
-        return clusterArchitecture == null ? null : clusterArchitecture.getFamily();
-    }
-
     private static boolean canHighNumberOfX86Vcpus(BiosType biosType) {
         return biosType != null && biosType.getChipsetType() == ChipsetType.Q35;
     }
@@ -53,8 +48,8 @@ public class VmCpuCountHelper {
             if (canHighNumberOfX86Vcpus(biosType)) {
                 maxVCpus = alignedMaxVCpu(maxVCpus, maxSockets, threadsPerCore, cpuPerSocket);
             } else if (oneSocketBitWidth > maxBitWidth) {
-                log.warn("{} cores with {} threads may be too many for the VM to be able to run",
-                        cpuPerSocket, threadsPerCore);
+                log.warn("{} cores with {} threads may be too many for the VM to be able to run", cpuPerSocket,
+                        threadsPerCore);
             } else {
                 int apicIdLimit = (int) Math.pow(2, 8 - oneSocketBitWidth);
                 int apicVCpusLimit = cpuPerSocket * threadsPerCore * Math.min(maxSockets, apicIdLimit);
@@ -129,13 +124,23 @@ public class VmCpuCountHelper {
      * configurations with too many threads or cores.
      *
      * @param vm The VM for which we want to check the CPU count configuration
+     * @param compatibilityVersion The effective VM compatibility version
      * @return Whether the CPU count configuration is valid
      */
-    public static boolean validateCpuCounts(VM vm) {
-        ArchitectureType architecture = architectureFamily(vm);
-        if (architecture == null || architecture == ArchitectureType.x86) {
-            return canHighNumberOfX86Vcpus(vm.getBiosType())
-                    || bitWidth(vm.getThreadsPerCpu()) + bitWidth(vm.getCpuPerSocket()) <= maxBitWidth;
+    public static boolean validateCpuCounts(VM vm, Version compatibilityVersion, ArchitectureType architecture) {
+        if ((architecture == null || architecture.getFamily() == ArchitectureType.x86)
+                && !canHighNumberOfX86Vcpus(vm.getBiosType())
+                && bitWidth(vm.getThreadsPerCpu()) + bitWidth(vm.getCpuPerSocket()) > maxBitWidth) {
+            log.error("The CPU topology cannot fit into APIC for {} BIOS type", vm.getBiosType());
+            return false;
+        }
+        Integer maxVCpus = calcMaxVCpu(vm.getStaticData(), compatibilityVersion, architecture);
+        if (vm.getNumOfCpus() > maxVCpus) {
+            log.error(
+                    "Too many CPUs for the given topology, compatibility version {}, {} architecture, "
+                            + "and {} BIOS type (maximum is {})",
+                    compatibilityVersion, architecture, vm.getBiosType(), maxVCpus);
+            return false;
         }
         return true;
     }

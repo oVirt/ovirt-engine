@@ -1160,7 +1160,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.QOS_CPU_SHARES_OUT_OF_RANGE);
         }
 
-        if (!VmCpuCountHelper.validateCpuCounts(vmFromParams)) {
+        if (!VmCpuCountHelper.validateCpuCounts(vmFromParams, getEffectiveCompatibilityVersion(),
+                getCluster().getArchitecture())) {
             return failValidation(EngineMessage.TOO_MANY_CPU_COMPONENTS);
         }
 
