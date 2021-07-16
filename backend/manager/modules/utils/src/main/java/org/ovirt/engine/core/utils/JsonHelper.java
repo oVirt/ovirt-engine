@@ -7,13 +7,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.CollectionType;
-import org.codehaus.jackson.map.type.MapType;
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.MapType;
 
 public class JsonHelper {
     private JsonHelper() {
@@ -23,7 +22,7 @@ public class JsonHelper {
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = new JsonFactory();
         StringWriter writer = new StringWriter();
-        JsonGenerator generator = factory.createJsonGenerator(writer);
+        JsonGenerator generator = factory.createGenerator(writer);
         if (prettyPrint) {
             generator.useDefaultPrettyPrinter();
         }
