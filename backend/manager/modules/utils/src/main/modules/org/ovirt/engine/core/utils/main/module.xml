@@ -33,6 +33,7 @@
     <module name="org.postgresql"/>
     <module name="org.springframework"/>
     <module name="org.slf4j"/>
+    <module name="com.fasterxml.jackson.core.jackson-databind"/>
   </dependencies>
 
 </module>
