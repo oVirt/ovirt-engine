@@ -84,6 +84,11 @@ public class DeleteAllVmCheckpointsCommand<T extends DeleteAllVmCheckpointsParam
         List<DiskImage> diskImages = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
         // Remove the bitmap from all the disk snapshots.
         for (DiskImage image : diskImages) {
+            // RAW volumes do not support bitmaps
+            if (!image.isQcowFormat()) {
+                continue;
+            }
+
             log.info("Clear all bitmaps from VM '{}' volume '{}'.", getVmName(), image.getId());
             VdsmImageLocationInfo locationInfo = new VdsmImageLocationInfo(
                     image.getStorageIds().get(0),
