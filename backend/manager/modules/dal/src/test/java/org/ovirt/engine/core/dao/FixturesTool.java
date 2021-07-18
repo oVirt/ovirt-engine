@@ -974,4 +974,13 @@ public class FixturesTool {
 
     public static final String IPV6_ADDR_NOT_EXIST = "2::3";
 
+    /**
+     * Predefined storage domain with ISO
+     */
+    protected static final Guid STORAGE_DOMAIN_WITH_ISO = new Guid("bee623f3-9174-4ffd-aa30-4fb0dc0aa2f6");
+
+    /**
+     * Predefined VM with mounted ISO
+     */
+    protected static final String VM_NAME_WITH_MOUNTED_ISO = "vm1-with-iso";
 }

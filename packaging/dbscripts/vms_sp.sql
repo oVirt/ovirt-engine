@@ -2261,11 +2261,11 @@ Create or replace FUNCTION GetActiveVmNamesWithIsoOnStorageDomain(v_storage_doma
 RETURNS SETOF varchar(255) STABLE
    AS $procedure$
 BEGIN
-    RETURN QUERY SELECT vm.vm_name
-    FROM images_storage_domain_view image, vms vm
+    RETURN QUERY SELECT vd.vm_name
+    FROM images_storage_domain_view image, vms_monitoring_view vd
     WHERE image.storage_id = v_storage_domain_id
-        AND vm.status not in (0, 14, 15) -- Down, ImageIllegal, ImageLocked
-        AND image.image_group_id::VARCHAR = vm.iso_path;
+    AND vd.status not in (0, 14, 15) -- Down, ImageIllegal, ImageLocked
+    AND image.image_group_id::VARCHAR = vd.current_cd;
 END; $procedure$
 LANGUAGE plpgsql;
 

@@ -481,9 +481,17 @@ public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmSt
     @Test
     public void testGetAllRunningForVds() {
         List<VmStatic> vms = dao.getAllRunningForVds(FixturesTool.VDS_RHEL6_NFS_SPM);
-        assertEquals(3, vms.size());
+        assertEquals(4, vms.size());
         List<Guid> vmIds = vms.stream().map(VmStatic::getId).collect(Collectors.toList());
         assertTrue(vmIds.contains(FixturesTool.VM_RHEL5_POOL_57));
         assertFalse(vmIds.contains(FixturesTool.VM_RHEL5_POOL_52));
+    }
+
+    @Test
+    public void testGetAllRunningNamesWithIsoOnStorageDomain() {
+        List<String> vms = dao.getAllRunningNamesWithIsoOnStorageDomain(FixturesTool.STORAGE_DOMAIN_WITH_ISO);
+
+        assertNotNull(vms);
+        assertTrue(vms.contains(FixturesTool.VM_NAME_WITH_MOUNTED_ISO));
     }
 }

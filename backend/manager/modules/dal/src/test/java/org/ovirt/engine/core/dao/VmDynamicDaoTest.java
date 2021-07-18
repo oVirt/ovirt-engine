@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, VmDynamicDao> {
-    private static final int DYNAMIC_RUNNING_COUNT = 3;
+    private static final int DYNAMIC_RUNNING_COUNT = 4;
 
     /**
      * Test the {@link VmDynamicDao#save(BusinessEntity)} method by adding a vm_dynamic record to a template.
@@ -52,7 +52,7 @@ public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, Vm
 
     @Override
     protected int getEntitiesTotalCount() {
-        return 10;
+        return 11;
     }
 
     /**
