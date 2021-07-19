@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
-import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ImageDao;
@@ -55,19 +54,6 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         } else {
             addAuditLogOnRemoveFailure();
         }
-    }
-
-    @Override
-    protected void lockImage() {
-        imagesHandler.updateAllDiskImageSnapshotsStatusWithCompensation(getRelevantDiskImage().getId(),
-                ImageStatus.LOCKED,
-                getRelevantDiskImage().getImageStatus(),
-                getCompensationContext());
-    }
-
-    @Override
-    protected void unLockImage() {
-        imageDao.updateStatusOfImagesByImageGroupId(getRelevantDiskImage().getId(), ImageStatus.OK);
     }
 
     @Override

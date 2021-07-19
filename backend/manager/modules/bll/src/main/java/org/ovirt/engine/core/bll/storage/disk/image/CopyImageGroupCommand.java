@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -413,6 +414,23 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     protected boolean canPerformRollbackUsingCommand(ActionType commandType, ActionParametersBase params) {
         return diskImageDao.get(getParameters().getDestinationImageId()) != null;
+    }
+
+    @Override
+    // Override required, as the default implementation only locks the top snapshot, the override will lock
+    // the entire disk
+    protected void lockImage() {
+        imagesHandler.updateAllDiskImageSnapshotsStatusWithCompensation(getRelevantDiskImage().getId(),
+                ImageStatus.LOCKED,
+                getRelevantDiskImage().getImageStatus(),
+                getCompensationContext());
+    }
+
+    @Override
+    // Override required, as the default implementation only unlocks the top snapshot, the override will
+    // unlock the entire disk
+    protected void unLockImage() {
+        imageDao.updateStatusOfImagesByImageGroupId(getRelevantDiskImage().getId(), ImageStatus.OK);
     }
 
     private boolean isManagedBlockCopy() {
