@@ -159,9 +159,10 @@ public class BackendVmResource
     @Override
     public Vm update(Vm incoming) {
         validateParameters(incoming);
+        parent.validateVirtioScsiMultiQueues(incoming);
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
             Guid clusterId = lookupClusterId(incoming);
-            if(!clusterId.toString().equals(get().getCluster().getId())){
+            if (!clusterId.toString().equals(get().getCluster().getId())) {
                 performAction(ActionType.ChangeVMCluster,
                               new ChangeVMClusterParameters(clusterId, guid, null)); // TODO: change 'null' to 'incoming.getVmCompa...' when REST support is added
             }

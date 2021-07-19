@@ -181,6 +181,7 @@ public class BackendVmsResource extends
         validateIconParameters(vm);
         // validate that the provided cluster-compatibility-version is legal
         validateClusterCompatibilityVersion(vm);
+        validateVirtioScsiMultiQueues(vm);
         Response response = null;
         if (vm.isSetInitialization() && vm.getInitialization().isSetConfiguration()) {
             validateParameters(vm, "initialization.configuration.type", "initialization.configuration.data");
@@ -277,6 +278,16 @@ public class BackendVmsResource extends
                         localize(Messages.INVALID_VERSION_DETAIL, LEGAL_CLUSTER_COMPATIBILITY_VERSIONS),
                         Response.Status.BAD_REQUEST);
             }
+        }
+    }
+
+    void validateVirtioScsiMultiQueues(Vm vm) {
+        if (vm.isSetVirtioScsiMultiQueues() && vm.isSetVirtioScsiMultiQueuesEnabled()
+                && !vm.isVirtioScsiMultiQueuesEnabled()) {
+            throw new WebFaultException(null,
+                    localize(Messages.INVALID_VIRTIO_SCSI_MULTI_QUEUE_REASON),
+                    localize(Messages.INVALID_VIRTIO_SCSI_MULTI_QUEUE_DETAIL),
+                    Response.Status.BAD_REQUEST);
         }
     }
 

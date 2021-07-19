@@ -40,6 +40,7 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
+import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
@@ -77,7 +78,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
-import  org.ovirt.engine.core.utils.MockedConfig;
+import org.ovirt.engine.core.utils.MockedConfig;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockConfigExtension.class)
@@ -1388,6 +1389,22 @@ public class BackendVmsResourceTest
         model.setLargeIcon(IconTestHelpler.createIconWithData());
         model.setSmallIcon(IconTestHelpler.createIcon(GUIDS[2]));
         verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)), BAD_REQUEST);
+    }
+
+    @Test
+    public void testAddVirtioMultiQueueFailure() {
+        Vm model = getModel(0);
+        model.setVirtioScsiMultiQueues(5);
+        model.setVirtioScsiMultiQueuesEnabled(false);
+        model.setCluster(new org.ovirt.engine.api.model.Cluster());
+        model.getCluster().setName(NAMES[1]);
+        model.setTemplate(new Template());
+        model.getTemplate().setId(DEFAULT_TEMPLATE_ID);
+
+        verifyFault(assertThrows(WebApplicationException.class, () -> collection.add(model)),
+                messageBundle.localize(Messages.INVALID_VIRTIO_SCSI_MULTI_QUEUE_REASON),
+                messageBundle.localize(Messages.INVALID_VIRTIO_SCSI_MULTI_QUEUE_DETAIL),
+                BAD_REQUEST);
     }
 
     private void setUpTemplateDisksExpectations(Guid templateId) {
