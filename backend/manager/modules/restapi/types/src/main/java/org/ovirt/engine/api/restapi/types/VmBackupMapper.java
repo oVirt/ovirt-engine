@@ -24,6 +24,9 @@ public class VmBackupMapper {
         if (model.isSetToCheckpointId()) {
             entity.setToCheckpointId(GuidUtils.asGuid(model.getToCheckpointId()));
         }
+        if (model.isSetDescription()) {
+            entity.setDescription(model.getDescription());
+        }
         if (model.isSetDisks()) {
             List<DiskImage> disks = model.getDisks().getDisks().stream().map(
                     d -> (DiskImage) DiskMapper.map(d, null)).collect(Collectors.toList());
@@ -47,6 +50,9 @@ public class VmBackupMapper {
         }
         if (entity.getCreationDate() != null) {
             model.setCreationDate(DateMapper.map(entity.getCreationDate(), null));
+        }
+        if (entity.getDescription() != null) {
+            model.setDescription(entity.getDescription());
         }
         if (entity.getVmId() != null) {
             Vm vm = new Vm();

@@ -21,7 +21,8 @@ CREATE OR REPLACE FUNCTION InsertVmBackup (
     v_vm_id UUID,
     v_host_id UUID,
     v_phase TEXT,
-    v__create_date TIMESTAMP WITH TIME ZONE
+    v__create_date TIMESTAMP WITH TIME ZONE,
+    v_description VARCHAR(1024)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -32,7 +33,8 @@ BEGIN
         vm_id,
         host_id,
         phase,
-        _create_date
+        _create_date,
+        description
         )
     VALUES (
         v_backup_id,
@@ -41,7 +43,8 @@ BEGIN
         v_vm_id,
         v_host_id,
         v_phase,
-        v__create_date
+        v__create_date,
+        v_description
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -52,7 +55,8 @@ CREATE OR REPLACE FUNCTION UpdateVmBackup (
     v_to_checkpoint_id UUID,
     v_vm_id UUID,
     v_host_id UUID,
-    v_phase TEXT
+    v_phase TEXT,
+    v_description VARCHAR(1024)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -62,7 +66,8 @@ BEGIN
         to_checkpoint_id = v_to_checkpoint_id,
         vm_id = v_vm_id,
         host_id = v_host_id,
-        phase = v_phase
+        phase = v_phase,
+        description = v_description
     WHERE backup_id = v_backup_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

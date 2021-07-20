@@ -25,6 +25,8 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
 
     private Date creationDate;
 
+    private String description;
+
     private List<DiskImage> disks;
 
     public Guid getId() {
@@ -91,6 +93,14 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
         this.creationDate = creationDate;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public boolean isIncremental() {
         return fromCheckpointId != null;
     }
@@ -105,7 +115,8 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
                 toCheckpointId,
                 phase,
                 disks,
-                creationDate
+                creationDate,
+                description
         );
     }
 
@@ -125,7 +136,8 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
                 && Objects.equals(toCheckpointId, other.toCheckpointId)
                 && Objects.equals(phase, other.phase)
                 && Objects.equals(disks, other.disks)
-                && Objects.equals(creationDate, other.creationDate);
+                && Objects.equals(creationDate, other.creationDate)
+                && Objects.equals(description, other.description);
     }
 
     @Override
