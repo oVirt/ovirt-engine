@@ -49,6 +49,9 @@ public class VmCheckpointMapper {
         if (entity.getState() != null) {
             model.setState(map(entity.getState()));
         }
+        if (entity.getDescription() != null) {
+            model.setDescription(entity.getDescription());
+        }
         return model;
     }
 

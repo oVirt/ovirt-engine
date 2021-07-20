@@ -32,7 +32,8 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
                 .addValue("vm_id", entity.getVmId())
                 .addValue("parent_id", entity.getParentId())
                 .addValue("_create_date", entity.getCreationDate())
-                .addValue("state", entity.getState().getName());
+                .addValue("state", entity.getState().getName())
+                .addValue("description", entity.getDescription());
     }
 
     @Override
@@ -51,6 +52,7 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
         entity.setVmId(getGuid(rs, "vm_id"));
         entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_create_date")));
         entity.setState(VmCheckpointState.forName(rs.getString("state")));
+        entity.setDescription(rs.getString("description"));
         return entity;
     };
 
@@ -60,7 +62,8 @@ public class VmCheckpointDaoImpl extends DefaultGenericDao<VmCheckpoint, Guid> i
                 .addValue("checkpoint_id", entity.getId())
                 .addValue("vm_id", entity.getVmId())
                 .addValue("parent_id", entity.getParentId())
-                .addValue("state", entity.getState().getName());
+                .addValue("state", entity.getState().getName())
+                .addValue("description", entity.getDescription());
         getCallsHandler().executeModification("UpdateVmCheckpoint", parameterSource);
     }
 
