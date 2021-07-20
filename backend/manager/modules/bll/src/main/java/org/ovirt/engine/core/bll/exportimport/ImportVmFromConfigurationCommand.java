@@ -524,7 +524,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     }
 
     private void updateBiosType() {
-        if (getVm().getOrigin() != OriginType.VMWARE) {
+        if (getVm().getOrigin() != OriginType.VMWARE && getVm().getOrigin() != OriginType.XEN) {
             return;
         }
 
