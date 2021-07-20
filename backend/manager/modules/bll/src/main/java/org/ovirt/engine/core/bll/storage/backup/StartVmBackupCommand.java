@@ -206,6 +206,10 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         if (isVmDuringBackup()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP);
         }
+
+        if (vmBackup.getDescription() != null && vmBackup.getDescription().length() > 1024) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_DESCRIPTION_IS_TOO_LONG);
+        }
         return true;
     }
 
@@ -521,13 +525,17 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         if (checkpointsLeaf != null) {
             vmCheckpoint.setParentId(checkpointsLeaf.getId());
         }
-        vmCheckpoint.setVmId(getParameters().getVmBackup().getVmId());
+
+        VmBackup vmBackup = getParameters().getVmBackup();
+
+        vmCheckpoint.setVmId(vmBackup.getVmId());
         vmCheckpoint.setCreationDate(new Date());
         vmCheckpoint.setState(VmCheckpointState.CREATED);
+        vmCheckpoint.setDescription(vmBackup.getDescription());
 
         TransactionSupport.executeInNewTransaction(() -> {
             vmCheckpointDao.save(vmCheckpoint);
-            getParameters().getVmBackup().getDisks()
+            vmBackup.getDisks()
                     .stream()
                     .filter(DiskImage::isQcowFormat)
                     .forEach(disk -> vmCheckpointDao.addDiskToCheckpoint(vmCheckpoint.getId(), disk.getId()));
