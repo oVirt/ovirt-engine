@@ -663,7 +663,7 @@ public class BackendVmsResource extends
                 throw new WebFaultException(null, localize(Messages.CPU_UPDATE_NOT_PERMITTED), Response.Status.CONFLICT);
             }
             try {
-                params.setCpuPinningPolicy(VmMapper.map(AutoPinningPolicy.fromValue(autoPinningPolicy), null));
+                params.getVm().setCpuPinningPolicy(VmMapper.map(AutoPinningPolicy.fromValue(autoPinningPolicy), null));
             } catch (Exception e) {
                 throw new WebFaultException(null, localize(Messages.INVALID_ENUM_REASON), Response.Status.BAD_REQUEST);
             }

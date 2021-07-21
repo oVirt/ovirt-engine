@@ -78,5 +78,6 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
                         : AsyncDataProvider.getInstance().getSmallByLargeOsDefaultIconId(largeIconId));
         // Custom Properties
         vm.setCustomProperties(model.getCustomPropertySheet().serialize());
+        vm.setCpuPinningPolicy(model.getCpuPinningPolicy().getSelectedItem());
     }
 }

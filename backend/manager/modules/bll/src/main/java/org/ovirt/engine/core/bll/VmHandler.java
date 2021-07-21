@@ -1554,13 +1554,12 @@ public class VmHandler implements BackendService {
         }
     }
 
-    public ValidationResult validateCpuPinningPolicy(VmBase vmBase, CpuPinningPolicy cpuPinningPolicy) {
-        if (vmBase.getDedicatedVmForVdsList().isEmpty() && cpuPinningPolicy != CpuPinningPolicy.NONE) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_PIN_WITHOUT_HOST);
-        }
-
-        if (cpuPinningPolicy != CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
+    public ValidationResult validateCpuPinningPolicy(VmBase vmBase, boolean numaSet) {
+        if (vmBase.getCpuPinningPolicy() != CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
             return ValidationResult.VALID;
+        }
+        if (numaSet) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_RESIZE_AND_PIN_AND_NUMA_SET);
         }
         boolean singleCoreHostFound = vmBase.getDedicatedVmForVdsList().stream()
                 .map(vdsId -> vdsDynamicDao.get(vdsId))

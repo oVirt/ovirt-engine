@@ -163,9 +163,9 @@ public abstract class VmManagementCommandBase<T extends VmManagementParametersBa
     }
 
     protected void addCpuAndNumaPinning() {
-        if (getParameters().getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
+        if (getParameters().getVm().getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
             vmHandler.updateCpuAndNumaPinning(getParameters().getVm().getStaticData(),
-                    getParameters().getCpuPinningPolicy());
+                    getParameters().getVm().getCpuPinningPolicy());
         }
     }
 

@@ -815,7 +815,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         parameters.setDiskInfoDestinationMap(imageToDestinationDomainMap);
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-        parameters.setCpuPinningPolicy(model.getCpuPinningPolicy().getSelectedItem());
 
         BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
 

@@ -2196,7 +2196,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 behavior.updateCustomCpu();
                 behavior.updateBiosType();
                 updateTscFrequency();
-                behavior.updateCpuPinningPolicy();
             } else if (sender == getTemplateWithVersion()) {
                 templateWithVersion_SelectedItemChanged(sender, args);
                 behavior.updateBiosType();
@@ -2275,7 +2274,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             if (sender == getDefaultHost()) {
                 defaultHost_SelectedItemChanged(sender, args);
                 behavior.updateNumaEnabled();
-                behavior.updateCpuPinningPolicy();
                 headlessModeChanged();
             }
         } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
@@ -2291,7 +2289,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
                 behavior.updateNumaEnabled();
-                behavior.updateCpuPinningPolicy();
             } else if (sender == getProvisioning()) {
                 provisioning_SelectedItemChanged(sender, args);
             } else if (sender == getProvisioningThin_IsSelected()) {

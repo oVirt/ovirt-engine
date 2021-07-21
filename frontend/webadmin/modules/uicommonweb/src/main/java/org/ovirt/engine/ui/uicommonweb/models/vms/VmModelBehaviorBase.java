@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -1606,15 +1605,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.fromGraphicsType(type));
             }
         }));
-    }
-
-    protected void updateCpuPinningPolicy() {
-        getModel().getCpuPinningPolicy().setSelectedItem(CpuPinningPolicy.NONE);
-    }
-
-    protected boolean isAutoPinningPossible() {
-        return !getModel().getIsAutoAssign().getEntity() && getModel().getDefaultHost().getSelectedItem() != null
-                && !getModel().isVmAttachedToPool();
     }
 
     /**

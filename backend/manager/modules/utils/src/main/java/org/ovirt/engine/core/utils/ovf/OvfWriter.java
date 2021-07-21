@@ -327,6 +327,7 @@ public abstract class OvfWriter implements IOvfBuilder {
 
         _writer.writeElement(USE_HOST_CPU, String.valueOf(vmBase.isUseHostCpuFlags()));
         _writer.writeElement(BALLOON_ENABLED, String.valueOf(vmBase.isBalloonEnabled()));
+        _writer.writeElement(CPU_PINNING_POLICY, String.valueOf(vmBase.getCpuPinningPolicy().getValue()));
     }
 
     protected void writeVirtioMultiQueues() {

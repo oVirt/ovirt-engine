@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -658,6 +659,10 @@ public abstract class OvfReader implements IOvfBuilder {
         consumeReadProperty(content, BALLOON_ENABLED,
                 val -> vmBase.setBalloonEnabled(Boolean.parseBoolean(val)),
                 () -> vmBase.setBalloonEnabled(hasBalloonDevice));
+
+        consumeReadProperty(content,
+                CPU_PINNING_POLICY,
+                val -> vmBase.setCpuPinningPolicy(CpuPinningPolicy.forValue(Integer.parseInt(val))));
 
         readVmInit(content);
     }

@@ -446,7 +446,6 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         if (model.getIsHeadlessModeEnabled().getEntity()) {
             parameters.getVmStaticData().setDefaultDisplayType(DisplayType.none);
         }
-        parameters.setCpuPinningPolicy(model.getCpuPinningPolicy().getSelectedItem());
         BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
             parameters.setVmId(new Guid(model.getVmId().getEntity()));

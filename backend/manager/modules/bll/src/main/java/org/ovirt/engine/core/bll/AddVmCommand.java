@@ -831,12 +831,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (!validate(validateAffinityGroups())) {
             return false;
         }
-
         if (!validate(vmHandler.validateCpuPinningPolicy(getParameters().getVmStaticData(),
-                getParameters().getCpuPinningPolicy()))) {
+                getParameters().isUpdateNuma()))) {
             return false;
         }
-
         return true;
     }
 

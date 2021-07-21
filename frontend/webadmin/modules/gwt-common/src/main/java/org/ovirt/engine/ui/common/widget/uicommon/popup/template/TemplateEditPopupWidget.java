@@ -47,7 +47,6 @@ public class TemplateEditPopupWidget extends AbstractVmPopupWidget {
 
     protected List<Widget> resourceAllocationTemplateHiddenFields() {
         return Arrays.asList(
-                cpuPinningPolicyRow,
                 storageAllocationPanel,
                 disksAllocationPanel);
     }

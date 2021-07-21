@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -519,21 +518,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             super.updateMaxMemory();
         }
     }
-
-    @Override
-    protected void updateCpuPinningPolicy() {
-        getModel().getCpuPinningPolicy().setSelectedItem(CpuPinningPolicy.NONE);
-        if (getModel().getIsAutoAssign().getEntity() == null) {
-            return;
-        }
-
-        if (!isAutoPinningPossible()) {
-            getModel().getCpuPinningPolicy().setIsChangeable(false);
-        } else {
-            getModel().getCpuPinningPolicy().setIsChangeable(true);
-        }
-    }
-
 
     @Override
     protected void disableCpuPinningAutoPinningConflict() {

@@ -58,7 +58,6 @@ import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -913,7 +912,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     private void updateVmNumaNodes() {
-        if (!getParameters().isUpdateNuma() && getParameters().getCpuPinningPolicy() == CpuPinningPolicy.NONE) {
+        if (!getParameters().isUpdateNuma()) {
             return;
         }
 
@@ -1371,12 +1370,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!isIsoPathExists(vmFromParams.getStaticData(), getVm().getStoragePoolId())){
             return failValidation(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
         }
-
         if (!validate(vmHandler.validateCpuPinningPolicy(getParameters().getVmStaticData(),
-                getParameters().getCpuPinningPolicy()))) {
+                getParameters().isUpdateNuma()))) {
             return false;
         }
-
         return true;
     }
 

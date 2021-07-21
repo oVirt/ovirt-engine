@@ -147,7 +147,7 @@ public class BackendVmResource
                 QueryType.GetVmByVmId,
                 new IdQueryParameters(guid), "VM: id=" + guid));
         if (action.isOptimizeCpuSettings() != null && action.isOptimizeCpuSettings()) {
-            params.setCpuPinningPolicy(CpuPinningPolicy.RESIZE_AND_PIN_NUMA);
+            params.getVm().setCpuPinningPolicy(CpuPinningPolicy.RESIZE_AND_PIN_NUMA);
         } else {
             throw new BaseBackendResource.WebFaultException(null,
                     localize(Messages.NOT_SUPPORTED_REASON, "`Pin` CPU Pinning policy"),
