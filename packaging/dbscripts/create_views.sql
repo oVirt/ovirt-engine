@@ -3871,7 +3871,7 @@ SELECT *
 FROM numa_node
 INNER JOIN
     (SELECT numa_node_id AS numa_node_id2,
-        ARRAY_AGG(cpu_core_id) AS cpu_core_ids
+        ARRAY_AGG(cpu_core_id ORDER BY cpu_core_id ASC) AS cpu_core_ids
     FROM numa_node_cpu_map
     GROUP BY numa_node_id
     ) numa_node_to_cpu_core_ids
