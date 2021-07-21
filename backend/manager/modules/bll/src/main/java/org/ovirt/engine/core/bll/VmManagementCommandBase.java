@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -163,9 +163,9 @@ public abstract class VmManagementCommandBase<T extends VmManagementParametersBa
     }
 
     protected void addCpuAndNumaPinning() {
-        if (getParameters().getAutoPinningPolicy() != AutoPinningPolicy.NONE) {
+        if (getParameters().getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
             vmHandler.updateCpuAndNumaPinning(getParameters().getVm().getStaticData(),
-                    getParameters().getAutoPinningPolicy());
+                    getParameters().getCpuPinningPolicy());
         }
     }
 

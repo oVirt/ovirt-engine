@@ -74,8 +74,8 @@ import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
@@ -146,12 +146,14 @@ public class BackendVmResource
                 org.ovirt.engine.core.common.businessentities.VM.class,
                 QueryType.GetVmByVmId,
                 new IdQueryParameters(guid), "VM: id=" + guid));
-        if (action.isOptimizeCpuSettings() == null) {
-            params.setAutoPinningPolicy(AutoPinningPolicy.PIN);
+        if (action.isOptimizeCpuSettings() != null && action.isOptimizeCpuSettings()) {
+            params.setCpuPinningPolicy(CpuPinningPolicy.RESIZE_AND_PIN_NUMA);
         } else {
-            params.setAutoPinningPolicy(
-                    action.isOptimizeCpuSettings() ? AutoPinningPolicy.RESIZE_AND_PIN : AutoPinningPolicy.PIN);
+            throw new BaseBackendResource.WebFaultException(null,
+                    localize(Messages.NOT_SUPPORTED_REASON, "`Pin` CPU Pinning policy"),
+                    Response.Status.BAD_REQUEST);
         }
+
 
         return performAction(ActionType.UpdateVm, params);
     }

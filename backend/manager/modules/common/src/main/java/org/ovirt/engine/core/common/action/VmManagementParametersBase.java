@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -150,7 +150,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
      *  Update VM - if null preserve current configuration
      */
     private List<Label> affinityLabels;
-    private AutoPinningPolicy autoPinningPolicy = AutoPinningPolicy.NONE;
+    private CpuPinningPolicy cpuPinningPolicy = CpuPinningPolicy.NONE;
 
     public VmManagementParametersBase() {
     }
@@ -394,12 +394,12 @@ public class VmManagementParametersBase extends VmOperationParameterBase
         this.memoryHotUnplugEnabled = memoryHotUnplugEnabled;
     }
 
-    public void setAutoPinningPolicy(AutoPinningPolicy autoPinningPolicy) {
-        this.autoPinningPolicy = autoPinningPolicy;
+    public void setCpuPinningPolicy(CpuPinningPolicy cpuPinningPolicy) {
+        this.cpuPinningPolicy = cpuPinningPolicy;
     }
 
-    public AutoPinningPolicy getAutoPinningPolicy() {
-        return autoPinningPolicy;
+    public CpuPinningPolicy getCpuPinningPolicy() {
+        return cpuPinningPolicy;
     }
 
     public Map<VmExternalDataKind, String> getVmExternalData() {

@@ -8,19 +8,17 @@ import java.util.stream.Stream;
 /**
  * Policy for assigning automatic CPU and NUMA pinning
  */
-public enum AutoPinningPolicy {
+public enum CpuPinningPolicy {
     NONE(0),
-    /** Use the current topology of the VM. Sets the CPU pinning and NUMA accordingly */
-    PIN(1),
     /** Switch the VM topology to be maximized on the selected host. Sets the CPU pinning and NUMA accordingly */
-    RESIZE_AND_PIN(2);
+    RESIZE_AND_PIN_NUMA(2);
 
     private int value;
 
-    private static Map<Integer, AutoPinningPolicy> mappings =
-            Stream.of(values()).collect(Collectors.toMap(AutoPinningPolicy::getValue, Function.identity()));
+    private static Map<Integer, CpuPinningPolicy> mappings =
+            Stream.of(values()).collect(Collectors.toMap(CpuPinningPolicy::getValue, Function.identity()));
 
-    AutoPinningPolicy(int value) {
+    CpuPinningPolicy(int value) {
         this.value = value;
     }
 
@@ -28,7 +26,7 @@ public enum AutoPinningPolicy {
      * Maps Integer value to policy.
      * @return If {@code value} is null returns null specifying unset policy.
      */
-    public static AutoPinningPolicy forValue(Integer value) {
+    public static CpuPinningPolicy forValue(Integer value) {
         return mappings.get(value);
     }
 

@@ -14,11 +14,11 @@ import java.util.function.UnaryOperator;
 
 import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.Row;
-import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -789,15 +789,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public ListModelListBoxEditor<Version> customCompatibilityVersionEditor;
 
     @UiField
-    protected Row autoPinningPolicyRow;
+    protected Row cpuPinningPolicyRow;
 
     @UiField(provided = true)
-    InfoIcon autoPinningInfo;
+    InfoIcon cpuPinningPolicyInfo;
 
     @UiField(provided = true)
-    @Path(value = "autoPinningPolicy.selectedItem")
-    @WithElementId("autoPinningPolicy")
-    public ListModelListBoxOnlyEditor<AutoPinningPolicy> autoPinningPolicyEditor;
+    @Path(value = "cpuPinningPolicy.selectedItem")
+    @WithElementId("cpuPinningPolicy")
+    public ListModelListBoxOnlyEditor<CpuPinningPolicy> cpuPinningPolicyEditor;
 
     // ==High Availability Tab==
     @UiField
@@ -1156,8 +1156,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         spiceFileTransferEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         spiceCopyPasteEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         multiQueues = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        autoPinningPolicyEditor = new ListModelListBoxOnlyEditor<>(new EnumRenderer<AutoPinningPolicy>(), new ModeSwitchingVisibilityRenderer());
-        autoPinningInfo = new InfoIcon(templates.italicText(constants.autoPinningLabelExplanation()));
+        cpuPinningPolicyEditor = new ListModelListBoxOnlyEditor<>(new EnumRenderer<CpuPinningPolicy>(), new ModeSwitchingVisibilityRenderer());
+        cpuPinningPolicyInfo = new InfoIcon(templates.italicText(constants.cpuPinningPolicyLabelExplanation()));
 
         initPoolSpecificWidgets();
         initTextBoxEditors();
@@ -2120,7 +2120,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         hostCpuEditor.setTabIndex(nextTabIndex++);
         tscFrequencyEditor.setTabIndexes(nextTabIndex++);
         customCompatibilityVersionEditor.setTabIndex(nextTabIndex++);
-        autoPinningPolicyEditor.setTabIndexes(nextTabIndex++);
+        cpuPinningPolicyEditor.setTabIndexes(nextTabIndex++);
 
         numaNodeCount.setTabIndex(nextTabIndex++);
         // ==High Availability Tab==

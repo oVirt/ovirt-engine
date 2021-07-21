@@ -80,7 +80,7 @@
         <include name="common/businessentities/HugePage.java" />
         <include name="common/businessentities/ConsoleTargetType.java" />
         <include name="common/businessentities/BiosType.java" />
-        <include name="common/businessentities/AutoPinningPolicy.java" />
+        <include name="common/businessentities/CpuPinningPolicy.java" />
         <include name="common/businessentities/FipsMode.java" />
 
         <!-- Network business entities -->

@@ -51,11 +51,11 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.CopyOnNewVersion;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.EditableVmField;
@@ -1302,9 +1302,9 @@ public class VmHandler implements BackendService {
         return ValidationResult.VALID;
     }
 
-    public void updateCpuAndNumaPinning(VmBase vmBase, AutoPinningPolicy autoPinningPolicy) {
+    public void updateCpuAndNumaPinning(VmBase vmBase, CpuPinningPolicy cpuPinningPolicy) {
         VdsDynamic host = vdsDynamicDao.get(vmBase.getDedicatedVmForVdsList().get(0));
-        NumaPinningHelper.applyAutoPinningPolicy(vmBase, autoPinningPolicy, host,
+        NumaPinningHelper.applyAutoPinningPolicy(vmBase, cpuPinningPolicy, host,
                 vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
     }
 
@@ -1554,16 +1554,12 @@ public class VmHandler implements BackendService {
         }
     }
 
-    public ValidationResult validateAutoPinningPolicy(VmBase vmBase, AutoPinningPolicy autoPinningPolicy) {
-        if (autoPinningPolicy == AutoPinningPolicy.PIN) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_AUTO_PIN_EXISTING_NOT_SUPPORTED);
-        }
-
-        if (vmBase.getDedicatedVmForVdsList().isEmpty() && autoPinningPolicy != AutoPinningPolicy.NONE) {
+    public ValidationResult validateCpuPinningPolicy(VmBase vmBase, CpuPinningPolicy cpuPinningPolicy) {
+        if (vmBase.getDedicatedVmForVdsList().isEmpty() && cpuPinningPolicy != CpuPinningPolicy.NONE) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_PIN_WITHOUT_HOST);
         }
 
-        if (autoPinningPolicy != AutoPinningPolicy.RESIZE_AND_PIN) {
+        if (cpuPinningPolicy != CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
             return ValidationResult.VALID;
         }
         boolean singleCoreHostFound = vmBase.getDedicatedVmForVdsList().stream()

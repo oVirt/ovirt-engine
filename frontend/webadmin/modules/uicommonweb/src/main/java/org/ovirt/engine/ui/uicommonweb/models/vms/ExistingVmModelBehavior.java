@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -521,16 +521,16 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    protected void updateAutoPinning() {
-        getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.NONE);
+    protected void updateCpuPinningPolicy() {
+        getModel().getCpuPinningPolicy().setSelectedItem(CpuPinningPolicy.NONE);
         if (getModel().getIsAutoAssign().getEntity() == null) {
             return;
         }
 
         if (!isAutoPinningPossible()) {
-            getModel().getAutoPinningPolicy().setIsChangeable(false);
+            getModel().getCpuPinningPolicy().setIsChangeable(false);
         } else {
-            getModel().getAutoPinningPolicy().setIsChangeable(true);
+            getModel().getCpuPinningPolicy().setIsChangeable(true);
         }
     }
 

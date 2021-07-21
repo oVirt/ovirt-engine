@@ -403,6 +403,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @EditableVmTemplateField
     private boolean balloonEnabled;
 
+    @CopyOnNewVersion
+    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmTemplateField
+    private CpuPinningPolicy cpuPinningPolicy;
+
     public VmBase() {
         name = "";
         interfaces = new ArrayList<>();
@@ -435,6 +440,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         multiQueuesEnabled = true;
         virtioScsiMultiQueues = 0;
         balloonEnabled = true;
+        cpuPinningPolicy = CpuPinningPolicy.NONE;
     }
 
     @EditableVmField
@@ -640,7 +646,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getCpuPinning(),
                 vmBase.getVirtioScsiMultiQueues(),
                 vmBase.isBalloonEnabled(),
-                vmBase.getBiosType());
+                vmBase.getBiosType(),
+                vmBase.getCpuPinningPolicy());
     }
 
     public VmBase(
@@ -715,7 +722,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             String cpuPinning,
             int virtioScsiMultiQueues,
             boolean balloonEnabled,
-            BiosType biosType) {
+            BiosType biosType,
+            CpuPinningPolicy cpuPinningPolicy) {
         this();
         this.name = name;
         this.id = id;
@@ -789,6 +797,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.cpuPinning = cpuPinning;
         this.balloonEnabled = balloonEnabled;
         this.biosType = biosType;
+        this.cpuPinningPolicy = cpuPinningPolicy;
     }
 
     @Override
@@ -1223,7 +1232,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 useTscFrequency,
                 cpuPinning,
                 virtioScsiMultiQueues,
-                balloonEnabled
+                balloonEnabled,
+                cpuPinningPolicy
         );
     }
 
@@ -1296,7 +1306,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(useTscFrequency, other.useTscFrequency)
                 && Objects.equals(cpuPinning, other.cpuPinning)
                 && virtioScsiMultiQueues == other.virtioScsiMultiQueues
-                && Objects.equals(balloonEnabled, other.balloonEnabled);
+                && Objects.equals(balloonEnabled, other.balloonEnabled)
+                && cpuPinningPolicy == other.cpuPinningPolicy;
     }
 
     public Guid getQuotaId() {
@@ -1658,5 +1669,13 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     public void setUseTscFrequency(boolean useTscFrequency) {
         this.useTscFrequency = useTscFrequency;
+    }
+
+    public void setCpuPinningPolicy(CpuPinningPolicy cpuPinningPolicy) {
+        this.cpuPinningPolicy = cpuPinningPolicy;
+    }
+
+    public CpuPinningPolicy getCpuPinningPolicy() {
+        return cpuPinningPolicy;
     }
 }

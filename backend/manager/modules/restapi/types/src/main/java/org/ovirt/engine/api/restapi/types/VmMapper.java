@@ -51,6 +51,7 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -749,15 +750,13 @@ public class VmMapper extends VmBaseMapper {
         }
     }
 
-    @Mapping(from = AutoPinningPolicy.class, to = org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.class)
-    public static org.ovirt.engine.core.common.businessentities.AutoPinningPolicy map(AutoPinningPolicy autoPinningPolicy, org.ovirt.engine.core.common.businessentities.AutoPinningPolicy template) {
+    @Mapping(from = AutoPinningPolicy.class, to = CpuPinningPolicy.class)
+    public static CpuPinningPolicy map(AutoPinningPolicy autoPinningPolicy, CpuPinningPolicy template) {
         switch (autoPinningPolicy) {
-        case EXISTING:
-            return org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.PIN;
         case ADJUST:
-            return org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.RESIZE_AND_PIN;
+            return CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
         default:
-            return org.ovirt.engine.core.common.businessentities.AutoPinningPolicy.NONE;
+            return CpuPinningPolicy.NONE;
         }
     }
 

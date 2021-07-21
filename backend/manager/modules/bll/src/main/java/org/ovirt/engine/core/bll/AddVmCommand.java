@@ -832,8 +832,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (!validate(vmHandler.validateAutoPinningPolicy(getParameters().getVmStaticData(),
-                getParameters().getAutoPinningPolicy()))) {
+        if (!validate(vmHandler.validateCpuPinningPolicy(getParameters().getVmStaticData(),
+                getParameters().getCpuPinningPolicy()))) {
             return false;
         }
 

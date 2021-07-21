@@ -120,7 +120,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                       String cpuPinning,
                       int virtioScsiMultiQueues,
                       boolean balloonEnabled,
-                      BiosType biosType) {
+                      BiosType biosType,
+                      CpuPinningPolicy cpuPinningPolicy) {
         super(name,
                 vmtGuid,
                 clusterId,
@@ -192,7 +193,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 cpuPinning,
                 virtioScsiMultiQueues,
                 balloonEnabled,
-                biosType);
+                biosType,
+                cpuPinningPolicy);
 
         diskTemplateMap = new HashMap<>();
         diskImageMap = new HashMap<>();

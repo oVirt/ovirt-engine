@@ -81,7 +81,7 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
                 update(editPoolEditMaxAssignedVmsPerUserRow, simpleField()).
                 update(templateVersionNameEditor, hiddenField()).
                 update(affinityTab, hiddenField()).
-                update(autoPinningPolicyRow, hiddenField());
+                update(cpuPinningPolicyRow, hiddenField());
     }
 
 }

@@ -15,12 +15,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -341,10 +341,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             getAutoConverge().setIsChangeable(false);
             getMigrateCompressed().setIsChangeable(false);
             getMigrateEncrypted().setIsChangeable(false);
-            getAutoPinningPolicy().setIsChangeable(false);
+            getCpuPinningPolicy().setIsChangeable(false);
 
             getNumaEnabled().setIsChangeable(false);
-            getAutoPinningPolicy().setIsChangeable(false);
+            getCpuPinningPolicy().setIsChangeable(false);
 
             // ==High Availability==
             getIsHighlyAvailable().setIsChangeable(false);
@@ -1695,14 +1695,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         this.affinityGroupList = affinityGroupList;
     }
 
-    private NotChangableForVmInPoolListModel<AutoPinningPolicy> autoPinningPolicy;
+    private NotChangableForVmInPoolListModel<CpuPinningPolicy> cpuPinningPolicy;
 
-    public ListModel<AutoPinningPolicy> getAutoPinningPolicy() {
-        return autoPinningPolicy;
+    public ListModel<CpuPinningPolicy> getCpuPinningPolicy() {
+        return cpuPinningPolicy;
     }
 
-    public void setAutoPinningPolicy(NotChangableForVmInPoolListModel<AutoPinningPolicy> autoPinningPolicy) {
-        this.autoPinningPolicy = autoPinningPolicy;
+    public void setCpuPinningPolicy(NotChangableForVmInPoolListModel<CpuPinningPolicy> cpuPinningPolicy) {
+        this.cpuPinningPolicy = cpuPinningPolicy;
     }
 
     public UnitVmModel(VmModelBehaviorBase behavior, ListModel<?> parentModel) {
@@ -1792,7 +1792,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         setLease(new NotChangableForVmInPoolListModel<StorageDomain>());
         getLease().getSelectedItemChangedEvent().addListener(this);
         setResumeBehavior(new NotChangableForVmInPoolListModel<VmResumeBehavior>());
-        setAutoPinningPolicy(new NotChangableForVmInPoolListModel<AutoPinningPolicy>());
+        setCpuPinningPolicy(new NotChangableForVmInPoolListModel<CpuPinningPolicy>());
         setIsHighlyAvailable(new NotChangableForVmInPoolEntityModel<Boolean>());
         getIsHighlyAvailable().getEntityChangedEvent().addListener(this);
         setIsTemplatePublic(new NotChangableForVmInPoolEntityModel<Boolean>());
@@ -2177,7 +2177,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         updateResumeBehavior();
         updateAffinityLists();
         updateTpmEnabled();
-        initAutoPinningPolicy();
+        initCpuPinningPolicy();
 
         behavior.initialize();
     }
@@ -2196,7 +2196,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 behavior.updateCustomCpu();
                 behavior.updateBiosType();
                 updateTscFrequency();
-                behavior.updateAutoPinning();
+                behavior.updateCpuPinningPolicy();
             } else if (sender == getTemplateWithVersion()) {
                 templateWithVersion_SelectedItemChanged(sender, args);
                 behavior.updateBiosType();
@@ -2266,8 +2266,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             } else if (sender == getBiosType()) {
                 updateDisplayAndGraphics();
                 updateTpmEnabled();
-            } else if (sender == getAutoPinningPolicy()) {
-                autoPinReset();
+            } else if (sender == getCpuPinningPolicy()) {
+                cpuPinPolicyReset();
             } else if (sender == getConsoleDisconnectAction()){
                 consoleDisconnectActionSelectedItemChanged();
             }
@@ -2275,7 +2275,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             if (sender == getDefaultHost()) {
                 defaultHost_SelectedItemChanged(sender, args);
                 behavior.updateNumaEnabled();
-                behavior.updateAutoPinning();
+                behavior.updateCpuPinningPolicy();
                 headlessModeChanged();
             }
         } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
@@ -2291,7 +2291,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
                 behavior.updateNumaEnabled();
-                behavior.updateAutoPinning();
+                behavior.updateCpuPinningPolicy();
             } else if (sender == getProvisioning()) {
                 provisioning_SelectedItemChanged(sender, args);
             } else if (sender == getProvisioningThin_IsSelected()) {
@@ -2329,21 +2329,17 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 .setIsChangeable(isVirtioScsiEnabled, messages.virtioScsiRequired());
     }
 
-    private void autoPinReset() {
-        AutoPinningPolicy autoPinningPolicy = getAutoPinningPolicy().getSelectedItem();
-        if (autoPinningPolicy == null) {
+    private void cpuPinPolicyReset() {
+        CpuPinningPolicy cpuPinningPolicy = getCpuPinningPolicy().getSelectedItem();
+        if (cpuPinningPolicy == null) {
             return;
         }
-        switch(autoPinningPolicy) {
+        switch(cpuPinningPolicy) {
             case NONE:
                 enableCpuFields();
                 enableCpuPinning();
                 break;
-            case PIN:
-                enableCpuFields();
-                disableCpuPinning();
-                break;
-            case RESIZE_AND_PIN:
+            case RESIZE_AND_PIN_NUMA:
                 disableCpuFields();
                 disableCpuPinning();
         }
@@ -2456,12 +2452,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         }
     }
 
-    private void initAutoPinningPolicy() {
-        getAutoPinningPolicy().getSelectedItemChangedEvent().addListener(this);
-        ArrayList<AutoPinningPolicy> policies = new ArrayList<>(Arrays.asList(AutoPinningPolicy.values()));
-        policies.remove(AutoPinningPolicy.PIN);
-        getAutoPinningPolicy().setItems(policies);
-        behavior.updateAutoPinning();
+    private void initCpuPinningPolicy() {
+        getCpuPinningPolicy().getSelectedItemChangedEvent().addListener(this);
+        getCpuPinningPolicy().setItems(new ArrayList<>(Arrays.asList(CpuPinningPolicy.values())));
     }
 
     protected void initNumOfMonitors() {

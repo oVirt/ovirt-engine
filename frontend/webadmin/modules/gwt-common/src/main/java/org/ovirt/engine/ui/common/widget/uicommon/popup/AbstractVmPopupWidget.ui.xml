@@ -510,13 +510,13 @@
                     </b:Column>
                   </b:Row>
                 </g:FlowPanel>
-                <b:Row ui:field="autoPinningPolicyRow">
+                <b:Row ui:field="cpuPinningPolicyRow">
                   <b:Column size="SM_6">
-                    <g:Label addStyleNames="{style.floatLeft}" text="{constants.autoPinningLabel}" />
-                    <d:InfoIcon ui:field="autoPinningInfo" addStyleNames="{style.infoIcon}"/>
+                    <g:Label addStyleNames="{style.floatLeft}" text="{constants.cpuPinningPolicyLabel}" />
+                    <d:InfoIcon ui:field="cpuPinningPolicyInfo" addStyleNames="{style.infoIcon}"/>
                   </b:Column>
                   <b:Column size="SM_6">
-                    <e:ListModelListBoxOnlyEditor ui:field="autoPinningPolicyEditor" usePatternFly="true"/>
+                    <e:ListModelListBoxOnlyEditor ui:field="cpuPinningPolicyEditor" usePatternFly="true"/>
                   </b:Column>
                 </b:Row>
               </b:Container>

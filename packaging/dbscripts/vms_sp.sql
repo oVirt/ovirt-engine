@@ -728,7 +728,8 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_use_tsc_frequency BOOLEAN,
     v_namespace VARCHAR(253),
     v_balloon_enabled BOOLEAN,
-    v_console_disconnect_action_delay SMALLINT)
+    v_console_disconnect_action_delay SMALLINT,
+    v_cpu_pinning_policy SMALLINT)
   RETURNS VOID
    AS $procedure$
 DECLARE
@@ -814,7 +815,8 @@ INSERT INTO vm_static(description,
                       use_tsc_frequency,
                       namespace,
                       balloon_enabled,
-                      console_disconnect_action_delay)
+                      console_disconnect_action_delay,
+                      cpu_pinning_policy)
     VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
@@ -892,7 +894,8 @@ INSERT INTO vm_static(description,
            v_use_tsc_frequency,
            v_namespace,
            v_balloon_enabled,
-           v_console_disconnect_action_delay);
+           v_console_disconnect_action_delay,
+           v_cpu_pinning_policy);
 
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE
@@ -1097,7 +1100,8 @@ v_virtio_scsi_multi_queues INTEGER,
 v_use_tsc_frequency BOOLEAN,
 v_namespace VARCHAR(253),
 v_balloon_enabled BOOLEAN,
-v_console_disconnect_action_delay SMALLINT)
+v_console_disconnect_action_delay SMALLINT,
+v_cpu_pinning_policy SMALLINT)
 
 RETURNS VOID
 
@@ -1182,7 +1186,8 @@ BEGIN
      use_tsc_frequency = v_use_tsc_frequency,
      namespace = v_namespace,
      balloon_enabled = v_balloon_enabled,
-     console_disconnect_action_delay = v_console_disconnect_action_delay
+     console_disconnect_action_delay = v_console_disconnect_action_delay,
+     cpu_pinning_policy = v_cpu_pinning_policy
      WHERE vm_guid = v_vm_guid
          AND entity_type = 'VM';
 

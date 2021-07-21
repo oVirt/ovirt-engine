@@ -1950,4 +1950,12 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     public void setBalloonEnabled(boolean balloonEnabled) {
         vmStatic.setBalloonEnabled(balloonEnabled);
     }
+
+    public CpuPinningPolicy getCpuPinningPolicy() {
+        return vmStatic.getCpuPinningPolicy();
+    }
+
+    public void setCpuPinningPolicy(CpuPinningPolicy cpuPinningPolicy) {
+        vmStatic.setCpuPinningPolicy(cpuPinningPolicy);
+    }
 }

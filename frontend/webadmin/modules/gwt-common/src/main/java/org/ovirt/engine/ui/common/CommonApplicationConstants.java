@@ -1193,9 +1193,9 @@ public interface CommonApplicationConstants extends Constants {
 
     String multiQueuesLabelExplanation();
 
-    String autoPinningLabelExplanation();
+    String cpuPinningPolicyLabelExplanation();
 
-    String autoPinningLabel();
+    String cpuPinningPolicyLabel();
 
     String monitors();
 

@@ -1772,11 +1772,9 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String CloudInitNetworkProtocol___OPENSTACK_METADATA();
 
-    String AutoPinningPolicy___NONE();
+    String CpuPinningPolicy___NONE();
 
-    String AutoPinningPolicy___PIN();
-
-    String AutoPinningPolicy___RESIZE_AND_PIN();
+    String CpuPinningPolicy___RESIZE_AND_PIN_NUMA();
 
     String VirtioMultiQueueType___DISABLED();
 

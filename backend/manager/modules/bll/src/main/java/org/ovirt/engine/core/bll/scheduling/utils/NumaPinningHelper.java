@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.NumaNode;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -249,14 +249,14 @@ public class NumaPinningHelper {
         return sb.toString();
     }
 
-    public static void applyAutoPinningPolicy(VmBase vmBase, AutoPinningPolicy autoPinningPolicy, VdsDynamic vdsDynamic,
-            List<VdsNumaNode> hostNodes) {
-        if (autoPinningPolicy == null || autoPinningPolicy == AutoPinningPolicy.NONE) {
+    public static void applyAutoPinningPolicy(VmBase vmBase, CpuPinningPolicy cpuPinningPolicy, VdsDynamic vdsDynamic,
+                                              List<VdsNumaNode> hostNodes) {
+        if (cpuPinningPolicy == null || cpuPinningPolicy == CpuPinningPolicy.NONE) {
             return;
         }
 
         // We assume identical topology of all assigned hosts
-        if (autoPinningPolicy == AutoPinningPolicy.RESIZE_AND_PIN) {
+        if (cpuPinningPolicy == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
             vmBase.setNumOfSockets(vdsDynamic.getCpuSockets());
             vmBase.setCpuPerSocket((vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets()) - 1);
             vmBase.setThreadsPerCpu(vdsDynamic.getCpuThreads() / vdsDynamic.getCpuCores());

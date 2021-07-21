@@ -16,9 +16,9 @@ import java.util.function.Function;
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -1608,8 +1608,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }));
     }
 
-    protected void updateAutoPinning() {
-        getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.NONE);
+    protected void updateCpuPinningPolicy() {
+        getModel().getCpuPinningPolicy().setSelectedItem(CpuPinningPolicy.NONE);
     }
 
     protected boolean isAutoPinningPossible() {

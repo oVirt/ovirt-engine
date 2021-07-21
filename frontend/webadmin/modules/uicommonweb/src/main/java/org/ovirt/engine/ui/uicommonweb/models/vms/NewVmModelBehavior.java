@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -410,16 +410,16 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    protected void updateAutoPinning() {
-        getModel().getAutoPinningPolicy().setSelectedItem(AutoPinningPolicy.NONE);
+    protected void updateCpuPinningPolicy() {
+        getModel().getCpuPinningPolicy().setSelectedItem(CpuPinningPolicy.NONE);
         if (getModel().getIsAutoAssign().getEntity() == null) {
             return;
         }
 
         if (!isAutoPinningPossible()) {
-            getModel().getAutoPinningPolicy().setIsChangeable(false);
+            getModel().getCpuPinningPolicy().setIsChangeable(false);
         } else {
-            getModel().getAutoPinningPolicy().setIsChangeable(true);
+            getModel().getCpuPinningPolicy().setIsChangeable(true);
         }
     }
 

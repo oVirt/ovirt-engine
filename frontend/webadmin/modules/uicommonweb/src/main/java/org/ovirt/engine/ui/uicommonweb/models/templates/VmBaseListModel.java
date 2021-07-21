@@ -9,9 +9,9 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -446,7 +446,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         if (model.getIsHeadlessModeEnabled().getEntity()) {
             parameters.getVmStaticData().setDefaultDisplayType(DisplayType.none);
         }
-        parameters.setAutoPinningPolicy(model.getAutoPinningPolicy().getSelectedItem());
+        parameters.setCpuPinningPolicy(model.getCpuPinningPolicy().getSelectedItem());
         BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
             parameters.setVmId(new Guid(model.getVmId().getEntity()));
@@ -611,7 +611,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
             public void init(Runnable callback) {
                 confirmModel = new VmHighPerformanceConfigurationModel();
 
-                if (model.getAutoPinningPolicy().getSelectedItem() == AutoPinningPolicy.NONE) {
+                if (model.getCpuPinningPolicy().getSelectedItem() == CpuPinningPolicy.NONE) {
                     // Handle CPU Pinning topology
                     final boolean isVmAssignedToSpecificHosts = !model.getIsAutoAssign().getEntity();
                     final boolean isVmCpuPinningSet =

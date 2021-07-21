@@ -52,4 +52,6 @@ public enum Messages {
     // Reason and template to use when a value is out of range:
     VALUE_OUT_OF_RANGE_REASON,
     VALUE_OUT_OF_RANGE_DETAIL_TEMPLATE,
+
+    NOT_SUPPORTED_REASON,
 }

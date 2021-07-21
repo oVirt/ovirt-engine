@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -101,7 +102,8 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("use_tsc_frequency", entity.getUseTscFrequency())
                 .addValue("cpu_pinning", entity.getCpuPinning())
                 .addValue("virtio_scsi_multi_queues", entity.getVirtioScsiMultiQueues())
-                .addValue("balloon_enabled", entity.isBalloonEnabled());
+                .addValue("balloon_enabled", entity.isBalloonEnabled())
+                .addValue("cpu_pinning_policy", entity.getCpuPinningPolicy());
     }
 
     /**
@@ -184,6 +186,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setCpuPinning(rs.getString("cpu_pinning"));
             entity.setVirtioScsiMultiQueues(rs.getInt("virtio_scsi_multi_queues"));
             entity.setBalloonEnabled(rs.getBoolean("balloon_enabled"));
+            entity.setCpuPinningPolicy(CpuPinningPolicy.forValue(rs.getInt("cpu_pinning_policy")));
         }
     }
 

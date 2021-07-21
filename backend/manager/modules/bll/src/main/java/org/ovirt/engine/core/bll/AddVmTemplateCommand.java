@@ -993,7 +993,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getCpuPinning(),
                         getParameters().getMasterVm().getVirtioScsiMultiQueues(),
                         getParameters().getMasterVm().isBalloonEnabled(),
-                        getParameters().getMasterVm().getBiosType()));
+                        getParameters().getMasterVm().getBiosType(),
+                        getParameters().getMasterVm().getCpuPinningPolicy()));
         getVmTemplate().setOrigin(getParameters().getMasterVm().getOrigin());
         updateVmIcons();
         getVmTemplate().setSealed(getParameters().isSealTemplate());
