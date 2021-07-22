@@ -453,12 +453,12 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
     private boolean validateNoActiveImageTransfers(VDS vds) {
         List<ImageTransfer> transfers = imageTransferDao.getByVdsId(vds.getId());
-        if (!transfers.stream().allMatch(ImageTransfer::isPaused)) {
+        if (!transfers.stream().allMatch(ImageTransfer::isPausedOrFinished)) {
             List<String> replacements = new ArrayList<>(3);
             replacements.add(ReplacementUtils.createSetVariableString("host", vds.getName()));
             replacements.addAll(ReplacementUtils.replaceWith("disks",
                     transfers.stream()
-                            .filter(imageTransfer -> !imageTransfer.isPaused())
+                            .filter(imageTransfer -> !imageTransfer.isPausedOrFinished())
                             .map(ImageTransfer::getDiskId)
                             .sorted()
                             .collect(Collectors.toList())));
