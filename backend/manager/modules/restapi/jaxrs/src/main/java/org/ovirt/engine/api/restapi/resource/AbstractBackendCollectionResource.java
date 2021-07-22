@@ -149,12 +149,21 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             ActionParametersBase taskParams,
             IResolver<T, Q> entityResolver,
             boolean block) {
-        return performCreate(task, taskParams, entityResolver, block, null);
+        return performCreate(task, taskParams, entityResolver, PollingType.VDSM_TASKS, block);
     }
 
     protected final <T> Response performCreate(ActionType task,
             ActionParametersBase taskParams,
             IResolver<T, Q> entityResolver,
+            PollingType pollingType,
+            boolean block) {
+        return performCreate(task, taskParams, entityResolver, pollingType, block, null);
+    }
+
+    protected final <T> Response performCreate(ActionType task,
+            ActionParametersBase taskParams,
+            IResolver<T, Q> entityResolver,
+            PollingType pollingType,
             boolean block,
             Class<? extends BaseResource> suggestedParentType) {
 
@@ -162,20 +171,27 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         ActionReturnValue createResult = doCreateEntity(task, taskParams);
 
         // fetch + map
-        return fetchCreatedEntity(entityResolver, block, suggestedParentType, createResult);
+        return fetchCreatedEntity(entityResolver, block, pollingType, suggestedParentType, createResult);
     }
 
     protected final <T> Response performCreate(ActionType task,
             ActionParametersBase taskParams,
             IResolver<T, Q> entityResolver) {
-        return performCreate(task, taskParams, entityResolver, expectBlocking());
+        return performCreate(task, taskParams, PollingType.VDSM_TASKS, entityResolver);
+    }
+
+    protected final <T> Response performCreate(ActionType task,
+            ActionParametersBase taskParams,
+            PollingType pollingType,
+            IResolver<T, Q> entityResolver) {
+        return performCreate(task, taskParams, entityResolver, pollingType, expectBlocking());
     }
 
     protected final <T> Response performCreate(ActionType task,
             ActionParametersBase taskParams,
             IResolver<T, Q> entityResolver,
             Class<? extends BaseResource> suggestedParentType) {
-        return performCreate(task, taskParams, entityResolver, expectBlocking(), suggestedParentType);
+        return performCreate(task, taskParams, entityResolver, PollingType.VDSM_TASKS, expectBlocking(), suggestedParentType);
     }
 
     protected boolean expectBlocking() {
@@ -213,15 +229,16 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
 
     private <T> Response fetchCreatedEntity(IResolver<T, Q> entityResolver,
             boolean block,
+            PollingType pollingType,
             Class<? extends BaseResource> suggestedParentType,
             ActionReturnValue createResult) {
         Q created = resolveCreated(createResult, entityResolver);
         R model = mapEntity(suggestedParentType, created);
         modifyCreatedEntity(model);
         Response response = null;
-        if (createResult.getHasAsyncTasks()) {
+        if (isAsyncTaskOrJobExists(pollingType, createResult)) {
             if (block) {
-                awaitCompletion(createResult);
+                awaitCompletion(createResult, pollingType);
                 // refresh model state
                 created = resolveCreated(createResult, entityResolver);
                 model = mapEntity(suggestedParentType, created);
@@ -244,6 +261,28 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             }
         }
         return response;
+    }
+
+    /**
+     * Returns true if there are still processes running in the
+     * background, associated with the current request.
+     *
+     * For vdsm-task polling, the indication is the existence of running
+     * vdsm tasks.
+     *
+     * For job polling, the indication is that the job is in PENDING or
+     * IN_PROGRESS status.
+     */
+    private boolean isAsyncTaskOrJobExists(PollingType pollingType, ActionReturnValue createResult) {
+        if (pollingType==PollingType.VDSM_TASKS) {
+            //when the polling-type is vdsm_tasks, check for existing async-tasks
+            return createResult.getHasAsyncTasks();
+        } else if (pollingType==PollingType.JOB) {
+            //when the polling-type is job, check if the job is pending or in progress
+            CreationStatus status = getJobIdStatus(createResult);
+            return status==CreationStatus.PENDING || status==CreationStatus.IN_PROGRESS;
+        }
+        return false; //shouldn't reach here
     }
 
     /**

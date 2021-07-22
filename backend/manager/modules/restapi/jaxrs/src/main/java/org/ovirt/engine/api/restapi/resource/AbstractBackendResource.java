@@ -119,7 +119,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q>
         return asyncStatus;
     }
 
-    private CreationStatus getJobIdStatus(ActionReturnValue result) {
+    protected CreationStatus getJobIdStatus(ActionReturnValue result) {
         Guid jobId = result.getJobId();
         if (jobId == null || jobId.equals(Guid.Empty)) {
             return CreationStatus.COMPLETE;
