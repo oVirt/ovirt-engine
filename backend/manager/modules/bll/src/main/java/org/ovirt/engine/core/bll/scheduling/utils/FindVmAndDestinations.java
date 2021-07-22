@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -114,7 +115,7 @@ public class FindVmAndDestinations {
             // Using host threads, so the predicted VM cpu is consistent
             // with the percentage that vdsm returns
             int predictedVmCpu = (vm.getStatisticsData() != null && vm.getUsageCpuPercent() != null && vds.getCpuThreads() != null) ?
-                    (vm.getUsageCpuPercent() * vm.getNumOfCpus()) / vds.getCpuThreads() :
+                    (vm.getUsageCpuPercent() * VmCpuCountHelper.getDynamicNumOfCpu(vm) / vds.getCpuThreads()):
                     0;
 
             if (vds.getUsageCpuPercent() + predictedVmCpu <= highCpuUtilization

@@ -1302,10 +1302,9 @@ public class VmHandler implements BackendService {
         return ValidationResult.VALID;
     }
 
-    public void updateCpuAndNumaPinning(VmBase vmBase, CpuPinningPolicy cpuPinningPolicy) {
-        VdsDynamic host = vdsDynamicDao.get(vmBase.getDedicatedVmForVdsList().get(0));
-        NumaPinningHelper.applyAutoPinningPolicy(vmBase, cpuPinningPolicy, host,
-                vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
+    public void updateCpuAndNumaPinning(VM vm, Guid vdsId) {
+        VdsDynamic host = vdsDynamicDao.get(vdsId);
+        NumaPinningHelper.applyAutoPinningPolicy(vm, host, vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
     }
 
     public void autoSelectResumeBehavior(VmBase vmBase) {

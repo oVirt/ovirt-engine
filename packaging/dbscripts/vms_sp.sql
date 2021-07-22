@@ -320,7 +320,11 @@ CREATE OR REPLACE FUNCTION InsertVmDynamic (
     v_guestos_kernel_version VARCHAR(255),
     v_guestos_type VARCHAR(255),
     v_guestos_version VARCHAR(255),
-    v_guest_containers TEXT
+    v_guest_containers TEXT,
+    v_current_cpu_pinning VARCHAR(4000),
+    v_current_sockets INT,
+    v_current_cores INT,
+    v_current_threads INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -376,7 +380,11 @@ BEGIN
         guestos_kernel_version,
         guestos_type,
         guestos_version,
-        guest_containers
+        guest_containers,
+        current_cpu_pinning,
+        current_sockets,
+        current_cores,
+        current_threads
         )
     VALUES (
         v_app_list,
@@ -430,7 +438,11 @@ BEGIN
         v_guestos_kernel_version,
         v_guestos_type,
         v_guestos_version,
-        v_guest_containers
+        v_guest_containers,
+        v_current_cpu_pinning,
+        v_current_sockets,
+        v_current_cores,
+        v_current_threads
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -488,7 +500,11 @@ CREATE OR REPLACE FUNCTION UpdateVmDynamic (
     v_guestos_kernel_version VARCHAR(255),
     v_guestos_type VARCHAR(255),
     v_guestos_version VARCHAR(255),
-    v_guest_containers TEXT
+    v_guest_containers TEXT,
+    v_current_cpu_pinning VARCHAR(4000),
+    v_current_sockets INT,
+    v_current_cores INT,
+    v_current_threads INT
     )
 RETURNS VOID
     --The [vm_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -546,7 +562,11 @@ BEGIN
         guestos_kernel_version = v_guestos_kernel_version,
         guestos_type = v_guestos_type,
         guestos_version = v_guestos_version,
-        guest_containers = v_guest_containers
+        guest_containers = v_guest_containers,
+        current_cpu_pinning = v_current_cpu_pinning,
+        current_sockets = v_current_sockets,
+        current_cores = v_current_cores,
+        current_threads = v_current_threads
     WHERE vm_guid = v_vm_guid;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

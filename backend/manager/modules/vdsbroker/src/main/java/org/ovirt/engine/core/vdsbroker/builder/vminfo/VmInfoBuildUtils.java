@@ -1266,8 +1266,8 @@ public class VmInfoBuildUtils {
     }
 
     public List<VmNumaNode> getVmNumaNodes(VM vm) {
-        int onlineCpus = vm.getNumOfCpus();
-        int vcpus = FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) ?
+        int onlineCpus = VmCpuCountHelper.getDynamicNumOfCpu(vm);
+        int vcpus = FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) && !VmCpuCountHelper.isAutoPinning(vm)?
                 VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
                 : onlineCpus;
         int offlineCpus = vcpus - onlineCpus;
@@ -1672,12 +1672,13 @@ public class VmInfoBuildUtils {
 
     public static int maxNumberOfVcpus(VM vm) {
         return FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(),
-                vm.getClusterArch()) ? VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
-                        : vm.getNumOfCpus();
+                vm.getClusterArch()) && !VmCpuCountHelper.isAutoPinning(vm) ? VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
+                        : VmCpuCountHelper.getDynamicNumOfCpu(vm);
     }
 
     public static boolean isVmWithHighNumberOfX86Vcpus(VM vm) {
         return vm.getClusterArch().getFamily() == ArchitectureType.x86
-                && maxNumberOfVcpus(vm) >= VmCpuCountHelper.HIGH_NUMBER_OF_X86_VCPUS;
+                && (VmCpuCountHelper.isDynamicCpuTopologySet(vm) ?
+                vm.getCurrentNumOfCpus() : maxNumberOfVcpus(vm)) >= VmCpuCountHelper.HIGH_NUMBER_OF_X86_VCPUS;
     }
 }

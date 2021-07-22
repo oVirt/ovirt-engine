@@ -232,7 +232,11 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("guestos_kernel_version", vm.getGuestOsKernelVersion())
                 .addValue("guestos_type", vm.getGuestOsType().name())
                 .addValue("guestos_version", vm.getGuestOsVersion())
-                .addValue("guest_containers", toGuestContainersString(vm));
+                .addValue("guest_containers", toGuestContainersString(vm))
+                .addValue("current_cpu_pinning", vm.getCurrentCpuPinning())
+                .addValue("current_sockets", vm.getCurrentSockets())
+                .addValue("current_cores", vm.getCurrentCoresPerSocket())
+                .addValue("current_threads", vm.getCurrentThreadsPerCore());
     }
 
     private static ObjectMapper JSON_MAPPER = new ObjectMapper();
@@ -313,6 +317,10 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         entity.setGuestOsVersion(rs.getString("guestos_version"));
         entity.setGuestContainers(fromContainersString(rs.getString("guest_containers")));
         entity.setLeaseInfo(SerializationFactory.getDeserializer().deserialize(rs.getString("lease_info"), HashMap.class));
+        entity.setCurrentCpuPinning(rs.getString("current_cpu_pinning"));
+        entity.setCurrentSockets(rs.getInt("current_sockets"));
+        entity.setCurrentCoresPerSocket(rs.getInt("current_cores"));
+        entity.setCurrentThreadsPerCore(rs.getInt("current_threads"));
         return entity;
     };
 

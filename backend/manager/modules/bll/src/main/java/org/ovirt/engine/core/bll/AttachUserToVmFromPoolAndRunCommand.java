@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -360,7 +361,9 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
             list.add(new QuotaClusterConsumptionParameter(vm.getQuotaId(),
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
                     vm.getClusterId(),
-                    vm.getCpuPerSocket() * vm.getNumOfSockets(),
+                    VmCpuCountHelper.isDynamicCpuTopologySet(vm) ? // might be true only for pre-started VMs
+                            vm.getCurrentCoresPerSocket() * vm.getCurrentSockets() :
+                            vm.getCpuPerSocket() * vm.getNumOfSockets(),
                     vm.getMemSizeMb()));
         }
         return list;

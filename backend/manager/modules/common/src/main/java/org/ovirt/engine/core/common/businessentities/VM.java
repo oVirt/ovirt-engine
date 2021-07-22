@@ -291,6 +291,16 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     public int getNumOfCpus(boolean countThreadsAsCPU) {
         return this.vmStatic.getNumOfCpus(countThreadsAsCPU);
     }
+
+    public int getCurrentNumOfCpus() {
+        return getCurrentNumOfCpus(true);
+    }
+
+    public int getCurrentNumOfCpus(boolean countThreadsAsCPU) {
+        return this.getCurrentCoresPerSocket() * this.getCurrentSockets()
+                * (countThreadsAsCPU ? this.getCurrentThreadsPerCore() : 1);
+    }
+
     /**
      * This method is created for SOAP serialization of primitives that are readonly but sent by the client. The setter
      * implementation is empty and the field is not being changed.
@@ -1202,6 +1212,38 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
 
     public void setFloppyPath(String value) {
         floppyPath = value;
+    }
+
+    public String getCurrentCpuPinning() {
+        return this.vmDynamic.getCurrentCpuPinning();
+    }
+
+    public void setCurrentCpuPinning(String cpuPinning) {
+        this.vmDynamic.setCurrentCpuPinning(cpuPinning);
+    }
+
+    public int getCurrentSockets() {
+        return this.vmDynamic.getCurrentSockets();
+    }
+
+    public void setCurrentSockets(int sockets) {
+        this.vmDynamic.setCurrentSockets(sockets);
+    }
+
+    public int getCurrentCoresPerSocket() {
+        return this.vmDynamic.getCurrentCoresPerSocket();
+    }
+
+    public void setCurrentCoresPerSocket(int cores) {
+        this.vmDynamic.setCurrentCoresPerSocket(cores);
+    }
+
+    public int getCurrentThreadsPerCore() {
+        return this.vmDynamic.getCurrentThreadsPerCore();
+    }
+
+    public void setCurrentThreadsPerCore(int threads) {
+        this.vmDynamic.setCurrentThreadsPerCore(threads);
     }
 
     public Boolean isRunAndPause() {

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.scheduling.utils;
 import java.util.Comparator;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 
 /**
  * Comparator that compares the CPU usage of two VMs, with regard to the number of CPUs each VM has.
@@ -16,6 +17,6 @@ public enum VmCpuUsageComparator implements Comparator<VM> {
     }
 
     private static int calculateCpuUsage(VM o1) {
-        return o1.getUsageCpuPercent() * o1.getNumOfCpus();
+        return o1.getUsageCpuPercent() * VmCpuCountHelper.getDynamicNumOfCpu(o1);
     }
 }

@@ -266,7 +266,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         newVmStatic = getParameters().getVmStaticData();
-        addCpuAndNumaPinning();
         if (isRunningConfigurationNeeded()) {
             logNameChange();
             vmHandler.createNextRunSnapshot(
@@ -1584,7 +1583,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
                         getClusterId(),
-                        getVm().getNumOfCpus(),
+                        VmCpuCountHelper.getDynamicNumOfCpu(getVm()),
                         getVm().getMemSizeMb()));
                 list.add(new QuotaClusterConsumptionParameter(getQuotaId(),
                         QuotaConsumptionParameter.QuotaAction.CONSUME,

@@ -1461,7 +1461,11 @@ SELECT vm_static.vm_name AS vm_name,
     vm_static.namespace AS namespace,
     vm_static.balloon_enabled AS balloon_enabled,
     vm_static.console_disconnect_action_delay AS console_disconnect_action_delay,
-    vm_static.cpu_pinning_policy AS cpu_pinning_policy
+    vm_static.cpu_pinning_policy AS cpu_pinning_policy,
+    vm_dynamic.current_cpu_pinning AS current_cpu_pinning,
+    vm_dynamic.current_sockets AS current_sockets,
+    vm_dynamic.current_cores AS current_cores,
+    vm_dynamic.current_threads AS current_threads
 FROM vm_static
 INNER JOIN vm_dynamic
     ON vm_static.vm_guid = vm_dynamic.vm_guid
@@ -1698,7 +1702,11 @@ SELECT DISTINCT vms.vm_name,
     vms.namespace,
     vms.balloon_enabled,
     vms.console_disconnect_action_delay,
-    vms.cpu_pinning_policy
+    vms.cpu_pinning_policy,
+    vms.current_cpu_pinning,
+    vms.current_sockets,
+    vms.current_cores,
+    vms.current_threads
 FROM vms
 LEFT JOIN tags_vm_map_view
     ON vms.vm_guid = tags_vm_map_view.vm_id

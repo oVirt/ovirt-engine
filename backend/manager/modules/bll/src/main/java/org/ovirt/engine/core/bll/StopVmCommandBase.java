@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -210,7 +211,9 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
             list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
                     QuotaConsumptionParameter.QuotaAction.RELEASE,
                     getVm().getClusterId(),
-                    getVm().getCpuPerSocket() * getVm().getNumOfSockets(),
+                    VmCpuCountHelper.isDynamicCpuTopologySet(getVm()) ?
+                            getVm().getCurrentCoresPerSocket() * getVm().getCurrentSockets() :
+                            getVm().getCpuPerSocket() * getVm().getNumOfSockets(),
                     getVm().getMemSizeMb()));
         }
         return list;

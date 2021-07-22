@@ -530,6 +530,7 @@ public enum EngineError {
     GraphicsConsoleCantBeObtained(5062),
     FailedToCreateWebsocketProxyTicket(5063),
     DefaultIconPairNotFound(5064),
+    FAILED_NUMA_UPDATE(5065),
 
     // Network Labels
     LABELED_NETWORK_INTERFACE_NOT_FOUND(5200),

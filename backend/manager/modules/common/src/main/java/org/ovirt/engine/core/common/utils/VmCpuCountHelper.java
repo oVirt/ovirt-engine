@@ -5,6 +5,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -146,6 +148,10 @@ public class VmCpuCountHelper {
      * @return Whether the CPU count configuration is valid
      */
     public static boolean validateCpuCounts(VM vm, Version compatibilityVersion, ArchitectureType architecture) {
+        if (isAutoPinning(vm)) {
+            return true;
+        }
+
         if ((architecture == null || architecture.getFamily() == ArchitectureType.x86)
                 && !canHighNumberOfX86Vcpus(vm.getBiosType())
                 && bitWidth(vm.getThreadsPerCpu()) + bitWidth(vm.getCpuPerSocket()) > maxBitWidth) {
@@ -153,7 +159,7 @@ public class VmCpuCountHelper {
             return false;
         }
         Integer maxVCpus = calcMaxVCpu(vm.getStaticData(), compatibilityVersion, architecture);
-        if (vm.getNumOfCpus() > maxVCpus) {
+        if (VmCpuCountHelper.getDynamicNumOfCpu(vm) > maxVCpus) {
             log.error(
                     "Too many CPUs for the given topology, compatibility version {}, {} architecture, "
                             + "and {} BIOS type (maximum is {})",
@@ -161,5 +167,36 @@ public class VmCpuCountHelper {
             return false;
         }
         return true;
+    }
+
+    public static boolean isAutoPinning(VM vm) {
+        return vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
+    }
+
+    public static int getDynamicNumOfCpu(VM vm) {
+        return isAutoPinning(vm) && vm.getCurrentNumOfCpus() > 0 ? vm.getCurrentNumOfCpus() : vm.getNumOfCpus();
+    }
+
+    public static boolean isDynamicCpuTopologySet(VM vm) {
+        return isAutoPinning(vm) && vm.getCurrentNumOfCpus() > 0;
+    }
+
+    /**
+     * Return the total amount of CPUs of a VM.
+     * If the VM is set with auto pinning before running it will calculate the future
+     * amount of CPUs on runtime.
+     * In other cases it will return the dynamic or the static CPUs.
+     *
+     * Note, it might return 0 if the auto pinning is set on undesired host with one core.
+     *
+     * @param vm the relevant VM
+     * @param host the relevant host
+     * @return required amount of CPUs
+     */
+    public static int getRuntimeNumOfCpu(VM vm, VDS host) {
+        if (VmCpuCountHelper.isAutoPinning(vm) && !VmCpuCountHelper.isDynamicCpuTopologySet(vm)) {
+            return host.getCpuSockets() * ((host.getCpuCores() / host.getCpuSockets()) - 1) * (host.getCpuThreads() / host.getCpuCores());
+        }
+        return VmCpuCountHelper.getDynamicNumOfCpu(vm);
     }
 }

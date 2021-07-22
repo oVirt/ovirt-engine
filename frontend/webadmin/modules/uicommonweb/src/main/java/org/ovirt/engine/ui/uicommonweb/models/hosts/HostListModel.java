@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -2095,6 +2096,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         return vm.getVmType() == VmType.HighPerformance
                 || vm.isUsingCpuPassthrough()
                 || (vm.getCpuPinning() != null && !vm.getCpuPinning().isEmpty())
+                || vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA
                 || vmsWithPinnedvNumaNodes.contains(vm.getId());
     }
 }

@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Guid;
 
 @SchedulingUnit(
@@ -76,8 +77,8 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
                 .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
                 // If the VM is running, use its current CPU load, otherwise use the config value
                 .mapToInt(vm -> vm.getRunOnVds() != null && vm.getStatisticsData() != null  && vm.getUsageCpuPercent() != null ?
-                        vm.getUsageCpuPercent() * vm.getNumOfCpus() :
-                        vcpu * vm.getNumOfCpus())
+                        vm.getUsageCpuPercent() * VmCpuCountHelper.getRuntimeNumOfCpu(vm, vds) :
+                        vcpu * VmCpuCountHelper.getRuntimeNumOfCpu(vm, vds))
                 .sum();
 
         double loadScore = (double)(hostLoad + addedVmLoad) / (double)hostCores;

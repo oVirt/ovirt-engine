@@ -1039,7 +1039,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (!addVmLease(getParameters().getVm().getLeaseStorageDomainId(), getVmId(), false)) {
             return;
         }
-        addCpuAndNumaPinning();
 
         TransactionSupport.executeInNewTransaction(() -> {
             addVmStatic();
