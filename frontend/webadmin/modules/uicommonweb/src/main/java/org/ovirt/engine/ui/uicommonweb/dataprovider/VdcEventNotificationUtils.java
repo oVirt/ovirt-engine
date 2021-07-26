@@ -187,6 +187,11 @@ public final class VdcEventNotificationUtils {
         addEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.USER_ADD_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
         addEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
         addEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
+
+        // Multipath
+        addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.FAULTY_MULTIPATHS_ON_HOST);
+        addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.NO_FAULTY_MULTIPATHS_ON_HOST);
+        addEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.MULTIPATH_DEVICES_WITHOUT_VALID_PATHS_ON_HOST);
     }
 
     /**

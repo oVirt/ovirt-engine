@@ -579,6 +579,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType__GLUSTER_WEBHOOK_ADDED();
 
+    String AuditLogType___FAULTY_MULTIPATHS_ON_HOST();
+
+    String AuditLogType___NO_FAULTY_MULTIPATHS_ON_HOST();
+
+    String AuditLogType___MULTIPATH_DEVICES_WITHOUT_VALID_PATHS_ON_HOST();
+
     String ActionType___ActivateVds();
 
     String ActionType___RecoveryStoragePool();
