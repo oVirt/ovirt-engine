@@ -53,7 +53,6 @@ public class KubevirtNodesMonitoring implements HostMonitoringInterface {
 
                 // memory
                 stat.setUsageMemPercent(promClient.getNodeMemUsage(name));
-                stat.setMemAvailable(promClient.getNodeMemAvailable(name));
                 stat.setMemFree(promClient.getNodeMemFree(name));
                 stat.setMemShared(promClient.getNodeMemShared(name));
 

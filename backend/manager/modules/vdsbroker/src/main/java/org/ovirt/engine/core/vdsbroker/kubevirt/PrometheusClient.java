@@ -114,10 +114,6 @@ public class PrometheusClient implements Closeable {
         return bToMb(getMetric("node_memory_MemFree_bytes{instance='%1$s'}", nodeName).asLong());
     }
 
-    public Long getNodeMemAvailable(String nodeName) {
-        return bToMb(getMetric("node_memory_MemAvailable_bytes{instance='%1$s'}", nodeName).asLong());
-    }
-
     public Long getNodeMemShared(String nodeName) {
         return bToMb(getMetric("node_memory_Shmem_bytes{instance='%1$s'}", nodeName).asLong());
     }

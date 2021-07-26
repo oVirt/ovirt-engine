@@ -1309,7 +1309,6 @@ public class VdsBrokerObjectsBuilder {
         d = (d != null) ? d : 0;
         vds.setCpuLoad(d * 100.0);
         vds.setCpuIdle(assignDoubleValue(struct, VdsProperties.cpu_idle));
-        vds.setMemAvailable(assignLongValue(struct, VdsProperties.mem_available));
         vds.setMemFree(assignLongValue(struct, VdsProperties.memFree));
         vds.setMemShared(assignLongValue(struct, VdsProperties.mem_shared));
 

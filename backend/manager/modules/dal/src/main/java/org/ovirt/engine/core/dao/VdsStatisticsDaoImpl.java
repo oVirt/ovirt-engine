@@ -46,7 +46,6 @@ public class VdsStatisticsDaoImpl extends BaseDao implements VdsStatisticsDao {
             entity.setUsageMemPercent((Integer) rs.getObject("usage_mem_percent"));
             entity.setUsageNetworkPercent((Integer) rs.getObject("usage_network_percent"));
             entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
-            entity.setMemAvailable(rs.getLong("mem_available"));
             entity.setMemFree(rs.getLong("mem_free"));
             entity.setMemShared(rs.getLong("mem_shared"));
             entity.setSwapFree(rs.getLong("swap_free"));
@@ -103,7 +102,6 @@ public class VdsStatisticsDaoImpl extends BaseDao implements VdsStatisticsDao {
                 .addValue("usage_network_percent",
                         stats.getUsageNetworkPercent())
                 .addValue("vds_id", stats.getId())
-                .addValue("mem_available", stats.getMemAvailable())
                 .addValue("mem_free" , stats.getMemFree())
                 .addValue("mem_shared", stats.getMemShared())
                 .addValue("swap_free", stats.getSwapFree())
@@ -149,7 +147,6 @@ public class VdsStatisticsDaoImpl extends BaseDao implements VdsStatisticsDao {
                 .addValue("usage_network_percent",
                         stats.getUsageNetworkPercent())
                 .addValue("vds_id", stats.getId())
-                .addValue("mem_available", stats.getMemAvailable())
                 .addValue("mem_free" , stats.getMemFree())
                 .addValue("mem_shared", stats.getMemShared())
                 .addValue("swap_free", stats.getSwapFree())

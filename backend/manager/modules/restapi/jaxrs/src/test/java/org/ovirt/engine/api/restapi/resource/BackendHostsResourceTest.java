@@ -229,7 +229,6 @@ public class BackendHostsResourceTest
         when(statistics.getUsageMemPercent()).thenReturn(20);
         when(statistics.getSwapFree()).thenReturn(25L);
         when(statistics.getSwapTotal()).thenReturn(30L);
-        when(statistics.getMemAvailable()).thenReturn(35L);
         when(statistics.getMemShared()).thenReturn(38L);
         when(statistics.getKsmCpuPercent()).thenReturn(40);
         when(statistics.getCpuUser()).thenReturn(45.0);

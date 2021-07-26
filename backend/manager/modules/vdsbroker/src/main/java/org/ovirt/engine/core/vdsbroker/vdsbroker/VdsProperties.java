@@ -184,7 +184,6 @@ public final class VdsProperties {
     public static final String Controller = "controller";
     public static final String spapr_vio = "spapr-vio";
 
-    public static final String mem_available = "memAvailable";
     public static final String memFree = "memFree";
     public static final String mem_shared = "memShared";
     public static final String mem_usage = "memUsed";

@@ -137,7 +137,6 @@ public class JsonObjectSerializationEntitiesTest {
         vdsStatistics.setCpuLoad(random.nextDouble());
         vdsStatistics.setCpuSys(random.nextDouble());
         vdsStatistics.setCpuUser(random.nextDouble());
-        vdsStatistics.setMemAvailable(random.nextLong());
         vdsStatistics.setMemFree(random.nextLong());
         vdsStatistics.setMemShared(random.nextLong());
         vdsStatistics.setUsageCpuPercent(random.nextInt());

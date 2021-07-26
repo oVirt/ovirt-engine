@@ -199,7 +199,6 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setBootTime(getBootTime());
         vds.setGuestOverhead(getGuestOverhead());
         vds.setPreviousStatus(getPreviousStatus());
-        vds.setMemAvailable(getMemAvailable());
         vds.setMemShared(getMemShared());
         vds.setSoftwareVersion(getSoftwareVersion());
         vds.setVersionName(getVersionName());
@@ -789,14 +788,6 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setPreviousStatus(VDSStatus value) {
         vdsDynamic.setPreviousStatus(value);
-    }
-
-    public Long getMemAvailable() {
-        return vdsStatistics.getMemAvailable();
-    }
-
-    public void setMemAvailable(Long value) {
-        vdsStatistics.setMemAvailable(value);
     }
 
     public Long getMemFree() {

@@ -20,7 +20,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private Integer usageMemPercent;
     private Integer usageCpuPercent;
     private Integer usageNetworkPercent;
-    private Long memAvailable;
     private Long memFree;
     private Long memShared;
     private Long swapFree;
@@ -50,7 +49,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         cpuLoad = BigDecimal.ZERO;
         cpuSys = BigDecimal.ZERO;
         cpuUser = BigDecimal.ZERO;
-        memAvailable = 0L;
         memFree = 0L;
         memShared = 0L;
         swapFree = 0L;
@@ -74,7 +72,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 cpuLoad,
                 cpuSys,
                 cpuUser,
-                memAvailable,
                 memFree,
                 memShared,
                 usageCpuPercent,
@@ -111,7 +108,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 && ObjectUtils.bigDecimalEqual(cpuLoad, other.cpuLoad)
                 && ObjectUtils.bigDecimalEqual(cpuSys, other.cpuSys)
                 && ObjectUtils.bigDecimalEqual(cpuUser, other.cpuUser)
-                && Objects.equals(memAvailable, other.memAvailable)
                 && Objects.equals(memFree, other.memFree)
                 && Objects.equals(memShared, other.memShared)
                 && Objects.equals(usageCpuPercent, other.usageCpuPercent)
@@ -179,30 +175,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
 
     public void setCpuUser(Double cpuUser) {
         this.cpuUser = BigDecimal.valueOf(cpuUser);
-    }
-
-    /**
-     * Returns a rough estimate on how much free mem is available for new vm
-     * i.e. MemFree + Cached + Buffers + resident - memCommitted
-     *
-     * resident set size of qemu processes may grow - up to  memCommitted.
-     * Thus, we deduct the growth potential of qemu processes, which is (memCommitted - resident)
-     *
-     * Do not use. This value was computed using very naive algorithm without the
-     * engine knowledge and does not reflect over-commit or Qemu overhead properly.
-     *
-     * Please see the org.ovirt.engine.core.bll.utils.VmOverheadCalculatorImpl for much more
-     * accurate algorithm and VDS#maxSchedulingMemory for a precomputed value.
-     *
-     * @return - free mem available for new vm in MiB
-     */
-    @Deprecated
-    public Long getMemAvailable() {
-        return memAvailable;
-    }
-
-    public void setMemAvailable(Long value) {
-        memAvailable = value;
     }
 
     /**

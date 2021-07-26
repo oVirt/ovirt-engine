@@ -378,7 +378,6 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends BaseComma
         host.setClusterId(clusterId);
         host.setVdsName(name);
         host.setPhysicalMemMb(freeMemoryMb);
-        host.setMemAvailable((long) freeMemoryMb);
         host.setMemCommited(0);
         host.setMemShared(0L);
         host.setReservedMem(128);
