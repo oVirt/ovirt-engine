@@ -408,6 +408,12 @@ public class EventSubscriptionMapper {
             return AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED;
         case USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED:
             return AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED;
+        case FAULTY_MULTIPATHS_ON_HOST:
+            return AuditLogType.FAULTY_MULTIPATHS_ON_HOST;
+        case NO_FAULTY_MULTIPATHS_ON_HOST:
+            return AuditLogType.NO_FAULTY_MULTIPATHS_ON_HOST;
+        case MULTIPATH_DEVICES_WITHOUT_VALID_PATHS_ON_HOST:
+            return AuditLogType.MULTIPATH_DEVICES_WITHOUT_VALID_PATHS_ON_HOST;
         default:
             assert false : "unknown or unnotifiable event: " + model.toString();
             return null;
@@ -730,6 +736,12 @@ public class EventSubscriptionMapper {
             return NotifiableEvent.USER_UPDATE_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED;
         case USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED:
             return NotifiableEvent.USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED;
+        case FAULTY_MULTIPATHS_ON_HOST:
+            return NotifiableEvent.FAULTY_MULTIPATHS_ON_HOST;
+        case NO_FAULTY_MULTIPATHS_ON_HOST:
+            return NotifiableEvent.NO_FAULTY_MULTIPATHS_ON_HOST;
+        case MULTIPATH_DEVICES_WITHOUT_VALID_PATHS_ON_HOST:
+            return NotifiableEvent.MULTIPATH_DEVICES_WITHOUT_VALID_PATHS_ON_HOST;
         default:
             assert false : "unknown or unnotifiable event: " + model.toString();
             return null;
