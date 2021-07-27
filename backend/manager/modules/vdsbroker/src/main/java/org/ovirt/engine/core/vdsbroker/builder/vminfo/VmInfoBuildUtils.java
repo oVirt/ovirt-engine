@@ -1655,7 +1655,7 @@ public class VmInfoBuildUtils {
 
     public static int maxNumberOfVcpus(VM vm) {
         return FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(),
-                vm.getClusterArch()) ? VmCpuCountHelper.calcMaxVCpu(vm, vm.getClusterCompatibilityVersion())
+                vm.getClusterArch()) ? VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
                         : vm.getNumOfCpus();
     }
 
