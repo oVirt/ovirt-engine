@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class VmCpuCountHelper {
     public static final int HIGH_NUMBER_OF_X86_VCPUS = 256;
+    private static final int MAX_I440FX_VCPUS = 240;
     private static final int maxBitWidth = 8;
     private static final Logger log = LoggerFactory.getLogger(VmCpuCountHelper.class);
 
@@ -48,14 +49,17 @@ public class VmCpuCountHelper {
             if (canHighNumberOfX86Vcpus(biosType)) {
                 maxVCpus = alignedMaxVCpu(maxVCpus, maxSockets, threadsPerCore, cpuPerSocket);
             } else if (oneSocketBitWidth > maxBitWidth) {
+                // This should be prevented by validation and never reached.
+                // We handle it just for safety and to provide meaningful error messages.
                 log.warn("{} cores with {} threads may be too many for the VM to be able to run", cpuPerSocket,
                         threadsPerCore);
+                if (maxVCpus > MAX_I440FX_VCPUS) {
+                    maxVCpus = threadsPerCore * cpuPerSocket;
+                }
             } else {
                 int apicIdLimit = (int) Math.pow(2, 8 - oneSocketBitWidth);
                 int apicVCpusLimit = cpuPerSocket * threadsPerCore * Math.min(maxSockets, apicIdLimit);
-                if (apicVCpusLimit == 256) {
-                    // Using the maximum 8-bit value may be unsafe under certain circumstances, see
-                    // https://bugzilla.redhat.com/1406243#c17
+                while (apicVCpusLimit > MAX_I440FX_VCPUS) {
                     // Note that maxVCpus must match the socket and thread counts.
                     apicVCpusLimit -= cpuPerSocket * threadsPerCore;
                 }
