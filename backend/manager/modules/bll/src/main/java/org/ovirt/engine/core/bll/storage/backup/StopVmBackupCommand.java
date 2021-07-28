@@ -98,6 +98,8 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
     }
 
     private void updateVmBackupPhase(VmBackupPhase phase) {
+        log.info("Change VM '{}' backup '{}' phase from '{}' to '{}'",
+                vmBackup.getVmId(), vmBackup.getId(), vmBackup.getPhase(), phase);
         vmBackup.setPhase(phase);
         vmBackupDao.update(vmBackup);
     }

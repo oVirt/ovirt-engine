@@ -602,6 +602,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     private void updateVmBackupPhase(VmBackupPhase phase) {
         VmBackup vmBackup = getParameters().getVmBackup();
+        log.info("Change VM '{}' backup '{}' phase from '{}' to '{}'",
+                getVmId(), vmBackup.getId(), vmBackup.getPhase(), phase);
         vmBackup.setPhase(phase);
         vmBackupDao.update(vmBackup);
     }
