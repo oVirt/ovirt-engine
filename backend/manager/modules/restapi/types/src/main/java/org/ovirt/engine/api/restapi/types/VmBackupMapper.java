@@ -51,6 +51,9 @@ public class VmBackupMapper {
         if (entity.getCreationDate() != null) {
             model.setCreationDate(DateMapper.map(entity.getCreationDate(), null));
         }
+        if (entity.getModificationDate() != null) {
+            model.setModificationDate(DateMapper.map(entity.getModificationDate(), null));
+        }
         if (entity.getDescription() != null) {
             model.setDescription(entity.getDescription());
         }

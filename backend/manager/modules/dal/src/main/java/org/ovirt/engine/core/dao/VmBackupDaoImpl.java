@@ -36,6 +36,7 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
                 .addValue("to_checkpoint_id", entity.getToCheckpointId())
                 .addValue("phase", entity.getPhase().getName())
                 .addValue("_create_date", entity.getCreationDate())
+                .addValue("_update_date", entity.getModificationDate())
                 .addValue("description", entity.getDescription());
     }
 
@@ -58,6 +59,7 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
         entity.setToCheckpointId(getGuid(rs, "to_checkpoint_id"));
         entity.setPhase(VmBackupPhase.forName(rs.getString("phase")));
         entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_create_date")));
+        entity.setModificationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_update_date")));
         entity.setDescription(rs.getString("description"));
         return entity;
     };
@@ -77,6 +79,7 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
                 .addValue("from_checkpoint_id", entity.getFromCheckpointId())
                 .addValue("to_checkpoint_id", entity.getToCheckpointId())
                 .addValue("phase", entity.getPhase().getName())
+                .addValue("_update_date", new Date())
                 .addValue("description", entity.getDescription());
         getCallsHandler()
                 .executeModification("UpdateVmBackup", parameterSource);

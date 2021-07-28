@@ -25,6 +25,8 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
 
     private Date creationDate;
 
+    private Date modificationDate;
+
     private String description;
 
     private List<DiskImage> disks;
@@ -93,6 +95,14 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
         this.creationDate = creationDate;
     }
 
+    public Date getModificationDate() {
+        return modificationDate;
+    }
+
+    public void setModificationDate(Date modificationDate) {
+        this.modificationDate = modificationDate;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -116,6 +126,7 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
                 phase,
                 disks,
                 creationDate,
+                modificationDate,
                 description
         );
     }
@@ -137,6 +148,7 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
                 && Objects.equals(phase, other.phase)
                 && Objects.equals(disks, other.disks)
                 && Objects.equals(creationDate, other.creationDate)
+                && Objects.equals(modificationDate, other.modificationDate)
                 && Objects.equals(description, other.description);
     }
 

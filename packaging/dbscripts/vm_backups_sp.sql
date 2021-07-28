@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION InsertVmBackup (
     v_host_id UUID,
     v_phase TEXT,
     v__create_date TIMESTAMP WITH TIME ZONE,
+    v__update_date TIMESTAMP WITH TIME ZONE,
     v_description VARCHAR(1024)
     )
 RETURNS VOID AS $PROCEDURE$
@@ -34,6 +35,7 @@ BEGIN
         host_id,
         phase,
         _create_date,
+        _update_date,
         description
         )
     VALUES (
@@ -44,6 +46,7 @@ BEGIN
         v_host_id,
         v_phase,
         v__create_date,
+        v__update_date,
         v_description
         );
 END;$PROCEDURE$
@@ -56,6 +59,7 @@ CREATE OR REPLACE FUNCTION UpdateVmBackup (
     v_vm_id UUID,
     v_host_id UUID,
     v_phase TEXT,
+    v__update_date TIMESTAMP WITH TIME ZONE,
     v_description VARCHAR(1024)
     )
 RETURNS VOID AS $PROCEDURE$
@@ -67,6 +71,7 @@ BEGIN
         vm_id = v_vm_id,
         host_id = v_host_id,
         phase = v_phase,
+        _update_date = v__update_date,
         description = v_description
     WHERE backup_id = v_backup_id;
 END;$PROCEDURE$
@@ -179,11 +184,11 @@ BEGIN
     FROM vm_backups
     WHERE (
             (
-                _create_date < v_succeeded_end_time
+                _update_date < v_succeeded_end_time
                 AND phase = 'Succeeded'
                 )
             OR (
-                _create_date < v_failed_end_time
+                _update_date < v_failed_end_time
                 AND phase = 'Failed'
                 )
             );

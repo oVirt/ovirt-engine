@@ -471,7 +471,10 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         vmBackup.setId(getCommandId());
         vmBackup.setHostId(getVdsId());
         vmBackup.setPhase(VmBackupPhase.INITIALIZING);
-        vmBackup.setCreationDate(new Date());
+        Date now = new Date();
+        vmBackup.setCreationDate(now);
+        vmBackup.setModificationDate(now);
+
         getParameters().setVmBackup(vmBackup);
         TransactionSupport.executeInNewTransaction(() -> {
             vmBackupDao.save(vmBackup);
