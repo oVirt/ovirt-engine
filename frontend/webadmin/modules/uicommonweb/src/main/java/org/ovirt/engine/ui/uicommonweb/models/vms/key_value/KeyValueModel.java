@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms.key_value;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,13 +20,16 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
     public static final String PROPERTIES_DELIMETER = ";"; //$NON-NLS-1$
     public static final String KEY_VALUE_DELIMETER = "="; //$NON-NLS-1$
     private String saveEntity;
+    private boolean showInvalidKeys;
 
     public KeyValueModel() {
         super(ConstantsManager.getInstance().getConstants().pleaseSelectKey(), ConstantsManager.getInstance().getConstants().noKeyAvailable());
     }
+
     Map<String, String> allKeyValueMap;
     Map<String, List<String>> allRegExKeys;
     private Map<String, String> keyValueMap_used = new HashMap<>();
+    private Map<String, String> keyValueMap_invalidKey = new HashMap<>();
     private boolean useEditableKey;
     //Available only if using editable key
     private boolean maskValueField;
@@ -54,6 +58,16 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
             if (constrainedValue) {
                 keyValueLineModel.getValues().setItems(allRegExKeys.get(key));
             }
+        } else if (showInvalidKeys){
+            keyValueLineModel.getValue().setIsAvailable(true);
+            keyValueLineModel.getValue().setEntity("");
+            keyValueLineModel.getEditableKey().setIsAvailable(false);
+            keyValueLineModel.getEditableKey().setEntity("");
+            keyValueLineModel.getPasswordValueField().setIsAvailable(false);
+            keyValueLineModel.getPasswordValueField().setEntity("");
+            keyValueLineModel.getValues().setIsAvailable(false);
+            keyValueLineModel.getValues().setSelectedItem(null);
+            keyValueLineModel.getValues().setItems(null);
         } else {
             keyValueLineModel.getValue().setIsAvailable(false);
             keyValueLineModel.getValue().setEntity("");
@@ -86,6 +100,8 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
     protected void setValueByKey(KeyValueLineModel lineModel, String key) {
         if (allRegExKeys.containsKey(key)) {
             lineModel.getValues().setSelectedItem(keyValueMap_used.get(key));
+        } else if (showInvalidKeys && keyValueMap_invalidKey.containsKey(key)) {
+            lineModel.getValue().setEntity(keyValueMap_invalidKey.get(key));
         } else {
             lineModel.getValue().setEntity(keyValueMap_used.get(key));
         }
@@ -99,6 +115,7 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
 
         //always reset the list of items when the item changes
         keyValueMap_used = new HashMap<>();
+        keyValueMap_invalidKey = new HashMap<>();
         if (value != null && !value.isEmpty()) {
             String[] lines = value.split(PROPERTIES_DELIMETER);
             String[] splitLine;
@@ -111,11 +128,17 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
                 String key = splitLine[0];
                 if (allKeyValueMap.containsKey(key)) {
                     keyValueMap_used.put(key, splitLine[1]);
+                } else if (showInvalidKeys) {
+                    keyValueMap_invalidKey.put(key, splitLine[1]);
                 }
 
             }
         }
-        init(allKeyValueMap.keySet(), keyValueMap_used.keySet());
+        Set<String> keysToShow = new HashSet<>(keyValueMap_used.keySet());
+        if (showInvalidKeys) {
+            keysToShow.addAll(keyValueMap_invalidKey.keySet());
+        }
+        init(allKeyValueMap.keySet(), keysToShow);
     }
 
     public void setKeyValueString(List<String> lines) {
@@ -217,6 +240,16 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
         boolean isValid = true;
         for (KeyValueLineModel keyValueLineModel : getItems()) {
             String key = keyValueLineModel.getKeys().getSelectedItem();
+
+            if (showInvalidKeys) {
+                if (keyValueMap_invalidKey.containsKey(key)) {
+                    keyValueLineModel.getKeys()
+                            .setIsValid(false, ConstantsManager.getInstance().getConstants().invalidKey());
+                    isValid = false;
+                    continue;
+                }
+            }
+
             if (!isKeyValid(key)) {
                 continue;
             }
@@ -325,5 +358,9 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
         }
 
         return lineModels;
+    }
+
+    public void setShowInvalidKeys(boolean showInvalidKeys) {
+        this.showInvalidKeys = showInvalidKeys;
     }
 }

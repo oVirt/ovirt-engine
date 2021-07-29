@@ -267,6 +267,20 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         }
     }
 
+    public void setIsValid(boolean value, String invalidityReason) {
+        if (!value) {
+            getInvalidityReasons().add(invalidityReason);
+        }
+        setIsValid(value);
+    }
+
+    /**
+     * The invalidity reasons need to be set before {@code #setIsValid(boolean)}
+     * in order to be displayed correctly.
+     *
+     * You can add the invalidity reason like this:
+     * model.getInvalidityReasons().add("My reason");
+     */
     private List<String> invalidityReasons;
 
     public List<String> getInvalidityReasons() {

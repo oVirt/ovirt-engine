@@ -1738,6 +1738,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setInitrd_path(new NotChangableForVmInPoolEntityModel<String>());
         setCustomProperties(new NotChangableForVmInPoolEntityModel<String>());
         setCustomPropertySheet(new NotChangableForVmInPoolKeyValueModel());
+        getCustomPropertySheet().setShowInvalidKeys(true);
         setDisplayType(new NotChangableForVmInPoolListModel<DisplayType>());
         setGraphicsType(new NotChangableForVmInPoolListModel<GraphicsTypes>());
         setSecondBootDevice(new NotChangableForVmInPoolListModel<EntityModel<BootSequence>>());
@@ -3522,6 +3523,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private class NotChangableForVmInPoolKeyValueModel extends KeyValueModel {
+
         @Override
         public KeyValueModel setIsChangeable(boolean value) {
             if (!isVmAttachedToPool()) {

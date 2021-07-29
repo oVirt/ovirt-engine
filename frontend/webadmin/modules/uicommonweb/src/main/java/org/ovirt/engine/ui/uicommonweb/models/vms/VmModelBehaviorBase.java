@@ -598,9 +598,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateCustomPropertySheet(Version clusterVersion) {
-        getModel().getCustomPropertySheet().setKeyValueMap(
-                getModel().getCustomPropertiesKeysList().get(clusterVersion)
-        );
+        // KeyValueModel resets all data when setting new key map and it does not have any other
+        // method of setting the data other than the deserialize method
+        String currentCustomProperties = getModel().getCustomPropertySheet().serialize();
+        getModel().getCustomPropertySheet()
+                .setKeyValueMap(
+                        getModel().getCustomPropertiesKeysList().get(clusterVersion));
+        getModel().getCustomPropertySheet().deserialize(currentCustomProperties);
     }
 
     public void updataMaxVmsInPool() {

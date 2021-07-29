@@ -1375,6 +1375,8 @@ public interface UIConstants extends Constants {
 
     String invalidBrickDirectoryAtleastTwoCharacterseMsg();
 
+    String invalidKey();
+
     String emptyBrickDirectoryMsg();
 
     String emptyServerBrickMsg();
