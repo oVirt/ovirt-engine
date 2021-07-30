@@ -309,10 +309,6 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
                 Config.<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
         final int lowUtilization = NumberUtils.toInt(parameters.get(PolicyUnitParameter.LOW_UTILIZATION.getDbName()),
                 Config.<Integer>getValue(ConfigValues.LowUtilizationForPowerSave));
-        final int cpuOverCommitDurationMinutes = NumberUtils.toInt(
-                parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
-                Config.<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes)
-        );
 
         final int highVdsCount = Math.min(
                 Config.<Integer>getValue(ConfigValues.UtilizationThresholdInPercent) * highUtilization / 100,
@@ -322,8 +318,8 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         // Over-utilized hosts are in the front of the list, because it is more important
         // to migrate a VM from an over-utilized host than from an under-utilized
         List<VDS> result = new ArrayList<>();
-        result.addAll(getOverUtilizedCPUHosts(candidateHosts, highVdsCount, cpuOverCommitDurationMinutes));
-        result.addAll(getUnderUtilizedCPUHosts(candidateHosts, lowUtilization, 1, cpuOverCommitDurationMinutes));
+        result.addAll(getOverUtilizedCPUHosts(candidateHosts, new CpuAndMemoryBalancingParameters(parameters, highVdsCount)));
+        result.addAll(getUnderUtilizedCPUHosts(candidateHosts, new CpuAndMemoryBalancingParameters(parameters, lowUtilization, 1)));
 
         return result;
     }
@@ -339,13 +335,8 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             Map<String, String> parameters) {
         int highUtilization = NumberUtils.toInt(parameters.get(PolicyUnitParameter.HIGH_UTILIZATION.getDbName()),
                 Config.<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
-        final int cpuOverCommitDurationMinutes = NumberUtils.toInt(
-                parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
-                Config.<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes)
-        );
-
         return candidateHosts.stream()
-                .filter(host -> !isHostCpuOverUtilized(host, highUtilization, cpuOverCommitDurationMinutes))
+                .filter(host -> !isHostCpuOverUtilized(host, new CpuAndMemoryBalancingParameters(parameters, highUtilization)))
                 .collect(Collectors.toList());
     }
 

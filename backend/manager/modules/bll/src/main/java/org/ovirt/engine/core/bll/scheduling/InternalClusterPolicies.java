@@ -145,6 +145,7 @@ public class InternalClusterPolicies {
                 .set(PolicyUnitParameter.HE_SPARES_COUNT, "0")
                 .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "2")
                 .set(PolicyUnitParameter.HIGH_UTILIZATION, "80")
+                .set(PolicyUnitParameter.VCPU_TO_PHYSICAL_CPU_RATIO, "0")
                 .register();
 
         createBuilder("5a2b0939-7d46-4b73-a469-e9c2c7fc6a53")

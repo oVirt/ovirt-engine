@@ -62,6 +62,7 @@ public class EvenDistributionBalancePolicyUnitTest extends CpuAndMemoryBalancing
         Map<String, String> parameters = new HashMap<>();
         parameters.put(PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED.getDbName(), "900");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "512");
+        parameters.put(PolicyUnitParameter.VCPU_TO_PHYSICAL_CPU_RATIO.getDbName(), "0");
 
         initMocks(policyUnit, hosts, vms);
 

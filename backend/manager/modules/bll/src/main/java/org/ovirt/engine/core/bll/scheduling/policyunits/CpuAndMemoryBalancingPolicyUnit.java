@@ -13,8 +13,10 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
+import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
@@ -170,13 +172,29 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         return result;
     }
 
-    protected boolean isHostCpuOverUtilized(VDS host, int highUtilization, int cpuOverCommitDurationMinutes) {
-        long duration = TimeUnit.MINUTES.toMillis(cpuOverCommitDurationMinutes);
+    protected boolean isHostCpuOverUtilized(VDS host,
+            CpuAndMemoryBalancingParameters params) {
 
-        return host.getUsageCpuPercent() + calcSpmCpuConsumption(host) >= highUtilization &&
+        long duration = TimeUnit.MINUTES.toMillis(params.getCpuOverCommitDurationMinutes());
+        Integer effectiveCpuCores = SlaValidator.getEffectiveCpuCores(host, params.isCountThreadsAsCores());
+
+        boolean cpuOvercommited = host.getUsageCpuPercent() + calcSpmCpuConsumption(host) >= params.getUtilization() &&
                 host.getCpuOverCommitTimestamp() != null &&
                 getTime().getTime() - host.getCpuOverCommitTimestamp().getTime() >= duration &&
                 host.getVmCount() > 0;
+
+        // do not calculate vcpuCountOverLimit if not needed
+        if (cpuOvercommited) {
+            return true;
+        }
+
+        boolean vcpuCountOverLimit = false;
+        if (params.getVcpuToPhysicalCpuRatio() > 0 && effectiveCpuCores != null && effectiveCpuCores > 0) {
+            double actualVcpuToPhysicalCpuRatio = (double) host.getVmsCoresCount() / (double) effectiveCpuCores;
+            vcpuCountOverLimit = actualVcpuToPhysicalCpuRatio >= params.getVcpuToPhysicalCpuRatio();
+        }
+
+        return  vcpuCountOverLimit;
     }
 
     /**
@@ -184,16 +202,14 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
      * more than cpuOverCommitDurationMinutes minutes.
      *
      * @param relevantHosts - candidate hosts
-     * @param highUtilization - threshold cpu usage in percents
-     * @param cpuOverCommitDurationMinutes - time limit in minutes
+     * @param params - parameters needed for the over utilized host calculation
      * @return - over utilized hosts
      */
     protected List<VDS> getOverUtilizedCPUHosts(Collection<VDS> relevantHosts,
-                                                final int highUtilization,
-                                                final int cpuOverCommitDurationMinutes) {
+            CpuAndMemoryBalancingParameters params) {
 
         List<VDS> overUtilizedHosts = relevantHosts.stream()
-                .filter(p -> isHostCpuOverUtilized(p, highUtilization, cpuOverCommitDurationMinutes))
+                .filter(p -> isHostCpuOverUtilized(p, params))
                 .collect(Collectors.toList());
 
         if (overUtilizedHosts.size() > 1) {
@@ -222,16 +238,14 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
      * @param cpuOverCommitDurationMinutes - time limit in minutes
      */
     protected List<VDS> getUnderUtilizedCPUHosts(Collection<VDS> relevantHosts,
-                                                 final int lowUtilization,
-                                                 final int minVmCount,
-                                                 final int cpuOverCommitDurationMinutes) {
+            CpuAndMemoryBalancingParameters params) {
 
         List<VDS> underUtilizedHosts = relevantHosts.stream()
-                .filter(p -> (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) < lowUtilization
-                    && p.getVmCount() >= minVmCount
+                .filter(p -> (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) < params.getUtilization()
+                    && p.getVmCount() >= params.getVmCount()
                     && (p.getCpuOverCommitTimestamp() == null
                         || (getTime().getTime() - p.getCpuOverCommitTimestamp().getTime()) >=
-                            TimeUnit.MINUTES.toMillis(cpuOverCommitDurationMinutes)))
+                            TimeUnit.MINUTES.toMillis(params.getCpuOverCommitDurationMinutes())))
                 .collect(Collectors.toList());
 
         if (underUtilizedHosts.size() > 1) {
@@ -318,4 +332,59 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
     protected abstract List<VDS> getSecondaryDestinations(Cluster cluster,
                                                           List<VDS> candidateHosts,
                                                           Map<String, String> parameters);
+
+    protected class CpuAndMemoryBalancingParameters {
+
+        private Map<String, String> parameters;
+
+        // load threshold in percent, can be lower or upper bound, depending on the
+        // context these parameters are used
+        private int utilization;
+
+        private boolean countThreadsAsCores;
+
+        // minimal number of VMs on a host
+        private int vmCount;
+
+        public CpuAndMemoryBalancingParameters(Map<String, String> parameters, int utilization) {
+            this(parameters, utilization, false);
+        }
+
+        public CpuAndMemoryBalancingParameters(Map<String, String> parameters, int utilization, int vmCount) {
+            this(parameters, utilization, false, vmCount);
+        }
+
+        public CpuAndMemoryBalancingParameters(Map<String, String> parameters, int utilization, boolean countThreadsAsCores) {
+            this(parameters, utilization, countThreadsAsCores, 0);
+        }
+
+        public CpuAndMemoryBalancingParameters(Map<String, String> parameters, int utilization, boolean countThreadsAsCores, int vmCount) {
+            this.parameters = parameters;
+            this.utilization = utilization;
+            this.countThreadsAsCores = countThreadsAsCores;
+            this.vmCount = vmCount;
+        }
+
+        public int getUtilization() {
+            return utilization;
+        }
+
+        public int getCpuOverCommitDurationMinutes() {
+            return NumberUtils.toInt(
+                    parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
+                    Config.<Integer> getValue(ConfigValues.CpuOverCommitDurationMinutes));
+        }
+
+        public double getVcpuToPhysicalCpuRatio() {
+            return NumberUtils.toDouble(parameters.get(PolicyUnitParameter.VCPU_TO_PHYSICAL_CPU_RATIO.getDbName()), 0);
+        }
+
+        public boolean isCountThreadsAsCores() {
+            return countThreadsAsCores;
+        }
+
+        public int getVmCount() {
+            return vmCount;
+        }
+    }
 }

@@ -55,7 +55,7 @@ public class PowerSavingCPUWeightPolicyUnit extends EvenDistributionCPUWeightPol
             }
 
             // Using negative score
-            int score = -(int)Math.round(calcHostLoadPerCore(vds, vmGroup, effectiveCpuCores, hostLoad));
+            int score = -(int)Math.round(calcHostLoadPerCore(vds, vmGroup, effectiveCpuCores, hostLoad, 0));
             scores.add(new Pair<>(vds.getId(), score));
         }
 
