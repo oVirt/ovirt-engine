@@ -50,12 +50,18 @@
           path: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_client_cert_file }}"
         register: qemu_client_cert_stat
 
+      - name: Check if OVN certificates are present
+        stat:
+          path: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_ovn_cert_file }}"
+        register: ovn_client_cert_stat
+
       - name: Set enrollment variable
         set_fact:
           do_host_cert_enrollment: >-
             {{ ('error' in iscorrect.results | map(attribute='stdout') | join(' '))
             or not contains_san
-            or not qemu_client_cert_stat.stat.exists }}
+            or not qemu_client_cert_stat.stat.exists
+            or not ovn_client_cert_stat.stat.exists }}
       when: not ansible_check_mode
 
   roles:
