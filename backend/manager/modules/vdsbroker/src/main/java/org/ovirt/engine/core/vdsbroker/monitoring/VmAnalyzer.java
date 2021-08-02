@@ -216,8 +216,7 @@ public class VmAnalyzer {
             if (dbVm.getRunOnVds() == null) {
                 log.info("VM '{}' is found as migrating on VDS '{}'({}) ",
                         vdsmVm.getVmDynamic().getId(), vdsManager.getVdsId(), vdsManager.getVdsName());
-                dbVm.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
-                saveDynamic(dbVm);
+                updateRuntimeData();
                 if (!vdsManager.isInitialized()) {
                     resourceManager.removeVmFromDownVms(vdsManager.getVdsId(), vdsmVm.getVmDynamic().getId());
                 }
@@ -269,9 +268,7 @@ public class VmAnalyzer {
             succeededToRun = true;
         }
 
-        dbVm.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
-        saveDynamic(dbVm);
-
+        updateRuntimeData();
         updateStatistics();
 
         if (!vdsManager.isInitialized()) {
@@ -733,14 +730,18 @@ public class VmAnalyzer {
 
         // if something relevant changed
         if (isAnyRuntimeFieldChanged()) {
-            if (vdsmVm.getVmDynamic().getGuestAgentNicsHash() != dbVm.getGuestAgentNicsHash()) {
-                vmGuestAgentNics = filterGuestAgentInterfaces(nullToEmptyList(vdsmVm.getVmGuestAgentInterfaces()));
-                dbVm.setIp(extractVmIps(vmGuestAgentNics));
-            }
-
-            dbVm.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
-            saveDynamic(dbVm);
+            updateRuntimeData();
         }
+    }
+
+    private void updateRuntimeData() {
+        if (vdsmVm.getVmDynamic().getGuestAgentNicsHash() != dbVm.getGuestAgentNicsHash()) {
+            vmGuestAgentNics = filterGuestAgentInterfaces(nullToEmptyList(vdsmVm.getVmGuestAgentInterfaces()));
+            dbVm.setIp(extractVmIps(vmGuestAgentNics));
+        }
+
+        dbVm.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
+        saveDynamic(dbVm);
     }
 
     private boolean isAnyRuntimeFieldChanged() {
