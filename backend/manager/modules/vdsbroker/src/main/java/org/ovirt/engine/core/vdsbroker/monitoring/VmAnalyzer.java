@@ -16,7 +16,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -727,28 +726,34 @@ public class VmAnalyzer {
     }
 
     private void updateVmDynamicData() {
-        if (vdsmVm.getVmDynamic().getGuestAgentNicsHash() != dbVm.getGuestAgentNicsHash()) {
-            vmGuestAgentNics = filterGuestAgentInterfaces(nullToEmptyList(vdsmVm.getVmGuestAgentInterfaces()));
-            dbVm.setIp(extractVmIps(vmGuestAgentNics));
-        }
-
+        // do not consider changes to app list before the status is UP (since the guest agent is not loaded yet)
         if (vdsmVm.getVmDynamic().getStatus() != VMStatus.Up) {
             vdsmVm.getVmDynamic().setAppList(dbVm.getAppList());
         }
 
-        if (getVmManager().getOrigin() == OriginType.KUBEVIRT) {
-            if (!Objects.equals(dbVm.getIp(), vdsmVm.getVmDynamic().getIp())) {
-                // TODO: report it as guest agent NICs info instead
-                dbVm.setIp(vdsmVm.getVmDynamic().getIp());
-                // make sure some field is changed
-                vdsmVm.getVmDynamic().setGuestAgentNicsHash(new Random().nextInt());
-            }
-        }
-
         // if something relevant changed
-        if (isAnyFieldChanged(dbVm, vdsmVm.getVmDynamic(), CHANGEABLE_FIELDS_BY_VDSM)) {
+        if (isAnyRuntimeFieldChanged()) {
+            if (vdsmVm.getVmDynamic().getGuestAgentNicsHash() != dbVm.getGuestAgentNicsHash()) {
+                vmGuestAgentNics = filterGuestAgentInterfaces(nullToEmptyList(vdsmVm.getVmGuestAgentInterfaces()));
+                dbVm.setIp(extractVmIps(vmGuestAgentNics));
+            }
+
             dbVm.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
             saveDynamic(dbVm);
+        }
+    }
+
+    private boolean isAnyRuntimeFieldChanged() {
+        switch (getVmManager().getOrigin()) {
+        case KUBEVIRT:
+            // that is a workaround for kubevirt since we place the IP we get from kubevirt in VmDynamic
+            // rather than setting vmGuestAgentInterfaces
+            if (!Objects.equals(dbVm.getIp(), vdsmVm.getVmDynamic().getIp())) {
+                dbVm.setIp(vdsmVm.getVmDynamic().getIp());
+                return true;
+            }
+        default:
+            return isAnyFieldChanged(dbVm, vdsmVm.getVmDynamic(), CHANGEABLE_FIELDS_BY_VDSM);
         }
     }
 

@@ -32,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -331,6 +332,7 @@ public class VmAnalyzerTest {
         when(vmManager.isColdReboot()).thenReturn(false);
         when(vmManager.isAutoStart()).thenReturn(vmData.dbVm() != null ? vmData.dbVm().isAutoStartup() : false);
         when(vmManager.getStatistics()).thenReturn(new VmStatistics());
+        when(vmManager.getOrigin()).thenReturn(OriginType.OVIRT);
         when(resourceManager.getVdsManager(any())).thenReturn(vdsManager);
         // -- default behaviors --
         // dst host is up
