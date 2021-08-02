@@ -2022,6 +2022,7 @@ public class VmDeviceUtils {
 
                 case VIDEO:
                     vmDevice.setSpecParams(getVideoDeviceSpecParams(vmBase));
+                    vmDevice.setPlugged(true);
                     break;
 
                 case GRAPHICS:
