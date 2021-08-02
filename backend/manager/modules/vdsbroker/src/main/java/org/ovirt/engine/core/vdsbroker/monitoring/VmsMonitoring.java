@@ -281,11 +281,11 @@ public class VmsMonitoring {
     }
 
     private void flush(List<VmAnalyzer> vmAnalyzers) {
+        saveVmGuestAgentNetworkDevices(vmAnalyzers);
         saveVmDynamic(vmAnalyzers);
         saveVmStatistics(vmAnalyzers);
         saveVmInterfaceStatistics(vmAnalyzers);
         saveVmDiskImageStatistics(vmAnalyzers);
-        saveVmGuestAgentNetworkDevices(vmAnalyzers);
     }
 
     private void saveVmDiskImageStatistics(List<VmAnalyzer> vmAnalyzers) {
@@ -345,7 +345,7 @@ public class VmsMonitoring {
             analyzersWithChangeGuestAgentNics.stream()
                 .map(VmAnalyzer::getVmGuestAgentNics)
                 .flatMap(List::stream)
-                .forEach(nic -> vmGuestAgentInterfaceDao.save(nic));
+                .forEach(vmGuestAgentInterfaceDao::save);
             return null;
         });
     }
