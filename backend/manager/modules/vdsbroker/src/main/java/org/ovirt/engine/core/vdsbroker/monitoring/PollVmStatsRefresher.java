@@ -51,17 +51,25 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
     }
 
     public void poll() {
-        if (isMonitoringNeeded(vdsManager.getStatus())) {
-            long fetchTime = System.nanoTime();
-            List<Pair<VmDynamic, VdsmVm>> fetchedVms = fetchVms();
-            if (fetchedVms == null) {
-                log.info("Failed to fetch vms info for host '{}'({}) - skipping VMs monitoring.", vdsManager.getVdsName(), vdsManager.getVdsId());
-                return;
-            }
+        try {
+            if (isMonitoringNeeded(vdsManager.getStatus())) {
+                long fetchTime = System.nanoTime();
+                List<Pair<VmDynamic, VdsmVm>> fetchedVms = fetchVms();
+                if (fetchedVms == null) {
+                    log.info("Failed to fetch vms info for host '{}'({}) - skipping VMs monitoring.", vdsManager.getVdsName(), vdsManager.getVdsId());
+                    return;
+                }
 
-            getVmsMonitoring().perform(fetchedVms, fetchTime, vdsManager, isStatistics());
-            processDevices(filterVmsToDevicesMonitoring(fetchedVms), fetchTime);
-            processExternalData(filterVmsToDevicesMonitoring(fetchedVms));
+                getVmsMonitoring().perform(fetchedVms, fetchTime, vdsManager, isStatistics());
+                processDevices(filterVmsToDevicesMonitoring(fetchedVms), fetchTime);
+                processExternalData(filterVmsToDevicesMonitoring(fetchedVms));
+            }
+        } catch (Throwable t) {
+            log.error("Failed during vms monitoring on host '{}'({}) error is: {}",
+                    vdsManager.getVdsName(),
+                    vdsManager.getVdsId(),
+                    ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception:", t);
         }
     }
 
