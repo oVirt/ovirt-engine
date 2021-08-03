@@ -275,8 +275,12 @@ public class VmBaseMapper {
             entity.setSmallIconId(GuidUtils.asGuid(model.getSmallIcon().getId()));
         }
 
-        if (model.isSetQuota() && model.getQuota().isSetId()) {
-            entity.setQuotaId(GuidUtils.asGuid(model.getQuota().getId()));
+        if (model.isSetQuota()) {
+            if (model.getQuota().isSetId()) {
+                entity.setQuotaId(GuidUtils.asGuid(model.getQuota().getId()));
+            } else {
+                entity.setQuotaId(null);
+            }
         }
 
         if (model.isSetLease()) {
