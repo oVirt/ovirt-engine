@@ -657,13 +657,16 @@ public class BackendVmsResource extends
     }
 
     private void addAutoPinningPolicy(Vm vm, VmManagementParametersBase params) {
+        if (vm.getAutoPinningPolicy() != null || vm.getCpuPinningPolicy() != null) {
+            return;
+        }
         String autoPinningPolicy = ParametersHelper.getParameter(httpHeaders, uriInfo, AUTO_PINNING_POLICY);
         if (autoPinningPolicy != null && !autoPinningPolicy.isEmpty()) {
             if (vm.isSetCpu() && (vm.getCpu().isSetTopology() || vm.getCpu().isSetCpuTune())) {
                 throw new WebFaultException(null, localize(Messages.CPU_UPDATE_NOT_PERMITTED), Response.Status.CONFLICT);
             }
             try {
-                params.getVm().setCpuPinningPolicy(VmMapper.map(AutoPinningPolicy.fromValue(autoPinningPolicy), null));
+                params.getVm().setCpuPinningPolicy(VmMapper.map(AutoPinningPolicy.fromValue(autoPinningPolicy)));
             } catch (Exception e) {
                 throw new WebFaultException(null, localize(Messages.INVALID_ENUM_REASON), Response.Status.BAD_REQUEST);
             }

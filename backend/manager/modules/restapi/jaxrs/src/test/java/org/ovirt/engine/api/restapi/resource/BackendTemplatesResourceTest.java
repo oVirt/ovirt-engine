@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -602,6 +603,7 @@ public class BackendTemplatesResourceTest
         }
         when(entity.getSmallIconId()).thenReturn(GUIDS[2]);
         when(entity.getLargeIconId()).thenReturn(GUIDS[3]);
+        when(entity.getCpuPinningPolicy()).thenReturn(CpuPinningPolicy.NONE);
         return entity;
     }
 

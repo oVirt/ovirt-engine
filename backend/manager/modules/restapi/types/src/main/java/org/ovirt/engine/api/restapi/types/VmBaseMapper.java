@@ -304,6 +304,14 @@ public class VmBaseMapper {
         if (model.isSetCpu() && model.getCpu().isSetCpuTune()) {
             entity.setCpuPinning(cpuTuneToString(model.getCpu().getCpuTune()));
         }
+
+        if (model.isSetAutoPinningPolicy()) {
+            entity.setCpuPinningPolicy(VmMapper.map(model.getAutoPinningPolicy()));
+        }
+        // Override the deprecated value if both given as input.
+        if (model.isSetCpuPinningPolicy()) {
+            entity.setCpuPinningPolicy(VmMapper.map(model.getCpuPinningPolicy()));
+        }
     }
 
     /**
@@ -497,6 +505,9 @@ public class VmBaseMapper {
             model.getCpu().setMode(CpuMode.HOST_PASSTHROUGH);
         }
         model.getCpu().setCpuTune(stringToCpuTune(entity.getCpuPinning()));
+
+        model.setAutoPinningPolicy(VmMapper.map(entity.getCpuPinningPolicy(), null));
+        model.setCpuPinningPolicy(VmMapper.map(entity.getCpuPinningPolicy()));
     }
 
     @Mapping(from = DisplayDisconnectAction.class, to = ConsoleDisconnectAction.class)
