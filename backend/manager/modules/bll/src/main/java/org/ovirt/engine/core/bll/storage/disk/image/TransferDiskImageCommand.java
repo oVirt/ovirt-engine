@@ -759,7 +759,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             updatesFromTicket.setBytesSent(ticketInfo.getTransferred());
             updatesFromTicket.setActive(ticketInfo.isActive());
             ActionReturnValue returnValue = runInternalAction(ActionType.TransferImageStatus,
-                    new TransferImageStatusParameters(getCommandId(), updatesFromTicket));
+                    new TransferImageStatusParameters(getCommandId(), updatesFromTicket), cloneContext().withoutLock());
             if (returnValue == null || !returnValue.getSucceeded()) {
                 log.debug("Failed to update transfer status.");
                 return oldImageTransfer;
@@ -781,7 +781,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 ImageTransfer statusUpdate = new ImageTransfer();
                 statusUpdate.setPhase(ImageTransferPhase.FINALIZING_SUCCESS);
                 runInternalAction(ActionType.TransferImageStatus,
-                        new TransferImageStatusParameters(getCommandId(), statusUpdate));
+                        new TransferImageStatusParameters(getCommandId(), statusUpdate), cloneContext().withoutLock());
             }
         }
     }
