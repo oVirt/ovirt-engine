@@ -704,7 +704,6 @@ Summary:	%{ovirt_product_name_short} health check bundler.
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-base = %{version}-%{release}
 Requires:	makeself >= 2.2
-Requires:	python3-otopi-devtools >= 1.9.0
 
 %description health-check-bundler
 A utility for creating a bundle script that runs a health check.
