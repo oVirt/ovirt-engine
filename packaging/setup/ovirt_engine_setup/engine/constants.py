@@ -793,6 +793,7 @@ class ConfigEnv(object):
 
     @osetupattrs(
         answerfile=True,
+        postinstallfile=True,
         summary=True,
         description=_('Engine Host FQDN'),
         summary_condition=lambda env: not env.get(
