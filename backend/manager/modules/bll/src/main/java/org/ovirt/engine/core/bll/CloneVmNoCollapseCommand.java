@@ -80,6 +80,12 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
     }
 
     @Override
+    protected void executeVmCommand() {
+        getParameters().setStage(CloneVmParameters.CloneVmStage.CREATE_VM_SNAPSHOT);
+        setSucceeded(true);
+    }
+
+    @Override
     protected void addVmImages() {
         getParameters()
                 .getSrcToDstChainMap()
@@ -234,6 +240,12 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
         ImagesHandler.sortImageList(newChain);
 
         return newChain;
+    }
+
+    @Override
+    protected void removeVmSnapshot() {
+        log.info("Skipping Auto-Generated snapshot removal, since it was not generated for " +
+                    "exporting VM '{}' without collapsing snapshots", getSourceVmId());
     }
 
     @Override

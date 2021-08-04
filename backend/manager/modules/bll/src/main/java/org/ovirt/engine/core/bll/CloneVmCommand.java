@@ -276,7 +276,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     protected void createDestSnapshots() {
     }
 
-    private void removeVmSnapshot() {
+    protected void removeVmSnapshot() {
         unlockEntities();
 
         ActionReturnValue returnValue = runInternalAction(
