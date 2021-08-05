@@ -337,7 +337,9 @@ select fn_db_add_config_value_for_versions_up_to('MaxNumOfThreadsPerCpu', '8', '
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmCpus', '{"x86":384,"ppc":384,"s390x":384}', '4.4');
 select fn_db_add_config_value('MaxNumOfVmCpus', '{"x86":512,"ppc":384,"s390x":384}', '4.5');
 select fn_db_add_config_value('MaxNumOfVmCpus', '{"x86":710,"ppc":384,"s390x":384}', '4.6');
-select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmSockets', '16', '4.6');
+select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmSockets', '16', '4.5');
+select fn_db_add_config_value('MaxNumOfVmSockets', '10000', '4.6');
+select fn_db_add_config_value('MaxNumOfCpusCoefficient', '2', 'general');
 select fn_db_add_config_value('MaxRerunVmOnVdsCount','3','general');
 select fn_db_add_config_value('MaxStorageVdsDelayCheckSec','5','general');
 select fn_db_add_config_value('MaxStorageVdsTimeoutCheckSec','30','general');
@@ -1069,6 +1071,7 @@ select fn_db_update_config_value('MaxNumOfCpuPerSocket', '254', '4.2');
 select fn_db_update_config_value_for_versions_from_up_to('VM64BitMaxMemorySizeInMB', '6291456', '4.2','4.5');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB', '16777216', '4.6');
 select fn_db_update_config_value_for_versions_from_up_to('VMPpc64BitMaxMemorySizeInMB', '6291456', '4.4','4.6');
+select fn_db_update_config_value('MaxNumOfVmSockets', '10000', '4.6');
 
 select fn_db_update_config_value('ServerCPUList',
     '3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; '

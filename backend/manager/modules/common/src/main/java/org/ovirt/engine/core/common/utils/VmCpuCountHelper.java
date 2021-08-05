@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 public class VmCpuCountHelper {
     public static final int HIGH_NUMBER_OF_X86_VCPUS = 256;
     private static final int MAX_I440FX_VCPUS = 240;
+    private static final int LEGACY_MAX_SOCKETS = 16;
     private static final int maxBitWidth = 8;
     private static final Logger log = LoggerFactory.getLogger(VmCpuCountHelper.class);
 
@@ -95,6 +96,19 @@ public class VmCpuCountHelper {
 
         int threadsPerCore = vm.getThreadsPerCpu();
         int cpuPerSocket = vm.getCpuPerSocket();
+        if (compatibilityVersion.greaterOrEquals(Version.v4_6) && maxSockets > LEGACY_MAX_SOCKETS) {
+            // Maximum vCPUs, even when unused, take some memory from the RAM available to
+            // the guest OS.
+            // So it's desirable not to set the maximum number of vCPUs unnecessarily high,
+            // in order to not waste memory. This concerns primarily configurations with a
+            // limit of CPU sockets higher than the one of 16, used for ages and no longer
+            // needed.
+            Integer maxVCpusCoefficient = Config.getValue(ConfigValues.MaxNumOfCpusCoefficient);
+            final int threadsPerSocket = cpuPerSocket * threadsPerCore;
+            final int maxComputedSockets = Math.min(maxSockets,
+                    maxVCpusCoefficient * vm.getNumOfCpus() / threadsPerSocket);
+            maxVCpus = Math.min(maxVCpus, Math.max(maxComputedSockets, LEGACY_MAX_SOCKETS) * threadsPerSocket);
+        }
         final BiosType biosType = vm.getBiosType();
         return calcMaxVCpu(architectureFamily, maxSockets, maxVCpus, threadsPerCore, cpuPerSocket, biosType);
     }

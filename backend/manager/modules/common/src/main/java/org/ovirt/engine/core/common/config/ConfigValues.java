@@ -193,6 +193,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Map.class)
     MaxNumOfVmCpus(ClientAccessLevel.User),
+    @Deprecated
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     MaxNumOfVmSockets(ClientAccessLevel.User),
@@ -202,6 +203,8 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     MaxNumOfThreadsPerCpu(ClientAccessLevel.User),
+    @TypeConverterAttribute(Integer.class)
+    MaxNumOfCpusCoefficient(ClientAccessLevel.User),
     @TypeConverterAttribute(Integer.class)
     NumberVmRefreshesBeforeSave,
     @TypeConverterAttribute(Integer.class)

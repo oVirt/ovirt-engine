@@ -1251,7 +1251,7 @@ public class VmInfoBuildUtils {
     public List<VmNumaNode> getVmNumaNodes(VM vm) {
         int onlineCpus = vm.getNumOfCpus();
         int vcpus = FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) ?
-                VmCpuCountHelper.calcMaxVCpu(vm, vm.getClusterCompatibilityVersion())
+                VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
                 : onlineCpus;
         int offlineCpus = vcpus - onlineCpus;
         List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
