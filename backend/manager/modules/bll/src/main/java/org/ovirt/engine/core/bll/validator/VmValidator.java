@@ -482,4 +482,11 @@ public class VmValidator {
         return isBiosTypeSupported(vm.getStaticData(), cluster, osRepository);
     }
 
+    public ValidationResult isVmStatusIn(VMStatus... statuses) {
+        VMStatus vmStatus = vm.getStatus();
+        if (Arrays.stream(statuses).noneMatch(status -> vmStatus == status)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vmStatus));
+        }
+        return ValidationResult.VALID;
+    }
 }

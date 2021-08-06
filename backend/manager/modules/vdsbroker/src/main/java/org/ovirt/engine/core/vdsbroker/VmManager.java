@@ -31,6 +31,8 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.vdsbroker.monitoring.VdsmVm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VmManager {
 
@@ -95,7 +97,7 @@ public class VmManager {
     VmManager(Guid vmId) {
         this.vmId = vmId;
         vmLock = new ReentrantLock();
-        vmDevicesLock = new ReentrantLock();
+        vmDevicesLock = new VmDevicesLock();
         convertOperationProgress = -1;
         statistics = new VmStatistics(vmId);
         vmMemoryWithOverheadInMB = 0;
@@ -330,5 +332,30 @@ public class VmManager {
 
     public void setLastStatusBeforeMigration(VMStatus lastStatusBeforeMigration) {
         this.lastStatusBeforeMigration = lastStatusBeforeMigration;
+    }
+
+    private class VmDevicesLock extends ReentrantLock {
+        protected Logger log = LoggerFactory.getLogger(getClass());
+
+        @Override
+        public void lock() {
+            log.debug("locking vm devices monitoring for VM {}", vmId);
+            super.lock();
+        }
+
+        @Override
+        public boolean tryLock() {
+            if (!super.tryLock()) {
+                log.debug("failed to lock vm devices monitoring for VM {}", vmId);
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public void unlock() {
+            log.debug("unlocking vm devices monitoring for VM {}", vmId);
+            super.unlock();
+        }
     }
 }

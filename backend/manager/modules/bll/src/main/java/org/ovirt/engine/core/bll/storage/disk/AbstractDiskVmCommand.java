@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.inject.Inject;
 
@@ -25,7 +26,6 @@ import org.ovirt.engine.core.bll.validator.storage.ManagedBlockStorageDomainVali
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.NullableLock;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -198,14 +197,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return volumeFormat == VolumeFormat.RAW;
     }
 
-    protected boolean isVmInUpPausedDownStatus() {
-        if (getVm().getStatus() != VMStatus.Up && getVm().getStatus() != VMStatus.Down
-                && getVm().getStatus() != VMStatus.Paused) {
-            return failVmStatusIllegal();
-        }
-        return true;
-    }
-
     protected boolean isDiskExistAndAttachedToVm(Disk disk) {
         DiskValidator diskValidator = getDiskValidator(disk);
         return validate(diskValidator.isDiskExists()) && validate(diskValidator.isDiskAttachedToVm(getVm()));
@@ -356,10 +347,18 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected Lock getVmDevicesLock(boolean runningVmChanges) {
-        if (runningVmChanges) {
-            log.debug("locking vm devices monitoring for {}", getVmId());
-            return resourceManager.getVmManager(getVmId()).getVmDevicesLock();
+        if (!runningVmChanges) {
+            // dummy lock
+            return new ReentrantLock() {
+                @Override
+                public void lock() {
+                }
+                @Override
+                public void unlock() {
+                }
+            };
         }
-        return new NullableLock();
+
+        return resourceManager.getVmManager(getVmId()).getVmDevicesLock();
     }
 }

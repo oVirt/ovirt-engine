@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -74,10 +75,9 @@ public class HotPlugDiskToVmCommand<T extends VmDiskOperationParameterBase> exte
     @Override
     protected boolean validate() {
         performDbLoads();
-
-        return
-                validate(new VmValidator(getVm()).isVmExists()) &&
-                isVmInUpPausedDownStatus() &&
+        VmValidator vmValidator = new VmValidator(getVm());
+        return validate(vmValidator.isVmExists()) &&
+                validate(vmValidator.isVmStatusIn(VMStatus.Up, VMStatus.Paused, VMStatus.Down)) &&
                 canRunActionOnNonManagedVm() &&
                 isDiskExistAndAttachedToVm(getDisk()) &&
                 interfaceDiskValidation() &&

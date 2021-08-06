@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.transaction.TransactionManager;
 
@@ -33,7 +34,6 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.utils.NullableLock;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -85,7 +85,7 @@ public class VmDevicesMonitoringTest {
         doReturn(Version.getLast()).when(vdsManager).getCompatibilityVersion();
         doReturn(vdsManager).when(fullListAdapter).getVdsManager(any());
         VmManager vmManagerMock = mock(VmManager.class);
-        doReturn(new NullableLock()).when(vmManagerMock).getVmDevicesLock();
+        doReturn(new ReentrantLock()).when(vmManagerMock).getVmDevicesLock();
         doReturn(vmManagerMock).when(resourceManager).getVmManager(eq(VM_ID));
     }
 

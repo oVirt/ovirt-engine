@@ -83,13 +83,15 @@ public class DiskVmElementValidator {
     }
 
     public ValidationResult isDiskInterfaceSupported(VM vm) {
-        if (vm != null) {
-            if (!Injector.get(VmValidationUtils.class).isDiskInterfaceSupportedByOs(
-                    vm.getOs(), vm.getCompatibilityVersion(), vm.getBiosType().getChipsetType(),
-                    diskVmElement.getDiskInterface())) {
-                return new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED,
-                        String.format("$osName %s", getOsRepository().getOsName(vm.getOs())));
-            }
+        if (vm == null) {
+            return ValidationResult.VALID;
+        }
+
+        if (!Injector.get(VmValidationUtils.class).isDiskInterfaceSupportedByOs(
+                vm.getOs(), vm.getCompatibilityVersion(), vm.getBiosType().getChipsetType(),
+                diskVmElement.getDiskInterface())) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED,
+                    String.format("$osName %s", getOsRepository().getOsName(vm.getOs())));
         }
 
         return ValidationResult.VALID;

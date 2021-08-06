@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -103,9 +102,9 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         if (!validate(oldDiskValidator.isDiskExists())){
             return false;
         }
-        ValidationResult isHostedEngineDisk = oldDiskValidator.validateNotHostedEngineDisk();
-        if (!isHostedEngineDisk.isValid()) {
-            return validate(isHostedEngineDisk);
+
+        if (!validate(oldDiskValidator.validateNotHostedEngineDisk())) {
+            return false;
         }
 
         if (!checkOperationAllowedOnDiskContentType(disk)) {
@@ -137,7 +136,12 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             }
         }
 
-        if (!validate(new VmValidator(getVm()).isVmExists()) || !isVmInUpPausedDownStatus()) {
+        VmValidator vmValidator = new VmValidator(getVm());
+        if (!validate(vmValidator.isVmExists())) {
+            return false;
+        }
+
+        if (!validate(vmValidator.isVmStatusIn(VMStatus.Up, VMStatus.Paused, VMStatus.Down))) {
             return false;
         }
 
@@ -205,9 +209,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return false;
         }
 
-        if (getParameters().isPlugUnPlug()
-                && getVm().isManaged()
-                && getVm().getStatus() != VMStatus.Down) {
+        if (isHotPlug()) {
             return isDiskSupportedForPlugUnPlug(getDiskVmElement(), disk.getDiskAlias());
         }
         return true;
@@ -219,7 +221,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
     @Override
     public ActionReturnValue executeAction() {
-        Lock vmDevicesLock = getVmDevicesLock(getVm() != null && diskShouldBePlugged());
+        Lock vmDevicesLock = getVmDevicesLock(getVm() != null && isHotPlug());
         vmDevicesLock.lock();
         try {
             return super.executeAction();
@@ -252,7 +254,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return null;
         });
 
-        if (diskShouldBePlugged() && performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice)) {
+        if (isHotPlug() && performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice)) {
             // updates the PCI address
             vmDeviceDao.update(vmDevice);
         }
@@ -263,7 +265,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         setSucceeded(true);
     }
 
-    private boolean diskShouldBePlugged() {
+    private boolean isHotPlug() {
         return getParameters().isPlugUnPlug() && getVm().getStatus() != VMStatus.Down && getVm().isManaged();
     }
 
