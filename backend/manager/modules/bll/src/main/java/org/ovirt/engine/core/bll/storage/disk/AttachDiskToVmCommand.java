@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -217,6 +218,17 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     }
 
     @Override
+    public ActionReturnValue executeAction() {
+        Lock vmDevicesLock = getVmDevicesLock(getVm() != null && diskShouldBePlugged());
+        vmDevicesLock.lock();
+        try {
+            return super.executeAction();
+        } finally {
+            vmDevicesLock.unlock();
+        }
+    }
+
+    @Override
     protected void executeVmCommand() {
         VmDevice vmDevice = createVmDevice();
 
@@ -229,32 +241,26 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         // update cached image
         vmHandler.updateDisksForVm(getVm(), Collections.singletonList(disk));
 
-        Lock vmDevicesLock = getVmDevicesLock(diskShouldBePlugged());
-        vmDevicesLock.lock();
-        try {
-            TransactionSupport.executeInNewTransaction(() -> {
-                vmDeviceDao.save(vmDevice);
-                diskVmElementDao.save(diskVmElement);
-                getCompensationContext().snapshotNewEntities(Arrays.asList(vmDevice, diskVmElement));
-                if (!isOperationPerformedOnDiskSnapshot() && disk.isAllowSnapshot()) {
-                    updateDiskVmSnapshotId();
-                }
-                getCompensationContext().stateChanged();
-                return null;
-            });
-
-            if (diskShouldBePlugged() && performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice)) {
-                // updates the PCI address
-                vmDeviceDao.update(vmDevice);
+        TransactionSupport.executeInNewTransaction(() -> {
+            vmDeviceDao.save(vmDevice);
+            diskVmElementDao.save(diskVmElement);
+            getCompensationContext().snapshotNewEntities(Arrays.asList(vmDevice, diskVmElement));
+            if (!isOperationPerformedOnDiskSnapshot() && disk.isAllowSnapshot()) {
+                updateDiskVmSnapshotId();
             }
+            getCompensationContext().stateChanged();
+            return null;
+        });
 
-            if (!isOperationPerformedOnDiskSnapshot()) {
-                vmStaticDao.incrementDbGeneration(getVm().getId());
-            }
-            setSucceeded(true);
-        } finally {
-            vmDevicesLock.unlock();
+        if (diskShouldBePlugged() && performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice)) {
+            // updates the PCI address
+            vmDeviceDao.update(vmDevice);
         }
+
+        if (!isOperationPerformedOnDiskSnapshot()) {
+            vmStaticDao.incrementDbGeneration(getVm().getId());
+        }
+        setSucceeded(true);
     }
 
     private boolean diskShouldBePlugged() {
