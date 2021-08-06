@@ -15,6 +15,7 @@ from subprocess import check_output
 import six
 
 TAR_BLOCK_SIZE = 512
+FS_BLOCK_SIZE = 4096
 NUL = b"\0"
 
 python2 = sys.version_info < (3, 0)
@@ -56,6 +57,27 @@ def write_file(name, ova_file, data):
     pad_to_block_size(ova_file)
 
 
+def write_padding_file(ova_file, padding_size):
+    file_size = padding_size - TAR_BLOCK_SIZE
+    # padding_size - the padding needed;
+    # file_size - the size of the padding file
+    #             (minus one block for the header).
+    tar_info = create_tar_info("pad", file_size)
+    ova_file.write(tar_info.tobuf())
+    pad_to_block_size(ova_file)
+    if file_size:
+        ova_file.write(NUL * file_size)
+
+
+def pad_to_fs_block_size(ova_file):
+    remainder = (ova_file.tell() + TAR_BLOCK_SIZE) % FS_BLOCK_SIZE
+    # remainder is a multiple of TAR_BLOCK_SIZE, because everything in TAR
+    # file is aligned to TAR_BLOCK_SIZE
+    if remainder:
+        # remainder is at least TAR_BLOCK_SIZE here
+        write_padding_file(ova_file, FS_BLOCK_SIZE - remainder)
+
+
 def convert_disks(ova_path):
     for path, offset in six.iteritems(path_to_offset):
         print("converting disk: %s, offset %s" % (path, offset))
@@ -90,6 +112,7 @@ def convert_disks(ova_path):
 
 def write_disk_headers(ova_file, disks_info):
     for disk_path, disk_size in six.iteritems(disks_info):
+        pad_to_fs_block_size(ova_file)
         print("skipping disk: path=%s size=%d" % (disk_path, disk_size))
         disk_name = os.path.basename(disk_path)
         tar_info = create_tar_info(disk_name, disk_size)
