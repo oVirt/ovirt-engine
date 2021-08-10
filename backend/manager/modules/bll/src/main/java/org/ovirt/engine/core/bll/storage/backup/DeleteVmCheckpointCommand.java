@@ -246,7 +246,7 @@ public class DeleteVmCheckpointCommand<T extends VmCheckpointParameters> extends
     @Override
     protected void setActionMessageParameters() {
         addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
-        addValidationMessage(EngineMessage.VAR__ACTION__CHECKPOINT);
+        addValidationMessage(EngineMessage.VAR__TYPE__CHECKPOINT);
     }
 
     @Override

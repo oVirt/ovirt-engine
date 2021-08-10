@@ -593,6 +593,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__TYPE__VM_BACKUP();
 
+    String VAR__TYPE__CHECKPOINT();
+
     String VAR__TYPE__VM_TEMPLATE();
 
     String VAR__ENTITIES__VM_TEMPLATES();
@@ -826,8 +828,6 @@ public interface AppErrors extends ConstantsWithLookup {
     String VAR__ACTION__TRANSFER();
 
     String VAR__ACTION__BACKUP();
-
-    String VAR__ACTION__CHECKPOINT();
 
     String VAR__ACTION__COPY_NETWORKS();
 
