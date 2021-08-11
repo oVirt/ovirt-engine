@@ -168,6 +168,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             VdsActionParameters tempVar = new VdsActionParameters(getVdsIdRef());
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setCompensationEnabled(true);
+            tempVar.setCorrelationId(getCorrelationId());
             ActionReturnValue addVdsSpmIdReturn =
                     runInternalAction(ActionType.AddVdsSpmId,
                             tempVar,
@@ -203,6 +204,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setRebootHost(getParameters().getRebootHost());
             installVdsParameters
                     .setHostedEngineDeployConfiguration(getParameters().getHostedEngineDeployConfiguration());
+            installVdsParameters.setCorrelationId(getCorrelationId());
             Map<String, String> values = new HashMap<>();
             values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getName());
             Step installStep = executionHandler.addSubStep(getExecutionContext(),
