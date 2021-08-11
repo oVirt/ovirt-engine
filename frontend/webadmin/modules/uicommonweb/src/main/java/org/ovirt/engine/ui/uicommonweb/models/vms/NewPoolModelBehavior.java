@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -154,5 +155,10 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     @Override
     public InstanceTypeManager getInstanceTypeManager() {
         return instanceTypeManager;
+    }
+
+    @Override
+    protected List<Integer> getOsValues(ArchitectureType architectureType) {
+        return AsyncDataProvider.getInstance().getSupportedOsIds(architectureType);
     }
 }

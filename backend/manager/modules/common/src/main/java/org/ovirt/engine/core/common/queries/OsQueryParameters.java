@@ -76,6 +76,7 @@ public class OsQueryParameters extends QueryParametersBase {
         GetSoundDeviceSupportMap,
         Get64BitOss,
         GetVmInitMap,
-        GetTpmAllowedMap
+        GetTpmAllowedMap,
+        GetUnsupportedOsIds,
     }
 }

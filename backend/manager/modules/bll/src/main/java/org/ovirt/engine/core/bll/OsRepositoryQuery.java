@@ -85,6 +85,9 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case GetTpmAllowedMap:
                 setReturnValue(osRepository.getTpmAllowedMap());
                 break;
+            case GetUnsupportedOsIds:
+                setReturnValue(osRepository.getUnsupportedOsIds());
+                break;
         }
     }
 }

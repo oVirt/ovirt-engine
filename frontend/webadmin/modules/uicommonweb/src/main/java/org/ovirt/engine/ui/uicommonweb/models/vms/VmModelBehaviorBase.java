@@ -477,7 +477,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        List<Integer> vmOsValues = AsyncDataProvider.getInstance().getOsIds(cluster.getArchitecture());
+        List<Integer> vmOsValues = getOsValues(cluster.getArchitecture());
 
         if (selectedOsId == null || !vmOsValues.contains(selectedOsId)) {
             updateOSValues();
@@ -1208,7 +1208,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Cluster cluster = getModel().getSelectedCluster();
 
         if (cluster != null) {
-            vmOsValues = AsyncDataProvider.getInstance().getOsIds(cluster.getArchitecture());
+            vmOsValues = getOsValues(cluster.getArchitecture());
             Integer selectedOsId = getModel().getOSType().getSelectedItem();
             getModel().getOSType().setItems(vmOsValues);
             if (selectedOsId != null && vmOsValues.contains(selectedOsId)) {
@@ -1811,5 +1811,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      protected boolean isHostCpuValueStillBasedOnTemp() {
          return !getModel().getIsAutoAssign().getEntity()
                  || getModel().getVmType().getSelectedItem() == VmType.HighPerformance;
+     }
+
+     protected List<Integer> getOsValues(ArchitectureType architectureType) {
+         return AsyncDataProvider.getInstance().getOsIds(architectureType);
      }
 }

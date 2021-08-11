@@ -35,6 +35,11 @@ public interface OsRepository {
     List<Integer> getOsIds();
 
     /**
+     * @return all unsupported os ids
+     */
+    Set<Integer> getUnsupportedOsIds();
+
+    /**
      * Every configured OS a both a unique id and a name. The unique name
      * is not intended for presentation but for logic. The reason for having 2 different IDs
      * is for compatibility with the old numeric ID.

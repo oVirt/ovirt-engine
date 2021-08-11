@@ -39,6 +39,7 @@ void attribute() : {} {
     | (<SYSPREP_FILENAME> stringValue())
     | (<PRODUCT_KEY>  stringValue())
     | (<VM_INIT_TYPE>) stringValue()
+    | (<DEPRECATED>) stringValue()
     | ("isTimezoneTypeInteger" booleanValue())
     | ("q35Support" q35SupportValue())
     | resources()
@@ -234,6 +235,7 @@ void valueSpecifier() : {} {
 |   < SYSPREP_FILENAME : "sysprepFileName" > : STRING_VALUE
 |   < PRODUCT_KEY : "productKey" > : STRING_VALUE
 |   < VM_INIT_TYPE : "vmInitType" > : STRING_VALUE
+|   < DEPRECATED : "deprecated" > : STRING_VALUE
 |   < CHAR : ["a"-"z","A"-"Z","0"-"9","_"] >
 |   < OS_UNIQUE_NAME : (<CHAR>)+ >
 |   < LINECOMMENT : "#" (~["\r","\n"])* >

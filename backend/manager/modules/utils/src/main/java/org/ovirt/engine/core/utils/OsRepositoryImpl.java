@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -126,6 +127,13 @@ public enum OsRepositoryImpl implements OsRepository {
     @Override
     public List<Integer> getOsIds() {
         return new ArrayList<>(idToUnameLookup.keySet());
+    }
+
+    public Set<Integer> getUnsupportedOsIds() {
+        return idToUnameLookup.keySet()
+                .stream()
+                .filter(osId -> getBoolean(getValueByVersion(idToUnameLookup.get(osId), "deprecated", null), false))
+                .collect(Collectors.toSet());
     }
 
     @Override

@@ -304,6 +304,9 @@ public class AsyncDataProvider {
     // cached ImageIO Proxy URI
     private String imageioProxyUri;
 
+    //cached unsupported os ids
+    private Set<Integer> unsupportedOsIds;
+
     public String getDefaultConfigurationVersion() {
         return _defaultConfigurationVersion;
     }
@@ -348,6 +351,7 @@ public class AsyncDataProvider {
         initCpuMap();
         initImageioProxyUri();
         initTpmAllowedForOsMap();
+        initUnsupportedOsIds();
     }
 
     private void initMigrationPolicies() {
@@ -2528,14 +2532,21 @@ public class AsyncDataProvider {
         List<Integer> osIds = new ArrayList<>();
 
         for (Entry<Integer, ArchitectureType> entry : osArchitectures.entrySet()) {
+            Integer osId = entry.getKey();
+
             if (entry.getValue() == architectureType) {
-                osIds.add(entry.getKey());
+                osIds.add(osId);
             }
         }
 
         osIds.sort(Comparator.comparing(o -> osNames.get(o)));
 
         return osIds;
+    }
+
+    public List<Integer> getSupportedOsIds(ArchitectureType architectureType) {
+        List<Integer> osIds = getOsIds(architectureType);
+        return osIds.stream().filter(osId -> !unsupportedOsIds.contains(osId)).collect(Collectors.toList());
     }
 
     public void getVmWatchdogTypes(int osId,
@@ -3250,5 +3261,13 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetTpmAllowedMap),
                 new AsyncQuery<QueryReturnValue>(result -> tpmAllowedForOsMap = result.getReturnValue()));
+    }
+
+    private void initUnsupportedOsIds() {
+        Frontend.getInstance()
+                .runQuery(QueryType.OsRepository,
+                        new OsQueryParameters(OsRepositoryVerb.GetUnsupportedOsIds),
+                        new AsyncQuery<QueryReturnValue>(
+                                returnValue -> unsupportedOsIds = returnValue.getReturnValue()));
     }
 }

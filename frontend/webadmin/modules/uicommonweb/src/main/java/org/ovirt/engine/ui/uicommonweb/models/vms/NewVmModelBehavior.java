@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -426,5 +427,10 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     protected void updateBiosType() {
         super.updateBiosType();
         super.selectBiosTypeFromTemplate();
+    }
+
+    @Override
+    protected List<Integer> getOsValues(ArchitectureType architectureType) {
+        return AsyncDataProvider.getInstance().getSupportedOsIds(architectureType);
     }
 }
