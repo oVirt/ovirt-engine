@@ -224,7 +224,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     private Guid getBitmap() {
         if (getParameters().getTransferType() == TransferType.Download
-                && getBackupVm() != null && getBackupVm().isDown()) {
+                && getBackupVm() != null
+                && getBackupVm().isDown()
+                && getDiskImage().isQcowFormat()) {
             return getBackup().getFromCheckpointId();
         }
         return null;
