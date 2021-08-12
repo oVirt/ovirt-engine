@@ -13,8 +13,6 @@ import java.util.function.Supplier;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.jboss.resteasy.jose.jws.JWSInput;
 import org.jboss.resteasy.jose.jws.crypto.HMACProvider;
 import org.jboss.resteasy.jose.jws.crypto.RSAProvider;
@@ -27,6 +25,9 @@ import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.sso.api.SsoSession;
 import org.ovirt.engine.core.sso.service.OpenIdService;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 class OpenIdServiceTest {
 
@@ -84,21 +85,21 @@ class OpenIdServiceTest {
         JWSInput input = new JWSInput(encoded, ResteasyProviderFactory.getInstance());
         String msg = input.readContent(String.class);
         JsonNode responseJson = new ObjectMapper().readTree(msg);
-        assertThat(responseJson.get("name").getTextValue()).isEqualTo("Alice");
-        assertThat(responseJson.get("family_name").getTextValue()).isEqualTo("Alice");
-        assertThat(responseJson.get("given_name").getTextValue()).isEqualTo("Alice");
-        assertThat(responseJson.get("nonce").getTextValue()).isEqualTo("testNonce");
-        assertThat(responseJson.get("jti").getTextValue()).isEqualTo("AliceID");
-        assertThat(responseJson.get("aud").getTextValue()).isEqualTo(SSO_CLIENT_ID);
-        assertThat(responseJson.get("sub").getTextValue()).isEqualTo("testUserIdWithProfile");
-        assertThat(responseJson.get("preferred_username").getTextValue()).isEqualTo("testUserIdWithProfile");
-        assertThat(responseJson.get("email").getTextValue()).isEqualTo("testUser@some.org");
-        assertThat(responseJson.get("acr").getTextValue()).isEqualTo("0");
+        assertThat(responseJson.get("name").textValue()).isEqualTo("Alice");
+        assertThat(responseJson.get("familyName").textValue()).isEqualTo("Alice");
+        assertThat(responseJson.get("givenName").textValue()).isEqualTo("Alice");
+        assertThat(responseJson.get("nonce").textValue()).isEqualTo("testNonce");
+        assertThat(responseJson.get("jti").textValue()).isEqualTo("AliceID");
+        assertThat(responseJson.get("aud").textValue()).isEqualTo(SSO_CLIENT_ID);
+        assertThat(responseJson.get("sub").textValue()).isEqualTo("testUserIdWithProfile");
+        assertThat(responseJson.get("preferredUserName").textValue()).isEqualTo("testUserIdWithProfile");
+        assertThat(responseJson.get("email").textValue()).isEqualTo("testUser@some.org");
+        assertThat(responseJson.get("acr").textValue()).isEqualTo("0");
         String expectedIss = SCHEME + "://" + TEST_SERVER_NAME + ":" + TEST_SERVER_PORT;
-        assertThat(responseJson.get("iss").getTextValue()).isEqualTo(expectedIss);
-        assertThat(responseJson.get("exp").getLongValue()).isEqualTo(NOW.getTime() + 30000 * 60);
-        assertThat(responseJson.get("iat").getLongValue()).isEqualTo(NOW.getTime());
-        assertThat(responseJson.get("auth_time").getLongValue()).isEqualTo(NOW.getTime());
+        assertThat(responseJson.get("iss").textValue()).isEqualTo(expectedIss);
+        assertThat(responseJson.get("exp").longValue()).isEqualTo(NOW.getTime() + 30000 * 60);
+        assertThat(responseJson.get("iat").longValue()).isEqualTo(NOW.getTime());
+        assertThat(responseJson.get("authTime").longValue()).isEqualTo(NOW.getTime());
 
         assertThat(signatureVerifier.apply(input)).isTrue();
     }
@@ -107,7 +108,7 @@ class OpenIdServiceTest {
     public void shouldCreateJWKbyHand() throws IOException {
         Map<String, Object> jwk = openIdService.getJWK();
 
-        ObjectMapper mapper = new ObjectMapper().disableDefaultTyping();
+        ObjectMapper mapper = new ObjectMapper().deactivateDefaultTyping();
         String jwkString =
                 mapper.writeValueAsString(jwk);
 

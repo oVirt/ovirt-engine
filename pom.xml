@@ -85,7 +85,7 @@
     <aopalliance.version>1.0</aopalliance.version>
     <snmp4j.version>2.5.3</snmp4j.version>
     <kubevirt-client.version>0.5.0</kubevirt-client.version>
-    <resteasy.version>3.6.1.Final</resteasy.version>
+    <resteasy.version>3.9.3.Final</resteasy.version>
     <!-- OpenStack -->
     <openstack-client.version>3.2.9</openstack-client.version>
     <!-- libsass -->
@@ -408,11 +408,13 @@
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>jose-jwt</artifactId>
         <version>${resteasy.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-jaxrs</artifactId>
         <version>${resteasy.version}</version>
+        <scope>provided</scope>
       </dependency>
     <dependency>
         <groupId>org.junit.jupiter</groupId>

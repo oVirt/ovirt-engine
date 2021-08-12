@@ -15,7 +15,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.conn.util.InetAddressUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.jboss.resteasy.jose.jws.JWSBuilder;
 import org.jboss.resteasy.jwt.JsonSerialization;
 import org.ovirt.engine.api.extensions.aaa.Authz;
@@ -23,6 +22,8 @@ import org.ovirt.engine.core.sso.api.SsoSession;
 import org.ovirt.engine.core.sso.api.jwk.JWK;
 import org.ovirt.engine.core.sso.api.jwt.JWT;
 import org.ovirt.engine.core.sso.api.jwt.JWTException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ApplicationScoped
 public class OpenIdService {
@@ -37,7 +38,7 @@ public class OpenIdService {
             throw new RuntimeException("Unable to generate KeyPair", e);
         }
     };
-    private final ObjectMapper mapper = new ObjectMapper().disableDefaultTyping();
+    private final ObjectMapper mapper = new ObjectMapper().deactivateDefaultTyping();
 
     private final KeyPair keyPair;
 
