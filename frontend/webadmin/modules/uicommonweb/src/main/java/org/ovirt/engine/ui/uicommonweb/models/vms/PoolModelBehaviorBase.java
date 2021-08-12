@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -238,9 +239,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             return;
         }
 
-        double overCommitFactor = 100.0 / cluster.getMaxVdsMemoryOverCommit();
-        getModel().getMinAllocatedMemory()
-                .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
+        int minMemory = VmCommonUtils.calcMinMemory(
+                getModel().getMemSize().getEntity(), cluster.getMaxVdsMemoryOverCommit());
+        getModel().getMinAllocatedMemory().setEntity(minMemory);
     }
 
     @Override

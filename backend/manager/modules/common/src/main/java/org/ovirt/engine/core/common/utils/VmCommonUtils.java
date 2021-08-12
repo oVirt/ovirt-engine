@@ -104,4 +104,9 @@ public class VmCommonUtils {
         final int maxMemoryDefaultRatio = 4;
         return maxMemoryDefaultRatio * memorySize;
      }
+
+     public static int calcMinMemory(int memory, int overcommit) {
+         double overCommitFactor = 100.0 / overcommit;
+         return (int) (memory * overCommitFactor);
+     }
 }

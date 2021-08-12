@@ -179,7 +179,8 @@ public class BackendVmsResource extends
             validateParameters(vm, "name");
             if (isCreateFromSnapshot(vm)) {
                 validateSnapshotExistence(vm);
-                response = createVmFromSnapshot(vm);
+                Cluster cluster = getCluster(vm);
+                response = createVmFromSnapshot(vm, cluster);
             } else {
                 validateParameters(vm, "template.id|name");
                 Cluster cluster = getCluster(vm);
@@ -207,7 +208,7 @@ public class BackendVmsResource extends
                 }
 
                 updateMaxMemoryIfUnspecified(vm, staticVm);
-                updateMinAllocatedMemoryIfUnspecified(vm, staticVm);
+                updateMinAllocatedMemoryIfUnspecified(vm, staticVm, cluster);
 
                 if (Guid.Empty.equals(template.getId()) && !vm.isSetOs()) {
                     staticVm.setOsId(OsRepository.AUTO_SELECT_OS);
@@ -279,9 +280,11 @@ public class BackendVmsResource extends
         }
     }
 
-    private void updateMinAllocatedMemoryIfUnspecified(Vm vm, VmStatic vmStatic) {
+    private void updateMinAllocatedMemoryIfUnspecified(Vm vm, VmStatic vmStatic, Cluster cluster) {
         if (!(vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetGuaranteed()) && vm.isSetMemory()) {
-            vmStatic.setMinAllocatedMem(vmStatic.getMemSizeMb());
+            int minMemory = VmCommonUtils.calcMinMemory(
+                    vmStatic.getMemSizeMb(), cluster.getMaxVdsMemoryOverCommit());
+            vmStatic.setMinAllocatedMem(minMemory);
         }
     }
 
@@ -309,13 +312,13 @@ public class BackendVmsResource extends
         validateParameters(snapshot, "id");
     }
 
-    private Response createVmFromSnapshot(Vm vm) {
+    private Response createVmFromSnapshot(Vm vm, Cluster cluster) {
         // If Vm has snapshots collection - this is a clone vm from snapshot operation
         String snapshotId = getSnapshotId(vm.getSnapshots());
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getVmConfiguration(snapshotId);
         getMapper(Vm.class, VmStatic.class).map(vm, vmConfiguration.getStaticData());
         updateMaxMemoryIfUnspecified(vm, vmConfiguration.getStaticData());
-        updateMinAllocatedMemoryIfUnspecified(vm, vmConfiguration.getStaticData());
+        updateMinAllocatedMemoryIfUnspecified(vm, vmConfiguration.getStaticData(), cluster);
         // If vm passed in the call has disks attached on them,
         // merge their data with the data of the disks on the configuration
         // The parameters to AddVmFromSnapshot hold an array list of Disks
