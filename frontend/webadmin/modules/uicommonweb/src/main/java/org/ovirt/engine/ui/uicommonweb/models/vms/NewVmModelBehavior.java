@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -301,9 +302,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             return;
         }
 
-        double overCommitFactor = 100.0 / cluster.getMaxVdsMemoryOverCommit();
-        getModel().getMinAllocatedMemory()
-                .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
+        int minMemory = VmCommonUtils.calcMinMemory(
+                getModel().getMemSize().getEntity(), cluster.getMaxVdsMemoryOverCommit());
+        getModel().getMinAllocatedMemory().setEntity(minMemory);
     }
 
     private void updateTemplate() {

@@ -421,6 +421,11 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(2);
         setUpGetRngDeviceExpectations(2);
         setUpGetTpmExpectations(2);
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
+                IdQueryParameters.class,
+                new String[]{"Id"},
+                new Object[]{GUIDS[2]},
+                getClusterEntity());
         setUpEntityQueryExpectations(QueryType.GetVmConfigurationBySnapshot,
                 IdQueryParameters.class,
                 new String[]{"Id"},

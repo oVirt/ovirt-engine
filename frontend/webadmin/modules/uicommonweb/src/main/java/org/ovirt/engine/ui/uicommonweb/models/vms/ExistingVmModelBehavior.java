@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
+import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -358,9 +359,9 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             return;
         }
 
-        double overCommitFactor = 100.0 / cluster.getMaxVdsMemoryOverCommit();
-        getModel().getMinAllocatedMemory()
-                .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
+        int minMemory = VmCommonUtils.calcMinMemory(
+                getModel().getMemSize().getEntity(), cluster.getMaxVdsMemoryOverCommit());
+        getModel().getMinAllocatedMemory().setEntity(minMemory);
     }
 
     protected void initTemplate() {
