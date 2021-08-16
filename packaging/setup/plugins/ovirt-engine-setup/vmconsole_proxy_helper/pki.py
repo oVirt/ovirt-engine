@@ -29,6 +29,12 @@ def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
+def _refresh_needed(cert_path):
+    ca_cert_path = oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+    return (not os.path.exists(cert_path) or
+            os.stat(ca_cert_path).st_mtime > os.stat(cert_path).st_mtime)
+
+
 @util.export
 class Plugin(plugin.PluginBase):
     """vmconsole proxy configuration plugin."""
@@ -178,7 +184,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: (
             self.environment[
                 ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-            ] and not os.path.exists(
+            ] and _refresh_needed(
                 ovmpcons.FileLocations.
                 OVIRT_ENGINE_PKI_VMCONSOLE_PROXY_HELPER_KEY
             )
@@ -273,24 +279,10 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: (
             self.environment[
                 ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-            ] and (
-                not os.path.exists(
-                    os.path.join(
-                        ovmpcons.FileLocations.VMCONSOLE_PKI_DIR,
-                        'proxy-ssh_host_rsa',
-                    )
-                ) or
-                (
-                    os.stat(
-                        oenginecons.FileLocations.
-                        OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-                    ).st_mtime >
-                    os.stat(
-                        os.path.join(
-                            ovmpcons.FileLocations.VMCONSOLE_PKI_DIR,
-                            'proxy-ssh_host_rsa',
-                        )
-                    ).st_mtime
+            ] and _refresh_needed(
+                os.path.join(
+                    ovmpcons.FileLocations.VMCONSOLE_PKI_DIR,
+                    'proxy-ssh_host_rsa',
                 )
             )
         ),
