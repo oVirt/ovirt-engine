@@ -1237,8 +1237,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getMigrateOnErrorOption_HA_ONLY().getEntityChangedEvent().addListener(this);
         // KSM feature
         setEnableKsm(new EntityModel<>());
-        getEnableKsm().setEntity(false);
-        getKsmPolicyForNumaSelection().setIsChangeable(false);
+        getEnableKsm().setEntity(true);
+        getKsmPolicyForNumaSelection().setIsChangeable(true);
         getEnableKsm().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (getEnableKsm().getEntity() == null){
                 return;
