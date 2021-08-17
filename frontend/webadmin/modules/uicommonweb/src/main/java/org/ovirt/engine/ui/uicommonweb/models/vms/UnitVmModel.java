@@ -1914,7 +1914,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setDisksAllocationModel(new DisksAllocationModel());
 
         setIsVirtioScsiEnabled(new EntityModel<Boolean>());
-        getIsVirtioScsiEnabled().setEntity(false);
         getIsVirtioScsiEnabled().setIsAvailable(false);
         getIsVirtioScsiEnabled().getEntityChangedEvent().addListener(this);
 
@@ -2114,6 +2113,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getMigrationMode().setIsChangeable(true);
 
         getCdImage().setIsChangeable(false);
+        getIsVirtioScsiEnabled().setEntity(false);
 
         initGraphicsAndDisplayListeners();
         initFirstBootDevice();
