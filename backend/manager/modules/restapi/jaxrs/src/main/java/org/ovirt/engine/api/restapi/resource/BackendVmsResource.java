@@ -372,6 +372,7 @@ public class BackendVmsResource extends
         }
         return performCreate(ActionType.ImportVmFromConfiguration,
                 parameters,
+                PollingType.JOB,
                 new QueryIdResolver<Guid>(QueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
