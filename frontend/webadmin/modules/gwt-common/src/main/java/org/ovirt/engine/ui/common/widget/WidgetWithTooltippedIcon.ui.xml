@@ -11,7 +11,8 @@
 
     <g:FlowPanel>
         <g:Widget ui:field="contentWidget" addStyleNames="{style.style}"/>
-        <d:TooltippedIcon ui:field="icon" addStyleNames="{style.style}"/>
+        <d:InfoIcon ui:field="infoIcon" addStyleNames="{style.style}"/>
+        <d:WarnIcon ui:field="warnIcon" addStyleNames="{style.style}"/>
     </g:FlowPanel>
 
 </ui:UiBinder>

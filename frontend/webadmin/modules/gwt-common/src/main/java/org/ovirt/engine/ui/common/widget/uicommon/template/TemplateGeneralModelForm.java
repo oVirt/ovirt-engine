@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
-import org.ovirt.engine.ui.common.widget.FormWidgetWithWarn;
-import org.ovirt.engine.ui.common.widget.WidgetWithWarn;
+import org.ovirt.engine.ui.common.widget.FormWidgetWithTooltippedIcon;
+import org.ovirt.engine.ui.common.widget.dialog.WarnIcon;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.BiosTypeLabel;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
@@ -39,7 +39,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     StringValueLabel oS = new StringValueLabel();
     BiosTypeRenderer biosTypeRenderer = new BiosTypeRenderer();
     BiosTypeLabel biosType = new BiosTypeLabel(biosTypeRenderer);
-    FormWidgetWithWarn biosTypeWithWarn = new FormWidgetWithWarn(biosType);
+    FormWidgetWithTooltippedIcon biosTypeWithIcon = new FormWidgetWithTooltippedIcon(biosType, WarnIcon.class);
     StringValueLabel cpuInfo = new StringValueLabel();
     StringValueLabel graphicsType = new StringValueLabel();
     StringValueLabel defaultDisplayType = new StringValueLabel();
@@ -81,7 +81,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         formBuilder.addFormItem(new FormItem(constants.descriptionTemplateGeneral(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.hostClusterTemplateGeneral(), hostCluster, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.osTemplateGeneral(), oS, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.biosTypeGeneral(), biosTypeWithWarn, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.biosTypeGeneral(), biosTypeWithIcon, 4, 0));
         formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 5, 0));
         formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 6, 0));
         formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 7, 0));
@@ -135,13 +135,13 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         monitorCount.setValue(Integer.toString(getModel().getMonitorCount()));
         isStateless.setValue(Boolean.toString(getModel().getIsStateless()));
 
-        updateBiosTypeWidget(biosTypeWithWarn);
+        updateBiosTypeWidget(biosTypeWithIcon);
 
         getModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if (args instanceof PropertyChangedEventArgs) {
                 String key = ((PropertyChangedEventArgs) args).propertyName;
                 if (key.equals(BIOS_TYPE)) {
-                    updateBiosTypeWidget(biosTypeWithWarn);
+                    updateBiosTypeWidget(biosTypeWithIcon);
                 }
             }
         });
@@ -150,7 +150,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
             if (args instanceof PropertyChangedEventArgs) {
                 String key = ((PropertyChangedEventArgs) args).propertyName;
                 if (key.equals(ARCHITECTURE)) {
-                    updateBiosTypeWidget(biosTypeWithWarn);
+                    updateBiosTypeWidget(biosTypeWithIcon);
                     // change of the architecture changes the bios type rendering so we need to trigger the redraw
                     getModel().onPropertyChanged(EntityModel.ENTITY);
                 }
@@ -163,16 +163,16 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         driver.cleanup();
     }
 
-    private void updateBiosTypeWidget(WidgetWithWarn widgetWithWarn) {
+    private void updateBiosTypeWidget(FormWidgetWithTooltippedIcon widgetWithIcon) {
         if (getModel() == null || getModel().getEntity() == null) {
-            widgetWithWarn.setIconVisible(false);
+            widgetWithIcon.setIconVisible(false);
             return;
         }
 
         biosTypeRenderer.setArchitectureType(getModel().getArchitecture());
-        widgetWithWarn.setIconVisible(
+        widgetWithIcon.setIconVisible(
                 getModel().getEntity().getBiosType() != getModel().getEntity().getClusterBiosType());
-        widgetWithWarn.setIconTooltipText(messages.biosTypeWarning(
+        widgetWithIcon.setIconTooltipText(messages.biosTypeWarning(
                 biosTypeRenderer.render(getModel().getEntity().getClusterBiosType())));
     }
 }

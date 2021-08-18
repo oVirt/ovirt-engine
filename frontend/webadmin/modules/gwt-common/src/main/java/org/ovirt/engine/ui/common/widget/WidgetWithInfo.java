@@ -17,6 +17,6 @@ public class WidgetWithInfo extends WidgetWithTooltippedIcon {
     }
 
     public WidgetWithInfo(Widget contentWidget, SafeHtml infoText) {
-        super(contentWidget, new InfoIcon(infoText));
+        super(contentWidget, InfoIcon.class, infoText);
     }
 }

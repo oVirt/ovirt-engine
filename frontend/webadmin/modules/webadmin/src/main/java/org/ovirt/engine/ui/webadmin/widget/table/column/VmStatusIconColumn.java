@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.OsType;
@@ -156,15 +157,14 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
     }
 
     private static boolean cpuVerbMatchesConfiguredCpuVerb(VM vm) {
-        if (vm.isUseHostCpuFlags()) {
-            return false;
+        if (vm.isUseHostCpuFlags() || vm.getCustomCpuName() != null) {
+            return true;
         }
 
-        String cpuVerb = vm.getCustomCpuName() != null ? vm.getCustomCpuName() : vm.getClusterCpuVerb();
-        if (cpuVerb == null) {
-            return false;
-        }
-        return cpuVerb.equals(vm.getConfiguredCpuVerb());
+        String actualCpuVerb = vm.getCpuName() != null
+                ? vm.getCpuName()
+                : vm.getClusterCpuVerb();
+        return Objects.equals(actualCpuVerb, vm.getConfiguredCpuVerb());
     }
 
     private String getStatusTooltipText(VMStatus status) {

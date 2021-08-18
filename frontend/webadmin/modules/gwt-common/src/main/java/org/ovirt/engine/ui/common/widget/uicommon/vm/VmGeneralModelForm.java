@@ -11,8 +11,9 @@ import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
-import org.ovirt.engine.ui.common.widget.FormWidgetWithWarn;
-import org.ovirt.engine.ui.common.widget.WidgetWithWarn;
+import org.ovirt.engine.ui.common.widget.FormWidgetWithTooltippedIcon;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
+import org.ovirt.engine.ui.common.widget.dialog.WarnIcon;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.BiosTypeLabel;
 import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
@@ -47,11 +48,11 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     StringValueLabel oS = new StringValueLabel();
     BiosTypeRenderer biosTypeRenderer = new BiosTypeRenderer();
     BiosTypeLabel biosType = new BiosTypeLabel(biosTypeRenderer);
-    FormWidgetWithWarn biosTypeWithWarn = new FormWidgetWithWarn(biosType);
+    FormWidgetWithTooltippedIcon biosTypeWithIcon = new FormWidgetWithTooltippedIcon(biosType, WarnIcon.class);
     StringValueLabel cpuInfo = new StringValueLabel();
     StringValueLabel guestCpuCount = new StringValueLabel();
     StringValueLabel guestCpuType = new StringValueLabel();
-    FormWidgetWithWarn guestCpuTypeWithWarn = new FormWidgetWithWarn(guestCpuType);
+    FormWidgetWithTooltippedIcon guestCpuTypeWithIcon = new FormWidgetWithTooltippedIcon(guestCpuType, WarnIcon.class);
     StringValueLabel graphicsType = new StringValueLabel();
     StringValueLabel defaultDisplayType = new StringValueLabel();
     StringValueLabel origin = new StringValueLabel();
@@ -100,7 +101,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         formBuilder.addFormItem(new FormItem(constants.uptimeVm(), uptime, 3, 0));
         formBuilder.addFormItem(new FormItem(constants.templateVm(), template, 4, 0));
         formBuilder.addFormItem(new FormItem(constants.osVm(), oS, 5, 0));
-        formBuilder.addFormItem(new FormItem(constants.biosTypeGeneral(), biosTypeWithWarn, 6, 0));
+        formBuilder.addFormItem(new FormItem(constants.biosTypeGeneral(), biosTypeWithIcon, 6, 0));
         formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 7, 0));
         formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 8, 0));
         formBuilder.addFormItem(new FormItem(constants.priorityVm(), priority, 9, 0));
@@ -125,7 +126,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         cpuInfoWithTooltip.setHtml(SafeHtmlUtils.fromString(constants.numOfCpuCoresTooltip()));
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfoWithTooltip, 4, 1));
         formBuilder.addFormItem(new FormItem(constants.GuestCpuCount(), guestCpuCount, 5, 1));
-        formBuilder.addFormItem(new FormItem(constants.GuestCpuType(), guestCpuTypeWithWarn, 6, 1));
+        formBuilder.addFormItem(new FormItem(constants.GuestCpuType(), guestCpuTypeWithIcon, 6, 1));
         formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 7, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 8, 1));
         formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 9, 1));
@@ -180,13 +181,13 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         // Required because of type conversion
         monitorCount.setValue(Integer.toString(getModel().getMonitorCount()));
 
-        updateBiosTypeWidget(biosTypeWithWarn);
+        updateBiosTypeWidget(biosTypeWithIcon);
 
         getModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if (args instanceof PropertyChangedEventArgs) {
                 String key = ((PropertyChangedEventArgs) args).propertyName;
                 if (key.equals(BIOS_TYPE)) {
-                    updateBiosTypeWidget(biosTypeWithWarn);
+                    updateBiosTypeWidget(biosTypeWithIcon);
                 }
             }
         });
@@ -195,21 +196,21 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
             if (args instanceof PropertyChangedEventArgs) {
                 String key = ((PropertyChangedEventArgs) args).propertyName;
                 if (key.equals(ARCHITECTURE)) {
-                    updateBiosTypeWidget(biosTypeWithWarn);
+                    updateBiosTypeWidget(biosTypeWithIcon);
                     // change of the architecture changes the bios type rendering so we need to trigger the redraw
                     getModel().onPropertyChanged(EntityModel.ENTITY);
                 }
             }
         });
 
-        updateCpuTypeWarning(guestCpuTypeWithWarn);
+        updateCpuTypeIcon(guestCpuTypeWithIcon);
 
         getModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if (args instanceof PropertyChangedEventArgs) {
                 String key = ((PropertyChangedEventArgs) args).propertyName;
                 if (key.equals(CONFIGURED_CPU_TYPE_PROPERTY_CHANGE)
                         || key.equals(GUEST_CPU_TYPE_PROPERTY_CHANGE)) {
-                    updateCpuTypeWarning(guestCpuTypeWithWarn);
+                    updateCpuTypeIcon(guestCpuTypeWithIcon);
                 }
             }
         });
@@ -220,27 +221,33 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         driver.cleanup();
     }
 
-    private void updateBiosTypeWidget(WidgetWithWarn widgetWithWarn) {
+    private void updateBiosTypeWidget(FormWidgetWithTooltippedIcon widgetWithIcon) {
         if (getModel() == null || getModel().getEntity() == null) {
-            widgetWithWarn.setIconVisible(false);
+            widgetWithIcon.setIconVisible(false);
             return;
         }
 
         biosTypeRenderer.setArchitectureType(getModel().getArchitecture());
-        widgetWithWarn.setIconVisible(
+        widgetWithIcon.setIconVisible(
                 getModel().getEntity().getBiosType() != getModel().getEntity().getClusterBiosType());
-        widgetWithWarn.setIconTooltipText(messages.biosTypeWarning(
+        widgetWithIcon.setIconTooltipText(messages.biosTypeWarning(
                 biosTypeRenderer.render(getModel().getEntity().getClusterBiosType())));
     }
 
-    private void updateCpuTypeWarning(WidgetWithWarn widgetWithWarn) {
+    private void updateCpuTypeIcon(FormWidgetWithTooltippedIcon widgetWithIcon) {
         if (getModel().isHostedEngine() || getModel().getConfiguredCpuType() == null) {
-            widgetWithWarn.setIconVisible(false);
+            widgetWithIcon.setIconVisible(false);
             return;
         }
 
-        widgetWithWarn.setIconVisible(!getModel().getConfiguredCpuType().equals(getModel().getGuestCpuType()));
-        widgetWithWarn.setIconTooltipText(messages.vmGuestCpuTypeWarning(
+        if (getModel().hasHostPassthrough() || getModel().hasCustomCpuType()) {
+            widgetWithIcon.setDisplayedIconType(InfoIcon.class);
+        } else {
+            widgetWithIcon.setDisplayedIconType(WarnIcon.class);
+        }
+
+        widgetWithIcon.setIconVisible(!getModel().getConfiguredCpuType().equals(getModel().getGuestCpuType()));
+        widgetWithIcon.setIconTooltipText(messages.vmGuestCpuTypeWarning(
                         getModel().getConfiguredCpuType()));
     }
 }

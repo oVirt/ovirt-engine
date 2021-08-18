@@ -17,6 +17,6 @@ public class WidgetWithWarn extends WidgetWithTooltippedIcon {
     }
 
     public WidgetWithWarn(Widget contentWidget, SafeHtml warnText) {
-        super(contentWidget, new WarnIcon(warnText));
+        super(contentWidget, WarnIcon.class, warnText);
     }
 }

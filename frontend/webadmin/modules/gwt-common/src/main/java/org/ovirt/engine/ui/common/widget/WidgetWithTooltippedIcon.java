@@ -1,6 +1,11 @@
 package org.ovirt.engine.ui.common.widget;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.TooltippedIcon;
+import org.ovirt.engine.ui.common.widget.dialog.WarnIcon;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipWidth;
 
 import com.google.gwt.core.client.GWT;
@@ -20,17 +25,39 @@ public abstract class WidgetWithTooltippedIcon extends Composite {
     @UiField(provided = true)
     protected Widget contentWidget;
 
-    @UiField(provided = true)
-    protected TooltippedIcon icon;
+    @UiField
+    protected InfoIcon infoIcon;
 
-    protected WidgetWithTooltippedIcon(Widget contentWidget, TooltippedIcon icon) {
+    @UiField
+    protected WarnIcon warnIcon;
+
+    protected Map<Class<? extends TooltippedIcon>, TooltippedIcon> iconTypeToInstance = new HashMap<>();
+
+    protected Class<? extends TooltippedIcon> displayedIconType;
+
+    protected WidgetWithTooltippedIcon(Widget contentWidget, Class<? extends TooltippedIcon> iconType, SafeHtml iconTooltipText) {
         this.contentWidget = contentWidget;
-        this.icon = icon;
+
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+
+        iconTypeToInstance.put(InfoIcon.class, infoIcon);
+        iconTypeToInstance.put(WarnIcon.class, warnIcon);
+
+        setDisplayedIconType(iconType);
+        setIconVisible(true);
+        setIconTooltipText(iconTooltipText);
+    }
+
+    public void setDisplayedIconType(Class<? extends TooltippedIcon> iconType) {
+        if (iconType == null) {
+            throw new IllegalArgumentException("Icon type cannot be null"); //$NON-NLS-1$
+        }
+        this.displayedIconType = iconType;
     }
 
     public void setIconVisible(boolean visible) {
-        icon.setVisible(visible);
+        iconTypeToInstance.values().forEach(icon -> icon.setVisible(false));
+        iconTypeToInstance.get(displayedIconType).setVisible(visible);
     }
 
     public void setIconTooltipText(String text) {
@@ -38,14 +65,14 @@ public abstract class WidgetWithTooltippedIcon extends Composite {
     }
 
     public void setIconTooltipText(SafeHtml text) {
-        icon.setText(text);
+        iconTypeToInstance.values().forEach(icon -> icon.setText(text));
     }
 
     public void setIconTooltipMaxWidth(TooltipWidth width) {
-        icon.setTooltipMaxWidth(width);
+        iconTypeToInstance.values().forEach(icon -> icon.setTooltipMaxWidth(width));
     }
 
     public void addIconStyle(String style) {
-        icon.addStyleName(style);
+        iconTypeToInstance.values().forEach(icon -> icon.addStyleName(style));
     }
 }

@@ -34,6 +34,10 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
+    public static final String HAS_HOST_PASSTHROUGH_PROPERTY_CHANGE = "HasHostPassthrough";//$NON-NLS-1$
+
+    public static final String HAS_CUSTOM_CPU_PROPERTY_CHANGE = "HasCustomCpuType";//$NON-NLS-1$
+
     public static final String GUEST_CPU_TYPE_PROPERTY_CHANGE = "GuestCpuType";//$NON-NLS-1$
 
     public static final String CONFIGURED_CPU_TYPE_PROPERTY_CHANGE = "ConfiguredCpuType";//$NON-NLS-1$
@@ -574,6 +578,32 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
     }
 
+    private boolean hasHostPassthrough;
+
+    public boolean hasHostPassthrough() {
+        return hasHostPassthrough;
+    }
+
+    public void setHasHostPassthrough(boolean value) {
+        if (hasHostPassthrough != value) {
+            hasHostPassthrough = value;
+            onPropertyChanged(new PropertyChangedEventArgs(HAS_HOST_PASSTHROUGH_PROPERTY_CHANGE));
+        }
+    }
+
+    private boolean hasCustomCpuType;
+
+    public boolean hasCustomCpuType() {
+        return hasCustomCpuType;
+    }
+
+    public void setHasCustomCpuType(boolean value) {
+        if (hasCustomCpuType != value) {
+            hasCustomCpuType = value;
+            onPropertyChanged(new PropertyChangedEventArgs(HAS_CUSTOM_CPU_PROPERTY_CHANGE));
+        }
+    }
+
     private String guestCpuType;
 
     public String getGuestCpuType() {
@@ -791,6 +821,8 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
 
         setHostedEngine(vm.isHostedEngine());
+        setHasHostPassthrough(vm.isUseHostCpuFlags());
+        setHasCustomCpuType(vm.getCustomCpuName() != null);
         setGuestCpuType(calculateGuestCpuTypeText(vm));
         setConfiguredCpuType(vm.getConfiguredCpuVerb());
     }

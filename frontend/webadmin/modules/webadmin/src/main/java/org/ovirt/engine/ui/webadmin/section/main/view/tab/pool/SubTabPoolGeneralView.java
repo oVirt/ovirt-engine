@@ -12,8 +12,8 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
-import org.ovirt.engine.ui.common.widget.FormWidgetWithWarn;
-import org.ovirt.engine.ui.common.widget.WidgetWithWarn;
+import org.ovirt.engine.ui.common.widget.FormWidgetWithTooltippedIcon;
+import org.ovirt.engine.ui.common.widget.dialog.WarnIcon;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
@@ -66,7 +66,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     StringValueLabel oS = new StringValueLabel();
     BiosTypeRenderer biosTypeRenderer = new BiosTypeRenderer();
     BiosTypeLabel biosType = new BiosTypeLabel(biosTypeRenderer);
-    FormWidgetWithWarn biosTypeWithWarn = new FormWidgetWithWarn(biosType);
+    FormWidgetWithTooltippedIcon biosTypeWithIcon = new FormWidgetWithTooltippedIcon(biosType, WarnIcon.class);
     StringValueLabel template = new StringValueLabel();
     StringValueLabel timeZone = new StringValueLabel();
     StringValueLabel usbPolicy = new StringValueLabel();
@@ -108,7 +108,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         formBuilder.addFormItem(new FormItem(constants.descriptionPoolGeneral(), description, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.templatePoolGeneral(), template, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.osPoolGeneral(), oS, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.biosTypeGeneral(), biosTypeWithWarn, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.biosTypeGeneral(), biosTypeWithIcon, 4, 0));
         formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 5, 0));
         formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 6, 0));
         formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 7, 0));
@@ -156,13 +156,13 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
 
         formBuilder.update(getDetailModel());
 
-        updateBiosTypeWidget(biosTypeWithWarn);
+        updateBiosTypeWidget(biosTypeWithIcon);
 
         getDetailModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if (args instanceof PropertyChangedEventArgs) {
                 String key = ((PropertyChangedEventArgs) args).propertyName;
                 if (key.equals(BIOS_TYPE)) {
-                    updateBiosTypeWidget(biosTypeWithWarn);
+                    updateBiosTypeWidget(biosTypeWithIcon);
                 }
             }
         });
@@ -171,7 +171,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
             if (args instanceof PropertyChangedEventArgs) {
                 String key = ((PropertyChangedEventArgs) args).propertyName;
                 if (key.equals(ARCHITECTURE)) {
-                    updateBiosTypeWidget(biosTypeWithWarn);
+                    updateBiosTypeWidget(biosTypeWithIcon);
                     // change of the architecture changes the bios type rendering so we need to trigger the redraw
                     getDetailModel().onPropertyChanged(EntityModel.ENTITY);
                 }
@@ -179,15 +179,15 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         });
     }
 
-    private void updateBiosTypeWidget(WidgetWithWarn widgetWithWarn) {
+    private void updateBiosTypeWidget(FormWidgetWithTooltippedIcon widgetWithIcon) {
         if (getDetailModel() == null || getDetailModel().getvm() == null) {
-            widgetWithWarn.setIconVisible(false);
+            widgetWithIcon.setIconVisible(false);
             return;
         }
         biosTypeRenderer.setArchitectureType(getDetailModel().getArchitecture());
-        widgetWithWarn.setIconVisible(
+        widgetWithIcon.setIconVisible(
                 getDetailModel().getvm().getBiosType() != getDetailModel().getvm().getClusterBiosType());
-        widgetWithWarn.setIconTooltipText(messages.biosTypeWarning(
+        widgetWithIcon.setIconTooltipText(messages.biosTypeWarning(
                 biosTypeRenderer.render(getDetailModel().getvm().getClusterBiosType())));
     }
 }
