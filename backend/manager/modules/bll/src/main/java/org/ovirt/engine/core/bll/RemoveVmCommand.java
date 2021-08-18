@@ -234,7 +234,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         }
 
         vmHandler.updateDisksFromDb(getVm());
-        getParameters().setUseCinderCommandCallback(getParameters().isRemoveDisks() && !getCinderDisks().isEmpty());
+        getParameters().setUseCinderCommandCallback(
+                getParameters().isRemoveDisks() && !(getCinderDisks().isEmpty() && getManagedBlockDisks().isEmpty()));
 
         if (!getParameters().isRemoveDisks() && !canRemoveVmWithDetachDisks()) {
             return false;
