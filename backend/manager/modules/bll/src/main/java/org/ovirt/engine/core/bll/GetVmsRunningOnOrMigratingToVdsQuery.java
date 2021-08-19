@@ -25,6 +25,7 @@ public class GetVmsRunningOnOrMigratingToVdsQuery<P extends IdQueryParameters> e
     protected void executeQueryCommand() {
         List<VM> allRunningOnOrMigratingToVds = vmDao.getAllRunningOnOrMigratingToVds(getParameters().getId());
         updateStatistics(allRunningOnOrMigratingToVds);
+        updateConfiguredCpuVerb(allRunningOnOrMigratingToVds);
 
         getQueryReturnValue().setReturnValue(
                 allRunningOnOrMigratingToVds);
@@ -36,4 +37,9 @@ public class GetVmsRunningOnOrMigratingToVdsQuery<P extends IdQueryParameters> e
         }
     }
 
+    protected void updateConfiguredCpuVerb(List<VM> allRunningOnOrMigratingToVds) {
+        if (allRunningOnOrMigratingToVds != null) {
+            allRunningOnOrMigratingToVds.forEach(vmHandler::updateConfiguredCpuVerb);
+        }
+    }
 }

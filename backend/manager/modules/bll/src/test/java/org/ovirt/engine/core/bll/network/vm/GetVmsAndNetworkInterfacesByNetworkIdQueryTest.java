@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.vm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -38,6 +40,9 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
     @Mock
     private VmNetworkInterfaceDao vmNetworkInterfaceDaoMock;
 
+    @Mock
+    private VmHandler vmHandler;
+
     @Test
     public void testExecuteQueryCommand() {
         // Set up the Daos
@@ -53,6 +58,8 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
 
         vm.setId(vmId);
         vmNetworkInterface.setVmId(vmId);
+
+        doNothing().when(vmHandler).updateConfiguredCpuVerb(vm);
 
         PairQueryable<VmNetworkInterface, VM> vmInterfaceVmPair =
                 new PairQueryable<>(vmNetworkInterface, vm);

@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -26,6 +27,9 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQuery<P extends GetVmsAndNetwo
     private VmDao vmDao;
 
     @Inject
+    private VmHandler vmHandler;
+
+    @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     public GetVmsAndNetworkInterfacesByNetworkIdQuery(P parameters, EngineContext engineContext) {
@@ -43,6 +47,7 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQuery<P extends GetVmsAndNetwo
         List<PairQueryable<VmNetworkInterface, VM>> vmInterfaceVmPairs = new ArrayList<>();
         for (VmNetworkInterface vmNetworkInterface : vmNetworkInterfaceList) {
             VM vm = vmsById.get(vmNetworkInterface.getVmId());
+            vmHandler.updateConfiguredCpuVerb(vm);
             if (getParameters().getRunningVms() == null || getParameters().getRunningVms().equals(vm.isRunning())) {
                 vmInterfaceVmPairs.add(new PairQueryable<>(vmNetworkInterface, vm));
             }

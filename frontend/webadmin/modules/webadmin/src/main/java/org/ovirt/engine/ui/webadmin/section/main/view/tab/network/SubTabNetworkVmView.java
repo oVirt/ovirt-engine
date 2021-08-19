@@ -74,7 +74,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
 
         boolean running = selected == NetworkVmFilter.running;
 
-        getTable().ensureColumnVisible(vmStatusIconColumn, constants.empty(), true, "30px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(vmStatusIconColumn, constants.empty(), true, "35px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(nameColumn, constants.nameVm(), true, "150px"); //$NON-NLS-1$
 

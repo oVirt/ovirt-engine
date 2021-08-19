@@ -25,6 +25,7 @@ public class GetVmsPinnedToHostQuery<P extends IdQueryParameters> extends Querie
         List<VM> vms = vmDao.getAllPinnedToHost(getParameters().getId());
         if (vms != null) {
             vms.forEach(vmHandler::updateVmStatistics);
+            vms.forEach(vmHandler::updateConfiguredCpuVerb);
         }
 
         setReturnValue(vms);

@@ -36,6 +36,7 @@ public class GetVmsRunningOnOrMigratingToVdsQueryTest
         when(vmDaoMock.getAllRunningOnOrMigratingToVds(vmGuid)).thenReturn(expected);
 
         doNothing().when(getQuery()).updateStatistics(expected);
+        doNothing().when(getQuery()).updateConfiguredCpuVerb(expected);
 
         // Set up the query parameters
         when(getQueryParameters().getId()).thenReturn(vmGuid);

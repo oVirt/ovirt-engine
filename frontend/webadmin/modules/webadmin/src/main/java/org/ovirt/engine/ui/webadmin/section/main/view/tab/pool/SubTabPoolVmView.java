@@ -55,7 +55,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
 
         VmStatusIconColumn<VM> statusIconColumn = new VmStatusIconColumn<>();
         statusIconColumn.setContextMenuTitle(constants.statusIconVm());
-        getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(statusIconColumn, constants.empty(), "35px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> nameColumn = new AbstractLinkColumn<VM>(new FieldUpdater<VM, String>() {
             @Override
