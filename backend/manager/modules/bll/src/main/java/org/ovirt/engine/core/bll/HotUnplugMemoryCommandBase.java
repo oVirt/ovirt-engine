@@ -109,7 +109,9 @@ public abstract class HotUnplugMemoryCommandBase<P extends HotUnplugMemoryParame
                         getVm().getRunOnVds(),
                         getDeviceToHotUnplug(),
                         minMemoryMb));
-        if (!vdsReturnValue.getSucceeded()) {
+        if (vdsReturnValue.getSucceeded()) {
+            getVmManager().setDeviceBeingHotUnlugged(getDeviceToHotUnplug().getDeviceId(), true);
+        } else {
             addCustomValue(AUDIT_LOG_VAR_ERROR_MESSAGE, vdsReturnValue.getVdsError().getMessage());
             setReturnValueFailure(vdsReturnValue);
         }

@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
@@ -77,6 +79,8 @@ public class VmManager {
 
     private VMStatus lastStatusBeforeMigration;
 
+    private Set<Guid> devicesBeingHotUnplugged;
+
     @Inject
     private VmDeviceDao vmDeviceDao;
     @Inject
@@ -100,6 +104,7 @@ public class VmManager {
         statistics = new VmStatistics(vmId);
         vmMemoryWithOverheadInMB = 0;
         externalDataStatus = new ExternalDataStatus();
+        devicesBeingHotUnplugged = new HashSet<>();
     }
 
     @PostConstruct
@@ -330,5 +335,27 @@ public class VmManager {
 
     public void setLastStatusBeforeMigration(VMStatus lastStatusBeforeMigration) {
         this.lastStatusBeforeMigration = lastStatusBeforeMigration;
+    }
+
+    public boolean isDeviceBeingHotUnlugged(Guid deviceId) {
+        synchronized (devicesBeingHotUnplugged) {
+            return devicesBeingHotUnplugged.contains(deviceId);
+        }
+    }
+
+    public void setDeviceBeingHotUnlugged(Guid deviceId, boolean beingHotUnplugged) {
+        synchronized (devicesBeingHotUnplugged) {
+            if (beingHotUnplugged) {
+                devicesBeingHotUnplugged.add(deviceId);
+            } else {
+                devicesBeingHotUnplugged.remove(deviceId);
+            }
+        }
+    }
+
+    public void rebootCleanup() {
+        synchronized (devicesBeingHotUnplugged) {
+            devicesBeingHotUnplugged.clear();
+        }
     }
 }

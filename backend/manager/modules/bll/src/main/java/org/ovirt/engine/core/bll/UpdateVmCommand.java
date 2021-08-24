@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -577,7 +578,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (currentMemory > newAmountOfMemory) {
-            hotUnplugMemory(newVm);
+            final Lock lock = getVmManager().getVmDevicesLock();
+            lock.lock();
+            try {
+                hotUnplugMemory(newVm);
+            } finally {
+                lock.unlock();
+            }
         }
     }
 
@@ -600,8 +607,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 VmDeviceType.MEMORY);
         final int oldMemoryMb = oldVm.getMemSizeMb();
         final int oldMinMemoryMb = oldVm.getMinAllocatedMem();
-        final List<VmDevice> memoryDevicesToUnplug = MemoryUtils.computeMemoryDevicesToHotUnplug(
-                vmMemoryDevices, oldMemoryMb, getParameters().getVm().getMemSizeMb());
+        final List<VmDevice> memoryDevicesToUnplug = MemoryUtils.computeMemoryDevicesToHotUnplug(vmMemoryDevices,
+                oldMemoryMb, getParameters().getVm().getMemSizeMb(), getVmManager());
         if (memoryDevicesToUnplug.isEmpty()) {
             logNoDeviceToHotUnplug(vmMemoryDevices);
 
@@ -648,6 +655,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             addCustomValue(AUDIT_LOG_NEW_MEMORY_MB, String.valueOf(getParameters().getVm().getMemSizeMb()));
             final String unplugOptions = vmMemoryDevices.stream()
                     .filter(VmDeviceCommonUtils::isMemoryDeviceHotUnpluggable)
+                    .filter(device -> !getVmManager().isDeviceBeingHotUnlugged(device.getDeviceId()))
                     .map(device -> VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(device).get())
                     .map(deviceSize -> String.format(
                             "%dMB (%dMB)",

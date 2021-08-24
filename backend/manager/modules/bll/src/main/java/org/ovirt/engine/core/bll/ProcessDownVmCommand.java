@@ -44,6 +44,7 @@ import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,8 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     private HostLocking hostLocking;
     @Inject
     private NetworkDeviceHelper networkDeviceHelper;
+    @Inject
+    private ResourceManager resourceManager;
     @Inject
     private SnapshotsManager snapshotsManager;
     @Inject
@@ -135,6 +138,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
 
         if (!removingVmPool) {
             removeStatelessVmUnmanagedDevices();
+            resourceManager.getVmManager(getVmId()).rebootCleanup();
 
             boolean vmHasDirectPassthroughDevices = releaseUsedHostDevices();
 
