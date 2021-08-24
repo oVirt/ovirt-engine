@@ -262,8 +262,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     }
 
     private String encode(String str) {
-        // replace " characters with \\\" and \n string with their unicode equivalent
-        return str.replaceAll("\"", "\\\\\\\\\\\\\"").replaceAll("&amp;#10", "&#10");
+        // replace " characters with \"
+        return str.replaceAll("\"", "\\\\\"");
     }
 
     private String genDiskParameters(Collection<DiskImage> disks, Map<Guid, String> diskIdToPath) {

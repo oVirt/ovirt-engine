@@ -1,4 +1,5 @@
 import io
+import json
 import mmap
 import os
 import pwd
@@ -26,7 +27,7 @@ def from_bytes(string):
             if isinstance(string, six.binary_type) else string)
 
 
-def extract_disk(ova_path, offset, image_path):
+def extract_disk(ova_path, offset, image_path, image_format):
     start_time = time.time()
     while True:
         try:
@@ -45,8 +46,8 @@ def extract_disk(ova_path, offset, image_path):
     vdsm_user = pwd.getpwnam('vdsm')
     os.chown(loop, vdsm_user.pw_uid, vdsm_user.pw_gid)
     try:
-        qemu_cmd = ("qemu-img convert -O qcow2 '%s' '%s'"
-                    % (loop, image_path))
+        qemu_cmd = ("qemu-img convert -O %s '%s' '%s'"
+                    % (image_format, loop, image_path))
         check_call(['su', '-p', '-c', qemu_cmd, 'vdsm'])
     except CalledProcessError as exc:
         print("qemu-img conversion failed with error: ", exc.returncode)
@@ -91,7 +92,7 @@ def nti(s):
     return n
 
 
-def extract_disks(ova_path, image_paths, image_mappings):
+def extract_disks(ova_path, image_paths_and_formats, image_mappings):
     try:
         fd = os.open(ova_path, os.O_RDONLY | os.O_DIRECT)
     except OSError:
@@ -122,9 +123,13 @@ def extract_disks(ova_path, image_paths, image_mappings):
                 pass
             else:
                 image_guid = image_mappings[name] if image_mappings else name
-                for image_path in image_paths:
+                for image_path_and_format in \
+                        six.iteritems(image_paths_and_formats):
+                    image_path = image_path_and_format[0]
+                    image_format = image_path_and_format[1]
                     if image_guid in image_path:
-                        extract_disk(ova_path, ova_file.tell(), image_path)
+                        extract_disk(ova_path, ova_file.tell(), image_path,
+                                     image_format)
                         ova_file.seek(size, 1)
                         break
 
@@ -133,4 +138,4 @@ if len(sys.argv) < 4:
     print("Usage: extract_ova.py ova_path disks_paths image_mappings")
     sys.exit(2)
 
-extract_disks(sys.argv[1], yaml.load(sys.argv[2]), yaml.load(sys.argv[3]))
+extract_disks(sys.argv[1], json.loads(sys.argv[2]), yaml.load(sys.argv[3]))

@@ -152,10 +152,6 @@ public class AnsibleRunnerHttpClient {
         } catch (IOException ex) {
             throw new AnsibleRunnerCallException("Failed to create host deploy variables mapper", ex);
         }
-        if (playAction.equals("Pack OVA")) {
-            // set xml string in the expected format
-            result = result.replaceAll("\\\\\\\\\\\\", "\\\\");
-        }
         return result;
     }
 

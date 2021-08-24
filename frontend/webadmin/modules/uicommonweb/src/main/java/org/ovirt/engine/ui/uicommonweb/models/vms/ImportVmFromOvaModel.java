@@ -68,7 +68,6 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
         for (Object item : getItems()) {
             ImportVmData importVmData = (ImportVmData) item;
             VM vm = importVmData.getVm();
-
             ImportVmFromOvaParameters prm = new ImportVmFromOvaParameters(
                     vm,
                     getStorage().getSelectedItem().getId(),
@@ -98,10 +97,10 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
                 DiskImage disk = (DiskImage) entry.getValue();
                 ImportDiskData importDiskData = getDiskImportData(disk.getDiskAlias());
                 disk.setVolumeType(getAllocation().getSelectedItem());
-                disk.setVolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
-                        disk.getVolumeType(),
-                        getStorage().getSelectedItem().getStorageType()));
-
+                disk.setVolumeFormat(AsyncDataProvider.getInstance()
+                        .getDiskVolumeFormat(
+                                disk.getVolumeType(),
+                                getStorage().getSelectedItem().getStorageType()));
                 if (getDiskImportData(disk.getDiskAlias()).getSelectedQuota() != null) {
                     disk.setQuotaId(importDiskData.getSelectedQuota().getId());
                 }

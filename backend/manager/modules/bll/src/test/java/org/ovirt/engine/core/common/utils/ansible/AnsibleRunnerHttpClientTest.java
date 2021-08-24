@@ -257,7 +257,6 @@ public class AnsibleRunnerHttpClientTest {
 
     private static Stream<Arguments> provideParamsForCommandVariablesFormatting() {
         return Stream.of(
-                // For all playbooks except "Pack OVA"
                 Arguments.of(
                         provideCommandVariables(),
                         "",
@@ -269,20 +268,6 @@ public class AnsibleRunnerHttpClientTest {
                                 + "\"integerValue\":4,"
                                 // Double quotes need to be properly escaped in JSON output
                                 + "\"stringWithQuotes\":\"Contains \\\"double quotes\\\"\","
-                                + "\"xmlVersion\":\"\\\\\\\\\\\\\\\"1.0\\\\\\\\\\\\\\\"\"}"),
-
-                // For "Pack OVA" playbook
-                Arguments.of(
-                        provideCommandVariables(),
-                        "Pack OVA",
-                        "{\"dateValue\":\"1989-11-17T16:00:00Z\","
-                                + "\"stringValue\":\"default\","
-                                // Boolean values are stored as boolean in JSON
-                                + "\"booleanValue\":false,"
-                                // Numbers are stored as numbers in JSON
-                                + "\"integerValue\":4,"
-                                // Double quotes need to be properly escaped in JSON output
-                                + "\"stringWithQuotes\":\"Contains \\\"double quotes\\\"\","
-                                + "\"xmlVersion\":\"\\\\\\\"1.0\\\\\\\"\"}"));
+                                + "\"xmlVersion\":\"\\\\\\\\\\\\\\\"1.0\\\\\\\\\\\\\\\"\"}"));
     }
 }

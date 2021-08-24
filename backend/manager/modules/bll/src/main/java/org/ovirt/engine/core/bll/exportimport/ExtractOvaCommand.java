@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll.exportimport;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
@@ -21,6 +23,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
@@ -34,6 +37,8 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @NonTransactiveCommandAttribute
 public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand<T> {
@@ -76,7 +81,8 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
         try {
             updateDisksFromDb();
             List<String> diskPaths = prepareImages();
-            boolean succeeded = runAnsibleImportOvaPlaybook(diskPaths);
+            String diskPathToFormat = prepareDiskPathToFormat(getDiskList(), diskPaths);
+            boolean succeeded = runAnsibleImportOvaPlaybook(diskPathToFormat);
             teardownImages();
             if (!succeeded) {
                 log.error("Failed to extract OVA file");
@@ -105,14 +111,11 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 : Collections.emptyMap();
     }
 
-    private boolean runAnsibleImportOvaPlaybook(List<String> diskPaths) {
+    private boolean runAnsibleImportOvaPlaybook(String disksPathToFormat) {
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("ovirt_import_ova_path", getParameters().getOvaPath())
-                .variable("ovirt_import_ova_disks",
-                        diskPaths.stream()
-                                .map(path -> String.format("'%s'", path))
-                                .collect(Collectors.joining(",", "[", "]")))
+                .variable("ovirt_import_ova_disks", disksPathToFormat)
                 .variable("ovirt_import_ova_image_mappings",
                         getImageMappings().entrySet()
                                 .stream()
@@ -163,6 +166,11 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
         return stdout.toString();
     }
 
+    private String encode(String str) {
+        // replace " characters with \"
+        return str.replaceAll("\"", "\\\\\"");
+    }
+
     /**
      * @return a list with the corresponding mounted paths
      */
@@ -171,6 +179,23 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 .map(this::prepareImage)
                 .map(PrepareImageReturn::getImagePath)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * @return a json with the corresponding mounted disks paths and formats
+     */
+    private String prepareDiskPathToFormat(List<DiskImage> diskList, List<String> diskPaths) {
+        Map<String, String> diskPathToFormat = IntStream.range(0, diskList.size())
+                .boxed()
+                .collect(Collectors.toMap(i -> diskPaths.get(i),
+                        i -> diskList.get(i).getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw"));
+        String json;
+        try {
+            json = new ObjectMapper().writeValueAsString(diskPathToFormat);
+        } catch (IOException e) {
+            throw new RuntimeException("failed to serialize disk info");
+        }
+        return encode(json);
     }
 
     private List<DiskImage> getDiskList() {

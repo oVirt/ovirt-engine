@@ -13,8 +13,6 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
@@ -104,9 +102,6 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
             return super.buildAddDiskParameters(image);
         }
 
-        // The volume format and type is fixed for disks within oVirt's OVA files:
-        image.setVolumeFormat(VolumeFormat.COW);
-        image.setVolumeType(VolumeType.Sparse);
         AddDiskParameters parameters = super.buildAddDiskParameters(image);
         parameters.setUsePassedDiskId(true);
         parameters.setUsePassedImageId(true);
