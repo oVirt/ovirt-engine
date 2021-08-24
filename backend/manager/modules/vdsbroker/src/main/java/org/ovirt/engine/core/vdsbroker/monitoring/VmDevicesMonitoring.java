@@ -611,6 +611,9 @@ public class VmDevicesMonitoring {
             } else {
                 change.addDeviceIdToRemove(device.getId());
                 log.debug("VM '{}' unmanaged device was marked for remove : {1}", vmId, device);
+                if (VmDeviceGeneralType.MEMORY.equals(device.getType())) {
+                    resourceManager.getVmManager(vmId).setDeviceBeingHotUnlugged(device.getDeviceId(), false);
+                }
             }
         }
     }

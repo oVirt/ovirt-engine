@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 
 public class MemoryUtils {
 
@@ -177,10 +178,12 @@ public class MemoryUtils {
     public static List<VmDevice> computeMemoryDevicesToHotUnplug(
             List<VmDevice> vmMemoryDevices,
             int currentMemoryMb,
-            int desiredMemoryMb) {
+            int desiredMemoryMb,
+            VmManager vmManager) {
         final int memoryToHotUnplugMb = currentMemoryMb - desiredMemoryMb;
         return vmMemoryDevices.stream()
                 .filter(VmDeviceCommonUtils::isMemoryDeviceHotUnpluggable)
+                .filter(memoryDevice -> !vmManager.isDeviceBeingHotUnlugged(memoryDevice.getDeviceId()))
                 .filter(memoryDevice ->
                         memoryToHotUnplugMb >= VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(memoryDevice).get())
                 .sorted(Comparator.comparing(

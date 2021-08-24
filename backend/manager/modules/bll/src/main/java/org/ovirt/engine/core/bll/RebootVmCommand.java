@@ -51,8 +51,8 @@ public class RebootVmCommand<T extends RebootVmParameters> extends VmOperationCo
             setSucceeded(true);
             return;
         }
+        VmManager vmManager = resourceManager.getVmManager(getVmId());
         if (isColdReboot()) {
-            VmManager vmManager = resourceManager.getVmManager(getVmId());
             vmManager.lockVm();
             try {
                 ActionReturnValue returnValue =

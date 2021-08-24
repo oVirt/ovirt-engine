@@ -622,6 +622,7 @@ public class VmAnalyzer {
         // Engine-initialed reboots shall set the state directly within the RebootVmCommand.
         if (vdsmVmDynamic.getStatus() == VMStatus.RebootInProgress &&
                 dbVm.getStatus() != VMStatus.RebootInProgress) {
+            getVmManager().rebootCleanup();
             auditVmOnRebooting();
         }
 
