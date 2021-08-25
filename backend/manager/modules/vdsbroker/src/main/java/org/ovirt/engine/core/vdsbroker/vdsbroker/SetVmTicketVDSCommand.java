@@ -41,6 +41,7 @@ public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> ex
         devStruct.put("password", getParameters().getTicket());
         devStruct.put("ttl", getParameters().getValidTime());
         devStruct.put("disconnectAction", getParameters().getDisconnectAction());
+        devStruct.put("consoleDisconnectActionDelay", getParameters().getConsoleDisconnectActionDelay());
         devStruct.put("params", getUidParams());
 
         status = getBroker().vmUpdateDevice(getParameters().getVmId().toString(), devStruct);

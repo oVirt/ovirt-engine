@@ -320,6 +320,9 @@
                 <b:Row>
                   <e:ListModelListBoxEditor ui:field="consoleDisconnectActionEditor" label="{constants.consoleDisconnectActionVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
+                <b:Row>
+                  <ge:IntegerEntityModelTextBoxEditor ui:field="consoleDisconnectActionDelayEditor" label="{constants.consoleDisconnectActionDelayVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
                 <b:Row ui:field="monitors">
                   <b:Column size="SM_6">
                     <l:EnableableFormLabel ui:field="monitorsLabel" text="{constants.monitors}" />

@@ -1733,6 +1733,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         vmStatic.setConsoleDisconnectAction(consoleDisconnectAction);
     }
 
+    public int getConsoleDisconnectActionDelay() {
+        return vmStatic.getConsoleDisconnectActionDelay();
+    }
+
+    public void setConsoleDisconnectActionDelay(int consoleDisconnectActionDelay) {
+        vmStatic.setConsoleDisconnectActionDelay(consoleDisconnectActionDelay);
+    }
+
     public int getBackgroundOperationProgress() {
         return backgroundOperationProgress;
     }

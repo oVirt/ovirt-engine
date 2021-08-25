@@ -360,6 +360,11 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     private ConsoleDisconnectAction consoleDisconnectAction;
 
     @CopyOnNewVersion
+    @EditableVmField
+    @EditableVmTemplateField
+    private int consoleDisconnectActionDelay;
+
+    @CopyOnNewVersion
     @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private Version customCompatibilityVersion;
@@ -423,6 +428,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         vNumaNodeList = new ArrayList<>();
         customProperties = "";
         consoleDisconnectAction = ConsoleDisconnectAction.LOCK_SCREEN;
+        consoleDisconnectActionDelay = 0;
         resumeBehavior = VmResumeBehavior.AUTO_RESUME;
         description = "";
         comment = "";
@@ -624,6 +630,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getLargeIconId(),
                 vmBase.getNumOfIoThreads(),
                 vmBase.getConsoleDisconnectAction(),
+                vmBase.getConsoleDisconnectActionDelay(),
                 vmBase.getCustomCompatibilityVersion(),
                 vmBase.getMigrationPolicyId(),
                 vmBase.getLeaseStorageDomainId(),
@@ -698,6 +705,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             Guid largeIconId,
             int numOfIoThreads,
             ConsoleDisconnectAction consoleDisconnectAction,
+            int consoleDisconnectActionDelay,
             Version customCompatibilityVersion,
             Guid migrationPolicyId,
             Guid leaseStorageDomainId,
@@ -770,6 +778,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.largeIconId = largeIconId;
         this.numOfIoThreads = numOfIoThreads;
         this.consoleDisconnectAction = consoleDisconnectAction;
+        this.consoleDisconnectActionDelay = consoleDisconnectActionDelay;
         this.customCompatibilityVersion = customCompatibilityVersion;
         this.migrationPolicyId = migrationPolicyId;
         this.leaseStorageDomainId = leaseStorageDomainId;
@@ -1207,6 +1216,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 smallIconId,
                 largeIconId,
                 consoleDisconnectAction,
+                consoleDisconnectActionDelay,
                 customCompatibilityVersion,
                 resumeBehavior,
                 multiQueuesEnabled,
@@ -1266,6 +1276,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && bootMenuEnabled == other.bootMenuEnabled
                 && spiceFileTransferEnabled == other.spiceFileTransferEnabled
                 && spiceCopyPasteEnabled == other.spiceCopyPasteEnabled
+                && consoleDisconnectActionDelay == other.consoleDisconnectActionDelay
                 && Objects.equals(cpuProfileId, other.cpuProfileId)
                 && Objects.equals(vNumaNodeList, other.vNumaNodeList)
                 && Objects.equals(autoConverge, other.autoConverge)
@@ -1370,6 +1381,14 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     public void setConsoleDisconnectAction(ConsoleDisconnectAction consoleDisconnectAction) {
         this.consoleDisconnectAction = consoleDisconnectAction;
+    }
+
+    public int getConsoleDisconnectActionDelay() {
+        return consoleDisconnectActionDelay;
+    }
+
+    public void setConsoleDisconnectActionDelay(int consoleDisconnectActionDelay) {
+        this.consoleDisconnectActionDelay = consoleDisconnectActionDelay;
     }
 
     @Override

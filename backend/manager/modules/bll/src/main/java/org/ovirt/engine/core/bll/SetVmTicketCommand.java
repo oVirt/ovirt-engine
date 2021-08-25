@@ -219,7 +219,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
                                 ticket, getParameters().getValidTime(),
                                 user.getLoginName(), user.getId(),
                                 getParameters().getGraphicsType(), getVm().getConsoleDisconnectAction(),
-                                getVm().getCompatibilityVersion())).getSucceeded();
+                                getVm().getCompatibilityVersion(), getVm().getConsoleDisconnectActionDelay())).getSucceeded();
 
         // Return the ticket only if sending it to the virtual machine succeeded:
         if (sent) {

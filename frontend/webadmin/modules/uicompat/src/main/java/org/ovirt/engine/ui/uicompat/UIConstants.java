@@ -2214,4 +2214,6 @@ public interface UIConstants extends Constants {
     String numaTuneModeDisabledReasonNodeUnpinned();
 
     String numaTuneModeDisabledReasonNotCurrentlyEditedVM();
+
+    String consoleDisconnectActionDelayDisabledReason();
 }

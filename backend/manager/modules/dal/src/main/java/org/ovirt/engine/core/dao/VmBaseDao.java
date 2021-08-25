@@ -92,6 +92,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue(SMALL_ICON_ID_COLUMN, entity.getSmallIconId())
                 .addValue(LARGE_ICON_ID_COLUMN, entity.getLargeIconId())
                 .addValue("console_disconnect_action", entity.getConsoleDisconnectAction().toString())
+                .addValue("console_disconnect_action_delay", entity.getConsoleDisconnectActionDelay())
                 .addValue("resume_behavior", entity.getResumeBehavior() == null ? null : entity.getResumeBehavior().toString())
                 .addValue("custom_compatibility_version", entity.getCustomCompatibilityVersion())
                 .addValue("migration_policy_id", entity.getMigrationPolicyId())
@@ -172,6 +173,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setSmallIconId(getGuid(rs, SMALL_ICON_ID_COLUMN));
             entity.setLargeIconId(getGuid(rs, LARGE_ICON_ID_COLUMN));
             entity.setConsoleDisconnectAction(ConsoleDisconnectAction.fromString(rs.getString("console_disconnect_action")));
+            entity.setConsoleDisconnectActionDelay(rs.getInt("console_disconnect_action_delay"));
             String resumeBehavior = rs.getString("resume_behavior");
             entity.setResumeBehavior(resumeBehavior == null ? null : VmResumeBehavior.valueOf(resumeBehavior));
             entity.setCustomCompatibilityVersion(new VersionRowMapper("custom_compatibility_version").mapRow(rs, 0));

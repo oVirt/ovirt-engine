@@ -311,6 +311,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             getGraphicsType().setIsChangeable(false);
             getIsUsbEnabled().setIsChangeable(false);
             getConsoleDisconnectAction().setIsChangeable(false);
+            getConsoleDisconnectActionDelay().setIsChangeable(false);
             getResumeBehavior().setIsChangeable(false);
             getNumOfMonitors().setIsChangeable(false);
             getIsSmartcardEnabled().setIsChangeable(false);
@@ -670,6 +671,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
     private void setConsoleDisconnectAction(NotChangableForVmInPoolListModel<ConsoleDisconnectAction> value) {
         consoleDisconnectAction = value;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Integer> consoleDisconnectActionDelay;
+
+    public EntityModel<Integer> getConsoleDisconnectActionDelay() {
+        return consoleDisconnectActionDelay;
+    }
+
+    private void setConsoleDisconnectActionDelay(NotChangableForVmInPoolEntityModel<Integer> consoleDisconnectActionDelay) {
+        this.consoleDisconnectActionDelay = consoleDisconnectActionDelay;
     }
 
     private NotChangableForVmInPoolListModel<TimeZoneModel> privateTimeZone;
@@ -1676,6 +1687,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         setMinAllocatedMemory(new NotChangableForVmInPoolEntityModel<Integer>());
         setIsUsbEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         setConsoleDisconnectAction(new NotChangableForVmInPoolListModel<ConsoleDisconnectAction>());
+        setConsoleDisconnectActionDelay(new NotChangableForVmInPoolEntityModel<Integer>());
+        getConsoleDisconnectActionDelay().setIsChangeable(false, constants.consoleDisconnectActionDelayDisabledReason());
+        getConsoleDisconnectAction().getSelectedItemChangedEvent().addListener(this);
         setIsStateless(new NotChangableForVmInPoolEntityModel<Boolean>());
         setIsRunAndPause(new NotChangableForVmInPoolEntityModel<Boolean>());
         setIsHeadlessModeEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
@@ -2217,6 +2231,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 updateTpmEnabled();
             } else if (sender == getAutoPinningPolicy()) {
                 autoPinReset();
+            } else if (sender == getConsoleDisconnectAction()){
+                consoleDisconnectActionSelectedItemChanged();
             }
         } else if (ev.matchesDefinition(ListModel.selectedItemsChangedEventDefinition)) {
             if (sender == getDefaultHost()) {
@@ -2392,6 +2408,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             getWatchdogAction().setIsChangeable(false);
         } else {
             getWatchdogAction().setIsChangeable(true);
+        }
+    }
+
+    private void consoleDisconnectActionSelectedItemChanged() {
+        if (ConsoleDisconnectAction.SHUTDOWN.equals(consoleDisconnectAction.getSelectedItem())) {
+            getConsoleDisconnectActionDelay().setIsChangeable(true);
+        } else {
+            getConsoleDisconnectActionDelay().setIsChangeable(false, constants.consoleDisconnectActionDelayDisabledReason());
         }
     }
 
@@ -3231,8 +3255,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 BusinessEntitiesDefinitions.VM_EMULATED_MACHINE_SIZE)});
         getCustomCpu().validateSelectedItem(new IValidation[] { new CpuNameValidation(), new LengthValidation(BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE)});
 
+        if (getConsoleDisconnectAction().getSelectedItem() == ConsoleDisconnectAction.SHUTDOWN) {
+            getConsoleDisconnectActionDelay().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE)});
+        } else {
+            getConsoleDisconnectActionDelay().setIsValid(true);
+        }
+
         setValidTab(TabName.CONSOLE_TAB, isValidTab(TabName.CONSOLE_TAB) &&
-                getIsUsbEnabled().getIsValid() && getNumOfMonitors().getIsValid() && getSpiceProxy().getIsValid());
+                getIsUsbEnabled().getIsValid() && getNumOfMonitors().getIsValid() && getSpiceProxy().getIsValid() && getConsoleDisconnectActionDelay().getIsValid());
 
         setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid());
 

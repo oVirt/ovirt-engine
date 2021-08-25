@@ -516,6 +516,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public ListModelListBoxEditor<ConsoleDisconnectAction> consoleDisconnectActionEditor;
 
     @UiField
+    @Path("consoleDisconnectActionDelay.entity")
+    public IntegerEntityModelTextBoxEditor consoleDisconnectActionDelayEditor;
+
+    @UiField
     @Ignore
     public EnableableFormLabel monitorsLabel;
 
@@ -2089,6 +2093,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isUsbEnabledEditor.setTabIndex(nextTabIndex++);
         consoleDisconnectActionEditor.setTabIndexes(nextTabIndex++);
         numOfMonitorsEditor.setTabIndex(nextTabIndex++);
+        consoleDisconnectActionDelayEditor.setTabIndexes(nextTabIndex++);
         isSmartcardEnabledEditor.setTabIndex(nextTabIndex++);
         ssoMethodNone.setTabIndex(nextTabIndex++);
         ssoMethodGuestAgent.setTabIndex(nextTabIndex++);
@@ -2197,6 +2202,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 graphicsTypeEditor,
                 isUsbEnabledEditor,
                 consoleDisconnectActionEditor,
+                consoleDisconnectActionDelayEditor,
                 isSmartcardEnabledEditor,
                 expander,
                 numOfMonitorsEditor,
@@ -2290,6 +2296,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 // console tab
                 isUsbEnabledEditor,
                 consoleDisconnectActionEditor,
+                consoleDisconnectActionDelayEditor,
                 monitors,
                 ssoMethodLabel,
                 ssoMethodNone,

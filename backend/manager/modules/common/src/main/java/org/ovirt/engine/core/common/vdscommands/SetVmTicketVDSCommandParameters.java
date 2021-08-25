@@ -14,13 +14,14 @@ public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase
     private GraphicsType graphicsType;
     private ConsoleDisconnectAction disconnectAction;
     private Version compatibilityVersion;
+    private int consoleDisconnectActionDelay;
 
     public SetVmTicketVDSCommandParameters() {
     }
 
     public SetVmTicketVDSCommandParameters(Guid vdsId, Guid vmId, String ticket, int validTime, String userName,
                                            Guid userId, GraphicsType graphicsType, ConsoleDisconnectAction disconnectAction,
-                                           Version compatibilityVersion) {
+                                           Version compatibilityVersion, int consoleDisconnectActionDelay) {
         super(vdsId, vmId);
         this.ticket = ticket;
         this.validTime = validTime;
@@ -29,6 +30,7 @@ public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase
         this.graphicsType = graphicsType;
         this.disconnectAction = disconnectAction;
         this.compatibilityVersion = compatibilityVersion;
+        this.consoleDisconnectActionDelay = consoleDisconnectActionDelay;
     }
 
     public String getTicket() {
@@ -59,6 +61,10 @@ public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase
         return compatibilityVersion;
     }
 
+    public int getConsoleDisconnectActionDelay() {
+        return consoleDisconnectActionDelay;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
@@ -67,6 +73,7 @@ public class SetVmTicketVDSCommandParameters extends VdsAndVmIDVDSParametersBase
                 .append("validTime", getValidTime())
                 .append("userName", getUserName())
                 .append("userId", getUserId())
-                .append("disconnectAction", getDisconnectAction());
+                .append("disconnectAction", getDisconnectAction())
+                .append("consoleDisconnectActionDelay", getConsoleDisconnectActionDelay());
     }
 }

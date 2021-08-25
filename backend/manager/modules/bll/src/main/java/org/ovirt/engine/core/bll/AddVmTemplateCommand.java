@@ -983,6 +983,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getLargeIconId(),
                         getParameters().getMasterVm().getNumOfIoThreads(),
                         getParameters().getMasterVm().getConsoleDisconnectAction(),
+                        getParameters().getMasterVm().getConsoleDisconnectActionDelay(),
                         getParameters().getMasterVm().getCustomCompatibilityVersion(),
                         getParameters().getMasterVm().getMigrationPolicyId(),
                         getParameters().getMasterVm().getLeaseStorageDomainId(),

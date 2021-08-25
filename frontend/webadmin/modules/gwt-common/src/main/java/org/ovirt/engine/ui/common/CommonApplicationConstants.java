@@ -533,6 +533,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String consoleDisconnectActionVmPopup();
 
+    String consoleDisconnectActionDelayVmPopup();
+
     String monitorsVmPopup();
 
     String hostVmPopup();

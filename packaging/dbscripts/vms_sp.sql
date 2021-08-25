@@ -727,7 +727,8 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_virtio_scsi_multi_queues INT,
     v_use_tsc_frequency BOOLEAN,
     v_namespace VARCHAR(253),
-    v_balloon_enabled BOOLEAN)
+    v_balloon_enabled BOOLEAN,
+    v_console_disconnect_action_delay SMALLINT)
   RETURNS VOID
    AS $procedure$
 DECLARE
@@ -812,7 +813,8 @@ INSERT INTO vm_static(description,
                       virtio_scsi_multi_queues,
                       use_tsc_frequency,
                       namespace,
-                      balloon_enabled)
+                      balloon_enabled,
+                      console_disconnect_action_delay)
     VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
@@ -889,7 +891,8 @@ INSERT INTO vm_static(description,
            v_virtio_scsi_multi_queues,
            v_use_tsc_frequency,
            v_namespace,
-           v_balloon_enabled);
+           v_balloon_enabled,
+           v_console_disconnect_action_delay);
 
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE
@@ -1093,7 +1096,8 @@ v_multi_queues_enabled BOOLEAN,
 v_virtio_scsi_multi_queues INTEGER,
 v_use_tsc_frequency BOOLEAN,
 v_namespace VARCHAR(253),
-v_balloon_enabled BOOLEAN)
+v_balloon_enabled BOOLEAN,
+v_console_disconnect_action_delay SMALLINT)
 
 RETURNS VOID
 
@@ -1177,7 +1181,8 @@ BEGIN
      virtio_scsi_multi_queues = v_virtio_scsi_multi_queues,
      use_tsc_frequency = v_use_tsc_frequency,
      namespace = v_namespace,
-     balloon_enabled = v_balloon_enabled
+     balloon_enabled = v_balloon_enabled,
+     console_disconnect_action_delay = v_console_disconnect_action_delay
      WHERE vm_guid = v_vm_guid
          AND entity_type = 'VM';
 

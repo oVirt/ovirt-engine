@@ -48,6 +48,7 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         // Console
         vm.setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
         vm.setConsoleDisconnectAction(model.getConsoleDisconnectAction().getSelectedItem());
+        vm.setConsoleDisconnectActionDelay(model.getConsoleDisconnectActionDelay().getEntity());
         vm.setSpiceFileTransferEnabled(Boolean.TRUE.equals(model.getSpiceFileTransferEnabled().getEntity()));
         vm.setSpiceCopyPasteEnabled(Boolean.TRUE.equals(model.getSpiceCopyPasteEnabled().getEntity()));
         vm.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());

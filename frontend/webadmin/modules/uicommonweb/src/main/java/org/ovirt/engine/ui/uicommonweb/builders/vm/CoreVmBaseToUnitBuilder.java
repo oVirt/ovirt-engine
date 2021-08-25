@@ -31,6 +31,7 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
         model.getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
         model.getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
         model.getConsoleDisconnectAction().setSelectedItem(vm.getConsoleDisconnectAction());
+        model.getConsoleDisconnectActionDelay().setEntity(vm.getConsoleDisconnectActionDelay());
         model.getResumeBehavior().setSelectedItem(vm.getResumeBehavior());
         model.getVmType().setSelectedItem(vm.getVmType());
         if (!Objects.equals(model.getCustomCompatibilityVersion().getSelectedItem(), vm.getCustomCompatibilityVersion())) {
