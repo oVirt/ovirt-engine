@@ -84,6 +84,7 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
         List<Disk> pluggedDisksForVm = diskDao.getAllForVm(getVm().getId(), true);
         List<DiskImage> filteredPluggedDisksForVm = DisksFilter.filterImageDisks(pluggedDisksForVm,
                 ONLY_SNAPABLE, ONLY_ACTIVE);
+        boolean memoryDump = getParameters().isMemorySnapshotSupported() && snapshot.containsMemory();
 
         // 'filteredPluggedDisks' should contain only disks from 'getDisksList()' that are plugged to the VM.
         List<DiskImage> filteredPluggedDisks = ImagesHandler.imagesIntersection(filteredPluggedDisksForVm, getParameters().getCachedSelectedActiveDisks());
@@ -91,7 +92,7 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
         SnapshotVDSCommandParameters parameters = new SnapshotVDSCommandParameters(
                 getVm().getRunOnVds(), getVm().getId(), filteredPluggedDisks);
 
-        if (getParameters().isMemorySnapshotSupported() && snapshot.containsMemory()) {
+        if (memoryDump) {
             parameters.setMemoryDump((DiskImage) diskDao.get(snapshot.getMemoryDiskId()));
             parameters.setMemoryConf((DiskImage) diskDao.get(snapshot.getMetadataDiskId()));
         }
@@ -103,7 +104,11 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
 
         if (!getParameters().isLegacyFlow()) {
             // Get the Live Snapshot timeout
-            parameters.setLiveSnapshotTimeout(Config.getValue(ConfigValues.LiveSnapshotTimeoutInMinutes));
+            if (memoryDump) {
+                parameters.setLiveSnapshotTimeout(Config.getValue(ConfigValues.LiveSnapshotTimeoutInMinutes));
+            } else {
+                parameters.setLiveSnapshotTimeout(Config.getValue(ConfigValues.LiveSnapshotFreezeTimeout));
+            }
         }
 
         return parameters;

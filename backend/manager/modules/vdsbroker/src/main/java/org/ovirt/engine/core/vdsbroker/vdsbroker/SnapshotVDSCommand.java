@@ -35,11 +35,14 @@ public class SnapshotVDSCommand<P extends SnapshotVDSCommandParameters> extends 
         String vmId = getParameters().getVmId().toString();
         String memoryVolume = getParameters().isMemoryVolumeExists() ? createMemoryStringFromDisks() : "";
         if (getParameters().isVmFrozen()) {
-            return getBroker().snapshot(vmId, createDisksMap(), memoryVolume, getParameters().isVmFrozen(), taskId.toString(), getParameters().getLiveSnapshotTimeout());
+            return getBroker().snapshot(vmId, createDisksMap(), memoryVolume, getParameters().isVmFrozen(),
+                    taskId.toString(), getParameters().getLiveSnapshotTimeout());
         } else if (getParameters().isMemoryVolumeExists()) {
-            return getBroker().snapshot(vmId, createDisksMap(), memoryVolume, taskId.toString(), getParameters().getLiveSnapshotTimeout());
+            return getBroker().snapshot(vmId, createDisksMap(), memoryVolume, taskId.toString(),
+                    getParameters().getLiveSnapshotTimeout());
         } else {
-            return getBroker().snapshot(vmId, createDisksMap(), taskId.toString(), getParameters().getLiveSnapshotTimeout());
+            return getBroker().snapshot(vmId, createDisksMap(), taskId.toString(),
+                    getParameters().getLiveSnapshotTimeout());
         }
     }
 
