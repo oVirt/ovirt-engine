@@ -256,6 +256,7 @@ def getPackageManager(logger=None):
     except (ImportError, RuntimeError):
         try:
             from otopi import miniyum
+
             # yum does not raises validation exceptions in constructor,
             # then its not worth instantiating it to test.
             if logger is not None:
