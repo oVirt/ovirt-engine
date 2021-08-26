@@ -67,7 +67,9 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
 
         setVmTemplateId(getParameters().getContainerId());
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
-        imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
+        if (imageToDestinationDomainMap == null) {
+            imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
+        }
         imageFromSourceDomainMap = new HashMap<>();
     }
 
