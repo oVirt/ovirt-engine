@@ -361,8 +361,9 @@ Requires:	ovirt-dependencies >= 4.4.2
 
 # cinderlib integration
 # https://bugzilla.redhat.com/1955375
-Requires:	ceph-common
-Requires:	python3-cinderlib
+# Reverting for 4.4.8.z - https://bugzilla.redhat.com/1997663
+# Requires:	ceph-common
+# Requires:	python3-cinderlib
 
 %{?extra_main_requires}
 
