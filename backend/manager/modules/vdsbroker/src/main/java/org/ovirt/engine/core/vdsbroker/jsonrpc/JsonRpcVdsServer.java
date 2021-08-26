@@ -12,6 +12,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicket;
@@ -1076,13 +1077,17 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @Override
     public StatusOnlyReturn snapshot(String vmId, Map<String, String>[] disks, String memory, boolean frozen, String jobUUID, int timeout) {
+        String timeoutType = "freeze_timeout";
+        if (StringUtils.isNotEmpty(memory)) {
+            timeoutType = "timeout";
+        }
         JsonRpcRequest request =
                 new RequestBuilder("VM.snapshot").withParameter("vmID", vmId)
                         .withParameter("snapDrives", new ArrayList<>(Arrays.asList(disks)))
                         .withOptionalParameter("snapMemory", memory)
                         .withParameter("frozen", frozen)
                         .withParameter("jobUUID", jobUUID)
-                        .withParameter("timeout", timeout)
+                        .withParameter(timeoutType, timeout)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
