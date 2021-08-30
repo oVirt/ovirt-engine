@@ -663,12 +663,13 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     private String mapTimeZone(String timezone) {
-        // changes timezones mappings that existed before and valid only to non-windows, to mappings that is valid to
-        // both non-windows and windows
+        // changes timezones mappings that:
+        // - existed before and valid only to non-windows, to mappings that is valid to both non-windows and windows
+        // - existed before but got removed because similar time zone exist, to mapping that exists
         switch (timezone) {
         case "America/Indianapolis":
             return "America/New_York";
-        case "US Eastern Standard Time (Indiana)":
+        case "US Eastern Standard Time":
             return "Eastern Standard Time";
         case "Atlantic/Reykjavik":
             return "Etc/GMT";
