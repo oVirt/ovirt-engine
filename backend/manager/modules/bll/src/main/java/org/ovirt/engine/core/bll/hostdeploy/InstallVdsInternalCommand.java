@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
-import static org.ovirt.engine.core.common.businessentities.ExternalNetworkPluginType.OVIRT_PROVIDER_OVN;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -22,6 +20,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -34,9 +33,6 @@ import org.ovirt.engine.core.common.action.VdsOperationActionParameters.Authenti
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
-import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
-import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.ReplaceHostConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -62,7 +58,6 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.PKIResources;
@@ -77,8 +72,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
 
     private static Logger log = LoggerFactory.getLogger(InstallVdsInternalCommand.class);
 
-    @Inject
-    private ProviderDao providerDao;
     @Inject
     private VdsStaticDao vdsStaticDao;
     @Inject
@@ -99,6 +92,9 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
 
     @Inject
     private AnsibleRunnerHttpClient runnerClient;
+
+    @Inject
+    private NetworkHelper networkHelper;
 
     private EngineLocalConfig config = EngineLocalConfig.getInstance();
 
@@ -531,26 +527,17 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     }
 
     private String getOvnCentral() {
-        Guid providerId = getCluster().getDefaultNetworkProviderId();
-        if (providerId != null) {
-            Provider provider = providerDao.get(providerId);
-            if (provider.getType() == ProviderType.EXTERNAL_NETWORK ) {
-                OpenstackNetworkProviderProperties properties =
-                        (OpenstackNetworkProviderProperties)provider.getAdditionalProperties();
-                if (OVIRT_PROVIDER_OVN.toString().equals(properties.getPluginType())) {
-                    String ovnCentral = NetworkUtils.getIpAddress(provider.getUrl());
-                    if (ovnCentral == null) {
-                        throw new VdsInstallException(
-                                VDSStatus.InstallFailed,
-                                String.format(
-                                        "Failed to extract OVN central IP from %1$s",
-                                        provider.getUrl()));
-                    }
-                    return ovnCentral;
-                }
-            }
+        var provider = networkHelper.getOvirtProviderOvn(getCluster().getDefaultNetworkProviderId());
+        if (provider == null) {
+            return null;
         }
-        return null;
+
+        String ovnCentral = NetworkUtils.getIpAddress(provider.getUrl());
+        if (ovnCentral == null) {
+            throw new VdsInstallException(VDSStatus.InstallFailed,
+                    String.format("Failed to extract OVN central IP from %1$s", provider.getUrl()));
+        }
+        return ovnCentral;
     }
 
     @Override

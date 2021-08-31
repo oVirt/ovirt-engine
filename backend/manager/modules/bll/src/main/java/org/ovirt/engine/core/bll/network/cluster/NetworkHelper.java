@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import static org.ovirt.engine.core.common.businessentities.ExternalNetworkPluginType.OVIRT_PROVIDER_OVN;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -19,6 +21,9 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
@@ -32,6 +37,7 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 /**
@@ -54,6 +60,9 @@ public class NetworkHelper {
 
     @Inject
     private NetworkFilterDao networkFilterDao;
+
+    @Inject
+    private ProviderDao providerDao;
 
     @Inject
     private RemoveNetworkParametersBuilder removeNetworkParametersBuilder;
@@ -224,6 +233,20 @@ public class NetworkHelper {
                 providerNetwork.setPhysicalNetworkId(network.getId());
             }
         }
+    }
+
+    public Provider<?> getOvirtProviderOvn(Guid providerId) {
+        if (providerId == null) {
+            return null;
+        }
+        var provider = providerDao.get(providerId);
+        if (provider.getType() == ProviderType.EXTERNAL_NETWORK) {
+            var properties = (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
+            if (OVIRT_PROVIDER_OVN.toString().equals(properties.getPluginType())) {
+                return provider;
+            }
+        }
+        return null;
     }
 
     private boolean isSupportedExternalType(ProviderNetwork providerNetwork) {
