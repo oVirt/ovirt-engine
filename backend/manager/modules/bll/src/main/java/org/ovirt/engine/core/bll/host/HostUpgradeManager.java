@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CertificationValidityChecker;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.PKIResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +55,9 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
 
     @Inject
     private ClusterDao clusterDao;
+
+    @Inject
+    private NetworkHelper networkHelper;
 
     @Override
     public HostUpgradeManagerResult checkForUpdates(final VDS host) {
@@ -182,6 +187,20 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                     PKIResources.getQemuCaCertificate()
                             .toString(PKIResources.Format.OPENSSH_PUBKEY)
                             .replace("\n", ""))
-            .variable("host_deploy_origin_type", Config.getValue(ConfigValues.OriginType));
+            .variable("host_deploy_origin_type", Config.getValue(ConfigValues.OriginType))
+            .variable("host_deploy_ovn_central", getOvnCentral(cluster))
+            .variable("host_deploy_ovn_tunneling_interface", NetworkUtils.getHostIp(host));
+    }
+
+    private String getOvnCentral(Cluster cluster) {
+        var provider = networkHelper.getOvirtProviderOvn(cluster.getDefaultNetworkProviderId());
+        if (provider == null) {
+            return null;
+        }
+        String ovnCentral = NetworkUtils.getIpAddress(provider.getUrl());
+        if (ovnCentral == null) {
+            throw new RuntimeException(String.format("Failed to extract OVN central IP from %1$s", provider.getUrl()));
+        }
+        return ovnCentral;
     }
 }

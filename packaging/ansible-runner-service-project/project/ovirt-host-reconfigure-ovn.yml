@@ -1,0 +1,16 @@
+- name: Fetch installed packages
+  package_facts:
+    manager: auto
+
+- name: Check version of ovirt-openvswitch after upgrade
+  set_fact:
+    ovirt_openvswitch_post: "{{ ansible_facts.packages['ovirt-openvswitch'] | first }}"
+
+- name: Reconfigure OVN for oVirt
+  command: >
+    vdsm-tool ovn-config {{ ovn_central }} {{ ovn_tunneling_interface }}
+  when:
+    - ovirt_openvswitch_pre.version is version('2.11', '==')
+    - ovirt_openvswitch_post.version is version('2.15', '>=')
+    - ovn_central is defined
+    - ovn_central | ipaddr

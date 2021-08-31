@@ -26,3 +26,11 @@
 - name: Detect if host is a prebuilt image
   set_fact:
     node_host: "{{ not node_presence.changed }}"
+
+- name: Check version of ovirt-openvswitch before upgrade
+  set_fact:
+    ovirt_openvswitch_pre: "{{ ansible_facts.packages['ovirt-openvswitch'] | first }}"
+  when:
+    - check_ovs_version is defined
+    - check_ovs_version | bool
+    - ovirt_openvswitch_pre is not defined

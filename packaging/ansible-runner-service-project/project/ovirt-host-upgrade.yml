@@ -73,3 +73,4 @@
 
   post_tasks:
     - include: ovirt-host-remove-yum-conf.yml
+    - include: ovirt-host-reconfigure-ovn.yml
