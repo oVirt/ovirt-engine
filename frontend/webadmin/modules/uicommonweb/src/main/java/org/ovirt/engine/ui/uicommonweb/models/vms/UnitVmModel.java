@@ -3360,27 +3360,26 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     private void validateMaxMemorySize() {
-        final int maxMemSize = getMaxMemorySize().getEntity();
+        getMaxMemorySize().setIsValid(true);
 
+        final int maxMemSize = getMaxMemorySize().getEntity();
         if (maxMemSize < getMemSize().getEntity()) {
-            getMaxMemorySize().setIsValid(false);
             getMaxMemorySize().getInvalidityReasons().add(
                     ConstantsManager.getInstance().getConstants().maxMemoryHasToBeLargerThanMemorySize());
+            getMaxMemorySize().setIsValid(false);
             return;
         }
 
         final int maxMaxMemorySize = AsyncDataProvider.getInstance()
                 .getMaxMaxMemorySize(getOSType().getSelectedItem(), getCompatibilityVersion());
         if (maxMemSize > maxMaxMemorySize) {
-            getMaxMemorySize().setIsValid(false);
             final String errorMessage = getOSType().getSelectedItem() != null
                     ? ConstantsManager.getInstance().getMessages().maxMaxMemoryForSelectedOsIs(maxMaxMemorySize)
                     : ConstantsManager.getInstance().getMessages().maxMaxMemoryIs(maxMaxMemorySize);
             getMaxMemorySize().getInvalidityReasons().add(errorMessage);
+            getMaxMemorySize().setIsValid(false);
             return;
         }
-
-        getMaxMemorySize().setIsValid(true);
     }
 
     private void validateMemoryAlignment(EntityModel<Integer> model) {
