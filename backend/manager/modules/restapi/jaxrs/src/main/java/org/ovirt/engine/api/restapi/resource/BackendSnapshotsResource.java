@@ -38,10 +38,17 @@ public class BackendSnapshotsResource
     private static final Logger log = LoggerFactory.getLogger(BackendSnapshotsResource.class);
 
     protected Guid parentId;
+    private boolean parseVmConfiguration;
 
     public BackendSnapshotsResource(Guid parentId) {
         super(Snapshot.class, org.ovirt.engine.core.common.businessentities.Snapshot.class);
         this.parentId = parentId;
+        parseVmConfiguration = true;
+    }
+
+    protected BackendSnapshotsResource(Guid parentId, boolean parseVmConfiguration) {
+        this(parentId);
+        this.parseVmConfiguration = parseVmConfiguration;
     }
 
     @Override
@@ -108,18 +115,20 @@ public class BackendSnapshotsResource
             Snapshot snapshot = map(entity, null);
             snapshot = populate(snapshot, entity);
             snapshot = addLinks(snapshot);
-            try {
-                snapshot = addVmConfiguration(entity, snapshot);
-            } catch (WebFaultException wfe) {
-                // Avoid adding the snapshot to the response if the VM configuration is missing.
-                // This scenario might be caused by initiating a snapshot deletion request
-                // right before listing the snapshots. See: https://bugzilla.redhat.com/1530603
-                if (Response.Status.NOT_FOUND.getStatusCode() == wfe.getResponse().getStatus()) {
-                    log.warn("Missing VM configuration for snapshot \"{}\". " +
-                             "Excluding the snapshot from response.", snapshot.getDescription());
-                    continue;
+            if (parseVmConfiguration) {
+                try {
+                    snapshot = addVmConfiguration(entity, snapshot);
+                } catch (WebFaultException wfe) {
+                    // Avoid adding the snapshot to the response if the VM configuration is missing.
+                    // This scenario might be caused by initiating a snapshot deletion request
+                    // right before listing the snapshots. See: https://bugzilla.redhat.com/1530603
+                    if (Response.Status.NOT_FOUND.getStatusCode() == wfe.getResponse().getStatus()) {
+                        log.warn("Missing VM configuration for snapshot \"{}\". " +
+                                "Excluding the snapshot from response.", snapshot.getDescription());
+                        continue;
+                    }
+                    throw wfe;
                 }
-                throw wfe;
             }
             snapshots.getSnapshots().add(snapshot);
         }

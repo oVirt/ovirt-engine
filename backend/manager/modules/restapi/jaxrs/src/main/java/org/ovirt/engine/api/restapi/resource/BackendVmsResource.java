@@ -111,6 +111,7 @@ public class BackendVmsResource extends
     private static final String CD_ROMS = "cdroms";
     private static final String HOST_DEVICES = "host_devices";
     private static final String WATCHDOGS = "watchdogs";
+    private static final String SNAPSHOTS = "snapshots";
 
     private Map<String, VM> vmIdToVm = Collections.emptyMap();
 
@@ -754,6 +755,11 @@ public class BackendVmsResource extends
             });
             node.setFollowed(true);
         });
+        findSnapshots(linksTree).ifPresent(node -> {
+            Vms vms = (Vms) entity;
+            vms.getVms().forEach(this::setSnapshots);
+            node.setFollowed(true);
+        });
     }
 
     private List<VmWatchdog> getWatchdogs(Vms vms) {
@@ -784,6 +790,14 @@ public class BackendVmsResource extends
         return inject(new BackendVmWatchdogsResource(asGuid(vmId), watchdogs));
     }
 
+    private void setSnapshots(Vm vm) {
+        vm.setSnapshots(getBackendSnapshotsResource(vm.getId()).list());
+    }
+
+    private BackendSnapshotsResource getBackendSnapshotsResource(String vmId) {
+        return inject(new BackendSnapshotsResource(asGuid(vmId), false));
+    }
+
     /**
      * This is a special case of searching the the links tree: we know that graphics_consoles must be the direct child
      * of the root.
@@ -802,6 +816,10 @@ public class BackendVmsResource extends
 
     private Optional<LinksTreeNode> findWatchdogs(LinksTreeNode linksTree) {
         return findNode(linksTree, WATCHDOGS);
+    }
+
+    private Optional<LinksTreeNode> findSnapshots(LinksTreeNode linksTree) {
+        return findNode(linksTree, SNAPSHOTS);
     }
 
     protected InstanceType lookupInstance(Template template) {
