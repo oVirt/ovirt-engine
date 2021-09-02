@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.validation.annotation.ValidSerialNumberPolic
 import org.ovirt.engine.core.common.validation.annotation.ValidTimeZone;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
+import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.common.validation.group.StartEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -36,7 +37,7 @@ import org.ovirt.engine.core.compat.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@ValidTimeZone(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, StartEntity.class})
+@ValidTimeZone(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, ImportClonedEntity.class, StartEntity.class})
 @ValidSerialNumberPolicy(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, StartEntity.class})
 public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commented, HasSerialNumberPolicy, HasMigrationOptions, Comparable<VmBase> {
     private static final long serialVersionUID = 1078548170257965614L;
