@@ -23,7 +23,8 @@ public class InternalPolicyUnitsTest {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.SpmVmGraceForEvenGuestDistribute, 5),
                 MockConfigDescriptor.of(ConfigValues.MigrationThresholdForEvenGuestDistribute, 5),
-                MockConfigDescriptor.of(ConfigValues.HighVmCountForEvenGuestDistribute, 10)
+                MockConfigDescriptor.of(ConfigValues.HighVmCountForEvenGuestDistribute, 10),
+                MockConfigDescriptor.of(ConfigValues.HostedEngineMaximumHighAvailabilityScore, 3400)
         );
     }
 

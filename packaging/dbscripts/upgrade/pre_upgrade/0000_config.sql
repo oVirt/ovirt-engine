@@ -762,6 +762,7 @@ select fn_db_add_config_value('AutoImportHostedEngine','true','general');
 select fn_db_add_config_value('AllowEditingHostedEngine','true','general');
 select fn_db_add_config_value('HostedEngineConfigDiskSizeInBytes','20480','general');
 select fn_db_add_config_value('HostedEngineConfigurationImageGuid','','general');
+select fn_db_add_config_value('HostedEngineMaximumHighAvailabilityScore','3400','general');
 
 -- Image IO
 select fn_db_add_config_value('ImageDaemonPort','54322','general');

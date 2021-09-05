@@ -9,6 +9,8 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -22,7 +24,10 @@ import org.ovirt.engine.core.compat.Guid;
 )
 public class HostedEngineHAClusterWeightPolicyUnit extends PolicyUnitImpl {
     private static int DEFAULT_WEIGHT = 1;
-    private static int MAXIMUM_HA_SCORE = 2400;
+
+    public static int getMaxHAScore() {
+        return Config.<Integer> getValue(ConfigValues.HostedEngineMaximumHighAvailabilityScore);
+    }
 
     public HostedEngineHAClusterWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -42,7 +47,7 @@ public class HostedEngineHAClusterWeightPolicyUnit extends PolicyUnitImpl {
 
         if (isHostedEngine) {
             // If the max HA score is higher than the max weight, then we normalize. Otherwise the ratio is 1, keeping the value as is
-            float ratio = MAXIMUM_HA_SCORE > getMaxSchedulerWeight() ? ((float) getMaxSchedulerWeight() / MAXIMUM_HA_SCORE) : 1;
+            float ratio = getMaxHAScore() > getMaxSchedulerWeight() ? ((float) getMaxSchedulerWeight() / getMaxHAScore()) : 1;
             for (VDS host : hosts) {
                 scores.add(new Pair<>(host.getId(), getMaxSchedulerWeight() - Math.round(host.getHighlyAvailableScore() * ratio)));
             }

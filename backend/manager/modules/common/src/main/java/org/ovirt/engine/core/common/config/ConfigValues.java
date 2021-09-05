@@ -1466,6 +1466,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     HostedEngineConfigDiskSizeInBytes,
 
+    @TypeConverterAttribute(Integer.class)
+    HostedEngineMaximumHighAvailabilityScore,
+
     @TypeConverterAttribute(Boolean.class)
     ipv6IscsiSupported,
 
