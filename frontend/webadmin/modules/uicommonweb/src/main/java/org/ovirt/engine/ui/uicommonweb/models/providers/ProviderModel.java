@@ -450,6 +450,9 @@ public class ProviderModel extends Model {
         getTenantName().setIsAvailable(false);
 
         List<ProviderType> providerTypes = new ArrayList<>(Arrays.asList(ProviderType.values()));
+        // Filtering out the old cinder integration from the providers type list on UI.
+        // The OPENSTACK_VOLUME provider type should be removed from the ProviderType enum (bug 1950731).
+        providerTypes.remove(ProviderType.OPENSTACK_VOLUME);
 
         Collections.sort(providerTypes,
                 Comparator.comparing(t -> EnumTranslator.getInstance().translate(t), new LexoNumericComparator()));
