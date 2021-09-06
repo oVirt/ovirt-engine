@@ -560,6 +560,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                         IMAGE_TYPE, getCommandId());
                 return;
             case SUCCEEDED:
+            case ENDED_SUCCESSFULLY:
                 break;
             default:
                 log.error("Failed to add {} for image transfer command '{}'",
