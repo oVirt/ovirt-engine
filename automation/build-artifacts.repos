@@ -1,3 +1,5 @@
-ovirt-master-tested,https://resources.ovirt.org/repos/ovirt/tested/master/rpm/$distro
+ovirt-master-tested,https://resources.ovirt.org/repos/ovirt/tested/master/rpm/el8
 #isort
 EL8_collection,https://copr-be.cloud.fedoraproject.org/results/sbonazzo/EL8_collection/epel-8-$basearch/
+# CS8 doesn't contain all build utilities
+epel-8,https://download.fedoraproject.org/pub/epel/8/Everything/x86_64/

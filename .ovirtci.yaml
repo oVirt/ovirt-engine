@@ -1,5 +1,5 @@
 distributions:
-  - el8
+  - el8stream
 
 timeout: 8h
 release_branches:
