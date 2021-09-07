@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
 import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
@@ -43,12 +44,14 @@ public class ClusterVmListModel extends VmListModel<Cluster> {
             final VmDevicesListModel<VM> vmDevicesListModel,
             final VmAffinityLabelListModel vmAffinityLabelListModel,
             final VmErrataCountModel vmErrataCountModel,
-            final VmGuestContainerListModel vmGuestContainerListModel) {
+            final VmGuestContainerListModel vmGuestContainerListModel,
+            final ConfirmationModelSettingsManager confirmationModelSettingsManager) {
         super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel,
                 vmSnapshotListModel, vmEventListModel, vmAppListModel,
                 permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel,
                 importVmsModelProvider, vmHostDeviceListModel, vmDevicesListModel,
-                vmAffinityLabelListModel, vmErrataCountModel, vmGuestContainerListModel);
+                vmAffinityLabelListModel, vmErrataCountModel, vmGuestContainerListModel,
+                confirmationModelSettingsManager);
         getSearchNextPageCommand().setIsAvailable(false);
         getSearchPreviousPageCommand().setIsAvailable(false);
     }

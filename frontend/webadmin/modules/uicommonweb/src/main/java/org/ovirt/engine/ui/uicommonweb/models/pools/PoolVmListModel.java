@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
 import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
@@ -63,12 +64,14 @@ public class PoolVmListModel extends VmListModel<VmPool> {
             final VmDevicesListModel<VM> vmDevicesListModel,
             final VmAffinityLabelListModel vmAffinityLabelListModel,
             final VmErrataCountModel vmErrataCountModel,
-            final VmGuestContainerListModel vmGuestContainerListModel) {
+            final VmGuestContainerListModel vmGuestContainerListModel,
+            final ConfirmationModelSettingsManager confirmationModelSettingsManager) {
         super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel,
                 vmSnapshotListModel, vmEventListModel, vmAppListModel,
                 permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel,
                 importVmsModelProvider, vmHostDeviceListModel, vmDevicesListModel,
-                vmAffinityLabelListModel, vmErrataCountModel, vmGuestContainerListModel);
+                vmAffinityLabelListModel, vmErrataCountModel, vmGuestContainerListModel,
+                confirmationModelSettingsManager);
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
         setHashName("virtual_machines"); //$NON-NLS-1$

@@ -77,6 +77,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.ImagesDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -140,6 +141,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private UICommand newVMCommand;
 
+    private static final String SUSPEND = "Suspend"; //$NON-NLS-1$
     private static final String SHUTDOWN = "Shutdown"; //$NON-NLS-1$
     private static final String STOP     = "Stop"; //$NON-NLS-1$
     private static final String REBOOT   = "Reboot"; //$NON-NLS-1$
@@ -184,14 +186,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         privateRunCommand = value;
     }
 
-    private UICommand privatePauseCommand;
+    private UICommand privateSuspendCommand;
 
-    public UICommand getPauseCommand() {
-        return privatePauseCommand;
+    public UICommand getSuspendCommand() {
+        return privateSuspendCommand;
     }
 
-    private void setPauseCommand(UICommand value) {
-        privatePauseCommand = value;
+    private void setSuspendCommand(UICommand value) {
+        privateSuspendCommand = value;
     }
 
     private UICommand privateStopCommand;
@@ -480,6 +482,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         return guestContainerListModel;
     }
 
+    private final ConfirmationModelSettingsManager confirmationModelSettingsManager;
+
     @Inject
     public VmListModel(final VmGeneralModel vmGeneralModel,
             final VmInterfaceListModel vmInterfaceListModel,
@@ -495,7 +499,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             final VmDevicesListModel<VM> vmDevicesListModel,
             final VmAffinityLabelListModel vmAffinityLabelListModel,
             final VmErrataCountModel vmErrataCountModel,
-            final VmGuestContainerListModel vmGuestContainerListModel) {
+            final VmGuestContainerListModel vmGuestContainerListModel,
+            final ConfirmationModelSettingsManager confirmationModelSettingsManager) {
         this.importVmsModelProvider = importVmsModelProvider;
         this.generalModel = vmGeneralModel;
         this.interfaceListModel = vmInterfaceListModel;
@@ -511,6 +516,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         this.guestInfoModel = vmGuestInfoModel;
         this.errataCountModel = vmErrataCountModel;
         this.guestContainerListModel = vmGuestContainerListModel;
+        this.confirmationModelSettingsManager = confirmationModelSettingsManager;
 
         setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
@@ -532,7 +538,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setRunCommand(new UICommand("Run", this, true)); //$NON-NLS-1$
-        setPauseCommand(new UICommand("Pause", this)); //$NON-NLS-1$
+        setSuspendCommand(new UICommand("Suspend", this)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
         setShutdownCommand(new UICommand("Shutdown", this)); //$NON-NLS-1$
         setRebootCommand(new UICommand("Reboot", this)); //$NON-NLS-1$
@@ -1427,6 +1433,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         } else if (actionName.equals(RESET)) {
             model.setHelpTag(HelpTag.reset_virtual_machine);
             model.setHashName("reset_virtual_machine"); //$NON-NLS-1$
+        } else if (actionName.equals(SUSPEND)) {
+            model.setHelpTag(HelpTag.suspend_virtual_machine);
+            model.setHashName(HelpTag.suspend_virtual_machine.name());
+            model.getDoNotShowAgain().setIsAvailable(true);
         }
 
         model.setMessage(message);
@@ -1531,14 +1541,36 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         onPowerAction(ActionType.ResetVm, vm -> new VmOperationParameterBase(vm.getId()));
     }
 
-    private void pause() {
-        ArrayList<ActionParametersBase> list = new ArrayList<>();
-        for (Object item : getSelectedItems()) {
-            VM a = (VM) item;
-            list.add(new VmOperationParameterBase(a.getId()));
+    private void suspend() {
+        if (confirmationModelSettingsManager.isConfirmSuspendingVm()) {
+            UIConstants constants = ConstantsManager.getInstance().getConstants();
+            powerAction(SUSPEND,
+                    constants.suspendVirtualMachinesTitle(),
+                    constants.areYouSureYouWantToSuspendTheFollowingVirtualMachinesMsg());
+        } else {
+            ArrayList<ActionParametersBase> paramsList = new ArrayList<>();
+            for (Object item : getSelectedItems()) {
+                VM a = (VM) item;
+                paramsList.add(new VmOperationParameterBase(a.getId()));
+            }
+            Frontend.getInstance().runMultipleAction(ActionType.HibernateVm, paramsList, result -> {}, null);
+        }
+    }
+
+    private void onSuspend() {
+        ConfirmationModel model = (ConfirmationModel) getWindow();
+
+        if (model.getProgress() != null) {
+            return;
         }
 
-        Frontend.getInstance().runMultipleAction(ActionType.HibernateVm, list, result -> {}, null);
+        if (model.getDoNotShowAgain().getEntity()) {
+            confirmationModelSettingsManager.setConfirmSuspendingVm(
+                    !model.getDoNotShowAgain().getEntity(),
+                    false);
+        }
+
+        onPowerAction(ActionType.HibernateVm, vm -> new VmOperationParameterBase(vm.getId()));
     }
 
     private void run() {
@@ -2000,7 +2032,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 && ActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.RunVm));
         getCloneVmCommand().setIsExecutionAllowed(singleVmSelected
                 && ActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.CloneVm));
-        getPauseCommand().setIsExecutionAllowed(vmsSelected
+        getSuspendCommand().setIsExecutionAllowed(vmsSelected
                 && ActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.HibernateVm));
         getShutdownCommand().setIsExecutionAllowed(vmsSelected
                 && ActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.ShutdownVm));
@@ -2110,8 +2142,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             remove();
         } else if (command == getRunCommand()) {
             run();
-        } else if (command == getPauseCommand()) {
-            pause();
+        } else if (command == getSuspendCommand()) {
+            suspend();
         } else if (command == getStopCommand()) {
             stop();
         } else if (command == getShutdownCommand()) {
@@ -2175,6 +2207,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             onReboot();
         } else if ("OnReset".equals(command.getName())) { //$NON-NLS-1$
             onReset();
+        } else if ("OnSuspend".equals(command.getName())) { //$NON-NLS-1$
+            onSuspend();
         } else if ("OnChangeCD".equals(command.getName())) { //$NON-NLS-1$
             onChangeCD();
         } else if (command.getName().equals("closeVncInfo") || // $NON-NLS-1$

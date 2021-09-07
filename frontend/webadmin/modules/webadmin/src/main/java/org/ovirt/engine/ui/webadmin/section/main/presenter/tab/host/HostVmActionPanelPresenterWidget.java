@@ -50,7 +50,7 @@ public class HostVmActionPanelPresenterWidget extends
                 IconType.MOON_O) {
             @Override
             protected UICommand resolveCommand() {
-                return getDetailModel().getPauseCommand();
+                return getDetailModel().getSuspendCommand();
             }
 
             @Override

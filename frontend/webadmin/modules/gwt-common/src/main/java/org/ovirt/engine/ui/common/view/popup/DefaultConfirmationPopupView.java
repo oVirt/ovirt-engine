@@ -3,13 +3,20 @@ package org.ovirt.engine.ui.common.view.popup;
 import java.util.ArrayList;
 
 import org.gwtbootstrap3.client.ui.constants.AlertType;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -33,11 +40,22 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
     @UiField
     FlowPanel descriptionPanel;
 
+    @UiField(provided = true)
+    @Path(value = "doNotShowAgain.entity")
+    @WithElementId
+    protected EntityModelCheckBoxEditor doNotShowAgain;
+
     private final Driver driver = GWT.create(Driver.class);
+
+    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public DefaultConfirmationPopupView(EventBus eventBus) {
         super(eventBus);
+
+        doNotShowAgain = new EntityModelCheckBoxEditor(Align.RIGHT);
+        doNotShowAgain.setLabel(constants.doNotShowAgain());
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
@@ -54,6 +72,14 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
 
             for (String item : items) {
                 descriptionPanel.add(new Label(getItemTextFormatted(item)));
+            }
+        });
+
+        // Bind "DoNotShowAgain.IsAvailable"
+        object.getDoNotShowAgain().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
+                EntityModel<?> entity = (EntityModel<?>) sender;
+                doNotShowAgain.setVisible(entity.getIsAvailable());
             }
         });
     }

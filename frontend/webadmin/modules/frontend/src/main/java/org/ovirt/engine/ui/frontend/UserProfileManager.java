@@ -156,6 +156,7 @@ public class UserProfileManager {
 
     public void uploadUserProfileProperty(UserProfileProperty update,
             BiConsumer<FrontendActionAsyncResult, UserProfileProperty> successCallback,
+            IFrontendActionAsyncCallback errorCallback,
             Object model, boolean showErrorDialog) {
         if (Guid.Empty.equals(update.getPropertyId())) {
             createUserProfileProperty(
@@ -167,9 +168,7 @@ public class UserProfileManager {
                                 .withUserId(frontend.getLoggedInUser().getId())
                                 .withPropertyId(id).build());
                     },
-                    result -> {
-                        // for future use
-                    },
+                    errorCallback,
                     model,
                     showErrorDialog);
             return;
@@ -177,9 +176,7 @@ public class UserProfileManager {
 
         updateUserProfileProperty(update,
                 result -> successCallback.accept(result, result.getReturnValue().getActionReturnValue()),
-                result -> {
-                    // for future use
-                },
+                errorCallback,
                 model,
                 showErrorDialog);
     }
@@ -192,6 +189,7 @@ public class UserProfileManager {
                     setWebAdminUserOption(updated);
                     successCallback.executed(result);
                 },
+                result -> {},
                 model,
                 showErrorDialog);
     }

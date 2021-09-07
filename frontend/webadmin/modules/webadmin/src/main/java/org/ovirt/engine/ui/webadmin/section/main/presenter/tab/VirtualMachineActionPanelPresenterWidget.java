@@ -78,7 +78,7 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
         addActionButton(new WebAdminImageButtonDefinition<Void, VM>(constants.suspendVm(), IconType.MOON_O) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getPauseCommand();
+                return getModel().getSuspendCommand();
             }
         });
 

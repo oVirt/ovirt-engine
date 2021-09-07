@@ -75,6 +75,16 @@ public class ConfirmationModel extends ListModel {
         this.alertType = alertType;
     }
 
+    private EntityModel<Boolean> doNotShowAgain;
+
+    public EntityModel<Boolean> getDoNotShowAgain() {
+        return doNotShowAgain;
+    }
+
+    public void setDoNotShowAgain(EntityModel<Boolean> value) {
+        doNotShowAgain = value;
+    }
+
     public ConfirmationModel() {
         setTitle(ConstantsManager.getInstance().getConstants().confirmTitle());
         setLatch(new EntityModel<Boolean>());
@@ -84,6 +94,10 @@ public class ConfirmationModel extends ListModel {
         setForce(new EntityModel<Boolean>());
         getForce().setEntity(false);
         getForce().setIsAvailable(false);
+
+        setDoNotShowAgain(new EntityModel<Boolean>());
+        getDoNotShowAgain().setEntity(false);
+        getDoNotShowAgain().setIsAvailable(false);
 
         setReason(new EntityModel<String>());
 

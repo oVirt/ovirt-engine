@@ -341,6 +341,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String forceRemove();
 
+    String doNotShowAgain();
+
     String yes();
 
     String no();

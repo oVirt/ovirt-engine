@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.system.ApplicationFocusManager;
 import org.ovirt.engine.ui.common.system.AsyncCallFailureHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.system.ClientStorageImpl;
+import org.ovirt.engine.ui.common.system.ConfirmationModelSettingsManagerImpl;
 import org.ovirt.engine.ui.common.system.ErrorPopupManagerImpl;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
@@ -30,6 +31,7 @@ import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 import org.ovirt.engine.ui.uicommonweb.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.SimpleEventBus;
@@ -71,6 +73,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(ElementTooltipUtils.CellWidgetTooltipReaper.class).asEagerSingleton();
         bind(ElementTooltipUtils.TooltipHideOnRootPanelClick.class).asEagerSingleton();
         requestStaticInjection(AssetProvider.class);
+        bind(ConfirmationModelSettingsManager.class).to(ConfirmationModelSettingsManagerImpl.class).in(Singleton.class);
     }
 
     private void bindEventBus() {

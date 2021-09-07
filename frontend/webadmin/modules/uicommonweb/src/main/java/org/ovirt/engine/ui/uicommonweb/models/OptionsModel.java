@@ -96,6 +96,7 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
             Frontend.getInstance().getUserProfileManager().uploadUserProfileProperty(
                     toProp(model.getNewPublicKey()),
                     (result, update) -> confirmSsh(model, update),
+                    result -> {},
                     model,
                     true);
         } else if (model.isSshKeyRemoved()) {
