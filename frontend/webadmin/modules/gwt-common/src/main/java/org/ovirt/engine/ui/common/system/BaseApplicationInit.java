@@ -212,7 +212,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             getLoginModel().autoLogin(loggedUser, userInfo.getWebAdminUserOption());
             clientStorage.storeAllUserSettingsInLocalStorage(Frontend.getInstance()
                     .getWebAdminSettings());
-            confirmationModelSettingsManager.loadSettings();
+            confirmationModelSettingsManager.loadConfirmSuspendingVm(() -> { });
         });
 
         user.setUserInfo(userInfo);

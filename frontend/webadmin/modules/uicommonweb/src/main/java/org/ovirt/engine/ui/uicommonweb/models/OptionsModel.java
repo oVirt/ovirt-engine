@@ -5,6 +5,7 @@ import static org.ovirt.engine.core.common.businessentities.UserProfileProperty.
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
@@ -24,11 +25,14 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
     private UICommand editCommand;
 
     private final LocalStorage localStorage;
+    private final ConfirmationModelSettingsManager confirmationModelSettingsManager;
     private UserProfileProperty sshPublicKeyProp;
 
     @Inject
-    public OptionsModel(LocalStorage localStorage) {
+    public OptionsModel(LocalStorage localStorage,
+            ConfirmationModelSettingsManager confirmationModelSettingsManager) {
         this.localStorage = localStorage;
+        this.confirmationModelSettingsManager = confirmationModelSettingsManager;
         setEditCommand(new UICommand(constants.edit(), this));
     }
 
@@ -73,6 +77,14 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
             model.getOriginalStoragePersistedOnServer().setEntity(settings.isLocalStoragePersistedOnServer());
             model.getLocalStoragePersistedOnServer().setEntity(settings.isLocalStoragePersistedOnServer());
         }, model);
+
+        model.setOriginalConfirmSuspendingVm(confirmationModelSettingsManager.isConfirmSuspendingVm());
+        model.getConfirmSuspendingVm().setEntity(confirmationModelSettingsManager.isConfirmSuspendingVm());
+
+        confirmationModelSettingsManager.loadConfirmSuspendingVm(() -> {
+            model.setOriginalConfirmSuspendingVm(confirmationModelSettingsManager.isConfirmSuspendingVm());
+            model.getConfirmSuspendingVm().setEntity(confirmationModelSettingsManager.isConfirmSuspendingVm());
+        });
     }
 
     private void setSshPublicKeyProp(UserProfileProperty prop) {
@@ -112,33 +124,53 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
                 .getEntity()) {
             // no change
             model.setOptionsUploadSucceeded(true);
-            return;
+        } else {
+            Map<String, String> storage = Collections.emptyMap();
+            if (model.getLocalStoragePersistedOnServer().getEntity()) {
+                storage = localStorage.getAllSupportedMappingsFromLocalStorage();
+            }
+            UserProfileProperty update = WebAdminSettings.Builder.create()
+                    .fromSettings(Frontend.getInstance().getWebAdminSettings())
+                    .withLocalStoragePersistence(model.getLocalStoragePersistedOnServer().getEntity())
+                    // clear the storage on the server when persistence gets disabled
+                    // upload local state to the server otherwise
+                    .withStorage(storage)
+                    .build()
+                    .encode();
+            Frontend.getInstance().getUserProfileManager().uploadWebAdminSettings(
+                    update,
+                    result -> {
+                        model.setOptionsUploadSucceeded(true);
+                        model.getOriginalStoragePersistedOnServer()
+                                .setEntity(model.getLocalStoragePersistedOnServer().getEntity());
+                        if (model.isUploadComplete()) {
+                            cancel();
+                        }
+                    },
+                    model,
+                    true);
         }
 
-        Map<String, String> storage = Collections.emptyMap();
-        if (model.getLocalStoragePersistedOnServer().getEntity()) {
-            storage = localStorage.getAllSupportedMappingsFromLocalStorage();
+        if (Objects.equals(model.getConfirmSuspendingVm().getEntity(),
+                model.getOriginalConfirmSuspendingVm())) {
+            model.setConfirmSuspendingVmUploadSucceeded(true);
+        } else {
+            confirmationModelSettingsManager.setConfirmSuspendingVm(
+                    model.getConfirmSuspendingVm().getEntity(),
+                    true,
+                    (result, profile) -> {
+                        model.setConfirmSuspendingVmUploadSucceeded(true);
+                        model.setOriginalConfirmSuspendingVm(
+                                model.getConfirmSuspendingVm().getEntity());
+                        if (model.isUploadComplete()) {
+                            cancel();
+                        }
+                    });
         }
-        UserProfileProperty update = WebAdminSettings.Builder.create()
-                .fromSettings(Frontend.getInstance().getWebAdminSettings())
-                .withLocalStoragePersistence(model.getLocalStoragePersistedOnServer().getEntity())
-                // clear the storage on the server when persistence gets disabled
-                // upload local state to the server otherwise
-                .withStorage(storage)
-                .build()
-                .encode();
-        Frontend.getInstance().getUserProfileManager().uploadWebAdminSettings(
-                update,
-                result -> {
-                    model.setOptionsUploadSucceeded(true);
-                    model.getOriginalStoragePersistedOnServer()
-                            .setEntity(model.getLocalStoragePersistedOnServer().getEntity());
-                    if (model.isUploadComplete()) {
-                        cancel();
-                    }
-                },
-                model,
-                true);
+
+        if (model.isUploadComplete()) {
+            cancel();
+        }
     }
 
     private UserProfileProperty toProp(String newPublicKey) {

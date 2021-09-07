@@ -10,16 +10,21 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 public class EditOptionsModel extends Model {
 
     private final EntityModel<String> publicKey = new EntityModel<>("");
-
     private EntityModel<Boolean> localStoragePersistedOnServer = new EntityModel<>();
-    private boolean sshUploadSucceeded;
-    private boolean optionsUploadSucceeded;
+    private EntityModel<Boolean> confirmSuspendingVm = new EntityModel<>();
+
     private final EntityModel<String> originalPublicKey = new EntityModel<>("");
     private final EntityModel<Boolean> originalLocalStoragePersistedOnServer = new EntityModel<>();
+    private Boolean originalConfirmSuspendingVm;
+
+    private boolean sshUploadSucceeded;
+    private boolean optionsUploadSucceeded;
+    private boolean confirmSuspendingVmUploadSucceeded;
 
     public EditOptionsModel() {
         publicKey.getEntityChangedEvent().addListener(this::updateAvailability);
         getLocalStoragePersistedOnServer().getEntityChangedEvent().addListener(this::updateAvailability);
+        getConfirmSuspendingVm().getEntityChangedEvent().addListener(this::updateAvailability);
     }
 
     private void updateAvailability(Event<? extends EventArgs> ev,
@@ -33,7 +38,9 @@ public class EditOptionsModel extends Model {
     private boolean hasChangedValues() {
         return isSshKeyUpdated() || isSshKeyRemoved() ||
                 !Objects.equals(originalLocalStoragePersistedOnServer.getEntity(),
-                        localStoragePersistedOnServer.getEntity());
+                        localStoragePersistedOnServer.getEntity()) ||
+                !Objects.equals(originalConfirmSuspendingVm,
+                        confirmSuspendingVm.getEntity());
     }
 
     public boolean isSshKeyUpdated() {
@@ -60,8 +67,20 @@ public class EditOptionsModel extends Model {
         return localStoragePersistedOnServer;
     }
 
+    public EntityModel<Boolean> getConfirmSuspendingVm() {
+        return confirmSuspendingVm;
+    }
+
     public void setLocalStoragePersistedOnServer(EntityModel<Boolean> localStoragePersistedOnServer) {
         this.localStoragePersistedOnServer = localStoragePersistedOnServer;
+    }
+
+    public void setConfirmSuspendingVm(EntityModel<Boolean> confirmSuspendingVm) {
+        this.confirmSuspendingVm = confirmSuspendingVm;
+    }
+
+    public void setOriginalConfirmSuspendingVm(Boolean originalConfirmSuspendingVm) {
+        this.originalConfirmSuspendingVm = originalConfirmSuspendingVm;
     }
 
     public void setSshUploadSucceeded(boolean succeeded) {
@@ -72,8 +91,12 @@ public class EditOptionsModel extends Model {
         optionsUploadSucceeded = succeeded;
     }
 
+    public void setConfirmSuspendingVmUploadSucceeded(boolean confirmSuspendingVmUploadSucceeded) {
+        this.confirmSuspendingVmUploadSucceeded = confirmSuspendingVmUploadSucceeded;
+    }
+
     public boolean isUploadComplete() {
-        return optionsUploadSucceeded && sshUploadSucceeded;
+        return optionsUploadSucceeded && sshUploadSucceeded && confirmSuspendingVmUploadSucceeded;
     }
 
     public String getOriginalPublicKey() {
@@ -97,6 +120,10 @@ public class EditOptionsModel extends Model {
 
     public EntityModel<Boolean> getOriginalStoragePersistedOnServer() {
         return originalLocalStoragePersistedOnServer;
+    }
+
+    public Boolean getOriginalConfirmSuspendingVm() {
+        return originalConfirmSuspendingVm;
     }
 
     @Override

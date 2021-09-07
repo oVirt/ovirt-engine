@@ -44,7 +44,7 @@
             vertical-align: baseline;
         }
     </ui:style>
-    <d:SimpleDialogPanel width="600px" height="375px">
+    <d:SimpleDialogPanel width="600px" height="450px">
         <d:content>
             <b:Container fluid="true">
                 <b:Row addStyleNames="{style.verticalSpacing}">
@@ -71,6 +71,15 @@
                                                       usePatternFly="true"
                                                       addStyleNames="{style.overrideClearBoth}"/>
                         <d:InfoIcon ui:field="localStoragePersistedOnServerInfoIcon" addStyleNames="{style.inlineBlock} {style.infoIcon}"/>
+                    </b:Column>
+                </b:Row>
+                <b:Row addStyleNames="{style.verticalSpacing}">
+                    <b:Column size="SM_12" addStyleNames="{style.indentation}">
+                        <ge:EntityModelCheckBoxEditor ui:field="confirmSuspendingVmCheckBox"
+                                                      label="{constants.confirmSuspendingVm}"
+                                                      removeFormGroup="true"
+                                                      usePatternFly="true"
+                                                      addStyleNames="{style.overrideClearBoth}"/>
                     </b:Column>
                 </b:Row>
             </b:Container>

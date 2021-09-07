@@ -9,6 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 /**
  * Resolves the settings for the specific confirmation models from the user profile.
@@ -23,27 +24,39 @@ public class ConfirmationModelSettingsManagerImpl implements ConfirmationModelSe
     private boolean confirmSuspendingVm = true;
 
     @Override
-    public void loadSettings() {
-        loadUserProfileProperty(CONFIRM_SUSPENDING_VM,
-                result -> initConfirmSuspendingVm(result));
-    }
-
-    @Override
     public boolean isConfirmSuspendingVm() {
         return confirmSuspendingVm;
     }
 
     @Override
-    public void setConfirmSuspendingVm(boolean confirm, boolean showError) {
+    public void loadConfirmSuspendingVm(Runnable successCallback) {
+        loadUserProfileProperty(CONFIRM_SUSPENDING_VM,
+                result -> {
+                    initConfirmSuspendingVm(result);
+                    successCallback.run();
+                });
+    }
+
+    @Override
+    public void setConfirmSuspendingVm(boolean confirm,
+            boolean showError,
+            BiConsumer<FrontendActionAsyncResult, UserProfileProperty> successCallback) {
+
         if (confirmSuspendingVm != confirm) {
             confirmSuspendingVm = confirm;
             UserProfileProperty propertyToSave =
                     confirmSuspendingVmProperty == null ? createConfirmSuspendingVmProperty()
                             : confirmSuspendingVmProperty;
+
             saveUserProfileProperty(propertyToSave,
                     Boolean.toString(confirmSuspendingVm),
                     (result, property) -> {
-                        this.confirmSuspendingVmProperty = property;
+                        initConfirmSuspendingVm(property);
+                        successCallback.accept(result, property);
+                    },
+                    result -> {
+                        // reload in case of error
+                        loadConfirmSuspendingVm(() -> {});
                     },
                     showError);
         }
@@ -81,7 +94,9 @@ public class ConfirmationModelSettingsManagerImpl implements ConfirmationModelSe
     private void saveUserProfileProperty(UserProfileProperty oldProperty,
             String content,
             BiConsumer<FrontendActionAsyncResult, UserProfileProperty> successCallback,
+            IFrontendActionAsyncCallback errorCallback,
             boolean showError) {
+
         UserProfileProperty newProperty = UserProfileProperty.builder()
                 .from(oldProperty)
                 .withContent(content)
@@ -92,9 +107,7 @@ public class ConfirmationModelSettingsManagerImpl implements ConfirmationModelSe
                 .uploadUserProfileProperty(
                         newProperty,
                         successCallback,
-                        result -> {
-                            loadSettings();
-                        },
+                        errorCallback,
                         this,
                         showError);
     }

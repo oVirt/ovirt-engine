@@ -56,10 +56,17 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
     @Path(value = "localStoragePersistedOnServer.entity")
     EntityModelCheckBoxEditor localStoragePersistedOnServerCheckBox;
 
+    @UiField(provided = true)
+    @Path(value = "confirmSuspendingVm.entity")
+    EntityModelCheckBoxEditor confirmSuspendingVmCheckBox;
+
     @Inject
     public OptionsPopupView(EventBus eventBus) {
         super(eventBus);
+
         localStoragePersistedOnServerCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
+        confirmSuspendingVmCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
@@ -75,6 +82,7 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
         // set it explicitly - the index would be auto-generated anyway
         // see UiCommonEditorVisitor
         localStoragePersistedOnServerCheckBox.asCheckBox().setTabIndex(1);
+        confirmSuspendingVmCheckBox.asCheckBox().setTabIndex(1);
 
         driver.initialize(this);
     }
