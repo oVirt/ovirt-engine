@@ -70,7 +70,6 @@
       - "{{ ovirt_vdsm_trust_store ~ '/' ~ ovirt_qemu_ca_file | dirname }}"
       - "{{ ovirt_vdsm_trust_store ~ '/' ~ ovirt_qemu_key_file | dirname }}"
       - "{{ ovirt_vdsm_trust_store ~ '/' ~ ovirt_vdsm_spice_cert_file | dirname }}"
-      - "{{ ovirt_vdsm_trust_store ~ '/' ~ ovirt_ovn_cert_file | dirname }}"
       - "{{ ovirt_libvirt_default_trust_store ~ '/' ~ ovirt_libvirt_default_client_key_file | dirname }}"
       - "{{ ovirt_libvirt_default_trust_store ~ '/' ~ ovirt_libvirt_default_client_ca_file | dirname }}"
     loop_control:
@@ -96,14 +95,6 @@
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_ca_file }}"
       owner: 'root'
       group: 'kvm'
-      mode: 0644
-
-  - name: Add OVN cacert file
-    copy:
-      content: "{{ ovirt_ca_cert }}"
-      dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_ovn_ca_file }}"
-      owner: 'openvswitch'
-      group: 'openvswitch'
       mode: 0644
 
   - name: Add vdsm cert files
@@ -135,15 +126,6 @@
       src: "{{ ovirt_qemu_cert_file | basename }}"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_client_cert_file }}"
       state: link
-
-  - name: Add OVN server cert file
-    copy:
-      src: "{{ ovirt_pki_dir }}/certs/{{ ovirt_vds_hostname }}.cer"
-      dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_ovn_cert_file }}"
-      owner: 'openvswitch'
-      group: 'openvswitch'
-      remote_src: no
-      mode: preserve
 
   - name: Set vdsm key path
     set_fact:
@@ -182,15 +164,6 @@
       src: "{{ ovirt_qemu_key_file | basename }}"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_client_key_file }}"
       state: link
-
-  - name: Add OVN server key file
-    copy:
-      src: "{{ vdsmkey_path }}"
-      dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_ovn_key_file }}"
-      owner: 'openvswitch'
-      group: 'openvswitch'
-      mode: 0440
-      remote_src: yes
 
   always:
     - name: Remove temp file

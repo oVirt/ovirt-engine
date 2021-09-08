@@ -1,0 +1,4 @@
+- name: Run ovn-certificates role
+  include_role:
+    name: ovirt-host-deploy-ovn-certificates
+    public: yes

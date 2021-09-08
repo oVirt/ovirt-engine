@@ -2,6 +2,7 @@ dependencies:
   - ovirt-host-deploy-facts
   - ovirt-host-deploy-vdsm
   - ovirt-host-deploy-misc
+  - ovirt-host-deploy-ovn-certificates
   - ovirt-provider-ovn-driver
   - ovirt-host-deploy-libvirt-guests
   - ovirt-host-deploy-firewalld

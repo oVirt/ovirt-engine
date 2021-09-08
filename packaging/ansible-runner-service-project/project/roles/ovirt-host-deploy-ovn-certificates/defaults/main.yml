@@ -1,0 +1,15 @@
+# Certificate path:
+ovirt_vdsm_trust_store: '/etc/pki/vdsm'
+
+# CA file (relative to certificate paths):
+ovirt_ovn_ca_file: 'ovn/ca-cert.pem'
+
+# Certificate files (relative to certificate path):
+ovirt_ovn_cert_file: 'ovn/ovn-cert.pem'
+
+# Certificate keys (relative to certificate path):
+ovirt_ovn_key_file: 'ovn/ovn-key.pem'
+
+# ovn private key variables:
+ovirt_ovn_key_size: 2048
+ovirt_ovn_key_type: rsa

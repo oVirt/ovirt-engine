@@ -1,0 +1,76 @@
+- block:
+  - name: Create OVN key temporary files
+    tempfile:
+      state: file
+      suffix: ovn
+    register: ovnkey
+
+  - name: Generate OVN CSR
+    command: |
+      '/usr/bin/openssl'
+      'req'
+      '-new'
+      '-newkey'
+      '{{ ovirt_ovn_key_type }}:{{ ovirt_ovn_key_size }}'
+      '-nodes'
+      '-subj'
+      '/'
+      '-keyout'
+      '{{ ovnkey.path }}'
+    register: csr
+
+  - name: Copy OVN CSR
+    copy:
+      content: "{{ csr.stdout }}"
+      dest: "{{ ovirt_pki_dir }}/requests/{{ ovirt_vds_hostname }}-ovn.req"
+      mode: 0644
+    delegate_to: localhost
+
+  - name: Run PKI enroll request for OVN
+    command: |
+       "{{ ovirt_engine_usr }}/bin/pki-enroll-request.sh"
+       "--name={{ ovirt_vds_hostname }}-ovn"
+       "--subject=/O={{ ovirt_organizationname }}/CN={{ ovirt_vds_hostname }}"
+       "--san={{ ovirt_san }}"
+       "--days={{ ovirt_vds_certificate_validity_in_days }}"
+       "--timeout={{ ovirt_signcerttimeoutinseconds }}"
+    delegate_to: localhost
+
+  - name: Prepare directory for OVN certificate files
+    file:
+      dest: "{{ ovirt_vdsm_trust_store ~ '/' ~ ovirt_ovn_cert_file | dirname }}"
+      state: directory
+      owner: 'openvswitch'
+      group: 'openvswitch'
+
+  - name: Add OVN cacert file
+    copy:
+      content: "{{ ovirt_ca_cert }}"
+      dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_ovn_ca_file }}"
+      owner: 'openvswitch'
+      group: 'openvswitch'
+      mode: 0644
+
+  - name: Add OVN cert file
+    copy:
+      src: "{{ ovirt_pki_dir }}/certs/{{ ovirt_vds_hostname }}-ovn.cer"
+      dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_ovn_cert_file }}"
+      owner: 'openvswitch'
+      group: 'openvswitch'
+      remote_src: no
+      mode: preserve
+
+  - name: Add OVN key file
+    copy:
+      src: "{{ ovnkey.path }}"
+      dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_ovn_key_file }}"
+      owner: 'openvswitch'
+      group: 'openvswitch'
+      mode: 0440
+      remote_src: yes
+
+  always:
+    - name: Remove temp file
+      file:
+        state: absent
+        path: "{{ ovnkey.path }}"

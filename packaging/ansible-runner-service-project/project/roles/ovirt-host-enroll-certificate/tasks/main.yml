@@ -3,3 +3,4 @@
     - loadconfig
     - vdsm
     - vmconsole
+    - ovn
