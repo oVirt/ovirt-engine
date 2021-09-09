@@ -162,6 +162,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>utils</artifactId>
       <version>${engine.version}</version>
@@ -219,6 +224,12 @@
            <ENGINE_DEFAULTS>${basedir}/src/test/resources/engine.conf.defaults</ENGINE_DEFAULTS>
            <ENGINE_VARS>${basedir}/src/test/resources/engine.conf</ENGINE_VARS>
          </environmentVariables>
+         <systemProperties>
+           <property>
+             <name>java.util.logging.config.file</name>
+             <value>src/test/resources/logging.properties</value>
+           </property>
+         </systemProperties>
         </configuration>
       </plugin>
         <plugin>

@@ -1,14 +1,19 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -16,18 +21,25 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.test.InMemoryLoggingHandler;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSGenericException;
 
 /** A test case for {@link CommandBase} */
 @ExtendWith(MockConfigExtension.class)
@@ -37,6 +49,8 @@ public class CommandBaseTest extends BaseCommandTest {
     }
 
     protected String session = "someSession";
+
+    private static final String ERROR_MESSAGE = "Custom error message";
 
     @Mock
     private AuditLogDirector director;
@@ -124,5 +138,44 @@ public class CommandBaseTest extends BaseCommandTest {
 
         assertTrue(CollectionUtils.isEqualCollection(extractedMsgs, command.extractVariableDeclarations(appendedMsgs)),
                 "extractVariableDeclarations didn't extract the variables as expected");
+    }
+
+    @ParameterizedTest
+    @MethodSource("sourceForTestExceptionsDuringAuditLog")
+    public void testExceptionsDuringAuditLog(RuntimeException ex, boolean result) {
+        doThrow(ex).when(director).log(any(AuditLogable.class), any(AuditLogType.class));
+
+        InMemoryLoggingHandler handler = new InMemoryLoggingHandler();
+        Logger logger = Logger.getLogger("org.ovirt.engine.core.bll");
+        logger.addHandler(handler);
+
+        command.log();
+
+        assertFalse(handler.getLogRecords().isEmpty());
+        assertNotNull(handler.getLogRecords().get(0).getMessage());
+        assertEquals(result, handler.getLogRecords().get(0).getMessage().contains(ERROR_MESSAGE));
+    }
+
+    public static Stream<Arguments> sourceForTestExceptionsDuringAuditLog() {
+        return Stream.of(
+                // top level exception with non-null error message
+                Arguments.of(
+                        new RuntimeException(ERROR_MESSAGE),
+                        true),
+
+                // top level exception with null error message
+                Arguments.of(
+                        new RuntimeException((String) null),
+                        false),
+
+                // encapsulated exception
+                Arguments.of(
+                        new RuntimeException(new VDSGenericException(ERROR_MESSAGE)),
+                        true),
+
+                // encapsulated exception with top level null error message
+                Arguments.of(
+                        new RuntimeException(null, new VDSGenericException(ERROR_MESSAGE)),
+                        false));
     }
 }
