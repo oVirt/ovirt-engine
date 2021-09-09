@@ -1450,7 +1450,9 @@ public abstract class CommandBase<T extends ActionParametersBase>
             try {
                 auditLogDirector.log(this, getAuditLogTypeValue());
             } catch (final RuntimeException ex) {
-                log.error("Error during log command: {}. Exception {}", getClass().getName(), ex.getMessage());
+                log.error("Error during log command: {}: '{}'",
+                        getClass().getName(),
+                        ExceptionUtils.getRootCauseMessage(ex));
                 log.debug("Exception", ex);
             }
             return null;

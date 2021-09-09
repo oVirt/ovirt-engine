@@ -176,6 +176,6 @@ public class CommandBaseTest extends BaseCommandTest {
                 // encapsulated exception with top level null error message
                 Arguments.of(
                         new RuntimeException(null, new VDSGenericException(ERROR_MESSAGE)),
-                        false));
+                        true));
     }
 }
