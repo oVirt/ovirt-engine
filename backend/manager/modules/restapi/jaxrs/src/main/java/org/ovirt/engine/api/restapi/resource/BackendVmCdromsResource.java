@@ -24,10 +24,16 @@ public class BackendVmCdromsResource
         implements VmCdromsResource {
 
     private Guid vmId;
+    private VM vm;
 
     public BackendVmCdromsResource(Guid vmId) {
         super(Cdrom.class, VM.class);
         this.vmId = vmId;
+    }
+
+    protected BackendVmCdromsResource(VM vm) {
+        this(vm.getId());
+        this.vm = vm;
     }
 
     @Override
@@ -59,6 +65,9 @@ public class BackendVmCdromsResource
     }
 
     private VM getVm() {
+        if (vm != null) {
+            return vm;
+        }
         return getEntity(
             VM.class,
             QueryType.GetVmByVmId,
