@@ -6,6 +6,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.AutoPinningPolicy;
@@ -104,6 +106,9 @@ public class BackendVmsResource extends
             Version.ALL.stream().map(Version::toString).collect(Collectors.joining(", "));
     private static final String CURRENT_GRAPHICS_CONSOLES = "current_graphics_consoles";
     private static final String GRAPHICS_CONSOLES = "graphics_consoles";
+    private static final String CD_ROMS = "cdroms";
+
+    private Map<String, VM> vmIdToVm = Collections.emptyMap();
 
     public BackendVmsResource() {
         super(Vm.class, org.ovirt.engine.core.common.businessentities.VM.class);
@@ -664,6 +669,11 @@ public class BackendVmsResource extends
         boolean includeCurrentGraphicsConsoles = details.contains(CURRENT_GRAPHICS_CONSOLES);
 
         List<Guid> vmIds = entities.stream().map(VM::getId).collect(Collectors.toList());
+        String followValue = ParametersHelper.getParameter(getHttpHeaders(), getUriInfo(), FOLLOW);
+        if (StringUtils.isNotEmpty(followValue)) {
+            vmIdToVm = entities.stream().collect(Collectors.toMap(vm -> vm.getId().toString(), vm -> vm));
+        }
+
         if (includeData) {
             // Fill VmInit for entities - the search query no join the VmInit to Vm
             IdsQueryParameters params = new IdsQueryParameters();
@@ -714,6 +724,19 @@ public class BackendVmsResource extends
             // overwrite the default output of "?follow=graphics_consoles"
             findGraphicsConsoles(linksTree).ifPresent(node -> node.setFollowed(true));
         }
+        findCdroms(linksTree).ifPresent(node -> {
+            Vms vms = (Vms) entity;
+            vms.getVms().forEach(this::setCdroms);
+            node.setFollowed(true);
+        });
+    }
+
+    private void setCdroms(Vm vm) {
+        vm.setCdroms(getBackendVmCdromsResource(vmIdToVm.get(vm.getId())).list());
+    }
+
+    private BackendVmCdromsResource getBackendVmCdromsResource(VM vm) {
+        return inject(new BackendVmCdromsResource(vm));
     }
 
     /**
@@ -721,22 +744,11 @@ public class BackendVmsResource extends
      * of the root.
      */
     private Optional<LinksTreeNode> findGraphicsConsoles(LinksTreeNode linksTree) {
-        String consoleLink = normalizeLinkName(GRAPHICS_CONSOLES);
-        for (LinksTreeNode node : linksTree.getChildren()) {
-            if (normalizeLinkName(node.getElement()).equals(consoleLink)) {
-                return Optional.of(node);
-            }
-        }
-        return Optional.empty();
+        return findNode(linksTree, GRAPHICS_CONSOLES);
     }
 
-    /**
-     * Links that differ only on case or underscore position are treated the same by the framework. Examples:
-     * graphics_console, graphicsconsoles, gra_phics_con_soles, GRapHIC_Consoles. Normalize the name by forcing lower
-     * case and removing all underscores.
-     */
-    private static String normalizeLinkName(String name) {
-        return name.toLowerCase().replaceAll("_", "");
+    private Optional<LinksTreeNode> findCdroms(LinksTreeNode linksTree) {
+        return findNode(linksTree, CD_ROMS);
     }
 
     protected InstanceType lookupInstance(Template template) {
