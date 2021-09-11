@@ -34,6 +34,7 @@ import org.ovirt.engine.api.model.DiskAttachments;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.GraphicsConsoles;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostDevices;
 import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Snapshot;
@@ -107,6 +108,7 @@ public class BackendVmsResource extends
     private static final String CURRENT_GRAPHICS_CONSOLES = "current_graphics_consoles";
     private static final String GRAPHICS_CONSOLES = "graphics_consoles";
     private static final String CD_ROMS = "cdroms";
+    private static final String HOST_DEVICES = "host_devices";
 
     private Map<String, VM> vmIdToVm = Collections.emptyMap();
 
@@ -728,6 +730,21 @@ public class BackendVmsResource extends
             vms.getVms().forEach(this::setCdroms);
             node.setFollowed(true);
         });
+        findHostDevices(linksTree).ifPresent(node -> {
+            Vms vms = (Vms) entity;
+            boolean nonePinned = vms.getVms().stream()
+                    .map(vm -> vmIdToVm.get(vm.getId()))
+                    .map(VM::getDedicatedVmForVdsList)
+                    .allMatch(List::isEmpty);
+            if (nonePinned) {
+                vms.getVms().forEach(this::setEmptyHostDevices);
+                node.setFollowed(true);
+            }
+        });
+    }
+
+    private void setEmptyHostDevices(Vm vm) {
+        vm.setHostDevices(new HostDevices());
     }
 
     private void setCdroms(Vm vm) {
@@ -748,6 +765,10 @@ public class BackendVmsResource extends
 
     private Optional<LinksTreeNode> findCdroms(LinksTreeNode linksTree) {
         return findNode(linksTree, CD_ROMS);
+    }
+
+    private Optional<LinksTreeNode> findHostDevices(LinksTreeNode linksTree) {
+        return findNode(linksTree, HOST_DEVICES);
     }
 
     protected InstanceType lookupInstance(Template template) {
