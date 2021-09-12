@@ -75,6 +75,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -109,6 +110,7 @@ public class BackendVmsResource extends
     private static final String GRAPHICS_CONSOLES = "graphics_consoles";
     private static final String CD_ROMS = "cdroms";
     private static final String HOST_DEVICES = "host_devices";
+    private static final String WATCHDOGS = "watchdogs";
 
     private Map<String, VM> vmIdToVm = Collections.emptyMap();
 
@@ -741,6 +743,29 @@ public class BackendVmsResource extends
                 node.setFollowed(true);
             }
         });
+        findWatchdogs(linksTree).ifPresent(node -> {
+            Vms vms = (Vms) entity;
+            List<VmWatchdog> watchdogs = getWatchdogs(vms);
+            vms.getVms().forEach(vm -> {
+                Guid vmId = asGuid(vm.getId());
+                setWatchdogs(vm, watchdogs.stream()
+                        .filter(w -> vmId.equals(w.getVmId()))
+                        .collect(Collectors.toList()));
+            });
+            node.setFollowed(true);
+        });
+    }
+
+    private List<VmWatchdog> getWatchdogs(Vms vms) {
+        List<Guid> vmIds = vms.getVms().stream().map(Vm::getId).map(this::asGuid).collect(Collectors.toList());
+        return getEntity(List.class,
+                QueryType.GetWatchdogs,
+                new IdsQueryParameters(vmIds),
+                "GetWatchdogs", true);
+    }
+
+    private void setWatchdogs(Vm vm, List<VmWatchdog> watchdogs) {
+        vm.setWatchdogs(getBackendVmWatchdogsResource(vm.getId(), watchdogs).list());
     }
 
     private void setEmptyHostDevices(Vm vm) {
@@ -753,6 +778,10 @@ public class BackendVmsResource extends
 
     private BackendVmCdromsResource getBackendVmCdromsResource(VM vm) {
         return inject(new BackendVmCdromsResource(vm));
+    }
+
+    private BackendVmWatchdogsResource getBackendVmWatchdogsResource(String vmId, List<VmWatchdog> watchdogs) {
+        return inject(new BackendVmWatchdogsResource(asGuid(vmId), watchdogs));
     }
 
     /**
@@ -769,6 +798,10 @@ public class BackendVmsResource extends
 
     private Optional<LinksTreeNode> findHostDevices(LinksTreeNode linksTree) {
         return findNode(linksTree, HOST_DEVICES);
+    }
+
+    private Optional<LinksTreeNode> findWatchdogs(LinksTreeNode linksTree) {
+        return findNode(linksTree, WATCHDOGS);
     }
 
     protected InstanceType lookupInstance(Template template) {

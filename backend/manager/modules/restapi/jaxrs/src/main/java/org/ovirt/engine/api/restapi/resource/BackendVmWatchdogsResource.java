@@ -28,15 +28,23 @@ public class BackendVmWatchdogsResource
         implements VmWatchdogsResource {
 
     private Guid vmId;
+    private List<VmWatchdog> watchdogs;
 
     public BackendVmWatchdogsResource(Guid vmId) {
         super(Watchdog.class, VmWatchdog.class);
         this.vmId = vmId;
     }
 
+    protected BackendVmWatchdogsResource(Guid vmId, List<VmWatchdog> watchdogs) {
+        this(vmId);
+        this.watchdogs = watchdogs;
+    }
+
     @Override
     public Watchdogs list() {
-        return mapCollection(getBackendCollection(QueryType.GetWatchdog, new IdQueryParameters(vmId)));
+        return watchdogs == null ?
+                mapCollection(getBackendCollection(QueryType.GetWatchdog, new IdQueryParameters(vmId)))
+                : mapCollection(watchdogs);
     }
 
     private Watchdogs mapCollection(List<VmWatchdog> entities) {
