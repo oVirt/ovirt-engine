@@ -83,7 +83,8 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
                         getParameters().getSrcInfo(),
                         getParameters().getDstInfo(),
                         getParameters().isCollapse(),
-                        getParameters().isCopyBitmaps());
+                        getParameters().isCopyBitmaps(),
+                        getParameters().isLegal());
         parameters.setVdsId(getVdsId());
 
         logExecutionHost();
