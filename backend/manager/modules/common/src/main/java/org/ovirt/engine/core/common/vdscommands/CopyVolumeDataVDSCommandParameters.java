@@ -11,18 +11,20 @@ public class CopyVolumeDataVDSCommandParameters extends StorageJobVdsCommandPara
     private LocationInfo dstInfo;
     private boolean collapse;
     private boolean copyBitmaps;
+    private boolean legal = true;
 
     public CopyVolumeDataVDSCommandParameters() {
     }
 
 
     public CopyVolumeDataVDSCommandParameters(Guid jobId, LocationInfo srcInfo, LocationInfo dstInfo,
-            boolean collapse, boolean copyBitmaps) {
+            boolean collapse, boolean copyBitmaps, boolean legal) {
         super(null);
         this.srcInfo = srcInfo;
         this.dstInfo = dstInfo;
         this.collapse = collapse;
         this.copyBitmaps = copyBitmaps;
+        this.legal = legal;
         setJobId(jobId);
     }
 
@@ -58,12 +60,21 @@ public class CopyVolumeDataVDSCommandParameters extends StorageJobVdsCommandPara
         this.copyBitmaps = copyBitmaps;
     }
 
+    public boolean isLegal() {
+        return legal;
+    }
+
+    public void setLegal(boolean legal) {
+        this.legal = legal;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("srcInfo", srcInfo)
                 .append("dstInfo", dstInfo)
                 .append("collapse", collapse)
-                .append("copyBitmaps", copyBitmaps);
+                .append("copyBitmaps", copyBitmaps)
+                .append("legal", legal);
     }
 }
