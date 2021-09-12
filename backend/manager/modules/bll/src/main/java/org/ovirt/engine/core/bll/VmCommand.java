@@ -628,6 +628,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         return !CollectionUtils.isEmpty(vmBackups) && vmBackups
                 .stream()
-                .anyMatch(vmBackup -> vmBackup.getPhase().isBackupInProgress());
+                .anyMatch(vmBackup -> !vmBackup.getPhase().isBackupFinished());
     }
 }
