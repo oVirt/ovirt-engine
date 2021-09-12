@@ -76,6 +76,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
@@ -287,68 +288,72 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
-        restoreCommandState();
+        try (EngineLock backupLock = getEntityUpdateLock(getParameters().getVmBackup().getId())) {
+            lockManager.acquireLockWait(backupLock);
 
-        switch (getParameters().getVmBackup().getPhase()) {
-            case CREATING_SCRATCH_DISKS:
-                if (createScratchDisks()) {
-                    updateVmBackupPhase(VmBackupPhase.PREPARING_SCRATCH_DISK);
-                    log.info("Scratch disks created for the backup");
-                } else {
-                    updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
-                }
-                break;
+            restoreCommandState();
 
-            case PREPARING_SCRATCH_DISK:
-                if (prepareScratchDisks()) {
-                    updateVmBackupPhase(VmBackupPhase.STARTING);
-                    log.info("Scratch disks prepared for the backup");
-                } else {
-                    updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
-                }
-                break;
-
-            case ADDING_BITMAPS:
-                if (!startAddBitmapJobs()) {
-                    updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+            switch (getParameters().getVmBackup().getPhase()) {
+                case CREATING_SCRATCH_DISKS:
+                    if (createScratchDisks()) {
+                        updateVmBackupPhase(VmBackupPhase.PREPARING_SCRATCH_DISK);
+                        log.info("Scratch disks created for the backup");
+                    } else {
+                        updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                    }
                     break;
-                }
 
-                log.info("Waiting for add bitmaps jobs completion");
-                updateVmBackupPhase(VmBackupPhase.WAITING_FOR_BITMAPS);
-
-                break;
-
-            case STARTING:
-                if (!runLiveVmBackup()) {
-                    updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                case PREPARING_SCRATCH_DISK:
+                    if (prepareScratchDisks()) {
+                        updateVmBackupPhase(VmBackupPhase.STARTING);
+                        log.info("Scratch disks prepared for the backup");
+                    } else {
+                        updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                    }
                     break;
-                }
 
-                // Since live backup is a single synchronous VDS command we can set the backup
-                // phase to READY immediately
-                updateVmBackupPhase(VmBackupPhase.READY);
-                log.info("Ready to start image transfers");
-                break;
+                case ADDING_BITMAPS:
+                    if (!startAddBitmapJobs()) {
+                        updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                        break;
+                    }
 
-            case WAITING_FOR_BITMAPS:
-                updateVmBackupPhase(VmBackupPhase.READY);
-                log.info("Ready to start image transfers");
+                    log.info("Waiting for add bitmaps jobs completion");
+                    updateVmBackupPhase(VmBackupPhase.WAITING_FOR_BITMAPS);
 
-                break;
+                    break;
 
-            case READY:
-                return true;
+                case STARTING:
+                    if (!runLiveVmBackup()) {
+                        updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                        break;
+                    }
 
-            case FINALIZING:
-                setCommandStatus(CommandStatus.SUCCEEDED);
-                break;
+                    // Since live backup is a single synchronous VDS command we can set the backup
+                    // phase to READY immediately
+                    updateVmBackupPhase(VmBackupPhase.READY);
+                    log.info("Ready to start image transfers");
+                    break;
 
-            case FINALIZING_FAILURE:
-                setCommandStatus(CommandStatus.FAILED);
-                break;
+                case WAITING_FOR_BITMAPS:
+                    updateVmBackupPhase(VmBackupPhase.READY);
+                    log.info("Ready to start image transfers");
+
+                    break;
+
+                case READY:
+                    return true;
+
+                case FINALIZING:
+                    setCommandStatus(CommandStatus.SUCCEEDED);
+                    break;
+
+                case FINALIZING_FAILURE:
+                    setCommandStatus(CommandStatus.FAILED);
+                    break;
+            }
+            persistCommandIfNeeded();
         }
-        persistCommandIfNeeded();
         return true;
     }
 
@@ -686,6 +691,13 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                     getVdsId());
             return null;
         }
+    }
+
+    private EngineLock getEntityUpdateLock(Guid backupId) {
+        Map<String, Pair<String, String>> lockMap = Collections.singletonMap(
+                backupId.toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_BACKUP, EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_LOCKED));
+        return new EngineLock(lockMap);
     }
 
     @Override

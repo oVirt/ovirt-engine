@@ -26,8 +26,12 @@ public enum VmBackupPhase {
         return name;
     }
 
-    public boolean isBackupInProgress() {
-        return this != SUCCEEDED && this != FAILED;
+    public boolean isBackupFinished() {
+        return this == SUCCEEDED || this == FAILED;
+    }
+
+    public boolean isBackupFinalizing() {
+        return this == FINALIZING || this == FINALIZING_FAILURE;
     }
 
     public static VmBackupPhase forName(String name) {
