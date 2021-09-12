@@ -11,6 +11,7 @@ public class CreateVolumeContainerCommandParameters extends StorageJobCommandPar
     private Guid srcImageGroupId;
     private Guid srcImageId;
     private Long initialSize;
+    private boolean legal = true;
 
     public CreateVolumeContainerCommandParameters() {
     }
@@ -79,5 +80,13 @@ public class CreateVolumeContainerCommandParameters extends StorageJobCommandPar
 
     public void setVolumeType(VolumeType volumeType) {
         this.volumeType = volumeType;
+    }
+
+    public boolean isLegal() {
+        return legal;
+    }
+
+    public void setLegal(boolean legal) {
+        this.legal = legal;
     }
 }
