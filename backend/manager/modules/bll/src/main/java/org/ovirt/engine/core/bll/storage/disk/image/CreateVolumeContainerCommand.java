@@ -71,6 +71,7 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
                         imagesHandler.getJsonDiskDescription(diskImageDescription),
                         getStoragePool().getCompatibilityVersion(),
                         DiskContentType.DATA);
+        parameters.setLegal(getParameters().isLegal());
         if (getType() != VolumeType.Preallocated && getStorageDomain().getStorageType().isBlockDomain()) {
             parameters.setImageInitialSizeInBytes(Optional.ofNullable(getParameters().getInitialSize()).orElse(0L));
         }
