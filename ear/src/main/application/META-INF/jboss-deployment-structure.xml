@@ -20,8 +20,6 @@
       <module name="org.apache.commons.lang" export="true"/>
       <module name="org.apache.httpcomponents" export="true"/>
       <module name="org.apache.xmlrpc" export="true"/>
-      <module name="org.codehaus.jackson.jackson-core-asl" export="true"/>
-      <module name="org.codehaus.jackson.jackson-mapper-asl" export="true"/>
       <module name="org.dom4j" export="true"/>
       <module name="org.hibernate.validator" export="true"/>
       <module name="org.infinispan" export="true"/>
