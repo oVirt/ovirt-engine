@@ -1414,7 +1414,7 @@ SELECT vm_static.vm_name AS vm_name,
     vm_dynamic.guest_cpu_count AS guest_cpu_count,
     vm_snapshots.next_run_config_exists AS next_run_config_exists,
     vm_snapshots.is_previewing_snapshot AS is_previewing_snapshot,
-    vm_next_run_snapshot.changed_fields AS changed_fields,
+    vm_snapshots.changed_fields AS changed_fields,
     vm_static.is_spice_file_transfer_enabled AS is_spice_file_transfer_enabled,
     vm_static.is_spice_copy_paste_enabled AS is_spice_copy_paste_enabled,
     vm_static.cpu_profile_id AS cpu_profile_id,
@@ -1483,19 +1483,13 @@ LEFT JOIN (
         COUNT(CASE snapshot_type
                 WHEN 'PREVIEW'
                     THEN 1
-                END) > 0 AS is_previewing_snapshot
+                END) > 0 AS is_previewing_snapshot,
+        array_to_string(array_agg(changed_fields), '') AS changed_fields
     FROM snapshots
+    WHERE snapshot_type = 'NEXT_RUN' OR snapshot_type = 'PREVIEW'
     GROUP BY vm_id
     ) vm_snapshots
     ON vm_static.vm_guid = vm_snapshots.vm_id
-LEFT JOIN (
-    SELECT
-        vm_id,
-        changed_fields
-    FROM snapshots
-    WHERE snapshot_type = 'NEXT_RUN'
-    ) vm_next_run_snapshot
-    ON vm_static.vm_guid = vm_next_run_snapshot.vm_id
 LEFT JOIN (
   SELECT vm_id, COUNT(CASE imagestatus WHEN 4 THEN 1 END) > 0 AS has_illegal_images
   FROM disk_vm_element
