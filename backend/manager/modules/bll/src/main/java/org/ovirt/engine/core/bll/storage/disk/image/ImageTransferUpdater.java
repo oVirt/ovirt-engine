@@ -96,6 +96,7 @@ public class ImageTransferUpdater {
             }
 
             imageTransferDao.update(entity);
+
             return entity;
         } finally {
             lockManager.releaseLock(lock);
