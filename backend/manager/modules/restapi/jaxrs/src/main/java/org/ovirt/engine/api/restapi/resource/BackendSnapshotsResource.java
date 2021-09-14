@@ -76,7 +76,7 @@ public class BackendSnapshotsResource
         }
         return performCreate(ActionType.CreateSnapshotForVm,
                                snapshotParams,
-                               new SnapshotIdResolver(),
+                               new QueryIdResolver<Guid>(QueryType.GetSnapshotBySnapshotId, IdQueryParameters.class),
                                block);
     }
 
@@ -152,14 +152,10 @@ public class BackendSnapshotsResource
     }
 
     protected org.ovirt.engine.core.common.businessentities.Snapshot getSnapshotById(Guid id) {
-        //TODO: move to 'GetSnapshotBySnapshotId' once Backend supplies it.
-        for (org.ovirt.engine.core.common.businessentities.Snapshot snapshot : getBackendCollection(QueryType.GetAllVmSnapshotsByVmId,
-                new IdQueryParameters(parentId))) {
-            if (snapshot.getId().equals(id)) {
-                return snapshot;
-            }
-        }
-        return null;
+        return getEntity(org.ovirt.engine.core.common.businessentities.Snapshot.class,
+                QueryType.GetSnapshotBySnapshotId,
+                new IdQueryParameters(id),
+                String.format("GetSnapshotBySnapshotId: snapshot id=%s", id));
     }
 
     @Override
@@ -167,17 +163,6 @@ public class BackendSnapshotsResource
         snapshot.setVm(new Vm());
         snapshot.getVm().setId(parentId.toString());
         return snapshot;
-    }
-
-    protected class SnapshotIdResolver extends EntityIdResolver<Guid> {
-
-        SnapshotIdResolver() {}
-
-        @Override
-        public org.ovirt.engine.core.common.businessentities.Snapshot lookupEntity(
-                Guid id) throws BackendFailureException {
-            return getSnapshotById(id);
-        }
     }
 
     @Override

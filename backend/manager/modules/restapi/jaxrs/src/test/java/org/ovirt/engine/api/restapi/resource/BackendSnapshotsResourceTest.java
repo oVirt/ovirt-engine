@@ -157,14 +157,10 @@ public class BackendSnapshotsResourceTest
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) {
         setUriInfo(setUpBasicUriExpectations());
         String ovfData = "data";
-        org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot0 = new org.ovirt.engine.core.common.businessentities.Snapshot();
+        org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot0 = new org.ovirt.engine.core.common.businessentities.Snapshot(false);
         resultSnapshot0.setVmConfiguration(ovfData);
         resultSnapshot0.setId(SNAPSHOT_IDS[0]);
-        setUpEntityQueryExpectations(QueryType.GetSnapshotBySnapshotId,
-                IdQueryParameters.class,
-                new String[]{"Id"},
-                new Object[]{SNAPSHOT_IDS[0]},
-                resultSnapshot0);
+        resultSnapshot0.setDescription(DESCRIPTIONS[0]);
         setUpCreationExpectations(ActionType.CreateSnapshotForVm,
                 CreateSnapshotForVmParameters.class,
                 new String[] { "Description", "VmId" },
@@ -174,11 +170,11 @@ public class BackendSnapshotsResourceTest
                 GUIDS[0],
                 asList(TASK_ID),
                 asList(new AsyncTaskStatus(asyncStatus)),
-                QueryType.GetAllVmSnapshotsByVmId,
+                QueryType.GetSnapshotBySnapshotId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
-                new Object[] { VM_ID },
-                getEntity(0));
+                new Object[] { SNAPSHOT_IDS[0] },
+                resultSnapshot0);
         Snapshot snapshot = new Snapshot();
         snapshot.setDescription(DESCRIPTIONS[0]);
 
@@ -188,9 +184,8 @@ public class BackendSnapshotsResourceTest
         Snapshot responseSnapshot = (Snapshot)response.getEntity();
         verifyModel(responseSnapshot, 0);
         verifyAllContent(responseSnapshot, ConfigurationType.OVF, ovfData);
-        Snapshot created = (Snapshot)response.getEntity();
-        assertNotNull(created.getCreationStatus());
-        assertEquals(creationStatus.value(), created.getCreationStatus());
+        assertNotNull(responseSnapshot.getCreationStatus());
+        assertEquals(creationStatus.value(), responseSnapshot.getCreationStatus());
     }
 
     protected void setUpGetEntityExpectations(int times) {

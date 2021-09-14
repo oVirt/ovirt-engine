@@ -34,6 +34,7 @@ public class BackendSnapshotResourceTest
 
     private static final Guid VM_ID = GUIDS[0];
     private static final Guid SNAPSHOT_ID = GUIDS[1];
+    private static final String SNAPSHOT_DESCRIPTION = DESCRIPTIONS[1];
 
     public BackendSnapshotResourceTest() {
         super(new BackendSnapshotResource(SNAPSHOT_ID.toString(), VM_ID, null));
@@ -53,7 +54,7 @@ public class BackendSnapshotResourceTest
     @Test
     public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(asList(getEntity(1)));
+        setUpGetEntityExpectations(getEntity(1));
         verifyModel(resource.get(), 1);
     }
 
@@ -62,17 +63,13 @@ public class BackendSnapshotResourceTest
         List<String> populates = new ArrayList<>();
         populates.add("true");
         String ovfData = "data";
-        org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot = new org.ovirt.engine.core.common.businessentities.Snapshot();
+        org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot = new org.ovirt.engine.core.common.businessentities.Snapshot(false);
         resultSnapshot.setVmConfiguration(ovfData);
         resultSnapshot.setId(SNAPSHOT_ID);
+        resultSnapshot.setDescription(SNAPSHOT_DESCRIPTION);
         when(httpHeaders.getRequestHeader(BackendResource.ALL_CONTENT_HEADER)).thenReturn(populates);
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(asList(getEntity(1)));
-        setUpEntityQueryExpectations(QueryType.GetSnapshotBySnapshotId,
-                IdQueryParameters.class,
-                new String[]{"Id"},
-                new Object[]{SNAPSHOT_ID},
-                resultSnapshot);
+        setUpGetEntityExpectations(resultSnapshot);
         Snapshot snapshot = resource.get();
         verifyModel(snapshot, 1);
         assertNotNull(snapshot.getInitialization());
@@ -82,19 +79,9 @@ public class BackendSnapshotResourceTest
     }
 
     @Test
-    //empty list of snapshots returned from Backend.
-    public void testGetNotFound1() {
+    public void testGetNotFound() {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(new ArrayList<>());
-        verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
-    }
-
-    @Test
-    //non-empty list of snapshots returned from Backend,
-    //but this specific snapshot is not there.
-    public void testGetNotFound2() {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(asList(getEntity(2)));
+        setUpGetEntityExpectations(null);
         verifyNotFoundException(assertThrows(WebApplicationException.class, resource::get));
     }
 
@@ -109,7 +96,7 @@ public class BackendSnapshotResourceTest
     @Test
     public void testRemove() {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(asList(getEntity(1)));
+        setUpGetEntityExpectations(getEntity(1));
         setUpActionExpectations(
             ActionType.RemoveSnapshot,
             RemoveSnapshotParameters.class,
@@ -132,7 +119,7 @@ public class BackendSnapshotResourceTest
     }
 
     protected void doTestBadRemove(boolean valid, boolean success, String detail) {
-        setUpGetEntityExpectations(asList(getEntity(1)));
+        setUpGetEntityExpectations(getEntity(1));
         setUriInfo(
             setUpActionExpectations(
                 ActionType.RemoveSnapshot,
@@ -170,11 +157,11 @@ public class BackendSnapshotResourceTest
                 null);
     }
 
-    protected void setUpGetEntityExpectations(List<org.ovirt.engine.core.common.businessentities.Snapshot> result) {
-        setUpGetEntityExpectations(QueryType.GetAllVmSnapshotsByVmId,
+    protected void setUpGetEntityExpectations(org.ovirt.engine.core.common.businessentities.Snapshot result) {
+        setUpGetEntityExpectations(QueryType.GetSnapshotBySnapshotId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
-                                   new Object[] { VM_ID },
+                                   new Object[] { SNAPSHOT_ID },
                                    result);
     }
 
