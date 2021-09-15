@@ -3,6 +3,9 @@ package org.ovirt.engine.ui.webadmin;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
 public interface ApplicationConstants extends CommonApplicationConstants {
+
+    String andMore();
+
     String applicationTitle();
 
     String aboutPopupCaption();
