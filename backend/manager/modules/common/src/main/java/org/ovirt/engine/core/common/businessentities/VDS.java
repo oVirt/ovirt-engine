@@ -264,6 +264,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vds.setSupportedCpus(getSupportedCpus());
         vds.setBootUuid(getBootUuid());
         vds.setCdChangePdiv(isCdChangePdiv());
+        vds.setOvnConfigured(isOvnConfigured());
         return vds;
     }
 
@@ -1860,6 +1861,14 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setFipsEnabled(boolean fipsEnabled) {
         vdsDynamic.setFipsEnabled(fipsEnabled);
+    }
+
+    public boolean isOvnConfigured() {
+        return vdsDynamic.isOvnConfigured();
+    }
+
+    public void setOvnConfigured(boolean ovnConfigured) {
+        vdsDynamic.setOvnConfigured(ovnConfigured);
     }
 
     public boolean isManaged() {

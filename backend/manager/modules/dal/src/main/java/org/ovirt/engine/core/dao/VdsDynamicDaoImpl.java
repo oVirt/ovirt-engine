@@ -137,6 +137,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
         entity.setFipsEnabled(rs.getBoolean("fips_enabled"));
         entity.setBootUuid(rs.getString("boot_uuid"));
         entity.setCdChangePdiv(rs.getBoolean("cd_change_pdiv"));
+        entity.setOvnConfigured(rs.getBoolean("ovn_configured"));
 
         return entity;
     };
@@ -344,7 +345,8 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("tsc_scaling", vds.isTscScalingEnabled())
                 .addValue("fips_enabled", vds.isFipsEnabled())
                 .addValue("boot_uuid", vds.getBootUuid())
-                .addValue("cd_change_pdiv", vds.isCdChangePdiv());
+                .addValue("cd_change_pdiv", vds.isCdChangePdiv())
+                .addValue("ovn_configured", vds.isOvnConfigured());
     }
 
     @Override

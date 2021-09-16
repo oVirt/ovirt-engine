@@ -1034,6 +1034,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setFipsEnabled(assignBoolValue(struct, VdsProperties.FIPS_MODE));
         vds.setBootUuid(assignStringValue(struct, VdsProperties.BOOT_UUID));
         vds.setCdChangePdiv(assignBoolValue(struct, VdsProperties.CD_CHANGE_PDIV));
+        vds.setOvnConfigured(assignBoolValue(struct, VdsProperties.OVN_CONFIGURED));
     }
 
     private void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {

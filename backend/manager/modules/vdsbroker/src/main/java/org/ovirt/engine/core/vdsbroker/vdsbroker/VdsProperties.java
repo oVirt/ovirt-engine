@@ -138,6 +138,7 @@ public final class VdsProperties {
     public static final String ADDR = "addr";
     public static final String OPENVSWITCH = "openvswitch";
     public static final String NMSTATE = "nmstate";
+    public static final String OVN_CONFIGURED = "ovnConfigured";
 
     // LLDP related properties
     public static final String LLDP_ENABLED = "enabled";

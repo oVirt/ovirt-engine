@@ -235,6 +235,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean cdChangePdiv;
 
+    private boolean ovnConfigured;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -997,6 +999,15 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.cdChangePdiv = cdChangePdiv;
     }
 
+    public boolean isOvnConfigured() {
+        return this.ovnConfigured;
+    }
+
+    public void setOvnConfigured(boolean ovnConfigured) {
+        this.ovnConfigured = ovnConfigured;
+    }
+
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -1078,7 +1089,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 tscScalingEnabled,
                 fipsEnabled,
                 bootUuid,
-                cdChangePdiv
+                cdChangePdiv,
+                ovnConfigured
         );
     }
 
@@ -1171,6 +1183,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && tscScalingEnabled == other.tscScalingEnabled
                 && fipsEnabled == other.fipsEnabled
                 && Objects.equals(bootUuid, other.bootUuid)
-                && cdChangePdiv == other.cdChangePdiv;
+                && cdChangePdiv == other.cdChangePdiv
+                && ovnConfigured == other.ovnConfigured;
     }
 }

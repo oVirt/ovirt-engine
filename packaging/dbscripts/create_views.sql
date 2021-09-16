@@ -1896,6 +1896,7 @@ SELECT cluster.cluster_id AS cluster_id,
     vds_dynamic.fips_enabled AS fips_enabled,
     vds_dynamic.boot_uuid AS boot_uuid,
     vds_dynamic.cd_change_pdiv AS cd_change_pdiv,
+    vds_dynamic.ovn_configured AS ovn_configured,
     vds_static.ssh_public_key AS ssh_public_key
 FROM cluster
 INNER JOIN vds_static
@@ -2069,6 +2070,7 @@ SELECT cluster.cluster_id,
     vds_dynamic.fips_enabled AS fips_enabled,
     vds_dynamic.boot_uuid AS boot_uuid,
     vds_dynamic.cd_change_pdiv AS cd_change_pdiv,
+    vds_dynamic.ovn_configured AS ovn_configured,
     vds_static.ssh_public_key AS ssh_public_key
 FROM cluster
 INNER JOIN vds_static
