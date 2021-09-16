@@ -58,7 +58,7 @@
                     <g:center>
                         <g:ResizeLayoutPanel ui:field="roleTablePanel" />
                     </g:center>
-                    <g:south size="150">
+                    <g:south size="160">
                         <g:FlowPanel ui:field="permissionTablePanel"/>
                     </g:south>
                 </g:SplitLayoutPanel>

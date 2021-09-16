@@ -10,6 +10,7 @@
              padding-top: 1em;
              padding-left: 0px;
              padding-right: 0px;
+             padding-bottom: 1em;
              height: inherit;
          }
     </ui:style>
