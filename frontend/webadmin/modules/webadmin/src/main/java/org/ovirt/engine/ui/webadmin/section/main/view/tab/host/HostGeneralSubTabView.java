@@ -86,6 +86,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
     StringValueLabel hugePages = new StringValueLabel();
     BooleanTextBoxLabel vncEncryptionEnabled = new BooleanTextBoxLabel(constants.enabled(), constants.disabled());
     BooleanTextBoxLabel fipsEnabled = new BooleanTextBoxLabel(constants.enabled(), constants.disabled());
+    BooleanTextBoxLabel ovnConfigured = new BooleanTextBoxLabel(constants.yes(), constants.no());
 
     MemorySizeTextBoxLabel<Integer> physicalMemory = new MemorySizeTextBoxLabel<>();
     MemorySizeTextBoxLabel<Integer> usedMemory = new MemorySizeTextBoxLabel<>();
@@ -211,7 +212,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
         boolean glusterSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly);
 
         // Build a form using the FormBuilder
-        softwareFormBuilder = new FormBuilder(softwareFormPanel, 1, 14);
+        softwareFormBuilder = new FormBuilder(softwareFormPanel, 1, 15);
         softwareFormBuilder.setRelativeColumnWidth(0, 12);
         softwareFormBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0).withAutoPlacement(), 2, 10);
         softwareFormBuilder.addFormItem(new FormItem(constants.osPrettyName(), osPrettyName, 0).withAutoPlacement(), 2, 10);
@@ -239,6 +240,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
                 .withAutoPlacement(), 2, 10);
         softwareFormBuilder.addFormItem(new FormItem(constants.vncEncryptionLabel(), vncEncryptionEnabled, 0).withAutoPlacement(), 2, 10);
         softwareFormBuilder.addFormItem(new FormItem(constants.fipsEnabledLabel(), fipsEnabled, 0).withAutoPlacement(), 2, 10);
+        softwareFormBuilder.addFormItem(new FormItem(constants.ovnConfiguredLabel(), ovnConfigured, 0).withAutoPlacement(), 2, 10);
     }
 
     private void generateHardwareFormPanel() {

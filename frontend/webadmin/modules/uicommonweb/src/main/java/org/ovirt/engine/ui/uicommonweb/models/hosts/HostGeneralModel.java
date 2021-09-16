@@ -904,6 +904,19 @@ public class HostGeneralModel extends EntityModel<VDS> {
         this.kernelFeatures = kernelFeatures;
     }
 
+    private boolean ovnConfigured;
+
+    public boolean isOvnConfigured() {
+        return ovnConfigured;
+    }
+
+    public void setOvnConfigured(boolean value) {
+        if (ovnConfigured != value) {
+            ovnConfigured = value;
+            onPropertyChanged(new PropertyChangedEventArgs("ovnConfigured")); //$NON-NLS-1$
+        }
+    }
+
     static {
         requestEditEventDefinition = new EventDefinition("RequestEditEvent", HostGeneralModel.class); //$NON-NLS-1$
         requestGOToEventsTabEventDefinition = new EventDefinition("RequestGOToEventsTabEvent", HostGeneralModel.class); //$NON-NLS-1$
@@ -1066,6 +1079,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setKernelFeatures(formatKernelFeatures(vds.getKernelFeatures()));
         setvncEncryptionEnabled(vds.isVncEncryptionEnabled());
         setFipsEnabled(vds.isFipsEnabled());
+        setOvnConfigured(vds.isOvnConfigured());
     }
 
     private String formatKernelFeatures(Map<String, Object> kernelFeatures) {

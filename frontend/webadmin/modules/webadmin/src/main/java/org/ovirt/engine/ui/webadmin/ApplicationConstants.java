@@ -3560,6 +3560,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String fipsEnabledLabel();
 
+    String ovnConfiguredLabel();
+
     String vdsmName();
 
     String portSecurityEnabledLabel();
