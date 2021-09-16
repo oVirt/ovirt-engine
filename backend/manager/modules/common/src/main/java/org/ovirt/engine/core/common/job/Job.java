@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Queryable;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -344,5 +345,26 @@ public class Job implements Queryable, BusinessEntity<Guid> {
                 && Objects.equals(steps, other.steps)
                 && external == other.external
                 && autoCleared == other.autoCleared;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.forInstance(this)
+                .append("actionType", actionType)
+                .append("status", status)
+                .append("startTime", startTime)
+                .append("endTime", endTime)
+                .append("lastUpdateTime", lastUpdateTime)
+                .append("id", id)
+                .append("correlationId", correlationId)
+                .append("engineSessionSeqId", engineSessionSeqId)
+                .append("description", description)
+                .append("visible", isVisible)
+                .append("jobSubjectEntities", jobSubjectEntities)
+                .append("ownerId", ownerId)
+                .append("steps", steps)
+                .append("external", external)
+                .append("autoCleared", autoCleared)
+                .toString();
     }
 }
