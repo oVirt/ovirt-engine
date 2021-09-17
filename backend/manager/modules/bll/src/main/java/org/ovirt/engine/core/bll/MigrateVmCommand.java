@@ -86,6 +86,13 @@ import org.slf4j.LoggerFactory;
 @NonTransactiveCommandAttribute
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
 
+    private static int PARALLEL_MIGRATION_CONNECTION_BANDWIDTH_MBPS = 10 * 1024;
+    // It's possible to use only one "parallel" connection, but it's safer to always
+    // use at least 2 with the current QEMU implementation.
+    private static int MIN_PARALLEL_MIGRATION_CONNECTIONS = 2;
+    // QEMU/libvirt accepts uint8_t values for the number of connections
+    private static int MAX_PARALLEL_MIGRATION_CONNECTIONS = 255;
+
     private Logger log = LoggerFactory.getLogger(MigrateVmCommand.class);
 
     @Inject
@@ -394,17 +401,18 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         Integer maxBandwidth = null;
 
         Boolean autoConverge = getAutoConverge();
-        Boolean migrateCompressed = getMigrateCompressed();
+        Integer parallelMigrations = getParallelMigrations();
+        Boolean migrateCompressed = parallelMigrations == null ? getMigrateCompressed() : false;
         Boolean migrateEncrypted = vmHandler.getMigrateEncrypted(getVm(), getCluster());
         Boolean enableGuestEvents = null;
-        Integer maxIncomingMigrations = null;
-        Integer maxOutgoingMigrations = null;
+        Integer maxIncomingMigrations = 1;
+        Integer maxOutgoingMigrations = 1;
 
         MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(
                 getCluster().getMigrationPolicyId(),
                 getCluster().getCompatibilityVersion());
         MigrationPolicy effectiveMigrationPolicy = findEffectiveConvergenceConfig(clusterMigrationPolicy);
-        ConvergenceConfig convergenceConfig = getVm().getStatus() == VMStatus.Paused
+        ConvergenceConfig convergenceConfig = getVm().getStatus() == VMStatus.Paused || parallelMigrations != null
                 ? filterOutPostcopy(effectiveMigrationPolicy.getConfig())
                 : effectiveMigrationPolicy.getConfig();
         convergenceSchedule = ConvergenceSchedule.from(convergenceConfig).asMap();
@@ -416,7 +424,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
         enableGuestEvents = effectiveMigrationPolicy.isEnableGuestEvents();
 
-        maxIncomingMigrations = maxOutgoingMigrations = effectiveMigrationPolicy.getMaxMigrations();
+        if (parallelMigrations == null) {
+            maxIncomingMigrations = maxOutgoingMigrations = effectiveMigrationPolicy.getMaxMigrations();
+        }
 
         return new MigrateVDSCommandParameters(getVdsId(),
                 getVmId(),
@@ -433,6 +443,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 migrateEncrypted,
                 getDestinationVds().getConsoleAddress(),
                 maxBandwidth,
+                parallelMigrations,
                 convergenceSchedule,
                 enableGuestEvents,
                 maxIncomingMigrations,
@@ -463,20 +474,28 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
      *
      * @see org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType
      */
-    private Integer getMaxBandwidth(MigrationPolicy migrationPolicy) {
+    private Integer getMaxBandwidth() {
         switch (getCluster().getMigrationBandwidthLimitType()) {
             case AUTO:
                 return Optional.ofNullable(getAutoMaxBandwidth())
-                        .map(bandwidth -> bandwidth / migrationPolicy.getMaxMigrations() / 8)
+                        .map(bandwidth -> bandwidth / 8)
                         .orElse(null);
             case VDSM_CONFIG:
                 return null;
             case CUSTOM:
-                return getCluster().getCustomMigrationNetworkBandwidth() / migrationPolicy.getMaxMigrations() / 8;
+                return getCluster().getCustomMigrationNetworkBandwidth() / 8;
             default:
                 throw new IllegalStateException(
                         "Unexpected enum item: " + getCluster().getMigrationBandwidthLimitType());
         }
+    }
+
+    private Integer getMaxBandwidth(MigrationPolicy migrationPolicy) {
+        final Integer maxBandwidth = getMaxBandwidth();
+        if (maxBandwidth == null) {
+            return null;
+        }
+        return maxBandwidth / migrationPolicy.getMaxMigrations();
     }
 
     private Integer getAutoMaxBandwidth() {
@@ -529,6 +548,55 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 .map(NetworkInterface::getSpeed)
                 .map(speed -> speed > 0 ? speed : null)
                 .orElse(null);
+    }
+
+    /**
+     * @return Number of parallel migrations to use in this migration or `null` to
+     *         not use parallel migrations.
+     */
+    private Integer getParallelMigrations() {
+        if (!FeatureSupported.isParallelMigrationsSupported(getVm().getCompatibilityVersion())) {
+            return null;
+        }
+        Integer parallelMigrationsRequested = getParallelMigrationsFromVmOrCluster();
+        Integer parallelMigrations = parallelMigrationsRequested;
+        if (parallelMigrationsRequested < 0) {
+            parallelMigrations = calculateAutomaticParallelMigrations();
+            if (parallelMigrations == null && parallelMigrationsRequested == -1) {
+                parallelMigrations = MIN_PARALLEL_MIGRATION_CONNECTIONS;
+            }
+        } else {
+            final int maxParallelMigrations = Math.max(MIN_PARALLEL_MIGRATION_CONNECTIONS, getVm().getNumOfCpus());
+            parallelMigrations = Math.min(parallelMigrationsRequested, maxParallelMigrations);
+        }
+        if (parallelMigrations == null || parallelMigrations <= 0) {
+            return null;
+        } else {
+            return Math.min(parallelMigrations, MAX_PARALLEL_MIGRATION_CONNECTIONS);
+        }
+    }
+
+    private Integer getParallelMigrationsFromVmOrCluster() {
+        Integer parallelMigrations = getVm().getParallelMigrations();
+        if (parallelMigrations == null) {
+            parallelMigrations = getCluster().getParallelMigrations();
+        }
+        return parallelMigrations;
+    }
+
+    private Integer calculateAutomaticParallelMigrations() {
+        final Integer maxBandwidth = getMaxBandwidth();
+        if (maxBandwidth != null) {
+            final Integer networkLimit = maxBandwidth * 8 / PARALLEL_MIGRATION_CONNECTION_BANDWIDTH_MBPS;
+            final Integer cpuLimit = getVm().getNumOfCpus();
+            Integer parallelMigrations = Math.min(networkLimit, cpuLimit);
+            if (parallelMigrations < MIN_PARALLEL_MIGRATION_CONNECTIONS) {
+                parallelMigrations = null;
+            }
+            return parallelMigrations;
+        } else {
+            return null;
+        }
     }
 
     private MigrationPolicy findEffectiveConvergenceConfig(MigrationPolicy clusterMigrationPolicy) {

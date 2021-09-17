@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.builders;
 
 import org.ovirt.engine.core.common.businessentities.HasMigrationOptions;
 import org.ovirt.engine.ui.uicommonweb.models.ModelWithMigrationsOptions;
+import org.ovirt.engine.ui.uicommonweb.models.ParallelMigrationsType;
 
 public class MigrationsEntityToModelBuilder<S extends HasMigrationOptions, D extends ModelWithMigrationsOptions> extends BaseSyncBuilder<S, D> {
 
@@ -12,5 +13,16 @@ public class MigrationsEntityToModelBuilder<S extends HasMigrationOptions, D ext
         destination.getAutoConverge().setSelectedItem(source.getAutoConverge());
         destination.getMigrateCompressed().setSelectedItem(source.getMigrateCompressed());
         destination.getMigrateEncrypted().setSelectedItem(source.getMigrateEncrypted());
+        buildParallelMigrations(source, destination);
+    }
+
+    private void buildParallelMigrations(S source, D destination) {
+        // null value is not applicable for clusters but it should never occur there
+        final Integer parallelMigrations = source.getParallelMigrations();
+        ParallelMigrationsType parallelMigrationsType = ParallelMigrationsType.forValue(parallelMigrations);
+        destination.getParallelMigrationsType().setSelectedItem(parallelMigrationsType);
+        if (ParallelMigrationsType.CUSTOM.equals(parallelMigrationsType)) {
+            destination.getCustomParallelMigrations().setEntity(parallelMigrations);
+        }
     }
 }

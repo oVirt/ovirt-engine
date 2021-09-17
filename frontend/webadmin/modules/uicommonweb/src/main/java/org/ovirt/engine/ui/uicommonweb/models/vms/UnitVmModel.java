@@ -69,6 +69,7 @@ import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.ModelWithMigrationsOptions;
+import org.ovirt.engine.ui.uicommonweb.models.ParallelMigrationsType;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
@@ -341,6 +342,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             getAutoConverge().setIsChangeable(false);
             getMigrateCompressed().setIsChangeable(false);
             getMigrateEncrypted().setIsChangeable(false);
+            getParallelMigrationsType().setIsChangeable(false);
+            getCustomParallelMigrations().setIsChangeable(false);
+
             getNumaEnabled().setIsChangeable(false);
 
             // ==High Availability==
@@ -1683,6 +1687,26 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         this.migrateEncrypted = migrateEncrypted;
     }
 
+    private ListModelWithClusterDefault<ParallelMigrationsType> parallelMigrationsType;
+
+    public ListModel<ParallelMigrationsType> getParallelMigrationsType() {
+        return parallelMigrationsType;
+    }
+
+    public void setParallelMigrationsType(ListModelWithClusterDefault<ParallelMigrationsType> value) {
+        this.parallelMigrationsType = value;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Integer> customParallelMigrations;
+
+    public NotChangableForVmInPoolEntityModel<Integer> getCustomParallelMigrations() {
+        return customParallelMigrations;
+    }
+
+    public void setCustomParallelMigrations(NotChangableForVmInPoolEntityModel<Integer> customParallelMigrations) {
+        this.customParallelMigrations = customParallelMigrations;
+    }
+
     private ListModel<Label> labelList;
 
     public void setLabelList(ListModel<Label> labelList) {
@@ -1904,6 +1928,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
         setMigrationPolicies(new ListModelWithClusterDefault<MigrationPolicy>());
         getMigrationPolicies().getSelectedItemChangedEvent().addListener(this);
+
+        setParallelMigrationsType(new ListModelWithClusterDefault<>());
+        getParallelMigrationsType()
+                .setItems(new ArrayList<ParallelMigrationsType>(Arrays.asList(ParallelMigrationsType.values())));
+
+        setCustomParallelMigrations(new NotChangableForVmInPoolEntityModel<>());
+        getParallelMigrationsType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            updateCustomParallelMigrations();
+        });
+        updateCustomParallelMigrations();
 
         setHostCpu(new NotChangableForVmInPoolEntityModel<Boolean>());
         getHostCpu().getEntityChangedEvent().addListener(this);
@@ -2346,6 +2380,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         initUsbPolicy();
         updateMultiQueues();
         updateMigrateEncrypted();
+        updateParallelMigrationsVersionChange();
         updateSerialNumberPolicy();
         updateTpmEnabled();
     }
@@ -3136,7 +3171,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                     && getTemplateWithVersion().getIsValid());
         }
 
-        setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid());
+        if (getParallelMigrationsType().getSelectedItem() == ParallelMigrationsType.CUSTOM) {
+            getCustomParallelMigrations()
+                    .validateEntity(new IValidation[] { new NotNullIntegerValidation(2, Short.MAX_VALUE) });
+        } else {
+            getCustomParallelMigrations().setIsValid(true);
+        }
+
+        setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid()
+                && getCustomParallelMigrations().getIsValid());
 
         getCpuPinningPolicy().validateSelectedItem();
 
@@ -3277,7 +3320,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         setValidTab(TabName.CONSOLE_TAB, isValidTab(TabName.CONSOLE_TAB) &&
                 getIsUsbEnabled().getIsValid() && getNumOfMonitors().getIsValid() && getSpiceProxy().getIsValid() && getConsoleDisconnectActionDelay().getIsValid());
 
-        setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid());
+        setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid()
+                && getCustomParallelMigrations().getIsValid());
 
         getRngBytes().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE), new RngDevValidation()});
         getRngPeriod().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE)});
@@ -3612,7 +3656,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         }
     }
 
-    private class NotChangableForVmInPoolEntityModel<T> extends EntityModel<T> {
+    public class NotChangableForVmInPoolEntityModel<T> extends EntityModel<T> {
         public NotChangableForVmInPoolEntityModel() {
         }
 
@@ -3890,6 +3934,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             encrypt = AsyncDataProvider.getInstance().getMigrateEncrypted();
         }
         migrateEncrypted.setClusterValue(encrypt);
+
+        updateParallelMigrationsVersionChange();
     }
 
     private void updateMigrateEncrypted() {
@@ -3899,6 +3945,52 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         } else {
             getMigrateEncrypted().setIsChangeable(false, messages.availableInVersionOrHigher(Version.v4_4.toString()));
             getMigrateEncrypted().setSelectedItem(null);
+        }
+    }
+
+    private boolean parallelMigrationsSupported() {
+        final Version version = getCompatibilityVersion();
+        return version != null && AsyncDataProvider.getInstance().isParallelMigrationsSupportedByVersion(version);
+    }
+
+    private void updateParallelMigrationsVersionChange() {
+        if (parallelMigrationsSupported()) {
+            getParallelMigrationsType().setIsChangeable(true);
+        } else {
+            getParallelMigrationsType().setSelectedItem(null);
+            getParallelMigrationsType().setIsChangeable(false,
+                    messages.availableInVersionOrHigher(Version.v4_7.toString()));
+        }
+        updateParallelMigrationValues();
+    }
+
+    private void updateParallelMigrationValues() {
+        Cluster cluster = getSelectedCluster();
+        if (cluster != null && cluster.getParallelMigrations() != null) {
+            ParallelMigrationsType policy = ParallelMigrationsType.forValue(cluster.getParallelMigrations());
+            if (policy == null) {
+                // Illegal value, let's set the policy to disabled as a safe value
+                policy = ParallelMigrationsType.DISABLED;
+            }
+            parallelMigrationsType.setClusterValue(policy);
+        }
+        updateCustomParallelMigrations();
+    }
+
+    private void updateCustomParallelMigrations() {
+        if (ParallelMigrationsType.CUSTOM.equals(parallelMigrationsType.getSelectedItem())) {
+            getCustomParallelMigrations().setIsChangeable(true);
+            if (getCustomParallelMigrations().getEntity() == null) {
+                getCustomParallelMigrations().setEntity(0);
+            }
+        } else {
+            getCustomParallelMigrations().setIsChangeable(false, constants.customParallelMigrationsDisabledReason());
+            final Integer customParallelMigrations =
+                    parallelMigrationsType.getSelectedItem() == null
+                    && ParallelMigrationsType.CUSTOM.equals(parallelMigrationsType.getClusterValue())
+                    && getSelectedCluster() != null
+                    ? getSelectedCluster().getParallelMigrations() : null;
+            getCustomParallelMigrations().setEntity(customParallelMigrations);
         }
     }
 

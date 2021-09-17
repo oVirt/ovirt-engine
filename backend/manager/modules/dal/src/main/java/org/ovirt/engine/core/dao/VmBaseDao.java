@@ -84,6 +84,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("is_auto_converge", entity.getAutoConverge())
                 .addValue("is_migrate_compressed", entity.getMigrateCompressed())
                 .addValue("is_migrate_encrypted", entity.getMigrateEncrypted())
+                .addValue("parallel_migrations", entity.getParallelMigrations())
                 .addValue("predefined_properties", entity.getPredefinedProperties())
                 .addValue("userdefined_properties", entity.getUserDefinedProperties())
                 .addValue("custom_emulated_machine", entity.getCustomEmulatedMachine())
@@ -162,6 +163,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setAutoConverge((Boolean) rs.getObject("is_auto_converge"));
             entity.setMigrateCompressed((Boolean) rs.getObject("is_migrate_compressed"));
             entity.setMigrateEncrypted((Boolean) rs.getObject("is_migrate_encrypted"));
+            entity.setParallelMigrations((Integer) rs.getObject("parallel_migrations"));
             String predefinedProperties = rs.getString("predefined_properties");
             String userDefinedProperties = rs.getString("userdefined_properties");
             entity.setPredefinedProperties(predefinedProperties);

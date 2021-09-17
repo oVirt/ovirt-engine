@@ -1627,6 +1627,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String migrateEncryptedLabel();
 
+    String parallelMigrationsType();
+
+    String customParallelMigrations();
+
     String autoConverge();
 
     String dontAutoConverge();

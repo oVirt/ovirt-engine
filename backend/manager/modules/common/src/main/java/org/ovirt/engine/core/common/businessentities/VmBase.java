@@ -561,6 +561,10 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
 
     @CopyOnNewVersion
     @EditableVmField(onHostedEngine = true)
+    private Integer parallelMigrations;
+
+    @CopyOnNewVersion
+    @EditableVmField(onHostedEngine = true)
     private Guid migrationPolicyId;
 
     @CopyOnNewVersion
@@ -626,6 +630,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 vmBase.getAutoConverge(),
                 vmBase.getMigrateCompressed(),
                 vmBase.getMigrateEncrypted(),
+                vmBase.getParallelMigrations(),
                 vmBase.getUserDefinedProperties(),
                 vmBase.getPredefinedProperties(),
                 vmBase.getCustomProperties(),
@@ -702,6 +707,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
             Boolean autoConverge,
             Boolean migrateCompressed,
             Boolean migrateEncrypted,
+            Integer parallelMigrations,
             String userDefinedProperties,
             String predefinedProperties,
             String customProperties,
@@ -776,6 +782,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         this.autoConverge = autoConverge;
         this.migrateCompressed = migrateCompressed;
         this.migrateEncrypted = migrateEncrypted;
+        this.parallelMigrations = parallelMigrations;
         this.userDefinedProperties = userDefinedProperties;
         this.predefinedProperties = predefinedProperties;
         this.customProperties = customProperties;
@@ -1217,6 +1224,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 autoConverge,
                 migrateCompressed,
                 migrateEncrypted,
+                parallelMigrations,
                 predefinedProperties,
                 userDefinedProperties,
                 customEmulatedMachine,
@@ -1292,6 +1300,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
                 && Objects.equals(autoConverge, other.autoConverge)
                 && Objects.equals(migrateCompressed, other.migrateCompressed)
                 && Objects.equals(migrateEncrypted, other.migrateEncrypted)
+                && Objects.equals(parallelMigrations, other.parallelMigrations)
                 && Objects.equals(predefinedProperties, other.predefinedProperties)
                 && Objects.equals(userDefinedProperties, other.userDefinedProperties)
                 && Objects.equals(customEmulatedMachine, other.customEmulatedMachine)
@@ -1559,6 +1568,14 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     @Override
     public void setMigrateEncrypted(Boolean value) {
         this.migrateEncrypted = value;
+    }
+
+    public Integer getParallelMigrations() {
+        return parallelMigrations;
+    }
+
+    public void setParallelMigrations(Integer parallelMigrations) {
+        this.parallelMigrations = parallelMigrations;
     }
 
     public String getCustomProperties() {

@@ -51,6 +51,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelChain.Confirmatio
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ParallelMigrationsType;
 import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.ClusterAffinityLabelListModel;
@@ -387,6 +388,8 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             cModel.getCommands().add(tempVar2);
         }));
         clusterModel.refreshMigrationPolicies();
+        // Set the default parallel migrations type
+        clusterModel.getParallelMigrationsType().setSelectedItem(ParallelMigrationsType.DISABLED);
     }
 
     public static ClusterModel createNewClusterModel() {

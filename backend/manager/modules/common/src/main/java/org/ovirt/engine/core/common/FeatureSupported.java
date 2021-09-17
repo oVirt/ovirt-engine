@@ -393,4 +393,13 @@ public class FeatureSupported {
         return Version.v4_7.lessOrEquals(version);
     }
 
+    /**
+     * Checks if parallel migrations are supported.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if parallel migrations are supported.
+     */
+    public static boolean isParallelMigrationsSupported(Version version) {
+        return supportedInConfig(ConfigValues.ParallelMigrationsSupported, version);
+    }
 }

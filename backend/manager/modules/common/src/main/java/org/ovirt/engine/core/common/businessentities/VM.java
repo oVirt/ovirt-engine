@@ -1720,6 +1720,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         return vmStatic.getMigrateEncrypted();
     }
 
+    public Integer getParallelMigrations() {
+        return vmStatic.getParallelMigrations();
+    }
+
+    public void setParallelMigrations(Integer parallelMigrations) {
+        vmStatic.setParallelMigrations(parallelMigrations);
+    }
+
     public LockInfo getLockInfo() {
         return lockInfo;
     }

@@ -84,7 +84,8 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_cpu_pinning VARCHAR(4000),
  v_balloon_enabled BOOLEAN,
  v_console_disconnect_action_delay SMALLINT,
- v_cpu_pinning_policy SMALLINT)
+ v_cpu_pinning_policy SMALLINT,
+ v_parallel_migrations SMALLINT)
 
 RETURNS VOID
    AS $procedure$
@@ -181,7 +182,8 @@ BEGIN
         cpu_pinning,
         balloon_enabled,
         console_disconnect_action_delay,
-        cpu_pinning_policy)
+        cpu_pinning_policy,
+        parallel_migrations)
     VALUES(
         v_child_count,
         v_creation_date,
@@ -260,7 +262,8 @@ BEGIN
         v_cpu_pinning,
         v_balloon_enabled,
         v_console_disconnect_action_delay,
-        v_cpu_pinning_policy);
+        v_cpu_pinning_policy,
+        v_parallel_migrations);
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
     INSERT INTO vm_ovf_generations(
@@ -360,7 +363,8 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_cpu_pinning VARCHAR(4000),
  v_balloon_enabled BOOLEAN,
  v_console_disconnect_action_delay SMALLINT,
- v_cpu_pinning_policy SMALLINT)
+ v_cpu_pinning_policy SMALLINT,
+ v_parallel_migrations SMALLINT)
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -441,7 +445,8 @@ BEGIN
       cpu_pinning = v_cpu_pinning,
       balloon_enabled = v_balloon_enabled,
       console_disconnect_action_delay = v_console_disconnect_action_delay,
-      cpu_pinning_policy = v_cpu_pinning_policy
+      cpu_pinning_policy = v_cpu_pinning_policy,
+      parallel_migrations = v_parallel_migrations
       WHERE vm_guid = v_vmt_guid
           AND entity_type = v_template_type;
 

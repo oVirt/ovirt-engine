@@ -11,4 +11,8 @@ public interface ModelWithMigrationsOptions {
     ListModel<Boolean> getMigrateEncrypted();
 
     ListModel<MigrationPolicy> getMigrationPolicies();
+
+    ListModel<ParallelMigrationsType> getParallelMigrationsType();
+
+    EntityModel<Integer> getCustomParallelMigrations();
 }

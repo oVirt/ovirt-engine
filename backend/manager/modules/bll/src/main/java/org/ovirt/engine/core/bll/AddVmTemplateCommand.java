@@ -974,6 +974,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getAutoConverge(),
                         getParameters().getMasterVm().getMigrateCompressed(),
                         getParameters().getMasterVm().getMigrateEncrypted(),
+                        getParameters().getMasterVm().getParallelMigrations(),
                         getParameters().getMasterVm().getUserDefinedProperties(),
                         getParameters().getMasterVm().getPredefinedProperties(),
                         getParameters().getMasterVm().getCustomProperties(),

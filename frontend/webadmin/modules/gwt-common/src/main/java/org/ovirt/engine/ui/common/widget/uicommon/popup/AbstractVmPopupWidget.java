@@ -105,6 +105,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.ParallelMigrationsType;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.VirtioMultiQueueType;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
@@ -723,6 +724,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public ListModelListBoxEditor<Boolean> migrateEncryptedEditor;
 
     private ClusterDefaultRenderer<Boolean> migrateEncryptedRenderer;
+
+    private ClusterDefaultRenderer<ParallelMigrationsType> parallelMigrationsTypeRenderer;
+
+    @UiField(provided = true)
+    @Path(value = "parallelMigrationsType.selectedItem")
+    @WithElementId("parallelMigrationsType")
+    public ListModelListBoxEditor<ParallelMigrationsType> parallelMigrationsTypeEditor;
+
+    @UiField(provided = true)
+    @Path(value = "customParallelMigrations.entity")
+    @WithElementId("customParallelMigrations")
+    public IntegerEntityModelTextBoxEditor customParallelMigrationsEditor;
 
     @UiField(provided = true)
     @Ignore
@@ -1577,6 +1590,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 migrateEncryptedRenderer,
                 new ModeSwitchingVisibilityRenderer());
 
+        parallelMigrationsTypeRenderer = new ClusterDefaultRenderer<>(
+                new EnumRenderer<ParallelMigrationsType>());
+        parallelMigrationsTypeEditor = new ListModelListBoxEditor<>(
+                parallelMigrationsTypeRenderer,
+                new ModeSwitchingVisibilityRenderer());
+        customParallelMigrationsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+
         // Resource Allocation
         provisioningThinEditor =
                 new EntityModelRadioButtonEditor("provisioningGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
@@ -1863,6 +1883,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         initClusterDefaultValueListener(serialNumberPolicyRenderer, getModel().getSerialNumberPolicy());
         initClusterDefaultValueListener(migrateEncryptedRenderer, getModel().getMigrateEncrypted());
+        initClusterDefaultValueListener(parallelMigrationsTypeRenderer, getModel().getParallelMigrationsType());
         initClusterDefaultValueListener(autoConvergeRenderer, getModel().getAutoConverge());
         initClusterDefaultValueListener(migrateCompressedRenderer, getModel().getMigrateCompressed());
         initClusterDefaultValueListener(migrationPolicyRenderer, getModel().getMigrationPolicies());
@@ -2114,6 +2135,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         autoConvergeEditor.setTabIndex(nextTabIndex++);
         migrateCompressedEditor.setTabIndex(nextTabIndex++);
         migrateEncryptedEditor.setTabIndex(nextTabIndex++);
+        parallelMigrationsTypeEditor.setTabIndex(nextTabIndex++);
+        customParallelMigrationsEditor.setTabIndex(nextTabIndex++);
         hostCpuEditor.setTabIndex(nextTabIndex++);
         tscFrequencyEditor.setTabIndexes(nextTabIndex++);
         customCompatibilityVersionEditor.setTabIndex(nextTabIndex++);

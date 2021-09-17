@@ -2195,6 +2195,10 @@ public interface UIConstants extends Constants {
 
     String clusterDefaultCustomSerialNumberDisabledReason();
 
+    String customParallelMigrationsDisabledReason();
+
+    String clusterDefaultCustomParallelMigrationsDisabledReason();
+
     String updatingStorageDomainTitle();
 
     String chipsetDependentVmDeviceChangesTitle();

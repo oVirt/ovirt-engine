@@ -53,6 +53,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.SystemDefaultRenderer;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
+import org.ovirt.engine.ui.uicommonweb.models.ParallelMigrationsType;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
@@ -447,6 +448,16 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId("migrateCompressed")
     ListModelListBoxEditor<Boolean> migrateCompressedEditor;
 
+    @UiField(provided = true)
+    @Path(value = "parallelMigrationsType.selectedItem")
+    @WithElementId("parallelMigrationsType")
+    public ListModelListBoxEditor<ParallelMigrationsType> parallelMigrationsTypeEditor;
+
+    @UiField
+    @Path(value = "customParallelMigrations.entity")
+    @WithElementId
+    public IntegerEntityModelTextBoxEditor customParallelMigrationsEditor;
+
     @UiField
     @Ignore
     DialogTab consoleTab;
@@ -729,6 +740,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                         new BooleanRenderer(constants.compress(), constants.dontCompress()),
                         AsyncDataProvider.getInstance().getMigrateCompressed()));
 
+        parallelMigrationsTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<ParallelMigrationsType>());
         migrationBandwidthLimitTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<MigrationBandwidthLimitType>());
         migrationBandwidthLimitTypeEditor.hideLabel();
         migrationPolicyEditor = new ListModelListBoxEditor<>(new MigrationPolicyNameRenderer());

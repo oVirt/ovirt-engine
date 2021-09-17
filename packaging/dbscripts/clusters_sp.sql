@@ -58,7 +58,8 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_vnc_encryption_enabled BOOLEAN,
     v_smt_disabled BOOLEAN,
     v_managed BOOLEAN,
-    v_fips_mode SMALLINT
+    v_fips_mode SMALLINT,
+    v_parallel_migrations SMALLINT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -117,7 +118,8 @@ BEGIN
         vnc_encryption_enabled,
         smt_disabled,
         managed,
-        fips_mode
+        fips_mode,
+        parallel_migrations
         )
     VALUES (
         v_cluster_id,
@@ -174,7 +176,8 @@ BEGIN
         v_vnc_encryption_enabled,
         v_smt_disabled,
         v_managed,
-        v_fips_mode
+        v_fips_mode,
+        v_parallel_migrations
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -235,7 +238,8 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     v_vnc_encryption_enabled BOOLEAN,
     v_smt_disabled BOOLEAN,
     v_managed BOOLEAN,
-    v_fips_mode SMALLINT
+    v_fips_mode SMALLINT,
+    v_parallel_migrations SMALLINT
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -297,7 +301,8 @@ BEGIN
         vnc_encryption_enabled = v_vnc_encryption_enabled,
         smt_disabled = v_smt_disabled,
         managed = v_managed,
-        fips_mode = v_fips_mode
+        fips_mode = v_fips_mode,
+        parallel_migrations = v_parallel_migrations
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

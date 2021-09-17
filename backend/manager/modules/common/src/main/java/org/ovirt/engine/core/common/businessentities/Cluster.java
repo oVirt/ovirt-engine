@@ -170,6 +170,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
     @Min(1)
     private Integer customMigrationNetworkBandwidth;
 
+    private Integer parallelMigrations;
     private Guid migrationPolicyId;
     private Guid macPoolId;
     private Guid defaultNetworkProviderId;
@@ -187,6 +188,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         enableKsm = true;
         ksmMergeAcrossNumaNodes = true;
         migrationBandwidthLimitType = MigrationBandwidthLimitType.DEFAULT;
+        parallelMigrations = 0;
         requiredSwitchTypeForCluster = SwitchType.LEGACY;
         logMaxMemoryUsedThresholdType = LogMaxMemoryUsedThresholdType.PERCENTAGE;
         description = "";
@@ -621,6 +623,16 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     public void setMigrationBandwidthLimitType(MigrationBandwidthLimitType migrationBandwidthLimitType) {
         this.migrationBandwidthLimitType = migrationBandwidthLimitType;
+    }
+
+    @Override
+    public Integer getParallelMigrations() {
+        return parallelMigrations;
+    }
+
+    @Override
+    public void setParallelMigrations(Integer parallelMigrations) {
+        this.parallelMigrations = parallelMigrations;
     }
 
     public Guid getMigrationPolicyId() {

@@ -310,6 +310,10 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeElement(MIGRATION_POLICY_ID, String.valueOf(vmBase.getMigrationPolicyId()));
         }
 
+        if (vmBase.getParallelMigrations() != null) {
+            _writer.writeElement(PARALLEL_MIGRATIONS, String.valueOf(vmBase.getParallelMigrations()));
+        }
+
         writeCustomEmulatedMachine();
         writeBiosType();
         writeCustomCpuName();

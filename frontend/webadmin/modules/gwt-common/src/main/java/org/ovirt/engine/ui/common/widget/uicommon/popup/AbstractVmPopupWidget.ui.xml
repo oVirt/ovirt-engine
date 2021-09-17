@@ -477,6 +477,12 @@
                   <e:ListModelListBoxEditor ui:field="migrateEncryptedEditor" label="{constants.migrateEncryptedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
+                  <e:ListModelListBoxEditor ui:field="parallelMigrationsTypeEditor" label="{constants.parallelMigrationsType}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                  <ge:IntegerEntityModelTextBoxEditor ui:field="customParallelMigrationsEditor" label="{constants.customParallelMigrations}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
                   <b:Column size="SM_5">
                     <l:EnableableFormLabel ui:field="migrationDowntimeLabel" addStyleNames="{style.floatLeft} " text="{constants.migrationDowntime}" />
                     <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.infoIcon}"/>

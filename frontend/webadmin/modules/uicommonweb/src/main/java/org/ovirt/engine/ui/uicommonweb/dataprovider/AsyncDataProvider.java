@@ -496,6 +496,10 @@ public class AsyncDataProvider {
         return FeatureSupported.isFipsModeSupported(version);
     }
 
+    public Boolean isParallelMigrationsSupportedByVersion(Version version) {
+        return (Boolean) getConfigValuePreConverted(ConfigValues.ParallelMigrationsSupported, version.getValue());
+    }
+
     private void initMigrationSupportMap() {
         Frontend.getInstance().runQuery(QueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMigrationSupport),

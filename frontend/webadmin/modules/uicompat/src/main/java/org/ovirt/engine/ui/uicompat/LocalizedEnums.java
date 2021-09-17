@@ -1732,6 +1732,14 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String MigrationBandwidthLimitType___CUSTOM();
 
+    String ParallelMigrationsType___AUTO();
+
+    String ParallelMigrationsType___AUTO_PARALLEL();
+
+    String ParallelMigrationsType___DISABLED();
+
+    String ParallelMigrationsType___CUSTOM();
+
     String ImageInfoModel$QemuCompat___V2();
 
     String ImageInfoModel$QemuCompat___V3();

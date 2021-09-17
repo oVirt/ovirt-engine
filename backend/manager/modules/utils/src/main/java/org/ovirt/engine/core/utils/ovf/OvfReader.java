@@ -632,6 +632,8 @@ public abstract class OvfReader implements IOvfBuilder {
         consumeReadProperty(content,
                 MIGRATION_POLICY_ID,
                 val -> vmBase.setMigrationPolicyId(Guid.createGuidFromString(val)));
+        consumeReadProperty(content, PARALLEL_MIGRATIONS,
+                val -> vmBase.setParallelMigrations(Integer.parseInt(val)));
         consumeReadProperty(content, CUSTOM_EMULATED_MACHINE, val -> vmBase.setCustomEmulatedMachine(val));
         readBiosType(content);
         consumeReadProperty(content, CUSTOM_CPU_NAME, val -> vmBase.setCustomCpuName(val));

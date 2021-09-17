@@ -61,6 +61,7 @@ import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ModelWithMigrationsOptions;
+import org.ovirt.engine.ui.uicommonweb.models.ParallelMigrationsType;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
@@ -920,6 +921,26 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.migrationBandwidthLimitType = migrationBandwidthLimitType;
     }
 
+    private EntityModel<Integer> customParallelMigrations;
+
+    public EntityModel<Integer> getCustomParallelMigrations() {
+        return customParallelMigrations;
+    }
+
+    public void setCustomParallelMigrations(EntityModel<Integer> customParallelMigrations) {
+        this.customParallelMigrations = customParallelMigrations;
+    }
+
+    public ListModel<ParallelMigrationsType> parallelMigrationsType;
+
+    public ListModel<ParallelMigrationsType> getParallelMigrationsType() {
+        return parallelMigrationsType;
+    }
+
+    public void setParallelMigrationsType(ListModel<ParallelMigrationsType> parallelMigrationsType) {
+        this.parallelMigrationsType = parallelMigrationsType;
+    }
+
     private ListModel<MacPool> macPoolListModel;
 
     public ListModel<MacPool> getMacPoolListModel() {
@@ -1412,6 +1433,25 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 }));
         setCustomMigrationNetworkBandwidth(new EntityModel<>());
         setMigrationBandwidthLimitType(new ListModel<>());
+
+        setParallelMigrationsType(new ListModel<>());
+        getParallelMigrationsType().setItems(new ArrayList<>(Arrays.asList(ParallelMigrationsType.values())));
+        updateParallelMigrationsChangeable();
+        setCustomParallelMigrations(new EntityModel<>());
+        getParallelMigrationsType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            updateCustomParallelMigrations();
+        });
+        updateCustomParallelMigrations();
+    }
+
+    private void updateParallelMigrationsChangeable() {
+        final Version version = getEffectiveVersion();
+        if (version == null || AsyncDataProvider.getInstance().isParallelMigrationsSupportedByVersion(version)) {
+            getParallelMigrationsType().setIsChangeable(true);
+        } else {
+            getParallelMigrationsType().setIsChangeable(false,
+                    messages.availableInVersionOrHigher(Version.v4_7.toString()));
+        }
     }
 
     private List<SerialNumberPolicy> getSerialNumberPoliciesWithNull() {
@@ -1430,6 +1470,18 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         } else {
             getCustomSerialNumber().setIsChangeable(false, constants.customSerialNumberDisabledReason());
             getCustomSerialNumber().setEntity(null);
+        }
+    }
+
+    private void updateCustomParallelMigrations() {
+        if (ParallelMigrationsType.CUSTOM.equals(getParallelMigrationsType().getSelectedItem())) {
+            getCustomParallelMigrations().setIsChangeable(true);
+            if (getCustomParallelMigrations().getEntity() == null) {
+                getCustomParallelMigrations().setEntity(0);
+            }
+        } else {
+            getCustomParallelMigrations().setIsChangeable(false, constants.customParallelMigrationsDisabledReason());
+            getCustomParallelMigrations().setEntity(null);
         }
     }
 
@@ -1978,6 +2030,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
 
         updateBiosType();
+
+        updateParallelMigrationsChangeable();
     }
 
     private void refreshAdditionalClusterFeaturesList() {
@@ -2338,10 +2392,17 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             }
         }
 
-        final boolean migrationTabValid =
-                getMigrationBandwidthLimitType().getIsValid()
-                && getCustomMigrationNetworkBandwidth().getIsValid();
-
+        if (ParallelMigrationsType.CUSTOM.equals(getParallelMigrationsType().getSelectedItem())) {
+            // Minimum safe number of parallel migration connections: 2
+            // Maximum parallel migration connections allowed by QEMU/libvirt: 255
+            getCustomParallelMigrations().validateEntity(
+                    new IValidation[] { new NotNullIntegerValidation(2, 255) });
+        } else {
+            getCustomParallelMigrations().setIsValid(true);
+        }
+        final boolean migrationTabValid = getMigrationBandwidthLimitType().getIsValid()
+                && getCustomMigrationNetworkBandwidth().getIsValid() && getParallelMigrationsType().getIsValid()
+                && getCustomParallelMigrations().getIsValid();
         setValidTab(TabName.MIGRATION_TAB, migrationTabValid);
 
         // Scheduling tab
