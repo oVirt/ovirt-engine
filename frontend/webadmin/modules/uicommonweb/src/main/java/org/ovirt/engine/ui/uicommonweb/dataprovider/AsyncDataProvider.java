@@ -1099,6 +1099,7 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    // NOTE: This logic is duplicated in ovirt-web-ui for disk and VM creation.  Any changes here should also be made there.
     public VolumeFormat getDiskVolumeFormat(VolumeType volumeType, StorageType storageType) {
         if (storageType.isFileDomain()) {
             return VolumeFormat.RAW;
@@ -1120,6 +1121,7 @@ public class AsyncDataProvider {
         }
     }
 
+    // NOTE: This logic is duplicated in ovirt-web-ui for disk and VM creation.  Any changes here should also be made there.
     public VolumeType getVolumeType(VolumeFormat volumeFormat, StorageType storageType, VM vm, Image diskImage) {
         switch (volumeFormat) {
         case COW:
