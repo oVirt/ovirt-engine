@@ -29,6 +29,7 @@ def extract_disk(ova_path, offset, image_path):
     output = check_output(['losetup', '--find', '--show', '-o', str(offset),
                            ova_path])
     loop = from_bytes(output.splitlines()[0])
+    call(['udevadm', 'settle'])
     loop_stat = os.stat(loop)
     vdsm_user = pwd.getpwnam('vdsm')
     os.chown(loop, vdsm_user.pw_uid, vdsm_user.pw_gid)
