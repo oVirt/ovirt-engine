@@ -339,6 +339,7 @@ public class HostMapper {
         }
 
         model.setReinstallationRequired(entity.getStaticData().isReinstallRequired());
+        model.setOvnConfigured(entity.isOvnConfigured());
 
         return model;
     }
