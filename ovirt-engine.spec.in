@@ -314,7 +314,10 @@ Requires:	xmlrpc-client
 Requires:	ovirt-ansible-collection >= 1.2.0
 Requires:	ovirt-web-ui
 Requires:	ovirt-cockpit-sso
+%if 0%{?rhel} < 9
+# ovirt-engine-api-explorer has never been built for el9
 Obsoletes:	ovirt-engine-api-explorer
+%endif
 
 # Metrics stuff
 Requires:	collectd
@@ -379,7 +382,10 @@ Conflicts:	python2-ipaserver
 Conflicts:	python3-ipaserver
 
 # Userportal is retired
+%if 0%{?rhel} < 9
+# ovirt-engine-userportal has never been built for el9
 Obsoletes:	%{name}-userportal
+%endif
 
 # OVS/OVN stuff
 Requires:	python3-pyOpenSSL
