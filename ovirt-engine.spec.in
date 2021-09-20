@@ -281,9 +281,13 @@ BuildRequires:	ed25519-java
 BuildRequires:	jackson-jaxrs-json-provider
 BuildRequires:	resteasy
 BuildRequires:	apache-sshd
+BuildRequires:	openstack-java-cinder-client >= %{openstack_java_version}
+BuildRequires:	openstack-java-keystone-client >= %{openstack_java_version}
+BuildRequires:	openstack-java-glance-client >= %{openstack_java_version}
 
 # backend
 BuildRequires:	%{name}-extensions-api >= 1.0.1
+BuildRequires:	ebay-cors-filter
 
 # findbugs filter
 BuildRequires:	maven-surefire-plugin
@@ -888,6 +892,10 @@ ln -s "%{engine_name}" "%{buildroot}%{engine_java}/../%{name}"
 #
 # Register poms
 #
+# All poms including intermediate ones are required.
+# Order of the sequence of %mvn_package & %mvn_artifact matters
+# Registration should start with the most top level pom and go down
+#
 while read package pom; do
 	pomdir="$(dirname "%{_mavenpomdir}/${pom}")"
 	pom="$(basename "${pom}")"
@@ -895,18 +903,21 @@ while read package pom; do
 	mv "%{buildroot}${pomdir}/${pom}" "%{buildroot}${pomdir}/${jpppom}"
 	artifact_id="$(echo "${pom}" | sed -e 's/^%{name}-//' -e 's/\.pom//')"
 	if [ -f "%{buildroot}%{engine_java}/${artifact_id}.jar" ]; then
-		%add_maven_depmap -f "${package}" "${jpppom}" "%{name}/${artifact_id}.jar"
+		%mvn_package ":${artifact_id}*" "${package}"
+		%mvn_artifact "%{buildroot}${pomdir}/${jpppom}" "%{buildroot}%{engine_java}/${artifact_id}.jar"
 	else
-		%add_maven_depmap -f "${package}" "${jpppom}"
+		%mvn_package ":${artifact_id}*" "${package}"
+		%mvn_artifact "%{buildroot}${pomdir}/${jpppom}"
 	fi
 done << __EOF__
-backend %{name}-aaa.pom
+base %{name}-root.pom
 backend %{name}-backend.pom
+backend %{name}-manager.pom
+backend %{name}-manager-modules.pom
+backend %{name}-aaa.pom
 backend %{name}-bll.pom
 backend %{name}-builtin.pom
 backend %{name}-dal.pom
-backend %{name}-manager-modules.pom
-backend %{name}-manager.pom
 backend %{name}-scheduler.pom
 backend %{name}-searchbackend.pom
 backend %{name}-vdsbroker.pom
@@ -915,13 +926,14 @@ base %{name}-common.pom
 base %{name}-compat.pom
 base %{name}-extensions-manager.pom
 base %{name}-logutils.pom
-base %{name}-root.pom
 base %{name}-utils.pom
 base %{name}-uutils.pom
+restapi %{name}-restapi-parent.pom
+restapi %{name}-interface.pom
+restapi %{name}-common-parent.pom
 restapi %{name}-interface-common-jaxrs.pom
 restapi %{name}-restapi-definition.pom
 restapi %{name}-restapi-jaxrs.pom
-restapi %{name}-restapi-parent.pom
 restapi %{name}-restapi-types.pom
 tools %{name}-extensions-tool.pom
 tools %{name}-sso-client-registration-tool.pom
@@ -1052,6 +1064,32 @@ perl -i -pe 'BEGIN{undef $/;} s/Name: [^\n]+\n( [^\n]+\n)*([^\s]+-Digest: [^\n]+
 perl -i -pe 's/^SHA1-Digest: [^\n]+\n//g' "%{buildroot}%{engine_ear}/META-INF/MANIFEST.MF"
 
 %endif
+
+#FIXME installation fails because:
+# Exception: Following dependencies were not resolved and requires cannot be generated.
+#   Either remove the dependencies from pom.xml or add proper packages to BuildRequires:
+#   org.hibernate.validator:hibernate-validator:6.0.18.Final required by org.ovirt.engine.core:common
+#   org.infinispan:infinispan-core:9.4.18.Final required by org.ovirt.engine.core:utils
+#
+#   asocha:
+#   Unfortunately, we cannot mark these 2 dependencies as 'provided' because they are required at 'compile' time
+#
+#   Right now I can only think about 2 options:
+#   1) install it (preferably via ovirt-dependencies) and
+#        'BuildRequires:  <packages>'
+#   2) register earlier using 'mvn_artifact' & 'mvn_package' (plus any transitive dependencies)
+#      and then here in 'install' section use:
+#        '%mvn_package ":hibernate-validator*"  __noinstall'
+#        '%mvn_package ":infinispan-core*"  __noinstall'
+#        '%mvn_package ":jboss-modules*"  __noinstall'
+#      to skip installation
+# Not sure if there is a better way, but I cannot exclude it.
+
+%mvn_install
+
+echo "Install complete"
+
+
 
 %preun
 if [ "$1" -eq 0 ]; then
