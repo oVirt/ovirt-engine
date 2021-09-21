@@ -42,4 +42,5 @@ ovirt_vdsm_key_type: rsa
 # OVN
 ovn_central: "{{ host_deploy_ovn_central | default(omit) }}"
 ovn_tunneling_interface: "{{ host_deploy_ovn_tunneling_interface | default('ovirtmgmt') }}"
+ovn_host_fqdn: "{{ ovirt_vds_hostname | default('') }}"
 check_ovs_version: true

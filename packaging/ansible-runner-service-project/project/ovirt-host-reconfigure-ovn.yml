@@ -8,7 +8,7 @@
 
 - name: Reconfigure OVN for oVirt
   command: >
-    vdsm-tool ovn-config {{ ovn_central }} {{ ovn_tunneling_interface }} {{ ovirt_vds_hostname }}
+    vdsm-tool ovn-config {{ ovn_central }} {{ ovn_tunneling_interface }} {{ ovn_host_fqdn }}
   when:
     - ovirt_openvswitch_pre.version is version('2.11', '==')
     - ovirt_openvswitch_post.version is version('2.15', '>=')

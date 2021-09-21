@@ -28,7 +28,7 @@
 
   - name: Configure OVN for oVirt
     command: >
-        vdsm-tool ovn-config {{ ovn_central }} {{ ovn_tunneling_interface }} {{ ovirt_vds_hostname }}
+        vdsm-tool ovn-config {{ ovn_central }} {{ ovn_tunneling_interface }} {{ ovn_host_fqdn }}
 
   when:
     - ovn_central is defined
