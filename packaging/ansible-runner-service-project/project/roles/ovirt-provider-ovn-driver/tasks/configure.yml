@@ -26,6 +26,20 @@
         state: started
         enabled: yes
 
+  - name: Fetch installed packages
+    package_facts:
+      manager: auto
+
+  - name: Get installed version of vdsm
+    set_fact:
+      vdsm_package: "{{ ansible_facts.packages['vdsm'] | first }}"
+
+  - name: Skip Host FQDN for vdsm older than 4.50
+    set_fact:
+      ovn_host_fqdn: ""
+    when:
+      - vdsm_package.version is version('4.50', '<')
+
   - name: Configure OVN for oVirt
     command: >
         vdsm-tool ovn-config {{ ovn_central }} {{ ovn_tunneling_interface }} {{ ovn_host_fqdn }}
