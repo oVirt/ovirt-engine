@@ -77,6 +77,8 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.ImagesDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelChain;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelChain.ConfirmationModelChainItem;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
@@ -1685,64 +1687,69 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         setcurrentVm(model.getIsNew() ? new VM() : (VM) Cloner.clone(selectedItem));
 
-        String selectedCpu = model.getCustomCpu().getSelectedItem();
-        if (selectedCpu != null && !selectedCpu.isEmpty()  && !model.getCustomCpu().getItems().contains(selectedCpu)) {
-            confirmCustomCpu("PreSavePhase2"); //$NON-NLS-1$
-        } else {
-            preSavePhase2();
-        }
+        confirmPreSaveWarnings();
     }
 
-    private void confirmCustomCpu(String phase2UiCommand) {
-        ConfirmationModel confirmModel = new ConfirmationModel();
-        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuTitle());
-        confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuMessage());
-        confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
-        confirmModel.setHashName("edit_unsupported_cpu"); //$NON-NLS-1$
+    private void confirmPreSaveWarnings() {
+        UnitVmModel model = (UnitVmModel) getWindow();
 
-        confirmModel.getCommands().add(new UICommand(phase2UiCommand, VmListModel.this)
-                .setTitle(ConstantsManager.getInstance().getConstants().ok())
-                .setIsDefault(true));
-
-        confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", VmListModel.this)); //$NON-NLS-1$
-
-        setConfirmWindow(confirmModel);
+        ConfirmationModelChain chain = new ConfirmationModelChain();
+        chain.addConfirmation(createConfirmCustomCpu(model));
+        chain.addConfirmation(createConfirmCpuPinningLost(model));
+        chain.execute(this, this::preSaveUpdateAndValidateModel);
     }
 
-    private void preSavePhase2() {
-        final UnitVmModel model = (UnitVmModel) getWindow();
+    private ConfirmationModelChainItem createConfirmCustomCpu(UnitVmModel model) {
+        return new ConfirmationModelChainItem() {
 
-        EntityModel<String> cpuPinning = model.getCpuPinning();
-        if (!cpuPinning.getIsChangable() && !model.isVmAttachedToPool() && cpuPinning.getEntity() != null
-                && !cpuPinning.getEntity().isEmpty()) {
-            confirmCpuPinningLost();
-        } else {
-            preSavePhase3();
-        }
+            @Override
+            public boolean isRequired() {
+                final String selectedCpu = model.getCustomCpu().getSelectedItem();
+                return selectedCpu != null && !selectedCpu.isEmpty() && !model.getCustomCpu().getItems().contains(selectedCpu);
+            }
+
+            @Override
+            public ConfirmationModel getConfirmation() {
+                ConfirmationModel confirmModel = new ConfirmationModel();
+                confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuTitle());
+                confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuMessage());
+                confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
+                confirmModel.setHashName("edit_unsupported_cpu"); //$NON-NLS-1$
+                return confirmModel;
+            }
+        };
     }
 
-    private void confirmCpuPinningLost() {
-        ConfirmationModel confirmModel = new ConfirmationModel();
-        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmCpuPinningClearTitle());
-        confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmCpuPinningClearMessage());
+    private ConfirmationModelChainItem createConfirmCpuPinningLost(UnitVmModel model) {
+        return new ConfirmationModelChainItem() {
 
-        confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
-        confirmModel.setHashName("edit_clear_cpu_pinning"); //$NON-NLS-1$
+            @Override
+            public boolean isRequired() {
+                final EntityModel<String> cpuPinning = model.getCpuPinning();
+                return !cpuPinning.getIsChangable() && !model.isVmAttachedToPool() && cpuPinning.getEntity() != null
+                        && !cpuPinning.getEntity().isEmpty();
+            }
 
-        confirmModel.getCommands().add(UICommand.createDefaultOkUiCommand("ClearCpuPinning", VmListModel.this)); //$NON-NLS-1$
-        confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", VmListModel.this)); //$NON-NLS-1$
+            @Override
+            public ConfirmationModel getConfirmation() {
+                ConfirmationModel confirmModel = new ConfirmationModel();
+                confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmCpuPinningClearTitle());
+                confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmCpuPinningClearMessage());
 
-        setConfirmWindow(confirmModel);
+                confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
+                confirmModel.setHashName("edit_clear_cpu_pinning"); //$NON-NLS-1$
+
+                return confirmModel;
+            }
+
+            @Override
+            public void onConfirm() {
+                model.getCpuPinning().setEntity("");
+            }
+        };
     }
 
-    private void clearCpuPinning() {
-        final UnitVmModel model = (UnitVmModel) getWindow();
-        model.getCpuPinning().setEntity("");
-
-        preSavePhase3();
-    }
-
-    private void preSavePhase3() {
+    private void preSaveUpdateAndValidateModel() {
         final UnitVmModel model = (UnitVmModel) getWindow();
         final String name = model.getName().getEntity();
 
@@ -1762,63 +1769,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
         getcurrentVm().setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
 
-        if (selectedItem.isRunningOrPaused() && !selectedItem.isHostedEngine()) {
-            AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery<>(
-                    new AsyncCallback<QueryReturnValue>() {
-                @Override
-                public void onSuccess(QueryReturnValue returnValue) {
-                    List<String> changedFields = returnValue.getReturnValue();
-                    final boolean cpuHotPluggable = VmCommonUtils.isCpusToBeHotpluggedOrUnplugged(selectedItem, getcurrentVm());
-                    final boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
-                    final boolean memoryHotPluggable =
-                            VmCommonUtils.isMemoryToBeHotplugged(selectedItem, getcurrentVm());
-                    final boolean minAllocatedMemoryChanged = selectedItem.getMinAllocatedMem() != getcurrentVm().getMinAllocatedMem();
-                    final boolean vmLeaseUpdated = VmCommonUtils.isVmLeaseToBeHotPluggedOrUnplugged(selectedItem, getcurrentVm());
-                    if (isHeadlessModeChanged) {
-                        changedFields.add(constants.headlessMode());
-                    }
-
-                    // provide warnings if isVmUnpinned()
-                    if (!changedFields.isEmpty() || isVmUnpinned() || memoryHotPluggable || cpuHotPluggable || vmLeaseUpdated) {
-                        VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
-                        if (isVmUnpinned()) {
-                            confirmModel.setVmUnpinned();
-                        }
-                        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
-                        confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
-                        confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
-                        confirmModel.setChangedFields(changedFields);
-                        confirmModel.setCpuPluggable(cpuHotPluggable);
-                        confirmModel.setMemoryPluggable(memoryHotPluggable);
-                        // it can be plugged only together with the memory, never alone
-                        confirmModel.setMinAllocatedMemoryPluggable(memoryHotPluggable && minAllocatedMemoryChanged);
-                        confirmModel.setVmLeaseUpdated(vmLeaseUpdated);
-
-                        confirmModel.getCommands().add(new UICommand("updateExistingVm", VmListModel.this) //$NON-NLS-1$
-                        .setTitle(ConstantsManager.getInstance().getConstants().ok())
-                        .setIsDefault(true));
-
-                        confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", VmListModel.this)); //$NON-NLS-1$
-
-                        setConfirmWindow(confirmModel);
-                    } else {
-                        updateExistingVm(false);
-                    }
-                }
-
-                private boolean isVmUnpinned() {
-                    if (selectedItem.isRunning()) {
-                        if (selectedItem.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST
-                            && getcurrentVm().getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            }));
-        } else {
-            updateExistingVm(false);
-        }
+        ConfirmationModelChain chain = new ConfirmationModelChain();
+        NextRunConfigurationConfirmation confirmationChainItem = new NextRunConfigurationConfirmation();
+        chain.addConfirmation(confirmationChainItem);
+        chain.execute(this, () -> updateExistingVm(confirmationChainItem.applyChangesLater()));
     }
 
     protected void setupCloneVmModel(UnitVmModel model, List<UICommand> uiCommands) {
@@ -2177,11 +2131,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             cancel();
         } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             preSave();
-        } else if ("PreSavePhase2".equals(command.getName())) { //$NON-NLS-1$
-            preSavePhase2();
-        } else if ("PreSavePhase3".equals(command.getName())) { //$NON-NLS-1$
-            preSavePhase3();
-            cancelConfirmation();
         } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
         } else if ("OnExport".equals(command.getName())) { //$NON-NLS-1$
@@ -2215,15 +2164,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         } else if (command.getName().equals("closeVncInfo") || // $NON-NLS-1$
                 "OnEditConsoleSave".equals(command.getName())) { //$NON-NLS-1$
             setWindow(null);
-        } else if ("updateExistingVm".equals(command.getName())) { // $NON-NLS-1$
-            VmNextRunConfigurationModel model = (VmNextRunConfigurationModel) getConfirmWindow();
-            if (!model.validate()) {
-                return;
-            }
-            updateExistingVm(!model.isAnythingPluggable() || model.getApplyLater().getEntity());
-            cancelConfirmation();
-        } else if ("ClearCpuPinning".equals(command.getName())) { // $NON-NLS-1$
-            clearCpuPinning();
         } else if (CMD_CONFIGURE_VMS_TO_IMPORT.equals(command.getName())) {
             onConfigureVmsToImport();
         } else if ("ConfirmAndSaveOrUpdateVM".equals(command.getName())) { //$NON-NLS-1$
@@ -2510,4 +2450,84 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         return entity.getStoragePoolId();
     }
 
+    class NextRunConfigurationConfirmation implements ConfirmationModelChainItem {
+
+        private VmNextRunConfigurationModel confirmModel;
+
+        private boolean required;
+
+        @Override
+        public void init(Runnable callback) {
+            required = selectedItem.isRunningOrPaused() && !selectedItem.isHostedEngine();
+
+            if (!required) {
+                callback.run();
+                return;
+            }
+
+            AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery<>(
+                    new AsyncCallback<QueryReturnValue>() {
+                @Override
+                public void onSuccess(QueryReturnValue returnValue) {
+                    List<String> changedFields = returnValue.getReturnValue();
+                    final boolean cpuHotPluggable = VmCommonUtils.isCpusToBeHotpluggedOrUnplugged(selectedItem, getcurrentVm());
+                    final boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
+                    final boolean memoryHotPluggable =
+                            VmCommonUtils.isMemoryToBeHotplugged(selectedItem, getcurrentVm());
+                    final boolean minAllocatedMemoryChanged = selectedItem.getMinAllocatedMem() != getcurrentVm().getMinAllocatedMem();
+                    final boolean vmLeaseUpdated = VmCommonUtils.isVmLeaseToBeHotPluggedOrUnplugged(selectedItem, getcurrentVm());
+                    if (isHeadlessModeChanged) {
+                        changedFields.add(constants.headlessMode());
+                    }
+
+                    // provide warnings if isVmUnpinned()
+                    if (!changedFields.isEmpty() || isVmUnpinned() || memoryHotPluggable || cpuHotPluggable || vmLeaseUpdated) {
+                        confirmModel = new VmNextRunConfigurationModel();
+                        if (isVmUnpinned()) {
+                            confirmModel.setVmUnpinned();
+                        }
+                        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
+                        confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
+                        confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
+                        confirmModel.setChangedFields(changedFields);
+                        confirmModel.setCpuPluggable(cpuHotPluggable);
+                        confirmModel.setMemoryPluggable(memoryHotPluggable);
+                        // it can be plugged only together with the memory, never alone
+                        confirmModel.setMinAllocatedMemoryPluggable(memoryHotPluggable && minAllocatedMemoryChanged);
+                        confirmModel.setVmLeaseUpdated(vmLeaseUpdated);
+                    } else {
+                        required = false;
+                    }
+                    callback.run();
+                }
+
+                private boolean isVmUnpinned() {
+                    if (selectedItem.isRunning()) {
+                        if (selectedItem.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST
+                            && getcurrentVm().getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }));
+        }
+
+        @Override
+        public boolean isRequired() {
+            return required;
+        }
+
+        @Override
+        public VmNextRunConfigurationModel getConfirmation() {
+            return confirmModel;
+        }
+
+        public boolean applyChangesLater() {
+            if (confirmModel == null) {
+                return false;
+            }
+            return !confirmModel.isAnythingPluggable() || confirmModel.getApplyLater().getEntity();
+        }
+    }
 }
