@@ -6,7 +6,11 @@ SET time_zone = CASE
                     WHEN time_zone = 'US Eastern Standard Time (Indiana)' THEN 'Eastern Standard Time'
                     WHEN time_zone = 'Atlantic/Reykjavik' THEN 'Etc/GMT'
                     WHEN time_zone = 'Iceland Standard Time' THEN 'Greenwich Standard Time'
-                    END;
+                    END
+WHERE time_zone in ('America/Indianapolis',
+                    'US Eastern Standard Time (Indiana)',
+                    'Atlantic/Reykjavik',
+                    'Iceland Standard Time');
 
 
 UPDATE vm_init
@@ -15,4 +19,9 @@ SET time_zone = CASE
                     WHEN time_zone = 'US Eastern Standard Time (Indiana)' THEN 'Eastern Standard Time'
                     WHEN time_zone = 'Atlantic/Reykjavik' THEN 'Etc/GMT'
                     WHEN time_zone = 'Iceland Standard Time' THEN 'Greenwich Standard Time'
-                    END;
+                    END
+WHERE time_zone in ('America/Indianapolis',
+                    'US Eastern Standard Time (Indiana)',
+                    'Atlantic/Reykjavik',
+                    'Iceland Standard Time');
+
