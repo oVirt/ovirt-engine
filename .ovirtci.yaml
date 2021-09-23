@@ -3,5 +3,5 @@ distributions:
 
 timeout: 8h
 release_branches:
-  master:
-    - ovirt-master
+  ovirt-engine-4.4.8.z:
+    - ovirt-4.4
