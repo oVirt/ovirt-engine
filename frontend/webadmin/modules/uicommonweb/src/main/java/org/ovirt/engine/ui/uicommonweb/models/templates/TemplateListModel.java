@@ -45,6 +45,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBui
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelChain;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.SearchStringMapping;
@@ -668,8 +669,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             templateId = ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate().getId();
         }
 
-
-        confirmExternalDataDeletionAndSave(model, templateId, "OnSave", m -> onSave()); //$NON-NLS-1$
+        ConfirmationModelChain chain = new ConfirmationModelChain();
+        chain.addConfirmation(new TpmDataRemovalConfirmation(model, templateId));
+        chain.addConfirmation(new NvramDataRemovalConfirmation(model, templateId));
+        chain.execute(this, () -> onSave());
     }
 
     private void onSave() {
@@ -973,14 +976,6 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             doExport();
         } else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
-        } else if ("ConfirmAndSaveOrUpdateVM".equals(command.getName())) { //$NON-NLS-1$
-            confirmAndSaveOrUpdateVM((UnitVmModel) getWindow());
-        } else if ("SaveOrUpdateVM".equals(command.getName())) { // $NON-NLS-1$
-            UnitVmModel model = (UnitVmModel) getWindow();
-            if (!model.validate()) {
-                return;
-            }
-            saveOrUpdateVM(model);
         } else if (CMD_CONFIGURE_TEMPLATES_TO_IMPORT.equals(command.getName())) { // $NON-NLS-1$
             onConfigureTemplatesToImport();
         } else if ("onClone".equals(command.getName())){ //$NON-NLS-1$

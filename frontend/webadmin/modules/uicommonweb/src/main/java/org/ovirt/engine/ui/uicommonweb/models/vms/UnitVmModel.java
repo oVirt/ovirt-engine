@@ -3863,29 +3863,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         return getBiosType().getSelectedItem() == BiosType.Q35_SECURE_BOOT;
     }
 
-    public void needsChipsetDependentVmDeviceChanges(Runnable noChanges, Runnable needsChanges) {
-
-        Cluster cluster = getSelectedCluster();
-
-        if (cluster.getArchitecture().getFamily() != ArchitectureType.x86) {
-            noChanges.run();
-            return;
-        }
-
-        if (getTemplateWithVersion().getSelectedItem().getTemplateVersion().getClusterId() == null) {
-            noChanges.run();
-            return;
-        }
-
-        BiosType templateBiosType = getTemplateWithVersion().getSelectedItem().getTemplateVersion().getBiosType();
-
-        if (getBiosType().getSelectedItem().getChipsetType() != templateBiosType.getChipsetType()) {
-            needsChanges.run();
-        } else {
-            noChanges.run();
-        }
-    }
-
     private void updateTpmEnabled() {
         Cluster cluster = getSelectedCluster();
         Version version = getCompatibilityVersion();
