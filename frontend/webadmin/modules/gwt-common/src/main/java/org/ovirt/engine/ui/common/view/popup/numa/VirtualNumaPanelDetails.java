@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBox;
-import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRendererWithNull;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
 
 import com.google.gwt.core.client.GWT;
@@ -37,7 +37,7 @@ public class VirtualNumaPanelDetails extends Composite {
 
     @Inject
     public VirtualNumaPanelDetails() {
-        numaTuneMode = new ListModelListBox<>(new EnumRenderer<NumaTuneMode>());
+        numaTuneMode = new ListModelListBox<>(new EnumRendererWithNull<NumaTuneMode>("&nbsp;"));//$NON-NLS-1$
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         applyStyles();
     }
@@ -47,13 +47,9 @@ public class VirtualNumaPanelDetails extends Composite {
     }
 
     public void setModel(VNodeModel nodeModel) {
-        // insert values to dropdown
-        numaTuneMode.setAcceptableValues(nodeModel.getNumaTuneModeList().getItems());
-
-        // set selected value
-        numaTuneMode.setValue(nodeModel.getNumaTuneModeList().getSelectedItem());
-
-        numaTuneMode.setEnabled(nodeModel.getNumaTuneModeList().getIsChangable());
+        setAcceptableValuesForNumaTune(nodeModel);
+        setSelectedValueNumaTune(nodeModel);
+        enableNumaTune(nodeModel);
 
         // sync view to model
         numaTuneMode.addHandler(event -> {
@@ -61,5 +57,31 @@ public class VirtualNumaPanelDetails extends Composite {
                 nodeModel.getNumaTuneModeList().setSelectedItem((NumaTuneMode) event.getValue());
             }
         }, ValueChangeEvent.getType());
+
+        nodeModel.getNumaTuneModeList().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if ("Items".equals(ev.getName())) {//$NON-NLS-1$
+                setAcceptableValuesForNumaTune(nodeModel);
+            } else if ("SelectedItem".equals(ev.getName())) {//$NON-NLS-1$
+                setSelectedValueNumaTune(nodeModel);
+            } else if ("IsChangable".equals(ev.getName())) {//$NON-NLS-1$
+                enableNumaTune(nodeModel);
+            }
+        });
+    }
+
+    private void setAcceptableValuesForNumaTune(VNodeModel nodeModel) {
+        numaTuneMode.setAcceptableValues(nodeModel.getNumaTuneModeList().getItems());
+    }
+
+    private void setSelectedValueNumaTune(VNodeModel nodeModel) {
+        numaTuneMode.setValue(nodeModel.getNumaTuneModeList().getSelectedItem());
+    }
+
+    private void enableNumaTune(VNodeModel nodeModel) {
+        if (nodeModel.getNumaTuneModeList().getIsChangable()) {
+            numaTuneMode.setEnabled(true);
+        } else {
+            numaTuneMode.disable(nodeModel.getNumaTuneModeList().getChangeProhibitionReason());
+        }
     }
 }

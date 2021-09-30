@@ -2,7 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.numa;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -23,6 +26,7 @@ public class VNodeModel extends Model {
     private final VM vm;
     private final VmNumaNode vmNumaNode;
     private boolean pinned;
+    private boolean editEnabled;
     private boolean locked;
     private Integer hostNodeIndex;
     private ListModel<NumaTuneMode> numaTuneModeList;
@@ -30,25 +34,44 @@ public class VNodeModel extends Model {
     public VNodeModel(VM vm, VmNumaNode vmNumaNode, boolean editEnabled) {
         this.vm = vm;
         this.vmNumaNode = vmNumaNode;
+        this.editEnabled = editEnabled;
+
         if (vmNumaNode.getVdsNumaNodeList() != null && !vmNumaNode.getVdsNumaNodeList().isEmpty()){
             hostNodeIndex = vmNumaNode.getVdsNumaNodeList().get(0);
             pinned = true;
         }
         setNumaTuneModeList(new ListModel<NumaTuneMode>());
-        initNumaTunes(editEnabled);
+        updateNumaTunes();
     }
 
-    private void initNumaTunes(boolean editEnabled) {
-        getNumaTuneModeList().setItems(AsyncDataProvider.getInstance().getNumaTuneModeList());
+    private void updateNumaTunes() {
+        List<NumaTuneMode> items;
         NumaTuneMode selectedMode;
+        String reason = null;
 
-        if (vmNumaNode.getNumaTuneMode() != null) {
-            selectedMode = vmNumaNode.getNumaTuneMode();
+        if (isPinned()) {
+            items = new ArrayList<>(AsyncDataProvider.getInstance().getNumaTuneModeList());
+            selectedMode = getNumaTuneModeList().getSelectedItem();
+            if (selectedMode == null) {
+                if (vmNumaNode.getNumaTuneMode() != null) {
+                    selectedMode = vmNumaNode.getNumaTuneMode();
+                } else {
+                    selectedMode = NumaTuneMode.INTERLEAVE;
+                }
+            }
+
+            if (!editEnabled) {
+                reason = constants.numaTuneModeDisabledReasonNotCurrentlyEditedVM();
+            }
         } else {
-            selectedMode = NumaTuneMode.INTERLEAVE;
+            items = Collections.emptyList();
+            selectedMode = null;
+            reason = constants.numaTuneModeDisabledReasonNodeUnpinned();
         }
+
+        getNumaTuneModeList().setItems(items);
         getNumaTuneModeList().setSelectedItem(selectedMode);
-        getNumaTuneModeList().setIsChangeable(editEnabled);
+        getNumaTuneModeList().setIsChangeable(editEnabled && isPinned(), reason);
     }
 
     public VM getVm() {
@@ -71,11 +94,13 @@ public class VNodeModel extends Model {
         requireNonNull(hostNodeIndex);
         pinned = true;
         this.hostNodeIndex = hostNodeIndex;
+        updateNumaTunes();
     }
 
     public void unpin(){
         pinned = false;
         hostNodeIndex = null;
+        updateNumaTunes();
     }
 
     public boolean isSplitted() {
@@ -92,7 +117,11 @@ public class VNodeModel extends Model {
         newNode.setId(vmNumaNode.getId());
         newNode.setMemTotal(vmNumaNode.getMemTotal());
         newNode.setCpuIds(vmNumaNode.getCpuIds());
-        newNode.setNumaTuneMode(getNumaTuneModeList().getSelectedItem());
+        if (getNumaTuneModeList().getSelectedItem() == null) {
+            newNode.setNumaTuneMode(NumaTuneMode.INTERLEAVE);
+        } else {
+            newNode.setNumaTuneMode(getNumaTuneModeList().getSelectedItem());
+        }
         if (isPinned()) {
             newNode.setVdsNumaNodeList(Arrays.asList(hostNodeIndex));
         }

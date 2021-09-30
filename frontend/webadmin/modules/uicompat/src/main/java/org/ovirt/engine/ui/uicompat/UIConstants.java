@@ -2210,4 +2210,8 @@ public interface UIConstants extends Constants {
     String guestOsVersionNotSupported();
 
     String sealWindowsUnavailable();
+
+    String numaTuneModeDisabledReasonNodeUnpinned();
+
+    String numaTuneModeDisabledReasonNotCurrentlyEditedVM();
 }
