@@ -217,49 +217,22 @@ class Plugin(plugin.PluginBase):
         return update
 
     def _checkForProductUpdate(self):
-        # TODO: otopi is now providing minidnf too
-        missingRollback = []
-        upgradeAvailable = False
         mpm = self._MiniPM(
             sink=self._getSink(),
             disabledPlugins=('versionlock',),
         )
-        plist = []
-        with mpm.transaction():
+        packages = [
+            package
             for entry in self.environment[
                 osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
-            ]:
-                mpm.installUpdate(packages=entry['packages'])
-
-            if mpm.buildTransaction():
-                upgradeAvailable = True
-
-                for p in mpm.queryTransaction():
-                    plist.append((p['display_name'], p['operation']))
-
-                plist = self._arrangedPackageList(plist)
-
-                # Verify all installed packages available in yum
-                for package in mpm.queryTransaction():
-                    installed = False
-                    reinstall_available = False
-                    for query in mpm.queryPackages(
-                        patterns=(package['display_name'],),
-                        showdups=True,
-                    ):
-                        self.logger.debug(
-                            'dupes: operation [%s] package %s' % (
-                                query['operation'],
-                                query['display_name'],
-                            )
-                        )
-                        if query['operation'] == 'installed':
-                            installed = True
-                        if query['operation'] == 'reinstall_available':
-                            reinstall_available = True
-                    if installed and not reinstall_available:
-                        missingRollback.append(package['display_name'])
-        return (upgradeAvailable, set(missingRollback), plist)
+            ]
+            for package in entry['packages']
+        ]
+        res = mpm.checkForSafeUpdate(packages)
+        plist = res['packageOperations']
+        upgradeAvailable = res['upgradeAvailable']
+        missingRollback = res['missingRollback']
+        return (upgradeAvailable, missingRollback, plist)
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -363,7 +336,7 @@ class Plugin(plugin.PluginBase):
                         'Do you wish to update them now? '
                         '(@VALUES@) [@DEFAULT@]: '
                     ).format(
-                        plist='\n'.join(plist)
+                        plist='\n'.join(self._arrangedPackageList(plist))
                     ),
                     prompt=True,
                     true=_('Yes'),
@@ -378,7 +351,9 @@ class Plugin(plugin.PluginBase):
                     osetupcons.RPMDistroEnv.PACKAGES_SETUP
                 ],
             )
-            if update:
+            if not update:
+                self.dialog.note(text=_('No update for Setup found'))
+            else:
                 self.dialog.note(
                     text=_(
                         'An update for the Setup packages {packages} was '
@@ -393,15 +368,14 @@ class Plugin(plugin.PluginBase):
                 raise RuntimeError(_('Please update the Setup packages'))
 
             if upgradeAvailable is None:
+                self.logger.info(_('Checking for product updates...'))
                 (
                     upgradeAvailable,
                     missingRollback,
                     plist,
                 ) = self._checkForProductUpdate()
 
-            if not upgradeAvailable:
-                self.dialog.note(text=_('No update for Setup found'))
-            else:
+            if upgradeAvailable:
                 if missingRollback:
                     if self.environment[
                         osetupcons.RPMDistroEnv.REQUIRE_ROLLBACK
@@ -482,9 +456,9 @@ class Plugin(plugin.PluginBase):
         for pname in plist:
             res.append(
                 "[{operation}] {package} {verb}".format(
-                    operation=pname[1],
-                    package=pname[0],
-                    verb=verbs.get(pname[1], '')
+                    operation=pname['operation'],
+                    package=pname['display_name'],
+                    verb=verbs.get(pname['operation'], '')
                 )
             )
 
