@@ -162,6 +162,7 @@ public class HostMonitoring implements HostMonitoringInterface {
         try {
             executingAsyncVdsCommand = beforeFirstRefreshTreatment(isVdsUpOrGoingToMaintenance);
             if (!executingAsyncVdsCommand && vdsManager.isTimeToRefreshStatistics()) {
+                log.debug("[{}] About to refresh VDS runtime info", vds.getHostName());
                 saveVdsDynamic |= refreshCommitedMemory(vds, vdsManager.getLastVmsList(), resourceManager);
             }
             succeeded = true;
@@ -500,6 +501,7 @@ public class HostMonitoring implements HostMonitoringInterface {
         }
         // get statistics data, images checks and vm_count data (dynamic)
         fetchHostInterfaces();
+        log.debug("[{}] About to refresh VDS Stats", vds.getHostName());
         resourceManager.runVdsCommand(VDSCommandType.GetStatsAsync,
                 new VdsIdAndVdsVDSCommandParametersBase(vds).withCallback(new GetStatsAsyncCallback(isVdsUpOrGoingToMaintenance)));
     }

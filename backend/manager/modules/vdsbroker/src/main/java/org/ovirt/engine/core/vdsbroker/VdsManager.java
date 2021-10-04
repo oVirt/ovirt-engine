@@ -168,7 +168,7 @@ public class VdsManager {
     private volatile HostMonitoringInterface hostMonitoring;
     private volatile boolean monitoringNeeded;
     private Map<Guid, VMStatus> lastVmsList = Collections.emptyMap();
-    private Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
+    private final Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
     private VmStatsRefresher vmsRefresher;
     protected AtomicInteger refreshIteration;
     private int autoRestartUnknownVmsIteration;
@@ -297,6 +297,7 @@ public class VdsManager {
                         if (isMonitoringNeeded()) {
                             setStartTime();
                             releaseLock = false;
+                            log.debug("[{}] About to create/activate host monitoring.", cachedVds.getHostName());
                             hostMonitoring = createHostMonitoring();
                             hostMonitoring.refresh();
                         }
@@ -341,8 +342,9 @@ public class VdsManager {
     }
 
     public void afterRefreshTreatment(boolean succeeded) {
-
+        final String hostName = cachedVds != null ? cachedVds.getHostName() : "n/a";
         if (!succeeded) {
+            log.debug("[{}] Host monitoring refresh not succeeded. Releasing monitoring lock", hostName);
             lockManager.releaseLock(monitoringLock);
             return;
         }
@@ -367,6 +369,9 @@ public class VdsManager {
                     }
 
                     hostMonitoring = null;
+
+
+                    log.debug("[{}] Host monitoring completed", hostName);
                 } catch (IRSErrorException ex) {
                     logAfterRefreshFailureMessage(ex);
                     if (log.isDebugEnabled()) {
@@ -460,6 +465,10 @@ public class VdsManager {
                 cachedVds.getStatus() != VDSStatus.InstallingOS &&
                 cachedVds.getStatus() != VDSStatus.Down &&
                 cachedVds.getStatus() != VDSStatus.Kdumping;
+        log.debug("[{}] Setting monitoring needed: {}, cached vds status {}",
+                cachedVds.getHostName(),
+                monitoringNeeded,
+                cachedVds.getStatus());
     }
 
     public boolean isMonitoringNeeded() {
@@ -1163,15 +1172,19 @@ public class VdsManager {
     }
 
     private void updateIteration() {
+        int monitoringIteration = 1;
         if (isTimeToRefreshStatistics()) {
-            refreshIteration.set(1);
+            refreshIteration.set(monitoringIteration);
         } else {
-            refreshIteration.incrementAndGet();
+            monitoringIteration = refreshIteration.incrementAndGet();
         }
+        log.debug("[{}] Monitoring iteration updated to {}", cachedVds.getHostName(), monitoringIteration);
     }
 
     public boolean isTimeToRefreshStatistics() {
-        return refreshIteration.get() == NUMBER_HOST_REFRESHES_BEFORE_SAVE;
+        final int currentIteration = refreshIteration.get();
+        log.debug("[{}] Checking current monitoring iteration: {}", cachedVds.getHostName(), currentIteration);
+        return currentIteration == NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     }
 
     public boolean getbeforeFirstRefresh() {
