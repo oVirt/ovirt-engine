@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -476,8 +477,9 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
 
     private void setMsgOnDetach(ConfirmationModel model) {
         StringBuilder warningMsgBuilder = new StringBuilder();
+        warningMsgBuilder.append(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachStorageFromDcsMsg());
 
-        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachStorageFromDcsMsg());
+        model.setMessage(warningMsgBuilder.toString());
 
         // Checks if the selected Storage Domain contains entities with disks on other Storage Domains.
         AsyncDataProvider.getInstance().doesStorageDomainContainEntityWithDisksOnMultipleSDs(
@@ -502,6 +504,23 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                                         getEntity().getStorageName(),
                                         returnValue.stream()
                                                 .map(id -> String.valueOf(id))
+                                                .collect(Collectors.joining(", ")))); //$NON-NLS-1$
+                        model.setMessage(warningMsgBuilder.toString());
+                    }
+                }), getEntity().getId());
+
+        // Checks if the selected storage domains contains entities with leases.
+        AsyncDataProvider.getInstance().getAllEntitiesWithLeaseOnStorageDomain(
+                new AsyncQuery<>(returnValue -> {
+                    if (!returnValue.isEmpty()) {
+                        if (warningMsgBuilder.length() > 0) {
+                            warningMsgBuilder.append("\n\n"); //$NON-NLS-1$
+                        }
+                        warningMsgBuilder.append(ConstantsManager.getInstance().getMessages()
+                                .detachStorageDomainContainsEntitiesWithLeaseOfVmsOnOtherSDsFromDC(
+                                        getEntity().getStorageName(),
+                                        returnValue.stream()
+                                                .map(VmBase::getName)
                                                 .collect(Collectors.joining(", ")))); //$NON-NLS-1$
                         model.setMessage(warningMsgBuilder.toString());
                     }

@@ -459,4 +459,8 @@ public interface UIMessages extends Messages {
     String virtioScsiRequired();
 
     String creatingIsoDomainDeprecatedMessage();
+
+    String detachStorageDomainContainsEntitiesWithLeaseOfVmsOnOtherSDsFromDC(String storageDomainName, String entitiesIds);
+
+    String detachStorageDomainContainsEntitiesWithLeaseOfVmsOnOtherSDs(String entitiesIds);
 }

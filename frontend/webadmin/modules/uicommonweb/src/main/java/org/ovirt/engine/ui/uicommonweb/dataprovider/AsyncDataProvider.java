@@ -62,6 +62,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -1875,6 +1876,14 @@ public class AsyncDataProvider {
         aQuery.converterCallback = new ListConverter<>();
 
         Frontend.getInstance().runQuery(QueryType.GetAllMetadataAndMemoryDisksOfSnapshotsOnDifferentStorageDomains,
+                new IdQueryParameters(sdId),
+                aQuery);
+    }
+
+    public void getAllEntitiesWithLeaseOnStorageDomain(AsyncQuery<List<VmBase>> aQuery, Guid sdId){
+        aQuery.converterCallback = new ListConverter<>();
+
+        Frontend.getInstance().runQuery(QueryType.GetEntitiesWithLeaseByStorageId,
                 new IdQueryParameters(sdId),
                 aQuery);
     }

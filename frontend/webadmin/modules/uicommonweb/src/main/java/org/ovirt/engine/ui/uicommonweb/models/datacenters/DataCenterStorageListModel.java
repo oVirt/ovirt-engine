@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -541,7 +542,8 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         List<QueryParametersBase> params = new ArrayList<>();
         StringBuilder warningMsgBuilder = new StringBuilder();
 
-        model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachFollowingStoragesMsg());
+        warningMsgBuilder.append(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachFollowingStoragesMsg());
+        model.setMessage(warningMsgBuilder.toString());
 
         // Checks if the selected Storage Domains contain entities with disks on other Storage Domains.
         getSelectedItems().forEach(sd -> {
@@ -553,6 +555,30 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
             if (result.getReturnValues().stream().anyMatch(QueryReturnValue::getReturnValue)) {
                 warningMsgBuilder.append(ConstantsManager.getInstance().getMessages()
                         .detachStorageDomainsContainEntitiesWithDisksOnMultipleSDs());
+                model.setMessage(warningMsgBuilder.toString());
+            }
+        });
+
+        // Checks if the selected storage domains contains entities with leases.
+        queries.clear();
+        params.clear();
+
+        getSelectedItems().forEach(sd -> {
+            queries.add(QueryType.GetEntitiesWithLeaseByStorageId);
+            params.add(new IdQueryParameters(sd.getId()));
+        });
+
+        Frontend.getInstance().runMultipleQueries(queries, params, result -> {
+            if (result.getReturnValues() != null && !result.getReturnValues().isEmpty()) {
+                if (warningMsgBuilder.length() > 0) {
+                    warningMsgBuilder.append("\n\n"); //$NON-NLS-1$
+                }
+                List<VmStatic> allEntities = new ArrayList<>();
+                result.getReturnValues().forEach(entity -> allEntities.addAll(entity.getReturnValue()));
+                warningMsgBuilder.append(ConstantsManager.getInstance().getMessages()
+                        .detachStorageDomainContainsEntitiesWithLeaseOfVmsOnOtherSDs(allEntities.stream()
+                                .map(VmStatic::getName)
+                                .collect(Collectors.joining(", ")))); //$NON-NLS-1$));
                 model.setMessage(warningMsgBuilder.toString());
             }
         });
