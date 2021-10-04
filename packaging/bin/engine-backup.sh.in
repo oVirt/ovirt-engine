@@ -993,7 +993,7 @@ dobackup() {
 }
 
 getOSVersion() {
-	python@PY_VERSION@ -c 'import platform; d = platform.linux_distribution(full_distribution_name=0); print("%s%s" % (d[0], d[1].split(".")[0]))'
+	python@PY_VERSION@ -c 'import distro; d = distro.linux_distribution(full_distribution_name=0); print("%s%s" % (d[0], d[1].split(".")[0]))'
 }
 
 looseVersion_le() {

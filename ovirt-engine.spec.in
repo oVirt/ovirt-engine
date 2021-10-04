@@ -641,6 +641,7 @@ Requires:	tar
 Requires:	bzip2
 Requires:	xz
 Requires:	python3-otopi >= 1.9.0
+Requires:	python3-distro
 Requires:	postgresql >= 12.0
 Requires:	sqlite
 
