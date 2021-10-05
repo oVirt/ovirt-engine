@@ -3,6 +3,7 @@ import mmap
 import os
 import pwd
 import sys
+import time
 
 
 from contextlib import closing
@@ -26,8 +27,18 @@ def from_bytes(string):
 
 
 def extract_disk(ova_path, offset, image_path):
-    output = check_output(['losetup', '--find', '--show', '-o', str(offset),
-                           ova_path])
+    start_time = time.time()
+    while True:
+        try:
+            output = check_output(['losetup', '--find', '--show', '-o',
+                                   str(offset), ova_path])
+        except CalledProcessError:
+            if time.time() - start_time > 10:
+                raise
+            time.sleep(1)
+        else:
+            break
+
     loop = from_bytes(output.splitlines()[0])
     call(['udevadm', 'settle'])
     loop_stat = os.stat(loop)
