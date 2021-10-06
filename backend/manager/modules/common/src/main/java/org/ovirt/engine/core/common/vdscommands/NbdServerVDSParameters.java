@@ -15,6 +15,8 @@ public class NbdServerVDSParameters extends VdsIdVDSCommandParametersBase {
 
     private boolean readonly;
 
+    private boolean detectZeroes;
+
     private boolean discard;
 
     // If true, export entire backing chain under specified volume. Otherwise
@@ -70,6 +72,14 @@ public class NbdServerVDSParameters extends VdsIdVDSCommandParametersBase {
         this.readonly = readonly;
     }
 
+    public boolean isDetectZeroes() {
+        return detectZeroes;
+    }
+
+    public void setDetectZeroes(boolean detectZeroes) {
+        this.detectZeroes = detectZeroes;
+    }
+
     public boolean isDiscard() {
         return discard;
     }
@@ -103,6 +113,7 @@ public class NbdServerVDSParameters extends VdsIdVDSCommandParametersBase {
                 .append("volumeId", volumeId)
                 .append("readonly", readonly)
                 .append("discard", discard)
+                .append("detectZeroes", detectZeroes)
                 .append("backingChain", backingChain)
                 .append("bitmap", bitmap);
     }

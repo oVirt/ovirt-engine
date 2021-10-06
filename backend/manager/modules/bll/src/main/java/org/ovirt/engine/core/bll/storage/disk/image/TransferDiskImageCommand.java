@@ -239,7 +239,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         nbdServerVDSParameters.setImageId(getDiskImage().getId());
         nbdServerVDSParameters.setVolumeId(getDiskImage().getImageId());
         nbdServerVDSParameters.setReadonly(getParameters().getTransferType() == TransferType.Download);
+
+        // The "detectZeroes" and "discard" options work together. When detectZeroes is enabled without discard,
+        // uploading actual zeroes to the image allocate space on storage without writing actual zeroes to storage.
+        // When both detectZeroes and discard are enabled, uploading actual zeroes to the image deallocate space on
+        // storage. When detectZeroes is disabled, the discard option has no effect since imageio does not support
+        // discard.
+        nbdServerVDSParameters.setDetectZeroes(true);
         nbdServerVDSParameters.setDiscard(isSparseImage());
+
         nbdServerVDSParameters.setBackingChain(!getParameters().isShallow());
         nbdServerVDSParameters.setBitmap(getBitmap());
         return nbdServerVDSParameters;
