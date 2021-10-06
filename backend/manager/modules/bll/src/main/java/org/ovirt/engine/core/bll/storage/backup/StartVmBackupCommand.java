@@ -253,7 +253,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 addCustomValue("backupId", vmBackupId.toString());
                 auditLogDirector.log(this, AuditLogType.VM_INCREMENTAL_BACKUP_FAILED_FULL_VM_BACKUP_NEEDED);
                 setCommandStatus(CommandStatus.FAILED);
-                updateVmBackupPhase(VmBackupPhase.FAILED);
                 return;
             }
             log.info("Successfully redefined previous VM checkpoints for VM '{}'", vmBackup.getVmId());
@@ -292,8 +291,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                     updateVmBackupPhase(VmBackupPhase.PREPARING_SCRATCH_DISK);
                     log.info("Scratch disks created for the backup");
                 } else {
-                    setCommandStatus(CommandStatus.FAILED);
-                    updateVmBackupPhase(VmBackupPhase.FAILED);
+                    updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
                 }
                 break;
 
@@ -302,8 +300,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                     updateVmBackupPhase(VmBackupPhase.STARTING);
                     log.info("Scratch disks prepared for the backup");
                 } else {
-                    setCommandStatus(CommandStatus.FAILED);
-                    updateVmBackupPhase(VmBackupPhase.FAILED);
+                    updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
                 }
                 break;
 
@@ -313,8 +310,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                     updateVmBackupPhase(VmBackupPhase.READY);
                     log.info("Ready to start image transfers");
                 } else {
-                    setCommandStatus(CommandStatus.FAILED);
-                    updateVmBackupPhase(VmBackupPhase.FAILED);
+                    updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
                 }
                 break;
 
@@ -322,12 +318,10 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 return true;
 
             case FINALIZING:
-                finalizeVmBackup();
                 setCommandStatus(CommandStatus.SUCCEEDED);
-                updateVmBackupPhase(VmBackupPhase.SUCCEEDED);
                 break;
 
-            case FAILED:
+            case FINALIZING_FAILURE:
                 setCommandStatus(CommandStatus.FAILED);
                 break;
         }
@@ -600,6 +594,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         getParameters().setVmBackup(vmBackup);
     }
 
+    private void updateVmBackupFinalPhase(VmBackupPhase phase) {
+        freeLock();
+        updateVmBackupPhase(phase);
+    }
+
     private void updateVmBackupPhase(VmBackupPhase phase) {
         VmBackup vmBackup = getParameters().getVmBackup();
         log.info("Change VM '{}' backup '{}' phase from '{}' to '{}'",
@@ -669,6 +668,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     @Override
     protected void endSuccessfully() {
+        finalizeVmBackup();
+        updateVmBackupFinalPhase(VmBackupPhase.SUCCEEDED);
         setSucceeded(true);
     }
 
@@ -677,6 +678,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         finalizeVmBackup();
         removeCheckpointFromDb();
         getReturnValue().setEndActionTryAgain(false);
+        updateVmBackupFinalPhase(VmBackupPhase.FAILED);
         setSucceeded(true);
     }
 

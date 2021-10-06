@@ -84,6 +84,7 @@ public class VmBackupMapper {
         case READY:
             return BackupPhase.READY;
         case FINALIZING:
+        case FINALIZING_FAILURE:
             return BackupPhase.FINALIZING;
         case SUCCEEDED:
             return BackupPhase.SUCCEEDED;
