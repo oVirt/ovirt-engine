@@ -58,7 +58,7 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
             setSucceeded(true);
         } else {
             log.error("Failed to stop VmBackup '{}'", vmBackup.getId());
-            updateVmBackupPhase(VmBackupPhase.FAILED);
+            updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
         }
     }
 

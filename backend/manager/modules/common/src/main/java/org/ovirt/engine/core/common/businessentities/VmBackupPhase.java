@@ -10,6 +10,7 @@ public enum VmBackupPhase {
     STARTING("Starting"),
     READY("Ready"),
     FINALIZING("Finalizing"),
+    FINALIZING_FAILURE("Finalizing Failure"),
     SUCCEEDED("Succeeded"),
     FAILED("Failed");
 
