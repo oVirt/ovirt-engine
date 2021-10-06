@@ -543,12 +543,6 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             case FINALIZING_CLEANUP:
                 handleFinalizingCleanup(context);
                 break;
-            case FINISHED_SUCCESS:
-                handleFinishedSuccess();
-                break;
-            case FINISHED_FAILURE:
-                handleFinishedFailure();
-                break;
             case FINISHED_CLEANUP:
                 handleFinishedCleanup();
                 break;
@@ -823,40 +817,41 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private void handleFinalizingSuccess(final StateContext context) {
         log.info("Finalizing successful transfer for {}", getTransferDescription());
 
-        ImageStatus nextImageStatus = ImageStatus.OK;
+        boolean isImageVerified = true;
 
         // If stopping the session did not succeed, don't change the transfer state.
         if (stopImageTransferSession(context.entity)) {
             Guid transferingVdsId = context.entity.getVdsId();
 
-            // Verify image is relevant only on upload
-            if (getParameters().getTransferType() == TransferType.Download) {
-                updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
-                setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
-            } else if (verifyImage(transferingVdsId)) {
-                // We want to use the transferring vds for image actions for having a coherent log when transferring.
-                setVolumeLegalityInStorage(LEGAL_IMAGE);
-                if (getDiskImage().getVolumeFormat().equals(VolumeFormat.COW)) {
-                    setQcowCompat(getDiskImage().getImage(),
-                            getStoragePool().getId(),
-                            getDiskImage().getId(),
-                            getDiskImage().getImageId(),
-                            getStorageDomainId(),
-                            transferingVdsId);
-                    imageDao.update(getDiskImage().getImage());
+            // Verify image is relevant only on upload.
+            if (getParameters().getTransferType() == TransferType.Upload) {
+                isImageVerified = verifyImage(transferingVdsId);
+                if (isImageVerified) {
+                    // We want to use the transferring vds for image actions for having a coherent log when transferring.
+                    setVolumeLegalityInStorage(LEGAL_IMAGE);
+                    if (getDiskImage().getVolumeFormat().equals(VolumeFormat.COW)) {
+                        setQcowCompat(getDiskImage().getImage(),
+                                getStoragePool().getId(),
+                                getDiskImage().getId(),
+                                getDiskImage().getImageId(),
+                                getStorageDomainId(),
+                                transferingVdsId);
+                        imageDao.update(getDiskImage().getImage());
+                    }
                 }
-                updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
-                setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
-            } else {
-                nextImageStatus = ImageStatus.ILLEGAL;
-                updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
             }
 
             // Finished using the image, tear it down.
             tearDownImage(context.entity.getVdsId(), context.entity.getBackupId());
 
-            // Moves Image status to OK or ILLEGAL
-            setImageStatus(nextImageStatus);
+            setImageStatus(isImageVerified? ImageStatus.OK : ImageStatus.ILLEGAL);
+        }
+
+        if (isImageVerified) {
+            log.info("Transfer was successful. {}", getTransferDescription());
+            setCommandStatus(CommandStatus.SUCCEEDED);
+        } else {
+            updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
         }
     }
 
@@ -879,6 +874,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     private void handleFinalizingFailure(final StateContext context) {
         cleanup(context, true);
+        log.error("Transfer failed. {}", getTransferDescription());
+        setCommandStatus(CommandStatus.FAILED);
     }
 
     private void handleFinalizingCleanup(final StateContext context) {
@@ -902,25 +899,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             // Teardown is required for all scenarios as we call prepareImage when
             // starting a new session.
             tearDownImage(vdsId, context.entity.getBackupId());
-            if (failure) {
-                updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
-                setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_FAILURE);
-            } else {
+            if (!failure) {
                 updateEntityPhase(ImageTransferPhase.FINISHED_CLEANUP);
                 setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_CLEANUP);
             }
         }
-    }
-
-
-    private void handleFinishedSuccess() {
-        log.info("Transfer was successful. {}", getTransferDescription());
-        setCommandStatus(CommandStatus.SUCCEEDED);
-    }
-
-    private void handleFinishedFailure() {
-        log.error("Transfer failed. {}", getTransferDescription());
-        setCommandStatus(CommandStatus.FAILED);
     }
 
     private void handleFinishedCleanup() {
@@ -1322,6 +1305,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return true;
     }
 
+    private void updateEntityFinalPhase(ImageTransferPhase phase) {
+        freeLock();
+        updateEntityPhase(phase);
+        setAuditLogTypeFromPhase(phase);
+    }
+
     private void updateEntityPhase(ImageTransferPhase phase) {
         ImageTransfer updates = new ImageTransfer(getCommandId());
         updates.setPhase(phase);
@@ -1423,36 +1412,26 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return proxyClient;
     }
 
-    public void onSucceeded() {
-        updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
-        endSuccessfully();
-        log.info("Successfully transferred disk '{}' (command id '{}')",
-                getParameters().getImageId(), getCommandId());
-    }
-
-    public void onFailed() {
-        updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
-        endWithFailure();
-        log.error("Failed to transfer disk '{}' (command id '{}')",
-                getParameters().getImageId(), getCommandId());
-    }
-
     @Override
     protected void endSuccessfully() {
+        log.info("Successfully transferred disk '{}' (command id '{}')", getParameters().getImageId(), getCommandId());
         if (getParameters().getTransferType() == TransferType.Upload) {
             // Update image data in DB, set Qcow Compat, etc
             // (relevant only for upload)
             super.endSuccessfully();
         }
+        updateEntityFinalPhase(ImageTransferPhase.FINISHED_SUCCESS);
         setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
+        log.error("Failed to transfer disk '{}' (command id '{}')", getParameters().getImageId(), getCommandId());
         if (getParameters().getTransferType() == TransferType.Upload) {
             // Do rollback only for upload - i.e. remove the disk added in 'createImage()'
             runInternalAction(ActionType.RemoveDisk, new RemoveDiskParameters(getParameters().getImageGroupID()));
         }
+        updateEntityFinalPhase(ImageTransferPhase.FINISHED_FAILURE);
         setSucceeded(true);
     }
 
