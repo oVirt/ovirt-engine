@@ -116,7 +116,8 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
 
     @Override
     public CommandCallback getCallback() {
-        return getParentParameters().getParentCommand() == ActionType.RemoveSnapshotSingleDiskLive ?
+        return (getParentParameters().getParentCommand() == ActionType.RemoveSnapshotSingleDiskLive ||
+                getParameters().getParentCommand() == ActionType.ConvertDisk) ?
                 callbackProvider.get() :
                 null;
     }

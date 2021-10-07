@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
@@ -26,6 +27,7 @@ import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.ConvertDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
@@ -34,7 +36,10 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
 import org.ovirt.engine.core.common.action.UpdateDiskParameters;
+import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -241,5 +246,28 @@ public class BackendDiskResource
             );
         }
         return disk;
+    }
+
+    @Override
+    public Response convert(Action action) {
+        validateParameters("disk.format|sparse");
+        Disk disk = get();
+        follow(disk);
+        ConvertDiskCommandParameters parameters = new ConvertDiskCommandParameters();
+        VdsmImageLocationInfo locationInfo = new VdsmImageLocationInfo();
+        locationInfo.setStorageDomainId(Guid.createGuidFromString(disk.getStorageDomains().getStorageDomains().get(0).getId()));
+        locationInfo.setImageGroupId(Guid.createGuidFromString(disk.getId()));
+        locationInfo.setImageId(Guid.createGuidFromString(disk.getImageId()));
+        parameters.setLocationInfo(locationInfo);
+
+        if (action.getDisk().isSetSparse()) {
+            parameters.setPreallocation(action.getDisk().isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);
+        }
+
+        if (action.getDisk().isSetFormat()) {
+            parameters.setVolumeFormat(action.getDisk().getFormat() == DiskFormat.RAW ? VolumeFormat.RAW : VolumeFormat.COW);
+        }
+
+        return doAction(ActionType.ConvertDisk, parameters, action);
     }
 }
