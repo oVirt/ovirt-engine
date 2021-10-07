@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 @Singleton
 public class MacsUsedAcrossWholeSystem {
@@ -54,15 +57,7 @@ public class MacsUsedAcrossWholeSystem {
         Map<Guid, VM> vmsById = getAllVmsInClusters(idsOfAllClustersHavingMacPool)
                 .collect(Collectors.toMap(VM::getId, Function.identity()));
 
-        Stream<Guid> idsOfRunningStatelessVMs = getAllStatelessVms(vmsById.values())
-                .map(VM::getId);
-
-        Stream<VM> statelessSnapshotsOfRunningVMs =
-                idsOfRunningStatelessVMs
-                        .parallel()
-                        .map(snapshotsManager::getVmConfigurationInStatelessSnapshotOfVm)
-                        .filter(Optional::isPresent)
-                        .map(Optional::get);
+        Stream<VM> statelessSnapshotsOfRunningVMs = getStatelessSnapshots(vmsById);
 
         Map<Guid, List<VmNetworkInterface>> snapshottedInterfacesByVmId =
                 statelessSnapshotsOfRunningVMs.collect(Collectors.toMap(VM::getId, VM::getInterfaces));
@@ -76,12 +71,31 @@ public class MacsUsedAcrossWholeSystem {
         return macsToBeAllocated;
     }
 
+    private Stream<VM> getStatelessSnapshots(Map<Guid, VM> vmsById) {
+        var tasks = getAllStatelessRunningVms(vmsById.values())
+                .map(VM::getId)
+                .map(this::getVmConfigurationInStatelessSnapshotOfVmTask)
+                .collect(Collectors.toList());
+
+        List<Optional<VM>> statelessSnapshotVmConfigurations =
+                Optional.ofNullable(ThreadPoolUtil.invokeAll(tasks)).orElse(Collections.emptyList());
+        Stream<VM> statelessSnapshotsOfRunningVMs =
+                statelessSnapshotVmConfigurations.stream()
+                        .filter(Optional::isPresent)
+                        .map(Optional::get);
+        return statelessSnapshotsOfRunningVMs;
+    }
+
+    private Callable<Optional<VM>> getVmConfigurationInStatelessSnapshotOfVmTask(Guid vmId) {
+        return () -> snapshotsManager.getVmConfigurationInStatelessSnapshotOfVm(vmId);
+    }
+
     private Stream<VM> getAllVmsInClusters(List<Guid> clusterIds) {
         return clusterIds.stream()
                 .flatMap(clusterId -> vmDao.getAllForCluster(clusterId).stream());
     }
 
-    private Stream<VM> getAllStatelessVms(Collection<VM> allVms) {
+    private Stream<VM> getAllStatelessRunningVms(Collection<VM> allVms) {
         return allVms.stream()
                 .filter(VM::isRunning)
                 .filter(VM::isStateless);
@@ -104,7 +118,7 @@ public class MacsUsedAcrossWholeSystem {
         List<VM> allVms = getAllVmsInClusters(getIdsOfAllClustersHavingMacPool(macPoolId))
                 .collect(Collectors.toList());
 
-        Map<Guid, VM> snapshotsById = getAllStatelessVms(allVms).map(VM::getId)
+        Map<Guid, VM> snapshotsById = getAllStatelessRunningVms(allVms).map(VM::getId)
                 .map(snapshotsManager::getVmConfigurationInStatelessSnapshotOfVm)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
