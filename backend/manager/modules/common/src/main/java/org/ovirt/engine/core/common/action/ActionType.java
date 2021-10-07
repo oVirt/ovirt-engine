@@ -213,6 +213,7 @@ public enum ActionType {
     CreateLiveSnapshotForVm(257, ActionGroup.MANIPULATE_VM_SNAPSHOTS, QuotaDependency.NONE),
     AnsibleImageMeasure(258, QuotaDependency.NONE),
     AnsiblePackOva(259, QuotaDependency.NONE),
+    ConvertDisk(261, ActionGroup.EDIT_DISK_PROPERTIES, QuotaDependency.NONE),
 
     // VmPoolCommands
     AddVmPool(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),
