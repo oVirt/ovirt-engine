@@ -27,8 +27,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.utils.ExecutorServiceExtension;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({ MockitoExtension.class, MockConfigExtension.class, ExecutorServiceExtension.class })
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class MacsUsedAcrossWholeSystemTest {
 
