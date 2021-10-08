@@ -1,27 +1,8 @@
 ---
-- include_tasks: host-os.yml
-
-- block:
-  - name: Reset configuration of advanced virtualization module
-    shell: dnf -y module reset virt
-    tags:
-      - skip_ansible_lint # E305
-
-  - name: Find relevant advanced virtualization module version
-    set_fact:
-      virt_mod_ver: "{{ 'av' if ansible_distribution_version is version('8.4', '>=') else
-          ansible_distribution_version }}"
-
-  - name: Enable advanced virtualization module
-    shell: "dnf -y module enable virt:{{ virt_mod_ver }}"
-    tags:
-      - skip_ansible_lint # E305
-
-  when:
-    - host_deploy_origin_type != ovirt_origin_type
-    - el_ver|int >= 8
-    - not node_host|bool
-    - not vdsm_preinstalled|bool
+- include_tasks: "{{ item }}.yml"
+  with_items:
+    - host-os
+    - av-setup
 
 - name: Ensure Python3 is installed for CentOS/RHEL8 hosts
   yum:
@@ -29,7 +10,7 @@
     state: present
   when: el_ver|int >= 8
 
-- name: Set facts
+- name: Setup Ansible Python interpreter
   set_fact:
     ansible_python_interpreter : "{{ '/usr/bin/python3'
         if (fc_ver|int > 0 or el_ver|int >= 8)
