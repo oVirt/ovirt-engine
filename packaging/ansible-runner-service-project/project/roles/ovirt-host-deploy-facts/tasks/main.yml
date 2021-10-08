@@ -3,6 +3,7 @@
   with_items:
     - host-os
     - av-setup
+    - cinderlib-setup
 
 - name: Ensure Python3 is installed for CentOS/RHEL8 hosts
   yum:
