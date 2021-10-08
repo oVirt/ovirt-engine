@@ -1,0 +1,53 @@
+---
+- block:
+    - name: Check if Cinderlib packages are available
+      package:
+        name: python3-os-brick
+        state: present
+      check_mode: yes
+      ignore_errors: true
+      register: cinderlib_check
+
+    - name: Enable Cinderlib repository
+      shell: "subscription-manager repos --enable=openstack-16.2-cinderlib-for-rhel-8-x86_64-rpms"
+      when: cinderlib_check is failed
+      ignore_errors: True
+      register: cinderlib_repo_install
+      tags:
+        - skip_ansible_lint # E305
+
+    - name: Check for Cinderlib repository configuration error
+      debug:
+        msg: "[ERROR] Cannot enable Cinderlib repositories, please check documentation how to enable them manually"
+      when:
+        - cinderlib_check is failed
+        - cinderlib_repo_install.rc != 0
+
+    - name: Check if Ceph packages are available
+      package:
+        name: ceph-common
+        state: present
+      check_mode: yes
+      ignore_errors: true
+      register: ceph_check
+
+    - name: Enable Ceph repository
+      shell: "subscription-manager repos --enable=rhceph-4-tools-for-rhel-8-x86_64-rpms"
+      when: ceph_check is failed
+      ignore_errors: True
+      register: ceph_repo_install
+      tags:
+        - skip_ansible_lint # E305
+
+    - name: Check for Ceph repository configuration error
+      debug:
+        msg: "[ERROR] Cannot enable Ceph repositories, please check documentation how to enable them manually"
+      when:
+        - ceph_check is failed
+        - ceph_repo_install.rc != 0
+
+  when:
+    - ansible_architecture == "x86_64"
+    - host_deploy_origin_type != ovirt_origin_type
+    - el_ver|int >= 8
+    - not node_host|bool
