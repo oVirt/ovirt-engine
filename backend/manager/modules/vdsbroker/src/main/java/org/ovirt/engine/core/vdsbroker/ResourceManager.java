@@ -53,6 +53,7 @@ import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
+import org.ovirt.engine.core.vdsbroker.monitoring.HostMonitoringWatchdog;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsCommandExecutor;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
@@ -75,6 +76,8 @@ public class ResourceManager implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(ResourceManager.class);
     private int parallelism = Config.getValue(ConfigValues.EventProcessingPoolSize);
     private int eventTimeoutInHours = Config.getValue(ConfigValues.EventPurgeTimeoutInHours);
+
+    private HostMonitoringWatchdog hostMonitoringWatchdog;
 
     @Inject
     private Instance<IVdsEventListener> eventListener;
@@ -107,7 +110,8 @@ public class ResourceManager implements BackendService {
         for (VDS curVds : allVdsList) {
             addVds(curVds, true, false);
         }
-
+        hostMonitoringWatchdog = new HostMonitoringWatchdog(monitoringExecutor, hostDao, () -> vdsManagersDict);
+        hostMonitoringWatchdog.start();
         log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
@@ -267,8 +271,9 @@ public class ResourceManager implements BackendService {
     /**
      * Set vm status without saving to DB
      *
-     * <p> Note: Calling this method with status=down, must be only when the
-     *     VM went down normally, otherwise call {@link #InternalSetVmStatus(VM, VMStatus, VmExitStatus, String)}
+     * <p>
+     * Note: Calling this method with status=down, must be only when the VM went down normally, otherwise call
+     * {@link #InternalSetVmStatus(VM, VMStatus, VmExitStatus, String)}
      */
     public void internalSetVmStatus(VmDynamic vm, final VMStatus status) {
         internalSetVmStatus(vm, status, VmExitStatus.Normal, StringUtils.EMPTY, VmExitReason.Unknown);
@@ -337,7 +342,8 @@ public class ResourceManager implements BackendService {
      * @return The command, or null if it can't be created.
      */
     private <P extends VDSParametersBase> VDSCommandBase<P> createCommand(
-            VDSCommandType commandType, P parameters) {
+            VDSCommandType commandType,
+            P parameters) {
         try {
             @SuppressWarnings("unchecked")
             Class<VDSCommandBase<P>> type =
@@ -367,7 +373,8 @@ public class ResourceManager implements BackendService {
         return cmd;
     }
 
-    private <P extends VdsIdVDSCommandParametersBase> FutureVDSCommand<P> createFutureCommand(FutureVDSCommandType commandType,
+    private <P extends VdsIdVDSCommandParametersBase> FutureVDSCommand<P> createFutureCommand(
+            FutureVDSCommandType commandType,
             P parameters) {
         try {
             Class<FutureVDSCommand<P>> type =
@@ -401,7 +408,8 @@ public class ResourceManager implements BackendService {
         return null;
     }
 
-    public <P extends VDSParametersBase> VDSAsyncReturnValue runAsyncVdsCommand(VDSCommandType commandType, P parameters) {
+    public <P extends VDSParametersBase> VDSAsyncReturnValue runAsyncVdsCommand(VDSCommandType commandType,
+            P parameters) {
         VDSCommandBase<P> command = createCommand(commandType, parameters);
 
         if (command != null) {
@@ -418,7 +426,8 @@ public class ResourceManager implements BackendService {
         return null;
     }
 
-    public <P extends VdsIdVDSCommandParametersBase> FutureVDSCall<VDSReturnValue> runFutureVdsCommand(final FutureVDSCommandType commandType,
+    public <P extends VdsIdVDSCommandParametersBase> FutureVDSCall<VDSReturnValue> runFutureVdsCommand(
+            final FutureVDSCommandType commandType,
             final P parameters) {
         FutureVDSCommand<P> command = createFutureCommand(commandType, parameters);
 
@@ -457,6 +466,10 @@ public class ResourceManager implements BackendService {
     }
 
     @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineThreadMonitoringThreadPool)
+    private ManagedScheduledExecutorService monitoringExecutor;
+
+    @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
     private ManagedScheduledExecutorService executor;
 
@@ -467,4 +480,5 @@ public class ResourceManager implements BackendService {
     public Map<String, Pair<String, String>> getVdsPoolAndStorageConnectionsLock(Guid vdsId) {
         return getEventListener().getVdsPoolAndStorageConnectionsLock(vdsId);
     }
+
 }

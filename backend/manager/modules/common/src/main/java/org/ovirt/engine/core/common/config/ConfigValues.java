@@ -1587,6 +1587,13 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     EnableBochsDisplay,
 
+    @TypeConverterAttribute(Integer.class)
+    HostMonitoringWatchdogIntervalInSeconds,
+
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    HostMonitoringWatchdogInactivityThresholdInSeconds,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;
