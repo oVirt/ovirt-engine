@@ -808,6 +808,10 @@ select fn_db_add_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)
 select fn_db_add_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^[^,](,?[0-9A-Za-z_-]+)+$;hugepages=^[0-9]+$', '4.3');
 select fn_db_add_config_value_for_versions_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_-]*):(true|false))(,(([a-zA-Z0-9_-]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^[^,](,?[0-9A-Za-z_-]+)+$;hugepages=^[0-9]+$;scsi_hostdev=^(scsi_generic|scsi_block|scsi_hd|virtio_blk_pci)$;nvram_template=^.*$', '4.6');
 
+-- Host monitoring watchdog
+select fn_db_add_config_value('HostMonitoringWatchdogIntervalInSeconds','900','general');
+select fn_db_add_config_value('HostMonitoringWatchdogInactivityThresholdInSeconds','1200','general');
+
 ------------------------------------------------------------------------------------
 --                  SCALE
 ------------------------------------------------------------------------------------

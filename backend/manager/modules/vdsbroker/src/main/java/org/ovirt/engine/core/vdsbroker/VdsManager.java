@@ -457,18 +457,23 @@ public class VdsManager {
 
     private void setMonitoringNeeded() {
         monitoringNeeded = monitoringStrategy.isMonitoringNeeded(cachedVds) &&
-                cachedVds.getStatus() != VDSStatus.Installing &&
-                cachedVds.getStatus() != VDSStatus.InstallFailed &&
-                cachedVds.getStatus() != VDSStatus.Reboot &&
-                cachedVds.getStatus() != VDSStatus.Maintenance &&
-                cachedVds.getStatus() != VDSStatus.PendingApproval &&
-                cachedVds.getStatus() != VDSStatus.InstallingOS &&
-                cachedVds.getStatus() != VDSStatus.Down &&
-                cachedVds.getStatus() != VDSStatus.Kdumping;
+                isHostStatusEligibleForMonitoring(cachedVds.getStatus());
+
         log.debug("[{}] Setting monitoring needed: {}, cached vds status {}",
                 cachedVds.getHostName(),
                 monitoringNeeded,
                 cachedVds.getStatus());
+    }
+
+    public static boolean isHostStatusEligibleForMonitoring(VDSStatus status) {
+        return status != VDSStatus.Installing &&
+                status != VDSStatus.InstallFailed &&
+                status != VDSStatus.Reboot &&
+                status != VDSStatus.Maintenance &&
+                status != VDSStatus.PendingApproval &&
+                status != VDSStatus.InstallingOS &&
+                status != VDSStatus.Down &&
+                status != VDSStatus.Kdumping;
     }
 
     public boolean isMonitoringNeeded() {
@@ -1024,6 +1029,7 @@ public class VdsManager {
 
     public void dispose() {
         log.info("vdsManager::disposing");
+
         for (ScheduledFuture job : registeredJobs) {
             job.cancel(true);
         }
