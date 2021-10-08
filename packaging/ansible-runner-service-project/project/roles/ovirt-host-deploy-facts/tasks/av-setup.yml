@@ -1,0 +1,22 @@
+---
+- block:
+    - name: Reset configuration of advanced virtualization module
+      shell: dnf -y module reset virt
+      tags:
+        - skip_ansible_lint # E305
+
+    - name: Find relevant advanced virtualization module version
+      set_fact:
+        virt_mod_ver: "{{ 'av' if ansible_distribution_version is version('8.4', '>=') else
+            ansible_distribution_version }}"
+
+    - name: Enable advanced virtualization module
+      shell: "dnf -y module enable virt:{{ virt_mod_ver }}"
+      tags:
+        - skip_ansible_lint # E305
+
+  when:
+    - host_deploy_origin_type != ovirt_origin_type
+    - el_ver|int >= 8
+    - not node_host|bool
+    - not vdsm_preinstalled|bool
