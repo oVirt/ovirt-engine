@@ -831,6 +831,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__ACTION__COPY_NETWORKS();
 
+    String VAR__ACTION__SCREENSHOT();
+
     String VAR__HOST_STATUS__UP();
 
     String VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL();
@@ -1926,6 +1928,8 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_IMPORT_DATA_DOMAIN_IS_NOT_SUPPORTED();
 
     String ACTION_TYPE_FAILED_RESET_VM_IS_NOT_SUPPORTED();
+
+    String ACTION_TYPE_FAILED_SCREENSHOT_VM_IS_NOT_SUPPORTED();
 
     String ACTION_TYPE_FAILED_VDS_NOT_MATCH_VALID_STATUS();
 

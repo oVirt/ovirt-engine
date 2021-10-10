@@ -383,4 +383,14 @@ public class FeatureSupported {
                 && Version.v4_6.greaterOrEquals(vds.getClusterCompatibilityVersion());
     }
 
+    /**
+     * Checks if Screenshot-VM is supported
+     *
+     * @param version Compatibility version to check for.
+     * @return true if Screenshot-VM is supported.
+     */
+    public static boolean isVMScreenshotSupported(Version version) {
+        return Version.v4_6.less(version);
+    }
+
 }

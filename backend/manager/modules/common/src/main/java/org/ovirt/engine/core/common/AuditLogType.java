@@ -1614,6 +1614,9 @@ public enum AuditLogType {
     USER_ADD_VM_TO_KUBEVIRT_REQUEST(13500),
     USER_ADD_VM_TO_KUBEVIRT_REQUEST_FAILED(13501),
 
+    SCREENSHOT_VM_SUCCESS(13502, AuditLogSeverity.NORMAL),
+    USER_FAILED_TO_SCREENSHOT_VM(13503, AuditLogSeverity.ERROR),
+
     // A generic error message to log validation failure events
     GENERIC_ERROR_MESSAGE(14001, AuditLogSeverity.ERROR);
 
