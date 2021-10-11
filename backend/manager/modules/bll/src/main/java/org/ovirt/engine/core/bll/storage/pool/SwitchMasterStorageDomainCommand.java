@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -124,12 +123,6 @@ public class SwitchMasterStorageDomainCommand<T extends SwitchMasterStorageDomai
 
         if (newMasterSD.getStorageDomainType() != StorageDomainType.Data || newMasterSD.isBackup()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_DATA_DOMAINS);
-        }
-
-        // TODO: Remove validation after BZ 1911597 is resolved
-        if (newMasterSD.getStorageType().equals(StorageType.GLUSTERFS) ||
-                getCurrentMasterStorageDomain().getStorageType().equals(StorageType.GLUSTERFS)) {
-            return failValidation(EngineMessage.SWITCH_MASTER_STORAGE_DOMAIN_IS_NOT_SUPPORTED_FOR_GLUSTER);
         }
 
         if (hasRunningTasks(getStoragePoolId())) {

@@ -963,8 +963,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 && item.getStorageDomainType().isDataDomain());
 
         getSwitchMasterCommand().setIsExecutionAllowed(item != null && items.size() == 1
-                // TODO: Remove after BZ 1911597 is resolved
-                && !items.get(0).getStorageType().equals(StorageType.GLUSTERFS)
                 && !items.get(0).getStorageType().isOpenStackDomain()
                 && !items.get(0).getStorageType().isManagedBlockStorage()
                 && item.getStatus() == StorageDomainStatus.Active
