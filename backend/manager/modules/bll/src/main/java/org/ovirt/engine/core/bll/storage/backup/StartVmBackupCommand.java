@@ -338,7 +338,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(ActionParametersBase.EndProcedure.PARENT_MANAGED);
 
-        ActionReturnValue returnValue = runInternalAction(ActionType.RedefineVmCheckpoint, parameters);
+        ActionReturnValue returnValue = runInternalAction(ActionType.RedefineVmCheckpoint, parameters,
+                cloneContext().withoutLock());
         return returnValue != null && returnValue.getSucceeded();
     }
 
@@ -431,9 +432,12 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         return vmBackupInfo;
     }
 
-    private void finalizeVmBackup() {
+    private void finalizeVmBackup(VmBackupPhase phase) {
         cleanDisksBackupModeIfSupported();
+        freeLock();
         unlockDisks();
+        updateVmBackupPhase(phase);
+
         // Remove the created scratch disks.
         if (!getParameters().getScratchDisksMap().isEmpty()) {
             removeScratchDisks();
@@ -598,11 +602,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         getParameters().setVmBackup(vmBackup);
     }
 
-    private void updateVmBackupFinalPhase(VmBackupPhase phase) {
-        freeLock();
-        updateVmBackupPhase(phase);
-    }
-
     private void updateVmBackupPhase(VmBackupPhase phase) {
         VmBackup vmBackup = getParameters().getVmBackup();
         vmBackup.setPhase(phase);
@@ -670,17 +669,15 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     @Override
     protected void endSuccessfully() {
-        finalizeVmBackup();
-        updateVmBackupFinalPhase(VmBackupPhase.SUCCEEDED);
+        finalizeVmBackup(VmBackupPhase.SUCCEEDED);
         setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
-        finalizeVmBackup();
+        finalizeVmBackup(VmBackupPhase.FAILED);
         removeCheckpointFromDb();
         getReturnValue().setEndActionTryAgain(false);
-        updateVmBackupFinalPhase(VmBackupPhase.FAILED);
         setSucceeded(true);
     }
 
