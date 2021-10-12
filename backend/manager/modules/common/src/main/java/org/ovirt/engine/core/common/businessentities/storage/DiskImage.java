@@ -252,6 +252,10 @@ public class DiskImage extends DiskImageBase {
         getImage().setParentId(parentId);
     }
 
+    public boolean hasParent() {
+        return !Guid.isNullOrEmpty(getParentId());
+    }
+
     public ImageStatus getImageStatus() {
         return getImage().getStatus();
     }

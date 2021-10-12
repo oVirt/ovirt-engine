@@ -8,7 +8,8 @@ import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.model.DiskSnapshots;
 import org.ovirt.engine.api.resource.DiskSnapshotResource;
 import org.ovirt.engine.api.resource.DiskSnapshotsResource;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.queries.DiskSnapshotsQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -18,6 +19,9 @@ public class BackendDiskSnapshotsResource
 
     protected Guid diskId;
 
+    protected static final String INCLUDE_ACTIVE = "include_active";
+    protected static final String INCLUDE_TEMPLATE = "include_template";
+
     public BackendDiskSnapshotsResource(Guid diskId) {
         super(DiskSnapshot.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);
         this.diskId = diskId;
@@ -25,7 +29,8 @@ public class BackendDiskSnapshotsResource
 
     @Override
     public DiskSnapshots list() {
-        return mapCollection(getBackendCollection(QueryType.GetAllDiskSnapshots,  new IdQueryParameters(diskId)));
+        return mapCollection(getBackendCollection(QueryType.GetAllDiskSnapshots,
+                new DiskSnapshotsQueryParameters(diskId, includeActive(), includeTemplate())));
     }
 
     protected DiskSnapshots mapCollection(List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities) {
@@ -54,5 +59,13 @@ public class BackendDiskSnapshotsResource
     @Override
     public DiskSnapshotResource getSnapshotResource(String id) {
         return inject(new BackendDiskSnapshotResource(id, this));
+    }
+
+    private boolean includeActive() {
+        return ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, INCLUDE_ACTIVE, true, false);
+    }
+
+    private boolean includeTemplate() {
+        return ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, INCLUDE_TEMPLATE, true, false);
     }
 }
