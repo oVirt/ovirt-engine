@@ -5,6 +5,14 @@
 - name: Check version of ovirt-openvswitch after upgrade
   set_fact:
     ovirt_openvswitch_post: "{{ ansible_facts.packages['ovirt-openvswitch'] | first }}"
+  when:
+    - ansible_facts.packages['ovirt-openvswitch'] is defined
+
+- name: Check version of rhv-openvswitch after upgrade
+  set_fact:
+    ovirt_openvswitch_post: "{{ ansible_facts.packages['rhv-openvswitch'] | first }}"
+  when:
+    - ansible_facts.packages['rhv-openvswitch'] is defined
 
 - name: Reconfigure OVN for oVirt
   command: >
