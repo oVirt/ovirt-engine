@@ -800,6 +800,11 @@ public class LibvirtVmXmlBuilder {
 
                 writer.writeStartElement("stimer");
                 writer.writeAttributeString("state", "on");
+                if (vm.getCompatibilityVersion().greater(Version.v4_6)) {
+                    writer.writeStartElement("direct");
+                    writer.writeAttributeString("state", "on");
+                    writer.writeEndElement();
+                }
                 writer.writeEndElement();
             }
 
@@ -825,6 +830,12 @@ public class LibvirtVmXmlBuilder {
                 writer.writeEndElement();
 
                 writer.writeStartElement("tlbflush");
+                writer.writeAttributeString("state", "on");
+                writer.writeEndElement();
+            }
+
+            if (vm.getCompatibilityVersion().greater(Version.v4_6)) {
+                writer.writeStartElement("ipi");
                 writer.writeAttributeString("state", "on");
                 writer.writeEndElement();
             }
