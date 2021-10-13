@@ -571,6 +571,7 @@ public class BackendApiResource
     }
 
     @Override
+    @Deprecated
     public OpenstackVolumeProvidersResource getOpenstackVolumeProvidersResource() {
         return inject(new BackendOpenStackVolumeProvidersResource());
     }

@@ -110,6 +110,7 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
 
     private ScsiGenericIO sgio;
 
+    @Deprecated
     private String cinderVolumeType;
 
     private DiskBackup backup;

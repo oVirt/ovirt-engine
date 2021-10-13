@@ -5,23 +5,14 @@
 
 package org.ovirt.engine.api.restapi.resource.openstack;
 
-import java.util.List;
-
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKeys;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeAuthenticationKeyResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeAuthenticationKeysResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
-import org.ovirt.engine.api.restapi.utils.GuidUtils;
-import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackVolumeAuthenticationKeysResource
         extends AbstractBackendCollectionResource<OpenstackVolumeAuthenticationKey, LibvirtSecret>
@@ -35,42 +26,19 @@ public class BackendOpenStackVolumeAuthenticationKeysResource
 
     @Override
     public OpenstackVolumeAuthenticationKeys list() {
-        IdQueryParameters parameters = new IdQueryParameters(GuidUtils.asGuid(providerId));
-        return mapCollection(getBackendCollection(QueryType.GetAllLibvirtSecretsByProviderId, parameters));
+        throw new UnsupportedOperationException("Cinder integration replaced by Managed Block Storage.\n"
+                + "Please use Managed Block Storage for creating Cinderlib based storage domain.");
     }
 
     @Override
     public Response add(OpenstackVolumeAuthenticationKey authenticationKey) {
-        validateParameters(authenticationKey, "uuid", "value", "usageType");
-        return performCreate(
-                ActionType.AddLibvirtSecret,
-                new LibvirtSecretParameters(map(addProvider(authenticationKey))),
-                new QueryIdResolver<Guid>(QueryType.GetLibvirtSecretById, IdQueryParameters.class)
-        );
-    }
-
-    protected OpenstackVolumeAuthenticationKeys mapCollection(List<LibvirtSecret> entities) {
-        OpenstackVolumeAuthenticationKeys collection = new OpenstackVolumeAuthenticationKeys();
-        for (LibvirtSecret libvirtSecret : entities) {
-            collection.getOpenstackVolumeAuthenticationKeys().add(addLinks(populate(map(libvirtSecret), libvirtSecret)));
-        }
-        return collection;
-    }
-
-    @Override
-    protected OpenstackVolumeAuthenticationKey addParents(OpenstackVolumeAuthenticationKey authenticationKey) {
-        return super.addParents(addProvider(authenticationKey));
-    }
-
-    private OpenstackVolumeAuthenticationKey addProvider(OpenstackVolumeAuthenticationKey authenticationKey) {
-        OpenStackVolumeProvider provider = new OpenStackVolumeProvider();
-        provider.setId(providerId);
-        authenticationKey.setOpenstackVolumeProvider(provider);
-        return authenticationKey;
+        throw new UnsupportedOperationException("Cinder integration replaced by Managed Block Storage.\n"
+                + "Please use Managed Block Storage for creating Cinderlib based storage domain.");
     }
 
     @Override
     public OpenstackVolumeAuthenticationKeyResource getKeyResource(String id) {
-        return inject(new BackendOpenStackVolumeAuthenticationKeyResource(providerId, id));
+        throw new UnsupportedOperationException("Cinder integration replaced by Managed Block Storage.\n"
+                + "Please use Managed Block Storage for creating Cinderlib based storage domain.");
     }
 }

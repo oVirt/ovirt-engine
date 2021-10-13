@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.Objects;
 
+@Deprecated
 public class CinderDisk extends DiskImage {
 
     CinderConnectionInfo cinderConnectionInfo;
