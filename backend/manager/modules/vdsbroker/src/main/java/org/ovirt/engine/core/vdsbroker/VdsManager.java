@@ -452,23 +452,12 @@ public class VdsManager {
 
     private void setMonitoringNeeded() {
         monitoringNeeded = monitoringStrategy.isMonitoringNeeded(cachedVds) &&
-                isHostStatusEligibleForMonitoring(cachedVds.getStatus());
+                cachedVds.getStatus().isEligibleForHostMonitoring();
 
         log.debug("[{}] Setting monitoring needed: {}, cached vds status {}",
                 cachedVds.getHostName(),
                 monitoringNeeded,
                 cachedVds.getStatus());
-    }
-
-    public static boolean isHostStatusEligibleForMonitoring(VDSStatus status) {
-        return status != VDSStatus.Installing &&
-                status != VDSStatus.InstallFailed &&
-                status != VDSStatus.Reboot &&
-                status != VDSStatus.Maintenance &&
-                status != VDSStatus.PendingApproval &&
-                status != VDSStatus.InstallingOS &&
-                status != VDSStatus.Down &&
-                status != VDSStatus.Kdumping;
     }
 
     public boolean isMonitoringNeeded() {

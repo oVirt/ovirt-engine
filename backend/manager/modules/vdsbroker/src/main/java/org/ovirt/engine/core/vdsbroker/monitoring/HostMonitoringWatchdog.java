@@ -111,7 +111,7 @@ public class HostMonitoringWatchdog {
             long inactivityMillis = currentMillis - vdsManager.getLastUpdate();
 
             if (inactivityMillis >= warningThresholdSupplier.get() * 1000L
-                    && VdsManager.isHostStatusEligibleForMonitoring(host.getStatus())) {
+                    && host.getStatus().isEligibleForHostMonitoring()) {
                 alertLongInactiveHost(vdsManager, inactivityMillis);
             }
         };
