@@ -1,0 +1,2 @@
+UPDATE vm_static SET time_zone='Central European Standard Time' WHERE time_zone='Central European Standard Tim';
+UPDATE vm_init SET time_zone='Central European Standard Time' WHERE time_zone='Central European Standard Tim';
