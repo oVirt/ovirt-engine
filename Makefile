@@ -198,7 +198,6 @@ GENERATED = \
 	build/helptag-oneline-check.py \
 	build/python-check.sh \
 	build/shell-check.sh \
-	packaging/ansible-runner-service-project/project/roles/ovirt-to-vdsm-network/files/ovirt-to-vdsm-network.py \
 	packaging/bin/engine-backup.sh \
 	packaging/bin/engine-host-update.py \
 	packaging/bin/engine-migrate-he.py \
@@ -273,7 +272,6 @@ generated-files:	$(GENERATED)
 	chmod a+x packaging/ansible-runner-service-project/project/roles/ovirt-ova-query/files/query_ova.py
 	chmod a+x packaging/ansible-runner-service-project/project/roles/ovirt-ova-pack/files/pack_ova.py
 	chmod a+x packaging/ansible-runner-service-project/project/roles/ovirt-ova-extract/files/extract_ova.py
-	chmod a+x packaging/ansible-runner-service-project/project/roles/ovirt-to-vdsm-network/files/ovirt-to-vdsm-network.py
 	chmod a+x packaging/services/ovirt-engine/ovirt-engine.sysv
 	chmod a+x packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.py
 	chmod a+x packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.sysv

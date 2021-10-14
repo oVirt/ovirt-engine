@@ -1331,7 +1331,6 @@ fi
 %{engine_data}/playbooks/install-skydive.inventory.sample/00_ovirt-engine-hosts-ansible-inventory
 %{engine_data}/playbooks/install-skydive.inventory.sample/01_hosts
 %{engine_data}/playbooks/install-skydive.yml
-%{engine_data}/playbooks/ovirt-provider-ovn-driver.yml
 %{engine_data}/selinux/ansible-runner-service.cil
 %{engine_data}/services/ovirt-engine-notifier
 %{engine_data}/services/ovirt-fence-kdump-listener/

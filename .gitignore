@@ -53,7 +53,6 @@ build/helptag_checker.py
 build/helptag-oneline-check.py
 build/python-check.sh
 build/shell-check.sh
-packaging/ansible-runner-service-project/project/roles/ovirt-to-vdsm-network/files/ovirt-to-vdsm-network.py
 packaging/bin/engine-backup.sh
 packaging/bin/engine-host-update.py
 packaging/bin/engine-migrate-he.py
