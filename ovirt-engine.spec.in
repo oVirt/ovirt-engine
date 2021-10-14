@@ -988,9 +988,6 @@ OVESETUP_RPMDISTRO/jbossPackages=str:ovirt-engine-wildfly,ovirt-engine-wildfly-o
 __EOF__
 %endif
 
-mkdir -p %{buildroot}/%{engine_data}/playbooks/install-skydive.inventory.sample
-ln -s %{engine_data}/../ovirt-engine-metrics/bin/ovirt-engine-hosts-ansible-inventory \
-    %{buildroot}/%{engine_data}/playbooks/install-skydive.inventory.sample/00_ovirt-engine-hosts-ansible-inventory
 
 mkdir -p %{buildroot}/%{engine_rpm_state_dir}
 %if !%{ovirt_provides_jboss}
@@ -1049,7 +1046,6 @@ fi
 %dir %{engine_data}/engine.ear
 %dir %{engine_data}/extensions.d
 %dir %{engine_data}/services
-%dir %{engine_data}/playbooks
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_data}/ansible-runner-service-project
 %dir %{engine_etc}
 %dir %{engine_etc}/ansible
@@ -1328,9 +1324,6 @@ fi
 %{engine_data}/conf/jaas.conf
 %{engine_data}/conf/notifier-logging.properties
 %{engine_data}/conf/tools-logging.properties
-%{engine_data}/playbooks/install-skydive.inventory.sample/00_ovirt-engine-hosts-ansible-inventory
-%{engine_data}/playbooks/install-skydive.inventory.sample/01_hosts
-%{engine_data}/playbooks/install-skydive.yml
 %{engine_data}/selinux/ansible-runner-service.cil
 %{engine_data}/services/ovirt-engine-notifier
 %{engine_data}/services/ovirt-fence-kdump-listener/

@@ -1,7 +1,7 @@
 #!/bin/sh -x
 
 # Search for playbooks within specified directories (one level only)
-PLABOOKS_DIR="packaging/playbooks packaging/ansible-runner-service-project/project"
+PLABOOKS_DIR="packaging/ansible-runner-service-project/project"
 
 # Directory with roles
 ROLES_DIR="packaging/ansible-runner-service-project/project/roles"
