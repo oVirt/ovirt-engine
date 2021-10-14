@@ -39,7 +39,7 @@ public class RemoveScratchDisksCommand<T extends VmBackupParameters> extends VmC
     @Override
     public void init() {
         setVmId(getParameters().getVmBackup().getVmId());
-        setVdsId(getVm().getRunOnVds());
+        setVdsId(getParameters().getVmBackup().getHostId());
     }
 
     @Override
