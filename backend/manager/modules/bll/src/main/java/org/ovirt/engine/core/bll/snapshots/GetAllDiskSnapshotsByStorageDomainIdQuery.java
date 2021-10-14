@@ -49,7 +49,7 @@ public class GetAllDiskSnapshotsByStorageDomainIdQuery<P extends DiskSnapshotsQu
                 diskImage.setVmSnapshotDescription(snapshot.getDescription());
                 diskImage.setSnapshotCreationDate(snapshot.getCreationDate());
                 diskImagesToReturn.add(diskImage);
-            } else if (getParameters().isIncludeTemplate() && diskImage.getVmEntityType().isTemplateType()) {
+            } else if (getParameters().isIncludeTemplate() && diskImage.isTemplate()) {
                 // Template images may be required for reconstructing the snapshot chain, in case a VM was created
                 // from a template with Thin Storage Allocation. Return them if 'include_template' param is sent
                 diskImage.setVmSnapshotDescription("Template image");

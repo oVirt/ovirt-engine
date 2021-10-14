@@ -74,6 +74,10 @@ public class DiskImage extends DiskImageBase {
         this.vmEntityType = vmEntityType;
     }
 
+    public boolean isTemplate() {
+        return getVmEntityType() != null && getVmEntityType().isTemplateType();
+    }
+
     public Boolean getActive() {
         return getImage().isActive();
     }
