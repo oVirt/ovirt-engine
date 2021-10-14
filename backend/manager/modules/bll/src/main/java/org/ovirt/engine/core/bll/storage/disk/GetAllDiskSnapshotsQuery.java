@@ -42,7 +42,7 @@ public class GetAllDiskSnapshotsQuery<P extends DiskSnapshotsQueryParameters> ex
 
         // If the 'include_template' flag requested - check if one of the disk images' parents is a template disk,
         // fetch it and add to the result
-        if (getParameters().isIncludeTemplate()) {
+        if (getParameters().getIncludeTemplate()) {
             Set<Guid> imageIds = imagesToReturn.stream().map(DiskImage::getImageId).collect(Collectors.toSet());
             DiskImage imageWithMissingParent = imagesToReturn.stream().
                     filter(image -> image.hasParent() && !imageIds.contains(image.getParentId()))

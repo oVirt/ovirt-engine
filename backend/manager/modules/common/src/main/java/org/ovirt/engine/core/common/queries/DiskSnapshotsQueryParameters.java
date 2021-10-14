@@ -30,7 +30,7 @@ public class DiskSnapshotsQueryParameters extends IdQueryParameters {
         return includeActive;
     }
 
-    public boolean isIncludeTemplate() {
+    public boolean getIncludeTemplate() {
         return includeTemplate;
     }
 
