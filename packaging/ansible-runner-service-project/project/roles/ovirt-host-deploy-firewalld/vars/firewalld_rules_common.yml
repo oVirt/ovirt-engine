@@ -5,3 +5,4 @@ host_deploy_firewalld_rules:
   - service: snmp
   - service: vdsm
   - service: ovirt-imageio
+  - service: ipsec
