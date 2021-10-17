@@ -13,15 +13,17 @@ import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.action.MeasureVolumeParameters;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
@@ -29,14 +31,16 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class CreateScratchDiskCommand<T extends AddDiskParameters> extends CommandBase<T> {
-    @Inject
-    protected ImagesHandler imagesHandler;
+
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
@@ -61,7 +65,7 @@ public class CreateScratchDiskCommand<T extends AddDiskParameters> extends Comma
     protected void executeCommand() {
         DiskImage disk = (DiskImage) getParameters().getDiskInfo();
         DiskImage image = new DiskImage();
-        image.setSize(disk.getSize());
+        image.setSize(getImageSize(disk));
         image.setInitialSizeInBytes(getInitialSize(disk));
         image.setVolumeType(VolumeType.Sparse);
         image.setVolumeFormat(VolumeFormat.COW);
@@ -95,24 +99,80 @@ public class CreateScratchDiskCommand<T extends AddDiskParameters> extends Comma
         setSucceeded(actionReturnValue.getSucceeded());
     }
 
-    private Long getInitialSize(DiskImage disk) {
-        // For block-based COW disks we should fetch the up-to-date
-        // LV size from the host for setting the initial size.
-        if (disk.getStorageTypes().get(0).isBlockDomain() && disk.getVolumeFormat() == VolumeFormat.COW) {
-            log.info("Getting volume info for image '{}/{}'", disk.getId(), disk.getImageId());
-            try {
-                DiskImage imageFromVdsm = imagesHandler.getVolumeInfoFromVdsm(disk.getStoragePoolId(),
-                        disk.getStorageIds().get(0),
-                        disk.getId(),
-                        disk.getImageId());
-                return imageFromVdsm.getApparentSizeInBytes();
-            } catch (Exception e) {
-                log.error("Failed to get volume info", e);
-                throw e;
-            }
+    private long getImageSize(DiskImage disk) {
+        // TODO: For block-based RAW disks, actual size may be bigger than virtual size
+        // due to lvm extent size (128m), should be investigated and fixed.
+        return disk.getStorageTypes().get(0).isBlockDomain() && disk.getVolumeFormat() == VolumeFormat.RAW
+                ? disk.getActualSizeInBytes() : disk.getSize();
+    }
+
+    private long getInitialSize(DiskImage disk) {
+        // Scratch disk created as COW-Sparse, so the initial size should be:
+        //  - File-based scratch disk: initial size should be - '0' (which mapped to None in VDSM),
+        //    since initial size isn't supported for file-based storage domains.
+        //
+        //  - Block-based scratch disk: The size should consider requested scratch disk size percentage
+        //                              MaxBackupBlockScratchDiskInitialSizePercents value from the
+        //                              config and not less then MinBackupBlockScratchDiskInitialSizeInGB from
+        //                              the config (default 4GB).
+        //      * Backed-up disk format is RAW: the initial size should be the backed-up disk actual size * percentage.
+        //      * Backed-up disk format is COW: the initial size should be measured and padded by 1GB
+        //        chunk size * percentage.
+
+        if (!disk.getStorageTypes().get(0).isBlockDomain()) {
+            return 0L;
         }
-        // Initial size should be '0'.
-        return 0L;
+
+        long maxInitialSize;
+        if (disk.getVolumeFormat() == VolumeFormat.RAW) {
+            maxInitialSize = disk.getActualSizeInBytes();
+        } else {
+            long measuredImageSize = measureImageChainSize(disk);
+            // Padding the image for data that might be written
+            // after we measured the disk and before backup was started.
+            measuredImageSize += SizeConverter.BYTES_IN_GB;
+            // If the measured padded size is bigger then the image virtual we should not use it.
+            maxInitialSize = Math.min(measuredImageSize, disk.getSize());
+        }
+
+        return calculateInitialSizeForBlockDisk(maxInitialSize, disk.getSize());
+    }
+
+    private long measureImageChainSize(DiskImage disk) {
+        // Scratch disk creation takes place only on live backup flow and as part of creating scratch disks
+        // parent command which received VmBackupParameters, so it is safe to cast the parent parameters to it.
+        Guid hostId = ((VmBackupParameters) getParameters().getParentParameters()).getVmBackup().getHostId();
+
+        MeasureVolumeParameters parameters = new MeasureVolumeParameters(disk.getStoragePoolId(),
+                disk.getStorageIds().get(0),
+                disk.getId(),
+                disk.getImageId(),
+                disk.getVolumeFormat().getValue());
+        parameters.setParentCommand(getActionType());
+        parameters.setEndProcedure(EndProcedure.PARENT_MANAGED);
+        parameters.setVdsRunningOn(hostId);
+        parameters.setCorrelationId(getCorrelationId());
+        ActionReturnValue actionReturnValue =
+                runInternalAction(ActionType.MeasureVolume, parameters,
+                        ExecutionHandler.createDefaultContextForTasks(getContext()));
+
+        if (!actionReturnValue.getSucceeded()) {
+            throw new RuntimeException(
+                    "Could not measure the initial size of " + disk.getName() + " for scratch disk creation.");
+        }
+
+        return actionReturnValue.getActionReturnValue();
+    }
+
+    private long calculateInitialSizeForBlockDisk(long maxInitialSize, long diskSize) {
+        // Sets the scratch disk size according to the percentage from the backed-up disk size
+        // (MaxBackupBlockScratchDiskInitialSizePercents) set in the config.
+        // Size cannot be less than MinBackupBlockScratchDiskInitialSizeInGB or the disk virtual size if it is smaller.
+        Integer scratchDiskSizePercentage = Config.<Integer> getValue(ConfigValues.MaxBackupBlockScratchDiskInitialSizePercents);
+        long minScratchDiskSize = Config.<Integer> getValue(ConfigValues.MinBackupBlockScratchDiskInitialSizeInGB) * SizeConverter.BYTES_IN_GB;
+        long initialSizeByPercentage = (scratchDiskSizePercentage * maxInitialSize) / 100;
+        long initialSize = Math.max(initialSizeByPercentage, minScratchDiskSize);
+        return Math.min(initialSize, diskSize);
     }
 
     private void endChildCommand(boolean succeeded) {

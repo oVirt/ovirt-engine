@@ -113,11 +113,6 @@ select fn_db_add_config_value('EnableVdsLoadBalancing','true','general');
 --Handling Backup Awareness.
 select fn_db_add_config_value('BackupCheckPeriodInHours','6','general');
 select fn_db_add_config_value('BackupAlertPeriodInDays','1','general');
-select fn_db_add_config_value('DbEntitiesCleanupRateInMinutes','10','general');
-select fn_db_add_config_value('SucceededBackupCleanupTimeInMinutes','15','general');
-select fn_db_add_config_value('FailedBackupCleanupTimeInMinutes','30','general');
-select fn_db_add_config_value('SucceededImageTransferCleanupTimeInMinutes','15','general');
-select fn_db_add_config_value('FailedImageTransferCleanupTimeInMinutes','30','general');
 
 --Handling Engine working mode
 select fn_db_add_config_value('EngineMode','Active','general');
@@ -885,13 +880,22 @@ select fn_db_add_config_value_for_versions_up_to('HyperVSynicStimerSupported', '
 select fn_db_add_config_value_for_versions_up_to('HyperVSynicStimerSupported', 'true', '4.6');
 select fn_db_add_config_value_for_versions_up_to('IsDeferringFileVolumePreallocationSupported', 'false', '4.2');
 select fn_db_add_config_value_for_versions_up_to('IsDeferringFileVolumePreallocationSupported', 'true', '4.6');
-select fn_db_add_config_value_for_versions_up_to('IsIncrementalBackupSupported', 'false', '4.4');
-select fn_db_add_config_value_for_versions_up_to('IsIncrementalBackupSupported', 'true', '4.6');
 select fn_db_add_config_value_for_versions_up_to('IsPortIsolationSupported', 'false', '4.4');
 select fn_db_add_config_value_for_versions_up_to('IsPortIsolationSupported', 'true', '4.6');
 select fn_db_add_config_value_for_versions_up_to('TpmDeviceSupported', '{"x86":"false","ppc":"false","s390x":"false"}', '4.6');
 select fn_db_add_config_value_for_versions_up_to('NvramPersistenceSupported', 'false', '4.6');
 select fn_db_add_config_value_for_versions_up_to('EnableBochsDisplay','false','4.6');
+
+-- Incremental backup
+select fn_db_add_config_value_for_versions_up_to('IsIncrementalBackupSupported', 'false', '4.4');
+select fn_db_add_config_value_for_versions_up_to('IsIncrementalBackupSupported', 'true', '4.6');
+select fn_db_add_config_value('SucceededBackupCleanupTimeInMinutes','15','general');
+select fn_db_add_config_value('FailedBackupCleanupTimeInMinutes','30','general');
+select fn_db_add_config_value('SucceededImageTransferCleanupTimeInMinutes','15','general');
+select fn_db_add_config_value('FailedImageTransferCleanupTimeInMinutes','30','general');
+select fn_db_add_config_value('DbEntitiesCleanupRateInMinutes','10','general');
+select fn_db_add_config_value('MaxBackupBlockScratchDiskInitialSizePercents','20','general');
+select fn_db_add_config_value('MinBackupBlockScratchDiskInitialSizeInGB','4','general');
 
 -- Managed block storage
 select fn_db_add_config_value('CinderlibCommandTimeoutInMinutes','2','general');
