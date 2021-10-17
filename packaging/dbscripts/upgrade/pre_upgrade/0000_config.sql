@@ -896,6 +896,8 @@ select fn_db_add_config_value('FailedBackupCleanupTimeInMinutes','30','general')
 select fn_db_add_config_value('SucceededImageTransferCleanupTimeInMinutes','15','general');
 select fn_db_add_config_value('FailedImageTransferCleanupTimeInMinutes','30','general');
 select fn_db_add_config_value('DbEntitiesCleanupRateInMinutes','10','general');
+select fn_db_add_config_value('MaxBackupBlockScratchDiskInitialSizePercents','20','general');
+select fn_db_add_config_value('MinBackupBlockScratchDiskInitialSizeInGB','4','general');
 
 -- Managed block storage
 select fn_db_add_config_value('CinderlibCommandTimeoutInMinutes','2','general');

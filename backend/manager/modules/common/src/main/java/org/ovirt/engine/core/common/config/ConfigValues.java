@@ -1405,6 +1405,12 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     FailedImageTransferCleanupTimeInMinutes,
 
+    @TypeConverterAttribute(Integer.class)
+    MaxBackupBlockScratchDiskInitialSizePercents,
+
+    @TypeConverterAttribute(Integer.class)
+    MinBackupBlockScratchDiskInitialSizeInGB,
+
     @TypeConverterAttribute(List.class)
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     HostDevicePassthroughCapabilities(ClientAccessLevel.Admin),
