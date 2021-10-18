@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.utils;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.UUID;
 
@@ -52,6 +53,13 @@ public class StatisticResourceUtils {
     }
 
     public static Statistic setDatum(Statistic statistic, Long datum) {
+        if (datum != null) {
+            return setDatum(statistic, new BigDecimal(datum));
+        }
+        return statistic;
+    }
+
+    public static Statistic setDatum(Statistic statistic, BigInteger datum) {
         if (datum != null) {
             return setDatum(statistic, new BigDecimal(datum));
         }

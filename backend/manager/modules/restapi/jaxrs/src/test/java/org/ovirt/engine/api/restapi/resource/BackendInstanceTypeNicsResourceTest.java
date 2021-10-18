@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,8 +117,8 @@ public class BackendInstanceTypeNicsResourceTest
         when(statistics.getReceiveDropRate()).thenReturn(2D);
         when(statistics.getTransmitRate()).thenReturn(3D);
         when(statistics.getTransmitDropRate()).thenReturn(4D);
-        when(statistics.getReceivedBytes()).thenReturn(5L);
-        when(statistics.getTransmittedBytes()).thenReturn(6L);
+        when(statistics.getReceivedBytes()).thenReturn(new BigInteger("5"));
+        when(statistics.getTransmittedBytes()).thenReturn(new BigInteger("6"));
         return entity;
     }
 

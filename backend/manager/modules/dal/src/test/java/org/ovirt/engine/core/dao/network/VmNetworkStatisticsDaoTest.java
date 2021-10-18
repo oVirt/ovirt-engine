@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,12 +40,12 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
         newVmStatistics.setSampleTime(0.0);
         newVmStatistics.setReceiveDropRate(0.0);
         newVmStatistics.setReceiveRate(0.0);
-        newVmStatistics.setReceivedBytes(0L);
-        newVmStatistics.setReceivedBytesOffset(0L);
+        newVmStatistics.setReceivedBytes(BigInteger.ZERO);
+        newVmStatistics.setReceivedBytesOffset(BigInteger.ZERO);
         newVmStatistics.setTransmitDropRate(0.0);
         newVmStatistics.setTransmitRate(0.0);
-        newVmStatistics.setTransmittedBytes(0L);
-        newVmStatistics.setTransmittedBytesOffset(0L);
+        newVmStatistics.setTransmittedBytes(BigInteger.ZERO);
+        newVmStatistics.setTransmittedBytesOffset(BigInteger.ZERO);
     }
 
     /**
@@ -93,7 +94,7 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
 
     @Test
     public void testUpdateWithValues() {
-        testUpdateStatistics(999.0, 999L);
+        testUpdateStatistics(999.0, new BigInteger("999"));
     }
 
     @Test

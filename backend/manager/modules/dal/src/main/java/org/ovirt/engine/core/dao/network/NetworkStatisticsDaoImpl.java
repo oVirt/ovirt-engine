@@ -58,10 +58,10 @@ public abstract class NetworkStatisticsDaoImpl<T extends NetworkStatistics> exte
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setReceiveRate(rs.getDouble("rx_rate"));
             entity.setTransmitRate(rs.getDouble("tx_rate"));
-            entity.setReceivedBytes(getLong(rs, "rx_total"));
-            entity.setTransmittedBytes(getLong(rs, "tx_total"));
-            entity.setReceivedBytesOffset(getLong(rs, "rx_offset"));
-            entity.setTransmittedBytesOffset(getLong(rs, "tx_offset"));
+            entity.setReceivedBytes(getBigInteger(rs, "rx_total"));
+            entity.setTransmittedBytes(getBigInteger(rs, "tx_total"));
+            entity.setReceivedBytesOffset(getBigInteger(rs, "rx_offset"));
+            entity.setTransmittedBytesOffset(getBigInteger(rs, "tx_offset"));
             entity.setReceiveDropRate(rs.getDouble("rx_drop"));
             entity.setTransmitDropRate(rs.getDouble("tx_drop"));
             entity.setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));

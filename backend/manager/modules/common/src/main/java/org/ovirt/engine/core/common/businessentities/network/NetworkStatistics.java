@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.math.BigInteger;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
@@ -20,17 +21,17 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
 
     private Double receiveRate;
 
-    private Long receivedBytes;
+    private BigInteger receivedBytes;
 
-    private Long receivedBytesOffset;
+    private BigInteger receivedBytesOffset;
 
     private Double transmitDropRate;
 
     private Double transmitRate;
 
-    private Long transmittedBytes;
+    private BigInteger transmittedBytes;
 
-    private Long transmittedBytesOffset;
+    private BigInteger transmittedBytesOffset;
 
     private Double sampleTime;
 
@@ -135,7 +136,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      * @param receivedBytes
      *            the total received bytes.
      */
-    public void setReceivedBytes(Long receivedBytes) {
+    public void setReceivedBytes(BigInteger receivedBytes) {
         this.receivedBytes = receivedBytes;
     }
 
@@ -144,7 +145,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      *
      * @return the total received bytes.
      */
-    public Long getReceivedBytes() {
+    public BigInteger getReceivedBytes() {
         return receivedBytes;
     }
 
@@ -154,7 +155,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      * @param receivedBytesOffset
      *            the RX byte offset.
      */
-    public void setReceivedBytesOffset(Long receivedBytesOffset) {
+    public void setReceivedBytesOffset(BigInteger receivedBytesOffset) {
         this.receivedBytesOffset = receivedBytesOffset;
     }
 
@@ -163,7 +164,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      *
      * @return the RX byte offset.
      */
-    public Long getReceivedBytesOffset() {
+    public BigInteger getReceivedBytesOffset() {
         return receivedBytesOffset;
     }
 
@@ -173,7 +174,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      * @param transmittedBytesOffset
      *            the TX byte offset.
      */
-    public void setTransmittedBytesOffset(Long transmittedBytesOffset) {
+    public void setTransmittedBytesOffset(BigInteger transmittedBytesOffset) {
         this.transmittedBytesOffset = transmittedBytesOffset;
     }
 
@@ -182,7 +183,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      *
      * @return the TX byte offset.
      */
-    public Long getTransmittedBytesOffset() {
+    public BigInteger getTransmittedBytesOffset() {
         return transmittedBytesOffset;
     }
 
@@ -230,7 +231,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      * @param transmittedBytes
      *            the total transmitted bytes.
      */
-    public void setTransmittedBytes(Long transmittedBytes) {
+    public void setTransmittedBytes(BigInteger transmittedBytes) {
         this.transmittedBytes = transmittedBytes;
     }
 
@@ -239,7 +240,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      *
      * @return the total transmitted bytes.
      */
-    public Long getTransmittedBytes() {
+    public BigInteger getTransmittedBytes() {
         return transmittedBytes;
     }
 

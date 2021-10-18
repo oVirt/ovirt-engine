@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.List;
 
@@ -142,5 +143,9 @@ public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /
 
     protected BigDecimal asDec(double d) {
         return new BigDecimal(d, new MathContext(2));
+    }
+
+    protected BigDecimal asDec(BigInteger bigInteger) {
+        return new BigDecimal(bigInteger);
     }
 }

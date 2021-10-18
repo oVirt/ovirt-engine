@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao.network;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ public class HostNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<Inter
 
     @Test
     public void testUpdateStatisticsWithValues() {
-        testUpdateStatistics(999.0, 999L);
+        testUpdateStatistics(999.0, new BigInteger("999"));
     }
 
     @Test

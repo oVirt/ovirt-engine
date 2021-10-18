@@ -12,6 +12,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.setUpInterfaces;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +44,8 @@ public class BackendHostNicResourceTest
     private static final double TRANSMIT_RATE = 20;
     private static final double RECEIVE_DROP_RATE = 30;
     private static final double TRANSMIT_DROP_RATE = 40;
-    private static final long RECEIVED_BYTES = 50;
-    private static final long TRANSMITTED_BYTES = 60;
+    private static final BigInteger RECEIVED_BYTES = new BigInteger("50");
+    private static final BigInteger TRANSMITTED_BYTES = new BigInteger("60");
 
     private final BackendHostNicsResourceTest hostNicsResource;
 

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao.network;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
@@ -19,19 +20,19 @@ public abstract class NetworkStatisticsDaoTest<D extends Dao, T extends NetworkS
     /**
      * Ensures that updating statistics for an interface works as expected.
      */
-    protected void testUpdateStatistics(Double doubleValue, Long longValue) {
+    protected void testUpdateStatistics(Double doubleValue, BigInteger bigIntValue) {
         List<? extends NetworkInterface<T>> before = getAllInterfaces();
         T stats = before.get(0).getStatistics();
 
         stats.setReceiveDropRate(999.0);
         stats.setReceiveRate(999.0);
-        stats.setReceivedBytes(longValue);
-        stats.setReceivedBytesOffset(longValue);
+        stats.setReceivedBytes(bigIntValue);
+        stats.setReceivedBytesOffset(bigIntValue);
         stats.setTransmitDropRate(999.0);
         stats.setTransmitRate(999.0);
         stats.setTransmitDropRate(999.0);
-        stats.setTransmittedBytes(longValue);
-        stats.setTransmittedBytesOffset(longValue);
+        stats.setTransmittedBytes(bigIntValue);
+        stats.setTransmittedBytesOffset(bigIntValue);
         stats.setSampleTime(doubleValue);
 
         updateStatistics(stats);

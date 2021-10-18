@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.math.BigInteger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -1410,9 +1411,9 @@ public class VdsBrokerObjectsBuilder {
     private static void extractInterfaceStatistics(Map<String, Object> dict, NetworkInterface<?> iface) {
         NetworkStatistics stats = iface.getStatistics();
         stats.setReceiveDropRate(assignDoubleValueWithNullProtection(dict, VdsProperties.rx_dropped));
-        stats.setReceivedBytes(assignLongValue(dict, VdsProperties.rx_total));
+        stats.setReceivedBytes(assignBigIntegerValue(dict, VdsProperties.rx_total));
         stats.setTransmitDropRate(assignDoubleValueWithNullProtection(dict, VdsProperties.tx_dropped));
-        stats.setTransmittedBytes(assignLongValue(dict, VdsProperties.tx_total));
+        stats.setTransmittedBytes(assignBigIntegerValue(dict, VdsProperties.tx_total));
         stats.setSampleTime(assignDoubleValue(dict, VdsProperties.sample_time));
 
         iface.setSpeed(assignIntValue(dict, VdsProperties.INTERFACE_SPEED));
@@ -1679,6 +1680,28 @@ public class VdsBrokerObjectsBuilder {
                     return Long.parseLong(stringValue);
                 } catch (NumberFormatException e) {
                     log.error("Failed to parse '{}' value '{}' to long: {}", name, stringValue, e.getMessage());
+                }
+            }
+        }
+        return null;
+    }
+
+    private static BigInteger assignBigIntegerValue(Map<String, Object> input, String name) {
+        if (input.containsKey(name)) {
+            Object inputName = input.get(name);
+            if (inputName instanceof Long || inputName instanceof Integer) {
+                return new BigInteger(inputName.toString());
+            }
+            String stringValue = (String) ((inputName instanceof String) ? inputName : null);
+            if (!StringUtils.isEmpty(stringValue)) { // in case the input
+                                                     // is decimal and we
+                                                     // need int.
+                stringValue = stringValue.split("[.]", -1)[0];
+
+                try {
+                    return new BigInteger(stringValue);
+                } catch (NumberFormatException e) {
+                    log.error("Failed to parse '{}' value '{}' to BigInteger: {}", name, stringValue, e.getMessage());
                 }
             }
         }

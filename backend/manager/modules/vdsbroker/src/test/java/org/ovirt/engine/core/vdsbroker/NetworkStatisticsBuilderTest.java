@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.BigInteger;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,30 +17,30 @@ public class NetworkStatisticsBuilderTest {
     @MethodSource
     public void buildStatistics(Double previousRxDrops,
             Double previousRxRate,
-            Long previousRxTotal,
-            Long previousRxOffset,
+            BigInteger previousRxTotal,
+            BigInteger previousRxOffset,
             Double previousTxDrops,
             Double previousTxRate,
-            Long previousTxTotal,
-            Long previousTxOffset,
+            BigInteger previousTxTotal,
+            BigInteger previousTxOffset,
             Double previousTime,
             Integer previousSpeed,
             Double reportedRxDrops,
             Double reportedRxRate,
-            Long reportedRxTotal,
+            BigInteger reportedRxTotal,
             Double reportedTxDrops,
             Double reportedTxRate,
-            Long reportedTxTotal,
+            BigInteger reportedTxTotal,
             Double reportedTime,
             Integer reportedSpeed,
             Double expectedRxDrops,
             Double expectedRxRate,
-            Long expectedRxTotal,
-            Long expectedRxOffset,
+            BigInteger expectedRxTotal,
+            BigInteger expectedRxOffset,
             Double expectedTxDrops,
             Double expectedTxRate,
-            Long expectedTxTotal,
-            Long expectedTxOffset,
+            BigInteger expectedTxTotal,
+            BigInteger expectedTxOffset,
             Double expectedTime,
             Integer expectedSpeed) {
 
@@ -84,91 +85,99 @@ public class NetworkStatisticsBuilderTest {
     }
 
     public static Stream<Arguments> buildStatistics() {
+        final BigInteger bi12500000 = new BigInteger("12500000");
+        final BigInteger bi1000 = new BigInteger("1000");
+        final BigInteger bi24999000 = new BigInteger("24999000");
+        final BigInteger bi25000000 = new BigInteger("25000000");
+        final BigInteger bi17500000 = new BigInteger("17500000");
+        final BigInteger bi30000000 = new BigInteger("30000000");
+        final BigInteger bi0 = BigInteger.ZERO;
         return Stream.of(
 
-                // everything's supported and reported, and rate should be 100Mbps (10%)
-                Arguments.of(
-                    anyDouble(),  anyDouble(), 12500000L, 1000L, anyDouble(),  anyDouble(), 12500000L, 1000L, 0D, anyInt(),
-                    100D,         anyDouble(), 24999000L,        100D,         anyDouble(), 24999000L,        1D, 1000,
-                    100D,         10D,         25000000L, 1000L, 100D,         10D,         25000000L, 1000L, 1D, 1000
-                ),
+            // everything's supported and reported, and rate should be 100Mbps (10%)
+            Arguments.of(
+                //rxDrop      rxRate       rxTotal     rxOffset txDrop      txRate       txTotal     txOffset time speed
+                anyDouble(),  anyDouble(), bi12500000, bi1000, anyDouble(), anyDouble(), bi12500000, bi1000, 0D, anyInt(),
+                100D,         anyDouble(), bi24999000, 100D,   anyDouble(), bi24999000,  1D,         1000,
+                100D,         10D,         bi25000000, bi1000, 100D,        10D,         bi25000000, bi1000, 1D, 1000
+            ),
 
-                // RX total wasn't reported - RX total and rate should be set to null
-                Arguments.of(
-                    anyDouble(),  anyDouble(), 12500000L, 1000L, anyDouble(),  anyDouble(), 12500000L, 1000L, 0D, anyInt(),
-                    100D,         anyDouble(), null,             100D,         anyDouble(), 24999000L,        1D, 1000,
-                    100D,         null,        null,      1000L, 100D,         10D,         25000000L, 1000L, 1D, 1000
-                ),
+            // RX total wasn't reported - RX total and rate should be set to null
+            Arguments.of(
+                anyDouble(), anyDouble(), bi12500000, bi1000, anyDouble(), anyDouble(), bi12500000, bi1000, 0D, anyInt(),
+                100D,        anyDouble(), null,       100D,   anyDouble(), bi24999000,  1D,         1000,
+                100D,        null,        null,       bi1000, 100D,        10D,         bi25000000, bi1000, 1D, 1000
+            ),
 
-                // TX total wasn't reported - TX total and rate should be set to null
-                Arguments.of(
-                    anyDouble(),  anyDouble(), 12500000L, 1000L, anyDouble(),  anyDouble(), 12500000L, 1000L, 0D, anyInt(),
-                    100D,         anyDouble(), 24999000L,        100D,         anyDouble(), null,             1D, 1000,
-                    100D,         10D,         25000000L, 1000L, 100D,         null,        null,      1000L, 1D, 1000
-                ),
+            // TX total wasn't reported - TX total and rate should be set to null
+            Arguments.of(
+                anyDouble(), anyDouble(), bi12500000, bi1000, anyDouble(), anyDouble(), bi12500000, bi1000, 0D, anyInt(),
+                100D,        anyDouble(), bi24999000, 100D,   anyDouble(), null,        1D,         1000,
+                100D,        10D,         bi25000000, bi1000, 100D,        null,        null,       bi1000, 1D, 1000
+            ),
 
-                // RX offset wasn't previously set - should be set so that total RX is zero, rate irrelevant
-                Arguments.of(
-                    anyDouble(),  anyDouble(), 12500000L, null,       anyDouble(),  anyDouble(), 12500000L, 1000L, 0D, anyInt(),
-                    100D,         anyDouble(), 25000000L,             100D,         anyDouble(), 24999000L,        1D, 1000,
-                    100D,         null,        0L,        -25000000L, 100D,         10D,         25000000L, 1000L, 1D, 1000
-                ),
+            // RX offset wasn't previously set - should be set so that total RX is zero, rate irrelevant
+            Arguments.of(
+                anyDouble(), anyDouble(), bi12500000, null,                anyDouble(), anyDouble(), bi12500000, bi1000, 0D, anyInt(),
+                100D,        anyDouble(), bi25000000, 100D,                anyDouble(), bi24999000,  1D,         1000,
+                100D,        null,        bi0,        bi25000000.negate(), 100D,        10D,         bi25000000, bi1000, 1D, 1000
+            ),
 
-                // TX offset wasn't previously set - should be set so that total TX is zero, rate irrelevant
-                Arguments.of(
-                    anyDouble(),  anyDouble(), 12500000L, 1000L, anyDouble(),  anyDouble(), 12500000L, null,       0D, anyInt(),
-                    100D,         anyDouble(), 24999000L,        100D,         anyDouble(), 25000000L,             1D, 1000,
-                    100D,         10D,         25000000L, 1000L, 100D,         null,        0L,        -25000000L, 1D, 1000
-                ),
+            // TX offset wasn't previously set - should be set so that total TX is zero, rate irrelevant
+            Arguments.of(
+                anyDouble(), anyDouble(), bi12500000, bi1000, anyDouble(), anyDouble(), bi12500000, null,                0D, anyInt(),
+                100D,        anyDouble(), bi24999000, 100D,   anyDouble(), bi25000000,  1D,         1000,
+                100D,        10D,         bi25000000, bi1000, 100D,        null,        bi0,        bi25000000.negate(), 1D, 1000
+            ),
 
-                // RX total wrapped around - offset should be updated
-                Arguments.of(
-                    anyDouble(),  anyDouble(), 17500000L, 1000L,     anyDouble(),  anyDouble(), 12500000L, 1000L, 0D, anyInt(),
-                    100D,         anyDouble(), 12500000L,            100D,         anyDouble(), 24999000L,        1D, 1000,
-                    100D,         10D,         30000000L, 17500000L, 100D,         10D,         25000000L, 1000L, 1D, 1000
-                ),
+            // RX total wrapped around - offset should be updated
+            Arguments.of(
+                anyDouble(), anyDouble(), bi17500000, bi1000,     anyDouble(), anyDouble(), bi12500000, bi1000, 0D, anyInt(),
+                100D,        anyDouble(), bi12500000, 100D,       anyDouble(), bi24999000,  1D,         1000,
+                100D,        10D,         bi30000000, bi17500000, 100D,        10D,         bi25000000, bi1000, 1D, 1000
+            ),
 
-                // TX total wrapped around - offset should be updated
-                Arguments.of(
-                    anyDouble(),  anyDouble(), 12500000L, 1000L, anyDouble(),  anyDouble(), 17500000L, 1000L,     0D, anyInt(),
-                    100D,         anyDouble(), 24999000L,        100D,         anyDouble(), 12500000L,            1D, 1000,
-                    100D,         10D,         25000000L, 1000L, 100D,         10D,         30000000L, 17500000L, 1D, 1000
-                ),
+            // TX total wrapped around - offset should be updated
+            Arguments.of(
+                anyDouble(), anyDouble(), bi12500000, bi1000, anyDouble(), anyDouble(), bi17500000, bi1000,     0D, anyInt(),
+                100D,        anyDouble(), bi24999000, 100D,   anyDouble(), bi12500000,  1D,         1000,
+                100D,        10D,         bi25000000, bi1000, 100D,        10D,         bi30000000, bi17500000, 1D, 1000
+            ),
 
-                // current time measurement is missing - rates shouldn't be computed
-                Arguments.of(
-                    anyDouble(),  anyDouble(), 12500000L, 1000L, anyDouble(),  anyDouble(), 12500000L, 1000L, 0D,     anyInt(),
-                    100D,         anyDouble(), 24999000L,        100D,         anyDouble(), 24999000L,        null,   1000,
-                    100D,         null,        25000000L, 1000L, 100D,         null,        25000000L, 1000L, null,   1000
-                ),
+            // current time measurement is missing - rates shouldn't be computed
+            Arguments.of(
+                anyDouble(), anyDouble(), bi12500000, bi1000, anyDouble(), anyDouble(), bi12500000, bi1000, 0D,   anyInt(),
+                100D,        anyDouble(), bi24999000, 100D,   anyDouble(), bi24999000,  null,       1000,
+                100D,        null,        bi25000000, bi1000, 100D,        null,        bi25000000, bi1000, null, 1000
+            ),
 
-                // previous time measurement is missing - rates shouldn't be computed
-                Arguments.of(
-                    anyDouble(),  anyDouble(), 12500000L, 1000L, anyDouble(),  anyDouble(), 12500000L, 1000L, null, anyInt(),
-                    100D,         anyDouble(), 24999000L,        100D,         anyDouble(), 24999000L,        1D,   1000,
-                    100D,         null,        25000000L, 1000L, 100D,         null,        25000000L, 1000L, 1D,   1000
-                ),
+            // previous time measurement is missing - rates shouldn't be computed
+            Arguments.of(
+                anyDouble(), anyDouble(), bi12500000, bi1000, anyDouble(), anyDouble(), bi12500000, bi1000, null, anyInt(),
+                100D,        anyDouble(), bi24999000, 100D,   anyDouble(), bi24999000,  1D,         1000,
+                100D,        null,        bi25000000, bi1000, 100D,        null,        bi25000000, bi1000, 1D,   1000
+            ),
 
-                // time measurement decreased - rates shouldn't be computed
-                Arguments.of(
-                    anyDouble(),  anyDouble(), 12500000L, 1000L, anyDouble(),  anyDouble(), 12500000L, 1000L, 1D, anyInt(),
-                    100D,         anyDouble(), 24999000L,        100D,         anyDouble(), 24999000L,        0D, 1000,
-                    100D,         null,        25000000L, 1000L, 100D,         null,        25000000L, 1000L, 0D, 1000
-                ),
+            // time measurement decreased - rates shouldn't be computed
+            Arguments.of(
+                anyDouble(), anyDouble(), bi12500000, bi1000, anyDouble(), anyDouble(), bi12500000, bi1000, 1D, anyInt(),
+                100D,        anyDouble(), bi24999000, 100D,   anyDouble(), bi24999000,  0D,         1000,
+                100D,        null,        bi25000000, bi1000, 100D,        null,        bi25000000, bi1000, 0D, 1000
+            ),
 
-                // speed is missing - rates shouldn't be computed
-                Arguments.of(
-                    anyDouble(),  anyDouble(), 12500000L, 1000L, anyDouble(),  anyDouble(), 12500000L, 1000L, 0D, anyInt(),
-                    100D,         anyDouble(), 24999000L,        100D,         anyDouble(), 24999000L,        1D, null,
-                    100D,         null,        25000000L, 1000L, 100D,         null,        25000000L, 1000L, 1D, null
-                ),
+            // speed is missing - rates shouldn't be computed
+            Arguments.of(
+                anyDouble(), anyDouble(), bi12500000, bi1000, anyDouble(), anyDouble(), bi12500000, bi1000, 0D, anyInt(),
+                100D,        anyDouble(), bi24999000, 100D,   anyDouble(), bi24999000,  1D,         null,
+                100D,        null,        bi25000000, bi1000, 100D,        null,        bi25000000, bi1000, 1D, null
+            ),
 
-                // speed is reported as zero - rates shouldn't be computed
-                Arguments.of(
-                    anyDouble(),  anyDouble(), 12500000L, 1000L, anyDouble(),  anyDouble(), 12500000L, 1000L, 0D, anyInt(),
-                    100D,         anyDouble(), 24999000L,        100D,         anyDouble(), 24999000L,        1D, 0,
-                    100D,         null,        25000000L, 1000L, 100D,         null,        25000000L, 1000L, 1D, 0
-                )
+            // speed is reported as zero - rates shouldn't be computed
+            Arguments.of(
+                anyDouble(), anyDouble(), bi12500000, bi1000, anyDouble(), anyDouble(), bi12500000, bi1000, 0D, anyInt(),
+                100D,        anyDouble(), bi24999000, 100D,   anyDouble(), bi24999000,  1D,         0,
+                100D,        null,        bi25000000, bi1000, 100D,        null,        bi25000000, bi1000, 1D, 0
+            )
         );
     }
 
@@ -182,12 +191,12 @@ public class NetworkStatisticsBuilderTest {
 
     private static NetworkInterface<NetworkStatistics> constructInterface(Double rxDrops,
             Double rxRate,
-            Long rxTotal,
-            Long rxOffset,
+            BigInteger rxTotal,
+            BigInteger rxOffset,
             Double txDrops,
             Double txRate,
-            Long txTotal,
-            Long txOffset,
+            BigInteger txTotal,
+            BigInteger txOffset,
             Double sampleTime,
             Integer speed) {
 

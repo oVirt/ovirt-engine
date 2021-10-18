@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -169,8 +170,8 @@ public class BackendHostNicsResourceTest
         statistics.setReceiveRate(2D);
         statistics.setTransmitDropRate(3D);
         statistics.setTransmitRate(4D);
-        statistics.setReceivedBytes(5L);
-        statistics.setTransmittedBytes(6L);
+        statistics.setReceivedBytes(new BigInteger("5"));
+        statistics.setTransmittedBytes(new BigInteger("6"));
         statistics.setVdsId(id);
         statistics.setStatus(null);
         entity.setStatistics(statistics);

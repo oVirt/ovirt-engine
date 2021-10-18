@@ -14,6 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -178,8 +179,8 @@ public class BackendVmNicResourceTest
         when(stats.getTransmitRate()).thenReturn(20D);
         when(stats.getReceiveDropRate()).thenReturn(30D);
         when(stats.getTransmitDropRate()).thenReturn(40D);
-        when(stats.getReceivedBytes()).thenReturn(50L);
-        when(stats.getTransmittedBytes()).thenReturn(60L);
+        when(stats.getReceivedBytes()).thenReturn(new BigInteger("50"));
+        when(stats.getTransmittedBytes()).thenReturn(new BigInteger("60"));
         List<VmNetworkInterface> ifaces = new ArrayList<>();
         ifaces.add(entity);
         setUpEntityQueryExpectations(
@@ -373,8 +374,8 @@ public class BackendVmNicResourceTest
         when(statistics.getReceiveDropRate()).thenReturn(2D);
         when(statistics.getTransmitRate()).thenReturn(3D);
         when(statistics.getTransmitDropRate()).thenReturn(4D);
-        when(statistics.getReceivedBytes()).thenReturn(5L);
-        when(statistics.getTransmittedBytes()).thenReturn(6L);
+        when(statistics.getReceivedBytes()).thenReturn(new BigInteger("5"));
+        when(statistics.getTransmittedBytes()).thenReturn(new BigInteger("6"));
         return entity;
     }
 
