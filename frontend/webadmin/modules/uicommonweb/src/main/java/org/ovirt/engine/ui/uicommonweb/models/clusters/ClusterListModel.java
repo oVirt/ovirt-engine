@@ -602,6 +602,10 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
     public void onSave() {
         ClusterModel model = (ClusterModel) getWindow();
 
+        if (!model.validate()) {
+            return;
+        }
+
         if (model.getIsNew()) {
             onPreSaveInternal(model);
         } else {

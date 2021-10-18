@@ -2302,65 +2302,27 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     public boolean validate() {
+        // General tab
         validateName();
-
         getDataCenter().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-
-        getCustomPropertySheet().setIsValid(getCustomPropertySheet().validate());
-        setValidTab(TabName.CLUSTER_POLICY_TAB, getCustomPropertySheet().getIsValid());
-
-        final IValidation[] versionValidations = new IValidation[] { new NotEmptyValidation() };
-        getVersion().validateSelectedItem(versionValidations);
-
+        getVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getManagementNetwork().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-
-        getRngHwrngSourceRequired().setIsValid(true);
-
-        boolean validService = true;
-        if (getEnableOvirtService().getIsAvailable() && getEnableGlusterService().getIsAvailable()) {
-            validService = getEnableOvirtService().getEntity()
-                            || getEnableGlusterService().getEntity();
-        }
 
         getGlusterHostAddress().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getGlusterHostPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
 
-        if (!validService) {
-            setMessage(ConstantsManager.getInstance().getConstants().clusterServiceValidationMsg());
-        } else if (getIsImportGlusterConfiguration().getEntity() && getGlusterHostAddress().getIsValid()
-                && getGlusterHostPassword().getIsValid()
-                && !isHostSshPublicKeyVerified()) {
-            setMessage(ConstantsManager.getInstance().getConstants().sshPublicKeyNotVerified());
-        } else {
-            setMessage(null);
-        }
-
-        if (getSpiceProxyEnabled().getEntity()) {
-            getSpiceProxy().validateEntity(new IValidation[] { new HostWithProtocolAndPortAddressValidation() });
-        } else {
-            getSpiceProxy().setIsValid(true);
-        }
-        setValidTab(TabName.CONSOLE_TAB, getSpiceProxy().getIsValid());
-
-        if (SerialNumberPolicy.CUSTOM.equals(getSerialNumberPolicy().getSelectedItem())) {
-            getCustomSerialNumber().validateEntity(new IValidation[] { new NotEmptyValidation() });
-        } else {
-            getCustomSerialNumber().setIsValid(true);
-        }
-
-        getMacPoolModel().validate();
-
-        boolean generalTabValid = getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
+        boolean generalTabValid = getName().getIsValid()
+                && getDataCenter().getIsValid()
                 && getManagementNetwork().getIsValid()
-                && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
-                && getRngHwrngSourceRequired().getIsValid()
+                && getVersion().getIsValid()
+                && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
                 && (!getIsImportGlusterConfiguration().getEntity() || (getGlusterHostAddress().getIsValid()
-                && getGlusterHostPassword().getIsValid()
-                && getCustomSerialNumber().getIsValid()
                 && isHostSshPublicKeyVerified()));
+
         setValidTab(TabName.GENERAL_TAB, generalTabValid);
 
+        // Migration Policy tab
         if (getVersion().getSelectedItem() != null) {
             if (MigrationBandwidthLimitType.CUSTOM.equals(getMigrationBandwidthLimitType().getSelectedItem())) {
                 getCustomMigrationNetworkBandwidth().validateEntity(
@@ -2369,15 +2331,51 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 getCustomMigrationNetworkBandwidth().setIsValid(true);
             }
         }
+
         final boolean migrationTabValid =
-                getMigrationBandwidthLimitType().getIsValid() && getCustomMigrationNetworkBandwidth().getIsValid();
+                getMigrationBandwidthLimitType().getIsValid()
+                && getCustomMigrationNetworkBandwidth().getIsValid();
+
         setValidTab(TabName.MIGRATION_TAB, migrationTabValid);
 
+        // Scheduling tab
+        getCustomPropertySheet().setIsValid(getCustomPropertySheet().validate());
+
+        if (SerialNumberPolicy.CUSTOM.equals(getSerialNumberPolicy().getSelectedItem())) {
+            getCustomSerialNumber().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        } else {
+            getCustomSerialNumber().setIsValid(true);
+        }
+
+        final boolean schedullingTabValid = getCustomPropertySheet().getIsValid()
+                && getCustomSerialNumber().getIsValid();
+
+        setValidTab(TabName.CLUSTER_POLICY_TAB, schedullingTabValid);
+
+        // Console tab
+        if (getSpiceProxyEnabled().getEntity()) {
+            getSpiceProxy().validateEntity(new IValidation[] { new HostWithProtocolAndPortAddressValidation() });
+        } else {
+            getSpiceProxy().setIsValid(true);
+        }
+
+        boolean consoleTablValid = getSpiceProxy().getIsValid();
+
+        setValidTab(TabName.CONSOLE_TAB, consoleTablValid);
+
+        // MAC Address Pool tab
+        getMacPoolModel().validate();
+
         boolean macPoolTabValid = getMacPoolModel().getIsValid();
+
         setValidTab(TabName.MAC_POOL_TAB, macPoolTabValid);
 
         ValidationCompleteEvent.fire(getEventBus(), this);
-        return generalTabValid && macPoolTabValid && getCustomPropertySheet().getIsValid() && getSpiceProxy().getIsValid() && migrationTabValid;
+        return generalTabValid
+                && migrationTabValid
+                && schedullingTabValid
+                && consoleTablValid
+                && macPoolTabValid;
     }
 
     public void validateName() {
