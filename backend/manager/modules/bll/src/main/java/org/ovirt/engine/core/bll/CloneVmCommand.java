@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -568,7 +569,9 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         List<Disk> loadedImages = vdcReturnValue.getReturnValue() != null ? (List<Disk>) vdcReturnValue.getReturnValue() : new ArrayList<>();
 
         for (Disk disk : loadedImages) {
-            if (disk.isShareable()) {
+            // All LUN disks, including shareable ones, are filtered out here just like when creating a template
+            // from a VM. The behaviour should be consistent in both cases.
+            if (disk.isShareable() && disk.getDiskStorageType() != DiskStorageType.LUN) {
                 attachDetachDisk(disk, actionType);
             }
         }
