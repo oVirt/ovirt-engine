@@ -247,6 +247,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     @Override
     protected void executeCommand() {
+        lockDisks();
         VmBackup vmBackup = getParameters().getVmBackup();
 
         // Sets the backup disks with the disks from the DB that contain all disk image data.
@@ -374,7 +375,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     private boolean startAddBitmapJobs() {
-        lockDisks();
         setHostForColdBackupOperation();
 
         VmBackup vmBackup = getParameters().getVmBackup();
@@ -425,7 +425,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     private boolean runLiveVmBackup() {
-        lockDisks();
         VmBackupInfo vmBackupInfo = null;
         if (!getParameters().isBackupInitiated()) {
             getParameters().setBackupInitiated(true);
