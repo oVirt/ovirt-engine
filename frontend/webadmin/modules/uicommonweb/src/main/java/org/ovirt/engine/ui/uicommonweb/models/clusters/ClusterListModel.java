@@ -40,6 +40,8 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.builders.MigrationsEntityToModelBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.MigrationsModelToEntityBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -434,9 +436,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         if (SerialNumberPolicy.CUSTOM.equals(cluster.getSerialNumberPolicy())) {
             clusterModel.getCustomSerialNumber().setEntity(cluster.getCustomSerialNumber());
         }
-        clusterModel.getAutoConverge().setSelectedItem(cluster.getAutoConverge());
-        clusterModel.getMigrateCompressed().setSelectedItem(cluster.getMigrateCompressed());
-        clusterModel.getMigrateEncrypted().setSelectedItem(cluster.getMigrateEncrypted());
         clusterModel.getGlusterTunedProfile().setSelectedItem(cluster.getGlusterTunedProfile());
         clusterModel.getGlusterTunedProfile().setIsChangeable(cluster.getClusterHostsAndVms().getHosts() == 0);
         clusterModel.getMigrationBandwidthLimitType().setItems(Arrays.asList(MigrationBandwidthLimitType.values()));
@@ -483,6 +482,10 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         }));
 
         clusterModel.refreshMigrationPolicies();
+
+        MigrationsEntityToModelBuilder<Cluster, ClusterModel> migrationsBuilder = new MigrationsEntityToModelBuilder<>();
+        migrationsBuilder.build(cluster, clusterModel);
+
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         clusterModel.getCommands().add(tempVar);
         UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
@@ -780,10 +783,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
         cluster.setVncEncryptionEnabled(model.getVncEncryptionEnabled().getEntity());
 
-        if (model.getMigrationPolicies().getSelectedItem() != null) {
-            cluster.setMigrationPolicyId(model.getMigrationPolicies().getSelectedItem().getId());
-        }
-
         cluster.getFencingPolicy().setFencingEnabled(model.getFencingEnabledModel().getEntity());
         cluster.getFencingPolicy().setSkipFencingIfSDActive(model.getSkipFencingIfSDActiveEnabled().getEntity());
         cluster.getFencingPolicy().setSkipFencingIfConnectivityBroken(model.getSkipFencingIfConnectivityBrokenEnabled().getEntity());
@@ -798,9 +797,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             cluster.setCustomSerialNumber(null);
         }
 
-        cluster.setAutoConverge(model.getAutoConverge().getSelectedItem());
-        cluster.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());
-        cluster.setMigrateEncrypted(model.getMigrateEncrypted().getSelectedItem());
         if (model.getEnableGlusterService().getEntity()) {
             cluster.setGlusterTunedProfile(model.getGlusterTunedProfile().getSelectedItem());
         }
@@ -815,6 +811,9 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                 : null);
 
         cluster.setMacPoolId(model.getMacPoolListModel().getSelectedItem().getId());
+
+        MigrationsModelToEntityBuilder<ClusterModel, Cluster> migrationsBuilder = new MigrationsModelToEntityBuilder<>(true);
+        migrationsBuilder.build(model, cluster);
 
         return cluster;
     }

@@ -60,6 +60,7 @@ import org.ovirt.engine.ui.uicommonweb.models.FilteredListModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.ModelWithMigrationsOptions;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
@@ -78,7 +79,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
-public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTabs {
+public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTabs, ModelWithMigrationsOptions {
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private Map<Guid, PolicyUnit> policyUnitMap;

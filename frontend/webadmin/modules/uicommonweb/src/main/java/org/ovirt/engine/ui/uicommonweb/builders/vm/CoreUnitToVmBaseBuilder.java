@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.builders.vm;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.uicommonweb.builders.MigrationsModelToEntityBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IconCache;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -20,9 +21,14 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
  */
 public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
 
+    public CoreUnitToVmBaseBuilder() {
+        // the policy is copied for VMs and Templates in MigrationOptionsUnitToVmBaseBuilder
+        super(new MigrationsModelToEntityBuilder<UnitVmModel, VmBase>(false));
+    }
+
     @Override
-    protected void build(UnitVmModel model, VmBase vm) {
-        super.build(model, vm);
+    protected void postBuild(UnitVmModel model, VmBase vm) {
+        super.postBuild(model, vm);
         // Header
         vm.setClusterId(model.getSelectedCluster() != null ? model.getSelectedCluster().getId() : null);
         vm.setVmType(model.getVmType().getSelectedItem());
@@ -48,9 +54,6 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         // Host
         vm.setUseHostCpuFlags(model.getHostCpu().getEntity());
         vm.setUseTscFrequency(model.getTscFrequency().getEntity());
-        vm.setAutoConverge(model.getAutoConverge().getSelectedItem());
-        vm.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());
-        vm.setMigrateEncrypted(model.getMigrateEncrypted().getSelectedItem());
         // Resource allocation
         if (model.getCpuProfiles().getSelectedItem() != null) {
             vm.setCpuProfileId(model.getCpuProfiles().getSelectedItem().getId());

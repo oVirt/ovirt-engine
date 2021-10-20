@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.ui.uicommonweb.builders.BaseSyncBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.CompositeSyncBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.SyncBuilder;
 import org.ovirt.engine.ui.uicommonweb.models.VirtioMultiQueueType;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
@@ -11,10 +12,14 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
  * DO-NOT-EDIT: this builder has been used for instance types which are now deprecated. New fields
  * common for vms, templates and pools should go to the {@link CoreUnitToVmBaseBuilder}
  */
-public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<UnitVmModel, T> {
+public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends CompositeSyncBuilder<UnitVmModel, T> {
+
+    public HwOnlyCoreUnitToVmBaseBuilder(SyncBuilder<UnitVmModel, T>... builders) {
+        super(builders);
+    }
 
     @Override
-    protected void build(UnitVmModel model, T vm) {
+    protected void postBuild(UnitVmModel model, T vm) {
         // System
         vm.setMemSizeMb(model.getMemSize().getEntity());
         vm.setMaxMemorySizeMb(model.getMaxMemorySize().getEntity());

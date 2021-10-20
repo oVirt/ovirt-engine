@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.ui.uicommonweb.builders.Builder;
 import org.ovirt.engine.ui.uicommonweb.builders.CompositeBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.MigrationsEntityToModelBuilder;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmModel> {
@@ -16,7 +17,8 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
         this(
                 new KernelParamsVmBaseToUnitBuilder(),
                 new SerialNumberPolicyVmBaseToUnitBuilder(),
-                new IconVmBaseToUnitBuilder()
+                new IconVmBaseToUnitBuilder(),
+                new MigrationsEntityToModelBuilder()
         );
     }
 
@@ -28,9 +30,6 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
         model.selectSsoMethod(vm.getSsoMethod());
         model.getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
         model.getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
-        model.getAutoConverge().setSelectedItem(vm.getAutoConverge());
-        model.getMigrateCompressed().setSelectedItem(vm.getMigrateCompressed());
-        model.getMigrateEncrypted().setSelectedItem(vm.getMigrateEncrypted());
         model.getConsoleDisconnectAction().setSelectedItem(vm.getConsoleDisconnectAction());
         model.getResumeBehavior().setSelectedItem(vm.getResumeBehavior());
         model.getVmType().setSelectedItem(vm.getVmType());
