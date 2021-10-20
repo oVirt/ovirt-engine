@@ -70,7 +70,6 @@ import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.template.UnitToAddVmTemplateParametersBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.template.VmBaseToVmBaseForTemplateCompositeBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.MultiQueuesVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmIconUnitAndVmToParameterBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -1361,7 +1360,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     protected static VM buildVmOnNewTemplate(UnitVmModel model, VM vm) {
         VM resultVm = new VM();
         resultVm.setId(vm.getId());
-        BuilderExecutor.build(model, resultVm.getStaticData(), new CommonUnitToVmBaseBuilder(), new MultiQueuesVmBaseBuilder());
+        BuilderExecutor.build(model, resultVm.getStaticData(), new CommonUnitToVmBaseBuilder());
         BuilderExecutor.build(vm.getStaticData(), resultVm.getStaticData(), new VmBaseToVmBaseForTemplateCompositeBaseBuilder());
         return resultVm;
     }

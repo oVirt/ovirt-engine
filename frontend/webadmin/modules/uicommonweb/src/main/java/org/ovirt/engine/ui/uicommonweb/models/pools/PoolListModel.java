@@ -28,15 +28,8 @@ import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.CpuProfileUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.MultiQueuesVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.NameUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.PoolUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -485,15 +478,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
 
     protected static VM buildVmOnSave(PoolModel model) {
         VM vm = new VM();
-        BuilderExecutor.build(model, vm.getStaticData(),
-                              new NameUnitToVmBaseBuilder(),
-                              new CoreUnitToVmBaseBuilder(),
-                              new KernelParamsUnitToVmBaseBuilder(),
-                              new MigrationOptionsUnitToVmBaseBuilder(),
-                              new DedicatedVmForVdsUnitToVmBaseBuilder(),
-                              new UsbPolicyUnitToVmBaseBuilder(),
-                              new CpuProfileUnitToVmBaseBuilder(),
-                              new MultiQueuesVmBaseBuilder());
+        BuilderExecutor.build(model, vm.getStaticData(), new PoolUnitToVmBaseBuilder());
         BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
         return vm;
     }

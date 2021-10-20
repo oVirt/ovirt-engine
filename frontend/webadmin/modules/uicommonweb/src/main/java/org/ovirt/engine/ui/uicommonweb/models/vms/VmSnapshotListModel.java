@@ -42,7 +42,6 @@ import org.ovirt.engine.ui.uicommonweb.builders.template.UnitToAddVmTemplatePara
 import org.ovirt.engine.ui.uicommonweb.builders.template.VmBaseToVmBaseForTemplateCompositeBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.MultiQueuesVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -714,7 +713,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     protected static VM buildVmOnNewTemplate(UnitVmModel model, VM vm) {
         VM resultVm = new VM();
         resultVm.setId(vm.getId());
-        BuilderExecutor.build(model, resultVm.getStaticData(), new CommonUnitToVmBaseBuilder(), new MultiQueuesVmBaseBuilder());
+        BuilderExecutor.build(model, resultVm.getStaticData(), new CommonUnitToVmBaseBuilder());
         BuilderExecutor.build(vm.getStaticData(), resultVm.getStaticData(), new VmBaseToVmBaseForTemplateCompositeBaseBuilder());
         return resultVm;
     }

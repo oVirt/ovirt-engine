@@ -7,30 +7,35 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 /**
  * HW only part of the core. This is part of ALL the builders (including the instance types)
+ *
+ * DO-NOT-EDIT: this builder has been used for instance types which are now deprecated. New fields
+ * common for vms, templates and pools should go to the {@link CoreUnitToVmBaseBuilder}
  */
 public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<UnitVmModel, T> {
 
     @Override
     protected void build(UnitVmModel model, T vm) {
+        // System
         vm.setMemSizeMb(model.getMemSize().getEntity());
         vm.setMaxMemorySizeMb(model.getMaxMemorySize().getEntity());
+        vm.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
+        vm.setNumOfSockets(model.getNumOfSockets().getSelectedItem());
+        vm.setCpuPerSocket(model.getCoresPerSocket().getSelectedItem());
+        vm.setThreadsPerCpu(model.getThreadsPerCore().getSelectedItem());
+        vm.setCustomEmulatedMachine(model.getEmulatedMachine().getSelectedItem());
+        vm.setCustomCpuName(model.getCustomCpu().getSelectedItem());
+        vm.setBiosType(model.getBiosType().getSelectedItem());
+        // Console
+        vm.setDefaultDisplayType(model.getDisplayType().getSelectedItem());
+        vm.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
+        vm.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
+        vm.setSsoMethod(model.extractSelectedSsoMethod());
+        // Resource Allocation
         if (model.getIoThreadsEnabled().getEntity()) {
             vm.setNumOfIoThreads(Integer.parseInt(model.getNumOfIoThreads().getEntity()));
         } else {
             vm.setNumOfIoThreads(0);
         }
-        vm.setNumOfSockets(model.getNumOfSockets().getSelectedItem());
-        vm.setCpuPerSocket(model.getCoresPerSocket().getSelectedItem());
-        vm.setThreadsPerCpu(model.getThreadsPerCore().getSelectedItem());
-        vm.setDefaultDisplayType(model.getDisplayType().getSelectedItem());
-        vm.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
-        vm.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
-        vm.setSsoMethod(model.extractSelectedSsoMethod());
-        vm.setMinAllocatedMem(model.getMinAllocatedMemory().getEntity());
-        vm.setDefaultBootSequence(model.getBootSequence());
-        vm.setCustomEmulatedMachine(model.getEmulatedMachine().getSelectedItem());
-        vm.setBiosType(model.getBiosType().getSelectedItem());
-        vm.setCustomCpuName(model.getCustomCpu().getSelectedItem());
         if (model.getNumOfVirtioScsiMultiQueues().getEntity() != null
                 && model.getVirtioScsiMultiQueueTypeSelection().getSelectedItem() == VirtioMultiQueueType.CUSTOM) {
             vm.setVirtioScsiMultiQueues(model.getNumOfVirtioScsiMultiQueues().getEntity());
@@ -39,7 +44,8 @@ public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBui
         } else if (model.getVirtioScsiMultiQueueTypeSelection().getSelectedItem() == VirtioMultiQueueType.AUTOMATIC) {
             vm.setVirtioScsiMultiQueues(-1);
         }
-
         vm.setBalloonEnabled(model.getMemoryBalloonEnabled().getEntity());
+        // Boot
+        vm.setDefaultBootSequence(model.getBootSequence());
     }
 }
