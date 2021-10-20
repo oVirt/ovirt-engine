@@ -1515,6 +1515,9 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("driver");
             writer.writeAttributeString("intremap", "on");
             writer.writeAttributeString("eim", "on");
+            if (!MDevTypesUtils.getMDevTypes(vm).isEmpty()) {
+                writer.writeAttributeString("caching_mode", "on");
+            }
             writer.writeEndElement();
             writer.writeEndElement();
         }
