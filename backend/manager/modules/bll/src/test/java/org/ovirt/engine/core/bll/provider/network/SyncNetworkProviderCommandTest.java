@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.openstack.ExternalNetworkProviderProxy;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -32,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -72,6 +74,9 @@ public class SyncNetworkProviderCommandTest extends BaseCommandTest {
 
     @Mock
     private ExternalNetworkProviderProxy providerProxy;
+
+    @Mock
+    private AuditLogDirector auditLogDirector;
 
     @InjectMocks
     private SyncNetworkProviderCommand<IdParameters> command = new SyncNetworkProviderCommand<>(
@@ -174,5 +179,7 @@ public class SyncNetworkProviderCommandTest extends BaseCommandTest {
         verify(backend).runInternalAction(eq(ActionType.RemoveNetwork), any(), any());
         verify(backend).runInternalAction(eq(ActionType.InternalImportExternalNetwork), any(), any());
         verify(networkHelper).attachNetworkToClusters(eq(NETWORK_ID), any());
+        verify(auditLogDirector).log(any(), eq(AuditLogType.PROVIDER_SYNCHRONIZATION_STARTED));
+        verify(auditLogDirector).log(any(), eq(AuditLogType.PROVIDER_SYNCHRONIZATION_ENDED));
     }
 }

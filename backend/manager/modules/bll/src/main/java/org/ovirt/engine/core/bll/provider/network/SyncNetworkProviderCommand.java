@@ -45,6 +45,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -64,6 +66,9 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
     private boolean authenticationFailed = false;
 
     private static Logger log = LoggerFactory.getLogger(SyncNetworkProviderCommand.class);
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private ProviderProxyFactory providerProxyFactory;
@@ -137,65 +142,70 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
 
     @Override
     protected void executeCommand() {
-        List<Network> providedNetworks = getAllNetworks();
-        Set<String> providedNetworkIds = externalIds(providedNetworks);
-        List<Network> providerNetworksInDb = networkDao.getAllForProvider(getProvider().getId());
+        logEvent(AuditLogType.PROVIDER_SYNCHRONIZATION_STARTED);
+        try {
+            List<Network> providedNetworks = getAllNetworks();
+            Set<String> providedNetworkIds = externalIds(providedNetworks);
+            List<Network> providerNetworksInDb = networkDao.getAllForProvider(getProvider().getId());
 
-        List<Cluster> clusters = clusterDao.getAllClustersByDefaultNetworkProviderId(getProvider().getId());
-        Set<Guid> dataCenterIds = clusters.stream()
-                .map(Cluster::getStoragePoolId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+            List<Cluster> clusters = clusterDao.getAllClustersByDefaultNetworkProviderId(getProvider().getId());
+            Set<Guid> dataCenterIds = clusters.stream()
+                    .map(Cluster::getStoragePoolId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
 
-        for (Guid dataCenterId : dataCenterIds) {
-            Map<String, Network> providerNetworksInDataCenter = providerNetworksInDb.stream()
-                    .filter(network -> dataCenterId.equals(network.getDataCenterId()))
-                    .collect(Collectors.toMap(
-                            network -> network.getProvidedBy().getExternalId(),
-                            network -> network));
+            for (Guid dataCenterId : dataCenterIds) {
+                Map<String, Network> providerNetworksInDataCenter = providerNetworksInDb.stream()
+                        .filter(network -> dataCenterId.equals(network.getDataCenterId()))
+                        .collect(Collectors.toMap(
+                                network -> network.getProvidedBy().getExternalId(),
+                                network -> network));
 
-            providerNetworksInDataCenter.values().stream()
-                    .filter(network -> !providedNetworkIds.contains(network.getProvidedBy().getExternalId()))
-                    .forEach(network -> removeNetwork(network.getId()));
+                providerNetworksInDataCenter.values().stream()
+                        .filter(network -> !providedNetworkIds.contains(network.getProvidedBy().getExternalId()))
+                        .forEach(network -> removeNetwork(network.getId()));
 
-            List<Cluster> idsOfClustersInDataCenter = clusters.stream()
-                    .filter(cluster -> dataCenterId.equals(cluster.getStoragePoolId()))
-                    .collect(Collectors.toList());
+                List<Cluster> idsOfClustersInDataCenter = clusters.stream()
+                        .filter(cluster -> dataCenterId.equals(cluster.getStoragePoolId()))
+                        .collect(Collectors.toList());
 
-            List<Guid> allClustersInDataCenterIds =
-                    idsOfClustersInDataCenter.stream()
-                            .map(Cluster::getId)
-                            .collect(Collectors.toList());
+                List<Guid> allClustersInDataCenterIds =
+                        idsOfClustersInDataCenter.stream()
+                                .map(Cluster::getId)
+                                .collect(Collectors.toList());
 
-            List<Guid> clustersWithOvsSwitchTypeIds = idsOfClustersInDataCenter.stream()
-                    .filter(cluster -> cluster.hasRequiredSwitchType(SwitchType.OVS))
-                    .map(Cluster::getId)
-                    .collect(Collectors.toList());
+                List<Guid> clustersWithOvsSwitchTypeIds = idsOfClustersInDataCenter.stream()
+                        .filter(cluster -> cluster.hasRequiredSwitchType(SwitchType.OVS))
+                        .map(Cluster::getId)
+                        .collect(Collectors.toList());
 
-            Map<String, Network> networkByName = networkDao.getAllForDataCenter(dataCenterId)
-                    .stream()
-                    .collect(Collectors.toMap(Network::getName, Function.identity()));
+                Map<String, Network> networkByName = networkDao.getAllForDataCenter(dataCenterId)
+                        .stream()
+                        .collect(Collectors.toMap(Network::getName, Function.identity()));
 
-            for (Network network : providedNetworks) {
-                ProviderNetwork providerNetwork = network.getProvidedBy();
-                Network networkInDataCenter = providerNetworksInDataCenter.get(providerNetwork.getExternalId());
-                networkHelper.mapPhysicalNetworkIdIfApplicable(providerNetwork, networkByName);
-                List<Guid> clusterIds = network.getProvidedBy().isLinkedToPhysicalNetwork() ?
-                        clustersWithOvsSwitchTypeIds :
-                        allClustersInDataCenterIds;
-                if (networkInDataCenter == null) {
-                    ActionReturnValue importReturnValue = importNetwork(dataCenterId, network);
-                    if (importReturnValue.getSucceeded()) {
-                        network.setId(importReturnValue.getActionReturnValue());
-                        propagateReturnValue(networkHelper.attachNetworkToClusters(network.getId(), clusterIds));
+                for (Network network : providedNetworks) {
+                    ProviderNetwork providerNetwork = network.getProvidedBy();
+                    Network networkInDataCenter = providerNetworksInDataCenter.get(providerNetwork.getExternalId());
+                    networkHelper.mapPhysicalNetworkIdIfApplicable(providerNetwork, networkByName);
+                    List<Guid> clusterIds = network.getProvidedBy().isLinkedToPhysicalNetwork() ?
+                            clustersWithOvsSwitchTypeIds :
+                            allClustersInDataCenterIds;
+                    if (networkInDataCenter == null) {
+                        ActionReturnValue importReturnValue = importNetwork(dataCenterId, network);
+                        if (importReturnValue.getSucceeded()) {
+                            network.setId(importReturnValue.getActionReturnValue());
+                            propagateReturnValue(networkHelper.attachNetworkToClusters(network.getId(), clusterIds));
+                        }
+                    } else {
+                        updateNetwork(dataCenterId, network, networkInDataCenter);
+                        updateNetworkClusters(clusterIds, network, networkInDataCenter);
                     }
-                } else {
-                    updateNetwork(dataCenterId, network, networkInDataCenter);
-                    updateNetworkClusters(clusterIds, network, networkInDataCenter);
                 }
             }
+            setSucceeded(!errorOccurred);
+        } finally {
+            logEvent(AuditLogType.PROVIDER_SYNCHRONIZATION_ENDED);
         }
-        setSucceeded(!errorOccurred);
     }
 
     private List<Network> getAllNetworks() {
@@ -339,6 +349,12 @@ public class SyncNetworkProviderCommand<P extends IdParameters> extends CommandB
 
     private void setAuthenticationFailed() {
         this.authenticationFailed = true;
+    }
+
+    private void logEvent(AuditLogType eventType) {
+        var logable = new AuditLogableImpl();
+        logable.addCustomValue("ProviderName", getProviderName());
+        auditLogDirector.log(logable, eventType);
     }
 
     @Override
