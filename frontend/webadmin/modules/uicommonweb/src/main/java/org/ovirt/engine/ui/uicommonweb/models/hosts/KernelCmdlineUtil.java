@@ -113,7 +113,7 @@ public class KernelCmdlineUtil {
             return "";
         }
         String fipsLine = "fips=1 "; //$NON-NLS-1$
-        return boot_uuid == null ? fipsLine : fipsLine + "boot=UUID=" + boot_uuid + " "; //$NON-NLS-1$ $NON-NLS-2$
+        return boot_uuid == null || boot_uuid.isEmpty() ? fipsLine : fipsLine + "boot=UUID=" + boot_uuid + " "; //$NON-NLS-1$ $NON-NLS-2$
     }
 
     private static String getSmt(boolean smtDisabled) {
