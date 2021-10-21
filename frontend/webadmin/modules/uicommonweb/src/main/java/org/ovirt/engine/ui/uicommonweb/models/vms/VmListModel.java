@@ -1566,10 +1566,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         }
 
         if (model.getDoNotShowAgain().getEntity()) {
-            confirmationModelSettingsManager.setConfirmSuspendingVm(
-                    !model.getDoNotShowAgain().getEntity(),
-                    false,
-                    (result, property) -> {});
+            confirmationModelSettingsManager.setConfirmSuspendingVm(!model.getDoNotShowAgain().getEntity());
         }
 
         onPowerAction(ActionType.HibernateVm, vm -> new VmOperationParameterBase(vm.getId()));

@@ -4,9 +4,9 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.section.main.presenter.OptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.EditOptionsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.OptionsModel;
+import org.ovirt.engine.ui.uicommonweb.models.options.EditOptionsModel;
+import org.ovirt.engine.ui.uicommonweb.models.options.OptionsModel;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;

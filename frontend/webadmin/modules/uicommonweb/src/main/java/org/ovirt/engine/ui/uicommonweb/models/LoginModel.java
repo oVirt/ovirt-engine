@@ -137,7 +137,7 @@ public class LoginModel extends Model {
         disableLoginScreen();
         setLoggedUser(user);
         Frontend.getInstance().setLoggedInUser(user);
-        Frontend.getInstance().getUserProfileManager().setWebAdminUserOption(webAdminOption);
+        Frontend.getInstance().getUserProfileManager().setInjectedWebAdminUserOption(webAdminOption);
         raiseLoggedInEvent();
     }
 

@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.LocalStorage;
-import org.ovirt.engine.ui.uicommonweb.models.OptionsModel;
+import org.ovirt.engine.ui.uicommonweb.models.options.OptionsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.INoVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;

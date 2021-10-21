@@ -9,8 +9,7 @@ import org.ovirt.engine.core.bll.validator.UserProfileValidator;
 import org.ovirt.engine.core.common.queries.UserProfilePropertyIdQueryParameters;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
-public class GetUserProfilePropertiesByUserIdQuery<P extends UserProfilePropertyIdQueryParameters>
-        extends QueriesCommandBase<P> {
+public class GetUserProfilePropertiesByUserIdQuery<P extends UserProfilePropertyIdQueryParameters> extends QueriesCommandBase<P> {
     @Inject
     private UserProfileDao userProfileDao;
 
@@ -29,10 +28,9 @@ public class GetUserProfilePropertiesByUserIdQuery<P extends UserProfileProperty
         if (!validate()) {
             return;
         }
-
         getQueryReturnValue().setReturnValue(userProfileDao.getAll(getParameters().getId())
                 .stream()
-                .filter(prop -> prop.getType().equals(getParameters().getType()))
+                .filter(prop -> getParameters().getType() == null || prop.getType().equals(getParameters().getType()))
                 .collect(Collectors.toList()));
     }
 }

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.system;
 import static org.ovirt.engine.ui.common.system.StorageKeyUtils.GRID_HIDDEN_COLUMN_WIDTH_PREFIX;
 import static org.ovirt.engine.ui.common.system.StorageKeyUtils.GRID_SWAPPED_COLUMN_LIST_SUFFIX;
 import static org.ovirt.engine.ui.common.system.StorageKeyUtils.GRID_VISIBLE;
+import static org.ovirt.engine.ui.frontend.UserProfileManager.BaseConflictResolutionStrategy.OVERWRITE_REMOTE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +13,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.WebAdminSettings;
@@ -45,8 +45,7 @@ public class ClientStorageImpl implements ClientStorage {
     private static Storage sessionStorage;
 
     private final SyncTimer syncTimer = new SyncTimer();
-    private final ActivationTimer activationTimer = new ActivationTimer();
-    private long lastUserSync = 0L;
+    private long lastUploadStartTime = 0L;
 
     public ClientStorageImpl() {
         initStorage();
@@ -128,104 +127,67 @@ public class ClientStorageImpl implements ClientStorage {
         }
     }
 
-    private void uploadUserSettings(UserProfileProperty update) {
-        Frontend.getInstance().getUserProfileManager().uploadWebAdminSettings(
-                update,
-                result -> syncTimer.activate(),
-                null,
-                false);
-    }
-
-    private class ActivationTimer extends Timer {
-
-        private int WAIT_DURATION = 30 * 1000;
-
-        @Override
-        public void run() {
-            syncTimer.activate();
-            syncTimer.trigger();
-        }
-
-        public void delaySync() {
-            cancel();
-            schedule(WAIT_DURATION);
-        }
-    }
-
     private class SyncTimer extends Timer {
-
         // do not trigger request immediately but wait for follow-up events
         // this allows to group subsequent updates and send them in one request
         private static final int OPTION_SYNC_DELAY = 2 * 1000;
-        // time after user options are considered outdated (stale)
-        private static final long MAX_OPTION_AGE = 60L * 1000L;
         // safety valve if the lock was not released due to request failures
         private static final long MAX_LOCK_DURATION = 2L * 60L * 1000L;
 
-        private boolean active = true;
-        private long deactivationTime = 0L;
-
-        public void deactivate() {
-            active = false;
-            deactivationTime = new Date().getTime();
-            logger.finest("Deactivated at:" + deactivationTime); //$NON-NLS-1$
-        }
-
-        public void activate() {
-            logger.finest("Activated"); //$NON-NLS-1$
-            active = true;
-        }
-
         @Override
         public void run() {
-            long now = new Date().getTime();
-            long lockExpirationTime = deactivationTime + MAX_LOCK_DURATION;
-            if (!active && lockExpirationTime > now) {
-                logger.finest("Sync in progress. Delay next sync."); //$NON-NLS-1$
-                activationTimer.delaySync();
-                return;
-            } else if (!active) {
-                logger.warning("Sync lock has expired after[ms]: " + (now - deactivationTime)); //$NON-NLS-1$
-            }
-
-            deactivate();
-
-            long optionExpirationTime = lastUserSync + MAX_OPTION_AGE;
-            if (optionExpirationTime > now) {
-                // assume that:
-                // user settings are fresh-enough
-                doUpload(true);
-                logger.finest("Upload to the server started."); //$NON-NLS-1$
-                return;
-            }
-
-            logger.finest("Options are outdated. Reload user."); //$NON-NLS-1$
-
-            Frontend.getInstance().getUserProfileManager().reloadWebAdminSettings(settings -> {
-                lastUserSync = new Date().getTime();
-                doUpload(true);
-            }, null);
+            doUpload(true);
+            logger.finest("Upload to the server started."); //$NON-NLS-1$
         }
 
         private void doUpload(boolean uploadChangedOnly) {
-            WebAdminSettings settings = Frontend.getInstance().getWebAdminSettings();
-            if (!settings.isLocalStoragePersistedOnServer()) {
-                // multi-browser scenario: 2nd browser disabled persistence
-                logger.info("Storage persistence disabled from other browser.Skip upload."); //$NON-NLS-1$
+            long currentTime = new Date().getTime();
+            if (currentTime - lastUploadStartTime < MAX_LOCK_DURATION) {
+                logger.finest("Sync in progress. Delay next sync."); //$NON-NLS-1$
+                trigger();
+                return;
+            } else if (lastUploadStartTime != 0L) {
+                logger.warning("Sync lock has expired after[ms]: " + (currentTime - lastUploadStartTime)); //$NON-NLS-1$
+            }
+
+            WebAdminSettings currentSettings = Frontend.getInstance().getWebAdminSettings();
+            if (!currentSettings.isLocalStoragePersistedOnServer()) {
+                logger.info("Storage persistence disabled in the meantime.Skip upload."); //$NON-NLS-1$
                 return;
             }
 
             Map<String, String> updated = getAllSupportedMappingsFromLocalStorage();
-            if (uploadChangedOnly && settings.getLocalStoragePersistedOnServer().equals(updated)) {
+            if (uploadChangedOnly && currentSettings.getLocalStoragePersistedOnServer().equals(updated)) {
                 logger.finest("Options are already up-to-date.Skip upload."); //$NON-NLS-1$
                 return;
             }
-            UserProfileProperty update = WebAdminSettings.Builder.create()
-                    .fromSettings(settings)
+
+            // (currently) we cannot propagate the changes in the local storage back to UI(grid layout)
+            // The flow is one-way only: UI (user hides a column) -> local storage(side effect)
+            // -> upload to the server (side effect). Settings are loaded from local storage only at the start (first
+            // display). There is no reverse flow so changing content of local storage has no effect on the UI (if the
+            // grid was already displayed).
+            WebAdminSettings nextSettings = WebAdminSettings.Builder.create()
+                    .fromSettings(currentSettings)
                     .withStorage(updated)
-                    .build()
-                    .encode();
-            uploadUserSettings(update);
+                    .build();
+
+            lastUploadStartTime = new Date().getTime();
+            Frontend.getInstance()
+                    .getUserProfileManager()
+                    .uploadUserProfileProperty(
+                            nextSettings.encode(),
+                            property -> {
+                                lastUploadStartTime = 0L;
+                                logger.fine("Uploaded property: " + property); //$NON-NLS-1$
+                                },
+                            result -> {
+                                lastUploadStartTime = 0L;
+                                logger.warning("Failed to upload WebAdmin settings due to:" + result);  //$NON-NLS-1$
+                            },
+                            (remote, local) -> OVERWRITE_REMOTE,
+                            null,
+                            false);
         }
 
         public void trigger() {
@@ -247,12 +209,14 @@ public class ClientStorageImpl implements ClientStorage {
             return;
         }
 
-        if (webAdminSettings.getLocalStoragePersistenceVersion() == null || webAdminSettings.getOriginalUserOptions() == null) {
+        if (webAdminSettings.getLocalStoragePersistenceVersion() == null
+                || webAdminSettings.getOriginalUserOptions() == null) {
             // version defaults to current version if no option, otherwise should be part of JSON content
             // missing version indicates unexpected JSON content i.e. {}, [], null, etc
             logger.severe("Invalid state. Cancel populating local storage."); //$NON-NLS-1$
             return;
         }
+
         if (Guid.Empty.equals(webAdminSettings.getOriginalUserOptions().getPropertyId())) {
             logger.warning("No webAdmin property on the server. Trigger standard upload to create the property."); //$NON-NLS-1$
             syncTimer.doUpload(false);
@@ -278,9 +242,7 @@ public class ClientStorageImpl implements ClientStorage {
                 .collect(
                         Collectors.toMap(
                                 key -> key,
-                                this::getLocalItem
-                        )
-                );
+                                this::getLocalItem));
     }
 
     private boolean isSupported(String key) {

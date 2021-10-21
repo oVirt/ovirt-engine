@@ -1099,7 +1099,7 @@ public class Frontend implements HasHandlers {
     /**
      * Settings retrieved for currently logged-in user.
      * Note that it may contain outdated settings (not in sync with the server).
-     * In order to refresh settings use {@linkplain UserProfileManager#reloadWebAdminSettings(Consumer, Object)}
+     * In order to refresh settings use {@linkplain UserProfileManager#reload(Consumer)}
      */
     public WebAdminSettings getWebAdminSettings() {
         UserProfileProperty webAdminUserOption = getUserProfileManager().getWebAdminUserOption();

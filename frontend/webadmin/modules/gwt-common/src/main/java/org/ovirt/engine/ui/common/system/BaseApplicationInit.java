@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
-import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 
 import com.google.gwt.core.client.GWT;
@@ -48,7 +47,6 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     private final ApplicationLogManager applicationLogManager;
     private final AlertManager alertManager;
     private final ClientStorage clientStorage;
-    private final ConfirmationModelSettingsManager confirmationModelSettingsManager;
 
     public BaseApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
@@ -59,8 +57,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             Frontend frontend, CurrentUserRole currentUserRole,
             ApplicationLogManager applicationLogManager,
             AlertManager alertManager,
-            ClientStorage clientStorage,
-            ConfirmationModelSettingsManager confirmationModelSettingsManager) {
+            ClientStorage clientStorage) {
         this.typeResolver = typeResolver;
         this.frontendEventsHandler = frontendEventsHandler;
         this.frontendFailureEventListener = frontendFailureEventListener;
@@ -72,7 +69,6 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         this.applicationLogManager = applicationLogManager;
         this.alertManager = alertManager;
         this.clientStorage = clientStorage;
-        this.confirmationModelSettingsManager = confirmationModelSettingsManager;
     }
 
     @Override
@@ -212,7 +208,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             getLoginModel().autoLogin(loggedUser, userInfo.getWebAdminUserOption());
             clientStorage.storeAllUserSettingsInLocalStorage(Frontend.getInstance()
                     .getWebAdminSettings());
-            confirmationModelSettingsManager.loadConfirmSuspendingVm(() -> { });
+            Frontend.getInstance()
+                    .getUserProfileManager()
+                    .reload(profile -> {});
         });
 
         user.setUserInfo(userInfo);

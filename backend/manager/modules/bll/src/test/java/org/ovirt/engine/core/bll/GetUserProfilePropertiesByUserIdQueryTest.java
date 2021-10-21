@@ -13,8 +13,7 @@ import org.ovirt.engine.core.common.queries.UserProfilePropertyIdQueryParameters
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
-class GetUserProfilePropertiesByUserIdQueryTest
-        extends AbstractUserQueryTest<UserProfilePropertyIdQueryParameters, GetUserProfilePropertiesByUserIdQuery<UserProfilePropertyIdQueryParameters>> {
+class GetUserProfilePropertiesByUserIdQueryTest extends AbstractUserQueryTest<UserProfilePropertyIdQueryParameters, GetUserProfilePropertiesByUserIdQuery<UserProfilePropertyIdQueryParameters>> {
 
     @Mock
     private UserProfileDao userProfileDaoMock;
@@ -26,32 +25,38 @@ class GetUserProfilePropertiesByUserIdQueryTest
         when(getQueryParameters().getType()).thenReturn(UserProfileProperty.PropertyType.SSH_PUBLIC_KEY);
         when(getUser().getId()).thenReturn(userId);
 
-        executeQueryInternal();
+        UserProfileProperty sshProp = sshProp();
+        UserProfileProperty jsonProp = jsonProp();
+        executeQueryInternal(List.of(sshProp, jsonProp), List.of(sshProp));
     }
 
-    private void executeQueryInternal() {
-        UserProfileProperty prop = UserProfileProperty.builder()
+    private UserProfileProperty sshProp() {
+        return UserProfileProperty.builder()
                 .withDefaultSshProp()
                 .withNewId()
                 .withContent("some_content")
                 .withUserId(getUser().getId())
                 .build();
+    }
 
-        // second property that should be filtered out
-        UserProfileProperty otherProp = UserProfileProperty.builder()
+    private UserProfileProperty jsonProp() {
+        return UserProfileProperty.builder()
                 .withTypeJson()
                 .withName("OtherUnusedProp")
                 .withNewId()
                 .withContent("{}")
                 .withUserId(getUser().getId())
                 .build();
+    }
 
-        when(userProfileDaoMock.getAll(getQueryParameters().getId())).thenReturn(List.of(prop, otherProp));
+    private void executeQueryInternal(List<UserProfileProperty> allAvailable,
+            List<UserProfileProperty> filteredByType) {
+        when(userProfileDaoMock.getAll(getQueryParameters().getId())).thenReturn(allAvailable);
 
         getQuery().executeQueryCommand();
 
         List<UserProfileProperty> properties = getQuery().getQueryReturnValue().getReturnValue();
-        assertThat(properties).containsExactly(prop);
+        assertThat(properties).containsExactlyInAnyOrderElementsOf(filteredByType);
     }
 
     @Test
@@ -74,7 +79,20 @@ class GetUserProfilePropertiesByUserIdQueryTest
         when(getUser().getId()).thenReturn(userId);
         when(getUser().isAdmin()).thenReturn(true);
 
-        executeQueryInternal();
+        UserProfileProperty sshProp = sshProp();
+        UserProfileProperty jsonProp = jsonProp();
+        executeQueryInternal(List.of(sshProp, jsonProp), List.of(sshProp));
+    }
+
+    @Test
+    public void fetchAllProperties() {
+        Guid userId = Guid.newGuid();
+        when(getQueryParameters().getId()).thenReturn(userId);
+        when(getQueryParameters().getType()).thenReturn(null);
+        when(getUser().getId()).thenReturn(userId);
+
+        List<UserProfileProperty> all = List.of(sshProp(), jsonProp());
+        executeQueryInternal(all, all);
     }
 
 }

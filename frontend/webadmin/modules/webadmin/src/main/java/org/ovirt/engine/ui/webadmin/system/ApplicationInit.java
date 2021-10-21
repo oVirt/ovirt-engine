@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
-import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.plugin.PluginManager;
@@ -44,11 +43,10 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> implements 
             ApplicationDynamicMessages dynamicMessages,
             CurrentUserRole currentUserRole,
             PluginManager pluginManager,
-            ClientStorage clientStorage,
-            ConfirmationModelSettingsManager confirmationModelSettingsManager) {
+            ClientStorage clientStorage) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user,
                 loginModelProvider, lockInteractionManager, frontend, currentUserRole,
-                applicationLogManager, alertManager, clientStorage, confirmationModelSettingsManager);
+                applicationLogManager, alertManager, clientStorage);
         this.dynamicMessages = dynamicMessages;
         pluginManager.setPluginsReadyCallback(this);
     }
