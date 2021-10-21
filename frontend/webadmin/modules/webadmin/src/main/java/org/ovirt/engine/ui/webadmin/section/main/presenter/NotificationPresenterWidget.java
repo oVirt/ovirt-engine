@@ -5,9 +5,12 @@ import java.util.LinkedList;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification;
 import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification.NotificationStatus;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.UserProfileManager;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.Timer;
@@ -19,35 +22,48 @@ import com.gwtplatform.mvp.client.View;
 public class NotificationPresenterWidget extends PresenterWidget<NotificationPresenterWidget.ViewDef> {
 
     public interface ViewDef extends View {
+
         void showNotification(ToastNotification notification);
+
         void removeNotification(ToastNotification notification);
+
         void clear();
+
         void show();
+
         void hide();
+
         HasClickHandlers getDismissAllButton();
+
         HasClickHandlers getDoNotDisturb10Minutes();
+
         HasClickHandlers getDoNotDisturb1Hour();
+
         HasClickHandlers getDoNotDisturb1Day();
+
         HasClickHandlers getDoNotDisturbNextLogin();
     }
 
+    private static final String SHOW_NOTIFICATIONS = "webAdmin.showNotifications"; //$NON-NLS-1$
+    private static final int AUTO_CLOSE_DELAY_SECONDS = 8;
+
+    private static final int MILLIS_10_MINUTES = 1000 * 60 * 10;
+    private static final int MILLIS_1_HOUR = 1000 * 60 * 60;
+    private static final int MILLIS_1_DAY = 1000 * 60 * 60 * 24;
+
+    private static final String DO_NOT_DISTURB = "_doNotDisturb"; //$NON-NLS-1$
+
+    private final UserProfileManager userProfileManger;
     private final ClientStorage clientStorage;
     private boolean sessionDoNotDisturb = false;
 
-    private LinkedList<ToastNotification> notifications = new LinkedList<>();
-
-    private static final int AUTO_CLOSE_DELAY_SECONDS = 8;
-
-    private int MILLIS_10_MINUTES = 1000 * 60 * 10;
-    private int MILLIS_1_HOUR = 1000 * 60 * 60;
-    private int MILLIS_1_DAY = 1000 * 60 * 60 * 24;
-
-    private String DO_NOT_DISTURB = "_doNotDisturb"; //$NON-NLS-1$
+    private final LinkedList<ToastNotification> notifications = new LinkedList<>();
 
     @Inject
     public NotificationPresenterWidget(ClientStorage clientStorage, EventBus eventBus, ViewDef view) {
         super(eventBus, view);
         this.clientStorage = clientStorage;
+        this.userProfileManger = Frontend.getInstance().getUserProfileManager();
         getView().hide();
         if (notifications.size() > 0) {
             getView().show();
@@ -65,14 +81,14 @@ public class NotificationPresenterWidget extends PresenterWidget<NotificationPre
     }
 
     private boolean isDoNotDisturb() {
-        if (sessionDoNotDisturb) {
+        if (sessionDoNotDisturb || isPermanentDoNotDisturb()) {
             return true;
         }
 
         try {
             String clientDoNotDisturb = clientStorage.getLocalItem(DO_NOT_DISTURB);
             if (clientDoNotDisturb != null && !clientDoNotDisturb.isEmpty()) {
-                Double clientDoNotDisturbExpires = Double.parseDouble(clientDoNotDisturb);
+                double clientDoNotDisturbExpires = Double.parseDouble(clientDoNotDisturb);
                 // is the expiration later than now?
                 Date now = new Date();
                 if (clientDoNotDisturbExpires > now.getTime()) {
@@ -86,6 +102,17 @@ public class NotificationPresenterWidget extends PresenterWidget<NotificationPre
         return false;
     }
 
+    private boolean isPermanentDoNotDisturb() {
+        return userProfileManger
+                .getUserProfile()
+                .getUserProfileProperty(SHOW_NOTIFICATIONS, UserProfileProperty.PropertyType.JSON)
+                .map(UserProfileProperty::getContent)
+                .map(Boolean::parseBoolean)
+                // showNotifications == !doNotDisturb
+                .map(showNotifications -> !showNotifications)
+                .orElse(false);
+    }
+
     public ToastNotification createNotification(String text, NotificationStatus status) {
         ToastNotification notification = new ToastNotification(text, status);
 
@@ -96,7 +123,8 @@ public class NotificationPresenterWidget extends PresenterWidget<NotificationPre
         }
 
         // manual close
-        HandlerRegistration handlerRegistration = notification.addCloseClickHandler(event -> hideNotification(notification));
+        HandlerRegistration handlerRegistration =
+                notification.addCloseClickHandler(event -> hideNotification(notification));
         registerHandler(handlerRegistration);
 
         // auto close
