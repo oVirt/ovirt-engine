@@ -1120,7 +1120,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private boolean isLiveBackup() {
-        return isBackup() && getBackupVm() != null && !getBackupVm().isDown();
+        return isBackup() && getBackup().isLiveBackup();
     }
 
     private boolean isSupportsDirtyExtents() {
