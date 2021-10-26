@@ -23,7 +23,8 @@ CREATE OR REPLACE FUNCTION InsertVmBackup (
     v_phase TEXT,
     v__create_date TIMESTAMP WITH TIME ZONE,
     v__update_date TIMESTAMP WITH TIME ZONE,
-    v_description VARCHAR(1024)
+    v_description VARCHAR(1024),
+    v_is_live_backup BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -36,7 +37,8 @@ BEGIN
         phase,
         _create_date,
         _update_date,
-        description
+        description,
+        is_live_backup
         )
     VALUES (
         v_backup_id,
@@ -47,7 +49,8 @@ BEGIN
         v_phase,
         v__create_date,
         v__update_date,
-        v_description
+        v_description,
+        v_is_live_backup
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -60,7 +63,8 @@ CREATE OR REPLACE FUNCTION UpdateVmBackup (
     v_host_id UUID,
     v_phase TEXT,
     v__update_date TIMESTAMP WITH TIME ZONE,
-    v_description VARCHAR(1024)
+    v_description VARCHAR(1024),
+    v_is_live_backup BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -72,7 +76,8 @@ BEGIN
         host_id = v_host_id,
         phase = v_phase,
         _update_date = v__update_date,
-        description = v_description
+        description = v_description,
+        is_live_backup = v_is_live_backup
     WHERE backup_id = v_backup_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

@@ -37,7 +37,8 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
                 .addValue("phase", entity.getPhase().getName())
                 .addValue("_create_date", entity.getCreationDate())
                 .addValue("_update_date", entity.getModificationDate())
-                .addValue("description", entity.getDescription());
+                .addValue("description", entity.getDescription())
+                .addValue("is_live_backup", entity.isLiveBackup());
     }
 
     @Override
@@ -61,6 +62,7 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
         entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_create_date")));
         entity.setModificationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_update_date")));
         entity.setDescription(rs.getString("description"));
+        entity.setLiveBackup(rs.getBoolean("is_live_backup"));
         return entity;
     };
 
@@ -80,7 +82,8 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
                 .addValue("to_checkpoint_id", entity.getToCheckpointId())
                 .addValue("phase", entity.getPhase().getName())
                 .addValue("_update_date", new Date())
-                .addValue("description", entity.getDescription());
+                .addValue("description", entity.getDescription())
+                .addValue("is_live_backup", entity.isLiveBackup());
         getCallsHandler()
                 .executeModification("UpdateVmBackup", parameterSource);
     }

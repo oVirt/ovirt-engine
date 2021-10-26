@@ -31,6 +31,8 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
 
     private List<DiskImage> disks;
 
+    private boolean liveBackup;
+
     public Guid getId() {
         return id;
     }
@@ -115,6 +117,14 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
         return fromCheckpointId != null;
     }
 
+    public boolean isLiveBackup() {
+        return liveBackup;
+    }
+
+    public void setLiveBackup(boolean liveBackup) {
+        this.liveBackup = liveBackup;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -127,7 +137,8 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
                 disks,
                 creationDate,
                 modificationDate,
-                description
+                description,
+                liveBackup
         );
     }
 
@@ -149,7 +160,8 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
                 && Objects.equals(disks, other.disks)
                 && Objects.equals(creationDate, other.creationDate)
                 && Objects.equals(modificationDate, other.modificationDate)
-                && Objects.equals(description, other.description);
+                && Objects.equals(description, other.description)
+                && Objects.equals(liveBackup, other.liveBackup);
     }
 
     @Override

@@ -107,6 +107,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     private List<DiskImage> disksList;
     private VmCheckpoint vmCheckpointsLeaf;
     private Set<Guid> fromCheckpointDisksIds;
+    private boolean isLiveBackup;
 
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
@@ -175,12 +176,14 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         if (!getVm().getStatus().isQualifiedForVmBackup()) {
             return failValidation(EngineMessage.CANNOT_START_BACKUP_VM_SHOULD_BE_IN_UP_OR_DOWN_STATUS);
         }
+        // Sets the VM backup type (live/cold) according to the VM status.
+        isLiveBackup = getVm().getStatus().equals(VMStatus.Up);
 
         if (!validate(snapshotsValidator.vmNotInPreview(getVm().getId()))) {
             return false;
         }
 
-        if (isLiveBackup()) {
+        if (isLiveBackup) {
             // Validate that the host supports building checkpoint XML for redefinition
             // and creating scratch disks on shared storage.
             // Those features were introduced together with the support for cold backup so if the
@@ -468,6 +471,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         Date now = new Date();
         vmBackup.setCreationDate(now);
         vmBackup.setModificationDate(now);
+        vmBackup.setLiveBackup(isLiveBackup);
 
         getParameters().setVmBackup(vmBackup);
         TransactionSupport.executeInNewTransaction(() -> {
@@ -805,6 +809,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     private boolean isLiveBackup() {
-        return getVm().getStatus() == VMStatus.Up;
+        return getParameters().getVmBackup().isLiveBackup();
     }
 }

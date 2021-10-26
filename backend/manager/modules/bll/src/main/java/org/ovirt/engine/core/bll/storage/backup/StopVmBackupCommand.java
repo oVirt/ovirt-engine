@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -63,7 +62,7 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
     }
 
     private boolean stopVmBackup() {
-        if (isColdBackup()) {
+        if (!isLiveBackup()) {
             return true;
         }
 
@@ -89,8 +88,8 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
                 getParameters().getVmBackup().getDisks();
     }
 
-    private boolean isColdBackup() {
-        return getVm().getStatus() == VMStatus.Down;
+    private boolean isLiveBackup() {
+        return vmBackup.isLiveBackup();
     }
 
     private void updateVmBackupPhase(VmBackupPhase phase) {
