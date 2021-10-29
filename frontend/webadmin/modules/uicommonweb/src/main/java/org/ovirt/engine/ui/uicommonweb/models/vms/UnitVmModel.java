@@ -268,82 +268,119 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
      */
     public void setVmAttachedToPool(boolean value) {
         if (value) {
-            // ==General Tab==
+            // ==Header==
             getDataCenterWithClustersList().setIsChangeable(!value);
-            getQuota().setIsChangeable(false);
-            getCpuProfiles().setIsChangeable(false);
-
-            getVmId().setIsChangeable(false);
-
-            getNumOfDesktops().setIsChangeable(false);
-            getPrestartedVms().setIsChangeable(false);
-            getMaxAssignedVmsPerUser().setIsChangeable(false);
-
             getBaseTemplate().setIsChangeable(false);
             getTemplateWithVersion().setIsChangeable(false);
+            getOSType().setIsChangeable(false);
             getInstanceTypes().setIsChangeable(false);
+            getVmType().setIsChangeable(false);
+            getQuota().setIsChangeable(false);
+
+            // ==General Tab==
+            getVmId().setIsChangeable(false);
+            getPrestartedVms().setIsChangeable(false);
+            getMaxAssignedVmsPerUser().setIsChangeable(false);
+            getNumOfDesktops().setIsChangeable(false);
+
+            getIsStateless().setIsChangeable(false);
+            getIsRunAndPause().setIsChangeable(false);
+            getIsDeleteProtected().setIsChangeable(false);
+
+            // ==System Tab==
             getMemSize().setIsChangeable(false);
             getMaxMemorySize().setIsChangeable(false);
             getMinAllocatedMemory().setIsChangeable(false);
             getTotalCPUCores().setIsChangeable(false);
 
-            getCustomCpu().setIsChangeable(false);
-            getEmulatedMachine().setIsChangeable(false);
-            getBiosType().setIsChangeable(false);
-
-            getCoresPerSocket().setIsChangeable(false);
             getNumOfSockets().setIsChangeable(false);
+            getCoresPerSocket().setIsChangeable(false);
             getThreadsPerCore().setIsChangeable(false);
-            getSerialNumberPolicy().setIsChangeable(false);
-            getTpmEnabled().setIsChangeable(false);
+            getEmulatedMachine().setIsChangeable(false);
+            getCustomCpu().setIsChangeable(false);
+            getCustomCompatibilityVersion().setIsChangeable(false);
 
-            getOSType().setIsChangeable(false);
-            getIsStateless().setIsChangeable(false);
-            getIsRunAndPause().setIsChangeable(false);
-            getIsDeleteProtected().setIsChangeable(false);
+            getBiosType().setIsChangeable(false);
+            getTimeZone().setIsChangeable(false);
+            getSerialNumberPolicy().setIsChangeable(false);
 
             // ==Initial run Tab==
-            getTimeZone().setIsChangeable(false);
+            getVmInitEnabled().setIsChangeable(false);
 
             // ==Console Tab==
             getIsHeadlessModeEnabled().setIsChangeable(false);
             getDisplayType().setIsChangeable(false);
             getGraphicsType().setIsChangeable(false);
-            getIsUsbEnabled().setIsChangeable(false);
+            getVncKeyboardLayout().setIsChangeable(false);
             getConsoleDisconnectAction().setIsChangeable(false);
             getConsoleDisconnectActionDelay().setIsChangeable(false);
-            getResumeBehavior().setIsChangeable(false);
             getNumOfMonitors().setIsChangeable(false);
+
+            getIsUsbEnabled().setIsChangeable(false);
             getIsSmartcardEnabled().setIsChangeable(false);
-            getAllowConsoleReconnect().setIsChangeable(false);
-            getVncKeyboardLayout().setIsChangeable(false);
             getSsoMethodNone().setIsChangeable(false);
             getSsoMethodGuestAgent().setIsChangeable(false);
+
+            getAllowConsoleReconnect().setIsChangeable(false);
+
+            getIsSoundcardEnabled().setIsChangeable(false);
+            getSpiceProxyEnabled().setIsChangeable(false);
+            getSpiceFileTransferEnabled().setIsChangeable(false);
+            getSpiceCopyPasteEnabled().setIsChangeable(false);
+            getIsConsoleDeviceEnabled().setIsChangeable(false);
 
             // ==Host Tab==
             getIsAutoAssign().setIsChangeable(false);
             getDefaultHost().setIsChangeable(false);
             getHostCpu().setIsChangeable(false);
+            getTscFrequency().setIsChangeable(false);
+
             getMigrationMode().setIsChangeable(false);
-            getCpuPinning().setIsChangeable(false);
             getMigrationDowntime().setIsChangeable(false);
             getMigrationPolicies().setIsChangeable(false);
-            getCustomCompatibilityVersion().setIsChangeable(false);
+            getAutoConverge().setIsChangeable(false);
+            getMigrateCompressed().setIsChangeable(false);
+            getMigrateEncrypted().setIsChangeable(false);
             getAutoPinningPolicy().setIsChangeable(false);
 
+            getNumaEnabled().setIsChangeable(false);
+            getAutoPinningPolicy().setIsChangeable(false);
+
+            // ==High Availability==
+            getIsHighlyAvailable().setIsChangeable(false);
+            getLease().setIsChangeable(false);
+            getResumeBehavior().setIsChangeable(false);
+            getPriority().setIsChangeable(false);
+            getWatchdogModel().setIsChangeable(false);
+            getWatchdogAction().setIsChangeable(false);
+
             // ==Resource Allocation Tab==
+            getCpuProfiles().setIsChangeable(false);
+            getCpuSharesAmountSelection().setIsChangeable(false);
+            getCpuSharesAmount().setIsChangeable(false);
+            getCpuPinning().setIsChangeable(false);
+            getMemoryBalloonEnabled().setIsChangeable(false);
+            getTpmEnabled().setIsChangeable(false);
+            getIoThreadsEnabled().setIsChangeable(false);
+            getNumOfIoThreads().setIsChangeable(false);
+
+            getMultiQueues().setIsChangeable(false);
+
             getProvisioning().setIsChangeable(false);
             getProvisioningThin_IsSelected().setIsChangeable(false);
             getProvisioningClone_IsSelected().setIsChangeable(false);
+            getIsVirtioScsiEnabled().setIsChangeable(false);
+            getVirtioScsiMultiQueueTypeSelection().setIsChangeable(false);
+            getNumOfVirtioScsiMultiQueues().setIsChangeable(false);
+
             getDisksAllocationModel().setIsChangeable(false);
-            getIoThreadsEnabled().setIsChangeable(false);
-            getNumOfIoThreads().setIsChangeable(false);
 
             // ==Boot Options Tab==
             getFirstBootDevice().setIsChangeable(false);
             getSecondBootDevice().setIsChangeable(false);
             getCdAttached().setIsChangeable(false);
             getCdImage().setIsChangeable(false);
+            getBootMenuEnabled().setIsChangeable(false);
             getKernel_path().setIsChangeable(false);
             getInitrd_path().setIsChangeable(false);
             getKernel_parameters().setIsChangeable(false);
@@ -362,8 +399,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             // ==Icon Tab==
             getIcon().setIsChangeable(false);
 
-            // ==High Availability==
-            getIsHighlyAvailable().setIsChangeable(false);
+            // ==Foreman Tab==
+            getProviders().setIsChangeable(false);
 
             vmAttachedToPool = true;
         }
@@ -1093,13 +1130,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         privateProvisioningClone_IsSelected = value;
     }
 
-    private EntityModel<Boolean> isVirtioScsiEnabled;
+    private NotChangableForVmInPoolEntityModel<Boolean> isVirtioScsiEnabled;
 
     public EntityModel<Boolean> getIsVirtioScsiEnabled() {
         return isVirtioScsiEnabled;
     }
 
-    public void setIsVirtioScsiEnabled(EntityModel<Boolean> virtioScsiEnabled) {
+    public void setIsVirtioScsiEnabled(NotChangableForVmInPoolEntityModel<Boolean> virtioScsiEnabled) {
         this.isVirtioScsiEnabled = virtioScsiEnabled;
     }
 
@@ -1928,7 +1965,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
         setDisksAllocationModel(new DisksAllocationModel());
 
-        setIsVirtioScsiEnabled(new EntityModel<Boolean>());
+        setIsVirtioScsiEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
         getIsVirtioScsiEnabled().setIsAvailable(false);
         getIsVirtioScsiEnabled().getEntityChangedEvent().addListener(this);
 
@@ -3516,6 +3553,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             }
             return this;
         }
+
+        @Override
+        public Model setIsChangeable(boolean value, String reason) {
+            if (!isVmAttachedToPool()) {
+                super.setIsChangeable(value, reason);
+            }
+            return this;
+        }
     }
 
     public class ListModelWithClusterDefault<T> extends NotChangableForVmInPoolListModel<T> {
@@ -3581,6 +3626,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             }
             return this;
         }
+
+        @Override
+        public Model setIsChangeable(boolean value, String reason) {
+            if (!isVmAttachedToPool()) {
+                super.setIsChangeable(value, reason);
+            }
+            return this;
+        }
     }
 
     private class NotChangableForVmInPoolEntityModel<T> extends EntityModel<T> {
@@ -3598,6 +3651,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             }
             return this;
         }
+
+        @Override
+        public EntityModel<T> setIsChangeable(boolean value, String reason) {
+            if (!isVmAttachedToPool()) {
+                super.setIsChangeable(value, reason);
+            }
+            return this;
+        }
     }
 
     private class NotChangableForVmInPoolKeyValueModel extends KeyValueModel {
@@ -3606,6 +3667,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         public KeyValueModel setIsChangeable(boolean value) {
             if (!isVmAttachedToPool()) {
                 super.setIsChangeable(value);
+            }
+            return this;
+        }
+
+        @Override
+        public KeyValueModel setIsChangeable(boolean value, String reason) {
+            if (!isVmAttachedToPool()) {
+                super.setIsChangeable(value, reason);
             }
             return this;
         }
