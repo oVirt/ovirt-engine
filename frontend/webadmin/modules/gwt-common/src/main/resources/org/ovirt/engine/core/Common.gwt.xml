@@ -368,6 +368,7 @@
         <include name="common/utils/ClusterEmulatedMachines.java" />
         <include name="common/utils/CpuUtils.java" />
         <include name="common/utils/BiosTypeUtils.java" />
+        <include name="common/utils/VmCpuCountHelper.java" />
 
         <!-- TODO: Remove when UI will be refactored to use FenceProxySourceType -->
         <include name="common/utils/pm/FenceProxySourceTypeHelper.java"/>

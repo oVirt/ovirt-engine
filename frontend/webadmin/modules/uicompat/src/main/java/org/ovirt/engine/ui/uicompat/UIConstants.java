@@ -2212,4 +2212,6 @@ public interface UIConstants extends Constants {
     String numaTuneModeDisabledReasonNotCurrentlyEditedVM();
 
     String consoleDisconnectActionDelayDisabledReason();
+
+    String adjustToHost();
 }
