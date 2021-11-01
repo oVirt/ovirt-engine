@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.common.utils.cinderlib.CinderlibReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.JsonHelper;
 
+@NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class GetManagedBlockStorageStatsCommand<T extends AddManagedBlockStorageDomainParameters> extends CommandBase<T> {
 
