@@ -1168,6 +1168,9 @@ public class VmHandler implements BackendService {
         String toolsVersion = currentOvirtGuestAgentVersion(vm);
         if (toolsVersion != null) {
             if (new Version(toolsVersion).less(new Version(latestVersion))) {
+                toolsVersion = toolsVersion.equals("0.0.0") ? "an old version of Windows Guest Tools" : toolsVersion;
+                log.info("Newer version of guest agent is available {} for VM '{}' ({}) having {}",
+                        latestVersion, vm.getName(), vm.getId(), toolsVersion);
                 updateOvirtGuestAgentStatus(vm, GuestAgentStatus.UpdateNeeded);
             } else {
                 updateOvirtGuestAgentStatus(vm, GuestAgentStatus.Exists);

@@ -67,7 +67,7 @@ public class VmStatusIconColumn<T> extends AbstractColumn<T, VM> {
         if (needsAlert(vm)) {
 
             if (isUpdateNeeded(vm)) {
-                tooltip += "<br/><br/>" + constants.newtools(); //$NON-NLS-1$
+                tooltip += "<br/><br/>" + constants.newAgent(); //$NON-NLS-1$
             }
 
             if (hasPauseError(vm)) {

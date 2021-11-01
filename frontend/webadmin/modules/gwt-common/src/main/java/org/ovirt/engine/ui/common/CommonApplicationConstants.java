@@ -1427,7 +1427,7 @@ public interface CommonApplicationConstants extends Constants {
 
     String down();
 
-    String newtools();
+    String newAgent();
 
     String volumeBricksDown();
 
