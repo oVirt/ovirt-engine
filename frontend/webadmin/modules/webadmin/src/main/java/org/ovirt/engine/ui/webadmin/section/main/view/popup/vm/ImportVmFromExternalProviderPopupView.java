@@ -26,7 +26,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRendererWithNull;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
@@ -301,12 +301,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
             }
         });
 
-        disksAllocationEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<VolumeType>() {
-            @Override
-            protected String renderNullSafe(VolumeType object) {
-                return new EnumRenderer<VolumeType>().render(object);
-            }
-        });
+        disksAllocationEditor = new ListModelListBoxEditor<>(new EnumRendererWithNull<VolumeType>(constants.autoDetect()));
 
         attachDriversEditor = new EntityModelCheckBoxEditor(Align.LEFT);
         cdImageEditor = new ListModelListBoxOnlyEditor<>(new NullSafeRenderer<RepoImage>() {

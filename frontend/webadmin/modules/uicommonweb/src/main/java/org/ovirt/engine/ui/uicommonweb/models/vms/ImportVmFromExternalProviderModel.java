@@ -66,7 +66,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         this.importInterfaceListModel = vmImportInterfaceListModel;
         setStorage(new ListModel<StorageDomain>());
         setAllocation(new ListModel<VolumeType>());
-        getAllocation().setItems(Arrays.asList(VolumeType.Sparse, VolumeType.Preallocated));
+        getAllocation().setItems(Arrays.asList(null, VolumeType.Sparse, VolumeType.Preallocated));
         sourceIsNotKvm = true;
         setIso(new SortedListModel<>(new LexoNumericNameableComparator()));
         setAttachDrivers(new EntityModel<>(false));

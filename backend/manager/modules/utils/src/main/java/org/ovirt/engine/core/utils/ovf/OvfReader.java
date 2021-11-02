@@ -160,10 +160,10 @@ public abstract class OvfReader implements IOvfBuilder {
             if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-type").getValue())) {
                 image.setVolumeType(VolumeType.valueOf(node.attributes.get("ovf:volume-type").getValue()));
             } else {
-                image.setVolumeType(VolumeType.Unassigned);
+                image.setVolumeType(getDefaultVolumeType());
             }
         } else {
-            image.setVolumeType(VolumeType.Unassigned);
+            image.setVolumeType(getDefaultVolumeType());
         }
         if (node.attributes.get("ovf:wipe-after-delete") != null) {
             if (!StringUtils.isEmpty(node.attributes.get("ovf:wipe-after-delete").getValue())) {
@@ -1034,5 +1034,9 @@ public abstract class OvfReader implements IOvfBuilder {
     @Override
     public String getStringRepresentation() {
         return _document.getOuterXml();
+    }
+
+    protected VolumeType getDefaultVolumeType() {
+        return VolumeType.Unassigned;
     }
 }
