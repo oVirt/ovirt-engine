@@ -88,13 +88,13 @@ public class HostInterface extends Model {
         rxRate = value;
     }
 
-    private Double rxDrop;
+    private BigInteger rxDrop;
 
-    public Double getRxDrop() {
+    public BigInteger getRxDrop() {
         return rxDrop;
     }
 
-    public void setRxDrop(Double value) {
+    public void setRxDrop(BigInteger value) {
         rxDrop = value;
     }
 
@@ -128,13 +128,13 @@ public class HostInterface extends Model {
         txTotal = value;
     }
 
-    private Double txDrop;
+    private BigInteger txDrop;
 
-    public Double getTxDrop() {
+    public BigInteger getTxDrop() {
         return txDrop;
     }
 
-    public void setTxDrop(Double value) {
+    public void setTxDrop(BigInteger value) {
         txDrop = value;
     }
 

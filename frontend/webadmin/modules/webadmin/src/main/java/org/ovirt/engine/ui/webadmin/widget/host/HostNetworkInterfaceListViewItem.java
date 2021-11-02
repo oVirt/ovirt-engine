@@ -232,8 +232,9 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         Span valueSpan = new Span();
         valueSpan.getElement()
                 .setInnerSafeHtml(templates.dropRate(
-                        hostInterface.getStatistics().getReceiveDropRate() + hostInterface.getStatistics()
-                                .getTransmitDropRate()));
+                hostInterface.getStatistics().getReceiveDrops().doubleValue() +
+                      hostInterface.getStatistics().getTransmitDrops().doubleValue()
+                ));
         dropRateCol.add(valueSpan);
         return dropRateCol;
     }

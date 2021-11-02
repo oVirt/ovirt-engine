@@ -166,9 +166,9 @@ public class BackendHostNicsResourceTest
         VdsNetworkStatistics statistics = new VdsNetworkStatistics();
 
         statistics.setId(null);
-        statistics.setReceiveDropRate(1D);
+        statistics.setReceiveDrops(BigInteger.ONE);
         statistics.setReceiveRate(2D);
-        statistics.setTransmitDropRate(3D);
+        statistics.setTransmitDrops(new BigInteger("3"));
         statistics.setTransmitRate(4D);
         statistics.setReceivedBytes(new BigInteger("5"));
         statistics.setTransmittedBytes(new BigInteger("6"));

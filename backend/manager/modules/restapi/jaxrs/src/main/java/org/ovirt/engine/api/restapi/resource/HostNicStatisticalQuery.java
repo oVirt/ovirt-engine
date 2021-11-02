@@ -40,8 +40,8 @@ public class HostNicStatisticalQuery extends AbstractStatisticalQuery<HostNic, V
                 setDatum(clone(DATA_TX_BITS), RxTxCalculator.percent2bits(iface.getSpeed(), s.getTransmitRate())),
                 setDatum(clone(TOTAL_RX), s.getReceivedBytes()),
                 setDatum(clone(TOTAL_TX), s.getTransmittedBytes()),
-                setDatum(clone(ERRS_RX), s.getReceiveDropRate()),
-                setDatum(clone(ERRS_TX), s.getTransmitDropRate()));
+                setDatum(clone(ERRS_RX), s.getReceiveDrops()),
+                setDatum(clone(ERRS_TX), s.getTransmitDrops()));
     }
 
     @Override

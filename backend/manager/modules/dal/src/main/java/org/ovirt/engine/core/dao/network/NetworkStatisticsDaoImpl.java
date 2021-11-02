@@ -34,11 +34,11 @@ public abstract class NetworkStatisticsDaoImpl<T extends NetworkStatistics> exte
         public Map<String, Object> createParametersMap(T stats) {
             Map<String, Object> map = new HashMap<>();
             map.put("id", stats.getId());
-            map.put("rx_drop", stats.getReceiveDropRate());
+            map.put("rx_drop", stats.getReceiveDrops());
             map.put("rx_rate", stats.getReceiveRate());
             map.put("rx_total", stats.getReceivedBytes());
             map.put("rx_offset", stats.getReceivedBytesOffset());
-            map.put("tx_drop", stats.getTransmitDropRate());
+            map.put("tx_drop", stats.getTransmitDrops());
             map.put("tx_rate", stats.getTransmitRate());
             map.put("tx_total", stats.getTransmittedBytes());
             map.put("tx_offset", stats.getTransmittedBytesOffset());
@@ -62,8 +62,8 @@ public abstract class NetworkStatisticsDaoImpl<T extends NetworkStatistics> exte
             entity.setTransmittedBytes(getBigInteger(rs, "tx_total"));
             entity.setReceivedBytesOffset(getBigInteger(rs, "rx_offset"));
             entity.setTransmittedBytesOffset(getBigInteger(rs, "tx_offset"));
-            entity.setReceiveDropRate(rs.getDouble("rx_drop"));
-            entity.setTransmitDropRate(rs.getDouble("tx_drop"));
+            entity.setReceiveDrops(getBigInteger(rs, "rx_drop"));
+            entity.setTransmitDrops(getBigInteger(rs, "tx_drop"));
             entity.setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
             entity.setSampleTime(getDouble(rs, "sample_time"));
             return entity;

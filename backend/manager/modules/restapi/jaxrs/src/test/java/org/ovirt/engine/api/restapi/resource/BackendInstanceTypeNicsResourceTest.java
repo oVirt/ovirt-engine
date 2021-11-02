@@ -114,9 +114,9 @@ public class BackendInstanceTypeNicsResourceTest
             VmNetworkStatistics statistics) {
         when(entity.getStatistics()).thenReturn(statistics);
         when(statistics.getReceiveRate()).thenReturn(1D);
-        when(statistics.getReceiveDropRate()).thenReturn(2D);
+        when(statistics.getReceiveDrops()).thenReturn(BigInteger.TWO);
         when(statistics.getTransmitRate()).thenReturn(3D);
-        when(statistics.getTransmitDropRate()).thenReturn(4D);
+        when(statistics.getTransmitDrops()).thenReturn(new BigInteger("4"));
         when(statistics.getReceivedBytes()).thenReturn(new BigInteger("5"));
         when(statistics.getTransmittedBytes()).thenReturn(new BigInteger("6"));
         return entity;

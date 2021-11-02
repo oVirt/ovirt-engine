@@ -17,7 +17,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
 
     private InterfaceStatus status;
 
-    private Double receiveDropRate;
+    private BigInteger receiveDrops;
 
     private Double receiveRate;
 
@@ -25,7 +25,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
 
     private BigInteger receivedBytesOffset;
 
-    private Double transmitDropRate;
+    private BigInteger transmitDrops;
 
     private Double transmitRate;
 
@@ -40,11 +40,11 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
 
     public NetworkStatistics(NetworkStatistics statistics) {
         setId(statistics.getId());
-        setReceiveDropRate(statistics.getReceiveDropRate());
+        setReceiveDrops(statistics.getReceiveDrops());
         setReceiveRate(statistics.getReceiveRate());
         setReceivedBytes(statistics.getReceivedBytes());
         setReceivedBytesOffset(statistics.getReceivedBytesOffset());
-        setTransmitDropRate(statistics.getTransmitDropRate());
+        setTransmitDrops(statistics.getTransmitDrops());
         setTransmitRate(statistics.getTransmitRate());
         setTransmittedBytes(statistics.getTransmittedBytes());
         setTransmittedBytesOffset(statistics.getTransmittedBytesOffset());
@@ -93,22 +93,22 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
     }
 
     /**
-     * Sets the received data drop rate.
+     * Sets the received data drops.
      *
-     * @param receiveDropRate
+     * @param receiveDrops
      *            the rate
      */
-    public void setReceiveDropRate(Double receiveDropRate) {
-        this.receiveDropRate = receiveDropRate;
+    public void setReceiveDrops(BigInteger receiveDrops) {
+        this.receiveDrops = receiveDrops;
     }
 
     /**
-     * Returns the received data drop rate.
+     * Returns the received data drops.
      *
      * @return the rate
      */
-    public Double getReceiveDropRate() {
-        return receiveDropRate;
+    public BigInteger getReceiveDrops() {
+        return receiveDrops;
     }
 
     /**
@@ -188,22 +188,22 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
     }
 
     /**
-     * Sets the transmitted data drop rate.
+     * Sets the transmitted data drops.
      *
-     * @param transmitDropRate
+     * @param transmitDrops
      *            the rate
      */
-    public void setTransmitDropRate(Double transmitDropRate) {
-        this.transmitDropRate = transmitDropRate;
+    public void setTransmitDrops(BigInteger transmitDrops) {
+        this.transmitDrops = transmitDrops;
     }
 
     /**
-     * Returns the transmitted data drop rate.
+     * Returns the transmitted data drops.
      *
      * @return the rate
      */
-    public Double getTransmitDropRate() {
-        return transmitDropRate;
+    public BigInteger getTransmitDrops() {
+        return transmitDrops;
     }
 
     /**
@@ -264,22 +264,22 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
     }
 
     public void resetVmStatistics() {
-        setTransmitDropRate(0D);
+        setTransmitDrops(BigInteger.ZERO);
         setTransmitRate(0D);
         setReceiveRate(0D);
-        setReceiveDropRate(0D);
+        setReceiveDrops(BigInteger.ZERO);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(
                 id,
-                receiveDropRate,
+                receiveDrops,
                 receiveRate,
                 receivedBytes,
                 receivedBytesOffset,
                 status,
-                transmitDropRate,
+                transmitDrops,
                 transmitRate,
                 transmittedBytes,
                 transmittedBytesOffset,
@@ -297,12 +297,12 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
         }
         NetworkStatistics other = (NetworkStatistics) obj;
         return Objects.equals(id, other.id)
-                && Objects.equals(receiveDropRate, other.receiveDropRate)
+                && Objects.equals(receiveDrops, other.receiveDrops)
                 && Objects.equals(receiveRate, other.receiveRate)
                 && Objects.equals(receivedBytes, other.receivedBytes)
                 && Objects.equals(receivedBytesOffset, other.receivedBytesOffset)
                 && Objects.equals(status, other.status)
-                && Objects.equals(transmitDropRate, other.transmitDropRate)
+                && Objects.equals(transmitDrops, other.transmitDrops)
                 && Objects.equals(transmitRate, other.transmitRate)
                 && Objects.equals(transmittedBytes, other.transmittedBytes)
                 && Objects.equals(transmittedBytesOffset, other.transmittedBytesOffset)

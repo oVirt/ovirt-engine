@@ -1410,9 +1410,9 @@ public class VdsBrokerObjectsBuilder {
 
     private static void extractInterfaceStatistics(Map<String, Object> dict, NetworkInterface<?> iface) {
         NetworkStatistics stats = iface.getStatistics();
-        stats.setReceiveDropRate(assignDoubleValueWithNullProtection(dict, VdsProperties.rx_dropped));
+        stats.setReceiveDrops(assignBigIntegerValueWithNullProtection(dict, VdsProperties.rx_dropped));
         stats.setReceivedBytes(assignBigIntegerValue(dict, VdsProperties.rx_total));
-        stats.setTransmitDropRate(assignDoubleValueWithNullProtection(dict, VdsProperties.tx_dropped));
+        stats.setTransmitDrops(assignBigIntegerValueWithNullProtection(dict, VdsProperties.tx_dropped));
         stats.setTransmittedBytes(assignBigIntegerValue(dict, VdsProperties.tx_total));
         stats.setSampleTime(assignDoubleValue(dict, VdsProperties.sample_time));
 
@@ -1684,6 +1684,11 @@ public class VdsBrokerObjectsBuilder {
             }
         }
         return null;
+    }
+
+    private static BigInteger assignBigIntegerValueWithNullProtection(Map<String, Object> input, String name) {
+        var bigIntValue = assignBigIntegerValue(input, name);
+        return bigIntValue == null ? BigInteger.ZERO : bigIntValue;
     }
 
     private static BigInteger assignBigIntegerValue(Map<String, Object> input, String name) {

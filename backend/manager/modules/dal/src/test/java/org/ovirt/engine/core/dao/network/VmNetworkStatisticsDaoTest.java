@@ -38,11 +38,11 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
         newVmStatistics.setVmId(VM_ID);
         newVmStatistics.setStatus(InterfaceStatus.DOWN);
         newVmStatistics.setSampleTime(0.0);
-        newVmStatistics.setReceiveDropRate(0.0);
+        newVmStatistics.setReceiveDrops(BigInteger.ZERO);
         newVmStatistics.setReceiveRate(0.0);
         newVmStatistics.setReceivedBytes(BigInteger.ZERO);
         newVmStatistics.setReceivedBytesOffset(BigInteger.ZERO);
-        newVmStatistics.setTransmitDropRate(0.0);
+        newVmStatistics.setTransmitDrops(BigInteger.ZERO);
         newVmStatistics.setTransmitRate(0.0);
         newVmStatistics.setTransmittedBytes(BigInteger.ZERO);
         newVmStatistics.setTransmittedBytesOffset(BigInteger.ZERO);
@@ -123,12 +123,12 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
     public void testUpdateAll() {
         VmNetworkStatistics existingStats = dao.get(FixturesTool.VM_NETWORK_INTERFACE);
         VmNetworkStatistics existingStats2 = dao.get(new Guid("e2817b12-f873-4046-b0da-0098293c0000"));
-        existingStats.setReceiveDropRate(10.0);
+        existingStats.setReceiveDrops(BigInteger.TEN);
         existingStats2.setStatus(InterfaceStatus.DOWN);
 
         dao.updateAll(Arrays.asList(existingStats, existingStats2));
 
-        assertEquals(existingStats.getReceiveDropRate(), dao.get(existingStats.getId()).getReceiveDropRate());
+        assertEquals(existingStats.getReceiveDrops(), dao.get(existingStats.getId()).getReceiveDrops());
         assertEquals(existingStats2.getStatus(), dao.get(existingStats2.getId()).getStatus());
     }
 }

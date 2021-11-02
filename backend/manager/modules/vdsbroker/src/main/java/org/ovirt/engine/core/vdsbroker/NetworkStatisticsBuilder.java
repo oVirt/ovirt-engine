@@ -34,8 +34,8 @@ public class NetworkStatisticsBuilder {
         previousTime = existingStats.getSampleTime();
 
         existingIface.setSpeed(speed);
-        existingStats.setReceiveDropRate(reportedStats.getReceiveDropRate());
-        existingStats.setTransmitDropRate(reportedStats.getTransmitDropRate());
+        existingStats.setReceiveDrops(reportedStats.getReceiveDrops());
+        existingStats.setTransmitDrops(reportedStats.getTransmitDrops());
 
         EffectiveStats rxResult =
                 computeEffectiveStats(reportedStats.getReceivedBytes(),

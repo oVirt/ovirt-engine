@@ -329,10 +329,10 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
         hi.setSpeed(nic.getSpeed());
         hi.setRxRate(nic.getStatistics().getReceiveRate());
         hi.setRxTotal(nic.getStatistics().getReceivedBytes());
-        hi.setRxDrop(nic.getStatistics().getReceiveDropRate());
+        hi.setRxDrop(nic.getStatistics().getReceiveDrops());
         hi.setTxRate(nic.getStatistics().getTransmitRate());
         hi.setTxTotal(nic.getStatistics().getTransmittedBytes());
-        hi.setTxDrop(nic.getStatistics().getTransmitDropRate());
+        hi.setTxDrop(nic.getStatistics().getTransmitDrops());
         hi.setStatus(nic.getStatistics().getStatus());
         hi.getPropertyChangedEvent().addListener(this);
 

@@ -259,8 +259,8 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.txTotal()),
                 SafeHtmlUtils.fromString(totalRenderer.render(networkInterface.getStatistics().getTransmittedBytes())), dl);
         addDetailItem(templates.sub(constants.dropsInterface(), constants.pkts()),
-                SafeHtmlUtils.fromString(String.valueOf(networkInterface.getStatistics().getReceiveDropRate()
-                        + networkInterface.getStatistics().getTransmitDropRate())), dl);
+                SafeHtmlUtils.fromString(String.valueOf(networkInterface.getStatistics().getReceiveDrops().doubleValue()
+                        + networkInterface.getStatistics().getTransmitDrops().doubleValue())), dl);
         column.getElement().appendChild(dl);
         content.add(column);
     }

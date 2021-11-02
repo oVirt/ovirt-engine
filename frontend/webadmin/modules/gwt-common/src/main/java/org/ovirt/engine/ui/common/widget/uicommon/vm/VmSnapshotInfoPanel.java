@@ -266,9 +266,9 @@ public class VmSnapshotInfoPanel extends FlowPanel {
         AbstractTextColumn<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
             @Override
             protected Double[] getRawValue(VmNetworkInterface object) {
-                Double receiveDropRate = object != null ? object.getStatistics().getReceiveDropRate() : null;
-                Double transmitDropRate = object != null ? object.getStatistics().getTransmitDropRate() : null;
-                return new Double[] { receiveDropRate, transmitDropRate };
+                Double receiveDrops = object != null ? object.getStatistics().getReceiveDrops().doubleValue() : null;
+                Double transmitDrops = object != null ? object.getStatistics().getTransmitDrops().doubleValue() : null;
+                return new Double[] { receiveDrops, transmitDrops };
             }
         };
         nicsTable.addColumn(dropsColumn, templates.sub(constants.dropsInterface(), constants.pkts()), "80px"); //$NON-NLS-1$

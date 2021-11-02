@@ -177,8 +177,8 @@ public class BackendVmNicResourceTest
         when(entity.getId()).thenReturn(NIC_ID);
         when(stats.getReceiveRate()).thenReturn(10D);
         when(stats.getTransmitRate()).thenReturn(20D);
-        when(stats.getReceiveDropRate()).thenReturn(30D);
-        when(stats.getTransmitDropRate()).thenReturn(40D);
+        when(stats.getReceiveDrops()).thenReturn(new BigInteger("30"));
+        when(stats.getTransmitDrops()).thenReturn(new BigInteger("40"));
         when(stats.getReceivedBytes()).thenReturn(new BigInteger("50"));
         when(stats.getTransmittedBytes()).thenReturn(new BigInteger("60"));
         List<VmNetworkInterface> ifaces = new ArrayList<>();
@@ -371,9 +371,9 @@ public class BackendVmNicResourceTest
     private VmNetworkInterface setUpStatisticalEntityExpectations(VmNetworkInterface entity, VmNetworkStatistics statistics) {
         when(entity.getStatistics()).thenReturn(statistics);
         when(statistics.getReceiveRate()).thenReturn(1D);
-        when(statistics.getReceiveDropRate()).thenReturn(2D);
+        when(statistics.getReceiveDrops()).thenReturn(BigInteger.TWO);
         when(statistics.getTransmitRate()).thenReturn(3D);
-        when(statistics.getTransmitDropRate()).thenReturn(4D);
+        when(statistics.getTransmitDrops()).thenReturn(new BigInteger("4"));
         when(statistics.getReceivedBytes()).thenReturn(new BigInteger("5"));
         when(statistics.getTransmittedBytes()).thenReturn(new BigInteger("6"));
         return entity;

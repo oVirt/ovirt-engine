@@ -23,14 +23,14 @@ public abstract class NetworkStatisticsDaoTest<D extends Dao, T extends NetworkS
     protected void testUpdateStatistics(Double doubleValue, BigInteger bigIntValue) {
         List<? extends NetworkInterface<T>> before = getAllInterfaces();
         T stats = before.get(0).getStatistics();
-
-        stats.setReceiveDropRate(999.0);
+        var bigInt999 = new BigInteger("999");
+        stats.setReceiveDrops(bigInt999);
         stats.setReceiveRate(999.0);
         stats.setReceivedBytes(bigIntValue);
         stats.setReceivedBytesOffset(bigIntValue);
-        stats.setTransmitDropRate(999.0);
+        stats.setTransmitDrops(bigInt999);
         stats.setTransmitRate(999.0);
-        stats.setTransmitDropRate(999.0);
+        stats.setTransmitDrops(bigInt999);
         stats.setTransmittedBytes(bigIntValue);
         stats.setTransmittedBytesOffset(bigIntValue);
         stats.setSampleTime(doubleValue);
@@ -43,13 +43,13 @@ public abstract class NetworkStatisticsDaoTest<D extends Dao, T extends NetworkS
         for (NetworkInterface<T> ifaced : after) {
             if (ifaced.getStatistics().getId().equals(stats.getId())) {
                 found = true;
-                assertEquals(stats.getReceiveDropRate(), ifaced.getStatistics().getReceiveDropRate());
+                assertEquals(stats.getReceiveDrops(), ifaced.getStatistics().getReceiveDrops());
                 assertEquals(stats.getReceiveRate(), ifaced.getStatistics().getReceiveRate());
                 assertEquals(stats.getReceivedBytes(), ifaced.getStatistics().getReceivedBytes());
                 assertEquals(stats.getReceivedBytesOffset(), ifaced.getStatistics().getReceivedBytesOffset());
-                assertEquals(stats.getTransmitDropRate(), ifaced.getStatistics().getTransmitDropRate());
+                assertEquals(stats.getTransmitDrops(), ifaced.getStatistics().getTransmitDrops());
                 assertEquals(stats.getTransmitRate(), ifaced.getStatistics().getTransmitRate());
-                assertEquals(stats.getTransmitDropRate(), ifaced.getStatistics().getTransmitDropRate());
+                assertEquals(stats.getTransmitDrops(), ifaced.getStatistics().getTransmitDrops());
                 assertEquals(stats.getTransmittedBytes(), ifaced.getStatistics().getTransmittedBytes());
                 assertEquals(stats.getTransmittedBytesOffset(), ifaced.getStatistics().getTransmittedBytesOffset());
                 assertEquals(stats.getSampleTime(), ifaced.getStatistics().getSampleTime());
