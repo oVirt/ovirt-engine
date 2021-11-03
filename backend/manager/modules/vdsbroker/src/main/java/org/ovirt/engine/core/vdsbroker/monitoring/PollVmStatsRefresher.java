@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 public class PollVmStatsRefresher extends VmStatsRefresher {
 
     private static final Logger log = LoggerFactory.getLogger(PollVmStatsRefresher.class);
-    protected static final long VMS_REFRESH_RATE = Config.<Long> getValue(ConfigValues.VdsRefreshRate) * 1000L;
-    protected static final int NUMBER_VMS_REFRESHES_BEFORE_SAVE = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
+    public static final long VMS_REFRESH_RATE = Config.<Long> getValue(ConfigValues.VdsRefreshRate) * 1000L;
+    public static final int NUMBER_VMS_REFRESHES_BEFORE_SAVE = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
     private static final Map<Guid, Integer> vdsIdToNumOfVms = new HashMap<>();
 
     @Inject

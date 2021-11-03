@@ -45,6 +45,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.EngineError;
+import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -66,6 +68,7 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
+import org.ovirt.engine.core.vdsbroker.monitoring.PollVmStatsRefresher;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
 
 @InternalCommandAttribute
@@ -136,17 +139,38 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             }
         }
 
-        cancelIncommingMigrations();
+        cancelIncomingMigrations();
         freeLock();
     }
 
-    private void cancelIncommingMigrations() {
-        for (Guid hostId :vdssToMaintenance.keySet()) {
+    private void cancelIncomingMigrations() {
+        boolean waitForGetAllVmStats = false;
+        for (Guid hostId : vdssToMaintenance.keySet()) {
             for (VmDynamic vm : vmDynamicDao.getAllMigratingToHost(hostId)) {
                 if (vm.getStatus() == VMStatus.MigratingFrom) {
                     log.info("Cancelling incoming migration of '{}' id '{}'", vm, vm.getId());
-                    runVdsCommand(VDSCommandType.CancelMigrate, new CancelMigrationVDSParameters(vm.getRunOnVds(), vm.getId(), true));
+                    try {
+                        runVdsCommand(VDSCommandType.CancelMigrate, new CancelMigrationVDSParameters(vm.getRunOnVds(), vm.getId(), true));
+                    } catch (EngineException e) {
+                        // The migration might end right before calling cancel, that will cause an exception within
+                        // the CancelMigrate command. Although, it can be fine.
+                        // We should wait 15 seconds to let the DB refresh and continue.
+                        log.warn("Engine exception thrown while sending cancel migration command, {}", vm.getId());
+                        if (e.getErrorCode() == EngineError.MIGRATION_CANCEL_ERROR_NO_VM
+                                || e.getErrorCode() == EngineError.MIGRATION_CANCEL_ERROR) {
+                            waitForGetAllVmStats = true;
+                        } else {
+                            throw e;
+                        }
+                    }
                 }
+            }
+        }
+        if (waitForGetAllVmStats) {
+            try {
+                Thread.sleep(PollVmStatsRefresher.VMS_REFRESH_RATE * PollVmStatsRefresher.NUMBER_VMS_REFRESHES_BEFORE_SAVE);
+            } catch (InterruptedException e) {
+                // Ignore
             }
         }
     }
