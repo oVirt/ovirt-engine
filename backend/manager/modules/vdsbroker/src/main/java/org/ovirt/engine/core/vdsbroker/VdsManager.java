@@ -893,6 +893,7 @@ public class VdsManager {
             return;
         }
         if (cachedVds.getStatus() != VDSStatus.Down) {
+            unrespondedAttempts.incrementAndGet();
             if (isHostInGracePeriod(false)) {
                 if (cachedVds.getStatus() != VDSStatus.Connecting
                         && cachedVds.getStatus() != VDSStatus.PreparingForMaintenance
@@ -902,7 +903,6 @@ public class VdsManager {
                 } else {
                     saveToDb = false;
                 }
-                unrespondedAttempts.incrementAndGet();
             } else {
                 if (cachedVds.getStatus() == VDSStatus.Maintenance) {
                     saveToDb = false;
@@ -969,9 +969,15 @@ public class VdsManager {
             timeoutToFence = timeoutToFence * 2;
             unrespondedAttemptsBarrier = unrespondedAttemptsBarrier * 2;
         }
-
-        return unrespondedAttempts.get() < unrespondedAttemptsBarrier
-                || (lastUpdate + timeoutToFence) > System.currentTimeMillis();
+        // return when either attempts reached or timeout passed, the sooner takes
+        if (unrespondedAttempts.get() > unrespondedAttemptsBarrier) {
+            // too many unresponded attempts
+            return false;
+        } else if ((lastUpdate + timeoutToFence) > System.currentTimeMillis()) {
+            // timeout since last successful communication attempt passed
+            return false;
+        }
+        return true;
     }
 
     private void logHostFailToRespond(VDSNetworkException ex) {
