@@ -120,7 +120,7 @@ def extract_disks(ova_path, image_paths_and_formats, image_mappings):
                     jump += TAR_BLOCK_SIZE - remainder
                 ova_file.seek(jump, 1)
             elif name == 'pad':
-                pass
+                ova_file.seek(size, 1)
             else:
                 image_guid = image_mappings[name] if image_mappings else name
                 for image_path_and_format in \
