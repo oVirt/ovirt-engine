@@ -142,7 +142,13 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
 
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
                 DiskImage disk = (DiskImage) entry.getValue();
-                disk.setVolumeType(getParameters().getVolumeType());
+
+                if (getParameters().getVolumeType() == null) {
+                    disk.setVolumeType(getAutoDetectedVolumeType(disk));
+                } else {
+                    disk.setVolumeType(getParameters().getVolumeType());
+                }
+
                 // in kvm we just copy the image, in other modes such as vmware or xen we use
                 // virt-v2v which converts the image format as well
                 if (vm.getOrigin() != OriginType.KVM) {
@@ -158,6 +164,8 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
 
             return prm;
         }
+
+        protected abstract VolumeType getAutoDetectedVolumeType(DiskImage disk);
 
         protected abstract VM loadExternalVm();
 
@@ -183,6 +191,11 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
             }
 
             return true;
+        }
+
+        @Override
+        protected VolumeType getAutoDetectedVolumeType(DiskImage disk) {
+            return VolumeType.Sparse;
         }
 
         @Override
@@ -245,6 +258,11 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
              }
 
              return true;
+         }
+
+         @Override
+         protected VolumeType getAutoDetectedVolumeType(DiskImage disk) {
+             return disk.getVolumeType();
          }
 
         @Override
