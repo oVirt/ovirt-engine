@@ -27,6 +27,7 @@ public class VdcOptionDaoTest extends BaseDaoTestCase<VdcOptionDao> {
         newOption = new VdcOption();
         newOption.setOptionName("option_name");
         newOption.setOptionValue("option_value");
+        newOption.setOptionDefaultValue("default_value");
         newOption.setVersion("general");
     }
 

@@ -9,6 +9,7 @@ public class VdcOption implements Serializable {
     private int id;
     private String name;
     private String value;
+    private String defaultValue;
     private String version;
 
     public VdcOption() {
@@ -33,7 +34,8 @@ public class VdcOption implements Serializable {
         }
         VdcOption other = (VdcOption) obj;
         return Objects.equals(name, other.name)
-                && Objects.equals(value, other.value);
+                && Objects.equals(value, other.value)
+                && Objects.equals(defaultValue, other.defaultValue);
     }
 
     public String getOptionName() {
@@ -50,6 +52,14 @@ public class VdcOption implements Serializable {
 
     public void setOptionValue(String value) {
         this.value = value;
+    }
+
+    public String getOptionDefaultValue() {
+        return this.defaultValue;
+    }
+
+    public void setOptionDefaultValue(String value) {
+        this.defaultValue = value;
     }
 
     public int getOptionId() {

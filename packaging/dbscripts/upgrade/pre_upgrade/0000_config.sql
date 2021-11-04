@@ -1399,4 +1399,4 @@ select fn_db_split_config_value('LiveSnapshotPerformFreezeInEngine', 'false', 'f
 --
 -- This must be the last section of the file!
 ------------------------------------------------------------------------------------
-select fn_db_change_column_type('vdc_options', 'default_value', 'VARCHAR(4000)', 'VARCHAR(4000) NOT NULL');
+select fn_db_change_column_null('vdc_options', 'default_value', false);

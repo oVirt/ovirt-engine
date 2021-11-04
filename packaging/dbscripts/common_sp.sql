@@ -45,25 +45,28 @@ RETURNS void AS $PROCEDURE$
 DECLARE v_sql TEXT;
 
 BEGIN
-    IF (
-            EXISTS (
-                SELECT 1
-                FROM information_schema.columns
-                WHERE table_schema = 'public'
-                    AND table_name ilike v_table
-                    AND column_name ilike v_column
-                    AND (
-                        udt_name ilike v_type
-                        OR data_type ilike v_type
-                        )
-                )
-            ) THEN
-        BEGIN
-            v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' TYPE ' || v_new_type;
-            EXECUTE v_sql;
-        END;
+    v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' TYPE ' || v_new_type;
+    EXECUTE v_sql;
 
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+-- Changes a column to allow/disallow NULL values
+CREATE OR REPLACE FUNCTION fn_db_change_column_null (
+    v_table VARCHAR(128),
+    v_column VARCHAR(128),
+    v_allow_null BOOLEAN
+    )
+RETURNS void AS $PROCEDURE$
+DECLARE v_sql TEXT;
+
+BEGIN
+    IF (v_allow_null) THEN
+        v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' DROP NOT NULL';
+    ELSE
+        v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' SET NOT NULL';
     END IF;
+    EXECUTE v_sql;
 
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -78,28 +81,10 @@ RETURNS void AS $PROCEDURE$
 DECLARE v_sql TEXT;
 
 BEGIN
-    IF (
-            EXISTS (
-                SELECT 1
-                FROM information_schema.columns
-                WHERE table_schema = 'public'
-                    AND table_name ilike v_table
-                    AND column_name ilike v_column
-                )
-            ) THEN
-    BEGIN
-        v_sql := 'ALTER TABLE ' || v_table || ' RENAME COLUMN ' || v_column || ' TO ' || v_new_name;
-
-        EXECUTE v_sql;
-    END;
-    ELSE
-        RAISE EXCEPTION 'Table % or Column % does not exist.',
-            v_table,
-            v_column;
-END
-
-IF ;END;$PROCEDURE$
-    LANGUAGE plpgsql;
+    v_sql := 'ALTER TABLE ' || v_table || ' RENAME COLUMN ' || v_column || ' TO ' || v_new_name;
+    EXECUTE v_sql;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
 
 -- rename a table
 CREATE OR REPLACE FUNCTION fn_db_rename_table (
@@ -110,23 +95,8 @@ RETURNS void AS $PROCEDURE$
 DECLARE v_sql TEXT;
 
 BEGIN
-    IF (
-            EXISTS (
-                SELECT 1
-                FROM information_schema.columns
-                WHERE table_schema = 'public'
-                    AND table_name ilike v_table
-                )
-            ) THEN
-    BEGIN
         v_sql := 'ALTER TABLE ' || v_table || ' RENAME TO ' || v_new_name;
-
         EXECUTE v_sql;
-    END;
-    ELSE
-        RAISE EXCEPTION 'Table % does not exist.',
-            v_table;
-END IF;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

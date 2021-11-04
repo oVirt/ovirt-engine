@@ -20,6 +20,7 @@ public class VdcOptionDaoImpl extends BaseDao implements VdcOptionDao {
         VdcOption entity = new VdcOption();
         entity.setOptionName(rs.getString("option_name"));
         entity.setOptionValue(rs.getString("option_value"));
+        entity.setOptionDefaultValue(rs.getString("default_value"));
         entity.setOptionId(rs.getInt("option_id"));
         entity.setVersion(rs.getString("version"));
         return entity;
@@ -53,6 +54,7 @@ public class VdcOptionDaoImpl extends BaseDao implements VdcOptionDao {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("option_name", option.getOptionName())
                 .addValue("option_value", option.getOptionValue())
+                .addValue("default_value", option.getOptionDefaultValue())
                 .addValue("version", option.getVersion())
                 .addValue("option_id", option.getOptionId());
 
