@@ -24,7 +24,6 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -39,6 +38,7 @@ import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.serialization.json.JsonExtMapMixIn;
+import org.ovirt.engine.core.uutils.IOUtils;
 import org.ovirt.engine.core.uutils.net.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +58,9 @@ public class SsoOAuthServiceUtils {
 
     static {
         // Remember to close the client when going down:
-        Runtime.getRuntime().addShutdownHook(
-                new Thread(() -> IOUtils.closeQuietly(client))
-        );
+        Runtime.getRuntime()
+                .addShutdownHook(
+                        new Thread(() -> IOUtils.closeQuietly(client)));
         mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator())

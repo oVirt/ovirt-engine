@@ -35,6 +35,11 @@
       <version>${engine.version}</version>
     </dependency>
     <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>uutils</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>ovirt-engine-extensions-api</artifactId>
       <version>${ovirt-engine-extensions-api.version}</version>
@@ -43,11 +48,6 @@
     <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>
       <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
     </dependency>
 
     <dependency>

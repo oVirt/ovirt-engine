@@ -10,7 +10,6 @@
     <module name="javax.api"/>
     <module name="javax.servlet.api"/>
     <module name="org.apache.commons.codec"/>
-    <module name="org.apache.commons.io"/>
     <module name="org.apache.commons.lang"/>
     <module name="org.apache.httpcomponents"/>
     <module name="org.ovirt.engine.core.common"/>
