@@ -20,7 +20,6 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.HttpStatus;
@@ -42,6 +41,7 @@ import org.ovirt.engine.core.sso.api.SsoConstants;
 import org.ovirt.engine.core.sso.api.SsoContext;
 import org.ovirt.engine.core.sso.api.SsoSession;
 import org.ovirt.engine.core.sso.utils.SsoLocalConfig;
+import org.ovirt.engine.core.uutils.IOUtils;
 import org.ovirt.engine.core.uutils.net.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,6 @@ public class ExternalOIDCService {
         Runtime.getRuntime()
                 .addShutdownHook(
                         new Thread(() -> IOUtils.closeQuietly(client)));
-
         mapper = new ObjectMapper();
     }
 

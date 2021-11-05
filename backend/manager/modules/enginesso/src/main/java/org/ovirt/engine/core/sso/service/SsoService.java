@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -49,6 +48,7 @@ import org.ovirt.engine.core.sso.api.SsoContext;
 import org.ovirt.engine.core.sso.api.SsoSession;
 import org.ovirt.engine.core.sso.utils.SsoLocalConfig;
 import org.ovirt.engine.core.sso.utils.json.JsonExtMapMixIn;
+import org.ovirt.engine.core.uutils.IOUtils;
 import org.ovirt.engine.core.uutils.crypto.EnvelopeEncryptDecrypt;
 import org.ovirt.engine.core.uutils.crypto.EnvelopePBE;
 import org.ovirt.engine.core.uutils.net.HttpClientBuilder;
