@@ -8,6 +8,7 @@ package org.ovirt.engine.api.rsdl;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -16,7 +17,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FileUtils;
 
 /**
  * This class is a simple utility that extracts the XML schema and the RSDL files from the engine artifacts and saves
@@ -86,7 +86,7 @@ public class RsdlIOManager {
 
         // Make sure that the output directory exists:
         File outputDirectory = new File(args[0]);
-        FileUtils.forceMkdir(outputDirectory);
+        Files.createDirectories(outputDirectory.toPath());
 
         // Copy the resources to the output directory:
         for (String resourceName : RESOURCE_NAMES) {
@@ -102,6 +102,6 @@ public class RsdlIOManager {
         InputStream inputResource = RsdlIOManager.class.getResourceAsStream(resourcePath);
         File outputFile = new File(outputDirectory, resourceName);
         System.out.printf("Copying resource \"%s\" to file \"%s\"%n", resourcePath, outputFile.getAbsolutePath());
-        FileUtils.copyInputStreamToFile(inputResource, outputFile);
+        Files.copy(inputResource, outputFile.toPath());
     }
 }
