@@ -79,7 +79,7 @@
     <jaxb.version>2.3.1</jaxb.version>
     <jbosssx-bare.version>2.0.4</jbosssx-bare.version>
     <infinispan.version>9.4.18.Final</infinispan.version>
-    <snakeyaml.version>1.17</snakeyaml.version>
+    <snakeyaml.version>1.26</snakeyaml.version>
     <ws-commons-util.version>1.0.2</ws-commons-util.version>
     <aopalliance.version>1.0</aopalliance.version>
     <snmp4j.version>2.5.3</snmp4j.version>
