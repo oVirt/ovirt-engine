@@ -11,7 +11,6 @@
   - supervdsmd.service
   - libvirtd.service
   - ovirt-imageio.service
-  - NetworkManager.service
   when: "item in ansible_facts.services"
 
 - name: Start and enable services
@@ -23,6 +22,9 @@
   # vdsmd will start all its dependent services stopped earlier, libvirtd, ovirt-imageio, supervdsmd
   - cgconfig.service
   - messagebus.service
-  - NetworkManager.service
   - vdsmd.service
   when: "item in ansible_facts.services"
+
+- name: Reload NetworkManager config
+  command: nmcli general reload conf
+  when: "'NetworkManager.service' in ansible_facts.services"
