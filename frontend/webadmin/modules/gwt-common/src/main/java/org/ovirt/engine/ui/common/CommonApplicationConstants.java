@@ -1181,6 +1181,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String cpuPinningLabel();
 
+    String cpuPinningPolicyLabel();
+
     String multiQueuesLabel();
 
     String virtioScsiMultiQueuesEnabled();
@@ -1192,10 +1194,6 @@ public interface CommonApplicationConstants extends Constants {
     String diskFormatTypeMatrixInfo();
 
     String multiQueuesLabelExplanation();
-
-    String cpuPinningPolicyLabelExplanation();
-
-    String cpuPinningPolicyLabel();
 
     String monitors();
 

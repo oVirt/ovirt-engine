@@ -19,8 +19,8 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
                 new KernelParamsVmBaseToUnitBuilder(),
                 new SerialNumberPolicyVmBaseToUnitBuilder(),
                 new IconVmBaseToUnitBuilder(),
-                new MigrationsEntityToModelBuilder()
-        );
+                new MigrationsEntityToModelBuilder(),
+                new CpuPinningVmBaseToUnitBuilder());
     }
 
     @Override
@@ -42,7 +42,5 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
             // builder leading to an infinite recursion
             model.getCustomCompatibilityVersion().setSelectedItem(vm.getCustomCompatibilityVersion());
         }
-        model.getCpuPinning().setEntity(vm.getCpuPinning());
-        model.getCpuPinningPolicy().setSelectedItem(vm.getCpuPinningPolicy());
     }
 }

@@ -670,6 +670,9 @@ public class BackendVmResource
             VmStatic updated = getMapper(modelType, VmStatic.class).map(incoming,
                     entity.getStaticData());
 
+            CpuPinningPolicy previousPolicy = entity.getCpuPinningPolicy();
+            parent.updateCpuPinningFields(updated, previousPolicy);
+
             updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy()));
 
             VmManagementParametersBase params = new VmManagementParametersBase(updated);

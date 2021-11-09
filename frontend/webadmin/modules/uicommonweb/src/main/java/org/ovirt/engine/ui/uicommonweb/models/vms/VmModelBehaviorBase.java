@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -905,6 +906,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
+        if (getModel().getCpuPinningPolicy().getSelectedItem().getPolicy() != CpuPinningPolicy.MANUAL) {
+            getModel().getCpuPinning().setIsChangeable(false, constants.cpuPinningUnavailable());
+            getModel().getCpuPinning().setEntity(null);
+            return;
+        }
+
         if (getModel().getSelectedCluster() != null) {
             boolean isLocalSD = getModel().getSelectedDataCenter() != null
                     && getModel().getSelectedDataCenter().isLocal();
@@ -917,11 +924,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 getModel().getCpuPinning().setChangeProhibitionReason(constants.cpuPinningUnavailable());
             }
         }
-    }
-
-    protected void disableCpuPinningAutoPinningConflict() {
-        getModel().getCpuPinning().setEntity("");
-        getModel().getCpuPinning().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
     }
 
     public void updateUseHostCpuAvailability() {
@@ -1798,13 +1800,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void useNumaPinningChanged(List<VmNumaNode> vNumaNodeList) {
-        // Set migration mode
-        getModel().getMigrationMode().setSelectedItem(
-                isVmHpOrPinningConfigurationEnabled() ? MigrationSupport.IMPLICITLY_NON_MIGRATABLE : MigrationSupport.MIGRATABLE
-        );
-    }
-
-    protected void updateCpuPinningChanged() {
         // Set migration mode
         getModel().getMigrationMode().setSelectedItem(
                 isVmHpOrPinningConfigurationEnabled() ? MigrationSupport.IMPLICITLY_NON_MIGRATABLE : MigrationSupport.MIGRATABLE

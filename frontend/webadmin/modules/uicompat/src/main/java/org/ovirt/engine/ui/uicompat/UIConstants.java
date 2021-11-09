@@ -2216,4 +2216,12 @@ public interface UIConstants extends Constants {
     String consoleDisconnectActionDelayDisabledReason();
 
     String adjustToHost();
+
+    String cpuPinningNoneDescription();
+
+    String cpuPinningManualDescription();
+
+    String cpuPinningManualDisabled();
+
+    String cpuPinningResizeAndPinDescription();
 }

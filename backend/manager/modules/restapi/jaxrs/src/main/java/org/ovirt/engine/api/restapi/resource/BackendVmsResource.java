@@ -62,6 +62,7 @@ import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromConfParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
@@ -240,6 +241,8 @@ public class BackendVmsResource extends
                 if (!vm.isSetPlacementPolicy() && template.getId().equals(Guid.Empty)) {
                     staticVm.setMigrationSupport(null);
                 }
+
+                updateCpuPinningFields(staticVm);
 
                 Guid storageDomainId =
                         (vm.isSetStorageDomain() && vm.getStorageDomain().isSetId()) ? asGuid(vm.getStorageDomain()
@@ -959,6 +962,25 @@ public class BackendVmsResource extends
             }
         } else if (host.isSetId()){
             guidsSet.add(Guid.createGuidFromString(host.getId()));
+        }
+    }
+
+    protected void updateCpuPinningFields(VmStatic staticVm) {
+        updateCpuPinningFields(staticVm, null);
+    }
+
+    protected void updateCpuPinningFields(VmStatic staticVm, CpuPinningPolicy previousPolicy) {
+        // specified cpu pinning string without MANUAL policy
+        if (!StringUtils.isEmpty(staticVm.getCpuPinning())
+                && staticVm.getCpuPinningPolicy() == CpuPinningPolicy.NONE) {
+            staticVm.setCpuPinningPolicy(CpuPinningPolicy.MANUAL);
+        }
+
+        // cpu pinning string removed
+        if (StringUtils.isEmpty(staticVm.getCpuPinning())
+                && staticVm.getCpuPinningPolicy() == CpuPinningPolicy.MANUAL
+                && previousPolicy == CpuPinningPolicy.MANUAL) {
+            staticVm.setCpuPinningPolicy(CpuPinningPolicy.NONE);
         }
     }
 }

@@ -522,9 +522,4 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             super.updateMaxMemory();
         }
     }
-
-    @Override
-    protected void disableCpuPinningAutoPinningConflict() {
-        getModel().getCpuPinning().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
-    }
 }

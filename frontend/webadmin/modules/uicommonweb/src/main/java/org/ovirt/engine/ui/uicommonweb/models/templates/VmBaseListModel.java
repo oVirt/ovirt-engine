@@ -610,7 +610,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
             public void init(Runnable callback) {
                 confirmModel = new VmHighPerformanceConfigurationModel();
 
-                if (model.getCpuPinningPolicy().getSelectedItem() == CpuPinningPolicy.NONE) {
+                if (model.getCpuPinningPolicy().getSelectedItem().getPolicy() == CpuPinningPolicy.NONE) {
                     // Handle CPU Pinning topology
                     final boolean isVmAssignedToSpecificHosts = !model.getIsAutoAssign().getEntity();
                     final boolean isVmCpuPinningSet =

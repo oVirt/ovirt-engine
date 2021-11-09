@@ -1261,6 +1261,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ConsoleDisconnectAction___REBOOT();
 
+    String CpuPinningPolicy___NONE();
+
+    String CpuPinningPolicy___MANUAL();
+
+    String CpuPinningPolicy___RESIZE_AND_PIN_NUMA();
+
     String SerialNumberPolicy___HOST_ID();
 
     String SerialNumberPolicy___VM_ID();
@@ -1771,10 +1777,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String CloudInitNetworkProtocol___ENI();
 
     String CloudInitNetworkProtocol___OPENSTACK_METADATA();
-
-    String CpuPinningPolicy___NONE();
-
-    String CpuPinningPolicy___RESIZE_AND_PIN_NUMA();
 
     String VirtioMultiQueueType___DISABLED();
 

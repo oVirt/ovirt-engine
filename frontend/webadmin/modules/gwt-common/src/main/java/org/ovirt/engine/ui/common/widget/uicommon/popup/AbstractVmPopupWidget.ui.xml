@@ -510,15 +510,6 @@
                     </b:Column>
                   </b:Row>
                 </g:FlowPanel>
-                <b:Row ui:field="cpuPinningPolicyRow">
-                  <b:Column size="SM_6">
-                    <g:Label addStyleNames="{style.floatLeft}" text="{constants.cpuPinningPolicyLabel}" />
-                    <d:InfoIcon ui:field="cpuPinningPolicyInfo" addStyleNames="{style.infoIcon}"/>
-                  </b:Column>
-                  <b:Column size="SM_6">
-                    <e:ListModelListBoxOnlyEditor ui:field="cpuPinningPolicyEditor" usePatternFly="true"/>
-                  </b:Column>
-                </b:Row>
               </b:Container>
             </t:content>
           </t:DialogTab>
@@ -599,6 +590,9 @@
                     <b:Column size="SM_2">
                       <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="cpuSharesAmountEditor" usePatternFly="true" />
                     </b:Column>
+                  </b:Row>
+                  <b:Row>
+                    <e:ListModelTypeAheadListBoxEditor ui:field="cpuPinningPolicyEditor" label="{constants.cpuPinningPolicyLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row ui:field="cpuPinningRow">
                     <b:Column size="SM_6">
