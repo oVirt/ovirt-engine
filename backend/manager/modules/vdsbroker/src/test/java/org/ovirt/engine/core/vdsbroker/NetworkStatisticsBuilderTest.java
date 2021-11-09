@@ -13,8 +13,19 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class NetworkStatisticsBuilderTest {
+
+    static final BigInteger biMaxLong = new BigInteger(String.valueOf(Long.MAX_VALUE));
+    static final BigInteger bi12500000 = new BigInteger("12500000");
+    static final BigInteger bi1000 = new BigInteger("1000");
+    static final BigInteger bi24999000 = new BigInteger("24999000");
+    static final BigInteger bi25000000 = new BigInteger("25000000");
+    static final BigInteger bi17500000 = new BigInteger("17500000");
+    static final BigInteger bi30000000 = new BigInteger("30000000");
+    static final BigInteger bi100 = new BigInteger("100");
+    static final BigInteger bi0 = BigInteger.ZERO;
+
     @ParameterizedTest
-    @MethodSource
+    @MethodSource({"buildStatistics", "buildStatistics2"})
     public void buildStatistics(BigInteger previousRxDrops,
             Double previousRxRate,
             BigInteger previousRxTotal,
@@ -85,14 +96,45 @@ public class NetworkStatisticsBuilderTest {
     }
 
     public static Stream<Arguments> buildStatistics() {
-        final BigInteger bi12500000 = new BigInteger("12500000");
-        final BigInteger bi1000 = new BigInteger("1000");
-        final BigInteger bi24999000 = new BigInteger("24999000");
-        final BigInteger bi25000000 = new BigInteger("25000000");
-        final BigInteger bi17500000 = new BigInteger("17500000");
-        final BigInteger bi30000000 = new BigInteger("30000000");
-        final BigInteger bi100 = new BigInteger("100");
-        final BigInteger bi0 = BigInteger.ZERO;
+        return buildArguments(
+                bi0,
+                bi100,
+                bi1000,
+                bi12500000,
+                bi17500000,
+                bi24999000,
+                bi25000000,
+                bi30000000,
+                10D
+        );
+    }
+
+    public static Stream<Arguments> buildStatistics2() {
+        return buildArguments(
+                bi0.multiply(biMaxLong),
+                bi100.multiply(biMaxLong),
+                bi1000.multiply(biMaxLong),
+                bi12500000.multiply(biMaxLong),
+                bi17500000.multiply(biMaxLong),
+                bi24999000.multiply(biMaxLong),
+                bi25000000.multiply(biMaxLong),
+                bi30000000.multiply(biMaxLong),
+                100D
+        );
+    }
+
+
+    public static Stream<Arguments> buildArguments(
+            BigInteger bi0,
+            BigInteger bi100,
+            BigInteger bi1000,
+            BigInteger bi12500000,
+            BigInteger bi17500000,
+            BigInteger bi24999000,
+            BigInteger bi25000000,
+            BigInteger bi30000000,
+            Double expectRate
+    ) {
         return Stream.of(
 
             // everything's supported and reported, and rate should be 100Mbps (10%)
@@ -100,49 +142,49 @@ public class NetworkStatisticsBuilderTest {
                 //rxDrop     rxRate       rxTotal     rxOffset txDrop      txRate       txTotal     txOffset time speed
                 anyBigInt(), anyDouble(), bi12500000, bi1000, anyBigInt(), anyDouble(), bi12500000, bi1000, 0D, anyInt(), //previous
                 bi100,       anyDouble(), bi24999000,         bi100,       anyDouble(), bi24999000,         1D, 1000,     //reported
-                bi100,       10D,         bi25000000, bi1000, bi100,       10D,         bi25000000, bi1000, 1D, 1000      //expected
+                bi100,       expectRate,  bi25000000, bi1000, bi100,       expectRate,  bi25000000, bi1000, 1D, 1000      //expected
             ),
 
             // RX total wasn't reported - RX total and rate should be set to null
             Arguments.of(
                 anyBigInt(), anyDouble(), bi12500000, bi1000, anyBigInt(), anyDouble(), bi12500000, bi1000, 0D, anyInt(),
                 bi100,       anyDouble(), null,       bi100,               anyDouble(), bi24999000,         1D, 1000,
-                bi100,       null,        null,       bi1000, bi100,       10D,         bi25000000, bi1000, 1D, 1000
+                bi100,       null,        null,       bi1000, bi100,       expectRate,  bi25000000, bi1000, 1D, 1000
             ),
 
             // TX total wasn't reported - TX total and rate should be set to null
             Arguments.of(
                 anyBigInt(), anyDouble(), bi12500000, bi1000, anyBigInt(), anyDouble(), bi12500000, bi1000, 0D, anyInt(),
                 bi100,       anyDouble(), bi24999000, bi100,               anyDouble(), null,               1D, 1000,
-                bi100,       10D,         bi25000000, bi1000, bi100,       null,        null,       bi1000, 1D, 1000
+                bi100,       expectRate,  bi25000000, bi1000, bi100,       null,        null,       bi1000, 1D, 1000
             ),
 
             // RX offset wasn't previously set - should be set so that total RX is zero, rate irrelevant
             Arguments.of(
                 anyBigInt(), anyDouble(), bi12500000, null,                 anyBigInt(), anyDouble(), bi12500000, bi1000, 0D, anyInt(),
                 bi100,       anyDouble(), bi25000000, bi100,                             anyDouble(), bi24999000,         1D, 1000,
-                bi100,       null,        bi0,        bi25000000.negate(),  bi100,       10D,         bi25000000, bi1000, 1D, 1000
+                bi100,       null,        bi0,        bi25000000.negate(),  bi100,       expectRate,  bi25000000, bi1000, 1D, 1000
             ),
 
             // TX offset wasn't previously set - should be set so that total TX is zero, rate irrelevant
             Arguments.of(
                 anyBigInt(), anyDouble(), bi12500000, bi1000, anyBigInt(), anyDouble(), bi12500000, null,                0D, anyInt(),
                 bi100,       anyDouble(), bi24999000, bi100,               anyDouble(), bi25000000,                      1D, 1000,
-                bi100,       10D,         bi25000000, bi1000, bi100,       null,        bi0,        bi25000000.negate(), 1D, 1000
+                bi100,       expectRate,   bi25000000, bi1000, bi100,       null,        bi0,        bi25000000.negate(), 1D, 1000
             ),
 
             // RX total wrapped around - offset should be updated
             Arguments.of(
                 anyBigInt(), anyDouble(), bi17500000, bi1000,     anyBigInt(), anyDouble(), bi12500000, bi1000, 0D, anyInt(),
                 bi100,       anyDouble(), bi12500000, bi100,                   anyDouble(), bi24999000,         1D, 1000,
-                bi100,       10D,         bi30000000, bi17500000, bi100,       10D,         bi25000000, bi1000, 1D, 1000
+                bi100,       expectRate,  bi30000000, bi17500000, bi100,       expectRate,  bi25000000, bi1000, 1D, 1000
             ),
 
             // TX total wrapped around - offset should be updated
             Arguments.of(
                 anyBigInt(), anyDouble(), bi12500000, bi1000, anyBigInt(), anyDouble(), bi17500000, bi1000,     0D, anyInt(),
                 bi100,       anyDouble(), bi24999000, bi100,               anyDouble(), bi12500000,             1D, 1000,
-                bi100,       10D,         bi25000000, bi1000, bi100,       10D,         bi30000000, bi17500000, 1D, 1000
+                bi100,       expectRate,  bi25000000, bi1000, bi100,       expectRate,  bi30000000, bi17500000, 1D, 1000
             ),
 
             // current time measurement is missing - rates shouldn't be computed
@@ -191,7 +233,7 @@ public class NetworkStatisticsBuilderTest {
     }
 
     private static BigInteger anyBigInt() {
-        return new BigInteger(String.valueOf(anyInt())).multiply(new BigInteger(String.valueOf(Long.MAX_VALUE)));
+        return new BigInteger(String.valueOf(anyInt())).multiply(biMaxLong);
     }
 
     private static NetworkInterface<NetworkStatistics> constructInterface(BigInteger rxDrops,
