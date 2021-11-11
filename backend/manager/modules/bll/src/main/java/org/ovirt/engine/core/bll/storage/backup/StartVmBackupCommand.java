@@ -213,6 +213,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         if (vmBackup.getDescription() != null && vmBackup.getDescription().length() > 1024) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_DESCRIPTION_IS_TOO_LONG);
         }
+
+        if (vmBackup.getId() != null && vmBackupDao.get(vmBackup.getId()) != null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_ID_ALREADY_EXIST,
+                    String.format("$backupId %s", vmBackup.getId()));
+        }
         return true;
     }
 
@@ -469,7 +474,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     private Guid createVmBackup() {
         VmBackup vmBackup = getParameters().getVmBackup();
-        vmBackup.setId(getCommandId());
+        Guid backupId = vmBackup.getId() != null ? vmBackup.getId() : getCommandId();
+        vmBackup.setId(backupId);
         vmBackup.setHostId(getVdsId());
         vmBackup.setPhase(VmBackupPhase.INITIALIZING);
         Date now = new Date();

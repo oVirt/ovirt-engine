@@ -151,6 +151,20 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
 
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
+    public void validateFailedBackupIdAlreadyExists() {
+        mockVm(VMStatus.Up);
+        mockVds(true, true);
+        mockVmDevice(true);
+
+        doReturn(Collections.emptySet()).when(command).getDisksNotInPreviousCheckpoint();
+        when(vmBackupDao.get(any())).thenReturn(mockVmBackup());
+
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_ID_ALREADY_EXIST);
+    }
+
+    @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedVdsNotSupportBackup() {
         mockVds(false, true);
         mockVm(VMStatus.Up);
