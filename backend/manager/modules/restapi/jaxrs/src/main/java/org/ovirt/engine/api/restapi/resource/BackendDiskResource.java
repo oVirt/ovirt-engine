@@ -171,8 +171,11 @@ public class BackendDiskResource
 
     @Override
     public Response reduce(Action action) {
-        Disk disk = get();
-        Guid imageId = getDiskImageId(disk.getImageId());
+        Guid imageId = Guid.createGuidFromString(action.getDisk().getImageId());
+        if (imageId == null) {
+            Disk disk = get();
+            imageId = getDiskImageId(disk.getImageId());
+        }
         ImagesActionsParametersBase params = new ImagesActionsParametersBase(imageId);
         return doAction(ActionType.ReduceImage, params, action);
     }
