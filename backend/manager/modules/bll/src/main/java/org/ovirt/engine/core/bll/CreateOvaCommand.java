@@ -35,8 +35,10 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -94,7 +96,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         setSucceeded(true);
     }
 
-    private String createOvf(Collection<DiskImage> disks) {
+    private Pair<String, Version> createOvf(Collection<DiskImage> disks) {
         switch(getParameters().getEntityType()) {
         case TEMPLATE:
             VmTemplate template = vmTemplateDao.get(getParameters().getEntityId());
@@ -106,7 +108,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
             FullEntityOvfData fullEntityOvfData = new FullEntityOvfData(template);
             fullEntityOvfData.setDiskImages(new ArrayList<>(disks));
             fullEntityOvfData.setInterfaces(interfaces);
-            return ovfManager.exportOva(template, fullEntityOvfData, template.getCompatibilityVersion());
+            return new Pair<>(ovfManager.exportOva(template, fullEntityOvfData, template.getCompatibilityVersion()),
+                    template.getCompatibilityVersion());
 
         default:
             VM vm = vmDao.get(getParameters().getEntityId());
@@ -118,7 +121,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
             fullEntityOvfData = new FullEntityOvfData(vm);
             fullEntityOvfData.setDiskImages(new ArrayList<>(disks));
             fullEntityOvfData.setInterfaces(interfaces);
-            return ovfManager.exportOva(vm, fullEntityOvfData, vm.getCompatibilityVersion());
+            return new Pair<>(ovfManager.exportOva(vm, fullEntityOvfData, vm.getCompatibilityVersion()),
+                    vm.getCompatibilityVersion());
         }
     }
 
@@ -185,7 +189,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
             Collection<DiskImage> disks,
             Map<Guid, String> diskIdToPath,
             String tpmData,
-            String nvramData) {
+            String nvramData,
+            Version compatibilityVersion) {
         String encodedOvf = encode(ovf);
         AnsibleCommandParameters params = new AnsibleCommandParameters();
         params.setHostId(getVdsId());
@@ -202,6 +207,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         vars.put("ovirt_ova_pack_disks", genDiskParameters(disks, diskIdToPath));
         vars.put("ovirt_ova_pack_tpm", tpmData);
         vars.put("ovirt_ova_pack_nvram", nvramData);
+        vars.put("ovirt_ova_pack_padding", Boolean.toString(compatibilityVersion.greater(Version.v4_6)));
         params.setVariables(vars);
         return params;
     }
@@ -209,10 +215,11 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     private void packOva() {
         List<DiskImage> disks = getParameters().getDisks();
         disks.forEach(this::updateDiskVmElementFromDb);
-        String ovf = createOvf(disks);
-        log.debug("Exporting OVF: {}", ovf);
+        Pair<String, Version> ovf = createOvf(disks);
+        log.debug("Exporting OVF: {}", ovf.getFirst());
         ActionReturnValue actionReturnValue = runInternalAction(ActionType.AnsiblePackOva,
-                createPackOvaParameters(ovf, disks, getParameters().getDiskIdToPath(), getTpmData(), getNvramData()),
+                createPackOvaParameters(ovf.getFirst(), disks, getParameters().getDiskIdToPath(), getTpmData(),
+                        getNvramData(), ovf.getSecond()),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
         if (!actionReturnValue.getSucceeded()) {
             log.error("Failed to start Ansible Pack OVA playbook");
