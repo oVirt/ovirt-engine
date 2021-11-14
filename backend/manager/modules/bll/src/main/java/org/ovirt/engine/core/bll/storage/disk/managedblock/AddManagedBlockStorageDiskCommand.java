@@ -160,6 +160,7 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
         disk.setCreationDate(new Date());
         disk.setLastModified(new Date());
         disk.setActive(true);
+        disk.setVmEntityType(getParameters().getDiskInfo().getVmEntityType());
         disk.setVmSnapshotId(getParameters().getVmSnapshotId());
         disk.setDiskVmElements(getParameters().getDiskVmElement() == null ? new ArrayList<>()
                 : Collections.singletonList(getParameters().getDiskVmElement()));
