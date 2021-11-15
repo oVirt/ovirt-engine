@@ -136,6 +136,7 @@ public class LibvirtVmXmlBuilder {
     private VM vm;
     private int vdsCpuThreads;
     private MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier;
+    private MemoizingSupplier<List<VmDevice>> vmDevicesSupplier;
     private MemoizingSupplier<VdsStatistics> hostStatisticsSupplier;
     private MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier;
     private MemoizingSupplier<List<VmNumaNode>> vmNumaNodesSupplier;
@@ -265,6 +266,7 @@ public class LibvirtVmXmlBuilder {
             incrementalBackupSupplier = new MemoizingSupplier<>(() -> false);
             kernelFipsModeSupplier = new MemoizingSupplier<>(() -> false);
         }
+        vmDevicesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmDevices(vm.getId()));
         vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
         mdevDisplayOn = MDevTypesUtils.isMdevDisplayOn(vm);
         legacyVirtio = vmInfoBuildUtils.isLegacyVirtio(vm.getVmOsId(), ChipsetType.fromMachineType(emulatedMachine));
@@ -1033,7 +1035,7 @@ public class LibvirtVmXmlBuilder {
 
     void writeDevices() {
         List<Pair<VmDevice, HostDevice>> hostDevDisks = new ArrayList<>();
-        List<VmDevice> devices = vmInfoBuildUtils.getVmDevices(vm.getId());
+        List<VmDevice> devices = vmDevicesSupplier.get();
         // replacement of some devices in run-once mode should eventually be done by the run-command
         devices = overrideDevicesForRunOnce(devices);
         devices = processPayload(devices);
@@ -1526,7 +1528,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("driver");
             writer.writeAttributeString("intremap", "on");
             writer.writeAttributeString("eim", "on");
-            if (!MDevTypesUtils.getMDevTypes(vm).isEmpty()) {
+            if (vmInfoBuildUtils.needsIommuCachingMode(vm, hostDevicesSupplier, vmDevicesSupplier)) {
                 writer.writeAttributeString("caching_mode", "on");
             }
             writer.writeEndElement();
