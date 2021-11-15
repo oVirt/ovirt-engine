@@ -242,7 +242,7 @@ public class LibvirtVmXmlBuilderTest {
         doCallRealMethod().when(underTest).writeDevices();
 
         VmInfoBuildUtils utils = mock(VmInfoBuildUtils.class);
-        when(utils.getVmDevices(any())).thenReturn(new ArrayList<>());
+        setVmDevicesSupplier(underTest, new ArrayList<>());
         setVmInfoBuildUtils(underTest, utils);
 
         VM vm = mock(VM.class);
@@ -391,6 +391,11 @@ public class LibvirtVmXmlBuilderTest {
         return supplier;
     }
 
+    private void setVmDevicesSupplier(LibvirtVmXmlBuilder underTest, List<VmDevice> vmDevices) throws NoSuchFieldException, IllegalAccessException {
+        Field vmDevicesSupplier = LibvirtVmXmlBuilder.class.getDeclaredField("vmDevicesSupplier");
+        accessor.set(vmDevicesSupplier, underTest, new MemoizingSupplier<>(() -> vmDevices));
+    }
+
     private void setTscFreqSupplier(LibvirtVmXmlBuilder underTest) throws NoSuchFieldException, IllegalAccessException {
         Field tscFrequencySupplier = LibvirtVmXmlBuilder.class.getDeclaredField("tscFrequencySupplier");
         accessor.set(tscFrequencySupplier, underTest, new MemoizingSupplier<>(() -> "1234567980"));
@@ -457,7 +462,6 @@ public class LibvirtVmXmlBuilderTest {
         when(device.isPlugged()).thenReturn(true);
         when(device.getDevice()).thenReturn("testScsi");
         when(device.getId()).thenReturn(new VmDeviceId(Guid.newGuid(), Guid.newGuid()));
-        when(buildUtils.getVmDevices(any())).thenReturn(Collections.singletonList(device));
         when(buildUtils.makeDiskName(any(), anyInt())).thenCallRealMethod();
         when(buildUtils.diskInterfaceToDevName(any())).thenCallRealMethod();
 
@@ -478,6 +482,7 @@ public class LibvirtVmXmlBuilderTest {
         setWriter(underTest, writer);
         setMetadata(underTest, metadata);
         setVolumeLeases(underTest, new ArrayList<>());
+        setVmDevicesSupplier(underTest, Collections.singletonList(device));
     }
 
     private void setVm(LibvirtVmXmlBuilder underTest, VM vm) throws NoSuchFieldException, IllegalAccessException {

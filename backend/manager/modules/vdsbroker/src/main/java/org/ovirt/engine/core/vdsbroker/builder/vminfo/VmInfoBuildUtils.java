@@ -81,6 +81,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.common.utils.PDIVMapBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
@@ -787,6 +788,22 @@ public class VmInfoBuildUtils {
     VmDevice getVmDeviceByDiskId(Guid diskId, Guid vmId) {
         // get vm device for this disk from DB
         return vmDeviceDao.get(new VmDeviceId(diskId, vmId));
+    }
+
+    public boolean needsIommuCachingMode(VM vm, MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier,
+            MemoizingSupplier<List<VmDevice>> vmDevicesSupplier) {
+        if (!MDevTypesUtils.getMDevTypes(vm).isEmpty()) {
+            return true;
+        }
+        for (VmDevice device : vmDevicesSupplier.get()) {
+            if (device.isPlugged() && device.getType() == VmDeviceGeneralType.HOSTDEV) {
+                HostDevice hostDevice = hostDevicesSupplier.get().get(device.getDevice());
+                if (hostDevice != null && "pci".equals(hostDevice.getCapability())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void reportUnsupportedVnicProfileFeatures(VM vm,
