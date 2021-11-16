@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -21,6 +22,8 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
 
     @Inject
     private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VmHandler vmHandler;
 
     private List<GraphicsDevice> prevDevices;
 
@@ -45,6 +48,12 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
     @Override
     protected boolean validate() {
         if (!super.validate()) {
+            return false;
+        }
+        if (!validate(vmHandler.isGraphicsAndDisplaySupported(
+                getParameters().isVm() ? getVm().getStaticData() : getVmTemplate(),
+                Set.of(getParameters().getDev().getGraphicsType()),
+                getCluster()))) {
             return false;
         }
 
