@@ -2480,6 +2480,7 @@ SELECT vm_interface_statistics.rx_rate,
     vm_interface_statistics.iface_status,
     vm_interface_statistics.sample_time,
     vm_interface.mac_addr,
+    vm_interface.vnic_profile_id,
     vm_interface.speed,
     vm_interface.vm_guid,
     vm_interface.id

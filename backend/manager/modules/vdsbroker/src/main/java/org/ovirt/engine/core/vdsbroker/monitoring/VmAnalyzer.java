@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.config.Config;
@@ -1032,7 +1033,15 @@ public class VmAnalyzer {
 
     private List<VmGuestAgentInterface> filterGuestAgentInterfaces(List<VmGuestAgentInterface> nics) {
         if (!nics.isEmpty()) {
-            nics = nics.stream().filter(this::isNotBlacklisted).collect(Collectors.toList());
+            loadVmNetworkInterfaces();
+            Map<String, VmNetworkInterface> ifacesByMac = ifaces.stream()
+                    .collect(Collectors.toMap(VmNic::getMacAddress, iface -> iface));
+            nics = nics.stream()
+                    .filter(this::isNotBlacklisted)
+                    .filter(nic -> ifacesByMac.get(nic.getMacAddress()) != null)
+                    .filter(nic -> ifacesByMac.get(nic.getMacAddress()).getVnicProfileId() != null)
+                    .collect(Collectors.toList());
+
             nics.forEach(this::filterIpv4Addresses);
             nics.forEach(this::filterIpv6Addresses);
         }
@@ -1122,7 +1131,9 @@ public class VmAnalyzer {
     }
 
     protected void loadVmNetworkInterfaces() {
-        ifaces = vmNetworkInterfaceDao.getAllForMonitoredVm(getVmId());
+        if (ifaces == null) {
+            ifaces = vmNetworkInterfaceDao.getAllForMonitoredVm(getVmId());
+        }
     }
 
     public boolean isColdRebootVmToRun() {
