@@ -246,7 +246,7 @@ pushd exported-artifacts
 
     ${PACKAGER} repolist enabled
     ${PACKAGER} clean all
-    ${PACKAGER} install -y http://resources.ovirt.org/pub/yum-repo/ovirt-release-master.rpm
+    ${PACKAGER} install -y https://resources.ovirt.org/pub/yum-repo/ovirt-release44-pre.rpm
 
     if [[ "$(rpm --eval "%dist")" == ".el8" ]]; then
         ${PACKAGER} module reset postgresql
