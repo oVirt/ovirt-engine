@@ -42,11 +42,11 @@
 %if 0%{!?ovirt_build_all_user_agents:1}
 %global ovirt_build_all_user_agents 1
 %endif
-# define "ovirt_provides_jboss 0" to use EAP 7
+# define "rhv_build 1" to perform RHV Manager build
 #if True
-%global ovirt_provides_jboss 0
+%global rhv_build 1
 #else
-%global ovirt_provides_jboss 1
+%global rhv_build 0
 #end if
 #
 # CUSTOMIZATION-END
@@ -58,7 +58,7 @@
 # real benefit:
 %global __jar_repack 0
 
-%if !%{ovirt_provides_jboss}
+%if %{rhv_build}
 #
 # unsign all provided jars
 # see rhbz#1019637
@@ -147,15 +147,15 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global ovirt_create_user_vdsm \
 %_ovirt_create_user %{vdsm_user} %{vdsm_uid} %{vdsm_group} %{vdsm_gid} "%%{vdsm_description}" /var/lib/vdsm
 
-%if %{ovirt_provides_jboss}
-%global wildfly_overlay_modules "/usr/share/ovirt-engine-wildfly-overlay/modules"
-%else
+%if %{rhv_build}
 %global wildfly_overlay_modules ""
 %define extra_common_opts \\\
 	MVN=true \\\
 	BUILD_ENV_VALIDATION=0 \\\
 	JBOSS_HOME=/opt/rh/eap7/root/usr/share/wildfly \\\
 	MAVEN_OUTPUT_DIR=%{_sourcedir}
+%else
+%global wildfly_overlay_modules "/usr/share/ovirt-engine-wildfly-overlay/modules"
 %endif
 
 %global make_common_opts \\\
@@ -201,13 +201,15 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"} \\\
 	%{?extra_common_opts}
 
-%if !%{ovirt_provides_jboss}
+%if %{rhv_build}
 %global extra_backend_requires Requires: rhvm-branding-rhv >= 4.3.0
 %global extra_setup_requires Requires: rhvm-setup-plugins >= 4.4.0
 %global spice_version 8.0
+%else
+%global ovirt_dependencies ovirt-dependencies/4.4
 %endif
 
-%if %{ovirt_provides_jboss}
+%if !%{rhv_build}
 Name:		@PACKAGE_NAME@
 Version:	@RPM_VERSION@
 Release:	@RPM_RELEASE@%{?release_suffix}%{?dist}
@@ -240,7 +242,7 @@ Release:	$downstream_rpm_release_prefix$release$release_suffix%{?dist}
 Summary:	Management server for Open Virtualization
 Group:		%{ovirt_product_group}
 License:	ASL 2.0
-%if %{ovirt_provides_jboss}
+%if !%{rhv_build}
 URL:		http://www.ovirt.org
 Source0:	http://resources.ovirt.org/pub/ovirt-master-snapshot/src/@PACKAGE_NAME@/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
 %else
@@ -258,13 +260,14 @@ Source$i:   $source
 
 BuildArch:	noarch
 
-%if %{ovirt_provides_jboss}
+%if %{rhv_build}
+BuildRequires:  perl
+%else
 BuildRequires:	assertj-core >= 2.2.0
 BuildRequires:	maven >= 3.5.0
 BuildRequires:  maven-enforcer-plugin
-%else
-BuildRequires:  perl
 %endif
+
 BuildRequires:	java-11-openjdk-devel >= %{openjdk_version}
 BuildRequires:	javapackages-tools
 BuildRequires:	make
@@ -280,15 +283,15 @@ BuildRequires:	%{name}-extensions-api >= 1.0.1
 
 Requires(pre):	shadow-utils
 
-%if %{ovirt_provides_jboss}
+%if %{rhv_build}
+Requires:	eap7-wildfly >= 7.4.2
+Requires:	rhvm = %{version}-%{release}
+%else
 # There is no way how to prevent WildFly not being upgraded, so we need to
 # fix engine to work with current and new WildFly version and only afterwards
 # bump the requirement (otherwise we would need to pass wildfly,
 # wildfly-overlay and ovirt-engine through the change queue at once)
 Requires:	ovirt-engine-wildfly-overlay >= 24
-%else
-Requires:	eap7-wildfly >= 7.4.2
-Requires:	rhvm = %{version}-%{release}
 %endif
 
 Requires:	%{name}-backend = %{version}-%{release}
@@ -403,7 +406,7 @@ Provides:	bundled(js-patternfly-next) = 2.26.1
 system that provides advanced capabilities for managing the Open
 virtualization infrastructure for Servers and Desktops.
 
-%if !%{ovirt_provides_jboss}
+%if %{rhv_build}
 %package -n rhvm
 Summary:    Red Hat Virtualization Manager
 Group:      %{ovirt_product_group}
@@ -734,7 +737,7 @@ Requires:	ovirt-imageio-daemon >= 2.0.10-1
 Setup imageio service.
 
 %prep
-%if %{ovirt_provides_jboss}
+%if !%{rhv_build}
 %setup -c -q
 %else
 #
@@ -981,7 +984,7 @@ cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" <
 OVESETUP_APACHE/configureRootRedirectionDefault=bool:True
 OVESETUP_CONFIG/validFirewallManagers=str:firewalld
 __EOF__
-%if !%{ovirt_provides_jboss}
+%if %{rhv_build}
 # just add to the list
 cat >> "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" << __EOF__
 OVESETUP_CONFIG/jbossHome=str:/opt/rh/eap7/root/usr/share/wildfly
@@ -1001,7 +1004,7 @@ __EOF__
 
 
 mkdir -p %{buildroot}/%{engine_rpm_state_dir}
-%if !%{ovirt_provides_jboss}
+%if %{rhv_build}
 ln -s /usr/share/spice "%{buildroot}%{engine_data}/files/spice"
 
 #
@@ -1086,7 +1089,7 @@ fi
 %{_javadir}/%{name}
 %endif
 
-%if !%{ovirt_provides_jboss}
+%if %{rhv_build}
 %files -n rhvm
 %license LICENSE
 %endif
@@ -1223,14 +1226,14 @@ fi
 %config %{_sysconfdir}/httpd/conf.d/ovirt-disable-http-trace.conf
 
 
-%if %{ovirt_provides_jboss}
+%if !%{rhv_build}
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf
 %config %{engine_etc}/engine.conf.d/20-setup-jboss-overlay.conf
 %endif
 
 %files setup-plugin-websocket-proxy
 %license LICENSE
-%if !%{ovirt_provides_jboss}
+%if %{rhv_build}
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-wsp.conf
 %endif
 %{engine_data}/firewalld/websocket-proxy/
