@@ -5,6 +5,7 @@
 
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -798,5 +799,14 @@ public class BackendVmResource
     @Override
     public AssignedAffinityLabelsResource getAffinityLabelsResource() {
         return inject(new BackendAssignedAffinityLabelsResource(id, VM::new));
+    }
+
+    @Override
+    public Response screenshot(Action action) {
+        String screenshot =
+                performAction(ActionType.ScreenshotVm, new VmOperationParameterBase(guid), String.class); // gets base64 encoded image
+
+        byte[] originalImage = Base64.getDecoder().decode(screenshot);
+        return Response.ok(originalImage).build();
     }
 }
