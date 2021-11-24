@@ -49,6 +49,8 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     private Integer generation;
 
+    private Integer sequenceNumber;
+
     public Image() {
         id = Guid.Empty;
         creationDate = new Date();
@@ -195,6 +197,14 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
         this.generation = generation;
     }
 
+    public Integer getSequenceNumber() {
+        return sequenceNumber;
+    }
+
+    public void setSequenceNumber(Integer sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -204,7 +214,8 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
                 parentId,
                 snapshotId,
                 status,
-                templateImageId
+                templateImageId,
+                sequenceNumber
         );
     }
 
@@ -223,6 +234,7 @@ public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
                 && Objects.equals(parentId, other.parentId)
                 && Objects.equals(snapshotId, other.snapshotId)
                 && status == other.status
-                && Objects.equals(templateImageId, other.templateImageId);
+                && Objects.equals(templateImageId, other.templateImageId)
+                && Objects.equals(sequenceNumber, other.sequenceNumber);
     }
 }

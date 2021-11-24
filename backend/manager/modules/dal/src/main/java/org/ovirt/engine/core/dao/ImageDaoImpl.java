@@ -64,7 +64,8 @@ public class ImageDaoImpl extends DefaultGenericDao<Image, Guid> implements Imag
                 .addValue("qcow_compat", entity.getQcowCompat())
                 .addValue("image_group_id", entity.getDiskId())
                 .addValue("active", entity.isActive())
-                .addValue("volume_classification", entity.getVolumeClassification().getValue());
+                .addValue("volume_classification", entity.getVolumeClassification().getValue())
+                .addValue("sequence_number", entity.getSequenceNumber());
     }
 
     @Override
