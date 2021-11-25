@@ -78,6 +78,10 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         newDiskImage.setContentType(getParameters().getDiskInfo().getContentType());
         newDiskImage.setBackup(getParameters().getDiskInfo().getBackup());
 
+        // We can assume this command is used only when adding the first image, setting the first sequence
+        // number to 1.
+        newDiskImage.getImage().setSequenceNumber(1);
+
         TransactionSupport.executeInNewTransaction(() -> {
             if (!getParameters().isShouldRemainIllegalOnFailedExecution()) {
                 addDiskImageToDb(newDiskImage, getCompensationContext(), Boolean.TRUE);
@@ -91,18 +95,18 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         if (getParameters().isShouldRemainIllegalOnFailedExecution()) {
             getReturnValue().setActionReturnValue(newDiskImage);
         }
-        processImageInIrs();
+        processImageInIrs(newDiskImage.getImage().getSequenceNumber());
         getReturnValue().setActionReturnValue(newDiskImage);
         setSucceeded(true);
     }
 
-    protected boolean processImageInIrs() {
+    protected boolean processImageInIrs(int sequenceNumber) {
         if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.KUBERNETES) {
             return true;
         }
         Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CreateVolume,
-                getCreateVolumeVDSCommandParameters());
+                getCreateVolumeVDSCommandParameters(sequenceNumber));
         if (vdsReturnValue.getSucceeded()) {
             getParameters().setVdsmTaskIds(new ArrayList<>());
             getParameters().getVdsmTaskIds().add(
@@ -131,7 +135,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         return initialSize;
     }
 
-    private CreateVolumeVDSCommandParameters getCreateVolumeVDSCommandParameters() {
+    private CreateVolumeVDSCommandParameters getCreateVolumeVDSCommandParameters(int sequenceNumber) {
         CreateVolumeVDSCommandParameters parameters =
                 new CreateVolumeVDSCommandParameters(
                         getParameters().getStoragePoolId(),
@@ -145,7 +149,8 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                         getDestinationImageId(),
                         imagesHandler.getJsonDiskDescription(getParameters().getDiskInfo()),
                         getStoragePool().getCompatibilityVersion(),
-                        getParameters().getDiskInfo().getContentType()
+                        getParameters().getDiskInfo().getContentType(),
+                        sequenceNumber
                 );
 
         // The initial size of a backup scratch disk shouldn't be overridden.

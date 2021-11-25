@@ -13,13 +13,15 @@ public class CreateVolumeContainerCommandParameters extends StorageJobCommandPar
     private Long initialSize;
     private boolean legal = true;
 
+    private Integer sequenceNumber;
+
     public CreateVolumeContainerCommandParameters() {
     }
 
     public CreateVolumeContainerCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid srcImageGroupId,
                                                   Guid srcImageId, Guid imageGroupId, Guid imageId,
                                                   VolumeFormat volumeFormat, VolumeType volumeType, String description, long size,
-                                                  Long initialSize) {
+                                                  Long initialSize, Integer sequenceNumber) {
         setStoragePoolId(storagePoolId);
         setStorageDomainId(storageDomainId);
         setImageGroupID(imageGroupId);
@@ -31,6 +33,7 @@ public class CreateVolumeContainerCommandParameters extends StorageJobCommandPar
         this.volumeFormat = volumeFormat;
         this.volumeType = volumeType;
         this.initialSize = initialSize;
+        this.sequenceNumber = sequenceNumber;
         fillEntityInfo(imageId);
     }
 
@@ -88,5 +91,13 @@ public class CreateVolumeContainerCommandParameters extends StorageJobCommandPar
 
     public void setLegal(boolean legal) {
         this.legal = legal;
+    }
+
+    public Integer getSequenceNumber() {
+        return sequenceNumber;
+    }
+
+    public void setSequenceNumber(Integer sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
     }
 }

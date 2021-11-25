@@ -115,6 +115,7 @@ public class DiskImage extends DiskImageBase {
         setLastModified(new Date());
         setImageStatus(ImageStatus.LOCKED);
         setDiskProfileId(diskImage.getDiskProfileId());
+        getImage().setSequenceNumber(diskImage.getImage().getSequenceNumber());
     }
 
     public Guid getImageId() {

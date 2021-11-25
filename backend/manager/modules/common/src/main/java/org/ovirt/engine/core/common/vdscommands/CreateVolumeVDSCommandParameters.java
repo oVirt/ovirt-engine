@@ -16,6 +16,7 @@ public class CreateVolumeVDSCommandParameters extends StoragePoolDomainAndGroupI
     private long imageInitialSizeInBytes;
     private boolean shouldAddBitmaps;
     private boolean legal = true;
+    private Integer sequenceNumber;
 
     // Initialize with Guid.Empty for creating a new image.
     private Guid _imageId;
@@ -32,7 +33,8 @@ public class CreateVolumeVDSCommandParameters extends StoragePoolDomainAndGroupI
             Guid newImageId,
             String newImageDescription,
             Version compatibilityVersion,
-            DiskContentType diskContentType) {
+            DiskContentType diskContentType,
+            Integer sequenceNumber) {
         super(storagePoolId, storageDomainId, imageGroupId);
         _imageSizeInBytes = imageSizeInBytes;
         _imageType = imageType;
@@ -43,6 +45,7 @@ public class CreateVolumeVDSCommandParameters extends StoragePoolDomainAndGroupI
         setDiskContentType(diskContentType);
         _imageId = imageId;
         setSourceImageGroupId(sourceImageGroupId);
+        this.sequenceNumber = sequenceNumber;
     }
 
     public CreateVolumeVDSCommandParameters() {
@@ -143,6 +146,14 @@ public class CreateVolumeVDSCommandParameters extends StoragePoolDomainAndGroupI
         this.legal = legal;
     }
 
+    public Integer getSequenceNumber() {
+        return sequenceNumber;
+    }
+
+    public void setSequenceNumber(Integer sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
@@ -155,6 +166,7 @@ public class CreateVolumeVDSCommandParameters extends StoragePoolDomainAndGroupI
                 .append("imageId", getImageId())
                 .append("sourceImageGroupId", getSourceImageGroupId())
                 .append("shouldAddBitmaps", shouldAddBitmaps())
-                .append("legal", isLegal());
+                .append("legal", isLegal())
+                .append("sequenceNumber", getSequenceNumber());
     }
 }

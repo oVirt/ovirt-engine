@@ -195,3 +195,12 @@ BEGIN
     ORDER BY repo_image_name;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION GetMaxSequenceNumber (v_image_group_id UUID)
+RETURNS int AS $FUNCTION$
+    SELECT MAX(sequence_number)
+    FROM images
+    WHERE image_group_id = v_image_group_id;
+$FUNCTION$
+LANGUAGE sql;
