@@ -50,6 +50,15 @@ public class ImageDaoImpl extends DefaultGenericDao<Image, Guid> implements Imag
     }
 
     @Override
+    public Integer getMaxSequenceNumber(Guid imageGroupId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("image_group_id", imageGroupId);
+        RowMapper<Integer> mapper = (rs, rowNum) -> rs.getInt(1);
+
+        return getCallsHandler().executeRead("GetMaxSequenceNumber", mapper, parameterSource);
+    }
+
+    @Override
     protected MapSqlParameterSource createFullParametersMapper(Image entity) {
         return createIdParameterMapper(entity.getId())
                 .addValue("creation_date", entity.getCreationDate())

@@ -112,13 +112,24 @@ public class CreateSnapshotCommand<T extends CreateSnapshotParameters> extends B
         // storage team request
         newDiskImage.setVolumeType(VolumeType.Sparse);
         newDiskImage.setVolumeFormat(VolumeFormat.COW);
+
+        // If we are creating a thin VM it makes sense to use the default sequence for the new
+        // image as the template image is not "really" part of the disk, but merely a symlink,
+        // so having a different sequence number doesn't provide much benefit
+        int nextSequenceNumber = 1;
+        if (getActionType() != ActionType.CreateSnapshotFromTemplate) {
+            nextSequenceNumber = imageDao.getMaxSequenceNumber(getImageGroupId()) + 1;
+        }
+
+        newDiskImage.getImage().setSequenceNumber(nextSequenceNumber);
+
         try {
             Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
 
             VDSReturnValue vdsReturnValue =
                     runVdsCommand(
                             VDSCommandType.CreateVolume,
-                            getCreateVDSCommandParameters());
+                            getCreateVDSCommandParameters(nextSequenceNumber));
 
             if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
                 getParameters().setVdsmTaskIds(new ArrayList<>());
@@ -147,7 +158,7 @@ public class CreateSnapshotCommand<T extends CreateSnapshotParameters> extends B
         return false;
     }
 
-    private CreateVolumeVDSCommandParameters getCreateVDSCommandParameters() {
+    private CreateVolumeVDSCommandParameters getCreateVDSCommandParameters(int nextSequenceNumber) {
         CreateVolumeVDSCommandParameters parameters = new CreateVolumeVDSCommandParameters(getStoragePoolId(),
                 getDestinationStorageDomainId(),
                 getImageGroupId(),
@@ -159,7 +170,8 @@ public class CreateSnapshotCommand<T extends CreateSnapshotParameters> extends B
                 getDestinationImageId(),
                 "",
                 getStoragePool().getCompatibilityVersion(),
-                getDiskImage().getContentType());
+                getDiskImage().getContentType(),
+                nextSequenceNumber);
         if (getParameters().getInitialSizeInBytes() != null) {
             parameters.setImageInitialSizeInBytes(getParameters().getInitialSizeInBytes());
         }

@@ -13,4 +13,6 @@ public interface ImageDao extends GenericDao<Image, Guid>, StatusAwareDao<Guid, 
     public void updateImageVmSnapshotId(Guid id, Guid vmSnapshotId);
 
     public void updateImageSize(Guid id, long size);
+
+    public Integer getMaxSequenceNumber(Guid imageGroupId);
 }

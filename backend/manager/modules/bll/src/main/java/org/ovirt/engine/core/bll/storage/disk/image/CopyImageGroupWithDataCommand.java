@@ -147,7 +147,10 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                 getDiskImage().getSize(),
                 determineTotalImageInitialSize(getDiskImage(),
                         getParameters().getDestinationFormat(),
-                        getParameters().getSrcDomain()));
+                        getParameters().getSrcDomain()),
+                // We can use 1 because this is only used when collapsing, no point using the leaf's sequence
+                // number
+                1);
         parameters.setDiskAlias(getParameters().getDiskAlias());
         parameters.setJobWeight(getParameters().getOperationsJobWeight().get(CopyStage.DEST_CREATION.name()));
         parameters.setParentCommand(getActionType());

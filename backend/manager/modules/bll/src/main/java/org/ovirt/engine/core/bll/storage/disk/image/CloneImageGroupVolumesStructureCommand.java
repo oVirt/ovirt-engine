@@ -174,7 +174,8 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
                 image.getVolumeType(),
                 getParameters().getDescription(),
                 image.getSize(),
-                initialSize);
+                initialSize,
+                innerImage.getSequenceNumber());
 
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setParentCommand(getActionType());

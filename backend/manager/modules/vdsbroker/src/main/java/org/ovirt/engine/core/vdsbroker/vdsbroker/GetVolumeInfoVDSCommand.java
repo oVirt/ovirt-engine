@@ -105,6 +105,10 @@ public class GetVolumeInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters
             if (struct.containsKey("generation")) {
                 newImage.getImage().setGeneration(Integer.valueOf(struct.get("generation").toString()));
             }
+
+            if (struct.containsKey("sequence")) {
+                newImage.getImage().setSequenceNumber(Integer.valueOf(struct.get("sequence").toString()));
+            }
         } catch (RuntimeException ex) {
             log.error("Failed building DiskImage: {}", ex.getMessage());
             printReturnValue();
