@@ -804,12 +804,6 @@ public class VmHandler implements BackendService {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult isGraphicsAndDisplaySupported(VmBase vmbase, Set<GraphicsType> graphicsTypeSet, Cluster cluster) {
-        return isGraphicsAndDisplaySupported(vmbase.getOsId(),
-                graphicsTypeSet, vmbase.getDefaultDisplayType(),
-                vmbase.getBiosType(), CompatibilityVersionUtils.getEffective(vmbase, cluster));
-    }
-
     /**
      * Check if the OS type is supported for VirtIO-SCSI.
      *

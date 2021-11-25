@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Set;
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -14,8 +12,6 @@ public class UpdateGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<G
 
     @Inject
     private VmDeviceDao vmDeviceDao;
-    @Inject
-    private VmHandler vmHandler;
 
     public UpdateGraphicsDeviceCommand(GraphicsParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -30,20 +26,6 @@ public class UpdateGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<G
 
         setSucceeded(true);
         setActionReturnValue(graphicsDev.getId().getDeviceId());
-    }
-
-    @Override
-    protected boolean validate() {
-        if (!super.validate()) {
-            return false;
-        }
-        if (!validate(vmHandler.isGraphicsAndDisplaySupported(
-                getParameters().isVm() ? getVm().getStaticData() : getVmTemplate(),
-                Set.of(getParameters().getDev().getGraphicsType()),
-                getCluster()))) {
-            return false;
-        }
-        return true;
     }
 
 }
