@@ -108,7 +108,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.PropagateDiskErrors, false),
-                MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, Version.v4_6, true)
+                MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, Version.getLast(), true)
         );
     }
 

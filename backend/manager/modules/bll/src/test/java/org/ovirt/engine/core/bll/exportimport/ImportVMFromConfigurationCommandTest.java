@@ -86,7 +86,7 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
     public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.DefaultGeneralTimeZone, "Etc/GMT"),
-                MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, Version.v4_6, true)
+                MockConfigDescriptor.of(ConfigValues.BiosTypeSupported, Version.getLast(), true)
         );
     }
 
