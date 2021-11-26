@@ -889,7 +889,8 @@ select fn_db_add_config_value_for_versions_up_to('TpmDeviceSupported', '{"x86":"
 select fn_db_add_config_value_for_versions_up_to('TpmDeviceSupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.6');
 select fn_db_add_config_value_for_versions_up_to('NvramPersistenceSupported', 'false', '4.5');
 select fn_db_add_config_value_for_versions_up_to('NvramPersistenceSupported', 'true', '4.6');
-select fn_db_add_config_value_for_versions_up_to('EnableBochsDisplay','false','4.6');
+select fn_db_add_config_value_for_versions_up_to('EnableBochsDisplay','false','4.5');
+select fn_db_add_config_value_for_versions_up_to('EnableBochsDisplay','true','4.6');
 
 -- Incremental backup
 select fn_db_add_config_value_for_versions_up_to('IsIncrementalBackupSupported', 'false', '4.4');
