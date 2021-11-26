@@ -885,7 +885,8 @@ select fn_db_add_config_value_for_versions_up_to('IsDeferringFileVolumePrealloca
 select fn_db_add_config_value_for_versions_up_to('IsDeferringFileVolumePreallocationSupported', 'true', '4.6');
 select fn_db_add_config_value_for_versions_up_to('IsPortIsolationSupported', 'false', '4.4');
 select fn_db_add_config_value_for_versions_up_to('IsPortIsolationSupported', 'true', '4.6');
-select fn_db_add_config_value_for_versions_up_to('TpmDeviceSupported', '{"x86":"false","ppc":"false","s390x":"false"}', '4.6');
+select fn_db_add_config_value_for_versions_up_to('TpmDeviceSupported', '{"x86":"false","ppc":"false","s390x":"false"}', '4.5');
+select fn_db_add_config_value_for_versions_up_to('TpmDeviceSupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.6');
 select fn_db_add_config_value_for_versions_up_to('NvramPersistenceSupported', 'false', '4.6');
 select fn_db_add_config_value_for_versions_up_to('EnableBochsDisplay','false','4.6');
 
