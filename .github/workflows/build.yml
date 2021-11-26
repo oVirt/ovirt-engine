@@ -35,6 +35,7 @@ jobs:
       run: |
         # Install oVirt repositories
         dnf copr enable -y ovirt/ovirt-master-snapshot centos-stream-8
+        dnf install -y ovirt-release-master
 
         # Requried for python3-ansible-lint and python3-isort
         dnf copr enable -y sbonazzo/EL8_collection
