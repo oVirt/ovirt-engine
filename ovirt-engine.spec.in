@@ -278,6 +278,12 @@ BuildRequires:	unzip
 BuildRequires:	ovirt-jboss-modules-maven-plugin >= 2.0.1
 BuildRequires:	javapackages-local
 
+# common-dependencies
+BuildRequires:	ed25519-java
+BuildRequires:	jackson-jaxrs-json-provider
+BuildRequires:	resteasy
+BuildRequires:	apache-sshd
+
 # backend
 BuildRequires:	%{name}-extensions-api >= 1.0.1
 
