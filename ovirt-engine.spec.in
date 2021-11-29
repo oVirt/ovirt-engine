@@ -281,6 +281,9 @@ BuildRequires:	unzip
 BuildRequires:	ovirt-jboss-modules-maven-plugin >= 2.0.1
 BuildRequires:	javapackages-local
 
+# backend
+BuildRequires:	%{name}-extensions-api >= 1.0.1
+
 Requires(pre):	shadow-utils
 
 %if %{ovirt_provides_jboss}
@@ -440,7 +443,7 @@ Summary:	Engine core of %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 License:	ASL 2.0 and LGPLv3 and GPLv3
 Requires:	%{name} = %{version}-%{release}
-Requires:	%{name}-extensions-api >= 1.0.0
+Requires:	%{name}-extensions-api >= 1.0.1
 Requires:	aopalliance >= 1.0
 Requires:	curl
 Requires:	ebay-cors-filter
