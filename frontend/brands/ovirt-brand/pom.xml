@@ -18,11 +18,17 @@
   <packaging>pom</packaging>
   <description>oVirt Engine default brand package</description>
 
+  <properties>
+    <jsass.version>5.10.4</jsass.version>
+    <libsass-maven-plugin.version>0.2.10-libsass_3.5.3</libsass-maven-plugin.version>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
          <groupId>com.github.warmuuh</groupId>
          <artifactId>libsass-maven-plugin</artifactId>
+         <version>${libsass-maven-plugin.version}</version>
          <executions>
            <execution>
              <phase>generate-resources</phase>
@@ -36,6 +42,13 @@
            <outputPath>${project.basedir}/target/generated-resources</outputPath>
            <generateSourceMap>false</generateSourceMap>
          </configuration>
+         <dependencies>
+          <dependency>
+            <groupId>io.bit3</groupId>
+            <artifactId>jsass</artifactId>
+            <version>${jsass.version}</version>
+          </dependency>
+         </dependencies>
       </plugin>
 
       <plugin>
@@ -73,11 +86,19 @@
           <plugin>
             <groupId>com.github.warmuuh</groupId>
             <artifactId>libsass-maven-plugin</artifactId>
+             <version>${libsass-maven-plugin.version}</version>
             <configuration>
               <generateSourceMap>true</generateSourceMap>
               <sourceMapOutputPath>${project.basedir}/target/generated-resources</sourceMapOutputPath>
               <embedSourceContentsInSourceMap>true</embedSourceContentsInSourceMap>
             </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>io.bit3</groupId>
+                <artifactId>jsass</artifactId>
+                <version>${jsass.version}</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>
