@@ -281,7 +281,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         }
 
         // For live VM backup, scratch disks should be created and prepared for each disk in the backup.
-        VmBackupPhase nextPhase = isLiveBackup() ? VmBackupPhase.CREATING_SCRATCH_DISKS : VmBackupPhase.STARTING;
+        // For cold VM backup, volume bitmaps need to be added
+        VmBackupPhase nextPhase = isLiveBackup() ? VmBackupPhase.CREATING_SCRATCH_DISKS : VmBackupPhase.ADDING_BITMAPS;
         updateVmBackupPhase(nextPhase);
 
         persistCommandIfNeeded();
@@ -312,14 +313,41 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 }
                 break;
 
-            case STARTING:
-                boolean isBackupSucceeded = isLiveBackup() ? runLiveVmBackup() : runColdVmBackup();
-                if (isBackupSucceeded) {
-                    updateVmBackupPhase(VmBackupPhase.READY);
-                    log.info("Ready to start image transfers");
-                } else {
+            case ADDING_BITMAPS:
+                if (!startAddBitmapJobs()) {
                     updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                    break;
                 }
+
+                log.info("Waiting for add bitmaps jobs completion");
+                updateVmBackupPhase(VmBackupPhase.WAITING_FOR_BITMAPS);
+
+                break;
+
+            case STARTING:
+                // Since live backup is a single synchronous VDS command we can set the backup
+                // phase to READY immediately
+                if (!runLiveVmBackup()) {
+                    updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                    break;
+                }
+
+                updateVmBackupPhase(VmBackupPhase.READY);
+                log.info("Ready to start image transfers");
+                break;
+
+            case WAITING_FOR_BITMAPS:
+                // If we are performing cold backup, meaning we add volume bitmaps we are waiting for multiple
+                // storage jobs, we can only move to ready when all of them are finished.
+                // Should a command fail, the transition will be directly to endWithFailure which will set
+                // the phase to VmBackupPhase.FAILED.
+                if (getParameters().getAddBitmapCommandIds()
+                        .stream()
+                        .allMatch(guid -> !commandCoordinatorUtil.getCommandStatus(guid).isDuringExecution())) {
+                    log.info("Ready to start image transfers");
+                    updateVmBackupPhase(VmBackupPhase.READY);
+                }
+
                 break;
 
             case READY:
@@ -348,7 +376,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         return returnValue != null && returnValue.getSucceeded();
     }
 
-    private boolean runColdVmBackup() {
+    private boolean startAddBitmapJobs() {
         lockDisks();
         setHostForColdBackupOperation();
 
@@ -380,13 +408,19 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             parameters.setParentCommand(getActionType());
             parameters.setParentParameters(getParameters());
 
+            // Set the commandId manually so we can save it in the list of commands
+            // we want to check performNextOperation
+            parameters.setCommandId(Guid.newGuid());
+
             ActionReturnValue returnValue = runInternalActionWithTasksContext(ActionType.AddVolumeBitmap, parameters);
             if (!returnValue.getSucceeded()) {
                 log.error("Failed to add bitmap to disk '{}'", diskImage.getId());
                 return false;
             }
+            getParameters().getAddBitmapCommandIds().add(parameters.getCommandId());
         }
         updateVmBackupCheckpoint();
+
         return true;
     }
 
