@@ -276,7 +276,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         }
 
         // For live VM backup, scratch disks should be created and prepared for each disk in the backup.
-        VmBackupPhase nextPhase = isLiveBackup() ? VmBackupPhase.CREATING_SCRATCH_DISKS : VmBackupPhase.STARTING;
+        // For cold VM backup, volume bitmaps need to be added
+        VmBackupPhase nextPhase = isLiveBackup() ? VmBackupPhase.CREATING_SCRATCH_DISKS : VmBackupPhase.ADDING_BITMAPS;
         updateVmBackupPhase(nextPhase);
 
         persistCommandIfNeeded();
@@ -307,14 +308,33 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 }
                 break;
 
-            case STARTING:
-                boolean isBackupSucceeded = isLiveBackup() ? runLiveVmBackup() : runColdVmBackup();
-                if (isBackupSucceeded) {
-                    updateVmBackupPhase(VmBackupPhase.READY);
-                    log.info("Ready to start image transfers");
-                } else {
+            case ADDING_BITMAPS:
+                if (!startAddBitmapJobs()) {
                     updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                    break;
                 }
+
+                log.info("Waiting for add bitmaps jobs completion");
+                updateVmBackupPhase(VmBackupPhase.WAITING_FOR_BITMAPS);
+
+                break;
+
+            case STARTING:
+                if (!runLiveVmBackup()) {
+                    updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                    break;
+                }
+
+                // Since live backup is a single synchronous VDS command we can set the backup
+                // phase to READY immediately
+                updateVmBackupPhase(VmBackupPhase.READY);
+                log.info("Ready to start image transfers");
+                break;
+
+            case WAITING_FOR_BITMAPS:
+                updateVmBackupPhase(VmBackupPhase.READY);
+                log.info("Ready to start image transfers");
+
                 break;
 
             case READY:
@@ -343,7 +363,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         return returnValue != null && returnValue.getSucceeded();
     }
 
-    private boolean runColdVmBackup() {
+    private boolean startAddBitmapJobs() {
         lockDisks();
         setHostForColdBackupOperation();
 
@@ -382,6 +402,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             }
         }
         updateVmBackupCheckpoint();
+
         return true;
     }
 
