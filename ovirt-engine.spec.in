@@ -281,6 +281,9 @@ BuildRequires:	javapackages-local
 # backend
 BuildRequires:	%{name}-extensions-api >= 1.0.1
 
+# findbugs filter
+BuildRequires:	maven-surefire-plugin
+
 Requires(pre):	shadow-utils
 
 %if %{rhv_build}
