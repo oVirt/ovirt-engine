@@ -441,12 +441,14 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         cleanDisksBackupModeIfSupported();
         freeLock();
         unlockDisks();
-        updateVmBackupPhase(phase);
 
         // Remove the created scratch disks.
         if (!getParameters().getScratchDisksMap().isEmpty()) {
             removeScratchDisks();
         }
+
+        // At this point the lock taken by RemoveScratchDisksCommand should be released
+        updateVmBackupPhase(phase);
     }
 
     private void removeScratchDisks() {
