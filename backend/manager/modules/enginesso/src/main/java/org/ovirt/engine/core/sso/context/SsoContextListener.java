@@ -2,6 +2,7 @@ package org.ovirt.engine.core.sso.context;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.security.cert.CertificateFactory;
 
 import javax.enterprise.inject.Instance;
@@ -38,12 +39,17 @@ public class SsoContextListener implements ServletContextListener {
 
         SsoContext ssoContext = new SsoContext();
         ssoContext.setSsoExtensionsManager(new SsoExtensionsManager(localConfig));
-        ssoContext.init(localConfig);
+
+        try {
+            ssoContext.init(localConfig);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Unable to build valid URLs for the SsoContext", e);
+        }
+
         ssoContext.setSsoClientRegistry(ssoClientRegistry.get());
         ssoContext.setScopeDependencies(ssoDao.get().getAllSsoScopeDependencies());
         ssoContext.setSsoDefaultProfile(AuthenticationService.getDefaultProfile(ssoContext.getSsoExtensionsManager()));
         ssoContext.setSsoProfiles(AuthenticationService.getAvailableProfiles(ssoContext.getSsoExtensionsManager()));
-        // required in login.jsp
         ssoContext.setSsoProfilesSupportingPasswd(
                 AuthenticationService.getAvailableProfilesSupportingPasswd(ssoContext.getSsoExtensionsManager()));
         ssoContext.setSsoProfilesSupportingPasswdChange(

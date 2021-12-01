@@ -21,6 +21,10 @@ public class URLBuilderTest {
             new URLBuilder("http://www.google.com", "/x").build()
         );
         assertEquals(
+            "http://www.google.com/x",
+            new URLBuilder("http://www.google.com", "x").build()
+        );
+        assertEquals(
             "http://www.google.com/test1?a=b&c=d",
             new URLBuilder("http://www.google.com/test1?")
                 .addParameter("a", "b")

@@ -89,14 +89,15 @@ public class OpenIdTokenServlet extends OAuthTokenServlet {
             if (credentials != null) {
                 profile = credentials.getProfile() == null ? "N/A" : credentials.getProfile();
             }
-            throw new AuthenticationException(String.format(
-                    ssoContext.getLocalizationUtils()
-                            .localize(
+            throw new AuthenticationException(
+                    SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER_IN_DOMAIN,
+                    String.format(
+                            ssoContext.getLocalizationUtils().localize(
                                     SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER_IN_DOMAIN,
                                     (Locale) request.getAttribute(SsoConstants.LOCALE)),
-                    credentials == null ? "N/A" : credentials.getUsername(),
-                    profile,
-                    ex.getMessage()));
+                            credentials == null ? "N/A" : credentials.getUsername(),
+                            profile,
+                            ex.getMessage()));
         }
     }
 

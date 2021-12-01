@@ -53,7 +53,19 @@ public class URLBuilder {
 
         ret.append(base);
         if (suffix != null) {
-            ret.append(suffix);
+            if (base.endsWith("/")) {
+                if (suffix.startsWith("/")) {
+                    ret.append(suffix.substring(1));
+                } else {
+                    ret.append(suffix);
+                }
+            } else {
+                if (suffix.startsWith("/")) {
+                    ret.append(suffix);
+                } else {
+                    ret.append("/").append(suffix);
+                }
+            }
         }
         boolean addAmp = false;
         if (!parameters.isEmpty()) {

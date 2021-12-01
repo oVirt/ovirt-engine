@@ -1,10 +1,16 @@
 <%@ page pageEncoding="UTF-8" session="true" %>
+<%@ page import="org.ovirt.engine.core.sso.api.SsoConstants" %>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="obrand" uri="obrand" %>
+<%@ taglib prefix="sso" tagdir="/WEB-INF/tags" %>
+
 <fmt:setLocale value="${locale}" />
 <fmt:setBundle basename="sso-messages" var="loginpage" />
+<sso:getContext var="ssoContext" locale="ssoLocale" />
+<sso:getSession var="ssoSession" />
 
 <!DOCTYPE html>
 <html>
@@ -22,14 +28,12 @@
     <script src="retain-fragment.js" type="text/javascript"></script>
 </head>
 <body class="ovirt-container">
-    <c:set var="ssoSession" value="${sessionScope['ovirt-ssoSession']}" />
-
     <c:if test="${ssoSession.status == 'authenticated'}">
         <c:redirect url="/interactive-login" />
     </c:if>
 
     <c:if test="${ssoSession.clientId == null}">
-        <c:redirect url="${applicationScope['ovirt-ssoContext'].engineUrl}" />
+        <c:redirect url="${ssoContext.engineUrl}" />
     </c:if>
 
     <c:if test="${ssoSession.reauthenticate == true}">
@@ -45,7 +49,7 @@
         <div class="pf-c-login__container">
 
             <header class="pf-c-login__header">
-                <a href="${applicationScope['ovirt-ssoContext'].engineUrl}" class="pf-c-brand obrand_loginPageLogoLink">
+                <a href="${ssoContext.engineUrl}" class="pf-c-brand obrand_loginPageLogoLink">
                     <div class="obrand_loginPageLogo"></div>
                 </a>
             </header>
@@ -70,6 +74,11 @@
                                 <c:set target="${ssoSession}" property="loginMessage" value="" />
                             </c:if>
                         </p>
+
+                        <c:if test="${ssoSession.loginErrorCode != null && ssoSession.loginErrorCode == SsoConstants.APP_ERROR_USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED}">
+                            <a href="${ssoContext.changePasswordUrl}"><fmt:message key="loginpage.changepasswordlink" bundle="${loginpage}" /></a>
+                            <c:set target="${ssoSession}" property="loginErrorCode" value="" />
+                        </c:if>
 
                         <input
                             type="hidden" class="pf-c-form-control" id="sessionIdToken"
@@ -96,7 +105,7 @@
                             </label>
                             <select class="pf-c-form-control" id="profile" name="profile" tabIndex="3">
                                 <c:forEach
-                                    items="${applicationScope['ovirt-ssoContext'].ssoProfilesSupportingPasswd}"
+                                    items="${ssoContext.ssoProfilesSupportingPasswd}"
                                     var="profile"
                                 >
                                     <c:choose>

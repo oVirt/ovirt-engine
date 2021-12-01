@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.sso.api;
 
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.sso.service.NegotiateAuthService;
 import org.ovirt.engine.core.sso.service.SsoClientsRegistry;
 import org.ovirt.engine.core.sso.service.SsoExtensionsManager;
 import org.ovirt.engine.core.sso.utils.SsoLocalConfig;
+import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,13 +41,21 @@ public class SsoContext implements Serializable {
     private Map<String, SsoSession> ssoSessionsById = new ConcurrentHashMap<>();
     private Map<String, AuthenticationProfile> profiles = null;
     private Map<String, List<String>> scopeDependenciesMap = new HashMap<>();
+
     private String engineUrl;
+    private String changePasswordUrl;
     private Certificate engineCertificate;
+
     private static final Logger log = LoggerFactory.getLogger(SsoContext.class);
 
-    public void init(SsoLocalConfig ssoLocalConfig) {
+    public void init(SsoLocalConfig ssoLocalConfig) throws MalformedURLException {
         this.ssoLocalConfig = ssoLocalConfig;
+
         engineUrl = ssoLocalConfig.getProperty("SSO_ENGINE_URL");
+        changePasswordUrl = new URLBuilder(
+                ssoLocalConfig.getProperty("ENGINE_SSO_AUTH_URL"),
+                SsoConstants.INTERACTIVE_CHANGE_PASSWD_FORM_URI).build();
+
         createProfiles();
     }
 
@@ -214,6 +224,10 @@ public class SsoContext implements Serializable {
 
     public String getEngineUrl() {
         return engineUrl;
+    }
+
+    public String getChangePasswordUrl() {
+      return changePasswordUrl;
     }
 
     public void setScopeDependencies(Map<String, List<String>> scopeDependenciesMap) {

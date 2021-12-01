@@ -179,14 +179,15 @@ public class OAuthTokenServlet extends HttpServlet {
             if (credentials != null) {
                 profile = credentials.getProfile() == null ? "N/A" : credentials.getProfile();
             }
-            throw new AuthenticationException(String.format(
-                    ssoContext.getLocalizationUtils()
-                            .localize(
+            throw new AuthenticationException(
+                    SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER_IN_DOMAIN,
+                    String.format(
+                            ssoContext.getLocalizationUtils().localize(
                                     SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER_IN_DOMAIN,
                                     (Locale) request.getAttribute(SsoConstants.LOCALE)),
-                    credentials == null ? "N/A" : credentials.getUsername(),
-                    profile,
-                    ex.getMessage()));
+                            credentials == null ? "N/A" : credentials.getUsername(),
+                            profile,
+                            ex.getMessage()));
         }
     }
 
@@ -251,18 +252,18 @@ public class OAuthTokenServlet extends HttpServlet {
                 SsoService.sendJsonData(response, buildResponse(ssoSession));
             } else {
                 throw new AuthenticationException(
-                        ssoContext.getLocalizationUtils()
-                                .localize(
-                                        SsoConstants.APP_ERROR_AUTHENTICATION_FAILED,
-                                        (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                        SsoConstants.APP_ERROR_AUTHENTICATION_FAILED,
+                        ssoContext.getLocalizationUtils().localize(
+                                SsoConstants.APP_ERROR_AUTHENTICATION_FAILED,
+                                (Locale) request.getAttribute(SsoConstants.LOCALE)));
             }
         } catch (Exception ex) {
             throw new AuthenticationException(
+                    SsoConstants.APP_ERROR_AUTHENTICATION_FAILED,
                     String.format(
-                            ssoContext.getLocalizationUtils()
-                                    .localize(
-                                            SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER,
-                                            (Locale) request.getAttribute(SsoConstants.LOCALE)),
+                            ssoContext.getLocalizationUtils().localize(
+                                    SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER,
+                                    (Locale) request.getAttribute(SsoConstants.LOCALE)),
                             ex.getMessage()));
         }
     }

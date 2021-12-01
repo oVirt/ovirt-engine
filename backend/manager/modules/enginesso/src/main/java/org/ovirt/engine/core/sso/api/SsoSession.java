@@ -42,6 +42,7 @@ public class SsoSession implements Serializable, Cloneable {
     private HttpSession httpSession;
     private ExtMap authRecord;
     private ExtMap principalRecord;
+    private String loginErrorCode;
     private String loginMessage;
     private String changePasswdMessage;
     private String state;
@@ -249,6 +250,14 @@ public class SsoSession implements Serializable, Cloneable {
 
     public Date getAuthTime() {
         return authTime;
+    }
+
+    public String getLoginErrorCode() {
+      return loginErrorCode;
+    }
+
+    public void setLoginErrorCode(String loginErrorCode) {
+      this.loginErrorCode = loginErrorCode;
     }
 
     public String getLoginMessage() {
