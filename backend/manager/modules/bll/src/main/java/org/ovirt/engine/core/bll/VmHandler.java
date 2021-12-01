@@ -1571,9 +1571,17 @@ public class VmHandler implements BackendService {
     }
 
     public void updateToQ35(VmStatic oldVm,
+                            VmStatic newVm,
+                            Cluster cluster,
+                            CompensationContext compensationContext) {
+        updateToQ35(oldVm, newVm, cluster, compensationContext, false);
+    }
+
+    public void updateToQ35(VmStatic oldVm,
             VmStatic newVm,
             Cluster cluster,
-            CompensationContext compensationContext) {
+            CompensationContext compensationContext,
+            boolean forceVmStaticUpdate) {
 
         if (newVm.getBiosType() == BiosType.I440FX_SEA_BIOS
                 && cluster.getBiosType().getChipsetType() == ChipsetType.Q35
@@ -1581,7 +1589,7 @@ public class VmHandler implements BackendService {
             newVm.setBiosType(BiosType.Q35_SEA_BIOS);
         }
 
-        if (oldVm.getBiosType() != newVm.getBiosType()) {
+        if (forceVmStaticUpdate || oldVm.getBiosType() != newVm.getBiosType()) {
             VmManager vmManager = resourceManager.getVmManager(newVm.getId());
             vmManager.update(newVm);
 
