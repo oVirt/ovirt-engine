@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -144,7 +145,11 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
 
         setOS(AsyncDataProvider.getInstance().getOsName(vm.getVmOsId()));
 
-        setDefaultDisplayType(translator.translate(vm.getDefaultDisplayType()));
+        if (vm.getOrigin() == null || vm.getOrigin() == OriginType.VMWARE) {
+            setDefaultDisplayType(translator.translate(null));
+        } else {
+            setDefaultDisplayType(translator.translate(vm.getDefaultDisplayType()));
+        }
 
         setIsHighlyAvailable(vm.isAutoStartup());
 

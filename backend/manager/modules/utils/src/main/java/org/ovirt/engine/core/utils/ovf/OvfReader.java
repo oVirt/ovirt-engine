@@ -557,8 +557,6 @@ public abstract class OvfReader implements IOvfBuilder {
         }
         vmBase.setClusterCompatibilityVersionOrigin(originVersion);
 
-        // Note: the fetching of 'default display type' should happen before reading
-        // the hardware section
         consumeReadProperty(content,
                 getDefaultDisplayTypeStringRepresentation(),
                 val -> vmBase.setDefaultDisplayType(DisplayType.forValue(Integer.parseInt(val))));
