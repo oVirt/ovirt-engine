@@ -4,7 +4,7 @@
 #
 # ovirt_build_extra_flags
 # ovirt_build_ut
-%if "@MILESTONE@"!="" && 0%{?ovirt_build_minimal:1}
+%if "@MILESTONE@"=="" && 0%{!?ovirt_build_minimal:1}
 %global ovirt_build_minimal 1
 %endif
 %if 0%{?ovirt_build_user_agent:1}
