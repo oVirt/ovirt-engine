@@ -877,12 +877,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     }
 
     @Override
-    protected void onSelectedItemChanged() {
-        super.onSelectedItemChanged();
-        updateActionAvailability();
-    }
-
-    @Override
     protected void updateDetailsAvailability() {
         if (getSelectedItem() != null) {
             StorageDomain storage = getSelectedItem();
@@ -926,9 +920,15 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     }
 
     @Override
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
+        fireModelChangeRelevantForActionsEvent();
+    }
+
+    @Override
     protected void selectedItemsChanged() {
         super.selectedItemsChanged();
-        updateActionAvailability();
+        fireModelChangeRelevantForActionsEvent();
     }
 
     @Override
@@ -936,8 +936,17 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         super.selectedItemPropertyChanged(sender, e);
 
         if (e.propertyName.equals("storage_domain_shared_status")) { //$NON-NLS-1$
-            updateActionAvailability();
+            fireModelChangeRelevantForActionsEvent();
         }
+    }
+
+    @Override
+    protected void onModelChangeRelevantForActions() {
+        // NOTE: Plugin API buttons listen for this event when they are added.  Nothing
+        //       special needs to be done for them to be updated as long as the event
+        //       is fired properly.
+        super.onModelChangeRelevantForActions();
+        updateActionAvailability();
     }
 
     private void updateActionAvailability() {
