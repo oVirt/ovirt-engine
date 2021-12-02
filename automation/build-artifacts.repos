@@ -1,4 +1,4 @@
-ovirt-master-tested,https://resources.ovirt.org/repos/ovirt/tested/master/rpm/el8
+ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-8-$basearch/
 #isort
 EL8_collection,https://copr-be.cloud.fedoraproject.org/results/sbonazzo/EL8_collection/epel-8-$basearch/
 # CS8 doesn't contain all build utilities
