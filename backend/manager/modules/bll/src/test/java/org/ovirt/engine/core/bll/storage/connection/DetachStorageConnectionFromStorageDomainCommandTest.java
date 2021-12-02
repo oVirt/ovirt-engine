@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class DetachStorageConnectionFromStorageDomainCommandTest extends BaseCommandTest {
@@ -48,6 +49,8 @@ public class DetachStorageConnectionFromStorageDomainCommandTest extends BaseCom
 
     @Mock
     LunDao lunDao;
+    @Mock
+    StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
 
     @BeforeEach
     public void init() {
