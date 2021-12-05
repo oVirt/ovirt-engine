@@ -34,6 +34,10 @@
     state: absent
   when: node_host|bool
 
+- name: Get installed version of vdsm
+  set_fact:
+    previous_vdsm_package: "{{ ansible_facts.packages['vdsm'] | first }}"
+
 - name: Upgrade packages
   yum:
     name: '*'
@@ -110,3 +114,41 @@
   when:
     - el_ver|int >= 8
     - lvm_filter_result.rc != 0
+
+- name: Gather packages facts
+  package_facts:
+    manager: auto
+
+- name: Get upgraded version of vdsm
+  set_fact:
+    upgraded_vdsm_package: "{{ ansible_facts.packages['vdsm'] | first }}"
+
+- name: Clean up no longer supported abrt integration
+  block:
+
+  - name: Check existence of custom abrt coredump configuration
+    stat:
+      path: /etc/sysctl.d/50-coredump.conf
+    register: link
+
+  - name: Remove custom abrt coredump configuration
+    file:
+      path: /etc/sysctl.d/50-coredump.conf
+      state: absent
+    when:
+      - link.stat.islnk is defined
+      - link.stat.lnk_source=="/dev/null"
+
+  - name: Remove abrt packages
+    dnf:
+      name:
+        - abrt*
+      state: absent
+    when: "'abrt' in ansible_facts.packages"
+
+  - name: Reload coredump pattern kernel configuration
+    command: /sbin/sysctl -p --system
+
+  when:
+    -  previous_vdsm_package.version is version('4.50', '<')
+    -  upgraded_vdsm_package.version is version('4.50', '>=')
