@@ -295,7 +295,7 @@ public interface UIMessages extends Messages {
 
     String haActive(int score);
 
-    String hugePages(String size, String amount);
+    String hugePages(String size, String free, String total);
 
     String volumeProfilingStatsTitle(String volumeName);
 

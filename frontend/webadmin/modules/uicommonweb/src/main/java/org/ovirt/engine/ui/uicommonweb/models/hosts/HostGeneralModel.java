@@ -1026,7 +1026,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
                     vds.getHugePages().stream().map(
                                     page -> messages.hugePages(
                                             String.valueOf(page.getSizeKB()),
-                                            String.valueOf(page.getFree() != null ? page.getFree() : constants.notAvailableLabel()))
+                                            String.valueOf(page.getFree() != null ? page.getFree() : constants.notAvailableLabel()),
+                                            String.valueOf(page.getTotal() != null ? page.getTotal() : constants.notAvailableLabel()))
                             ).collect(Collectors.joining(", "))); //$NON-NLS-1$
         } else {
             setHugePages(constants.notAvailableLabel());
