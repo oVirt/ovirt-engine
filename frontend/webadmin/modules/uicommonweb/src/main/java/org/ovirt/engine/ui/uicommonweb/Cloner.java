@@ -215,6 +215,33 @@ public final class Cloner {
         vm.setSmallIconId(instance.getSmallIconId());
         vm.setLargeIconId(instance.getLargeIconId());
         vm.setVirtioScsiMultiQueues(instance.getVirtioScsiMultiQueues());
+        vm.setCpuPinning(instance.getCpuPinning());
+        vm.setCpuPinningPolicy(instance.getCpuPinningPolicy());
+        vm.setNumOfIoThreads(instance.getNumOfIoThreads());
+        vm.setBalloonEnabled(instance.isBalloonEnabled());
+        vm.setMultiQueuesEnabled(instance.isMultiQueuesEnabled());
+        vm.setCpuShares(instance.getCpuShares());
+        vm.setDeleteProtected(instance.isDeleteProtected());
+        vm.setSmartcardEnabled(instance.isSmartcardEnabled());
+        vm.setConsoleDisconnectAction(instance.getConsoleDisconnectAction());
+        vm.setConsoleDisconnectActionDelay(instance.getConsoleDisconnectActionDelay());
+        vm.setSsoMethod(instance.getSsoMethod());
+        vm.setResumeBehavior(instance.getResumeBehavior());
+        vm.setMigrationPolicyId(instance.getMigrationPolicyId());
+        vm.setUseTscFrequency(instance.getUseTscFrequency());
+        vm.setTunnelMigration(instance.getTunnelMigration());
+        // TODO This should be also deep cloned
+        vm.setvNumaNodeList(instance.getvNumaNodeList());
+        vm.setClusterSpiceProxy(instance.getClusterSpiceProxy());
+        vm.setVmPoolSpiceProxy(instance.getVmPoolSpiceProxy());
+        vm.setNextRunChangedFields(instance.getNextRunChangedFields());
+        vm.setNextRunConfigurationExists(instance.isNextRunConfigurationExists());
+        vm.setPreviewSnapshot(instance.isPreviewSnapshot());
+        vm.setClusterCpuName(instance.getClusterCpuName());
+        vm.setClusterCpuFlags(instance.getClusterCpuFlags());
+        vm.setClusterCpuVerb(instance.getClusterCpuVerb());
+        vm.setConfiguredCpuVerb(instance.getConfiguredCpuVerb());
+        vm.setVmExternalData(instance.getVmExternalData());
         return vm;
     }
 
