@@ -280,6 +280,8 @@ BuildRequires:	javapackages-local
 
 # backend
 BuildRequires:	%{name}-extensions-api >= 1.0.1
+# backend - aaa
+BuildRequires:	jaxb-api
 
 # findbugs filter
 BuildRequires:	maven-surefire-plugin
