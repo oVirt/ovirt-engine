@@ -885,11 +885,11 @@ public abstract class OvfReader implements IOvfBuilder {
                             DisplayType firstDisplayType = supportedGraphicsAndDisplays.get(0).getSecond();
                             vmDevice.setDevice(firstDisplayType.getDefaultVmDeviceType().getName());
                         } else {
-                            vmDevice.setDevice(VmDeviceType.QXL.getName());
+                            vmDevice.setDevice(VmDeviceType.VGA.getName());
                         }
                     }
-                } else { // default to spice if quantity not found
-                    vmDevice.setDevice(VmDeviceType.QXL.getName());
+                } else { // default to VNC if quantity not found
+                    vmDevice.setDevice(VmDeviceType.VGA.getName());
                 }
             } else {
                 vmDevice.setDevice(VmDeviceType.getoVirtDevice(Integer.parseInt(resourceType)).getName());

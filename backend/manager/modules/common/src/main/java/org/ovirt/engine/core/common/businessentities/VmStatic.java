@@ -41,7 +41,7 @@ public class VmStatic extends VmBase {
         setNiceLevel(0);
         setCpuShares(0);
         setDefaultBootSequence(BootSequence.C);
-        setDefaultDisplayType(DisplayType.qxl);
+        setDefaultDisplayType(DisplayType.vga);
         setVmType(VmType.Server);
         vmtGuid = Guid.Empty;
     }
