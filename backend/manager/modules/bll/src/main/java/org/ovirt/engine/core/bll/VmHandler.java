@@ -1450,10 +1450,19 @@ public class VmHandler implements BackendService {
 
         if (defaultDisplayType == null) {
             if (!displayGraphicsSupport.isEmpty()) {// when not found otherwise, let's take osinfo's record as the default
-                Map.Entry<DisplayType, Set<GraphicsType>> entry = displayGraphicsSupport.entrySet().iterator().next();
-                defaultDisplayType = entry.getKey();
+                for (Map.Entry<DisplayType, Set<GraphicsType>> entry : displayGraphicsSupport.entrySet()) {
+                    if (defaultDisplayType == null) {
+                        // prioritize first display type based on osinfo
+                        defaultDisplayType = entry.getKey();
+                    }
+                    if (entry.getKey() != DisplayType.qxl) {
+                        // since QXL is deprecated, the first non-QXL display type we see, take it and stop iterating
+                        defaultDisplayType = entry.getKey();
+                        break;
+                    }
+                }
             } else {// no osinfo record
-                defaultDisplayType = DisplayType.qxl;
+                defaultDisplayType = DisplayType.vga;
             }
         }
 

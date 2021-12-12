@@ -51,7 +51,7 @@ public class AddGraphicsAndVideoDevicesCommand extends AddGraphicsDeviceCommand 
             return;
         }
         if (vmStatic.getDefaultDisplayType() == DisplayType.none) {
-            vmStatic.setDefaultDisplayType(DisplayType.qxl);
+            vmStatic.setDefaultDisplayType(DisplayType.vga);
             resourceManager.getVmManager(getVmBaseId()).update(vmStatic);
         }
 
@@ -64,7 +64,7 @@ public class AddGraphicsAndVideoDevicesCommand extends AddGraphicsDeviceCommand 
             return;
         }
         if (vmTemplate.getDefaultDisplayType() == DisplayType.none) {
-            vmTemplate.setDefaultDisplayType(DisplayType.qxl);
+            vmTemplate.setDefaultDisplayType(DisplayType.vga);
             vmTemplateDao.update(vmTemplate);
         }
 

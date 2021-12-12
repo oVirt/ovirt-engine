@@ -426,7 +426,7 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
         defaultBootSequence = BootSequence.C;
         migrationSupport = MigrationSupport.MIGRATABLE;
         vmType = VmType.Server;
-        defaultDisplayType = DisplayType.qxl;
+        defaultDisplayType = DisplayType.vga;
         ssoMethod = SsoMethod.GUEST_AGENT;
         spiceFileTransferEnabled = true;
         spiceCopyPasteEnabled = true;

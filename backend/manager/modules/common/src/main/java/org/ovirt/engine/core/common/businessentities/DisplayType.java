@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 public enum DisplayType {
     @Deprecated
     cirrus(VmDeviceType.CIRRUS),
+    @Deprecated
     qxl(VmDeviceType.QXL),
     vga(VmDeviceType.VGA),
     bochs(VmDeviceType.BOCHS),
