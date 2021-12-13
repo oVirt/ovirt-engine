@@ -330,7 +330,7 @@ public class NumaPinningHelper {
 
         public void setHugePages(List<HugePage> hugePages) {
             this.hugePages = hugePages.stream()
-                    .map(page -> new HugePage(page.getSizeKB(), page.getAmount()))
+                    .map(page -> new HugePage(page.getSizeKB(), page.getFree()))
                     .collect(Collectors.toList());
         }
     }

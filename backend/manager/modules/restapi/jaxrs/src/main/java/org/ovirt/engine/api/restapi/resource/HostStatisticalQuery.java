@@ -59,7 +59,7 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
 
         if (s != null && s.getHugePages() != null) {
             s.getHugePages().stream()
-                .filter(page -> page.getAmount() != null)
+                .filter(page -> page.getFree() != null)
                 .map(this::createHugePagesFree)
                 .forEach(statistics::add);
         }
@@ -70,7 +70,7 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
     private Statistic createHugePagesFree(HugePage page) {
         return setDatum(
                 create("hugepages." + page.getSizeKB() + ".free", "Amount of free huge pages of the given size", GAUGE, NONE, INTEGER),
-                page.getAmount());
+                page.getFree());
     }
 
     public Statistic adopt(Statistic statistic) {

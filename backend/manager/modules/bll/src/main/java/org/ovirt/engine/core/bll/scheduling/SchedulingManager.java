@@ -496,7 +496,7 @@ public class SchedulingManager implements BackendService {
             statistics.setMemFree(statistics.getMemFree() - consumption.getMemoryMB());
 
             for (HugePage hugePage : statistics.getHugePages()) {
-                hugePage.setAmount(hugePage.getAmount() - consumption.getHugePages().getOrDefault(hugePage.getSizeKB(), 0));
+                hugePage.setFree(hugePage.getFree() - consumption.getHugePages().getOrDefault(hugePage.getSizeKB(), 0));
             }
         }
     }

@@ -8,14 +8,14 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 public class HugePage implements Serializable {
     private static final long serialVersionUID = -7900304010567972606L;
     private Integer sizeKB;
-    private Integer amount;
+    private Integer free;
 
     public HugePage() {
     }
 
-    public HugePage(Integer sizeKB, Integer amount) {
+    public HugePage(Integer sizeKB, Integer free) {
         this.sizeKB = sizeKB;
-        this.amount = amount;
+        this.free = free;
     }
 
     @Override
@@ -28,14 +28,14 @@ public class HugePage implements Serializable {
         }
         HugePage other = (HugePage) obj;
         return Objects.equals(sizeKB, other.sizeKB)
-                && Objects.equals(amount, other.amount);
+                && Objects.equals(free, other.free);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(
                 sizeKB,
-                amount
+                free
         );
     }
 
@@ -47,19 +47,19 @@ public class HugePage implements Serializable {
         this.sizeKB = sizeKB;
     }
 
-    public Integer getAmount() {
-        return amount;
+    public Integer getFree() {
+        return free;
     }
 
-    public void setAmount(Integer amount) {
-        this.amount = amount;
+    public void setFree(Integer free) {
+        this.free = free;
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
                 .append("sizeKB", getSizeKB())
-                .append("amount", getAmount())
+                .append("free", getFree())
                 .build();
     }
 }
