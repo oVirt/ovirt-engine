@@ -200,6 +200,7 @@ public final class VdsProperties {
     public static final String transparent_huge_pages = "transparentHugePages";
     public static final String hugepages = "hugepages";
     public static final String free_hugepages = "vm.free_hugepages";
+    public static final String total_hugepages = "nr_hugepages";
 
     public static final String exit_code = "exitCode";
     public static final String exit_message = "exitMessage";

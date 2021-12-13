@@ -1334,12 +1334,13 @@ public class VdsBrokerObjectsBuilder {
             if (hugepages instanceof Map) {
                 Map<String, Map<String, String>> hugepagesMap = (Map<String, Map<String, String>>) hugepages;
 
-                List<HugePage> parsedHugePages = hugepagesMap.entrySet().stream().map(entry ->
-                        new HugePage(
+                List<HugePage> parsedHugePages = hugepagesMap.entrySet()
+                        .stream()
+                        .map(entry -> new HugePage(
                                 Integer.parseInt(entry.getKey()),
-                                assignIntValue(entry.getValue(), VdsProperties.free_hugepages)
-                        )
-                ).collect(Collectors.toList());
+                                assignIntValue(entry.getValue(), VdsProperties.free_hugepages),
+                                assignIntValue(entry.getValue(), VdsProperties.total_hugepages)))
+                        .collect(Collectors.toList());
 
                 vds.setHugePages(parsedHugePages);
             }
