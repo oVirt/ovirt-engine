@@ -176,14 +176,30 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
 
     protected void setDefaultBiosType() {
         Cluster cluster = getCluster();
-        if (cluster.getCompatibilityVersion() != null
-                && cluster.getCompatibilityVersion().greaterOrEquals(Version.v4_4)
-                && cluster.getArchitecture() != null
-                && cluster.getArchitecture().getFamily() == ArchitectureType.x86) {
+        if (isVersionGreater(cluster, Version.v4_6)
+                && isX86Architecture(cluster)) {
+            cluster.setBiosType(BiosType.Q35_OVMF);
+        } else if (isVersionGreaterOrEquals(cluster, Version.v4_4)
+                && isX86Architecture(cluster)) {
             cluster.setBiosType(BiosType.Q35_SEA_BIOS);
         } else {
             cluster.setBiosType(BiosType.I440FX_SEA_BIOS);
         }
+    }
+
+    private boolean isVersionGreater(Cluster cluster, Version version) {
+        return cluster.getCompatibilityVersion() != null
+                && cluster.getCompatibilityVersion().greater(version);
+    }
+
+    private boolean isVersionGreaterOrEquals(Cluster cluster, Version version) {
+        return cluster.getCompatibilityVersion() != null
+                && cluster.getCompatibilityVersion().greaterOrEquals(version);
+    }
+
+    private boolean isX86Architecture(Cluster cluster) {
+        return cluster.getArchitecture() != null
+                && cluster.getArchitecture().getFamily() == ArchitectureType.x86;
     }
 
     private ClusterPolicy getClusterPolicy(final Cluster cluster) {

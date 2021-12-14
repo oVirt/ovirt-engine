@@ -1589,10 +1589,29 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         } else {
             getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getEffectiveVersion());
         }
+
         if (architecture == ArchitectureType.undefined || (!getBiosType().getIsChangable() && getBiosType().getSelectedItem() == null)) {
             getBiosType().setSelectedItem(null);
             return;
         }
+
+        if (getIsNew() &&
+                getBiosType().getIsChangable() &&
+                getBiosType().getSelectedItem() != null &&
+                Version.v4_6.less(getEffectiveVersion())) {
+            getBiosType().setSelectedItem(BiosType.Q35_OVMF);
+            return;
+        }
+
+        if (getIsEdit() &&
+                getBiosType().getIsChangable() &&
+                getBiosType().getSelectedItem() != null &&
+                !getEffectiveVersion().equals(getEntity().getCompatibilityVersion()) &&
+                Version.v4_6.less(getEffectiveVersion())) {
+            getBiosType().setSelectedItem(BiosType.Q35_OVMF);
+            return;
+        }
+
         if (getIsEdit() && architecture.equals(getEntity().getArchitecture())
                 && getEffectiveVersion().equals(getEntity().getCompatibilityVersion())) {
             getBiosType().setSelectedItem(getEntity().getBiosType());
