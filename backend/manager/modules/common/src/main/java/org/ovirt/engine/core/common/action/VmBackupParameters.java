@@ -1,9 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -26,7 +24,6 @@ public class VmBackupParameters extends VmOperationParameterBase implements Seri
     // Map between the backed-up disk ID to the created scratch disk image
     // and the path to it after the scratch disk prepared.
     private Map<Guid, Pair<DiskImage, String>> scratchDisksMap = new HashMap<>();
-    private List<Guid> addBitmapCommandIds = new ArrayList<>();
 
     public VmBackupParameters() {
     }
@@ -79,14 +76,5 @@ public class VmBackupParameters extends VmOperationParameterBase implements Seri
     @Override
     public Guid getVmId() {
         return getVmBackup() != null ? getVmBackup().getVmId() : null;
-    }
-
-
-    public List<Guid> getAddBitmapCommandIds() {
-        return addBitmapCommandIds;
-    }
-
-    public void setAddBitmapCommandIds(List<Guid> addBitmapCommandIds) {
-        this.addBitmapCommandIds = addBitmapCommandIds;
     }
 }

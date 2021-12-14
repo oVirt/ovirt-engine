@@ -325,28 +325,20 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 break;
 
             case STARTING:
-                // Since live backup is a single synchronous VDS command we can set the backup
-                // phase to READY immediately
                 if (!runLiveVmBackup()) {
                     updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
                     break;
                 }
 
+                // Since live backup is a single synchronous VDS command we can set the backup
+                // phase to READY immediately
                 updateVmBackupPhase(VmBackupPhase.READY);
                 log.info("Ready to start image transfers");
                 break;
 
             case WAITING_FOR_BITMAPS:
-                // If we are performing cold backup, meaning we add volume bitmaps we are waiting for multiple
-                // storage jobs, we can only move to ready when all of them are finished.
-                // Should a command fail, the transition will be directly to endWithFailure which will set
-                // the phase to VmBackupPhase.FAILED.
-                if (getParameters().getAddBitmapCommandIds()
-                        .stream()
-                        .allMatch(guid -> !commandCoordinatorUtil.getCommandStatus(guid).isDuringExecution())) {
-                    log.info("Ready to start image transfers");
-                    updateVmBackupPhase(VmBackupPhase.READY);
-                }
+                updateVmBackupPhase(VmBackupPhase.READY);
+                log.info("Ready to start image transfers");
 
                 break;
 
@@ -408,16 +400,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             parameters.setParentCommand(getActionType());
             parameters.setParentParameters(getParameters());
 
-            // Set the commandId manually so we can save it in the list of commands
-            // we want to check performNextOperation
-            parameters.setCommandId(Guid.newGuid());
-
             ActionReturnValue returnValue = runInternalActionWithTasksContext(ActionType.AddVolumeBitmap, parameters);
             if (!returnValue.getSucceeded()) {
                 log.error("Failed to add bitmap to disk '{}'", diskImage.getId());
                 return false;
             }
-            getParameters().getAddBitmapCommandIds().add(parameters.getCommandId());
         }
         updateVmBackupCheckpoint();
 
