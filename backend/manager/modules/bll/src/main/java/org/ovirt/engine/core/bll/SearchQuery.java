@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.config.Config;
@@ -80,6 +81,7 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkViewDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -146,6 +148,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     @Inject
     private NetworkViewDao networkViewDao;
+
+    @Inject
+    private VnicProfileViewDao vnicProfileViewDao;
 
     @Inject
     private ProviderDao providerDao;
@@ -245,6 +250,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             break;
         case Job:
             returnValue = searchJobs();
+            break;
+        case VnicProfile:
+            returnValue = searchVnicProfiles();
             break;
         default:
             log.error("Search object type not handled: {}", getParameters().getSearchTypeValue());
@@ -459,6 +467,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<NetworkView> searchNetworks() {
         return genericSearch(networkViewDao, true);
+    }
+
+    private List<VnicProfileView> searchVnicProfiles() {
+        return genericSearch(vnicProfileViewDao, true);
     }
 
     private List<Provider<?>> searchProviders() {

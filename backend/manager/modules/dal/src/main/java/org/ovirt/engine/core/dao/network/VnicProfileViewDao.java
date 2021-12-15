@@ -5,8 +5,9 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ReadDao;
+import org.ovirt.engine.core.dao.SearchDao;
 
-public interface VnicProfileViewDao extends ReadDao<VnicProfileView, Guid> {
+public interface VnicProfileViewDao extends ReadDao<VnicProfileView, Guid>, SearchDao<VnicProfileView> {
 
     /**
      * Retrieves a vnic profile.

@@ -35,6 +35,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         verbs.add(SearchObjects.IMAGE_TYPE_PLU_OBJ_NAME);
         verbs.add(SearchObjects.SESSION_PLU_OBJ_NAME);
         verbs.add(SearchObjects.JOB_PLU_OBJ_NAME);
+        verbs.add(SearchObjects.VNIC_PROFILE_PLU_OBJ_NAME);
 
         buildCompletions();
         verbs.add(SearchObjects.VM_OBJ_NAME);
@@ -53,6 +54,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         verbs.add(SearchObjects.IMAGE_TYPE_OBJ_NAME);
         verbs.add(SearchObjects.SESSION_OBJ_NAME);
         verbs.add(SearchObjects.JOB_OBJ_NAME);
+        verbs.add(SearchObjects.VNIC_PROFILE_OBJ_NAME);
 
         requiresFullTable.put(SearchObjects.VDC_USER_ROLE_SEARCH, true);
 
@@ -565,6 +567,13 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "job_id",
                             "start_time ASC",
                             false));
+                    put(SearchObjects.VNIC_PROFILE_OBJ_NAME, new EntitySearchInfo(null,
+                            new VnicProfileConditionFieldAutoCompleter(),
+                            "vnic_profiles_view",
+                            "vnic_profiles_view",
+                            "id",
+                            "name ASC",
+                            true));
                 }
             });
 
@@ -593,6 +602,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
             put(SearchObjects.PROVIDER_PLU_OBJ_NAME, SearchObjects.PROVIDER_OBJ_NAME);
             put(SearchObjects.SESSION_PLU_OBJ_NAME, SearchObjects.SESSION_OBJ_NAME);
             put(SearchObjects.JOB_PLU_OBJ_NAME, SearchObjects.JOB_OBJ_NAME);
+            put(SearchObjects.VNIC_PROFILE_PLU_OBJ_NAME, SearchObjects.VNIC_PROFILE_OBJ_NAME);
         }
     });
 

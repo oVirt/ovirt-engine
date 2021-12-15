@@ -39,9 +39,10 @@ public class MainVnicProfilePresenter extends AbstractMainWithDetailsPresenter<V
     @Inject
     public MainVnicProfilePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<VnicProfileView, VnicProfileListModel> modelProvider,
+            SearchPanelPresenterWidget<VnicProfileView, VnicProfileListModel> searchPanelPresenterWidget,
             VnicProfileBreadCrumbsPresenterWidget breadCrumbs,
             VnicProfileActionPanelPresenterWidget actionPanel) {
-        super(eventBus, view, proxy, placeManager, modelProvider, null, breadCrumbs, actionPanel);
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

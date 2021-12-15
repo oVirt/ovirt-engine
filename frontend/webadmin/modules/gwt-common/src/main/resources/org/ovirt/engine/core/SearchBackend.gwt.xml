@@ -73,6 +73,8 @@
 		<include name="searchbackend/ProviderConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/SessionConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/JobConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/VnicProfileConditionFieldAutoCompleter.java" />
+		<include name="searchbackend/VnicProfileCrossRefAutoCompleter.java" />
 		<!--======================SEARCHBACKEND/GLUSTER====================== -->
 		<include name="searchbackend/gluster/GlusterVolumeConditionFieldAutoCompleter.java" />
 		<include name="searchbackend/gluster/GlusterVolumeCrossRefAutoCompleter.java" />
