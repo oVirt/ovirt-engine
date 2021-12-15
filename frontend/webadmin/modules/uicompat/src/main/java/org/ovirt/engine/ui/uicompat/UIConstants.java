@@ -65,8 +65,6 @@ public interface UIConstants extends Constants {
 
     String setUnlimitedSpecificQuotaModeTitle();
 
-    String disableClusterCpuThreadSupportTitle();
-
     String changeCpuLevel();
 
     String changeCpuLevelWhileRunningMessage();
@@ -626,8 +624,6 @@ public interface UIConstants extends Constants {
     String youAreAboutChangeClusterCompatibilityVersionNonResponsiveHostsMsg();
 
     String youAreAboutChangeDCQuotaEnforcementMsg();
-
-    String youAreAboutChangeClusterCpuThreadSupportMsg();
 
     String youAreAboutToCreateUnlimitedSpecificQuotaMsg();
 

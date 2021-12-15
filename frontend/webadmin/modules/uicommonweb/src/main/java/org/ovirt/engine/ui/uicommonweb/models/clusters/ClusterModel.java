@@ -505,16 +505,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.privateSmtDisabled = privateSmtEnabled;
     }
 
-    private EntityModel<Boolean> privateVersionSupportsCpuThreads;
-
-    public EntityModel<Boolean> getVersionSupportsCpuThreads() {
-        return privateVersionSupportsCpuThreads;
-    }
-
-    public void setVersionSupportsCpuThreads(EntityModel<Boolean> value) {
-        privateVersionSupportsCpuThreads = value;
-    }
-
     /**
      * Mutually exclusive Resilience policy radio button
      * @see #privateMigrateOnErrorOption_YES
@@ -1263,8 +1253,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getCountThreadsAsCores().setIsChangeable(!getSmtDisabled().getEntity());
         getSmtDisabled().getEntityChangedEvent().addListener(this);
 
-        setVersionSupportsCpuThreads(new EntityModel<>(true));
-
         setOptimizeForUtilization(new EntityModel<>());
         setOptimizeForSpeed(new EntityModel<>());
         getOptimizeForUtilization().setEntity(true);
@@ -1948,8 +1936,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 populateCPUList(cpus, true);
             }
         }), version);
-
-        getVersionSupportsCpuThreads().setEntity(true);
 
         setRngSourcesCheckboxes(version);
 

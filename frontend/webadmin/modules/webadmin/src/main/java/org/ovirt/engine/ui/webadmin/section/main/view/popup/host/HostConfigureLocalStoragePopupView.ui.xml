@@ -133,7 +133,7 @@
 									<ge:EntityModelRadioButtonEditor ui:field="optimizationForDesktopEditor" />
 									<ge:EntityModelRadioButtonEditor ui:field="optimizationCustomEditor" />
 								</g:FlowPanel>
-								<g:FlowPanel ui:field="cpuThreadsPanel" addStyleNames="{style.nestedSubsequentPanel}">
+								<g:FlowPanel addStyleNames="{style.nestedSubsequentPanel}">
 									<g:Label ui:field="cpuThreadsPanelTitle" addStyleNames="{style.panelTitle}" />
 									<d:InfoIcon ui:field="cpuThreadsInfo" addStyleNames="{style.panelInfo}" />
 									<ge:EntityModelCheckBoxEditor ui:field="countThreadsAsCoresEditor" />

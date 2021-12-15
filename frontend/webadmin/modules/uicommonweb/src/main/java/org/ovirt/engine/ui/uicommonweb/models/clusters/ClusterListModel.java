@@ -623,14 +623,14 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             confirmModel.setTitle(constants.changeClusterCompatibilityVersionTitle());
             confirmModel.setHelpTag(HelpTag.change_cluster_compatibility_version);
             confirmModel.setHashName("change_cluster_compatibility_version"); //$NON-NLS-1$
-            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveConfirmCpuThreads", this); //$NON-NLS-1$
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("onSaveConfirmGenericWarnings", this); //$NON-NLS-1$
             getConfirmWindow().getCommands().add(tempVar);
             UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
             getConfirmWindow().getCommands().add(tempVar2);
 
             checkForActiveVms(model, confirmModel);
         } else {
-            onSaveConfirmCpuThreads();
+            onSaveConfirmGenericWarnings();
         }
     }
 
@@ -644,35 +644,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                     }
                     checkForNonResponsiveHosts(confirmModel);
         }));
-    }
-
-    private void onSaveConfirmCpuThreads() {
-        ClusterModel model = (ClusterModel) getWindow();
-
-        // cancel confirm window if there is one
-        cancelConfirmation();
-
-        // CPU thread support is being turned off either explicitly or via version change
-        if (!model.getVersionSupportsCpuThreads().getEntity() && model.getCountThreadsAsCores().getEntity()
-                && getSelectedItem().getCountThreadsAsCores()) {
-            ConfirmationModel confirmModel = new ConfirmationModel();
-            setConfirmWindow(confirmModel);
-            confirmModel.setTitle(ConstantsManager.getInstance()
-                    .getConstants()
-                    .disableClusterCpuThreadSupportTitle());
-            confirmModel.setHelpTag(HelpTag.disable_cpu_thread_support);
-            confirmModel.setHashName("disable_cpu_thread_support"); //$NON-NLS-1$
-            confirmModel.setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .youAreAboutChangeClusterCpuThreadSupportMsg());
-
-            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveConfirmGenericWarnings", this); //$NON-NLS-1$
-            getConfirmWindow().getCommands().add(tempVar);
-            UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
-            getConfirmWindow().getCommands().add(tempVar2);
-        } else {
-            onSaveConfirmGenericWarnings();
-        }
     }
 
     private void onSaveConfirmGenericWarnings() {
@@ -735,8 +706,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         cluster.setBiosType(model.getBiosType().getSelectedItem());
         cluster.setMaxVdsMemoryOverCommit(model.getMemoryOverCommit());
         cluster.setSmtDisabled(Boolean.TRUE.equals(model.getSmtDisabled().getEntity()));
-        cluster.setCountThreadsAsCores(Boolean.TRUE.equals(model.getVersionSupportsCpuThreads().getEntity())
-                && Boolean.TRUE.equals(model.getCountThreadsAsCores().getEntity()));
+        cluster.setCountThreadsAsCores(Boolean.TRUE.equals(model.getCountThreadsAsCores().getEntity()));
         cluster.setEnableKsm(Boolean.TRUE.equals(model.getEnableKsm().getEntity()));
         cluster.setKsmMergeAcrossNumaNodes(model.getKsmPolicyForNuma());
         cluster.setEnableBallooning(Boolean.TRUE.equals(model.getEnableBallooning().getEntity()));
@@ -1092,8 +1062,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             cancel();
         } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        } else if ("OnSaveConfirmCpuThreads".equals(command.getName())) { //$NON-NLS-1$
-            onSaveConfirmCpuThreads();
         } else if ("OnSaveConfirmGenericWarnings".equals(command.getName())) { //$NON-NLS-1$
             onSaveConfirmGenericWarnings();
         } else if ("OnSaveInternal".equals(command.getName())) { //$NON-NLS-1$

@@ -299,9 +299,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     EntityModelRadioButtonEditor optimizationCustomEditor;
 
     @UiField
-    Row cpuThreadsRow;
-
-    @UiField
     @Ignore
     Label cpuThreadsPanelTitle;
 
@@ -877,9 +874,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         updateGlusterFencingPolicyVisibility(object);
         importGlusterExplanationLabel.setVisible(object.getEnableGlusterService().getEntity()
                 && object.getIsNew());
-
-        object.getVersionSupportsCpuThreads().getEntityChangedEvent().addListener((ev, sender, args) ->
-                cpuThreadsRow.setVisible(object.getVersionSupportsCpuThreads().getEntity()));
 
         schedulerOptimizationInfoIcon.setText(SafeHtmlUtils.fromTrustedString(
                 templates.italicText(object.getSchedulerOptimizationInfoMessage()).asString()
