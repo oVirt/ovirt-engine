@@ -1117,7 +1117,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (!validate(VmValidator.validateCpuSockets(vmFromParams.getStaticData(),
                 getEffectiveCompatibilityVersion(),
-                getCluster().getArchitecture()))) {
+                getCluster().getArchitecture(),
+                osRepository))) {
             return false;
         }
 
@@ -1249,6 +1250,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 && !getVmDeviceUtils().isTpmDeviceSupported(getParameters().getVmStaticData(), getCluster())) {
             addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
             return failValidation(EngineMessage.TPM_DEVICE_REQUESTED_ON_NOT_SUPPORTED_PLATFORM);
+        }
+
+        if (!isTpmEnabled() && osRepository.requiresTpm(getParameters().getVmStaticData().getOsId())) {
+            return failValidation(EngineMessage.TPM_DEVICE_REQUIRED_BY_OS);
         }
 
         if (!validate(getNumaValidator().checkVmNumaNodesIntegrity(

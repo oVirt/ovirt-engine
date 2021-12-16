@@ -77,7 +77,7 @@ void devices() : {} {
     | ("memoryHotplug.specialBlock" booleanValue())
     | ("legacyVirtio" booleanValue())
     | ("ovirtGuestAgentChannel" booleanValue())
-    | ("tpmAllowed" booleanValue())
+    | ("tpm" tpmSupportValue())
     )
 }
 
@@ -135,6 +135,10 @@ void consoleTargetTypeValue() : {} {
 
 void q35SupportValue() : {} {
     valueSpecifier() ("true" | "insecure" | "false")
+}
+
+void tpmSupportValue() : {} {
+    valueSpecifier() ("unsupported" | "supported" | "required")
 }
 
 void valueSpecifier() : {} {

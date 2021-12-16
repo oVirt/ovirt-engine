@@ -2749,6 +2749,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
         updateSoundCard();
         updateTpmEnabled();
+        getBehavior().updateMemory();
+        getBehavior().updateTotalCpuCores();
     }
 
     private void updateIconAccordingToOs() {
@@ -3964,6 +3966,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         } else if (!AsyncDataProvider.getInstance().isTpmAllowedForOs(getOSType().getSelectedItem())) {
             getTpmEnabled().setIsChangeable(false, constants.guestOsVersionNotSupported());
             getTpmEnabled().setEntity(false);
+        } else if (AsyncDataProvider.getInstance().isTpmRequiredForOs(getOSType().getSelectedItem())) {
+            if (getBiosType().getSelectedItem() == null || !getBiosType().getSelectedItem().isOvmf()) {
+                getBiosType().setSelectedItem(BiosType.Q35_OVMF);
+            }
+            getTpmEnabled().setIsChangeable(false, constants.tpmDeviceRequired());
+            getTpmEnabled().setEntity(true);
         } else if (cluster == null || cluster.getArchitecture() == null
                 || cluster.getArchitecture().getFamily() == ArchitectureType.x86
                         && (getBiosType().getSelectedItem() == null || !getBiosType().getSelectedItem().isOvmf())) {

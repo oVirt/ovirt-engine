@@ -476,7 +476,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        List<Integer> vmOsValues = getOsValues(cluster.getArchitecture());
+        List<Integer> vmOsValues = getOsValues(cluster.getArchitecture(), getCompatibilityVersion());
 
         if (selectedOsId == null || !vmOsValues.contains(selectedOsId)) {
             updateOSValues();
@@ -1207,7 +1207,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Cluster cluster = getModel().getSelectedCluster();
 
         if (cluster != null) {
-            vmOsValues = getOsValues(cluster.getArchitecture());
+            vmOsValues = getOsValues(cluster.getArchitecture(), getCompatibilityVersion());
             Integer selectedOsId = getModel().getOSType().getSelectedItem();
             getModel().getOSType().setItems(vmOsValues);
             if (selectedOsId != null && vmOsValues.contains(selectedOsId)) {
@@ -1665,6 +1665,24 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
+    public void updateMemory() {
+        Integer memoryMb = getModel().getMemSize().getEntity();
+        AsyncDataProvider.getMinMemoryForOs(new AsyncQuery<>(minMemory -> {
+            if (memoryMb == null || memoryMb < minMemory) {
+                getModel().getMemSize().setEntity(minMemory);
+            }
+        }), getSelectedOSType(), getCompatibilityVersion());
+    }
+
+    public void updateTotalCpuCores() {
+        int cpuCores = getTotalCpuCores();
+        AsyncDataProvider.getMinCpus(new AsyncQuery<>(minCpus -> {
+            if (cpuCores < minCpus) {
+                getModel().getTotalCPUCores().setEntity(Integer.toString(minCpus));
+            }
+        }), getSelectedOSType());
+    }
+
     protected void updateSeal() {
         if (!getModel().getIsSealed().getIsAvailable()) {
             return;
@@ -1803,7 +1821,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                  || getModel().getVmType().getSelectedItem() == VmType.HighPerformance;
      }
 
-     protected List<Integer> getOsValues(ArchitectureType architectureType) {
+     protected List<Integer> getOsValues(ArchitectureType architectureType, Version version) {
          return AsyncDataProvider.getInstance().getOsIds(architectureType);
      }
 }

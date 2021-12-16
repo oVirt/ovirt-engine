@@ -266,7 +266,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (returnValue) {
             returnValue = validate(VmValidator.validateCpuSockets(getParameters().getVmTemplateData(),
                     getVmTemplate().getCompatibilityVersion(),
-                    getCluster().getArchitecture()));
+                    getCluster().getArchitecture(),
+                    osRepository));
         }
 
         // Check PCI and IDE limits are ok
@@ -313,6 +314,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (tpmEnabled && !getVmDeviceUtils().isTpmDeviceSupported(getVmTemplate(), getCluster())) {
             addValidationMessageVariable("clusterArch", getCluster().getArchitecture());
             return failValidation(EngineMessage.TPM_DEVICE_REQUESTED_ON_NOT_SUPPORTED_PLATFORM);
+        }
+
+        if (!tpmEnabled && osRepository.requiresTpm(getVmTemplate().getOsId())) {
+            return failValidation(EngineMessage.TPM_DEVICE_REQUIRED_BY_OS);
         }
 
         if (!validate(VmValidator.isBiosTypeSupported(getVmTemplate(), getCluster(), osRepository))) {

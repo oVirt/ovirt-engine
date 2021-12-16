@@ -211,6 +211,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String TPM_DEVICE_REQUESTED_ON_NOT_SUPPORTED_PLATFORM();
 
+    String TPM_DEVICE_REQUIRED_BY_OS();
+
     String VM_CANNOT_REMOVE_CLUSTER_VMS_DETECTED();
 
     String VMT_CANNOT_REMOVE_CLUSTER_VMTS_DETECTED();
@@ -1640,6 +1642,8 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET();
 
     String ACTION_TYPE_FAILED_MAX_NUM_CPU();
+
+    String ACTION_TYPE_FAILED_MIN_NUM_CPU_FOR_OS();
 
     String ACTION_TYPE_FAILED_MAX_NUM_SOCKETS();
 

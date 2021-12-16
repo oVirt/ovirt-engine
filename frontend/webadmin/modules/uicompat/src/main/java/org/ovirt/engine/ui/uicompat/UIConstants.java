@@ -783,6 +783,8 @@ public interface UIConstants extends Constants {
 
     String tooBigMacRange();
 
+    String tpmDeviceRequired();
+
     String labelAlreadyExists();
 
     String noteLocalStorageAlreadyConfiguredForThisHostMsg();

@@ -81,7 +81,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel6/q35Support").put("value", "false");
         preferences.node("/os/rhel6/devices/usb/controller").put("value", "nec-xhci");
         preferences.node("/os/rhel6/devices/usb/controller").put("value.4.2", "none");
-        preferences.node("/os/rhel7/devices/tpmAllowed").put("value", "true");
+        preferences.node("/os/rhel7/devices/tpm").put("value", "supported");
         OsRepositoryImpl.INSTANCE.init(preferences);
     }
 

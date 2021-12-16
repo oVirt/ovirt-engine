@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -46,6 +47,9 @@ public class ChangeVmClusterValidator {
 
     @Inject
     private NetworkHelper networkHelper;
+
+    @Inject
+    private OsRepository osRepository;
 
     private VM vm;
     private final Guid targetClusterId;
@@ -97,7 +101,8 @@ public class ChangeVmClusterValidator {
         // Check if VM static parameters are compatible for new cluster.
         ValidationResult isCpuSocketsValid = VmValidator.validateCpuSockets(vm.getStaticData(),
                 vmCompatibilityVersion,
-                targetCluster.getArchitecture());
+                targetCluster.getArchitecture(),
+                osRepository);
         if (!isCpuSocketsValid.isValid()) {
             return isCpuSocketsValid;
         }

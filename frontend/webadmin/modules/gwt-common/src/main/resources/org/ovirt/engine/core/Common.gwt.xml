@@ -251,6 +251,7 @@
         <include name="common/businessentities/HostedEngineDeployConfiguration.java" />
         <include name="common/businessentities/SubjectEntity.java" />
         <include name="common/businessentities/ReplaceHostConfiguration.java" />
+        <include name="common/businessentities/TpmSupport.java" />
         <include name="common/job/*.java" />
 
         <!-- Console -->
