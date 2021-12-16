@@ -125,8 +125,20 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private VmBackup backup;
     private VM backupVm;
 
+    // Used by engine to abort inactive transfer, and passed to imageio server for disconnecting inactive
+    // connections.
+    private int clientInactivityTimeout;
+
     public TransferDiskImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        clientInactivityTimeout = getParameters().getClientInactivityTimeout() != null ?
+                getParameters().getClientInactivityTimeout() :
+                getTransferImageClientInactivityTimeoutInSeconds();
     }
 
     @Override
@@ -432,9 +444,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         entity.setActive(false);
         entity.setLastUpdated(new Date());
         entity.setBytesTotal(isImageProvided() ? getTransferSize() : getParameters().getTransferSize());
-        entity.setClientInactivityTimeout(getParameters().getClientInactivityTimeout() != null ?
-                getParameters().getClientInactivityTimeout() :
-                getTransferImageClientInactivityTimeoutInSeconds());
+        entity.setClientInactivityTimeout(clientInactivityTimeout);
         entity.setTimeoutPolicy(getParameters().getTimeoutPolicyType() != null ?
                 getParameters().getTimeoutPolicyType() : TimeoutPolicyType.LEGACY);
         entity.setImageFormat(getTransferImageFormat());
@@ -944,13 +954,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private boolean shouldAbortOnClientInactivityTimeout(ImageTransfer entity, long ts, Integer idleTimeFromTicket) {
-        int inactivityTimeout = entity.getClientInactivityTimeout();
         // For new daemon (1.3.0), we check timeout according to 'idle_time' in ticket;
         // otherwise, fallback to check according to entity's 'lastUpdated'.
         boolean timeoutExceeded = idleTimeFromTicket != null ?
-                idleTimeFromTicket > inactivityTimeout :
-                ts > (entity.getLastUpdated().getTime() / 1000) + inactivityTimeout;
-        return inactivityTimeout > 0
+                idleTimeFromTicket > clientInactivityTimeout :
+                ts > (entity.getLastUpdated().getTime() / 1000) + clientInactivityTimeout;
+        return clientInactivityTimeout > 0
                 && timeoutExceeded
                 && !entity.getActive();
     }
@@ -1156,6 +1165,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
         ticket.setId(ticketId);
         ticket.setTimeout(getClientTicketLifetime());
+        ticket.setInactivityTimeout(clientInactivityTimeout);
         ticket.setSize(getParameters().getTransferSize());
         ticket.setUrl(ticketUrl);
         ticket.setTransferId(getParameters().getCommandId().toString());
