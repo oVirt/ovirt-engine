@@ -707,7 +707,7 @@ public class VmBaseMapper {
      * Maps the stringified CPU-pinning to the API format.
      */
     static CpuTune stringToCpuTune(String cpuPinning) {
-        if(cpuPinning == null || cpuPinning.equals("")) {
+        if(StringUtils.isEmpty(cpuPinning)) {
             return null;
         }
         final CpuTune cpuTune = new CpuTune();

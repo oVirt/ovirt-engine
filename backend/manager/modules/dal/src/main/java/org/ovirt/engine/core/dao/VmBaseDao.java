@@ -100,7 +100,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
                 .addValue("lease_sd_id", entity.getLeaseStorageDomainId())
                 .addValue("multi_queues_enabled", entity.isMultiQueuesEnabled())
                 .addValue("use_tsc_frequency", entity.getUseTscFrequency())
-                .addValue("cpu_pinning", entity.getCpuPinning())
+                .addValue("cpu_pinning", StringUtils.isEmpty(entity.getCpuPinning()) ? null : entity.getCpuPinning())
                 .addValue("virtio_scsi_multi_queues", entity.getVirtioScsiMultiQueues())
                 .addValue("balloon_enabled", entity.isBalloonEnabled())
                 .addValue("cpu_pinning_policy", entity.getCpuPinningPolicy());
