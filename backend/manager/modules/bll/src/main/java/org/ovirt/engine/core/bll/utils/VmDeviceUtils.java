@@ -1743,11 +1743,8 @@ public class VmDeviceUtils {
                     break;
 
                 case TPM:
-                    if (Boolean.FALSE.equals(isTpmEnabled)) {
-                        continue;
-                    }
                     hasTpm = true;
-                    break;
+                    continue;
 
                 case GRAPHICS:
                     GraphicsType type = GraphicsType.fromVmDeviceType(VmDeviceType.getByName(device.getDevice()));
@@ -1788,7 +1785,7 @@ public class VmDeviceUtils {
             }
         }
 
-        if (Boolean.TRUE.equals(isTpmEnabled) && !hasTpm) {
+        if (Boolean.TRUE.equals(isTpmEnabled) || (isTpmEnabled == null && hasTpm)) {
             addTpmDevice(dstId);
         }
 
