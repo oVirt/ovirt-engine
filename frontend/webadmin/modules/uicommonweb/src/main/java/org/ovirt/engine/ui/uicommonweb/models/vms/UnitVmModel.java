@@ -2593,9 +2593,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     public void initDisplayModels(Set<DisplayType> displayTypes, DisplayType selectedDisplayType) {
         // set items and set selected one
         if (displayTypes.contains(selectedDisplayType)) {
-            getDisplayType().setItems(displayTypes, selectedDisplayType);
+            getDisplayType().setItems(displayTypes);
+            getDisplayType().setSelectedItem(selectedDisplayType);
         } else if (displayTypes.size() > 0) {
-            getDisplayType().setItems(displayTypes, displayTypes.iterator().next());
+            getDisplayType().setItems(displayTypes);
+            getDisplayType().setSelectedItem(displayTypes.iterator().next());
         }
     }
 
