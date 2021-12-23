@@ -269,7 +269,8 @@ public class NumaPinningHelper {
                     vm.getMemSizeMb(),
                     HugePageUtils.getHugePageSize(vm.getStaticData()),
                     vm.getCurrentNumOfCpus(),
-                    NumaTuneMode.STRICT);
+                    NumaTuneMode.STRICT,
+                    vm.getCurrentThreadsPerCore());
         }
         vm.setvNumaNodeList(vmNumaNodes);
     }
