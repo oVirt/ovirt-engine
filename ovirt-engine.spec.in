@@ -1,5 +1,3 @@
-
-#
 # CUSTOMIZATION-BEGIN
 #
 # ovirt_build_extra_flags
@@ -203,11 +201,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"} \\\
 	%{?extra_common_opts}
 
-%if %{ovirt_provides_jboss}
-%global ovirt_dependencies ovirt-dependencies/4.4
-%else
-%global ovirt_dependencies rhvm-dependencies/4.4
-
+%if !%{ovirt_provides_jboss}
 %global extra_backend_requires Requires: rhvm-branding-rhv >= 4.3.0
 %global extra_setup_requires Requires: rhvm-setup-plugins >= 4.4.0
 %global spice_version 8.0
@@ -366,7 +360,7 @@ Requires:	ed25519-java >= 0.3.0
 Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 2.4.1
-Requires:	ovirt-dependencies >= 4.4.2
+Requires:	ovirt-dependencies >= 4.5.0
 
 # cinderlib integration
 # https://bugzilla.redhat.com/1955375
@@ -946,18 +940,29 @@ tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
 tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
 tools/org/slf4j/jcl-over-slf4j/main/jcl-over-slf4j.jar slf4j/jcl-over-slf4j.jar
 
-../engine.ear/webadmin.war/WEB-INF/lib/gwt-servlet.jar %{ovirt_dependencies}/gwt-servlet.jar
-common/org/springframework/main/spring-aop.jar %{ovirt_dependencies}/spring-aop.jar
-common/org/springframework/main/spring-asm.jar %{ovirt_dependencies}/spring-asm.jar
-common/org/springframework/main/spring-beans.jar %{ovirt_dependencies}/spring-beans.jar
-common/org/springframework/main/spring-context.jar %{ovirt_dependencies}/spring-context.jar
-common/org/springframework/main/spring-core.jar %{ovirt_dependencies}/spring-core.jar
-common/org/springframework/main/spring-expression.jar %{ovirt_dependencies}/spring-expression.jar
-common/org/springframework/main/spring-instrument.jar %{ovirt_dependencies}/spring-instrument.jar
-common/org/springframework/main/spring-jdbc.jar %{ovirt_dependencies}/spring-jdbc.jar
-common/org/springframework/main/spring-tx.jar %{ovirt_dependencies}/spring-tx.jar
+common/org/springframework/main/spring-aop.jar ovirt-dependencies/spring-aop.jar
+common/org/springframework/main/spring-asm.jar ovirt-dependencies/spring-asm.jar
+common/org/springframework/main/spring-beans.jar ovirt-dependencies/spring-beans.jar
+common/org/springframework/main/spring-context.jar ovirt-dependencies/spring-context.jar
+common/org/springframework/main/spring-core.jar ovirt-dependencies/spring-core.jar
+common/org/springframework/main/spring-expression.jar ovirt-dependencies/spring-expression.jar
+common/org/springframework/main/spring-instrument.jar ovirt-dependencies/spring-instrument.jar
+common/org/springframework/main/spring-jdbc.jar ovirt-dependencies/spring-jdbc.jar
+common/org/springframework/main/spring-tx.jar ovirt-dependencies/spring-tx.jar
 __EOF__
 
+
+while read dst src; do
+	[ -z "${dst}" ] && continue
+	[ -z "${src}" ] && src="$(basename "${dst}")"
+
+	dst="%{engine_jboss_modules}/${dst}"
+	src="%{_jnidir}/${src}"
+	rm -f "%{buildroot}${dst}"
+	ln -s "${src}" "%{buildroot}${dst}"
+done << __EOF__
+../engine.ear/webadmin.war/WEB-INF/lib/gwt-servlet.jar ovirt-dependencies/gwt-servlet.jar
+__EOF__
 
 #
 # Register services
