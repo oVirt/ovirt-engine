@@ -2707,6 +2707,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__DETAIL__NOT_MEMORY_PINNED_NUMA();
 
+    String VAR__DETAIL__SOCKETS_UNEQUAL_NUMA();
+
     String VAR__DETAIL__NOT_ENOUGH_CORES();
 
     String VAR__DETAIL__NOT_ENOUGH_CORES_PER_SOCKET_FOR_RESIZE_AND_PIN();

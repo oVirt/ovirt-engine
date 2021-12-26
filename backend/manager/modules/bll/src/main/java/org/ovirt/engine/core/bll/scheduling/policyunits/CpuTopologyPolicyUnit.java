@@ -53,6 +53,13 @@ public class CpuTopologyPolicyUnit extends PolicyUnitImpl {
                             host.getName());
                     continue;
                 }
+
+                if (host.getCpuSockets() != host.getNumaNodeList().size()) {
+                    log.debug("Host '{}' is not qualified for the 'Resize and Pin' CPU pinning policy," +
+                            " number of sockets is not equal to number of NUMA nodes", host.getName());
+                    messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__SOCKETS_UNEQUAL_NUMA.toString());
+                    continue;
+                }
             } else if (vm.getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED) {
                 // the dedicated pinning requires that all vThreads of the same vCore are pinned
                 // to the same physical core. That is why the number of threads per core for the VM
