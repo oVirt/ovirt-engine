@@ -72,6 +72,10 @@ public class VmDeviceCommonUtils {
         return device.getType() == VmDeviceGeneralType.GRAPHICS;
     }
 
+    public static boolean isVideo(VmDevice device) {
+        return device.getType() == VmDeviceGeneralType.VIDEO;
+    }
+
     public static boolean isBridge(VmDevice device) {
         return device.getType() == VmDeviceGeneralType.INTERFACE
                 && device.getDevice().equals(VmDeviceType.BRIDGE.getName());

@@ -92,7 +92,7 @@ public class VmDeviceUtils {
     private final VmHandler vmHandler;
     private final MacPoolPerCluster macPoolPerCluster;
     private final RngDeviceUtils rngDeviceUtils;
-    private final VideoDeviceSettings videoDeviceSettings;
+    private static VideoDeviceSettings videoDeviceSettings;
 
     private OsRepository osRepository;
 
@@ -621,7 +621,7 @@ public class VmDeviceUtils {
      *
      * @return a map of device parameters
      */
-    private Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {
+    public static Map<String, Object> getVideoDeviceSpecParams(VmBase vmBase) {
         return videoDeviceSettings.getVideoDeviceSpecParams(vmBase, VmDeviceCommonUtils.isSingleQxlPci(vmBase));
     }
 

@@ -1,12 +1,14 @@
 package org.ovirt.engine.core.bll.utils;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -19,8 +21,10 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class CompatibilityVersionUpdater {
@@ -195,6 +199,27 @@ public class CompatibilityVersionUpdater {
         if (vmBase.getDefaultDisplayType() == DisplayType.cirrus &&
                 newVersion.greaterOrEquals(Version.v4_3)) {
             vmBase.setDefaultDisplayType(DisplayType.vga);
+            return true;
+        }
+        if (vmBase.getDefaultDisplayType() == DisplayType.qxl &&
+                FeatureSupported.isQxlDisplayDisabled(newVersion)) {
+            vmBase.setDefaultDisplayType(DisplayType.vga);
+            HashSet<Guid> devicesToRemove= new HashSet<>();
+            for (VmDevice device : vmBase.getManagedDeviceMap().values()) {
+                if (VmDeviceCommonUtils.isGraphics(device) && GraphicsType.fromString(device.getDevice()) == GraphicsType.SPICE) {
+                    devicesToRemove.add(device.getDeviceId());
+                } else if (VmDeviceCommonUtils.isVideo(device) && DisplayType.valueOf(device.getDevice()) == DisplayType.qxl) {
+                    if (vmBase.getManagedDeviceMap().values().stream().noneMatch(d -> VmDeviceCommonUtils.isVideo(d) && DisplayType.valueOf(d.getDevice()) == DisplayType.vga)
+                            && vmBase.getManagedDeviceMap().values().stream().anyMatch(d -> VmDeviceCommonUtils.isGraphics(d) && GraphicsType.fromString(d.getDevice()) == GraphicsType.VNC)) {
+                        device.setDevice(DisplayType.vga.name());
+                        device.setSpecParams(VmDeviceUtils.getVideoDeviceSpecParams(vmBase));
+                    } else {
+                        devicesToRemove.add(device.getDeviceId());
+                    }
+                }
+            }
+            devicesToRemove.forEach(id -> vmBase.getManagedDeviceMap().remove(id)); // TODO on update VM CL(via cluster) we later update again the device from DB
+
             return true;
         }
         return false;

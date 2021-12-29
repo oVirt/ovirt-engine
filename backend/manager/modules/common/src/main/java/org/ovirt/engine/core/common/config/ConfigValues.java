@@ -1606,6 +1606,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     HostMonitoringWatchdogInactivityThresholdInSeconds,
 
+    @TypeConverterAttribute(Boolean.class)
+    isQxlDisplayDisabled,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

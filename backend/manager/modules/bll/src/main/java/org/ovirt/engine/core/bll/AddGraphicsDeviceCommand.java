@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -8,11 +10,13 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
@@ -21,6 +25,8 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
 
     @Inject
     private VmDeviceDao vmDeviceDao;
+    @Inject
+    private VmHandler vmHandler;
 
     private List<GraphicsDevice> prevDevices;
 
@@ -56,6 +62,15 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
                 if (device.getGraphicsType().equals(getParameters().getDev().getGraphicsType())) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_ONLY_ONE_DEVICE_WITH_THIS_GRAPHICS_ALLOWED);
                 }
+            }
+            Collection<GraphicsType> graphics = prevDevices.stream().map(GraphicsDevice::getGraphicsType).collect(Collectors.toSet());
+            graphics.add(getParameters().getDev().getGraphicsType());
+            if (!validate(vmHandler.isGraphicsAndDisplaySupported(getVm().getVmOsId(),
+                    graphics,
+                    getVm().getDefaultDisplayType(),
+                    getVm().getBiosType(),
+                    CompatibilityVersionUtils.getEffective(getVm().getStaticData(), getCluster())))) {
+                return false;
             }
 
             return true;

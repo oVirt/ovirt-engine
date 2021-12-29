@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -124,6 +125,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
     private VmInitDao vmInitDao;
     @Inject
     private OsRepository osRepository;
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
     private List<VDS> allHostsForCluster;
 
@@ -144,6 +147,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         if (oldCluster != null && shouldUpdateVmsAndTemplates()) {
             vmsLockedForUpdate = filterVmsInClusterNeedUpdate();
             templatesLockedForUpdate = filterTemplatesInClusterNeedUpdate();
+            fillDevices();
         }
 
         if (oldCluster == null || isCpuNameChanged() || isVersionChanged()) {
@@ -160,6 +164,11 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 .filter(vm -> vm.getOrigin() != OriginType.EXTERNAL)
                 .sorted()
                 .collect(Collectors.toList());
+    }
+
+    private void fillDevices() {
+        vmsLockedForUpdate.forEach(vm -> vmDeviceUtils.setVmDevices(vm));
+        templatesLockedForUpdate.forEach(template -> vmDeviceUtils.setVmDevices(template));
     }
 
     private List<VmStatic> getAllVmsInCluster() {

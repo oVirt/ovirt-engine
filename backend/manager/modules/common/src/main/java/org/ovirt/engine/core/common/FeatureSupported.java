@@ -393,4 +393,14 @@ public class FeatureSupported {
         return Version.v4_7.lessOrEquals(version);
     }
 
+    /**
+     * Checks if QXL display support disabled for the cluster version
+     *
+     * @param version Compatibility version to check for.
+     * @return true, if QXL is supported.
+     */
+    public static boolean isQxlDisplayDisabled(Version version) {
+        return supportedInConfig(ConfigValues.isQxlDisplayDisabled, version);
+    }
+
 }
