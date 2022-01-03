@@ -14,7 +14,8 @@ public enum VmInterfaceType {
     e1000(2, "e1000", "e1000", 1000),
     pv(3, "VirtIO", "pv", 10000),
     spaprVlan(4, "sPAPR VLAN", "spapr-vlan", 1000),
-    pciPassthrough(5, "PCI Passthrough", "pci-passthorugh", 1000);
+    pciPassthrough(5, "PCI Passthrough", "pci-passthorugh", 1000),
+    e1000e(6, "e1000e", "e1000e", 1000);
 
     private int value;
     private String description;

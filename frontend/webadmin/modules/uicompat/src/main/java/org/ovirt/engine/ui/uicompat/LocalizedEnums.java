@@ -1526,6 +1526,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VmInterfaceType___e1000();
 
+    String VmInterfaceType___e1000e();
+
     String VmInterfaceType___pv();
 
     String VmInterfaceType___spaprVlan();
