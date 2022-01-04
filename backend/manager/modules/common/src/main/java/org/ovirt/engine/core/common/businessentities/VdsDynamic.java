@@ -237,6 +237,10 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean ovnConfigured;
 
+    private List<VdsCpuUnit> cpuTopology;
+
+    private String vdsmCpusAffinity;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -267,6 +271,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
         // By default we support these storage versions (for older vdsm that do not report it).
         supportedDomainVersions = StorageFormatType.getDefaultSupportedVersions();
+        cpuTopology = new ArrayList<>();
     }
 
     public Integer getCpuCores() {
@@ -1007,6 +1012,22 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.ovnConfigured = ovnConfigured;
     }
 
+    public void setCpuTopology(List<VdsCpuUnit> value) {
+        cpuTopology = value;
+    }
+
+    public List<VdsCpuUnit> getCpuTopology() {
+        return cpuTopology;
+    }
+
+    public void setVdsmCpusAffinity(String value) {
+        vdsmCpusAffinity = value;
+    }
+
+    public String getVdsmCpusAffinity() {
+        return vdsmCpusAffinity;
+    }
+
 
     @Override
     public int hashCode() {
@@ -1090,7 +1111,9 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 fipsEnabled,
                 bootUuid,
                 cdChangePdiv,
-                ovnConfigured
+                ovnConfigured,
+                cpuTopology,
+                vdsmCpusAffinity
         );
     }
 
@@ -1184,6 +1207,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && fipsEnabled == other.fipsEnabled
                 && Objects.equals(bootUuid, other.bootUuid)
                 && cdChangePdiv == other.cdChangePdiv
-                && ovnConfigured == other.ovnConfigured;
+                && ovnConfigured == other.ovnConfigured
+                && Objects.equals(cpuTopology, other.cpuTopology)
+                && Objects.equals(vdsmCpusAffinity, other.vdsmCpusAffinity);
     }
 }
