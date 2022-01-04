@@ -32,7 +32,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmPoolResource
         extends AbstractBackendActionableResource<VmPool, org.ovirt.engine.core.common.businessentities.VmPool>
-        implements VmPoolResource {
+    implements VmPoolResource {
 
     private BackendVmPoolsResource parent;
 
@@ -49,18 +49,18 @@ public class BackendVmPoolResource
     @Override
     public VmPool update(VmPool incoming) {
         return performUpdate(incoming,
-                new QueryIdResolver<>(QueryType.GetVmPoolById, IdQueryParameters.class),
-                ActionType.UpdateVmPool,
-                new UpdateParametersProvider());
+                             new QueryIdResolver<>(QueryType.GetVmPoolById, IdQueryParameters.class),
+                             ActionType.UpdateVmPool,
+                             new UpdateParametersProvider());
     }
 
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                QueryType.GetPermissionsForObject,
-                new GetPermissionsForObjectParameters(guid),
-                VmPool.class,
-                VdcObjectType.VmPool));
+                                                             QueryType.GetPermissionsForObject,
+                                                             new GetPermissionsForObjectParameters(guid),
+                                                             VmPool.class,
+                                                             VdcObjectType.VmPool));
     }
 
     @Override
@@ -81,10 +81,10 @@ public class BackendVmPoolResource
         Guid storageDomainId = null;
         if (templateId != null) {
             List<DiskImage> images = asCollection(DiskImage.class,
-                    getEntity(List.class,
-                            QueryType.GetVmTemplatesDisks,
-                            new IdQueryParameters(templateId),
-                            templateId.toString()));
+                                                  getEntity(List.class,
+                                                            QueryType.GetVmTemplatesDisks,
+                                                            new IdQueryParameters(templateId),
+                                                            templateId.toString()));
             if (images != null && images.size() > 0) {
                 storageDomainId = images.get(0).getStorageIds().get(0);
             }
@@ -111,11 +111,11 @@ public class BackendVmPoolResource
                 vm.setVmtGuid(getTempalteId(incoming.getTemplate()));
             } else {
                 final VM existing = currentVmCount > 0
-                        ? getEntity(VM.class,
-                                QueryType.GetVmDataByPoolId,
-                                new IdQueryParameters(current.getId()),
-                                "Vms: pool=" + current.getId())
-                        : null;
+                                ? getEntity(VM.class,
+                                        QueryType.GetVmDataByPoolId,
+                                        new IdQueryParameters(current.getId()),
+                                        "Vms: pool=" + current.getId())
+                              : null;
 
                 if (existing != null) {
                     vm.setStaticData(existing.getStaticData());
@@ -125,9 +125,9 @@ public class BackendVmPoolResource
 
             if (vm.getVmtGuid() != null) {
                 final VmTemplate template = getEntity(VmTemplate.class,
-                        QueryType.GetVmTemplate,
-                        new GetVmTemplateParameters(vm.getVmtGuid()),
-                        vm.getVmtGuid().toString());
+                                                QueryType.GetVmTemplate,
+                                                new GetVmTemplateParameters(vm.getVmtGuid()),
+                                                vm.getVmtGuid().toString());
 
                 if (incoming.isSetTemplate()) {
                     VmStatic templateVmStatic = VmMapper.map(template, vm.getStaticData());
@@ -168,10 +168,10 @@ public class BackendVmPoolResource
     @Override
     public Response allocateVm(Action action) {
         return doAction(ActionType.AttachUserToVmFromPoolAndRun,
-                new AttachUserToVmFromPoolAndRunParameters(guid, getCurrent().getUser().getId()),
-                action,
-                new VmQueryIdResolver(QueryType.GetVmByVmId,
-                        IdQueryParameters.class));
+                        new AttachUserToVmFromPoolAndRunParameters(guid,  getCurrent().getUser().getId()),
+                        action,
+                        new VmQueryIdResolver(QueryType.GetVmByVmId,
+                                              IdQueryParameters.class));
 
     }
 
