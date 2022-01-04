@@ -11,7 +11,6 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.VmPoolResource;
-import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -20,7 +19,6 @@ import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.AttachUserToVmFromPoolAndRunParameters;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -116,10 +114,9 @@ public class BackendVmPoolResource
                                         new IdQueryParameters(current.getId()),
                                         "Vms: pool=" + current.getId())
                               : null;
-
                 if (existing != null) {
-                    vm.setStaticData(existing.getStaticData());
-                    vm.setId(Guid.Empty);
+                    vm.setVmtGuid(existing.getVmtGuid());
+                    vm.setVmInit(existing.getVmInit());
                 }
             }
 
@@ -128,12 +125,13 @@ public class BackendVmPoolResource
                                                 QueryType.GetVmTemplate,
                                                 new GetVmTemplateParameters(vm.getVmtGuid()),
                                                 vm.getVmtGuid().toString());
-
-                if (incoming.isSetTemplate()) {
-                    VmStatic templateVmStatic = VmMapper.map(template, vm.getStaticData());
-                    vm.setStaticData(templateVmStatic);
-                }
-
+                vm.getStaticData().setMemSizeMb(template.getMemSizeMb());
+                vm.getStaticData().setMaxMemorySizeMb(template.getMaxMemorySizeMb());
+                vm.getStaticData().setOsId(template.getOsId());
+                vm.getStaticData().setDefaultDisplayType(template.getDefaultDisplayType());
+                vm.getStaticData().setMigrationSupport(template.getMigrationSupport());
+                vm.getStaticData().setMultiQueuesEnabled(template.isMultiQueuesEnabled());
+                vm.getStaticData().setVirtioScsiMultiQueues(template.getVirtioScsiMultiQueues());
                 if (vm.getVmInit() == null) {
                     vm.setVmInit(template.getVmInit());
                 }
