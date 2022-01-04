@@ -1912,7 +1912,9 @@ SELECT cluster.cluster_id AS cluster_id,
     vds_dynamic.boot_uuid AS boot_uuid,
     vds_dynamic.cd_change_pdiv AS cd_change_pdiv,
     vds_dynamic.ovn_configured AS ovn_configured,
-    vds_static.ssh_public_key AS ssh_public_key
+    vds_static.ssh_public_key AS ssh_public_key,
+    vds_dynamic.cpu_topology AS cpu_topology,
+    vds_dynamic.vdsm_cpus_affinity AS vdsm_cpus_affinity
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id
@@ -2086,7 +2088,9 @@ SELECT cluster.cluster_id,
     vds_dynamic.boot_uuid AS boot_uuid,
     vds_dynamic.cd_change_pdiv AS cd_change_pdiv,
     vds_dynamic.ovn_configured AS ovn_configured,
-    vds_static.ssh_public_key AS ssh_public_key
+    vds_static.ssh_public_key AS ssh_public_key,
+    vds_dynamic.cpu_topology AS cpu_topology,
+    vds_dynamic.vdsm_cpus_affinity AS vdsm_cpus_affinity
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id

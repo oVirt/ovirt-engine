@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -178,6 +179,7 @@ public class VdsManager {
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     private HostConnectionRefresherInterface hostRefresher;
     private volatile boolean inServerRebootTimeout;
+    private List<VdsCpuUnit> cpuTopology;
 
     VdsManager(VDS vds, ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -199,6 +201,7 @@ public class VdsManager {
         handlePreviousStatus();
         handleSecureSetup();
         initVdsBroker();
+        initAvailableCpus();
     }
 
     public void handleSecureSetup() {
@@ -1288,5 +1291,13 @@ public class VdsManager {
                 }
             }
         }
+    }
+
+    private void initAvailableCpus() {
+        List<VdsCpuUnit> cpuTopology = cachedVds.getCpuTopology();
+        if (cpuTopology == null) {
+            return;
+        }
+        this.cpuTopology = cpuTopology;
     }
 }
