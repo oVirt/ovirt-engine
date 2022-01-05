@@ -1267,6 +1267,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String CpuPinningPolicy___RESIZE_AND_PIN_NUMA();
 
+    String CpuPinningPolicy___DEDICATED();
+
     String SerialNumberPolicy___HOST_ID();
 
     String SerialNumberPolicy___VM_ID();

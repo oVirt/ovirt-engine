@@ -2383,6 +2383,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         updateParallelMigrationsVersionChange();
         updateSerialNumberPolicy();
         updateTpmEnabled();
+        updateCpuPinningPolicy();
     }
 
     private void updateMultiQueues() {
@@ -4061,7 +4062,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         boolean defaultHostSelected =  Boolean.FALSE.equals(getIsAutoAssign().getEntity()) &&
                 getDefaultHost().getSelectedItems() != null &&
                 getDefaultHost().getSelectedItems().size() > 0;
+
+        boolean isDedicatedCpusSupported = false;
+        if(getSelectedCluster() != null && getSelectedCluster().getCompatibilityVersion() != null) {
+            isDedicatedCpusSupported = Version.v4_7.lessOrEquals(getSelectedCluster().getCompatibilityVersion());
+        }
         cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.MANUAL, defaultHostSelected);
+        cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.DEDICATED, isDedicatedCpusSupported);
     }
 
     protected void cpuPinningPolicyChanged() {

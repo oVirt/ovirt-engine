@@ -32,6 +32,10 @@ public class CpuPinningListModel extends ListModel<CpuPinningListModelItem> {
                 CpuPinningPolicy.RESIZE_AND_PIN_NUMA,
                 constants.cpuPinningResizeAndPinDescription(),
                 constants.emptyString())); // it should be always enabled
+        items.add(new CpuPinningListModelItem(
+                CpuPinningPolicy.DEDICATED,
+                constants.cpuPinningDedicatedDescription(),
+                constants.cpuPinningDedicatedDisabled()));
 
         setItems(items);
         setSelectedCpuPolicy(CpuPinningPolicy.NONE);
@@ -117,7 +121,11 @@ public class CpuPinningListModel extends ListModel<CpuPinningListModelItem> {
         public ValidationResult validate(Object value) {
             if (value instanceof CpuPinningListModelItem) {
                 ValidationResult result = new ValidationResult();
-                result.setSuccess(((CpuPinningListModelItem) value).isEnabled());
+                CpuPinningListModelItem item = (CpuPinningListModelItem) value;
+                result.setSuccess(item.isEnabled());
+                if (!item.isEnabled()) {
+                    result.getReasons().add(item.getDisablementReason());
+                }
                 return result;
             }
             return ValidationResult.fail();

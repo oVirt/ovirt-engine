@@ -2228,7 +2228,12 @@ public interface UIConstants extends Constants {
     String cpuPinningManualDisabled();
 
     String cpuPinningResizeAndPinDescription();
+
     String allPermissions();
 
     String directPermissions();
+
+    String cpuPinningDedicatedDescription();
+
+    String cpuPinningDedicatedDisabled();
 }
