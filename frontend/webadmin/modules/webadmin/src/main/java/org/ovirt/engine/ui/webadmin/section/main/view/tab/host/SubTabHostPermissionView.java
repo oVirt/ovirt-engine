@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissi
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 
-public class SubTabHostPermissionView extends AbstractSubTabPermissionsView<VDS, HostListModel<Void>>
+public class SubTabHostPermissionView extends AbstractSubTabPermissionsView<VDS, HostListModel<Void>, PermissionListModel<VDS>>
         implements SubTabHostPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostPermissionView> {

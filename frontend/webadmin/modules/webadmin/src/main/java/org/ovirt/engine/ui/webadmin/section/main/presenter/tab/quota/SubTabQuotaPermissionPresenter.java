@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailPermissionActionPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
@@ -39,9 +38,9 @@ public class SubTabQuotaPermissionPresenter
     @Inject
     public SubTabQuotaPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, QuotaMainSelectedItems selectedItems,
-            DetailPermissionActionPanelPresenterWidget<Quota, QuotaListModel, QuotaPermissionListModel> actionPanel,
             SearchableDetailModelProvider<Permission, QuotaListModel, QuotaPermissionListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
+        // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 QuotaSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

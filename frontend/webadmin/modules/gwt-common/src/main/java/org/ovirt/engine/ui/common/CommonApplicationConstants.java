@@ -629,7 +629,7 @@ public interface CommonApplicationConstants extends Constants {
 
     String iconLimitationsIconVmPopup();
 
-    String inheritedPermission();
+    String inheritedFromPermission();
 
     String typePermission();
 
@@ -1946,4 +1946,6 @@ public interface CommonApplicationConstants extends Constants {
     String typeToSearchPlaceHolder();
 
     String configChangesPending();
+
+    String permissionFilter();
 }

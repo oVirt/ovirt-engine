@@ -35,7 +35,7 @@ public class PermissionWithInheritedPermissionListModelTable<E, P extends Permis
             }
         };
         permissionColumn.makeSortable();
-        getTable().addColumn(permissionColumn, constants.inheritedPermission(), "300px"); //$NON-NLS-1$
+        getTable().addColumn(permissionColumn, constants.inheritedFromPermission(), "300px"); //$NON-NLS-1$
     }
 
 }

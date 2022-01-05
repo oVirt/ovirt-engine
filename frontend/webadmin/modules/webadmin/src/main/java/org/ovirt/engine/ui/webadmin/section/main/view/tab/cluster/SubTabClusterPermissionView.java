@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissi
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 
-public class SubTabClusterPermissionView extends AbstractSubTabPermissionsView<Cluster, ClusterListModel<Void>>
+public class SubTabClusterPermissionView extends AbstractSubTabPermissionsView<Cluster, ClusterListModel<Void>, PermissionListModel<Cluster>>
         implements SubTabClusterPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterPermissionView> {

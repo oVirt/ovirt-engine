@@ -1,25 +1,23 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.quota;
 
-import javax.inject.Inject;
-
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
+import org.ovirt.engine.ui.common.widget.action.PermissionActionPanelPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaPermissionListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaPermissionPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissionsView;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
 
-public class SubTabQuotaPermissionView extends AbstractSubTabTableView<Quota, Permission, QuotaListModel, QuotaPermissionListModel>
-        implements SubTabQuotaPermissionPresenter.ViewDef {
+public class SubTabQuotaPermissionView extends AbstractSubTabPermissionsView<Quota, QuotaListModel, QuotaPermissionListModel> implements SubTabQuotaPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabQuotaPermissionView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -28,48 +26,16 @@ public class SubTabQuotaPermissionView extends AbstractSubTabTableView<Quota, Pe
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public SubTabQuotaPermissionView(SearchableDetailModelProvider<Permission, QuotaListModel, QuotaPermissionListModel> modelProvider) {
-        super(modelProvider);
-        initTable();
-        initWidget(getTableContainer());
+    public SubTabQuotaPermissionView(
+            SearchableDetailModelProvider<Permission, QuotaListModel, QuotaPermissionListModel> modelProvider,
+            EventBus eventBus,
+            PermissionActionPanelPresenterWidget<Quota, QuotaListModel, QuotaPermissionListModel> actionPanel,
+            ClientStorage clientStorage) {
+        super(modelProvider, eventBus, clientStorage, actionPanel);
     }
 
     @Override
     protected void generateIds() {
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
-
-    private void initTable() {
-        getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
-
-        AbstractTextColumn<Permission> userColumn = new AbstractTextColumn<Permission>() {
-            @Override
-            public String getValue(Permission object) {
-                return object.getOwnerName();
-            }
-        };
-        userColumn.makeSortable();
-        getTable().addColumn(userColumn, constants.userPermission());
-
-        AbstractTextColumn<Permission> roleColumn = new AbstractTextColumn<Permission>() {
-            @Override
-            public String getValue(Permission object) {
-                return object.getRoleName();
-            }
-        };
-        roleColumn.makeSortable();
-        getTable().addColumn(roleColumn, constants.rolePermission());
-
-        AbstractTextColumn<Permission> permissionColumn = new AbstractObjectNameColumn<Permission>() {
-            @Override
-            protected Object[] getRawValue(Permission object) {
-                return new Object[] { object.getObjectType(), object.getObjectName(), getDetailModel().getEntity(),
-                        object.getObjectId()
-                };
-            }
-        };
-        permissionColumn.makeSortable();
-        getTable().addColumn(permissionColumn, constants.inheretedFromPermission());
-    }
-
 }

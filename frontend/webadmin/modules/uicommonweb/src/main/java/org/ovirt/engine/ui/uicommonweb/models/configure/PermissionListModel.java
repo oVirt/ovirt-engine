@@ -68,6 +68,8 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
 
     private final Provider<AdElementListModel> adElementListModelProvider;
 
+    protected boolean directOnly = false;
+
     @Inject
     public PermissionListModel(Provider<AdElementListModel> adElementListModelProvider) {
         this.adElementListModelProvider = adElementListModelProvider;
@@ -106,7 +108,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         GetPermissionsForObjectParameters tempVar = new GetPermissionsForObjectParameters();
         tempVar.setObjectId(getEntityGuid());
         tempVar.setVdcObjectType(objType);
-        tempVar.setDirectOnly(false);
+        tempVar.setDirectOnly(directOnly);
         tempVar.setRefresh(getIsQueryFirstTime());
         tempVar.setAllUsersWithPermission(getAllUsersWithPermission());
         super.syncSearch(QueryType.GetPermissionsForObject, tempVar);
@@ -352,5 +354,13 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
     @Override
     protected String getListName() {
         return "PermissionListModel"; //$NON-NLS-1$
+    }
+
+    public void setDirectOnly(boolean directOnly) {
+        // prevent query if value is not changed since the query is refreshed on timer interval
+        if (this.directOnly != directOnly) {
+            this.directOnly = directOnly;
+            syncSearch();
+        }
     }
 }

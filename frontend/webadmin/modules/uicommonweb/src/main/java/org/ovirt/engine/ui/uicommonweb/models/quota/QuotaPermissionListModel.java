@@ -32,7 +32,7 @@ public class QuotaPermissionListModel extends PermissionListModel<Quota> {
         GetPermissionsForObjectParameters tempVar = new GetPermissionsForObjectParameters();
         tempVar.setObjectId(getEntityGuid());
         tempVar.setVdcObjectType(getObjectType());
-        tempVar.setDirectOnly(false);
+        tempVar.setDirectOnly(directOnly);
         tempVar.setRefresh(getIsQueryFirstTime());
 
         tempVar.setRefresh(getIsQueryFirstTime());

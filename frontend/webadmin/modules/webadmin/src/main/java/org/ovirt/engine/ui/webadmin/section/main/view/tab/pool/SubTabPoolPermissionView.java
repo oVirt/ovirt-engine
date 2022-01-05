@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissi
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 
-public class SubTabPoolPermissionView extends AbstractSubTabPermissionsView<VmPool, PoolListModel>
+public class SubTabPoolPermissionView extends AbstractSubTabPermissionsView<VmPool, PoolListModel, PermissionListModel<VmPool>>
         implements SubTabPoolPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabPoolPermissionView> {

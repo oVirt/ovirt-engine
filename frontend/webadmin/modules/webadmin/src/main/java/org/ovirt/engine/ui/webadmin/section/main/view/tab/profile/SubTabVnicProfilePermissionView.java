@@ -15,7 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabVnicProfilePermissionView extends AbstractSubTabPermissionsView<VnicProfileView, VnicProfileListModel>
+public class SubTabVnicProfilePermissionView extends AbstractSubTabPermissionsView<VnicProfileView, VnicProfileListModel, PermissionListModel<VnicProfileView>>
         implements SubTabVnicProfilePermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVnicProfilePermissionView> {
