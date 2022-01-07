@@ -113,7 +113,6 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     @Override
     public void postDataCenterWithClusterSelectedItemChanged() {
-        updateGraphics(template.getId());
         updateDefaultHost();
         updateNumOfSockets();
         updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
@@ -178,6 +177,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             if (getModel().getDisplayType().getItems().contains(displayType)) {
                 getModel().getDisplayType().setSelectedItem(displayType);
             }
+
+            updateGraphics(template.getId());
 
             updateTpm(template.getId());
             updateConsoleDevice(template.getId());

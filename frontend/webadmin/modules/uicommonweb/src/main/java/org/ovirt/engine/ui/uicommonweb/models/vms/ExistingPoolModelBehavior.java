@@ -107,6 +107,10 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
             //can be set only from DB since it is not part of the Template's fields
             getModel().getCpuPinning().setEntity(pool.getCpuPinning());
         }
+
+        updateBiosType();
+
+        getInstanceTypeManager().updateInstanceTypeFieldsFromSource();
     }
 
     public void setupWindowFromVmBase(VmBase from) {

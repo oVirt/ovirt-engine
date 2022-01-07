@@ -214,6 +214,11 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getCustomCompatibilityVersion().setSelectedItem(getSavedCurrentCustomCompatibilityVersion());
             setCustomCompatibilityVersionChangeInProgress(false);
             updateLeaseStorageDomains(template.getLeaseStorageDomainId());
+
+            updateBiosType();
+            selectBiosTypeFromTemplate();
+
+            getInstanceTypeManager().updateInstanceTypeFieldsFromSource();
         });
     }
 
@@ -407,12 +412,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         return oldTemplateToSelect != null
                 ? oldTemplateToSelect
                 : computeNewTemplateWithVersionToSelect(newItems, addLatest);
-    }
-
-    @Override
-    protected void updateBiosType() {
-        super.updateBiosType();
-        super.selectBiosTypeFromTemplate();
     }
 
     @Override

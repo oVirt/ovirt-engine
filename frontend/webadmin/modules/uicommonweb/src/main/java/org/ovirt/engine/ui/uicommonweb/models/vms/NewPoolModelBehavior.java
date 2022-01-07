@@ -109,6 +109,11 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         setupWindowModelFrom(template);
         updateRngDevice(template.getId());
         getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
+
+        updateBiosType();
+        selectBiosTypeFromTemplate();
+
+        getInstanceTypeManager().updateInstanceTypeFieldsFromSource();
     }
 
     @Override
@@ -135,12 +140,6 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
                 getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoTemplates());
             }
         }));
-    }
-
-    @Override
-    protected void updateBiosType() {
-        super.updateBiosType();
-        super.selectBiosTypeFromTemplate();
     }
 
     @Override

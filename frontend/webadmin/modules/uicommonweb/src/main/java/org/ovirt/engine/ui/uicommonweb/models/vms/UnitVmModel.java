@@ -2198,7 +2198,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 updateTscFrequency();
             } else if (sender == getTemplateWithVersion()) {
                 templateWithVersion_SelectedItemChanged(sender, args);
-                behavior.updateBiosType();
             } else if (sender == getInstanceTypes()) {
                 behavior.updateBiosType();
             } else if (sender == getTimeZone()) {
