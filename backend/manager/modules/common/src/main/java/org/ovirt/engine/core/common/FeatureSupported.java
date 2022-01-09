@@ -390,7 +390,7 @@ public class FeatureSupported {
      * @return true if Screenshot-VM is supported.
      */
     public static boolean isVMScreenshotSupported(Version version) {
-        return Version.v4_6.less(version);
+        return Version.v4_7.lessOrEquals(version);
     }
 
 }
