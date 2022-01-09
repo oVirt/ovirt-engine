@@ -380,7 +380,7 @@ public class FeatureSupported {
      */
     public static boolean isHostSupportsMBSCopy(VDS vds) {
         return vds != null && vds.getConnectorInfo() != null
-                && Version.v4_6.greaterOrEquals(vds.getClusterCompatibilityVersion());
+                && Version.v4_6.lessOrEquals(vds.getClusterCompatibilityVersion());
     }
 
     /**
