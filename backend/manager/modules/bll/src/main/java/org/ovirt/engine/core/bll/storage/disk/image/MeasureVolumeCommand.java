@@ -132,7 +132,7 @@ public class MeasureVolumeCommand<T extends MeasureVolumeParameters> extends Com
     protected void endSuccessfully() {
         getReturnValue().setEndActionTryAgain(false);
         if (getParameters().isShouldTeardown()) {
-            Guid hostForExecution = vdsCommandsHelper.getHostForExecution(getParameters().getStoragePoolId());
+            Guid hostForExecution = getParameters().getVdsRunningOn();
 
             if (!executeWithHost(hostForExecution,
                     host -> imagesHandler.teardownImage(
