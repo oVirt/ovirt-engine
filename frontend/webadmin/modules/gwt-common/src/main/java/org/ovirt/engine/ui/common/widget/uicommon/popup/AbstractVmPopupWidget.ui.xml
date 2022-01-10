@@ -104,7 +104,7 @@
                   <e:ListModelListBoxEditor ui:field="oSTypeEditor" label="{constants.osVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
-                  <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableInstanceTypesEditor" label="{constants.instanceType}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_6" />
+                  <e:ListModelListBoxEditor ui:field="biosTypeEditor" label="{constants.customBiosTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
                   <e:ListModelListBoxEditor ui:field="vmTypeEditor" label="{constants.optimizedFor}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
@@ -250,7 +250,7 @@
                       </b:Column>
                    </b:Row>
                    <b:Row>
-                       <e:ListModelListBoxEditor ui:field="biosTypeEditor" label="{constants.customBiosTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                       <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableInstanceTypesEditor" label="{constants.instanceType}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_6" />
                    </b:Row>
                     <b:Row>
                       <w:EntityModelWidgetWithInfo ui:field="timeZoneEditorWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
