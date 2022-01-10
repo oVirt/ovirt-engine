@@ -57,6 +57,7 @@ public enum AuditLogType {
     VDS_FAILED_TO_RUN_VMS(500, AuditLogSeverity.ERROR,
             AuditLogTimeInterval.MINUTE.getValue()),
     VDS_INSTALL(504),
+    HOSTED_ENGINE_MAX_RECOMMENDED_HOSTS_INSTALLED(526, AuditLogSeverity.WARNING),
     VDS_INSTALL_FAILED(505, AuditLogSeverity.ERROR),
     VDS_INITIATED_RUN_VM(506),
     VDS_INITIATED_RUN_VM_AS_STATELESS(537),
