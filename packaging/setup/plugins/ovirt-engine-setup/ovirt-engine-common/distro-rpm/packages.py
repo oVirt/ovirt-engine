@@ -22,6 +22,7 @@ from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
+from ovirt_engine_setup.engine import constants as oenginecons
 
 from ovirt_setup_lib import dialog
 
@@ -265,6 +266,7 @@ class Plugin(plugin.PluginBase):
         self.environment[
             osetupcons.RPMDistroEnv.PACKAGES_SETUP
         ] = []
+        self._plist = None
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -315,7 +317,7 @@ class Plugin(plugin.PluginBase):
             (
                 upgradeAvailable,
                 missingRollback,
-                plist,
+                self._plist,
             ) = self._checkForProductUpdate()
 
             if not upgradeAvailable:
@@ -336,7 +338,7 @@ class Plugin(plugin.PluginBase):
                         'Do you wish to update them now? '
                         '(@VALUES@) [@DEFAULT@]: '
                     ).format(
-                        plist='\n'.join(self._arrangedPackageList(plist))
+                        plist='\n'.join(self._arrangedPackageList(self._plist))
                     ),
                     prompt=True,
                     true=_('Yes'),
@@ -372,7 +374,7 @@ class Plugin(plugin.PluginBase):
                 (
                     upgradeAvailable,
                     missingRollback,
-                    plist,
+                    self._plist,
                 ) = self._checkForProductUpdate()
 
             if upgradeAvailable:
@@ -431,6 +433,48 @@ class Plugin(plugin.PluginBase):
                     '"--offline" to prevent checking for updates.'
                 )
             )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        condition=lambda self: (
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
+            ] and
+            osetuputil.is_ovirt_packaging_supported_distro()
+        ),
+    )
+    def _validation(self):
+        engineVersion = None
+        if self._plist is not None:
+            for p in self._plist:
+                if (
+                    p['name'] == oenginecons.Const.ENGINE_PACKAGE_NAME and
+                    p['operation'] == 'install'
+                ):
+                    engineVersion = f'{p["version"]}-{p["release"]}'
+        if engineVersion is None:
+            # Engine is not updated, or we run offline. I still want to make
+            # sure we use a matching engine-setup. Check installed engine.
+            rc, stdout, stderr = self.execute(
+                args=(
+                    self.command.get('rpm'),
+                    '-q',
+                    '--queryformat=%{version}-%{release}',
+                    oenginecons.Const.ENGINE_PACKAGE_NAME,
+                ),
+            )
+            engineVersion = stdout[0]
+        if (
+            engineVersion is not None and
+            osetupcons.Const.DISPLAY_VERSION != engineVersion
+        ):
+            self.dialog.note(
+                f'Setup version: {osetupcons.Const.DISPLAY_VERSION}\n'
+                f'Engine version: {engineVersion}'
+            )
+            raise RuntimeError(_(
+                'Setup and (updated) Engine versions must match'
+            ))
 
     @plugin.event(
         stage=plugin.Stages.STAGE_PACKAGES,
