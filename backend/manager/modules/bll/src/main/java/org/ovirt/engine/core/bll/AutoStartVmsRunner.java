@@ -160,11 +160,19 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
         if (considerPriority) {
             // Sort only if priority is important
-            vmsToRestart.sort(Comparator.<AutoStartVmToRestart>comparingInt(a -> a.getVm().getPriority()).reversed());
+            vmsToRestart.sort(
+                    Comparator.<AutoStartVmToRestart> comparingInt(a -> a.getVm() != null ? a.getVm().getPriority() : 0)
+                            .reversed());
         }
 
         int neededPriority = Integer.MIN_VALUE;
         for (AutoStartVmToRestart autoStartVmToRestart : vmsToRestart) {
+            if (autoStartVmToRestart.getVm() == null) {
+                log.debug("VM '{}' was removed, excluding it from auto-start list", autoStartVmToRestart.getVmId());
+                autoStartVmsToRestart.remove(autoStartVmToRestart.getVmId());
+                continue;
+            }
+
             if (autoStartVmToRestart.getState() == AutoStartVmToRestart.State.VM_DOWN) {
                 autoStartVmToRestart.setState(
                         processVmDown(autoStartVmToRestart, neededPriority, iterationStartTime));
