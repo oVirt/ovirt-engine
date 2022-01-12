@@ -785,6 +785,8 @@ public class VmMapper extends VmBaseMapper {
     @Mapping(from = CpuPinningPolicy.class, to = org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.class)
     public static org.ovirt.engine.core.common.businessentities.CpuPinningPolicy map(CpuPinningPolicy cpuPinningPolicy) {
         switch (cpuPinningPolicy) {
+            case MANUAL:
+                return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.MANUAL;
             case RESIZE_AND_PIN_NUMA:
                 return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
             default:
@@ -795,6 +797,8 @@ public class VmMapper extends VmBaseMapper {
     @Mapping(from = org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.class, to = CpuPinningPolicy.class)
     public static CpuPinningPolicy map(org.ovirt.engine.core.common.businessentities.CpuPinningPolicy cpuPinningPolicy) {
         switch (cpuPinningPolicy) {
+            case MANUAL:
+                return CpuPinningPolicy.MANUAL;
             case RESIZE_AND_PIN_NUMA:
                 return CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
             default:
