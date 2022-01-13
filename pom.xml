@@ -168,6 +168,13 @@
         <groupId>org.apache.xmlrpc</groupId>
         <artifactId>xmlrpc-client</artifactId>
         <version>${xmlrpc-client.version}</version>
+        <exclusions>
+          <!-- Note: avoid junit 3 as a dependency -->
+          <exclusion>
+            <artifactId>junit</artifactId>
+            <groupId>junit</groupId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
