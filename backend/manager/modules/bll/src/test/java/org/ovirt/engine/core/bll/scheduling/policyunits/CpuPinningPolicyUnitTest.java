@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
@@ -51,11 +52,13 @@ public class CpuPinningPolicyUnitTest {
 
         vm = new VM();
         vm.setId(Guid.newGuid());
+        vm.setCpuPinningPolicy(CpuPinningPolicy.MANUAL);
         cluster = new Cluster();
     }
 
     @Test
     public void shouldHandleEmptyHostList() {
+        vm.setCpuPinning("1#0_2#3");
         final List<VDS> filteredHost = policyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap()),  new ArrayList<>(), vm, mock(PerHostMessages.class));
         assertThat(filteredHost, is(empty()));
         assertThat(messages(), is(empty()));
@@ -65,7 +68,8 @@ public class CpuPinningPolicyUnitTest {
      * No online CPU is equivalent to no information available
      */
     @Test
-    public void shouldConsiderHostsWithNoOnlineCpus(){
+    public void shouldConsiderHostsWithNoOnlineCpus() {
+        vm.setCpuPinningPolicy(CpuPinningPolicy.NONE);
         hostWithoutCpus.setOnlineCpus("");
         assertThat(filter(), hasItem(hostWithoutCpus));
         assertThat(messages(), is(empty()));
@@ -75,7 +79,8 @@ public class CpuPinningPolicyUnitTest {
      * No information about online cpus is available
      */
     @Test
-    public void shouldConsiderHostWithNoCpuData(){
+    public void shouldConsiderHostWithNoCpuData() {
+        vm.setCpuPinningPolicy(CpuPinningPolicy.NONE);
         hostWithoutCpus.setOnlineCpus(null);
         assertThat(filter(), hasItem(hostWithoutCpus));
         assertThat(messages(), is(empty()));
@@ -83,6 +88,7 @@ public class CpuPinningPolicyUnitTest {
 
     @Test
     public void shouldReturnAllHostWithoutPinningRequirements() {
+        vm.setCpuPinningPolicy(CpuPinningPolicy.NONE);
         assertThat(filter(), containsInAnyOrder(hostWithCpus, hostWithoutCpus));
         assertThat(messages(), is(empty()));
     }
