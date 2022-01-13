@@ -306,10 +306,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             DiskInterface diskInterface) {
         int numOfDisks = getVm().getDiskMap().values().size();
         int controllerId = vmInfoBuildUtils.getControllerForScsiDisk(address, getVm(), diskInterface, numOfDisks);
-        if (!vmDeviceUnitMap.containsKey(controllerId)) {
-            return new HashMap<>();
-        }
-        return vmDeviceUnitMap.get(controllerId);
+        return vmDeviceUnitMap.computeIfAbsent(controllerId, i -> new HashMap<>());
     }
 
     private Map<String, String> getAddressMapForScsiDisk(String address,
