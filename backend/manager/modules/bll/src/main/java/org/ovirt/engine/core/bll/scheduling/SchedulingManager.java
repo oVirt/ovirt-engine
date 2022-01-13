@@ -40,6 +40,7 @@ import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.bll.scheduling.external.WeightResultEntry;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuLoad;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuPinning;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingHugePages;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingNumaMemory;
@@ -52,6 +53,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUn
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmToHostAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.selector.SelectorInstance;
 import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
+import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUnitPinningHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -61,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -142,6 +145,8 @@ public class SchedulingManager implements BackendService {
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
     private ManagedScheduledExecutorService executor;
+    @Inject
+    private VdsCpuUnitPinningHelper vdsCpuUnitPinningHelper;
 
     private PendingResourceManager pendingResourceManager;
 
@@ -424,8 +429,10 @@ public class SchedulingManager implements BackendService {
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, NumaNodeMemoryConsumption::merge));
                 updateHostNumaNodes(host, numaConsumption);
 
+
                 for (VM vm : vmsNotOnHost) {
-                    addPendingResources(vm, host, numaConsumptionPerVm.getOrDefault(vm.getId(), Collections.emptyMap()));
+                    List<VdsCpuUnit> dedicatedCpuPinning = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host);
+                    addPendingResources(vm, host, numaConsumptionPerVm.getOrDefault(vm.getId(), Collections.emptyMap()), dedicatedCpuPinning);
                     hostsToNotifyPending.add(bestHostId);
                     vfsUpdates.add(() -> markVfsAsUsedByVm(vm, bestHostId));
                 }
@@ -502,13 +509,14 @@ public class SchedulingManager implements BackendService {
         }
     }
 
-    private void addPendingResources(VM vm, VDS host, Map<Integer, NumaNodeMemoryConsumption> numaConsumption) {
+    private void addPendingResources(VM vm, VDS host, Map<Integer, NumaNodeMemoryConsumption> numaConsumption, List<VdsCpuUnit>  dedicatedCpus) {
         int numOfCpus = VmCpuCountHelper.getRuntimeNumOfCpu(vm, host);
         Guid hostId = host.getId();
         getPendingResourceManager().addPending(new PendingCpuCores(hostId, vm, numOfCpus));
         getPendingResourceManager().addPending(new PendingMemory(hostId, vm, vmOverheadCalculator.getStaticOverheadInMb(vm)));
         getPendingResourceManager().addPending(new PendingOvercommitMemory(hostId, vm, vmOverheadCalculator.getTotalRequiredMemWithoutHugePagesMb(vm, numOfCpus)));
         getPendingResourceManager().addPending(new PendingVM(hostId, vm));
+        getPendingResourceManager().addPending(new PendingCpuPinning(hostId, vm, dedicatedCpus));
 
         int cpuLoad = vm.getRunOnVds() != null && vm.getStatisticsData() != null && vm.getUsageCpuPercent() != null ?
                 vm.getUsageCpuPercent() * VmCpuCountHelper.getDynamicNumOfCpu(vm) :

@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.CpuPinningHelper;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.BrokerCommandCallback;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -553,13 +554,18 @@ public class VdsManager {
      * @param pendingMemory - scheduled memory in MiB
      * @param pendingCpuCount - scheduled number of CPUs
      */
-    public void updatePendingData(int pendingMemory, int pendingCpuCount) {
+    public void updatePendingData(int pendingMemory,
+            int pendingCpuCount,
+            Map<Guid, List<VdsCpuUnit>> vmToPendingPinning) {
         synchronized (this) {
             cachedVds.setPendingVcpusCount(pendingCpuCount);
             cachedVds.setPendingVmemSize(pendingMemory);
             List<VmDynamic> vmsOnVds = getVmDynamicDao().getAllRunningForVds(getVdsId());
             Map<Guid, VMStatus> vmIdToStatus = vmsOnVds.stream().collect(Collectors.toMap(VmDynamic::getId, VmDynamic::getStatus));
             HostMonitoring.refreshCommitedMemory(cachedVds, vmIdToStatus, resourceManager);
+            for (var vmPendingPinning : vmToPendingPinning.entrySet()) {
+                vmPendingPinning.getValue().forEach(cpu -> cpu.setVmId(vmPendingPinning.getKey()));
+            }
             updateDynamicData(cachedVds.getDynamicData());
         }
     }
@@ -1247,7 +1253,28 @@ public class VdsManager {
         if (!isInitialized()) {
             log.info("VMs initialization finished for Host: '{}:{}'", cachedVds.getName(), cachedVds.getId());
             resourceManager.handleVmsFinishedInitOnVds(cachedVds.getId());
+            recoverCpuPinning(vmDao.getMonitoredVmsRunningByVds(cachedVds.getId()));
             setInitialized(true);
+        }
+    }
+
+    /**
+     * Once the engine starts, if any VM is running on the host - check the VM pinning and set it to the cached
+     * cpuTopology.
+     * @param vms VMs running on the host.
+     */
+    private void recoverCpuPinning(List<VM> vms) {
+        for (VM vm : vms) {
+            VM vmFromDB = vmDao.get(vm.getId());
+            String pinning = CpuPinningHelper.getVmPinning(vmFromDB);
+            if (pinning != null) {
+                synchronized (this) {
+                    getCpuTopology().stream()
+                            .filter(cpu -> CpuPinningHelper.getAllPinnedPCpus(pinning).contains(cpu.getCpu()))
+                            .forEach(cpu -> cpu.setVmId(vm.getId()));
+                    updateDynamicToCachedVds();
+                }
+            }
         }
     }
 
@@ -1293,11 +1320,21 @@ public class VdsManager {
         }
     }
 
+
     private void initAvailableCpus() {
         List<VdsCpuUnit> cpuTopology = cachedVds.getCpuTopology();
         if (cpuTopology == null) {
             return;
         }
         this.cpuTopology = cpuTopology;
+        this.cpuTopology.stream().filter(cpu -> cpu.getCpu() == Integer.parseInt(cachedVds.getVdsmCpusAffinity())).forEach(cpu -> cpu.setVmId(Guid.SYSTEM));
+    }
+
+    public List<VdsCpuUnit> getCpuTopology() {
+        return cpuTopology;
+    }
+
+    public void updateDynamicToCachedVds() {
+        updateDynamicData(cachedVds.getDynamicData());
     }
 }

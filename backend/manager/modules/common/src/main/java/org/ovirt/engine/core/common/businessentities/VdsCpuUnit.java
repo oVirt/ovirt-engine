@@ -3,12 +3,19 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.Objects;
 
+import org.ovirt.engine.core.compat.Guid;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
 public class VdsCpuUnit implements Serializable {
 
     private static final long serialVersionUID = -397254497953366129L;
     private int core;
     private int socket;
     private int cpu;
+    @JsonIgnore
+    private Guid vmId;
 
     public VdsCpuUnit() {
 
@@ -42,6 +49,21 @@ public class VdsCpuUnit implements Serializable {
 
     public void setCpu(int cpu) {
         this.cpu = cpu;
+    }
+
+    @JsonIgnore
+    public void setVmId(Guid vmId) {
+        this.vmId = vmId;
+    }
+
+    @JsonIgnore
+    public Guid getVmId() {
+        return vmId;
+    }
+
+    @JsonIgnore
+    public boolean isPinned() {
+        return !Guid.isNullOrEmpty(vmId);
     }
 
     @Override
