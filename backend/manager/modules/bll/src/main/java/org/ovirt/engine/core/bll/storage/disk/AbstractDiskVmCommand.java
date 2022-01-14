@@ -284,10 +284,15 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 .run(new GetControllerIndices())
                 .returnValue()
                 .get(diskInterface);
+        if (diskInterface == DiskInterface.VirtIO_SCSI) {
+            int numOfPluggedDisks = (int) getVm().getDiskMap().values().stream()
+                    .filter(disk -> disk.getDiskVmElementForVm(getVm().getId()).isPlugged())
+                    .count();
+            controllerIndex = vmInfoBuildUtils.getControllerForScsiDisk(currentAddress, getVm(), diskInterface, numOfPluggedDisks);
+        }
         var vmDeviceUnitMap = getVmDeviceUnitMapForScsiDisks(diskInterface);
-        Map<VmDevice, Integer> vmDeviceUnitMapForController =
-                vmDeviceUnitMapForController(currentAddress, vmDeviceUnitMap, diskInterface);
-        Map<String, String> addressMap = getAddressMapForScsiDisk(currentAddress,
+        var vmDeviceUnitMapForController = vmDeviceUnitMap.computeIfAbsent(controllerIndex, i -> new HashMap<>());
+        var addressMap = getAddressMapForScsiDisk(currentAddress,
                 vmDeviceUnitMapForController,
                 controllerIndex,
                 diskInterface == DiskInterface.SPAPR_VSCSI,
@@ -299,14 +304,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return diskInterface == DiskInterface.VirtIO_SCSI
                 ? vmInfoBuildUtils.getVmDeviceUnitMapForVirtioScsiDisks(getVm())
                 : vmInfoBuildUtils.getVmDeviceUnitMapForSpaprScsiDisks(getVm());
-    }
-
-    private Map<VmDevice, Integer> vmDeviceUnitMapForController(String address,
-            Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap,
-            DiskInterface diskInterface) {
-        int numOfDisks = getVm().getDiskMap().values().size();
-        int controllerId = vmInfoBuildUtils.getControllerForScsiDisk(address, getVm(), diskInterface, numOfDisks);
-        return vmDeviceUnitMap.computeIfAbsent(controllerId, i -> new HashMap<>());
     }
 
     private Map<String, String> getAddressMapForScsiDisk(String address,
