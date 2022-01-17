@@ -12,9 +12,8 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 public class NumaUtils {
 
     public static void setNumaListConfiguration(List<VmNumaNode> nodeList, long memTotal, Optional<Integer> hugepages,
-            int coreCount) {
-
-     // Sorting is needed, otherwise the list will be ordered by nodeId,
+            int cpuCount) {
+        // Sorting is needed, otherwise the list will be ordered by nodeId,
         // as it was returned by DB. It can assign wrong CPU IDs to nodes.
         nodeList.sort(Comparator.comparing(NumaNode::getIndex));
         int nodeCount = nodeList.size();
@@ -27,8 +26,8 @@ public class NumaUtils {
         long memBlocksPerNode = memBlocks / nodeCount;
         long remainingBlocks = memBlocks % nodeCount;
 
-        int coresPerNode = coreCount / nodeCount;
-        int remainingCores = coreCount % nodeCount;
+        int cpuPerNode = cpuCount / nodeCount;
+        int remainingCpus = cpuCount % nodeCount;
 
         int nextCpuId = 0;
         for (VmNumaNode vmNumaNode : nodeList) {
@@ -38,11 +37,11 @@ public class NumaUtils {
             vmNumaNode.setMemTotal(nodeBlocks * memGranularityMB);
 
             // Update cpus
-            int nodeCores = coresPerNode + (remainingCores > 0 ? 1 : 0);
-            --remainingCores;
+            int nodeCpus = cpuPerNode + (remainingCpus > 0 ? 1 : 0);
+            --remainingCpus;
 
-            List<Integer> coreList = new ArrayList<>(nodeCores);
-            for (int j = 0; j < nodeCores; j++, nextCpuId++) {
+            List<Integer> coreList = new ArrayList<>(nodeCpus);
+            for (int j = 0; j < nodeCpus; j++, nextCpuId++) {
                 coreList.add(nextCpuId);
             }
             vmNumaNode.setCpuIds(coreList);
@@ -50,9 +49,9 @@ public class NumaUtils {
     }
 
     public static void setNumaListConfiguration(List<VmNumaNode> nodeList, long memTotal, Optional<Integer> hugepages,
-            int coreCount, NumaTuneMode numaTuneMode) {
+            int cpuCount, NumaTuneMode numaTuneMode) {
 
-        setNumaListConfiguration(nodeList, memTotal, hugepages, coreCount);
+        setNumaListConfiguration(nodeList, memTotal, hugepages, cpuCount);
         for (VmNumaNode vmNumaNode : nodeList) {
             // Update tune mode
             vmNumaNode.setNumaTuneMode(numaTuneMode);
