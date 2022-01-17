@@ -156,6 +156,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         setStoragePool(dataCenter);
         getClusterQuota().setIsAvailable(dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
         getCluster().getSelectedItemChangedEvent().addListener(clusterChangedListener);
+        getCluster().getSelectedItemChangedEvent().addListener(vmImportGeneralModel);
 
         // get cluster
         getCluster().setItems(null);

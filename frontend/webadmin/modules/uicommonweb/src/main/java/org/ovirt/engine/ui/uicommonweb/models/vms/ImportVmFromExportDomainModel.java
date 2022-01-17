@@ -51,6 +51,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     public static final String ON_DISK_LOAD = "OnDiskLoad"; //$NON-NLS-1$
 
     private final VmImportDiskListModel importDiskListModel;
+    private final VmImportGeneralModel vmImportGeneralModel;
     private final Map<Guid, List<Disk>> missingTemplateDiskMap = new HashMap<>();
     protected ArrayList<StorageDomain> filteredStorageDomains;
     private Map<Guid, ArrayList<Quota>> storageQuotaMap;
@@ -70,6 +71,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
             final VmImportAppListModel vmImportAppListModel) {
         super(cluster, clusterQuota);
         importDiskListModel = vmImportDiskListModel;
+        this.vmImportGeneralModel = vmImportGeneralModel;
         setDetailList(vmImportGeneralModel, vmImportInterfaceListModel, importDiskListModel, vmImportAppListModel);
     }
 
@@ -80,6 +82,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         }
         getClusterQuota().setIsAvailable(dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
         getCluster().getSelectedItemChangedEvent().addListener(clusterChangedListener);
+        getCluster().getSelectedItemChangedEvent().addListener(vmImportGeneralModel);
         // get cluster
         getCluster().setItems(null);
         AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(clusters -> {

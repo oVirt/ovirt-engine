@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -16,12 +17,16 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
@@ -63,6 +68,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
     private String optimizedForSystemProfile;
     private Map<Guid, String> vmNamesMap;
     private Guid editedVmId;
+    private Cluster cluster;
 
     private ImportSource source;
 
@@ -91,8 +97,36 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
     protected void onEntityChanged() {
         super.onEntityChanged();
         if (getEntity() != null) {
+            updateOsList();
             updateProperties();
         }
+    }
+
+    @Override
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+        super.eventRaised(ev, sender, args);
+        if (sender instanceof ClusterListModel) {
+            cluster = (Cluster)((ClusterListModel) sender).getSelectedItem();
+            updateOsList();
+        }
+    }
+
+    private void updateOsList() {
+        if (getEntity() == null || getEntity().getVm() == null || cluster == null) {
+            return;
+        }
+
+        VM vm = getEntity().getVm();
+        Version version = vm.getCompatibilityVersion() != null ? vm.getCompatibilityVersion() : cluster.getCompatibilityVersion();
+
+        if (version == null) {
+            return;
+        }
+
+        setCompatibilityVersion(version.toString());
+        getOperatingSystems().setItems(
+                AsyncDataProvider.getInstance()
+                        .getSupportedOsIds(vm.getClusterArch(), version));
     }
 
     public String getOrigin() {
@@ -132,9 +166,6 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         super.updateProperties(vm.getId());
         addVmOriginalNameToMapIfMissing();
         getName().setEntity(getVmEditedName());
-        getOperatingSystems().setItems(
-                AsyncDataProvider.getInstance()
-                        .getSupportedOsIds(vm.getClusterArch(), vm.getCompatibilityVersion()));
         setDescription(vm.getVmDescription());
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(vm.getQuotaEnforcementType() != null
@@ -179,10 +210,6 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
 
         setHasCustomProperties(!StringHelper.isNullOrEmpty(vm.getCustomProperties()));
         setCustomProperties(getHasCustomProperties() ? constants.configured() : constants.notConfigured());
-
-        setCompatibilityVersion(vm.getCompatibilityVersion() != null
-                ? vm.getCompatibilityVersion().toString()
-                : ""); //$NON-NLS-1$
 
         setVmId(vm.getId().toString());
         setFqdn(vm.getFqdn());
