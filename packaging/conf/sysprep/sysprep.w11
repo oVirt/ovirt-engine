@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+    <settings pass="windowsPE">
+        <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <UserData>
+                <ProductKey>
+                    <Key><![CDATA[$ProductKey$]]></Key>
+                </ProductKey>
+                <AcceptEula>true</AcceptEula>
+                <FullName>"user"</FullName>
+                <Organization><![CDATA[$OrgName$]]></Organization>
+            </UserData>
+            <ImageInstall>
+                <OSImage>
+                    <InstallToAvailablePartition>true</InstallToAvailablePartition>
+                </OSImage>
+            </ImageInstall>
+        </component>
+        <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <SetupUILanguage>
+                <UILanguage><![CDATA[$SetupUiLanguageUiLanguage$]]></UILanguage>
+            </SetupUILanguage>
+            <InputLocale><![CDATA[$InputLocale$]]></InputLocale>
+            <UILanguage><![CDATA[$UILanguage$]]></UILanguage>
+            <SystemLocale><![CDATA[$SystemLocale$]]></SystemLocale>
+            <UserLocale><![CDATA[$UserLocale$]]></UserLocale>
+        </component>
+    </settings>
+    <settings pass="specialize">
+        <component name="Microsoft-Windows-UnattendedJoin" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <Identification>
+                <Credentials>
+                    <Domain><![CDATA[$JoinDomain$]]></Domain>
+                    <Password><![CDATA[$DomainAdminPassword$]]></Password>
+                    <Username><![CDATA[$DomainAdmin$]]></Username>
+                </Credentials>
+                <JoinDomain><![CDATA[$JoinDomain$]]></JoinDomain>
+                <MachineObjectOU><![CDATA[$MachineObjectOU$]]></MachineObjectOU>
+            </Identification>
+        </component>
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <Display>
+                <ColorDepth>32</ColorDepth>
+                <DPI>96</DPI>
+                <HorizontalResolution>1024</HorizontalResolution>
+                <RefreshRate>75</RefreshRate>
+                <VerticalResolution>768</VerticalResolution>
+            </Display>
+            <ComputerName><![CDATA[$ComputerName$]]></ComputerName>
+            <TimeZone><![CDATA[$TimeZone$]]></TimeZone>
+        </component>
+        <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <InputLocale><![CDATA[$InputLocale$]]></InputLocale>
+            <UserLocale><![CDATA[$UserLocale$]]></UserLocale>
+            <SystemLocale><![CDATA[$SystemLocale$]]></SystemLocale>
+            <UILanguage><![CDATA[$UILanguage$]]></UILanguage>
+        </component>
+    </settings>
+    <settings pass="oobeSystem">
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <UserAccounts>
+                <AdministratorPassword>
+                    <Value><![CDATA[$AdminPassword$]]></Value>
+                    <PlainText>true</PlainText>
+                </AdministratorPassword>
+                <LocalAccounts>
+                    <LocalAccount wcm:action="add">
+                        <Password>
+                            <Value><![CDATA[$AdminPassword$]]></Value>
+                            <PlainText>true</PlainText>
+                        </Password>
+                        <DisplayName>user</DisplayName>
+                        <Group>administrators</Group>
+                        <Name>user</Name>
+                    </LocalAccount>
+                </LocalAccounts>
+            </UserAccounts>
+            <OOBE>
+                <HideEULAPage>true</HideEULAPage>
+                <NetworkLocation>Work</NetworkLocation>
+                <ProtectYourPC>2</ProtectYourPC>
+            </OOBE>
+        </component>
+        <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <InputLocale><![CDATA[$InputLocale$]]></InputLocale>
+            <UserLocale><![CDATA[$UserLocale$]]></UserLocale>
+            <SystemLocale><![CDATA[$SystemLocale$]]></SystemLocale>
+            <UILanguage><![CDATA[$UILanguage$]]></UILanguage>
+        </component>
+    </settings>
+    <cpi:offlineImage cpi:source="wim:d:/sources/install.wim#Windows 10 ENTERPRISE" xmlns:cpi="urn:schemas-microsoft-com:cpi"/>
+</unattend>
