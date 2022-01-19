@@ -284,7 +284,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                         lockManager.getLockInfo(getImage().getImageTemplateId() + LockingGroup.TEMPLATE.toString());
 
                 if (lockInfo != null) {
-                    log.info("The template image is being used, skipping teardown");
+                    log.info("The template image is used for image transfer '{}', skipping teardown", getCommandId());
                     return;
                 }
             }
@@ -292,8 +292,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             VDSReturnValue teardownImageVdsRetVal = runVdsCommand(VDSCommandType.TeardownImage,
                     getImageActionsParameters(vdsId));
             if (!teardownImageVdsRetVal.getSucceeded()) {
-                log.warn("Failed to tear down image '{}' for image transfer session: {}",
-                        image, teardownImageVdsRetVal.getVdsError());
+                log.warn("Failed to tear down image '{}' for image transfer '{}': {}",
+                        image, getCommandId(), teardownImageVdsRetVal.getVdsError());
                 tearDownFailed = true;
             }
         }
@@ -498,8 +498,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     public void proceedCommandExecution(Guid childCmdId) {
         ImageTransfer entity = imageTransferDao.get(getCommandId());
         if (entity == null || entity.getPhase() == null) {
-            log.error("Image transfer status entity corrupt or missing from database"
-                         + " for image transfer command '{}'", getCommandId());
+            log.error("Image transfer status entity is corrupted or missing from database for image transfer '{}'",
+                    getCommandId());
             setCommandStatus(CommandStatus.FAILED);
             return;
         }
@@ -567,15 +567,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         switch (commandCoordinatorUtil.getCommandStatus(context.childCmdId)) {
             case NOT_STARTED:
             case ACTIVE:
-                log.info("Waiting for {} to be added for image transfer command '{}'",
-                        IMAGE_TYPE, getCommandId());
+                log.info("Waiting for {} to be added for image transfer '{}'", IMAGE_TYPE, getCommandId());
                 return;
             case SUCCEEDED:
             case ENDED_SUCCESSFULLY:
                 break;
             default:
-                log.error("Failed to add {} for image transfer command '{}'",
-                        IMAGE_TYPE, getCommandId());
+                log.error("Failed to add {} for image transfer '{}'", IMAGE_TYPE, getCommandId());
                 setCommandStatus(CommandStatus.FAILED);
                 return;
         }
@@ -583,7 +581,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         ActionReturnValue addDiskRetVal = commandCoordinatorUtil.getCommandReturnValue(context.childCmdId);
         if (addDiskRetVal == null || !addDiskRetVal.getSucceeded()) {
             log.error("Failed to add {} (command status was success, but return value was failed)"
-                    + " for image transfer command '{}'", IMAGE_TYPE, getCommandId());
+                    + " for image transfer '{}'", IMAGE_TYPE, getCommandId());
             setReturnValue(addDiskRetVal);
             setCommandStatus(CommandStatus.FAILED);
             return;
@@ -609,8 +607,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         setImage(image);
         setStorageDomainId(domainId);
 
-        log.info("Successfully added {} for image transfer command '{}'",
-                getTransferDescription(), getCommandId());
+        log.info("Successfully added {} for image transfer '{}'", getTransferDescription(), getCommandId());
 
         // ImageGroup is empty when downloading a disk snapshot
         if (!Guid.isNullOrEmpty(getParameters().getImageGroupID())) {
@@ -622,8 +619,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         // The image will remain locked until the transfer command has completed.
         lockImage();
         startImageTransferSession();
-        log.info("Returning from proceedCommandExecution after starting transfer session"
-                + " for image transfer command '{}'", getCommandId());
+        log.info("Returning from proceedCommandExecution() after starting image transfer '{}'", getCommandId());
 
         resetPeriodicPauseLogTime(0);
     }
@@ -701,7 +697,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private void handleResuming(final StateContext context) {
         lockImage();
 
-        log.info("Resuming transfer for {}", getTransferDescription());
+        log.info("Resuming transfer '{}' for {}", getCommandId(), getTransferDescription());
         auditLog(this, AuditLogType.TRANSFER_IMAGE_RESUMED_BY_USER);
         extendTicketIfNecessary(context);
         updateEntityPhase(ImageTransferPhase.TRANSFERRING);
@@ -722,10 +718,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         // exponentially, make sure to set it with time to spare.
         if (context.iterationTimestamp
                 >= getParameters().getSessionExpiration() - getHostTicketRefreshAllowance()) {
-            log.info("Renewing transfer ticket for {}", getTransferDescription());
+            log.info("Renewing transfer ticket for {}, image transfer '{}'", getTransferDescription(), getCommandId());
             boolean extendSucceeded = extendImageTransferSession(context.entity);
             if (!extendSucceeded) {
-                log.warn("Failed to renew transfer ticket for {}", getTransferDescription());
+                log.warn("Failed to renew transfer ticket for {}, image transfer '{}'",
+                        getTransferDescription(), getCommandId());
                 if (getParameters().isRetryExtendTicket()) {
                     // Set 'extendTicketFailed' flag to true for giving a grace period
                     // for another extend attempt.
@@ -737,7 +734,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 }
             }
         } else {
-            log.debug("Not yet renewing transfer ticket for {}", getTransferDescription());
+            log.debug("Not yet renewing transfer ticket for {}, image transfer '{}'",
+                    getTransferDescription(), getCommandId());
         }
     }
 
@@ -752,7 +750,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                     new GetImageTicketVDSCommandParameters(
                             context.entity.getVdsId(), context.entity.getImagedTicketId())).getReturnValue();
         } catch (EngineException e) {
-            log.error("Could not get image ticket '{}' from vdsm", context.entity.getImagedTicketId(), e);
+            log.error("Could not get image ticket '{}' from vdsm, image transfer '{}': {}",
+                    context.entity.getImagedTicketId(), getCommandId(), e);
             updateEntityPhaseToStoppedBySystem(
                     AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_MISSING_TICKET);
             return;
@@ -777,7 +776,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             ActionReturnValue returnValue = runInternalAction(ActionType.TransferImageStatus,
                     new TransferImageStatusParameters(getCommandId(), updatesFromTicket), cloneContext().withoutLock());
             if (returnValue == null || !returnValue.getSucceeded()) {
-                log.debug("Failed to update transfer status.");
+                log.debug("Failed to update status for image transfer '{}'", getCommandId());
                 return oldImageTransfer;
             }
             return returnValue.getActionReturnValue();
@@ -812,19 +811,19 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private void handleCancelledUser() {
-        log.info("Transfer cancelled by user for {}", getTransferDescription());
+        log.info("Image transfer '{}' cancelled by user for {}", getCommandId(), getTransferDescription());
         setAuditLogTypeFromPhase(ImageTransferPhase.CANCELLED_USER);
         updateEntityPhase(ImageTransferPhase.FINALIZING_CLEANUP);
     }
 
     private void handleCancelledSystem() {
-        log.info("Transfer cancelled by system for {}", getTransferDescription());
+        log.info("Image transfer '{}' cancelled by system for {}", getCommandId(), getTransferDescription());
         setAuditLogTypeFromPhase(ImageTransferPhase.CANCELLED_SYSTEM);
         updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
     }
 
     private void handleFinalizingSuccess(final StateContext context) {
-        log.info("Finalizing successful transfer for {}", getTransferDescription());
+        log.info("Finalizing successful image transfer '{}' for {}", getCommandId(), getTransferDescription());
 
         boolean isImageVerified = true;
 
@@ -857,7 +856,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
 
         if (isImageVerified) {
-            log.info("Transfer was successful. {}", getTransferDescription());
+            log.info("Image transfer '{}' was successful for {}", getCommandId(), getTransferDescription());
             setCommandStatus(CommandStatus.SUCCEEDED);
         } else {
             updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
@@ -875,7 +874,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             // As we currently support a single volume image, we only need to verify that volume.
             vdsBroker.runVdsCommand(VDSCommandType.VerifyUntrustedVolume, parameters);
         } catch (RuntimeException e) {
-            log.error("Failed to verify transferred image: {}", e);
+            log.error("Failed to verify transferred image for image transfer '{}': {}", getCommandId(), e);
             return false;
         }
         return true;
@@ -883,7 +882,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     private void handleFinalizingFailure(final StateContext context) {
         cleanup(context, true);
-        log.error("Transfer failed. {}", getTransferDescription());
+        log.error("Image transfer '{}' failed for {}", getCommandId(), getTransferDescription());
         setCommandStatus(CommandStatus.FAILED);
     }
 
@@ -893,9 +892,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     private void cleanup(final StateContext context, boolean failure) {
         if (failure) {
-            log.error("Finalizing failed transfer. {}", getTransferDescription());
+            log.error("Finalizing failed image transfer '{}' for {}", getCommandId(), getTransferDescription());
         } else {
-            log.info("Cleaning up after cancelled transfer. {}", getTransferDescription());
+            log.info("Cleaning up after cancelled image transfer '{}' for {}",
+                    getCommandId(), getTransferDescription());
         }
 
         // If stopping the session did not succeed, don't change the transfer state.
@@ -916,7 +916,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private void handleFinishedCleanup() {
-        log.info("Cleanup after cancelled transfer done. {}", getTransferDescription());
+        log.info("Cleanup after cancelled image transfer '{}' finished for {}",
+                getCommandId(), getTransferDescription());
         setCommandStatus(CommandStatus.FAILED);
     }
 
@@ -972,7 +973,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     private void periodicPauseLog(ImageTransfer entity, long ts) {
         if (ts >= getParameters().getLastPauseLogTime() + getPauseLogInterval()) {
-            log.info("Transfer was paused by {}. {}",
+            log.info("Image transfer '{}' was paused by {} for {}",
+                    getCommandId(),
                     entity.getPhase() == ImageTransferPhase.PAUSED_SYSTEM ? "system" : "user",
                     getTransferDescription());
             resetPeriodicPauseLogTime(ts);
@@ -984,7 +986,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
      */
     protected void startImageTransferSession() {
         if (!initializeVds()) {
-            log.error("Could not find a suitable host for image data transfer");
+            log.error("Could not find a suitable host for image transfer '{}'", getCommandId());
             updateEntityPhaseToStoppedBySystem(
                     AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_MISSING_HOST);
             return;
@@ -993,14 +995,14 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         try {
             imagePath = prepareImage(getVdsId());
         } catch (Exception e) {
-            log.error("Failed to prepare image for transfer session: {}", e.getMessage(), e);
+            log.error("Failed to prepare image for image transfer '{}': {}", getCommandId(), e);
             return;
         }
 
         Guid imagedTicketId = Guid.newGuid();
 
         if (!addImageTicketToDaemon(imagedTicketId, imagePath)) {
-            log.error("Failed to add host image ticket");
+            log.error("Failed to add host image ticket for image transfer '{}'", getCommandId());
             updateEntityPhaseToStoppedBySystem(
                     AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_DAEMON);
             return;
@@ -1008,7 +1010,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
         if (proxyEnabled()) {
             if (!addImageTicketToProxy(imagedTicketId, getImageDaemonUri(getVds().getHostName()))) {
-                log.error("Failed to add proxy image ticket");
+                log.error("Failed to add proxy image ticket for image transfer '{}'", getCommandId());
                 if (getParameters().getTransferClientType().isBrowserTransfer()) {
                     updateEntityPhaseToStoppedBySystem(
                             AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
@@ -1019,8 +1021,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             }
         }
 
-        log.info("Started transfer session with transfer id {}, timeout {} seconds",
-                getParameters().getCommandId().toString(), getClientTicketLifetime());
+        log.info("Started image transfer '{}', timeout {} seconds", getCommandId(), getClientTicketLifetime());
 
         ImageTransfer updates = new ImageTransfer();
         updates.setVdsId(getVdsId());
@@ -1054,16 +1055,18 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         if (isBackup() && getParameters().getTransferType() == TransferType.Download) {
             VmBackup backup = getBackup();
             if (backup == null) {
-                log.error("Cannot download disk: '{}'. Backup id: '{}' doesn't exist.",
+                log.error("Cannot download disk '{}', image transfer '{}'. Backup '{}' doesn't exist.",
                         getDiskImage().getId(),
+                        getCommandId(),
                         getParameters().getBackupId());
                 return false;
             }
 
             if (getBackupVm() == null) {
-                log.error("Cannot download disk: '{}' for backup id: '{}', backup VM '{}' could not be found.",
+                log.error("Cannot download disk '{}' for backup '{}', image transfer '{}'. VM '{}' could not be found.",
                         getDiskImage().getId(),
                         getParameters().getBackupId(),
+                        getCommandId(),
                         backup.getVmId());
                 return false;
             }
@@ -1077,9 +1080,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             VDS vds = vdsDao.get(getBackupVm().getRunOnVds());
             if (vds == null) {
                 // Can happen when the VM crashed and Not running on any host.
-                log.warn("Cannot download disk id: '{}' backup id: '{}', the VM is down.",
+                log.warn("Cannot download disk '{}' for backup '{}', image transfer '{}'. VM is down.",
                         getDiskImage().getId(),
-                        getParameters().getBackupId());
+                        getParameters().getBackupId(),
+                        getCommandId());
                 return false;
             }
 
@@ -1104,17 +1108,17 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         try {
             vdsRetVal = vdsBroker.runVdsCommand(VDSCommandType.AddImageTicket, transferCommandParams);
         } catch (RuntimeException e) {
-            log.error("Failed to start image transfer session: {}", e.getMessage(), e);
+            log.error("Failed to start image transfer '{}': {}", getCommandId(), e);
             return false;
         }
 
         if (!vdsRetVal.getSucceeded()) {
-            log.error("Failed to start image transfer session");
+            log.error("Failed to start image transfer '{}': {}", getCommandId(), vdsRetVal.getVdsError());
             return false;
         }
-        log.info("Started transfer session with ticket id {}, timeout {} seconds",
-                imagedTicketId.toString(), ticket.getTimeout());
 
+        log.info("Started image transfer '{}' with ticket id {}, timeout {} seconds",
+                getCommandId(), imagedTicketId, ticket.getTimeout());
         return true;
     }
 
@@ -1149,11 +1153,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         String url = String.format("%s%s/%s", hostUri, IMAGES_PATH, imagedTicketId);
         ImageTicket imageTicket = buildImageTicket(imagedTicketId, url);
 
-        log.info("Adding proxy image ticket, id {}", imagedTicketId);
+        log.info("Adding proxy image ticket '{}' for image transfer '{}'", imagedTicketId, getCommandId());
         try {
             getProxyClient().putTicket(imageTicket);
         } catch (RuntimeException e) {
-            log.error("Failed to add proxy image ticket: {}", e.getMessage(), e);
+            log.error("Failed to add proxy image ticket '{}' for image transfer '{}': {}",
+                    imagedTicketId, getCommandId(), e);
             return false;
         }
 
@@ -1187,8 +1192,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         try {
             runVdsCommand(VDSCommandType.SetVolumeLegality, parameters);
         } catch (EngineException e) {
-            log.error("Failed to set image's volume's legality to {} for image {} and volume {}: {}",
-                    legal, getImage().getImage().getDiskId(), getImage().getImageId(), e);
+            log.error("Failed to set image volume legality to {} for image '{}', volume '{}', image transfer '{}': {}",
+                    legal, getImage().getImage().getDiskId(), getImage().getImageId(), getCommandId(), e);
             return false;
         }
         return true;
@@ -1206,7 +1211,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     private boolean extendImageTransferSession(final ImageTransfer entity) {
         if (entity.getImagedTicketId() == null) {
-            log.error("Failed to extend image transfer session: no existing session to extend");
+            log.error("Failed to extend image transfer '{}': no existing session to extend", getCommandId());
             return false;
         }
 
@@ -1220,24 +1225,26 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         try {
             vdsRetVal = vdsBroker.runVdsCommand(VDSCommandType.ExtendImageTicket, transferCommandParams);
         } catch (RuntimeException e) {
-            log.error("Failed to extend host image ticket '{}': {}",
-                    resourceId.toString(), e);
+            log.error("Failed to extend host image ticket '{}' for image transfer '{}': {}",
+                    resourceId, getCommandId(), e);
             return false;
         }
 
         if (!vdsRetVal.getSucceeded()) {
-            log.error("Failed to extend image transfer session");
+            log.error("Failed to extend image transfer '{}': {}", getCommandId(), vdsRetVal.getVdsError());
             return false;
         }
-        log.info("Transfer session with ticket id {} extended, timeout {} seconds",
-                resourceId.toString(), timeout);
+
+        log.info("Image transfer '{}' with ticket '{}' extended, timeout {} seconds",
+                getCommandId(), resourceId, timeout);
 
         // Send extend ticket request to proxy
         if (proxyEnabled()) {
             try {
                 getProxyClient().extendTicket(resourceId, timeout);
             } catch (RuntimeException e) {
-                log.error("Failed to extend proxy image ticket: {}", e.getMessage(), e);
+                log.error("Failed to extend proxy ticket '{}' for image transfer '{}': {}",
+                        resourceId, getCommandId(), e);
                 if (getParameters().getTransferClientType().isBrowserTransfer()) {
                     updateEntityPhaseToStoppedBySystem(
                             AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
@@ -1257,7 +1264,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     private boolean stopImageTransferSession(ImageTransfer entity) {
         if (entity.getImagedTicketId() == null) {
-            log.warn("Failed to stop image transfer session. Ticket does not exist for image '{}'", entity.getDiskId());
+            log.warn("Failed to stop image transfer '{}'. Ticket does not exist for image '{}'",
+                    getCommandId(), entity.getDiskId());
             return false;
         }
 
@@ -1291,25 +1299,28 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         try {
             vdsRetVal = vdsBroker.runVdsCommand(VDSCommandType.RemoveImageTicket, parameters);
         } catch (RuntimeException e) {
-            log.error("Failed to stop image transfer session for ticket '{}': {}", imagedTicketId, e);
+            log.error("Failed to stop image transfer '{}' for ticket '{}': {}", getCommandId(), imagedTicketId, e);
             return false;
         }
 
         if (!vdsRetVal.getSucceeded()) {
-            log.warn("Failed to stop image transfer session for ticket '{}'", imagedTicketId);
+            log.warn("Failed to stop image transfer '{}' for ticket '{}': {}",
+                    getCommandId(), imagedTicketId, vdsRetVal.getVdsError());
             return false;
         }
-        log.info("Successfully stopped image transfer session for ticket '{}'", imagedTicketId);
+
+        log.info("Successfully stopped image transfer '{}' for ticket '{}'", getCommandId(), imagedTicketId);
         return true;
     }
 
     private boolean removeImageTicketFromProxy(Guid imagedTicketId) {
         // Send DELETE request
         try {
-            log.info("Removing proxy image ticket, id {}", imagedTicketId);
+            log.info("Removing proxy image ticket '{}' for image transfer '{}'", imagedTicketId, getCommandId());
             getProxyClient().deleteTicket(imagedTicketId);
         } catch (RuntimeException e) {
-            log.error("Failed to remove proxy image ticket: {}", e.getMessage(), e);
+            log.error("Failed to remove proxy image ticket '{}' for image transfer '{}': {}",
+                    imagedTicketId, getCommandId(), e);
             return false;
         }
         return true;
@@ -1424,7 +1435,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     @Override
     protected void endSuccessfully() {
-        log.info("Successfully transferred disk '{}' (command id '{}')", getParameters().getImageId(), getCommandId());
+        log.info("Successfully transferred disk '{}' for image transfer '{}'",
+                getParameters().getImageId(), getCommandId());
         if (getParameters().getTransferType() == TransferType.Upload) {
             // Update image data in DB, set Qcow Compat, etc
             // (relevant only for upload)
@@ -1436,7 +1448,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     @Override
     protected void endWithFailure() {
-        log.error("Failed to transfer disk '{}' (command id '{}')", getParameters().getImageId(), getCommandId());
+        log.error("Failed to transfer disk '{}' for image transfer '{}'", getParameters().getImageId(), getCommandId());
         if (getParameters().getTransferType() == TransferType.Upload) {
             // Do rollback only for upload - i.e. remove the disk added in 'createImage()'
             runInternalAction(ActionType.RemoveDisk, new RemoveDiskParameters(getParameters().getImageGroupID()));
