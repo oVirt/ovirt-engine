@@ -35,7 +35,6 @@ jobs:
       run: |
         # Install oVirt repositories
         dnf copr enable -y ovirt/ovirt-master-snapshot centos-stream-8
-        dnf install -y ovirt-release-master
 
         # Requried for python3-ansible-lint and python3-isort
         dnf copr enable -y sbonazzo/EL8_collection
@@ -52,11 +51,9 @@ jobs:
 
         # Install oVirt repositories
         dnf copr enable -y ovirt/ovirt-master-snapshot
-        dnf install -y ovirt-release-master
 
         # Requried for python3-ansible-lint and python3-isort
         dnf copr enable -y sbonazzo/EL9_collection
-
 
         # Configure CS9 repositories
         dnf config-manager --enable crb
@@ -71,10 +68,8 @@ jobs:
           java-11-openjdk-devel \
           make \
           maven \
-          python3-ansible-lint \
           python3-pycodestyle \
           python3-pytest \
-          python3-pytest-mock \
           python3-devel \
           python3-isort \
           python3-pyflakes \
@@ -97,13 +92,11 @@ jobs:
 
     - name: Perform build
       run: |
-        make all-dev \
-          BUILD_GWT=1 \
-          DEV_BUILD_GWT_DRAFT=1 \
-          BUILD_UT=1 \
-          BUILD_JAVA_OPTS_GWT="-Xms1G -Xmx4G" \
-          DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS="-Dgwt.userAgent=gecko1_8,safari" \
-          DEV_EXTRA_BUILD_FLAGS="-Dgwt.compiler.localWorkers=1"
+        .automation/build-rpm.sh $ARTIFACTS_DIR
+
+    - name: Create DNF repository
+      run: |
+        createrepo_c $ARTIFACTS_DIR
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
