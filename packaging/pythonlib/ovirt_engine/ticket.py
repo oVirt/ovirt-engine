@@ -35,7 +35,6 @@ class TicketEncoder():
     def encode(self, data):
         d = {
             'salt': base64.b64encode(os.urandom(8)).decode('ascii'),
-            'digest': 'sha1',
             'validFrom': self._formatDate(datetime.datetime.utcnow()),
             'validTo': self._formatDate(
                 datetime.datetime.utcnow() + datetime.timedelta(
@@ -52,15 +51,8 @@ class TicketEncoder():
             data_to_sign += v.encode('utf-8')
         d['signedFields'] = ','.join(fields)
 
-        signature = self._pkey.sign(
-            data_to_sign,
-            padding.PKCS1v15(),
-            hashes.SHA1()
-        )
-        d['signature'] = base64.b64encode(signature).decode('ascii')
-
-        # Add a "v2" signature that's using PSS/SHA256
-        # TODO remove old 'signature' if/when it's not needed anymore
+        # We used to have "signature" that used a deprecated SHA1 hash,
+        # thus the name "v2_signature".
         v2_signature = self._pkey.sign(
             data_to_sign,
             padding.PSS(
@@ -152,25 +144,7 @@ class TicketDecoder():
 
         pkey = x509cert.public_key()
         if 'v2_signature' in decoded:
-            # v2 uses SHA256/PSS, even though 'digest' is sha1.
-            # If/when we do not need SHA1/PKCS1v15 anymore,
-            # we'll just ignore 'digest' and 'signature'. For now,
-            # if we have v2, we use only it.
-            # TODO: Analyze this from a security POV and decide if
-            # it's good enough. It's _not_ good enough if e.g.:
-            # 1. An attacker can break SHA1/PKCS1v15
-            # 2. An attacker can remove 'v2' from the ticket and
-            # force the code below to use the attacker-controlled
-            # SHA1/PKCS1v15 signature.
-            # Or something like that. I am not a security expert.
-            # If it's not good enough, it simply means that as long
-            # as we support also old "v1" 'signature', we are just
-            # as broken as without 'v2_signature' at all.
             md = hashes.SHA256()
-        elif decoded['digest'] == 'sha1':
-            # TODO somehow log the fact that we use "v1"?
-            # Notify the calling application?
-            md = hashes.SHA1()
         else:
             raise RuntimeError('Unknown message digest algorithm')
         hasher = hashes.Hash(md, backend=default_backend())
@@ -186,13 +160,6 @@ class TicketDecoder():
                         mgf=padding.MGF1(hashes.SHA256()),
                         salt_length=padding.PSS.MAX_LENGTH,
                     ),
-                    utils.Prehashed(md),
-                )
-            else:
-                res = pkey.verify(
-                    base64.b64decode(decoded['signature']),
-                    digest,
-                    padding.PKCS1v15(),
                     utils.Prehashed(md),
                 )
             if res is not None:

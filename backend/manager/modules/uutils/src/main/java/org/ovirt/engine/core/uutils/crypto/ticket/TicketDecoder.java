@@ -111,9 +111,7 @@ public class TicketDecoder {
                     TicketEncoder.getSaltMaxLength((RSAKey) cert.getPublicKey()),
                     PSSParameterSpec.TRAILER_FIELD_BC));
         } else {
-            sig = Signature.getInstance(String.format("%swith%s",
-                    map.get("digest"),
-                    cert.getPublicKey().getAlgorithm()));
+            throw new GeneralSecurityException("ticket signature not found");
         }
 
         sig.initVerify(cert.getPublicKey());
@@ -122,7 +120,7 @@ public class TicketDecoder {
             sig.update(buf);
         }
         if (!sig.verify(Base64
-                .decodeBase64(map.containsKey("v2_signature") ? map.get("v2_signature") : map.get("signature")))) {
+                .decodeBase64(map.get("v2_signature")))) {
             throw new GeneralSecurityException("Invalid ticket signature");
         }
 
