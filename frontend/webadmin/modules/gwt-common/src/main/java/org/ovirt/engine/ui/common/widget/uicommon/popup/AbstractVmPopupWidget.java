@@ -695,6 +695,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     public InfoIcon migrationSelectInfoIcon;
 
+    @UiField(provided = true)
+    public InfoIcon parallelMigrationsInfoIcon;
+
     @UiField
     @Ignore
     public EnableableFormLabel migrationDowntimeLabel;
@@ -1147,6 +1150,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         migrationSelectInfoIcon = new InfoIcon(multiLineItalicSafeHtml(messages.migrationSelectInfo()));
 
+        parallelMigrationsInfoIcon = new InfoIcon(templates.italicText(messages.parallelMigrationsInfo()));
+
         hostCpuInfoIcon = new InfoIcon(templates.italicText(messages.hostCpuInfo()));
         tscFrequencyInfoIcon = new InfoIcon(templates.italicText(messages.tscFrequencyInfo()));
 
@@ -1595,6 +1600,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         parallelMigrationsTypeEditor = new ListModelListBoxEditor<>(
                 parallelMigrationsTypeRenderer,
                 new ModeSwitchingVisibilityRenderer());
+        parallelMigrationsTypeEditor.hideLabel();
         customParallelMigrationsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
 
         // Resource Allocation

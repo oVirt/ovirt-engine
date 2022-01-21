@@ -449,6 +449,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     ListModelListBoxEditor<Boolean> migrateCompressedEditor;
 
     @UiField(provided = true)
+    InfoIcon parallelMigrationsInfoIcon;
+
+    @UiField(provided = true)
     @Path(value = "parallelMigrationsType.selectedItem")
     @WithElementId("parallelMigrationsType")
     public ListModelListBoxEditor<ParallelMigrationsType> parallelMigrationsTypeEditor;
@@ -741,6 +744,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                         AsyncDataProvider.getInstance().getMigrateCompressed()));
 
         parallelMigrationsTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<ParallelMigrationsType>());
+        parallelMigrationsTypeEditor.hideLabel();
         migrationBandwidthLimitTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<MigrationBandwidthLimitType>());
         migrationBandwidthLimitTypeEditor.hideLabel();
         migrationPolicyEditor = new ListModelListBoxEditor<>(new MigrationPolicyNameRenderer());
@@ -821,6 +825,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         logMaxMemoryUsedThresholdInfoIcon =
                 new InfoIcon(templates.italicText(constants.logMaxMemoryUsedThresholdLabelHelpMessage()));
+
+        parallelMigrationsInfoIcon = new InfoIcon(templates.italicText(messages.parallelMigrationsInfo()));
     }
 
     @Override

@@ -434,7 +434,13 @@
                                     <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
-                                    <e:ListModelListBoxEditor ui:field="parallelMigrationsTypeEditor" label="{constants.parallelMigrationsType}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                    <b:Column size="SM_6" >
+                                        <l:LabelWithTooltip text="{constants.parallelMigrationsType}" forWidget="{parallelMigrationsTypeEditor}" />
+                                        <d:InfoIcon ui:field="parallelMigrationsInfoIcon" addStyleNames="{style.panelInfo}" tooltipPlacement="AUTO"/>
+                                    </b:Column>
+                                    <b:Column size="SM_6" >
+                                      <e:ListModelListBoxEditor ui:field="parallelMigrationsTypeEditor" usePatternFly="true"/>
+                                    </b:Column>
                                 </b:Row>
                                 <b:Row>
                                     <ge:IntegerEntityModelTextBoxEditor ui:field="customParallelMigrationsEditor" label="{constants.customParallelMigrations}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
