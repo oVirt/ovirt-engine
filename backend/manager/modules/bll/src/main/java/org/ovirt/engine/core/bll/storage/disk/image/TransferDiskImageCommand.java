@@ -158,7 +158,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         runInternalAction(ActionType.AddDisk, getAddDiskParameters(), cloneContextAndDetachFromParent());
     }
 
-    protected String prepareImage(Guid vdsId, Guid imagedTicketId) {
+    protected String prepareImage(Guid vdsId) {
         if (isLiveBackup()) {
             return vmBackupDao.getBackupUrlForDisk(
                     getParameters().getBackupId(), getDiskImage().getId());
@@ -166,8 +166,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.PrepareImage,
                     getPrepareParameters(vdsId));
         if (usingNbdServer()) {
-            vdsRetVal = runVdsCommand(VDSCommandType.StartNbdServer,
-                    getStartNbdServerParameters(vdsId, imagedTicketId));
+            vdsRetVal = runVdsCommand(VDSCommandType.StartNbdServer, getStartNbdServerParameters(vdsId));
             return (String) vdsRetVal.getReturnValue();
         } else {
             return FILE_URL_SCHEME + ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
@@ -244,9 +243,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return null;
     }
 
-    private NbdServerVDSParameters getStartNbdServerParameters(Guid vdsId, Guid imagedTicketId) {
+    private NbdServerVDSParameters getStartNbdServerParameters(Guid vdsId) {
         NbdServerVDSParameters nbdServerVDSParameters = new NbdServerVDSParameters(vdsId);
-        nbdServerVDSParameters.setServerId(imagedTicketId);
+        nbdServerVDSParameters.setServerId(getCommandId());
         nbdServerVDSParameters.setStorageDomainId(getParameters().getStorageDomainId());
         nbdServerVDSParameters.setImageId(getDiskImage().getId());
         nbdServerVDSParameters.setVolumeId(getDiskImage().getImageId());
@@ -307,14 +306,14 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
     }
 
-    private boolean stopNbdServer(Guid vdsId, Guid imageTicketId) {
+    private boolean stopNbdServer(Guid vdsId) {
         NbdServerVDSParameters nbdServerVDSParameters = new NbdServerVDSParameters(vdsId);
-        nbdServerVDSParameters.setServerId(imageTicketId);
+        nbdServerVDSParameters.setServerId(getCommandId());
         VDSReturnValue stopNbdServerVdsRetVal = runVdsCommand(VDSCommandType.StopNbdServer,
                 nbdServerVDSParameters);
         if (!stopNbdServerVdsRetVal.getSucceeded()) {
-            log.warn("Failed to stop NBD server for ticket id '{}': {}",
-                    imageTicketId, stopNbdServerVdsRetVal.getVdsError());
+            log.warn("Failed to stop NBD server for image transfer '{}': {}",
+                    getCommandId(), stopNbdServerVdsRetVal.getVdsError());
             return false;
         }
         return true;
@@ -990,14 +989,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                     AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_MISSING_HOST);
             return;
         }
-        Guid imagedTicketId = Guid.newGuid();
         String imagePath;
         try {
-            imagePath = prepareImage(getVdsId(), imagedTicketId);
+            imagePath = prepareImage(getVdsId());
         } catch (Exception e) {
             log.error("Failed to prepare image for transfer session: {}", e.getMessage(), e);
             return;
         }
+
+        Guid imagedTicketId = Guid.newGuid();
 
         if (!addImageTicketToDaemon(imagedTicketId, imagePath)) {
             log.error("Failed to add host image ticket");
@@ -1276,7 +1276,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
         // Stopping NBD server if necessary
         if (usingNbdServer()) {
-            stopNbdServer(entity.getVdsId(), entity.getImagedTicketId());
+            stopNbdServer(entity.getVdsId());
         }
 
         ImageTransfer updates = new ImageTransfer();
