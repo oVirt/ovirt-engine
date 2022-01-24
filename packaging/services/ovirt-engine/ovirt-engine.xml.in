@@ -96,6 +96,56 @@
         <level name="ALL"/>
       </custom-handler>
 
+      {% if config.getboolean('SYSLOG_HANDLER_ENABLED') %}
+      <custom-handler name="SYSLOG" class="org.jboss.logmanager.handlers.SyslogHandler" module="org.jboss.logmanager">
+        <level name="{{ config.get('SYSLOG_HANDLER_LEVEL') }}"/>
+        {% if config.get('SYSLOG_HANDLER_ENCODING') != "" %}
+        <encoding value="{{ config.get('SYSLOG_HANDLER_ENCODING') }}"/>
+        {% endif %}
+        {% if config.get('SYSLOG_HANDLER_FORMATTER_PATTERN') != "" %}
+        <formatter>
+            <pattern-formatter pattern="{{ config.get('SYSLOG_HANDLER_FORMATTER_PATTERN') }}"/>
+        </formatter>
+        {% endif %}
+        <properties>
+            <property name="serverHostname" value="{{ config.get('SYSLOG_HANDLER_SERVER_HOSTNAME') }}"/>
+            {% if config.get('SYSLOG_HANDLER_PORT') != "" %}
+            <property name="port" value="{{ config.get('SYSLOG_HANDLER_PORT') }}"/>
+            {% endif %}
+            {% if config.get('SYSLOG_HANDLER_FACILITY') != "" %}
+            <property name="facility" value="{{ config.get('SYSLOG_HANDLER_FACILITY') }}"/>
+            {% endif %}
+            {% if config.get('SYSLOG_HANDLER_APP_NAME') != "" %}
+            <property name="appName" value="{{ config.get('SYSLOG_HANDLER_APP_NAME') }}"/>
+            {% endif %}
+            {% if config.get('SYSLOG_HANDLER_HOSTNAME') != "" %}
+            <property name="hostname" value="{{ config.get('SYSLOG_HANDLER_HOSTNAME') }}"/>
+            {% endif %}
+            {% if config.get('SYSLOG_HANDLER_SYSLOG_TYPE') != "" %}
+            <property name="syslogType" value="{{ config.get('SYSLOG_HANDLER_SYSLOG_TYPE') }}"/>
+            {% endif %}
+            {% if config.get('SYSLOG_HANDLER_PROTOCOL') != "" %}
+            <property name="protocol" value="{{ config.get('SYSLOG_HANDLER_PROTOCOL') }}"/>
+            {% endif %}
+            {% if config.get('SYSLOG_HANDLER_MESSAGE_DELIMITER') != "" %}
+            <property name="messageDelimiter" value="{{ config.get('SYSLOG_HANDLER_MESSAGE_DELIMITER') }}"/>
+            {% endif %}
+            {% if config.get('SYSLOG_HANDLER_USE_MESSAGE_DELIMITER') != "" %}
+            <property name="useMessageDelimiter" value="{{ config.get('SYSLOG_HANDLER_USE_MESSAGE_DELIMITER') }}"/>
+            {% endif %}
+            {% if config.get('SYSLOG_HANDLER_USE_COUNTING_FRAMING') != "" %}
+            <property name="useCountingFraming" value="{{ config.get('SYSLOG_HANDLER_USE_COUNTING_FRAMING') }}"/>
+            {% endif %}
+            {% if config.get('SYSLOG_HANDLER_TRUNCATE') != "" %}
+            <property name="truncate" value="{{ config.get('SYSLOG_HANDLER_TRUNCATE') }}"/>
+            {% endif %}
+            {% if config.get('SYSLOG_HANDLER_MAX_LENGTH') != "" %}
+            <property name="maxLength" value="{{ config.get('SYSLOG_HANDLER_MAX_LENGTH') }}"/>
+            {% endif %}
+          </properties>
+      </custom-handler>
+      {% endif %}
+
       <formatter name="DEFAULT">
         <pattern-formatter pattern="%d{yyyy-MM-dd HH:mm:ss,SSSX} %-5p [%c] (%t) %s%E%n"/>
       </formatter>
@@ -194,6 +244,9 @@
         <handlers>
           <handler name="ovirt-logger"/>
           <handler name="SERVER"/>
+          {% if config.getboolean('SYSLOG_HANDLER_ENABLED') %}
+          <handler name="SYSLOG"/>
+          {% endif %}
         </handlers>
       </root-logger>
     </subsystem>
