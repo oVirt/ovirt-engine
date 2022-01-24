@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
+import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
@@ -69,7 +70,6 @@ import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.ModelWithMigrationsOptions;
-import org.ovirt.engine.ui.uicommonweb.models.ParallelMigrationsType;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
@@ -3172,8 +3172,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         }
 
         if (getParallelMigrationsType().getSelectedItem() == ParallelMigrationsType.CUSTOM) {
-            getCustomParallelMigrations()
-                    .validateEntity(new IValidation[] { new NotNullIntegerValidation(2, Short.MAX_VALUE) });
+            getCustomParallelMigrations().validateEntity(
+                    new IValidation[] { new NotNullIntegerValidation(ParallelMigrationsType.MIN_PARALLEL_CONNECTIONS,
+                            ParallelMigrationsType.MAX_PARALLEL_CONNECTIONS) });
         } else {
             getCustomParallelMigrations().setIsValid(true);
         }

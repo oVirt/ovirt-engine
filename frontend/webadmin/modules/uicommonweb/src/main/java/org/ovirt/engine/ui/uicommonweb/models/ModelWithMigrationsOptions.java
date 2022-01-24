@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
+import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 
 public interface ModelWithMigrationsOptions {
 

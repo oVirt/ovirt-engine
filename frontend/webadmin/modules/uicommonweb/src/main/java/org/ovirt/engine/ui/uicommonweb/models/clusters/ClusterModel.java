@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
+import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.common.network.SwitchType;
@@ -61,7 +62,6 @@ import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ModelWithMigrationsOptions;
-import org.ovirt.engine.ui.uicommonweb.models.ParallelMigrationsType;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
@@ -2393,10 +2393,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
 
         if (ParallelMigrationsType.CUSTOM.equals(getParallelMigrationsType().getSelectedItem())) {
-            // Minimum safe number of parallel migration connections: 2
-            // Maximum parallel migration connections allowed by QEMU/libvirt: 255
             getCustomParallelMigrations().validateEntity(
-                    new IValidation[] { new NotNullIntegerValidation(2, 255) });
+                    new IValidation[] { new NotNullIntegerValidation(ParallelMigrationsType.MIN_PARALLEL_CONNECTIONS,
+                            ParallelMigrationsType.MAX_PARALLEL_CONNECTIONS) });
         } else {
             getCustomParallelMigrations().setIsValid(true);
         }

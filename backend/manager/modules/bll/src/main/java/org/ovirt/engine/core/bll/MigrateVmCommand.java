@@ -64,6 +64,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.migration.ConvergenceConfig;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
+import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.vdscommands.MigrateStatusVDSCommandParameters;
@@ -87,11 +88,6 @@ import org.slf4j.LoggerFactory;
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
 
     private static int PARALLEL_MIGRATION_CONNECTION_BANDWIDTH_MBPS = 10 * 1024;
-    // It's possible to use only one "parallel" connection, but it's safer to always
-    // use at least 2 with the current QEMU implementation.
-    private static int MIN_PARALLEL_MIGRATION_CONNECTIONS = 2;
-    // QEMU/libvirt accepts uint8_t values for the number of connections
-    private static int MAX_PARALLEL_MIGRATION_CONNECTIONS = 255;
 
     private Logger log = LoggerFactory.getLogger(MigrateVmCommand.class);
 
@@ -563,16 +559,17 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         if (parallelMigrationsRequested < 0) {
             parallelMigrations = calculateAutomaticParallelMigrations();
             if (parallelMigrations == null && parallelMigrationsRequested == -1) {
-                parallelMigrations = MIN_PARALLEL_MIGRATION_CONNECTIONS;
+                parallelMigrations = ParallelMigrationsType.MIN_PARALLEL_CONNECTIONS;
             }
         } else {
-            final int maxParallelMigrations = Math.max(MIN_PARALLEL_MIGRATION_CONNECTIONS, getVm().getNumOfCpus());
+            final int maxParallelMigrations = Math.max(ParallelMigrationsType.MIN_PARALLEL_CONNECTIONS,
+                    getVm().getNumOfCpus());
             parallelMigrations = Math.min(parallelMigrationsRequested, maxParallelMigrations);
         }
         if (parallelMigrations == null || parallelMigrations <= 0) {
             return null;
         } else {
-            return Math.min(parallelMigrations, MAX_PARALLEL_MIGRATION_CONNECTIONS);
+            return Math.min(parallelMigrations, ParallelMigrationsType.MAX_PARALLEL_CONNECTIONS);
         }
     }
 
@@ -590,7 +587,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             final Integer networkLimit = maxBandwidth * 8 / PARALLEL_MIGRATION_CONNECTION_BANDWIDTH_MBPS;
             final Integer cpuLimit = getVm().getNumOfCpus();
             Integer parallelMigrations = Math.min(networkLimit, cpuLimit);
-            if (parallelMigrations < MIN_PARALLEL_MIGRATION_CONNECTIONS) {
+            if (parallelMigrations < ParallelMigrationsType.MIN_PARALLEL_CONNECTIONS) {
                 parallelMigrations = null;
             }
             return parallelMigrations;

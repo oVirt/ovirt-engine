@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.builders;
 
 import org.ovirt.engine.core.common.businessentities.HasMigrationOptions;
+import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 import org.ovirt.engine.ui.uicommonweb.models.ModelWithMigrationsOptions;
-import org.ovirt.engine.ui.uicommonweb.models.ParallelMigrationsType;
 
 public class MigrationsModelToEntityBuilder<S extends ModelWithMigrationsOptions, D extends HasMigrationOptions> extends BaseSyncBuilder<S, D> {
 

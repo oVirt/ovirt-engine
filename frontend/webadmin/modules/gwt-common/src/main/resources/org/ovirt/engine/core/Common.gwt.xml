@@ -537,6 +537,7 @@
         <include name="common/migration/ConvergenceItemWithStallingLimit.java"/>
         <include name="common/migration/MigrationPolicy.java"/>
         <include name="common/migration/NoMigrationPolicy.java"/>
+        <include name="common/migration/ParallelMigrationsType.java"/>
 
     </source>
 

@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.uicommonweb.models;
+package org.ovirt.engine.core.common.migration;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -10,6 +10,12 @@ public enum ParallelMigrationsType {
     AUTO_PARALLEL(-1),
     DISABLED(0),
     CUSTOM(1);
+
+    // It's possible to use only one "parallel" connection, but it's safer to always
+    // use at least 2 with the current QEMU implementation.
+    public static int MIN_PARALLEL_CONNECTIONS = 2;
+    // QEMU/libvirt accepts uint8_t values for the number of connections.
+    public static int MAX_PARALLEL_CONNECTIONS = 255;
 
     private int value;
 
