@@ -2,3 +2,4 @@ ovirt-44-pre,https://resources.ovirt.org/pub/ovirt-4.4-pre/rpm/$distro
 ovirt-44,https://resources.ovirt.org/pub/ovirt-4.4/rpm/$distro
 #isort
 EL8_collection,https://copr-be.cloud.fedoraproject.org/results/sbonazzo/EL8_collection/epel-8-$basearch/
+virtsig44,https://buildlogs.centos.org/centos/8-stream/virt/$basearch/ovirt-44/

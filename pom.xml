@@ -83,7 +83,7 @@
     <snakeyaml.version>1.17</snakeyaml.version>
     <ws-commons-util.version>1.0.2</ws-commons-util.version>
     <aopalliance.version>1.0</aopalliance.version>
-    <snmp4j.version>2.5.3</snmp4j.version>
+    <snmp4j.version>3.6.4</snmp4j.version>
     <kubevirt-client.version>0.5.0</kubevirt-client.version>
     <resteasy.version>3.6.1.Final</resteasy.version>
     <!-- OpenStack -->

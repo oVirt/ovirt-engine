@@ -356,7 +356,7 @@ Requires:	apache-sshd >= 2.6.0
 Requires:	ed25519-java >= 0.3.0
 Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	jcl-over-slf4j >= 1.7.0
-Requires:	snmp4j >= 2.4.1
+Requires:	snmp4j >= 3.6.4
 Requires:	ovirt-dependencies >= 4.4.2
 
 # cinderlib integration
