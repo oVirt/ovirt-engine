@@ -228,37 +228,10 @@ class FileLocations(object):
         OVIRT_ENGINE_BINDIR,
         'ovirt-engine-crypto-tool.sh',
     )
-
-    NFS_RHEL_CONFIG = os.path.join(
-        SYSCONFDIR,
-        'sysconfig',
-        'nfs',
-    )
-    NFS_EXPORT_FILE = os.path.join(
-        SYSCONFDIR,
-        'exports',
-    )
-    NFS_EXPORT_DIR = os.path.join(
-        SYSCONFDIR,
-        'exports.d',
-    )
-
     NSS_DB_DIR = os.path.join(
         SYSCONFDIR,
         'pki',
         'nssdb',
-    )
-
-    OVIRT_NFS_EXPORT_FILE = os.path.join(
-        NFS_EXPORT_DIR,
-        'ovirt-engine-iso-domain.exports'
-    )
-
-    ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT = os.path.join(
-        LOCALSTATEDIR,
-        'lib',
-        'exports',
-        'iso',
     )
 
     ANSIBLE_RUNNER_SERVICE_SELINUX = os.path.join(
@@ -392,8 +365,6 @@ class Defaults(object):
     DEFAULT_CONFIG_APPLICATION_MODE = 'Both'
     DEFAULT_CONFIG_STORAGE_IS_LOCAL = False
 
-    DEFAULT_ISO_DOMAIN_NAME = 'ISO_DOMAIN'
-
     DEFAULT_CLEAR_TASKS_WAIT_PERIOD = 20
 
     DEFAULT_ANSIBLE_RUNNER_SERVICE_PORT = '50001'
@@ -427,10 +398,6 @@ class Defaults(object):
 @util.export
 class Stages(object):
 
-    SYSTEM_NFS_CONFIG_AVAILABLE = 'osetup.system.nfs.available'
-
-    CONFIG_ISO_DOMAIN_AVAILABLE = 'osetup.config.iso_domain.available'
-
     CONFIG_EXTENSIONS_UPGRADE = 'osetup.config.extensions.upgrade'
 
     CONFIG_AAA_ADMIN_USER_SETUP = 'osetup.config.aaa.adminuser.setup'
@@ -443,7 +410,6 @@ class Stages(object):
     QEMU_CA_AVAILABLE = 'osetup.pki.qemu.ca.available'
 
     POSTGRES_PROVISIONING_ALLOWED = 'osetup.engine.provisioning.pgsql.allow'
-    NFS_CONFIG_ALLOWED = 'osetup.engine.system.nfs.allow'
     APPMODE_ALLOWED = 'osetup.engine.config.appmode.allow'
     KDUMP_ALLOW = 'osetup.engine.kdump.allow'
     CONNECTION_ALLOW = 'osetup.engine.db.connection.allow'
@@ -478,8 +444,6 @@ class Const(object):
     FENCE_KDUMP_LISTENER_SERVICE_NAME = 'ovirt-fence-kdump-listener'
 
     PKI_PASSWORD = 'mypass'
-    MINIMUM_SPACE_ISODOMAIN_MB = 350
-    ISO_DOMAIN_IMAGE_UID = '11111111-1111-1111-1111-111111111111'
 
     ENGINE_URI = '/ovirt-engine'
     ENGINE_PKI_CA_URI = _pki_ca_uri(ENGINE_URI, 'ca-certificate')
@@ -674,34 +638,6 @@ class SystemEnv(object):
     MEMCHECK_RECOMMENDED_MB = 'OVESETUP_SYSTEM/memCheckRecommendedMB'
     MEMCHECK_THRESHOLD = 'OVESETUP_SYSTEM/memCheckThreshold'
 
-    NFS_SERVICE_NAME = 'OVESETUP_SYSTEM/nfsServiceName'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('NFS setup'),
-        summary_condition=lambda env: env.get(
-            SystemEnv.NFS_CONFIG_ENABLED
-        ),
-    )
-    def NFS_CONFIG_ENABLED(self):
-        return 'OVESETUP_SYSTEM/nfsConfigEnabled'
-
-    #
-    # In 3.3/3.4.0 the NFS_CONFIG_ENABLED was in postinstall file
-    # and now removed.
-    # At first upgrade from these versions we should not consider
-    # its value from environment.
-    # This variable will not be available at these versions, and
-    # will set to False in future runs to allow us to
-    # consider the value of NFS_CONFIG_ENABLED in later setups.
-    #
-    @osetupattrs(
-        postinstallfile=True,
-    )
-    def NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL(self):
-        return 'OVESETUP_SYSTEM/nfsConfigEnabled_legacyInPostInstall'
-
 
 @util.export
 @util.codegen
@@ -745,51 +681,6 @@ class PKIEnv(object):
 @util.codegen
 @osetupattrsclass
 class ConfigEnv(object):
-
-    @osetupattrs(
-        postinstallfile=True,
-    )
-    def ISO_DOMAIN_EXISTS(self):
-        return 'OVESETUP_CONFIG/isoDomainExists'
-
-    @osetupattrs(
-        postinstallfile=True,
-    )
-    def ISO_DOMAIN_SD_UUID(self):
-        return 'OVESETUP_CONFIG/isoDomainSdUuid'
-
-    @osetupattrs(
-        postinstallfile=True,
-    )
-    def ISO_DOMAIN_STORAGE_DIR(self):
-        return 'OVESETUP_CONFIG/isoDomainStorageDir'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('NFS mount point'),
-        postinstallfile=True,
-    )
-    def ISO_DOMAIN_NFS_MOUNT_POINT(self):
-        return 'OVESETUP_CONFIG/isoDomainMountPoint'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('NFS export ACL'),
-    )
-    def ISO_DOMAIN_NFS_ACL(self):
-        return 'OVESETUP_CONFIG/isoDomainACL'
-
-    @osetupattrs(
-        answerfile=True,
-        postinstallfile=True
-    )
-    def ISO_DOMAIN_NAME(self):
-        return 'OVESETUP_CONFIG/isoDomainName'
-
-    ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT = \
-        'OVESETUP_CONFIG/isoDomainDefaultMountPoint'
 
     @osetupattrs(
         answerfile=True,

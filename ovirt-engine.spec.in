@@ -203,7 +203,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 
 %if %{rhv_build}
 %global extra_backend_requires Requires: rhvm-branding-rhv >= 4.3.0
-%global extra_setup_requires Requires: rhvm-setup-plugins >= 4.4.0
+%global extra_setup_requires Requires: rhvm-setup-plugins >= 4.5.0-0.1
 %global spice_version 8.0
 %else
 %global ovirt_dependencies ovirt-dependencies/4.4

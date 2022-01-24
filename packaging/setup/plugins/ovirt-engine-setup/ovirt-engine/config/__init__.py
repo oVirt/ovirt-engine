@@ -22,7 +22,6 @@ from . import ca
 from . import database
 from . import domain_type
 from . import firewall
-from . import iso_domain
 from . import java
 from . import jboss
 from . import notifier
@@ -51,7 +50,6 @@ def createPlugins(context):
     ca.Plugin(context=context)
     options.Plugin(context=context)
     tools.Plugin(context=context)
-    iso_domain.Plugin(context=context)
     public_glance_repository.Plugin(context=context)
     storage.Plugin(context=context)
     sso.Plugin(context=context)
