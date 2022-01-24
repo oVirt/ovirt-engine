@@ -669,3 +669,78 @@ ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT=120
 # 3 - even more verbose with basic debugging, corresponds to -vvv
 # 4 - super verbose mode with connection debugging, corresponds to -vvvv
 ANSIBLE_PLAYBOOK_VERBOSITY_LEVEL=1
+
+
+#
+# Enables sending log records from engine to remote syslog.
+# For more details about SyslogHandler configuration please consult JBoss LogManager documentation:
+# https://javadoc.io/static/org.jboss.logmanager/jboss-logmanager/2.1.18.Final/org/jboss/logmanager/handlers/SyslogHandler.html
+SYSLOG_HANDLER_ENABLED=false
+
+#
+# Level of messages to be sent to remote syslog.
+# https://javadoc.io/static/org.jboss.logmanager/jboss-logmanager/2.1.18.Final/org/jboss/logmanager/Level.html
+SYSLOG_HANDLER_LEVEL="INFO"
+
+#
+# Encoding used for messages to be sent to remote syslog
+SYSLOG_HANDLER_ENCODING=
+
+#
+# Formatter pattern to format the message to be sent to remote syslog
+SYSLOG_HANDLER_FORMATTER_PATTERN=
+
+#
+# The address of the syslog server.
+SYSLOG_HANDLER_SERVER_HOSTNAME=
+
+#
+# The port of the syslog server.
+SYSLOG_HANDLER_PORT=
+
+#
+# The facility used to calculate the priority of the log message as as defined by RFC-5424 and RFC-3164.
+# https://javadoc.io/static/org.jboss.logmanager/jboss-logmanager/2.1.18.Final/org/jboss/logmanager/handlers/SyslogHandler.Facility.html
+SYSLOG_HANDLER_FACILITY=
+
+#
+# The name of the application that is logging.
+SYSLOG_HANDLER_APP_NAME="ovirt-engine"
+
+#
+# The name of the host the messages are being sent from.
+SYSLOG_HANDLER_HOSTNAME=
+
+#
+# The type of the syslog used to format the message.
+# https://javadoc.io/static/org.jboss.logmanager/jboss-logmanager/2.1.18.Final/org/jboss/logmanager/handlers/SyslogHandler.SyslogType.html
+SYSLOG_HANDLER_SYSLOG_TYPE=
+
+#
+# The protocol to send the message over
+# https://javadoc.io/static/org.jboss.logmanager/jboss-logmanager/2.1.18.Final/org/jboss/logmanager/handlers/SyslogHandler.Protocol.html
+SYSLOG_HANDLER_PROTOCOL=
+
+#
+# The delimiter to use at the end of the message if SYSLOG_HANDLER_USE_DELIMITER is set to true.
+# For UDP "null". For TCP or SSL_TCP "\n"
+SYSLOG_HANDLER_MESSAGE_DELIMITER=
+
+#
+# Whether or not the message should be appended with a delimiter.
+# For UDP "false". For TCP or SSL_TCP "true".
+SYSLOG_HANDLER_USE_MESSAGE_DELIMITER=
+
+#
+# Prefixes the size of the message, mainly used for TCP or SSL_TCP, connections to the message being sent
+# to the syslog server. See http://tools.ietf.org/html/rfc6587 for more details on framing types.
+SYSLOG_HANDLER_USE_COUNTING_FRAMING=
+
+#
+# Whether or not a message, including the header, should truncate the message if the length in bytes is
+# greater than the maximum length. If set to false messages will be split and sent with the same header values.
+SYSLOG_HANDLER_TRUNCATE=
+
+#
+# The maximum length a log message, including the header, is allowed to be.
+SYSLOG_HANDLER_MAX_LENGTH=

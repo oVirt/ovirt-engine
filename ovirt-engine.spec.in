@@ -405,6 +405,12 @@ Provides:	bundled(js-bootstrap) = 3.4.1
 Provides:	bundled(js-patternfly) = 3.59.3
 Provides:	bundled(js-patternfly-next) = 2.26.1
 
+# logger-log4j is replaced by internal ovirt-engine implementation
+%if 0%{?rhel} < 9
+# logger-log4j has never been built for el9
+Obsoletes:	ovirt-engine-extension-logger-log4j
+%endif
+
 %description
 %{ovirt_product_name} is a feature-rich server virtualization management
 system that provides advanced capabilities for managing the Open
