@@ -5,7 +5,6 @@
 
 .PHONY: prepare zanata-push push zanata-pull normalize copy-changed pull
 
-JAVA_18=$(shell alternatives --list | grep 'jre_1.8.0_openjdk' | cut -f 3)
 ZANATA_LOCALES=de,es,fr,it,ja,ko,pt-BR,zh-CN,ru,cs
 
 prepare:
@@ -20,19 +19,17 @@ prepare:
 		--exclude="*" \
 		../ target/zanata
 
-zanata-push: JAVA_HOME=$(JAVA_18)
 zanata-push:
 	mvn \
-	  org.zanata:zanata-maven-plugin:4.6.2:push \
+	  at.porscheinformatik.zanata:zanata-maven-plugin:4.7.8:push \
 	  -Dzanata.pushType="source" \
 	  -Dzanata.locales="$(ZANATA_LOCALES)"
 
 push:	prepare zanata-push
 
-zanata-pull: JAVA_HOME=$(JAVA_18)
 zanata-pull:
 	mvn \
-	  org.zanata:zanata-maven-plugin:4.6.2:pull \
+	  at.porscheinformatik.zanata:zanata-maven-plugin:4.7.8:pull \
 	  -Dzanata.pullType="trans" \
 	  -Dzanata.locales="$(ZANATA_LOCALES)"
 

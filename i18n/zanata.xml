@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config xmlns="http://zanata.org/namespace/config/">
-    <url>https://zanata.phx.ovirt.org/</url>
+    <url>https://zanata.ovirt.org/</url>
     <project>ovirt-engine</project>
     <project-version>ovirt-4.4</project-version>
     <project-type>properties</project-type>
