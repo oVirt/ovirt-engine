@@ -621,6 +621,11 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
             return false;
         }
 
+        if (getSourceVmFromDb().isRunning() &&
+                !DisksFilter.filterManagedBlockStorageDisks(diskImagesFromConfiguration).isEmpty()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_CLONE_RUNNING_VM_WITH_MBS_DISKS);
+        }
+
         return super.validate();
     }
 
