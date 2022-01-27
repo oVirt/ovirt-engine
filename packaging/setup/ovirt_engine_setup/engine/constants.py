@@ -277,12 +277,6 @@ class FileLocations(object):
         'ansible-runner-service-project',
     )
 
-    ANSIBLE_RUNNER_SERVICE_HOSTS_FILE = os.path.join(
-        ANSIBLE_RUNNER_SERVICE_PROJECT,
-        'inventory',
-        'hosts',
-    )
-
     DIR_HTTPD = os.path.join(
         SYSCONFDIR,
         'httpd',

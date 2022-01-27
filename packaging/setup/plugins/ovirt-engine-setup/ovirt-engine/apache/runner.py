@@ -11,7 +11,6 @@
 
 
 import gettext
-import os
 import textwrap
 
 from otopi import constants as otopicons
@@ -43,7 +42,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.DEVELOPER_MODE
         ],
     )
-    def _ars_config(self):
+    def _misc(self):
         project_dir = oenginecons.FileLocations.ANSIBLE_RUNNER_SERVICE_PROJECT
         pki_path = oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_SSH_KEY
         runner_wsgi_file = oenginecons.FileLocations.HTTPD_RUNNER_WSGI_SCRIPT
@@ -100,37 +99,6 @@ class Plugin(plugin.PluginBase):
                 ],
             )
         )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: self.environment[
-            oenginecons.CoreEnv.ENABLE
-        ],
-    )
-    def _ars_inventory(self):
-        # ansible-runner-service hosts inventory configuration
-        path = oenginecons.FileLocations.ANSIBLE_RUNNER_SERVICE_HOSTS_FILE
-        if not os.path.exists(path):
-            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-                filetransaction.FileTransaction(
-                    name=path,
-                    content=textwrap.dedent('''
-                    # This file is automatically updated by ansible-runner-service, please don't update it manually!
-                    all:
-                      children:
-                        ovirt:
-                          children:
-                          hosts:
-                      hosts:
-                    '''),  # noqa: E501
-                    modifiedList=self.environment[
-                        otopicons.CoreEnv.MODIFIED_FILES
-                    ],
-                    mode=0o644,
-                    owner=self.environment[osetupcons.SystemEnv.USER_ENGINE],
-                    group=self.environment[osetupcons.SystemEnv.GROUP_ENGINE]
-                )
-            )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

@@ -1312,6 +1312,7 @@ fi
 %{_mandir}/man8/engine-config.*
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_data}/ansible-runner-service-project/env
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_data}/ansible-runner-service-project/inventory
+%attr(-, %{engine_user}, %{engine_group}) %{engine_data}/ansible-runner-service-project/inventory/hosts
 %{engine_data}/ansible-runner-service-project/project/ansible.cfg
 %{engine_data}/ansible-runner-service-project/project/create-brick.yml
 %{engine_data}/ansible-runner-service-project/project/ovirt-fetch-he-config.yml
