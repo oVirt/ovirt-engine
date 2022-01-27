@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.utils.vdshooks;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Parsers a hooks string to a  map of script directories/events to a map of script names to a
@@ -147,5 +150,15 @@ public class VdsHooksParser {
         hooksStr.getChars(0, hooksStr.length(), chars, 0);
         ParsingResult parsingResult = parseMap(chars, 0);
         return parsingResult.getMap();
+    }
+
+    public static Set<String> parseScriptNames(String hooksStr) {
+        // the parsed hooks contain Map as value. The script name is the key of that value.
+        return (Set<String>) parseHooks(hooksStr).values()
+                .stream()
+                .filter(value -> value instanceof Map)
+                .map(value -> ((Map) value).keySet())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
     }
 }
