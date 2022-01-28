@@ -1326,6 +1326,12 @@ public class VmHandler implements BackendService {
             return;
         }
 
+        // The selected display type of the Blank template might not be supported in the latest CL,
+        // but that is OK as it might be used in old clusters
+        if (parametersStaticData.getDefaultDisplayType() != null && cluster == null) {
+            return;
+        }
+
         List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = osRepository.getGraphicsAndDisplays(
                 parametersStaticData.getOsId(),
                 CompatibilityVersionUtils.getEffective(parametersStaticData, cluster));

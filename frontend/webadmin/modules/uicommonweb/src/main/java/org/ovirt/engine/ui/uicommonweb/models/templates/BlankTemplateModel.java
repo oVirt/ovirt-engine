@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -17,6 +18,11 @@ public class BlankTemplateModel extends UnitVmModel {
         Integer osType = getOSType().getSelectedItem();
 
         if (osType == null) {
+            return;
+        }
+
+        if (getDisplayType().getSelectedItem() == DisplayType.cirrus) {
+            initGraphicsConsoles(osType, Version.v4_2);
             return;
         }
 
