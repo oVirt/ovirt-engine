@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.ui.uicommonweb.builders.CompositeSyncBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.SyncBuilder;
@@ -29,12 +31,26 @@ public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends CompositeSy
         vm.setThreadsPerCpu(model.getThreadsPerCore().getSelectedItem());
         vm.setCustomEmulatedMachine(model.getEmulatedMachine().getSelectedItem());
         vm.setCustomCpuName(model.getCustomCpu().getSelectedItem());
-        vm.setBiosType(model.getBiosType().getSelectedItem());
         // Console
-        vm.setDefaultDisplayType(model.getDisplayType().getSelectedItem());
+        if(model.getIsHeadlessModeEnabled().getEntity()) {
+            vm.setDefaultDisplayType(DisplayType.none);
+        } else {
+            vm.setDefaultDisplayType(model.getDisplayType().getSelectedItem());
+        }
         vm.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
+        if (model.getIsUsbEnabled().getEntity()) {
+            vm.setUsbPolicy(UsbPolicy.ENABLED_NATIVE);
+        } else {
+            vm.setUsbPolicy(UsbPolicy.DISABLED);
+        }
         vm.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
-        vm.setSsoMethod(model.extractSelectedSsoMethod());
+        // Host
+        vm.setMigrationSupport(model.getMigrationMode().getSelectedItem());
+        vm.setMigrationDowntime(model.getSelectedMigrationDowntime());
+        vm.setMigrationPolicyId(model.getSelectedMigrationPolicy());
+        // Highly Available
+        vm.setAutoStartup(model.getIsHighlyAvailable().getEntity());
+        vm.setPriority(model.getPriority().getSelectedItem().getEntity());
         // Resource Allocation
         if (model.getIoThreadsEnabled().getEntity()) {
             vm.setNumOfIoThreads(Integer.parseInt(model.getNumOfIoThreads().getEntity()));
