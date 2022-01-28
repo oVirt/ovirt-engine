@@ -26,6 +26,7 @@ jobs:
 
     env:
       ARTIFACTS_DIR: exported-artifacts
+      MAVEN_OPTS: "-Dmaven.repo.local=${{ github.workspace }}/repository"
 
     container:
       image: quay.io/centos/centos:${{ matrix.container-name }}
@@ -37,6 +38,9 @@ jobs:
         # Install oVirt repositories
         dnf copr enable -y ovirt/ovirt-master-snapshot centos-stream-8
         dnf install -y ovirt-release-master
+
+        # Requried for python3-ansible-lint and python3-isort
+        dnf copr enable -y sbonazzo/EL8_collection
 
         # Configure CS8 repositories
         dnf config-manager --enable powertools
@@ -51,6 +55,10 @@ jobs:
         # Install oVirt repositories
         dnf copr enable -y ovirt/ovirt-master-snapshot
         dnf install -y ovirt-release-master
+
+        # Requried for python3-ansible-lint and python3-isort
+        dnf copr enable -y sbonazzo/EL9_collection
+
 
         # Configure CS9 repositories
         dnf config-manager --enable crb
@@ -84,18 +92,20 @@ jobs:
     - name: Use cache for maven
       uses: actions/cache@v2
       with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        path: "${{ github.workspace }}/repository"
+        key: ${{ matrix.shorcut }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-          ${{ runner.os }}-maven-
+          ${{ matrix.shorcut }}-maven-
 
     - name: Perform build
       run: |
-        automation/build-artifacts.sh $ARTIFACTS_DIR
-
-    - name: Create DNF repository
-      run: |
-        createrepo_c $ARTIFACTS_DIR
+        make all-dev \
+          BUILD_GWT=1 \
+          DEV_BUILD_GWT_DRAFT=1 \
+          BUILD_UT=1 \
+          BUILD_JAVA_OPTS_GWT="-Xms1G -Xmx4G" \
+          DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS="-Dgwt.userAgent=gecko1_8,safari" \
+          DEV_EXTRA_BUILD_FLAGS="-Dgwt.compiler.localWorkers=1"
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
