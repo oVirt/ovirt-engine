@@ -26,7 +26,7 @@ jobs:
 
     env:
       ARTIFACTS_DIR: exported-artifacts
-      MAVEN_OPTS: "-Dmaven.repo.local=${{ github.workspace }}/repository"
+      MAVEN_OPTS: "-Dmaven.repo.local=${{ github.workspace }}/.m2/repository"
 
     container:
       image: quay.io/centos/centos:${{ matrix.container-name }}
@@ -92,7 +92,7 @@ jobs:
     - name: Use cache for maven
       uses: actions/cache@v2
       with:
-        path: "${{ github.workspace }}/repository"
+        path: "${{ github.workspace }}/.m2/repository"
         key: ${{ matrix.shorcut }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ matrix.shorcut }}-maven-
