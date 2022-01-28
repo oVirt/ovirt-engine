@@ -38,7 +38,6 @@ public class CommonUnitToVmBaseBuilder<T extends VmBase> extends CompositeSyncBu
         } else {
             vm.setResumeBehavior(selectedResumeBehavior);
         }
-        vm.setAutoStartup(model.getIsHighlyAvailable().getEntity());
         vm.setPriority(model.getPriority().getSelectedItem().getEntity());
         StorageDomain leaseSd = model.getLease().getSelectedItem();
         vm.setLeaseStorageDomainId(leaseSd != null ? leaseSd.getId() : null);

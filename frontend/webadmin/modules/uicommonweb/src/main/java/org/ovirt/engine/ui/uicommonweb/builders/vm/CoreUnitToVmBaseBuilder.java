@@ -35,6 +35,7 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         vm.setClusterId(model.getSelectedCluster() != null ? model.getSelectedCluster().getId() : null);
         vm.setVmType(model.getVmType().getSelectedItem());
         vm.setOsId(model.getOSType().getSelectedItem());
+        vm.setBiosType(model.getBiosType().getSelectedItem());
         // General
         vm.setDeleteProtected(model.getIsDeleteProtected().getEntity());
         // System
@@ -48,6 +49,7 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
             vm.setCustomSerialNumber(null);
         }
         // Console
+        vm.setSsoMethod(model.extractSelectedSsoMethod());
         vm.setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
         vm.setConsoleDisconnectAction(model.getConsoleDisconnectAction().getSelectedItem());
         vm.setConsoleDisconnectActionDelay(model.getConsoleDisconnectActionDelay().getEntity());
