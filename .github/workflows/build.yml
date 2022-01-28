@@ -93,7 +93,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ${{ github.workspace }}/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        key: engine-maven-cache-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          engine-maven-cache-
 
     - name: Perform build
       run: |
