@@ -26,7 +26,6 @@ jobs:
 
     env:
       ARTIFACTS_DIR: exported-artifacts
-      MAVEN_OPTS: "-Dmaven.repo.local=$HOME/.m2/repository"
 
     container:
       image: quay.io/centos/centos:${{ matrix.container-name }}
@@ -89,13 +88,10 @@ jobs:
     - name: Checkout sources
       uses: actions/checkout@v2
 
-    - name: Use cache for maven
-      uses: actions/cache@v2
+    - name: Restore Maven cache
+      uses: skjolber/maven-cache-github-action@v1
       with:
-        path: $HOME/.m2/repository
-        key: engine-maven-cache-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          engine-maven-cache-
+        step: restore
 
     - name: Perform build
       run: |
@@ -106,6 +102,11 @@ jobs:
           BUILD_JAVA_OPTS_GWT="-Xms1G -Xmx4G" \
           DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS="-Dgwt.userAgent=gecko1_8,safari" \
           DEV_EXTRA_BUILD_FLAGS="-Dgwt.compiler.localWorkers=1"
+
+    - name: Save Maven cache
+      uses: skjolber/maven-cache-github-action@v1
+      with:
+        step: save
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
