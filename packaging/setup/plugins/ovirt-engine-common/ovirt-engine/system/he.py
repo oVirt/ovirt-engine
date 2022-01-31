@@ -118,6 +118,11 @@ class Plugin(plugin.PluginBase):
                 'Maintenance" mode before running engine-setup, or the '
                 'hosted-engine HA agent might kill the machine, which '
                 'might corrupt your data.\n'
+                'If you want to enforce this tool to continue, skipping this '
+                'check, you can re-run it with this additional option:\n'
+                '--otopi-environment='
+                f'{osetupcons.ConfigEnv.CONTINUE_SETUP_ON_HE_VM}'
+                '=bool:True'
             ))
             raise RuntimeError(_(
                 'Hosted Engine setup detected, '
