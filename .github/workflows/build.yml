@@ -99,7 +99,6 @@ jobs:
         createrepo_c $ARTIFACTS_DIR
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v2
+      uses: ovirt/upload-rpms-action@v2
       with:
-        name: rpm-${{ matrix.shortcut }}
-        path: ${{ env.ARTIFACTS_DIR}}
+        directory: ${{ env.ARTIFACTS_DIR }}
