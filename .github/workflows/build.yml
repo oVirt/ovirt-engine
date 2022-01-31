@@ -67,13 +67,13 @@ jobs:
     - name: Checkout sources
       uses: actions/checkout@v2
 
-    - name: Use cache for maven
+    - name: Setup maven cache
       uses: actions/cache@v2
       with:
-        path: "${{ github.workspace }}/repository"
-        key: ${{ matrix.shorcut }}-maven-${{ hashFiles('**/pom.xml') }}
+        path: /root/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-          ${{ matrix.shorcut }}-maven-
+          ${{ runner.os }}-maven-
 
     - name: Perform build
       run: |
