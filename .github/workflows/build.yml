@@ -15,7 +15,7 @@ jobs:
         include:
           - name: centos-stream-8
             shortcut: cs8
-            container-name: stream8
+            container-name: el8stream
           # Try to enable CS9 after switch to xmaven is finished
           # - name: centos-stream-9
           #  shortcut: cs9
@@ -27,59 +27,9 @@ jobs:
       ARTIFACTS_DIR: exported-artifacts
 
     container:
-      image: quay.io/centos/centos:${{ matrix.container-name }}
+      image: quay.io/ovirt/buildcontainer:${{ matrix.container-name }}
 
     steps:
-    - name: Prepare CentOS Stream 8 environment
-      if: ${{ matrix.shortcut == 'cs8' }}
-      run: |
-        # Install oVirt repositories
-        dnf copr enable -y ovirt/ovirt-master-snapshot centos-stream-8
-        dnf install -y ovirt-release-master
-
-        # Requried for python3-ansible-lint and python3-isort
-        dnf copr enable -y sbonazzo/EL8_collection
-
-        # Configure CS8 repositories
-        dnf config-manager --enable powertools
-        dnf module enable -y pki-deps javapackages-tools maven:3.6
-
-    - name: Prepare CentOS Stream 9 environment
-      if: ${{ matrix.shortcut == 'cs9' }}
-      run: |
-        # DNF core plugins are installed in the official CS9 container image
-        dnf install -y dnf-plugins-core
-
-        # Install oVirt repositories
-        dnf copr enable -y ovirt/ovirt-master-snapshot
-
-        # Requried for python3-ansible-lint and python3-isort
-        dnf copr enable -y sbonazzo/EL9_collection
-
-        # Configure CS9 repositories
-        dnf config-manager --enable crb
-
-    - name: Install required packages
-      run: |
-        dnf install -y \
-          createrepo_c \
-          dnf-utils \
-          git \
-          gzip \
-          java-11-openjdk-devel \
-          make \
-          maven \
-          python3-pycodestyle \
-          python3-pytest \
-          python3-devel \
-          python3-isort \
-          python3-pyflakes \
-          python3-pyOpenSSL \
-          python3-dnf-plugin-versionlock \
-          rpm-build \
-          sed \
-          tar
-
     - name: Checkout sources
       uses: actions/checkout@v2
 
