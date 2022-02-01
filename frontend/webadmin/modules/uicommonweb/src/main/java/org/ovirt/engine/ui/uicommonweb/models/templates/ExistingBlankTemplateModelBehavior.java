@@ -39,7 +39,6 @@ public class ExistingBlankTemplateModelBehavior extends ExistingNonClusterModelB
     @Override
     protected void postBuild() {
         getModel().getIsSealed().setEntity(template.isSealed());
-        getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
         updateTimeZone(template.getTimeZone());
         getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
         getModel().getVmInitModel().init(template);
