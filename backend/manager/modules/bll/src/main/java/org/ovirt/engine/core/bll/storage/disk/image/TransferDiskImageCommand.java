@@ -628,12 +628,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
         log.info("Successfully added {} for image transfer '{}'", getTransferDescription(), getCommandId());
 
-        // ImageGroup is empty when downloading a disk snapshot
-        if (!Guid.isNullOrEmpty(getParameters().getImageGroupID())) {
-            ImageTransfer updates = new ImageTransfer();
-            updates.setDiskId(getParameters().getImageGroupID());
-            updateEntity(updates);
-        }
+        ImageTransfer updates = new ImageTransfer();
+        updates.setDiskId(getParameters().getImageGroupID());
+        updateEntity(updates);
 
         // The image will remain locked until the transfer command has completed.
         lockImage();
