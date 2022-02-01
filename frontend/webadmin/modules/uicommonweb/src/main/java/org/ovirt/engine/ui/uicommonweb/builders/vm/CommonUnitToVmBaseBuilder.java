@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.ui.uicommonweb.builders.CompositeSyncBuilder;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
@@ -31,13 +30,6 @@ public class CommonUnitToVmBaseBuilder<T extends VmBase> extends CompositeSyncBu
         vm.setStateless(model.getIsStateless().getEntity());
         vm.setRunAndPause(model.getIsRunAndPause().getEntity());
         // High availability
-        VmResumeBehavior selectedResumeBehavior = model.getResumeBehavior().getSelectedItem();
-        if (selectedResumeBehavior == null) {
-            // the default
-            vm.setResumeBehavior(VmResumeBehavior.AUTO_RESUME);
-        } else {
-            vm.setResumeBehavior(selectedResumeBehavior);
-        }
         vm.setPriority(model.getPriority().getSelectedItem().getEntity());
         StorageDomain leaseSd = model.getLease().getSelectedItem();
         vm.setLeaseStorageDomainId(leaseSd != null ? leaseSd.getId() : null);

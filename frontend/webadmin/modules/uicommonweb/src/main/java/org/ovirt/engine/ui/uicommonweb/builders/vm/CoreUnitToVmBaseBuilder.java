@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.builders.MigrationsModelToEntityBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -59,6 +60,14 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         // Host
         vm.setUseHostCpuFlags(model.getHostCpu().getEntity());
         vm.setUseTscFrequency(model.getTscFrequency().getEntity());
+        // High availability
+        VmResumeBehavior selectedResumeBehavior = model.getResumeBehavior().getSelectedItem();
+        if (selectedResumeBehavior == null) {
+            // the default
+            vm.setResumeBehavior(VmResumeBehavior.AUTO_RESUME);
+        } else {
+            vm.setResumeBehavior(selectedResumeBehavior);
+        }
         // Resource allocation
         if (model.getCpuProfiles().getSelectedItem() != null) {
             vm.setCpuProfileId(model.getCpuProfiles().getSelectedItem().getId());

@@ -258,7 +258,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         updateSeal();
     }
 
-    public abstract void postDataCenterWithClusterSelectedItemChanged();
+    public void postDataCenterWithClusterSelectedItemChanged() {
+        updateOSValues();
+        updateBiosType();
+        updateNumOfSockets();
+        updateDefaultHost();
+        updateCpuSharesAvailability();
+        updateVirtioScsiAvailability();
+        updateMemoryBalloon();
+        updateCustomPropertySheet();
+    }
 
     public abstract void defaultHost_SelectedItemChanged();
 
@@ -534,7 +543,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void changeDefaultHost() {
     }
 
-    protected void doChangeDefaultHost(List<Guid> dedicatedHostIds) {
+    protected void updateDefaultHost(List<Guid> dedicatedHostIds) {
         if (dedicatedHostIds == null) {
             getModel().getIsAutoAssign().setEntity(true);
             return;
@@ -1484,7 +1493,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     /**
      * In case of a blank template, use the proper value for the default OS.
      */
-    protected void setSelectedOSType(VmBase vmBase,
+    protected void updateOSType(VmBase vmBase,
             ArchitectureType architectureType) {
         if (vmBase.getId().equals(Guid.Empty)) {
             Integer osId = AsyncDataProvider.getInstance().getDefaultOs(architectureType);
@@ -1532,6 +1541,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected boolean basedOnCustomInstanceType() {
         InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
         return selectedInstanceType == null || selectedInstanceType instanceof CustomInstanceType;
+    }
+
+    protected void updateCpuProfile(Cluster cluster, Guid cpuProfileId) {
+        if (cluster == null) {
+            return;
+        }
+        updateCpuProfile(cluster.getId(), cpuProfileId);
     }
 
     protected void updateCpuProfile(Guid clusterId, Guid cpuProfileId) {
