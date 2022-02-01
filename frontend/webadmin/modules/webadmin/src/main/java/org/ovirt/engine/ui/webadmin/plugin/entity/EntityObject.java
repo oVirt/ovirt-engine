@@ -64,6 +64,7 @@ public final class EntityObject extends JsMutableObjectWithProperties {
             obj.setValueAsString("name", ((Network) businessEntity).getName()); //$NON-NLS-1$
         } else if (businessEntity instanceof StorageDomain) {
             obj.setValueAsString("name", ((StorageDomain) businessEntity).getStorageName()); //$NON-NLS-1$
+            obj.setValueAsString("type", ((StorageDomain) businessEntity).getStorageType().toString().toLowerCase()); //$NON-NLS-1$
         } else if (businessEntity instanceof Disk) {
             // No custom properties for now
         } else if (businessEntity instanceof VM) {
