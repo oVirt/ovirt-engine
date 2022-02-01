@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModelErrorEventListener;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
@@ -67,10 +69,14 @@ public abstract class ConsolesBase implements VmConsoles {
         List<ConsoleProtocol> allProtocols = ConsoleProtocol.getProtocolsByPriority();
         Collections.reverse(allProtocols);
 
-        if (selectedProtocol != null) { // if it's selected, it's prefered -> set it to the 1st position
-            allProtocols.remove(selectedProtocol);
-            allProtocols.add(0, selectedProtocol);
+        ConsoleProtocol defaultSelectedProtocol = selectedProtocol;
+        if (defaultSelectedProtocol == null) { // if no console was selected yet
+            defaultSelectedProtocol = readClientModeConsoleDefault();
         }
+
+        // if it's selected, it's preferred -> set it to the 1st position
+        allProtocols.remove(defaultSelectedProtocol);
+        allProtocols.add(0, defaultSelectedProtocol);
 
         for (ConsoleProtocol protocol : allProtocols) {
             if (canSelectProtocol(protocol)) {
@@ -132,6 +138,15 @@ public abstract class ConsolesBase implements VmConsoles {
         // if display types changed, we'd like to update the default selected protocol as the old one may be invalid
         if (graphicsTypeChanged || newVm.getOs() != oldOs) {
             setDefaultSelectedProtocol();
+        }
+    }
+
+    private ConsoleProtocol readClientModeConsoleDefault() {
+        try {
+            return ConsoleProtocol.valueOf(AsyncDataProvider.getInstance().
+                    getConfigValuePreConverted(ConfigValues.ClientModeConsoleDefault).toString().toUpperCase());
+        } catch (Exception e) {
+            return ConsoleProtocol.VNC;
         }
     }
 }
