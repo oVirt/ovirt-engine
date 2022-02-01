@@ -76,6 +76,9 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
     @Mock
     private VmBackupDao vmBackupDao;
 
+    @Mock
+    private ImageTransferUpdater imageTransferUpdater;
+
     @Spy
     @InjectMocks
     private  TransferDiskImageCommand<TransferDiskImageParameters> transferImageCommand =
