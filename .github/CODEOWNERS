@@ -1,0 +1,36 @@
+# See github docs for more info on the syntax:
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default to all maintainers if nothing more specific matches
+*    @almusil @ahadas @bennyz @emesika @ljelinkova @mwperina @michalskrivanek @oliel @sandrobonazzola @sgratch @smelamud @didib
+
+packaging/dbscripts/    @emesika @mwperina
+*Dao*.java              @emesika @mwperina
+
+backend/manager/modules/*/org/ovirt/engine/core/bll/pm/    @emesika @mwperina
+
+**/*network*   @almusil @eraviv
+
+backend/manager/modules/*/org/ovirt/engine/core/*/hostdeploy/   @dangel101 @mwperina
+backend/manager/modules/*/org/ovirt/engine/core/bll/host/       @dangel101 @mwperina
+
+backend/manager/modules/*/org/ovirt/engine/core/*/job/          @arso @mwperina
+
+**/*vms*    @ahadas
+
+restapi/    @oliel @mwperina
+
+ovirt-engine.spec.in    @didib @sandrobonazzola @mwperina
+
+Makefile                @didib @sandrobonazzola @mwperina
+
+packaging/setup    @didib @sandrobonazzola
+
+pom.xml    @arso @mwperina
+
+packaging/ansible-runner-service-project/    @dangel101 @mwperina
+
+frontend    @sgratch
+
+
+
