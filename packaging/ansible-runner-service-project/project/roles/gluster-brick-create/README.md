@@ -30,10 +30,22 @@ Example Playbook to call the role
 ---------------------------------
 
 ```yaml
-    - hosts: servers
-      remote_user: root
-      roles:
-         - glusterfs-brick-create
+- hosts: servers
+  remote_user: root
+  vars:
+    disks:
+      - /dev/sdb
+    disktype: none
+    vgname: test_vg
+    size: 3G
+    lvname: lv_name
+    ssd:  /dev/sdc
+    cache_lvname: cache
+    cache_lvsize: 100M
+    mntpath: /root/mount_test
+    pool_metadatasize: 24M
+  roles:
+    - glusterfs-brick-create
 ```
 
 License
