@@ -46,7 +46,7 @@ __pycache__
 
 # Files generated from templates
 ###########################
-automation/milestone-config.sh
+.automation/milestone-config.sh
 ovirt-engine.spec
 build/helptag.py
 build/helptag_checker.py
