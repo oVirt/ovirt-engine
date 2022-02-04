@@ -188,6 +188,13 @@
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
+                    <b:ListGroup>
+                        <b:ListGroupItem>
+                            <b:Anchor href="javascript:;" ui:field="accountSettingsAnchor">
+                                <span class="list-group-item-value"><ui:text from="{constants.accountSettings}" /></span>
+                            </b:Anchor>
+                        </b:ListGroupItem>
+                    </b:ListGroup>
                 </g:FlowPanel>
             </b:ListGroupItem>
             <b:ListGroupItem ui:field="eventsPrimaryItem">

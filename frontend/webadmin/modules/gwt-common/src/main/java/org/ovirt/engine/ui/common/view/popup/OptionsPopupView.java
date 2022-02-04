@@ -9,6 +9,8 @@ import org.ovirt.engine.ui.common.section.main.presenter.OptionsPopupPresenterWi
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextArea;
 import org.ovirt.engine.ui.uicommonweb.models.options.EditOptionsModel;
@@ -21,6 +23,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsModel>
@@ -60,6 +63,23 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
     @Path(value = "confirmSuspendingVm.entity")
     EntityModelCheckBoxEditor confirmSuspendingVmCheckBox;
 
+    @UiField
+    DialogTabPanel tabPanel;
+
+    @UiField
+    DialogTab generalTab;
+
+    @UiField
+    DialogTab confirmationTab;
+
+    @UiField
+    @Path(value = "userName.entity")
+    Label userName;
+
+    @UiField
+    @Path(value = "email.entity")
+    Label email;
+
     @Inject
     public OptionsPopupView(EventBus eventBus) {
         super(eventBus);
@@ -70,19 +90,8 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
-        // use the same tab index for all controls and let the order in the DOM decide
-        // unfortunately it cannot be zero because checkbox have aut-generated index
-        publicKeyEditor.setTabIndex(1);
-
         consolePublicKeyInfoIcon.setText(SafeHtmlUtils.fromString(constants.consolePublicKeyMessage()));
-        consolePublicKeyInfoIcon.setTabIndex(1);
-
         localStoragePersistedOnServerInfoIcon.setText(createTooltip());
-        localStoragePersistedOnServerInfoIcon.setTabIndex(1);
-        // set it explicitly - the index would be auto-generated anyway
-        // see UiCommonEditorVisitor
-        localStoragePersistedOnServerCheckBox.asCheckBox().setTabIndex(1);
-        confirmSuspendingVmCheckBox.asCheckBox().setTabIndex(1);
 
         driver.initialize(this);
     }

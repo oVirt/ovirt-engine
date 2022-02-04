@@ -52,9 +52,13 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
             return;
         }
 
-        final EditOptionsModel model = new EditOptionsModel(confirmationModelSettingsManager, localStorage);
+        final EditOptionsModel model = new EditOptionsModel(
+                confirmationModelSettingsManager,
+                localStorage,
+                Frontend.getInstance()
+                        .getLoggedInUser());
 
-        model.setTitle(constants.editOptionsTitle());
+        model.setTitle(constants.accountSettings());
 
         model.setHashName("edit_options"); //$NON-NLS-1$
         setWindow(model);

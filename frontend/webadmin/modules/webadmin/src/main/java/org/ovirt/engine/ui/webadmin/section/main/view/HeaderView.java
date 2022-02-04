@@ -106,7 +106,7 @@ public class HeaderView extends AbstractView implements HeaderPresenterWidget.Vi
     @Inject
     public HeaderView(ApplicationDynamicMessages dynamicMessages) {
         logoutLink = new AnchorListItem(constants.logoutLinkLabel());
-        optionsLink = new AnchorListItem(constants.optionsLinkLabel());
+        optionsLink = new AnchorListItem(constants.accountSettings());
         aboutLink = new AnchorListItem(constants.aboutLinkLabel());
         guideLink = new AnchorListItem(dynamicMessages.guideLinkLabel());
 
