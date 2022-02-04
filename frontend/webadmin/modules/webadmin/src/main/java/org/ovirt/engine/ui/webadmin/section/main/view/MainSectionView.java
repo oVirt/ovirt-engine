@@ -68,6 +68,18 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
 
     private native void activateMenus() /*-{
         $wnd.jQuery().setupVerticalNavigation(true);
+        // trigger extra "focus" event on "click"
+        // this allows opening sub-menu by pressing "enter" key
+        $wnd.jQuery(".secondary-nav-item-pf > a").on("click", function() {$wnd.jQuery(this).trigger("mouseenter")})
+        // clean-up is-hover marker class when moving focus by keyboard
+        $wnd.jQuery(".secondary-nav-item-pf > a").on("focus", function(){
+            var parentItem = $wnd.jQuery(this).closest(".secondary-nav-item-pf")
+            var menuBox = $wnd.jQuery(".hover-secondary-nav-pf")
+            $wnd.jQuery(".secondary-nav-item-pf").not(parentItem).removeClass("is-hover")
+            if($wnd.jQuery(".secondary-nav-item-pf.is-hover").length == 0) {
+               menuBox.removeClass("hover-secondary-nav-pf")
+            }
+        })
     }-*/;
 
 }
