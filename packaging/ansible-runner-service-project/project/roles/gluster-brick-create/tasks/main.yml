@@ -3,7 +3,7 @@
 - name: Clean up filesystem signature
   command: wipefs -a {{ item }}
   with_items: "{{ disks | default([]) }}"
-  when:  wipefs == 'yes' and item is defined
+  when: wipefs == 'yes' and item is defined
   register: resp
   failed_when: resp.rc not in [0, 1]
 
@@ -32,6 +32,7 @@
   command: "vgcreate --dataalignment {{ pv_dataalign }} -s {{ vg_pesize | default(4) }} {{ vgname }} {{ disks | join(' ') }}"
   register: resp
   failed_when: resp.rc not in [0, 3]
+  changed_when: resp.rc == 0
 
 # Chunksize is calculated as follows for GlusterFS' optimal performance.
 # RAID6:
@@ -56,12 +57,14 @@
   command: "lvcreate -l 100%FREE --chunksize {{ lv_chunksize }} --poolmetadatasize {{ pool_metadatasize }} --zero n --type thin-pool --thinpool {{ lvname }}_pool {{ vgname }}"
   register: resp
   failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
 
 # rc 5 = Logical Volume 'name' already exists in volume group.
 - name: Create thin logical volume
   command: "lvcreate -T {{ vgname }}/{{ lvname }}_pool -V {{ size }} -n {{ lvname }}"
   register: resp
   failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
 
 - include_tasks: lvmcache.yml
   when: ssd is defined and ssd
@@ -71,6 +74,7 @@
   command: "mkfs.xfs -f -K -i size=512 -n size=8192 {% if 'raid' in disktype %} -d sw={{ diskcount }},su={{ stripesize }}k {% endif %} /dev/{{ vgname }}/{{ lvname }}"
   register: resp
   failed_when: resp.rc not in [0, 1]
+  changed_when: resp.rc == 0
 
 - name: Create the backend directory, skips if present
   file:
@@ -87,3 +91,5 @@
 
 - name: Set SELinux labels on the bricks
   command: "chcon -t glusterd_brick_t {{ mntpath }}"
+  register: resp
+  changed_when: resp.rc == 0

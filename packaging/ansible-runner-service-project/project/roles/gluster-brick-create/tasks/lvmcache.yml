@@ -4,18 +4,21 @@
   command: "vgextend --dataalignment 256K {{ vgname }} {{ ssd }}"
   register: resp
   failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
 
 # rc 5 = Physical volume '/dev/name' is already in volume group
 - name: Setup SSD for caching | Create LV for cache
   command: "lvcreate -L {{ cache_lvsize }} -n {{ cache_lvname }} {{ vgname }}"
   register: resp
   failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
 
 - name: Setup SSD for caching | Create metadata LV for cache
   command: "lvcreate -L {{ cache_meta_lvsize }} -n {{ cache_meta_lv }} {{ vgname }}"
   when: cache_meta_lv is defined and cache_meta_lv != ' '
   register: resp
   failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
 
 - name: Setup SSD for caching | Convert logical volume to a cache pool LV
   command: >
@@ -26,6 +29,7 @@
   when: cache_meta_lv is defined and cache_meta_lv != ' '
   register: resp
   failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
 
 # rc 5 = Command on LV name/cache does not accept LV type cachepool.
 # It is valid not to have cachemetalvname! Writing a separate task not to
@@ -39,6 +43,7 @@
   when: cache_meta_lv is not defined
   register: resp
   failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
 
 # Run lvs -a -o +devices to see the cache settings
 - name: Setup SSD for caching | Convert an existing logical volume to a cache LV
@@ -47,5 +52,6 @@
      "/dev/{{ vgname }}/{{ lvname }}_pool"
   register: resp
   failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
   tags:
     - skip_ansible_lint
