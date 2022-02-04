@@ -1,9 +1,11 @@
 ---
+# rc 1 = Device or resource busy
 - name: Clean up filesystem signature
   command: wipefs -a {{ item }}
   with_items: "{{ disks | default([]) }}"
   when:  wipefs == 'yes' and item is defined
-  ignore_errors: yes
+  register: resp
+  failed_when: resp.rc not in [0, 1]
 
 # Set data alignment for JBODs, by default it is 256K. This set_fact is not
 # needed if we can always assume 256K for JBOD, however we provide this extra
@@ -11,36 +13,25 @@
 - name: Set PV data alignment for JBOD
   set_fact:
     pv_dataalign: "{{ gluster_infra_dalign | default('256K') }}"
-  when: disktype == 'NONE' or disktype == 'RAID0'
+  when: disktype|upper in ['NONE', 'RAID0']
 
 # Set data alignment for RAID
 # We need KiB: ensure to keep the trailing `K' in the pv_dataalign calculation.
 - name: Set PV data alignment for RAID
   set_fact:
-    pv_dataalign: >
-        {{ diskcount|int *
-           stripesize|int }}K
-  when: >
-      disktype == 'RAID6' or
-      disktype == 'RAID10'
+    pv_dataalign: "{{ diskcount|int * stripesize|int }}K"
+  when: disktype|upper in ['RAID6', 'RAID10']
 
 - name: Set VG physical extent size for RAID
   set_fact:
-    vg_pesize: >
-         {{ diskcount|int *
-            stripesize|int }}K
-  when: >
-     disktype == 'RAID6' or
-     disktype == 'RAID10'
+    vg_pesize: "{{ diskcount|int * stripesize|int }}K"
+  when: disktype|upper in ['RAID6', 'RAID10']
 
+# rc 3 = already exists in filesystem
 - name: Create volume groups
-  lvg:
-    state: present
-    vg: "{{ vgname }}"
-    pvs: "{{ disks }}"
-    pv_options: "--dataalignment {{ pv_dataalign }}"
-    # pesize is 4m by default for JBODs
-    pesize: "{{ vg_pesize | default(4) }}"
+  command: "vgcreate --dataalignment {{ pv_dataalign }} -s {{ vg_pesize | default(4) }} {{ vgname }} {{ disks | join(' ') }}"
+  register: resp
+  failed_when: resp.rc not in [0, 3]
 
 # Chunksize is calculated as follows for GlusterFS' optimal performance.
 # RAID6:
@@ -51,50 +42,35 @@
 #
 - name: Calculate chunksize for RAID6/RAID10
   set_fact:
-     lv_chunksize: >
-        {{ stripesize|int *
-           diskcount|int }}K
-  when: >
-     disktype == 'RAID6' or
-     disktype == 'RAID10'
+    lv_chunksize: "{{ stripesize|int * diskcount|int }}K"
+  when: disktype|upper in ['RAID6', 'RAID10']
 
 # For JBOD the thin pool chunk size is set to 256 KiB.
 - name: Set chunksize for JBOD
   set_fact:
-     lv_chunksize: '256K'
-  when: disktype == 'NONE' or disktype == 'RAID0'
+    lv_chunksize: '256K'
+  when: disktype|upper in ['NONE', 'RAID0']
 
+# rc 5 = Logical Volume 'name' already exists in volume group.
 - name: Create a LV thinpool
-  lvol:
-     state: present
-     shrink: false
-     vg: "{{ vgname }}"
-     thinpool: "{{ lvname }}_pool"
-     size: 100%FREE
-     opts: " --chunksize {{ lv_chunksize }}
-             --poolmetadatasize {{ pool_metadatasize }}
-             --zero n"
+  command: "lvcreate -l 100%FREE --chunksize {{ lv_chunksize }} --poolmetadatasize {{ pool_metadatasize }} --zero n --type thin-pool --thinpool {{ lvname }}_pool {{ vgname }}"
+  register: resp
+  failed_when: resp.rc not in [0, 5]
 
+# rc 5 = Logical Volume 'name' already exists in volume group.
 - name: Create thin logical volume
-  lvol:
-     state: present
-     vg: "{{ vgname }}"
-     shrink: no
-     lv: "{{ lvname }}"
-     size: "{{ size }}"
-     thinpool: "{{ lvname }}_pool"
+  command: "lvcreate -T {{ vgname }}/{{ lvname }}_pool -V {{ size }} -n {{ lvname }}"
+  register: resp
+  failed_when: resp.rc not in [0, 5]
 
 - include_tasks: lvmcache.yml
   when: ssd is defined and ssd
 
+# rc 1 = Filesystem already exists
 - name: Create an xfs filesystem
-  filesystem:
-    fstype: "{{ fstype }}"
-    dev: "/dev/{{ vgname }}/{{ lvname }}"
-    opts: "{{ fsopts }}{{ raidopts }}"
-  vars:
-    fsopts: "-f -K -i size=512 -n size=8192"
-    raidopts: "{% if 'raid' in disktype %} -d sw={{ diskcount }},su={{ stripesize }}k {% endif %}"
+  command: "mkfs.xfs -f -K -i size=512 -n size=8192 {% if 'raid' in disktype %} -d sw={{ diskcount }},su={{ stripesize }}k {% endif %} /dev/{{ vgname }}/{{ lvname }}"
+  register: resp
+  failed_when: resp.rc not in [0, 1]
 
 - name: Create the backend directory, skips if present
   file:
@@ -110,8 +86,4 @@
     state: mounted
 
 - name: Set SELinux labels on the bricks
-  sefcontext:
-    target: "{{ mntpath }}"
-    setype: glusterd_brick_t
-    state: present
-    reload: yes
+  command: "chcon -t glusterd_brick_t {{ mntpath }}"
