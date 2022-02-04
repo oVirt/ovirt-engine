@@ -20,6 +20,7 @@ Role Variables
 | cache_lvname      | yes      |         |          | Name of the Logical Volume to be used for cache.
 | cache_lvsize      | yes      |         |          | Size of the cache logical volume
 | mntpath           | yes      |         |          | Path to mount the filesystem.
+| pool_metadatasize | yes      |         |          | Size of the pools metadata should be between 2M to 16G (Example: 24M).
 | wipefs            | no       | yes     | yes/no   | Whether to wipe the filesystem labels if present.
 | fstype            | no       | xfs     |          | Type of filesystem to create.
 
