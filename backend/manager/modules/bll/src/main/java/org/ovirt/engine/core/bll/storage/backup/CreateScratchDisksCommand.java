@@ -57,24 +57,23 @@ public class CreateScratchDisksCommand<T extends VmBackupParameters> extends VmC
         setActionReturnValue(getParameters().getScratchDisksMap());
 
         for (DiskImage disk : getParameters().getVmBackup().getDisks()) {
-            ActionReturnValue returnValue = addDisk(disk);
+            ActionReturnValue returnValue = createScratchDisk(disk);
             if (!returnValue.getSucceeded() || returnValue.getActionReturnValue() == null) {
-                log.error("Failed to create Scratch disk for disk ID '{}'", disk.getId());
+                log.error("Failed to create scratch disk for disk ID '{}'", disk.getId());
                 return;
             }
 
             Guid scratchDiskId = returnValue.getActionReturnValue();
-            DiskImage scratchDiskImage = (DiskImage) diskDao.get(scratchDiskId);
-            // Add the created scratch disk image to the disks map, the scratch disk
-            // path will be updated after preparing the scratch disk.
-            getParameters().getScratchDisksMap().put(disk.getId(), new Pair<>(scratchDiskImage, null));
+            DiskImage scratchDisk = (DiskImage) diskDao.get(scratchDiskId);
+            // Note, that the scratch disk path will be updated after preparing the scratch disk.
+            getParameters().getScratchDisksMap().put(disk.getId(), new Pair<>(scratchDisk, null));
         }
 
         persistCommandIfNeeded();
         setSucceeded(true);
     }
 
-    private ActionReturnValue addDisk(DiskImage disk) {
+    private ActionReturnValue createScratchDisk(DiskImage disk) {
         AddDiskParameters parameters = new AddDiskParameters(disk);
         parameters.setStorageDomainId(disk.getStorageIds().get(0));
         parameters.setParentCommand(getActionType());
