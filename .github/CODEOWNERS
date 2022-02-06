@@ -16,6 +16,9 @@ backend/manager/modules/*/org/ovirt/engine/core/bll/host/       @dangel101 @mwpe
 
 backend/manager/modules/*/org/ovirt/engine/core/*/job/          @arso @mwperina
 
+backend/manager/modules/*/org/ovirt/engine/core/bll/storage/    @bennyz @ahadas
+backend/manager/modules/*/org/ovirt/engine/core/bll/snapshots/  @bennyz @ahadas
+
 **/*vms*    @ahadas
 
 restapi/    @oliel @mwperina
