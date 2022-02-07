@@ -193,7 +193,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private VmBase vmDevicesSource;
     private List<StorageDomain> poolDomains;
 
-    private Map<Guid, Guid> srcDiskIdToTargetDiskIdMapping = new HashMap<>();
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
 
     @Inject
@@ -1439,7 +1438,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
             diskImageMap.put(cinderDisk.getId(), imageId);
         }
-        srcDiskIdToTargetDiskIdMapping.putAll(diskImageMap);
+        getSrcDiskIdToTargetDiskIdMapping().putAll(diskImageMap);
     }
 
     protected void addManagedBlockDisks(Collection<DiskImage> templateDisks) {
@@ -1462,7 +1461,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             Guid imageId = actionReturnValue.getActionReturnValue();
             diskImageMap.put(managedBlockDisk.getId(), imageId);
         }
-        srcDiskIdToTargetDiskIdMapping.putAll(diskImageMap);
+        getSrcDiskIdToTargetDiskIdMapping().putAll(diskImageMap);
     }
 
     private ImagesContainterParametersBase buildImagesContainterParameters(DiskImage srcDisk) {
@@ -1708,7 +1707,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private void addDiskPermissions() {
-        List<Guid> newDiskImageIds = new ArrayList<>(srcDiskIdToTargetDiskIdMapping.values());
+        List<Guid> newDiskImageIds = new ArrayList<>(getSrcDiskIdToTargetDiskIdMapping().values());
         Permission[] permsArray = new Permission[newDiskImageIds.size()];
 
         for (int i = 0; i < newDiskImageIds.size(); i++) {
