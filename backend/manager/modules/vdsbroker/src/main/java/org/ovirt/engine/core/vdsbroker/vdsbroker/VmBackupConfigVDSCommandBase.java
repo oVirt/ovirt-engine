@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskType;
+import org.ovirt.engine.core.common.vdscommands.ScratchDiskInfo;
 import org.ovirt.engine.core.common.vdscommands.VmBackupVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
@@ -42,10 +43,10 @@ public abstract class VmBackupConfigVDSCommandBase<P extends VmBackupVDSParamete
                 imageParams.put(VdsProperties.BACKUP_MODE, backupMode);
             }
 
-            Map<Guid, String> scratchDisksMap = getParameters().getScratchDisksMap();
+            Map<Guid, ScratchDiskInfo> scratchDisksMap = getParameters().getScratchDisksMap();
             if (scratchDisksMap != null && scratchDisksMap.containsKey(diskImage.getId())) {
                 Map<String, Object> scratchDiskParams = new HashMap<>();
-                scratchDiskParams.put(VdsProperties.Path, scratchDisksMap.get(diskImage.getId()));
+                scratchDiskParams.put(VdsProperties.Path, scratchDisksMap.get(diskImage.getId()).getPath());
                 StorageDomainStatic sourceDomain = storageDomainStaticDao.get(diskImage.getStorageIds().get(0));
                 DiskType diskType = sourceDomain.getStorageType().isBlockDomain() ? DiskType.Block : DiskType.File;
                 scratchDiskParams.put(VdsProperties.Type, diskType.getName());
