@@ -510,7 +510,9 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
     @Override
     protected VM getVmFromConfiguration() {
-        if (getParameters().getSourceSnapshotId() == null) {
+        // Get the VM from the database in case of cloning a VM with MBS disks
+        // because we don't create a snapshot in this case
+        if (getParameters().getSourceSnapshotId() == null || !isAllVmDisksSupportSnapshots()) {
             return getVm();
         }
         if (vmFromConfiguration == null) {
