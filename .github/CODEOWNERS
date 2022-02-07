@@ -7,17 +7,17 @@
 packaging/dbscripts/    @emesika @mwperina
 *Dao*.java              @emesika @mwperina
 
-backend/manager/modules/*/org/ovirt/engine/core/bll/pm/    @emesika @mwperina
+backend/manager/modules/**/org/ovirt/engine/core/bll/pm/    @emesika @mwperina
 
 **/*network*   @almusil @eraviv
 
-backend/manager/modules/*/org/ovirt/engine/core/*/hostdeploy/   @dangel101 @mwperina
-backend/manager/modules/*/org/ovirt/engine/core/bll/host/       @dangel101 @mwperina
+backend/manager/modules/**/org/ovirt/engine/core/*/hostdeploy/   @dangel101 @mwperina
+backend/manager/modules/**/org/ovirt/engine/core/bll/host/       @dangel101 @mwperina
 
-backend/manager/modules/*/org/ovirt/engine/core/*/job/          @arso @mwperina
+backend/manager/modules/**/org/ovirt/engine/core/*/job/          @arso @mwperina
 
-backend/manager/modules/*/org/ovirt/engine/core/bll/storage/    @bennyz @ahadas
-backend/manager/modules/*/org/ovirt/engine/core/bll/snapshots/  @bennyz @ahadas
+backend/manager/modules/**/org/ovirt/engine/core/bll/storage/    @bennyz @ahadas
+backend/manager/modules/**/org/ovirt/engine/core/bll/snapshots/  @bennyz @ahadas
 
 **/*vms*    @ahadas
 
@@ -34,6 +34,3 @@ pom.xml    @arso @mwperina
 packaging/ansible-runner-service-project/    @dangel101 @mwperina
 
 frontend    @sgratch
-
-
-
