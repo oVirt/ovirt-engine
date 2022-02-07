@@ -744,3 +744,12 @@ SYSLOG_HANDLER_TRUNCATE=
 #
 # The maximum length a log message, including the header, is allowed to be.
 SYSLOG_HANDLER_MAX_LENGTH=
+
+#
+# Whether we send engine.log to SYSLOG when SYSLOG_HANDLER_ENABLED=true
+# Default to true to have same behavior as with log4j syslog
+ENGINE_LOG_TO_SYSLOG=true
+
+#
+# Whether we send ui.log to SYSLOG when SYSLOG_HANDLER_ENABLED=true
+UI_LOG_TO_SYSLOG=false
