@@ -46,10 +46,15 @@ public abstract class VmBackupConfigVDSCommandBase<P extends VmBackupVDSParamete
             Map<Guid, ScratchDiskInfo> scratchDisksMap = getParameters().getScratchDisksMap();
             if (scratchDisksMap != null && scratchDisksMap.containsKey(diskImage.getId())) {
                 Map<String, Object> scratchDiskParams = new HashMap<>();
-                scratchDiskParams.put(VdsProperties.Path, scratchDisksMap.get(diskImage.getId()).getPath());
+                ScratchDiskInfo scratchDiskInfo = scratchDisksMap.get(diskImage.getId());
+                DiskImage scratchDisk = scratchDiskInfo.getDisk();
+                scratchDiskParams.put(VdsProperties.Path, scratchDiskInfo.getPath());
                 StorageDomainStatic sourceDomain = storageDomainStaticDao.get(diskImage.getStorageIds().get(0));
                 DiskType diskType = sourceDomain.getStorageType().isBlockDomain() ? DiskType.Block : DiskType.File;
                 scratchDiskParams.put(VdsProperties.Type, diskType.getName());
+                scratchDiskParams.put(VdsProperties.DomainId, scratchDisk.getStorageIds().get(0).toString());
+                scratchDiskParams.put(VdsProperties.ImageId, scratchDisk.getId().toString());
+                scratchDiskParams.put(VdsProperties.VolumeId, scratchDisk.getImageId().toString());
                 imageParams.put(VdsProperties.SCRATCH_DISK, scratchDiskParams);
             }
             return imageParams;
