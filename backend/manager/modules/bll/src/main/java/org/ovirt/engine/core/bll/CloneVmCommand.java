@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
-import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -42,7 +41,6 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInit;
@@ -120,7 +118,6 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         super.init();
         oldVmId = getParameters().getVmId();
         setVmName(getParameters().getNewName());
-        storageToDisksMap = getParameters().getStorageToDisksMap();
 
         // init the parameters only at first instantiation (not subsequent for end action)
         if (Guid.isNullOrEmpty(getParameters().getNewVmGuid())) {
@@ -134,21 +131,23 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
     @Override
     protected void executeVmCommand() {
-        getParameters().setStage(CloneVmParameters.CloneVmStage.CREATE_VM_SNAPSHOT);
-        Guid snapshotId = createVmSnapshot();
-        setSnapshotId(snapshotId);
-        setSucceeded(snapshotId != null);
+        if (isAllVmDisksSupportSnapshots()) {
+            getParameters().setStage(CloneVmParameters.CloneVmStage.CREATE_VM_SNAPSHOT);
+            Guid snapshotId = getVmSnapshotToClone();
+            initDisks(snapshotId);
+            setSucceeded(snapshotId != null);
+        } else {
+            getParameters().setStage(CloneVmParameters.CloneVmStage.COPY_DISKS);
+            setSucceeded(true);
+        }
+
     }
 
-    private void setSnapshotId(Guid snapshotId) {
+    private void initDisks(Guid snapshotId) {
         getParameters().setSourceSnapshotId(snapshotId);
         diskImagesFromConfiguration = null;
         diskInfoDestinationMap = new HashMap<>();
         fillDisksToParameters();
-        storageToDisksMap =
-                ImagesHandler.buildStorageToDiskMap(getImagesToCheckDestinationStorageDomains(),
-                        diskInfoDestinationMap);
-        getParameters().setStorageToDisksMap(storageToDisksMap);
     }
 
     @Override
@@ -168,7 +167,15 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
                 break;
 
             case CLONE_VM:
-                getParameters().setStage(CloneVmParameters.CloneVmStage.CREATE_SNAPSHOTS);
+                // Skip snapshots for non-running VMs with MBS disks
+                if (isAllVmDisksSupportSnapshots()) {
+                    getParameters().setStage(CloneVmParameters.CloneVmStage.CREATE_SNAPSHOTS);
+                } else {
+                    if (getParameters().getVnicsWithProfiles() == null) {
+                        return false;
+                    }
+                    getParameters().setStage(CloneVmParameters.CloneVmStage.MODIFY_VM_INTERFACES);
+                }
                 break;
 
             case CREATE_SNAPSHOTS:
@@ -219,8 +226,13 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         }
     }
 
-    private Guid createVmSnapshot() {
+    private Guid getVmSnapshotToClone() {
         Snapshot activeSnapshot = snapshotDao.get(getSourceVmId(), Snapshot.SnapshotType.ACTIVE);
+        // Skip VM snapshot creation for non-running VMs with MBS disks
+        if (!isAllVmDisksSupportSnapshots()) {
+            return activeSnapshot.getId();
+        }
+
         ActionReturnValue returnValue = runInternalAction(
                 ActionType.CreateSnapshotForVm,
                 buildCreateSnapshotParameters(),
@@ -234,7 +246,6 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
             log.error("Failed to create VM snapshot");
             throw new EngineException(returnValue.getFault().getError(), returnValue.getFault().getMessage());
         }
-
         return activeSnapshot.getId();
     }
 
@@ -290,7 +301,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         }
 
         // If the command fails beyond this point, endWithFailure() do not need to delete the snapshot anymore
-        setSnapshotId(null);
+        initDisks(null);
     }
 
     private RemoveSnapshotParameters createRemoveSnapshotParameters() {
@@ -337,7 +348,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
             StorageDomain destStorageDomain = storageDomainDao.get(getParameters().getDestStorageDomainId());
             StorageDomainValidator storageDomainValidator = createStorageDomainValidator(destStorageDomain);
             return validateDomainsThreshold(storageDomainValidator) &&
-                    validateFreeSpace(storageDomainValidator, storageToDisksMap.values().stream().
+                    validateFreeSpace(storageDomainValidator, getStorageToDisksMap().values().stream().
                             flatMap(Collection::stream).collect(Collectors.toList()));
         } else {
             return super.validateSpaceRequirements();
@@ -385,6 +396,11 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
      */
     @Override
     protected void lockEntities() {
+        // No need to lock snapshots for VMs with MBS disks
+        if (!isAllVmDisksSupportSnapshots()) {
+            return;
+        }
+
         TransactionSupport.executeInNewTransaction(() -> {
             Snapshot snapshot = snapshotDao.get(getParameters().getSourceSnapshotId(), null, false);
             getCompensationContext().snapshotEntityStatus(snapshot);
@@ -399,7 +415,6 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     protected void unlockEntities() {
         // Assumption - this is last DB change of command, no need for compensation here
         snapshotDao.updateStatus(getParameters().getSourceSnapshotId(), Snapshot.SnapshotStatus.OK);
-        vmDynamicDao.updateStatus(getVmId(), VMStatus.Down);
     }
 
     private List<Disk> getVmDisks() {
@@ -425,11 +440,14 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         return diskVmElementDao.get(new VmDeviceId(disk.getId(), oldVmId));
     }
 
+    private boolean isAllVmDisksSupportSnapshots() {
+        return DisksFilter.filterManagedBlockStorageDisks(getDisksForVm()).isEmpty();
+    }
+
     @Override
     protected Collection<DiskImage> getSourceDisks() {
         if (diskImagesFromConfiguration == null) {
-            Collection<? extends Disk> loadedImages =
-                    getParameters().getSourceSnapshotId() != null ? getSnapshotDisks() : getVmDisks();
+            Collection<? extends Disk> loadedImages = getDisksForVm();
             Predicate<Disk> activity = getParameters().getSourceSnapshotId() != null ? (d -> true) : ONLY_ACTIVE;
 
             diskImagesFromConfiguration = DisksFilter.filterImageDisks(loadedImages, ONLY_SNAPABLE, activity);
@@ -437,6 +455,10 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
             diskImagesFromConfiguration.addAll(DisksFilter.filterManagedBlockStorageDisks(loadedImages, ONLY_PLUGGED));
         }
         return diskImagesFromConfiguration;
+    }
+
+    private Collection<? extends Disk> getDisksForVm() {
+        return getParameters().getSourceSnapshotId() != null ? getSnapshotDisks() : getVmDisks();
     }
 
     private Collection<DiskImage> getTargetDisks() {
