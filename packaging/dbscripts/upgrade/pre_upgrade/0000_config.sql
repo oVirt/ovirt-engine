@@ -951,6 +951,10 @@ select fn_db_add_config_value_for_versions_up_to('SkuToAVLevel', '', '4.7');
 
 -- UUID of this oVirt instance
 select fn_db_add_config_value('InstanceId', uuid_generate_v1()::varchar, 'general');
+
+-- Number of MAC address left in pool to invoke audit warning
+select fn_db_add_config_value('RemainingMacsInPoolWarningThreshold', '10', 'general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

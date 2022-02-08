@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.apache.commons.lang.math.LongRange;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -14,7 +16,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ public final class MacPoolUsingRanges implements MacPool {
     private MacsStorage macsStorage;
     private Collection<LongRange> rangesBoundaries;
     private final AuditLogDirector auditLogDirector;
+    private String macPoolName;
 
     public MacPoolUsingRanges(Guid id,
             Collection<LongRange> rangesBoundaries,
@@ -43,7 +45,7 @@ public final class MacPoolUsingRanges implements MacPool {
     void initialize(boolean engineStartup, List<String> macsForMacPool) {
         log.info("Initializing {}", this);
         this.macsStorage = createMacsStorage(this.rangesBoundaries);
-
+        auditIfPoolAlmostEmpty();
         log.debug("Initializing {} with macs: {}", this, macsForMacPool);
         List<String> notAddedMacs = addMacs(macsForMacPool);
 
@@ -87,6 +89,20 @@ public final class MacPoolUsingRanges implements MacPool {
         }
     }
 
+    private void auditIfPoolAlmostEmpty() {
+        if (isPoolAlmostEmpty()) {
+            var logable = new AuditLogableImpl();
+            logable.addCustomValue("AvailableMacsCount", String.valueOf(getAvailableMacsCount()));
+            logable.addCustomValue("MacPoolName", this.macPoolName);
+            logable.addCustomValue("MacPoolId", this.id.toString());
+            auditLogDirector.log(logable, AuditLogType.MAC_POOL_ALMOST_EMPTY);
+        }
+    }
+
+    private boolean isPoolAlmostEmpty() {
+        return getAvailableMacsCount() <= Config.<Integer>getValue(ConfigValues.RemainingMacsInPoolWarningThreshold);
+    }
+
     @Override
     public boolean containsDuplicates() {
         return macsStorage.containsDuplicates();
@@ -95,7 +111,9 @@ public final class MacPoolUsingRanges implements MacPool {
     private void logWhenMacPoolIsEmpty() {
         if (!macsStorage.availableMacExist()) {
             AuditLogable logable = new AuditLogableImpl();
-            Injector.get(AuditLogDirector.class).log(logable, AuditLogType.MAC_POOL_EMPTY);
+            auditLogDirector.log(logable, AuditLogType.MAC_POOL_EMPTY);
+        } else {
+            auditIfPoolAlmostEmpty();
         }
     }
 
@@ -169,6 +187,7 @@ public final class MacPoolUsingRanges implements MacPool {
         for (String mac : macs) {
             macsStorage.freeMac(MacAddressRangeUtils.macToLong(mac));
         }
+        auditIfPoolAlmostEmpty();
     }
 
     public boolean canAllocateMacAddresses(int numberOfAddresses) {
@@ -215,5 +234,13 @@ public final class MacPoolUsingRanges implements MacPool {
     @Override
     public boolean overlaps(MacPool macPool) {
         return macsStorage.overlaps(macPool.getMacsStorage());
+    }
+
+    public void setMacPoolName(String macPoolName) {
+        this.macPoolName = macPoolName;
+    }
+
+    public String getMacPoolName() {
+        return macPoolName;
     }
 }
