@@ -279,7 +279,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         // -------- cpu --------------
         setCpuSys(vmStatistics.getCpuSys());
         setCpuUser(vmStatistics.getCpuUser());
-        if ((getCpuSys() != null) && (getCpuUser() != null)) {
+        if (getCpuSys() != null && getCpuUser() != null) {
             Double percent = (getCpuSys() + getCpuUser()) / numOfCpus;
             setUsageCpuPercent(percent.intValue());
             if (getUsageCpuPercent() != null && getUsageCpuPercent() > 100) {

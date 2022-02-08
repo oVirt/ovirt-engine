@@ -33,7 +33,7 @@ public class CidrValidator {
      */
 
     public boolean isCidrFormatValid(String cidr, boolean isIpv4) {
-        return cidr != null && ((isIpv4 && cidr.matches(ValidationUtils.IPV4_CIDR_FORMAT_PATTERN))
+        return cidr != null && (isIpv4 && cidr.matches(ValidationUtils.IPV4_CIDR_FORMAT_PATTERN)
                 || !isIpv4 && cidr.matches(ValidationUtils.IPV6_CIDR_FORMAT_PATTERN));
     }
 

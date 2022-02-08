@@ -61,10 +61,10 @@ public class VmRngDevice extends VmDevice implements Serializable {
             if (oldVersion == null || newVersion == null) {
                 return false;
             }
-            return (newVersion.greaterOrEquals(VmRngDevice.Source.FIRST_URANDOM_VERSION)
-                    && oldVersion.less(VmRngDevice.Source.FIRST_URANDOM_VERSION))
-                    || (oldVersion.greaterOrEquals(VmRngDevice.Source.FIRST_URANDOM_VERSION)
-                    && newVersion.less(VmRngDevice.Source.FIRST_URANDOM_VERSION));
+            return newVersion.greaterOrEquals(VmRngDevice.Source.FIRST_URANDOM_VERSION)
+                    && oldVersion.less(VmRngDevice.Source.FIRST_URANDOM_VERSION)
+                    || oldVersion.greaterOrEquals(VmRngDevice.Source.FIRST_URANDOM_VERSION)
+                    && newVersion.less(VmRngDevice.Source.FIRST_URANDOM_VERSION);
         }
     }
 

@@ -1650,7 +1650,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     public boolean isHostedEngineDeployed() {
         // TODO Add running status of ovirt-ha-agent and ovirt-ha-broker once available from VDSM
         if (isHostedEngineConfigured()
-                || (getHighlyAvailableScore() > 0 && getHighlyAvailableIsActive())) {
+                || getHighlyAvailableScore() > 0 && getHighlyAvailableIsActive()) {
             return true;
         }
 

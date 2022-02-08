@@ -62,7 +62,6 @@ public class FeatureSupported {
     /**
      * Check if the migrate encrypted is supported for the given version
      * @param version Compatibility version to check for.
-     * @return
      */
     public static boolean isMigrateEncryptedSupported(Version version) {
         return version.greaterOrEquals(Version.v4_4);
