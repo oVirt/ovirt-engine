@@ -11,7 +11,7 @@ public class EmulatedMachineCommonUtils {
     public static Predicate<String> chipsetMatches(ChipsetType chipsetType) {
         return emulatedMachine -> {
             ChipsetType emChipsetType = ChipsetType.fromMachineType(emulatedMachine); // emChipsetType == null for non-x86
-            return (chipsetType == ChipsetType.I440FX && emChipsetType == null) || chipsetType == emChipsetType;
+            return chipsetType == ChipsetType.I440FX && emChipsetType == null || chipsetType == emChipsetType;
         };
     }
 
