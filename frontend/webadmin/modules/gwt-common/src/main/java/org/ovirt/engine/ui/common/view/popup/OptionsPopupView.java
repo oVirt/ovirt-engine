@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.view.popup;
 
+import static org.ovirt.engine.ui.uicommonweb.models.options.OptionsModel.RESET_SETTINGS;
+
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -7,6 +9,8 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.section.main.presenter.OptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
@@ -26,8 +30,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsModel>
-        implements OptionsPopupPresenterWidget.ViewDef {
+public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsModel> implements OptionsPopupPresenterWidget.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<OptionsPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -126,5 +129,23 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
     @Override
     public void cleanup() {
         driver.cleanup();
+    }
+
+    @Override
+    protected UiCommandButton createCommandButton(String label, String uniqueId) {
+        if (RESET_SETTINGS.equals(uniqueId)) {
+            return new LeftAlignedUiCommandButton(label);
+        }
+
+        return super.createCommandButton(label, uniqueId);
+    }
+
+    @Override
+    public void init(EditOptionsModel model) {
+        super.init(model);
+        // resettable fields require  field <-> label mapping to display a human-readable confirmation
+        // since the mapping is stored in the model we need to propagate labels from model to the view
+        confirmSuspendingVmCheckBox.setLabel(model.getConfirmSuspendingVm().getTitle());
+        localStoragePersistedOnServerCheckBox.setLabel(model.getLocalStoragePersistedOnServer().getTitle());
     }
 }

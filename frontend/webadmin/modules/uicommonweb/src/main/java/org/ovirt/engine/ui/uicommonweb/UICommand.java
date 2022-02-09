@@ -132,11 +132,15 @@ public class UICommand extends Model implements ICommand {
     private ICommandTarget target;
     private final boolean autoRefresh;
 
-    public UICommand(String name, ICommandTarget target, boolean autoRefresh) {
+    public UICommand(String name, ICommandTarget target, boolean autoRefresh, String title) {
         this(autoRefresh);
         setName(name);
-        setTitle(name);
+        setTitle(title);
         this.target = target;
+    }
+
+    public UICommand(String name, ICommandTarget target, boolean autoRefresh) {
+        this(name, target, autoRefresh, name);
     }
 
     public UICommand(String name, ICommandTarget target) {
