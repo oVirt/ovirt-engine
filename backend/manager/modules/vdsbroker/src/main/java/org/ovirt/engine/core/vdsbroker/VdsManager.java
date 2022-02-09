@@ -791,8 +791,8 @@ public class VdsManager {
             // For gluster nodes, SELinux needs to be in enforcing mode,
             // hence warning in case of permissive as well.
             if (vds.getSELinuxEnforceMode() == null || vds.getSELinuxEnforceMode().equals(SELinuxMode.DISABLED)
-                    || (vds.getClusterSupportsGlusterService()
-                            && vds.getSELinuxEnforceMode().equals(SELinuxMode.PERMISSIVE))) {
+                    || vds.getClusterSupportsGlusterService()
+                            && vds.getSELinuxEnforceMode().equals(SELinuxMode.PERMISSIVE)) {
                 AuditLogable auditLogable = createAuditLogableForHost(vds);
                 auditLogable.addCustomValue("Mode",
                         vds.getSELinuxEnforceMode() == null ? "UNKNOWN" : vds.getSELinuxEnforceMode().name());

@@ -40,7 +40,7 @@ public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends 
             getCurrentIrsProxy().resetIrs();
 
             StoragePool pool = storagePoolDao.get(parameters.getStoragePoolId());
-            if (pool != null && (pool.getStatus() == StoragePoolStatus.NotOperational)) {
+            if (pool != null && pool.getStatus() == StoragePoolStatus.NotOperational) {
                 resourceManager
                         .getEventListener()
                         .storagePoolStatusChange(parameters.getStoragePoolId(), StoragePoolStatus.NonResponsive,
