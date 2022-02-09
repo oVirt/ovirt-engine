@@ -890,9 +890,11 @@ public class HostMonitoring implements HostMonitoringInterface {
             // VMs' pending resources are cleared in powering up, so in launch state
             // we shouldn't include them as committed.
             if (status != VMStatus.WaitForLaunch && status != VMStatus.Down) {
-                VmManager vmManager = resourceManager.getVmManager(entry.getKey());
-                memCommited += vmManager.getVmMemoryWithOverheadInMB();
-                vmsCoresCount += vmManager.getNumOfCpus();
+                VmManager vmManager = resourceManager.getVmManager(entry.getKey(), false);
+                if (vmManager != null) {
+                    memCommited += vmManager.getVmMemoryWithOverheadInMB();
+                    vmsCoresCount += vmManager.getNumOfCpus();
+                }
             }
         }
 

@@ -10,8 +10,12 @@ import java.util.stream.Stream;
  */
 public enum CpuPinningPolicy {
     NONE(0),
+    /** Use the user provided manual string for pinning **/
+    MANUAL(1),
     /** Switch the VM topology to be maximized on the selected host. Sets the CPU pinning and NUMA accordingly */
-    RESIZE_AND_PIN_NUMA(2);
+    RESIZE_AND_PIN_NUMA(2),
+    /** Dynamically dedicate pCPUs to be exclusively pinned to VM virtual CPU topology **/
+    DEDICATED(3);
 
     private int value;
 

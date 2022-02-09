@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
+import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.common.network.SwitchType;
@@ -299,9 +300,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     EntityModelRadioButtonEditor optimizationCustomEditor;
 
     @UiField
-    Row cpuThreadsRow;
-
-    @UiField
     @Ignore
     Label cpuThreadsPanelTitle;
 
@@ -449,6 +447,19 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Path("migrateCompressed.selectedItem")
     @WithElementId("migrateCompressed")
     ListModelListBoxEditor<Boolean> migrateCompressedEditor;
+
+    @UiField(provided = true)
+    InfoIcon parallelMigrationsInfoIcon;
+
+    @UiField(provided = true)
+    @Path(value = "parallelMigrationsType.selectedItem")
+    @WithElementId("parallelMigrationsType")
+    public ListModelListBoxEditor<ParallelMigrationsType> parallelMigrationsTypeEditor;
+
+    @UiField
+    @Path(value = "customParallelMigrations.entity")
+    @WithElementId
+    public IntegerEntityModelTextBoxEditor customParallelMigrationsEditor;
 
     @UiField
     @Ignore
@@ -732,6 +743,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                         new BooleanRenderer(constants.compress(), constants.dontCompress()),
                         AsyncDataProvider.getInstance().getMigrateCompressed()));
 
+        parallelMigrationsTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<ParallelMigrationsType>());
+        parallelMigrationsTypeEditor.hideLabel();
         migrationBandwidthLimitTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<MigrationBandwidthLimitType>());
         migrationBandwidthLimitTypeEditor.hideLabel();
         migrationPolicyEditor = new ListModelListBoxEditor<>(new MigrationPolicyNameRenderer());
@@ -812,6 +825,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         logMaxMemoryUsedThresholdInfoIcon =
                 new InfoIcon(templates.italicText(constants.logMaxMemoryUsedThresholdLabelHelpMessage()));
+
+        parallelMigrationsInfoIcon = new InfoIcon(templates.italicText(messages.parallelMigrationsInfo()));
     }
 
     @Override
@@ -877,9 +892,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         updateGlusterFencingPolicyVisibility(object);
         importGlusterExplanationLabel.setVisible(object.getEnableGlusterService().getEntity()
                 && object.getIsNew());
-
-        object.getVersionSupportsCpuThreads().getEntityChangedEvent().addListener((ev, sender, args) ->
-                cpuThreadsRow.setVisible(object.getVersionSupportsCpuThreads().getEntity()));
 
         schedulerOptimizationInfoIcon.setText(SafeHtmlUtils.fromTrustedString(
                 templates.italicText(object.getSchedulerOptimizationInfoMessage()).asString()

@@ -215,6 +215,10 @@ cleanup() {
 		FAILURE_NOTIFIED=1
 		notify_engine "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" -1 "Failed"
 	fi
+	if [ "${ec}" = '1' -a -n "${TEMP_FOLDER}" ]; then
+		local avail=$(df -k --output=avail "${TEMP_FOLDER}" | grep -v Avail)
+		[ "${avail}" -lt 10000 ] && output "ERROR: Low free space on ${TEMP_FOLDER}: ${avail}KiB"
+	fi
 
 	[ -n "${TEMP_FOLDER}" -a -z "${KEEP_TEMP_FOLDER}" ] && rm -rf "${TEMP_FOLDER}"
 }
@@ -1145,8 +1149,6 @@ dorestore() {
 	log "Reading config"
 	. "${TEMP_FOLDER}/config"
 
-	verifyArgsConfig
-
 	# Refresh scope vars according to what actually found
 	[ -s "${TEMP_FOLDER}/files" ] || SCOPE_FILES=
 	[ -s "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" ] || SCOPE_ENGINE_DB=
@@ -1174,6 +1176,30 @@ dorestore() {
 
 	log "Reloading configuration"
 	my_load_config
+
+	# Update provisioning vars if all DBs are on localhost and are inaccessible
+	generatePgPass # Needed for canConnectToDB
+	if [ \
+		-z "${CHANGE_DB_CREDENTIALS}" -a \
+		-z "${CHANGE_DWH_DB_CREDENTIALS}" -a \
+		-z "${CHANGE_CINDERLIB_DB_CREDENTIALS}" -a \
+		"${ENGINE_DB_HOST}" == "localhost" -a \
+		"${DWH_DB_HOST}" == "localhost" -a \
+		"${CINDERLIB_DB_HOST}" == "localhost" \
+	] && \
+		! canConnectToDB "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" && \
+		! canConnectToDB "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}" && \
+		! canConnectToDB "${CINDERLIB_DB_USER}" "${CINDERLIB_DB_HOST}" "${CINDERLIB_DB_PORT}" "${CINDERLIB_DB_DATABASE}" \
+	; then
+		PROVISIONING=1
+		PROVISION_ALL_DBS=1
+		PROVISION_DB=1
+		PROVISION_DWH_DB=1
+		PROVISION_CINDERLIB_DB=1
+		[ -z "${RESTORE_PERMISSIONS}" ] && RESTORE_PERMISSIONS="1"
+	fi
+
+	verifyArgsConfig
 
 	if [ -n "${PROVISIONING}" ]; then
 		output "Provisioning PostgreSQL users/databases:"
@@ -1247,6 +1273,16 @@ __EOF__
 	output "You should now run engine-setup."
 }
 
+canConnectToDB() {
+	local user="$1"
+	local host="$2"
+	local port="$3"
+	local database="$4"
+
+	pg_cmd psql -c "select 1" >> "${LOG}" 2>&1 \
+		|| return 1
+}
+
 verifyConnection() {
 	local user="$1"
 	local host="$2"
@@ -1255,7 +1291,7 @@ verifyConnection() {
 
 	local pgrestorelog="${TEMP_FOLDER}/pg-restore-log"
 
-	pg_cmd psql -c "select 1" >> "${LOG}" 2>&1 \
+	canConnectToDB "${user}" "${host}" "${port}" "${database}" \
 		|| logdie "Can't connect to database '${database}'. Please see '${0} --help'."
 
 	pg_cmd psql -t -c "show lc_messages" 2> /dev/null \

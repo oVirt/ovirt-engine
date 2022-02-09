@@ -27,6 +27,9 @@ public enum PolicyUnitParameter {
     /* The CPU load in percents under which a host is considered under utilized */
     LOW_UTILIZATION("LowUtilization", "^([0-9]|[1-4][0-9])$"),
 
+    /* The ratio between the sum of VM's vCPUs to the physical host CPU cores count over which a host is considered over utilized */
+    VCPU_TO_PHYSICAL_CPU_RATIO("VCpuToPhysicalCpuRatio", "^([0-2](\\.([0-9]+))?)$"),
+
     /* The amount of hosts that should be kept up although there are no VMs running
        Used in the power saving policy. */
     HOSTS_IN_RESERVE("HostsInReserve", "^[0-9][0-9]*$"),

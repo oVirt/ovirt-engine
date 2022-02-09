@@ -280,6 +280,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("ksm_merge_across_nodes", cluster.isKsmMergeAcrossNumaNodes())
                 .addValue("migration_bandwidth_limit_type", cluster.getMigrationBandwidthLimitType().name())
                 .addValue("custom_migration_bandwidth_limit", cluster.getCustomMigrationNetworkBandwidth())
+                .addValue("parallel_migrations", cluster.getParallelMigrations())
                 .addValue("migration_policy_id", cluster.getMigrationPolicyId())
                 .addValue("mac_pool_id", cluster.getMacPoolId())
                 .addValue("switch_type", cluster.getRequiredSwitchTypeForCluster().getOptionValue())
@@ -355,6 +356,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.setKsmMergeAcrossNumaNodes(rs.getBoolean("ksm_merge_across_nodes"));
         entity.setMigrationBandwidthLimitType(MigrationBandwidthLimitType.valueOf(rs.getString("migration_bandwidth_limit_type")));
         entity.setCustomMigrationNetworkBandwidth(getInteger(rs, "custom_migration_bandwidth_limit"));
+        entity.setParallelMigrations(rs.getInt("parallel_migrations"));
         entity.setMigrationPolicyId(getGuid(rs, "migration_policy_id"));
         entity.setMacPoolId(getGuid(rs, "mac_pool_id"));
         entity.setRequiredSwitchTypeForCluster(SwitchType.parse(rs.getString("switch_type")));

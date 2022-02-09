@@ -154,7 +154,8 @@ BEGIN
 
         SELECT numa_node_cpus_view.*
         FROM numa_node_cpus_view
-        WHERE vm_id = v_vm_id;
+        WHERE vm_id = v_vm_id
+        ORDER BY numa_node_index ASC;
     END;
 
     RETURN;

@@ -94,10 +94,7 @@ class Plugin(plugin.PluginBase):
                 ].extend(
                     [
                         'ca_pki',
-                        'exportfs',
-                        'nfs_config',
                         'ca_pki',
-                        'iso_domain',
                         'ca_config',
                         'ssl',
                         'versionlock',

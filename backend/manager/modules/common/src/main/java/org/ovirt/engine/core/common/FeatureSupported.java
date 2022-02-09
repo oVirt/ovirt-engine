@@ -380,7 +380,26 @@ public class FeatureSupported {
      */
     public static boolean isHostSupportsMBSCopy(VDS vds) {
         return vds != null && vds.getConnectorInfo() != null
-                && Version.v4_6.greaterOrEquals(vds.getClusterCompatibilityVersion());
+                && Version.v4_6.lessOrEquals(vds.getClusterCompatibilityVersion());
     }
 
+    /**
+     * Checks if Screenshot-VM is supported
+     *
+     * @param version Compatibility version to check for.
+     * @return true if Screenshot-VM is supported.
+     */
+    public static boolean isVMScreenshotSupported(Version version) {
+        return Version.v4_7.lessOrEquals(version);
+    }
+
+    /**
+     * Checks if parallel migrations are supported.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if parallel migrations are supported.
+     */
+    public static boolean isParallelMigrationsSupported(Version version) {
+        return supportedInConfig(ConfigValues.ParallelMigrationsSupported, version);
+    }
 }

@@ -10,17 +10,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.NumaNode;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.NumaUtils;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +77,7 @@ public class NumaPinningHelper {
         List<VmNumaNodeData> vmNodesData = vms.stream()
                 .flatMap(vm -> {
                     Map<Integer, Collection<Integer>> cpuPinning = considerCpuPinning ?
-                            CpuPinningHelper.parseCpuPinning(vm.getCpuPinning()).stream()
+                            CpuPinningHelper.parseCpuPinning(VmCpuCountHelper.isAutoPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning()).stream()
                                     .collect(Collectors.toMap(p -> p.getvCpu(), p -> p.getpCpus())) :
                             null;
                     Optional<Integer> hugePageSize = HugePageUtils.getHugePageSize(vm.getStaticData());
@@ -210,10 +209,10 @@ public class NumaPinningHelper {
         return true;
     }
 
-    public static String getSapHanaCpuPinning(VmBase vmBase, VdsDynamic vdsDynamic, List<VdsNumaNode> numaNodes) {
+    public static String getSapHanaCpuPinning(VM vm, VdsDynamic vdsDynamic, List<VdsNumaNode> numaNodes) {
         int hostSockets = vdsDynamic.getCpuSockets();
         int hostThreadsPerCore = vdsDynamic.getCpuThreads() / vdsDynamic.getCpuCores();
-        int vmNumCpus = vmBase.getNumOfCpus();
+        int vmNumCpus = vm.getCurrentNumOfCpus();
         int vCpusPerNumaThread = vmNumCpus / hostSockets / hostThreadsPerCore;
         if (vCpusPerNumaThread == 0) {
             return null;
@@ -249,32 +248,31 @@ public class NumaPinningHelper {
         return sb.toString();
     }
 
-    public static void applyAutoPinningPolicy(VmBase vmBase, CpuPinningPolicy cpuPinningPolicy, VdsDynamic vdsDynamic,
-                                              List<VdsNumaNode> hostNodes) {
-        if (cpuPinningPolicy == null || cpuPinningPolicy == CpuPinningPolicy.NONE) {
-            return;
-        }
+    /**
+     * This function will set the 'Resize and pin' CPU pinning policy to a VM.
+     * @param vm the VM we are intending to set the settings.
+     * @param vdsDynamic the VdsDynamic of the host the VM will run on.
+     * @param hostNodes List of VdsNumaNode, the NUMA nodes the host has.
+     */
+    public static void applyAutoPinningPolicy(VM vm, VdsDynamic vdsDynamic, List<VdsNumaNode> hostNodes) {
+        vm.setCurrentSockets(vdsDynamic.getCpuSockets());
+        vm.setCurrentCoresPerSocket((vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets()) - 1);
+        vm.setCurrentThreadsPerCore(vdsDynamic.getCpuThreads() / vdsDynamic.getCpuCores());
 
-        // We assume identical topology of all assigned hosts
-        if (cpuPinningPolicy == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
-            vmBase.setNumOfSockets(vdsDynamic.getCpuSockets());
-            vmBase.setCpuPerSocket((vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets()) - 1);
-            vmBase.setThreadsPerCpu(vdsDynamic.getCpuThreads() / vdsDynamic.getCpuCores());
-        }
-
-        List<VmNumaNode> vmNumaNodes = NumaPinningHelper.initVmNumaNode(vmBase.getNumOfCpus(), hostNodes);
-        vmBase.setCpuPinning(NumaPinningHelper.getSapHanaCpuPinning(vmBase,
+        List<VmNumaNode> vmNumaNodes = NumaPinningHelper.initVmNumaNode(vm.getCurrentNumOfCpus(), hostNodes);
+        vm.setCurrentCpuPinning(NumaPinningHelper.getSapHanaCpuPinning(vm,
                 vdsDynamic,
                 hostNodes));
         if (vmNumaNodes.size() > 0) {
             NumaUtils.setNumaListConfiguration(
                     vmNumaNodes,
-                    vmBase.getMemSizeMb(),
-                    HugePageUtils.getHugePageSize(vmBase),
-                    vmBase.getNumOfCpus(),
-                    NumaTuneMode.STRICT);
+                    vm.getMemSizeMb(),
+                    HugePageUtils.getHugePageSize(vm.getStaticData()),
+                    vm.getCurrentNumOfCpus(),
+                    NumaTuneMode.STRICT,
+                    vm.getCurrentThreadsPerCore());
         }
-        vmBase.setvNumaNodeList(vmNumaNodes);
+        vm.setvNumaNodeList(vmNumaNodes);
     }
 
     public static List<VmNumaNode> initVmNumaNode(int numCpus, List<VdsNumaNode> hostNodes) {
@@ -330,7 +328,7 @@ public class NumaPinningHelper {
 
         public void setHugePages(List<HugePage> hugePages) {
             this.hugePages = hugePages.stream()
-                    .map(page -> new HugePage(page.getSizeKB(), page.getAmount()))
+                    .map(page -> new HugePage(page.getSizeKB(), page.getFree()))
                     .collect(Collectors.toList());
         }
     }

@@ -214,6 +214,10 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getMigrationMode().setSelectedItem(vm.getMigrationSupport());
 
             getModel().getTscFrequency().setEntity(vm.getUseTscFrequency());
+
+            updateBiosType();
+
+            getInstanceTypeManager().updateInstanceTypeFieldsFromSource();
         });
     }
 
@@ -517,10 +521,5 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         if (vm.getStatus() != VMStatus.Up) {
             super.updateMaxMemory();
         }
-    }
-
-    @Override
-    protected void disableCpuPinningAutoPinningConflict() {
-        getModel().getCpuPinning().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
     }
 }

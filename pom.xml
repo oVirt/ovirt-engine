@@ -41,9 +41,9 @@
 
     <!-- Versions of the API model and tools: -->
     <metamodel.version>1.3.7</metamodel.version>
-    <model.version>4.5.1</model.version>
+    <model.version>4.5.2</model.version>
 
-    <ovirt-engine-extensions-api.version>1.0.0</ovirt-engine-extensions-api.version>
+    <ovirt-engine-extensions-api.version>1.0.1</ovirt-engine-extensions-api.version>
 
     <!-- JDK9+ now separated modules from the jdk -->
     <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
@@ -65,7 +65,7 @@
     <cxf.version>2.2.7</cxf.version>
     <sshd-core.version>2.6.0</sshd-core.version>
     <eddsa.version>0.3.0</eddsa.version>
-    <vdsm-jsonrpc-java.version>1.6.0</vdsm-jsonrpc-java.version>
+    <vdsm-jsonrpc-java.version>1.7.1</vdsm-jsonrpc-java.version>
     <slf4j.version>1.7.22</slf4j.version>
     <gwt.version>2.9.0</gwt.version>
     <mockito.version>3.8.0</mockito.version>
@@ -82,7 +82,7 @@
     <snakeyaml.version>1.26</snakeyaml.version>
     <ws-commons-util.version>1.0.2</ws-commons-util.version>
     <aopalliance.version>1.0</aopalliance.version>
-    <snmp4j.version>2.5.3</snmp4j.version>
+    <snmp4j.version>3.6.4</snmp4j.version>
     <kubevirt-client.version>0.5.0</kubevirt-client.version>
     <resteasy.version>3.9.3.Final</resteasy.version>
     <!-- OpenStack -->
@@ -168,6 +168,13 @@
         <groupId>org.apache.xmlrpc</groupId>
         <artifactId>xmlrpc-client</artifactId>
         <version>${xmlrpc-client.version}</version>
+        <exclusions>
+          <!-- Note: avoid junit 3 as a dependency -->
+          <exclusion>
+            <artifactId>junit</artifactId>
+            <groupId>junit</groupId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
@@ -737,7 +744,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>2.4</version>
+          <version>3.3.0</version>
         </plugin>
         <plugin>
           <groupId>com.github.warmuuh</groupId>

@@ -83,6 +83,8 @@ public enum ActionType {
     RemoveUnregisteredVmTemplate(67, ActionGroup.DELETE_TEMPLATE, QuotaDependency.NONE),
     RemoveUnregisteredVm(68, ActionGroup.DELETE_VM, QuotaDependency.NONE),
     MeasureVolume(69, false, QuotaDependency.NONE),
+    ScreenshotVm(71, ActionGroup.CONNECT_TO_VM, QuotaDependency.NONE),
+
     SealVm(255, QuotaDependency.NONE),
 
     // VdsCommands

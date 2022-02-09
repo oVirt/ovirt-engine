@@ -602,4 +602,7 @@ public interface IVdsServer {
     VDSInfoReturn getLeaseStatus(String leaseUUID, String sdUUID);
 
     StatusOnlyReturn fenceLeaseJob(String leaseUUID, String sdUUID, Map<String, Object> leaseMetadata);
+
+    ScreenshotInfoReturn createScreenshot(String vmId);
+
 }

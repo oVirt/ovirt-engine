@@ -384,10 +384,11 @@ public class VmValidator {
      * @param vmBase - the VM/template to validate
      * @param compatibilityVersion - the compatibility version of vmBase
      * @param architecture - the cluster's architecture
+     * @param osRepository - OsRepository instance
      * @return ValidationResult.VALID if the CPU topology on vmBase is valid, failed ValidationResult otherwise.
      */
     public static ValidationResult validateCpuSockets(VmBase vmBase, Version compatibilityVersion,
-            ArchitectureType architecture) {
+            ArchitectureType architecture, OsRepository osRepository) {
         int num_of_sockets = vmBase.getNumOfSockets();
         int cpu_per_socket = vmBase.getCpuPerSocket();
         int threadsPerCpu = vmBase.getThreadsPerCpu();
@@ -417,6 +418,11 @@ public class VmValidator {
         }
         if (threadsPerCpu < 1) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIN_THREADS_PER_CPU);
+        }
+        int minCpus = osRepository.getMinimumCpus(vmBase.getOsId());
+        if (vcpus < minCpus) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_MIN_NUM_CPU_FOR_OS,
+                    ReplacementUtils.createSetVariableString("cpus", minCpus));
         }
         return ValidationResult.VALID;
     }

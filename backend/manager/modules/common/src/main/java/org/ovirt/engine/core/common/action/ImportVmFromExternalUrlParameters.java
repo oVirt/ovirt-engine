@@ -18,7 +18,6 @@ public class ImportVmFromExternalUrlParameters extends ActionParametersBase {
     @NotEmpty
     private String externalName;
 
-    @NotNull
     private VolumeType volumeType;
 
     @NotNull

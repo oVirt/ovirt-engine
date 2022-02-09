@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.math.BigInteger;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
@@ -16,21 +17,21 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
 
     private InterfaceStatus status;
 
-    private Double receiveDropRate;
+    private BigInteger receiveDrops;
 
     private Double receiveRate;
 
-    private Long receivedBytes;
+    private BigInteger receivedBytes;
 
-    private Long receivedBytesOffset;
+    private BigInteger receivedBytesOffset;
 
-    private Double transmitDropRate;
+    private BigInteger transmitDrops;
 
     private Double transmitRate;
 
-    private Long transmittedBytes;
+    private BigInteger transmittedBytes;
 
-    private Long transmittedBytesOffset;
+    private BigInteger transmittedBytesOffset;
 
     private Double sampleTime;
 
@@ -39,11 +40,11 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
 
     public NetworkStatistics(NetworkStatistics statistics) {
         setId(statistics.getId());
-        setReceiveDropRate(statistics.getReceiveDropRate());
+        setReceiveDrops(statistics.getReceiveDrops());
         setReceiveRate(statistics.getReceiveRate());
         setReceivedBytes(statistics.getReceivedBytes());
         setReceivedBytesOffset(statistics.getReceivedBytesOffset());
-        setTransmitDropRate(statistics.getTransmitDropRate());
+        setTransmitDrops(statistics.getTransmitDrops());
         setTransmitRate(statistics.getTransmitRate());
         setTransmittedBytes(statistics.getTransmittedBytes());
         setTransmittedBytesOffset(statistics.getTransmittedBytesOffset());
@@ -92,22 +93,22 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
     }
 
     /**
-     * Sets the received data drop rate.
+     * Sets the received data drops.
      *
-     * @param receiveDropRate
+     * @param receiveDrops
      *            the rate
      */
-    public void setReceiveDropRate(Double receiveDropRate) {
-        this.receiveDropRate = receiveDropRate;
+    public void setReceiveDrops(BigInteger receiveDrops) {
+        this.receiveDrops = receiveDrops;
     }
 
     /**
-     * Returns the received data drop rate.
+     * Returns the received data drops.
      *
      * @return the rate
      */
-    public Double getReceiveDropRate() {
-        return receiveDropRate;
+    public BigInteger getReceiveDrops() {
+        return receiveDrops;
     }
 
     /**
@@ -135,7 +136,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      * @param receivedBytes
      *            the total received bytes.
      */
-    public void setReceivedBytes(Long receivedBytes) {
+    public void setReceivedBytes(BigInteger receivedBytes) {
         this.receivedBytes = receivedBytes;
     }
 
@@ -144,7 +145,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      *
      * @return the total received bytes.
      */
-    public Long getReceivedBytes() {
+    public BigInteger getReceivedBytes() {
         return receivedBytes;
     }
 
@@ -154,7 +155,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      * @param receivedBytesOffset
      *            the RX byte offset.
      */
-    public void setReceivedBytesOffset(Long receivedBytesOffset) {
+    public void setReceivedBytesOffset(BigInteger receivedBytesOffset) {
         this.receivedBytesOffset = receivedBytesOffset;
     }
 
@@ -163,7 +164,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      *
      * @return the RX byte offset.
      */
-    public Long getReceivedBytesOffset() {
+    public BigInteger getReceivedBytesOffset() {
         return receivedBytesOffset;
     }
 
@@ -173,7 +174,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      * @param transmittedBytesOffset
      *            the TX byte offset.
      */
-    public void setTransmittedBytesOffset(Long transmittedBytesOffset) {
+    public void setTransmittedBytesOffset(BigInteger transmittedBytesOffset) {
         this.transmittedBytesOffset = transmittedBytesOffset;
     }
 
@@ -182,27 +183,27 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      *
      * @return the TX byte offset.
      */
-    public Long getTransmittedBytesOffset() {
+    public BigInteger getTransmittedBytesOffset() {
         return transmittedBytesOffset;
     }
 
     /**
-     * Sets the transmitted data drop rate.
+     * Sets the transmitted data drops.
      *
-     * @param transmitDropRate
+     * @param transmitDrops
      *            the rate
      */
-    public void setTransmitDropRate(Double transmitDropRate) {
-        this.transmitDropRate = transmitDropRate;
+    public void setTransmitDrops(BigInteger transmitDrops) {
+        this.transmitDrops = transmitDrops;
     }
 
     /**
-     * Returns the transmitted data drop rate.
+     * Returns the transmitted data drops.
      *
      * @return the rate
      */
-    public Double getTransmitDropRate() {
-        return transmitDropRate;
+    public BigInteger getTransmitDrops() {
+        return transmitDrops;
     }
 
     /**
@@ -230,7 +231,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      * @param transmittedBytes
      *            the total transmitted bytes.
      */
-    public void setTransmittedBytes(Long transmittedBytes) {
+    public void setTransmittedBytes(BigInteger transmittedBytes) {
         this.transmittedBytes = transmittedBytes;
     }
 
@@ -239,7 +240,7 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
      *
      * @return the total transmitted bytes.
      */
-    public Long getTransmittedBytes() {
+    public BigInteger getTransmittedBytes() {
         return transmittedBytes;
     }
 
@@ -263,22 +264,22 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
     }
 
     public void resetVmStatistics() {
-        setTransmitDropRate(0D);
+        setTransmitDrops(BigInteger.ZERO);
         setTransmitRate(0D);
         setReceiveRate(0D);
-        setReceiveDropRate(0D);
+        setReceiveDrops(BigInteger.ZERO);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(
                 id,
-                receiveDropRate,
+                receiveDrops,
                 receiveRate,
                 receivedBytes,
                 receivedBytesOffset,
                 status,
-                transmitDropRate,
+                transmitDrops,
                 transmitRate,
                 transmittedBytes,
                 transmittedBytesOffset,
@@ -296,12 +297,12 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
         }
         NetworkStatistics other = (NetworkStatistics) obj;
         return Objects.equals(id, other.id)
-                && Objects.equals(receiveDropRate, other.receiveDropRate)
+                && Objects.equals(receiveDrops, other.receiveDrops)
                 && Objects.equals(receiveRate, other.receiveRate)
                 && Objects.equals(receivedBytes, other.receivedBytes)
                 && Objects.equals(receivedBytesOffset, other.receivedBytesOffset)
                 && Objects.equals(status, other.status)
-                && Objects.equals(transmitDropRate, other.transmitDropRate)
+                && Objects.equals(transmitDrops, other.transmitDrops)
                 && Objects.equals(transmitRate, other.transmitRate)
                 && Objects.equals(transmittedBytes, other.transmittedBytes)
                 && Objects.equals(transmittedBytesOffset, other.transmittedBytesOffset)

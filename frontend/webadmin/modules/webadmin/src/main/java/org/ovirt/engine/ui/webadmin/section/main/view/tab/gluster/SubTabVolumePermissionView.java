@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissi
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 
-public class SubTabVolumePermissionView extends AbstractSubTabPermissionsView<GlusterVolumeEntity, VolumeListModel>
+public class SubTabVolumePermissionView extends AbstractSubTabPermissionsView<GlusterVolumeEntity, VolumeListModel, PermissionListModel<GlusterVolumeEntity>>
         implements SubTabVolumePermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVolumePermissionView> {

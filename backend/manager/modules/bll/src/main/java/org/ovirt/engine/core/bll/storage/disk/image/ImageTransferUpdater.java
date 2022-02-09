@@ -50,15 +50,11 @@ public class ImageTransferUpdater {
                     entity.setId(updates.getId());
                 }
                 if (updates.getPhase() != null) {
-                    String disk = entity.getDiskId() != null
-                            ? String.format(" (image %s)", entity.getDiskId().toString()) : "";
-                    String message = entity.getMessage() != null
-                            ? String.format(" (message: '%s')", entity.getMessage()) : "";
-                    log.info("Updating image transfer {}{} phase to {}{}",
+                    // TODO: Validate that phase change is valid. For now just log.
+                    log.info("Updating image transfer '{}' phase from '{}' to '{}'",
                             commandId,
-                            disk,
-                            updates.getPhase(),
-                            message);
+                            entity.getPhase(),
+                            updates.getPhase());
                     entity.setPhase(updates.getPhase());
                 }
                 if (updates.getType() != null) {

@@ -65,8 +65,6 @@ public interface UIConstants extends Constants {
 
     String setUnlimitedSpecificQuotaModeTitle();
 
-    String disableClusterCpuThreadSupportTitle();
-
     String changeCpuLevel();
 
     String changeCpuLevelWhileRunningMessage();
@@ -627,8 +625,6 @@ public interface UIConstants extends Constants {
 
     String youAreAboutChangeDCQuotaEnforcementMsg();
 
-    String youAreAboutChangeClusterCpuThreadSupportMsg();
-
     String youAreAboutToCreateUnlimitedSpecificQuotaMsg();
 
     String asciiNameValidationMsg();
@@ -786,6 +782,8 @@ public interface UIConstants extends Constants {
     String invalidMacRangeRightBound();
 
     String tooBigMacRange();
+
+    String tpmDeviceRequired();
 
     String labelAlreadyExists();
 
@@ -2197,6 +2195,10 @@ public interface UIConstants extends Constants {
 
     String clusterDefaultCustomSerialNumberDisabledReason();
 
+    String customParallelMigrationsDisabledReason();
+
+    String clusterDefaultCustomParallelMigrationsDisabledReason();
+
     String updatingStorageDomainTitle();
 
     String chipsetDependentVmDeviceChangesTitle();
@@ -2216,4 +2218,22 @@ public interface UIConstants extends Constants {
     String numaTuneModeDisabledReasonNotCurrentlyEditedVM();
 
     String consoleDisconnectActionDelayDisabledReason();
+
+    String adjustToHost();
+
+    String cpuPinningNoneDescription();
+
+    String cpuPinningManualDescription();
+
+    String cpuPinningManualDisabled();
+
+    String cpuPinningResizeAndPinDescription();
+
+    String allPermissions();
+
+    String directPermissions();
+
+    String cpuPinningDedicatedDescription();
+
+    String cpuPinningDedicatedDisabled();
 }

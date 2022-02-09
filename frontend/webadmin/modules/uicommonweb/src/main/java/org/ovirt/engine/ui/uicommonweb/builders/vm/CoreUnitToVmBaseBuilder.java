@@ -23,7 +23,9 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
 
     public CoreUnitToVmBaseBuilder() {
         // the policy is copied for VMs and Templates in MigrationOptionsUnitToVmBaseBuilder
-        super(new MigrationsModelToEntityBuilder<UnitVmModel, VmBase>(false));
+        super(
+                new MigrationsModelToEntityBuilder<UnitVmModel, VmBase>(false),
+                new CpuPinningUnitToVmBaseBuilder());
     }
 
     @Override
@@ -62,7 +64,6 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         if (model.getCpuSharesAmount().getIsAvailable() && model.getCpuSharesAmount().getEntity() != null) {
             vm.setCpuShares(model.getCpuSharesAmount().getEntity());
         }
-        vm.setCpuPinning(model.getCpuPinning().getEntity());
         vm.setMultiQueuesEnabled(model.getMultiQueues().getEntity());
         // Boot
         vm.setIsoPath(model.getCdImage().getIsChangable() && model.getCdImage().getSelectedItem() != null ?
@@ -78,6 +79,5 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
                         : AsyncDataProvider.getInstance().getSmallByLargeOsDefaultIconId(largeIconId));
         // Custom Properties
         vm.setCustomProperties(model.getCustomPropertySheet().serialize());
-        vm.setCpuPinningPolicy(model.getCpuPinningPolicy().getSelectedItem());
     }
 }

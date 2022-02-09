@@ -233,9 +233,27 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     private void runAnsibleHostDeployPlaybook() {
         String hostedEngineAction = StringUtils.EMPTY;
         File hostedEngineTmpCfgFile = null;
+        VDS vds = getVds();
         if (getParameters().getHostedEngineDeployConfiguration() != null) {
             hostedEngineAction =
                     getParameters().getHostedEngineDeployConfiguration().getDeployAction().name().toLowerCase();
+            if (hostedEngineAction.equals("deploy")) {
+                long numHEHosts = vdsDao.getAll().stream().filter(VDS::isHostedEngineHost).count();
+                int maxHEHosts = EngineLocalConfig.getInstance().getInteger("MAX_RECOMMENDED_HE_HOSTS");
+                if (numHEHosts >= maxHEHosts) {
+                    log.warn(
+                            "There are {} HE hosts deployed. Deploying more than {} HE hosts isn't recommended. Please remove dead hosts, if any, in order to get rid of this warning",
+                            numHEHosts,
+                            maxHEHosts);
+                    AuditLogable logable = new AuditLogableImpl();
+                    logable.setVdsName(vds.getName());
+                    logable.setVdsId(vds.getId());
+                    logable.setCorrelationId(getCorrelationId());
+                    logable.addCustomValue("NumHEHosts", String.valueOf(numHEHosts));
+                    logable.addCustomValue("MaxHEHosts", String.valueOf(maxHEHosts));
+                    auditLogDirector.log(logable, AuditLogType.HOSTED_ENGINE_MAX_RECOMMENDED_HOSTS_INSTALLED);
+                }
+            }
         }
 
         try {
@@ -258,7 +276,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 kdumpDestinationAddress = EngineLocalConfig.getInstance().getHost();
             }
             Cluster hostCluster = clusterDao.get(getClusterId());
-            VDS vds = getVds();
             boolean isGlusterServiceSupported = hostCluster.supportsGlusterService();
             String tunedProfile = isGlusterServiceSupported ? hostCluster.getGlusterTunedProfile() : null;
             String clusterVersion = hostCluster.getCompatibilityVersion().getValue();

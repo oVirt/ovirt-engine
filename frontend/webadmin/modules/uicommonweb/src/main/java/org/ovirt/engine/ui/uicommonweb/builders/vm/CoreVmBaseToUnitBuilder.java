@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.ui.uicommonweb.builders.Builder;
 import org.ovirt.engine.ui.uicommonweb.builders.CompositeBuilder;
@@ -18,12 +19,14 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
                 new KernelParamsVmBaseToUnitBuilder(),
                 new SerialNumberPolicyVmBaseToUnitBuilder(),
                 new IconVmBaseToUnitBuilder(),
-                new MigrationsEntityToModelBuilder()
-        );
+                new MigrationsEntityToModelBuilder(),
+                new CpuPinningVmBaseToUnitBuilder());
     }
 
     @Override
     protected void postBuild(VmBase vm, UnitVmModel model) {
+        model.setSecureBootOriginallyEnabled(vm.getBiosType() == BiosType.Q35_SECURE_BOOT);
+        model.getBiosType().setSelectedItem(vm.getBiosType());
         model.getBootMenuEnabled().setEntity(vm.isBootMenuEnabled());
         model.getVncKeyboardLayout().setSelectedItem(vm.getVncKeyboardLayout());
         model.getIsDeleteProtected().setEntity(vm.isDeleteProtected());
@@ -39,7 +42,5 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
             // builder leading to an infinite recursion
             model.getCustomCompatibilityVersion().setSelectedItem(vm.getCustomCompatibilityVersion());
         }
-        model.getCpuPinning().setEntity(vm.getCpuPinning());
-        model.getCpuPinningPolicy().setSelectedItem(vm.getCpuPinningPolicy());
     }
 }

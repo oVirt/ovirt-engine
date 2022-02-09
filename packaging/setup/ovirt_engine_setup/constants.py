@@ -161,21 +161,6 @@ class FileLocations(object):
         'virtio-win',
     )
 
-    RHEV_GUEST_TOOLS_DIR = os.path.join(
-        DATADIR,
-        'rhev-guest-tools-iso',
-    )
-
-    RHV_GUEST_TOOLS_DIR = os.path.join(
-        DATADIR,
-        'rhv-guest-tools-iso',
-    )
-
-    OVIRT_GUEST_TOOLS_DIR = os.path.join(
-        DATADIR,
-        'ovirt-guest-tools-iso',
-    )
-
     OVIRT_ENGINE_UNINSTALL_DIR = os.path.join(
         OVIRT_ENGINE_SYSCONFDIR,
         'uninstall.d'
@@ -265,7 +250,6 @@ class Const(object):
     FIREWALL_MANAGER_HUMAN = 'skip'
     FIREWALL_MANAGER_IPTABLES = 'iptables'
     FIREWALL_MANAGER_FIREWALLD = 'firewalld'
-    ISO_DOMAIN_NFS_DEFAULT_ACL_FORMAT = '{fqdn}(rw)'
 
     REMOTE_ENGINE_SETUP_STYLE_AUTO_SSH = 'auto_ssh'
     REMOTE_ENGINE_SETUP_STYLE_MANUAL_FILES = 'manual_files'
@@ -489,7 +473,6 @@ class ConfigEnv(object):
     def REMOTE_ENGINE_HOST_ROOT_PASSWORD(self):
         return 'OVESETUP_CONFIG/remoteEngineHostRootPassword'
 
-    ISO_PATHS_TO_UPLOAD = 'OVESETUP_CONFIG/isoPathsToUpload'
     TOTAL_MEMORY_MB = 'OVESETUP_CONFIG/totalMemoryMB'
     CONTINUE_SETUP_ON_HE_VM = 'OVESETUP_CONFIG/continueSetupOnHEVM'
 

@@ -33,7 +33,6 @@ public class BackendExternalVmImportsResource extends BackendResource implements
                 "provider",
                 "url",
                 "name",
-                "sparse",
                 "cluster.id|name",
                 "storageDomain.id|name");
 
@@ -104,7 +103,10 @@ public class BackendExternalVmImportsResource extends BackendResource implements
     }
 
     private static VolumeType getVolumeType(ExternalVmImport vmImport) {
-        return Boolean.TRUE.equals(vmImport.isSparse()) ? VolumeType.Sparse : VolumeType.Preallocated;
+        if (vmImport.isSparse() == null) {
+            return null;
+        }
+        return vmImport.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated;
     }
 
     private Guid getClusterId(ExternalVmImport vmImport) {

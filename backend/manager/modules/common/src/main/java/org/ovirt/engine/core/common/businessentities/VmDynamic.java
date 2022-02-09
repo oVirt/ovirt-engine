@@ -98,6 +98,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private Map<String, String> leaseInfo;
     @UnchangeableByVdsm
     private String runtimeName;
+    @UnchangeableByVdsm
+    private String currentCpuPinning;
+    @UnchangeableByVdsm
+    private int currentSockets;
+    @UnchangeableByVdsm
+    private int currentCoresPerSocket;
+    @UnchangeableByVdsm
+    private int currentThreadsPerCore;
 
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
 
@@ -151,7 +159,11 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 guestOsVersion,
                 guestOsType,
                 guestContainers,
-                leaseInfo
+                leaseInfo,
+                currentCpuPinning,
+                currentSockets,
+                currentCoresPerSocket,
+                currentThreadsPerCore
         );
     }
 
@@ -211,7 +223,11 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(guestOsArch, other.guestOsArch)
                 && Objects.equals(guestOsType, other.guestOsType)
                 && Objects.equals(guestContainers, other.guestContainers)
-                && Objects.equals(leaseInfo, other.leaseInfo);
+                && Objects.equals(leaseInfo, other.leaseInfo)
+                && Objects.equals(currentCpuPinning, other.currentCpuPinning)
+                && Objects.equals(currentSockets, other.currentSockets)
+                && Objects.equals(currentCoresPerSocket, other.currentCoresPerSocket)
+                && Objects.equals(currentThreadsPerCore, other.currentThreadsPerCore);
     }
 
     public Date getBootTime() {
@@ -328,6 +344,10 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         guestContainers = template.getGuestContainers();
         volatileRun = template.isVolatileRun();
         leaseInfo = template.leaseInfo;
+        currentCpuPinning = template.getCurrentCpuPinning();
+        currentSockets = template.getCurrentSockets();
+        currentCoresPerSocket = template.getCurrentCoresPerSocket();
+        currentThreadsPerCore = template.getCurrentThreadsPerCore();
     }
 
     public String getAppList() {
@@ -721,6 +741,38 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setRuntimeName(String runtimeName) {
         this.runtimeName = runtimeName;
+    }
+
+    public String getCurrentCpuPinning() {
+        return currentCpuPinning;
+    }
+
+    public void setCurrentCpuPinning(String cpuPinning) {
+        this.currentCpuPinning = cpuPinning;
+    }
+
+    public int getCurrentSockets() {
+        return currentSockets;
+    }
+
+    public void setCurrentSockets(int sockets) {
+        this.currentSockets = sockets;
+    }
+
+    public int getCurrentCoresPerSocket() {
+        return currentCoresPerSocket;
+    }
+
+    public void setCurrentCoresPerSocket(int cores) {
+        currentCoresPerSocket = cores;
+    }
+
+    public int getCurrentThreadsPerCore() {
+        return currentThreadsPerCore;
+    }
+
+    public void setCurrentThreadsPerCore(int threads) {
+        this.currentThreadsPerCore = threads;
     }
 
     /**

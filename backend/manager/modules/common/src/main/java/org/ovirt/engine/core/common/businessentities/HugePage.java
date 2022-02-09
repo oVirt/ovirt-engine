@@ -8,14 +8,21 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 public class HugePage implements Serializable {
     private static final long serialVersionUID = -7900304010567972606L;
     private Integer sizeKB;
-    private Integer amount;
+    private Integer free;
+    private Integer total;
 
     public HugePage() {
     }
 
-    public HugePage(Integer sizeKB, Integer amount) {
+    public HugePage(Integer sizeKB, Integer free) {
         this.sizeKB = sizeKB;
-        this.amount = amount;
+        this.free = free;
+    }
+
+    public HugePage(Integer sizeKB, Integer free, Integer total) {
+        this.sizeKB = sizeKB;
+        this.free = free;
+        this.total = total;
     }
 
     @Override
@@ -28,14 +35,16 @@ public class HugePage implements Serializable {
         }
         HugePage other = (HugePage) obj;
         return Objects.equals(sizeKB, other.sizeKB)
-                && Objects.equals(amount, other.amount);
+                && Objects.equals(free, other.free)
+                && Objects.equals(total, other.total);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(
                 sizeKB,
-                amount
+                free,
+                total
         );
     }
 
@@ -47,19 +56,28 @@ public class HugePage implements Serializable {
         this.sizeKB = sizeKB;
     }
 
-    public Integer getAmount() {
-        return amount;
+    public Integer getFree() {
+        return free;
     }
 
-    public void setAmount(Integer amount) {
-        this.amount = amount;
+    public void setFree(Integer free) {
+        this.free = free;
+    }
+
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
                 .append("sizeKB", getSizeKB())
-                .append("amount", getAmount())
+                .append("free", getFree())
+                .append("total", getTotal())
                 .build();
     }
 }

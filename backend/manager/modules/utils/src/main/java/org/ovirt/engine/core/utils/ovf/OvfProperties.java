@@ -82,6 +82,7 @@ public interface OvfProperties {
     String IS_MIGRATE_COMPRESSED = "IsMigrateCompressed";
     String IS_MIGRATE_ENCRYPTED = "IsMigrateEncrypted";
     String MIGRATION_POLICY_ID = "MigrationPolicyId";
+    String PARALLEL_MIGRATIONS = "ParallelMigrations";
     String CUSTOM_EMULATED_MACHINE = "CustomEmulatedMachine";
     String BIOS_TYPE = "BiosType";
     String CUSTOM_CPU_NAME = "CustomCpuName";

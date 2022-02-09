@@ -45,7 +45,7 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case GetMaxOsRam:
                 setReturnValue(osRepository.getMaximumRam(getParameters().getOsId(), getParameters().getVersion()));
                 break;
-            case GetMinimumOsRam:
+            case GetMinOsRam:
                 setReturnValue(osRepository.getMinimumRam(getParameters().getOsId(), getParameters().getVersion()));
                 break;
             case GetDisplayTypes:
@@ -82,11 +82,14 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case GetVmInitMap:
                 setReturnValue(osRepository.getVmInitMap());
                 break;
-            case GetTpmAllowedMap:
-                setReturnValue(osRepository.getTpmAllowedMap());
+            case GetTpmSupportMap:
+                setReturnValue(osRepository.getTpmSupportMap());
                 break;
             case GetUnsupportedOsIds:
                 setReturnValue(osRepository.getUnsupportedOsIds());
+                break;
+            case GetMinCpus:
+                setReturnValue(osRepository.getMinimumCpus(getParameters().getOsId()));
                 break;
         }
     }

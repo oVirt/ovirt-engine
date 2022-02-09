@@ -108,9 +108,11 @@ public class VmsMonitoring {
 
     private void unlockVms(List<VmAnalyzer> vmAnalyzers) {
         vmAnalyzers.stream().map(VmAnalyzer::getVmId).forEach(vmId -> {
-            VmManager vmManager = getVmManager(vmId);
-            vmManager.updateVmDataChangedTime();
-            vmManager.unlockVm();
+            VmManager vmManager = getVmManager(vmId, false);
+            if (vmManager != null) {
+                vmManager.updateVmDataChangedTime();
+                vmManager.unlockVm();
+            }
         });
     }
 
@@ -315,7 +317,12 @@ public class VmsMonitoring {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         vmStatisticsDao.updateAllInBatch(statistics);
-        statistics.forEach(stats -> getVmManager(stats.getId()).setStatistics(stats));
+        statistics.forEach(stats -> {
+            VmManager vmManager = getVmManager(stats.getId(), false);
+            if (vmManager != null) {
+                vmManager.setStatistics(stats);
+            }
+        });
     }
 
     protected void addUnmanagedVms(List<VmAnalyzer> vmAnalyzers, Guid vdsId) {
@@ -361,7 +368,11 @@ public class VmsMonitoring {
     }
 
     protected VmManager getVmManager(Guid vmId) {
-        return resourceManager.getVmManager(vmId);
+        return getVmManager(vmId, true);
+    }
+
+    protected VmManager getVmManager(Guid vmId, boolean createIfAbsent) {
+        return resourceManager.getVmManager(vmId, createIfAbsent);
     }
 
 }

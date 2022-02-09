@@ -15,10 +15,13 @@ import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CloudInit;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
+import org.ovirt.engine.api.model.CpuPinningPolicy;
+import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Domain;
+import org.ovirt.engine.api.model.DynamicCpu;
 import org.ovirt.engine.api.model.ExternalHostProvider;
 import org.ovirt.engine.api.model.ExternalVmProviderType;
 import org.ovirt.engine.api.model.File;
@@ -51,7 +54,6 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -70,6 +72,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -287,6 +290,15 @@ public class VmMapper extends VmBaseMapper {
             if (model.getOs() != null && entity.getBootSequence() != null) {
                 Boot boot = map(entity.getBootSequence(), null);
                 model.getOs().setBoot(boot);
+            }
+            if (VmCpuCountHelper.isAutoPinning(entity)) {
+                CpuTopology topology = new CpuTopology();
+                topology.setSockets(entity.getCurrentSockets());
+                topology.setCores(entity.getCurrentCoresPerSocket());
+                topology.setThreads(entity.getCurrentThreadsPerCore());
+                model.setDynamicCpu(new DynamicCpu());
+                model.getDynamicCpu().setTopology(topology);
+                model.getDynamicCpu().setCpuTune(stringToCpuTune(entity.getCurrentCpuPinning()));
             }
         } else {
             if (model.getOs() != null) {
@@ -751,12 +763,46 @@ public class VmMapper extends VmBaseMapper {
     }
 
     @Mapping(from = AutoPinningPolicy.class, to = CpuPinningPolicy.class)
-    public static CpuPinningPolicy map(AutoPinningPolicy autoPinningPolicy, CpuPinningPolicy template) {
+    public static org.ovirt.engine.core.common.businessentities.CpuPinningPolicy map(AutoPinningPolicy autoPinningPolicy) {
         switch (autoPinningPolicy) {
         case ADJUST:
-            return CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
+            return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
         default:
-            return CpuPinningPolicy.NONE;
+            return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.NONE;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.class, to = AutoPinningPolicy.class)
+    public static AutoPinningPolicy map(org.ovirt.engine.core.common.businessentities.CpuPinningPolicy cpuPinningPolicy, AutoPinningPolicy template) {
+        switch (cpuPinningPolicy) {
+            case RESIZE_AND_PIN_NUMA:
+            return AutoPinningPolicy.ADJUST;
+        default:
+            return AutoPinningPolicy.DISABLED;
+        }
+    }
+
+    @Mapping(from = CpuPinningPolicy.class, to = org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.class)
+    public static org.ovirt.engine.core.common.businessentities.CpuPinningPolicy map(CpuPinningPolicy cpuPinningPolicy) {
+        switch (cpuPinningPolicy) {
+            case MANUAL:
+                return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.MANUAL;
+            case RESIZE_AND_PIN_NUMA:
+                return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
+            default:
+                return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.NONE;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.class, to = CpuPinningPolicy.class)
+    public static CpuPinningPolicy map(org.ovirt.engine.core.common.businessentities.CpuPinningPolicy cpuPinningPolicy) {
+        switch (cpuPinningPolicy) {
+            case MANUAL:
+                return CpuPinningPolicy.MANUAL;
+            case RESIZE_AND_PIN_NUMA:
+                return CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
+            default:
+                return CpuPinningPolicy.NONE;
         }
     }
 

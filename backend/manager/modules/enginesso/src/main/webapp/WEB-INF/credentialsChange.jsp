@@ -3,8 +3,12 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="obrand" uri="obrand" %>
+<%@ taglib prefix="sso" tagdir="/WEB-INF/tags" %>
+
 <fmt:setLocale value="${locale}" />
 <fmt:setBundle basename="sso-messages" var="changepasswordpage" />
+<sso:getContext var="ssoContext" locale="ssoLocale" />
+<sso:getSession var="ssoSession" />
 
 <!DOCTYPE html>
 <html>
@@ -21,10 +25,8 @@
     <obrand:javascripts />
 </head>
 <body class="ovirt-container">
-    <c:set var="ssoSession" value="${sessionScope['ovirt-ssoSession']}" />
-
     <c:if test="${ssoSession.clientId == null}">
-        <c:redirect url="${applicationScope['ovirt-ssoContext'].engineUrl}" />
+        <c:redirect url="${ssoContext.engineUrl}" />
     </c:if>
 
     <c:choose>
@@ -43,7 +45,7 @@
     <div class="pf-c-login">
         <div class="pf-c-login__container">
             <header class="pf-c-login__header">
-                <a href="${applicationScope['ovirt-ssoContext'].engineUrl}" class="pf-c-brand obrand_loginPageLogoLink">
+                <a href="${ssoContext.engineUrl}" class="pf-c-brand obrand_loginPageLogoLink">
                     <div class="obrand_loginPageLogo"></div>
                 </a>
             </header>

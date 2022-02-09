@@ -334,7 +334,7 @@
                                         <ge:EntityModelCheckBoxEditor ui:field="smtDisabledEditor" label="{constants.clusterPopupCpuSmtLabel}" removeFormGroup="true" usePatternFly="true" />
                                     </b:Column>
                                 </b:Row>
-                                <b:Row ui:field="cpuThreadsRow">
+                                <b:Row>
                                     <b:Column size="SM_12">
                                         <g:Label ui:field="cpuThreadsPanelTitle" addStyleNames="{style.floatLeft} {style.groupTitle}" text="{constants.clusterPopupCpuThreadsPanelTitle}" />
                                         <d:InfoIcon ui:field="cpuThreadsInfo" addStyleNames="{style.panelInfo}" />
@@ -432,6 +432,18 @@
                                 </b:Row>
                                 <b:Row>
                                     <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_6" >
+                                        <l:LabelWithTooltip text="{constants.parallelMigrationsType}" forWidget="{parallelMigrationsTypeEditor}" />
+                                        <d:InfoIcon ui:field="parallelMigrationsInfoIcon" addStyleNames="{style.panelInfo}" tooltipPlacement="AUTO"/>
+                                    </b:Column>
+                                    <b:Column size="SM_6" >
+                                      <e:ListModelListBoxEditor ui:field="parallelMigrationsTypeEditor" usePatternFly="true"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <ge:IntegerEntityModelTextBoxEditor ui:field="customParallelMigrationsEditor" label="{constants.customParallelMigrations}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                             </b:Container>
                         </t:content>

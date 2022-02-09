@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -248,6 +249,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
      */
     private boolean validateImageAvailability(DiskImage image, Guid imageGroupId) {
         boolean imageAvailable = false;
+        Set<Guid> availableStorageDomains = new HashSet<>();
+
         for (Guid storageDomainId : image.getStorageIds()) {
             DiskImage fromIrs = null;
             try {
@@ -264,8 +267,12 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                         image.getImageId(), storageDomainId);
             } else if (!imageAvailable) {
                 imageAvailable = true;
+                availableStorageDomains.add(storageDomainId);
             }
         }
+
+        getParameters().getImageToAvailableStorageDomains().put(image.getImageId(), availableStorageDomains);
+
         return imageAvailable;
     }
 

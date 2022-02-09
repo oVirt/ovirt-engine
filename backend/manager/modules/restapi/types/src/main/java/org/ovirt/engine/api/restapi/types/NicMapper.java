@@ -92,6 +92,8 @@ public class NicMapper {
             return 4;
         case PCI_PASSTHROUGH:
             return 5;
+        case E1000E:
+            return 6;
         default:
             return -1;
         }
@@ -112,6 +114,8 @@ public class NicMapper {
             return NicInterface.SPAPR_VLAN;
         case 5:
             return NicInterface.PCI_PASSTHROUGH;
+        case 6:
+            return NicInterface.E1000E;
         default:
             return null;
         }

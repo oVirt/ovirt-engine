@@ -146,6 +146,7 @@ public enum VDSCommandType {
     VerifyUntrustedVolume("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     MeasureVolume("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SwitchMasterStorageDomain("org.ovirt.engine.core.vdsbroker.irsbroker"),
+    ScreenshotVm("org.ovirt.engine.core.vdsbroker.vdsbroker"),
 
     // Gluster VDS commands
     CreateGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),

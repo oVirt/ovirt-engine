@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper.PinnedCpu;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
@@ -39,6 +40,10 @@ public class CpuPinningValidator {
     public static ValidationResult isCpuPinningValid(final String cpuPinning, VmBase vmBase) {
         if (StringUtils.isEmpty(cpuPinning)) {
             return ValidationResult.VALID;
+        }
+
+        if (vmBase.getCpuPinningPolicy() != CpuPinningPolicy.MANUAL) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_MANUAL_PINNING_POLICY_NOT_SELECTED);
         }
 
         if (!isValidCpuPinningSyntax(cpuPinning)) {

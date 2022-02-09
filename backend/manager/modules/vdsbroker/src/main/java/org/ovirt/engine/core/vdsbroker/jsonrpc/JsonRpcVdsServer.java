@@ -74,6 +74,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVmReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OvfReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.QemuImageInfoReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.ScreenshotInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ServerConnectionStatusReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.SpmStatusReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturn;
@@ -2677,5 +2678,14 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
+    }
+
+    @Override
+    public ScreenshotInfoReturn createScreenshot(String vmId) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.screenshot").withParameter("vmID", vmId)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new ScreenshotInfoReturn(response);
     }
 }

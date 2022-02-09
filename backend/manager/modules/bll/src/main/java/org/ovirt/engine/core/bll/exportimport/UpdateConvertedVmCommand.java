@@ -108,6 +108,12 @@ public class UpdateConvertedVmCommand<T extends ConvertVmParameters> extends VmC
     private void addExtraData(VM ovfVm) {
         VmStatic oldVm = getVm().getStaticData();
         VmStatic newVm = new VmStatic(oldVm);
+        boolean forceVmStaticUpdate = false;
+
+        if (newVm.getDefaultDisplayType() != ovfVm.getDefaultDisplayType()) {
+            newVm.setDefaultDisplayType(ovfVm.getDefaultDisplayType());
+            forceVmStaticUpdate = true;
+        }
 
         if (newVm.getBiosType() != ovfVm.getBiosType()) {
             newVm.setBiosType(ovfVm.getBiosType());
@@ -116,7 +122,8 @@ public class UpdateConvertedVmCommand<T extends ConvertVmParameters> extends VmC
         vmHandler.updateToQ35(oldVm,
                 newVm,
                 getCluster(),
-                null);
+                null,
+                forceVmStaticUpdate);
     }
 
     private void deleteV2VJob() {

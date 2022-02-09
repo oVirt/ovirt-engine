@@ -56,6 +56,8 @@ public final class SearchObjects {
     public static final String SESSION_PLU_OBJ_NAME = "SESSIONS";
     public static final String JOB_OBJ_NAME = "JOB";
     public static final String JOB_PLU_OBJ_NAME = "JOBS";
+    public static final String VNIC_PROFILE_OBJ_NAME = "VNICPROFILE";
+    public static final String VNIC_PROFILE_PLU_OBJ_NAME = "VNICPROFILES";
 
     // Special fields that require tag based search
     public static final String VDC_USER_ROLE_SEARCH = SearchObjects.VDC_USER_OBJ_NAME + "-ROLE";
@@ -113,7 +115,9 @@ public final class SearchObjects {
                 SESSION_OBJ_NAME,
                 SESSION_PLU_OBJ_NAME,
                 JOB_OBJ_NAME,
-                JOB_PLU_OBJ_NAME);
+                JOB_PLU_OBJ_NAME,
+                VNIC_PROFILE_OBJ_NAME,
+                VNIC_PROFILE_PLU_OBJ_NAME);
 
         Set<String> result = new HashSet<>();
         for (String name : names) {

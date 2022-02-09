@@ -61,7 +61,7 @@ Generally, the project is localized and translated following the work-flow:
 * Developers access the messages through the appropriate backend or frontend layer
 * When the strings are stable, push the messages to Zanata
 * Translators do their work for each supported language within the corresponding
-  https://zanata.phx.ovirt.org/project/view/ovirt-engine[Zanata project]
+  https://zanata.ovirt.org/project/view/ovirt-engine[Zanata project]
 * When translations are complete, pull the localized strings from Zanata
 * Normalize translations  (keys sorted, etc) and generate a gerrit patch
 * Rebuilding the project will make the updated translations available for use

@@ -186,6 +186,7 @@ public final class Cloner {
         vm.setUseLatestVersion(instance.isUseLatestVersion());
         vm.setSerialNumberPolicy(instance.getSerialNumberPolicy());
         vm.setCustomSerialNumber(instance.getCustomSerialNumber());
+        vm.setParallelMigrations(instance.getParallelMigrations());
         vm.setBootMenuEnabled(instance.isBootMenuEnabled());
         vm.setSpiceFileTransferEnabled(instance.isSpiceFileTransferEnabled());
         vm.setSpiceCopyPasteEnabled(instance.isSpiceCopyPasteEnabled());
@@ -215,6 +216,33 @@ public final class Cloner {
         vm.setSmallIconId(instance.getSmallIconId());
         vm.setLargeIconId(instance.getLargeIconId());
         vm.setVirtioScsiMultiQueues(instance.getVirtioScsiMultiQueues());
+        vm.setCpuPinning(instance.getCpuPinning());
+        vm.setCpuPinningPolicy(instance.getCpuPinningPolicy());
+        vm.setNumOfIoThreads(instance.getNumOfIoThreads());
+        vm.setBalloonEnabled(instance.isBalloonEnabled());
+        vm.setMultiQueuesEnabled(instance.isMultiQueuesEnabled());
+        vm.setCpuShares(instance.getCpuShares());
+        vm.setDeleteProtected(instance.isDeleteProtected());
+        vm.setSmartcardEnabled(instance.isSmartcardEnabled());
+        vm.setConsoleDisconnectAction(instance.getConsoleDisconnectAction());
+        vm.setConsoleDisconnectActionDelay(instance.getConsoleDisconnectActionDelay());
+        vm.setSsoMethod(instance.getSsoMethod());
+        vm.setResumeBehavior(instance.getResumeBehavior());
+        vm.setMigrationPolicyId(instance.getMigrationPolicyId());
+        vm.setUseTscFrequency(instance.getUseTscFrequency());
+        vm.setTunnelMigration(instance.getTunnelMigration());
+        // TODO This should be also deep cloned
+        vm.setvNumaNodeList(instance.getvNumaNodeList());
+        vm.setClusterSpiceProxy(instance.getClusterSpiceProxy());
+        vm.setVmPoolSpiceProxy(instance.getVmPoolSpiceProxy());
+        vm.setNextRunChangedFields(instance.getNextRunChangedFields());
+        vm.setNextRunConfigurationExists(instance.isNextRunConfigurationExists());
+        vm.setPreviewSnapshot(instance.isPreviewSnapshot());
+        vm.setClusterCpuName(instance.getClusterCpuName());
+        vm.setClusterCpuFlags(instance.getClusterCpuFlags());
+        vm.setClusterCpuVerb(instance.getClusterCpuVerb());
+        vm.setConfiguredCpuVerb(instance.getConfiguredCpuVerb());
+        vm.setVmExternalData(instance.getVmExternalData());
         return vm;
     }
 
@@ -325,6 +353,7 @@ public final class Cloner {
         obj.setArchitecture(instance.getArchitecture());
         obj.setSerialNumberPolicy(instance.getSerialNumberPolicy());
         obj.setCustomSerialNumber(instance.getCustomSerialNumber());
+        obj.setParallelMigrations(instance.getParallelMigrations());
         obj.setFencingPolicy(new FencingPolicy(instance.getFencingPolicy()));
         obj.setAutoConverge(instance.getAutoConverge());
         obj.setMigrateCompressed(instance.getMigrateCompressed());
@@ -473,6 +502,7 @@ public final class Cloner {
         obj.setTemplateVersionName(instance.getTemplateVersionName());
         obj.setSerialNumberPolicy(instance.getSerialNumberPolicy());
         obj.setCustomSerialNumber(instance.getCustomSerialNumber());
+        obj.setParallelMigrations(instance.getParallelMigrations());
         obj.setBootMenuEnabled(instance.isBootMenuEnabled());
         obj.setCreatedByUserId(instance.getCreatedByUserId());
         obj.setSpiceFileTransferEnabled(instance.isSpiceFileTransferEnabled());
@@ -530,6 +560,7 @@ public final class Cloner {
         obj.setUseLatestVersion(instance.isUseLatestVersion());
         obj.setSerialNumberPolicy(instance.getSerialNumberPolicy());
         obj.setCustomSerialNumber(instance.getCustomSerialNumber());
+        obj.setParallelMigrations(instance.getParallelMigrations());
         obj.setBootMenuEnabled(instance.isBootMenuEnabled());
         obj.setSpiceFileTransferEnabled(instance.isSpiceFileTransferEnabled());
         obj.setSpiceCopyPasteEnabled(instance.isSpiceCopyPasteEnabled());

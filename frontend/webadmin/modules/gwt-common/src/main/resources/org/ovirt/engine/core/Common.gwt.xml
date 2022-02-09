@@ -251,6 +251,7 @@
         <include name="common/businessentities/HostedEngineDeployConfiguration.java" />
         <include name="common/businessentities/SubjectEntity.java" />
         <include name="common/businessentities/ReplaceHostConfiguration.java" />
+        <include name="common/businessentities/TpmSupport.java" />
         <include name="common/job/*.java" />
 
         <!-- Console -->
@@ -368,6 +369,7 @@
         <include name="common/utils/ClusterEmulatedMachines.java" />
         <include name="common/utils/CpuUtils.java" />
         <include name="common/utils/BiosTypeUtils.java" />
+        <include name="common/utils/VmCpuCountHelper.java" />
 
         <!-- TODO: Remove when UI will be refactored to use FenceProxySourceType -->
         <include name="common/utils/pm/FenceProxySourceTypeHelper.java"/>
@@ -535,6 +537,7 @@
         <include name="common/migration/ConvergenceItemWithStallingLimit.java"/>
         <include name="common/migration/MigrationPolicy.java"/>
         <include name="common/migration/NoMigrationPolicy.java"/>
+        <include name="common/migration/ParallelMigrationsType.java"/>
 
     </source>
 

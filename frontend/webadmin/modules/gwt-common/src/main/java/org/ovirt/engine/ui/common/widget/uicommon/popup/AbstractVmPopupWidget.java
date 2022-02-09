@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -43,12 +42,12 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
+import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
-import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -66,6 +65,7 @@ import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.OvirtTabListItem;
+import org.ovirt.engine.ui.common.widget.editor.CpuPinningPolicyListBox;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBox;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.IconEditorWidget;
@@ -109,6 +109,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.VirtioMultiQueueType;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
+import org.ovirt.engine.ui.uicommonweb.models.vms.CpuPinningListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.CpuPinningListModel.CpuPinningListModelItem;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
@@ -119,7 +121,6 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -160,10 +161,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "quota.selectedItem")
     @WithElementId("quota")
     public ListModelTypeAheadListBoxEditor<Quota> quotaEditor;
-
-    @UiField
-    @Ignore
-    public Label cpuPinningLabel;
 
     @UiField
     @Ignore
@@ -698,6 +695,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     public InfoIcon migrationSelectInfoIcon;
 
+    @UiField(provided = true)
+    public InfoIcon parallelMigrationsInfoIcon;
+
     @UiField
     @Ignore
     public EnableableFormLabel migrationDowntimeLabel;
@@ -728,6 +728,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private ClusterDefaultRenderer<Boolean> migrateEncryptedRenderer;
 
+    private ClusterDefaultRenderer<ParallelMigrationsType> parallelMigrationsTypeRenderer;
+
+    @UiField(provided = true)
+    @Path(value = "parallelMigrationsType.selectedItem")
+    @WithElementId("parallelMigrationsType")
+    public ListModelListBoxEditor<ParallelMigrationsType> parallelMigrationsTypeEditor;
+
+    @UiField(provided = true)
+    @Path(value = "customParallelMigrations.entity")
+    @WithElementId("customParallelMigrations")
+    public IntegerEntityModelTextBoxEditor customParallelMigrationsEditor;
+
     @UiField(provided = true)
     @Ignore
     @WithElementId("specificHost")
@@ -749,14 +761,22 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public ListModelListBoxEditor<CpuProfile> cpuProfilesEditor;
 
     @UiField(provided = true)
-    InfoIcon cpuPinningInfo;
-
-    @UiField(provided = true)
     InfoIcon multiQueuesInfo;
 
     @UiField
     @Ignore
     Label multiQueuesLabel;
+
+    @Ignore
+    public CpuPinningPolicyListBox cpuPinningPolicyListBox;
+
+    @UiField(provided = true)
+    @Path(value = "cpuPinningPolicy.selectedItem")
+    @WithElementId("cpuPinningPolicy")
+    public ListModelTypeAheadListBoxEditor<CpuPinningListModelItem> cpuPinningPolicyEditor;
+
+    @UiField(provided = true)
+    InfoIcon cpuPinningInfo;
 
     @UiField(provided = true)
     @Path(value = "cpuPinning.entity")
@@ -787,17 +807,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "customCompatibilityVersion.selectedItem")
     @WithElementId("customCompatibilityVersion")
     public ListModelListBoxEditor<Version> customCompatibilityVersionEditor;
-
-    @UiField
-    protected Row cpuPinningPolicyRow;
-
-    @UiField(provided = true)
-    InfoIcon cpuPinningPolicyInfo;
-
-    @UiField(provided = true)
-    @Path(value = "cpuPinningPolicy.selectedItem")
-    @WithElementId("cpuPinningPolicy")
-    public ListModelListBoxOnlyEditor<CpuPinningPolicy> cpuPinningPolicyEditor;
 
     // ==High Availability Tab==
     @UiField
@@ -1141,6 +1150,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         migrationSelectInfoIcon = new InfoIcon(multiLineItalicSafeHtml(messages.migrationSelectInfo()));
 
+        parallelMigrationsInfoIcon = new InfoIcon(templates.italicText(messages.parallelMigrationsInfo()));
+
         hostCpuInfoIcon = new InfoIcon(templates.italicText(messages.hostCpuInfo()));
         tscFrequencyInfoIcon = new InfoIcon(templates.italicText(messages.tscFrequencyInfo()));
 
@@ -1156,8 +1167,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         spiceFileTransferEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         spiceCopyPasteEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         multiQueues = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
-        cpuPinningPolicyEditor = new ListModelListBoxOnlyEditor<>(new EnumRenderer<CpuPinningPolicy>(), new ModeSwitchingVisibilityRenderer());
-        cpuPinningPolicyInfo = new InfoIcon(templates.italicText(constants.cpuPinningPolicyLabelExplanation()));
 
         initPoolSpecificWidgets();
         initTextBoxEditors();
@@ -1586,6 +1595,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 migrateEncryptedRenderer,
                 new ModeSwitchingVisibilityRenderer());
 
+        parallelMigrationsTypeRenderer = new ClusterDefaultRenderer<>(
+                new EnumRenderer<ParallelMigrationsType>());
+        parallelMigrationsTypeEditor = new ListModelListBoxEditor<>(
+                parallelMigrationsTypeRenderer,
+                new ModeSwitchingVisibilityRenderer());
+        parallelMigrationsTypeEditor.hideLabel();
+        customParallelMigrationsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+
         // Resource Allocation
         provisioningThinEditor =
                 new EntityModelRadioButtonEditor("provisioningGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
@@ -1623,6 +1640,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         cpuSharesAmountSelectionEditor =
                 new ListModelListBoxOnlyEditor<>(new EnumRenderer<UnitVmModel.CpuSharesAmount>(), new ModeSwitchingVisibilityRenderer());
+
+        cpuPinningPolicyListBox = new CpuPinningPolicyListBox();
+        cpuPinningPolicyEditor = new ListModelTypeAheadListBoxEditor<>(
+                cpuPinningPolicyListBox,
+                new ModeSwitchingVisibilityRenderer()
+        );
 
         virtioScsiMultiQueueSelectionEditor =
                 new ListModelListBoxOnlyEditor<>(new EnumRenderer<VirtioMultiQueueType>(), new ModeSwitchingVisibilityRenderer());
@@ -1826,10 +1849,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             getModel().getBiosType().fireItemsChangedEvent();
         });
 
-        object.getCpuPinning().getPropertyChangedEvent().addListener((ev, sender, args) -> {
-            if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
-                cpuPinningLabel.setStyleName(object.getCpuPinning().getIsChangable() ? OvirtCss.LABEL_ENABLED : OvirtCss.LABEL_DISABLED);
-                cpuPinningLabel.getElement().getStyle().setFloat(Float.LEFT);
+        object.getCpuPinningPolicy().getPropertyChangedEvent().addListener((ev, sender, args) -> {
+            if (CpuPinningListModel.ITEMS_ENABLED_PROPERTY_CHANGE.equals(args.propertyName)) {
+                // re-render the editor to change the colors of enabled/disabled policies properly
+                cpuPinningPolicyListBox.render(object.getCpuPinningPolicy().getSelectedItem(), false);
             }
         });
 
@@ -1866,6 +1889,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         initClusterDefaultValueListener(serialNumberPolicyRenderer, getModel().getSerialNumberPolicy());
         initClusterDefaultValueListener(migrateEncryptedRenderer, getModel().getMigrateEncrypted());
+        initClusterDefaultValueListener(parallelMigrationsTypeRenderer, getModel().getParallelMigrationsType());
         initClusterDefaultValueListener(autoConvergeRenderer, getModel().getAutoConverge());
         initClusterDefaultValueListener(migrateCompressedRenderer, getModel().getMigrateCompressed());
         initClusterDefaultValueListener(migrationPolicyRenderer, getModel().getMigrationPolicies());
@@ -2117,10 +2141,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         autoConvergeEditor.setTabIndex(nextTabIndex++);
         migrateCompressedEditor.setTabIndex(nextTabIndex++);
         migrateEncryptedEditor.setTabIndex(nextTabIndex++);
+        parallelMigrationsTypeEditor.setTabIndex(nextTabIndex++);
+        customParallelMigrationsEditor.setTabIndex(nextTabIndex++);
         hostCpuEditor.setTabIndex(nextTabIndex++);
         tscFrequencyEditor.setTabIndexes(nextTabIndex++);
         customCompatibilityVersionEditor.setTabIndex(nextTabIndex++);
-        cpuPinningPolicyEditor.setTabIndexes(nextTabIndex++);
 
         numaNodeCount.setTabIndex(nextTabIndex++);
         // ==High Availability Tab==
@@ -2136,6 +2161,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         cpuProfilesEditor.setTabIndex(nextTabIndex++);
         provisioningThinEditor.setTabIndex(nextTabIndex++);
         provisioningCloneEditor.setTabIndex(nextTabIndex++);
+        cpuPinningPolicyEditor.setTabIndex(nextTabIndex++);
         cpuPinning.setTabIndex(nextTabIndex++);
         cpuSharesAmountEditor.setTabIndex(nextTabIndex++);
         tpmEnabledEditor.setTabIndex(nextTabIndex++);

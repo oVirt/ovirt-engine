@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -259,10 +260,23 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.txTotal()),
                 SafeHtmlUtils.fromString(totalRenderer.render(networkInterface.getStatistics().getTransmittedBytes())), dl);
         addDetailItem(templates.sub(constants.dropsInterface(), constants.pkts()),
-                SafeHtmlUtils.fromString(String.valueOf(networkInterface.getStatistics().getReceiveDropRate()
-                        + networkInterface.getStatistics().getTransmitDropRate())), dl);
+                SafeHtmlUtils.fromString(totalRenderer.render(totalDrops(networkInterface))), dl);
+
         column.getElement().appendChild(dl);
         content.add(column);
+    }
+
+    private BigInteger totalDrops(VmNetworkInterface iface) {
+        BigInteger rxDrops = iface.getStatistics().getReceiveDrops();
+        BigInteger txDrops = iface.getStatistics().getTransmitDrops();
+        if (rxDrops == null && txDrops == null) {
+            return null;
+        } else if (rxDrops == null) {
+            return txDrops;
+        } else if (txDrops == null) {
+            return rxDrops;
+        }
+        return rxDrops.add(txDrops);
     }
 
     private boolean isInterfaceUp(VmNetworkInterface networkInterface) {

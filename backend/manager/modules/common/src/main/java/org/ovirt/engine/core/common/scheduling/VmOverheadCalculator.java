@@ -35,6 +35,23 @@ public interface VmOverheadCalculator {
     int getTotalRequiredMemWithoutHugePagesMb(VM vm);
 
     /**
+     * Return the total amount of RAM required to run the given VM, ignoring
+     * memory needed for huge pages.
+     * It includes VM size without huge pages, expected QEMU overhead
+     * and other memory taken from the system by running the VM (such as page tables).
+     *
+     * Please note the return value is just an estimation of the memory
+     * requirements, The actual amount of RAM required may be larger or smaller.
+     *
+     * @param vm the relevant VM
+     * @param numOfCpus number of CPUs
+     * @return required amount of memory in MiB
+     * @throws RuntimeException
+     *             thrown in case the cluster architecture cannot be identified
+     */
+    int getTotalRequiredMemWithoutHugePagesMb(VM vm, int numOfCpus);
+
+    /**
      * Get the total expected memory overhead, including the expected QEMU
      * overhead and other memory taken from the system by running the VM
      * (such as page tables).
@@ -50,6 +67,22 @@ public interface VmOverheadCalculator {
     int getOverheadInMb(VM vm);
 
     /**
+     * Get the total expected memory overhead, including the expected QEMU
+     * overhead and other memory taken from the system by running the VM
+     * (such as page tables).
+     *
+     * Please note the return value is just an estimation of the memory
+     * requirements, The actual amount of RAM required may be larger or smaller.
+     *
+     * @param vm the relevant VM
+     * @param numOfCpus number of CPUs
+     * @return required amount of memory in MiB
+     * @throws RuntimeException
+     *             thrown in case the cluster architecture cannot be identified
+     */
+    int getOverheadInMb(VM vm, int numOfCpus);
+
+    /**
      * Get the size of possible memory overhead. This represents memory
      * that might be allocated by QEMU, but is not used immediately.
      *
@@ -57,6 +90,16 @@ public interface VmOverheadCalculator {
      * @return required amount of memory in MiB
      */
     int getPossibleOverheadInMb(VM vm);
+
+    /**
+     * Get the size of possible memory overhead. This represents memory
+     * that might be allocated by QEMU, but is not used immediately.
+     *
+     * @param vm the relevant VM
+     * @param numOfCpus number of CPUs
+     * @return required amount of memory in MiB
+     */
+    int getPossibleOverheadInMb(VM vm, int numOfCpus);
 
     /**
      * Get the memory overhead QEMU imposes on the VM immediately.

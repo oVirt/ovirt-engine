@@ -12,6 +12,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.setUpInterfaces;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +42,10 @@ public class BackendHostNicResourceTest
     private static final int SPEED = 50;
     private static final double RECEIVE_RATE = 10;
     private static final double TRANSMIT_RATE = 20;
-    private static final double RECEIVE_DROP_RATE = 30;
-    private static final double TRANSMIT_DROP_RATE = 40;
-    private static final long RECEIVED_BYTES = 50;
-    private static final long TRANSMITTED_BYTES = 60;
+    private static final BigInteger RECEIVE_DROPS = new BigInteger("30");
+    private static final BigInteger TRANSMIT_DROPS = new BigInteger("40");
+    private static final BigInteger RECEIVED_BYTES = new BigInteger("50");
+    private static final BigInteger TRANSMITTED_BYTES = new BigInteger("60");
 
     private final BackendHostNicsResourceTest hostNicsResource;
 
@@ -132,8 +133,8 @@ public class BackendHostNicResourceTest
         when(entity.getId()).thenReturn(NIC_ID);
         when(stats.getReceiveRate()).thenReturn(RECEIVE_RATE);
         when(stats.getTransmitRate()).thenReturn(TRANSMIT_RATE);
-        when(stats.getReceiveDropRate()).thenReturn(RECEIVE_DROP_RATE);
-        when(stats.getTransmitDropRate()).thenReturn(TRANSMIT_DROP_RATE);
+        when(stats.getReceiveDrops()).thenReturn(RECEIVE_DROPS);
+        when(stats.getTransmitDrops()).thenReturn(TRANSMIT_DROPS);
         when(stats.getReceivedBytes()).thenReturn(RECEIVED_BYTES);
         when(stats.getTransmittedBytes()).thenReturn(TRANSMITTED_BYTES);
         List<VdsNetworkInterface> ifaces = new ArrayList<>();
@@ -158,7 +159,7 @@ public class BackendHostNicResourceTest
                         asDec(RxTxCalculator.percent2bytes(SPEED, TRANSMIT_RATE)),
                         asDec(RxTxCalculator.percent2bits(SPEED, RECEIVE_RATE)),
                         asDec(RxTxCalculator.percent2bits(SPEED, TRANSMIT_RATE)),
-                        asDec(RECEIVE_DROP_RATE), asDec(TRANSMIT_DROP_RATE),
+                        asDec(RECEIVE_DROPS), asDec(TRANSMIT_DROPS),
                         asDec(RECEIVED_BYTES), asDec(TRANSMITTED_BYTES) });
         Statistic adopted = query.adopt(new Statistic());
         assertTrue(adopted.isSetHostNic());

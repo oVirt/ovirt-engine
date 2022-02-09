@@ -14,4 +14,7 @@ public interface HasMigrationOptions {
 
     Boolean getMigrateEncrypted();
     void setMigrateEncrypted(Boolean value);
+
+    Integer getParallelMigrations();
+    void setParallelMigrations(Integer value);
 }

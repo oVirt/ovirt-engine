@@ -173,7 +173,6 @@ public abstract class InstanceTypeManager {
     private void registerListeners(UnitVmModel model) {
         ManagedFieldsManager managedFieldsManager = new ManagedFieldsManager();
         model.getInstanceTypes().getSelectedItemChangedEvent().addListener(managedFieldsManager);
-        model.getTemplateWithVersion().getSelectedItemChangedEvent().addListener(managedFieldsManager);
     }
 
     public void activate() {
@@ -240,6 +239,11 @@ public abstract class InstanceTypeManager {
             model.startProgress();
             doUpdateManagedFieldsFrom(template);
         }
+    }
+
+    public void updateInstanceTypeFieldsFromSource() {
+        model.startProgress();
+        doUpdateManagedFieldsFrom(getSource());
     }
 
     protected void doUpdateManagedFieldsFrom(final VmBase vmBase) {
@@ -458,30 +462,31 @@ public abstract class InstanceTypeManager {
     }
 
     protected void updateDefaultDisplayRelatedFields(final VmBase vmBase) {
-        // Update display protocol selected item
         final Collection<DisplayType> displayTypes = model.getDisplayType().getItems();
         if (displayTypes == null || displayTypes.isEmpty()) {
             return;
         }
 
-        // graphics
+        deactivate();
+
+        model.getIsHeadlessModeEnabled().setEntity(vmBase.getDefaultDisplayType() == DisplayType.none);
+
+        // select display protocol
+        DisplayType displayProtocol = displayTypes.iterator().next(); // first by default
+        if (displayTypes.contains(vmBase.getDefaultDisplayType())) {
+            displayProtocol = vmBase.getDefaultDisplayType(); // if display types contain DT of a vm, pick this one
+        }
+        maybeSetSelectedItem(model.getDisplayType(), displayProtocol);
+
         Frontend.getInstance().runQuery(QueryType.GetGraphicsDevices, new IdQueryParameters(vmBase.getId()),
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
-                    deactivate();
-
                     List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
-                    model.getIsHeadlessModeEnabled().setEntity(vmBase.getDefaultDisplayType() == DisplayType.none);
-                    // select display protocol
-                    DisplayType displayProtocol = displayTypes.iterator().next(); // first by default
-                    if (displayTypes.contains(vmBase.getDefaultDisplayType())) {
-                        displayProtocol = vmBase.getDefaultDisplayType(); // if display types contain DT of a vm, pick this one
-                    }
-                    maybeSetSelectedItem(model.getDisplayType(), displayProtocol);
-
                     Set<GraphicsType> graphicsTypes = new HashSet<>();
+
                     for (GraphicsDevice graphicsDevice : graphicsDevices) {
                         graphicsTypes.add(graphicsDevice.getGraphicsType());
                     }
+
                     UnitVmModel.GraphicsTypes selected = UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypes);
                     if (selected != null && getModel().getGraphicsType().getItems().contains(selected)) {
                         maybeSetSelectedItem(getModel().getGraphicsType(), selected);

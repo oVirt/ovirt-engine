@@ -160,10 +160,10 @@ public abstract class OvfReader implements IOvfBuilder {
             if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-type").getValue())) {
                 image.setVolumeType(VolumeType.valueOf(node.attributes.get("ovf:volume-type").getValue()));
             } else {
-                image.setVolumeType(VolumeType.Unassigned);
+                image.setVolumeType(getDefaultVolumeType());
             }
         } else {
-            image.setVolumeType(VolumeType.Unassigned);
+            image.setVolumeType(getDefaultVolumeType());
         }
         if (node.attributes.get("ovf:wipe-after-delete") != null) {
             if (!StringUtils.isEmpty(node.attributes.get("ovf:wipe-after-delete").getValue())) {
@@ -558,8 +558,6 @@ public abstract class OvfReader implements IOvfBuilder {
         }
         vmBase.setClusterCompatibilityVersionOrigin(originVersion);
 
-        // Note: the fetching of 'default display type' should happen before reading
-        // the hardware section
         consumeReadProperty(content,
                 getDefaultDisplayTypeStringRepresentation(),
                 val -> vmBase.setDefaultDisplayType(DisplayType.forValue(Integer.parseInt(val))));
@@ -634,6 +632,8 @@ public abstract class OvfReader implements IOvfBuilder {
         consumeReadProperty(content,
                 MIGRATION_POLICY_ID,
                 val -> vmBase.setMigrationPolicyId(Guid.createGuidFromString(val)));
+        consumeReadProperty(content, PARALLEL_MIGRATIONS,
+                val -> vmBase.setParallelMigrations(Integer.parseInt(val)));
         consumeReadProperty(content, CUSTOM_EMULATED_MACHINE, val -> vmBase.setCustomEmulatedMachine(val));
         readBiosType(content);
         consumeReadProperty(content, CUSTOM_CPU_NAME, val -> vmBase.setCustomCpuName(val));
@@ -1034,5 +1034,9 @@ public abstract class OvfReader implements IOvfBuilder {
     @Override
     public String getStringRepresentation() {
         return _document.getOuterXml();
+    }
+
+    protected VolumeType getDefaultVolumeType() {
+        return VolumeType.Unassigned;
     }
 }

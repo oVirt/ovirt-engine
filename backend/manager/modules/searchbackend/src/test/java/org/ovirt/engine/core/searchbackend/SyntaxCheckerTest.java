@@ -511,6 +511,18 @@ public class SyntaxCheckerTest {
     }
 
     @Test
+    public void testVnicProfile() {
+        testValidSql("VnicProfile: ",
+            "SELECT * FROM ((SELECT distinct vnic_profiles_view.* FROM  vnic_profiles_view  )  ORDER BY name ASC) as T1 OFFSET (1 -1) LIMIT 0");
+    }
+
+    @Test
+    public void testVnicProfiles() {
+        testValidSql("VnicProfiles: ",
+            "SELECT * FROM ((SELECT distinct vnic_profiles_view.* FROM  vnic_profiles_view  )  ORDER BY name ASC) as T1 OFFSET (1 -1) LIMIT 0");
+    }
+
+    @Test
     public void testSearchThatContainsVmAndStorage() {
         testValidSql("Vms: status=up and storage=iscsi",
                 "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT distinct vms_with_tags.vm_guid FROM  vms_with_tags   LEFT OUTER JOIN storage_domains_with_hosts_view ON vms_with_tags.storage_id=storage_domains_with_hosts_view.id    WHERE (  vms_with_tags.status = '1'  AND  (  storage_domains_with_hosts_view.storage_comment LIKE '%iscsi%' OR  storage_domains_with_hosts_view.storage_description LIKE '%iscsi%' OR  storage_domains_with_hosts_view.storage_name LIKE '%iscsi%' OR  storage_domains_with_hosts_view.storage_pool_name::text LIKE '%iscsi%' )  )))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");

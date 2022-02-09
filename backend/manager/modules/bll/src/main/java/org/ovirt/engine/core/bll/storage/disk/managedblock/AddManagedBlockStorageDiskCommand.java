@@ -116,9 +116,14 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
         disk.setImageId(volumeId);
         disk.setId(volumeId);
         TransactionSupport.executeInNewTransaction(() -> {
-            baseDiskDao.save(disk);
-            imageDao.save(disk.getImage());
-            managedBlockStorageDiskUtil.saveDisk(disk);
+            if (!disk.isTemplate()) {
+                // In case of a template disk, the disk already exists in the DB, so no need to save it again,
+                // only add a storage domain mapping (executed in CopyImageGroupCommand).
+                baseDiskDao.save(disk);
+                imageDao.save(disk.getImage());
+                managedBlockStorageDiskUtil.saveDisk(disk);
+                managedBlockStorageDiskUtil.lockImage(disk.getImageId());
+            }
 
             if (!Guid.isNullOrEmpty(getParameters().getVmId())) {
                 // Set correct device id
@@ -127,8 +132,6 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
                 addDiskVmElementForDisk(diskVmElement);
                 addManagedDeviceForDisk(volumeId);
             }
-
-            managedBlockStorageDiskUtil.lockImage(disk.getImageId());
 
             return null;
         });
@@ -160,6 +163,7 @@ public class AddManagedBlockStorageDiskCommand<T extends AddManagedBlockStorageD
         disk.setCreationDate(new Date());
         disk.setLastModified(new Date());
         disk.setActive(true);
+        disk.setVmEntityType(getParameters().getDiskInfo().getVmEntityType());
         disk.setVmSnapshotId(getParameters().getVmSnapshotId());
         disk.setDiskVmElements(getParameters().getDiskVmElement() == null ? new ArrayList<>()
                 : Collections.singletonList(getParameters().getDiskVmElement()));

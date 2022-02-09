@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissi
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 
-public class SubTabDataCenterPermissionView extends AbstractSubTabPermissionsView<StoragePool, DataCenterListModel>
+public class SubTabDataCenterPermissionView extends AbstractSubTabPermissionsView<StoragePool, DataCenterListModel, PermissionListModel<StoragePool>>
         implements SubTabDataCenterPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabDataCenterPermissionView> {

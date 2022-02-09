@@ -24,6 +24,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionWei
 import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HighPerformanceCpuPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostDeviceFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HostHooksFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineMemoryReservationFilterPolicyUnit;
@@ -96,6 +97,7 @@ public class InternalPolicyUnits {
         enabledUnits.add(HighPerformanceCpuPolicyUnit.class);
         enabledUnits.add(CpuAndNumaPinningWeightPolicyUnit.class);
         enabledUnits.add(MigrationTscFrequencyPolicyUnit.class);
+        enabledUnits.add(HostHooksFilterPolicyUnit.class);
 
         mandatoryUnits.add(CompatibilityVersionFilterPolicyUnit.class);
         mandatoryUnits.add(CpuLevelFilterPolicyUnit.class);

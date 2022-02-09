@@ -191,7 +191,7 @@ BUILD_TARGET=install
 # Once add new template file, if required chmod, add it in generated-files target.
 GENERATED = \
 	.gitignore \
-	automation/milestone-config.sh \
+	.automation/milestone-config.sh \
 	ovirt-engine.spec \
 	build/helptag.py \
 	build/helptag_checker.py \

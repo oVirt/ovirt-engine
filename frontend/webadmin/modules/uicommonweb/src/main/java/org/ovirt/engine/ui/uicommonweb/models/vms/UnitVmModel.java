@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
+import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
@@ -341,10 +342,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             getAutoConverge().setIsChangeable(false);
             getMigrateCompressed().setIsChangeable(false);
             getMigrateEncrypted().setIsChangeable(false);
-            getCpuPinningPolicy().setIsChangeable(false);
+            getParallelMigrationsType().setIsChangeable(false);
+            getCustomParallelMigrations().setIsChangeable(false);
 
             getNumaEnabled().setIsChangeable(false);
-            getCpuPinningPolicy().setIsChangeable(false);
 
             // ==High Availability==
             getIsHighlyAvailable().setIsChangeable(false);
@@ -358,6 +359,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             getCpuProfiles().setIsChangeable(false);
             getCpuSharesAmountSelection().setIsChangeable(false);
             getCpuSharesAmount().setIsChangeable(false);
+            getCpuPinningPolicy().setIsChangeable(false);
             getCpuPinning().setIsChangeable(false);
             getMemoryBalloonEnabled().setIsChangeable(false);
             getTpmEnabled().setIsChangeable(false);
@@ -1508,6 +1510,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     private void setBehavior(VmModelBehaviorBase value) {
     }
 
+    private CpuPinningListModel cpuPinningPolicy;
+
+    public CpuPinningListModel getCpuPinningPolicy() {
+        return cpuPinningPolicy;
+    }
+
+    public void setCpuPinningPolicy(CpuPinningListModel cpuPinningPolicy) {
+        this.cpuPinningPolicy = cpuPinningPolicy;
+    }
+
     private NotChangableForVmInPoolEntityModel<String> cpuPinning;
 
     public EntityModel<String> getCpuPinning() {
@@ -1675,6 +1687,26 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         this.migrateEncrypted = migrateEncrypted;
     }
 
+    private ListModelWithClusterDefault<ParallelMigrationsType> parallelMigrationsType;
+
+    public ListModel<ParallelMigrationsType> getParallelMigrationsType() {
+        return parallelMigrationsType;
+    }
+
+    public void setParallelMigrationsType(ListModelWithClusterDefault<ParallelMigrationsType> value) {
+        this.parallelMigrationsType = value;
+    }
+
+    private NotChangableForVmInPoolEntityModel<Integer> customParallelMigrations;
+
+    public NotChangableForVmInPoolEntityModel<Integer> getCustomParallelMigrations() {
+        return customParallelMigrations;
+    }
+
+    public void setCustomParallelMigrations(NotChangableForVmInPoolEntityModel<Integer> customParallelMigrations) {
+        this.customParallelMigrations = customParallelMigrations;
+    }
+
     private ListModel<Label> labelList;
 
     public void setLabelList(ListModel<Label> labelList) {
@@ -1693,16 +1725,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
     public void setAffinityGroupList(ListModel<AffinityGroup> affinityGroupList) {
         this.affinityGroupList = affinityGroupList;
-    }
-
-    private NotChangableForVmInPoolListModel<CpuPinningPolicy> cpuPinningPolicy;
-
-    public ListModel<CpuPinningPolicy> getCpuPinningPolicy() {
-        return cpuPinningPolicy;
-    }
-
-    public void setCpuPinningPolicy(NotChangableForVmInPoolListModel<CpuPinningPolicy> cpuPinningPolicy) {
-        this.cpuPinningPolicy = cpuPinningPolicy;
     }
 
     public UnitVmModel(VmModelBehaviorBase behavior, ListModel<?> parentModel) {
@@ -1792,7 +1814,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         setLease(new NotChangableForVmInPoolListModel<StorageDomain>());
         getLease().getSelectedItemChangedEvent().addListener(this);
         setResumeBehavior(new NotChangableForVmInPoolListModel<VmResumeBehavior>());
-        setCpuPinningPolicy(new NotChangableForVmInPoolListModel<CpuPinningPolicy>());
         setIsHighlyAvailable(new NotChangableForVmInPoolEntityModel<Boolean>());
         getIsHighlyAvailable().getEntityChangedEvent().addListener(this);
         setIsTemplatePublic(new NotChangableForVmInPoolEntityModel<Boolean>());
@@ -1908,6 +1929,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         setMigrationPolicies(new ListModelWithClusterDefault<MigrationPolicy>());
         getMigrationPolicies().getSelectedItemChangedEvent().addListener(this);
 
+        setParallelMigrationsType(new ListModelWithClusterDefault<>());
+        getParallelMigrationsType()
+                .setItems(new ArrayList<ParallelMigrationsType>(Arrays.asList(ParallelMigrationsType.values())));
+
+        setCustomParallelMigrations(new NotChangableForVmInPoolEntityModel<>());
+        getParallelMigrationsType().getSelectedItemChangedEvent().addListener((ev, sender, args) -> {
+            updateCustomParallelMigrations();
+        });
+        updateCustomParallelMigrations();
+
         setHostCpu(new NotChangableForVmInPoolEntityModel<Boolean>());
         getHostCpu().getEntityChangedEvent().addListener(this);
 
@@ -1979,6 +2010,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         getCpuPinning().setEntity("");
         getCpuPinning().setIsChangeable(false);
         getCpuPinning().getEntityChangedEvent().addListener(this);
+
+        setCpuPinningPolicy(new CpuPinningListModel());
+        getCpuPinningPolicy().getSelectedItemChangedEvent().addListener(this);
 
         setCpuSharesAmount(new NotChangableForVmInPoolEntityModel<Integer>());
         getCpuSharesAmount().setIsChangeable(false);
@@ -2177,7 +2211,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         updateResumeBehavior();
         updateAffinityLists();
         updateTpmEnabled();
-        initCpuPinningPolicy();
 
         behavior.initialize();
     }
@@ -2198,7 +2231,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 updateTscFrequency();
             } else if (sender == getTemplateWithVersion()) {
                 templateWithVersion_SelectedItemChanged(sender, args);
-                behavior.updateBiosType();
             } else if (sender == getInstanceTypes()) {
                 behavior.updateBiosType();
             } else if (sender == getTimeZone()) {
@@ -2266,7 +2298,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 updateDisplayAndGraphics();
                 updateTpmEnabled();
             } else if (sender == getCpuPinningPolicy()) {
-                cpuPinPolicyReset();
+                cpuPinningPolicyChanged();
             } else if (sender == getConsoleDisconnectAction()){
                 consoleDisconnectActionSelectedItemChanged();
             }
@@ -2289,6 +2321,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
                 behavior.updateNumaEnabled();
+                updateCpuPinningPolicy();
             } else if (sender == getProvisioning()) {
                 provisioning_SelectedItemChanged(sender, args);
             } else if (sender == getProvisioningThin_IsSelected()) {
@@ -2310,7 +2343,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             } else if (sender == getIsHeadlessModeEnabled()) {
                 headlessModeChanged();
             } else if (sender == getCpuPinning()) {
-                behavior.updateCpuPinningChanged();
+                cpuPinningChanged();
             } else if (sender == getIsVirtioScsiEnabled()) {
                 virtioScsiChanged();
             }
@@ -2324,22 +2357,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         }
         getVirtioScsiMultiQueueTypeSelection()
                 .setIsChangeable(isVirtioScsiEnabled, messages.virtioScsiRequired());
-    }
-
-    private void cpuPinPolicyReset() {
-        CpuPinningPolicy cpuPinningPolicy = getCpuPinningPolicy().getSelectedItem();
-        if (cpuPinningPolicy == null) {
-            return;
-        }
-        switch(cpuPinningPolicy) {
-            case NONE:
-                enableCpuFields();
-                enableCpuPinning();
-                break;
-            case RESIZE_AND_PIN_NUMA:
-                disableCpuFields();
-                disableCpuPinning();
-        }
     }
 
     private void enableCpuFields() {
@@ -2356,14 +2373,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         getThreadsPerCore().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
     }
 
-    private void enableCpuPinning() {
-        behavior.updateCpuPinningVisibility();
-    }
-
-    private void disableCpuPinning() {
-        behavior.disableCpuPinningAutoPinningConflict();
-    }
-
     private void compatibilityVersionChanged(Object sender, EventArgs args) {
         dataCenterWithClusterSelectedItemChanged(sender, args);
         updateDisplayAndGraphics();
@@ -2371,8 +2380,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         initUsbPolicy();
         updateMultiQueues();
         updateMigrateEncrypted();
+        updateParallelMigrationsVersionChange();
         updateSerialNumberPolicy();
         updateTpmEnabled();
+        updateCpuPinningPolicy();
     }
 
     private void updateMultiQueues() {
@@ -2447,11 +2458,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         } else {
             getConsoleDisconnectActionDelay().setIsChangeable(false, constants.consoleDisconnectActionDelayDisabledReason());
         }
-    }
-
-    private void initCpuPinningPolicy() {
-        getCpuPinningPolicy().getSelectedItemChangedEvent().addListener(this);
-        getCpuPinningPolicy().setItems(new ArrayList<>(Arrays.asList(CpuPinningPolicy.values())));
     }
 
     protected void initNumOfMonitors() {
@@ -2593,9 +2599,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     public void initDisplayModels(Set<DisplayType> displayTypes, DisplayType selectedDisplayType) {
         // set items and set selected one
         if (displayTypes.contains(selectedDisplayType)) {
-            getDisplayType().setItems(displayTypes, selectedDisplayType);
+            getDisplayType().setItems(displayTypes);
+            getDisplayType().setSelectedItem(selectedDisplayType);
         } else if (displayTypes.size() > 0) {
-            getDisplayType().setItems(displayTypes, displayTypes.iterator().next());
+            getDisplayType().setItems(displayTypes);
+            getDisplayType().setSelectedItem(displayTypes.iterator().next());
         }
     }
 
@@ -2714,6 +2722,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
     private void defaultHost_SelectedItemChanged(Object sender, EventArgs args) {
         behavior.defaultHost_SelectedItemChanged();
+        updateCpuPinningPolicy();
     }
 
     private void oSType_SelectedItemChanged(Object sender, EventArgs args) {
@@ -2747,6 +2756,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
         updateSoundCard();
         updateTpmEnabled();
+        getBehavior().updateMemory();
+        getBehavior().updateTotalCpuCores();
     }
 
     private void updateIconAccordingToOs() {
@@ -3161,12 +3172,32 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                     && getTemplateWithVersion().getIsValid());
         }
 
-        setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid());
+        if (getParallelMigrationsType().getSelectedItem() == ParallelMigrationsType.CUSTOM) {
+            getCustomParallelMigrations().validateEntity(
+                    new IValidation[] { new NotNullIntegerValidation(ParallelMigrationsType.MIN_PARALLEL_CONNECTIONS,
+                            ParallelMigrationsType.MAX_PARALLEL_CONNECTIONS) });
+        } else {
+            getCustomParallelMigrations().setIsValid(true);
+        }
 
+        setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid()
+                && getCustomParallelMigrations().getIsValid());
+
+        getCpuPinningPolicy().validateSelectedItem();
+
+        if (getCpuPinningPolicy().getSelectedItem().getPolicy() == CpuPinningPolicy.MANUAL) {
+            getCpuPinning().validateEntity(new IValidation[]{new NotEmptyValidation()});
+        } else {
+            getCpuPinning().setIsValid(true);
+        }
         boolean diskAliasesValid = getDisksAllocationModel().getIsValid();
 
-        setValidTab(TabName.RESOURCE_ALLOCATION_TAB, isValidTab(TabName.RESOURCE_ALLOCATION_TAB)
-                && getCpuSharesAmount().getIsValid() && diskAliasesValid);
+        setValidTab(TabName.RESOURCE_ALLOCATION_TAB,
+                isValidTab(TabName.RESOURCE_ALLOCATION_TAB)
+                && getCpuSharesAmount().getIsValid()
+                && getCpuPinningPolicy().getIsValid()
+                && getCpuPinning().getIsValid()
+                && diskAliasesValid);
 
         setValidTab(TabName.BOOT_OPTIONS_TAB, isValidTab(TabName.BOOT_OPTIONS_TAB) &&
                 getCdImage().getIsValid() && getKernel_path().getIsValid());
@@ -3291,7 +3322,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         setValidTab(TabName.CONSOLE_TAB, isValidTab(TabName.CONSOLE_TAB) &&
                 getIsUsbEnabled().getIsValid() && getNumOfMonitors().getIsValid() && getSpiceProxy().getIsValid() && getConsoleDisconnectActionDelay().getIsValid());
 
-        setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid());
+        setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid()
+                && getCustomParallelMigrations().getIsValid());
 
         getRngBytes().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE), new RngDevValidation()});
         getRngPeriod().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE)});
@@ -3626,7 +3658,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         }
     }
 
-    private class NotChangableForVmInPoolEntityModel<T> extends EntityModel<T> {
+    public class NotChangableForVmInPoolEntityModel<T> extends EntityModel<T> {
         public NotChangableForVmInPoolEntityModel() {
         }
 
@@ -3904,6 +3936,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             encrypt = AsyncDataProvider.getInstance().getMigrateEncrypted();
         }
         migrateEncrypted.setClusterValue(encrypt);
+
+        updateParallelMigrationsVersionChange();
     }
 
     private void updateMigrateEncrypted() {
@@ -3913,6 +3947,52 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         } else {
             getMigrateEncrypted().setIsChangeable(false, messages.availableInVersionOrHigher(Version.v4_4.toString()));
             getMigrateEncrypted().setSelectedItem(null);
+        }
+    }
+
+    private boolean parallelMigrationsSupported() {
+        final Version version = getCompatibilityVersion();
+        return version != null && AsyncDataProvider.getInstance().isParallelMigrationsSupportedByVersion(version);
+    }
+
+    private void updateParallelMigrationsVersionChange() {
+        if (parallelMigrationsSupported()) {
+            getParallelMigrationsType().setIsChangeable(true);
+        } else {
+            getParallelMigrationsType().setSelectedItem(null);
+            getParallelMigrationsType().setIsChangeable(false,
+                    messages.availableInVersionOrHigher(Version.v4_7.toString()));
+        }
+        updateParallelMigrationValues();
+    }
+
+    private void updateParallelMigrationValues() {
+        Cluster cluster = getSelectedCluster();
+        if (cluster != null && cluster.getParallelMigrations() != null) {
+            ParallelMigrationsType policy = ParallelMigrationsType.forValue(cluster.getParallelMigrations());
+            if (policy == null) {
+                // Illegal value, let's set the policy to disabled as a safe value
+                policy = ParallelMigrationsType.DISABLED;
+            }
+            parallelMigrationsType.setClusterValue(policy);
+        }
+        updateCustomParallelMigrations();
+    }
+
+    private void updateCustomParallelMigrations() {
+        if (ParallelMigrationsType.CUSTOM.equals(parallelMigrationsType.getSelectedItem())) {
+            getCustomParallelMigrations().setIsChangeable(true);
+            if (getCustomParallelMigrations().getEntity() == null) {
+                getCustomParallelMigrations().setEntity(0);
+            }
+        } else {
+            getCustomParallelMigrations().setIsChangeable(false, constants.customParallelMigrationsDisabledReason());
+            final Integer customParallelMigrations =
+                    parallelMigrationsType.getSelectedItem() == null
+                    && ParallelMigrationsType.CUSTOM.equals(parallelMigrationsType.getClusterValue())
+                    && getSelectedCluster() != null
+                    ? getSelectedCluster().getParallelMigrations() : null;
+            getCustomParallelMigrations().setEntity(customParallelMigrations);
         }
     }
 
@@ -3962,6 +4042,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         } else if (!AsyncDataProvider.getInstance().isTpmAllowedForOs(getOSType().getSelectedItem())) {
             getTpmEnabled().setIsChangeable(false, constants.guestOsVersionNotSupported());
             getTpmEnabled().setEntity(false);
+        } else if (AsyncDataProvider.getInstance().isTpmRequiredForOs(getOSType().getSelectedItem())) {
+            if (getBiosType().getSelectedItem() == null || !getBiosType().getSelectedItem().isOvmf()) {
+                getBiosType().setSelectedItem(BiosType.Q35_OVMF);
+            }
+            getTpmEnabled().setIsChangeable(false, constants.tpmDeviceRequired());
+            getTpmEnabled().setEntity(true);
         } else if (cluster == null || cluster.getArchitecture() == null
                 || cluster.getArchitecture().getFamily() == ArchitectureType.x86
                         && (getBiosType().getSelectedItem() == null || !getBiosType().getSelectedItem().isOvmf())) {
@@ -3969,6 +4055,39 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             getTpmEnabled().setEntity(false);
         } else {
             getTpmEnabled().setIsChangeable(true);
+        }
+    }
+
+    protected void updateCpuPinningPolicy() {
+        boolean defaultHostSelected =  Boolean.FALSE.equals(getIsAutoAssign().getEntity()) &&
+                getDefaultHost().getSelectedItems() != null &&
+                getDefaultHost().getSelectedItems().size() > 0;
+
+        boolean isDedicatedCpusSupported = false;
+        if(getSelectedCluster() != null && getSelectedCluster().getCompatibilityVersion() != null) {
+            isDedicatedCpusSupported = Version.v4_7.lessOrEquals(getSelectedCluster().getCompatibilityVersion());
+        }
+        cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.MANUAL, defaultHostSelected);
+        cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.DEDICATED, isDedicatedCpusSupported);
+    }
+
+    protected void cpuPinningPolicyChanged() {
+        updateCpuFields();
+        behavior.updateCpuPinningVisibility();
+    }
+
+    protected void updateCpuFields() {
+        if (getCpuPinningPolicy().getSelectedItem().getPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
+            disableCpuFields();
+        } else {
+            enableCpuFields();
+        }
+    }
+
+    protected void cpuPinningChanged() {
+        // Set migration mode
+        if (behavior.isVmHpOrPinningConfigurationEnabled()) {
+            getMigrationMode().setSelectedItem(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
         }
     }
 }

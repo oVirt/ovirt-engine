@@ -15,7 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabDiskPermissionView extends AbstractSubTabPermissionsView<Disk, DiskListModel>
+public class SubTabDiskPermissionView extends AbstractSubTabPermissionsView<Disk, DiskListModel, PermissionListModel<Disk>>
         implements SubTabDiskPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabDiskPermissionView> {

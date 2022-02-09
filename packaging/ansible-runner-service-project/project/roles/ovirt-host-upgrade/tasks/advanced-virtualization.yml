@@ -1,18 +1,16 @@
 ---
 - block:
-    - name: Fetch redhat-release version
-      yum:
+    - name: Fetch available redhat-release versions
+      dnf:
         list: redhat-release
         update_cache: yes
       register: available_releases
 
     - name: Find latest available redhat-release version
       set_fact:
-        virt_mod_ver: "{{ 'av' if item.version is version('8.4', '>=') else item.version }}"
-      when:
-        - virt_mod_ver | default('0') != 'av'
-        - virt_mod_ver | default('0') is version (item.version, '<')
+        latest_rh_rel: "{{ item.version }}"
       loop: "{{ available_releases.results }}"
+      when: latest_rh_rhel |default('0') is version(item.version, '<')
 
     - block:
         - name: Reset configuration of advanced virtualization module
@@ -20,16 +18,38 @@
           tags:
             - skip_ansible_lint # E305
 
+        - name: Set virt module version for RHEL 8.6 and newer
+          set_fact:
+            virt_mod_ver: "rhel"
+          when:
+            - ansible_distribution_version is version('8.6', '>=')
+
+        - name: Set virt module version for RHEL 8.4 and 8.5
+          set_fact:
+            virt_mod_ver: "av"
+          when:
+            - virt_mod_ver is not defined
+            - ansible_distribution_version is version('8.4', '>=')
+            - ansible_distribution_version is version('8.5', '<=')
+
+        - name: Set virt module version for RHEL 8.3 and older
+          set_fact:
+            virt_mod_ver: "{{ ansible_distribution_version }}"
+          when:
+            - virt_mod_ver is not defined
+            - ansible_distribution_version is version('8.3', '<=')
+
         - name: Enable advanced virtualization module for relevant OS version
           shell: "dnf -y module enable virt:{{ virt_mod_ver }}"
           tags:
             - skip_ansible_lint # E305
 
-      when: >
-        virt_mod_ver == 'av' and ansible_distribution_version is version ('8.4', '<') or
-        virt_mod_ver != 'av' and virt_mod_ver is version (ansible_distribution_version, '>')
+      when:
+        - ansible_facts.packages['redhat-release'] is defined
+        - ansible_facts.packages['redhat-release'].version is version(latest_rh_rel, '!=')
 
   when:
     - host_deploy_origin_type != ovirt_origin_type
-    - el_ver|int >= 8
     - not node_host|bool
+    - el_ver|int >= 8
+    - ansible_distribution_version is version('8.6', '<') # no need to update virt module version when we are on 8.6+

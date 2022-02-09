@@ -25,7 +25,8 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
                 PolicyUnitParameter.HIGH_UTILIZATION,
                 PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED,
                 PolicyUnitParameter.HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED,
-                PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES
+                PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES,
+                PolicyUnitParameter.VCPU_TO_PHYSICAL_CPU_RATIO
         }
 )
 public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUnit {
@@ -57,12 +58,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
                                           List<VDS> candidateHosts,
                                           Map<String, String> parameters) {
         final int highUtilization = NumberUtils.toInt(parameters.get(HIGH_UTILIZATION), getHighUtilizationDefaultValue());
-        final int cpuOverCommitDurationMinutes = NumberUtils.toInt(
-                parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
-                Config.<Integer> getValue(ConfigValues.CpuOverCommitDurationMinutes)
-        );
-
-        return getOverUtilizedCPUHosts(candidateHosts, highUtilization, cpuOverCommitDurationMinutes);
+        return getOverUtilizedCPUHosts(candidateHosts, new CpuAndMemoryBalancingParameters(parameters, highUtilization, cluster.getCountThreadsAsCores()));
     }
 
     @Override
@@ -79,12 +75,7 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
                 highUtilization - Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage)
         );
 
-        final int cpuOverCommitDurationMinutes = NumberUtils.toInt(
-                parameters.get(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES.getDbName()),
-                Config.<Integer> getValue(ConfigValues.CpuOverCommitDurationMinutes)
-        );
-
-        return getUnderUtilizedCPUHosts(candidateHosts, lowUtilization, 0, cpuOverCommitDurationMinutes);
+        return getUnderUtilizedCPUHosts(candidateHosts, new CpuAndMemoryBalancingParameters(parameters, lowUtilization));
     }
 
     /**

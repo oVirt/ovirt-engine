@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.storage;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
@@ -21,6 +22,11 @@ public class ManagedBlockStorageDisk extends DiskImage {
     }
 
     public ManagedBlockStorageDisk() {
+    }
+
+    public ManagedBlockStorageDisk(DiskImage diskImage) {
+        super(diskImage);
+        setStorageTypes(Arrays.asList(StorageType.MANAGED_BLOCK_STORAGE));
     }
 
     public Map<String, Object> getDevice() {

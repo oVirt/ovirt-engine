@@ -57,6 +57,10 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
             migrationInfo.put(VdsProperties.MIGRATION_BANDWIDTH, parameters.getMaxBandwidth());
         }
 
+        if (parameters.getParallelMigrations() != null) {
+            migrationInfo.put(VdsProperties.PARALLEL_MIGRATION_CONNECTIONS, parameters.getParallelMigrations());
+        }
+
         if (parameters.getConvergenceSchedule() != null) {
             migrationInfo.put(VdsProperties.MIGRATION_CONVERGENCE_SCHEDULE, parameters.getConvergenceSchedule());
         }

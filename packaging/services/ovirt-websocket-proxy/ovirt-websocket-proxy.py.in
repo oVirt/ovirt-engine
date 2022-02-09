@@ -222,13 +222,15 @@ class OvirtProxyRequestHandler(websockify.ProxyRequestHandler):
         websockify.ProxyRequestHandler.__init__(self, retsock, address, proxy,
                                                 *args, **kwargs)
 
-    def get_target(self, target_cfg, path):
+    def get_target(self, target_plugin, path=None):
         """
         Parses the path, extracts a token, and looks for a valid
         target for that token in the configuration file(s). Returns
         target_host and target_port if successful and sets an ssl_target
         flag.
         """
+        if path is None:
+            path = self.path
         connection_data = json.loads(parse.unquote(
             self._proxy._ticketDecoder.decode(path[1:])))
         target_host = connection_data['host'].encode('utf8')

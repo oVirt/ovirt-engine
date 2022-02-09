@@ -482,10 +482,10 @@ public enum ConfigValues {
     OvfItemsCountPerUpdate,
 
     @TypeConverterAttribute(String.class)
-    DefaultWindowsTimeZone(ClientAccessLevel.Admin),
+    DefaultWindowsTimeZone(ClientAccessLevel.User),
 
     @TypeConverterAttribute(String.class)
-    DefaultGeneralTimeZone(ClientAccessLevel.Admin),
+    DefaultGeneralTimeZone(ClientAccessLevel.User),
 
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
@@ -1605,6 +1605,12 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     HostMonitoringWatchdogInactivityThresholdInSeconds,
+
+    @TypeConverterAttribute(Boolean.class)
+    ParallelMigrationsSupported,
+
+    @TypeConverterAttribute(Integer.class)
+    RemainingMacsInPoolWarningThreshold,
 
     Invalid;
 

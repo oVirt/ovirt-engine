@@ -76,29 +76,29 @@ public class ExternalOIDCService {
             if (authResult != null && StringUtils.isNotEmpty(authResult.getToken())) {
                 SsoSession ssoSession = SsoService.getSsoSessionFromRequest(request, authResult.getToken());
                 if (ssoSession == null) {
-                    throw new OAuthException(SsoConstants.ERR_CODE_INVALID_GRANT,
-                            ssoContext.getLocalizationUtils()
-                                    .localize(
-                                            SsoConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED,
-                                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                    throw new OAuthException(
+                            SsoConstants.ERR_CODE_INVALID_GRANT,
+                            ssoContext.getLocalizationUtils().localize(
+                                    SsoConstants.APP_ERROR_AUTHORIZATION_GRANT_EXPIRED,
+                                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
                 }
                 SsoService.validateClientAcceptHeader(request);
                 log.debug("Sending json response");
                 SsoService.sendJsonData(response, buildResponse(ssoSession));
             } else {
                 throw new AuthenticationException(
-                        ssoContext.getLocalizationUtils()
-                                .localize(
-                                        SsoConstants.APP_ERROR_AUTHENTICATION_FAILED,
-                                        (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                    SsoConstants.APP_ERROR_AUTHENTICATION_FAILED,
+                    ssoContext.getLocalizationUtils().localize(
+                            SsoConstants.APP_ERROR_AUTHENTICATION_FAILED,
+                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
             }
         } catch (Exception ex) {
             throw new AuthenticationException(
+                    SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER,
                     String.format(
-                            ssoContext.getLocalizationUtils()
-                                    .localize(
-                                            SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER,
-                                            (Locale) request.getAttribute(SsoConstants.LOCALE)),
+                            ssoContext.getLocalizationUtils().localize(
+                                    SsoConstants.APP_ERROR_CANNOT_AUTHENTICATE_USER,
+                                    (Locale) request.getAttribute(SsoConstants.LOCALE)),
                             ex.getMessage()));
         }
     }

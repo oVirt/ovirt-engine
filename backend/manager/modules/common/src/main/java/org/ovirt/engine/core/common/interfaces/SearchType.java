@@ -25,7 +25,8 @@ public enum SearchType implements Serializable {
     ImageType,
     ImageTransfer,
     Session,
-    Job;
+    Job,
+    VnicProfile;
 
     public int getValue() {
         return this.ordinal();

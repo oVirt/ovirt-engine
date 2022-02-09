@@ -48,10 +48,12 @@ import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
 import org.ovirt.engine.core.common.action.VmLeaseParameters;
+import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -81,6 +83,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.StartEntity;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
@@ -952,6 +955,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getVm().setUseHostCpuFlags(true);
         }
 
+        addCpuAndNumaPinning();
+
         return true;
     }
 
@@ -969,7 +974,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         List<VdsNumaNode> hostNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(getVdsId());
         boolean vmFitsToSomeNumaNode = hostNodes.stream()
                 .filter(node -> getVm().getMemSizeMb() <= node.getMemTotal())
-                .anyMatch(node -> getVm().getNumOfCpus() <= node.getCpuIds().size());
+                .anyMatch(node -> VmCpuCountHelper.getDynamicNumOfCpu(getVm()) <= node.getCpuIds().size());
 
         if (!vmFitsToSomeNumaNode) {
             addCustomValue("HostName", getVdsName());
@@ -1142,6 +1147,21 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         return true;
+    }
+
+    private void addCpuAndNumaPinning() {
+        if (getVm().getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
+            vmHandler.updateCpuAndNumaPinning(getVm(), getVdsId());
+
+            List<VmNumaNode> newVmNumaList = getVm().getvNumaNodeList();
+            VmNumaNodeOperationParameters params =
+                    new VmNumaNodeOperationParameters(getVm(), new ArrayList<>(newVmNumaList));
+
+            if (!backend.runInternalAction(ActionType.SetVmNumaNodes, params).getSucceeded()) {
+                auditLogDirector.log(this, AuditLogType.NUMA_UPDATE_VM_NUMA_NODE_FAILED);
+                throw new EngineException(EngineError.FAILED_NUMA_UPDATE);
+            }
+        }
     }
 
     protected void checkVmLeaseStorageDomain() {
@@ -1399,7 +1419,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         list.add(new QuotaClusterConsumptionParameter(getVm().getQuotaId(),
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
                 getVm().getClusterId(),
-                getVm().getCpuPerSocket() * getVm().getNumOfSockets(),
+                VmCpuCountHelper.isDynamicCpuTopologySet(getVm()) ?
+                        getVm().getCurrentCoresPerSocket() * getVm().getCurrentSockets() :
+                        getVm().getCpuPerSocket() * getVm().getNumOfSockets(),
                 getVm().getMemSizeMb()));
         return list;
     }

@@ -66,6 +66,7 @@ public class InteractiveAuthServlet extends HttpServlet {
                                 ssoSession.getSourceAddr(),
                                 ex.getMessage());
                         log.debug("Exception", ex);
+                        SsoService.getSsoSession(request).setLoginErrorCode(ex.getErrorCode());
                         SsoService.getSsoSession(request).setLoginMessage(ex.getMessage());
                     }
                     log.debug("Redirecting to LoginPage");
@@ -94,10 +95,10 @@ public class InteractiveAuthServlet extends HttpServlet {
             Credentials userCredentials) throws AuthenticationException {
         if (userCredentials == null || !SsoService.areCredentialsValid(request, userCredentials, true)) {
             throw new AuthenticationException(
-                    ssoContext.getLocalizationUtils()
-                            .localize(
-                                    SsoConstants.APP_ERROR_INVALID_CREDENTIALS,
-                                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                    SsoConstants.APP_ERROR_INVALID_CREDENTIALS,
+                    ssoContext.getLocalizationUtils().localize(
+                            SsoConstants.APP_ERROR_INVALID_CREDENTIALS,
+                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         try {
             log.debug("Authenticating user using credentials");

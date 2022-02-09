@@ -172,6 +172,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         parameters.setHttpLocationInfo(prepareRepoImageLocation());
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
+        parameters.setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroupID()));
         return parameters;
     }
 

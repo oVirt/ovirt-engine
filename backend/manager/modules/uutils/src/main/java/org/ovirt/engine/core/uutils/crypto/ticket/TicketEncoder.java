@@ -51,7 +51,6 @@ public class TicketEncoder {
         byte[] random = new byte[8];
         SECURE_RANDOM.nextBytes(random);
         map.put("salt", base64.encodeToString(random));
-        map.put("digest", "sha1");
 
         DateFormat df = new SimpleDateFormat(DATE_FORMAT);
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -72,9 +71,15 @@ public class TicketEncoder {
         /*
          * Calculate signature on fields in map
          */
-        Signature signature = Signature.getInstance(String.format("%swith%s", map.get("digest"), key.getAlgorithm()));
-        signature.initSign(key);
+        if (!key.getAlgorithm().equals("RSA")) {
+            throw new GeneralSecurityException("Unsupported ticket signature algorithm");
+        }
+
+        Signature signature = Signature.getInstance("RSASSA-PSS");
         StringBuilder fields = new StringBuilder();
+        signature.setParameter(new PSSParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256,
+                getSaltMaxLength((RSAKey)key), PSSParameterSpec.TRAILER_FIELD_BC));
+        signature.initSign(key);
         for (Map.Entry<String, String> entry : map.entrySet()) {
             if (fields.length() > 0) {
                 fields.append(",");
@@ -83,27 +88,14 @@ public class TicketEncoder {
             signature.update(entry.getValue().getBytes(StandardCharsets.UTF_8));
         }
 
-        // TODO remove old 'signature' if/when it's not needed anymore
-        map.put("signature", base64.encodeToString(signature.sign()));
-
-        if (key.getAlgorithm().equals("RSA")) {
-            signature = Signature.getInstance("RSASSA-PSS");
-            signature.setParameter(new PSSParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256,
-                    getSaltMaxLength((RSAKey)key), PSSParameterSpec.TRAILER_FIELD_BC));
-            signature.initSign(key);
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                // signature is unsigned value, we should skip it
-                if (entry.getKey().equals("signature")) {
-                    continue;
-                }
-                signature.update(entry.getValue().getBytes(StandardCharsets.UTF_8));
-            }
-        }
-
         /*
          * Add unsigned fields
          */
         map.put("signedFields", fields.toString());
+        /*
+         * We used to have "signature" that used a deprecated SHA1 hash,
+         * thus the name "v2_signature".
+         */
         map.put("v2_signature", base64.encodeToString(signature.sign()));
         map.put("certificate", String.format(
                 "-----BEGIN CERTIFICATE-----\n" +

@@ -155,7 +155,11 @@ public class BaseImportNetworksModel extends Model {
                                                       List<StoragePool> dataCenters) {
         List<ExternalNetwork> items = new LinkedList<>();
         for (Map.Entry<Network, Set<Guid>> entry : externalNetworkToDataCenters.entrySet()) {
-            items.add(getExternalNetwork(entry.getKey(), entry.getValue(), dataCenters));
+            ExternalNetwork network = getExternalNetwork(entry.getKey(), entry.getValue(), dataCenters);
+            // Do not show network that is already imported in all data centers
+            if (!network.getDataCenters().getItems().isEmpty()) {
+                items.add(network);
+            }
         }
         Collections.sort(items,
                 Comparator.comparing(ExternalNetwork::getNetwork, new NameableComparator()));

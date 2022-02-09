@@ -128,4 +128,10 @@ public class VnicProfileViewDaoImpl extends DefaultReadDao<VnicProfileView, Guid
                 VnicProfileViewRowMapper.INSTANCE,
                 getCustomMapSqlParameterSource().addValue("network_qos_id", qosId));
     }
+
+    @Override
+    public List<VnicProfileView> getAllWithQuery(String query) {
+        return getJdbcTemplate().query(query, VnicProfileViewRowMapper.INSTANCE);
+    }
+
 }

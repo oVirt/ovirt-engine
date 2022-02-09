@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
@@ -175,8 +176,9 @@ public class VmPoolHandler implements BackendService {
         // check that there is no user already attached to this VM
         // and make sure the VM is running statelessly
         List<String> messages = new ArrayList<>();
-        boolean isFree = !vmAssignedToUser(vmId, messages)
-                && (isStatefulPool && !vmIsStartedByRunOnce(vmId) || vmIsRunningStateless(vmId));
+        VmDynamic vmDynamic = vmDynamicDao.get(vmId);
+        boolean isFree = !vmAssignedToUser(vmId, vmDynamic, messages)
+                && (isStatefulPool && !vmIsStartedByRunOnce(vmDynamic) || vmIsRunningStateless(vmId));
         if (errorProcessor != null && !messages.isEmpty()) {
             errorProcessor.process(vmId, messages);
         }
@@ -192,13 +194,19 @@ public class VmPoolHandler implements BackendService {
     public boolean isNonPrestartedVmFree(Guid vmId, ErrorProcessor errorProcessor) {
         List<String> messages = new ArrayList<>();
 
+        VM vm = vmDao.get(vmId);
+        if (vm == null) {
+            messages.add(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND.name());
+            return false;
+        }
+
         // check that there is no user already attached to this VM
-        if (vmAssignedToUser(vmId, messages)) {
+        if (vmAssignedToUser(vmId, vm.getDynamicData(), messages)) {
             return failVmFree(errorProcessor, vmId, messages);
         }
 
         // check that VN can be run
-        if (!canRunPoolVm(vmId, messages)) {
+        if (!canRunPoolVm(vm, messages)) {
             return failVmFree(errorProcessor, vmId, messages);
         }
 
@@ -216,7 +224,6 @@ public class VmPoolHandler implements BackendService {
         List<Disk> disks = diskDao.getAllForVm(vmId);
         List<DiskImage> vmImages = DisksFilter.filterImageDisks(disks, ONLY_NOT_SHAREABLE, ONLY_SNAPABLE);
 
-        VM vm = vmDao.get(vmId);
         StoragePool sp = storagePoolDao.get(vm.getStoragePoolId());
         ValidationResult spUpResult = new StoragePoolValidator(sp).existsAndUp();
         if (!spUpResult.isValid()) {
@@ -260,35 +267,36 @@ public class VmPoolHandler implements BackendService {
         return false;
     }
 
-    private boolean vmIsStartedByRunOnce(Guid vmId) {
-        VmDynamic vmDynamic = vmDynamicDao.get(vmId);
+    private boolean vmIsStartedByRunOnce(VmDynamic vmDynamic) {
         return vmDynamic != null && vmDynamic.isRunOnce();
+    }
+
+    private boolean vmHasActiveConsole(VmDynamic vmDynamic) {
+        return vmDynamic != null && !StringUtils.isEmpty(vmDynamic.getClientIp());
     }
 
     private boolean vmIsRunningStateless(Guid vmId) {
         return snapshotDao.exists(vmId, Snapshot.SnapshotType.STATELESS);
     }
 
-    private boolean vmAssignedToUser(Guid vmId, List<String> messages) {
+    private boolean vmAssignedToUser(Guid vmId, VmDynamic vmDynamic, List<String> messages) {
         if (dbUserDao.getAllForVm(vmId).size() > 0) {
             messages.add(EngineMessage.VM_POOL_CANNOT_ADD_VM_WITH_USERS_ATTACHED_TO_POOL.toString());
+            return true;
+        }
+        if (vmHasActiveConsole(vmDynamic)) {
+            messages.add(EngineMessage.VM_POOL_CANNOT_ATTACH_TO_VM_WITH_ACTIVE_CONSOLE.toString());
             return true;
         }
         return false;
     }
 
-    private boolean canRunPoolVm(Guid vmId, List<String> messages) {
-        VM vm = vmDao.get(vmId);
-        if (vm == null) {
-            messages.add(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND.name());
-            return false;
-        }
-
+    private boolean canRunPoolVm(VM vm, List<String> messages) {
         // TODO: This is done to keep consistency with VmDao.getById.
         // It can probably be removed, but that requires some more research
         vmHandler.updateNetworkInterfacesFromDb(vm);
 
-        RunVmParams runVmParams = new RunVmParams(vmId);
+        RunVmParams runVmParams = new RunVmParams(vm.getId());
 
         return Injector.injectMembers(new RunVmValidator(vm, runVmParams, false, findActiveISODomain(vm.getStoragePoolId())))
                 .canRunVm(

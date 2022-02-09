@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionBal
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HighPerformanceCpuPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HostHooksFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineMemoryReservationFilterPolicyUnit;
@@ -64,6 +65,7 @@ public class InternalClusterPolicies {
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
                 .addFilters(MigrationTscFrequencyPolicyUnit.class)
+                .addFilters(HostHooksFilterPolicyUnit.class)
 
                 .addFunction(2, EvenDistributionCPUWeightPolicyUnit.class)
                 .addFunction(1, EvenDistributionMemoryWeightPolicyUnit.class)
@@ -98,6 +100,7 @@ public class InternalClusterPolicies {
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
                 .addFilters(MigrationTscFrequencyPolicyUnit.class)
+                .addFilters(HostHooksFilterPolicyUnit.class)
 
                 .addFunction(2, EvenDistributionCPUWeightPolicyUnit.class)
                 .addFunction(1, EvenDistributionMemoryWeightPolicyUnit.class)
@@ -131,6 +134,7 @@ public class InternalClusterPolicies {
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
                 .addFilters(MigrationTscFrequencyPolicyUnit.class)
+                .addFilters(HostHooksFilterPolicyUnit.class)
 
                 .addFunction(2, EvenDistributionCPUWeightPolicyUnit.class)
                 .addFunction(1, EvenDistributionMemoryWeightPolicyUnit.class)
@@ -145,6 +149,7 @@ public class InternalClusterPolicies {
                 .set(PolicyUnitParameter.HE_SPARES_COUNT, "0")
                 .set(PolicyUnitParameter.CPU_OVERCOMMIT_DURATION_MINUTES, "2")
                 .set(PolicyUnitParameter.HIGH_UTILIZATION, "80")
+                .set(PolicyUnitParameter.VCPU_TO_PHYSICAL_CPU_RATIO, "0")
                 .register();
 
         createBuilder("5a2b0939-7d46-4b73-a469-e9c2c7fc6a53")
@@ -165,6 +170,7 @@ public class InternalClusterPolicies {
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
                 .addFilters(MigrationTscFrequencyPolicyUnit.class)
+                .addFilters(HostHooksFilterPolicyUnit.class)
 
                 .addFunction(2, PowerSavingCPUWeightPolicyUnit.class)
                 .addFunction(1, PowerSavingMemoryWeightPolicyUnit.class)
@@ -200,6 +206,7 @@ public class InternalClusterPolicies {
                 .addFilters(NetworkPolicyUnit.class)
                 .addFilters(HostedEngineMemoryReservationFilterPolicyUnit.class)
                 .addFilters(MigrationTscFrequencyPolicyUnit.class)
+                .addFilters(HostHooksFilterPolicyUnit.class)
 
                 .addFunction(2, EvenGuestDistributionWeightPolicyUnit.class)
                 .addFunction(99, PreferredHostsWeightPolicyUnit.class)

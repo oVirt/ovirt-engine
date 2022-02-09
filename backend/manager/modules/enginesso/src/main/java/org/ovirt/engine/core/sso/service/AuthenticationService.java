@@ -48,10 +48,10 @@ public class AuthenticationService {
         }
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(profile)) {
             throw new AuthenticationException(
-                    ssoContext.getLocalizationUtils()
-                            .localize(
-                                    SsoConstants.APP_ERROR_PROVIDE_USERNAME_AND_PROFILE,
-                                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                    SsoConstants.APP_ERROR_PROVIDE_USERNAME_AND_PROFILE,
+                    ssoContext.getLocalizationUtils().localize(
+                            SsoConstants.APP_ERROR_PROVIDE_USERNAME_AND_PROFILE,
+                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
 
         ObjectMapper mapper = new ObjectMapper()
@@ -97,10 +97,10 @@ public class AuthenticationService {
         log.debug("Entered AuthenticationUtils.handleCredentials");
         if (StringUtils.isEmpty(credentials.getUsername()) || StringUtils.isEmpty(credentials.getProfile())) {
             throw new AuthenticationException(
-                    ssoContext.getLocalizationUtils()
-                            .localize(
-                                    SsoConstants.APP_ERROR_PROVIDE_USERNAME_PASSWORD_AND_PROFILE,
-                                    (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                    SsoConstants.APP_ERROR_PROVIDE_USERNAME_PASSWORD_AND_PROFILE,
+                    ssoContext.getLocalizationUtils().localize(
+                            SsoConstants.APP_ERROR_PROVIDE_USERNAME_PASSWORD_AND_PROFILE,
+                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         SsoSession ssoSession = login(ssoContext, request, credentials, null, interactive);
         String userDomain = ssoContext.getUserAuthzName(ssoSession);
@@ -140,9 +140,10 @@ public class AuthenticationService {
         String user = mapUser(profile, credentials);
         if (authRecord == null) {
             log.debug("AuthenticationUtils.handleCredentials invoking AUTHENTICATE_CREDENTIALS on authn");
-            ExtMap outputMap = profile.authn.invoke(new ExtMap().mput(
-                    Base.InvokeKeys.COMMAND,
-                    Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS)
+            ExtMap outputMap = profile.authn.invoke(new ExtMap()
+                    .mput(
+                            Base.InvokeKeys.COMMAND,
+                            Authn.InvokeCommands.AUTHENTICATE_CREDENTIALS)
                     .mput(
                             Authn.InvokeKeys.USER,
                             user)
@@ -154,23 +155,28 @@ public class AuthenticationService {
                 if (interactive) {
                     SsoService.getSsoSession(request).setChangePasswdCredentials(credentials);
                 }
+
                 log.debug("AuthenticationUtils.handleCredentials AUTHENTICATE_CREDENTIALS on authn failed");
-                String loginErrMsg = AuthnMessageMapper.mapMessageErrorCode(
+                String errorCode = AuthnMessageMapper.mapErrorCode(
                         ssoContext,
                         request,
                         credentials.getProfile(),
                         outputMap);
+
+                String errorMessage = ssoContext.getLocalizationUtils().localize(
+                        errorCode,
+                        (Locale) request.getAttribute(SsoConstants.LOCALE));
+
                 SsoSession ssoSession = SsoService.getSsoSession(request, false);
                 String sourceAddr = ssoSession == null ? null : ssoSession.getSourceAddr();
-                SsoService.notifyClientOfAuditLogEvent(ssoContext,
+                SsoService.notifyClientOfAuditLogEvent(
+                        ssoContext,
                         sourceAddr == null ? request.getRemoteAddr() : sourceAddr,
                         ssoContext.getSsoLocalConfig().getProperty("ENGINE_SSO_CLIENT_ID"),
                         Optional.ofNullable(credentials).map(Credentials::getUsernameWithProfile).orElse("N/A"),
-                        ssoContext.getLocalizationUtils().localize(loginErrMsg, Locale.ENGLISH));
-                throw new AuthenticationException(ssoContext.getLocalizationUtils()
-                        .localize(
-                                loginErrMsg,
-                                (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                        errorMessage);
+
+                throw new AuthenticationException(errorCode, errorMessage);
             }
             log.debug("AuthenticationUtils.handleCredentials AUTHENTICATE_CREDENTIALS on authn succeeded");
             authRecord = outputMap.get(Authn.InvokeKeys.AUTH_RECORD);
@@ -275,12 +281,17 @@ public class AuthenticationService {
                 outputMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
             SsoService.getSsoSession(request).setChangePasswdCredentials(credentials);
             log.debug("AuthenticationUtils.changePassword CREDENTIALS_CHANGE on authn failed");
+            String errorCode = AuthnMessageMapper.mapErrorCode(
+                    context,
+                    request,
+                    credentials.getProfile(),
+                    outputMap);
+
             throw new AuthenticationException(
-                    AuthnMessageMapper.mapMessageErrorCode(
-                            context,
-                            request,
-                            credentials.getProfile(),
-                            outputMap));
+                    errorCode,
+                    context.getLocalizationUtils().localize(
+                        errorCode,
+                        (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         log.debug("AuthenticationUtils.changePassword CREDENTIALS_CHANGE on authn succeeded");
     }

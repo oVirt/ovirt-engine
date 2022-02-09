@@ -1,0 +1,104 @@
+name: build
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: centos-stream-8
+            shortcut: cs8
+            container-name: stream8
+          # Try to enable CS9 after switch to xmaven is finished
+          # - name: centos-stream-9
+          #  shortcut: cs9
+          #  container-name: stream9
+
+    name: ${{ matrix.name }}
+
+    env:
+      ARTIFACTS_DIR: exported-artifacts
+
+    container:
+      image: quay.io/centos/centos:${{ matrix.container-name }}
+
+    steps:
+    - name: Prepare CentOS Stream 8 environment
+      if: ${{ matrix.shortcut == 'cs8' }}
+      run: |
+        # Install oVirt repositories
+        dnf copr enable -y ovirt/ovirt-master-snapshot centos-stream-8
+
+        # Requried for python3-ansible-lint and python3-isort
+        dnf copr enable -y sbonazzo/EL8_collection
+
+        # Configure CS8 repositories
+        dnf config-manager --enable powertools
+        dnf module enable -y pki-deps javapackages-tools
+
+    - name: Prepare CentOS Stream 9 environment
+      if: ${{ matrix.shortcut == 'cs9' }}
+      run: |
+        # DNF core plugins are installed in the official CS9 container image
+        dnf install -y dnf-plugins-core
+
+        # Install oVirt repositories
+        dnf copr enable -y ovirt/ovirt-master-snapshot
+
+        # Requried for python3-ansible-lint and python3-isort
+        dnf copr enable -y sbonazzo/EL9_collection
+
+        # Configure CS9 repositories
+        dnf config-manager --enable crb
+
+    - name: Install required packages
+      run: |
+        dnf install -y \
+          createrepo_c \
+          dnf-utils \
+          git \
+          gzip \
+          java-11-openjdk-devel \
+          make \
+          maven \
+          python3-pycodestyle \
+          python3-pytest \
+          python3-devel \
+          python3-isort \
+          python3-pyflakes \
+          python3-pyOpenSSL \
+          python3-dnf-plugin-versionlock \
+          rpm-build \
+          sed \
+          tar
+
+    - name: Checkout sources
+      uses: actions/checkout@v2
+
+    - name: Setup maven cache
+      uses: actions/cache@v2
+      with:
+        path: /root/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Perform build
+      run: |
+        .automation/build-rpm.sh $ARTIFACTS_DIR
+
+    - name: Create DNF repository
+      run: |
+        createrepo_c $ARTIFACTS_DIR
+
+    - name: Upload artifacts
+      uses: ovirt/upload-rpms-action@v2
+      with:
+        directory: ${{ env.ARTIFACTS_DIR }}

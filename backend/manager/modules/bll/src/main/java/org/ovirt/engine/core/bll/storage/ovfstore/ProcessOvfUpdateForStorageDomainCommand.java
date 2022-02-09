@@ -280,6 +280,8 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
             return true;
         }
 
+        log.debug("Updating OVF stores: {}", domainOvfStoresInfoForUpdate);
+
         updateDate = new Date();
 
         List<Guid> vmAndTemplatesIds =
@@ -298,6 +300,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateP
         // we'll
         // possibly have some ovf data on storage)
         if (lastOvfStoreForUpdate.getFirst().getLastUpdated() != null) {
+            log.debug("Removing last OVF store from list: {}", lastOvfStoreForUpdate);
             domainOvfStoresInfoForUpdate.removeLast();
         } else {
             lastOvfStoreForUpdate = null;

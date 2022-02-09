@@ -37,8 +37,8 @@ public class NicStatisticalQuery extends AbstractStatisticalQuery<Nic, VmNetwork
                 setDatum(clone(DATA_TX), RxTxCalculator.percent2bytes(iface.getSpeed(), s.getTransmitRate())),
                 setDatum(clone(DATA_RX_BITS), RxTxCalculator.percent2bits(iface.getSpeed(), s.getReceiveRate())),
                 setDatum(clone(DATA_TX_BITS), RxTxCalculator.percent2bits(iface.getSpeed(), s.getTransmitRate())),
-                setDatum(clone(ERRS_RX), s.getReceiveDropRate()),
-                setDatum(clone(ERRS_TX), s.getTransmitDropRate()),
+                setDatum(clone(ERRS_RX), s.getReceiveDrops()),
+                setDatum(clone(ERRS_TX), s.getTransmitDrops()),
                 setDatum(clone(TOTAL_RX), s.getReceivedBytes()),
                 setDatum(clone(TOTAL_TX), s.getTransmittedBytes()));
     }

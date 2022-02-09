@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,14 +38,14 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
         newVmStatistics.setVmId(VM_ID);
         newVmStatistics.setStatus(InterfaceStatus.DOWN);
         newVmStatistics.setSampleTime(0.0);
-        newVmStatistics.setReceiveDropRate(0.0);
+        newVmStatistics.setReceiveDrops(BigInteger.ZERO);
         newVmStatistics.setReceiveRate(0.0);
-        newVmStatistics.setReceivedBytes(0L);
-        newVmStatistics.setReceivedBytesOffset(0L);
-        newVmStatistics.setTransmitDropRate(0.0);
+        newVmStatistics.setReceivedBytes(BigInteger.ZERO);
+        newVmStatistics.setReceivedBytesOffset(BigInteger.ZERO);
+        newVmStatistics.setTransmitDrops(BigInteger.ZERO);
         newVmStatistics.setTransmitRate(0.0);
-        newVmStatistics.setTransmittedBytes(0L);
-        newVmStatistics.setTransmittedBytesOffset(0L);
+        newVmStatistics.setTransmittedBytes(BigInteger.ZERO);
+        newVmStatistics.setTransmittedBytesOffset(BigInteger.ZERO);
     }
 
     /**
@@ -93,7 +94,7 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
 
     @Test
     public void testUpdateWithValues() {
-        testUpdateStatistics(999.0, 999L);
+        testUpdateStatistics(999.0, new BigInteger("999"));
     }
 
     @Test
@@ -122,12 +123,12 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
     public void testUpdateAll() {
         VmNetworkStatistics existingStats = dao.get(FixturesTool.VM_NETWORK_INTERFACE);
         VmNetworkStatistics existingStats2 = dao.get(new Guid("e2817b12-f873-4046-b0da-0098293c0000"));
-        existingStats.setReceiveDropRate(10.0);
+        existingStats.setReceiveDrops(BigInteger.TEN);
         existingStats2.setStatus(InterfaceStatus.DOWN);
 
         dao.updateAll(Arrays.asList(existingStats, existingStats2));
 
-        assertEquals(existingStats.getReceiveDropRate(), dao.get(existingStats.getId()).getReceiveDropRate());
+        assertEquals(existingStats.getReceiveDrops(), dao.get(existingStats.getId()).getReceiveDrops());
         assertEquals(existingStats2.getStatus(), dao.get(existingStats2.getId()).getStatus());
     }
 }

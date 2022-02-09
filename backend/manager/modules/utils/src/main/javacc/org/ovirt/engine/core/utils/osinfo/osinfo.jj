@@ -77,7 +77,7 @@ void devices() : {} {
     | ("memoryHotplug.specialBlock" booleanValue())
     | ("legacyVirtio" booleanValue())
     | ("ovirtGuestAgentChannel" booleanValue())
-    | ("tpmAllowed" booleanValue())
+    | ("tpm" tpmSupportValue())
     )
 }
 
@@ -137,6 +137,10 @@ void q35SupportValue() : {} {
     valueSpecifier() ("true" | "insecure" | "false")
 }
 
+void tpmSupportValue() : {} {
+    valueSpecifier() ("unsupported" | "supported" | "required")
+}
+
 void valueSpecifier() : {} {
     <VALUE> (<DOT> <VERSION>)* (<WS>)* <EQUALS> (<WS>)*
 }
@@ -170,7 +174,7 @@ void valueSpecifier() : {} {
 |   < COMMA : "," >
 |   < NETWORK_DEVICE_TYPE
     :
-    ("rtl8139_pv" | "rtl8139" | "e1000" | "pv" | "spaprVlan" | "pciPassthrough")
+    ("rtl8139_pv" | "rtl8139" | "e1000" | "e1000e" | "pv" | "spaprVlan" | "pciPassthrough")
     >
 |   < CHIPSET_HARDWARE_INTERFACE_TYPE
     :

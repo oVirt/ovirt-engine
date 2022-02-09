@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
 import org.ovirt.engine.core.common.businessentities.LogMaxMemoryUsedThresholdType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
@@ -26,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -45,6 +47,8 @@ import org.ovirt.engine.ui.uicommonweb.builders.MigrationsModelToEntityBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelChain;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelChain.ConfirmationModelChainItem;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
@@ -384,6 +388,8 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             cModel.getCommands().add(tempVar2);
         }));
         clusterModel.refreshMigrationPolicies();
+        // Set the default parallel migrations type
+        clusterModel.getParallelMigrationsType().setSelectedItem(ParallelMigrationsType.DISABLED);
     }
 
     public static ClusterModel createNewClusterModel() {
@@ -612,88 +618,11 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         if (model.getIsNew()) {
             onPreSaveInternal(model);
         } else {
-            onSaveConfirmCV(model);
+            ConfirmationModelChain chain = new ConfirmationModelChain();
+            chain.addConfirmation(createConfirmCompatibilityVersion(model));
+            chain.addConfirmation(createConfirmClusterWarnings(model));
+            chain.execute(this, this::onSaveInternal);
         }
-    }
-
-    private void onSaveConfirmCV(ClusterModel model) {
-        if (!model.getVersion().getSelectedItem().equals(getSelectedItem().getCompatibilityVersion())) {
-            final ConfirmationModel confirmModel = new ConfirmationModel();
-            setConfirmWindow(confirmModel);
-            confirmModel.setTitle(constants.changeClusterCompatibilityVersionTitle());
-            confirmModel.setHelpTag(HelpTag.change_cluster_compatibility_version);
-            confirmModel.setHashName("change_cluster_compatibility_version"); //$NON-NLS-1$
-            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveConfirmCpuThreads", this); //$NON-NLS-1$
-            getConfirmWindow().getCommands().add(tempVar);
-            UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
-            getConfirmWindow().getCommands().add(tempVar2);
-
-            checkForActiveVms(model, confirmModel);
-        } else {
-            onSaveConfirmCpuThreads();
-        }
-    }
-
-    private void checkForActiveVms(ClusterModel model, final ConfirmationModel confirmModel) {
-        Guid clusterId = model.getEntity().getId();
-        Frontend.getInstance().runQuery(QueryType.GetNumberOfActiveVmsInClusterByClusterId,
-                new IdQueryParameters(clusterId), new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
-                    Integer numOfActiveVms = returnValue.getReturnValue();
-                    if (numOfActiveVms != 0) {
-                        confirmModel.setMessage(messages.thereAreActiveVMsRequiringRestart(numOfActiveVms));
-                    }
-                    checkForNonResponsiveHosts(confirmModel);
-        }));
-    }
-
-    private void onSaveConfirmCpuThreads() {
-        ClusterModel model = (ClusterModel) getWindow();
-
-        // cancel confirm window if there is one
-        cancelConfirmation();
-
-        // CPU thread support is being turned off either explicitly or via version change
-        if (!model.getVersionSupportsCpuThreads().getEntity() && model.getCountThreadsAsCores().getEntity()
-                && getSelectedItem().getCountThreadsAsCores()) {
-            ConfirmationModel confirmModel = new ConfirmationModel();
-            setConfirmWindow(confirmModel);
-            confirmModel.setTitle(ConstantsManager.getInstance()
-                    .getConstants()
-                    .disableClusterCpuThreadSupportTitle());
-            confirmModel.setHelpTag(HelpTag.disable_cpu_thread_support);
-            confirmModel.setHashName("disable_cpu_thread_support"); //$NON-NLS-1$
-            confirmModel.setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .youAreAboutChangeClusterCpuThreadSupportMsg());
-
-            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveConfirmGenericWarnings", this); //$NON-NLS-1$
-            getConfirmWindow().getCommands().add(tempVar);
-            UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
-            getConfirmWindow().getCommands().add(tempVar2);
-        } else {
-            onSaveConfirmGenericWarnings();
-        }
-    }
-
-    private void onSaveConfirmGenericWarnings() {
-        ClusterModel model = (ClusterModel) getWindow();
-        cancelConfirmation();
-
-        Cluster cluster = buildCluster(model, model.getIsNew() ?
-                new Cluster() : (Cluster) Cloner.clone(getSelectedItem()));
-        AsyncDataProvider.getInstance().getClusterEditWarnings(new AsyncQuery<>(warnings -> {
-            if (!warnings.isEmpty()) {
-                ClusterWarningsModel confirmWindow = new ClusterWarningsModel();
-                confirmWindow.init(warnings);
-                confirmWindow.getCommands().add(UICommand.createDefaultOkUiCommand("OnSaveInternal", ClusterListModel.this)); //$NON-NLS-1$
-                confirmWindow.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", ClusterListModel.this)); //$NON-NLS-1$
-
-                setConfirmWindow(confirmWindow);
-            } else {
-                onSaveInternal();
-            }
-
-        }), cluster);
     }
 
     public void onPreSaveInternal(ClusterModel model) {
@@ -735,8 +664,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         cluster.setBiosType(model.getBiosType().getSelectedItem());
         cluster.setMaxVdsMemoryOverCommit(model.getMemoryOverCommit());
         cluster.setSmtDisabled(Boolean.TRUE.equals(model.getSmtDisabled().getEntity()));
-        cluster.setCountThreadsAsCores(Boolean.TRUE.equals(model.getVersionSupportsCpuThreads().getEntity())
-                && Boolean.TRUE.equals(model.getCountThreadsAsCores().getEntity()));
+        cluster.setCountThreadsAsCores(Boolean.TRUE.equals(model.getCountThreadsAsCores().getEntity()));
         cluster.setEnableKsm(Boolean.TRUE.equals(model.getEnableKsm().getEntity()));
         cluster.setKsmMergeAcrossNumaNodes(model.getKsmPolicyForNuma());
         cluster.setEnableBallooning(Boolean.TRUE.equals(model.getEnableBallooning().getEntity()));
@@ -1092,12 +1020,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             cancel();
         } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
-        } else if ("OnSaveConfirmCpuThreads".equals(command.getName())) { //$NON-NLS-1$
-            onSaveConfirmCpuThreads();
-        } else if ("OnSaveConfirmGenericWarnings".equals(command.getName())) { //$NON-NLS-1$
-            onSaveConfirmGenericWarnings();
-        } else if ("OnSaveInternal".equals(command.getName())) { //$NON-NLS-1$
-            onSaveInternal();
         } else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
             cancelConfirmation();
         } else if ("OnSaveHosts".equals(command.getName())) { //$NON-NLS-1$
@@ -1110,45 +1032,126 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         return "ClusterListModel"; //$NON-NLS-1$
     }
 
-    /**
-     * Checks if in selected cluster are some non responsive hosts. If so, it adds warning about upgrading cluster level
-     * when some hosts are non responsive
-     */
-    @SuppressWarnings("unchecked")
-    private void checkForNonResponsiveHosts(final ConfirmationModel confirmModel) {
-        startProgress();
-        Frontend.getInstance().runQuery(QueryType.GetHostsByClusterId,
-                new IdQueryParameters(getSelectedItem().getId()),
-                new AsyncQuery<>(returnValue -> {
-                    List<VDS> hosts = null;
-                    if (returnValue instanceof List) {
-                        hosts = (List<VDS>) returnValue;
-                    } else if (returnValue instanceof QueryReturnValue
-                            && ((QueryReturnValue) returnValue).getReturnValue() instanceof List) {
-                        hosts = ((QueryReturnValue) returnValue).getReturnValue();
-                    }
+    private ConfirmationModelChainItem createConfirmCompatibilityVersion(ClusterModel model) {
+        return new ConfirmationModelChainItem() {
 
-                    boolean foundNRHosts = false;
-                    if (hosts != null) {
-                        for (VDS host : hosts) {
-                            if (VDSStatus.NonResponsive == host.getStatus()) {
-                                foundNRHosts = true;
-                                break;
-                            }
-                        }
-                    }
+            private boolean required = false;
 
-                    String existingMsg = confirmModel.getMessage() == null ? "" : confirmModel.getMessage();
-                    if (foundNRHosts) {
-                        confirmModel.setMessage(existingMsg +
-                                constants.youAreAboutChangeClusterCompatibilityVersionNonResponsiveHostsMsg());
-                    } else {
-                        confirmModel.setMessage(existingMsg +
-                                constants.youAreAboutChangeClusterCompatibilityVersionMsg());
-                    }
+            private Integer numOfActiveVms;
 
-                    stopProgress();
-                }));
+            private boolean foundNRHosts;
+
+            @Override
+            public void init(Runnable callback) {
+                required = !model.getVersion().getSelectedItem().equals(getSelectedItem().getCompatibilityVersion());
+
+                if (!required) {
+                    callback.run();
+                    return;
+                }
+
+                checkForActiveVms(callback);
+            }
+
+            @Override
+            public boolean isRequired() {
+                return required;
+            }
+
+            @Override
+            public ConfirmationModel getConfirmation() {
+                final ConfirmationModel confirmModel = new ConfirmationModel();
+                confirmModel.setTitle(constants.changeClusterCompatibilityVersionTitle());
+                confirmModel.setHelpTag(HelpTag.change_cluster_compatibility_version);
+                confirmModel.setHashName("change_cluster_compatibility_version"); //$NON-NLS-1$
+
+                if (numOfActiveVms != 0) {
+                    confirmModel.setMessage(messages.thereAreActiveVMsRequiringRestart(numOfActiveVms));
+                }
+
+                String existingMsg = confirmModel.getMessage() == null ? "" : confirmModel.getMessage();
+                if (foundNRHosts) {
+                    confirmModel.setMessage(existingMsg +
+                            constants.youAreAboutChangeClusterCompatibilityVersionNonResponsiveHostsMsg());
+                } else {
+                    confirmModel.setMessage(existingMsg +
+                            constants.youAreAboutChangeClusterCompatibilityVersionMsg());
+                }
+
+                return confirmModel;
+            }
+
+            private void checkForActiveVms(Runnable callback) {
+                Guid clusterId = model.getEntity().getId();
+                Frontend.getInstance()
+                        .runQuery(QueryType.GetNumberOfActiveVmsInClusterByClusterId,
+                                new IdQueryParameters(clusterId),
+                                new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
+                                    numOfActiveVms = returnValue.getReturnValue();
+                                    checkForNonResponsiveHosts(callback);
+                                }));
+            }
+
+            /**
+             * Checks if in selected cluster are some non responsive hosts. If so, it adds warning about upgrading
+             * cluster level when some hosts are non responsive
+             */
+            @SuppressWarnings("unchecked")
+            private void checkForNonResponsiveHosts(Runnable callback) {
+                Frontend.getInstance()
+                        .runQuery(QueryType.GetHostsByClusterId,
+                                new IdQueryParameters(getSelectedItem().getId()),
+                                new AsyncQuery<>(returnValue -> {
+                                    List<VDS> hosts = null;
+                                    if (returnValue instanceof List) {
+                                        hosts = (List<VDS>) returnValue;
+                                    } else if (returnValue instanceof QueryReturnValue
+                                            && ((QueryReturnValue) returnValue).getReturnValue() instanceof List) {
+                                        hosts = ((QueryReturnValue) returnValue).getReturnValue();
+                                    }
+
+                                    foundNRHosts = false;
+                                    if (hosts != null) {
+                                        for (VDS host : hosts) {
+                                            if (VDSStatus.NonResponsive == host.getStatus()) {
+                                                foundNRHosts = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    callback.run();
+                                }));
+            }
+        };
     }
 
+    private ConfirmationModelChainItem createConfirmClusterWarnings(ClusterModel model) {
+        return new ConfirmationModelChainItem() {
+
+            private ClusterEditWarnings warnings;
+
+            @Override
+            public void init(Runnable callback) {
+                Cluster cluster = buildCluster(model,
+                        model.getIsNew() ? new Cluster() : (Cluster) Cloner.clone(getSelectedItem()));
+
+                AsyncDataProvider.getInstance().getClusterEditWarnings(new AsyncQuery<>(warnings -> {
+                    this.warnings = warnings;
+                    callback.run();
+                }), cluster);
+            }
+
+            @Override
+            public boolean isRequired() {
+                return warnings != null && !warnings.isEmpty();
+            }
+
+            @Override
+            public ConfirmationModel getConfirmation() {
+                ClusterWarningsModel confirmWindow = new ClusterWarningsModel();
+                confirmWindow.init(warnings);
+                return confirmWindow;
+            }
+        };
+    }
 }

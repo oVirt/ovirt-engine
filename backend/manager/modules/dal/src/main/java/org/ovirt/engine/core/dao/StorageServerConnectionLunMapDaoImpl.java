@@ -70,4 +70,10 @@ public class StorageServerConnectionLunMapDaoImpl extends BaseDao implements
     public void remove(LUNStorageServerConnectionMapId id) {
         throw new UnsupportedOperationException();
     }
+
+    public void removeServerConnectionByIdAndLunId(String lunId, String storageServerConnection) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("lun_id", lunId)
+                .addValue("storage_server_connection", storageServerConnection);
+        getCallsHandler().executeModification("DeleteLUN_storage_server_connection_map", parameterSource);
+    }
 }

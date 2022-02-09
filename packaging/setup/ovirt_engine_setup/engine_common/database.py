@@ -1718,5 +1718,41 @@ class OvirtUtils(base.Base):
             upgrade_approved_cleanupold,
         )
 
+    def setDefaultPrivilegesReadOnlyForUser(self, user):
+        # TODO: Reconsider grantReadOnlyAccessToUser:
+        # Unite them? Keep only one?
+        # grantReadOnlyAccessToUser was buggy, bz 2026358.
+        # It's ran during provisioning, requires postgres.
+        # Current can work also with remote db.
+        # grantReadOnlyAccessToUser is used by both dwh/grafana and
+        # provisiondb, latter only for restoring grafana. Perhaps it's
+        # not needed there either, so can be completely removed.
+        owner = _ind_env(self, DEK.USER)
+        db = _ind_env(self, DEK.DATABASE)
+        statement = Statement(
+            environment=self.environment,
+            dbenvkeys=self._dbenvkeys,
+        )
+        res = statement.execute(
+            statement=('SELECT defaclacl FROM pg_default_acl'),
+            ownConnection=True,
+        )
+        # In current 4.4, this returns:
+        # [{'defaclacl': '{ovirt_engine_history_grafana=r/postgres}'}]
+        expected = f'{{{user}=r/{owner}}}'
+        if expected in (x['defaclacl'] for x in res):
+            self.logger.debug(f'User {user} already has default privileges')
+            return
+        self.logger.info(_(f'Allowing {user} to read data on {db}'))
+        statement.execute(
+            statement=(
+                'ALTER DEFAULT PRIVILEGES '
+                f'FOR USER {owner} '
+                'IN SCHEMA public '
+                f'GRANT SELECT ON TABLES TO {user}'
+            ),
+            ownConnection=True,
+        )
+
 
 # vim: expandtab tabstop=4 shiftwidth=4

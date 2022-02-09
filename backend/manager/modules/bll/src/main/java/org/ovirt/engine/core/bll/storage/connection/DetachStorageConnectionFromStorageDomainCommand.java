@@ -15,12 +15,15 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 
 public class DetachStorageConnectionFromStorageDomainCommand<T extends AttachDetachStorageConnectionParameters>
         extends StorageDomainCommandBase<T> {
 
     @Inject
     private StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
     @Inject
     private LunDao lunDao;
 
@@ -58,8 +61,12 @@ public class DetachStorageConnectionFromStorageDomainCommand<T extends AttachDet
         Collection<LUNs> lunsToRemove = (Collection<LUNs>) CollectionUtils.intersection(lunsForConnection, lunsForVG);
 
         for (LUNs lun : lunsToRemove) {
-            if (lunDao.get(lun.getLUNId()) != null) {
-                lunDao.remove(lun.getLUNId());
+            String lunId = lun.getLUNId();
+            if (lunDao.get(lunId) != null) {
+                storageServerConnectionLunMapDao.removeServerConnectionByIdAndLunId(lunId, connectionId);
+                if (storageServerConnectionLunMapDao.getAll(lunId).isEmpty()) {
+                    lunDao.remove(lunId);
+                }
             }
         }
 

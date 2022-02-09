@@ -55,7 +55,6 @@ import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.CopyOnNewVersion;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.EditableVmField;
@@ -1302,10 +1301,9 @@ public class VmHandler implements BackendService {
         return ValidationResult.VALID;
     }
 
-    public void updateCpuAndNumaPinning(VmBase vmBase, CpuPinningPolicy cpuPinningPolicy) {
-        VdsDynamic host = vdsDynamicDao.get(vmBase.getDedicatedVmForVdsList().get(0));
-        NumaPinningHelper.applyAutoPinningPolicy(vmBase, cpuPinningPolicy, host,
-                vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
+    public void updateCpuAndNumaPinning(VM vm, Guid vdsId) {
+        VdsDynamic host = vdsDynamicDao.get(vdsId);
+        NumaPinningHelper.applyAutoPinningPolicy(vm, host, vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
     }
 
     public void autoSelectResumeBehavior(VmBase vmBase) {
@@ -1325,6 +1323,12 @@ public class VmHandler implements BackendService {
                                                 Cluster cluster,
                                                 Map<GraphicsType, GraphicsDevice> graphicsDevices) {
         if (parametersStaticData.getOsId() == OsRepository.AUTO_SELECT_OS) {
+            return;
+        }
+
+        // The selected display type of the Blank template might not be supported in the latest CL,
+        // but that is OK as it might be used in old clusters
+        if (parametersStaticData.getDefaultDisplayType() != null && cluster == null) {
             return;
         }
 
@@ -1555,25 +1559,46 @@ public class VmHandler implements BackendService {
     }
 
     public ValidationResult validateCpuPinningPolicy(VmBase vmBase, boolean numaSet) {
-        if (vmBase.getCpuPinningPolicy() != CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
-            return ValidationResult.VALID;
+        ValidationResult result = ValidationResult.VALID;
+
+        switch (vmBase.getCpuPinningPolicy()) {
+        case MANUAL:
+            if (StringUtils.isBlank(vmBase.getCpuPinning())) {
+                result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_SET_MANUAL_PINNING);
+            }
+            break;
+        case RESIZE_AND_PIN_NUMA:
+            if (numaSet) {
+                result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_RESIZE_AND_PIN_AND_NUMA_SET);
+                break;
+            }
+            boolean singleCoreHostFound = vmBase.getDedicatedVmForVdsList()
+                    .stream()
+                    .map(vdsId -> vdsDynamicDao.get(vdsId))
+                    .anyMatch(vdsDynamic -> vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets() == 1);
+            if (singleCoreHostFound) {
+                result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_RESIZE_AND_PIN_SINGLE_CORE);
+            }
+            break;
+        default:
+            break;
         }
-        if (numaSet) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_RESIZE_AND_PIN_AND_NUMA_SET);
-        }
-        boolean singleCoreHostFound = vmBase.getDedicatedVmForVdsList().stream()
-                .map(vdsId -> vdsDynamicDao.get(vdsId))
-                .anyMatch(vdsDynamic -> vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets() == 1);
-        if (singleCoreHostFound) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_RESIZE_AND_PIN_SINGLE_CORE);
-        }
-        return ValidationResult.VALID;
+
+        return result;
+    }
+
+    public void updateToQ35(VmStatic oldVm,
+                            VmStatic newVm,
+                            Cluster cluster,
+                            CompensationContext compensationContext) {
+        updateToQ35(oldVm, newVm, cluster, compensationContext, false);
     }
 
     public void updateToQ35(VmStatic oldVm,
             VmStatic newVm,
             Cluster cluster,
-            CompensationContext compensationContext) {
+            CompensationContext compensationContext,
+            boolean forceVmStaticUpdate) {
 
         if (newVm.getBiosType() == BiosType.I440FX_SEA_BIOS
                 && cluster.getBiosType().getChipsetType() == ChipsetType.Q35
@@ -1581,7 +1606,7 @@ public class VmHandler implements BackendService {
             newVm.setBiosType(BiosType.Q35_SEA_BIOS);
         }
 
-        if (oldVm.getBiosType() != newVm.getBiosType()) {
+        if (forceVmStaticUpdate || oldVm.getBiosType() != newVm.getBiosType()) {
             VmManager vmManager = resourceManager.getVmManager(newVm.getId());
             vmManager.update(newVm);
 

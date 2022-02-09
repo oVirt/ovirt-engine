@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
@@ -108,6 +109,11 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         setupWindowModelFrom(template);
         updateRngDevice(template.getId());
         getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
+
+        updateBiosType();
+        selectBiosTypeFromTemplate();
+
+        getInstanceTypeManager().updateInstanceTypeFieldsFromSource();
     }
 
     @Override
@@ -137,12 +143,6 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     @Override
-    protected void updateBiosType() {
-        super.updateBiosType();
-        super.selectBiosTypeFromTemplate();
-    }
-
-    @Override
     protected List<Cluster> filterClusters(List<Cluster> clusters) {
         return AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusters);
     }
@@ -158,7 +158,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     @Override
-    protected List<Integer> getOsValues(ArchitectureType architectureType) {
-        return AsyncDataProvider.getInstance().getSupportedOsIds(architectureType);
+    protected List<Integer> getOsValues(ArchitectureType architectureType, Version version) {
+        return AsyncDataProvider.getInstance().getSupportedOsIds(architectureType, version);
     }
 }

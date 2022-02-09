@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -59,6 +60,9 @@ public class OvfVmReader extends OvfOvirtReader {
         consumeReadProperty(content, IS_INITIALIZED, val -> _vm.setInitialized(Boolean.parseBoolean(val)));
         consumeReadProperty(content, QUOTA_ID, val -> _vm.setQuotaId(new Guid(val)));
         consumeReadProperty(content, CPU_PINNING, _vm::setCpuPinning);
+        if (!StringUtils.isBlank(_vm.getCpuPinning())) {
+            _vm.setCpuPinningPolicy(CpuPinningPolicy.MANUAL);
+        }
 
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
         // Gets a list of all the aliases of the fields that should be logged in

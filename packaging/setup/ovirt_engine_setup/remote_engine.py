@@ -228,7 +228,7 @@ class EnrollCert(base.Base):
         ).sign(
             private_key=private_key,
             # TODO Replace with SHA256 if/when it's safe
-            algorithm=hashes.SHA1(),
+            algorithm=hashes.SHA256(),
             backend=default_backend(),
         )
         request_pem = request.public_bytes(

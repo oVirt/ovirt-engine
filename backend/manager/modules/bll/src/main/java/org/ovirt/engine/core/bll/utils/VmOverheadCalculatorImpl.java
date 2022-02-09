@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 
 @Singleton
@@ -57,6 +58,29 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
     }
 
     /**
+     * Return total required RAM for running the given VM.
+     * It includes VM size, expected QEMU overhead and other memory taken from
+     * the system by running the VM (such as page tables).
+     *
+     * Hugepages are taken into account here, a VM backed with hugepages
+     * only consumes the overhead from the free RAM.
+     *
+     * Please note the return value is just estimation of the memory
+     * requirements and the real required RAM may differ in both directions.
+     *
+     * @param vm the relevant VM
+     * @param numOfCpus number of CPUs
+     * @return required amount of memory in MiB
+     * @throws RuntimeException
+     *             thrown in case the cluster architecture cannot be identified
+     */
+    @Override
+    public int getTotalRequiredMemWithoutHugePagesMb(VM vm, int numOfCpus) {
+        int vmRam = HugePageUtils.getRequiredMemoryWithoutHugePages(vm.getStaticData());
+        return vmRam + getOverheadInMb(vm, numOfCpus);
+    }
+
+    /**
      * Get total expected memory overhead
      *
      * It includes VM size, expected QEMU overhead and other memory taken from
@@ -76,6 +100,25 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
     }
 
     /**
+     * Get total expected memory overhead
+     *
+     * It includes VM size, expected QEMU overhead and other memory taken from
+     * the system by running the VM (such as page tables).
+     *
+     * Please note the return value is just estimation of the memory
+     * requirements and the real required RAM may differ in both directions.
+     *
+     * @param vm the relevant VM
+     * @return required amount of memory in MiB
+     * @throws RuntimeException
+     *             thrown in case the cluster architecture cannot be identified
+     */
+    @Override
+    public int getOverheadInMb(VM vm, int numOfCpus) {
+        return getStaticOverheadInMb(vm) + getPossibleOverheadInMb(vm, numOfCpus);
+    }
+
+    /**
      * Get the size of possible memory overhead. This represents memory
      * that might be allocated by QEMU, but the memory is then not used
      * immediately.
@@ -85,8 +128,22 @@ public class VmOverheadCalculatorImpl implements VmOverheadCalculator {
      */
     @Override
     public int getPossibleOverheadInMb(VM vm) {
+        return getPossibleOverheadInMb(vm, VmCpuCountHelper.getDynamicNumOfCpu(vm));
+    }
+
+    /**
+     * Get the size of possible memory overhead. This represents memory
+     * that might be allocated by QEMU, but the memory is then not used
+     * immediately.
+     *
+     * @param vm the relevant VM
+     * @param numOfCpus number of CPUs
+     * @return required amount of memory in MiB
+     */
+    @Override
+    public int getPossibleOverheadInMb(VM vm, int numOfCpus) {
         int videoRam = videoDeviceSettings.totalVideoRAMSizeMb(vm, VmDeviceCommonUtils.isSingleQxlPci(vm.getStaticData()));
-        int cpuOverhead = 8 * vm.getNumOfCpus(true);
+        int cpuOverhead = 8 * numOfCpus;
         int iothreadsOverhead = 8 * vm.getNumOfIoThreads();
 
         return videoRam + cpuOverhead + iothreadsOverhead;

@@ -1099,4 +1099,9 @@ public class NullVdsServer implements IVdsServer {
     public GlusterVolumeGlobalOptionsInfoReturn glusterVolumeGlobalOptionsGet() {
         return null;
     }
+
+    @Override
+    public ScreenshotInfoReturn createScreenshot(String vmId) {
+        return null;
+    }
 }

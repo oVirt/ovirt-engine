@@ -306,6 +306,10 @@ public class ResourceManager implements BackendService {
                     vm.setBootTime(null);
                     vm.setDowntime(0);
                     vm.setRuntimeName(null);
+                    vm.setCurrentCpuPinning(null);
+                    vm.setCurrentSockets(0);
+                    vm.setCurrentCoresPerSocket(0);
+                    vm.setCurrentThreadsPerCore(0);
                 }
             }
         }

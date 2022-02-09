@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -213,6 +214,11 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getCustomCompatibilityVersion().setSelectedItem(getSavedCurrentCustomCompatibilityVersion());
             setCustomCompatibilityVersionChangeInProgress(false);
             updateLeaseStorageDomains(template.getLeaseStorageDomainId());
+
+            updateBiosType();
+            selectBiosTypeFromTemplate();
+
+            getInstanceTypeManager().updateInstanceTypeFieldsFromSource();
         });
     }
 
@@ -409,13 +415,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    protected void updateBiosType() {
-        super.updateBiosType();
-        super.selectBiosTypeFromTemplate();
-    }
-
-    @Override
-    protected List<Integer> getOsValues(ArchitectureType architectureType) {
-        return AsyncDataProvider.getInstance().getSupportedOsIds(architectureType);
+    protected List<Integer> getOsValues(ArchitectureType architectureType, Version version) {
+        return AsyncDataProvider.getInstance().getSupportedOsIds(architectureType, version);
     }
 }

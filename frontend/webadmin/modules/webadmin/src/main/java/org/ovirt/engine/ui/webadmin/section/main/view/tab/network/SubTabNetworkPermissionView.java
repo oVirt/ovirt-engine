@@ -15,7 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabNetworkPermissionView extends AbstractSubTabPermissionsView<NetworkView, NetworkListModel>
+public class SubTabNetworkPermissionView extends AbstractSubTabPermissionsView<NetworkView, NetworkListModel, PermissionListModel<NetworkView>>
         implements SubTabNetworkPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabNetworkPermissionView> {

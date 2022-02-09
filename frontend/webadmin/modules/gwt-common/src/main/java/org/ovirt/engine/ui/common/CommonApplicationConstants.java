@@ -629,7 +629,7 @@ public interface CommonApplicationConstants extends Constants {
 
     String iconLimitationsIconVmPopup();
 
-    String inheritedPermission();
+    String inheritedFromPermission();
 
     String typePermission();
 
@@ -1181,6 +1181,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String cpuPinningLabel();
 
+    String cpuPinningPolicyLabel();
+
     String multiQueuesLabel();
 
     String virtioScsiMultiQueuesEnabled();
@@ -1192,10 +1194,6 @@ public interface CommonApplicationConstants extends Constants {
     String diskFormatTypeMatrixInfo();
 
     String multiQueuesLabelExplanation();
-
-    String cpuPinningPolicyLabelExplanation();
-
-    String cpuPinningPolicyLabel();
 
     String monitors();
 
@@ -1629,6 +1627,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String migrateEncryptedLabel();
 
+    String parallelMigrationsType();
+
+    String customParallelMigrations();
+
     String autoConverge();
 
     String dontAutoConverge();
@@ -1948,4 +1950,6 @@ public interface CommonApplicationConstants extends Constants {
     String typeToSearchPlaceHolder();
 
     String configChangesPending();
+
+    String permissionFilter();
 }

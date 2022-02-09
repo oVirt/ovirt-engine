@@ -990,7 +990,8 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.cpu_pinning AS cpu_pinning,
     vm_templates.balloon_enabled AS balloon_enabled,
     vm_templates.console_disconnect_action_delay AS console_disconnect_action_delay,
-    vm_templates.cpu_pinning_policy AS cpu_pinning_policy
+    vm_templates.cpu_pinning_policy AS cpu_pinning_policy,
+    vm_templates.parallel_migrations AS parallel_migrations
 FROM vm_static AS vm_templates
 LEFT JOIN cluster
     ON vm_templates.cluster_id = cluster.cluster_id
@@ -1079,7 +1080,8 @@ SELECT vm_templates.vm_guid AS vmt_guid,
     vm_templates.predefined_properties AS predefined_properties,
     vm_templates.userdefined_properties AS userdefined_properties,
     vm_templates.is_template_sealed AS is_template_sealed,
-    vm_templates.console_disconnect_action_delay AS console_disconnect_action_delay
+    vm_templates.console_disconnect_action_delay AS console_disconnect_action_delay,
+    vm_templates.parallel_migrations AS parallel_migrations
 FROM vm_static AS vm_templates
 LEFT JOIN cluster
     ON vm_templates.cluster_id = cluster.cluster_id
@@ -1161,7 +1163,8 @@ SELECT vm_templates_1.vm_guid AS vmt_guid,
     vm_templates_1.predefined_properties AS predefined_properties,
     vm_templates_1.userdefined_properties AS userdefined_properties,
     vm_templates_1.is_template_sealed AS is_template_sealed,
-    vm_templates_1.console_disconnect_action_delay AS console_disconnect_action_delay
+    vm_templates_1.console_disconnect_action_delay AS console_disconnect_action_delay,
+    vm_templates_1.parallel_migrations AS parallel_migrations
 FROM vm_static AS vm_templates_1
 LEFT JOIN cluster AS cluster_1
     ON vm_templates_1.cluster_id = cluster_1.cluster_id
@@ -1461,7 +1464,12 @@ SELECT vm_static.vm_name AS vm_name,
     vm_static.namespace AS namespace,
     vm_static.balloon_enabled AS balloon_enabled,
     vm_static.console_disconnect_action_delay AS console_disconnect_action_delay,
-    vm_static.cpu_pinning_policy AS cpu_pinning_policy
+    vm_static.cpu_pinning_policy AS cpu_pinning_policy,
+    vm_dynamic.current_cpu_pinning AS current_cpu_pinning,
+    vm_dynamic.current_sockets AS current_sockets,
+    vm_dynamic.current_cores AS current_cores,
+    vm_dynamic.current_threads AS current_threads,
+    vm_static.parallel_migrations AS parallel_migrations
 FROM vm_static
 INNER JOIN vm_dynamic
     ON vm_static.vm_guid = vm_dynamic.vm_guid
@@ -1698,7 +1706,12 @@ SELECT DISTINCT vms.vm_name,
     vms.namespace,
     vms.balloon_enabled,
     vms.console_disconnect_action_delay,
-    vms.cpu_pinning_policy
+    vms.cpu_pinning_policy,
+    vms.current_cpu_pinning,
+    vms.current_sockets,
+    vms.current_cores,
+    vms.current_threads,
+    vms.parallel_migrations
 FROM vms
 LEFT JOIN tags_vm_map_view
     ON vms.vm_guid = tags_vm_map_view.vm_id

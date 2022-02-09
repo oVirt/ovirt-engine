@@ -415,21 +415,26 @@ public class SsoService {
             boolean isInteractiveAuth) throws AuthenticationException {
         SsoContext ssoContext = getSsoContext(request);
         if (StringUtils.isEmpty(credentials.getUsername())) {
-            throw new AuthenticationException(ssoContext.getLocalizationUtils()
-                    .localize(
-                            isInteractiveAuth ? SsoConstants.APP_ERROR_NO_USER_NAME_IN_CREDENTIALS_INTERACTIVE_AUTH
-                                    : SsoConstants.APP_ERROR_NO_USER_NAME_IN_CREDENTIALS,
+            String error = isInteractiveAuth
+                ? SsoConstants.APP_ERROR_NO_USER_NAME_IN_CREDENTIALS_INTERACTIVE_AUTH
+                : SsoConstants.APP_ERROR_NO_USER_NAME_IN_CREDENTIALS;
+            throw new AuthenticationException(
+                    error,
+                    ssoContext.getLocalizationUtils().localize(
+                            error,
                             (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         if (!credentials.isProfileValid()) {
-            throw new AuthenticationException(ssoContext.getLocalizationUtils()
-                    .localize(
+            throw new AuthenticationException(
+                    SsoConstants.APP_ERROR_NO_VALID_PROFILE_IN_CREDENTIALS,
+                    ssoContext.getLocalizationUtils().localize(
                             SsoConstants.APP_ERROR_NO_VALID_PROFILE_IN_CREDENTIALS,
                             (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         if (StringUtils.isEmpty(credentials.getProfile())) {
-            throw new AuthenticationException(ssoContext.getLocalizationUtils()
-                    .localize(
+            throw new AuthenticationException(
+                    SsoConstants.APP_ERROR_NO_PROFILE_IN_CREDENTIALS,
+                    ssoContext.getLocalizationUtils().localize(
                             SsoConstants.APP_ERROR_NO_PROFILE_IN_CREDENTIALS,
                             (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
@@ -667,7 +672,8 @@ public class SsoService {
         sendJsonDataWithMessage(request, response, new OAuthException(errorCode, ex.getMessage(), ex));
     }
 
-    public static void sendJsonDataWithMessage(HttpServletRequest request,
+    public static void sendJsonDataWithMessage(
+            HttpServletRequest request,
             HttpServletResponse response,
             OAuthException ex) throws IOException {
         log.debug("Exception", ex);

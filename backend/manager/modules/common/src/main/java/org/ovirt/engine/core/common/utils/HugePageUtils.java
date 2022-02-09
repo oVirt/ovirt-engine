@@ -78,7 +78,7 @@ public class HugePageUtils {
     public static Map<Integer, Integer> hugePagesToMap(List<HugePage> hugePages) {
         Map<Integer, Integer> hugePageMap = new HashMap<>(hugePages.size());
         for (HugePage hp: hugePages) {
-            hugePageMap.put(hp.getSizeKB(), hp.getAmount());
+            hugePageMap.put(hp.getSizeKB(), hp.getFree());
         }
         return hugePageMap;
     }
@@ -94,7 +94,7 @@ public class HugePageUtils {
     public static void updateHugePages(List<HugePage> hugePages, Integer sizeKb, Integer amount) {
         for (HugePage hugePage : hugePages) {
             if (Objects.equals(hugePage.getSizeKB(), sizeKb)) {
-                hugePage.setAmount(amount);
+                hugePage.setFree(amount);
                 break;
             }
         }

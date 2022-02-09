@@ -76,6 +76,7 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.scheduling.VmOverheadCalculator;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
@@ -424,7 +425,7 @@ public class SchedulingManager implements BackendService {
                 updateHostNumaNodes(host, numaConsumption);
 
                 for (VM vm : vmsNotOnHost) {
-                    addPendingResources(vm, bestHostId, numaConsumptionPerVm.getOrDefault(vm.getId(), Collections.emptyMap()));
+                    addPendingResources(vm, host, numaConsumptionPerVm.getOrDefault(vm.getId(), Collections.emptyMap()));
                     hostsToNotifyPending.add(bestHostId);
                     vfsUpdates.add(() -> markVfsAsUsedByVm(vm, bestHostId));
                 }
@@ -496,20 +497,22 @@ public class SchedulingManager implements BackendService {
             statistics.setMemFree(statistics.getMemFree() - consumption.getMemoryMB());
 
             for (HugePage hugePage : statistics.getHugePages()) {
-                hugePage.setAmount(hugePage.getAmount() - consumption.getHugePages().getOrDefault(hugePage.getSizeKB(), 0));
+                hugePage.setFree(hugePage.getFree() - consumption.getHugePages().getOrDefault(hugePage.getSizeKB(), 0));
             }
         }
     }
 
-    private void addPendingResources(VM vm, Guid hostId, Map<Integer, NumaNodeMemoryConsumption> numaConsumption) {
-        getPendingResourceManager().addPending(new PendingCpuCores(hostId, vm, vm.getNumOfCpus()));
+    private void addPendingResources(VM vm, VDS host, Map<Integer, NumaNodeMemoryConsumption> numaConsumption) {
+        int numOfCpus = VmCpuCountHelper.getRuntimeNumOfCpu(vm, host);
+        Guid hostId = host.getId();
+        getPendingResourceManager().addPending(new PendingCpuCores(hostId, vm, numOfCpus));
         getPendingResourceManager().addPending(new PendingMemory(hostId, vm, vmOverheadCalculator.getStaticOverheadInMb(vm)));
-        getPendingResourceManager().addPending(new PendingOvercommitMemory(hostId, vm, vmOverheadCalculator.getTotalRequiredMemWithoutHugePagesMb(vm)));
+        getPendingResourceManager().addPending(new PendingOvercommitMemory(hostId, vm, vmOverheadCalculator.getTotalRequiredMemWithoutHugePagesMb(vm, numOfCpus)));
         getPendingResourceManager().addPending(new PendingVM(hostId, vm));
 
         int cpuLoad = vm.getRunOnVds() != null && vm.getStatisticsData() != null && vm.getUsageCpuPercent() != null ?
-                vm.getUsageCpuPercent() * vm.getNumOfCpus() :
-                vcpuLoadPerCore * vm.getNumOfCpus();
+                vm.getUsageCpuPercent() * VmCpuCountHelper.getDynamicNumOfCpu(vm) :
+                vcpuLoadPerCore * VmCpuCountHelper.getDynamicNumOfCpu(vm);
 
         getPendingResourceManager().addPending(new PendingCpuLoad(hostId, vm, cpuLoad));
 
@@ -545,7 +548,7 @@ public class SchedulingManager implements BackendService {
 
 
         boolean considerCpuPinning = filteredVms.stream()
-                .anyMatch(vm -> !StringUtils.isEmpty(vm.getCpuPinning()));
+                .anyMatch(vm -> !StringUtils.isEmpty(VmCpuCountHelper.isAutoPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning()));
 
         Optional<Map<Guid, Integer>> nodeAssignment = Optional.empty();
         if (considerCpuPinning) {

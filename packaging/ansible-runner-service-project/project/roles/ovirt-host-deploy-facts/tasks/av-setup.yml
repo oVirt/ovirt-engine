@@ -5,10 +5,26 @@
       tags:
         - skip_ansible_lint # E305
 
-    - name: Find relevant advanced virtualization module version
+    - name: Set virt module version for RHEL 8.6 and newer
       set_fact:
-        virt_mod_ver: "{{ 'av' if ansible_distribution_version is version('8.4', '>=') else
-            ansible_distribution_version }}"
+        virt_mod_ver: "rhel"
+      when:
+        - ansible_distribution_version is version('8.6', '>=')
+
+    - name: Set virt module version for RHEL 8.4 and 8.5
+      set_fact:
+        virt_mod_ver: "av"
+      when:
+        - virt_mod_ver is not defined
+        - ansible_distribution_version is version('8.4', '>=')
+        - ansible_distribution_version is version('8.5', '<=')
+
+    - name: Set virt module version for RHEL 8.3 and older
+      set_fact:
+        virt_mod_ver: "{{ ansible_distribution_version }}"
+      when:
+        - virt_mod_ver is not defined
+        - ansible_distribution_version is version('8.3', '<=')
 
     - name: Enable advanced virtualization module
       shell: "dnf -y module enable virt:{{ virt_mod_ver }}"

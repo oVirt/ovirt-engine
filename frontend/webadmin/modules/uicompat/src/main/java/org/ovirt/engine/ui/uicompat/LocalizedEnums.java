@@ -1261,6 +1261,14 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ConsoleDisconnectAction___REBOOT();
 
+    String CpuPinningPolicy___NONE();
+
+    String CpuPinningPolicy___MANUAL();
+
+    String CpuPinningPolicy___RESIZE_AND_PIN_NUMA();
+
+    String CpuPinningPolicy___DEDICATED();
+
     String SerialNumberPolicy___HOST_ID();
 
     String SerialNumberPolicy___VM_ID();
@@ -1520,6 +1528,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VmInterfaceType___e1000();
 
+    String VmInterfaceType___e1000e();
+
     String VmInterfaceType___pv();
 
     String VmInterfaceType___spaprVlan();
@@ -1724,6 +1734,14 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String MigrationBandwidthLimitType___CUSTOM();
 
+    String ParallelMigrationsType___AUTO();
+
+    String ParallelMigrationsType___AUTO_PARALLEL();
+
+    String ParallelMigrationsType___DISABLED();
+
+    String ParallelMigrationsType___CUSTOM();
+
     String ImageInfoModel$QemuCompat___V2();
 
     String ImageInfoModel$QemuCompat___V3();
@@ -1771,10 +1789,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String CloudInitNetworkProtocol___ENI();
 
     String CloudInitNetworkProtocol___OPENSTACK_METADATA();
-
-    String CpuPinningPolicy___NONE();
-
-    String CpuPinningPolicy___RESIZE_AND_PIN_NUMA();
 
     String VirtioMultiQueueType___DISABLED();
 

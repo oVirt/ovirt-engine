@@ -60,6 +60,7 @@ public class InstanceTypesPopupWidget extends AbstractVmPopupWidget {
                 putOne(templateVersionNameEditor, hiddenField()).
                 putOne(bootMenuEnabledEditor, hiddenField()).
                 putOne(serialNumberPolicyEditor, hiddenField()).
+                putOne(parallelMigrationsTypeEditor, hiddenField()).
                 putOne(timeZoneEditorWithInfo, hiddenField()).
                 putOne(startRunningOnPanel, hiddenField()).
                 putOne(spiceCopyPasteEnabledEditor, hiddenField()).

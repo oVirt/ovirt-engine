@@ -8,6 +8,7 @@
     "{{ ovirt_ova_pack_disks }}"
     "{{ ovirt_ova_pack_tpm }}"
     "{{ ovirt_ova_pack_nvram }}"
+    "{{ ovirt_ova_pack_padding }}"
   args:
     executable: "{{ ansible_python_interpreter }}"
   register: packing_result

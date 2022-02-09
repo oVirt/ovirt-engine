@@ -88,6 +88,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -1459,6 +1460,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VnicProfileBreadCrumbsPresenterWidget.class,
                 VnicProfileBreadCrumbsPresenterWidget.VnicProfileBreadCrumbsViewDef.class,
                 VnicProfileBreadCrumbsView.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<VnicProfileView, VnicProfileListModel>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<VnicProfileListModel>>(){},
+                new TypeLiteral<SearchPanelView<VnicProfileListModel>>(){});
         bindActionPanel(new TypeLiteral<ActionPanelPresenterWidget.ViewDef<VnicProfileView, VnicProfileView>>(){},
             new TypeLiteral<ActionPanelView<VnicProfileView, VnicProfileView>>(){});
 

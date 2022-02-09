@@ -66,6 +66,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -399,8 +400,9 @@ public class LibvirtVmXmlBuilder {
 
     private void writevCpu() {
         writer.writeStartElement("vcpu");
-        writer.writeAttributeString("current", String.valueOf(vm.getNumOfCpus()));
-        writer.writeRaw(String.valueOf(VmInfoBuildUtils.maxNumberOfVcpus(vm)));
+        writer.writeAttributeString("current", String.valueOf(VmCpuCountHelper.getDynamicNumOfCpu(vm)));
+        writer.writeRaw(String.valueOf(VmCpuCountHelper.isAutoPinning(vm) ?
+                VmCpuCountHelper.getDynamicNumOfCpu(vm) : VmInfoBuildUtils.maxNumberOfVcpus(vm)));
         writer.writeEndElement();
     }
 
@@ -460,11 +462,23 @@ public class LibvirtVmXmlBuilder {
         }
 
         if ((boolean) Config.getValue(ConfigValues.SendSMPOnRunVm)) {
+            int sockets;
+            int cores;
+            int threads;
+            if (VmCpuCountHelper.isDynamicCpuTopologySet(vm)) {
+                sockets = vm.getCurrentSockets();
+                cores = vm.getCurrentCoresPerSocket();
+                threads = vm.getCurrentThreadsPerCore();
+            } else {
+                int vcpus = VmInfoBuildUtils.maxNumberOfVcpus(vm);
+                sockets = vcpus / vm.getCpuPerSocket() / vm.getThreadsPerCpu();
+                cores = vm.getCpuPerSocket();
+                threads = vm.getThreadsPerCpu();
+            }
             writer.writeStartElement("topology");
-            writer.writeAttributeString("cores", Integer.toString(vm.getCpuPerSocket()));
-            writer.writeAttributeString("threads", Integer.toString(vm.getThreadsPerCpu()));
-            int vcpus = VmInfoBuildUtils.maxNumberOfVcpus(vm);
-            writer.writeAttributeString("sockets", String.valueOf(vcpus / vm.getCpuPerSocket() / vm.getThreadsPerCpu()));
+            writer.writeAttributeString("cores", Integer.toString(cores));
+            writer.writeAttributeString("threads", Integer.toString(threads));
+            writer.writeAttributeString("sockets", String.valueOf(sockets));
             writer.writeEndElement();
         }
 
@@ -507,7 +521,8 @@ public class LibvirtVmXmlBuilder {
 
     private void writeCpuTune(boolean numaEnabled) {
         writer.writeStartElement("cputune");
-        Map<String, Object> cpuPinning = vmInfoBuildUtils.parseCpuPinning(vm.getCpuPinning());
+        Map<String, Object> cpuPinning = vmInfoBuildUtils.parseCpuPinning(VmCpuCountHelper.isAutoPinning(vm) ?
+                vm.getCurrentCpuPinning() : vm.getCpuPinning());
         if (cpuPinning.isEmpty() && numaEnabled) {
             cpuPinning = NumaSettingFactory.buildCpuPinningWithNumaSetting(
                     vmNumaNodesSupplier.get(),
@@ -2120,7 +2135,7 @@ public class LibvirtVmXmlBuilder {
                 if (index != null && vmDeviceVirtioScsiUnitMap.containsKey(index)) {
                     numOfDisks = vmDeviceVirtioScsiUnitMap.get(index).size();
                 }
-                queues = vmInfoBuildUtils.getNumOfScsiQueues(numOfDisks, vm.getNumOfCpus());
+                queues = vmInfoBuildUtils.getNumOfScsiQueues(numOfDisks, VmCpuCountHelper.getDynamicNumOfCpu(vm));
             } else if (vm.getVirtioScsiMultiQueues() > 0) {
                 queues = vm.getVirtioScsiMultiQueues();
             }
@@ -2750,7 +2765,7 @@ public class LibvirtVmXmlBuilder {
             }
 
             if (queues == null && vm.isMultiQueuesEnabled() && vmInfoBuildUtils.isInterfaceQueuable(device, nic)) {
-                queues = String.valueOf(vmInfoBuildUtils.getOptimalNumOfQueuesPerVnic(vm.getNumOfCpus()));
+                queues = String.valueOf(vmInfoBuildUtils.getOptimalNumOfQueuesPerVnic(VmCpuCountHelper.getDynamicNumOfCpu(vm)));
             }
 
             String driverName = getDriverNameForNetwork(!networkless ? network.getName() : "");

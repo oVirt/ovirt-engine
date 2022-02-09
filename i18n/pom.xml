@@ -13,8 +13,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
-    <slf4j.version>1.7.5</slf4j.version>
-    <log4j.version>1.2.17</log4j.version>
+    <slf4j.version>1.7.22</slf4j.version>
     <snakeyaml.version>1.17</snakeyaml.version>
 
     <working-zanata-directory>target/zanata</working-zanata-directory>
@@ -32,15 +31,11 @@
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <artifactId>slf4j-jdk14</artifactId>
       <version>${slf4j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${log4j.version}</version>
     </dependency>
 
     <dependency>
@@ -72,6 +67,7 @@
 
           <!-- JVM arguments -->
           <arguments>
+            <argument>-Djava.util.logging.config.file=src/main/resources/jul.properties</argument>
             <argument>-classpath</argument>
             <classpath />
             <argument>org.ovirt.engine.i18n.NormalizePulledTranslations</argument>

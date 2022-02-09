@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -460,7 +459,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         }
 
         failValidation(List.of(EngineMessage.CLUSTER_CANNOT_UPDATE_CLUSTER_FAILED_TO_UPDATE_VMS),
-                "$VmList " + nameJoiner.toString());
+                "$VmList " + nameJoiner.toString(),
+                "$VmFirstError " + failedUpgradeEntities.get(0).getSecond());
         getReturnValue().setValid(false);
         setSucceeded(false);
         return false;
@@ -504,11 +504,19 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                     createUpdateVmParameters(vm),
                     cloneContextWithNoCleanupCompensation());
 
+
+
             if (!result.getSucceeded()) {
                 List<String> params = new ArrayList<>();
                 params.add("$action Update");
                 params.add("$type VM");
-                params.add(parseErrorMessage(result.getValidationMessages()));
+
+                if (!result.isValid()) {
+                    params.addAll(result.getValidationMessages());
+                } else {
+                    params.addAll(result.getExecuteFailedMessages());
+                }
+
                 List<String> messages = backend.getErrorsTranslator().translateErrorText(params);
 
                 failedUpgradeEntities.add(new Pair<>(vm.getName(), getFailedMessage(messages)));
@@ -614,7 +622,13 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 List<String> params = new ArrayList<>();
                 params.add("$action Update");
                 params.add("$type Template");
-                params.add(parseErrorMessage(result.getValidationMessages()));
+
+                if (!result.isValid()) {
+                    params.addAll(result.getValidationMessages());
+                } else {
+                    params.addAll(result.getExecuteFailedMessages());
+                }
+
                 List<String> messages = backend.getErrorsTranslator().translateErrorText(params);
 
                 failedUpgradeEntities.add(new Pair<>(template.getName(), getFailedMessage(messages)));
@@ -628,17 +642,6 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             msg = messages.get(0);
         }
         return msg;
-    }
-
-    private String parseErrorMessage(List<String> messages) {
-        // method gets command Validation Messages and return the message
-        for(String message: messages) {
-            Matcher matcher = MESSAGE_PATTERN.matcher(message);
-            if (matcher.matches()) {
-                return matcher.group("error");
-            }
-        }
-        return "";
     }
 
     private void updateResumeBehavior(VmBase vmBase) {

@@ -27,4 +27,14 @@
 
 - name: Reload NetworkManager config
   command: nmcli general reload conf
-  when: "'NetworkManager.service' in ansible_facts.services"
+  when:
+    - "'NetworkManager.service' in ansible_facts.services"
+    - el_ver|int >= 8
+
+- name: Restart NetworkManager service
+  service:
+    name: NetworkManager.service
+    state: restarted
+  when:
+    - "'NetworkManager.service' in ansible_facts.services"
+    - el_ver|int == 7

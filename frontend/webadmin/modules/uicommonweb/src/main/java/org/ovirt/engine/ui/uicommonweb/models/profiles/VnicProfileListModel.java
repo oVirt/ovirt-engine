@@ -5,10 +5,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
@@ -61,7 +64,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
 
         setDefaultSearchString(SearchStringMapping.VNIC_PROFILE_DEFAULT_SEARCH + ":"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
-        // setSearchObjects(new String[] { SearchObjects.PROFILE_OBJ_NAME, SearchObjects.PROFILE_PLU_OBJ_NAME });
+        setSearchObjects(new String[] { SearchObjects.VNIC_PROFILE_OBJ_NAME, SearchObjects.VNIC_PROFILE_PLU_OBJ_NAME});
         setAvailableInModes(ApplicationMode.VirtOnly);
 
         setComparator(Linq.VnicProfileViewComparator);
@@ -126,7 +129,10 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
 
     @Override
     protected void syncSearch() {
-        AsyncDataProvider.getInstance().getAllVnicProfiles(new SetRawItemsAsyncQuery());
+        SearchParameters tempVar =
+                new SearchParameters(applySortOptions(getSearchString()), SearchType.VnicProfile, isCaseSensitiveSearch());
+        tempVar.setMaxCount(getSearchPageSize());
+        super.syncSearch(QueryType.Search, tempVar);
     }
 
     @Override

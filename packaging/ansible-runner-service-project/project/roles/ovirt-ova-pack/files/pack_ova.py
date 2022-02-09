@@ -70,6 +70,9 @@ def write_padding_file(ova_file, padding_size):
 
 
 def pad_to_fs_block_size(ova_file):
+    if padding != "true":
+        print("padding is switched off")
+        return
     remainder = (ova_file.tell() + TAR_BLOCK_SIZE) % FS_BLOCK_SIZE
     # remainder is a multiple of TAR_BLOCK_SIZE, because everything in TAR
     # file is aligned to TAR_BLOCK_SIZE
@@ -128,7 +131,7 @@ def write_null_blocks(ova_file):
 
 if len(sys.argv) < 3:
     print("Usage: pack_ova.py <vm/template> output_path ovf"
-          " [disks_info [tpm_data] [nvram_data]]")
+          " [disks_info [tpm_data] [nvram_data] [padding]]")
     sys.exit(2)
 
 entity = sys.argv[1]
@@ -137,6 +140,7 @@ ovf = sys.argv[3]
 disks_info = sys.argv[4]
 tpm_data = sys.argv[5]
 nvram_data = sys.argv[6]
+padding = sys.argv[7]
 with io.open(ova_path, "wb") as ova_file:
     write_ovf(entity, ova_file, ovf)
     if len(tpm_data) > 0:

@@ -32,6 +32,7 @@ public class MacPoolFactory {
                 MacAddressRangeUtils.macPoolToRanges(macPool),
                 macPool.isAllowDuplicateMacAddresses(),
                 auditLogDirector);
+        macPoolUsingRanges.setMacPoolName(macPool.getName());
 
         macPoolUsingRanges.initialize(engineStartup, macsUsedAcrossWholeSystem.getMacsForMacPool(macPool.getId()));
         reportOverlappingRanges(macPool);

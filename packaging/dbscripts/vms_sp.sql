@@ -320,7 +320,11 @@ CREATE OR REPLACE FUNCTION InsertVmDynamic (
     v_guestos_kernel_version VARCHAR(255),
     v_guestos_type VARCHAR(255),
     v_guestos_version VARCHAR(255),
-    v_guest_containers TEXT
+    v_guest_containers TEXT,
+    v_current_cpu_pinning VARCHAR(4000),
+    v_current_sockets INT,
+    v_current_cores INT,
+    v_current_threads INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -376,7 +380,11 @@ BEGIN
         guestos_kernel_version,
         guestos_type,
         guestos_version,
-        guest_containers
+        guest_containers,
+        current_cpu_pinning,
+        current_sockets,
+        current_cores,
+        current_threads
         )
     VALUES (
         v_app_list,
@@ -430,7 +438,11 @@ BEGIN
         v_guestos_kernel_version,
         v_guestos_type,
         v_guestos_version,
-        v_guest_containers
+        v_guest_containers,
+        v_current_cpu_pinning,
+        v_current_sockets,
+        v_current_cores,
+        v_current_threads
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -488,7 +500,11 @@ CREATE OR REPLACE FUNCTION UpdateVmDynamic (
     v_guestos_kernel_version VARCHAR(255),
     v_guestos_type VARCHAR(255),
     v_guestos_version VARCHAR(255),
-    v_guest_containers TEXT
+    v_guest_containers TEXT,
+    v_current_cpu_pinning VARCHAR(4000),
+    v_current_sockets INT,
+    v_current_cores INT,
+    v_current_threads INT
     )
 RETURNS VOID
     --The [vm_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -546,7 +562,11 @@ BEGIN
         guestos_kernel_version = v_guestos_kernel_version,
         guestos_type = v_guestos_type,
         guestos_version = v_guestos_version,
-        guest_containers = v_guest_containers
+        guest_containers = v_guest_containers,
+        current_cpu_pinning = v_current_cpu_pinning,
+        current_sockets = v_current_sockets,
+        current_cores = v_current_cores,
+        current_threads = v_current_threads
     WHERE vm_guid = v_vm_guid;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -729,7 +749,8 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_namespace VARCHAR(253),
     v_balloon_enabled BOOLEAN,
     v_console_disconnect_action_delay SMALLINT,
-    v_cpu_pinning_policy SMALLINT)
+    v_cpu_pinning_policy SMALLINT,
+    v_parallel_migrations SMALLINT)
   RETURNS VOID
    AS $procedure$
 DECLARE
@@ -816,7 +837,8 @@ INSERT INTO vm_static(description,
                       namespace,
                       balloon_enabled,
                       console_disconnect_action_delay,
-                      cpu_pinning_policy)
+                      cpu_pinning_policy,
+                      parallel_migrations)
     VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
@@ -895,7 +917,8 @@ INSERT INTO vm_static(description,
            v_namespace,
            v_balloon_enabled,
            v_console_disconnect_action_delay,
-           v_cpu_pinning_policy);
+           v_cpu_pinning_policy,
+           v_parallel_migrations);
 
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE
@@ -1101,7 +1124,8 @@ v_use_tsc_frequency BOOLEAN,
 v_namespace VARCHAR(253),
 v_balloon_enabled BOOLEAN,
 v_console_disconnect_action_delay SMALLINT,
-v_cpu_pinning_policy SMALLINT)
+v_cpu_pinning_policy SMALLINT,
+v_parallel_migrations SMALLINT)
 
 RETURNS VOID
 
@@ -1187,7 +1211,8 @@ BEGIN
      namespace = v_namespace,
      balloon_enabled = v_balloon_enabled,
      console_disconnect_action_delay = v_console_disconnect_action_delay,
-     cpu_pinning_policy = v_cpu_pinning_policy
+     cpu_pinning_policy = v_cpu_pinning_policy,
+     parallel_migrations = v_parallel_migrations
      WHERE vm_guid = v_vm_guid
          AND entity_type = 'VM';
 

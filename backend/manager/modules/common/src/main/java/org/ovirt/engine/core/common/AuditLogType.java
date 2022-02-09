@@ -57,6 +57,7 @@ public enum AuditLogType {
     VDS_FAILED_TO_RUN_VMS(500, AuditLogSeverity.ERROR,
             AuditLogTimeInterval.MINUTE.getValue()),
     VDS_INSTALL(504),
+    HOSTED_ENGINE_MAX_RECOMMENDED_HOSTS_INSTALLED(526, AuditLogSeverity.WARNING),
     VDS_INSTALL_FAILED(505, AuditLogSeverity.ERROR),
     VDS_INITIATED_RUN_VM(506),
     VDS_INITIATED_RUN_VM_AS_STATELESS(537),
@@ -790,6 +791,7 @@ public enum AuditLogType {
     USER_REMOVE_CLUSTER(813),
     USER_REMOVE_CLUSTER_FAILED(814, AuditLogSeverity.ERROR),
     MAC_POOL_EMPTY(816, AuditLogSeverity.WARNING),
+    MAC_POOL_ALMOST_EMPTY(8160, AuditLogSeverity.WARNING),
     MAC_ADDRESS_IS_EXTERNAL(925, AuditLogSeverity.WARNING),
     MAC_ADDRESS_IS_IN_USE(833, AuditLogSeverity.WARNING),
     MAC_ADDRESS_HAD_TO_BE_REALLOCATED(10916, AuditLogSeverity.WARNING),
@@ -1613,6 +1615,9 @@ public enum AuditLogType {
     // KubeVirt related
     USER_ADD_VM_TO_KUBEVIRT_REQUEST(13500),
     USER_ADD_VM_TO_KUBEVIRT_REQUEST_FAILED(13501),
+
+    SCREENSHOT_VM_SUCCESS(13502, AuditLogSeverity.NORMAL),
+    USER_FAILED_TO_SCREENSHOT_VM(13503, AuditLogSeverity.ERROR),
 
     // A generic error message to log validation failure events
     GENERIC_ERROR_MESSAGE(14001, AuditLogSeverity.ERROR);

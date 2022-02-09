@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.math.BigInteger;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -95,6 +96,15 @@ public abstract class BaseDao {
         } else {
             return resultSet.getLong(columnName);
         }
+    }
+
+    /**
+     * Returns a BigDecimal or a null if the column was NULL.
+     * @param resultSet the ResultSet to extract the result from
+     * @return a BigDecimal or null
+     */
+    public static BigInteger getBigInteger(ResultSet resultSet, String columnName) throws SQLException {
+        return resultSet.getBigDecimal(columnName) == null ? null : resultSet.getBigDecimal(columnName).toBigIntegerExact();
     }
 
     /**

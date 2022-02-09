@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -731,11 +732,23 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
         setUsbPolicy(translator.translate(vm.getUsbPolicy()));
 
-        setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
-                vm.getNumOfCpus(),
-                vm.getNumOfSockets(),
-                vm.getCpuPerSocket(),
-                vm.getThreadsPerCpu()));
+        if (VmCpuCountHelper.isAutoPinning(vm)) {
+            if (vm.isRunning() && vm.getCurrentNumOfCpus() > 0) {
+                setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
+                        vm.getCurrentNumOfCpus(),
+                        vm.getCurrentSockets(),
+                        vm.getCurrentCoresPerSocket(),
+                        vm.getCurrentThreadsPerCore()));
+            } else {
+                setCpuInfo(ConstantsManager.getInstance().getConstants().adjustToHost());
+            }
+        } else {
+            setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
+                    vm.getNumOfCpus(),
+                    vm.getNumOfSockets(),
+                    vm.getCpuPerSocket(),
+                    vm.getThreadsPerCpu()));
+        }
 
         setGuestCpuCount(vm.getGuestCpuCount());
 

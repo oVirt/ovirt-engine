@@ -61,7 +61,7 @@ public class OsQueryParameters extends QueryParametersBase {
         GetDiskHotpluggableInterfacesMap,
         GetLinuxOss,
         GetOsIds,
-        GetMinimumOsRam,
+        GetMinOsRam,
         GetMaxOsRam,
         GetFloppySupport,
         GetDiskInterfaces,
@@ -76,7 +76,9 @@ public class OsQueryParameters extends QueryParametersBase {
         GetSoundDeviceSupportMap,
         Get64BitOss,
         GetVmInitMap,
-        GetTpmAllowedMap,
+        GetTpmSupportMap,
         GetUnsupportedOsIds,
+        GetMinCpus,
+        GetTpmRequiredMap
     }
 }

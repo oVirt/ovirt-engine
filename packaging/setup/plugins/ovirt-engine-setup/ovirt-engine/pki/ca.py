@@ -900,13 +900,13 @@ class Plugin(plugin.PluginBase):
             oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
         )
         self.dialog.note(
-            text=_('Internal CA {fingerprint}').format(
+            text=_('Internal CA fingerprint: SHA256: {fingerprint}').format(
                 fingerprint=re.sub(
                     r'(..)',
                     r':\1',
                     binascii.b2a_hex(
                         x509cert.fingerprint(
-                            algorithm=hashes.SHA1()
+                            algorithm=hashes.SHA256()
                         )
                     ).decode().upper()
                 )[1:],

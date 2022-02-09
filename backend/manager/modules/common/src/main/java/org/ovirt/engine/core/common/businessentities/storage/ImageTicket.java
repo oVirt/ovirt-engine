@@ -20,6 +20,8 @@ public class ImageTicket implements BusinessEntity<Guid> {
 
     private int timeout;
 
+    private int inactivityTimeout;
+
     private String[] ops;
 
     private boolean sparse;
@@ -67,6 +69,14 @@ public class ImageTicket implements BusinessEntity<Guid> {
         this.timeout = timeout;
     }
 
+    public int getInactivityTimeout() {
+        return inactivityTimeout;
+    }
+
+    public void setInactivityTimeout(int timeout) {
+        this.inactivityTimeout = timeout;
+    }
+
     public String[] getOps() {
         return ops;
     }
@@ -111,6 +121,7 @@ public class ImageTicket implements BusinessEntity<Guid> {
         Map<String, Object> ticketDict = new HashMap<>();
         ticketDict.put("uuid", id.toString());
         ticketDict.put("timeout", timeout);
+        ticketDict.put("inactivity_timeout", inactivityTimeout);
         ticketDict.put("size", size);
         ticketDict.put("url", url);
         ticketDict.put("ops", ops);
@@ -135,6 +146,7 @@ public class ImageTicket implements BusinessEntity<Guid> {
         ImageTicket that = (ImageTicket) o;
         return size == that.size &&
                 timeout == that.timeout &&
+                inactivityTimeout == that.inactivityTimeout &&
                 sparse == that.sparse &&
                 Objects.equals(id, that.id) &&
                 Objects.equals(url, that.url) &&
@@ -146,7 +158,7 @@ public class ImageTicket implements BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, size, url, timeout, sparse, transferId, filename, dirty);
+        int result = Objects.hash(id, size, url, timeout, inactivityTimeout, sparse, transferId, filename, dirty);
         result = 31 * result + Arrays.hashCode(ops);
         return result;
     }

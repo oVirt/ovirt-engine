@@ -200,6 +200,7 @@ public final class VdsProperties {
     public static final String transparent_huge_pages = "transparentHugePages";
     public static final String hugepages = "hugepages";
     public static final String free_hugepages = "vm.free_hugepages";
+    public static final String total_hugepages = "nr_hugepages";
 
     public static final String exit_code = "exitCode";
     public static final String exit_message = "exitMessage";
@@ -435,6 +436,7 @@ public final class VdsProperties {
     public static final String MIGRATION_CONVERGENCE_SCHEDULE = "convergenceSchedule";
     public static final String ENABLE_GUEST_EVENTS = "enableGuestEvents";
     public static final String MIGRATION_BANDWIDTH = "maxBandwidth";
+    public static final String PARALLEL_MIGRATION_CONNECTIONS = "parallel";
     public static final String MIGRATION_INIT_STEPS = "init";
     public static final String MIGRATION_STALLING_STEPS = "stalling";
     public static final String MIGRATION_SOURCE = "Migration Source";

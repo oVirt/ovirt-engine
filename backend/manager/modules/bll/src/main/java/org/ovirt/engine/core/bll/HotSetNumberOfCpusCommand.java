@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HotSetNumberOfCpusParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -82,6 +83,10 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
                     EngineMessage.HOT_UNPLUG_CPU_IS_NOT_SUPPORTED_FOR_GUEST_OS,
                     String.format("$guestOS %1$s", osRepository.getOsName(getVm().getVmOsId())),
                     String.format("$architecture %1$s", getVm().getClusterArch()));
+        }
+        if (getVm().getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
+            valid = failValidation(EngineMessage.HOT_PLUG_CPU_CONFLICT,
+                    String.format("%1$s", getVm().getCpuPinningPolicy().name()));
         }
 
         return valid;

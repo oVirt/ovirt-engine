@@ -95,6 +95,7 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -149,6 +150,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private DiskVmElementDao diskVmElementDao;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    private OsRepository osRepository;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
@@ -218,9 +221,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 getParameters().setSoundDeviceEnabled(false);
             }
 
-            if (getParameters().isTpmEnabled() == null) {
-                getParameters().setTpmEnabled(false);
-            }
             if (getParameters().isConsoleEnabled() == null) {
                 getParameters().setConsoleEnabled(false);
             }
@@ -690,7 +690,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 && validate(VmValidator.validateCpuSockets(
                         getParameters().getMasterVm(),
                         getVm().getCompatibilityVersion(),
-                        getCluster().getArchitecture()));
+                        getCluster().getArchitecture(),
+                        osRepository));
     }
 
     protected boolean isVmStatusValid(VMStatus status) {
@@ -973,6 +974,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getAutoConverge(),
                         getParameters().getMasterVm().getMigrateCompressed(),
                         getParameters().getMasterVm().getMigrateEncrypted(),
+                        getParameters().getMasterVm().getParallelMigrations(),
                         getParameters().getMasterVm().getUserDefinedProperties(),
                         getParameters().getMasterVm().getPredefinedProperties(),
                         getParameters().getMasterVm().getCustomProperties(),

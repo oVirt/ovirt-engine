@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -142,7 +143,7 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
                 DiskImage disk = (DiskImage) entry.getValue();
                 ImportDiskData importDiskData = getDiskImportData(disk.getDiskAlias());
-                disk.setVolumeType(getAllocation().getSelectedItem());
+                disk.setVolumeType(getVolumeType());
                 // in kvm we just copy the image, in other modes such as vmware or xen we use
                 // virt-v2v which converts the image format as well
                 if (vm.getOrigin() != OriginType.KVM) {
@@ -168,5 +169,10 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
         }
 
         return prms;
+    }
+
+    private VolumeType getVolumeType() {
+        return getAllocation().getSelectedItem() == null ? VolumeType.Sparse
+                : getAllocation().getSelectedItem();
     }
 }

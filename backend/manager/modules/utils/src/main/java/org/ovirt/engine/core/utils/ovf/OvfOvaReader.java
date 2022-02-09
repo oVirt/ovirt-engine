@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ovf.xml.XmlAttribute;
@@ -297,5 +298,10 @@ public abstract class OvfOvaReader extends OvfReader {
         super.updateSingleNic(node, iface, nicIdx);
         XmlNode macNode = selectSingleNode(node, "rasd:MACAddress", _xmlNS);
         iface.setMacAddress(macNode != null ? macNode.innerText : null);
+    }
+
+    @Override
+    protected VolumeType getDefaultVolumeType() {
+        return VolumeType.Sparse;
     }
 }

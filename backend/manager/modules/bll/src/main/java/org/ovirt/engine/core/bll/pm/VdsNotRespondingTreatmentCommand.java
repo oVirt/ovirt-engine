@@ -28,16 +28,20 @@ import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.VdsDynamicDaoImpl;
 import org.ovirt.engine.core.utils.ThreadUtils;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategyFactory;
 
@@ -68,6 +72,9 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     private VdsDao vdsDao;
     @Inject
     private HostLocking hostLocking;
+    @Inject
+    private VdsDynamicDaoImpl vdsDynamicDao;
+
 
     public VdsNotRespondingTreatmentCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -120,6 +127,11 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     @Override
     protected void executeCommand() {
         VDS host = getVds();
+        if (host.isInFenceFlow()) {
+            // host was detected already as non responding and fencing flow is active
+            return;
+        }
+        updateHostInFenceFlow(host.getId(), false);
         if (!previousHostedEngineHost.isPreviousHostId(host.getId())
                 && !fenceValidator.isStartupTimeoutPassed()
                 && !host.isInFenceFlow()) {
@@ -193,6 +205,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             getParameters().setFencingPolicy(fencingPolicy);
 
             waitUntilSkipFencingIfSDActiveAllowed(fencingPolicy.isSkipFencingIfSDActive());
+            updateHostInFenceFlow(getVdsId(), true);
             restartVdsResult = runInternalAction(ActionType.RestartVds,
                     getParameters(), cloneContext().withoutExecutionContext());
         } else {
@@ -211,6 +224,8 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         } else {
             getReturnValue().setSucceeded(shouldBeFenced);
         }
+        // reset the flag since we have completed the restart action, not matter if it succeeded or not
+        updateHostInFenceFlow(host.getId(), false);
     }
 
     private void setStoragePoolNonOperational() {
@@ -290,5 +305,13 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return hostLocking.getPowerManagementLock(getVdsId());
+    }
+    private void updateHostInFenceFlow(Guid hostId, boolean isInFenceFlow) {
+        TransactionSupport.executeInNewTransaction(() -> {
+            VdsDynamic vdsDynamic = vdsDynamicDao.get(hostId);
+            vdsDynamic.setInFenceFlow(isInFenceFlow);
+            vdsDynamicDao.update(vdsDynamic);
+            return null;
+        });
     }
 }

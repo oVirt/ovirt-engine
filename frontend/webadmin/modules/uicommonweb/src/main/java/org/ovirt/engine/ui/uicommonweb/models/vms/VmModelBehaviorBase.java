@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -476,7 +477,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        List<Integer> vmOsValues = getOsValues(cluster.getArchitecture());
+        List<Integer> vmOsValues = getOsValues(cluster.getArchitecture(), getCompatibilityVersion());
 
         if (selectedOsId == null || !vmOsValues.contains(selectedOsId)) {
             updateOSValues();
@@ -905,6 +906,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
+        if (getModel().getCpuPinningPolicy().getSelectedItem().getPolicy() != CpuPinningPolicy.MANUAL) {
+            getModel().getCpuPinning().setIsChangeable(false, constants.cpuPinningUnavailable());
+            getModel().getCpuPinning().setEntity(null);
+            return;
+        }
+
         if (getModel().getSelectedCluster() != null) {
             boolean isLocalSD = getModel().getSelectedDataCenter() != null
                     && getModel().getSelectedDataCenter().isLocal();
@@ -917,11 +924,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 getModel().getCpuPinning().setChangeProhibitionReason(constants.cpuPinningUnavailable());
             }
         }
-    }
-
-    protected void disableCpuPinningAutoPinningConflict() {
-        getModel().getCpuPinning().setEntity("");
-        getModel().getCpuPinning().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
     }
 
     public void updateUseHostCpuAvailability() {
@@ -1207,7 +1209,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Cluster cluster = getModel().getSelectedCluster();
 
         if (cluster != null) {
-            vmOsValues = getOsValues(cluster.getArchitecture());
+            vmOsValues = getOsValues(cluster.getArchitecture(), getCompatibilityVersion());
             Integer selectedOsId = getModel().getOSType().getSelectedItem();
             getModel().getOSType().setItems(vmOsValues);
             if (selectedOsId != null && vmOsValues.contains(selectedOsId)) {
@@ -1665,6 +1667,24 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
+    public void updateMemory() {
+        Integer memoryMb = getModel().getMemSize().getEntity();
+        AsyncDataProvider.getMinMemoryForOs(new AsyncQuery<>(minMemory -> {
+            if (memoryMb == null || memoryMb < minMemory) {
+                getModel().getMemSize().setEntity(minMemory);
+            }
+        }), getSelectedOSType(), getCompatibilityVersion());
+    }
+
+    public void updateTotalCpuCores() {
+        int cpuCores = getTotalCpuCores();
+        AsyncDataProvider.getMinCpus(new AsyncQuery<>(minCpus -> {
+            if (cpuCores < minCpus) {
+                getModel().getTotalCPUCores().setEntity(Integer.toString(minCpus));
+            }
+        }), getSelectedOSType());
+    }
+
     protected void updateSeal() {
         if (!getModel().getIsSealed().getIsAvailable()) {
             return;
@@ -1786,13 +1806,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         );
     }
 
-    protected void updateCpuPinningChanged() {
-        // Set migration mode
-        getModel().getMigrationMode().setSelectedItem(
-                isVmHpOrPinningConfigurationEnabled() ? MigrationSupport.IMPLICITLY_NON_MIGRATABLE : MigrationSupport.MIGRATABLE
-        );
-    }
-
     /**
      * Return true if VM is of "High Performance" type or if "Host Auto Assign" is enabled.
      * since calling updateDefaultHost() for checking which hosts are available for current chosen cluster
@@ -1803,7 +1816,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                  || getModel().getVmType().getSelectedItem() == VmType.HighPerformance;
      }
 
-     protected List<Integer> getOsValues(ArchitectureType architectureType) {
+     protected List<Integer> getOsValues(ArchitectureType architectureType, Version version) {
          return AsyncDataProvider.getInstance().getOsIds(architectureType);
      }
 }

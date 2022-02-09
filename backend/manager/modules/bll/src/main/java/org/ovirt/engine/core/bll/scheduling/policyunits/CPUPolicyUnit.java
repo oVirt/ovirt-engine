@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +37,23 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
         List<VDS> list = new ArrayList<>();
 
         for (VDS vds : hosts) {
+            if (VmCpuCountHelper.isAutoPinning(vm) && !VmCpuCountHelper.isDynamicCpuTopologySet(vm)) {
+                if (vds.getCpuCores() / vds.getCpuSockets() > 1) {
+                    list.add(vds);
+                } else {
+                    messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_CORES.toString());
+                    log.debug("Host '{}' has only one core per socket. Resize and pin requires more than one core per socket", vds.getName());
+                }
+                continue;
+            }
             Integer cores = SlaValidator.getEffectiveCpuCores(vds, context.getCluster().getCountThreadsAsCores());
-            if (cores != null && vm.getNumOfCpus(false) > cores) {
+            if (cores != null && ((VmCpuCountHelper.isDynamicCpuTopologySet(vm) ?
+                    vm.getCurrentNumOfCpus(false) : vm.getNumOfCpus(false)) > cores)) {
                 messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_CORES.toString());
                 log.debug("Host '{}' has less cores ({}) than vm cores ({})",
                         vds.getName(),
                         cores,
-                        vm.getNumOfCpus());
+                        VmCpuCountHelper.getDynamicNumOfCpu(vm));
                 continue;
             }
 

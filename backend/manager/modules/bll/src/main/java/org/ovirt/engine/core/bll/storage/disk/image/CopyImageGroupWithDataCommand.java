@@ -30,12 +30,14 @@ import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameter
 import org.ovirt.engine.core.common.action.MeasureVolumeParameters;
 import org.ovirt.engine.core.common.action.UpdateVolumeCommandParameters;
 import org.ovirt.engine.core.common.businessentities.LocationInfo;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -51,6 +53,8 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
     @Inject
     private ImagesHandler imagesHandler;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     private DiskImage diskImage;
 
@@ -233,21 +237,17 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         // otherwise fallback to the legacy method
         Guid hostId = imagesHandler.getHostForMeasurement(sourceImage.getStoragePoolId(),
                 sourceImage.getId());
-        // We are collapsing the chain, so we want to measure the leaf to get the size
-        // of the entire chain
-        List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(sourceImage.getId());
-        imagesHandler.sortImageList(images);
-        DiskImage leaf = images.get(images.size() - 1);
-        if (hostId == null || (leaf.getActive() && !leaf.getStorageTypes().get(0).isBlockDomain())) {
+        StorageDomain destDomain = storageDomainDao.get(getParameters().getDestDomain());
+        if (hostId == null || (sourceImage.getActive() && !destDomain.getStorageType().isBlockDomain())) {
             return imagesHandler.determineTotalImageInitialSize(getDiskImage(),
                     getParameters().getDestinationFormat(),
                     getParameters().getSrcDomain(),
                     getParameters().getDestDomain());
         } else {
-            MeasureVolumeParameters parameters = new MeasureVolumeParameters(leaf.getStoragePoolId(),
+            MeasureVolumeParameters parameters = new MeasureVolumeParameters(sourceImage.getStoragePoolId(),
                     srcDomain,
-                    leaf.getId(),
-                    leaf.getImageId(),
+                    sourceImage.getId(),
+                    sourceImage.getImageId(),
                     destFormat.getValue());
             parameters.setParentCommand(getActionType());
             parameters.setEndProcedure(EndProcedure.PARENT_MANAGED);

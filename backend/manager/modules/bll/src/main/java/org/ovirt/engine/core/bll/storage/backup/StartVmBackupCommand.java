@@ -76,6 +76,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmBackupInfo;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
@@ -246,6 +247,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     @Override
     protected void executeCommand() {
+        lockDisks();
         VmBackup vmBackup = getParameters().getVmBackup();
 
         // Sets the backup disks with the disks from the DB that contain all disk image data.
@@ -281,7 +283,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         }
 
         // For live VM backup, scratch disks should be created and prepared for each disk in the backup.
-        VmBackupPhase nextPhase = isLiveBackup() ? VmBackupPhase.CREATING_SCRATCH_DISKS : VmBackupPhase.STARTING;
+        // For cold VM backup, volume bitmaps need to be added
+        VmBackupPhase nextPhase = isLiveBackup() ? VmBackupPhase.CREATING_SCRATCH_DISKS : VmBackupPhase.ADDING_BITMAPS;
         updateVmBackupPhase(nextPhase);
 
         persistCommandIfNeeded();
@@ -291,49 +294,72 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
-        restoreCommandState();
+        try (EngineLock backupLock = getEntityUpdateLock(getParameters().getVmBackup().getId())) {
+            lockManager.acquireLockWait(backupLock);
 
-        switch (getParameters().getVmBackup().getPhase()) {
-            case CREATING_SCRATCH_DISKS:
-                if (createScratchDisks()) {
-                    updateVmBackupPhase(VmBackupPhase.PREPARING_SCRATCH_DISK);
-                    log.info("Scratch disks created for the backup");
-                } else {
-                    updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
-                }
-                break;
+            restoreCommandState();
 
-            case PREPARING_SCRATCH_DISK:
-                if (prepareScratchDisks()) {
-                    updateVmBackupPhase(VmBackupPhase.STARTING);
-                    log.info("Scratch disks prepared for the backup");
-                } else {
-                    updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
-                }
-                break;
+            switch (getParameters().getVmBackup().getPhase()) {
+                case CREATING_SCRATCH_DISKS:
+                    if (createScratchDisks()) {
+                        updateVmBackupPhase(VmBackupPhase.PREPARING_SCRATCH_DISK);
+                        log.info("Scratch disks created for the backup");
+                    } else {
+                        updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                    }
+                    break;
 
-            case STARTING:
-                boolean isBackupSucceeded = isLiveBackup() ? runLiveVmBackup() : runColdVmBackup();
-                if (isBackupSucceeded) {
+                case PREPARING_SCRATCH_DISK:
+                    if (prepareScratchDisks()) {
+                        updateVmBackupPhase(VmBackupPhase.STARTING);
+                        log.info("Scratch disks prepared for the backup");
+                    } else {
+                        updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                    }
+                    break;
+
+                case ADDING_BITMAPS:
+                    if (!startAddBitmapJobs()) {
+                        updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                        break;
+                    }
+
+                    log.info("Waiting for add bitmaps jobs completion");
+                    updateVmBackupPhase(VmBackupPhase.WAITING_FOR_BITMAPS);
+
+                    break;
+
+                case STARTING:
+                    if (!runLiveVmBackup()) {
+                        updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                        break;
+                    }
+
+                    // Since live backup is a single synchronous VDS command we can set the backup
+                    // phase to READY immediately
                     updateVmBackupPhase(VmBackupPhase.READY);
                     log.info("Ready to start image transfers");
-                } else {
-                    updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
-                }
-                break;
+                    break;
 
-            case READY:
-                return true;
+                case WAITING_FOR_BITMAPS:
+                    updateVmBackupPhase(VmBackupPhase.READY);
+                    log.info("Ready to start image transfers");
 
-            case FINALIZING:
-                setCommandStatus(CommandStatus.SUCCEEDED);
-                break;
+                    break;
 
-            case FINALIZING_FAILURE:
-                setCommandStatus(CommandStatus.FAILED);
-                break;
+                case READY:
+                    return true;
+
+                case FINALIZING:
+                    setCommandStatus(CommandStatus.SUCCEEDED);
+                    break;
+
+                case FINALIZING_FAILURE:
+                    setCommandStatus(CommandStatus.FAILED);
+                    break;
+            }
+            persistCommandIfNeeded();
         }
-        persistCommandIfNeeded();
         return true;
     }
 
@@ -348,8 +374,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         return returnValue != null && returnValue.getSucceeded();
     }
 
-    private boolean runColdVmBackup() {
-        lockDisks();
+    private boolean startAddBitmapJobs() {
         setHostForColdBackupOperation();
 
         VmBackup vmBackup = getParameters().getVmBackup();
@@ -387,6 +412,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             }
         }
         updateVmBackupCheckpoint();
+
         return true;
     }
 
@@ -399,7 +425,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     private boolean runLiveVmBackup() {
-        lockDisks();
         VmBackupInfo vmBackupInfo = null;
         if (!getParameters().isBackupInitiated()) {
             getParameters().setBackupInitiated(true);
@@ -441,12 +466,14 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         cleanDisksBackupModeIfSupported();
         freeLock();
         unlockDisks();
-        updateVmBackupPhase(phase);
 
         // Remove the created scratch disks.
         if (!getParameters().getScratchDisksMap().isEmpty()) {
             removeScratchDisks();
         }
+
+        // At this point the lock taken by RemoveScratchDisksCommand should be released
+        updateVmBackupPhase(phase);
     }
 
     private void removeScratchDisks() {
@@ -673,6 +700,13 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                     getVdsId());
             return null;
         }
+    }
+
+    private EngineLock getEntityUpdateLock(Guid backupId) {
+        Map<String, Pair<String, String>> lockMap = Collections.singletonMap(
+                backupId.toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_BACKUP, EngineMessage.ACTION_TYPE_FAILED_VM_BACKUP_LOCKED));
+        return new EngineLock(lockMap);
     }
 
     @Override

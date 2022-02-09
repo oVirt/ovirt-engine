@@ -15,7 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabTemplatePermissionView extends AbstractSubTabPermissionsView<VmTemplate, TemplateListModel>
+public class SubTabTemplatePermissionView extends AbstractSubTabPermissionsView<VmTemplate, TemplateListModel, PermissionListModel<VmTemplate>>
         implements SubTabTemplatePermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabTemplatePermissionView> {

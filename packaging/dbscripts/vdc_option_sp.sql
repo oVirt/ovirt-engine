@@ -7,6 +7,7 @@
 CREATE OR REPLACE FUNCTION InsertVdcOption (
     v_option_name VARCHAR(50),
     v_option_value TEXT,
+    v_default_value TEXT,
     v_version VARCHAR(40),
     INOUT v_option_id INT
     ) AS $PROCEDURE$
@@ -14,11 +15,13 @@ BEGIN
     INSERT INTO vdc_options (
         option_name,
         option_value,
+	default_value,
         version
         )
     VALUES (
         v_option_name,
         v_option_value,
+	v_default_value,
         v_version
         );
 

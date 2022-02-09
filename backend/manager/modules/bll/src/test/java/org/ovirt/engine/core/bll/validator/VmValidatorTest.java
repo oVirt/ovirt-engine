@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Guid;
@@ -58,7 +60,7 @@ public class VmValidatorTest extends BaseCommandTest {
 
     private VM vm;
 
-    private static final Version COMPAT_VERSION_FOR_CPU_SOCKET_TEST = Version.v4_2;
+    private static final Version COMPAT_VERSION_FOR_CPU_SOCKET_TEST = Version.v4_6;
     private static final int MAX_NUM_CPUS = 16;
     private static final int MAX_NUM_SOCKETS = 4;
     private static final int MAX_NUM_CPUS_PER_SOCKET = 3;
@@ -100,17 +102,21 @@ public class VmValidatorTest extends BaseCommandTest {
     @InjectedMock
     public VnicProfileDao vnicProfileDao;
 
+    @Mock
+    private OsRepository osRepository;
+
     @BeforeEach
     public void setUp() throws InitializationException {
         vm = createVm();
         validator = spy(new VmValidator(vm));
         mockVmPropertiesUtils();
+        when(osRepository.getMinimumCpus(anyInt())).thenReturn(2);
     }
 
     private VM createVm() {
         VM vm = new VM();
         vm.setId(Guid.newGuid());
-        vm.setClusterCompatibilityVersion(Version.v4_2);
+        vm.setClusterCompatibilityVersion(COMPAT_VERSION_FOR_CPU_SOCKET_TEST);
         return vm;
     }
 
@@ -128,7 +134,7 @@ public class VmValidatorTest extends BaseCommandTest {
         doReturn("").
                 when(utils)
                 .getUserDefinedVMProperties(any());
-        doReturn(new HashSet<>(Arrays.asList(Version.v4_2, Version.v4_3, Version.v4_4))).
+        doReturn(new HashSet<>(Arrays.asList(Version.v4_4, Version.v4_5, Version.v4_6))).
                 when(utils)
                 .getSupportedClusterLevels();
         doReturn(utils).when(validator).getVmPropertiesUtils();
@@ -186,16 +192,16 @@ public class VmValidatorTest extends BaseCommandTest {
 
     @Test
     public void testVmPassesCpuSocketValidation() {
-        setVmCpuValues(1, 1, 1);
+        setVmCpuValues(1, 1, 2);
         assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
-                ArchitectureType.x86_64), isValid());
+                ArchitectureType.x86_64, osRepository), isValid());
     }
 
     @Test
     public void testVmExceedsMaxNumOfVmCpus() {
         setVmCpuValues(2, 3, 3);
         assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
-                ArchitectureType.x86_64),
+                ArchitectureType.x86_64, osRepository),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_CPU));
     }
 
@@ -203,7 +209,7 @@ public class VmValidatorTest extends BaseCommandTest {
     public void testVmExceedsMaxNumOfSockets() {
         setVmCpuValues(MAX_NUM_SOCKETS + 1, 1, 1);
         assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
-                ArchitectureType.x86_64),
+                ArchitectureType.x86_64, osRepository),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS));
     }
 
@@ -211,7 +217,7 @@ public class VmValidatorTest extends BaseCommandTest {
     public void testVmExceedsMaxNumOfCpusPerSocket() {
         setVmCpuValues(1, MAX_NUM_CPUS_PER_SOCKET + 1, 1);
         assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
-                ArchitectureType.x86_64),
+                ArchitectureType.x86_64, osRepository),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET));
     }
 
@@ -219,7 +225,7 @@ public class VmValidatorTest extends BaseCommandTest {
     public void testVmExceedsMaxThreadsPerCpu() {
         setVmCpuValues(1, 1, MAX_NUM_THREADS_PER_CPU + 1);
         assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
-                ArchitectureType.x86_64),
+                ArchitectureType.x86_64, osRepository),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MAX_THREADS_PER_CPU));
     }
 
@@ -227,7 +233,7 @@ public class VmValidatorTest extends BaseCommandTest {
     public void testVmUnderMinNumOfSockets() {
         setVmCpuValues(1, -2, 1);
         assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
-                ArchitectureType.x86_64),
+                ArchitectureType.x86_64, osRepository),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MIN_CPU_PER_SOCKET));
     }
 
@@ -235,7 +241,7 @@ public class VmValidatorTest extends BaseCommandTest {
     public void testVmUnderMinNumOfCpusPerSocket() {
         setVmCpuValues(-2, 1, 1);
         assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
-                ArchitectureType.x86_64),
+                ArchitectureType.x86_64, osRepository),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MIN_NUM_SOCKETS));
     }
 
@@ -243,8 +249,16 @@ public class VmValidatorTest extends BaseCommandTest {
     public void testVmUnderMinNumOfThreadsPerCpu() {
         setVmCpuValues(1, 1, -2);
         assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
-                ArchitectureType.x86_64),
+                ArchitectureType.x86_64, osRepository),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_MIN_THREADS_PER_CPU));
+    }
+
+    @Test
+    public void testVmUnderMinNumCpusForOs() {
+        setVmCpuValues(1, 1, 1);
+        assertThat(VmValidator.validateCpuSockets(vm.getStaticData(), COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
+                ArchitectureType.x86_64, osRepository),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_MIN_NUM_CPU_FOR_OS));
     }
 
     @Test

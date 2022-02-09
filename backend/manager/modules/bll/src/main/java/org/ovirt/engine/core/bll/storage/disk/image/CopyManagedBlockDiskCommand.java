@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -157,8 +156,7 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
             super.createVolumes();
         } else if (destDomainType == StorageDomainType.ManagedBlockStorage) {
             // Create and attach target disk (if target is Managed Block Storage)
-            DiskImage managedBlockDisk = createManagedBlockDisk(sourceDisk);
-            ManagedBlockStorageDisk destDisk = (ManagedBlockStorageDisk) diskDao.get(managedBlockDisk.getId());
+            ManagedBlockStorageDisk destDisk = addManagedBlockDisk(sourceDisk);
             getParameters().setDestinationImageId(destDisk.getId());
             getParameters().setDestImageGroupId(destDisk.getId());
             String targetPath = attachVolume(destDisk);
@@ -169,7 +167,7 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
         // Attach source to host (if source is Managed Block Storage)
         // TODO: handle failures
         if (sourceDomainType == StorageDomainType.ManagedBlockStorage) {
-            String sourcePath = attachVolume((ManagedBlockStorageDisk) sourceDisk);
+            String sourcePath = attachVolume(createManagedBlockDiskFromDiskImage(sourceDisk));
             getParameters().setSourcePath(sourcePath);
         }
     }
@@ -310,14 +308,8 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
         return new VdsmImageLocationInfo(storageDomainId, diskId, imageId, null);
     }
 
-    private DiskImage createManagedBlockDisk(DiskImage sourceDisk) {
-        DiskImage targetDisk = DiskImage.copyOf(sourceDisk);
-        targetDisk.setId(getParameters().getDestinationImageId());
-        targetDisk.setImageId(getParameters().getDestinationImageId());
-        targetDisk.setStorageTypes(Arrays.asList(StorageType.MANAGED_BLOCK_STORAGE));
-        targetDisk.setStorageIds(Arrays.asList(getParameters().getDestDomain()));
-        targetDisk.setDiskAlias(getParameters().getDiskAlias());
-        targetDisk.setDiskDescription(getParameters().getDescription());
+    private ManagedBlockStorageDisk addManagedBlockDisk(DiskImage sourceDisk) {
+        ManagedBlockStorageDisk targetDisk = createManagedBlockDiskFromDiskImage(sourceDisk);
 
         AddManagedBlockStorageDiskParameters params = new AddManagedBlockStorageDiskParameters();
         params.setShouldPlugDiskToVm(false);
@@ -328,6 +320,18 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
         runInternalAction(ActionType.AddManagedBlockStorageDisk, params);
 
         return targetDisk;
+    }
+
+    private ManagedBlockStorageDisk createManagedBlockDiskFromDiskImage(DiskImage diskImage) {
+        ManagedBlockStorageDisk managedBlockDisk = new ManagedBlockStorageDisk(diskImage);
+
+        managedBlockDisk.setId(getParameters().getDestinationImageId());
+        managedBlockDisk.setImageId(getParameters().getDestinationImageId());
+        managedBlockDisk.setDiskAlias(getParameters().getDiskAlias());
+        managedBlockDisk.setDiskDescription(getParameters().getDescription());
+        managedBlockDisk.getStorageIds().add(getParameters().getDestDomain());
+
+        return managedBlockDisk;
     }
 
     private void removeExternalLease() {

@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.ConsoleTargetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.TpmSupport;
 import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.config.Config;
@@ -287,6 +288,11 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public boolean requiresTpm(int osId) {
+        return getTpmSupport(osId) == TpmSupport.REQUIRED;
+    }
+
+    @Override
     public boolean requiresOvirtGuestAgentChannel(int osId) {
         return getBoolean(getValueByVersion(idToUnameLookup.get(osId),
                         "devices.ovirtGuestAgentChannel",
@@ -541,6 +547,11 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public int getMinimumCpus(int osId) {
+        return getInt(getValueByVersion(idToUnameLookup.get(osId), "resources.minimum.numberOfCpus", null), 1);
+    }
+
+    @Override
     public Map<Integer, Map<Version, Boolean>> getSoundDeviceSupportMap() {
         Map<Integer, Map<Version, Boolean>> soundDeviceSupportMap = new HashMap<>();
         Set<Version> versionsWithNull = new HashSet<>(Version.ALL);
@@ -607,9 +618,19 @@ public enum OsRepositoryImpl implements OsRepository {
                         .toLowerCase().split(",")));
     }
 
+    private TpmSupport getTpmSupport(String value) {
+        TpmSupport tpmSupport = value != null ? TpmSupport.forValue(value) : null;
+        return tpmSupport != null ? tpmSupport : TpmSupport.UNSUPPORTED;
+    }
+
+    @Override
+    public TpmSupport getTpmSupport(int osId) {
+        return getTpmSupport(getValueByVersion(idToUnameLookup.get(osId), "devices.tpm", null));
+    }
+
     @Override
     public boolean isTpmAllowed(int osId) {
-        return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "devices.tpmAllowed", null), false);
+        return getTpmSupport(osId) != TpmSupport.UNSUPPORTED;
     }
 
     @Override
@@ -627,12 +648,12 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public Map<Integer, Boolean> getTpmAllowedMap() {
-        Map<Integer, Boolean> tpmAllowedMap = new HashMap<>();
+    public Map<Integer, TpmSupport> getTpmSupportMap() {
+        Map<Integer, TpmSupport> tpmSupportMap = new HashMap<>();
         for (Integer osId : getOsIds()) {
-            tpmAllowedMap.put(osId, isTpmAllowed(osId));
+            tpmSupportMap.put(osId, getTpmSupport(osId));
         }
-        return tpmAllowedMap;
+        return tpmSupportMap;
     }
 
     private boolean getBoolean(String value, boolean defaultValue) {

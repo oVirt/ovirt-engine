@@ -14,6 +14,7 @@ import org.ovirt.engine.core.sso.api.AuthenticationException;
 import org.ovirt.engine.core.sso.api.Credentials;
 import org.ovirt.engine.core.sso.api.SsoConstants;
 import org.ovirt.engine.core.sso.api.SsoContext;
+import org.ovirt.engine.core.sso.api.SsoSession;
 import org.ovirt.engine.core.sso.service.AuthenticationService;
 import org.ovirt.engine.core.sso.service.SsoService;
 import org.slf4j.Logger;
@@ -48,31 +49,30 @@ public class InteractiveChangePasswdServlet extends HttpServlet {
             userCredentials = getUserCredentials(request);
             if (userCredentials == null) {
                 throw new AuthenticationException(
-                        ssoContext.getLocalizationUtils()
-                                .localize(
-                                        SsoConstants.APP_ERROR_UNABLE_TO_EXTRACT_CREDENTIALS,
-                                        (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                        SsoConstants.APP_ERROR_UNABLE_TO_EXTRACT_CREDENTIALS,
+                        ssoContext.getLocalizationUtils().localize(
+                                SsoConstants.APP_ERROR_UNABLE_TO_EXTRACT_CREDENTIALS,
+                                (Locale) request.getAttribute(SsoConstants.LOCALE)));
             }
             if (!userCredentials.getNewCredentials().equals(userCredentials.getConfirmedNewCredentials())) {
                 throw new AuthenticationException(
-                        ssoContext.getLocalizationUtils()
-                                .localize(
-                                        SsoConstants.APP_ERROR_PASSWORDS_DONT_MATCH,
-                                        (Locale) request.getAttribute(SsoConstants.LOCALE)));
+                        SsoConstants.APP_ERROR_PASSWORDS_DONT_MATCH,
+                        ssoContext.getLocalizationUtils().localize(
+                                SsoConstants.APP_ERROR_PASSWORDS_DONT_MATCH,
+                                (Locale) request.getAttribute(SsoConstants.LOCALE)));
             }
             redirectUrl = changeUserPasswd(request, userCredentials);
         } catch (Exception ex) {
             String msg = String.format(
-                    ssoContext.getLocalizationUtils()
-                            .localize(
-                                    SsoConstants.APP_ERROR_CHANGE_PASSWORD_FAILED,
-                                    (Locale) request.getAttribute(SsoConstants.LOCALE)),
+                    ssoContext.getLocalizationUtils().localize(
+                            SsoConstants.APP_ERROR_CHANGE_PASSWORD_FAILED,
+                            (Locale) request.getAttribute(SsoConstants.LOCALE)),
                     userCredentials == null ? "" : userCredentials.getUsernameWithProfile(),
                     ex.getMessage());
             log.error(msg);
             log.debug("Exception", ex);
             SsoService.getSsoSession(request).setChangePasswdMessage(msg);
-            redirectUrl = request.getContextPath() + SsoConstants.INTERACTIVE_CHANGE_PASSWD_FORM_URI;
+            redirectUrl = SsoService.getSsoContext(request).getChangePasswordUrl();
         }
         log.debug("Redirecting to url: {}", redirectUrl);
         response.sendRedirect(redirectUrl);
@@ -83,20 +83,18 @@ public class InteractiveChangePasswdServlet extends HttpServlet {
         log.debug("Calling Authn to change password for user '{}'.",
                 userCredentials.getUsernameWithProfile());
         AuthenticationService.changePassword(ssoContext, request, userCredentials);
-        SsoService.getSsoSession(request).setChangePasswdCredentials(null);
+        SsoSession ssoSession = SsoService.getSsoSession(request);
+        ssoSession.setChangePasswdCredentials(null);
         if (SsoService.isUserAuthenticated(request)) {
             log.debug("User is authenticated updating password in SsoSession for password-access scope.");
-            SsoService.persistUserPassword(request,
-                    SsoService.getSsoSession(request),
-                    userCredentials.getNewCredentials());
+            SsoService.persistUserPassword(request, ssoSession, userCredentials.getNewCredentials());
         } else {
             log.debug("User password change succeeded, redirecting to login page.");
-            SsoService.getSsoSession(request)
-                    .setLoginMessage(
-                            ssoContext.getLocalizationUtils()
-                                    .localize(
-                                            SsoConstants.APP_MSG_CHANGE_PASSWORD_SUCCEEDED,
-                                            (Locale) request.getAttribute(SsoConstants.LOCALE)));
+            ssoSession.setLoginErrorCode(SsoConstants.APP_MSG_CHANGE_PASSWORD_SUCCEEDED);
+            ssoSession.setLoginMessage(
+                ssoContext.getLocalizationUtils().localize(
+                        SsoConstants.APP_MSG_CHANGE_PASSWORD_SUCCEEDED,
+                        (Locale) request.getAttribute(SsoConstants.LOCALE)));
         }
         return request.getContextPath() + SsoConstants.INTERACTIVE_LOGIN_URI;
     }
@@ -117,10 +115,10 @@ public class InteractiveChangePasswdServlet extends HttpServlet {
                             : null;
         } catch (Exception ex) {
             throw new AuthenticationException(
-                    ssoContext.getLocalizationUtils()
-                            .localize(
-                                    SsoConstants.APP_ERROR_UNABLE_TO_EXTRACT_CREDENTIALS,
-                                    (Locale) request.getAttribute(SsoConstants.LOCALE)),
+                    SsoConstants.APP_ERROR_UNABLE_TO_EXTRACT_CREDENTIALS,
+                    ssoContext.getLocalizationUtils().localize(
+                            SsoConstants.APP_ERROR_UNABLE_TO_EXTRACT_CREDENTIALS,
+                            (Locale) request.getAttribute(SsoConstants.LOCALE)),
                     ex);
         }
     }

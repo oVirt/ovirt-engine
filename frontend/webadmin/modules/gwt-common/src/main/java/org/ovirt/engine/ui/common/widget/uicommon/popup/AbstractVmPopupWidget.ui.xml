@@ -104,7 +104,7 @@
                   <e:ListModelListBoxEditor ui:field="oSTypeEditor" label="{constants.osVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
-                  <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableInstanceTypesEditor" label="{constants.instanceType}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_6" />
+                  <e:ListModelListBoxEditor ui:field="biosTypeEditor" label="{constants.customBiosTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
               </b:Row>
               <b:Row>
                   <e:ListModelListBoxEditor ui:field="vmTypeEditor" label="{constants.optimizedFor}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
@@ -250,7 +250,7 @@
                       </b:Column>
                    </b:Row>
                    <b:Row>
-                       <e:ListModelListBoxEditor ui:field="biosTypeEditor" label="{constants.customBiosTypeLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                       <ge:EntityModelDetachableWidgetWithLabel ui:field="detachableInstanceTypesEditor" label="{constants.instanceType}" usePatternFly="true" labelColSize="SM_5" widgetColSize="SM_6" />
                    </b:Row>
                     <b:Row>
                       <w:EntityModelWidgetWithInfo ui:field="timeZoneEditorWithInfo" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
@@ -477,6 +477,18 @@
                   <e:ListModelListBoxEditor ui:field="migrateEncryptedEditor" label="{constants.migrateEncryptedLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row>
+                  <b:Column size="SM_6">
+                    <g:Label addStyleNames="{style.floatLeft}" text="{constants.parallelMigrationsType}" />
+                    <d:InfoIcon ui:field="parallelMigrationsInfoIcon" addStyleNames="{style.infoIcon}"/>
+                  </b:Column>
+                  <b:Column size="SM_6">
+                    <e:ListModelListBoxEditor ui:field="parallelMigrationsTypeEditor" usePatternFly="true"/>
+                  </b:Column>
+                </b:Row>
+                <b:Row>
+                  <ge:IntegerEntityModelTextBoxEditor ui:field="customParallelMigrationsEditor" label="{constants.customParallelMigrations}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
                   <b:Column size="SM_5">
                     <l:EnableableFormLabel ui:field="migrationDowntimeLabel" addStyleNames="{style.floatLeft} " text="{constants.migrationDowntime}" />
                     <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.infoIcon}"/>
@@ -510,15 +522,6 @@
                     </b:Column>
                   </b:Row>
                 </g:FlowPanel>
-                <b:Row ui:field="cpuPinningPolicyRow">
-                  <b:Column size="SM_6">
-                    <g:Label addStyleNames="{style.floatLeft}" text="{constants.cpuPinningPolicyLabel}" />
-                    <d:InfoIcon ui:field="cpuPinningPolicyInfo" addStyleNames="{style.infoIcon}"/>
-                  </b:Column>
-                  <b:Column size="SM_6">
-                    <e:ListModelListBoxOnlyEditor ui:field="cpuPinningPolicyEditor" usePatternFly="true"/>
-                  </b:Column>
-                </b:Row>
               </b:Container>
             </t:content>
           </t:DialogTab>
@@ -599,6 +602,9 @@
                     <b:Column size="SM_2">
                       <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="cpuSharesAmountEditor" usePatternFly="true" />
                     </b:Column>
+                  </b:Row>
+                  <b:Row>
+                    <e:ListModelTypeAheadListBoxEditor ui:field="cpuPinningPolicyEditor" label="{constants.cpuPinningPolicyLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                   </b:Row>
                   <b:Row ui:field="cpuPinningRow">
                     <b:Column size="SM_6">

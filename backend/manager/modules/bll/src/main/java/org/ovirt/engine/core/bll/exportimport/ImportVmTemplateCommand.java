@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -153,7 +154,18 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
             if (!getParameters().isImagesExistOnTargetStorageDomain()) {
                 updateDiskSizeByQcowImageInfo(image);
             } else {
-                updateDiskSizeByQcowImageInfo(image, image.getStorageIds().get(0));
+                Set<Guid> storageDomains = getParameters().getImageToAvailableStorageDomains().get(image.getImageId());
+                Guid sdToUse;
+
+                // Try to use the target SD, otherwise fallback to one of the available SDs
+                // for the image
+                if (storageDomains.contains(getStorageDomainId())) {
+                    sdToUse = getStorageDomainId();
+                } else {
+                    sdToUse = storageDomains.stream().findFirst().get();
+                }
+
+                updateDiskSizeByQcowImageInfo(image, sdToUse);
             }
 
             if (getParameters().isImportAsNewEntity()) {

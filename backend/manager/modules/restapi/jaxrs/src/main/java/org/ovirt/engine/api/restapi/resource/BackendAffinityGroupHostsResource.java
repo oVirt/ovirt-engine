@@ -46,7 +46,7 @@ public class BackendAffinityGroupHostsResource extends AbstractBackendCollection
     @Override
     public Response add(Host host) {
         return performAction(ActionType.AddHostToAffinityGroup,
-                new AffinityGroupMemberChangeParameters(affinityGroupId, asGuid(host.getId())));
+                new AffinityGroupMemberChangeParameters(affinityGroupId, getHostId(host)));
     }
 
     @Override

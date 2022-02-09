@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import java.math.BigInteger;
+
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 
@@ -32,8 +34,8 @@ public class NetworkStatisticsBuilder {
         previousTime = existingStats.getSampleTime();
 
         existingIface.setSpeed(speed);
-        existingStats.setReceiveDropRate(reportedStats.getReceiveDropRate());
-        existingStats.setTransmitDropRate(reportedStats.getTransmitDropRate());
+        existingStats.setReceiveDrops(reportedStats.getReceiveDrops());
+        existingStats.setTransmitDrops(reportedStats.getTransmitDrops());
 
         EffectiveStats rxResult =
                 computeEffectiveStats(reportedStats.getReceivedBytes(),
@@ -53,34 +55,34 @@ public class NetworkStatisticsBuilder {
         existingStats.setSampleTime(currentTime);
     }
 
-    private EffectiveStats computeEffectiveStats(Long reported, Long previous, Long offset) {
+    private EffectiveStats computeEffectiveStats(BigInteger reported, BigInteger previous, BigInteger previousOffset) {
         EffectiveStats stats = new EffectiveStats();
 
         if (reported == null) {
             // the value wasn't reported - clear it, keep the previous offset, and rate can't be computed
             stats.current = null;
-            stats.offset = offset;
+            stats.offset = previousOffset;
             stats.rate = null;
-        } else if (offset == null) {
+        } else if (previousOffset == null) {
             // statistic reported for the first time - set to zero, set offset accordingly, and rate can't be computed
-            stats.current = 0L;
-            stats.offset = -reported;
+            stats.current = BigInteger.ZERO; //$NON-NLS-1$
+            stats.offset = reported.negate();
             stats.rate = null;
         } else {
-            stats.offset = offset;
-            stats.current = offset + reported;
+            stats.offset = previousOffset;
+            stats.current = previousOffset.add(reported);
             if (previous == null) {
                 // for some reason there's no previous sample - the rate can't be computed
                 stats.rate = null;
             } else {
-                if (stats.current < previous) {
+                if (stats.current.compareTo(previous) < 0) {
                     // if value wrapped around, it means counter had reset - compensate in offset, and update value
                     stats.offset = previous;
-                    stats.current = previous + reported;
+                    stats.current = previous.add(reported);
                 }
 
                 // current and previous sampled values are up-to-date - try to compute rate
-                stats.rate = computeRatePercentage(stats.current - previous);
+                stats.rate = computeRatePercentage(stats.current.subtract(previous));
             }
         }
 
@@ -91,21 +93,21 @@ public class NetworkStatisticsBuilder {
         return Math.min(100, value);
     }
 
-    private Double computeRatePercentage(long byteDiff) {
+    private Double computeRatePercentage(BigInteger byteDiff) {
         if (currentTime == null || previousTime == null || currentTime <= previousTime || speed == null
                 || speed.equals(0)) {
             return null;
         }
 
-        double megabitDiff = BITS_IN_BYTE * (double)byteDiff / BITS_IN_MEGABIT;
+        double megabitDiff = BITS_IN_BYTE * byteDiff.doubleValue() / BITS_IN_MEGABIT;
         double timeDiffInSeconds = currentTime - previousTime;
         double rateInMbps = megabitDiff / timeDiffInSeconds;
         return truncatePercentage(100 * rateInMbps / speed);
     }
 
     private static class EffectiveStats {
-        private Long current;
-        private Long offset;
+        private BigInteger current;
+        private BigInteger offset;
         private Double rate;
     }
 

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.math.BigInteger;
+
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -86,13 +88,13 @@ public class HostInterface extends Model {
         rxRate = value;
     }
 
-    private Double rxDrop;
+    private BigInteger rxDrop;
 
-    public Double getRxDrop() {
+    public BigInteger getRxDrop() {
         return rxDrop;
     }
 
-    public void setRxDrop(Double value) {
+    public void setRxDrop(BigInteger value) {
         rxDrop = value;
     }
 
@@ -106,33 +108,33 @@ public class HostInterface extends Model {
         txRate = value;
     }
 
-    private Long rxTotal;
+    private BigInteger rxTotal;
 
-    public Long getRxTotal() {
+    public BigInteger getRxTotal() {
         return rxTotal;
     }
 
-    public void setRxTotal(Long value) {
+    public void setRxTotal(BigInteger value) {
         rxTotal = value;
     }
 
-    private Long txTotal;
+    private BigInteger txTotal;
 
-    public Long getTxTotal() {
+    public BigInteger getTxTotal() {
         return txTotal;
     }
 
-    public void setTxTotal(Long value) {
+    public void setTxTotal(BigInteger value) {
         txTotal = value;
     }
 
-    private Double txDrop;
+    private BigInteger txDrop;
 
-    public Double getTxDrop() {
+    public BigInteger getTxDrop() {
         return txDrop;
     }
 
-    public void setTxDrop(Double value) {
+    public void setTxDrop(BigInteger value) {
         txDrop = value;
     }
 

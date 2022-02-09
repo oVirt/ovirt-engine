@@ -10,10 +10,10 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Guid;
 
 @SchedulingUnit(
@@ -51,7 +51,7 @@ public class NumaWeightPolicyUnit extends PolicyUnitImpl {
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS host: hosts) {
             int score = 1;
-            if (host.isNumaSupport() && !doesVmFitSomeNumaNode(vm.getStaticData(), host)) {
+            if (host.isNumaSupport() && !doesVmFitSomeNumaNode(vm, host)) {
                 score = getMaxSchedulerWeight();
             }
 
@@ -61,9 +61,10 @@ public class NumaWeightPolicyUnit extends PolicyUnitImpl {
         return scores;
     }
 
-    private boolean doesVmFitSomeNumaNode(VmStatic vm, VDS host) {
+    private boolean doesVmFitSomeNumaNode(VM vm, VDS host) {
+        int numOfCpus = VmCpuCountHelper.getRuntimeNumOfCpu(vm, host);
         return host.getNumaNodeList().stream()
                 .filter(node -> vm.getMemSizeMb() <= node.getMemTotal())
-                .anyMatch(node -> vm.getNumOfCpus() <= node.getCpuIds().size());
+                .anyMatch(node -> numOfCpus <= node.getCpuIds().size());
     }
 }

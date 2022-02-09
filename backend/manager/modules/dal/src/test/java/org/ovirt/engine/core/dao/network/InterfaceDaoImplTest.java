@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -240,7 +241,7 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase<InterfaceDao> {
         List<VdsNetworkStatistics> statistics = new ArrayList<>(interfaces.size());
         for (VdsNetworkInterface iface : interfaces) {
             VdsNetworkStatistics stats = iface.getStatistics();
-            stats.setReceiveDropRate(RandomUtils.instance().nextInt() * 1.0);
+            stats.setReceiveDrops(new BigInteger(String.valueOf(RandomUtils.instance().nextInt())));
             stats.setStatus(RandomUtils.instance().nextEnum(InterfaceStatus.class));
             statistics.add(stats);
         }
@@ -253,7 +254,7 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase<InterfaceDao> {
             for (VdsNetworkStatistics stats : statistics) {
                 if (iface.getId().equals(stats.getId())) {
                     found = true;
-                    assertEquals(stats.getReceiveDropRate(), iface.getStatistics().getReceiveDropRate());
+                    assertEquals(stats.getReceiveDrops(), iface.getStatistics().getReceiveDrops());
                     assertEquals(stats.getStatus(), iface.getStatistics().getStatus());
                 }
             }

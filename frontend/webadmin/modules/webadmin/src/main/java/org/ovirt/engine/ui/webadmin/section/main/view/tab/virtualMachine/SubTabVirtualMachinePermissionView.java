@@ -15,7 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabVirtualMachinePermissionView extends AbstractSubTabPermissionsView<VM, VmListModel<Void>>
+public class SubTabVirtualMachinePermissionView extends AbstractSubTabPermissionsView<VM, VmListModel<Void>, PermissionListModel<VM>>
         implements SubTabVirtualMachinePermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachinePermissionView> {

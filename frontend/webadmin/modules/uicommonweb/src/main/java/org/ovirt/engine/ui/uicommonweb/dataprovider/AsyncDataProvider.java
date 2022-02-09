@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.TagsType;
+import org.ovirt.engine.core.common.businessentities.TpmSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -270,8 +271,8 @@ public class AsyncDataProvider {
     // cached sound device enabled by map
     private Map<Integer, Map<Version, Boolean>> soundDeviceSupportMap;
 
-    // cached TPM allowed for OS map
-    private Map<Integer, Boolean> tpmAllowedForOsMap;
+    // cached TPM support for OS map
+    private Map<Integer, TpmSupport> tpmSupportForOsMap;
 
     // cached windows OS
     private List<Integer> windowsOsIds;
@@ -294,6 +295,9 @@ public class AsyncDataProvider {
 
     // cached architecture support for memory hot unplug
     private Map<ArchitectureType, Map<Version, Boolean>> memoryHotUnplugSupport;
+
+    // cached architecture support for tpm device
+    private Map<ArchitectureType, Map<Version, Boolean>> tpmDeviceSupport;
 
     // cached custom properties
     private Map<Version, Map<String, String>> customPropertiesList;
@@ -345,12 +349,13 @@ public class AsyncDataProvider {
         initMigrationSupportMap();
         initMemorySnapshotSupportMap();
         initMemoryHotUnplugSupportMap();
+        initTpmDeviceSupportMap();
         initCustomPropertiesList();
         initSoundDeviceSupportMap();
         initMigrationPolicies();
         initCpuMap();
         initImageioProxyUri();
-        initTpmAllowedForOsMap();
+        initTpmSupportForOsMap();
         initUnsupportedOsIds();
     }
 
@@ -479,12 +484,20 @@ public class AsyncDataProvider {
         return memoryHotUnplugSupport.get(architecture).get(version);
     }
 
+    public Boolean isTpmDeviceSupported(ArchitectureType architecture, Version version) {
+        return tpmDeviceSupport.get(architecture).get(version);
+    }
+
     public Boolean isTscSupportedByVersion(Version version) {
         return FeatureSupported.isTscFrequencySupported(version);
     }
 
     public Boolean isFipsModeSupportedByVersion(Version version) {
         return FeatureSupported.isFipsModeSupported(version);
+    }
+
+    public Boolean isParallelMigrationsSupportedByVersion(Version version) {
+        return (Boolean) getConfigValuePreConverted(ConfigValues.ParallelMigrationsSupported, version.getValue());
     }
 
     private void initMigrationSupportMap() {
@@ -503,6 +516,12 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMemoryHotUnplugSupport),
                 new AsyncQuery<QueryReturnValue>(returnValue -> memoryHotUnplugSupport = returnValue.getReturnValue()));
+    }
+
+    private void initTpmDeviceSupportMap() {
+        Frontend.getInstance().runQuery(QueryType.GetArchitectureCapabilities,
+                new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetTpmDeviceSupport),
+                new AsyncQuery<QueryReturnValue>(returnValue -> tpmDeviceSupport = returnValue.getReturnValue()));
     }
 
     /**
@@ -2544,9 +2563,13 @@ public class AsyncDataProvider {
         return osIds;
     }
 
-    public List<Integer> getSupportedOsIds(ArchitectureType architectureType) {
+    public List<Integer> getSupportedOsIds(ArchitectureType architectureType, Version version) {
         List<Integer> osIds = getOsIds(architectureType);
-        return osIds.stream().filter(osId -> !unsupportedOsIds.contains(osId)).collect(Collectors.toList());
+        return osIds.stream()
+                .filter(osId -> !unsupportedOsIds.contains(osId))
+                .filter(osId -> !isTpmRequiredForOs(osId)
+                        || isTpmDeviceSupported(architectureType, version))
+                .collect(Collectors.toList());
     }
 
     public void getVmWatchdogTypes(int osId,
@@ -3254,13 +3277,17 @@ public class AsyncDataProvider {
     }
 
     public Boolean isTpmAllowedForOs(Integer osId) {
-        return osId != null && tpmAllowedForOsMap.get(osId);
+        return osId != null && tpmSupportForOsMap.get(osId) != TpmSupport.UNSUPPORTED;
     }
 
-    private void initTpmAllowedForOsMap() {
+    private void initTpmSupportForOsMap() {
         Frontend.getInstance().runQuery(QueryType.OsRepository,
-                new OsQueryParameters(OsRepositoryVerb.GetTpmAllowedMap),
-                new AsyncQuery<QueryReturnValue>(result -> tpmAllowedForOsMap = result.getReturnValue()));
+                new OsQueryParameters(OsRepositoryVerb.GetTpmSupportMap),
+                new AsyncQuery<QueryReturnValue>(result -> tpmSupportForOsMap = result.getReturnValue()));
+    }
+
+    public Boolean isTpmRequiredForOs(Integer osId) {
+        return osId != null && tpmSupportForOsMap.get(osId) == TpmSupport.REQUIRED;
     }
 
     private void initUnsupportedOsIds() {
@@ -3270,4 +3297,19 @@ public class AsyncDataProvider {
                         new AsyncQuery<QueryReturnValue>(
                                 returnValue -> unsupportedOsIds = returnValue.getReturnValue()));
     }
+
+    public static void getMinMemoryForOs(AsyncQuery<Integer> aQuery, Integer osId, Version version) {
+        aQuery.converterCallback = new DefaultValueConverter<>(1024);
+        OsQueryParameters params = new OsQueryParameters(OsRepositoryVerb.GetMinOsRam, osId, version);
+
+        Frontend.getInstance().runQuery(QueryType.OsRepository, params, aQuery);
+    }
+
+    public static void getMinCpus(AsyncQuery<Integer> aQuery, Integer osId) {
+        aQuery.converterCallback = new DefaultValueConverter<>(1);
+        OsQueryParameters params = new OsQueryParameters(OsRepositoryVerb.GetMinCpus, osId, null);
+
+        Frontend.getInstance().runQuery(QueryType.OsRepository, params, aQuery);
+    }
+
 }

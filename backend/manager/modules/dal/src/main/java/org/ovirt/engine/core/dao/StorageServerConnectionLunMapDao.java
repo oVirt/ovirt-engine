@@ -17,4 +17,14 @@ public interface StorageServerConnectionLunMapDao extends GenericDao<LUNStorageS
      *            LUN id.
      */
     List<LUNStorageServerConnectionMap> getAll(final String lunId);
+
+    /**
+     * Removes the server storage connection by storage server connection and LUN ids.
+     *
+     * @param lunId
+     *            LUN id.
+     * @param storageServerConnectionId
+     *            Storage server connection id.
+     */
+    void removeServerConnectionByIdAndLunId(final String lunId, final String storageServerConnectionId);
 }

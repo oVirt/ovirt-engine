@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.ConsoleTargetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.TpmSupport;
 import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -275,6 +276,11 @@ public interface OsRepository {
     boolean isCpuHotunplugSupported(int osId);
 
     /**
+     * @return minimal number of CPUs required by OS
+     */
+    int getMinimumCpus(int osId);
+
+    /**
      * @return a map that contain an pair (OS id and version) with the sound device support.
      */
     Map<Integer, Map<Version, Boolean>> getSoundDeviceSupportMap();
@@ -312,15 +318,27 @@ public interface OsRepository {
     boolean requiresLegacyVirtio(int osId, ChipsetType chipset);
 
     /**
+     * Checks if the operation system requires TPM
+     * @param osId operation system id
+     */
+    boolean requiresTpm(int osId);
+
+    /**
      * Checks if the operation system requires a channel for ovirt guest agent support.
      * @param osId operation system id
      */
     boolean requiresOvirtGuestAgentChannel(int osId);
 
     /**
-     * @return a map from OS id to TPM-allowed Booleans
+     * @return a map from OS id to TPM support flags
      */
-    Map<Integer, Boolean> getTpmAllowedMap();
+    Map<Integer, TpmSupport> getTpmSupportMap();
+
+    /**
+     * Returns the operating system TPM support flag.
+     * @param osId operation system id
+     */
+    TpmSupport getTpmSupport(int osId);
 
     /**
      * Checks if the operating system supports virtual TPM.

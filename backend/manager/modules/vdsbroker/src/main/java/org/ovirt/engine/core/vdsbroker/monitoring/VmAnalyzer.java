@@ -996,12 +996,14 @@ public class VmAnalyzer {
             } else {
                 vmIface.getStatistics().setReceiveRate(max(vmIface.getStatistics().getReceiveRate(),
                         ifStats.getStatistics().getReceiveRate()));
-                vmIface.getStatistics().setReceiveDropRate(max(vmIface.getStatistics().getReceiveDropRate(),
-                        ifStats.getStatistics().getReceiveDropRate()));
+                vmIface.getStatistics().setReceiveDrops(
+                        vmIface.getStatistics().getReceiveDrops().max(ifStats.getStatistics().getReceiveDrops())
+                );
                 vmIface.getStatistics().setTransmitRate(max(vmIface.getStatistics().getTransmitRate(),
                         ifStats.getStatistics().getTransmitRate()));
-                vmIface.getStatistics().setTransmitDropRate(max(vmIface.getStatistics().getTransmitDropRate(),
-                        ifStats.getStatistics().getTransmitDropRate()));
+                vmIface.getStatistics().setTransmitDrops(
+                        vmIface.getStatistics().getTransmitDrops().max(ifStats.getStatistics().getTransmitDrops())
+                );
             }
             vmIface.setVmId(dbVm.getId());
 

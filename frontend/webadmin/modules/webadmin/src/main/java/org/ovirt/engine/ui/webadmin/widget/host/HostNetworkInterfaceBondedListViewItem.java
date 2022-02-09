@@ -165,8 +165,7 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
         TextColumn<HostInterface> dropRate = new TextColumn<HostInterface>() {
             @Override
             public String getValue(HostInterface hostInterface) {
-                return String.valueOf(hostInterface.getRxDrop()
-                        + hostInterface.getTxDrop());
+                return String.valueOf(hostInterface.getRxDrop().add(hostInterface.getTxDrop()));
             }
         };
         slavesTable.addColumn(dropRate, templates.sub(constants.dropsInterface(), constants.pkts()));

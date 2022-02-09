@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.sso.service;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,34 +27,25 @@ public class AuthnMessageMapper {
                 SsoConstants.APP_ERROR_USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED);
     }
 
-    public static final String mapMessageErrorCode(
+    public static final String mapErrorCode(
             SsoContext ssoContext,
             HttpServletRequest request,
             String profile,
             ExtMap outputMap) {
-        int authResult = outputMap.<Integer> get(Authn.InvokeKeys.RESULT);
-        String msg = messagesMap.containsKey(authResult) ? messagesMap.get(authResult)
+        int authResult = outputMap.<Integer>get(Authn.InvokeKeys.RESULT);
+        String errorCode = messagesMap.containsKey(authResult)
+                ? messagesMap.get(authResult)
                 : SsoConstants.APP_ERROR_USER_FAILED_TO_AUTHENTICATE;
-        boolean changePasswordSupported = false;
+
         if (authResult == Authn.AuthResult.CREDENTIALS_EXPIRED) {
             if (outputMap.<String> get(Authn.InvokeKeys.CREDENTIALS_CHANGE_URL) != null ||
                     SsoService.getSsoContext(request).getSsoProfilesSupportingPasswdChange().contains(profile)) {
-                changePasswordSupported = true;
-                msg = SsoConstants.APP_ERROR_USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED;
+                errorCode = SsoConstants.APP_ERROR_USER_PASSWORD_EXPIRED_CHANGE_URL_PROVIDED;
             } else {
-                msg = SsoConstants.APP_ERROR_USER_PASSWORD_EXPIRED;
+                errorCode = SsoConstants.APP_ERROR_USER_PASSWORD_EXPIRED;
             }
         }
 
-        msg = ssoContext == null ? msg
-                : ssoContext.getLocalizationUtils()
-                        .localize(
-                                msg,
-                                (Locale) request.getAttribute(SsoConstants.LOCALE));
-
-        if (changePasswordSupported) {
-            msg = String.format(msg, request.getContextPath() + SsoConstants.INTERACTIVE_CHANGE_PASSWD_FORM_URI);
-        }
-        return msg;
+        return errorCode;
     }
 }

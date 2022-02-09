@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
@@ -40,11 +41,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +85,8 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     private VmHandler vmHandler;
     @Inject
     private VmNicDao vmNicDao;
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
 
     protected ProcessDownVmCommand(Guid commandId) {
         super(commandId);
@@ -138,7 +143,10 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
 
         if (!removingVmPool) {
             removeStatelessVmUnmanagedDevices();
-            resourceManager.getVmManager(getVmId()).rebootCleanup();
+            VmManager vmManager = resourceManager.getVmManager(getVmId(), false);
+            if (vmManager != null) {
+                vmManager.rebootCleanup();
+            }
 
             boolean vmHasDirectPassthroughDevices = releaseUsedHostDevices();
 
@@ -243,12 +251,14 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             EngineLock updateVmLock = createUpdateVmLock();
             if (lockManager.acquireLock(updateVmLock).isAcquired()) {
                 snapshotDao.remove(runSnap.getId());
+                List<VmNumaNode> vmNumaNodeList = vmNumaNodeDao.getAllVmNumaNodeByVmId(getVmId());
                 Date originalCreationDate = getVm().getVmCreationDate();
                 snapshotsManager.updateVmFromConfiguration(getVm(), runSnap.getVmConfiguration());
                 // override creation date because the value in the config is the creation date of the config, not the vm
                 getVm().setVmCreationDate(originalCreationDate);
+                boolean isNumaChanged = !getVm().getvNumaNodeList().equals(vmNumaNodeList);
 
-                ActionReturnValue result = runInternalAction(ActionType.UpdateVm, createUpdateVmParameters(),
+                ActionReturnValue result = runInternalAction(ActionType.UpdateVm, createUpdateVmParameters(isNumaChanged),
                         ExecutionHandler.createInternalJobContext(updateVmLock));
                 if (result.getActionReturnValue() != null && result.getActionReturnValue()
                         .equals(ActionType.UpdateVmVersion)) { // Template-version changed
@@ -266,7 +276,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
                 UpdateVmCommand.getSharedLocksForUpdateVm(getVm()));
     }
 
-    private VmManagementParametersBase createUpdateVmParameters() {
+    private VmManagementParametersBase createUpdateVmParameters(boolean isNumaChanged) {
         // clear non updateable fields got from config
         getVm().setExportDate(null);
         getVm().setOvfVersion(null);
@@ -278,7 +288,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         updateVmParams.setVirtioScsiEnabled(false);
         updateVmParams.setClearPayload(true);
         updateVmParams.setUpdateRngDevice(true);
-        updateVmParams.setUpdateNuma(true);
+        updateVmParams.setUpdateNuma(isNumaChanged);
         for (GraphicsType graphicsType : GraphicsType.values()) {
             updateVmParams.getGraphicsDevices().put(graphicsType, null);
         }

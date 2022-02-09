@@ -97,6 +97,8 @@ public interface CommonApplicationMessages extends Messages {
 
     String migrationPolicyInfo();
 
+    String parallelMigrationsInfo();
+
     String hostCpuInfo();
 
     String tscFrequencyInfo();

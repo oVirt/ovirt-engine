@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
+import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,7 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
             final List<VDS> hosts,
             final VM vm,
             final PerHostMessages messages) {
-        final String cpuPinning = vm.getCpuPinning();
+        final String cpuPinning = VmCpuCountHelper.isAutoPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning();
 
         // return all hosts when no host pinning is requested
         if (StringUtils.isEmpty(cpuPinning)) {

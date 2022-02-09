@@ -621,6 +621,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(EngineMessage.TPM_DEVICE_REQUESTED_ON_NOT_SUPPORTED_PLATFORM);
         }
 
+        if (!isTpmEnabled() && osRepository.requiresTpm(getParameters().getVmStaticData().getOsId())) {
+            return failValidation(EngineMessage.TPM_DEVICE_REQUIRED_BY_OS);
+        }
+
         if (!validateQuota(getParameters().getVmStaticData().getQuotaId())) {
             return false;
         }
@@ -729,7 +733,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (!validate(VmValidator.validateCpuSockets(getParameters().getVmStaticData(),
                 getEffectiveCompatibilityVersion(),
-                getCluster().getArchitecture()))) {
+                getCluster().getArchitecture(),
+                osRepository))) {
             return false;
         }
 
@@ -1039,7 +1044,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (!addVmLease(getParameters().getVm().getLeaseStorageDomainId(), getVmId(), false)) {
             return;
         }
-        addCpuAndNumaPinning();
 
         TransactionSupport.executeInNewTransaction(() -> {
             addVmStatic();

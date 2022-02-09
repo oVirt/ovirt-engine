@@ -72,6 +72,6 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
             }
         };
         inheritedColumn.makeSortable();
-        getTable().addColumn(inheritedColumn, constants.inheritedPermission(), "560px");  //$NON-NLS-1$
+        getTable().addColumn(inheritedColumn, constants.inheritedFromPermission(), "560px");  //$NON-NLS-1$
     }
 }
