@@ -212,18 +212,17 @@ public class BackendStorageDomainResource
 
     public static synchronized boolean isIsoDomain(StorageDomain storageDomain) {
         StorageDomainType type = storageDomain.getType();
-        return type != null && type == StorageDomainType.ISO ? true : false;
+        return type != null && type == StorageDomainType.ISO;
     }
 
     public static synchronized boolean isIsoDomain(org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain) {
         org.ovirt.engine.core.common.businessentities.StorageDomainType type = storageDomain.getStorageDomainType();
-        return type != null && type == org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO ? true
-                : false;
+        return type != null && type == org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO;
     }
 
     public static synchronized boolean isExportDomain(StorageDomain storageDomain) {
         StorageDomainType type = storageDomain.getType();
-        return type != null && type == StorageDomainType.EXPORT ? true : false;
+        return type != null && type == StorageDomainType.EXPORT;
     }
 
     public static synchronized boolean isImageDomain(StorageDomain storageDomain) {

@@ -381,8 +381,8 @@ public class BackendHostNicsResource
         for (org.ovirt.engine.core.common.businessentities.network.Network entity : getBackendCollection(org.ovirt.engine.core.common.businessentities.network.Network.class,
                                                    QueryType.GetAllNetworks,
                                                    new IdQueryParameters(Guid.Empty))) {
-            if ((id != null && id.equals(entity.getId().toString())) ||
-                (name != null && name.equals(entity.getName()))) {
+            if (id != null && id.equals(entity.getId().toString()) ||
+                name != null && name.equals(entity.getName())) {
                 return entity;
             }
         }

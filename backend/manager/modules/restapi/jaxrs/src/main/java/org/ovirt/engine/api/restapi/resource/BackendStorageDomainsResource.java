@@ -228,7 +228,7 @@ public class BackendStorageDomainsResource
             // the user assumes that the host is already logged-in to the target of this lun.
             // so in this case we do not need (and do not have the required information) to login
             // to the target.
-            if ((storageType == StorageType.ISCSI) && !isConnectionAssumed(unit)) {
+            if (storageType == StorageType.ISCSI && !isConnectionAssumed(unit)) {
                 connectStorageToHost(hostId, storageType, unit);
             }
             lunIds.add(unit.getId());
