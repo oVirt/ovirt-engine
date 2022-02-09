@@ -92,9 +92,9 @@ public class VnicProfileHelper {
         List<VnicProfile> networkProfiles = getVnicProfileDao().getAllForNetwork(network.getId());
 
         for (VnicProfile profile : networkProfiles) {
-            if ((user == null && !profile.isPortMirroring())
-                    || (user != null
-                            && getBackwardCompatibilityVnicHelper().isVnicProfilePermitted(user, profile, false))) {
+            if (user == null && !profile.isPortMirroring()
+                    || user != null
+                            && getBackwardCompatibilityVnicHelper().isVnicProfilePermitted(user, profile, false)) {
                 return profile;
             }
         }

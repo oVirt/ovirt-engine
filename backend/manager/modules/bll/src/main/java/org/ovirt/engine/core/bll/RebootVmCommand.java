@@ -105,7 +105,7 @@ public class RebootVmCommand<T extends RebootVmParameters> extends VmOperationCo
     }
 
     private boolean isColdReboot() {
-        boolean coldReboot = (getVm().isRunOnce() && getVm().isVolatileRun()) || getVm().isNextRunConfigurationExists();
+        boolean coldReboot = getVm().isRunOnce() && getVm().isVolatileRun() || getVm().isNextRunConfigurationExists();
 
         log.info(
                 "VM '{}' is performing {} reboot; run once: '{}', running as volatile: '{}', has next run configuration: '{}'",

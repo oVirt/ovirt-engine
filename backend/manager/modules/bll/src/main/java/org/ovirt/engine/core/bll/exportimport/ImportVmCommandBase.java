@@ -688,7 +688,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     private boolean shouldReassignMac(VmNetworkInterface iface) {
         return StringUtils.isEmpty(iface.getMacAddress())
-                || (getParameters().isReassignBadMacs() && vNicHasBadMac(iface))
+                || getParameters().isReassignBadMacs() && vNicHasBadMac(iface)
                 || getParameters().isImportAsNewEntity();
     }
 

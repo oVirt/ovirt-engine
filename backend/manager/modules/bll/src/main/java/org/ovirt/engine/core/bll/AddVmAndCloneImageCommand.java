@@ -432,7 +432,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         } finally {
             // If no tasks were created, endAction will not be called, but
             // it is still needed to unlock the entities
-            if ((numberOfStartedCopyTasks == 0) && cinderDisks.isEmpty() && managedBlockDisks.isEmpty()) {
+            if (numberOfStartedCopyTasks == 0 && cinderDisks.isEmpty() && managedBlockDisks.isEmpty()) {
                 unlockEntities();
             }
         }

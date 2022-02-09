@@ -362,9 +362,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             getCompensationContext().snapshotEntity(getStoragePool());
             getStoragePool().setStatus(newStatus);
             StoragePool poolFromDb = storagePoolDao.get(getStoragePool().getId());
-            if ((getStoragePool().getSpmVdsId() == null && poolFromDb.getSpmVdsId() != null)
-                    || (getStoragePool().getSpmVdsId() != null && !getStoragePool().getSpmVdsId().equals(
-                            poolFromDb.getSpmVdsId()))) {
+            if (getStoragePool().getSpmVdsId() == null && poolFromDb.getSpmVdsId() != null
+                    || getStoragePool().getSpmVdsId() != null && !getStoragePool().getSpmVdsId().equals(
+                            poolFromDb.getSpmVdsId())) {
                 log.info("Set storage pool '{}' vds Id to '{}'", getStoragePool().getId(), poolFromDb.getSpmVdsId());
                 getStoragePool().setSpmVdsId(poolFromDb.getSpmVdsId());
             }
@@ -525,7 +525,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             if (isFoundOvfDiskUpdated && !isUpdated) {
                 continue;
             }
-            if ((isUpdated && !isFoundOvfDiskUpdated) || date.after(foundOvfDiskUpdateDate)) {
+            if (isUpdated && !isFoundOvfDiskUpdated || date.after(foundOvfDiskUpdateDate)) {
                 isBetterOvfDiskFound = true;
             }
             if (isBetterOvfDiskFound) {

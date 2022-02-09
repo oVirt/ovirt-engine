@@ -54,9 +54,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
      *  Retrieves list of hosts from Foreman responding to the request URL:
      *  /api/v2/hosts?format=json&per_page=9999
      *
-     * @deprecated no longer in use
-     *
      * @return a list of hosts
+     * @deprecated no longer in use
      */
     @Override
     @Deprecated
@@ -68,10 +67,9 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
      *  Retrieves list of filtered hosts from Foreman responding to the request URL:
      *  /api/v2/hosts?search=FILTER&format=json&per_page=9999
      *
-     * @deprecated no longer in use
-     *
      * @param filter The filter for hosts
      * @return a list of filtered hosts
+     * @deprecated no longer in use
      */
     @Override
     @Deprecated
@@ -83,9 +81,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
      *  Retrieves list of discovered hosts from Foreman responding to the request URL:
      *  /api/v2/discovered_hosts?format=json&per_page=9999
      *
-     * @deprecated no longer in use
-     *
      * @return a list of discovered hosts
+     * @deprecated no longer in use
      */
     @Override
     @Deprecated
@@ -97,9 +94,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
      *  Retrieves list of host groups from Foreman responding to the request URL:
      *  /api/v2/hostgroups?format=json&per_page=9999
      *
-     * @deprecated no longer in use
-     *
      * @return a list of host groups
+     * @deprecated no longer in use
      */
     @Override
     @Deprecated
@@ -110,9 +106,9 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     /**
      *  Retrieves list of compute resource from Foreman responding to the request URL:
      *  /api/v2/compute_resources?search=oVirt%7CRHEV&per_page=9999
-     * @deprecated no longer in use
      *
      * @return a list of compute resources
+     * @deprecated no longer in use
      */
     @Override
     public List<ExternalComputeResource> getComputeResources() {

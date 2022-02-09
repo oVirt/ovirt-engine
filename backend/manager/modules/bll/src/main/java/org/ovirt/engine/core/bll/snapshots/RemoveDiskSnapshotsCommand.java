@@ -260,7 +260,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     private boolean isLiveMerge() {
-        return (getParameters().isLiveMerge() || (getVm() != null && getVm().isQualifiedForLiveSnapshotMerge()))
+        return (getParameters().isLiveMerge() || getVm() != null && getVm().isQualifiedForLiveSnapshotMerge())
                 && !DisksFilter.filterImageDisks(getImages()).isEmpty();
     }
 

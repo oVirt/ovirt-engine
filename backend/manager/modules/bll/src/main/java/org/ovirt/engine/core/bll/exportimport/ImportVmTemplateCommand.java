@@ -82,7 +82,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
             return false;
         }
 
-        if ((sourceDomain.getStorageDomainType() != StorageDomainType.ImportExport)
+        if (sourceDomain.getStorageDomainType() != StorageDomainType.ImportExport
                 && !getParameters().isImagesExistOnTargetStorageDomain()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }

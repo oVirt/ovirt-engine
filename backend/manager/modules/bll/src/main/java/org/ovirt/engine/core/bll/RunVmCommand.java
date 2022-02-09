@@ -1017,9 +1017,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     int toolVersion = Integer.parseInt(matchToolPattern.group(IsoDomainListSynchronizer.TOOL_VERSION));
 
                     if (clusterVer.compareTo(getVm().getCompatibilityVersion()) <= 0) {
-                        if ((bestClusterVer == null)
-                                || (clusterVer.compareTo(bestClusterVer) > 0)
-                                || (clusterVer.equals(bestClusterVer) && toolVersion > bestToolVer)) {
+                        if (bestClusterVer == null
+                                || clusterVer.compareTo(bestClusterVer) > 0
+                                || clusterVer.equals(bestClusterVer) && toolVersion > bestToolVer) {
                             bestToolVer = toolVersion;
                             bestClusterVer = clusterVer;
                             selectedCd = fileName;
@@ -1106,11 +1106,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return false;
         }
 
-        boolean isCloudInitEnabled = (!getVm().isInitialized() && getVm().getVmInit() != null && osRepository.isCloudInit(getVm().getVmOsId())) ||
-                (getParameters().getInitializationType() == InitializationType.CloudInit);
+        boolean isCloudInitEnabled = !getVm().isInitialized() && getVm().getVmInit() != null && osRepository.isCloudInit(getVm().getVmOsId()) ||
+                getParameters().getInitializationType() == InitializationType.CloudInit;
 
-        boolean isIgnitionEnabled = (!getVm().isInitialized() && getVm().getVmInit() != null && osRepository.isIgnition(getVm().getVmOsId())) ||
-                (getParameters().getInitializationType() == InitializationType.Ignition);
+        boolean isIgnitionEnabled = !getVm().isInitialized() && getVm().getVmInit() != null && osRepository.isIgnition(getVm().getVmOsId()) ||
+                getParameters().getInitializationType() == InitializationType.Ignition;
 
         if ((isCloudInitEnabled || isIgnitionEnabled) && hasMaximumNumberOfDisks()) {
             return failValidation(EngineMessage.VMPAYLOAD_CDROM_OR_CLOUD_INIT_MAXIMUM_DEVICES);

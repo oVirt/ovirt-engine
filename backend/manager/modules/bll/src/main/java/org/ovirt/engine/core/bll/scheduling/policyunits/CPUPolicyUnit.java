@@ -47,8 +47,8 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
                 continue;
             }
             Integer cores = SlaValidator.getEffectiveCpuCores(vds, context.getCluster().getCountThreadsAsCores());
-            if (cores != null && ((VmCpuCountHelper.isDynamicCpuTopologySet(vm) ?
-                    vm.getCurrentNumOfCpus(false) : vm.getNumOfCpus(false)) > cores)) {
+            if (cores != null && (VmCpuCountHelper.isDynamicCpuTopologySet(vm) ?
+                    vm.getCurrentNumOfCpus(false) : vm.getNumOfCpus(false)) > cores) {
                 messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_CORES.toString());
                 log.debug("Host '{}' has less cores ({}) than vm cores ({})",
                         vds.getName(),

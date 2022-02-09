@@ -65,8 +65,8 @@ public class ScheduleGlusterStorageSyncCommand<T extends StorageSyncSchedulePara
     @Override
     protected boolean validate() {
         if (getParameters().getSchedule() == null
-                || (getParameters().getSchedule().getFrequency() != StorageSyncSchedule.Frequency.NONE
-                        && StringUtils.isEmpty(getParameters().getSchedule().toCronExpression()))) {
+                || getParameters().getSchedule().getFrequency() != StorageSyncSchedule.Frequency.NONE
+                        && StringUtils.isEmpty(getParameters().getSchedule().toCronExpression())) {
             return failValidation(EngineMessage.VALIDATION_INVALID_SCHEDULE);
         }
         if (getStorageDomain() == null) {

@@ -560,7 +560,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
             if (storageToDisksMap.containsKey(domainId)) {
                 int numOfDisksOnDomain = storageToDisksMap.get(domainId).size();
                 if (numOfDisksOnDomain > 0
-                        && (domain.getStorageDomainType() == StorageDomainType.ImportExport)) {
+                        && domain.getStorageDomainType() == StorageDomainType.ImportExport) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                 }
             }

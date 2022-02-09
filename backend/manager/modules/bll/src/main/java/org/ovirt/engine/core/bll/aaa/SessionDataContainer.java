@@ -248,7 +248,7 @@ public class SessionDataContainer {
                 continue;
             }
             boolean sessionValid = StringUtils.isEmpty(token) ? false : sessionStatuses.get(token);
-            if (((hardLimit != null && hardLimit.before(now)) || (softLimit != null && softLimit.before(now))) ||
+            if (hardLimit != null && hardLimit.before(now) || softLimit != null && softLimit.before(now) ||
                     !(boolean) sessionMap.get(SESSION_VALID_PARAMETER_NAME) ||
                     !sessionValid) {
                 removeSessionImpl(entry.getKey(),

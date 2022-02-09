@@ -192,7 +192,7 @@ public class EventQueueMonitor implements EventQueue {
                                     EventType eventType = task.getFirst().getEventType();
                                     if (eventType == EventType.VDSCONNECTTOPOOL
                                             ||
-                                            ((eventType == EventType.RECOVERY || eventType == EventType.DOMAINFAILOVER || eventType == EventType.VDSCLEARCACHE) && !result.isSuccess())) {
+                                            (eventType == EventType.RECOVERY || eventType == EventType.DOMAINFAILOVER || eventType == EventType.VDSCLEARCACHE) && !result.isSuccess()) {
                                         queue.add(task);
                                     } else {
                                         log.info("The following operation '{}' was cancelled, because of reconstruct was run before",

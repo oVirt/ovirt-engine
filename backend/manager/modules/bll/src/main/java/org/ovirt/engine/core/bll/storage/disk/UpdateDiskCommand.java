@@ -384,7 +384,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
 
             // If disk image list is more than one then we assume that it has a snapshot, since one image is the active
             // disk and all the other images are the snapshots.
-            if ((diskImageList.size() > 1) || !Guid.Empty.equals(((DiskImage) getOldDisk()).getImageTemplateId())) {
+            if (diskImageList.size() > 1 || !Guid.Empty.equals(((DiskImage) getOldDisk()).getImageTemplateId())) {
                 return failValidation(EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
             }
 
@@ -557,9 +557,9 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
                     vmDeviceDao.update(vmDeviceForVm);
                 }
 
-                if ((getOldDiskVmElement().getDiskInterface() != getDiskVmElement().getDiskInterface()) ||
-                        ((getOldDiskVmElement().isBoot() != getDiskVmElement().isBoot()) && (
-                                getDiskVmElement().getDiskInterface() == DiskInterface.IDE))) {
+                if (getOldDiskVmElement().getDiskInterface() != getDiskVmElement().getDiskInterface() ||
+                        getOldDiskVmElement().isBoot() != getDiskVmElement().isBoot() &&
+                                getDiskVmElement().getDiskInterface() == DiskInterface.IDE) {
                     vmDeviceForVm.setAddress("");
                     vmDeviceDao.clearDeviceAddress(getOldDisk().getId());
                 }
@@ -568,7 +568,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
     }
 
     private boolean shouldPerformMetadataUpdate() {
-        return (getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) &&
+        return getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE &&
                 (!Objects.equals(getOldDisk().getDiskAlias(), getNewDisk().getDiskAlias()) ||
                  !Objects.equals(getOldDisk().getDiskDescription(), getNewDisk().getDiskDescription()));
     }

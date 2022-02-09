@@ -238,7 +238,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         Guid hostId = imagesHandler.getHostForMeasurement(sourceImage.getStoragePoolId(),
                 sourceImage.getId());
         StorageDomain destDomain = storageDomainDao.get(getParameters().getDestDomain());
-        if (hostId == null || (sourceImage.getActive() && !destDomain.getStorageType().isBlockDomain())) {
+        if (hostId == null || sourceImage.getActive() && !destDomain.getStorageType().isBlockDomain()) {
             return imagesHandler.determineTotalImageInitialSize(getDiskImage(),
                     getParameters().getDestinationFormat(),
                     getParameters().getSrcDomain(),

@@ -44,12 +44,12 @@ public class IsRoleNetworkIpConfigurationValid {
 
     private boolean hasBootProtocolOtherThanNoneOnIpv4(IpConfiguration ipConfiguration) {
         return ipConfiguration.hasIpv4PrimaryAddressSet()
-                && (ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() != Ipv4BootProtocol.NONE);
+                && ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() != Ipv4BootProtocol.NONE;
     }
 
     private boolean hasBootProtocolOtherThanNoneOnIpv6(IpConfiguration ipConfiguration) {
         return ipConfiguration.hasIpv6PrimaryAddressSet()
-                && (ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() != Ipv6BootProtocol.NONE);
+                && ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() != Ipv6BootProtocol.NONE;
     }
 
     /*

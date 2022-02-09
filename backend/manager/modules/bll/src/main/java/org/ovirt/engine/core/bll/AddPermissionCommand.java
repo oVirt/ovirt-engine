@@ -230,8 +230,8 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         // if the user does not exist in the database we need to
         // check if the logged in user has permissions to add another
         // user from the directory service
-        if ((getParameters().getUser() != null && dbUser == null)
-                || (getParameters().getGroup() != null && dbGroup == null)) {
+        if (getParameters().getUser() != null && dbUser == null
+                || getParameters().getGroup() != null && dbGroup == null) {
            permissionsSubject.add(new PermissionSubject(permission.getObjectId(),
                     permission.getObjectType(), ActionGroup.ADD_USERS_AND_GROUPS_FROM_DIRECTORY));
         }

@@ -205,7 +205,7 @@ public class VmTemplateHandler implements BackendService {
                 }
             }
         }
-        if (checkIllegal && (vmTemplate.getStatus() == VmTemplateStatus.Illegal)) {
+        if (checkIllegal && vmTemplate.getStatus() == VmTemplateStatus.Illegal) {
             return new ValidationResult(EngineMessage.VM_TEMPLATE_IMAGE_IS_ILLEGAL);
         }
         return ValidationResult.VALID;

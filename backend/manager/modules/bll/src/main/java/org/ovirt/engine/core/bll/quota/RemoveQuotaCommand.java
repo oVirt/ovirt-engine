@@ -29,7 +29,7 @@ public class RemoveQuotaCommand extends CommandBase<IdParameters> {
 
     @Override
     protected boolean validate() {
-        if (getParameters() == null || (getParameters().getId() == null)) {
+        if (getParameters() == null || getParameters().getId() == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_NOT_EXIST);
             return false;
         }

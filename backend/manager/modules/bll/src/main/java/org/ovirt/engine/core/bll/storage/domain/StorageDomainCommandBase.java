@@ -330,10 +330,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         StorageDomain storageDomain = getStorageDomain();
 
         for (StorageDomain dbStorageDomain : storageDomains) {
-            if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId().equals(storageDomain.getId())))
-                    && ((dbStorageDomain.getStorageDomainType() == StorageDomainType.Data && !dbStorageDomain.isBackup())
-                            || (canChooseCurrentMasterAsNewMaster
-                            && dbStorageDomain.getStorageDomainType() == StorageDomainType.Master))) {
+            if ((storageDomain == null || duringReconstruct || !dbStorageDomain.getId().equals(storageDomain.getId()))
+                    && (dbStorageDomain.getStorageDomainType() == StorageDomainType.Data && !dbStorageDomain.isBackup()
+                            || canChooseCurrentMasterAsNewMaster
+                            && dbStorageDomain.getStorageDomainType() == StorageDomainType.Master)) {
                 if (dbStorageDomain.getStatus() == StorageDomainStatus.Active
                         || dbStorageDomain.getStatus() == StorageDomainStatus.Unknown) {
                     newMaster = dbStorageDomain;

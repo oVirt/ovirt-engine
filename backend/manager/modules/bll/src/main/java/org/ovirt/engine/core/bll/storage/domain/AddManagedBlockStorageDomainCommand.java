@@ -66,7 +66,7 @@ public class AddManagedBlockStorageDomainCommand<T extends AddManagedBlockStorag
 
     private boolean testStorageConnection() {
         ActionReturnValue actionReturnValue = runInternalAction(ActionType.GetManagedBlockStorageStats, getParameters());
-        return (actionReturnValue.getSucceeded() && actionReturnValue.getActionReturnValue() != null) ||
+        return actionReturnValue.getSucceeded() && actionReturnValue.getActionReturnValue() != null ||
                 failValidation(EngineMessage.FAILED_TO_CONNECT_MANAGED_BLOCK_DOMAIN);
     }
 

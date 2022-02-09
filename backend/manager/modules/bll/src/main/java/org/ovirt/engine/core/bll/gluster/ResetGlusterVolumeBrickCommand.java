@@ -56,8 +56,8 @@ public class ResetGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<Glu
         }
 
         if (getGlusterVolume().getAsyncTask() != null && (getGlusterVolume().getAsyncTask().getStatus() == JobExecutionStatus.STARTED
-                || (getGlusterVolume().getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK
-                && getGlusterVolume().getAsyncTask().getStatus() == JobExecutionStatus.FINISHED))) {
+                || getGlusterVolume().getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK
+                && getGlusterVolume().getAsyncTask().getStatus() == JobExecutionStatus.FINISHED)) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_GLUSTER_VOLUME_HAS_RUNNING_TASKS);
             return false;
         }

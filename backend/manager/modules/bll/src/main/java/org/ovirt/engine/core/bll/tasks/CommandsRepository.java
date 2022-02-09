@@ -135,10 +135,10 @@ public class CommandsRepository {
         commandsCache.put(cmdEntity);
         // check if callback is enabled or if parent command has callback enabled
         if (cmdEntity.isCallbackEnabled() ||
-                (!Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) &&
+                !Guid.isNullOrEmpty(cmdEntity.getParentCommandId()) &&
                         commandsCache.get(cmdEntity.getParentCommandId()) != null &&
                         commandsCache.get(cmdEntity.getParentCommandId()).isCallbackEnabled()
-                )) {
+                ) {
             buildCmdHierarchy(cmdEntity);
             if (!cmdEntity.isCallbackNotified()) {
                 addToCallbackMap(cmdEntity);

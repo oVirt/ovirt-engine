@@ -204,7 +204,7 @@ public class RunVmValidator {
                 validate(validateDisplayType(), messages) &&
                 validate(new VmValidator(vm).vmNotLocked(), messages) &&
                 validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId()), messages) &&
-                ((runInUnknownStatus && vm.getStatus() == VMStatus.Unknown) || validate(validateVmStatusUsingMatrix(vm), messages)) &&
+                (runInUnknownStatus && vm.getStatus() == VMStatus.Unknown || validate(validateVmStatusUsingMatrix(vm), messages)) &&
                 validate(validateStoragePoolUp(vm, storagePool, getVmImageDisks()), messages) &&
                 validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath(), activeIsoDomainId), messages)  &&
                 validate(vmDuringInitialization(vm), messages) &&
@@ -388,7 +388,7 @@ public class RunVmValidator {
      * Check isValid only if VM is not HA VM
      */
     private ValidationResult validateImagesForRunVm(VM vm, List<DiskImage> vmDisks) {
-        if (vmDisks.isEmpty() || (vm.isAutoStartup() && isInternalExecution)) {
+        if (vmDisks.isEmpty() || vm.isAutoStartup() && isInternalExecution) {
             return ValidationResult.VALID;
         }
         return new DiskImagesValidator(vmDisks).diskImagesNotLocked();
@@ -534,7 +534,7 @@ public class RunVmValidator {
     }
 
     private ValidationResult validateStoragePoolUp(VM vm, StoragePool storagePool, List<DiskImage> vmImages) {
-        if (vmImages.isEmpty() || (vm.isAutoStartup() && isInternalExecution)) {
+        if (vmImages.isEmpty() || vm.isAutoStartup() && isInternalExecution) {
             return ValidationResult.VALID;
         }
         return new StoragePoolValidator(storagePool).existsAndUp();
