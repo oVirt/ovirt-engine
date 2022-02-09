@@ -113,7 +113,7 @@ public abstract class InstanceTypeManager {
 
                     getModel().getInstanceTypes().setItems(instanceTypes);
                     for (InstanceType instanceType : instanceTypes) {
-                        if ((instanceType instanceof CustomInstanceType) && selectedInstanceTypeId == null) {
+                        if (instanceType instanceof CustomInstanceType && selectedInstanceTypeId == null) {
                             getModel().getInstanceTypes().setSelectedItem(CustomInstanceType.INSTANCE);
                             break;
                         }
@@ -502,13 +502,13 @@ public abstract class InstanceTypeManager {
 
 
     protected <T> void maybeSetSelectedItem(ListModel<T> entityModel, T value) {
-        if (alwaysEnabledFieldUpdate || (entityModel != null && entityModel.getIsChangable() && entityModel.getIsAvailable())) {
+        if (alwaysEnabledFieldUpdate || entityModel != null && entityModel.getIsChangable() && entityModel.getIsAvailable()) {
             entityModel.setSelectedItem(value);
         }
     }
 
     protected <T> void maybeSetEntity(EntityModel<T> listModel, T value) {
-        if (alwaysEnabledFieldUpdate || (listModel != null && listModel.getIsChangable() && listModel.getIsAvailable())) {
+        if (alwaysEnabledFieldUpdate || listModel != null && listModel.getIsChangable() && listModel.getIsAvailable()) {
             listModel.setEntity(value);
         }
     }

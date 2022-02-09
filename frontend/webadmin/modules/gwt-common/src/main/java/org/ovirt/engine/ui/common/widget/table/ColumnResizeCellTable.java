@@ -1040,7 +1040,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
                 if (BrowserEvents.CLICK.equals(event.getNativeEvent().getType())) {
                     long click = System.currentTimeMillis();
 
-                    if (lastClick > 0 && (click - lastClick < DOUBLE_CLICK_THRESHOLD)) {
+                    if (lastClick > 0 && click - lastClick < DOUBLE_CLICK_THRESHOLD) {
                         handler.onCellPreview(event);
                         lastClick = -1;
                     } else {
@@ -1081,7 +1081,7 @@ public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizabl
         Scheduler.get().scheduleDeferred(() -> {
             int gridHeaderHeight = getGridHeaderHeight();
             if (!isHeightSet && gridHeaderHeight > 0) {
-                if (maxGridHeight == -1 || (maxGridHeight > -1 && maxGridHeight > rowHeight + gridHeaderHeight)) {
+                if (maxGridHeight == -1 || maxGridHeight > -1 && maxGridHeight > rowHeight + gridHeaderHeight) {
                     resizeGridToContentHeight(rowHeight + gridHeaderHeight);
                 } else {
                     resizeGridToContentHeight(maxGridHeight);

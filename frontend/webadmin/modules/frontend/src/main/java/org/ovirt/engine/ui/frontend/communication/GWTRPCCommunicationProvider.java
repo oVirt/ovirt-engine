@@ -238,8 +238,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      * @param queriesList The list of queries.
      */
     private void transmitMultipleQueries(final List<VdcOperation<?, ?>> queriesList) {
-        if (queriesList.size() > 1 || (queriesList.size() == 1
-                && queriesList.get(0).getCallback() instanceof VdcOperationCallbackList)) {
+        if (queriesList.size() > 1 || queriesList.size() == 1
+                && queriesList.get(0).getCallback() instanceof VdcOperationCallbackList) {
             final List<QueryType> queryTypes = new ArrayList<>();
             final List<QueryParametersBase> parameters = new ArrayList<>();
 
@@ -335,8 +335,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                 parameters.add((ActionParametersBase) operation.getParameter());
             }
 
-            if (parameters.size() > 1 || (allActionOperations.size() == 1
-                    && allActionOperations.get(0).getCallback() instanceof VdcOperationCallbackList)) {
+            if (parameters.size() > 1 || allActionOperations.size() == 1
+                    && allActionOperations.get(0).getCallback() instanceof VdcOperationCallbackList) {
                 List<VdcOperation<?, ?>> waitForResultList = getWaitForResultList(actionEntry.getValue());
                 if (!waitForResultList.isEmpty()) {
                     runMultipleActions(actionEntry.getKey(), waitForResultList, parameters, allActionOperations,

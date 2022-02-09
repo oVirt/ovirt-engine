@@ -29,7 +29,7 @@ public abstract class AbstractLunTextColumn extends AbstractSafeHtmlColumn<LunMo
                 builder.textDecoration(TextDecoration.LINE_THROUGH);
             } else if (object.getIsLunRemovable()) {
                 builder.trustedColor("black"); //$NON-NLS-1$
-            } else if ((!object.getIsIncluded() && object.getIsGrayedOut()) || isLunUnExtendable) {
+            } else if (!object.getIsIncluded() && object.getIsGrayedOut() || isLunUnExtendable) {
                 builder.trustedColor("gray"); //$NON-NLS-1$
             } else if (!object.getIsAccessible() && !object.getIsGrayedOut()) {
                 builder.trustedColor("orange"); //$NON-NLS-1$

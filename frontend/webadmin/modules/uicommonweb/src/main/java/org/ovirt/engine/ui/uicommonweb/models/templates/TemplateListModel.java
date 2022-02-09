@@ -302,7 +302,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             }
         }
 
-        return t.size() > 1 ? true : false;
+        return t.size() > 1;
     }
 
     @Override

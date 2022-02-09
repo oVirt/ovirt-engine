@@ -34,7 +34,7 @@ public class HostAddressValidation extends BaseI18NValidation {
 
     @Override
     public ValidationResult validate(Object value) {
-        if (acceptEmptyInput && (value == null || (value instanceof String && value.equals(EMPTY_STRING)))) {
+        if (acceptEmptyInput && (value == null || value instanceof String && value.equals(EMPTY_STRING))) {
             return new ValidationResult();
         }
         return super.validate(value instanceof String ? ((String) value).trim() : value);

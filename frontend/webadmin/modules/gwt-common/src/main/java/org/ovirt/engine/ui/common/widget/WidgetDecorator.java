@@ -133,7 +133,7 @@ public abstract class WidgetDecorator implements IsWidget, HasWidgets, HasOneWid
 
             @Override
             public Widget next() {
-                if (!hasElement || (widget == null)) {
+                if (!hasElement || widget == null) {
                     throw new NoSuchElementException();
                 }
                 hasElement = false;

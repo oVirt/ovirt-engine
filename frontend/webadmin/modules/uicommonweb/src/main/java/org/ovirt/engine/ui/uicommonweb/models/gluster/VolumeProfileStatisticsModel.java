@@ -198,7 +198,7 @@ public class VolumeProfileStatisticsModel extends Model {
         AsyncDataProvider.getInstance().getGlusterVolumeProfilingStatistics(new AsyncQuery<>(returnValue -> {
             stopProgress();
             GlusterVolumeProfileInfo profileInfoEntity =returnValue.getReturnValue();
-            if((profileInfoEntity == null) || !returnValue.getSucceeded()) {
+            if(profileInfoEntity == null || !returnValue.getSucceeded()) {
                 setSuccessfulProfileStatsFetch(false);
                 if (isNfs) {
                     showNfsProfileStats(profileInfoEntity);

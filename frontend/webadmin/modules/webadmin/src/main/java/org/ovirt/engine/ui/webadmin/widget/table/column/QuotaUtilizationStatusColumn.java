@@ -55,10 +55,10 @@ public class QuotaUtilizationStatusColumn<Queryable> extends AbstractImageResour
     }
 
     private boolean getQuotaExceeded(QuotaCluster quota) {
-        return (quota.getMemSizeMB() != null && !quota.getMemSizeMB().equals(QuotaCluster.UNLIMITED_MEM)
-                && quota.getMemSizeMB() < quota.getMemSizeMBUsage())
-                || (quota.getVirtualCpu() != null && !quota.getVirtualCpu().equals(QuotaCluster.UNLIMITED_VCPU)
-                && quota.getVirtualCpu() < quota.getVirtualCpuUsage());
+        return quota.getMemSizeMB() != null && !quota.getMemSizeMB().equals(QuotaCluster.UNLIMITED_MEM)
+                && quota.getMemSizeMB() < quota.getMemSizeMBUsage()
+                || quota.getVirtualCpu() != null && !quota.getVirtualCpu().equals(QuotaCluster.UNLIMITED_VCPU)
+                && quota.getVirtualCpu() < quota.getVirtualCpuUsage();
     }
 
 }

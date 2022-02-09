@@ -1005,7 +1005,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         boolean isInternalDomain = storageDomain.getStorageDomainType().isInternalDomain();
         boolean isBlockStorage = storageDomain.getStorageType().isBlockDomain();
 
-        isEditAvailable = isActive || isBlockStorage || ((isInMaintenance || isUnattached) && isInternalDomain);
+        isEditAvailable = isActive || isBlockStorage || (isInMaintenance || isUnattached) && isInternalDomain;
         return isEditAvailable;
     }
 

@@ -938,7 +938,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         if (clusterSupportsHostCpu && !clusterHasPpcArchitecture()
-                && ((Boolean.FALSE.equals(isAutoAssign) && numOfPinnedHosts > 0)
+                && (Boolean.FALSE.equals(isAutoAssign) && numOfPinnedHosts > 0
                 || getModel().getVmType().getSelectedItem() == VmType.HighPerformance)) {
             getModel().getHostCpu().setIsChangeable(true);
         } else {
@@ -1779,10 +1779,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      */
     protected boolean isVmHpOrPinningConfigurationEnabled() {
         return getModel().getVmType().getSelectedItem() == VmType.HighPerformance
-                || (getModel().getCpuPinning().getEntity() != null && !getModel().getCpuPinning().getEntity().isEmpty())
-                || (getModel().getHostCpu().getEntity() != null && getModel().getHostCpu().getEntity().equals(true))
-                || (getModel().getVmNumaNodes() != null
-                    && getModel().getVmNumaNodes().stream().anyMatch(node -> !node.getVdsNumaNodeList().isEmpty()));
+                || getModel().getCpuPinning().getEntity() != null && !getModel().getCpuPinning().getEntity().isEmpty()
+                || getModel().getHostCpu().getEntity() != null && getModel().getHostCpu().getEntity().equals(true)
+                || getModel().getVmNumaNodes() != null
+                    && getModel().getVmNumaNodes().stream().anyMatch(node -> !node.getVdsNumaNodeList().isEmpty());
     }
 
     protected void useHostCpuValueChanged() {

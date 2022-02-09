@@ -1093,8 +1093,8 @@ public class HostGeneralModel extends EntityModel<VDS> {
                 // only string and int values are shown, -1 int values are hidden - considered "N/A"
                 .filter(pair ->
                         pair.getValue() instanceof String
-                                || (pair.getValue() instanceof Integer && !Objects.equals(vdsmNotAvailable,
-                                pair.getValue())))
+                                || pair.getValue() instanceof Integer && !Objects.equals(vdsmNotAvailable,
+                                pair.getValue()))
                 .map(pair -> pair.getKey() + ": " + pair.getValue()) //$NON-NLS-1$
                 .collect(Collectors.joining(", ")); //$NON-NLS-1$
         if (concatenatedPairs.isEmpty()) {

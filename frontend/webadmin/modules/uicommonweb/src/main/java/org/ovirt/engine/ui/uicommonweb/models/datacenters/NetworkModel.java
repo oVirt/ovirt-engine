@@ -249,7 +249,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 String defaultProfileName = defaultProfile.getName().getEntity();
-                if ((defaultProfileName != null) && (!defaultProfileName.equals(getName().getEntity()))) {
+                if (defaultProfileName != null && !defaultProfileName.equals(getName().getEntity())) {
                     getName().getEntityChangedEvent().removeListener(networkNameListener);
                     defaultProfile.getName().getEntityChangedEvent().removeListener(this);
                 }
@@ -547,8 +547,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     }
 
     private void updateVlanChangeabilityAndValue() {
-        boolean changeable = !getExternal().getEntity() || (getConnectedToPhysicalNetwork().getEntity()
-                && getUsePhysicalNetworkFromCustom().getEntity());
+        boolean changeable = !getExternal().getEntity() || getConnectedToPhysicalNetwork().getEntity()
+                && getUsePhysicalNetworkFromCustom().getEntity();
 
         getHasVLanTag().setEntity(changeable && getHasVLanTag().getEntity());
         getHasVLanTag().setIsChangeable(changeable);

@@ -150,7 +150,7 @@ public class VirtualMachineModule extends AbstractGinModule {
                                    "OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
                             if (windowModel instanceof AttachDiskModel) {
                                 return attachDiskPopupProvider.get();
-                            } else if ((windowModel instanceof NewDiskModel) || (windowModel instanceof EditVmDiskModel)) {
+                            } else if (windowModel instanceof NewDiskModel || windowModel instanceof EditVmDiskModel) {
                                 return newDiskPopupProvider.get();
                             } else {
                                 return newVmPopupProvider.get();
