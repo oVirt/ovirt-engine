@@ -425,7 +425,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
                         // If host exists in InstallingOs status, remove it from DB and move on
                         final VDS foundVds = vdsDao.getByName(parameters.getVdsStaticData().getName(), getClusterId());
-                        if ((foundVds != null) && (foundVds.getDynamicData().getStatus() == VDSStatus.InstallingOS)) {
+                        if (foundVds != null && foundVds.getDynamicData().getStatus() == VDSStatus.InstallingOS) {
                             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
                                 vdsStatisticsDao.remove(foundVds.getId());
                                 vdsDynamicDao.remove(foundVds.getId());

@@ -325,10 +325,10 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
 
     private boolean securityGroupsChanged(List<String> existingSecurityGroups, List<String> desiredSecurityGroups) {
         existingSecurityGroups = existingSecurityGroups == null ? NO_SECURITY_GROUPS : existingSecurityGroups;
-        return (desiredSecurityGroups == DEFAULT_SECURITY_GROUP
-                && existingSecurityGroups.isEmpty())
-                || (desiredSecurityGroups != DEFAULT_SECURITY_GROUP
-                && !CollectionUtils.isEqualCollection(existingSecurityGroups, desiredSecurityGroups));
+        return desiredSecurityGroups == DEFAULT_SECURITY_GROUP
+                && existingSecurityGroups.isEmpty()
+                || desiredSecurityGroups != DEFAULT_SECURITY_GROUP
+                && !CollectionUtils.isEqualCollection(existingSecurityGroups, desiredSecurityGroups);
     }
 
     private List<String> getSecurityGroups(VnicProfile vnicProfile) {

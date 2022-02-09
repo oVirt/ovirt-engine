@@ -116,8 +116,8 @@ public abstract class CtorsTestBase {
     private Predicate<Constructor<?>> createConstructorInaccessibleFromPackagePredicate(Package sourcePackage) {
         return constructor ->
                 Modifier.isPrivate(constructor.getModifiers()) ||
-                        (!sourcePackage.equals(constructor.getDeclaringClass().getPackage()) &&
-                                !Modifier.isPublic(constructor.getModifiers()));
+                        !sourcePackage.equals(constructor.getDeclaringClass().getPackage()) &&
+                                !Modifier.isPublic(constructor.getModifiers());
     }
 
     /**

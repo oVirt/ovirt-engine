@@ -58,7 +58,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
             storageDomainId =
                     storageDomainDao.getAllForStoragePool(getStoragePoolId()).stream().filter(
                             a -> !a.getStorageDomainType().isIsoOrImportExportDomain()
-                                    && (a.getStatus() == StorageDomainStatus.Active))
+                                    && a.getStatus() == StorageDomainStatus.Active)
                             .map(StorageDomain::getId).findFirst().orElse(Guid.Empty);
 
             getParameters().setStorageDomainId(storageDomainId);

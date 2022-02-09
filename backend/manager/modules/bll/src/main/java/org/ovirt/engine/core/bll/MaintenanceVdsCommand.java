@@ -219,7 +219,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                     return failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_NO_ALTERNATE_HOST_FOR_HOSTED_ENGINE);
                 }
             }
-            if ((getParameters().isInternal() && vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE) ||
+            if (getParameters().isInternal() && vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE ||
                     vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
                 nonMigratableVms.add(vm.getName());
                 return failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM);

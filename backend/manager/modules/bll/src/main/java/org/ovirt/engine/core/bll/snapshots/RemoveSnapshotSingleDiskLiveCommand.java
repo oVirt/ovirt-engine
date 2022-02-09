@@ -188,7 +188,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     private boolean shouldSkipReduceImage() {
         // Skipping file domains and live merge scenarios.
         return getStorageDomain().getStorageType().isFileDomain() ||
-                (getActiveDiskImage() == null || getActiveDiskImage().getParentId().equals(getImageId()));
+                getActiveDiskImage() == null || getActiveDiskImage().getParentId().equals(getImageId());
     }
 
     private boolean completedMerge() {

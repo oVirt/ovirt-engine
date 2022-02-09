@@ -652,7 +652,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     protected boolean validatePassDiscardSupportedForDestinationStorageDomain() {
         if (isMoveOperation() ||
-                (isCopyOperation() && isTemplate())) {
+                isCopyOperation() && isTemplate()) {
             MultipleDiskVmElementValidator multipleDiskVmElementValidator = createMultipleDiskVmElementValidator();
             return validate(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSd(
                     getParameters().getStorageDomainId()));

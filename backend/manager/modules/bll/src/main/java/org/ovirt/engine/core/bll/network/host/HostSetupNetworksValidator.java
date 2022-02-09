@@ -559,12 +559,12 @@ public class HostSetupNetworksValidator {
                          * we're creating new bond, and it's definition contains reference to slave already assigned
                          * to a different bond.
                          */
-                (!potentialSlave.isPartOfBond(modifiedOrNewBond.getName())
+                !potentialSlave.isPartOfBond(modifiedOrNewBond.getName())
                     //… but this bond is also removed in this request, so it's ok.
                     && !isBondRemoved(currentSlavesBondName)
 
                     //… or slave was removed from its former bond
-                    && !bondIsUpdatedAndDoesNotContainCertainSlave(slaveName, currentSlavesBondName))) {
+                    && !bondIsUpdatedAndDoesNotContainCertainSlave(slaveName, currentSlavesBondName)) {
 
 
                 EngineMessage engineMessage = EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND;
@@ -910,8 +910,8 @@ public class HostSetupNetworksValidator {
                     NicLabel nicLabel = nicLabelByLabel.get(label);
                     boolean labelRemovedFromNic =
                             params.getRemovedLabels().contains(label)
-                                    || (nicLabel != null && !Objects.equals(nicLabel.getNicName(),
-                                            existingNic.getName()));
+                                    || nicLabel != null && !Objects.equals(nicLabel.getNicName(),
+                                            existingNic.getName());
                     if (!labelRemovedFromNic) {
                         labelsToConfigure.add(label);
                     }

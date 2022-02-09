@@ -156,8 +156,8 @@ public class StorageDeviceSyncJob extends GlusterJob {
         }
 
         for (StorageDevice storageDevice : storageDevicesInDb) {
-            if ((storageDevice.getDevUuid() != null && !deviceUuidsFromVdsm.contains(storageDevice.getDevUuid()))
-                    || (storageDevice.getDevUuid() == null && !deviceNamesFromVdsm.contains(storageDevice.getName()))) {
+            if (storageDevice.getDevUuid() != null && !deviceUuidsFromVdsm.contains(storageDevice.getDevUuid())
+                    || storageDevice.getDevUuid() == null && !deviceNamesFromVdsm.contains(storageDevice.getName())) {
                 log.debug("storage device '{}' detected removed for the host '{}'",
                         storageDevice.getName(),
                         vds.getName());

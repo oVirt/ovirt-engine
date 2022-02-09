@@ -73,8 +73,8 @@ public class NetworkConfigurator {
 
         final String hostManagementNetworkIpv4Address = getIpv4AddressOfNetwork(managementNetworkName);
         final String hostManagementNetworkIpv6Address = getIpv6AddressOfNetwork(managementNetworkName);
-        if ((hostManagementNetworkIpv4Address != null && hostManagementNetworkIpv4Address.equals(hostIp)) ||
-                (hostManagementNetworkIpv6Address != null && hostManagementNetworkIpv6Address.equals(hostIp))) {
+        if (hostManagementNetworkIpv4Address != null && hostManagementNetworkIpv4Address.equals(hostIp) ||
+                hostManagementNetworkIpv6Address != null && hostManagementNetworkIpv6Address.equals(hostIp)) {
             log.info("The management network '{}' is already configured on host '{}'",
                     managementNetworkName,
                     host.getName());

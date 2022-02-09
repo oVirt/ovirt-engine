@@ -549,9 +549,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             DnsResolverConfiguration oldDnsResolverConfiguration = oldNetwork.getDnsResolverConfiguration();
             boolean dnsEmpty = isDnsEmpty(dnsResolverConfiguration);
             boolean oldDnsEmpty = isDnsEmpty(oldDnsResolverConfiguration);
-            return (dnsEmpty && !oldDnsEmpty) || (!dnsEmpty && !oldDnsEmpty
+            return dnsEmpty && !oldDnsEmpty || !dnsEmpty && !oldDnsEmpty
                     && !dnsResolverConfiguration.getNameServers()
-                            .containsAll(oldDnsResolverConfiguration.getNameServers()));
+                            .containsAll(oldDnsResolverConfiguration.getNameServers());
         }
 
         private boolean isDnsEmpty(DnsResolverConfiguration dnsResolverConfiguration) {

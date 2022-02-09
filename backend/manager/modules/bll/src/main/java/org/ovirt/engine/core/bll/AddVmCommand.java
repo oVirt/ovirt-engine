@@ -713,7 +713,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (vmFromParams.isUseHostCpuFlags() && (ArchitectureType.ppc == getCluster().getArchitecture().getFamily())) {
+        if (vmFromParams.isUseHostCpuFlags() && ArchitectureType.ppc == getCluster().getArchitecture().getFamily()) {
             return failValidation(EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
         }
 
@@ -823,7 +823,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failValidation(msgs);
         }
 
-        if (vmDevicesSource.getClusterId() == null && (getCluster().getBiosType() == null)) {
+        if (vmDevicesSource.getClusterId() == null && getCluster().getBiosType() == null) {
             return failValidation(EngineMessage.CLUSTER_BIOS_TYPE_NOT_SET);
         }
 
@@ -1677,11 +1677,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     private boolean isMakeCreatorExplicitOwner() {
         return getParameters().isMakeCreatorExplicitOwner()
-                || (getCurrentUser() != null && getParameters().getPoolId() == null
+                || getCurrentUser() != null && getParameters().getPoolId() == null
                         && !checkUserAuthorization(getCurrentUser().getId(),
                                 ActionGroup.MANIPULATE_PERMISSIONS,
                                 getVmId(),
-                                VdcObjectType.VM));
+                                VdcObjectType.VM);
     }
 
     private void copyTemplatePermissions(UniquePermissionsSet permissionsToAdd) {

@@ -65,7 +65,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
         Quota quotaByName = quotaDao.getQuotaByQuotaName(quota.getQuotaName(), quota.getStoragePoolId());
 
         // Check if there is no quota with the same name that already exists.
-        if ((quotaByName != null) && !quotaByName.getId().equals(quota.getId())) {
+        if (quotaByName != null && !quotaByName.getId().equals(quota.getId())) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             return false;
         }

@@ -249,7 +249,7 @@ public class TagsDirector implements BackendService, ITagsHandler {
     }
 
     private static void recursiveGetTagsAndChildrenByRegExp(String tagNameRegExp, StringBuilder sb, Tags tag, TagReturnValueIndicator indicator) {
-        if ((tag.getChildren() != null) && !tag.getChildren().isEmpty()) {
+        if (tag.getChildren() != null && !tag.getChildren().isEmpty()) {
             tagNameRegExp = BACKSLASH_REMOVER.matcher(tagNameRegExp).replaceAll("");
             for (Tags child : tag.getChildren()) {
                 Pattern tagNamePattern = Pattern.compile(tagNameRegExp);

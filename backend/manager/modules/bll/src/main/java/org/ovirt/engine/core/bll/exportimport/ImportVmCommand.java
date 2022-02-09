@@ -449,9 +449,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         // If there are no snapshots we may not care if copyCollapse = false
         // There's always at least one snapshot (Active).
         // In case the VM is based on a template, we need to take copyCollapse in account
-        return ((getParameters().getVm().getSnapshots().size() > 1) ||
-                (!VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getVmtGuid())
-                        && getVmTemplate() != null))
+        return (getParameters().getVm().getSnapshots().size() > 1 ||
+                !VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getVmtGuid())
+                        && getVmTemplate() != null)
                 && !getParameters().getCopyCollapse();
     }
 

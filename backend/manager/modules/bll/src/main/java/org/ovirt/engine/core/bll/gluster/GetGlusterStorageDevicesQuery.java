@@ -38,8 +38,8 @@ public class GetGlusterStorageDevicesQuery<P extends IdQueryParameters> extends 
         List<String> fsTypesToFilterOutList = getFsTypesFilter();
         // Filter out the devices which are not going to be used as storage device for gluster.
         for (StorageDevice device : storageDevices) {
-            if ((device.getMountPoint() != null && mountPointsFilterPattern.matcher(device.getMountPoint()).matches())
-                    || (device.getFsType() != null && fsTypesToFilterOutList.contains(device.getFsType()))) {
+            if (device.getMountPoint() != null && mountPointsFilterPattern.matcher(device.getMountPoint()).matches()
+                    || device.getFsType() != null && fsTypesToFilterOutList.contains(device.getFsType())) {
                 continue;
             }
             if (device.getCanCreateBrick() || device.getMountPoint() != null || device.getFsType() != null) {

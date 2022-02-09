@@ -134,7 +134,7 @@ public class GlusterTaskUtils {
     public boolean hasTaskCompleted(GlusterAsyncTask task) {
         // Remove brick task is marked completed only if committed or aborted.
         return JobExecutionStatus.ABORTED == task.getStatus() ||
-                (JobExecutionStatus.FINISHED == task.getStatus() && task.getType() != GlusterTaskType.REMOVE_BRICK)
+                JobExecutionStatus.FINISHED == task.getStatus() && task.getType() != GlusterTaskType.REMOVE_BRICK
                 || JobExecutionStatus.FAILED == task.getStatus();
     }
 

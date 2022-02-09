@@ -336,10 +336,10 @@ public final class AsyncTaskManager implements BackendService {
     }
 
     private boolean isCurrentTaskLookedFor(Guid id, SPMTask task) {
-        return (task instanceof CommandAsyncTask) && task.getParameters().getEntityInfo() != null &&
+        return task instanceof CommandAsyncTask && task.getParameters().getEntityInfo() != null &&
                 id.equals(task.getParameters().getEntityInfo().getId())
-                && (task.getState() != AsyncTaskState.Cleared)
-                && (task.getState() != AsyncTaskState.ClearFailed);
+                && task.getState() != AsyncTaskState.Cleared
+                && task.getState() != AsyncTaskState.ClearFailed;
     }
 
     private void cleanZombieTasks() {
@@ -478,8 +478,8 @@ public final class AsyncTaskManager implements BackendService {
                     poolsAsyncTaskMap.put(storagePoolID, map);
                 }
             } catch (RuntimeException e) {
-                if ((e instanceof EngineException)
-                        && (((EngineException) e).getErrorCode() == EngineError.VDS_NETWORK_ERROR)) {
+                if (e instanceof EngineException
+                        && ((EngineException) e).getErrorCode() == EngineError.VDS_NETWORK_ERROR) {
                     log.debug("Get SPM task statuses: Calling Command {}VDSCommand, "
                                     + "with storagePoolId '{}') threw an exception.",
                             VDSCommandType.SPMGetAllTasksStatuses, storagePoolID);

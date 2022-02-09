@@ -343,7 +343,7 @@ public class ImagesHandler {
      * */
     public static double getTotalActualSizeOfDisk(DiskImage diskImage, StorageDomainStatic storageDomain) {
         double sizeForDisk = diskImage.getSize();
-        if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse) ||
+        if (storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse ||
                 storageDomain.getStorageType().isBlockDomain() && diskImage.getVolumeFormat() == VolumeFormat.COW) {
             double usedSpace = diskImage.getActualDiskWithSnapshotsSizeInBytes();
             sizeForDisk = Math.min(diskImage.getSize(), usedSpace);
@@ -528,9 +528,9 @@ public class ImagesHandler {
     }
 
     private static boolean checkImageConfiguration(StorageDomainStatic storageDomain, VolumeType volumeType, VolumeFormat volumeFormat, DiskBackup diskBackup) {
-        return !((volumeType == VolumeType.Preallocated && volumeFormat == VolumeFormat.COW && diskBackup != DiskBackup.Incremental)
-                || (volumeFormat == VolumeFormat.RAW && diskBackup == DiskBackup.Incremental)
-                || (storageDomain.getStorageType().isBlockDomain() && volumeType == VolumeType.Sparse && volumeFormat == VolumeFormat.RAW)
+        return !(volumeType == VolumeType.Preallocated && volumeFormat == VolumeFormat.COW && diskBackup != DiskBackup.Incremental
+                || volumeFormat == VolumeFormat.RAW && diskBackup == DiskBackup.Incremental
+                || storageDomain.getStorageType().isBlockDomain() && volumeType == VolumeType.Sparse && volumeFormat == VolumeFormat.RAW
                 || volumeFormat == VolumeFormat.Unassigned
                 || volumeType == VolumeType.Unassigned);
     }

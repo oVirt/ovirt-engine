@@ -102,7 +102,7 @@ public class VdsCommandsHelper {
 
             executedHosts.add(params.getVdsId());
 
-            if (!performFailover || (returnValue != null && !returnValue.isCanTryOnDifferentVds())) {
+            if (!performFailover || returnValue != null && !returnValue.isCanTryOnDifferentVds()) {
                 break;
             }
 

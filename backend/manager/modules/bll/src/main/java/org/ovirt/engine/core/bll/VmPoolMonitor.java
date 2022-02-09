@@ -141,8 +141,8 @@ public class VmPoolMonitor implements BackendService {
         return vmsInPool == null ? 0
                 : (int) vmsInPool.stream()
                         .filter(vm -> startingVms.contains(vm.getId())
-                                || (vm.isStartingOrUp()
-                                        && vmPoolHandler.isPrestartedVmFree(vm.getId(), pool.isStateful(), null)))
+                                || vm.isStartingOrUp()
+                                        && vmPoolHandler.isPrestartedVmFree(vm.getId(), pool.isStateful(), null))
                         .count();
     }
 

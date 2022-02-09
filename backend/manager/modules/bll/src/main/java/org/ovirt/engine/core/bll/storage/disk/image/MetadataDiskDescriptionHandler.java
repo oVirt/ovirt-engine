@@ -73,9 +73,9 @@ public class MetadataDiskDescriptionHandler {
             descriptionAvailableLength = addFieldToDescriptionMap(descriptionMap, fieldName, fieldValue, 1 << priority,
                     descriptionAvailableLength);
             boolean fieldValueContainsOnlyAscii = stringMatchesAsciiPattern(fieldValue);
-            if ((fieldValueContainsOnlyAscii && descriptionAvailableLength <= 0) ||
-                    (!fieldValueContainsOnlyAscii &&
-                            descriptionAvailableLength < MAX_ENCODING_RATIO_WITH_HEX_USING_UTF_16LE)) {
+            if (fieldValueContainsOnlyAscii && descriptionAvailableLength <= 0 ||
+                    !fieldValueContainsOnlyAscii &&
+                            descriptionAvailableLength < MAX_ENCODING_RATIO_WITH_HEX_USING_UTF_16LE) {
                 // Storage space limitation reached.
                 if (!auditLogIfFieldWasNotAddedSuccessfully(descriptionFields, descriptionMap, fieldName, fieldValue,
                         descriptionFieldsPriority, priority)) {
