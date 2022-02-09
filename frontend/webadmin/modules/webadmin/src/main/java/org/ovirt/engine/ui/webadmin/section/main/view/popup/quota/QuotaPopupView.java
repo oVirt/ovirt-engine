@@ -251,7 +251,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             @Override
             public String getValue(QuotaStorage object) {
                 if (model.getGlobalStorageQuota().getEntity()
-                        || (model.getSpecificStorageQuota().getEntity() && selectedStorageGuid.contains(object.getStorageId()))) {
+                        || model.getSpecificStorageQuota().getEntity() && selectedStorageGuid.contains(object.getStorageId())) {
                     return constants.editCellQuota();
                 }
                 return null;
@@ -271,7 +271,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             @Override
             public Boolean getValue(QuotaCluster object) {
                 if (selectedClusterGuid.contains(object.getClusterId())
-                        || (object.getMemSizeMB() != null && object.getVirtualCpu() != null)) {
+                        || object.getMemSizeMB() != null && object.getVirtualCpu() != null) {
                     if (!selectedClusterGuid.contains(object.getClusterId())) {
                         selectedClusterGuid.add(object.getClusterId());
                     }
@@ -341,7 +341,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             @Override
             public String getValue(QuotaCluster object) {
                 if (model.getGlobalClusterQuota().getEntity()
-                        || (model.getSpecificClusterQuota().getEntity() && selectedClusterGuid.contains(object.getClusterId()))) {
+                        || model.getSpecificClusterQuota().getEntity() && selectedClusterGuid.contains(object.getClusterId())) {
                     return constants.editCellQuota();
                 }
                 return null;

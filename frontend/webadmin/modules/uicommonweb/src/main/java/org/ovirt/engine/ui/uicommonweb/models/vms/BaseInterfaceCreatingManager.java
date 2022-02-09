@@ -70,8 +70,8 @@ public abstract class BaseInterfaceCreatingManager {
                     Guid existingProfileId = existingVnic.getVnicProfileId();
                     Guid editedProfileId = editedVnic.getVnicProfileId();
 
-                    if ((editedProfileId == null && existingProfileId != null)
-                            || (editedProfileId != null && !editedProfileId.equals(existingProfileId))) {
+                    if (editedProfileId == null && existingProfileId != null
+                            || editedProfileId != null && !editedProfileId.equals(existingProfileId)) {
                         existingVnic.setVnicProfileId(editedProfileId);
                         existingVnic.setNetworkName(editedVnic.getNetworkName());
                         updateVnicParameters.add(createAddInterfaceParameter(vmId, existingVnic));

@@ -11,8 +11,8 @@ public class NotEmptyQuotaValidation implements IValidation {
         ValidationResult result = new ValidationResult();
 
         if (value == null
-                || (value instanceof Quota
-                && (((Quota)value).getId() == null || Guid.Empty.equals(((Quota)value).getId())))) {
+                || value instanceof Quota
+                && (((Quota)value).getId() == null || Guid.Empty.equals(((Quota)value).getId()))) {
             result.setSuccess(false);
             result.getReasons().add(ConstantsManager.getInstance().getConstants().thisFieldCantBeEmptyInvalidReason());
         }

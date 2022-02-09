@@ -342,7 +342,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         boolean isRootItem = item.getParentItem() == null;
         boolean isNodeItem = item.getParentItem() != null;
 
-        if ((isRootItem && !isRootSelectionEnabled) || (isNodeItem && !isNodeSelectionEnabled)) {
+        if (isRootItem && !isRootSelectionEnabled || isNodeItem && !isNodeSelectionEnabled) {
             return;
         }
 
@@ -414,7 +414,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
     }
 
     protected void onItemsSelection() {
-        if (listModel.getItems() == null || (!isRootSelectionEnabled && !isNodeSelectionEnabled)) {
+        if (listModel.getItems() == null || !isRootSelectionEnabled && !isNodeSelectionEnabled) {
             return;
         }
 

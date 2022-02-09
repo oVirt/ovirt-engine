@@ -80,7 +80,7 @@ public class ErrorTranslator {
             Boolean changeIfNotFound) {
         String ret = ""; //$NON-NLS-1$
         try {
-            if ((errorMsg != null) && (errorMsg.length() > 0)) {
+            if (errorMsg != null && errorMsg.length() > 0) {
                 String errMsgCopy = errorMsg; // Taking a copy of the error message
                 if (!isDynamicVariable(errorMsg)) {
                     errorMsg = errorMsg.replace('.', '_');

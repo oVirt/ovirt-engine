@@ -2690,8 +2690,8 @@ public class AsyncDataProvider {
             boolean supportsGlusterService) {
         final ArrayList<Cluster> filteredList = new ArrayList<>();
         for (Cluster cluster : list) {
-            if ((supportsVirtService && cluster.supportsVirtService())
-                    || (supportsGlusterService && cluster.supportsGlusterService())) {
+            if (supportsVirtService && cluster.supportsVirtService()
+                    || supportsGlusterService && cluster.supportsGlusterService()) {
                 filteredList.add(cluster);
             }
         }

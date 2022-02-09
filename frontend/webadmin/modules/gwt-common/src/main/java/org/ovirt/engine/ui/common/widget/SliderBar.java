@@ -591,8 +591,8 @@ public class SliderBar extends FocusPanel implements RequiresResize,
         this.curValue -= remainder;
 
         // Go to next step if more than halfway there
-        if ((remainder > (stepSize / 2))
-                && ((this.curValue + stepSize) <= maxValue)) {
+        if (remainder > (stepSize / 2)
+                && (this.curValue + stepSize) <= maxValue) {
             this.curValue += stepSize;
         }
 

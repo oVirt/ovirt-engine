@@ -125,7 +125,7 @@ public class NetworkGeneralModel extends EntityModel<NetworkView> {
     }
 
     public void setId(Guid value) {
-        if ((id == null && value != null) || (id != null && !id.equals(value))) {
+        if (id == null && value != null || id != null && !id.equals(value)) {
             id = value;
             onPropertyChanged(new PropertyChangedEventArgs("Id")); //$NON-NLS-1$
         }

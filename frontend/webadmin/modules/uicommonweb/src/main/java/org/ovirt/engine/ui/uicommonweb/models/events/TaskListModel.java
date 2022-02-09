@@ -97,8 +97,8 @@ public class TaskListModel extends SearchableListModel<Void, Job> {
                     }
 
                     if (entry.getKey().getLastUpdateTime() == null
-                            || (entry.getKey().getLastUpdateTime().before(task.getLastUpdateTime())
-                            && !entry.getKey().getLastUpdateTime().equals(task.getLastUpdateTime()))) {
+                            || entry.getKey().getLastUpdateTime().before(task.getLastUpdateTime())
+                            && !entry.getKey().getLastUpdateTime().equals(task.getLastUpdateTime())) {
                         entry.getKey().setLastUpdateTime(task.getLastUpdateTime());
                     }
                     Date tempDate = task.getLastUpdateTime();
@@ -196,8 +196,8 @@ public class TaskListModel extends SearchableListModel<Void, Job> {
                                             task.setStatus(job.getStatus());
                                         }
                                         if (task.getLastUpdateTime() == null
-                                                || (task.getLastUpdateTime().before(job.getLastUpdateTime()) && !task.getLastUpdateTime()
-                                                .equals(job.getLastUpdateTime()))) {
+                                                || task.getLastUpdateTime().before(job.getLastUpdateTime()) && !task.getLastUpdateTime()
+                                                .equals(job.getLastUpdateTime())) {
                                             task.setLastUpdateTime(job.getEndTime());
                                         }
                                         Date tempDate = task.getLastUpdateTime();

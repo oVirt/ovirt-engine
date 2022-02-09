@@ -71,8 +71,8 @@ public class EventNotificationModel extends Model {
     }
 
     public void setEventGroupModels(ArrayList<SelectionTreeNodeModel> value) {
-        if ((eventGroupModels == null && value != null)
-                || (eventGroupModels != null && !eventGroupModels.equals(value))) {
+        if (eventGroupModels == null && value != null
+                || eventGroupModels != null && !eventGroupModels.equals(value)) {
             eventGroupModels = value;
             onPropertyChanged(new PropertyChangedEventArgs("EventGroupModels")); //$NON-NLS-1$
         }

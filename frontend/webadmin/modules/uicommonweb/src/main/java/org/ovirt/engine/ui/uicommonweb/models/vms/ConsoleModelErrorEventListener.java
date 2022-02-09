@@ -28,7 +28,7 @@ public class ConsoleModelErrorEventListener implements IEventListener<ErrorCodeE
     @Override
     public void eventRaised(Event<? extends ErrorCodeEventArgs> ev, Object sender, ErrorCodeEventArgs args) {
         if (ev.matchesDefinition(ConsoleModel.errorEventDefinition)
-                && ((sender instanceof SpiceConsoleModel) || (sender instanceof RdpConsoleModel))) {
+                && (sender instanceof SpiceConsoleModel || sender instanceof RdpConsoleModel)) {
             consoleModelError(sender, getConsoleModelErrorMessage(sender, args));
         }
     }

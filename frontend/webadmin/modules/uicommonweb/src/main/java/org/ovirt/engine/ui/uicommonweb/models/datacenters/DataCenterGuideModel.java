@@ -374,7 +374,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
     }
 
     private void updateOptionsLocalFS() {
-        if (clusters == null || allHosts == null || (localStorageHost == null && !noLocalStorageHost)) {
+        if (clusters == null || allHosts == null || localStorageHost == null && !noLocalStorageHost) {
             return;
         }
 

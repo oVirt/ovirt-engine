@@ -493,7 +493,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         // of type 'valueObjectEnumerableList', which is not IList).
         if (getItems() != null) {
             Iterator<T> enumerator = getItems().iterator();
-            setIsEmpty(enumerator.hasNext() ? false : true);
+            setIsEmpty(!enumerator.hasNext());
         } else {
             setIsEmpty(true);
         }
@@ -663,7 +663,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
 
     @Override
     public final boolean hasItemsSorted() {
-        return (sortBy != null) || super.hasItemsSorted();
+        return sortBy != null || super.hasItemsSorted();
     }
 
     /**
@@ -722,8 +722,8 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
                 }
             }
 
-            if (comparator == null || ((value instanceof SortedSet)
-                    && Objects.equals(((SortedSet<?>) value).comparator(), comparator))) {
+            if (comparator == null || value instanceof SortedSet
+                    && Objects.equals(((SortedSet<?>) value).comparator(), comparator)) {
                 itemsChanging(value, items);
                 items = value;
             } else {

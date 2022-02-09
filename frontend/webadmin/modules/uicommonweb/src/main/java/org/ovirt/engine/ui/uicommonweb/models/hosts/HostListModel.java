@@ -2095,7 +2095,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     private boolean isVmHpOrPinningConfigurationEnabled(VM vm, Set<Guid> vmsWithPinnedvNumaNodes) {
         return vm.getVmType() == VmType.HighPerformance
                 || vm.isUsingCpuPassthrough()
-                || (vm.getCpuPinning() != null && !vm.getCpuPinning().isEmpty())
+                || vm.getCpuPinning() != null && !vm.getCpuPinning().isEmpty()
                 || vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA
                 || vmsWithPinnedvNumaNodes.contains(vm.getId());
     }

@@ -91,8 +91,8 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior {
 
         // local storage should only be available in a local DC.
         boolean canAttachLocalStorage = !isLocalStorage(item) || dataCenter.isLocal();
-        if (((isExportDomain && canAttachExportDomain) || (isIsoDomain && canAttachIsoDomain) ||
-                (isManagedBlockDomain && canAttachManagedBlockDomain)) && canAttachLocalStorage) {
+        if ((isExportDomain && canAttachExportDomain || isIsoDomain && canAttachIsoDomain ||
+                isManagedBlockDomain && canAttachManagedBlockDomain) && canAttachLocalStorage) {
             updateItemSelectability(item, true);
             return;
         }

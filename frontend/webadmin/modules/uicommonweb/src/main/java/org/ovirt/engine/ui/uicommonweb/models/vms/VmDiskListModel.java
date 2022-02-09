@@ -518,7 +518,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
             if (disk.getPlugged() == plug
                     || isLocked
-                    || (!isDiskHotpluggableInterface && !isVmDown())) {
+                    || !isDiskHotpluggableInterface && !isVmDown()) {
                 return false;
             }
         }
@@ -540,7 +540,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
-            if (!isImageDiskOK(disk) || (!isVmDown() && disk.getPlugged()) || disk.isDiskSnapshot()) {
+            if (!isImageDiskOK(disk) || !isVmDown() && disk.getPlugged() || disk.isDiskSnapshot()) {
                 return false;
             }
         }
@@ -569,7 +569,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         List<Disk> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
-            if (isDiskLocked(disk) ||  (!isVmDown() && disk.getPlugged())) {
+            if (isDiskLocked(disk) || !isVmDown() && disk.getPlugged()) {
                 return false;
             }
         }
@@ -581,7 +581,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         List<Disk> disks = getSelectedItems() != null ?getSelectedItems() : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
-            if (!isImageDiskOK(disk) || isImageDiskPreallocated(disk) || (!isVmDown() && disk.getPlugged())) {
+            if (!isImageDiskOK(disk) || isImageDiskPreallocated(disk) || !isVmDown() && disk.getPlugged()) {
                 return false;
             }
         }

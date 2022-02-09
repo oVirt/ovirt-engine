@@ -730,8 +730,8 @@ public final class FormatterJava {
             }
 
             // bad combination
-            if ((f.contains(Flags.PLUS) && f.contains(Flags.LEADING_SPACE))
-                    || (f.contains(Flags.LEFT_JUSTIFY) && f.contains(Flags.ZERO_PAD))) {
+            if (f.contains(Flags.PLUS) && f.contains(Flags.LEADING_SPACE)
+                    || f.contains(Flags.LEFT_JUSTIFY) && f.contains(Flags.ZERO_PAD)) {
                 throw new IllegalArgumentException(f.toString());
             }
         }
@@ -899,7 +899,7 @@ public final class FormatterJava {
 
                 char c = value[j];
                 sb.append((char) ((c - '0') + zero));
-                if (grpSep != '\0' && j != dot - 1 && ((dot - j) % grpSize == 1)) {
+                if (grpSep != '\0' && j != dot - 1 && (dot - j) % grpSize == 1) {
                     sb.append(grpSep);
                 }
             }
@@ -1281,8 +1281,8 @@ public final class FormatterJava {
                 BigDecimal tenToTheNegFour = BigDecimal.valueOf(1, 4);
                 BigDecimal tenToThePrec = BigDecimal.valueOf(1, -prec);
                 if (value.equals(BigDecimal.ZERO)
-                        || ((value.compareTo(tenToTheNegFour) != -1)
-                        && (value.compareTo(tenToThePrec) == -1))) {
+                        || value.compareTo(tenToTheNegFour) != -1
+                        && value.compareTo(tenToThePrec) == -1) {
 
                     int e = -value.scale()
                             + (value.unscaledValue().toString().length() - 1);
@@ -1654,7 +1654,7 @@ public final class FormatterJava {
                     fs.print(null);
                     break;
                 case -1: // relative index
-                    if (last < 0 || (args != null && last > args.length - 1)) {
+                    if (last < 0 || args != null && last > args.length - 1) {
                         throw new IllegalArgumentException(fs.toString());
                     }
                     fs.print(args == null ? null : args[last]);

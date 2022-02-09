@@ -102,7 +102,7 @@ public class TemplateModule extends AbstractGinModule {
                         } else if (lastExecutedCommand == getModel().getCreateVmFromTemplateCommand()) {
                             if (windowModel instanceof AttachDiskModel) {
                                 return attachDiskPopupProvider.get();
-                            } else if ((windowModel instanceof NewDiskModel) || (windowModel instanceof EditVmDiskModel)) {
+                            } else if (windowModel instanceof NewDiskModel || windowModel instanceof EditVmDiskModel) {
                                 return newDiskPopupProvider.get();
                             } else {
                                 return createVmPopupProvider.get();
@@ -185,8 +185,8 @@ public class TemplateModule extends AbstractGinModule {
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(TemplateInterfaceListModel source,
                             UICommand lastExecutedCommand,
                             Model windowModel) {
-                        if ((lastExecutedCommand == getModel().getNewCommand())
-                                || (lastExecutedCommand == getModel().getEditCommand())) {
+                        if (lastExecutedCommand == getModel().getNewCommand()
+                                || lastExecutedCommand == getModel().getEditCommand()) {
                             return popupProvider.get();
                         } else {
                             return super.getModelPopup(source, lastExecutedCommand, windowModel);

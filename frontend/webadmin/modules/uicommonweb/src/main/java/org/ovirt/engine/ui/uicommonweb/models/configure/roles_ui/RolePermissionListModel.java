@@ -56,7 +56,7 @@ public class RolePermissionListModel extends SearchableListModel<Role, Permissio
 
     private void updateActionAvailability() {
         getRemoveCommand().setIsExecutionAllowed(getSelectedItem() != null
-                || (getSelectedItems() != null && getSelectedItems().size() > 0));
+                || getSelectedItems() != null && getSelectedItems().size() > 0);
 
     }
 

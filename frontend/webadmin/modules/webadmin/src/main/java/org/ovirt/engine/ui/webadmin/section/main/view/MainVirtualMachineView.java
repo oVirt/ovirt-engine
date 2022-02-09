@@ -192,7 +192,7 @@ public class MainVirtualMachineView extends AbstractMainWithDetailsTableView<VM,
         AbstractTextColumn<VM> graphicsColumn = new AbstractEnumColumn<VM, UnitVmModel.GraphicsTypes>() {
             @Override
             protected UnitVmModel.GraphicsTypes getRawValue(VM vm) {
-                if ((vm.getStatus() == VMStatus.Down) || (vm.getStatus() == VMStatus.ImageLocked)) {
+                if (vm.getStatus() == VMStatus.Down || vm.getStatus() == VMStatus.ImageLocked) {
                     return UnitVmModel.GraphicsTypes.NONE;
                 }
 
