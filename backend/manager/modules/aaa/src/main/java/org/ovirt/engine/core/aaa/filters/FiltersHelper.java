@@ -54,8 +54,8 @@ public class FiltersHelper {
     }
 
     public static boolean isAuthenticated(HttpServletRequest request) {
-        return (request.getSession(false) != null && request.getSession(false)
-                .getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY) != null)
+        return request.getSession(false) != null
+                && request.getSession(false).getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY) != null
                 || request.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY) != null;
     }
 
