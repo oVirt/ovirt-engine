@@ -414,8 +414,8 @@ public class AuthenticationService {
     private static boolean matchesSearchName(ExtensionProxy authn,
             String searchProfileName,
             String searchAuthzName) {
-        return (StringUtils.isNotEmpty(searchProfileName) && searchProfileName.equals(getProfileName(authn))) ||
-                (StringUtils.isNotEmpty(searchAuthzName) && searchAuthzName.equals(getAuthzName(authn)));
+        return StringUtils.isNotEmpty(searchProfileName) && searchProfileName.equals(getProfileName(authn)) ||
+                StringUtils.isNotEmpty(searchAuthzName) && searchAuthzName.equals(getAuthzName(authn));
     }
 
     private static ExtensionProfile mapToExtensionProfile(SsoContext ssoContext, ExtensionProxy authn) {
