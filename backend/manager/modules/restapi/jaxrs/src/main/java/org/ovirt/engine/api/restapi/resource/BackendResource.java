@@ -133,7 +133,7 @@ public class BackendResource extends BaseBackendResource {
                                 String identifier,
                                 boolean isMandatory) throws BackendFailureException {
         QueryReturnValue result = runQuery(query, queryParams);
-        if (!result.getSucceeded() || (isMandatory && result.getReturnValue() == null)) {
+        if (!result.getSucceeded() || isMandatory && result.getReturnValue() == null) {
             if (result.getExceptionString() != null) {
                 backendFailure(result.getExceptionString());
             } else {
