@@ -117,7 +117,7 @@ public class NetworkInSyncWithVdsNetworkInterface {
 
     private boolean isIpv6AddressInSync(String attachmentValue, String ifaceValue) {
         IpAddressPredicate p = new IpAddressPredicate(ifaceValue);
-        return p.test(attachmentValue) || (ipUnspecifiedPredicate().test(ifaceValue) && attachmentValue == null);
+        return p.test(attachmentValue) || ipUnspecifiedPredicate().test(ifaceValue) && attachmentValue == null;
     }
 
     private SubnetUtils getsSubnetUtilsInstance() {
