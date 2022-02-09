@@ -2236,4 +2236,12 @@ public interface UIConstants extends Constants {
     String cpuPinningDedicatedDisabled();
 
     String accountSettings();
+
+    String resetSettings();
+
+    String areYouSureYouWantToResetTheFollowingSettings();
+
+    String persistGridSettingsOnServer();
+
+    String confirmSuspendingVm();
 }

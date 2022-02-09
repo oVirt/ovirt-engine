@@ -333,11 +333,7 @@ public interface CommonApplicationConstants extends Constants {
 
     String permanentlyRemoveLabel();
 
-    String persistGridSettingsOnServer();
-
     String persistGridSettingsOnServerTooltip();
-
-    String confirmSuspendingVm();
 
     String hideDisplayColumns();
 

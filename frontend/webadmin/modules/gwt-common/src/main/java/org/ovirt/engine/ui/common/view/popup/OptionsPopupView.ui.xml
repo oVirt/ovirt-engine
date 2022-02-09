@@ -101,7 +101,6 @@
                                 <b:Row>
                                     <b:Column size="SM_12" addStyleNames="{style.indentation}">
                                         <ge:EntityModelCheckBoxEditor ui:field="localStoragePersistedOnServerCheckBox"
-                                                                      label="{constants.persistGridSettingsOnServer}"
                                                                       removeFormGroup="true"
                                                                       usePatternFly="true"
                                                                       addStyleNames="{style.overrideClearBoth}"/>
@@ -120,7 +119,6 @@
                                 <b:Row>
                                     <b:Column size="SM_12" addStyleNames="{style.indentation}">
                                         <ge:EntityModelCheckBoxEditor ui:field="confirmSuspendingVmCheckBox"
-                                                                      label="{constants.confirmSuspendingVm}"
                                                                       removeFormGroup="true"
                                                                       usePatternFly="true"
                                                                       addStyleNames="{style.overrideClearBoth}"/>
