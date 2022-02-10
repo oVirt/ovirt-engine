@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
@@ -30,5 +31,6 @@ public class SubTabHostDeviceView
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());
+        bindSlot(AbstractSubTabPresenter.TYPE_SetActionPanel, getModelBoundTableWidget().getActionPanelContainer());
     }
 }
