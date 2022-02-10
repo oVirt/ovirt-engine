@@ -688,7 +688,8 @@ SYSLOG_HANDLER_ENCODING=
 
 #
 # Formatter pattern to format the message to be sent to remote syslog
-SYSLOG_HANDLER_FORMATTER_PATTERN=
+# https://github.com/wildfly/wildfly/blob/main/docs/src/main/asciidoc/_admin-guide/subsystem-configuration/Logging_Formatters.adoc#pattern-formatter
+SYSLOG_HANDLER_FORMATTER_PATTERN="%-5p [%c] (%t) %s%e%n"
 
 #
 # The address of the syslog server.
