@@ -250,7 +250,7 @@
         <handlers>
           <handler name="ovirt-logger"/>
           <handler name="SERVER"/>
-          {% if config.getboolean('SYSLOG_HANDLER_ENABLED') %}
+          {% if config.getboolean('SYSLOG_HANDLER_ENABLED') and config.getboolean('SERVER_LOG_TO_SYSLOG') %}
           <handler name="SYSLOG"/>
           {% endif %}
         </handlers>
