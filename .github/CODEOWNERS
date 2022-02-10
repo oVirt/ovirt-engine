@@ -2,7 +2,7 @@
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
 # Default to all maintainers if nothing more specific matches
-*    @almusil @ahadas @bennyz @emesika @ljelinkova @mwperina @michalskrivanek @oliel @sandrobonazzola @sgratch @smelamud @didib
+*    @almusil @ahadas @bennyz @emesika @ljelinkova @mwperina @michalskrivanek @oliel @sgratch @smelamud @didib
 
 packaging/dbscripts/    @emesika @mwperina
 *Dao*.java              @emesika @mwperina
