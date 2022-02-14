@@ -329,6 +329,16 @@ Requires:	ovirt-cockpit-sso
 Obsoletes:	ovirt-engine-api-explorer
 %endif
 
+%if 0%{?rhel} < 9
+# fapolicyd should be installed but does not have to be running
+# needed for OpenScap DISA STIG compliance
+#
+# TODO: remove condition when fapolicyd-1.1 is available on CS9
+Requires:	fapolicyd >= 1.1
+%else
+Requires:	fapolicyd
+%endif
+
 # Metrics stuff
 Requires:	collectd
 Requires:	collectd-postgresql
@@ -1222,6 +1232,7 @@ fi
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
 %{_bindir}/engine-upgrade-check
 %{engine_data}/conf/ovirt-engine-proxy.conf.v2.in
+%{engine_data}/conf/fapolicyd-55-allow-ovirt-jboss.rules.in
 %{engine_data}/conf/ovirt-engine-root-redirect.conf.in
 %{engine_data}/firewalld/ovirt-engine/
 %{engine_data}/setup/bin/ovirt-engine-upgrade-check
