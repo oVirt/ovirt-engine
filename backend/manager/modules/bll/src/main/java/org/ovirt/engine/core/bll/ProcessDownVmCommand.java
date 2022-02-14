@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -36,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.CpuPinningHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -158,17 +156,10 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             Guid alternativeHostsList = vmHasDirectPassthroughDevices ? getVm().getDedicatedVmForVdsList().get(0) : null;
             refreshHostIfNeeded(hostId == null ? alternativeHostsList : hostId);
         }
+
         VdsManager vdsManager = resourceManager.getVdsManager(getParameters().getHostId(), false);
-        String pinning = getVm().getCpuPinningPolicy() == CpuPinningPolicy.MANUAL ? getVm().getCpuPinning() : getVm().getCurrentCpuPinning();
-        if (pinning != null && !pinning.isBlank()) {
-            synchronized (vdsManager) {
-                vdsManager.getCpuTopology().stream().filter(cpu -> CpuPinningHelper.getAllPinnedPCpus(pinning).contains(cpu.getCpu())).forEach(cpu -> cpu.setVmId(null));
-                vdsManager.updateDynamicToCachedVds();
-            }
-        }
-        // Release the pinned CPUs anyway if there are any on the same VM ID when not having them on the VM itself.
-        synchronized (vdsManager) {
-            vdsManager.getCpuTopology().stream().filter(cpu -> cpu.getVmId() != null && cpu.getVmId().equals(getVmId())).forEach(cpu -> cpu.setVmId(null));
+        if (vdsManager != null) {
+            vdsManager.unpinVmCpus(getVm());
         }
         managedBlockStorageCommandUtil.disconnectManagedBlockStorageDisks(getVm(), vmHandler);
         vmNicDao.setVmInterfacesSyncedForVm(getVmId());

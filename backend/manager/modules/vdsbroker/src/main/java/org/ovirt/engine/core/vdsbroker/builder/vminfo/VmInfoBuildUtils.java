@@ -1267,7 +1267,7 @@ public class VmInfoBuildUtils {
 
     public List<VmNumaNode> getVmNumaNodes(VM vm) {
         int onlineCpus = VmCpuCountHelper.getDynamicNumOfCpu(vm);
-        int vcpus = FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) && !VmCpuCountHelper.isAutoPinning(vm)?
+        int vcpus = FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) && !VmCpuCountHelper.isResizeAndPinPolicy(vm)?
                 VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
                 : onlineCpus;
         int offlineCpus = vcpus - onlineCpus;
@@ -1672,7 +1672,7 @@ public class VmInfoBuildUtils {
 
     public static int maxNumberOfVcpus(VM vm) {
         return FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(),
-                vm.getClusterArch()) && !VmCpuCountHelper.isAutoPinning(vm) ? VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
+                vm.getClusterArch()) && !VmCpuCountHelper.isResizeAndPinPolicy(vm) ? VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
                         : VmCpuCountHelper.getDynamicNumOfCpu(vm);
     }
 

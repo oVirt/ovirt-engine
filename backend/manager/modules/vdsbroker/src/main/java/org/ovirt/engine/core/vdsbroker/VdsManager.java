@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.SELinuxMode;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo;
@@ -564,7 +565,10 @@ public class VdsManager {
             Map<Guid, VMStatus> vmIdToStatus = vmsOnVds.stream().collect(Collectors.toMap(VmDynamic::getId, VmDynamic::getStatus));
             HostMonitoring.refreshCommitedMemory(cachedVds, vmIdToStatus, resourceManager);
             for (var vmPendingPinning : vmToPendingPinning.entrySet()) {
-                vmPendingPinning.getValue().forEach(cpu -> cpu.setVmId(vmPendingPinning.getKey()));
+                vmPendingPinning.getValue().forEach(cpu -> cpuTopology.stream()
+                        .filter(vdsCpuUnit -> vdsCpuUnit.getCpu() == cpu.getCpu()).findFirst()
+                        .ifPresent(cpuUnit -> cpu.getVmIds()
+                                .forEach(vmId -> cpuUnit.pinVm(vmId, cpu.getCpuPinningPolicy()))));
             }
             updateDynamicData(cachedVds.getDynamicData());
         }
@@ -1268,11 +1272,11 @@ public class VdsManager {
             VM vmFromDB = vmDao.get(vm.getId());
             String pinning = CpuPinningHelper.getVmPinning(vmFromDB);
             if (pinning != null) {
+                Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(pinning);
                 synchronized (this) {
-                    getCpuTopology().stream()
-                            .filter(cpu -> CpuPinningHelper.getAllPinnedPCpus(pinning).contains(cpu.getCpu()))
-                            .forEach(cpu -> cpu.setVmId(vm.getId()));
-                    updateDynamicToCachedVds();
+                    cpuTopology.stream()
+                            .filter(cpu -> pinnedCpus.contains(cpu.getCpu()))
+                            .forEach(cpu -> cpu.pinVm(vm.getId(), vmFromDB.getCpuPinningPolicy()));
                 }
             }
         }
@@ -1327,14 +1331,23 @@ public class VdsManager {
             return;
         }
         this.cpuTopology = cpuTopology;
-        this.cpuTopology.stream().filter(cpu -> cpu.getCpu() == Integer.parseInt(cachedVds.getVdsmCpusAffinity())).forEach(cpu -> cpu.setVmId(Guid.SYSTEM));
+        this.cpuTopology.stream().filter(cpu -> cpu.getCpu() == Integer.parseInt(cachedVds.getVdsmCpusAffinity()))
+                .forEach(cpu -> cpu.pinVm(Guid.SYSTEM, CpuPinningPolicy.MANUAL));
     }
 
     public List<VdsCpuUnit> getCpuTopology() {
-        return cpuTopology;
+        List<VdsCpuUnit> clone = new ArrayList<>();
+        cpuTopology.forEach(cpu -> clone.add(cpu.clone()));
+        return clone;
     }
 
-    public void updateDynamicToCachedVds() {
-        updateDynamicData(cachedVds.getDynamicData());
+    public void unpinVmCpus(VM vm) {
+        String pinning = vm.getCpuPinningPolicy() == CpuPinningPolicy.MANUAL ? vm.getCpuPinning() :
+                vm.getCurrentCpuPinning();
+        if (pinning != null && !pinning.isBlank()) {
+            Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(pinning);
+            cpuTopology.stream().filter(cpu -> pinnedCpus.contains(cpu.getCpu()))
+                    .forEach(cpu -> cpu.unPinVm(vm.getId()));
+        }
     }
 }

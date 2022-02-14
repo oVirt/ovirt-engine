@@ -60,7 +60,7 @@ public class HighPerformanceCpuPolicyUnit extends PolicyUnitImpl {
     private boolean policyUnitEnabled(VM vm) {
         if (vm.getVmType() == VmType.HighPerformance ||
                 vm.isUsingCpuPassthrough() ||
-                StringUtils.isNotEmpty(VmCpuCountHelper.isAutoPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning())) {
+                StringUtils.isNotEmpty(VmCpuCountHelper.isDynamicCpuPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning())) {
             return true;
         }
 

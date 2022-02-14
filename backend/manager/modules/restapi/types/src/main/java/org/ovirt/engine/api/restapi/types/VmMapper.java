@@ -291,13 +291,15 @@ public class VmMapper extends VmBaseMapper {
                 Boot boot = map(entity.getBootSequence(), null);
                 model.getOs().setBoot(boot);
             }
-            if (VmCpuCountHelper.isAutoPinning(entity)) {
+            if (VmCpuCountHelper.isResizeAndPinPolicy(entity)) {
                 CpuTopology topology = new CpuTopology();
                 topology.setSockets(entity.getCurrentSockets());
                 topology.setCores(entity.getCurrentCoresPerSocket());
                 topology.setThreads(entity.getCurrentThreadsPerCore());
                 model.setDynamicCpu(new DynamicCpu());
                 model.getDynamicCpu().setTopology(topology);
+            }
+            if (VmCpuCountHelper.isDynamicCpuPinning(entity)) {
                 model.getDynamicCpu().setCpuTune(stringToCpuTune(entity.getCurrentCpuPinning()));
             }
         } else {

@@ -2711,7 +2711,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__DETAIL__MISSING_VDS_HOOK();
 
-    String VAR__DETAIL__NO_HOST_DATA();
+    String VAR__DETAIL__NO_HOST_CPU_DATA();
 
     String VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE();
 

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.CpuPinningHelper;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,8 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
 
     @Inject
     private VdsCpuUnitPinningHelper vdsCpuUnitPinningHelper;
+    @Inject
+    private ResourceManager resourceManager;
 
     public CpuPinningPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -57,7 +61,7 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
             final List<VDS> hosts,
             final VM vm,
             final PerHostMessages messages) {
-        final String cpuPinning = VmCpuCountHelper.isAutoPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning();
+        final String cpuPinning = VmCpuCountHelper.isDynamicCpuPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning();
 
         // return all hosts when no CPU pinning is requested
         if (vm.getCpuPinningPolicy() == CpuPinningPolicy.NONE) {
@@ -75,7 +79,10 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
                 final Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(cpuPinning);
                 for (final VDS host : hosts) {
                     final Collection<Integer> onlineHostCpus = SlaValidator.getOnlineCpus(host);
-                    final Collection difference = CollectionUtils.subtract(pinnedCpus, onlineHostCpus);
+                    var cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
+                    final Collection<Integer> dedicatedCpus = cpuTopology.stream().filter(VdsCpuUnit::isDedicated).map(VdsCpuUnit::getCpu).collect(Collectors.toList());
+                    final Collection availableCpus = CollectionUtils.subtract(onlineHostCpus, dedicatedCpus);
+                    final Collection difference = CollectionUtils.subtract(pinnedCpus, availableCpus);
                     if (difference.isEmpty()) {
                         candidates.add(host);
                     } else {
@@ -91,7 +98,7 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
                 for (final VDS host : hosts) {
                     if (host.getCpuTopology() == null || host.getCpuTopology().isEmpty()) {
                         // means CPU topology not reported for this host, lets ignore it
-                        messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__NO_HOST_DATA.name());
+                        messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__NO_HOST_CPU_DATA.name());
                         log.debug("Host {} does not have the cpu topology data.", host.getId());
                         continue;
                     }
