@@ -11,8 +11,11 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 
 public class CpuPinningHelper {
 
@@ -102,6 +105,18 @@ public class CpuPinningHelper {
             default:
                 return null;
         }
+    }
+
+    /**
+     * Provides a CPU pinning string based on the VdsCpuUnit list.
+     * The pinning will be based on the list order.
+     *
+     * @param vdsCpuUnits a list of VdsCpuUnit
+     * @return a string of CPU pinning
+     */
+    public static String createCpuPinning(List<VdsCpuUnit> vdsCpuUnits) {
+        return IntStream.range(0, vdsCpuUnits.size())
+                .mapToObj(i-> String.format("%d#%d", i, vdsCpuUnits.get(i).getCpu())).collect(Collectors.joining("_"));
     }
 
     /**

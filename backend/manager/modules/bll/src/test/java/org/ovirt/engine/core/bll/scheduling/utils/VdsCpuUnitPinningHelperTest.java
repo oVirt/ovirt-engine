@@ -95,10 +95,6 @@ public class VdsCpuUnitPinningHelperTest {
                 vdsCpuUnitPinningHelper.isDedicatedCpuPinningPossibleAtHost(vmToPendingCpus, vm, host);
 
         assertTrue(result);
-        // should unpin the pending cpus after finishing
-        assertFalse(cpuTopology.stream().anyMatch(cpu -> cpu.getSocket() == 0 && cpu.getCore() == 0 && cpu.getCpu() == 0 && cpu.isPinned()));
-        assertFalse(cpuTopology.stream().anyMatch(cpu -> cpu.getSocket() == 0 && cpu.getCore() == 0 && cpu.getCpu() == 1 && cpu.isPinned()));
-
     }
 
     @Test

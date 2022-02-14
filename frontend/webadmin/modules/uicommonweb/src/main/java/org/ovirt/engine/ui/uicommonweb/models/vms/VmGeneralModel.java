@@ -732,7 +732,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
         setUsbPolicy(translator.translate(vm.getUsbPolicy()));
 
-        if (VmCpuCountHelper.isAutoPinning(vm)) {
+        if (VmCpuCountHelper.isResizeAndPinPolicy(vm)) {
             if (vm.isRunning() && vm.getCurrentNumOfCpus() > 0) {
                 setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
                         vm.getCurrentNumOfCpus(),

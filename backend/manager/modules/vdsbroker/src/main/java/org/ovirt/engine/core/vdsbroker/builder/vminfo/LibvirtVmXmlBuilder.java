@@ -401,7 +401,7 @@ public class LibvirtVmXmlBuilder {
     private void writevCpu() {
         writer.writeStartElement("vcpu");
         writer.writeAttributeString("current", String.valueOf(VmCpuCountHelper.getDynamicNumOfCpu(vm)));
-        writer.writeRaw(String.valueOf(VmCpuCountHelper.isAutoPinning(vm) ?
+        writer.writeRaw(String.valueOf(VmCpuCountHelper.isResizeAndPinPolicy(vm) ?
                 VmCpuCountHelper.getDynamicNumOfCpu(vm) : VmInfoBuildUtils.maxNumberOfVcpus(vm)));
         writer.writeEndElement();
     }
@@ -521,7 +521,7 @@ public class LibvirtVmXmlBuilder {
 
     private void writeCpuTune(boolean numaEnabled) {
         writer.writeStartElement("cputune");
-        Map<String, Object> cpuPinning = vmInfoBuildUtils.parseCpuPinning(VmCpuCountHelper.isAutoPinning(vm) ?
+        Map<String, Object> cpuPinning = vmInfoBuildUtils.parseCpuPinning(VmCpuCountHelper.isDynamicCpuPinning(vm) ?
                 vm.getCurrentCpuPinning() : vm.getCpuPinning());
         if (cpuPinning.isEmpty() && numaEnabled) {
             cpuPinning = NumaSettingFactory.buildCpuPinningWithNumaSetting(
@@ -997,6 +997,7 @@ public class LibvirtVmXmlBuilder {
         writePayloadMetadata();
         writeResumeBehaviorMetadata();
         writeBalloonMetadata();
+        writeCpuPinningPolicyMetadata();
         writer.writeEndElement();
     }
 
@@ -1040,6 +1041,10 @@ public class LibvirtVmXmlBuilder {
 
     private void writeBalloonMetadata() {
         writer.writeElement(OVIRT_VM_URI, "ballooningEnabled", String.valueOf(vm.isBalloonEnabled()));
+    }
+
+    private void writeCpuPinningPolicyMetadata() {
+        writer.writeElement(OVIRT_VM_URI, "cpuPolicy", vm.getCpuPinningPolicy().name().toLowerCase());
     }
 
     private void writePowerEvents() {

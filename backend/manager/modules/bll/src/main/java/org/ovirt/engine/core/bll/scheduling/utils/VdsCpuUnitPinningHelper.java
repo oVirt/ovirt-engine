@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
+import org.ovirt.engine.core.common.utils.CpuPinningHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
@@ -37,7 +39,7 @@ public class VdsCpuUnitPinningHelper {
      * @param host VDS object.
      * @return boolean. True if possible to dedicate the VM on the host. Otherwise false.
      */
-    public synchronized boolean isDedicatedCpuPinningPossibleAtHost(Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings,
+    public boolean isDedicatedCpuPinningPossibleAtHost(Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings,
             VM vm, VDS host) {
         List<VdsCpuUnit> cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
 
@@ -46,7 +48,7 @@ public class VdsCpuUnitPinningHelper {
             return false;
         }
 
-        previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingPinnings);
+        previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingPinnings, vm.getCpuPinningPolicy());
 
         int vcpus = vm.getNumOfCpus();
         int cpusLeft = vcpus;
@@ -66,9 +68,12 @@ public class VdsCpuUnitPinningHelper {
         return cpusLeft == 0;
     }
 
-    private void previewPinOfPendingExclusiveCpus(List<VdsCpuUnit> cpuTopology, Map<Guid, List<VdsCpuUnit>> vmToPendingPinning) {
+    private void previewPinOfPendingExclusiveCpus(List<VdsCpuUnit> cpuTopology, Map<Guid, List<VdsCpuUnit>> vmToPendingPinning, CpuPinningPolicy cpuPinningPolicy) {
         for (var vmToPendingPinningEntry : vmToPendingPinning.entrySet()) {
-            vmToPendingPinningEntry.getValue().forEach(vdsCpuUnit -> vdsCpuUnit.setVmId(vmToPendingPinningEntry.getKey()));
+            vmToPendingPinningEntry.getValue().forEach(vdsCpuUnit -> {
+                VdsCpuUnit cpuUnit = getCpu(cpuTopology, vdsCpuUnit.getCpu());
+                cpuUnit.pinVm(vmToPendingPinningEntry.getKey(), cpuPinningPolicy);
+            });
         }
     }
 
@@ -93,16 +98,26 @@ public class VdsCpuUnitPinningHelper {
      * @param host VDS object.
      * @return List<{@link VdsCpuUnit}>. The list of VdsCpuUnit we are going to use. If not possible, return an empty List.
      */
-    public synchronized List<VdsCpuUnit> allocateDedicatedCpus(VM vm, Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings,
-                                                               VDS host) {
-        if (vm.getCpuPinningPolicy() != CpuPinningPolicy.DEDICATED) {
+    public List<VdsCpuUnit> allocateDedicatedCpus(VM vm, Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings, VDS host) {
+        if (vm.getCpuPinningPolicy() == CpuPinningPolicy.NONE) {
             return new ArrayList<>();
         }
         List<VdsCpuUnit> cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
 
-        previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingPinnings);
+        previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingPinnings, vm.getCpuPinningPolicy());
 
         List<VdsCpuUnit> cpusToBeAllocated = new ArrayList<>();
+
+        if (vm.getCpuPinningPolicy() != CpuPinningPolicy.DEDICATED) {
+            String cpuPinning = vm.getCpuPinningPolicy() == CpuPinningPolicy.MANUAL ? vm.getCpuPinning() : vm.getCurrentCpuPinning();
+            Set<Integer> requestedCpus = CpuPinningHelper.getAllPinnedPCpus(cpuPinning);
+            for (Integer cpuId : requestedCpus) {
+                VdsCpuUnit vdsCpuUnit = getCpu(cpuTopology, cpuId);
+                vdsCpuUnit.pinVm(vm.getId(), vm.getCpuPinningPolicy());
+                cpusToBeAllocated.add(vdsCpuUnit);
+            }
+            return cpusToBeAllocated;
+        }
 
         int vcpus = vm.getNumOfCpus();
         int cpusLeft = vcpus;
@@ -115,12 +130,11 @@ public class VdsCpuUnitPinningHelper {
                 continue;
             }
             cpusLeft = allocateCores(cpuTopology, hostCoresPerSocket, hostThreadsPerCore, socket, cpusLeft,
-                    cpusToBeAllocated, true, vm.getId());
-
+                    cpusToBeAllocated, true, vm.getId(), vm.getCpuPinningPolicy());
             if (cpusLeft > 0 && getFreeCpusInSocket(cpuTopology, socket).size() >= cpusLeft) {
                 // iterate again on the cores, take whatever we can.
                 cpusLeft = allocateCores(cpuTopology, hostCoresPerSocket, hostThreadsPerCore, socket, cpusLeft,
-                        cpusToBeAllocated, false, vm.getId());
+                        cpusToBeAllocated, false, vm.getId(), vm.getCpuPinningPolicy());
             }
             if (cpusLeft == 0) {
                 return cpusToBeAllocated;
@@ -130,7 +144,8 @@ public class VdsCpuUnitPinningHelper {
     }
 
     private int allocateCores(List<VdsCpuUnit> cpuTopology, int hostCoresPerSocket, int hostThreadsPerCore, int socket,
-                              int cpusLeft, List<VdsCpuUnit> cpusToBeAllocated, boolean wholeCore, Guid vmId) {
+                              int cpusLeft, List<VdsCpuUnit> cpusToBeAllocated, boolean wholeCore, Guid vmId,
+                              CpuPinningPolicy cpuPinningPolicy) {
         for (int core = 0; core < hostCoresPerSocket; core++) {
             List<VdsCpuUnit> sharedCpus = getFreeCpusInCore(cpuTopology, socket, core);
             int sharedCpusInCore = sharedCpus.size();
@@ -145,7 +160,7 @@ public class VdsCpuUnitPinningHelper {
                     while (sharedCpusInCore-- > 0) {
                         VdsCpuUnit cpuToTake = getCpu(sharedCpus, socket, core, sharedCpusIterator.next());
                         cpusToBeAllocated.add(cpuToTake);
-                        cpuToTake.setVmId(vmId);
+                        cpuToTake.pinVm(vmId, cpuPinningPolicy);
                         cpusLeft--;
                     }
                 }
@@ -153,12 +168,26 @@ public class VdsCpuUnitPinningHelper {
                 while (sharedCpusInCore-- > 0 && cpusLeft > 0) {
                     VdsCpuUnit cpuToTake = getCpu(sharedCpus, socket, core, sharedCpusIterator.next());
                     cpusToBeAllocated.add(cpuToTake);
-                    cpuToTake.setVmId(vmId);
+                    cpuToTake.pinVm(vmId, cpuPinningPolicy);
                     cpusLeft--;
                 }
             }
         }
         return cpusLeft;
+    }
+
+    public int countTakenCores(VDS host) {
+        List<VdsCpuUnit> cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
+        int hostCoresPerSocket = host.getCpuCores() / host.getCpuSockets();
+        int numOfTakenCores = 0;
+        for (int socket = 0; socket < host.getCpuSockets(); socket++) {
+            for (int core = 0; core < hostCoresPerSocket; core++) {
+                if (getNonDedicatedCpusInCore(cpuTopology, socket, core).isEmpty()) {
+                    numOfTakenCores++;
+                }
+            }
+        }
+        return numOfTakenCores;
     }
 
     private List<VdsCpuUnit> getCoresInSocket(List<VdsCpuUnit> cpuTopology, int socketId) {
@@ -183,5 +212,14 @@ public class VdsCpuUnitPinningHelper {
 
     private VdsCpuUnit getCpu(List<VdsCpuUnit> cpuTopology, int socketId, int coreId, int cpuId) {
         return getCpu(getCpusInCore(getCoresInSocket(cpuTopology, socketId), coreId), cpuId);
+    }
+
+    private List<VdsCpuUnit> getNonDedicatedCpusInCore(List<VdsCpuUnit> cpuTopology, int socketId, int coreId) {
+        return getCpusInCore(getCoresInSocket(cpuTopology, socketId), coreId).stream().filter(cpu -> !cpu.isDedicated()).collect(Collectors.toList());
+    }
+
+    public int getDedicatedCount(Guid vdsId) {
+        return (int) resourceManager.getVdsManager(vdsId).getCpuTopology().stream()
+                .filter(VdsCpuUnit::isDedicated).count();
     }
 }

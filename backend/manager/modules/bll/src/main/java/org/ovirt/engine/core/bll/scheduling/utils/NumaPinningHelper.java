@@ -78,7 +78,7 @@ public class NumaPinningHelper {
         List<VmNumaNodeData> vmNodesData = vms.stream()
                 .flatMap(vm -> {
                     Map<Integer, Collection<Integer>> cpuPinning = considerCpuPinning ?
-                            CpuPinningHelper.parseCpuPinning(VmCpuCountHelper.isAutoPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning()).stream()
+                            CpuPinningHelper.parseCpuPinning(VmCpuCountHelper.isDynamicCpuPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning()).stream()
                                     .collect(Collectors.toMap(p -> p.getvCpu(), p -> p.getpCpus())) :
                             null;
                     Optional<Integer> hugePageSize = HugePageUtils.getHugePageSize(vm.getStaticData());

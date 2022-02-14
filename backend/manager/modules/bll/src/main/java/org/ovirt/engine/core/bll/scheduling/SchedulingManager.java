@@ -431,7 +431,8 @@ public class SchedulingManager implements BackendService {
 
 
                 for (VM vm : vmsNotOnHost) {
-                    List<VdsCpuUnit> dedicatedCpuPinning = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host);
+                    List<VdsCpuUnit> dedicatedCpuPinning = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm,
+                            PendingCpuPinning.collectForHost(getPendingResourceManager(), host.getId()), host);
                     addPendingResources(vm, host, numaConsumptionPerVm.getOrDefault(vm.getId(), Collections.emptyMap()), dedicatedCpuPinning);
                     hostsToNotifyPending.add(bestHostId);
                     vfsUpdates.add(() -> markVfsAsUsedByVm(vm, bestHostId));
@@ -556,7 +557,7 @@ public class SchedulingManager implements BackendService {
 
 
         boolean considerCpuPinning = filteredVms.stream()
-                .anyMatch(vm -> !StringUtils.isEmpty(VmCpuCountHelper.isAutoPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning()));
+                .anyMatch(vm -> !StringUtils.isEmpty(VmCpuCountHelper.isDynamicCpuPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning()));
 
         Optional<Map<Guid, Integer>> nodeAssignment = Optional.empty();
         if (considerCpuPinning) {

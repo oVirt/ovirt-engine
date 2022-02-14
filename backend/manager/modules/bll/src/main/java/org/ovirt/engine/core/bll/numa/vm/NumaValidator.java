@@ -330,13 +330,13 @@ public class NumaValidator {
         }
 
         // Check if the VM is pinned to at least one host
-        if (vm.getDedicatedVmForVdsList().isEmpty() && !VmCpuCountHelper.isAutoPinning(vm)) {
+        if (vm.getDedicatedVmForVdsList().isEmpty() && !VmCpuCountHelper.isResizeAndPinPolicy(vm)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_AT_LEAST_ONE_HOST);
         }
 
         // check that VM's NUMA policy fits all pinned/assigned hosts NUMA policy
         final Map<Guid, List<VdsNumaNode>> hostsNumaNodesMap = new HashMap<>();
-        if (VmCpuCountHelper.isAutoPinning(vm)) {
+        if (VmCpuCountHelper.isResizeAndPinPolicy(vm)) {
             return ValidationResult.VALID;
         } else {
             vm.getDedicatedVmForVdsList()
