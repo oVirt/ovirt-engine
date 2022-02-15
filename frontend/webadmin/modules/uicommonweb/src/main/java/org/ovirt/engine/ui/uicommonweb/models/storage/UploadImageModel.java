@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -24,7 +25,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -161,30 +161,29 @@ public class UploadImageModel extends Model implements ICommandTarget {
     public UploadImageModel(final Guid limitToStorageDomainId, final DiskImage resumeUploadDisk) {
         if (resumeUploadDisk == null) {
             setDiskModel(new NewDiskModel() {
+                private final boolean isChangeable = limitToStorageDomainId == null;
+
                 @Override
                 public void initialize() {
                     super.initialize();
 
-                    getStorageDomain().setIsChangeable(limitToStorageDomainId == null);
-                    getDataCenter().setIsChangeable(limitToStorageDomainId == null);
+                    getDataCenter().setIsChangeable(isChangeable);
+                    if (!isChangeable) {
+                        // Set the selected item on the storage domains list.
+                        AsyncDataProvider.getInstance().getStorageDomainById(
+                                new AsyncQuery<>(storageDomain -> {
+                                    getStorageDomain().setItems(Collections.singletonList(storageDomain));
+                                }), limitToStorageDomainId);
+                    }
+                    getStorageDomain().setIsChangeable(isChangeable);
                     getStorageType().setIsChangeable(false);
                     getSize().setIsChangeable(false);
                 }
 
                 @Override
                 protected void updateStorageDomains(final StoragePool datacenter) {
-                    if (limitToStorageDomainId == null) {
+                    if (isChangeable) {
                         super.updateStorageDomains(datacenter);
-                    } else {
-                        AsyncDataProvider backend = AsyncDataProvider.getInstance();
-                        backend.getStorageDomainById(
-                                new AsyncQuery<>(storageDomain -> {
-                                    getStorageDomain().setSelectedItem(storageDomain);
-                                    backend.getDataCentersByStorageDomain(new AsyncQuery<>(storagePools -> {
-                                        getDataCenter().setSelectedItem(Linq.firstOrNull(storagePools));
-                                    }), limitToStorageDomainId);
-                                }),
-                                limitToStorageDomainId);
                     }
                 }
 
