@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -21,7 +22,9 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.MDevTypesUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.dao.HostDeviceDao;
+import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +41,9 @@ public class MDevicePolicyUnit extends PolicyUnitImpl {
     @Inject
     private HostDeviceDao hostDeviceDao;
 
+    @Inject
+    private VmInfoBuildUtils vmInfoBuildUtils;
+
     public MDevicePolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -45,7 +51,9 @@ public class MDevicePolicyUnit extends PolicyUnitImpl {
 
     @Override
     public List<VDS> filter(SchedulingContext context, List<VDS> hosts, VM vm, PerHostMessages messages) {
-        List<String> vmMDevs = MDevTypesUtils.getMDevTypes(vm);
+        List<String> vmMDevs = MDevTypesUtils.getMdevs(vmInfoBuildUtils.getVmDevices(vm.getId()), VmDeviceType.VGPU)
+                .stream().map(mdev -> (String) mdev.getSpecParams().get(MDevTypesUtils.MDEV_TYPE))
+                .collect(Collectors.toList());
         if (vmMDevs.isEmpty()) {
             return hosts;
         }

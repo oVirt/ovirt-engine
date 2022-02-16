@@ -792,7 +792,7 @@ public class VmInfoBuildUtils {
 
     public boolean needsIommuCachingMode(VM vm, MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier,
             MemoizingSupplier<List<VmDevice>> vmDevicesSupplier) {
-        if (!MDevTypesUtils.getMDevTypes(vm).isEmpty()) {
+        if (!MDevTypesUtils.getMdevs(vmDevicesSupplier.get(), VmDeviceType.VGPU).isEmpty()) {
             return true;
         }
         for (VmDevice device : vmDevicesSupplier.get()) {

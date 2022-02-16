@@ -625,10 +625,12 @@ public class VmDevicesMonitoring {
 
     /**
      * Libvirt gives no address to some special devices, and we know it.
+     * There are also no addresses for fake managed devices, such as mdevs.
      */
     private static boolean deviceWithoutAddress(VmDevice device) {
         return VmDeviceCommonUtils.isGraphics(device)
                 || VmDeviceGeneralType.CONSOLE.equals(device.getType())
+                || VmDeviceGeneralType.MDEV.equals(device.getType())
                 || VmDeviceGeneralType.TPM.equals(device.getType());
     }
 
