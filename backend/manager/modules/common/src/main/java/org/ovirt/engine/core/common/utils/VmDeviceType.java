@@ -37,6 +37,7 @@ public enum VmDeviceType {
     ICH9("ich9"),
     TPM("tpm"),
     BOCHS("bochs"),
+    VGPU("vgpu"),
     OTHER("other", "0"),
     UNKNOWN("unknown", "-1");
 

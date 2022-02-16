@@ -329,6 +329,9 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
                 case TPM:
                     updateVmParams.setTpmEnabled(true);
                     break;
+                case MDEV:
+                    updateVmParams.getMdevs().put(device.getDeviceId(), device.getSpecParams());
+                    break;
                 default:
             }
         }

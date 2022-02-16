@@ -1757,6 +1757,7 @@ public class VmDeviceUtils {
                     break;
 
                 case HOSTDEV:
+                case MDEV:
                     if (!copyHostDevices) {
                         continue;
                     }

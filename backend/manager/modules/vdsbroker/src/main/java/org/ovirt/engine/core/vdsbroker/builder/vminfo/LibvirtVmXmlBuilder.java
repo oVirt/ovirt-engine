@@ -159,7 +159,6 @@ public class LibvirtVmXmlBuilder {
     private VmNic nic;
     private Disk disk;
     private VmDevice device;
-    private boolean mdevDisplayOn;
     private int sdIndex;
 
     /**
@@ -269,7 +268,6 @@ public class LibvirtVmXmlBuilder {
         }
         vmDevicesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmDevices(vm.getId()));
         vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
-        mdevDisplayOn = MDevTypesUtils.isMdevDisplayOn(vm);
         legacyVirtio = vmInfoBuildUtils.isLegacyVirtio(vm.getVmOsId(), ChipsetType.fromMachineType(emulatedMachine));
     }
 
@@ -1335,22 +1333,22 @@ public class LibvirtVmXmlBuilder {
     }
 
     void writeVGpu() {
-        for (String mdevType : MDevTypesUtils.getMDevTypes(vm)) {
+        for (VmDevice mdev : MDevTypesUtils.getMdevs(vmDevicesSupplier.get(), VmDeviceType.VGPU)) {
             writer.writeStartElement("hostdev");
             writer.writeAttributeString("mode", "subsystem");
             writer.writeAttributeString("type", "mdev");
             writer.writeAttributeString("model", "vfio-pci");
-            if (mdevDisplayOn) {
-                // Nvidia vGPU VNC console is only supported on RHEL >= 7.6
-                // See https://bugzilla.redhat.com/show_bug.cgi?id=1633623 for details and discussion
+            final Map<String, Object> mdevSpecParams = mdev.getSpecParams();
+            if (!Boolean.TRUE.equals(mdevSpecParams.get(MDevTypesUtils.NODISPLAY))
+                    && MDevTypesUtils.isMdevDisplayOnSupported(vm.getCompatibilityVersion())) {
                 writer.writeAttributeString("display", "on");
                 if (FeatureSupported.isVgpuFramebufferSupported(vm.getCompatibilityVersion())) {
                     writer.writeAttributeString("ramfb", "on");
                 }
             }
 
+            String address = mdev.getDeviceId().toString();
             writer.writeStartElement("source");
-            String address = Guid.newGuid().toString();
             writer.writeStartElement("address");
             writer.writeAttributeString("uuid", address);
             writer.writeEndElement();
@@ -1358,7 +1356,7 @@ public class LibvirtVmXmlBuilder {
 
             writer.writeEndElement();
 
-            String mdevTypeMeta = mdevType;
+            String mdevTypeMeta = (String)mdevSpecParams.get(MDevTypesUtils.MDEV_TYPE);
             if (FeatureSupported.isVgpuPlacementSupported(vm.getCompatibilityVersion())) {
                 VgpuPlacement vgpuPlacement = hostVgpuPlacementSupplier.get();
                 String vgpuPlacementString;
@@ -1374,8 +1372,6 @@ public class LibvirtVmXmlBuilder {
                 }
                 mdevTypeMeta = mdevTypeMeta + "|" + vgpuPlacementString;
             }
-            // removing from custom properties since it will be processed separately
-            vmCustomProperties.remove("mdev_type");
             mdevMetadata.put(address, Collections.singletonMap("mdevType", mdevTypeMeta));
         }
     }
@@ -2985,6 +2981,9 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("video");
 
         writer.writeStartElement("model");
+        boolean mdevDisplayOn = MDevTypesUtils
+                .getMdevs(vmDevicesSupplier.get(), VmDeviceType.VGPU).stream()
+                .anyMatch(mdev -> !Boolean.TRUE.equals(mdev.getSpecParams().get(MDevTypesUtils.NODISPLAY)));
         if (mdevDisplayOn) {
             writer.writeAttributeString("type", "none");
         } else {
