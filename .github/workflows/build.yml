@@ -5,7 +5,6 @@ on:
   pull_request:
     branches: [master]
   workflow_dispatch:
-    branches: [master]
 
 jobs:
   build:
@@ -17,10 +16,6 @@ jobs:
           - name: centos-stream-8
             shortcut: cs8
             container-name: stream8
-          # Try to enable CS9 after switch to xmaven is finished
-          # - name: centos-stream-9
-          #  shortcut: cs9
-          #  container-name: stream9
 
     name: ${{ matrix.name }}
 
@@ -45,23 +40,6 @@ jobs:
         # Configure CS8 repositories
         dnf config-manager --enable powertools
         dnf module enable -y pki-deps javapackages-tools
-
-    - name: Prepare CentOS Stream 9 environment
-      if: ${{ matrix.shortcut == 'cs9' }}
-      run: |
-        # DNF core plugins are installed in the official CS9 container image
-        dnf install -y dnf-plugins-core
-
-        # Install oVirt repositories
-        dnf copr enable -y ovirt/ovirt-master-snapshot
-        dnf install -y ovirt-release-master
-
-        # Requried for python3-ansible-lint and python3-isort
-        dnf copr enable -y sbonazzo/EL9_collection
-
-
-        # Configure CS9 repositories
-        dnf config-manager --enable crb
 
     - name: Install required packages
       run: |
