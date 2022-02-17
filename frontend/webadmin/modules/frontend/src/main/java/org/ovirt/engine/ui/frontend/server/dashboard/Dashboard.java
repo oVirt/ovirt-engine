@@ -20,6 +20,11 @@ public class Dashboard {
     private Inventory inventory;
 
     /**
+     * URL to the engine's grafana instance, or null if it is not configured.
+     */
+    private String engineGrafanaBaseUrl;
+
+    /**
      * @return {@code HeatMapData} object containing heatmap data for clusters and storage domains.
      */
     public HeatMapData getHeatMapData() {
@@ -63,5 +68,13 @@ public class Dashboard {
      */
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
+    }
+
+    public String getEngineGrafanaBaseUrl() {
+      return engineGrafanaBaseUrl;
+    }
+
+    public void setEngineGrafanaBaseUrl(String engineGrafanaBaseUrl) {
+      this.engineGrafanaBaseUrl = engineGrafanaBaseUrl;
     }
 }
