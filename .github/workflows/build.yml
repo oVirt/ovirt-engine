@@ -1,9 +1,9 @@
 name: build
 on:
   push:
-    branches: [master]
+    branches: [ovirt-engine-4.4]
   pull_request:
-    branches: [master]
+    branches: [ovirt-engine-4.4]
   workflow_dispatch:
 
 jobs:
