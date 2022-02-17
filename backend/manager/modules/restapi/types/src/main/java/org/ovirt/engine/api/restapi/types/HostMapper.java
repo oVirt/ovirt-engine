@@ -23,6 +23,7 @@ import org.ovirt.engine.api.model.HardwareInformation;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostCpuUnit;
 import org.ovirt.engine.api.model.HostDevicePassthrough;
 import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.HostStatus;
@@ -56,6 +57,7 @@ import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
@@ -726,4 +728,12 @@ public class HostMapper {
         }
     }
 
+    @Mapping(from = VdsCpuUnit.class, to = HostCpuUnit.class)
+    public static HostCpuUnit map(VdsCpuUnit vdsCpuUnit, HostCpuUnit hostCpuUnit) {
+        HostCpuUnit cpuUnit = new HostCpuUnit();
+        cpuUnit.setSocketId(vdsCpuUnit.getSocket());
+        cpuUnit.setCoreId(vdsCpuUnit.getCore());
+        cpuUnit.setCpuId(vdsCpuUnit.getCpu());
+        return cpuUnit;
+    }
  }
