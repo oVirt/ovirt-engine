@@ -62,6 +62,8 @@ public class DashboardDataServlet extends HttpServlet {
     private boolean dwhAvailable = false;
     private boolean enableBackgroundCacheUpdate = false;
 
+    private String engineGrafanaBaseUrl = null;
+
     @Resource(lookup = "java:jboss/infinispan/cache/ovirt-engine/dashboard")
     private Cache<String, Dashboard> dashboardCache;
     @Resource(lookup = "java:jboss/infinispan/cache/ovirt-engine/inventory")
@@ -88,6 +90,8 @@ public class DashboardDataServlet extends HttpServlet {
             log.info("Dashboard DB query cache has been disabled."); //$NON-NLS-1$
             return;
         }
+
+        engineGrafanaBaseUrl = lookupEngineGrafanaBaseUrl(config);
 
         /*
          * Update the utilization cache now and every 5 minutes (by default) thereafter, but never run 2 updates simultaneously.
@@ -256,6 +260,9 @@ public class DashboardDataServlet extends HttpServlet {
                 dashboard = getDashboardFromCache();
             }
 
+            // Add the Grafana information
+            dashboard.setEngineGrafanaBaseUrl(engineGrafanaBaseUrl);
+
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(response.getOutputStream(), dashboard);
         } catch (final DashboardDataException se) {
@@ -360,6 +367,25 @@ public class DashboardDataServlet extends HttpServlet {
         HourlySummaryHelper.getCpuMemSummary(utilization, dwhDataSource);
         utilization.setStorage(HourlySummaryHelper.getStorageSummary(dwhDataSource));
         return utilization;
+    }
+
+    /**
+     * Return the configured Grafana base URL or null if either Grafana is not configured
+     * or the config key is empty.
+     */
+    private String lookupEngineGrafanaBaseUrl(EngineLocalConfig config) {
+        String grafanaBaseUrlVal;
+
+        try {
+            grafanaBaseUrlVal = config.getEngineGrafanaBaseUrl();
+            if (StringUtils.isBlank(config.getEngineGrafanaFqdn()) || StringUtils.isBlank(grafanaBaseUrlVal)) {
+                grafanaBaseUrlVal = null;
+            }
+        } catch (IllegalArgumentException e) {
+            grafanaBaseUrlVal = null;
+        }
+
+        return grafanaBaseUrlVal;
     }
 
     private static class DashboardError {
