@@ -18,6 +18,8 @@ backend/manager/modules/**/org/ovirt/engine/core/*/job/          @arso @mwperina
 
 backend/manager/modules/**/org/ovirt/engine/core/bll/storage/    @bennyz @ahadas
 backend/manager/modules/**/org/ovirt/engine/core/bll/snapshots/  @bennyz @ahadas
+backend/manager/modules/**/org/ovirt/engine/core/common/businessentities/storage/  @bennyz @ahadas
+backend/manager/modules/**/org/ovirt/engine/core/bll/validator/storage/            @bennyz @ahadas
 
 **/*vms*    @ahadas
 
