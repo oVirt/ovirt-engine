@@ -26,15 +26,37 @@ public enum ImageTransferPhase implements Identifiable {
     private String description;
     private static final Map<Integer, ImageTransferPhase> valueToPhase = new HashMap<>();
 
+    // TODO: revisit this in the future to validate all transitions
+    // private static final EnumMap<ImageTransferPhase, EnumSet<ImageTransferPhase>> validTransitions = new EnumMap<>(ImageTransferPhase.class);
+
     static {
         for (ImageTransferPhase phase : values()) {
             valueToPhase.put(phase.getValue(), phase);
         }
+
+        // TODO: revisit this in the future to validate all transitions
+        //        validTransitions.put(INITIALIZING, EnumSet.of(TRANSFERRING, PAUSED_SYSTEM, CANCELLED_SYSTEM));
+        //        validTransitions.put(TRANSFERRING, EnumSet.of(FINALIZING_SUCCESS, PAUSED_SYSTEM, CANCELLED_SYSTEM, CANCELLED_USER, PAUSED_USER));
+        //        validTransitions.put(RESUMING, EnumSet.of(TRANSFERRING, PAUSED_SYSTEM, CANCELLED_SYSTEM));
+        //        validTransitions.put(PAUSED_SYSTEM, EnumSet.of(RESUMING, CANCELLED_USER, CANCELLED_SYSTEM));
+        //        validTransitions.put(PAUSED_USER, EnumSet.of(RESUMING, CANCELLED_USER, CANCELLED_SYSTEM));
+        //        validTransitions.put(CANCELLED_USER, EnumSet.of(FINALIZING_CLEANUP));
+        //        validTransitions.put(CANCELLED_SYSTEM, EnumSet.of(FINALIZING_FAILURE));
+        //        validTransitions.put(FINALIZING_SUCCESS, EnumSet.of(FINALIZING_FAILURE, FINISHED_SUCCESS));
+        //        validTransitions.put(FINALIZING_FAILURE, EnumSet.of(FINISHED_FAILURE));
+        //        validTransitions.put(FINALIZING_CLEANUP, EnumSet.of(FINISHED_CLEANUP));
+        //        validTransitions.put(FINISHED_FAILURE, EnumSet.of(FINISHED_FAILURE));
+        //        validTransitions.put(FINISHED_SUCCESS, EnumSet.of(FINISHED_SUCCESS));
+
     }
 
     ImageTransferPhase(int value, String description) {
         this.value = value;
         this.description = description;
+    }
+
+    public static boolean isValidTransition(ImageTransferPhase from, ImageTransferPhase to) {
+        return !from.isFinished();
     }
 
     @Override

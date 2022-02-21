@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -50,12 +51,18 @@ public class ImageTransferUpdater {
                     entity.setId(updates.getId());
                 }
                 if (updates.getPhase() != null) {
-                    // TODO: Validate that phase change is valid. For now just log.
-                    log.info("Updating image transfer '{}' phase from '{}' to '{}'",
-                            commandId,
-                            entity.getPhase(),
-                            updates.getPhase());
-                    entity.setPhase(updates.getPhase());
+                    if (!ImageTransferPhase.isValidTransition(entity.getPhase(), updates.getPhase())) {
+                        log.error("Image transfer '{}' transition from phase '{}' to '{}' is invalid",
+                                commandId,
+                                entity.getPhase(),
+                                updates.getPhase());
+                    } else {
+                        log.info("Updating image transfer '{}' phase from '{}' to '{}'",
+                                commandId,
+                                entity.getPhase(),
+                                updates.getPhase());
+                        entity.setPhase(updates.getPhase());
+                    }
                 }
                 if (updates.getType() != null) {
                     entity.setType(updates.getType());
