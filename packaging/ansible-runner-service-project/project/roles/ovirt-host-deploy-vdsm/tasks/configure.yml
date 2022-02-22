@@ -39,6 +39,12 @@
       path: /run/libvirt/virtqemud-sock
       state: absent
 
+  # workaround for BZ 2054323
+  - name: Change the openvswitch_t to permissive
+    selinux_permissive:
+      name: openvswitch_t
+      permissive: true
+
   when: el_ver|int >= 9
 
 
