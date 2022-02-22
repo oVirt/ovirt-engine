@@ -28,6 +28,9 @@ public class EditOptionsModel extends Model {
     private EntityModel<Boolean> confirmSuspendingVm = new EntityModel<>(constants.confirmSuspendingVm(), true);
     private final EntityModel<String> userName = new EntityModel<>("");
     private final EntityModel<String> email = new EntityModel<>("");
+    private final EntityModel<Boolean> isHomePageCustom = new EntityModel<>(constants.homePageCustom(), false);
+    // in the UI customHomePage(text area) shares the same label with radio button that enables it
+    private final EntityModel<String> customHomePage = new EntityModel<>(constants.homePageCustom(), "");
     private final UICommand okCommand;
     private final UICommand resetCommand;
 
@@ -38,6 +41,8 @@ public class EditOptionsModel extends Model {
             UICommand cancelCommand,
             UICommand resetCommand) {
         this.fields = Arrays.asList(
+                new UseCustomHomePageField(isHomePageCustom, true),
+                new CustomHomePageField(customHomePage, true),
                 new PublicSshKeyField(publicKey, UserProfileProperty.builder().withDefaultSshProp().build()),
                 new LocalStoragePersistenceField(localStoragePersistedOnServer, localStorage, true),
                 new ConfirmSuspendingVmField(confirmSuspendingVm, confirmationModelSettingsManager, true));
@@ -128,5 +133,13 @@ public class EditOptionsModel extends Model {
 
     public EntityModel<String> getEmail() {
         return email;
+    }
+
+    public EntityModel<Boolean> getIsHomePageCustom() {
+        return isHomePageCustom;
+    }
+
+    public EntityModel<String> getCustomHomePage() {
+        return customHomePage;
     }
 }

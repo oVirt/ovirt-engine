@@ -2244,4 +2244,6 @@ public interface UIConstants extends Constants {
     String persistGridSettingsOnServer();
 
     String confirmSuspendingVm();
+
+    String homePageCustom();
 }

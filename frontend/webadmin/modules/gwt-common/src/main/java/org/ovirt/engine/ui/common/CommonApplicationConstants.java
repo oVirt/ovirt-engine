@@ -4,6 +4,12 @@ import com.google.gwt.i18n.client.Constants;
 
 public interface CommonApplicationConstants extends Constants {
 
+    String homePage();
+
+    String homePageFormat();
+
+    String homePageIgnoreInvalid();
+
     String resetGridSettings();
 
     String changeColumnsVisibilityOrder();

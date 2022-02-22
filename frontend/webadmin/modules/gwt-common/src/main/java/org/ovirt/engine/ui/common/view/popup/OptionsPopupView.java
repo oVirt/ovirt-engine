@@ -3,10 +3,12 @@ package org.ovirt.engine.ui.common.view.popup;
 import static org.ovirt.engine.ui.uicommonweb.models.options.OptionsModel.RESET_SETTINGS;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.place.ApplicationPlaceManager;
 import org.ovirt.engine.ui.common.section.main.presenter.OptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
@@ -16,19 +18,26 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextArea;
 import org.ovirt.engine.ui.uicommonweb.models.options.EditOptionsModel;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasChangeHandlers;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 
 public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsModel> implements OptionsPopupPresenterWidget.ViewDef {
 
@@ -47,6 +56,7 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @UiField
     @Path(value = "publicKey.entity")
@@ -83,23 +93,53 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
     @Path(value = "email.entity")
     Label email;
 
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelRadioButtonEditor isHomePageDefault;
+
+    @UiField(provided = true)
+    @Path(value = "isHomePageCustom.entity")
+    public EntityModelRadioButtonEditor isHomePageCustom;
+
+    @UiField
+    InfoIcon isHomePageCustomInfo;
+
+    @UiField
+    @Path(value = "customHomePage.entity")
+    StringEntityModelTextArea customHomePage;
+
     @Inject
-    public OptionsPopupView(EventBus eventBus) {
+    public OptionsPopupView(EventBus eventBus, PlaceManager manager) {
         super(eventBus);
 
         localStoragePersistedOnServerCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
         confirmSuspendingVmCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isHomePageCustom = new EntityModelRadioButtonEditor("homePage", Align.RIGHT); // $NON-NLS-1$
+        isHomePageDefault = new EntityModelRadioButtonEditor("homePage", Align.RIGHT);// $NON-NLS-1$
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
         consolePublicKeyInfoIcon.setText(SafeHtmlUtils.fromString(constants.consolePublicKeyMessage()));
-        localStoragePersistedOnServerInfoIcon.setText(createTooltip());
+        localStoragePersistedOnServerInfoIcon.setText(createTooltipForGridSettings());
+        isHomePageCustomInfo.setText(createTooltipForHomePage());
+        isHomePageDefault.setLabel(
+                messages.homePageDefault("#" + // $NON-NLS-1$
+                        ((ApplicationPlaceManager) manager).getDefaultPlace().getNameToken()));
 
         driver.initialize(this);
     }
 
-    private SafeHtml createTooltip() {
+    private SafeHtml createTooltipForHomePage() {
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        builder.append(SafeHtmlUtils.fromString(constants.homePageFormat()));
+        builder.append(SafeHtmlUtils.fromSafeConstant(constants.lineBreak()));
+        builder.append(SafeHtmlUtils.fromSafeConstant(constants.lineBreak()));
+        builder.append(SafeHtmlUtils.fromString(constants.homePageIgnoreInvalid()));
+        return builder.toSafeHtml();
+    }
+
+    private SafeHtml createTooltipForGridSettings() {
         SafeHtmlBuilder listItemBuilder = new SafeHtmlBuilder();
         listItemBuilder.append(templates.listItem(SafeHtmlUtils.fromString(constants.hideDisplayColumns())));
         listItemBuilder.append(templates.listItem(SafeHtmlUtils.fromString(constants.swapColumns())));
@@ -111,14 +151,42 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
         return tooltipBuilder.toSafeHtml();
     }
 
+    private DelegateProvider createDelegateFor(StringEntityModelTextArea textArea) {
+        return new DelegateProvider() {
+            @Override
+            public HasChangeHandlers asHasChangeHandlers() {
+                return textArea;
+            }
+
+            @Override
+            public HasValue<String> asHasValue() {
+                return textArea;
+            }
+
+            @Override
+            public HasText asHasText() {
+                return textArea;
+            }
+        };
+    }
+
     @Override
-    public HasChangeHandlers getPublicKeyEditor() {
-        return publicKeyEditor;
+    public DelegateProvider getPublicKeyEditor() {
+        return createDelegateFor(publicKeyEditor);
+    }
+
+    private void toggleHomePage(EditOptionsModel model) {
+        boolean isHomePageCustom = Boolean.TRUE.equals(model.getIsHomePageCustom().getEntity());
+        customHomePage.setEnabled(isHomePageCustom);
     }
 
     @Override
     public void edit(final EditOptionsModel model) {
         driver.edit(model);
+        boolean isHomePageCustom = Boolean.TRUE.equals(model.getIsHomePageCustom().getEntity());
+        this.isHomePageCustom.asRadioButton().setValue(isHomePageCustom);
+        isHomePageDefault.asRadioButton().setValue(!isHomePageCustom);
+        toggleHomePage(model);
     }
 
     @Override
@@ -147,5 +215,17 @@ public class OptionsPopupView extends AbstractModelBoundPopupView<EditOptionsMod
         // since the mapping is stored in the model we need to propagate labels from model to the view
         confirmSuspendingVmCheckBox.setLabel(model.getConfirmSuspendingVm().getTitle());
         localStoragePersistedOnServerCheckBox.setLabel(model.getLocalStoragePersistedOnServer().getTitle());
+        isHomePageCustom.setLabel(model.getIsHomePageCustom().getTitle());
     }
+
+    @Override
+    public IEventListener<? super PropertyChangedEventArgs> createHomePageListener(EditOptionsModel model) {
+        return (event, sender, args) -> toggleHomePage(model);
+    }
+
+    @Override
+    public HasValueChangeHandlers<Boolean> getHomePageDefaultSwitch() {
+        return isHomePageDefault.asRadioButton();
+    }
+
 }
