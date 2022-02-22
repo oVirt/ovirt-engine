@@ -149,6 +149,7 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
         model.setMessage(constants.areYouSureYouWantToResetTheFollowingSettings());
         model.setItems(removals.stream()
                 .map(Field::getLabel)
+                .distinct()
                 .collect(Collectors.toList()));
 
         List<Boolean> results = new ArrayList<>();
