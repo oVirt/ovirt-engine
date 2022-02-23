@@ -5,7 +5,7 @@
     state: present
     create: yes
     block: |
-      mech_list: scram-sha-1
+      mech_list: scram-sha-256
       sasldb_path: /etc/sasl2/vnc_passwd.db
 
 - name: Use saslpasswd2 to create file with dummy user

@@ -2,7 +2,7 @@ oVirt host setup - VNC SASL authentication
 =============================
 
 This role is used for configuration of SASL authentication for VNC on oVirt
-hosts (with scram-sha-1 mechanism).
+hosts (with scram-sha-256 mechanism).
 
 IMPORTANT: This role restarts libvirtd, and that's safe to perform only on
 hosts which are in maintenance mode and not running any VMs.
