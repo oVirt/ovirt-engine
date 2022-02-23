@@ -108,7 +108,8 @@ public class NetworkInSyncWithVdsNetworkInterface {
     private boolean isIpv4GatewayInSync() {
         String gatewayDesiredValue = getIpv4PrimaryAddress().getGateway();
         String gatewayActualValue = iface.getIpv4Gateway();
-        return Objects.equals(gatewayDesiredValue, gatewayActualValue);
+        boolean isNoGateway = "0.0.0.0".equals(gatewayDesiredValue) && gatewayActualValue == null;
+        return isNoGateway || Objects.equals(gatewayDesiredValue, gatewayActualValue);
     }
 
     private boolean isIpv6PrefixInSync() {

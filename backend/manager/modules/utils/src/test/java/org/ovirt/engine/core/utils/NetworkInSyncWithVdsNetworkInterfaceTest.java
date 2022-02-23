@@ -636,6 +636,25 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     /**
+     * vdsm reports a 0.0.0.0 gateway as an empty string which is converted in engine into null.
+     * User configuration of a 0.0.0.0 gateway is saved on the attachment as is.
+     */
+    @Test
+    public void testIsNetworkInSyncWhenIpv4GatewayNone(){
+        List<Object[]> tests = Arrays.asList(
+                // array of [network attachment address, interface address, expected sync]
+                new Object[] { null, "0.0.0.0" , Boolean.FALSE},
+                new Object[] { "0.0.0.0", null , Boolean.TRUE }
+        );
+        for (Object[] test : tests) {
+            initIpv4ConfigurationStaticBootProtocol(Ipv4BootProtocol.STATIC_IP);
+            ipv4Address.setGateway((String) test[0]);
+            iface.setIpv4Gateway((String) test[1]);
+            assertThat(createTestedInstance().isNetworkInSync(), is((Boolean) test[2]));
+        }
+    }
+
+    /**
      * @return method source for test with same name
      */
     static Stream<String[]> testIsNetworkInSyncForIpv6Synonyms() {
