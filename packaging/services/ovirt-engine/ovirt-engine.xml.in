@@ -358,12 +358,19 @@
           </validation>
         </datasource>
         {% if config.getboolean('KEYCLOAK_BUNDLED') %}
-        <datasource jndi-name="java:jboss/datasources/KeycloakDS" pool-name="KeycloakDS" enabled="true" use-java-context="true">
-          <connection-url>jdbc:h2:${jboss.server.data.dir}/keycloak;AUTO_SERVER=TRUE</connection-url>
-          <driver>h2</driver>
+        <datasource
+            jndi-name="java:jboss/datasources/KeycloakDS"
+            pool-name="KeycloakDS"
+            enabled="true"
+            use-java-context="true">
+          <connection-url><![CDATA[{{ config.get('KEYCLOAK_DB_URL') }}]]></connection-url>
+          <driver>postgresql</driver>
+          <pool>
+            <max-pool-size>{{ config.getinteger('KEYCLOAK_DB_MAX_CONNECTIONS') }}</max-pool-size>
+          </pool>
           <security>
-            <user-name>sa</user-name>
-            <password>sa</password>
+            <user-name><![CDATA[{{ config.get('KEYCLOAK_DB_USER') }}]]></user-name>
+            <password><![CDATA[{{ config.get('KEYCLOAK_DB_PASSWORD') }}]]></password>
           </security>
         </datasource>
         {% endif %}
@@ -372,11 +379,6 @@
           <driver name="postgresql" module="org.postgresql">
             <xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>
           </driver>
-        {% if config.getboolean('KEYCLOAK_BUNDLED') %}
-          <driver name="h2" module="com.h2database.h2">
-            <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
-          </driver>
-        {% endif %}
         </drivers>
       </datasources>
     </subsystem>
