@@ -117,6 +117,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
         List<DiskImage> disksFromDb =
                 DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_SNAPABLE, ONLY_ACTIVE);
         disksFromDb.addAll(DisksFilter.filterCinderDisks(getVm().getDiskMap().values(), ONLY_PLUGGED));
+        disksFromDb.addAll(DisksFilter.filterManagedBlockStorageDisks(getVm().getDiskMap().values(), ONLY_PLUGGED));
         return disksFromDb;
     }
 
