@@ -36,11 +36,7 @@
 
 # Detach the old host, to replace host with different FQDN usecase
 - name: Detach the peer, in the case of different host replacement
-  gluster_peer:
-    state: absent
-    force: true
-    nodes:
-      - "{{ gluster_maintenance_old_node }}"
+  command: "gluster peer detach {{ gluster_maintenance_old_node }} force"
   when: gluster_maintenance_old_node != gluster_maintenance_new_node
 
 - name: Force removal of old node peer in new node
