@@ -190,7 +190,7 @@ public class VmsMonitoring {
     }
 
     private void postFlush(List<VmAnalyzer> vmAnalyzers, VdsManager vdsManager, long fetchTime) {
-        Collection<Guid> movedToDownVms = new ArrayList<>();
+        List<Guid> movedToDownVms = new ArrayList<>();
         List<Guid> succeededToRunVms = new ArrayList<>();
         List<Guid> autoVmsToRun = new ArrayList<>();
         List<Guid> coldRebootVmsToRun = new ArrayList<>();

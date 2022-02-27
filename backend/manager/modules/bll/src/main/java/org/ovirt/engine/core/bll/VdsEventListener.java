@@ -258,17 +258,13 @@ public class VdsEventListener implements IVdsEventListener {
         }
 
         vmJobsMonitoring.removeJobsByVmIds(vmIds);
-        ThreadPoolUtil.execute(() -> processOnVmStopInternal(vmIds, hostId));
-    }
-
-    private void processOnVmStopInternal(final Collection<Guid> vmIds, final Guid hostId) {
-        for (Guid vmId : vmIds) {
-            backend.runInternalAction(ActionType.ProcessDownVm,
-                    new ProcessDownVmParameters(vmId, true, hostId));
-        }
-
-        HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);
-        hostDeviceManager.refreshHostIfAnyVmHasHostDevices(vmIds, hostId);
+        ThreadPoolUtil.execute(() -> {
+            vmIds.forEach(vmId -> backend.runInternalAction(
+                    ActionType.ProcessDownVm,
+                    new ProcessDownVmParameters(vmId, true, hostId)));
+            HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);
+            hostDeviceManager.refreshHostIfAnyVmHasHostDevices(vmIds, hostId);
+        });
     }
 
     /**
