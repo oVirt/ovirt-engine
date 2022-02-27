@@ -6,7 +6,6 @@ public enum VmBackupPhase {
 
     INITIALIZING("Initializing"),
     CREATING_SCRATCH_DISKS("Creating scratch disks"),
-    PREPARING_SCRATCH_DISK("Preparing scratch disks"),
     STARTING("Starting"),
     ADDING_BITMAPS("Adding volume bitmaps"),
     WAITING_FOR_BITMAPS("Waiting for bitmaps"),
