@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.hostdev;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -108,7 +107,10 @@ public class HostDeviceManager implements BackendService {
         return vmDeviceDao.existsVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.HOSTDEV);
     }
 
-    private boolean checkVmNeedsHostDevices(Guid vmId) {
+    /**
+     * Checks whether the VM uses host devices (that were attached directly or via the SRIOV scheduling)
+     */
+    public boolean checkVmNeedsHostDevices(Guid vmId) {
         List<VmDevice> vfs = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(vmId,
                 VmDeviceGeneralType.INTERFACE,
                 VmDeviceType.HOST_DEVICE);
@@ -139,18 +141,5 @@ public class HostDeviceManager implements BackendService {
 
     public void freeVmHostDevices(Guid vmId) {
         hostDeviceDao.freeHostDevicesUsedByVmId(vmId);
-    }
-
-    /**
-     * Calls <code>ActionType.RefreshHost</code> on the specified host, in case any of the specified vms contain
-     * host devices (that were attached directly or via the SRIOV scheduling)
-     */
-    public void refreshHostIfAnyVmHasHostDevices(Collection<Guid> vmIds, Guid hostId) {
-        for (Guid vmId : vmIds) {
-            if (checkVmNeedsHostDevices(vmId)) {
-                backend.runInternalAction(ActionType.RefreshHost, new VdsActionParameters(hostId));
-                return;
-            }
-        }
     }
 }

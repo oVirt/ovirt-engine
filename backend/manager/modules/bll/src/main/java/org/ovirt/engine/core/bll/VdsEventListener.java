@@ -128,8 +128,6 @@ public class VdsEventListener implements IVdsEventListener {
     @Inject
     private BackendInternal backend;
     @Inject
-    private Instance<HostedEngineImporter> hostedEngineImporterProvider;
-    @Inject
     private SchedulingManager schedulingManager;
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -258,13 +256,9 @@ public class VdsEventListener implements IVdsEventListener {
         }
 
         vmJobsMonitoring.removeJobsByVmIds(vmIds);
-        ThreadPoolUtil.execute(() -> {
-            vmIds.forEach(vmId -> backend.runInternalAction(
-                    ActionType.ProcessDownVm,
-                    new ProcessDownVmParameters(vmId, true, hostId)));
-            HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);
-            hostDeviceManager.refreshHostIfAnyVmHasHostDevices(vmIds, hostId);
-        });
+        ThreadPoolUtil.execute(() -> vmIds.forEach(vmId -> backend.runInternalAction(
+                ActionType.ProcessDownVm,
+                new ProcessDownVmParameters(vmId, true, hostId))));
     }
 
     /**
@@ -554,15 +548,18 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void refreshHostIfAnyVmHasHostDevices(final List<Guid> vmIds, final Guid hostId) {
-        if (vmIds.isEmpty()) {
+    public void refreshHostIfAnyVmHasHostDevices(List<Guid> succeededToRunVms, List<Guid> movedToDownVms, final Guid hostId) {
+        if (succeededToRunVms.isEmpty() && movedToDownVms.isEmpty()) {
             return;
         }
 
-        ThreadPoolUtil.execute(() -> {
-            HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);
-            hostDeviceManager.refreshHostIfAnyVmHasHostDevices(vmIds, hostId);
-        });
+        HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);
+        if (succeededToRunVms.stream().anyMatch(hostDeviceManager::checkVmNeedsHostDevices) ||
+                movedToDownVms.stream().anyMatch(hostDeviceManager::checkVmNeedsHostDevices)) {
+            ThreadPoolUtil.execute(() -> backend.runInternalAction(
+                    ActionType.RefreshHost,
+                    new VdsActionParameters(hostId)));
+        }
     }
 
     @Override
