@@ -254,6 +254,9 @@ public class VmsMonitoring {
 
         getVdsEventListener().updateSlaPolicies(succeededToRunVms, vdsManager.getVdsId());
 
+        // need to execute this before processOnVmStop that might remove unmanaged devices
+        getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, movedToDownVms, vdsManager.getVdsId());
+
         // process all vms that went down
         getVdsEventListener().processOnVmStop(movedToDownVms, vdsManager.getVdsId());
 
@@ -262,8 +265,6 @@ public class VmsMonitoring {
 
         // run all vms that went down as a part of cold reboot process
         getVdsEventListener().runColdRebootVms(coldRebootVmsToRun);
-
-        getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, vdsManager.getVdsId());
 
         // Looping only over powering up VMs as LUN device size
         // is updated by VDSM only once when running a VM.
