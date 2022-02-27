@@ -436,11 +436,16 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             // Check if backup already started at the host.
             if (!getParameters().isBackupInitiated()) {
                 // Backup operation didn't start yet, fail the operation.
+                log.error("Failed to initiate VM '{}' backup on the host", getVmId());
                 return false;
             }
 
-            vmBackupInfo = recoverFromMissingBackupInfo();
-            if (vmBackupInfo == null) {
+            // Try to recover from the missing backup info issue by trying to fetch it.
+            vmBackupInfo = performVmBackupOperation(VDSCommandType.GetVmBackupInfo);
+            if (vmBackupInfo == null || vmBackupInfo.getDisks() == null) {
+                log.error("Failed to start VM '{}' backup '{}' on the host",
+                        getVmId(),
+                        getParameters().getVmBackup().getId());
                 return false;
             }
         }
@@ -448,18 +453,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         updateVmBackupCheckpoint();
         storeBackupsUrls(vmBackupInfo.getDisks());
         return true;
-    }
-
-    private VmBackupInfo recoverFromMissingBackupInfo() {
-        // Try to recover by fetching the backup info.
-        VmBackupInfo vmBackupInfo = performVmBackupOperation(VDSCommandType.GetVmBackupInfo);
-        if (vmBackupInfo == null || vmBackupInfo.getDisks() == null) {
-            log.error("Failed to start VM '{}' backup '{}' on the host",
-                    getVmId(),
-                    getParameters().getVmBackup().getId());
-            return null;
-        }
-        return vmBackupInfo;
     }
 
     private void finalizeVmBackup(VmBackupPhase phase) {
