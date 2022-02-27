@@ -302,17 +302,8 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             switch (getParameters().getVmBackup().getPhase()) {
                 case CREATING_SCRATCH_DISKS:
                     if (createScratchDisks()) {
-                        updateVmBackupPhase(VmBackupPhase.PREPARING_SCRATCH_DISK);
-                        log.info("Scratch disks created for the backup");
-                    } else {
-                        updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
-                    }
-                    break;
-
-                case PREPARING_SCRATCH_DISK:
-                    if (prepareScratchDisks()) {
                         updateVmBackupPhase(VmBackupPhase.STARTING);
-                        log.info("Scratch disks prepared for the backup");
+                        log.info("Scratch disks created for the backup");
                     } else {
                         updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
                     }
@@ -330,6 +321,12 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                     break;
 
                 case STARTING:
+                    if (!prepareScratchDisks()) {
+                        updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                        break;
+                    }
+                    log.info("Scratch disks prepared for the backup");
+
                     if (!runLiveVmBackup()) {
                         updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
                         break;
