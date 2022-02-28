@@ -132,10 +132,10 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
         }
 
         model.setEventGroupModels(list);
-        if (!StringHelper.isNullOrEmpty(getEntity().getEmail())) {
-            model.getEmail().setEntity(getEntity().getEmail());
-        } else if (items.size() > 0) {
+        if (items.size() > 0) {
             model.getEmail().setEntity(items.iterator().next().getMethodAddress());
+        } else if (!StringHelper.isNullOrEmpty(getEntity().getEmail())) {
+            model.getEmail().setEntity(getEntity().getEmail());
         }
 
         model.setOldEmail(model.getEmail().getEntity());
