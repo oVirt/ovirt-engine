@@ -21,10 +21,10 @@ from . import appmode
 from . import ca
 from . import database
 from . import domain_type
-from . import jboss_fapolicyd
 from . import firewall
 from . import java
 from . import jboss
+from . import jboss_fapolicyd
 from . import notifier
 from . import options
 from . import protocols
