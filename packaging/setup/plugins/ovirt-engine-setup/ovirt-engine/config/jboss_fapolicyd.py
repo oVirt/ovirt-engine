@@ -50,9 +50,12 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
                 self.environment[oenginecons.CoreEnv.ENABLE] and
-                not os.path.exists(oengcommcons.FileLocations.FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE) and
-                not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
-        )
+                not os.path.exists(
+                    oengcommcons.FileLocations.FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE
+                ) and not self.environment[
+                    osetupcons.CoreEnv.DEVELOPER_MODE
+                ]
+        ),
     )
     def _misc(self):
         config = configfile.ConfigFile([
@@ -72,7 +75,8 @@ class Plugin(plugin.PluginBase):
                 ],
                 content=outil.processTemplate(
                     template=(
-                        oengcommcons.FileLocations.FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE_TEMPLATE
+                        oengcommcons.FileLocations.
+                        FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE_TEMPLATE
                     ),
                     subst={
                         '@JBOSS_RUNTIME_TMP_DIR@': engine_tmp_dir,
