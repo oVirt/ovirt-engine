@@ -1299,8 +1299,6 @@ public interface UIConstants extends Constants {
 
     String editOptionVolume();
 
-    String editOptionsTitle();
-
     String errorInFetchingVolumeOptionList();
 
     String resetOptionVolumeTitle();
@@ -2236,4 +2234,6 @@ public interface UIConstants extends Constants {
     String cpuPinningDedicatedDescription();
 
     String cpuPinningDedicatedDisabled();
+
+    String accountSettings();
 }

@@ -427,23 +427,25 @@
                     </b:Column>
                   </b:Row>
                 </g:FlowPanel>
-                <b:Row>
-                  <b:Column size="SM_12">
-                    <g:Label addStyleNames="{style.sectionLabel}" text="{constants.hostCpuVmPopup}" />
-                  </b:Column>
-                </b:Row>
-                <b:Row>
-                  <b:Column size="SM_5">
-                    <ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" label="{constants.passThroughHostCpu}" usePatternFly="true" addStyleNames="{style.floatLeft} "/>
-                    <d:InfoIcon ui:field="hostCpuInfoIcon" addStyleNames="{style.infoIcon}"/>
-                  </b:Column>
-                </b:Row>
-                <b:Row>
-                  <b:Column size="SM_12">
-                    <ge:EntityModelCheckBoxEditor ui:field="tscFrequencyEditor" label="{constants.tscFrequency}" usePatternFly="true" addStyleNames="{style.floatLeft} "/>
-                    <d:InfoIcon ui:field="tscFrequencyInfoIcon" addStyleNames="{style.infoIcon}"/>
-                  </b:Column>
-                </b:Row>
+                <g:FlowPanel ui:field="hostCpuEditorPanel">
+                    <b:Row>
+                      <b:Column size="SM_12">
+                        <g:Label addStyleNames="{style.sectionLabel}" text="{constants.hostCpuVmPopup}" />
+                      </b:Column>
+                    </b:Row>
+                    <b:Row>
+                      <b:Column size="SM_5">
+                        <ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" label="{constants.passThroughHostCpu}" usePatternFly="true" addStyleNames="{style.floatLeft} "/>
+                        <d:InfoIcon ui:field="hostCpuInfoIcon" addStyleNames="{style.infoIcon}"/>
+                      </b:Column>
+                    </b:Row>
+                    <b:Row>
+                      <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="tscFrequencyEditor" label="{constants.tscFrequency}" usePatternFly="true" addStyleNames="{style.floatLeft} "/>
+                        <d:InfoIcon ui:field="tscFrequencyInfoIcon" addStyleNames="{style.infoIcon}"/>
+                      </b:Column>
+                    </b:Row>
+                </g:FlowPanel>
                 <b:Row>
                   <b:Column size="SM_12">
                     <g:Label addStyleNames="{style.sectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
@@ -478,7 +480,7 @@
                 </b:Row>
                 <b:Row>
                   <b:Column size="SM_6">
-                    <g:Label addStyleNames="{style.floatLeft}" text="{constants.parallelMigrationsType}" />
+                    <g:Label ui:field="parallelMigrationsLabel" addStyleNames="{style.floatLeft}" text="{constants.parallelMigrationsType}" />
                     <d:InfoIcon ui:field="parallelMigrationsInfoIcon" addStyleNames="{style.infoIcon}"/>
                   </b:Column>
                   <b:Column size="SM_6">
@@ -538,7 +540,7 @@
                     <ge:EntityModelDetachableWidget ui:field="isHighlyAvailableEditorWithDetachable" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
-                <b:Row>
+                <b:Row ui:field="leaseRow">
                   <b:Column size="SM_6">
                     <g:Label addStyleNames="{style.floatLeft}" text="{constants.leaseStorageDomain}" />
                     <d:InfoIcon ui:field="leaseInfoIcon" addStyleNames="{style.infoIcon}"/>
@@ -547,7 +549,7 @@
                     <e:ListModelListBoxOnlyEditor ui:field="leaseEditor" usePatternFly="true"/>
                   </b:Column>
                 </b:Row>
-                <b:Row>
+                <b:Row ui:field="resumeBehaviorRow">
                   <b:Column size="SM_6">
                     <g:Label addStyleNames="{style.floatLeft}" text="{constants.resumeBehavior}" />
                     <d:InfoIcon ui:field="resumeBehaviorInfoIcon" addStyleNames="{style.infoIcon}"/>
@@ -627,16 +629,18 @@
                     <ge:EntityModelDetachableWidget ui:field="isMemoryBalloonEnabledDetachable" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
-                <b:Row>
-                  <b:Column size="SM_12">
-                    <g:Label text="{constants.trustedPlatformModuleVmPopup}" addStyleNames="{style.sectionLabel}" />
-                  </b:Column>
-                </b:Row>
-                <b:Row>
-                  <b:Column size="SM_12">
-                    <ge:EntityModelCheckBoxEditor ui:field="tpmEnabledEditor" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.tpmDeviceLabel}" />
-                  </b:Column>
-                </b:Row>
+                <g:FlowPanel ui:field="trustedPlatformPanel">
+                    <b:Row>
+                      <b:Column size="SM_12">
+                        <g:Label text="{constants.trustedPlatformModuleVmPopup}" addStyleNames="{style.sectionLabel}" />
+                      </b:Column>
+                    </b:Row>
+                    <b:Row>
+                      <b:Column size="SM_12">
+                        <ge:EntityModelCheckBoxEditor ui:field="tpmEnabledEditor" addStyleNames="{style.floatLeft}" usePatternFly="true" removeFormGroup="true" label="{constants.tpmDeviceLabel}" />
+                      </b:Column>
+                    </b:Row>
+                </g:FlowPanel>
                <b:Row>
                   <b:Column size="SM_12">
                     <g:Label text="{constants.ioThreadsVmPopup}" addStyleNames="{style.sectionLabel}" />

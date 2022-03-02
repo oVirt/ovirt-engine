@@ -175,7 +175,7 @@ public class HostValidator {
         }
 
         if ((hostedEngineDeployed || hostedEngineDeployRequested)
-                && (!hostedEngineHelper.getStoragePoolId().equals(cluster.getStoragePoolId()))) {
+                && !hostedEngineHelper.getStoragePoolId().equals(cluster.getStoragePoolId())) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_HOST_IN_ANOTHER_DC);
         }
 

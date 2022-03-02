@@ -30,8 +30,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String logoutLinkLabel();
 
-    String optionsLinkLabel();
-
     String aboutLinkLabel();
 
     String guideLinkLabel();
@@ -1665,8 +1663,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String groupUser();
 
     String groupNameUser();
-
-    String emailUser();
 
     String addUser();
 
@@ -3620,4 +3616,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String ipv6AutoconfAvailabilityInfo();
 
     String cleanupFinishedTasks();
+
+    String accountSettings();
 }

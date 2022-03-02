@@ -170,8 +170,8 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
                 repoImage.setLastRefreshed(currentTime);
                 repoImages.add(repoImage);
             }
-        } while((images.getList().size() >= listSize) &&
-                (totalListSize != null && repoImages.size() < totalListSize));
+        } while(images.getList().size() >= listSize &&
+                totalListSize != null && repoImages.size() < totalListSize);
 
         return repoImages;
     }

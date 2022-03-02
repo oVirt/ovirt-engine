@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.LocalStorage;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -19,9 +20,12 @@ public class EditOptionsModel extends Model {
     private final EntityModel<String> publicKey = new EntityModel<>("");
     private EntityModel<Boolean> localStoragePersistedOnServer = new EntityModel<>(true);
     private EntityModel<Boolean> confirmSuspendingVm = new EntityModel<>(true);
+    private final EntityModel<String> userName = new EntityModel<>("");
+    private final EntityModel<String> email = new EntityModel<>("");
 
     public EditOptionsModel(ConfirmationModelSettingsManager confirmationModelSettingsManager,
-            LocalStorage localStorage) {
+            LocalStorage localStorage,
+            DbUser user) {
         this.fields = Arrays.asList(
                 new PublicSshKeyField(publicKey, UserProfileProperty.builder().withDefaultSshProp().build()),
                 new LocalStoragePersistenceField(localStoragePersistedOnServer, localStorage),
@@ -30,6 +34,9 @@ public class EditOptionsModel extends Model {
         for (Field<?> field : fields) {
             field.getEntity().getEntityChangedEvent().addListener(this::updateAvailability);
         }
+
+        userName.setEntity(user.getLoginName());
+        email.setEntity(user.getEmail());
     }
 
     private void updateAvailability(Event<? extends EventArgs> ev,
@@ -92,5 +99,13 @@ public class EditOptionsModel extends Model {
         return fields.stream()
                 .filter(Field::isRemoved)
                 .collect(Collectors.toList());
+    }
+
+    public EntityModel<String> getUserName() {
+        return userName;
+    }
+
+    public EntityModel<String> getEmail() {
+        return email;
     }
 }

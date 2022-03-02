@@ -27,6 +27,11 @@ public final class AutoLoginData extends JavaScriptObject {
         return this.userName;
     }-*/;
 
+
+    private native String getEmail() /*-{
+        return this.email;
+    }-*/;
+
     private native String getDomain() /*-{
         return this.domain;
     }-*/;
@@ -48,6 +53,7 @@ public final class AutoLoginData extends JavaScriptObject {
         user.setId(Guid.createGuidFromStringDefaultEmpty(getId()));
         user.setDomain(getDomain());
         user.setLoginName(getUserName());
+        user.setEmail(getEmail());
         user.setAdmin(isAdmin());
         return user;
     }

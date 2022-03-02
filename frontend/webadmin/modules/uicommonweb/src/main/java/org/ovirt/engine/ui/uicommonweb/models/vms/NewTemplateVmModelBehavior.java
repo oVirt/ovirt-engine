@@ -230,18 +230,11 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
     @Override
     public void postDataCenterWithClusterSelectedItemChanged() {
+        super.postDataCenterWithClusterSelectedItemChanged();
         updateQuotaByCluster(vm.getQuotaId(), vm.getQuotaName());
-        updateMemoryBalloon();
-        updateCpuSharesAvailability();
-        updateVirtioScsiAvailability();
-        updateOSValues();
+
         updateTemplate();
-        updateNumOfSockets();
-        if(getModel().getSelectedCluster() != null) {
-            updateCpuProfile(getModel().getSelectedCluster().getId(), vm.getCpuProfileId());
-        }
-        updateCustomPropertySheet();
-        getModel().getCustomPropertySheet().deserialize(vm.getCustomProperties());
+        updateCpuProfile(getModel().getSelectedCluster(), vm.getCpuProfileId());
         updateLeaseStorageDomains(vm.getLeaseStorageDomainId());
     }
 
@@ -263,9 +256,16 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     public void provisioning_SelectedItemChanged() {
     }
 
+    @Override
+    protected void changeDefaultHost() {
+        super.changeDefaultHost();
+        updateDefaultHost(vm.getDedicatedVmForVdsList());
+    }
+
     private void initTemplate() {
         // Update model state according to VM properties.
         buildModel(this.vm.getStaticData(), (source, destination) -> {
+            updateDefaultHost(vm.getDedicatedVmForVdsList());
             updateSelectedCdImage(vm.getStaticData());
             updateTimeZone(vm.getTimeZone());
             updateTpm(vm.getId());

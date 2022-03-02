@@ -14,6 +14,7 @@ public class CopyDataCommandParameters extends StorageJobCommandParameters {
     private boolean live;
     private List<DiskImage> destImages = new ArrayList<>();
     private boolean copyBitmaps;
+    private boolean legal = true;
 
     public CopyDataCommandParameters() {
     }
@@ -71,5 +72,13 @@ public class CopyDataCommandParameters extends StorageJobCommandParameters {
 
     public void setLive(boolean live) {
         this.live = live;
+    }
+
+    public boolean isLegal() {
+        return legal;
+    }
+
+    public void setLegal(boolean legal) {
+        this.legal = legal;
     }
 }

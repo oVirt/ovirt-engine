@@ -135,7 +135,7 @@ public abstract class AffinityLabelModel extends Model {
     }
 
     void onSave() {
-        if (!validate() || (getProgress() != null)) {
+        if (!validate() || getProgress() != null) {
             return;
         }
 

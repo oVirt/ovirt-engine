@@ -184,7 +184,7 @@ public class StorageDomainValidator {
     private double getTotalSizeForDisksWithSnapshots(Collection<DiskImage> diskImages) {
         return getTotalSizeForDisksByMethod(diskImages, diskImage -> {
             double sizeForDisk = diskImage.getSize();
-            if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse)
+            if (storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse
                 || diskImage.getVolumeFormat() == VolumeFormat.COW) {
                 sizeForDisk = diskImage.getActualDiskWithSnapshotsSizeInBytes();
             }

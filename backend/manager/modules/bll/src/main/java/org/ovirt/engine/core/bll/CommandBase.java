@@ -1941,7 +1941,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
 
     private void freeLockExecute() {
         if (releaseLocksAtEndOfExecute || !getSucceeded() ||
-                (noAsyncOperations() && !(this instanceof IVdsAsyncCommand))) {
+                noAsyncOperations() && !(this instanceof IVdsAsyncCommand)) {
             freeLock();
         }
     }

@@ -259,7 +259,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private boolean isHeHostBeingMovedToForeignCluster(VDS vds) {
         return hostedEngineHelper.isVmManaged() && vds.isHostedEngineDeployed()
-                && (!hostedEngineHelper.getClusterId().equals(vds.getClusterId()));
+                && !hostedEngineHelper.getClusterId().equals(vds.getClusterId());
     }
 
     private boolean initializeStorage() {

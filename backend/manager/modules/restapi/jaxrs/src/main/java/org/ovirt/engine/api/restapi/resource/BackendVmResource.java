@@ -504,7 +504,7 @@ public class BackendVmResource
             params.setInitializationType(InitializationType.CloudInit);
         } else if (useIgnition) {
             params.setInitializationType(InitializationType.Ignition);
-        } else if ((sysPrepSet && !useSysPrep) || (cloudInitSet && !useCloudInit) || (ignitionSet && !useIgnition)) {
+        } else if (sysPrepSet && !useSysPrep || cloudInitSet && !useCloudInit || ignitionSet && !useIgnition) {
             //if sysprep or cloud-init were explicitly set to false, this indicates
             //that the user wants no initialization
             params.setInitializationType(InitializationType.None);

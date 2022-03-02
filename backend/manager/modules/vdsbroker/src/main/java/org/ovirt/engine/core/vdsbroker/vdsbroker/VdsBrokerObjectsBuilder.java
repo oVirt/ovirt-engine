@@ -56,6 +56,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
@@ -952,6 +953,7 @@ public class VdsBrokerObjectsBuilder {
 
         updateNetworkData(vds, vdsmNameMap, struct);
         updateNumaNodesData(vds, struct);
+        updateCpuTopology(vds, struct);
 
         vds.setCpuThreads(assignIntValue(struct, VdsProperties.cpuThreads));
         vds.setCpuCores(assignIntValue(struct, VdsProperties.cpu_cores));
@@ -1036,6 +1038,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setBootUuid(assignStringValue(struct, VdsProperties.BOOT_UUID));
         vds.setCdChangePdiv(assignBoolValue(struct, VdsProperties.CD_CHANGE_PDIV));
         vds.setOvnConfigured(assignBoolValue(struct, VdsProperties.OVN_CONFIGURED));
+        vds.setVdsmCpusAffinity(assignStringValueFromArray(struct, VdsProperties.vdsm_cpus_affinity));
     }
 
     private void setDnsResolverConfigurationData(VDS vds, Map<String, Object> struct) {
@@ -2576,6 +2579,22 @@ public class VdsBrokerObjectsBuilder {
             vds.setNumaSupport(newNumaNodeList.size() > 1);
         }
 
+    }
+
+    public void updateCpuTopology(VDS vds, Map<String, Object> struct) {
+        if (struct.containsKey(VdsProperties.cpu_topology)) {
+            List<VdsCpuUnit> vdsCpuTopology = new ArrayList<>();
+            Object[] cpuTopology = (Object[]) struct.get(VdsProperties.cpu_topology);
+            for (Object cpuCapabilityObject : cpuTopology) {
+                Map<String, Object> cpuCapability = (Map<String, Object>) cpuCapabilityObject;
+                int socket = (Integer) cpuCapability.get(VdsProperties.socket_id);
+                int core = (Integer) cpuCapability.get(VdsProperties.core_id);
+                int cpuId = (Integer) cpuCapability.get(VdsProperties.cpu_id);
+                VdsCpuUnit vdsCpuUnit = new VdsCpuUnit(socket, core, cpuId);
+                vdsCpuTopology.add(vdsCpuUnit);
+            }
+            vds.setCpuTopology(vdsCpuTopology);
+        }
     }
 
     private static <T> List<T> extractList(Map<String, Object> struct, String propertyName) {

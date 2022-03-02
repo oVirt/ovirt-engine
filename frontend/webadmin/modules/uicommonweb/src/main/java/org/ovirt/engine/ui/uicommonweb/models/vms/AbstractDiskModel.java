@@ -720,8 +720,8 @@ public abstract class AbstractDiskModel extends DiskModel {
             boolean isApplicableDiskStorageType = selectedDiskStorageType == DiskStorageType.LUN ||
                     selectedDiskStorageType == DiskStorageType.IMAGE;
             boolean isApplicableStorageType = selectedDiskStorageType == DiskStorageType.LUN ||
-                    (getStorageDomain().getSelectedItem() != null &&
-                            getStorageDomain().getSelectedItem().getStorageType().isInternal());
+                    getStorageDomain().getSelectedItem() != null &&
+                            getStorageDomain().getSelectedItem().getStorageType().isInternal();
 
             if (isApplicableInterface && isApplicableDiskStorageType && isApplicableStorageType) {
                 getPassDiscard().setIsAvailable(true);

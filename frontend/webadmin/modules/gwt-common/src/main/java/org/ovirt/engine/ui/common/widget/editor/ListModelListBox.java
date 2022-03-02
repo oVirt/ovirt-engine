@@ -221,7 +221,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         } else {
             boolean found = false;
             for (T listItem: this.valueList) {
-                if (listItem == value || (listItem != null && listItem.equals(value))) {
+                if (listItem == value || listItem != null && listItem.equals(value)) {
                     //Found the value, show the right thing on the button.
                     updateCurrentValue(value, fireEvents);
                     found = true;
@@ -427,7 +427,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
                             item.setSelected();
                         }
                     } else {
-                        if (item.getValue() == value || (item.getValue() != null && item.getValue().equals(value))) {
+                        if (item.getValue() == value || item.getValue() != null && item.getValue().equals(value)) {
                             item.setSelected();
                         }
                     }

@@ -414,7 +414,7 @@ public class AuditLogableBase implements AuditLogable {
 
     protected VDS getVds() {
         if (vds == null
-                && ((vdsId != null && !Guid.Empty.equals(vdsId)) || (getVm() != null && getVm().getRunOnVds() != null))) {
+                && (vdsId != null && !Guid.Empty.equals(vdsId) || getVm() != null && getVm().getRunOnVds() != null)) {
             if (vdsId == null || Guid.Empty.equals(vdsId)) {
                 vdsId = getVm().getRunOnVds();
             }
@@ -430,7 +430,7 @@ public class AuditLogableBase implements AuditLogable {
 
     private VdsStatic getVdsStatic() {
         if (cachedVdsStatic == null
-                && ((vdsId != null && !Guid.Empty.equals(vdsId)) || (getVm() != null && getVm().getRunOnVds() != null))) {
+                && (vdsId != null && !Guid.Empty.equals(vdsId) || getVm() != null && getVm().getRunOnVds() != null)) {
             if (vdsId == null || Guid.Empty.equals(vdsId)) {
                 vdsId = getVm().getRunOnVds();
             }

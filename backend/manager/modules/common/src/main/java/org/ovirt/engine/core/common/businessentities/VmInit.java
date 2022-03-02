@@ -291,8 +291,8 @@ public class VmInit implements Serializable, BusinessEntity<Guid> {
                 Objects.equals(regenerateKeys, other.regenerateKeys) &&
                 Objects.equals(passwordAlreadyStored, other.passwordAlreadyStored) &&
                 (Objects.equals(networks, other.networks) ||
-                        (networks == null && other.networks.size() == 0) ||
-                        (other.networks == null && networks.size() == 0)) &&
+                        networks == null && other.networks.size() == 0 ||
+                        other.networks == null && networks.size() == 0) &&
                 Objects.equals(cloudInitNetworkProtocol, other.cloudInitNetworkProtocol);
     }
 }

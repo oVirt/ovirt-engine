@@ -117,14 +117,14 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 && Objects.equals(ksmCpuPercent, other.ksmCpuPercent)
                 && Objects.equals(swapTotal, other.swapTotal)
                 && Objects.equals(swapFree, other.swapFree)
-                && (anonymousHugePages == other.anonymousHugePages)
+                && anonymousHugePages == other.anonymousHugePages
                 && Objects.equals(hugePages, other.hugePages)
                 && Objects.equals(bootTime, other.bootTime)
-                && (highlyAvailableScore == other.highlyAvailableScore)
-                && (highlyAvailableIsConfigured == other.highlyAvailableIsConfigured)
-                && (highlyAvailableIsActive == other.highlyAvailableIsActive)
-                && (highlyAvailableGlobalMaintenance == other.highlyAvailableGlobalMaintenance)
-                && (highlyAvailableLocalMaintenance == other.highlyAvailableLocalMaintenance)
+                && highlyAvailableScore == other.highlyAvailableScore
+                && highlyAvailableIsConfigured == other.highlyAvailableIsConfigured
+                && highlyAvailableIsActive == other.highlyAvailableIsActive
+                && highlyAvailableGlobalMaintenance == other.highlyAvailableGlobalMaintenance
+                && highlyAvailableLocalMaintenance == other.highlyAvailableLocalMaintenance
                 && Objects.equals(cpuCoreStatistics, other.cpuCoreStatistics)
                 && Objects.equals(cpuOverCommitTimeStamp, other.cpuOverCommitTimeStamp);
     }

@@ -1,6 +1,0 @@
-ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-8-$basearch/
-#isort
-EL8_collection,https://copr-be.cloud.fedoraproject.org/results/sbonazzo/EL8_collection/epel-8-$basearch/
-# CS8 doesn't contain all build utilities
-epel-el8,https://download.fedoraproject.org/pub/epel/8/Everything/x86_64/
-nfv-master-centos-el8s,https://buildlogs.centos.org/centos/8-stream/nfv/$basearch/openvswitch-2/

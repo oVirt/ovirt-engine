@@ -105,12 +105,9 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
             return;
         }
 
-        doChangeDefaultHost(template.getDedicatedVmForVdsList());
         setupWindowModelFrom(template);
+        updateDefaultHost(template.getDedicatedVmForVdsList());
         updateRngDevice(template.getId());
-        getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
-
-        updateBiosType();
         selectBiosTypeFromTemplate();
 
         getInstanceTypeManager().updateInstanceTypeFieldsFromSource();

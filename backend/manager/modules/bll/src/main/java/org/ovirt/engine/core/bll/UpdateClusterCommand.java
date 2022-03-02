@@ -395,8 +395,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
 
             alertIfFencingDisabled();
 
-            boolean isKsmPolicyChanged = (getCluster().isKsmMergeAcrossNumaNodes() != oldCluster.isKsmMergeAcrossNumaNodes()) ||
-                    (getCluster().isEnableKsm() != oldCluster.isEnableKsm());
+            boolean isKsmPolicyChanged = getCluster().isKsmMergeAcrossNumaNodes() != oldCluster.isKsmMergeAcrossNumaNodes() ||
+                    getCluster().isEnableKsm() != oldCluster.isEnableKsm();
 
             if (isKsmPolicyChanged) {
                 momPolicyUpdatedEvent.fire(getCluster());
@@ -850,10 +850,10 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
         // If the version is being upgrading and the previous or current CPU was deprecated,
         // then skip the validation so that we can adjust the cpu type in the executeCommand() function.
         return isVersionChanged() &&
-                ((cpuFlagsManagerHandler.checkIfCpusExist(oldCluster.getCpuName(),
+                (cpuFlagsManagerHandler.checkIfCpusExist(oldCluster.getCpuName(),
                         oldCluster.getCompatibilityVersion()) &&
                         !cpuFlagsManagerHandler.checkIfCpusExist(oldCluster.getCpuName(),
-                                getParameters().getCluster().getCompatibilityVersion())) ||
+                                getParameters().getCluster().getCompatibilityVersion()) ||
                         !cpuFlagsManagerHandler.checkIfCpusExist(getCluster().getCpuName(),
                                 getParameters().getCluster().getCompatibilityVersion()));
     }

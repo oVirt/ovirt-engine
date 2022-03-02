@@ -375,7 +375,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     private void setIsoImages(ObservableCollection<ChangeCDModel> value) {
-        if ((isoImages == null && value != null) || (isoImages != null && !isoImages.equals(value))) {
+        if (isoImages == null && value != null || isoImages != null && !isoImages.equals(value)) {
             isoImages = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsoImages")); //$NON-NLS-1$
         }

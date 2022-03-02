@@ -117,9 +117,9 @@ public class ExternalVnicProfileMapping implements Serializable {
      */
     public boolean isSameSourceProfile(VmNetworkInterface vnic) {
         return (Objects.equals(getSourceNetworkName(), vnic.getNetworkName()) ||
-                ("".equals(getSourceNetworkName()) && vnic.getNetworkName() == null)) &&
+                "".equals(getSourceNetworkName()) && vnic.getNetworkName() == null) &&
                 (Objects.equals(getSourceProfileName(), vnic.getVnicProfileName()) ||
-                        ("".equals(getSourceProfileName()) && vnic.getVnicProfileName() == null));
+                        "".equals(getSourceProfileName()) && vnic.getVnicProfileName() == null);
     }
 
      /**

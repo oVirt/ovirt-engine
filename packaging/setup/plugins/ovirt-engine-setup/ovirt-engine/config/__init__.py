@@ -24,6 +24,7 @@ from . import domain_type
 from . import firewall
 from . import java
 from . import jboss
+from . import jboss_fapolicyd
 from . import notifier
 from . import options
 from . import protocols
@@ -54,6 +55,7 @@ def createPlugins(context):
     storage.Plugin(context=context)
     sso.Plugin(context=context)
     notifier.Plugin(context=context)
+    jboss_fapolicyd.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

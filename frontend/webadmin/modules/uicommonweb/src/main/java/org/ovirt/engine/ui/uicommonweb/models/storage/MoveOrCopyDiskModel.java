@@ -120,8 +120,8 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     protected void onInitAllDisks(List<? extends Disk> disks) {
         allDisks.addAll(disks.stream()
                 .filter(disk -> disk.getDiskStorageType() == DiskStorageType.IMAGE ||
-                        (isAllowedForManagedBlockDisks() &&
-                                disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE))
+                        isAllowedForManagedBlockDisks() &&
+                                disk.getDiskStorageType() == DiskStorageType.MANAGED_BLOCK_STORAGE)
                 .map(DiskModel::diskToModel)
                 .collect(Collectors.toList()));
     }
@@ -129,7 +129,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     protected void onInitStorageDomains(List<StorageDomain> storages) {
         getActiveStorageDomains().addAll(storages.stream()
                 .filter(sd -> Linq.isDataActiveStorageDomain(sd) ||
-                        (isAllowedForManagedBlockDisks() && Linq.isManagedBlockActiveStorageDomain(sd)))
+                        isAllowedForManagedBlockDisks() && Linq.isManagedBlockActiveStorageDomain(sd))
                 .collect(Collectors.toList()));
         getActiveStorageDomains().sort(new NameableComparator());
 

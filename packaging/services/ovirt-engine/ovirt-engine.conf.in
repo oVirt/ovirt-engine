@@ -691,7 +691,8 @@ SYSLOG_HANDLER_ENCODING=
 
 #
 # Formatter pattern to format the message to be sent to remote syslog
-SYSLOG_HANDLER_FORMATTER_PATTERN=
+# https://github.com/wildfly/wildfly/blob/main/docs/src/main/asciidoc/_admin-guide/subsystem-configuration/Logging_Formatters.adoc#pattern-formatter
+SYSLOG_HANDLER_FORMATTER_PATTERN="%-5p [%c] (%t) %s%e%n"
 
 #
 # The address of the syslog server.
@@ -747,3 +748,17 @@ SYSLOG_HANDLER_TRUNCATE=
 #
 # The maximum length a log message, including the header, is allowed to be.
 SYSLOG_HANDLER_MAX_LENGTH=
+
+#
+# Whether we send server.log to SYSLOG when SYSLOG_HANDLER_ENABLED=true
+# Default to true to have same behavior as with log4j syslog
+SERVER_LOG_TO_SYSLOG=true
+
+#
+# Whether we send engine.log to SYSLOG when SYSLOG_HANDLER_ENABLED=true
+# Default to true to have same behavior as with log4j syslog
+ENGINE_LOG_TO_SYSLOG=true
+
+#
+# Whether we send ui.log to SYSLOG when SYSLOG_HANDLER_ENABLED=true
+UI_LOG_TO_SYSLOG=false

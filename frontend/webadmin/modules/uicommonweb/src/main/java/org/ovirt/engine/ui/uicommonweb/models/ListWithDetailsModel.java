@@ -93,7 +93,7 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
             // Try to choose default (first) detail model.
             updateDetailsAvailability();
             if (getDetailModels() != null) {
-                if ((getActiveDetailModel() != null && !getActiveDetailModel().getIsAvailable())
+                if (getActiveDetailModel() != null && !getActiveDetailModel().getIsAvailable()
                         || getActiveDetailModel() == null) {
                     HasEntity<D> model = null;
                     for (HasEntity<D> item : getDetailModels()) {

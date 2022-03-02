@@ -161,7 +161,7 @@ public class VmAffinityWeightPolicyUnit extends PolicyUnitImpl {
     }
 
     private static boolean isVmMigratable(VM vm) {
-        return (vm.getMigrationSupport() == MigrationSupport.MIGRATABLE) && !vm.isHostedEngine();
+        return vm.getMigrationSupport() == MigrationSupport.MIGRATABLE && !vm.isHostedEngine();
     }
 
     private static class HostInfo {

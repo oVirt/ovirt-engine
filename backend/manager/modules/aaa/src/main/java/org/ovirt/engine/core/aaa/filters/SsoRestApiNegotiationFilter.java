@@ -78,8 +78,9 @@ public class SsoRestApiNegotiationFilter implements Filter {
         log.debug("Entered SsoRestApiNegotiationFilter");
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
-        if ((FiltersHelper.isAuthenticated(req) && FiltersHelper.isSessionValid((HttpServletRequest) request)) ||
-                !EngineLocalConfig.getInstance().getBoolean("ENGINE_RESTAPI_NEGO")) {
+        if (FiltersHelper.isAuthenticated(req)
+                && FiltersHelper.isSessionValid((HttpServletRequest) request)
+                || !EngineLocalConfig.getInstance().getBoolean("ENGINE_RESTAPI_NEGO")) {
             log.debug("SsoRestApiNegotiationFilter Not performing Negotiate Auth");
             chain.doFilter(request, response);
         } else {

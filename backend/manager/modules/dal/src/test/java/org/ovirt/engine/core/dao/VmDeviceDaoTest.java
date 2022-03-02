@@ -149,7 +149,7 @@ public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
                 dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID,
                         VmDeviceGeneralType.BALLOON,
                         VmDeviceType.MEMBALLOON.getName());
-        assertTrue((queryRes && !devices.isEmpty()) || (!queryRes && devices.isEmpty()));
+        assertTrue(queryRes && !devices.isEmpty() || !queryRes && devices.isEmpty());
     }
 
     /**

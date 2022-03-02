@@ -171,7 +171,7 @@ public class CompletenessAssertor {
             } else {
                 boolean found = false;
                 for (String superField : superField(r).split(ALTERNATIVE)) {
-                    found = found || (isSet(model, capitalize(superField)) && assertFields(model, superField, subField(r)));
+                    found = found || isSet(model, capitalize(superField)) && assertFields(model, superField, subField(r));
                 }
                 if (!found) {
                     missing.add(r);

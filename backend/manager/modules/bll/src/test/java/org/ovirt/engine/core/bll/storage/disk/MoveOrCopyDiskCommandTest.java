@@ -367,7 +367,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     private void mockStorageDomainValidatorWithoutSpace() {
-        when(multipleStorageDomainsValidator.allDomainsHaveSpaceForDisksWithSnapshots(any())).thenReturn(
+        when(multipleStorageDomainsValidator.targetDomainHasSpaceForDisks(any())).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
     }
 

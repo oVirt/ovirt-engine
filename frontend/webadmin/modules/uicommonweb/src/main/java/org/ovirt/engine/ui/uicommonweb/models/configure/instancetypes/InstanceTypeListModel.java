@@ -29,10 +29,8 @@ import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.HwOnlyCoreUnitToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.NameUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -198,14 +196,8 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         UnitVmModel model = (UnitVmModel) getWindow();
         BuilderExecutor.build(model, vmBase,
                 new HwOnlyCoreUnitToVmBaseBuilder(),
-                new NameUnitToVmBaseBuilder(),
-                new UsbPolicyUnitToVmBaseBuilder(),
-                new MigrationOptionsUnitToVmBaseBuilder()
+                new NameUnitToVmBaseBuilder()
         );
-
-        // from CommonUnitToVmBaseBuilder
-        vmBase.setAutoStartup(model.getIsHighlyAvailable().getEntity());
-        vmBase.setPriority(model.getPriority().getSelectedItem().getEntity());
     }
 
     private void postInstanceTypeNameUniqueCheck() {
@@ -222,12 +214,8 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         addInstanceTypeParameters.setPublicUse(true);
 
         addInstanceTypeParameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-        addInstanceTypeParameters.setTpmEnabled(model.getTpmEnabled().getEntity());
         addInstanceTypeParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         addInstanceTypeParameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-        if(model.getIsHeadlessModeEnabled().getEntity()) {
-            addInstanceTypeParameters.getVm().setDefaultDisplayType(DisplayType.none);
-        }
 
         setVmWatchdogToParams(model, addInstanceTypeParameters);
         setRngDeviceToParams(model, addInstanceTypeParameters);

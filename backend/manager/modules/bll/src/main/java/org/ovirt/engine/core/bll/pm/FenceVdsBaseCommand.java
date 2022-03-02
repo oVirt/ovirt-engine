@@ -80,7 +80,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // Check Quiet time between PM operations, this is done only if command is not internal and parent
         // command is not <Restart>
         int secondsLeftToNextPmOp =
-                (isInternalExecution() || (getParameters().getParentCommand() == ActionType.RestartVds))
+                isInternalExecution() || getParameters().getParentCommand() == ActionType.RestartVds
                         ?
                         0
                         :

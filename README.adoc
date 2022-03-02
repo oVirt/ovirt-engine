@@ -5,10 +5,6 @@ image:https://copr.fedorainfracloud.org/coprs/ovirt/ovirt-master-snapshot/packag
 
 Welcome to the oVirt Engine - Open Virtualization Manager source repository.
 
-This repository is hosted on [gerrit.ovirt.org:ovirt-engine](https://gerrit.ovirt.org/#/admin/projects/ovirt-engine)
-and a **backup** of it is hosted on [GitHub:ovirt-engine](https://github.com/oVirt/ovirt-engine)
-
-
 == How to contribute
 
 === Submitting patches

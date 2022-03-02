@@ -305,7 +305,7 @@ public class PluginManager implements HasHandlers {
 
         boolean isInitializingOrInUse = plugin.isInState(PluginState.INITIALIZING) || plugin.isInState(PluginState.IN_USE);
         boolean isLoading = plugin.isInState(PluginState.LOADING);
-        return isInitializingOrInUse || (allowWhileLoading && isLoading);
+        return isInitializingOrInUse || allowWhileLoading && isLoading;
     }
 
     /**

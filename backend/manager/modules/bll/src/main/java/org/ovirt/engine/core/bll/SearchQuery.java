@@ -598,8 +598,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     int endPos = searchObj.getErrorEndPos();
                     int length = endPos - startPos;
                     String error =
-                            (length > 0 && ((startPos + 1 + length) < searchText.length())
-                            && (endPos + 1 < searchText.length()))
+                            (length > 0 && (startPos + 1 + length) < searchText.length()
+                            && (endPos + 1) < searchText.length())
                                     ?
                                     searchText.substring(0, startPos)
                                             + "$"

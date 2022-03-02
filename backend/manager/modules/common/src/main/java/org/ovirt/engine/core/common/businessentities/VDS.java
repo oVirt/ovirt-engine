@@ -1650,7 +1650,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
     public boolean isHostedEngineDeployed() {
         // TODO Add running status of ovirt-ha-agent and ovirt-ha-broker once available from VDSM
         if (isHostedEngineConfigured()
-                || (getHighlyAvailableScore() > 0 && getHighlyAvailableIsActive())) {
+                || getHighlyAvailableScore() > 0 && getHighlyAvailableIsActive()) {
             return true;
         }
 
@@ -1889,5 +1889,21 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setCdChangePdiv(boolean cdChangePdiv) {
         vdsDynamic.setCdChangePdiv(cdChangePdiv);
+    }
+
+    public List<VdsCpuUnit> getCpuTopology() {
+        return vdsDynamic.getCpuTopology();
+    }
+
+    public void setCpuTopology(List<VdsCpuUnit> value) {
+        vdsDynamic.setCpuTopology(value);
+    }
+
+    public String getVdsmCpusAffinity() {
+        return vdsDynamic.getVdsmCpusAffinity();
+    }
+
+    public void setVdsmCpusAffinity(String value) {
+        vdsDynamic.setVdsmCpusAffinity(value);
     }
 }

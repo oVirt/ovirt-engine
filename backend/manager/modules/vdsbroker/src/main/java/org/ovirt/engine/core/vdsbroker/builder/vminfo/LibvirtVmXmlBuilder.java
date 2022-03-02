@@ -289,7 +289,7 @@ public class LibvirtVmXmlBuilder {
         if (numaEnabled) {
             writeNumaTune();
         }
-        writeCpu(numaEnabled || (vm.isHostedEngine() && !vmNumaNodesSupplier.get().isEmpty()));
+        writeCpu(numaEnabled || vm.isHostedEngine() && !vmNumaNodesSupplier.get().isEmpty());
         writeCpuTune(numaEnabled);
         writeQemuCapabilities();
         writeDevices();
@@ -387,7 +387,7 @@ public class LibvirtVmXmlBuilder {
 
         if (!FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())
                 // the next check is because QEMU fails if memory and maxMemory are the same
-                || (vm.getVmMemSizeMb() == vm.getMaxMemorySizeMb()) && nvdimmSize == 0) {
+                || vm.getVmMemSizeMb() == vm.getMaxMemorySizeMb() && nvdimmSize == 0) {
                 return;
         }
 
@@ -1287,7 +1287,7 @@ public class LibvirtVmXmlBuilder {
         }
 
         // graphics device handling
-        if (displayType == DisplayType.none || (vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty())) {
+        if (displayType == DisplayType.none || vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty()) {
             // remove existing graphics devices
             devices = devices.stream()
                     .filter(dev -> dev.getType() != VmDeviceGeneralType.GRAPHICS)

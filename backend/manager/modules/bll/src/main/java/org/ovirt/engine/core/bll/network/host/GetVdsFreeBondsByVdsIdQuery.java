@@ -26,7 +26,7 @@ public class GetVdsFreeBondsByVdsIdQuery<P extends IdQueryParameters> extends Qu
         // we return only bonds that are not active (that have no interfaces
         // related to them)
         List<VdsNetworkInterface> interfaces = list.stream().filter(bond ->
-                (bond.getBonded() != null && bond.getBonded())
+                bond.getBonded() != null && bond.getBonded()
                 && list.stream().noneMatch(iface -> iface.getBondName() != null && iface.getBondName().equals(bond.getName()))
         ).collect(Collectors.toList());
 

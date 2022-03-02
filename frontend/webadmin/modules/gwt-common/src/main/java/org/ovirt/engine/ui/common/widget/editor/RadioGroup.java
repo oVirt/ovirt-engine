@@ -89,7 +89,7 @@ public class RadioGroup<K> extends Composite implements TakesValue<K>, HasConstr
     @Override
     public void setValue(K value, boolean fireEvents) {
         if (value == selectedValue
-                || (selectedValue != null && selectedValue.equals(value))) {
+                || selectedValue != null && selectedValue.equals(value)) {
             return;
         }
 

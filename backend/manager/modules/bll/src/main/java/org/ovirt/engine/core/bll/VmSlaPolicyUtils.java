@@ -96,7 +96,7 @@ public class VmSlaPolicyUtils {
         Map<Guid, List<Disk>> attachedDisks = diskDao.getAllForVms(vmIds);
         for (Guid vmId : vmIds) {
             List<DiskImage> updatedDisks = attachedDisks.get(vmId).stream()
-                    .filter(disk -> (disk.getDiskStorageType() == DiskStorageType.IMAGE) && disk.getPlugged())
+                    .filter(disk -> disk.getDiskStorageType() == DiskStorageType.IMAGE && disk.getPlugged())
                     .map(DiskImage.class::cast)
                     .filter(disk -> disk.getActive() && diskProfileIds.contains(disk.getDiskProfileId()))
                     .collect(Collectors.toList());

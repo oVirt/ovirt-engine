@@ -266,10 +266,10 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         switch (getParameters().getSnapshotAction()) {
         case UNDO:
             return !Objects.equals(srcLeaseDomainId, dstLeaseDomainId) ||
-                    (srcLeaseDomainId == null && dstLeaseDomainId != null);
+                    srcLeaseDomainId == null && dstLeaseDomainId != null;
         case COMMIT:
             return !Objects.equals(srcLeaseDomainId, dstLeaseDomainId) ||
-                    (srcLeaseDomainId != null && dstLeaseDomainId == null);
+                    srcLeaseDomainId != null && dstLeaseDomainId == null;
         default:
             return false;
         }
@@ -320,10 +320,10 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     private boolean isLeaseInfoUpdateNeeded(Guid srcLeaseDomainId, Guid dstLeaseDomainId) {
-        return (getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO
-                && !(srcLeaseDomainId == null && dstLeaseDomainId == null)) || (
-                getParameters().getSnapshotAction() == SnapshotActionEnum.COMMIT && (srcLeaseDomainId != null
-                        && dstLeaseDomainId == null));
+        return getParameters().getSnapshotAction() == SnapshotActionEnum.UNDO
+                && !(srcLeaseDomainId == null && dstLeaseDomainId == null) ||
+                getParameters().getSnapshotAction() == SnapshotActionEnum.COMMIT && srcLeaseDomainId != null
+                        && dstLeaseDomainId == null;
     }
 
     private boolean updateLeaseInfo(Guid snapshotLeaseDomainId) {

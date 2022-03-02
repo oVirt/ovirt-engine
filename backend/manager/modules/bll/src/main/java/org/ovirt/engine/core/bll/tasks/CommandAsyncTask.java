@@ -203,7 +203,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                             + " completed, handling the result.",
                     actionType);
 
-                if (actionReturnValue == null || (!actionReturnValue.getSucceeded() && actionReturnValue.getEndActionTryAgain())) {
+                if (actionReturnValue == null || !actionReturnValue.getSucceeded() && actionReturnValue.getEndActionTryAgain()) {
                     log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type"
                                     + " '{}' hasn't succeeded, not clearing tasks, will attempt again next polling.",
                         actionType);

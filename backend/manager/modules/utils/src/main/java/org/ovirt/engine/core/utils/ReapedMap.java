@@ -214,9 +214,9 @@ public class ReapedMap<K, V> extends HashMap<K, V> {
             boolean ret = false;
             S one = null;
             ret = other == this
-                    || (other instanceof SoftReference<?>
+                    || other instanceof SoftReference<?>
                             && (one = get()) != null
-                      && one.equals(((SoftReference<?>) other).get()));
+                      && one.equals(((SoftReference<?>) other).get());
             return ret;
         }
 

@@ -19,7 +19,8 @@ public class CopyVolumeDataVDSCommand<P extends CopyVolumeDataVDSCommandParamete
                 getParameters().getJobId().toString(),
                 buildLocationInfo(getParameters().getSrcInfo()),
                 buildLocationInfo(getParameters().getDstInfo()),
-                getParameters().isCopyBitmaps());
+                getParameters().isCopyBitmaps(),
+                getParameters().isLegal());
 
         proceedProxyReturnValue();
     }

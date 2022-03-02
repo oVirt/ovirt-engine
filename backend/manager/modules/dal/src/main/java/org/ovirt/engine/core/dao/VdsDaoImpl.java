@@ -31,6 +31,7 @@ import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
 import org.ovirt.engine.core.utils.JsonHelper;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -418,6 +419,8 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setBootUuid(rs.getString("boot_uuid"));
         entity.setCdChangePdiv(rs.getBoolean("cd_change_pdiv"));
         entity.setOvnConfigured(rs.getBoolean("ovn_configured"));
+        entity.setCpuTopology(SerializationFactory.getDeserializer().deserialize(rs.getString("cpu_topology"), ArrayList.class));
+        entity.setVdsmCpusAffinity(rs.getString("vdsm_cpus_affinity"));
         return entity;
     };
 }

@@ -1006,11 +1006,11 @@ public class VmDeviceUtils {
 
         final UsbControllerModel controllerModel = getUsbControllerModel(vmBase);
 
-        if ((managedUsbControllers.isEmpty() && controllerModel == null)
-            || (managedUsbControllers.size() == 1
+        if (managedUsbControllers.isEmpty() && controllerModel == null
+            || managedUsbControllers.size() == 1
                 && controllerModel != null
                 && controllerModel.libvirtName.equals(
-                        getUsbControllerModelName(managedUsbControllers.get(0))))) {
+                        getUsbControllerModelName(managedUsbControllers.get(0)))) {
             return;
         }
 
@@ -1785,7 +1785,7 @@ public class VmDeviceUtils {
             }
         }
 
-        if (Boolean.TRUE.equals(isTpmEnabled) || (isTpmEnabled == null && hasTpm)) {
+        if (Boolean.TRUE.equals(isTpmEnabled) || isTpmEnabled == null && hasTpm) {
             addTpmDevice(dstId);
         }
 
@@ -2255,7 +2255,7 @@ public class VmDeviceUtils {
     public VmDevice getFirstDeviceWithType(List<VmDevice> devices, VmDeviceGeneralType generalType, VmDeviceType deviceType) {
         for (VmDevice device : devices) {
             if (device.getType() == generalType) {
-                if (deviceType == null || (deviceType.getName() != null && deviceType.getName().equals(device.getDevice()))) {
+                if (deviceType == null || deviceType.getName() != null && deviceType.getName().equals(device.getDevice())) {
                     return device;
                 }
             }

@@ -386,7 +386,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             List<EntityModel> models = new ArrayList<>();
             for (StorageDomain storageDomain : storageDomainList) {
                 if (storageDomain.getStorageDomainType() == StorageDomainType.Data
-                        && (storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)) {
+                        && storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
                     EntityModel tempVar = new EntityModel();
                     tempVar.setEntity(storageDomain);
                     models.add(tempVar);
@@ -753,7 +753,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                 && storagePoolItem.isManaged());
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
-                || (oneSelected && storagePoolItem.isManaged()));
+                || oneSelected && storagePoolItem.isManaged());
 
         getRecoveryStorageCommand().setIsExecutionAllowed(oneSelected
                 && !storagePoolItem.isLocal()

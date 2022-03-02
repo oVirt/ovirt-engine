@@ -303,12 +303,12 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             for (Guid vdsId : getParameters().getVdsIdList()) {
                 VDS vds = vdssToMaintenance.get(vdsId);
                 if (vds != null) {
-                    if ((vds.getStatus() != VDSStatus.Maintenance) && (vds.getStatus() != VDSStatus.NonResponsive)
-                            && (vds.getStatus() != VDSStatus.Up) && (vds.getStatus() != VDSStatus.Error)
-                            && (vds.getStatus() != VDSStatus.PreparingForMaintenance)
-                            && (vds.getStatus() != VDSStatus.Down)
-                            && (vds.getStatus() != VDSStatus.NonOperational
-                            && (vds.getStatus() != VDSStatus.InstallFailed))) {
+                    if (vds.getStatus() != VDSStatus.Maintenance && vds.getStatus() != VDSStatus.NonResponsive
+                            && vds.getStatus() != VDSStatus.Up && vds.getStatus() != VDSStatus.Error
+                            && vds.getStatus() != VDSStatus.PreparingForMaintenance
+                            && vds.getStatus() != VDSStatus.Down
+                            && vds.getStatus() != VDSStatus.NonOperational
+                            && vds.getStatus() != VDSStatus.InstallFailed) {
                         result = failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL);
                     } else {
                         List<VM> vms = vmDao.getAllRunningForVds(vdsId);
@@ -334,7 +334,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             }
 
                             boolean vmNonMigratable = vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST ||
-                                    (vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE && getParameters().getIsInternal());
+                                    vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE && getParameters().getIsInternal();
 
                             // The Hosted Engine VM is migrated by the HA agent;
                             // other non-migratable VMs are reported

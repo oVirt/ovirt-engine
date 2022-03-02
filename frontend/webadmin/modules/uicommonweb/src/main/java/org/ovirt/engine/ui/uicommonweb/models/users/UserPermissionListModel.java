@@ -157,7 +157,7 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
         } else {
             boolean isInherited = p != null && getEntity() != null && !p.getAdElementId().equals(getEntity().getId());
             getRemoveCommand().setIsExecutionAllowed(!isInherited && (getSelectedItem() != null
-                    || (getSelectedItems() != null && getSelectedItems().size() > 0)));
+                    || getSelectedItems() != null && getSelectedItems().size() > 0));
         }
 
         /**

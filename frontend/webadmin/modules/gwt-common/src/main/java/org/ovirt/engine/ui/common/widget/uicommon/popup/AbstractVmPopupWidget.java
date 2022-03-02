@@ -653,6 +653,22 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Ignore
     public FlowPanel startRunningOnPanel;
 
+    @UiField
+    @Ignore
+    public FlowPanel hostCpuEditorPanel;
+
+    @UiField
+    @Ignore
+    public FlowPanel trustedPlatformPanel;
+
+    @UiField
+    @Ignore
+    public Row leaseRow;
+
+    @UiField
+    @Ignore
+    public Row resumeBehaviorRow;
+
     @UiField(provided = true)
     @Ignore
     public InfoIcon numaInfoIcon;
@@ -694,6 +710,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     public InfoIcon migrationSelectInfoIcon;
+
+    @UiField
+    @Ignore
+    public Label parallelMigrationsLabel;
 
     @UiField(provided = true)
     public InfoIcon parallelMigrationsInfoIcon;
