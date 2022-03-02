@@ -624,10 +624,18 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     public boolean isVmDuringBackup() {
+        if (!shouldBlockDuringBackup()) {
+            return false;
+        }
+
         List<VmBackup> vmBackups = vmBackupDao.getAllForVm(getVmId());
 
         return !CollectionUtils.isEmpty(vmBackups) && vmBackups
                 .stream()
                 .anyMatch(vmBackup -> !vmBackup.getPhase().isBackupFinished());
+    }
+
+    private boolean shouldBlockDuringBackup() {
+        return getParentParameters() == null || getParentParameters().getCommandType() != ActionType.HybridBackup;
     }
 }
