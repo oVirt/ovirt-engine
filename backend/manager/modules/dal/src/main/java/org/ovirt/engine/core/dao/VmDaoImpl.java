@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -380,6 +381,8 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         entity.setThreadsPerCpu(rs.getInt("threads_per_cpu"));
         entity.setPriority(rs.getInt("priority"));
         entity.setLeaseStorageDomainId(getGuid(rs, "lease_sd_id"));
+        entity.setCpuPinning(rs.getString("cpu_pinning"));
+        entity.setCpuPinningPolicy(CpuPinningPolicy.forValue(rs.getInt("cpu_pinning_policy")));
         entity.setDynamicData(VmDynamicDaoImpl.getRowMapper().mapRow(rs, rowNum));
 
         return entity;

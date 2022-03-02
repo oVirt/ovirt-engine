@@ -1269,14 +1269,13 @@ public class VdsManager {
      */
     private void recoverCpuPinning(List<VM> vms) {
         for (VM vm : vms) {
-            VM vmFromDB = vmDao.get(vm.getId());
-            String pinning = CpuPinningHelper.getVmPinning(vmFromDB);
+            String pinning = CpuPinningHelper.getVmPinning(vm);
             if (pinning != null) {
                 Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(pinning);
                 synchronized (this) {
                     cpuTopology.stream()
                             .filter(cpu -> pinnedCpus.contains(cpu.getCpu()))
-                            .forEach(cpu -> cpu.pinVm(vm.getId(), vmFromDB.getCpuPinningPolicy()));
+                            .forEach(cpu -> cpu.pinVm(vm.getId(), vm.getCpuPinningPolicy()));
                 }
             }
         }
@@ -1341,13 +1340,8 @@ public class VdsManager {
         return clone;
     }
 
-    public void unpinVmCpus(VM vm) {
-        String pinning = vm.getCpuPinningPolicy() == CpuPinningPolicy.MANUAL ? vm.getCpuPinning() :
-                vm.getCurrentCpuPinning();
-        if (pinning != null && !pinning.isBlank()) {
-            Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(pinning);
-            cpuTopology.stream().filter(cpu -> pinnedCpus.contains(cpu.getCpu()))
-                    .forEach(cpu -> cpu.unPinVm(vm.getId()));
-        }
+    public void unpinVmCpus(Guid vmId) {
+        cpuTopology.stream().filter(cpu -> cpu.getVmIds().contains(vmId))
+                .forEach(cpu -> cpu.unPinVm(vmId));
     }
 }

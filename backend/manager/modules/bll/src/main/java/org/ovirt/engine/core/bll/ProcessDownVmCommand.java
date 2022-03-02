@@ -159,7 +159,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
 
         VdsManager vdsManager = resourceManager.getVdsManager(getParameters().getHostId(), false);
         if (vdsManager != null) {
-            vdsManager.unpinVmCpus(getVm());
+            vdsManager.unpinVmCpus(getVm().getId());
         }
         managedBlockStorageCommandUtil.disconnectManagedBlockStorageDisks(getVm(), vmHandler);
         vmNicDao.setVmInterfacesSyncedForVm(getVmId());
