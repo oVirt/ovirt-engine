@@ -118,18 +118,21 @@ LANGUAGE plpgsql;
 ----------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION InsertVmBackupDiskMap (
     v_backup_id UUID,
-    v_disk_id UUID
+    v_disk_id UUID,
+    v_disk_snapshot_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     BEGIN
         INSERT INTO vm_backup_disk_map (
             backup_id,
-            disk_id
+            disk_id,
+            disk_snapshot_id
             )
         VALUES (
             v_backup_id,
-            v_disk_id
+            v_disk_id,
+            v_disk_snapshot_id
             );
     END;
 
@@ -175,6 +178,15 @@ BEGIN
     );
 END;$FUNCTION$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetDiskSnapshotIdForBackup (v_backup_id UUID, v_disk_id UUID)
+RETURNS UUID STABLE AS $FUNCTION$
+    SELECT disk_snapshot_id
+    FROM vm_backup_disk_map
+    WHERE backup_id = v_backup_id AND disk_id = v_disk_id;
+$FUNCTION$
+LANGUAGE sql;
+
 
 -----------------------------------------------------------
 -- Cleanup backup entities by create time and phase
