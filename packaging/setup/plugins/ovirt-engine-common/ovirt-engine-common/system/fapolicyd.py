@@ -58,9 +58,8 @@ class Plugin(plugin.PluginBase):
         ),
         condition=lambda self: (
                 self._enabled and
-                self.environment[
-                    oengcommcons.FapolicydEnv.NEED_RESTART
-                ]
+                self.environment[oengcommcons.FapolicydEnv.NEED_RESTART] and
+                not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
         ),
     )
     def _closeup(self):
