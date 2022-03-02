@@ -25,8 +25,9 @@ public interface VmBackupDao extends GenericDao<VmBackup, Guid> {
      *
      * @param backupId the VM backup id
      * @param diskId the disk id to add
+     * @param diskSnapshotId the id of the snapshot in case it is called in hybrid backup
      */
-    void addDiskToVmBackup(Guid backupId, Guid diskId);
+    void addDiskToVmBackup(Guid backupId, Guid diskId, Guid diskSnapshotId);
 
     /**
      * Adds the specified backup url to the VM backup.
@@ -52,6 +53,17 @@ public interface VmBackupDao extends GenericDao<VmBackup, Guid> {
      * @return the list of associated disks.
      */
     List<DiskImage> getDisksByBackupId(Guid backupId);
+
+    /**
+     * Get the snapshot associated with the VM backup for a given disk.
+     * Used by hybrid backup.
+     *
+     * @param backupId the VM backup id
+     * @param diskId the relevant disk id
+     * @return The disk snapshot id created for this disk
+     */
+    Guid getDiskSnapshotIdForBackup(Guid backupId, Guid diskId);
+
 
     /**
      * Deletes completed backups.
