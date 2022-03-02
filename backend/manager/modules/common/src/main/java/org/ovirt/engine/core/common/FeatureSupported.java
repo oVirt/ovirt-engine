@@ -401,4 +401,14 @@ public class FeatureSupported {
     public static boolean isParallelMigrationsSupported(Version version) {
         return supportedInConfig(ConfigValues.ParallelMigrationsSupported, version);
     }
+
+    /**
+     * Checks if the host can perform disk conversion
+     *
+     * @param vds The host
+     * @return true if the host can convert a disk
+     */
+    public static boolean isConvertDiskSupported(VDS vds) {
+        return vds != null && Version.v4_6.less(vds.getClusterCompatibilityVersion());
+    }
 }

@@ -32,7 +32,7 @@ export JAVA_HOME="${JAVA_HOME:=/usr/lib/jvm/java-11}"
 [ -d ${ARTIFACTS_DIR} ] || mkdir -p ${ARTIFACTS_DIR}
 [ -d rpmbuild/SOURCES ] || mkdir -p rpmbuild/SOURCES
 
-make generated-files
+make validations
 
 # Get the tarball
 make dist

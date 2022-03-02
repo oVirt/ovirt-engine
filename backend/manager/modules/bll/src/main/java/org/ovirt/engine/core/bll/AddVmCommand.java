@@ -193,7 +193,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private VmBase vmDevicesSource;
     private List<StorageDomain> poolDomains;
 
-    private Map<Guid, Guid> srcDiskIdToTargetDiskIdMapping = new HashMap<>();
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
 
     @Inject
@@ -505,7 +504,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
      * Check if destination storage has enough space
      */
     protected boolean validateSpaceRequirements() {
-        for (Map.Entry<Guid, List<DiskImage>> sdImageEntry : storageToDisksMap.entrySet()) {
+        for (Map.Entry<Guid, List<DiskImage>> sdImageEntry : getStorageToDisksMap().entrySet()) {
             StorageDomain destStorageDomain = destStorages.get(sdImageEntry.getKey());
             List<DiskImage> disksList = sdImageEntry.getValue();
             StorageDomainValidator storageDomainValidator = createStorageDomainValidator(destStorageDomain);
@@ -628,11 +627,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (!validateQuota(getParameters().getVmStaticData().getQuotaId())) {
             return false;
         }
-
-        // otherwise..
-        storageToDisksMap =
-                ImagesHandler.buildStorageToDiskMap(getImagesToCheckDestinationStorageDomains(),
-                        diskInfoDestinationMap);
 
         if (!validateAddVmCommand()) {
             return false;
@@ -843,6 +837,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return true;
     }
 
+    protected Map<Guid, List<DiskImage>> getStorageToDisksMap() {
+        if (storageToDisksMap == null) {
+            storageToDisksMap = ImagesHandler.buildStorageToDiskMap(getImagesToCheckDestinationStorageDomains(),
+                    diskInfoDestinationMap);
+        }
+        return storageToDisksMap;
+    }
+
     protected boolean isDisksVolumeFormatValid() {
         if (diskInfoDestinationMap.values()
                 .stream()
@@ -897,7 +899,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                     false,
                     true,
                     true,
-                    storageToDisksMap.get(storage.getId())))) {
+                    getStorageToDisksMap().get(storage.getId())))) {
                 return false;
             }
         }
@@ -1436,7 +1438,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
             diskImageMap.put(cinderDisk.getId(), imageId);
         }
-        srcDiskIdToTargetDiskIdMapping.putAll(diskImageMap);
+        getSrcDiskIdToTargetDiskIdMapping().putAll(diskImageMap);
     }
 
     protected void addManagedBlockDisks(Collection<DiskImage> templateDisks) {
@@ -1459,7 +1461,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             Guid imageId = actionReturnValue.getActionReturnValue();
             diskImageMap.put(managedBlockDisk.getId(), imageId);
         }
-        srcDiskIdToTargetDiskIdMapping.putAll(diskImageMap);
+        getSrcDiskIdToTargetDiskIdMapping().putAll(diskImageMap);
     }
 
     private ImagesContainterParametersBase buildImagesContainterParameters(DiskImage srcDisk) {
@@ -1705,7 +1707,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private void addDiskPermissions() {
-        List<Guid> newDiskImageIds = new ArrayList<>(srcDiskIdToTargetDiskIdMapping.values());
+        List<Guid> newDiskImageIds = new ArrayList<>(getSrcDiskIdToTargetDiskIdMapping().values());
         Permission[] permsArray = new Permission[newDiskImageIds.size()];
 
         for (int i = 0; i < newDiskImageIds.size(); i++) {

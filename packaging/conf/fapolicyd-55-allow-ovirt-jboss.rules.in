@@ -1,0 +1,5 @@
+#
+# This is Ovirt Engine configuration and MUST NOT be changed manually
+#
+%java_lang=application/java-archive,text/x-java,application/x-java-applet,application/javascript,text/javascript
+allow perm=any trust=1 : dir=@JBOSS_RUNTIME_TMP_DIR@ ftype=%java_lang

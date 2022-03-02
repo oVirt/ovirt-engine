@@ -64,9 +64,9 @@ public class CreateScratchDisksCommand<T extends VmBackupParameters> extends VmC
             }
 
             Guid scratchDiskId = returnValue.getActionReturnValue();
+            log.info("Created scratch disk '{}' for disk ID '{}'", scratchDiskId, disk.getId());
             DiskImage scratchDisk = (DiskImage) diskDao.get(scratchDiskId);
-            // Note, that the scratch disk path will be updated after preparing the scratch disk.
-            getParameters().getScratchDisksMap().put(disk.getId(), new Pair<>(scratchDisk, null));
+            getParameters().getScratchDisksMap().put(disk.getId(), scratchDisk);
         }
 
         persistCommandIfNeeded();
