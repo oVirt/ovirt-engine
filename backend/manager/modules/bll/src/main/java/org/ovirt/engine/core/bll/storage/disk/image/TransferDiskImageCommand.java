@@ -124,6 +124,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private ImageioClient proxyClient;
     private VmBackup backup;
     private VM backupVm;
+    private Guid backupDiskSnapshotId;
 
     // Used by engine to abort inactive transfer, and passed to imageio server for disconnecting inactive
     // connections.
@@ -234,6 +235,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private Guid getBitmap() {
+        if (isHybridBackup() && getDiskImage().isQcowFormat()) {
+            return getBackup().getFromCheckpointId();
+        }
+
         if (getParameters().getTransferType() == TransferType.Download
                 && getBackupVm() != null
                 && getBackupVm().isDown()
@@ -348,6 +353,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     protected DiskImage getDiskImage() {
+        if (getBackup() != null) {
+            Guid diskSnapshotId = vmBackupDao.getDiskSnapshotIdForBackup(getParameters().getBackupId(), getParameters().getImageGroupID());
+            if (!Guid.isNullOrEmpty(diskSnapshotId)) {
+                setImageId(diskSnapshotId);
+                return super.getDiskImage();
+            }
+        }
         if (!Guid.isNullOrEmpty(getParameters().getImageId())) {
             setImageId(getParameters().getImageId());
             return super.getDiskImage();
@@ -407,7 +419,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
-        if (isBackup()) {
+
+        if (isBackup() && !isHybridBackup()) {
             // StartVmBackup should handle locks
             return locks;
         }
@@ -422,7 +435,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
-        if (isBackup()) {
+        if (isBackup() && !isHybridBackup()) {
             // StartVmBackup should handle locks
             return locks;
         }
@@ -1135,6 +1148,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         return isBackup() && getBackup().isLiveBackup();
     }
 
+    private boolean isHybridBackup() {
+        // TODO This is how we check that this not hybrid backup, in the near future we will have a backup type.
+        return !Guid.isNullOrEmpty(getBackupDiskSnapshotId());
+    }
+
     private boolean isSupportsDirtyExtents() {
         if (!isBackup() || getParameters().getTransferType() != TransferType.Download) {
             return false;
@@ -1430,6 +1448,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             proxyClient = new ImageioClient("localhost", PROXY_CONTROL_PORT);
         }
         return proxyClient;
+    }
+
+    private Guid getBackupDiskSnapshotId() {
+        if (Guid.isNullOrEmpty(backupDiskSnapshotId)) {
+            return vmBackupDao.getDiskSnapshotIdForBackup(getParameters().getBackupId(),
+                    getParameters().getImageGroupID());
+        }
+
+        return backupDiskSnapshotId;
     }
 
     @Override
