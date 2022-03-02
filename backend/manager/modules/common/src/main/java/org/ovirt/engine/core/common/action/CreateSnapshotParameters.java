@@ -8,6 +8,8 @@ public class CreateSnapshotParameters extends ImagesActionsParametersBase {
 
     private boolean isLiveSnapshot;
 
+    private Guid bitmap;
+
     public CreateSnapshotParameters() {
     }
 
@@ -25,5 +27,13 @@ public class CreateSnapshotParameters extends ImagesActionsParametersBase {
 
     public void setLiveSnapshot(boolean isLiveSnapshot) {
         this.isLiveSnapshot = isLiveSnapshot;
+    }
+
+    public Guid getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Guid bitmap) {
+        this.bitmap = bitmap;
     }
 }

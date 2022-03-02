@@ -552,6 +552,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         parameters.setParentParameters(getParameters());
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setLiveSnapshot(isLiveSnapshotApplicable() && hasDisksForLiveSnapshot());
+        parameters.setBitmap(getParameters().getBitmap());
         return runInternalAction(ActionType.CreateSnapshotDisk,
                 parameters,
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
