@@ -803,43 +803,42 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private void handleFinalizingSuccess(final StateContext context) {
-        log.info("Finalizing successful transfer for {}", getTransferDescription());
+        log.info("Finalizing successful image transfer '{}' for {}", getCommandId(), getTransferDescription());
 
-        boolean isImageVerified = true;
+        ImageStatus nextImageStatus = ImageStatus.OK;
 
         // If stopping the session did not succeed, don't change the transfer state.
         if (stopImageTransferSession(context.entity)) {
             Guid transferingVdsId = context.entity.getVdsId();
 
-            // Verify image is relevant only on upload.
-            if (getParameters().getTransferType() == TransferType.Upload) {
-                isImageVerified = verifyImage(transferingVdsId);
-                if (isImageVerified) {
-                    // We want to use the transferring vds for image actions for having a coherent log when transferring.
-                    setVolumeLegalityInStorage(LEGAL_IMAGE);
-                    if (getDiskImage().getVolumeFormat().equals(VolumeFormat.COW)) {
-                        setQcowCompat(getDiskImage().getImage(),
-                                getStoragePool().getId(),
-                                getDiskImage().getId(),
-                                getDiskImage().getImageId(),
-                                getStorageDomainId(),
-                                transferingVdsId);
-                        imageDao.update(getDiskImage().getImage());
-                    }
+            // Verify image is relevant only on upload
+            if (getParameters().getTransferType() == TransferType.Download) {
+                setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
+                setCommandStatus(CommandStatus.SUCCEEDED);
+            } else if (verifyImage(transferingVdsId)) {
+                // We want to use the transferring vds for image actions for having a coherent log when transferring.
+                setVolumeLegalityInStorage(LEGAL_IMAGE);
+                if (getDiskImage().getVolumeFormat().equals(VolumeFormat.COW)) {
+                    setQcowCompat(getDiskImage().getImage(),
+                            getStoragePool().getId(),
+                            getDiskImage().getId(),
+                            getDiskImage().getImageId(),
+                            getStorageDomainId(),
+                            transferingVdsId);
+                    imageDao.update(getDiskImage().getImage());
                 }
+                setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
+                setCommandStatus(CommandStatus.SUCCEEDED);
+            } else {
+                nextImageStatus = ImageStatus.ILLEGAL;
+                updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
             }
 
             // Finished using the image, tear it down.
             tearDownImage(context.entity.getVdsId(), context.entity.getBackupId());
 
-            setImageStatus(isImageVerified? ImageStatus.OK : ImageStatus.ILLEGAL);
-        }
-
-        if (isImageVerified) {
-            log.info("Transfer was successful. {}", getTransferDescription());
-            setCommandStatus(CommandStatus.SUCCEEDED);
-        } else {
-            updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
+            // Moves Image status to OK or ILLEGAL
+            setImageStatus(nextImageStatus);
         }
     }
 
