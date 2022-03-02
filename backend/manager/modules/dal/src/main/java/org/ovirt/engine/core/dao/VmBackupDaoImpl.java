@@ -89,11 +89,12 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
     }
 
     @Override
-    public void addDiskToVmBackup(Guid backupId, Guid diskId) {
+    public void addDiskToVmBackup(Guid backupId, Guid diskId, Guid diskSnapshotId) {
         getCallsHandler().executeModification("InsertVmBackupDiskMap",
                 getCustomMapSqlParameterSource()
                         .addValue("backup_id", backupId)
-                        .addValue("disk_id", diskId));
+                        .addValue("disk_id", diskId)
+                        .addValue("disk_snapshot_id", diskSnapshotId));
     }
 
     @Override
@@ -119,6 +120,14 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
         return getCallsHandler().executeReadList("GetDisksByVmBackupId",
                 DiskImageDaoImpl.DiskImageRowMapper.instance,
                 getCustomMapSqlParameterSource().addValue("backup_id", backupId));
+    }
+
+    @Override
+    public Guid getDiskSnapshotIdForBackup(Guid backupId, Guid diskId) {
+        return getCallsHandler().executeRead("GetDiskSnapshotIdForBackup",
+                SingleColumnRowMapper.newInstance(Guid.class),
+                getCustomMapSqlParameterSource().addValue("backup_id", backupId)
+                        .addValue("disk_id", diskId));
     }
 
     @Override
