@@ -22,6 +22,7 @@ public class StorageConstants {
     public static final String LSM_AUTO_GENERATED_SNAPSHOT_DESCRIPTION = "Auto-generated for Live Storage Migration";
     public static final String OVA_AUTO_GENERATED_SNAPSHOT_DESCRIPTION = "Auto-generated for Export To OVA";
     public static final String CLONE_VM_AUTO_GENERATED_SNAPSHOT_DESCRIPTION = "Auto-generated for Clone VM";
+    public static final String BACKUP_VM_AUTO_GENERATED_SNAPSHOT_DESCRIPTION = "Auto-generated for Backup VM";
     public static final String GUID = "guid";
     public static final double QCOW_OVERHEAD_FACTOR = 1.1;
     public static final long QCOW_HEADER_OVERHEAD = 1048576;

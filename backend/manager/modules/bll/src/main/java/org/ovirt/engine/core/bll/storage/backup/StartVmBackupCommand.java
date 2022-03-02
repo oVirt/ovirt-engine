@@ -272,7 +272,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         if (FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())
                 && !isBackupContainsRawDisksOnly()) {
             log.info("Creating VmCheckpoint entity for VM '{}'", vmBackup.getVmId());
-            Guid vmCheckpointId = createVmCheckpoint();
+            Guid vmCheckpointId = createVmCheckpoint(Guid.newGuid());
             log.info("Created VmCheckpoint entity '{}'", vmCheckpointId);
 
             // Set the the created checkpoint ID only in the parameters and not in the
@@ -516,7 +516,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         return vmBackup.getId();
     }
 
-    private void setDiskBackupModeIfSupported(DiskImage disk) {
+    protected void setDiskBackupModeIfSupported(DiskImage disk) {
         if (FeatureSupported.isBackupModeAndBitmapsOperationsSupported(getCluster().getCompatibilityVersion())) {
             DiskBackupMode diskBackupMode = getBackupModeForDisk(disk.getId(),
                     getParameters().getVmBackup().getFromCheckpointId());
@@ -547,10 +547,10 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         return fromCheckpointDisksIds;
     }
 
-    private Guid createVmCheckpoint() {
+    protected Guid createVmCheckpoint(Guid checkpointId) {
         VmCheckpoint vmCheckpoint = new VmCheckpoint();
 
-        vmCheckpoint.setId(Guid.newGuid());
+        vmCheckpoint.setId(checkpointId);
         VmCheckpoint checkpointsLeaf = getVmCheckpointsLeaf();
         if (checkpointsLeaf != null) {
             vmCheckpoint.setParentId(checkpointsLeaf.getId());
@@ -611,14 +611,14 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                         (String) disks.get(diskId)));
     }
 
-    private void restoreCommandState() {
+    protected void restoreCommandState() {
         Guid backupId = getParameters().getVmBackup().getId();
         VmBackup vmBackup = vmBackupDao.get(backupId);
         vmBackup.setDisks(vmBackupDao.getDisksByBackupId(backupId));
         getParameters().setVmBackup(vmBackup);
     }
 
-    private void updateVmBackupPhase(VmBackupPhase phase) {
+    protected void updateVmBackupPhase(VmBackupPhase phase) {
         VmBackup vmBackup = getParameters().getVmBackup();
         log.info("Change VM '{}' backup '{}' phase from '{}' to '{}'",
                 getVmId(), vmBackup.getId(), vmBackup.getPhase(), phase);
@@ -807,7 +807,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private List<DiskImage> getDisks() {
+    protected List<DiskImage> getDisks() {
         if (disksList == null) {
             List<Disk> vmDisks = diskDao.getAllForVm(getVmId());
             List<DiskImage> diskImages = DisksFilter.filterImageDisks(vmDisks,
