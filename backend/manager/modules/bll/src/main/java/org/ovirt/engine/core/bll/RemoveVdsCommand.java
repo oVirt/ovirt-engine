@@ -52,6 +52,8 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -93,6 +95,10 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     private HostLocking hostLocking;
     @Inject
     private AnsibleExecutor ansibleExecutor;
+    @Inject
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
+    @Inject
+    private NetworkAttachmentDao networkAttachmentDao;
 
     public RemoveVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -152,6 +158,13 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     private void removeHostFromDB(Guid hostId) {
         vdsStatisticsDao.remove(hostId);
         tagDao.detachVdsFromAllTags(hostId);
+        var dnsConfigIds = networkAttachmentDao.getAllForHost(hostId)
+                .stream()
+                .filter(na -> na.getDnsResolverConfiguration() != null)
+                .filter(na -> na.getDnsResolverConfiguration().getId() != null)
+                .map(na -> na.getDnsResolverConfiguration().getId())
+                .collect(Collectors.toList());
+        dnsResolverConfigurationDao.removeAll(dnsConfigIds);
         vdsDynamicDao.remove(hostId);
         vdsStaticDao.remove(hostId);
     }

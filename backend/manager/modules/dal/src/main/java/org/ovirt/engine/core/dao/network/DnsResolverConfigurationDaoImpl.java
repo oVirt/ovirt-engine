@@ -8,13 +8,14 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DefaultGenericDao;
+import org.ovirt.engine.core.dao.MassOperationsGenericDao;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class DnsResolverConfigurationDaoImpl extends DefaultGenericDao<DnsResolverConfiguration, Guid> implements DnsResolverConfigurationDao {
+public class DnsResolverConfigurationDaoImpl
+        extends MassOperationsGenericDao<DnsResolverConfiguration, Guid> implements DnsResolverConfigurationDao {
 
     public DnsResolverConfigurationDaoImpl() {
         super("DnsResolverConfiguration");

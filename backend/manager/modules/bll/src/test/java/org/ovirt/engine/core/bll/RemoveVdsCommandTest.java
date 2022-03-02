@@ -64,6 +64,8 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class RemoveVdsCommandTest extends BaseCommandTest {
@@ -126,6 +128,12 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
 
     @Mock
     private TagDao tagDao;
+
+    @Mock
+    private NetworkAttachmentDao networkAttachmentDao;
+
+    @Mock
+    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
 
     /**
      * The command under test.
@@ -387,6 +395,7 @@ public class RemoveVdsCommandTest extends BaseCommandTest {
         VerificationMode multipleHostsRemovedVerificationMode = multipleHosts ? never() : times(1);
         verify(volumeDao, multipleHostsRemovedVerificationMode).removeByClusterId(any());
         verify(hooksDao, multipleHostsRemovedVerificationMode).removeAllInCluster(any());
+        verify(dnsResolverConfigurationDao, times(1)).removeAll(any());
     }
 
     private void mockVmsAssignedWithHostDevice(Guid vmId, List<VmDevice> devices) {
