@@ -508,7 +508,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
             getParameters().getVmBackup().getDisks().forEach(
                     disk -> {
                         setDiskBackupModeIfSupported(disk);
-                        vmBackupDao.addDiskToVmBackup(vmBackup.getId(), disk.getId());
+                        vmBackupDao.addDiskToVmBackup(vmBackup.getId(), disk.getId(), null);
                     });
             return null;
         });
