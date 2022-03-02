@@ -203,14 +203,6 @@ class Stages(object):
 
 @util.export
 @util.codegen
-class Const(object):
-    # Enable only TLSv1.2 protocol. More information at
-    # https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslprotocol
-    HTTPD_SSL_PROTOCOLS = '-all +TLSv1.2'
-
-
-@util.export
-@util.codegen
 @osetupattrsclass
 class DBEnvKeysConst(object):
     HOST = 'host'

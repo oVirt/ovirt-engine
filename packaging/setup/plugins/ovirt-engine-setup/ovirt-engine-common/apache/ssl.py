@@ -67,7 +67,7 @@ _HTTPD_CONF_PARAMS_DB = (
     },
     {
         'name': 'SSLProtocol',
-        'value': oengcommcons.Const.HTTPD_SSL_PROTOCOLS,
+        'value': None,
         'only_if_unconfigured': False,
     },
 )
