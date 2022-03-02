@@ -50,8 +50,8 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
                 self.environment[oenginecons.CoreEnv.ENABLE] and
-                not os.path.exists(oengcommcons.FileLocations.FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE),
-                not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE],
+                not os.path.exists(oengcommcons.FileLocations.FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE) and
+                not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
         )
     )
     def _misc(self):
