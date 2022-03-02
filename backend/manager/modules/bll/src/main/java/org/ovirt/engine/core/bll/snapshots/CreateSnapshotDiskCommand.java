@@ -187,6 +187,7 @@ public class CreateSnapshotDiskCommand<T extends CreateSnapshotDiskParameters> e
         result.setParentCommand(getActionType());
         result.setParentParameters(getParameters());
         result.setLiveSnapshot(getParameters().isLiveSnapshot());
+        result.setBitmap(getParameters().getBitmap());
         DiskImage diskImage = getParameters().getDiskImagesMap().get(image.getId());
         if (diskImage != null) {
             result.setDestinationImageId(diskImage.getImageId());
