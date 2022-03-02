@@ -1536,7 +1536,9 @@ SELECT vm_dynamic.*,
     vm_static.threads_per_cpu,
     vm_static.priority,
     vm_static.lease_sd_id,
-    vm_static.fn_get_num_of_vcpus AS num_of_cpus -- use of function as an attribute
+    vm_static.fn_get_num_of_vcpus AS num_of_cpus, -- use of function as an attribute
+    vm_static.cpu_pinning,
+    vm_static.cpu_pinning_policy
 FROM vm_dynamic
 INNER JOIN vm_static
     ON vm_static.vm_guid = vm_dynamic.vm_guid;
