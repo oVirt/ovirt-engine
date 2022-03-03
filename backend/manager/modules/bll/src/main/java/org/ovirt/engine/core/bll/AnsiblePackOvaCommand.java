@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.AnsibleCommandParameters;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 @NonTransactiveCommandAttribute
 public class AnsiblePackOvaCommand <T extends AnsibleCommandParameters> extends AnsibleCommandBase<T> {
@@ -18,6 +19,7 @@ public class AnsiblePackOvaCommand <T extends AnsibleCommandParameters> extends 
 
     @Override
     protected AnsibleCommandConfig createCommand() {
+        int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
         Map<String, Object> vars = getParameters().getVariables();
         return new AnsibleCommandConfig()
                 .hosts(getVds())
@@ -30,6 +32,7 @@ public class AnsiblePackOvaCommand <T extends AnsibleCommandParameters> extends 
                 .variable("ovirt_ova_pack_tpm", vars.get("ovirt_ova_pack_tpm"))
                 .variable("ovirt_ova_pack_nvram", vars.get("ovirt_ova_pack_nvram"))
                 .variable("ovirt_ova_pack_padding", vars.get("ovirt_ova_pack_padding"))
+                .variable("ansible_timeout", timeout)
                 // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-export-ova-ansible")

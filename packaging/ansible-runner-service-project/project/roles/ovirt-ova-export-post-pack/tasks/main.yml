@@ -1,6 +1,8 @@
 ---
 - name: Rename the OVA file
   command: mv "{{ ova_file.dest }}" "{{ target_directory }}/{{ ova_name }}"
+  async: "{{ ansible_timeout }}"
+  poll: 15
   when: packing_result.rc is defined and packing_result.rc == 0
 
 - name: Remove the temporary file
