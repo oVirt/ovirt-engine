@@ -188,6 +188,10 @@ public class VdsCpuUnitPinningHelper {
         int numOfTakenCores = 0;
         for (int socket = 0; socket < host.getCpuSockets(); socket++) {
             for (int core = 0; core < hostCoresPerSocket; core++) {
+                if (getCpusInCore(getCoresInSocket(cpuTopology, socket), core).isEmpty()) {
+                    // TODO change the iterations to consider only online CPUS and remove this.
+                    continue;
+                }
                 if (getNonDedicatedCpusInCore(cpuTopology, socket, core).isEmpty()) {
                     numOfTakenCores++;
                 }
