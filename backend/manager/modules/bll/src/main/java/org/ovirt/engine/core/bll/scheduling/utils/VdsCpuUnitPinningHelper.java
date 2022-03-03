@@ -103,6 +103,9 @@ public class VdsCpuUnitPinningHelper {
             return new ArrayList<>();
         }
         List<VdsCpuUnit> cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
+        if (cpuTopology.isEmpty()) {
+            return new ArrayList<>();
+        }
 
         previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingPinnings, vm.getCpuPinningPolicy());
 
@@ -178,6 +181,9 @@ public class VdsCpuUnitPinningHelper {
 
     public int countTakenCores(VDS host) {
         List<VdsCpuUnit> cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
+        if (cpuTopology.isEmpty()) {
+            return 0;
+        }
         int hostCoresPerSocket = host.getCpuCores() / host.getCpuSockets();
         int numOfTakenCores = 0;
         for (int socket = 0; socket < host.getCpuSockets(); socket++) {
