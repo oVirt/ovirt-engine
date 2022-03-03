@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.dao.VmDeviceDao;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends CommandBase<T> {
 
@@ -93,10 +94,12 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
     }
 
     private ValidationResult validateTargetFolder() {
+        int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("target_directory", getParameters().getDirectory())
                 .variable("validate_only", "True")
+                .variable("ansible_timeout", timeout)
                 // /var/log/ovirt-engine/ova/ovirt-export-ova-validate-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(CreateOvaCommand.CREATE_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-export-ova-validate-ansible")
