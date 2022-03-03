@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHttpClient;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters> extends QueriesCommandBase<P> {
 
@@ -46,12 +47,14 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
     }
 
     private String runAnsibleQueryOvaInfoPlaybook() {
+        int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
         VDS host = vdsDao.get(getParameters().getVdsId());
         AnsibleCommandConfig command = new AnsibleCommandConfig()
                 .hosts(host)
                 .variable("ovirt_query_ova_path", getParameters().getPath())
                 .variable("list_directory", getParameters().isListDirectory() ? "True" : "False")
                 .variable("entity_type", getEntityType().name().toLowerCase())
+                .variable("ansible_timeout", timeout)
                 // /var/log/ovirt-engine/ova/ovirt-query-ova-ansible-{hostname}-{timestamp}.log
                 .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-query-ova-ansible")
