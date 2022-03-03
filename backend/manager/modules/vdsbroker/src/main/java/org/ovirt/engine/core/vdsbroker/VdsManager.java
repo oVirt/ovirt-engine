@@ -192,6 +192,7 @@ public class VdsManager {
         vdsId = vds.getId();
         unrespondedAttempts = new AtomicInteger();
         autoStartVmsWithLeasesLock = new ReentrantLock();
+        cpuTopology = new ArrayList<>();
     }
 
     @PostConstruct
@@ -1330,7 +1331,8 @@ public class VdsManager {
             return;
         }
         this.cpuTopology = cpuTopology;
-        this.cpuTopology.stream().filter(cpu -> cpu.getCpu() == Integer.parseInt(cachedVds.getVdsmCpusAffinity()))
+        int vdsmCpu = Integer.parseInt(cachedVds.getVdsmCpusAffinity());
+        this.cpuTopology.stream().filter(cpu -> cpu.getCpu() == vdsmCpu)
                 .forEach(cpu -> cpu.pinVm(Guid.SYSTEM, CpuPinningPolicy.MANUAL));
     }
 
