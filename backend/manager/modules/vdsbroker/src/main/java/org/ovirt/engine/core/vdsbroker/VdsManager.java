@@ -1330,8 +1330,14 @@ public class VdsManager {
         if (cpuTopology == null) {
             return;
         }
+        int vdsmCpu;
+        try {
+            vdsmCpu = Integer.parseInt(cachedVds.getVdsmCpusAffinity());
+        } catch (NumberFormatException e) {
+            // we need the affinity otherwise we could exclusively pin vCPU to the one where VDSM is running
+            return;
+        }
         this.cpuTopology = cpuTopology;
-        int vdsmCpu = Integer.parseInt(cachedVds.getVdsmCpusAffinity());
         this.cpuTopology.stream().filter(cpu -> cpu.getCpu() == vdsmCpu)
                 .forEach(cpu -> cpu.pinVm(Guid.SYSTEM, CpuPinningPolicy.MANUAL));
     }
