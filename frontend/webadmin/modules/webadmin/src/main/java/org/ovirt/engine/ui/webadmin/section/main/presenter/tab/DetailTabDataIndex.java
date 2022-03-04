@@ -270,14 +270,16 @@ public final class DetailTabDataIndex {
 
     public static final TabData USER_GENERAL = new GroupedTabData(constants.userGeneralSubTabLabel(), 0); //$NON-NLS-1$
 
-    public static final TabData USER_PERMISSION = new GroupedTabData(constants.userPermissionSubTabLabel(), 1); //$NON-NLS-1$
+    public static final TabData USER_SETTINGS = new GroupedTabData(constants.accountSettings(), 1); //$NON-NLS-1$
 
-    public static final TabData USER_QUOTA = new GroupedTabData(constants.userQuotaSubTabLabel(), 2); //$NON-NLS-1$
+    public static final TabData USER_PERMISSION = new GroupedTabData(constants.userPermissionSubTabLabel(), 2); //$NON-NLS-1$
 
-    public static final TabData USER_GROUP = new GroupedTabData(constants.userGroupsSubTabLabel(), 3); //$NON-NLS-1$
+    public static final TabData USER_QUOTA = new GroupedTabData(constants.userQuotaSubTabLabel(), 3); //$NON-NLS-1$
 
-    public static final TabData USER_EVENT_NOTIFIER = new GroupedTabData(constants.userEventNotifierSubTabLabel(), 4); //$NON-NLS-1$
+    public static final TabData USER_GROUP = new GroupedTabData(constants.userGroupsSubTabLabel(), 4); //$NON-NLS-1$
 
-    public static final TabData USER_EVENT = new GroupedTabData(constants.userEventSubTabLabel(), 5); //$NON-NLS-1$
+    public static final TabData USER_EVENT_NOTIFIER = new GroupedTabData(constants.userEventNotifierSubTabLabel(), 5); //$NON-NLS-1$
+
+    public static final TabData USER_EVENT = new GroupedTabData(constants.userEventSubTabLabel(), 6); //$NON-NLS-1$
 
 }

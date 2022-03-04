@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -365,6 +366,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGe
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserQuotaPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserSettingsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.UserSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineAffinityGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineAffinityLabelPresenter;
@@ -652,6 +654,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserGeneral
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserGroupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserQuotaView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserSettingsView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.UserSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineAffinityGroupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineAffinityLabelView;
@@ -1238,6 +1241,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabUserGeneralPresenter.ViewDef.class,
                 SubTabUserGeneralView.class,
                 SubTabUserGeneralPresenter.ProxyDef.class);
+        bindPresenter(SubTabUserSettingsPresenter.class,
+                SubTabUserSettingsPresenter.ViewDef.class,
+                SubTabUserSettingsView.class,
+                SubTabUserSettingsPresenter.ProxyDef.class);
         bindPresenter(SubTabUserPermissionPresenter.class,
                 SubTabUserPermissionPresenter.ViewDef.class,
                 SubTabUserPermissionView.class,
@@ -1270,6 +1277,8 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<OvirtBreadCrumbsView<DbUser, UserListModel>>(){});
         bindActionPanel(new TypeLiteral<ActionPanelPresenterWidget.ViewDef<Void, DbUser>>(){},
             new TypeLiteral<ActionPanelView<Void, DbUser>>(){});
+        bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<DbUser, UserProfileProperty>>(){},
+                new TypeLiteral<DetailActionPanelView<DbUser, UserProfileProperty>>(){});
 
         // Quota
         bindPresenter(QuotaSubTabPanelPresenter.class,
