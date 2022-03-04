@@ -1960,4 +1960,6 @@ public interface CommonApplicationConstants extends Constants {
     String configChangesPending();
 
     String permissionFilter();
+
+    String propertyId();
 }

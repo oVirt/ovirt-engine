@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -26,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserQuotaListModel;
+import org.ovirt.engine.ui.uicommonweb.models.users.UserSettingsModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
@@ -173,6 +175,20 @@ public class UserModule extends AbstractGinModule {
         return result;
     }
 
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<UserProfileProperty, UserListModel, UserSettingsModel> getUseSettingsModelProvider(
+            EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<UserListModel> mainModelProvider,
+            final Provider<UserSettingsModel> modelProvider) {
+        SearchableDetailTabModelProvider<UserProfileProperty, UserListModel, UserSettingsModel> result =
+                new SearchableDetailTabModelProvider<>(eventBus, defaultConfirmPopupProvider);
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
+    }
+
     @Override
     protected void configure() {
         bind(UserListModel.class).in(Singleton.class);
@@ -182,6 +198,7 @@ public class UserModule extends AbstractGinModule {
         bind(UserQuotaListModel.class).in(Singleton.class);
         bind(UserEventListModel.class).in(Singleton.class);
         bind(UserGroupListModel.class).in(Singleton.class);
+        bind(UserSettingsModel.class).in(Singleton.class);
         bind(UserMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models

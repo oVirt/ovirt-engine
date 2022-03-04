@@ -53,6 +53,7 @@ public class UserSubTabPanelPresenter extends
     protected void initDetailTabToModelMapping(Map<TabData, Model> mapping) {
         UserListModel mainModel = modelProvider.getModel();
         mapping.put(DetailTabDataIndex.USER_GENERAL, mainModel.getGeneralModel());
+        mapping.put(DetailTabDataIndex.USER_SETTINGS, mainModel.getUserSettingsModel());
         mapping.put(DetailTabDataIndex.USER_PERMISSION, mainModel.getPermissionListModel());
         mapping.put(DetailTabDataIndex.USER_QUOTA, mainModel.getQuotaListModel());
         mapping.put(DetailTabDataIndex.USER_GROUP, mainModel.getGroupListModel());

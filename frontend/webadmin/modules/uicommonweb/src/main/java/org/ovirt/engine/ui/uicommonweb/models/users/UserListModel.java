@@ -76,6 +76,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         privateAssignTagsCommand = value;
     }
 
+
+    private final UserSettingsModel userSettingsModel;
     private final UserGroupListModel groupListModel;
     private final UserEventNotifierListModel eventNotifierListModel;
     private final UserGeneralModel generalModel;
@@ -89,7 +91,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
             final UserGeneralModel userGeneralModel,
             final UserQuotaListModel userQuotaListModel,
             final UserPermissionListModel userPermissionListModel,
-            final UserEventListModel userEventListModel) {
+            final UserEventListModel userEventListModel,
+            final UserSettingsModel userSettingsModel) {
         setIsTimerDisabled(true);
         this.groupListModel = userGroupListModel;
         this.eventNotifierListModel = userEventNotifierListModel;
@@ -97,6 +100,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         this.permissionListModel = userPermissionListModel;
         this.quotaListModel = userQuotaListModel;
         this.eventListModel = userEventListModel;
+        this.userSettingsModel = userSettingsModel;
         setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().usersTitle());
         setApplicationPlace(WebAdminApplicationPlaces.userMainPlace);
@@ -118,6 +122,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
     private void setDetailList() {
         List<HasEntity<DbUser>> list = new ArrayList<>();
         list.add(generalModel);
+        list.add(userSettingsModel);
         list.add(quotaListModel);
         list.add(permissionListModel);
         list.add(eventListModel);
@@ -567,4 +572,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         return eventListModel;
     }
 
+    public UserSettingsModel getUserSettingsModel() {
+        return userSettingsModel;
+    }
 }
