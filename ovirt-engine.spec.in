@@ -1360,6 +1360,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Sun Mar 06 2022 Martin Perina <mperina@redhat.com> - 4.4.10.7
+- Bump version to 4.4.10.7
+
 * Wed Jan 26 2022 Martin Perina <mperina@redhat.com> - 4.4.10.6
 - Bump version to 4.4.10.6
 
