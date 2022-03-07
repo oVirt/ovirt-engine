@@ -31,6 +31,20 @@ public class ToastNotification extends Composite {
             this.iconStyleName = iconStyleName;
         }
 
+        public static NotificationStatus from(org.ovirt.engine.ui.frontend.NotificationStatus status) {
+            switch (status){
+            case DANGER:
+                return DANGER;
+            case SUCCESS:
+                return SUCCESS;
+            case WARNING:
+                return WARNING;
+            case INFO:
+            default:
+                return INFO;
+            }
+        }
+
         public String getStyleName() {
             return styleName;
         }

@@ -14,6 +14,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification.NotificationStatus;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.NotificationHandler;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractOverlayPresenterWidget;
@@ -23,9 +25,15 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
-public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPresenterWidget.ViewDef> {
+public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPresenterWidget.ViewDef>
+        implements NotificationHandler {
 
     protected final Logger log = Logger.getLogger(TasksPresenterWidget.class.getName());
+
+    @Override
+    public void showToast(String text, org.ovirt.engine.ui.frontend.NotificationStatus status) {
+        notificationPresenterWidget.createNotification(text, NotificationStatus.from(status));
+    }
 
     public interface ViewDef extends AbstractOverlayPresenterWidget.ViewDef {
         void updateTaskStatus(TaskListModel taskListModel);
@@ -71,6 +79,8 @@ public class TasksPresenterWidget extends AbstractOverlayPresenterWidget<TasksPr
     @Override
     public void onBind() {
         super.onBind();
+        Frontend.getInstance().setNotificationHandler(this);
+        registerHandler(() -> Frontend.getInstance().setNotificationHandler(null));
         taskModelProvider.getModel().getItemsChangedEvent().addListener((ev, sender, args) -> {
             getView().updateTaskStatus(taskModelProvider.getModel());
             if (lastSpecialTaskEndTime == NOT_INITIALIZED_END_TIME) {
