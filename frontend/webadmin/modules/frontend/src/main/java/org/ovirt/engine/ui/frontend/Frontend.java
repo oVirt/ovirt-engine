@@ -58,6 +58,8 @@ import com.google.inject.Inject;
  */
 public class Frontend implements HasHandlers {
 
+    private NotificationHandler notificationHandler;
+
     /**
      * Provides static access to {@code Frontend} singleton instance.
      */
@@ -1109,4 +1111,20 @@ public class Frontend implements HasHandlers {
         }
         return webAdminSettings;
     }
+
+    public void setNotificationHandler(NotificationHandler handler) {
+        this.notificationHandler = handler;
+    }
+
+    /**
+     * Display a toast notification using registered {@linkplain NotificationHandler} (if available).
+     */
+    public void showToast(String text, NotificationStatus status) {
+        // use local reference for async action
+        NotificationHandler handler = notificationHandler;
+        if (handler != null) {
+            Scheduler.get().scheduleDeferred(() -> handler.showToast(text, status));
+        }
+    }
+
 }
