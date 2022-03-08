@@ -786,7 +786,6 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
-            jobProperties.put("diskalias", getDiskAlias());
         }
         return jobProperties;
     }
