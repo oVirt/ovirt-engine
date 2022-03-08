@@ -552,6 +552,11 @@ public enum ActionType {
     HotUnplugMemoryWithoutVmUpdate(2401, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
     SaveVmExternalData(2402, false, QuotaDependency.NONE),
 
+    // Mediated devices
+    AddMdev(2450, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    UpdateMdev(2451, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    RemoveMdev(2452, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+
     // Audit Log
     RemoveAuditLogById(2100, false, QuotaDependency.NONE),
     ClearAllAuditLogEvents(2101, false, QuotaDependency.NONE),

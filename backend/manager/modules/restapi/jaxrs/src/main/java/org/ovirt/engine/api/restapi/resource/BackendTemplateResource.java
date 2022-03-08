@@ -16,6 +16,7 @@ import org.ovirt.engine.api.resource.TemplateCdromsResource;
 import org.ovirt.engine.api.resource.TemplateDiskAttachmentsResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateGraphicsConsolesResource;
+import org.ovirt.engine.api.resource.TemplateMediatedDevicesResource;
 import org.ovirt.engine.api.resource.TemplateNicsResource;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplateWatchdogsResource;
@@ -232,5 +233,9 @@ public class BackendTemplateResource
                 "GetConsoleDevices", true);
     }
 
+    @Override
+    public TemplateMediatedDevicesResource getMediatedDevicesResource() {
+        return inject(new BackendTemplateMediatedDevicesResource(guid));
+    }
 }
 
