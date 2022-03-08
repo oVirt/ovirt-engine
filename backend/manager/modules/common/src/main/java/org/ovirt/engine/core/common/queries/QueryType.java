@@ -489,6 +489,7 @@ public enum QueryType implements Serializable {
     GetGraphicsDevices(QueryAuthType.User),
     GetNextRunGraphicsDevices(QueryAuthType.User),
     GetGraphicsDevicesMultiple(QueryAuthType.User),
+    GetMdevs(QueryAuthType.User),
 
     GetVmHostDevices,
 
