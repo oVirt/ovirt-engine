@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -630,9 +631,16 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         List<VmBackup> vmBackups = vmBackupDao.getAllForVm(getVmId());
 
-        return !CollectionUtils.isEmpty(vmBackups) && vmBackups
+        // No need to block during hybrid backup
+        boolean allBackupsHybrid = vmBackups
+                .stream()
+                .allMatch(vmBackup -> VmBackupType.Hybrid == vmBackup.getBackupType());
+
+        boolean backupFinished = !CollectionUtils.isEmpty(vmBackups) && vmBackups
                 .stream()
                 .anyMatch(vmBackup -> !vmBackup.getPhase().isBackupFinished());
+
+        return backupFinished || allBackupsHybrid;
     }
 
     private boolean shouldBlockDuringBackup() {
