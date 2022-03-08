@@ -1,9 +1,11 @@
 package org.ovirt.engine.api.restapi.types;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,8 @@ import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Payload;
+import org.ovirt.engine.api.model.Properties;
+import org.ovirt.engine.api.model.Property;
 import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.Template;
@@ -47,6 +51,7 @@ import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.api.model.VmMediatedDevice;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
@@ -61,8 +66,11 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
+import org.ovirt.engine.core.common.businessentities.VmMdevType;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -71,6 +79,7 @@ import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -723,6 +732,48 @@ public class VmMapper extends VmBaseMapper {
             case CDROM:             return org.ovirt.engine.api.model.VmDeviceType.CDROM;
             default:                return null;
         }
+    }
+
+    @Mapping(from = VmMdevType.class, to = VmMediatedDevice.class)
+    public static VmMediatedDevice map(VmMdevType device, VmMediatedDevice template) {
+        VmMediatedDevice model = template == null ? new VmMediatedDevice() : template;
+        model.setId(device.getId().getDeviceId().toString());
+        if (device.getSpecParams() != null && !device.getSpecParams().isEmpty()) {
+            Properties properties = new Properties();
+            List<Property> propertyList = properties.getProperties();
+            for (Entry entry : device.getSpecParams().entrySet()) {
+                Property property = new Property();
+                property.setName((String)entry.getKey());
+                property.setValue(entry.getValue().toString());
+                propertyList.add(property);
+            }
+            model.setSpecParams(properties);
+        }
+        return model;
+    }
+
+    @Mapping(from = VmMediatedDevice.class, to = VmMdevType.class)
+    public static VmMdevType map(VmMediatedDevice mdev, VmMdevType template) {
+        final VmMdevType device = template == null ? new VmMdevType() : template;
+        final Guid mdevId = mdev.getId() == null ? Guid.newGuid() : new Guid(mdev.getId());
+        device.setId(new VmDeviceId(mdevId, null));
+        device.setType(VmDeviceGeneralType.MDEV);
+        device.setDevice(VmDeviceType.VGPU.getName());
+        device.setAddress("");
+        device.setManaged(true);
+        device.setPlugged(true);
+        final Map<String, Object> specParams = new HashMap<>();
+        for (Property property : mdev.getSpecParams().getProperties()) {
+            final String name = property.getName();
+            final String value = property.getValue();
+            if (MDevTypesUtils.NODISPLAY.equals(name)) {
+                specParams.put(name, Boolean.valueOf(value));
+            } else {
+                specParams.put(name, value);
+            }
+        }
+        device.setSpecParams(specParams);
+        return device;
     }
 
     private static VmStatus mapVmStatus(VMStatus status) {
