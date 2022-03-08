@@ -1039,7 +1039,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
             for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
                 VM vm = pair.getFirst();
                 vmsDiskOrSnapshotAttachedTo.add(vm);
-                if (Boolean.TRUE.equals(pair.getSecond().isPlugged())) {
+                if (pair.getSecond().isPlugged()) {
                     if (pair.getSecond().getSnapshotId() != null) {
                         vmsDiskSnapshotPluggedTo.add(vm);
                     } else {
