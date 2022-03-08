@@ -281,7 +281,7 @@ public class VdsCpuUnitPinningHelperTest {
     }
 
     @Test
-    public void shouldFailToDedicateSplitSockets() {
+    public void shouldSucceedToDedicateSplitSockets() {
         VM vm = new VM();
         vm.setId(Guid.newGuid());
         vm.setNumOfSockets(2);
@@ -299,7 +299,72 @@ public class VdsCpuUnitPinningHelperTest {
         when(vdsManager.getCpuTopology()).thenReturn(cpuTopology);
 
         List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host);
+        assertEquals(2, cpus.size());
+
+        assertEquals(0, cpus.get(0).getSocket());
+        assertEquals(0, cpus.get(0).getCore());
+        assertEquals(0, cpus.get(0).getCpu());
+
+        assertEquals(1, cpus.get(1).getSocket());
+        assertEquals(0, cpus.get(1).getCore());
+        assertEquals(0, cpus.get(1).getCpu());
+    }
+
+    @Test
+    public void shouldFailToDedicateSplitSockets() {
+        VM vm = new VM();
+        vm.setId(Guid.newGuid());
+        vm.setNumOfSockets(2);
+        vm.setCpuPerSocket(1);
+        vm.setThreadsPerCpu(1);
+        VDS host = new VDS();
+        host.setId(Guid.EVERYONE);
+        host.setCpuSockets(2);
+        host.setCpuThreads(4);
+        host.setCpuCores(2);
+        vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
+        List<VdsCpuUnit> cpuTopology = new ArrayList<>();
+        cpuTopology.add(new VdsCpuUnit(0, 0, 0));
+        VdsCpuUnit vdsCpuUnit = new VdsCpuUnit(0, 0, 1);
+        vdsCpuUnit.pinVm(Guid.newGuid(), CpuPinningPolicy.DEDICATED);
+        cpuTopology.add(vdsCpuUnit);
+        cpuTopology.add(new VdsCpuUnit(1, 0, 0));
+        vdsCpuUnit = new VdsCpuUnit(1, 0, 1);
+        vdsCpuUnit.pinVm(Guid.newGuid(), CpuPinningPolicy.DEDICATED);
+        cpuTopology.add(vdsCpuUnit);
+        when(vdsManager.getCpuTopology()).thenReturn(cpuTopology);
+
+        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host);
         assertEquals(0, cpus.size());
+    }
+
+    @Test
+    public void shouldSucceedToDedicateOneSocketThreeCoreOneCpuOffLine() {
+        VM vm = new VM();
+        vm.setId(Guid.newGuid());
+        vm.setNumOfSockets(1);
+        vm.setCpuPerSocket(3);
+        vm.setThreadsPerCpu(1);
+        vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
+        List<VdsCpuUnit> cpuTopology = new ArrayList<>();
+        cpuTopology.add(new VdsCpuUnit(0, 0, 0));
+        cpuTopology.add(new VdsCpuUnit(1, 0, 1));
+        cpuTopology.add(new VdsCpuUnit(2, 1, 0));
+        when(vdsManager.getCpuTopology()).thenReturn(cpuTopology);
+        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host);
+        assertEquals(3, cpus.size());
+
+        assertEquals(0, cpus.get(0).getSocket());
+        assertEquals(0, cpus.get(0).getCore());
+        assertEquals(0, cpus.get(0).getCpu());
+
+        assertEquals(1, cpus.get(1).getSocket());
+        assertEquals(0, cpus.get(1).getCore());
+        assertEquals(1, cpus.get(1).getCpu());
+
+        assertEquals(2, cpus.get(2).getSocket());
+        assertEquals(1, cpus.get(2).getCore());
+        assertEquals(0, cpus.get(2).getCpu());
     }
 
 }
