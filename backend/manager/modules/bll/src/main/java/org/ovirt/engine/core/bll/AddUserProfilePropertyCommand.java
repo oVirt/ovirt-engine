@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -13,12 +14,21 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UserProfilePropertyParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
 public class AddUserProfilePropertyCommand<T extends UserProfilePropertyParameters> extends CommandBase<T> {
 
+    public static final String PROFILE_USER = "profile_user";
+    public static final String PROFILE_PROPERTY = "profile_property";
+
     @Inject
     protected UserProfileDao userProfileDao;
+
+    @Inject
+    protected DbUserDao userDao;
+
     private final UserProfileValidator validator = new UserProfileValidator();
 
     public AddUserProfilePropertyCommand(T parameters, CommandContext cmdContext) {
@@ -28,6 +38,10 @@ public class AddUserProfilePropertyCommand<T extends UserProfilePropertyParamete
     @Override
     protected boolean validate() {
         UserProfileProperty newProp = getParameters().getUserProfileProperty();
+        if (!newProp.getUserId().equals(getUserId())) {
+            addCustomValue(PROFILE_USER, buildUserName(userDao, newProp.getUserId()));
+        }
+        addCustomValue(PROFILE_PROPERTY, newProp.getName());
         return validator.validateAdd(
                 userProfileDao.getProfile(newProp.getUserId()),
                 newProp,
@@ -35,9 +49,23 @@ public class AddUserProfilePropertyCommand<T extends UserProfilePropertyParamete
                 this::validate);
     }
 
+    public static String buildUserName(DbUserDao userDao, Guid userId) {
+        return Optional.ofNullable(userDao.get(userId))
+                .map(dbUser -> String.format("%s@%s", dbUser.getLoginName(), dbUser.getDomain()))
+                .orElse(userId.toString());
+    }
+
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_UPDATE_PROFILE : AuditLogType.USER_UPDATE_PROFILE_FAILED;
+        if (getCustomValues().containsKey(PROFILE_USER)) {
+            return getSucceeded() ?
+                    AuditLogType.USER_PROFILE_CREATE_PROPERTY :
+                    AuditLogType.USER_PROFILE_CREATE_PROPERTY_FAILED;
+        } else {
+            return getSucceeded() ?
+                    AuditLogType.USER_PROFILE_CREATE_OWN_PROPERTY :
+                    AuditLogType.USER_PROFILE_CREATE_OWN_PROPERTY_FAILED;
+        }
     }
 
     @Override

@@ -18,11 +18,15 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
 class RemoveUserProfilePropertyCommandTest extends BaseCommandTest {
     @Mock
     private UserProfileDao userProfileDaoMock;
+
+    @Mock
+    private DbUserDao userDaoMock;
 
     private IdParameters parameters = mock(IdParameters.class);
 
@@ -63,8 +67,13 @@ class RemoveUserProfilePropertyCommandTest extends BaseCommandTest {
 
     @Test
     void notAuthorized() {
-        when(parameters.getId()).thenReturn(Guid.newGuid());
-        when(userProfileDaoMock.get(any())).thenReturn(mock(UserProfileProperty.class));
+        UserProfileProperty prop = UserProfileProperty.builder()
+                .withNewId()
+                .withUserId(Guid.newGuid())
+                .build();
+        when(parameters.getId()).thenReturn(prop.getPropertyId());
+        when(userProfileDaoMock.get(any())).thenReturn(prop);
+        when(userDaoMock.get(any())).thenReturn(null);
         assertFalse(removeCommand.validate(), buildValidationMessage(removeCommand.getReturnValue()));
     }
 }

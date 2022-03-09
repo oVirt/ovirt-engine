@@ -1,7 +1,12 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.bll.AddUserProfilePropertyCommand.PROFILE_PROPERTY;
+import static org.ovirt.engine.core.bll.AddUserProfilePropertyCommand.PROFILE_USER;
+import static org.ovirt.engine.core.bll.AddUserProfilePropertyCommand.buildUserName;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -13,6 +18,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
 public class RemoveUserProfilePropertyCommand<T extends IdParameters> extends CommandBase<T> {
@@ -20,7 +26,11 @@ public class RemoveUserProfilePropertyCommand<T extends IdParameters> extends Co
     @Inject
     protected UserProfileDao userProfileDao;
 
-    private UserProfileValidator validator = new UserProfileValidator();
+    @Inject
+    protected DbUserDao userDao;
+
+
+    private final UserProfileValidator validator = new UserProfileValidator();
 
     public RemoveUserProfilePropertyCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -28,7 +38,13 @@ public class RemoveUserProfilePropertyCommand<T extends IdParameters> extends Co
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_UPDATE_PROFILE : AuditLogType.USER_UPDATE_PROFILE_FAILED;
+        if (getCustomValues().containsKey(PROFILE_USER)) {
+            return getSucceeded() ? AuditLogType.USER_PROFILE_REMOVE_PROPERTY
+                    : AuditLogType.USER_PROFILE_REMOVE_PROPERTY_FAILED;
+        } else {
+            return getSucceeded() ? AuditLogType.USER_PROFILE_REMOVE_OWN_PROPERTY
+                    : AuditLogType.USER_PROFILE_REMOVE_OWN_PROPERTY_FAILED;
+        }
     }
 
     @Override
@@ -40,8 +56,16 @@ public class RemoveUserProfilePropertyCommand<T extends IdParameters> extends Co
     @Override
     protected boolean validate() {
         UserProfileProperty currentProp = userProfileDao.get(getParameters().getId());
+        if (currentProp != null && !currentProp.getUserId().equals(getUserId())) {
+            addCustomValue(PROFILE_USER, buildUserName(userDao, currentProp.getUserId()));
+        }
+        addCustomValue(PROFILE_PROPERTY,
+                Optional.ofNullable(currentProp)
+                        .map(UserProfileProperty::getName)
+                        .orElse(getParameters().getId().toString()));
         return validate(validator.propertyProvided(currentProp)) &&
-                validate(validator.authorized(getCurrentUser(), currentProp.getUserId()));
+                validate(validator.authorized(getCurrentUser(),
+                        Optional.ofNullable(currentProp).map(UserProfileProperty::getUserId).orElse(null)));
     }
 
     @Override
