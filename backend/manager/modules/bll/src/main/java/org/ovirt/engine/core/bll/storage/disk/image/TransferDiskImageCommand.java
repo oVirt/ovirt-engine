@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBacken
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TimeoutPolicyType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
+import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
@@ -1145,12 +1146,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private boolean isLiveBackup() {
-        return isBackup() && getBackup().isLiveBackup();
+        return isBackup() && getBackup().getBackupType() == VmBackupType.Live;
     }
 
     private boolean isHybridBackup() {
-        // TODO This is how we check that this not hybrid backup, in the near future we will have a backup type.
-        return !Guid.isNullOrEmpty(getBackupDiskSnapshotId());
+        return isBackup() && getBackup().getBackupType() == VmBackupType.Hybrid;
     }
 
     private boolean isSupportsDirtyExtents() {

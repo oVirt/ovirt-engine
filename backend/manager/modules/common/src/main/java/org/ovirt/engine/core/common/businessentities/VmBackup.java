@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmBackup implements Queryable, BusinessEntity<Guid> {
@@ -31,7 +32,7 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
 
     private List<DiskImage> disks;
 
-    private boolean liveBackup;
+    private VmBackupType backupType;
 
     public Guid getId() {
         return id;
@@ -117,12 +118,13 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
         return fromCheckpointId != null;
     }
 
-    public boolean isLiveBackup() {
-        return liveBackup;
+
+    public VmBackupType getBackupType() {
+        return backupType;
     }
 
-    public void setLiveBackup(boolean liveBackup) {
-        this.liveBackup = liveBackup;
+    public void setBackupType(VmBackupType backupType) {
+        this.backupType = backupType;
     }
 
     @Override
@@ -138,7 +140,7 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
                 creationDate,
                 modificationDate,
                 description,
-                liveBackup
+                backupType
         );
     }
 
@@ -161,7 +163,7 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
                 && Objects.equals(creationDate, other.creationDate)
                 && Objects.equals(modificationDate, other.modificationDate)
                 && Objects.equals(description, other.description)
-                && Objects.equals(liveBackup, other.liveBackup);
+                && Objects.equals(backupType, other.backupType);
     }
 
     @Override
