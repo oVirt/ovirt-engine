@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.UserProfileTestHelper.buildValidationMessage;
 import static org.ovirt.engine.core.bll.UserProfileTestHelper.checkAssertsForGenericProp;
 import static org.ovirt.engine.core.bll.UserProfileTestHelper.checkAssertsForSshProp;
-import static org.ovirt.engine.core.bll.UserProfileTestHelper.createWithId;
+import static org.ovirt.engine.core.bll.UserProfileTestHelper.createAdmin;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,12 +19,17 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.UserProfilePropertyParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
 class AddUserProfilePropertyCommandTest extends BaseCommandTest {
     @Mock
     private UserProfileDao userProfileDaoMock;
+
+    @Mock
+    protected DbUserDao userDaoMock;
 
     private UserProfilePropertyParameters parameters = mock(UserProfilePropertyParameters.class);
 
@@ -33,7 +38,7 @@ class AddUserProfilePropertyCommandTest extends BaseCommandTest {
             new AddUserProfilePropertyCommand<>(parameters, CommandContext.createContext(""));
 
     @Test
-    void addSinglSshPropToEmptyProfile() {
+    void addSinglSshPropToEmptyProfileForAnotherUser() {
         Guid userId = Guid.newGuid();
         UserProfileProperty inputProp = UserProfileProperty.builder()
                 .withDefaultSshProp()
@@ -46,9 +51,10 @@ class AddUserProfilePropertyCommandTest extends BaseCommandTest {
                 .build();
 
         when(userProfileDaoMock.getProfile(any())).thenReturn(existingProfile);
+        when(userDaoMock.get(any())).thenReturn(mock(DbUser.class));
 
         when(parameters.getUserProfileProperty()).thenReturn(inputProp);
-        addCommand.setCurrentUser(createWithId(userId));
+        addCommand.setCurrentUser(createAdmin(Guid.newGuid()));
 
         assertTrue(addCommand.validate(), buildValidationMessage(addCommand.getReturnValue()));
 
