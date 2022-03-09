@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBacken
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TimeoutPolicyType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
+import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
@@ -353,12 +354,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     protected DiskImage getDiskImage() {
-        if (getBackup() != null) {
-            Guid diskSnapshotId = vmBackupDao.getDiskSnapshotIdForBackup(getParameters().getBackupId(), getParameters().getImageGroupID());
-            if (!Guid.isNullOrEmpty(diskSnapshotId)) {
-                setImageId(diskSnapshotId);
-                return super.getDiskImage();
-            }
+        if (isHybridBackup()) {
+            setImageId(getBackupDiskSnapshotId());
+            return super.getDiskImage();
         }
         if (!Guid.isNullOrEmpty(getParameters().getImageId())) {
             setImageId(getParameters().getImageId());
@@ -1145,12 +1143,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private boolean isLiveBackup() {
-        return isBackup() && getBackup().isLiveBackup();
+        return isBackup() && getBackup().getBackupType() == VmBackupType.Live;
     }
 
     private boolean isHybridBackup() {
-        // TODO This is how we check that this not hybrid backup, in the near future we will have a backup type.
-        return !Guid.isNullOrEmpty(getBackupDiskSnapshotId());
+        return isBackup() && getBackup().getBackupType() == VmBackupType.Hybrid;
     }
 
     private boolean isSupportsDirtyExtents() {
@@ -1452,7 +1449,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     private Guid getBackupDiskSnapshotId() {
         if (Guid.isNullOrEmpty(backupDiskSnapshotId)) {
-            return vmBackupDao.getDiskSnapshotIdForBackup(getParameters().getBackupId(),
+            backupDiskSnapshotId = vmBackupDao.getDiskSnapshotIdForBackup(getParameters().getBackupId(),
                     getParameters().getImageGroupID());
         }
 

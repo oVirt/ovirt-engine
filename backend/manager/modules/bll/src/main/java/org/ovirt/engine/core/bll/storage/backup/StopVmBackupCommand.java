@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -126,7 +127,7 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
     }
 
     private boolean isLiveBackup() {
-        return vmBackup.isLiveBackup();
+        return vmBackup.getBackupType() == VmBackupType.Live;
     }
 
     private void updateVmBackupPhase(VmBackupPhase phase) {

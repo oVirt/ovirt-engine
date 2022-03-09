@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
@@ -38,7 +39,7 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
                 .addValue("_create_date", entity.getCreationDate())
                 .addValue("_update_date", entity.getModificationDate())
                 .addValue("description", entity.getDescription())
-                .addValue("is_live_backup", entity.isLiveBackup());
+                .addValue("backup_type", entity.getBackupType().getName());
     }
 
     @Override
@@ -62,7 +63,7 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
         entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_create_date")));
         entity.setModificationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_update_date")));
         entity.setDescription(rs.getString("description"));
-        entity.setLiveBackup(rs.getBoolean("is_live_backup"));
+        entity.setBackupType(VmBackupType.forName(rs.getString("backup_type")));
         return entity;
     };
 
@@ -83,7 +84,7 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
                 .addValue("phase", entity.getPhase().getName())
                 .addValue("_update_date", new Date())
                 .addValue("description", entity.getDescription())
-                .addValue("is_live_backup", entity.isLiveBackup());
+                .addValue("backup_type", entity.getBackupType().getName());
         getCallsHandler()
                 .executeModification("UpdateVmBackup", parameterSource);
     }
