@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -500,7 +501,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         Date now = new Date();
         vmBackup.setCreationDate(now);
         vmBackup.setModificationDate(now);
-        vmBackup.setLiveBackup(isLiveBackup);
+        vmBackup.setBackupType(isLiveBackup ? VmBackupType.Live : VmBackupType.Cold);
 
         getParameters().setVmBackup(vmBackup);
         TransactionSupport.executeInNewTransaction(() -> {
@@ -831,6 +832,6 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
     }
 
     private boolean isLiveBackup() {
-        return getParameters().getVmBackup().isLiveBackup();
+        return getParameters().getVmBackup().getBackupType() == VmBackupType.Live;
     }
 }

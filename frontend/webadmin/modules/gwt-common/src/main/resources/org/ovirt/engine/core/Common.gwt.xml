@@ -337,6 +337,7 @@
         <include name="common/businessentities/VmBackupPhase.java" />
         <include name="common/businessentities/VmCheckpoint.java" />
         <include name="common/businessentities/VmCheckpointState.java" />
+        <include name="common/businessentities/storage/VmBackupType.java" />
         <include name="common/businessentities/storage/DiskBackupMode.java" />
         <include name="common/businessentities/storage/LeaseJobStatus.java" />
 

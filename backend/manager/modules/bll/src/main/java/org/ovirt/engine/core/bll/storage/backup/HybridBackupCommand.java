@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
@@ -284,7 +285,7 @@ public class HybridBackupCommand<T extends VmBackupParameters> extends StartVmBa
         Date now = new Date();
         vmBackup.setCreationDate(now);
         vmBackup.setModificationDate(now);
-
+        vmBackup.setBackupType(VmBackupType.Hybrid);
         getParameters().setVmBackup(vmBackup);
         vmBackupDao.save(vmBackup);
         persistCommandIfNeeded();
