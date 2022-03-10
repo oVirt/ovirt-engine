@@ -1,0 +1,4 @@
+- name: Run vnc-certificates role
+  include_role:
+    name: ovirt-host-deploy-vnc-certificates
+    public: yes
