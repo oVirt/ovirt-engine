@@ -44,6 +44,7 @@ def osetupattrs(
     answerfile_condition=lambda env: True,
     summary_condition=lambda env: True,
     is_secret=False,
+    doc_text=None,
 ):
     class decorator(classproperty):
         def __init__(self, o):
@@ -57,6 +58,7 @@ def osetupattrs(
                 answerfile_condition=answerfile_condition,
                 summary_condition=summary_condition,
                 is_secret=is_secret,
+                doc_text=doc_text,
             )
     return decorator
 
@@ -331,6 +333,12 @@ class DocsEnv(object):
     DWH_DOC_URL = 'OVESETUP_DOCS/dwhDocUrl'
     REPORTS_DOC_URL = 'OVESETUP_DOCS/reportsDocUrl'
 
+    @osetupattrs(
+        doc_text=_('Show env keys doc text'),
+    )
+    def SHOW_DOC_TEXT(self):
+        return 'OVESETUP_DOCS/showDocText'
+
 
 @util.export
 @util.codegen
@@ -474,7 +482,15 @@ class ConfigEnv(object):
         return 'OVESETUP_CONFIG/remoteEngineHostRootPassword'
 
     TOTAL_MEMORY_MB = 'OVESETUP_CONFIG/totalMemoryMB'
-    CONTINUE_SETUP_ON_HE_VM = 'OVESETUP_CONFIG/continueSetupOnHEVM'
+
+    @osetupattrs(
+        doc_text=_(
+            'Allow overriding/ignoring the check for hosted-engine global '
+            'maintenance. Use with care!'
+        ),
+    )
+    def CONTINUE_SETUP_ON_HE_VM(self):
+        return 'OVESETUP_CONFIG/continueSetupOnHEVM'
 
 
 @util.export

@@ -19,6 +19,7 @@ from . import misc
 from . import offlinepackager
 from . import postinstall
 from . import reconfigure
+from . import show_doc_text
 from . import uninstall
 
 
@@ -31,6 +32,7 @@ def createPlugins(context):
     offlinepackager.Plugin(context=context)
     postinstall.Plugin(context=context)
     reconfigure.Plugin(context=context)
+    show_doc_text.Plugin(context=context)
     uninstall.Plugin(context=context)
 
 
