@@ -11,7 +11,7 @@ import org.apache.sshd.common.config.keys.KeyUtils;
 import org.apache.sshd.common.config.keys.PublicKeyEntryResolver;
 import org.apache.sshd.common.config.keys.writer.openssh.OpenSSHKeyPairResourceWriter;
 import org.apache.sshd.common.digest.BuiltinDigests;
-import org.apache.sshd.common.util.io.output.SecureByteArrayOutputStream;
+import org.apache.sshd.common.util.io.SecureByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
