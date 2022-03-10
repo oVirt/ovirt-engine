@@ -12,7 +12,6 @@
     copy:
       src: "{{ host_deploy_spice_tls_x509_cert_dir }}/{{ item }}"
       dest: "{{ host_deploy_vnc_tls_x509_cert_dir }}/{{ item }}"
-      force: no
       group: kvm
       owner: root
       remote_src: yes
