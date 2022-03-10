@@ -40,9 +40,12 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
+        stage=plugin.Stages.STAGE_BOOT,
+        before=(
+            osetupcons.Stages.SECRETS_FILTERED_FROM_SETUP_ATTRS_MODULES,
+        ),
     )
-    def _setup(self):
+    def _boot(self):
         self.environment[
             osetupcons.CoreEnv.SETUP_ATTRS_MODULES
         ].append(ovmpcons)
