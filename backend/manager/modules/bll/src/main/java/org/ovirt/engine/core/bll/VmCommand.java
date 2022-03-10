@@ -67,6 +67,7 @@ import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSuccessListener;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
@@ -646,5 +647,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     private boolean shouldBlockDuringBackup() {
         return getParentParameters() == null || getParentParameters().getCommandType() != ActionType.HybridBackup;
+    }
+
+    protected VdsManager getVdsManager(Guid vdsId) {
+        return resourceManager.getVdsManager(vdsId);
     }
 }

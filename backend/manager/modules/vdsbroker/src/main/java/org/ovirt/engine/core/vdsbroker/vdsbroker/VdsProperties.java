@@ -448,6 +448,7 @@ public final class VdsProperties {
     public static final String MIGRATION_DESTINATION = "Migration Destination";
     public static final String MIGRATION_OUTGOING_LIMIT = "outgoingLimit";
     public static final String MIGRATION_INCOMING_LIMIT = "incomingLimit";
+    public static final String MIGRATION_CPUSETS = "cpusets";
 
     // multipath health
     public static final String MULTIPATH_HEALTH = "multipathHealth";

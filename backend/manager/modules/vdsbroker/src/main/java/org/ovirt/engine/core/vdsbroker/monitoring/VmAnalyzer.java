@@ -288,6 +288,7 @@ public class VmAnalyzer {
             }
         }
         destroyVm();
+        vdsManager.unpinVmCpus(getVmId());
 
         // VM is running on another host - must be during migration
         if (!isVmRunningInDatabaseOnMonitoredHost()) {
