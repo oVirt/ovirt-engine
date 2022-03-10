@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -35,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -49,6 +52,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.CpuPinningHelper;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -84,7 +88,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     @Inject
     protected SchedulingManager schedulingManager;
     @Inject
-    private ResourceManager resourceManager;
+    protected ResourceManager resourceManager;
     @Inject
     protected JobRepository jobRepository;
     @Inject
@@ -397,6 +401,19 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                     new VmDeviceId(iface.getId(), getVmId()), deviceProperties);
             }
         }
+    }
+
+    protected void setDedicatedCpus(VdsManager vdsManager) {
+        if (getVm().getCpuPinningPolicy() != CpuPinningPolicy.DEDICATED) {
+            return;
+        }
+        getVm().setCurrentCpuPinning(getDedicatedCpuPinning(vdsManager));
+    }
+
+    protected String getDedicatedCpuPinning(VdsManager vdsManager) {
+        List<VdsCpuUnit> vdsCpuUnits = vdsManager.getCpuTopology().stream()
+                .filter(cpu -> cpu.getVmIds().contains(getVmId())).sorted().collect(Collectors.toList());
+        return CpuPinningHelper.createCpuPinning(vdsCpuUnits);
     }
 
     protected VdsManager getVdsManager() {

@@ -32,6 +32,7 @@ public class StopVmCommand<T extends StopVmParameters> extends StopVmCommandBase
             return;
         }
         destroyVm();
+        getVdsManager(getVdsId()).unpinVmCpus(getVm().getId());
         setSucceeded(true);
     }
 

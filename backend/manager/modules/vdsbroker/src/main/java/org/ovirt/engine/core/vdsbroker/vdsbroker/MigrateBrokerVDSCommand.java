@@ -77,6 +77,10 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
             migrationInfo.put(VdsProperties.MIGRATION_OUTGOING_LIMIT, parameters.getMaxOutgoingMigrations());
         }
 
+        if (parameters.getCpuSets() != null) {
+            migrationInfo.put(VdsProperties.MIGRATION_CPUSETS, parameters.getCpuSets());
+        }
+
         return migrationInfo;
     }
 }
