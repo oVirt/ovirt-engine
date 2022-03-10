@@ -199,6 +199,15 @@ public class FeatureSupported {
     }
 
     /**
+     * Check if vGPU driver parameters are supported
+     *
+     * @param version Compatibility version to check for.
+     */
+    public static boolean isVgpuDriverParametersSupported(Version version) {
+        return Version.v4_7.lessOrEquals(version);
+    }
+
+    /**
      * Skip commit network changes is supported for
      * - host supporting commitOnSuccess (>= 4.3)
      * - engine has at least version 4.4

@@ -1334,15 +1334,17 @@ public class LibvirtVmXmlBuilder {
 
     void writeVGpu() {
         for (VmDevice mdev : MDevTypesUtils.getMdevs(vmDevicesSupplier.get(), VmDeviceType.VGPU)) {
+            final Version compatibilityVersion = vm.getCompatibilityVersion();
+
             writer.writeStartElement("hostdev");
             writer.writeAttributeString("mode", "subsystem");
             writer.writeAttributeString("type", "mdev");
             writer.writeAttributeString("model", "vfio-pci");
             final Map<String, Object> mdevSpecParams = mdev.getSpecParams();
             if (!Boolean.TRUE.equals(mdevSpecParams.get(MDevTypesUtils.NODISPLAY))
-                    && MDevTypesUtils.isMdevDisplayOnSupported(vm.getCompatibilityVersion())) {
+                    && MDevTypesUtils.isMdevDisplayOnSupported(compatibilityVersion)) {
                 writer.writeAttributeString("display", "on");
-                if (FeatureSupported.isVgpuFramebufferSupported(vm.getCompatibilityVersion())) {
+                if (FeatureSupported.isVgpuFramebufferSupported(compatibilityVersion)) {
                     writer.writeAttributeString("ramfb", "on");
                 }
             }
@@ -1356,8 +1358,9 @@ public class LibvirtVmXmlBuilder {
 
             writer.writeEndElement();
 
+            Map<String, String> metadata = new HashMap<>();
             String mdevTypeMeta = (String)mdevSpecParams.get(MDevTypesUtils.MDEV_TYPE);
-            if (FeatureSupported.isVgpuPlacementSupported(vm.getCompatibilityVersion())) {
+            if (FeatureSupported.isVgpuPlacementSupported(compatibilityVersion)) {
                 VgpuPlacement vgpuPlacement = hostVgpuPlacementSupplier.get();
                 String vgpuPlacementString;
                 if (vgpuPlacement == VgpuPlacement.CONSOLIDATED) {
@@ -1372,7 +1375,15 @@ public class LibvirtVmXmlBuilder {
                 }
                 mdevTypeMeta = mdevTypeMeta + "|" + vgpuPlacementString;
             }
-            mdevMetadata.put(address, Collections.singletonMap("mdevType", mdevTypeMeta));
+            metadata.put("mdevType", mdevTypeMeta);
+            String mdevDriverParameters = (String) mdevSpecParams.get(MDevTypesUtils.DRIVER_PARAMETERS);
+            if (mdevDriverParameters != null) {
+                metadata.put("mdevDriverParameters", mdevDriverParameters);
+                if (!FeatureSupported.isVgpuDriverParametersSupported(compatibilityVersion)) {
+                    log.warn("vGPU driver parameters not supported in cluster version {}", compatibilityVersion);
+                }
+            }
+            mdevMetadata.put(address, metadata);
         }
     }
 
