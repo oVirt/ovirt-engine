@@ -39,7 +39,8 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
                 .addValue("_create_date", entity.getCreationDate())
                 .addValue("_update_date", entity.getModificationDate())
                 .addValue("description", entity.getDescription())
-                .addValue("backup_type", entity.getBackupType().getName());
+                .addValue("backup_type", entity.getBackupType().getName())
+                .addValue("snapshot_id", entity.getSnapshotId());
     }
 
     @Override
@@ -64,6 +65,7 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
         entity.setModificationDate(DbFacadeUtils.fromDate(rs.getTimestamp("_update_date")));
         entity.setDescription(rs.getString("description"));
         entity.setBackupType(VmBackupType.forName(rs.getString("backup_type")));
+        entity.setSnapshotId(getGuid(rs, "snapshot_id"));
         return entity;
     };
 
@@ -84,7 +86,8 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
                 .addValue("phase", entity.getPhase().getName())
                 .addValue("_update_date", new Date())
                 .addValue("description", entity.getDescription())
-                .addValue("backup_type", entity.getBackupType().getName());
+                .addValue("backup_type", entity.getBackupType().getName())
+                .addValue("snapshot_id", entity.getSnapshotId());
         getCallsHandler()
                 .executeModification("UpdateVmBackup", parameterSource);
     }

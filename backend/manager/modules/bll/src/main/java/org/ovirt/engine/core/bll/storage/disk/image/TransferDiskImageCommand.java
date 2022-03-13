@@ -79,6 +79,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
@@ -116,6 +117,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private VdsDao vdsDao;
     @Inject
     private VmBackupDao vmBackupDao;
+    @Inject
+    private SnapshotDao snapshotDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
@@ -186,6 +189,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 && validate(diskImagesValidator.diskImagesNotIllegal())
                 && validate(storageDomainValidator.isDomainExistAndActive());
         if (isBackup()) {
+            if (isHybridBackup()) {
+                if (!snapshotDao.exists(getBackup().getVmId(), getBackup().getSnapshotId())) {
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
+                }
+            }
             return isValid && validate(isVmBackupReady()) && validate(isFormatApplicableForBackup());
         }
         return isValid
