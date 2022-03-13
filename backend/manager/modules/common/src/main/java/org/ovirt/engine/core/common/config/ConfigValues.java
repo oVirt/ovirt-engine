@@ -1578,6 +1578,9 @@ public enum ConfigValues {
     IsIncrementalBackupSupported,
 
     @TypeConverterAttribute(Boolean.class)
+    UseHybridBackup,
+
+    @TypeConverterAttribute(Boolean.class)
     IsPortIsolationSupported,
 
     @TypeConverterAttribute(String.class)
