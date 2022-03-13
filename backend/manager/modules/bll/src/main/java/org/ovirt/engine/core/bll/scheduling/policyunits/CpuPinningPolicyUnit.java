@@ -75,6 +75,12 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
         switch (vm.getCpuPinningPolicy()) {
             case MANUAL:
             case RESIZE_AND_PIN_NUMA:
+                if (StringUtils.isEmpty(cpuPinning)) {
+                    // The logic below applies to MigrateVm in which we get here with CPU pinning that was set on the
+                    // source host. On RunVm, we get here before determining the CPU pinning for the VM so the dynamic
+                    // CPU pinning is not set and hosts should not be filtered by the logic below.
+                    return hosts;
+                }
                 // collect all pinned host cpus and merge them into one set
                 final Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(cpuPinning);
                 for (final VDS host : hosts) {
