@@ -931,6 +931,8 @@ select fn_db_add_config_value_for_versions_up_to('ParallelMigrationsSupported', 
 -- Incremental backup
 select fn_db_add_config_value_for_versions_up_to('IsIncrementalBackupSupported', 'false', '4.4');
 select fn_db_add_config_value_for_versions_up_to('IsIncrementalBackupSupported', 'true', '4.7');
+select fn_db_add_config_value_for_versions_up_to('UseHybridBackup', 'false', '4.6');
+select fn_db_add_config_value_for_versions_up_to('UseHybridBackup', 'true', '4.7');
 select fn_db_add_config_value('SucceededBackupCleanupTimeInMinutes','15','general');
 select fn_db_add_config_value('FailedBackupCleanupTimeInMinutes','30','general');
 select fn_db_add_config_value('SucceededImageTransferCleanupTimeInMinutes','15','general');

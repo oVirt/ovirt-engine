@@ -420,6 +420,6 @@ public class FeatureSupported {
      * @return true if VM can be backed up using hybrid backup
      */
     public static boolean isHybridBackupSupported(VM vm) {
-        return vm != null && Version.v4_7.lessOrEquals(vm.getClusterCompatibilityVersion());
+        return vm != null && supportedInConfig(ConfigValues.UseHybridBackup, vm.getCompatibilityVersion());
     }
 }
