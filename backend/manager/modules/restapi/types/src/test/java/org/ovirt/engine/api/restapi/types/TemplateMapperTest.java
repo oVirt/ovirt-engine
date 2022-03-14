@@ -67,6 +67,7 @@ public class TemplateMapperTest
         from.getMigration().setAutoConverge(InheritableBoolean.TRUE);
         from.getMigration().setCompressed(InheritableBoolean.TRUE);
         from.getDisplay().setDisconnectAction(DisplayDisconnectAction.LOCK_SCREEN.toString());
+        from.getDisplay().setDisconnectActionDelay(2);
         for (NicConfiguration nicConfiguration : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
             nicConfiguration.setBootProtocol(BootProtocol.STATIC);
         }
@@ -118,5 +119,6 @@ public class TemplateMapperTest
         assertEquals(model.getMigration().getAutoConverge(), transform.getMigration().getAutoConverge());
         assertEquals(model.getMigration().getCompressed(), transform.getMigration().getCompressed());
         assertEquals(model.getDisplay().getDisconnectAction(), transform.getDisplay().getDisconnectAction());
+        assertEquals(model.getDisplay().getDisconnectActionDelay(), transform.getDisplay().getDisconnectActionDelay());
     }
 }

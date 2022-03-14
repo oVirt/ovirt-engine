@@ -224,6 +224,12 @@ public class VmBaseMapper {
                 DisplayDisconnectAction action = DisplayDisconnectAction.fromValue(model.getDisplay().getDisconnectAction());
                 entity.setConsoleDisconnectAction(map(action, null));
             }
+            if (model.getDisplay().isSetDisconnectActionDelay()) {
+                Integer delay = model.getDisplay().getDisconnectActionDelay();
+                if (delay != null) {
+                    entity.setConsoleDisconnectActionDelay(delay);
+                }
+            }
         }
 
         if (model.isSetTimeZone()) {
