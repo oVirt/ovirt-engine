@@ -538,7 +538,7 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         return DiskBackupMode.Incremental;
     }
 
-    private Set<Guid> getFromCheckpointDisksIds(Guid fromCheckpointId) {
+    protected Set<Guid> getFromCheckpointDisksIds(Guid fromCheckpointId) {
         if (fromCheckpointDisksIds == null) {
             fromCheckpointDisksIds = vmCheckpointDao.getDisksByCheckpointId(fromCheckpointId)
                     .stream()
