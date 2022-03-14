@@ -175,8 +175,12 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
 
         // Delete old image
         if (getParameters().getConvertDiskPhase() == ConvertDiskCommandParameters.ConvertDiskPhase.REMOVE_SOURCE_VOLUME) {
-            switchImage();
+            if (!switchImage()) {
+                setCommandStatus(CommandStatus.FAILED);
+                return true;
+            }
             runInternalAction(ActionType.DestroyImage, createDestroyImageParameters(getDiskImage().getImageId()));
+
             updatePhase(ConvertDiskCommandParameters.ConvertDiskPhase.COMPLETE);
 
             return true;
@@ -248,7 +252,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         runInternalActionWithTasksContext(ActionType.CopyData, parameters);
     }
 
-    private void switchImage() {
+    private boolean switchImage() {
         DiskImage info = imagesHandler.getVolumeInfoFromVdsm(getDiskImage().getStoragePoolId(),
                 getDiskImage().getStorageIds().get(0),
                 getDiskImage().getId(),
@@ -261,8 +265,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
             if (info.getVolumeFormat() != getParameters().getVolumeFormat()) {
                 log.error("Requested format '{}' doesn't match format on storage '{}'",
                         getParameters().getVolumeFormat(), info.getVolumeFormat());
-                setCommandStatus(CommandStatus.FAILED);
-                return;
+                return false;
             }
 
             newImage.setVolumeFormat(getParameters().getVolumeFormat());
@@ -272,8 +275,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
             if (info.getVolumeType() != getParameters().getPreallocation()) {
                 log.error("Requested allocation policy '{}' doesn't match allocation policy on storage '{}'",
                         getParameters().getPreallocation(), info.getVolumeType());
-                setCommandStatus(CommandStatus.FAILED);
-                return;
+                return false;
             }
 
             newImage.setVolumeType(getParameters().getPreallocation());
@@ -287,6 +289,8 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
 
             return null;
         });
+
+        return true;
     }
 
     private void updatePhase(ConvertDiskCommandParameters.ConvertDiskPhase phase) {
