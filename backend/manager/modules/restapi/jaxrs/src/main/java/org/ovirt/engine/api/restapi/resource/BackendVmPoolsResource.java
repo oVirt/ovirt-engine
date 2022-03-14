@@ -40,6 +40,8 @@ public class BackendVmPoolsResource
         extends AbstractBackendCollectionResource<VmPool, org.ovirt.engine.core.common.businessentities.VmPool>
     implements VmPoolsResource {
 
+    public static final String SEAL = "seal";
+
     public BackendVmPoolsResource() {
         super(VmPool.class, org.ovirt.engine.core.common.businessentities.VmPool.class);
     }
@@ -123,11 +125,17 @@ public class BackendVmPoolsResource
         params.getVmStaticData().setCustomProperties(pool.isSetVm() && pool.getVm().isSetCustomProperties() ?
                 CustomPropertiesParser.parse(pool.getVm().getCustomProperties().getCustomProperties()) : params.getVmStaticData().getCustomProperties());
         params.setTpmEnabled(pool.isSetTpmEnabled() ? pool.isTpmEnabled() : null);
+        setupSealing(params);
 
         return performCreate(ActionType.AddVmPool,
                                params,
                                new QueryIdResolver<Guid>(QueryType.GetVmPoolById,
                                                    IdQueryParameters.class));
+    }
+
+    private void setupSealing(AddVmPoolParameters params) {
+        Boolean seal = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, SEAL, null, null);
+        params.setSeal(seal);
     }
 
     @Override
