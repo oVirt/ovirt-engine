@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.DiskBackup;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Vm;
@@ -266,6 +267,12 @@ public class BackendDiskResource
 
         if (action.getDisk().isSetFormat()) {
             parameters.setVolumeFormat(action.getDisk().getFormat() == DiskFormat.RAW ? VolumeFormat.RAW : VolumeFormat.COW);
+        }
+
+        if (action.getDisk().isSetBackup()) {
+            parameters.setBackup(action.getDisk().getBackup() == DiskBackup.INCREMENTAL ?
+                    org.ovirt.engine.core.common.businessentities.storage.DiskBackup.Incremental :
+                    org.ovirt.engine.core.common.businessentities.storage.DiskBackup.None);
         }
 
         return doAction(ActionType.ConvertDisk, parameters, action);

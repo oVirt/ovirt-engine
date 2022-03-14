@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.LocationInfo;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -12,6 +13,7 @@ public class ConvertDiskCommandParameters extends ImagesContainterParametersBase
     private VolumeFormat volumeFormat;
     private VolumeType preallocation;
     private Guid newVolGuid;
+    private DiskBackup backup;
 
     private ConvertDiskPhase convertDiskPhase = ConvertDiskPhase.CREATE_TARGET_VOLUME;
 
@@ -57,6 +59,14 @@ public class ConvertDiskCommandParameters extends ImagesContainterParametersBase
 
     public void setConvertDiskPhase(ConvertDiskPhase convertDiskPhase) {
         this.convertDiskPhase = convertDiskPhase;
+    }
+
+    public DiskBackup getBackup() {
+        return backup;
+    }
+
+    public void setBackup(DiskBackup backup) {
+        this.backup = backup;
     }
 
     public enum ConvertDiskPhase {
