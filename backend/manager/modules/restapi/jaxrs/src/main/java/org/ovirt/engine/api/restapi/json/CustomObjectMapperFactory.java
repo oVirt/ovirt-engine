@@ -26,7 +26,7 @@ public class CustomObjectMapperFactory {
         return new ObjectMapper()
                 .configure(INDENT_OUTPUT, true)
                 .setAnnotationIntrospector(new JaxbAnnotationIntrospector(TypeFactory.defaultInstance()))
-                .setSerializationInclusion(JsonInclude.Include.USE_DEFAULTS)
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
                 .registerModule(new SimpleModule() {
                     @Override
                     public void setupModule(SetupContext context) {
