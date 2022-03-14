@@ -426,7 +426,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     protected Map<String, Pair<String, String>> getSharedLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
 
-        if (isBackup() && !isHybridBackup()) {
+        if (isBackup()) {
             // StartVmBackup should handle locks
             return locks;
         }
@@ -441,7 +441,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
-        if (isBackup() && !isHybridBackup()) {
+        if (isBackup()) {
             // StartVmBackup should handle locks
             return locks;
         }
