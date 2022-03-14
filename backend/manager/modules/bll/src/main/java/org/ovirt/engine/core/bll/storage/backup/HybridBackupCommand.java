@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.storage.backup;
 
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_ACTIVE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_NOT_SHAREABLE;
+import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAPABLE;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,6 +23,7 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -31,6 +36,7 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
@@ -190,12 +196,12 @@ public class HybridBackupCommand<T extends VmBackupParameters> extends StartVmBa
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
-        getDisks().forEach(disk -> locks.put(disk.getId().toString(),
+        List<Disk> vmDisks = diskDao.getAllForVm(getVmId());
+        List<DiskImage> diskImages = DisksFilter.filterImageDisks(vmDisks,
+                ONLY_NOT_SHAREABLE, ONLY_SNAPABLE, ONLY_ACTIVE);
+        diskImages.forEach(disk -> locks.put(disk.getId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISK_IS_LOCKED)));
-        locks.put(getParameters().getVmBackup().getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP));
         return locks;
-
     }
 
     @Override
@@ -273,7 +279,7 @@ public class HybridBackupCommand<T extends VmBackupParameters> extends StartVmBa
         ExecutionContext ctx = new ExecutionContext();
         ctx.setStep(addedStep);
         ctx.setMonitored(true);
-        return ExecutionHandler.createInternalJobContext(getContext(), getLock())
+        return ExecutionHandler.createInternalJobContext(getContext(), null)
                 .withExecutionContext(ctx);
     }
 
