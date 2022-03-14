@@ -295,7 +295,6 @@ Requires:	rhvm = %{version}-%{release}
 # bump the requirement (otherwise we would need to pass wildfly,
 # wildfly-overlay and ovirt-engine through the change queue at once)
 Requires:	ovirt-engine-wildfly-overlay >= 24
-Requires:	ovirt-engine-keycloak
 %endif
 
 Requires:	%{name}-backend = %{version}-%{release}
