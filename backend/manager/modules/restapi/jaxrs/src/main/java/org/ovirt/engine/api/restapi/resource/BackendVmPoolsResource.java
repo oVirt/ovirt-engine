@@ -134,7 +134,7 @@ public class BackendVmPoolsResource
     }
 
     private void setupSealing(AddVmPoolParameters params) {
-        Boolean seal = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, SEAL, null, null);
+        Boolean seal = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, SEAL, Boolean.TRUE, null);
         params.setSeal(seal);
     }
 
