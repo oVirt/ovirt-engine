@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -58,6 +59,9 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
 
     @Inject
     private VmDao vmDao;
+
+    @Inject
+    private BaseDiskDao baseDiskDao;
 
     @Inject
     private ImagesHandler imagesHandler;
@@ -124,7 +128,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         return ImagesHandler.checkImageConfiguration(storageDomain.getStorageStaticData(),
                 getVolumeType(getDiskImage()),
                 getVolumeFormat(getDiskImage()),
-                getDiskImage().getBackup(),
+                getParameters().getBackup() != null ? getParameters().getBackup() : getDiskImage().getBackup(),
                 getReturnValue().getValidationMessages());
     }
 
@@ -354,7 +358,16 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         imageDao.remove(getDiskImage().getImageId());
 
         freeLock();
-        imagesHandler.updateImageStatus(getParameters().getNewVolGuid(), ImageStatus.OK);
+        TransactionSupport.executeInNewTransaction(() -> {
+            imagesHandler.updateImageStatus(getParameters().getNewVolGuid(), ImageStatus.OK);
+            DiskImage convertedImage = diskImageDao.get(getParameters().getNewVolGuid());
+            if (getParameters().getBackup() != null) {
+                convertedImage.setBackup(getParameters().getBackup());
+                baseDiskDao.update(convertedImage);
+            }
+
+            return null;
+        });
 
         setSucceeded(true);
     }
