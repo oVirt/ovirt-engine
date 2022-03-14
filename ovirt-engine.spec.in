@@ -339,6 +339,8 @@ Requires:	fapolicyd >= 1.1
 Requires:	fapolicyd
 %endif
 
+Requires:	scap-security-guide >= 0.1.60-4
+
 # Metrics stuff
 Requires:	collectd
 Requires:	collectd-postgresql
