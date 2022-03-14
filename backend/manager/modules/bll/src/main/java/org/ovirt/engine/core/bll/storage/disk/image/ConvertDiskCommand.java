@@ -134,6 +134,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
                 FeatureSupported::isConvertDiskSupported);
         if (Guid.isNullOrEmpty(hostForExecution)) {
             log.error("Could not find a host to perform conversion");
+            setCommandStatus(CommandStatus.FAILED);
             return;
         }
 
