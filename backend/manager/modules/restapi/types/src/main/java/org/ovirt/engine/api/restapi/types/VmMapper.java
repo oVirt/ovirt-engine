@@ -402,6 +402,7 @@ public class VmMapper extends VmBaseMapper {
         model.getDisplay().setCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
         model.getDisplay().setProxy(getEffectiveSpiceProxy(entity));
         model.getDisplay().setDisconnectAction(map(entity.getConsoleDisconnectAction(), null).toString());
+        model.getDisplay().setDisconnectActionDelay(entity.getConsoleDisconnectActionDelay());
 
         model.setStateless(entity.isStateless());
         model.setDeleteProtected(entity.isDeleteProtected());
