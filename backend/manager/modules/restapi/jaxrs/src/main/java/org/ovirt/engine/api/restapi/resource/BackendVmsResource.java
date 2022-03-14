@@ -465,6 +465,7 @@ public class BackendVmsResource extends
         }
 
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
+        setupSealing(params);
 
         return performCreate(ActionType.AddVmFromSnapshot,
                                 params,
@@ -483,6 +484,7 @@ public class BackendVmsResource extends
         addAutoPinningPolicy(vm, params);
         setupCloneTemplatePermissions(params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
+        setupSealing(params);
 
         return performCreate(ActionType.AddVmFromTemplate,
                 params,
