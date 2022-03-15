@@ -482,7 +482,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         log.info("Starting image transfer: {}", entity);
 
         if (isImageProvided()) {
-            handleImageIsReadyForTransfer();
+            if (!handleImageIsReadyForTransfer()) {
+                return;
+            }
         } else {
             if (getParameters().getTransferType() == TransferType.Download) {
                 failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_NOT_SPECIFIED_FOR_DOWNLOAD);
@@ -616,10 +618,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         Guid createdId = addDiskRetVal.getActionReturnValue();
         // Saving disk id in the parameters in order to persist it in command_entities table
         getParameters().setImageGroupID(createdId);
-        handleImageIsReadyForTransfer();
+        if (!handleImageIsReadyForTransfer()) {
+            setCommandStatus(CommandStatus.FAILED);
+        }
     }
 
-    protected void handleImageIsReadyForTransfer() {
+    protected boolean handleImageIsReadyForTransfer() {
         DiskImage image = getDiskImage();
         Guid domainId = image.getStorageIds().get(0);
 
@@ -641,10 +645,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
         // The image will remain locked until the transfer command has completed.
         lockImage();
-        startImageTransferSession();
+        if (!startImageTransferSession()) {
+            return false;
+        }
         log.info("Returning from proceedCommandExecution() after starting image transfer '{}'", getCommandId());
 
         resetPeriodicPauseLogTime(0);
+        return true;
     }
 
     /**
@@ -1006,19 +1013,24 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     /**
      * Start the ovirt-image-daemon session
      */
-    protected void startImageTransferSession() {
+    protected boolean startImageTransferSession() {
         if (!initializeVds()) {
             log.error("Could not find a suitable host for image transfer '{}'", getCommandId());
-            updateEntityPhaseToStoppedBySystem(
-                    AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_MISSING_HOST);
-            return;
+            auditLog(this, AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_MISSING_HOST);
+
+            // Go directly to endWithFailure, we only need to remove the disk if we failed at this point
+            // for upload, and only unlock for download
+            setImageStatus(ImageStatus.OK);
+            setCommandStatus(CommandStatus.FAILED);
+
+            return false;
         }
         String imagePath;
         try {
             imagePath = prepareImage(getVdsId());
         } catch (Exception e) {
             log.error("Failed to prepare image for image transfer '{}': {}", getCommandId(), e);
-            return;
+            return false;
         }
 
         Guid imagedTicketId = Guid.newGuid();
@@ -1027,7 +1039,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             log.error("Failed to add host image ticket for image transfer '{}'", getCommandId());
             updateEntityPhaseToStoppedBySystem(
                     AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_DAEMON);
-            return;
+            return false;
         }
 
         if (proxyEnabled()) {
@@ -1036,7 +1048,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 if (getParameters().getTransferClientType().isBrowserTransfer()) {
                     updateEntityPhaseToStoppedBySystem(
                             AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_ADD_TICKET_TO_PROXY);
-                    return;
+                    return false;
                 }
                 // No need to stop the transfer - API client can use the daemon url directly.
                 auditLog(this, AuditLogType.TRANSFER_FAILED_TO_ADD_TICKET_TO_PROXY);
@@ -1054,6 +1066,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
         setNewSessionExpiration(getClientTicketLifetime());
         updateEntityPhase(ImageTransferPhase.TRANSFERRING);
+        return true;
     }
 
     private static boolean proxyEnabled() {
