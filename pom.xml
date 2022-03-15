@@ -20,8 +20,10 @@
     <url>https://bugzilla.redhat.com/enter_bug.cgi?product=ovirt-engine</url>
   </issueManagement>
   <scm>
-    <developerConnection>scm:git:ssh://gerrit.ovirt.org/ovirt-engine.git</developerConnection>
-    <connection>scm:git:http://gerrit.ovirt.org/p/ovirt-engine.git</connection>
+    <url>https://github.com/oVirt/ovirt-engine</url>
+    <connection>scm:git:https://github.com/oVirt/ovirt-engine.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:oVirt/ovirt-engine.git</developerConnection>
+    <tag>HEAD</tag>
   </scm>
   <!--Project Sub Modules-->
   <modules>
