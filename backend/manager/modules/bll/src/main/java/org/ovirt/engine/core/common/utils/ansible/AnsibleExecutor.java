@@ -5,7 +5,9 @@
 
 package org.ovirt.engine.core.common.utils.ansible;
 
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -140,7 +142,7 @@ public class AnsibleExecutor {
                 async);
     }
 
-    public AnsibleReturnValue runCommand(AnsibleCommandConfig command, int timeout, BiConsumer<String, String> fn, boolean async) {
+    public AnsibleReturnValue runCommand(AnsibleCommandConfig commandConfig, int timeout, BiConsumer<String, String> fn, boolean async) {
         if (timeout <= 0) {
             timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
         }
@@ -156,61 +158,63 @@ public class AnsibleExecutor {
         String msg = "";
         AnsibleRunnerHttpClient runnerClient = null;
         try {
-            runnerClient = ansibleClientFactory.create(command);
+            runnerClient = ansibleClientFactory.create(commandConfig);
             ret.setLogFile(runnerClient.getLogger().getLogFile());
+            List<String> command = commandConfig.build();
 
             // Run the playbook:
-            playUuid = runnerClient.runPlaybook(command);
+            runPlaybook(command, timeout);
+//            playUuid = runnerClient.runPlaybook(command);
 
-            if (runnerClient.isHostUnreachable(playUuid)) {
-                ret.setAnsibleReturnCode(AnsibleReturnCode.UNREACHABLE);
-                return ret;
-            }
-
-            if (async) {
-                ret.setPlayUuid(playUuid);
-                ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
-                return ret;
-            }
-
-            // Process the events of the playbook:
-            while (iteration < timeout * 60) {
-                Thread.sleep(POLL_INTERVAL);
-
-                // Get the current status of the playbook:
-                AnsibleRunnerHttpClient.PlaybookStatus playbookStatus = runnerClient.getPlaybookStatus(playUuid);
-                String status = playbookStatus.getStatus();
-                msg = playbookStatus.getMsg();
-                // Process the events if the playbook is running:
-                totalEvents = runnerClient.getTotalEvents(playUuid);
-
-                if (
-                        msg.equalsIgnoreCase("running")
-                                || msg.equalsIgnoreCase("successful") && lastEventId < totalEvents
-                ) {
-                    lastEventId = runnerClient.processEvents(playUuid, lastEventId, fn, msg, ret.getLogFile());
-                    iteration += POLL_INTERVAL / 1000;
-                } else if (msg.equalsIgnoreCase("successful")) {
-                    // Exit the processing if playbook finished:
-                    ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
-                    return ret;
-                } else if (status.equalsIgnoreCase("unknown")) {
-                    // ignore and continue:
-                } else if (runnerClient.isHostUnreachable(playUuid)) {
-                    ret.setStderr(msg);
-                    ret.setAnsibleReturnCode(AnsibleReturnCode.UNREACHABLE);
-                    return ret;
-                } else {
-                    // Playbook failed:
-                    return ret;
-                }
-            }
+//            if (runnerClient.isHostUnreachable(playUuid)) {
+//                ret.setAnsibleReturnCode(AnsibleReturnCode.UNREACHABLE);
+//                return ret;
+//            }
+//
+//            if (async) {
+//                ret.setPlayUuid(playUuid);
+//                ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
+//                return ret;
+//            }
+//
+//            // Process the events of the playbook:
+//            while (iteration < timeout * 60) {
+//                Thread.sleep(POLL_INTERVAL);
+//
+//                // Get the current status of the playbook:
+//                AnsibleRunnerHttpClient.PlaybookStatus playbookStatus = runnerClient.getPlaybookStatus(playUuid);
+//                String status = playbookStatus.getStatus();
+//                msg = playbookStatus.getMsg();
+//                // Process the events if the playbook is running:
+//                totalEvents = runnerClient.getTotalEvents(playUuid);
+//
+//                if (
+//                        msg.equalsIgnoreCase("running")
+//                                || msg.equalsIgnoreCase("successful") && lastEventId < totalEvents
+//                ) {
+//                    lastEventId = runnerClient.processEvents(playUuid, lastEventId, fn, msg, ret.getLogFile());
+//                    iteration += POLL_INTERVAL / 1000;
+//                } else if (msg.equalsIgnoreCase("successful")) {
+//                    // Exit the processing if playbook finished:
+//                    ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
+//                    return ret;
+//                } else if (status.equalsIgnoreCase("unknown")) {
+//                    // ignore and continue:
+//                } else if (runnerClient.isHostUnreachable(playUuid)) {
+//                    ret.setStderr(msg);
+//                    ret.setAnsibleReturnCode(AnsibleReturnCode.UNREACHABLE);
+//                    return ret;
+//                } else {
+//                    // Playbook failed:
+//                    return ret;
+//                }
+//            }
 
             // Cancel playbook, and raise exception in case timeout occur:
-            runnerClient.cancelPlaybook(playUuid);
-            throw new PlaybookExecutionException(
-                "Timeout exceed while waiting for playbook. ", command.playbook()
-            );
+//            runnerClient.cancelPlaybook(playUuid);
+//            throw new PlaybookExecutionException(
+//                "Timeout exceed while waiting for playbook. ", commandConfig.playbook()
+//            );
         } catch (InventoryException ex) {
             String message = ex.getMessage();
             log.error("Error executing playbook: {}", message);
@@ -243,5 +247,19 @@ public class AnsibleExecutor {
                 command.correlationId(),
                 Map.of("Message", taskName, "PlayAction", command.playAction())
         );
+    }
+
+    private void runPlaybook(List<String> command, int timeout) {
+        Process ansibleProcess = null;
+        try {
+            ProcessBuilder ansibleProcessBuilder = new ProcessBuilder(command);
+            ansibleProcess = ansibleProcessBuilder.start();
+            if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
+                throw new Exception("Timeout occurred while executing Ansible playbook.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("thread: " + Thread.currentThread().getName() + " ansible process exit value: " + ansibleProcess.exitValue());
     }
 }

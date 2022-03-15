@@ -13,6 +13,9 @@ public class AnsibleClientFactory {
         AnsibleRunnerLogger runnerLogger = ansibleCommandLogFileFactory.create(command);
         AnsibleRunnerHttpClient client = new AnsibleRunnerHttpClient();
         client.setLogger(runnerLogger);
+//        UUID uuid = UUID.randomUUID();
+//        command.setUUID(uuid);
+        client.setUUID(command.getUuid());
         return client;
     }
 
