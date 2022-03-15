@@ -273,8 +273,8 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
         ansibleCommand.add(String.valueOf(inventoryFile));
         ansibleCommand.add("-i");
         ansibleCommand.add(String.valueOf(uuid));
-        ansibleCommand.add("--private-key");
-        ansibleCommand.add("/home/delfassy/ovirt-engine-master-git/etc/pki/ovirt-engine/keys/engine_id_rsa");
+//        ansibleCommand.add("--private-key");
+//        ansibleCommand.add("/home/delfassy/ovirt-engine-master-git/etc/pki/ovirt-engine/keys/engine_id_rsa");
         ansibleCommand.add("-vvvv");
         return ansibleCommand;
     }
