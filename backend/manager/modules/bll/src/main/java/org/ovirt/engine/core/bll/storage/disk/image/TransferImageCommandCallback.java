@@ -38,4 +38,8 @@ public class TransferImageCommandCallback implements CommandCallback {
         return commandCoordinatorUtil.retrieveCommand(cmdId);
     }
 
+    @Override
+    public boolean pollOnExecutionFailed() {
+        return true;
+    }
 }
