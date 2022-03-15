@@ -17,7 +17,6 @@ from . import aaainternal
 from . import aaajdbc
 from . import aaakerbldap
 from . import aaaupgrade
-from . import ansible_runner
 from . import appmode
 from . import ca
 from . import database
@@ -42,7 +41,6 @@ def createPlugins(context):
     aaajdbc.Plugin(context=context)
     aaakerbldap.Plugin(context=context)
     aaaupgrade.Plugin(context=context)
-    ansible_runner.Plugin(context=context)
     jboss.Plugin(context=context)
     java.Plugin(context=context)
     database.Plugin(context=context)

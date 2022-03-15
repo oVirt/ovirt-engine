@@ -579,6 +579,7 @@ install-dev:	\
 	install -d "$(DESTDIR)$(PKG_TMP_DIR)"
 	install -d "$(DESTDIR)$(PKG_CACHE_DIR)"
 	install -d "$(DESTDIR)$(PKG_STATE_DIR)/.ssh"
+	install -d "$(DESTDIR)$(PKG_STATE_DIR)/ansible-runner"
 	install -d "$(DESTDIR)$(PKG_STATE_DIR)/content"
 	install -d "$(DESTDIR)$(PKG_STATE_DIR)/setup/answers"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/host-deploy"
