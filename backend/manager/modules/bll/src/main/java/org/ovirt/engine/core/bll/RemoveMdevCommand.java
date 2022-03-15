@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.common.action.MdevParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -22,8 +21,7 @@ public class RemoveMdevCommand extends AbstractMdevCommand<MdevParameters> {
     @Override
     protected void executeCommand() {
         VmDeviceId deviceId = getParameters().getDevice().getId();
-        CompensationUtils.removeEntity(deviceId, vmDeviceDao, getCompensationContextIfEnabledByCaller());
-        compensationStateChanged();
+        vmDeviceDao.remove(deviceId);
         setSucceeded(true);
     }
 
@@ -35,5 +33,4 @@ public class RemoveMdevCommand extends AbstractMdevCommand<MdevParameters> {
         }
         return true;
     }
-
 }

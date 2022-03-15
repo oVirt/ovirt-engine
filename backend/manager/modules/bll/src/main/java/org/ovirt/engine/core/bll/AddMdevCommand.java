@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.CompensationUtils;
 import org.ovirt.engine.core.common.action.MdevParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.compat.Guid;
@@ -25,10 +24,7 @@ public class AddMdevCommand extends AbstractMdevCommand<MdevParameters> {
         if (mdev.getDeviceId() == null) {
             mdev.setDeviceId(Guid.newGuid());
         }
-
-        CompensationUtils.saveEntity(mdev, vmDeviceDao, getCompensationContextIfEnabledByCaller());
-        compensationStateChanged();
-
+        vmDeviceDao.save(mdev);
         setSucceeded(true);
         setActionReturnValue(mdev.getId().getDeviceId());
     }
