@@ -14,6 +14,19 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
  * This file hold constants used for ansible execution.
  */
 public class AnsibleConstants {
+    /**
+     * Path to designated directory which will temporarily be populated with project directories named by play uuid.
+     */
+    public static final Path ANSIBLE_RUNNER_PATH = Paths.get(
+            EngineLocalConfig.getInstance().getVarDir().getPath(),
+            "ansible-runner");
+
+    /**
+     * Path to base project.
+     */
+    public static final Path RUNNER_SERVICE_PROJECT_PATH =
+            Paths.get(EngineLocalConfig.getInstance().getUsrDir().getPath(),
+                    "ansible-runner-service-project/");
 
     /**
      * Path to host-deploy-post-tasks. User can create a tasks in this file to extend host-deploy process.

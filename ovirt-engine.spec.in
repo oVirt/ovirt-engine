@@ -809,7 +809,7 @@ make %{make_common_opts} install DESTDIR="%{buildroot}"
 #
 install -dm 750 "%{buildroot}/%{engine_state}"
 install -dm 700 "%{buildroot}/%{engine_state}/.ssh"
-install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers}
+install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers,ansible-runner}
 # see also relevant %%dir line to set permissions
 install -dm 700 "%{buildroot}/%{engine_log}"
 install -dm 700 "%{buildroot}/%{engine_log}"/{ova,host-deploy,setup,notifier,dump,ansible,db-manual,brick-setup,cinderlib}
@@ -1137,6 +1137,7 @@ fi
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/ansible
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/db-manual
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/ova
+%attr(-, %{engine_user}, %{engine_group}) %{engine_state}/ansible-runner
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/content
 %attr(700, %{engine_user}, %{engine_group}) %{engine_state}/.ssh/
 %attr(600, %{engine_user}, %{engine_group}) %{engine_state}/.ssh/config
