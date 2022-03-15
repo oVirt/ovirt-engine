@@ -1586,6 +1586,13 @@ public class VmHandler implements BackendService {
         case DEDICATED:
             if (!FeatureSupported.isDedicatePolicySupported(version)) {
                 result = new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_IS_NOT_SUPPORTED);
+                break;
+            }
+
+            boolean anyNodePinned =
+                vmBase.getvNumaNodeList().stream().anyMatch(numa -> !numa.getVdsNumaNodeList().isEmpty());
+            if (anyNodePinned) {
+                result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_SET_DEDICATED_PINNING_WITH_NUMA_NODES_PINNED);
             }
             break;
         default:
