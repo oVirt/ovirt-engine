@@ -1699,8 +1699,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String removeVmHostDevice();
 
-    String repinVmHost();
-
     String updateAvailable();
 
     String noWatchdogLabel();

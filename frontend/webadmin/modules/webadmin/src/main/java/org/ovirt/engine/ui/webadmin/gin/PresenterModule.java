@@ -191,7 +191,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.NetworkAtt
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.AddVmHostDevicePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.VmRepinHostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.InstanceTypesPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.label.AffinityLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
@@ -535,7 +534,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmNextRunConfigur
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRepinHostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRunOncePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCreatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCustomPreviewPopupView;
@@ -1897,10 +1895,6 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(AddVmHostDevicePopupPresenterWidget.class,
                 AddVmHostDevicePopupPresenterWidget.ViewDef.class,
                 AddVmHostDevicePopupView.class);
-
-        bindPresenterWidget(VmRepinHostPopupPresenterWidget.class,
-                VmRepinHostPopupPresenterWidget.ViewDef.class,
-                VmRepinHostPopupView.class);
 
         // Volume
         bindPresenter(VolumeSubTabPanelPresenter.class,

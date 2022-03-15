@@ -41,12 +41,6 @@ public class VmHostDeviceActionPanelPresenterWidget extends
                 return getDetailModel().getRemoveCommand();
             }
         });
-        addActionButton(new UiCommandButtonDefinition<VM, HostDeviceView>(getSharedEventBus(), constants.repinVmHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRepinHostCommand();
-            }
-        });
     }
 
 }

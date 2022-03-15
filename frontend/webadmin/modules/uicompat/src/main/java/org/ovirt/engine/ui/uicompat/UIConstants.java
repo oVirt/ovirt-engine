@@ -2053,8 +2053,6 @@ public interface UIConstants extends Constants {
 
     String addVmHostDevicesTitle();
 
-    String repinHostTitle();
-
     String someNonDefaultTemplateHasToExistFirst();
 
     String vmDevicesTitle();
