@@ -575,7 +575,6 @@
             <custom_property name="sndbuf" regexp="^[0-9]+$"/>
             <custom_property name="vhost" regexp="^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$"/>
             <custom_property name="viodiskcache" regexp="^(none|writeback|writethrough)$"/>
-            <custom_property name="mdev_type" regexp="^.*$"/>
             <custom_property name="hugepages" regexp="^[0-9]+$"/>
         </custom_properties>
         <boot_protocols>
