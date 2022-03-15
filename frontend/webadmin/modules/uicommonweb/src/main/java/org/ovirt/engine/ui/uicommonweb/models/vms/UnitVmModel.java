@@ -3808,6 +3808,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         model.getVm().setvNumaNodeList(getVmNumaNodes());
 
         behavior.useNumaPinningChanged(getVmNumaNodes());
+        updateCpuPinningPolicy();
     }
 
     public void setNumaChanged(boolean numaChanged) {
@@ -4068,8 +4069,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             isDedicatedCpusSupported = AsyncDataProvider.getInstance()
                     .isDedicatedPolicySupportedByVersion(getCompatibilityVersion());
         }
+
+        boolean numaNodesUnpinned =
+                getNumaEnabled() == null
+                        || getNumaEnabled().getEntity() == null
+                        || !getNumaEnabled().getEntity()
+                        || getVmNumaNodes() == null
+                        || getVmNumaNodes().stream().allMatch(numa -> numa.getVdsNumaNodeList().isEmpty());
+
         cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.MANUAL, defaultHostSelected);
-        cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.DEDICATED, isDedicatedCpusSupported);
+        cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.DEDICATED, isDedicatedCpusSupported && numaNodesUnpinned);
     }
 
     protected void cpuPinningPolicyChanged() {

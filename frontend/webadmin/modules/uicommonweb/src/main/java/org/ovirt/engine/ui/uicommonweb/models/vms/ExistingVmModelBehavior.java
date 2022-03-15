@@ -96,6 +96,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         if (vm.isNextRunConfigurationExists()) {
             getModel().setVmNumaNodes(vm.getvNumaNodeList());
             getModel().updateNodeCount(vm.getvNumaNodeList().size());
+            getModel().updateCpuPinningPolicy();
         } else {
             Frontend.getInstance().runQuery(QueryType.GetVmNumaNodesByVmId,
                     new IdQueryParameters(vm.getId()),
@@ -103,6 +104,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                         List<VmNumaNode> nodes = returnValue.getReturnValue();
                         getModel().setVmNumaNodes(nodes);
                         getModel().updateNodeCount(nodes.size());
+                        getModel().updateCpuPinningPolicy();
                     }));
         }
         // load dedicated host names into host names list
