@@ -57,7 +57,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.VmErrataListWit
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.AddVmHostDevicePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.VmRepinHostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.label.AffinityLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ova.ExportOvaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
@@ -448,7 +447,6 @@ public class VirtualMachineModule extends AbstractGinModule {
     public SearchableDetailModelProvider<HostDeviceView, VmListModel<Void>, VmHostDeviceListModel> getVmHostDeviceListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<AddVmHostDevicePopupPresenterWidget> addPopupProvider,
-            final Provider<VmRepinHostPopupPresenterWidget> repinPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<VmListModel<Void>> mainModelProvider,
             final Provider<VmHostDeviceListModel> modelProvider) {
@@ -458,8 +456,6 @@ public class VirtualMachineModule extends AbstractGinModule {
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmHostDeviceListModel source, UICommand lastExecutedCommand, Model windowModel) {
                         if (lastExecutedCommand == getModel().getAddCommand()) {
                             return addPopupProvider.get();
-                        } else if (lastExecutedCommand == getModel().getRepinHostCommand()) {
-                            return repinPopupProvider.get();
                         }
                         return super.getModelPopup(source, lastExecutedCommand, windowModel);
                     }
