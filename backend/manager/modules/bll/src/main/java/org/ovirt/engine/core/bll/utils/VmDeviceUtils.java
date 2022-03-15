@@ -640,6 +640,13 @@ public class VmDeviceUtils {
     }
 
     /*
+     * Check if the VM has a mediated fake VM device.
+     */
+    public boolean hasMdevDevice(final Guid vmId) {
+        return !vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.MDEV).isEmpty();
+    }
+
+    /*
      * TPM device
      */
 

@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
@@ -270,11 +269,7 @@ public class VmValidator {
     }
 
     public ValidationResult vmNotUsingMdevTypeHook() {
-        Map<String, String> properties = getVmPropertiesUtils().getVMProperties(
-                vm.getCompatibilityVersion(),
-                vm.getStaticData());
-        String mdevType = properties.get("mdev_type");
-        if (!StringUtils.isEmpty(mdevType)) {
+        if (getVmDeviceUtils().hasMdevDevice(vm.getId())) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USES_MDEV_TYPE_HOOK);
         }
 
@@ -285,7 +280,7 @@ public class VmValidator {
         return Injector.get(HostDeviceManager.class);
     }
 
-    private VmDeviceUtils getVmDeviceUtils() {
+    VmDeviceUtils getVmDeviceUtils() {
         return Injector.get(VmDeviceUtils.class);
     }
 
