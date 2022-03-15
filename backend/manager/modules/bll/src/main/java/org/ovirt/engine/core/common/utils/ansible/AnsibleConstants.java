@@ -14,6 +14,22 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
  * This file hold constants used for ansible execution.
  */
 public class AnsibleConstants {
+//    public static final Path PROJECT_DIR = Paths.get(
+//            EngineLocalConfig.getInstance().getEtcDir().toString(),
+//            "ansible-runner-service-project"
+//    );
+    public static final String HOST_DEPLOY_PROJECT_DIR =
+            EngineLocalConfig.getInstance().getUsrDir().toString() +
+                    "/ansible-runner-service-project";
+
+    public static final String EXTRA_VARS_DIR = EngineLocalConfig.getInstance().getUsrDir().toString() +
+            "/ansible-runner-service-project" + "/env/";
+
+    public static final String ARTIFACTS_DIR = EngineLocalConfig.getInstance().getUsrDir().toString() +
+            "/ansible-runner-service-project/artifacts";
+
+    public static final String HOST_DEPLOY_PLAYBOOK_DIR = EngineLocalConfig.getInstance().getUsrDir().toString() +
+            "/ansible-runner-service-project/project/ovirt-host-deploy.yml";
 
     /**
      * Path to host-deploy-post-tasks. User can create a tasks in this file to extend host-deploy process.
