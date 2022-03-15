@@ -33,7 +33,10 @@ public class PendingCpuPinning extends PendingResource {
 
     public static Map<Guid, List<VdsCpuUnit>> collectForHost(PendingResourceManager manager, Guid host) {
         Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings = new HashMap<>();
-        manager.pendingHostResources(host, PendingCpuPinning.class).forEach(resource -> vmToPendingPinnings.put(resource.getVm(), resource.getCpuPinning()));
+        manager.pendingHostResources(host, PendingCpuPinning.class)
+                .stream()
+                .filter(resource -> resource.getCpuPinning() != null)
+                .forEach(resource -> vmToPendingPinnings.put(resource.getVm(), resource.getCpuPinning()));
 
         return vmToPendingPinnings;
     }

@@ -115,7 +115,7 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
                             vdsCpuUnitPinningHelper.isDedicatedCpuPinningPossibleAtHost(
                                     vmToPendingDedicatedCpuPinnings,
                                     vm,
-                                    host);
+                                    host.getId());
                     if (isDedicatedCpuPinningPossibleAtHost) {
                         candidates.add(host);
                     } else {

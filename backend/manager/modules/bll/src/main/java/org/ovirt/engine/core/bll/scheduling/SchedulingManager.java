@@ -432,7 +432,7 @@ public class SchedulingManager implements BackendService {
 
                 for (VM vm : vmsNotOnHost) {
                     List<VdsCpuUnit> dedicatedCpuPinning = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm,
-                            PendingCpuPinning.collectForHost(getPendingResourceManager(), host.getId()), host);
+                            PendingCpuPinning.collectForHost(getPendingResourceManager(), host.getId()), host.getId());
                     addPendingResources(vm, host, numaConsumptionPerVm.getOrDefault(vm.getId(), Collections.emptyMap()), dedicatedCpuPinning);
                     hostsToNotifyPending.add(bestHostId);
                     vfsUpdates.add(() -> markVfsAsUsedByVm(vm, bestHostId));
