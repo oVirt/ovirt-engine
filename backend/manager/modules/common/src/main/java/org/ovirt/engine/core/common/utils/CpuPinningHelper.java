@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.scheduling.utils;
+package org.ovirt.engine.core.common.utils;
 
 import static java.util.Objects.requireNonNull;
 
@@ -11,8 +11,11 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 
 public class CpuPinningHelper {
 
@@ -67,7 +70,7 @@ public class CpuPinningHelper {
      * @return a list containing virtual cpu to host cpu associations
      */
     public static List<PinnedCpu> parseCpuPinning(final String cpuPinning) {
-        if (StringUtils.isEmpty(cpuPinning)) {
+        if (cpuPinning == null || cpuPinning.isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -92,6 +95,30 @@ public class CpuPinningHelper {
         }
     }
 
+    public static String getVmPinning(VM vm) {
+        switch (vm.getCpuPinningPolicy()) {
+            case MANUAL:
+                return vm.getCpuPinning();
+            case RESIZE_AND_PIN_NUMA:
+            case DEDICATED:
+                return vm.getCurrentCpuPinning();
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Provides a CPU pinning string based on the VdsCpuUnit list.
+     * The pinning will be based on the list order.
+     *
+     * @param vdsCpuUnits a list of VdsCpuUnit
+     * @return a string of CPU pinning
+     */
+    public static String createCpuPinning(List<VdsCpuUnit> vdsCpuUnits) {
+        return IntStream.range(0, vdsCpuUnits.size())
+                .mapToObj(i-> String.format("%d#%d", i, vdsCpuUnits.get(i).getCpu())).collect(Collectors.joining("_"));
+    }
+
     /**
      * Represents the association between a virtual CPU in a VM to the bare metal cpu threads on a host
      */
@@ -99,6 +126,10 @@ public class CpuPinningHelper {
 
         private Integer vCpu;
         private Collection<Integer> pCpus;
+
+        protected PinnedCpu() {
+
+        }
 
         protected PinnedCpu(Integer vCpu, Collection<Integer> pCpus) {
             this.vCpu = requireNonNull(vCpu);

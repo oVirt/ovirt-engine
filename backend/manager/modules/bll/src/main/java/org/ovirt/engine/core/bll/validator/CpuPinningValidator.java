@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper.parseCpuPinning;
+import static org.ovirt.engine.core.common.utils.CpuPinningHelper.parseCpuPinning;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,10 +8,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper.PinnedCpu;
 import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.CpuPinningHelper.PinnedCpu;
 
 public class CpuPinningValidator {
 

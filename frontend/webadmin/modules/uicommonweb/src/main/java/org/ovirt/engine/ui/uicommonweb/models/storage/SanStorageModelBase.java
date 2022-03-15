@@ -1022,8 +1022,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             boolean includedLuns,
             List<LunModel> aggregatedLuns) {
         for (LunModel lun : lunModels) {
-            if (((selectedLuns && lun.getIsSelected() && !lun.getIsIncluded()) ||
-                    (includedLuns && lun.getIsIncluded() && !lun.getIsSelected())) &&
+            if ((selectedLuns && lun.getIsSelected() && !lun.getIsIncluded() ||
+                    includedLuns && lun.getIsIncluded() && !lun.getIsSelected()) &&
                     Linq.firstOrNull(aggregatedLuns, new Linq.LunPredicate(lun)) == null) {
                 aggregatedLuns.add(lun);
             }

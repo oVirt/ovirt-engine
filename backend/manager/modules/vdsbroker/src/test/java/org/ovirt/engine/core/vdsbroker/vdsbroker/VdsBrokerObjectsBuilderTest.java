@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,6 +20,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.LeaseStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -421,5 +423,38 @@ public class VdsBrokerObjectsBuilderTest {
     @Test
     public void testExtractIpv4GatewayEmptyString() {
         assertThat(vdsBrokerObjectsBuilder.extractGateway(Collections.singletonMap(VdsProperties.GLOBAL_GATEWAY, "")), nullValue());
+    }
+
+    @Test
+    public void testCpuTopology() {
+        Map<String, Object> vmStruct = createCpuTopologyStruct();
+        VDS vds = getVds();
+        vdsBrokerObjectsBuilder.updateCpuTopology(vds, vmStruct);
+        assertEquals(4, vds.getCpuTopology().size());
+        assertThat(vds.getCpuTopology(), contains(new VdsCpuUnit(0, 0, 0), new VdsCpuUnit(0, 0, 1),
+                new VdsCpuUnit(0, 1, 2), new VdsCpuUnit(1, 0, 3)));
+    }
+
+    private Map<String, Object> createCpuTopologyStruct() {
+        Map<String, Integer> cpuCapability1 = new HashMap<>();
+        cpuCapability1.put(VdsProperties.cpu_id, 0);
+        cpuCapability1.put(VdsProperties.core_id, 0);
+        cpuCapability1.put(VdsProperties.socket_id, 0);
+        Map<String, Integer> cpuCapability2 = new HashMap<>();
+        cpuCapability2.put(VdsProperties.cpu_id, 1);
+        cpuCapability2.put(VdsProperties.core_id, 0);
+        cpuCapability2.put(VdsProperties.socket_id, 0);
+        Map<String, Integer> cpuCapability3 = new HashMap<>();
+        cpuCapability3.put(VdsProperties.cpu_id, 2);
+        cpuCapability3.put(VdsProperties.core_id, 1);
+        cpuCapability3.put(VdsProperties.socket_id, 0);
+        Map<String, Integer> cpuCapability4 = new HashMap<>();
+        cpuCapability4.put(VdsProperties.cpu_id, 3);
+        cpuCapability4.put(VdsProperties.core_id, 0);
+        cpuCapability4.put(VdsProperties.socket_id, 1);
+        Map<String, Object> struct = new HashMap<>();
+        struct.put(VdsProperties.cpu_topology,
+                new Object[] { cpuCapability1, cpuCapability2, cpuCapability3, cpuCapability4 });
+        return struct;
     }
 }

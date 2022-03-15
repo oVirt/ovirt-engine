@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
@@ -384,7 +385,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
 
             // If disk image list is more than one then we assume that it has a snapshot, since one image is the active
             // disk and all the other images are the snapshots.
-            if ((diskImageList.size() > 1) || !Guid.Empty.equals(((DiskImage) getOldDisk()).getImageTemplateId())) {
+            if (diskImageList.size() > 1 || !Guid.Empty.equals(((DiskImage) getOldDisk()).getImageTemplateId())) {
                 return failValidation(EngineMessage.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
             }
 
@@ -557,9 +558,9 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
                     vmDeviceDao.update(vmDeviceForVm);
                 }
 
-                if ((getOldDiskVmElement().getDiskInterface() != getDiskVmElement().getDiskInterface()) ||
-                        ((getOldDiskVmElement().isBoot() != getDiskVmElement().isBoot()) && (
-                                getDiskVmElement().getDiskInterface() == DiskInterface.IDE))) {
+                if (getOldDiskVmElement().getDiskInterface() != getDiskVmElement().getDiskInterface() ||
+                        getOldDiskVmElement().isBoot() != getDiskVmElement().isBoot() &&
+                                getDiskVmElement().getDiskInterface() == DiskInterface.IDE) {
                     vmDeviceForVm.setAddress("");
                     vmDeviceDao.clearDeviceAddress(getOldDisk().getId());
                 }
@@ -568,7 +569,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
     }
 
     private boolean shouldPerformMetadataUpdate() {
-        return (getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) &&
+        return getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE &&
                 (!Objects.equals(getOldDisk().getDiskAlias(), getNewDisk().getDiskAlias()) ||
                  !Objects.equals(getOldDisk().getDiskDescription(), getNewDisk().getDiskDescription()));
     }
@@ -786,7 +787,12 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
-            jobProperties.put("diskalias", getDiskAlias());
+            String vmNames = vmsDiskOrSnapshotAttachedTo
+                    .stream()
+                    .map(VM::getName)
+                    .sorted()
+                    .collect(Collectors.joining(", "));
+            jobProperties.put("vm", vmNames.isEmpty()? "N/A" : vmNames);
         }
         return jobProperties;
     }
@@ -1039,7 +1045,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
             for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
                 VM vm = pair.getFirst();
                 vmsDiskOrSnapshotAttachedTo.add(vm);
-                if (Boolean.TRUE.equals(pair.getSecond().isPlugged())) {
+                if (pair.getSecond().isPlugged()) {
                     if (pair.getSecond().getSnapshotId() != null) {
                         vmsDiskSnapshotPluggedTo.add(vm);
                     } else {

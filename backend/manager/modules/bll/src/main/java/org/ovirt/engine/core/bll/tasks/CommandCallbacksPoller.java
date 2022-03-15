@@ -196,7 +196,7 @@ public class CommandCallbacksPoller implements BackendService {
                 log.debug("Exception", ex);
                 handleError(ex, status, cmdId);
             } finally {
-                if ((CommandStatus.FAILED == status || (CommandStatus.SUCCEEDED == status && !errorInCallback))
+                if ((CommandStatus.FAILED == status || CommandStatus.SUCCEEDED == status && !errorInCallback)
                         && !runCallbackAgain) {
                     log.debug("Callback of command {} ({}) has been notified, removing command from command repository.",
                             cmdActionType, cmdId);

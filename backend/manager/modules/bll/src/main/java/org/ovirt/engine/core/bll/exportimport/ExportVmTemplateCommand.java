@@ -175,7 +175,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                 if (!validate(sdValidator.isDomainExistAndActive())
                         || !validate(sdValidator.isDomainWithinThresholds())
                         || !(getParameters().getForceOverride()
-                        || (!getParameters().isImagesExistOnTargetStorageDomain() && checkIfDisksExist(getTemplateDisks())))
+                        || !getParameters().isImagesExistOnTargetStorageDomain() && checkIfDisksExist(getTemplateDisks()))
                         || !validateFreeSpaceOnDestinationDomain(sdValidator, getTemplateDisks())) {
                     return false;
                 }

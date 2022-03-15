@@ -21,4 +21,5 @@ Dialogs
     height: initial;
     max-height: initial;
     position: inherit;
+    min-height: inherit;
 }

@@ -16,6 +16,8 @@ Usage: $0
         Load extra configuration files or answer file.
     --generate-answer=file
         Generate answer file.
+    --show-environment-documentation
+        Show documentation about used environment keys.
 
 __EOF__
 	exit 0
@@ -49,6 +51,9 @@ while [ -n "$1" ]; do
 		;;
 		--generate-answer=*)
 			environment="${environment} OVESETUP_CORE/answerFile=str:${v}"
+		;;
+		--show-environment-documentation)
+			environment="${environment} OVESETUP_DOCS/showDocText=bool:True"
 		;;
 		--help)
 			usage

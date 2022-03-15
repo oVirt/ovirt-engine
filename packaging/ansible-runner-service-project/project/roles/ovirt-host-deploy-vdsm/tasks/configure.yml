@@ -11,6 +11,43 @@
 # grab local devices that should be blacklisted. This may expose
 # the local devices as FC storage in engine.
 
+- block:
+  - name: mask libvirt modular daemon units
+    systemd:
+      name: "{{ item }}"
+      state: stopped
+      enabled: no
+      masked: yes
+    with_items:
+      - virtqemud.service
+      - virtqemud.socket
+      - virtinterfaced.socket
+      - virtnetworkd.socket
+      - virtnodedevd.socket
+      - virtnwfilterd.socket
+      - virtsecretd.socket
+      - virtstoraged.socket
+      - virtproxyd.socket
+
+  - name: enable libvirtd monolithic daemon unit
+    systemd:
+      name: libvirtd
+      enabled: yes
+
+  - name: remove virtqemud socket
+    file:
+      path: /run/libvirt/virtqemud-sock
+      state: absent
+
+  # workaround for BZ 2054323
+  - name: Change the openvswitch_t to permissive
+    selinux_permissive:
+      name: openvswitch_t
+      permissive: true
+
+  when: el_ver|int >= 9
+
+
 - name: Configure LVM filter
   command: vdsm-tool config-lvm-filter -y
   register: lvm_filter_result

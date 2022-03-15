@@ -169,7 +169,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
 
             // Attachment wasn't changed- check if needs update
             if (wasAttached && !needsDetach) {
-                if ((manageModel.isRequired() != networkCluster.isRequired())
+                if (manageModel.isRequired() != networkCluster.isRequired()
                         || manageModel.isDisplayNetwork() != networkCluster.isDisplay()
                         || manageModel.isMigrationNetwork() != networkCluster.isMigration()
                         || manageModel.isManagement() != networkCluster.isManagement()

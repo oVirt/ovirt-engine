@@ -64,10 +64,10 @@ public abstract class AffinityGroupsQueryBase<T extends QueryParametersBase> ext
 
             Set<Guid> hostIds = AffinityValidator.unpackAffinityGroupHostsFromLabels(group, labelsMap);
             group.setBroken(
-                    (group.isVmPositive() && hostsWithVms.size() > 1) ||
-                    (group.isVmNegative() && hostsWithVms.size() < runningVms.size()) ||
-                    (group.isVdsPositive() && !hostIds.containsAll(hostsWithVms)) ||
-                    (group.isVdsNegative() && hostIds.stream().anyMatch(hostsWithVms::contains))
+                    group.isVmPositive() && hostsWithVms.size() > 1 ||
+                    group.isVmNegative() && hostsWithVms.size() < runningVms.size() ||
+                    group.isVdsPositive() && !hostIds.containsAll(hostsWithVms) ||
+                    group.isVdsNegative() && hostIds.stream().anyMatch(hostsWithVms::contains)
             );
         }
     }

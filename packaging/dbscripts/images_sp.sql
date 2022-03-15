@@ -16,7 +16,8 @@ CREATE OR REPLACE FUNCTION InsertImage (
     v_volume_format INT,
     v_image_group_id UUID,
     v_active BOOLEAN,
-    v_volume_classification SMALLINT
+    v_volume_classification SMALLINT,
+    v_sequence_number INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -33,7 +34,8 @@ BEGIN
         image_group_id,
         volume_format,
         active,
-        volume_classification
+        volume_classification,
+        sequence_number
         )
     VALUES (
         v_creation_date,
@@ -48,7 +50,8 @@ BEGIN
         v_image_group_id,
         v_volume_format,
         v_active,
-        v_volume_classification
+        v_volume_classification,
+        v_sequence_number
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -117,7 +120,8 @@ CREATE OR REPLACE FUNCTION UpdateImage (
     v_image_group_id UUID,
     v_active BOOLEAN,
     v_volume_classification SMALLINT,
-    v_qcow_compat INT
+    v_qcow_compat INT,
+    v_sequence_number INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -135,7 +139,8 @@ BEGIN
         active = v_active,
         volume_classification = v_volume_classification,
         qcow_compat = v_qcow_compat,
-        _update_date = LOCALTIMESTAMP
+        _update_date = LOCALTIMESTAMP,
+        sequence_number = v_sequence_number
     WHERE image_guid = v_image_guid;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -190,3 +195,12 @@ BEGIN
     ORDER BY repo_image_name;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION GetMaxSequenceNumber (v_image_group_id UUID)
+RETURNS int AS $FUNCTION$
+    SELECT MAX(sequence_number)
+    FROM images
+    WHERE image_group_id = v_image_group_id;
+$FUNCTION$
+LANGUAGE sql;

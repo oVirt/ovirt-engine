@@ -59,7 +59,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends DeactivateSto
 
     private boolean shouldUseCallback() {
         CommandEntity commandEntity = commandCoordinatorUtil.getCommandEntity(getCommandId());
-        return (commandEntity != null && commandEntity.isCallbackEnabled()) || shouldPerformOvfUpdate();
+        return commandEntity != null && commandEntity.isCallbackEnabled() || shouldPerformOvfUpdate();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.options;
 
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 /**
@@ -8,7 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
  * @param <T> entity type wrapped by this field
  */
 interface Field<T> {
-    /** Entity model used by the widgets visibile in the UI */
+    /** Entity model used by the widgets visible in the UI */
     EntityModel<T> getEntity();
 
     /**
@@ -31,6 +32,13 @@ interface Field<T> {
     }
 
     /**
+     * @return true if Field is backed by a property persisted on the server
+     */
+    default boolean isOnServer() {
+        return !Guid.Empty.equals(toProp().getPropertyId());
+    }
+
+    /**
      * Create a new property, based on previous property (if present) but containing the current widgets value
      * @return new property
      */
@@ -47,4 +55,23 @@ interface Field<T> {
      * @return true if the prop is supported by this field
      */
     boolean isSupported(UserProfileProperty prop);
+
+    /**
+     * @return true if the field supports resetting
+     */
+    default boolean isResettable() {
+        return false;
+    }
+
+    /**
+     * @return true if the field contains custom setting (non-default)
+     */
+    boolean isCustom();
+
+    /**
+     * @return translated label for the field (if available), otherwise the property name
+     */
+    default String getLabel() {
+        return getEntity().getTitle() != null ? getEntity().getTitle() : toProp().getName();
+    }
 }

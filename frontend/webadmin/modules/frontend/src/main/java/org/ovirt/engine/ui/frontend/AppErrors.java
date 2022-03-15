@@ -2701,6 +2701,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__DETAIL__VM_PINNING_PCPU_DOES_NOT_EXIST();
 
+    String VAR__DETAIL__VM_PINNING_DEDICATED_NOT_FIT();
+
     String VAR__DETAIL__NUMA_PINNING_FAILED();
 
     String VAR__DETAIL__CLUSTER_IN_MAINTENANCE();
@@ -2708,6 +2710,8 @@ public interface AppErrors extends ConstantsWithLookup {
     String VAR__DETAIL__NOT_PINNED_TO_HOST();
 
     String VAR__DETAIL__MISSING_VDS_HOOK();
+
+    String VAR__DETAIL__NO_HOST_CPU_DATA();
 
     String VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE();
 
@@ -3185,5 +3189,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_CANNOT_CLONE_RUNNING_VM_WITH_MBS_DISKS();
 
+    String ACTION_TYPE_FAILED_CONVERT_DISK_NO_FORMAT_CHANGE();
+
+    String ACTION_TYPE_FAILED_CONVERT_DISK_NO_ALLOCATION_CHANGE();
+
+    String ACTION_TYPE_FAILED_DISK_WITH_CHAIN();
 }
 

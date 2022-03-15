@@ -18,7 +18,7 @@ public class NetworkQosValidator extends QosValidator<NetworkQoS> {
      */
     @Override
     public ValidationResult requiredValuesPresent() {
-        return (getQos() != null)
+        return getQos() != null
                 && (missingValue(getQos().getInboundAverage(), getQos().getInboundPeak(), getQos().getInboundBurst())
                 || missingValue(getQos().getOutboundAverage(), getQos().getOutboundPeak(), getQos().getOutboundBurst()))
                 ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES)
@@ -33,7 +33,7 @@ public class NetworkQosValidator extends QosValidator<NetworkQoS> {
      * Verify that the specified peak value isn't lower than the specified average value.
      */
     public ValidationResult peakConsistentWithAverage() {
-        return (getQos() != null) && (peakLowerThanAverage(getQos().getInboundAverage(), getQos().getInboundPeak())
+        return getQos() != null && (peakLowerThanAverage(getQos().getInboundAverage(), getQos().getInboundPeak())
                 || peakLowerThanAverage(getQos().getOutboundAverage(), getQos().getOutboundPeak()))
                 ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE)
                 : ValidationResult.VALID;

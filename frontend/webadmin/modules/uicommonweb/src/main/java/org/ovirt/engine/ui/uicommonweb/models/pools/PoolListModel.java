@@ -343,9 +343,9 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
         // Check name unicitate.
         AsyncDataProvider.getInstance().isPoolNameUnique(new AsyncQuery<>(
                         isUnique -> {
-                            if ((model.getIsNew() && !isUnique)
-                                    || (!model.getIsNew() && !isUnique
-                                    && name.compareToIgnoreCase(getCurrentPool().getName()) != 0)) {
+                            if (model.getIsNew() && !isUnique
+                                    || !model.getIsNew() && !isUnique
+                                    && name.compareToIgnoreCase(getCurrentPool().getName()) != 0) {
                                 model.getName()
                                         .getInvalidityReasons()
                                         .add(ConstantsManager.getInstance()

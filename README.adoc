@@ -5,10 +5,6 @@ image:https://copr.fedorainfracloud.org/coprs/ovirt/ovirt-master-snapshot/packag
 
 Welcome to the oVirt Engine - Open Virtualization Manager source repository.
 
-This repository is hosted on [gerrit.ovirt.org:ovirt-engine](https://gerrit.ovirt.org/#/admin/projects/ovirt-engine)
-and a **backup** of it is hosted on [GitHub:ovirt-engine](https://github.com/oVirt/ovirt-engine)
-
-
 == How to contribute
 
 === Submitting patches
@@ -68,10 +64,9 @@ Install the following system components:
 - ovirt-engine-metrics (optional)
 - python3-ovirt-engine-sdk4 (optional)
 - ansible-lint / python3-ansible-lint (optional)
-- python-flake8 / pyflakes (optional)
-- python-pep8 / pep8 (optional)
-- python-docker-py (optional)
-- python2-isort (optional)
+- python3-flake8 / pyflakes (optional)
+- python3-pycodestyle / pycodestyle (optional)
+- python3-isort (optional)
 - python3-distro
 
 ==== Note on Java versions
@@ -175,19 +170,19 @@ Install additional packages for Fedora:
         ovirt-engine-wildfly \
         ovirt-engine-wildfly-overlay \
         ovirt-setup-lib \
-        python2-daemon \
-        python2-dateutil \
-        python2-jinja2 \
+        python3-daemon \
+        python3-dateutil \
+        python3-jinja2 \
         python-ovirt-engine-sdk4 \
         unzip
 
 Optional packages for Fedora:
 
   $ sudo yum install -y \
-        python2-docker-py \
-        python2-flake8 \
-        python2-isort \
-        python2-pep8
+        python3-docker-py \
+        python3-flake8 \
+        python3-isort \
+        python3-pycodestyle
 
 ==== System settings
 
@@ -457,6 +452,34 @@ WILDFLY_OVERLAY_MODULES:: Change location of WildFly overlay modules.
 If you want to disable WildFly overlay configuration completely, please
 set to empty string. Default is
 `/usr/share/ovirt-engine-wildfly-overlay/modules`.
+
+ISORT:: Set name/location of the `isort` utility, which is used during `make validations`
+(also called from `make install-dev`). Defaults to `isort`. If not found, that's ok. If
+found, should be at least version 5.7. The version in CentOS Stream 8 is ok. The version
+provided by RHEL 8 (and rebuilds) is too old, 4.3. Some ways to get a newer version:
+
+- `dnf copr enable -y sbonazzo/EL8_collection`
+
+- Install from pypi in a python virtualenv/venv, e.g.:
+```
+sudo dnf install python3-virtualenv
+mkdir -p $HOME/venv
+cd $HOME/venv
+virtualenv-3 python3-isort
+. python3-isort/bin/activate
+pip install isort
+```
+
+And, before running `make`,
+```
+export ISORT=$HOME/venv/python3-isort/bin/isort
+```
+
+If you do have an older version installed and want `make` to ignore it, you can
+point the variable at some non-existing name/location, e.g.:
+```
+export ISORT=nonexistent
+```
 
 === Setup
 

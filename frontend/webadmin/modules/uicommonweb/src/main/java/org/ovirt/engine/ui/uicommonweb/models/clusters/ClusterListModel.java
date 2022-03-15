@@ -975,7 +975,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                         Cluster.class));
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
-                || (oneSelected && getSelectedItem().isManaged()));
+                || oneSelected && getSelectedItem().isManaged());
 
         boolean moreSelected = getSelectedItems() != null && getSelectedItems().size() > 0;
 

@@ -1,14 +1,14 @@
-package org.ovirt.engine.core.bll.scheduling.utils;
+package org.ovirt.engine.core.common.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper.getAllPinnedPCpus;
-import static org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper.parseCpuPinning;
+import static org.ovirt.engine.core.common.utils.CpuPinningHelper.getAllPinnedPCpus;
+import static org.ovirt.engine.core.common.utils.CpuPinningHelper.parseCpuPinning;
 
 import java.util.Collection;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.ovirt.engine.core.bll.scheduling.utils.CpuPinningHelper.PinnedCpu;
+import org.ovirt.engine.core.common.utils.CpuPinningHelper.PinnedCpu;
 
 public class CpuPinningHelperTest {
 

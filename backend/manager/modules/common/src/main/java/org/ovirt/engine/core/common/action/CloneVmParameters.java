@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -20,7 +19,6 @@ public class CloneVmParameters extends AddVmParameters {
     private Guid destStorageDomainId;
     private CloneVmStage stage = CloneVmStage.CREATE_VM_SNAPSHOT;
     private Guid sourceSnapshotId;
-    private Map<Guid, List<DiskImage>> storageToDisksMap;
     private Collection<VmInterfacesModifyParameters.VnicWithProfile> vnicsWithProfiles;
 
     private boolean edited;
@@ -94,14 +92,6 @@ public class CloneVmParameters extends AddVmParameters {
 
     public void setSourceSnapshotId(Guid sourceSnapshotId) {
         this.sourceSnapshotId = sourceSnapshotId;
-    }
-
-    public Map<Guid, List<DiskImage>> getStorageToDisksMap() {
-        return storageToDisksMap;
-    }
-
-    public void setStorageToDisksMap(Map<Guid, List<DiskImage>> storageToDisksMap) {
-        this.storageToDisksMap = storageToDisksMap;
     }
 
     public Collection<VmInterfacesModifyParameters.VnicWithProfile> getVnicsWithProfiles() {

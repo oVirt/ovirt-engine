@@ -379,8 +379,8 @@ public class HostMonitoring implements HostMonitoringInterface {
         for (VdsNetworkInterface iface : vds.getInterfaces()) {
             Double transmitRate = iface.getStatistics().getTransmitRate();
             Double receiveRate = iface.getStatistics().getReceiveRate();
-            if ((transmitRate != null && iface.getStatistics().getTransmitRate().intValue() > maxUsedPercentageThreshold)
-                    || (receiveRate != null && iface.getStatistics().getReceiveRate().intValue() > maxUsedPercentageThreshold)) {
+            if (transmitRate != null && iface.getStatistics().getTransmitRate().intValue() > maxUsedPercentageThreshold
+                    || receiveRate != null && iface.getStatistics().getReceiveRate().intValue() > maxUsedPercentageThreshold) {
                 AuditLogable logable = createAuditLogableForHost();
                 logable.setCustomId(iface.getName());
                 logable.addCustomValue("HostName", vds.getName());

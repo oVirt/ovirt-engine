@@ -7,7 +7,7 @@ import java.util.function.Function;
 public class ObjectUtils {
 
     public static boolean bigDecimalEqual(BigDecimal a, BigDecimal b) {
-        return (a == b) || (a != null && b != null && a.compareTo(b) == 0);
+        return a == b || a != null && b != null && a.compareTo(b) == 0;
     }
 
     /**

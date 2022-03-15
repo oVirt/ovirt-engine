@@ -289,7 +289,7 @@ public class LibvirtVmXmlBuilder {
         if (numaEnabled) {
             writeNumaTune();
         }
-        writeCpu(numaEnabled || (vm.isHostedEngine() && !vmNumaNodesSupplier.get().isEmpty()));
+        writeCpu(numaEnabled || vm.isHostedEngine() && !vmNumaNodesSupplier.get().isEmpty());
         writeCpuTune(numaEnabled);
         writeQemuCapabilities();
         writeDevices();
@@ -387,7 +387,7 @@ public class LibvirtVmXmlBuilder {
 
         if (!FeatureSupported.hotPlugMemory(vm.getCompatibilityVersion(), vm.getClusterArch())
                 // the next check is because QEMU fails if memory and maxMemory are the same
-                || (vm.getVmMemSizeMb() == vm.getMaxMemorySizeMb()) && nvdimmSize == 0) {
+                || vm.getVmMemSizeMb() == vm.getMaxMemorySizeMb() && nvdimmSize == 0) {
                 return;
         }
 
@@ -401,7 +401,7 @@ public class LibvirtVmXmlBuilder {
     private void writevCpu() {
         writer.writeStartElement("vcpu");
         writer.writeAttributeString("current", String.valueOf(VmCpuCountHelper.getDynamicNumOfCpu(vm)));
-        writer.writeRaw(String.valueOf(VmCpuCountHelper.isAutoPinning(vm) ?
+        writer.writeRaw(String.valueOf(VmCpuCountHelper.isResizeAndPinPolicy(vm) ?
                 VmCpuCountHelper.getDynamicNumOfCpu(vm) : VmInfoBuildUtils.maxNumberOfVcpus(vm)));
         writer.writeEndElement();
     }
@@ -521,7 +521,7 @@ public class LibvirtVmXmlBuilder {
 
     private void writeCpuTune(boolean numaEnabled) {
         writer.writeStartElement("cputune");
-        Map<String, Object> cpuPinning = vmInfoBuildUtils.parseCpuPinning(VmCpuCountHelper.isAutoPinning(vm) ?
+        Map<String, Object> cpuPinning = vmInfoBuildUtils.parseCpuPinning(VmCpuCountHelper.isDynamicCpuPinning(vm) ?
                 vm.getCurrentCpuPinning() : vm.getCpuPinning());
         if (cpuPinning.isEmpty() && numaEnabled) {
             cpuPinning = NumaSettingFactory.buildCpuPinningWithNumaSetting(
@@ -997,6 +997,7 @@ public class LibvirtVmXmlBuilder {
         writePayloadMetadata();
         writeResumeBehaviorMetadata();
         writeBalloonMetadata();
+        writeCpuPinningPolicyMetadata();
         writer.writeEndElement();
     }
 
@@ -1040,6 +1041,10 @@ public class LibvirtVmXmlBuilder {
 
     private void writeBalloonMetadata() {
         writer.writeElement(OVIRT_VM_URI, "ballooningEnabled", String.valueOf(vm.isBalloonEnabled()));
+    }
+
+    private void writeCpuPinningPolicyMetadata() {
+        writer.writeElement(OVIRT_VM_URI, "cpuPolicy", vm.getCpuPinningPolicy().name().toLowerCase());
     }
 
     private void writePowerEvents() {
@@ -1287,7 +1292,7 @@ public class LibvirtVmXmlBuilder {
         }
 
         // graphics device handling
-        if (displayType == DisplayType.none || (vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty())) {
+        if (displayType == DisplayType.none || vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty()) {
             // remove existing graphics devices
             devices = devices.stream()
                     .filter(dev -> dev.getType() != VmDeviceGeneralType.GRAPHICS)

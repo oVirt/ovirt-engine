@@ -1,36 +1,24 @@
 ---
-- name: Merging cache disk with other list of disks
-  set_fact:
-    disklist: "{{ (disks|from_yaml + [ssd]) | join(',') }}"
-
+# rc 5 = Physical volume '/dev/name' is already in volume group
 - name: Setup SSD for caching | Extend the Volume Group
-  lvg:
-     state: present
-     vg: "{{ vgname }}"
-     pvs: "{{ disklist }}"
-     pv_options: "--dataalignment 256K"
+  command: "vgextend --dataalignment 256K {{ vgname }} {{ ssd }}"
+  register: resp
+  failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
 
-- name: Setup SSD for caching | Change the attributes of the logical volume
-  lvol:
-     state: present
-     vg: "{{ vgname }}"
-     thinpool: "{{ lvname }}_pool"
-     opts: " --zero n "
-
+# rc 5 = Physical volume '/dev/name' is already in volume group
 - name: Setup SSD for caching | Create LV for cache
-  lvol:
-     state: present
-     vg: "{{ vgname }}"
-     lv: "{{ cache_lvname }}"
-     size: "{{ cache_lvsize }}"
+  command: "lvcreate -L {{ cache_lvsize }} -n {{ cache_lvname }} {{ vgname }}"
+  register: resp
+  failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
 
 - name: Setup SSD for caching | Create metadata LV for cache
-  lvol:
-     state: present
-     vg: "{{ vgname }}"
-     lv: "{{ cache_meta_lv }}"
-     size: "{{ cache_meta_lvsize }}"
+  command: "lvcreate -L {{ cache_meta_lvsize }} -n {{ cache_meta_lv }} {{ vgname }}"
   when: cache_meta_lv is defined and cache_meta_lv != ' '
+  register: resp
+  failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
 
 - name: Setup SSD for caching | Convert logical volume to a cache pool LV
   command: >
@@ -39,7 +27,11 @@
         --cachemode {{ cachemode | default('writethrough') }}
         "/dev/{{ vgname }}/{{ cache_lvname }}"
   when: cache_meta_lv is defined and cache_meta_lv != ' '
+  register: resp
+  failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
 
+# rc 5 = Command on LV name/cache does not accept LV type cachepool.
 # It is valid not to have cachemetalvname! Writing a separate task not to
 # complicate things.
 - name: Setup SSD for caching | Convert logical volume to a cache pool LV without cachemetalvname
@@ -49,11 +41,17 @@
         --cachemode {{ cachemode | default('writethrough') }}
         "/dev/{{ vgname }}/{{ cache_lvname }}"
   when: cache_meta_lv is not defined
+  register: resp
+  failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
 
 # Run lvs -a -o +devices to see the cache settings
 - name: Setup SSD for caching | Convert an existing logical volume to a cache LV
   command: >
      lvconvert -y --type cache --cachepool "/dev/{{ vgname }}/{{ cache_lvname }}"
      "/dev/{{ vgname }}/{{ lvname }}_pool"
+  register: resp
+  failed_when: resp.rc not in [0, 5]
+  changed_when: resp.rc == 0
   tags:
     - skip_ansible_lint

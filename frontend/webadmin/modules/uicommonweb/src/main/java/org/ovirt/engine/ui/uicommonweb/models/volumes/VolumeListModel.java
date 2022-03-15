@@ -573,7 +573,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     }
 
     private boolean isEditSnapshotScheduleAvailable(List<GlusterVolumeEntity> list) {
-        return (list.size() == 1) && (list.get(0).getStatus() == GlusterStatus.UP) && list.get(0)
+        return list.size() == 1 && list.get(0).getStatus() == GlusterStatus.UP && list.get(0)
                 .getSnapshotScheduled();
     }
 
@@ -585,7 +585,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 if (volumeEntity.getStatus() == GlusterStatus.DOWN) {
                     return false;
                 }
-                if ((volumeEntity.getOptionValue("diagnostics.latency-measurement") == null)|| !volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on")) {//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+                if (volumeEntity.getOptionValue("diagnostics.latency-measurement") == null || !volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on")) {//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
                     return false;
                 }
             }
@@ -601,7 +601,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 if (volumeEntity.getStatus() == GlusterStatus.DOWN) {
                     return false;
                 }
-                if ((volumeEntity.getOptionValue("diagnostics.latency-measurement") != null) && volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on")) {//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+                if (volumeEntity.getOptionValue("diagnostics.latency-measurement") != null && volumeEntity.getOptionValue("diagnostics.latency-measurement").equals("on")) {//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
                     return false;
                 }
             }
@@ -1257,7 +1257,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         AsyncDataProvider.getInstance().getGlusterRebalanceStatus(new AsyncQuery<>(returnValue -> {
             cModel.stopProgress();
             GlusterVolumeTaskStatusEntity rebalanceStatusEntity = returnValue.getReturnValue();
-            if ((rebalanceStatusEntity == null) || !returnValue.getSucceeded()) {
+            if (rebalanceStatusEntity == null || !returnValue.getSucceeded()) {
                 cModel.setMessage(ConstantsManager.getInstance().getMessages().rebalanceStatusFailed(volumeEntity.getName()));
             } else {
                 setConfirmWindow(null);

@@ -1,16 +1,34 @@
 ---
-- name: Run packing script
-  script: >
-    pack_ova.py
-    "{{ entity_type }}"
-    "{{ ova_file.dest }}"
-    "{{ ovirt_ova_pack_ovf }}"
-    "{{ ovirt_ova_pack_disks }}"
-    "{{ ovirt_ova_pack_tpm }}"
-    "{{ ovirt_ova_pack_nvram }}"
-    "{{ ovirt_ova_pack_padding }}"
-  args:
-    executable: "{{ ansible_python_interpreter }}"
-  register: packing_result
-  ignore_errors: yes
-  when: ova_file is defined and ova_file.dest is defined
+- block:
+  - name: Create temporary directory
+    tempfile:
+      state: directory
+      suffix: ova
+    register: ova_temp
+
+  - name: Copy pack_ova.py to temp directory
+    copy:
+      src: pack_ova.py
+      dest: "{{ ova_temp.path }}/pack_ova.py"
+
+  - name: Run packing script
+    command: >
+      "{{ ansible_python_interpreter }}"
+      "{{ ova_temp.path }}/pack_ova.py"
+      "{{ entity_type }}"
+      "{{ ova_file.dest }}"
+      "{{ ovirt_ova_pack_ovf }}"
+      "{{ ovirt_ova_pack_disks }}"
+      "{{ ovirt_ova_pack_tpm }}"
+      "{{ ovirt_ova_pack_nvram }}"
+      "{{ ovirt_ova_pack_padding }}"
+    register: packing_result
+    ignore_errors: yes
+    async: "{{ ansible_timeout }}"
+    poll: 15
+    when: ova_file is defined and ova_file.dest is defined
+  always:
+  - name: Remove temp directory
+    file:
+      state: absent
+      path: "{{ ova_temp.path }}"

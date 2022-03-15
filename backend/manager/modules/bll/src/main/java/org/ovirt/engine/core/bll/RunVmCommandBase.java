@@ -60,6 +60,7 @@ import org.ovirt.engine.core.dao.provider.HostProviderBindingDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VdsMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -397,4 +398,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             }
         }
     }
+
+    protected VdsManager getVdsManager() {
+        return resourceManager.getVdsManager(getVdsId());
+    }
+
 }

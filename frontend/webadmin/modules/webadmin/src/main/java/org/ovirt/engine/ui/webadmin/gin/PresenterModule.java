@@ -2205,6 +2205,8 @@ public class PresenterModule extends BasePresenterModule {
             new TypeLiteral<DetailActionPanelView<VM, HostDeviceView>>(){});
         bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<VDS, HostInterfaceLineModel>>(){},
             new TypeLiteral<DetailActionPanelView<VDS, HostInterfaceLineModel>>(){});
+        bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<VDS, HostDeviceView>>(){},
+                new TypeLiteral<DetailActionPanelView<VDS, HostDeviceView>>(){});
         bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<StoragePool, StorageQos>>(){},
             new TypeLiteral<DetailActionPanelView<StoragePool, StorageQos>>(){});
         bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<Cluster, VDS>>(){},

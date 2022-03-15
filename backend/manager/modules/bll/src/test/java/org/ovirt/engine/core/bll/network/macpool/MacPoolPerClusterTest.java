@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MacRange;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -34,8 +36,10 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.InjectorExtension;
+import org.ovirt.engine.core.utils.MockConfigDescriptor;
+import org.ovirt.engine.core.utils.MockConfigExtension;
 
-@ExtendWith({MockitoExtension.class, InjectorExtension.class})
+@ExtendWith({MockitoExtension.class, InjectorExtension.class, MockConfigExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class MacPoolPerClusterTest extends BaseCommandTest {
     private static final String SESSION_ID = "session id";
@@ -67,13 +71,16 @@ public class MacPoolPerClusterTest extends BaseCommandTest {
     private MacPoolPerCluster macPoolPerCluster;
     private CommandContext commandContext;
 
+    public static Stream<MockConfigDescriptor<?>> mockConfiguration() {
+        return Stream.of(MockConfigDescriptor.of(ConfigValues.RemainingMacsInPoolWarningThreshold, 5));
+    }
+
     @BeforeEach
     public void setUp() {
         commandContext = CommandContext.createContext(SESSION_ID);
         macPool = createMacPool(MAC_FROM, MAC_TO);
         cluster = createCluster(macPool);
         vmNic = createVmNic();
-
         when(decoratedMacPoolFactory.createDecoratedPool(any(), any())).thenAnswer(AdditionalAnswers.returnsFirstArg());
 
         mockUsedMacsInSystem(macPool.getId());

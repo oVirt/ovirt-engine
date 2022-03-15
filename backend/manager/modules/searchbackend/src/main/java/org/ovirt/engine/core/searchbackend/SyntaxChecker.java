@@ -129,7 +129,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         // Doing this condition to identify whether this is the last
         // searchObject and no space is predicted !!
         if (final2) {
-            if (((curChar == ' ') || (idx + 1 == searchText.length())) && !betweenDoubleQuotes && !addObjFlag) {
+            if ((curChar == ' ' || idx + 1 == searchText.length()) && !betweenDoubleQuotes && !addObjFlag) {
                 strRealObj = strRealObj.trim();
                 if (nonSpaceRegexp.isMatch(strRealObj)) {
                     addObjFlag = true;
@@ -138,7 +138,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 }
             }
         } else {
-            if ((curChar == ' ') && !betweenDoubleQuotes && !addObjFlag) {
+            if (curChar == ' ' && !betweenDoubleQuotes && !addObjFlag) {
                 strRealObj = strRealObj.trim();
                 if (nonSpaceRegexp.isMatch(strRealObj)) {
                     addObjFlag = true;
@@ -202,9 +202,9 @@ public class SyntaxChecker implements ISyntaxChecker {
                 syntaxContainer.setErr(SyntaxError.INVALID_CHARECTER, curStartPos, idx + 1);
                 return syntaxContainer;
             }
-            if ((curChar == ' ') && (curState != SyntaxObjectType.CONDITION_RELATION)
-                    && (curState != SyntaxObjectType.COLON) && (curState != SyntaxObjectType.CONDITION_VALUE)
-                    && (curState != SyntaxObjectType.OR) && (curState != SyntaxObjectType.AND)) {
+            if (curChar == ' ' && curState != SyntaxObjectType.CONDITION_RELATION
+                    && curState != SyntaxObjectType.COLON && curState != SyntaxObjectType.CONDITION_VALUE
+                    && curState != SyntaxObjectType.OR && curState != SyntaxObjectType.AND) {
                 curStartPos += 1;
                 continue;
             }

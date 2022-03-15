@@ -1609,6 +1609,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     ParallelMigrationsSupported,
 
+    @TypeConverterAttribute(Integer.class)
+    RemainingMacsInPoolWarningThreshold,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

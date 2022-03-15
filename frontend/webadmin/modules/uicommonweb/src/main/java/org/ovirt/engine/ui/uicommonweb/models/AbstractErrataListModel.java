@@ -95,13 +95,13 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
 
     protected Collection<Erratum> filter(Collection<Erratum> resultList) {
         List<Erratum> ret = new ArrayList<>();
-        if (filter == null || (filter.isSecurity() && filter.isBugs() && filter.isEnhancements())) {
+        if (filter == null || filter.isSecurity() && filter.isBugs() && filter.isEnhancements()) {
             return resultList;
         }
         for (Erratum e : resultList) {
-            if ((filter.isSecurity() && e.getType() == Erratum.ErrataType.SECURITY) ||
-                    (filter.isBugs() && e.getType() == Erratum.ErrataType.BUGFIX) ||
-                    (filter.isEnhancements() && e.getType() == Erratum.ErrataType.ENHANCEMENT) ) {
+            if (filter.isSecurity() && e.getType() == Erratum.ErrataType.SECURITY ||
+                    filter.isBugs() && e.getType() == Erratum.ErrataType.BUGFIX ||
+                    filter.isEnhancements() && e.getType() == Erratum.ErrataType.ENHANCEMENT) {
                 ret.add(e);
             }
         }

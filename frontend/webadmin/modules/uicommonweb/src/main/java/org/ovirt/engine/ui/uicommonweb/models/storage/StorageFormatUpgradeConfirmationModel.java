@@ -61,7 +61,7 @@ public class StorageFormatUpgradeConfirmationModel extends ConfirmationModel {
         }
         // Checks if the DC level is greater than the storage domain level.
         // And is not an export domain.
-        return sd -> (sd.getStorageFormat().compareTo(dc.getStoragePoolFormatType()) < 0)
+        return sd -> sd.getStorageFormat().compareTo(dc.getStoragePoolFormatType()) < 0
                 && !sd.getStorageDomainType().isIsoOrImportExportDomain();
     }
 }

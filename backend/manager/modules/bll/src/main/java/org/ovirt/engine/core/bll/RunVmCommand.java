@@ -64,6 +64,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -83,6 +84,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.utils.CpuPinningHelper;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.StartEntity;
@@ -956,8 +958,18 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         addCpuAndNumaPinning();
+        setDedicatedCpus();
 
         return true;
+    }
+
+    private void setDedicatedCpus() {
+        if (getVm().getCpuPinningPolicy() != CpuPinningPolicy.DEDICATED) {
+            return;
+        }
+        List<VdsCpuUnit> vdsCpuUnits = getVdsManager().getCpuTopology().stream()
+                .filter(cpu -> cpu.getVmIds().contains(getVmId())).sorted().collect(Collectors.toList());
+        getVm().setCurrentCpuPinning(CpuPinningHelper.createCpuPinning(vdsCpuUnits));
     }
 
     private void warnIfVmNotFitInNumaNode() {
@@ -1017,9 +1029,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     int toolVersion = Integer.parseInt(matchToolPattern.group(IsoDomainListSynchronizer.TOOL_VERSION));
 
                     if (clusterVer.compareTo(getVm().getCompatibilityVersion()) <= 0) {
-                        if ((bestClusterVer == null)
-                                || (clusterVer.compareTo(bestClusterVer) > 0)
-                                || (clusterVer.equals(bestClusterVer) && toolVersion > bestToolVer)) {
+                        if (bestClusterVer == null
+                                || clusterVer.compareTo(bestClusterVer) > 0
+                                || clusterVer.equals(bestClusterVer) && toolVersion > bestToolVer) {
                             bestToolVer = toolVersion;
                             bestClusterVer = clusterVer;
                             selectedCd = fileName;
@@ -1106,11 +1118,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return false;
         }
 
-        boolean isCloudInitEnabled = (!getVm().isInitialized() && getVm().getVmInit() != null && osRepository.isCloudInit(getVm().getVmOsId())) ||
-                (getParameters().getInitializationType() == InitializationType.CloudInit);
+        boolean isCloudInitEnabled = !getVm().isInitialized() && getVm().getVmInit() != null && osRepository.isCloudInit(getVm().getVmOsId()) ||
+                getParameters().getInitializationType() == InitializationType.CloudInit;
 
-        boolean isIgnitionEnabled = (!getVm().isInitialized() && getVm().getVmInit() != null && osRepository.isIgnition(getVm().getVmOsId())) ||
-                (getParameters().getInitializationType() == InitializationType.Ignition);
+        boolean isIgnitionEnabled = !getVm().isInitialized() && getVm().getVmInit() != null && osRepository.isIgnition(getVm().getVmOsId()) ||
+                getParameters().getInitializationType() == InitializationType.Ignition;
 
         if ((isCloudInitEnabled || isIgnitionEnabled) && hasMaximumNumberOfDisks()) {
             return failValidation(EngineMessage.VMPAYLOAD_CDROM_OR_CLOUD_INIT_MAXIMUM_DEVICES);

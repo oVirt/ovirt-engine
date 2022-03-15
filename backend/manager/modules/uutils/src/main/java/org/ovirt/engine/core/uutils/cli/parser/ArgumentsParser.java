@@ -505,7 +505,7 @@ public class ArgumentsParser {
 
         for (String argName : this.properties.stringPropertyNames()) {
             String[] param = argName.split("\\.");
-            if((param.length > 1 && !param[1].equals("arg")) || !param[0].equals(this.prefix)) {
+            if(param.length > 1 && !param[1].equals("arg") || !param[0].equals(this.prefix)) {
                 continue;
             }
             if (param.length < 4) {

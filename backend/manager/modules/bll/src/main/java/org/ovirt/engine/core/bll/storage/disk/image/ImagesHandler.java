@@ -343,7 +343,7 @@ public class ImagesHandler {
      * */
     public static double getTotalActualSizeOfDisk(DiskImage diskImage, StorageDomainStatic storageDomain) {
         double sizeForDisk = diskImage.getSize();
-        if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse) ||
+        if (storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse ||
                 storageDomain.getStorageType().isBlockDomain() && diskImage.getVolumeFormat() == VolumeFormat.COW) {
             double usedSpace = diskImage.getActualDiskWithSnapshotsSizeInBytes();
             sizeForDisk = Math.min(diskImage.getSize(), usedSpace);
@@ -515,22 +515,34 @@ public class ImagesHandler {
     }
 
     public static boolean checkImageConfiguration(StorageDomainStatic storageDomain,
-            DiskImageBase diskInfo, List<String> messages) {
-        if (!checkImageConfiguration(storageDomain, diskInfo.getVolumeType(), diskInfo.getVolumeFormat(), diskInfo.getBackup())) {
+            VolumeType volumeType,
+            VolumeFormat volumeFormat,
+            DiskBackup diskBackup,
+            List<String> messages) {
+        if (!checkImageConfiguration(storageDomain, volumeType, volumeFormat, diskBackup)) {
             // not supported
             messages.add(EngineMessage.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED.toString());
-            messages.add(String.format("$%1$s %2$s", "volumeFormat", diskInfo.getVolumeFormat()));
-            messages.add(String.format("$%1$s %2$s", "volumeType", diskInfo.getVolumeType()));
-            messages.add(String.format("$%1$s %2$s", "backup", diskInfo.getBackup()));
+            messages.add(String.format("$%1$s %2$s", "volumeFormat", volumeFormat));
+            messages.add(String.format("$%1$s %2$s", "volumeType", volumeType));
+            messages.add(String.format("$%1$s %2$s", "backup", diskBackup));
             return false;
         }
         return true;
     }
 
+    public static boolean checkImageConfiguration(StorageDomainStatic storageDomain,
+            DiskImageBase diskInfo, List<String> messages) {
+       return checkImageConfiguration(storageDomain,
+               diskInfo.getVolumeType(),
+               diskInfo.getVolumeFormat(),
+               diskInfo.getBackup(),
+               messages);
+    }
+
     private static boolean checkImageConfiguration(StorageDomainStatic storageDomain, VolumeType volumeType, VolumeFormat volumeFormat, DiskBackup diskBackup) {
-        return !((volumeType == VolumeType.Preallocated && volumeFormat == VolumeFormat.COW && diskBackup != DiskBackup.Incremental)
-                || (volumeFormat == VolumeFormat.RAW && diskBackup == DiskBackup.Incremental)
-                || (storageDomain.getStorageType().isBlockDomain() && volumeType == VolumeType.Sparse && volumeFormat == VolumeFormat.RAW)
+        return !(volumeType == VolumeType.Preallocated && volumeFormat == VolumeFormat.COW && diskBackup != DiskBackup.Incremental
+                || volumeFormat == VolumeFormat.RAW && diskBackup == DiskBackup.Incremental
+                || storageDomain.getStorageType().isBlockDomain() && volumeType == VolumeType.Sparse && volumeFormat == VolumeFormat.RAW
                 || volumeFormat == VolumeFormat.Unassigned
                 || volumeType == VolumeType.Unassigned);
     }

@@ -3901,7 +3901,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         }
 
         Version version = getCompatibilityVersion();
-        if (version == null || version.greaterOrEquals(Version.v4_4)) {
+        if (cluster != null && version != null && version.greaterOrEquals(Version.v4_4)) {
             getMigrationDowntime().setIsAvailable(false);
             getAutoConverge().setIsAvailable(false);
             getMigrateCompressed().setIsAvailable(false);

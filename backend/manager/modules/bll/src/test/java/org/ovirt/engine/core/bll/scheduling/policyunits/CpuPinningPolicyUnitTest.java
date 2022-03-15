@@ -7,6 +7,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
@@ -17,13 +19,24 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class CpuPinningPolicyUnitTest {
     private VDS hostWithCpus;
 
@@ -31,11 +44,18 @@ public class CpuPinningPolicyUnitTest {
 
     private VM vm;
 
+    @InjectMocks
     private final CpuPinningPolicyUnit policyUnit = new CpuPinningPolicyUnit(null, null);
 
     private PerHostMessages perHostMessages;
 
     private Cluster cluster;
+
+    @Mock
+    private ResourceManager resourceManager;
+
+    @Mock
+    private VdsManager vdsManager;
 
     @BeforeEach
     public void setUp() {
@@ -51,11 +71,15 @@ public class CpuPinningPolicyUnitTest {
 
         vm = new VM();
         vm.setId(Guid.newGuid());
+        vm.setCpuPinningPolicy(CpuPinningPolicy.MANUAL);
         cluster = new Cluster();
+        doReturn(vdsManager).when(resourceManager).getVdsManager(any());
+        doReturn(new ArrayList<>()).when(vdsManager).getCpuTopology();
     }
 
     @Test
     public void shouldHandleEmptyHostList() {
+        vm.setCpuPinning("1#0_2#3");
         final List<VDS> filteredHost = policyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap()),  new ArrayList<>(), vm, mock(PerHostMessages.class));
         assertThat(filteredHost, is(empty()));
         assertThat(messages(), is(empty()));
@@ -65,7 +89,8 @@ public class CpuPinningPolicyUnitTest {
      * No online CPU is equivalent to no information available
      */
     @Test
-    public void shouldConsiderHostsWithNoOnlineCpus(){
+    public void shouldConsiderHostsWithNoOnlineCpus() {
+        vm.setCpuPinningPolicy(CpuPinningPolicy.NONE);
         hostWithoutCpus.setOnlineCpus("");
         assertThat(filter(), hasItem(hostWithoutCpus));
         assertThat(messages(), is(empty()));
@@ -75,7 +100,8 @@ public class CpuPinningPolicyUnitTest {
      * No information about online cpus is available
      */
     @Test
-    public void shouldConsiderHostWithNoCpuData(){
+    public void shouldConsiderHostWithNoCpuData() {
+        vm.setCpuPinningPolicy(CpuPinningPolicy.NONE);
         hostWithoutCpus.setOnlineCpus(null);
         assertThat(filter(), hasItem(hostWithoutCpus));
         assertThat(messages(), is(empty()));
@@ -83,6 +109,7 @@ public class CpuPinningPolicyUnitTest {
 
     @Test
     public void shouldReturnAllHostWithoutPinningRequirements() {
+        vm.setCpuPinningPolicy(CpuPinningPolicy.NONE);
         assertThat(filter(), containsInAnyOrder(hostWithCpus, hostWithoutCpus));
         assertThat(messages(), is(empty()));
     }

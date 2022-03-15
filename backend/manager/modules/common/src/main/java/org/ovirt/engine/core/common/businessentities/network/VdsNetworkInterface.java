@@ -94,7 +94,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      * @return <code>true</code> if this is the management interface
      */
     public boolean getIsManagement() {
-        return getType() != null && ((getType() & 2) > 0);
+        return getType() != null && (getType() & 2) > 0;
     }
 
     /**

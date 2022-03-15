@@ -9,7 +9,7 @@ public class NotEmptyValidation implements IValidation {
     public ValidationResult validate(Object value) {
         ValidationResult result = new ValidationResult();
 
-        if (value == null || (value instanceof String && StringHelper.isNullOrEmpty((String) value))) {
+        if (value == null || value instanceof String && StringHelper.isNullOrEmpty((String) value)) {
             result.setSuccess(false);
             result.getReasons().add(ConstantsManager.getInstance().getConstants().thisFieldCantBeEmptyInvalidReason());
         }

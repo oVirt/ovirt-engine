@@ -186,7 +186,7 @@ public class AnsibleExecutor {
 
                 if (
                         msg.equalsIgnoreCase("running")
-                                || (msg.equalsIgnoreCase("successful") && lastEventId < totalEvents)
+                                || msg.equalsIgnoreCase("successful") && lastEventId < totalEvents
                 ) {
                     lastEventId = runnerClient.processEvents(playUuid, lastEventId, fn, msg, ret.getLogFile());
                     iteration += POLL_INTERVAL / 1000;

@@ -47,6 +47,7 @@ import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,6 +157,10 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             refreshHostIfNeeded(hostId == null ? alternativeHostsList : hostId);
         }
 
+        VdsManager vdsManager = resourceManager.getVdsManager(getParameters().getHostId(), false);
+        if (vdsManager != null) {
+            vdsManager.unpinVmCpus(getVm().getId());
+        }
         managedBlockStorageCommandUtil.disconnectManagedBlockStorageDisks(getVm(), vmHandler);
         vmNicDao.setVmInterfacesSyncedForVm(getVmId());
     }

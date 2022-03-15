@@ -79,6 +79,17 @@ class FileLocations(object):
         OVIRT_ENGINE_PKIKEYSDIR,
         'apache.key.nopass',
     )
+    FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE_TEMPLATE = os.path.join(
+        osetupcons.FileLocations.OVIRT_SETUP_DATADIR,
+        'conf',
+        'fapolicyd-55-allow-ovirt-jboss.rules.in',
+    )
+    FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE = os.path.join(
+        SYSCONFDIR,
+        'fapolicyd',
+        'rules.d',
+        '55-allow-ovirt-jboss.rules',
+    )
 
 
 @util.export
@@ -110,6 +121,8 @@ class Defaults(object):
     DEFAULT_NETWORK_JBOSS_DEBUG_ADDRESS = '127.0.0.1:8787'
 
     DEFAULT_HTTPD_SERVICE = 'httpd'
+
+    DEFAULT_FAPOLICYD_SERVICE = 'fapolicyd'
 
     DEFAULT_POSTGRES_PROVISIONING_PGDATA_DIR = os.path.join(
         osetupcons.FileLocations.LOCALSTATEDIR,
@@ -149,6 +162,7 @@ class Defaults(object):
 class Stages(object):
     ADMIN_PASSWORD_SET = 'osetup.admin.password.set'
     APACHE_RESTART = 'osetup.apache.core.restart'
+    FAPOLICYD_RESTART = 'osetup.fapolicyd.core.restart'
 
     CORE_ENGINE_START = 'osetup.core.engine.start'
 
@@ -185,14 +199,6 @@ class Stages(object):
     DIALOG_TITLES_E_STORAGE = 'osetup.dialog.titles.storage.end'
 
     RENAME_PKI_CONF_MISC = 'osetup.rename.pki.conf.misc'
-
-
-@util.export
-@util.codegen
-class Const(object):
-    # Enable only TLSv1.2 protocol. More information at
-    # https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslprotocol
-    HTTPD_SSL_PROTOCOLS = '-all +TLSv1.2'
 
 
 @util.export
@@ -353,6 +359,29 @@ class ApacheEnv(object):
     HTTPD_CONF_SSL = 'OVESETUP_APACHE/configFileSsl'
     HTTPD_SERVICE = 'OVESETUP_APACHE/httpdService'
     NEED_RESTART = 'OVESETUP_APACHE/needRestart'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class FapolicydEnv(object):
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def CONFIGURED(self):
+        return 'OVESETUP_FAPOLICYD/configured'
+
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Allow ovirt engine jboss tmp directory access'),
+    )
+    def ALLOW_JBOSS_TMP_FOLDER_ACCESS(self):
+        return 'OVESETUP_FAPOLICYD/allowJbossTmpFolderAccess'
+
+    FAPOLICYD_ALLOW_OVIRT_RULE = "OVESETUP_FAPOLICYD/configAllowOvirtRule"
+    FAPOLICYD_SERVICE = 'OVESETUP_FAPOLICYD/fapolicydService'
+    NEED_RESTART = 'OVESETUP_FAPOLICYD/needRestart'
 
 
 @util.export

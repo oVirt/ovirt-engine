@@ -217,8 +217,8 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         // Internal execution means that the domain status is being set to Inactive - therefore it's applicable for
         // the Active/Unknown statuses.
         // On user initiated execution, we allow to deactivate domain which is monitored.
-        if (!((getParameters().getIsInternal() && checkStorageDomainStatus(StorageDomainStatus.Active,
-                StorageDomainStatus.Unknown))
+        if (!(getParameters().getIsInternal() && checkStorageDomainStatus(StorageDomainStatus.Active,
+                StorageDomainStatus.Unknown)
                 || checkStorageDomainStatus(StorageConstants.monitoredDomainStatuses))) {
             return false;
         }

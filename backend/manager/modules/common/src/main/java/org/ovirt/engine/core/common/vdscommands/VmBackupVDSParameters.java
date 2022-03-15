@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VmBackup;
@@ -10,20 +11,25 @@ public class VmBackupVDSParameters extends VdsIdVDSCommandParametersBase {
 
     private VmBackup vmBackup;
     private boolean requireConsistency;
-    // Map between the backed-up disk ID to the created scratch disk image path.
-    private Map<Guid, String> scratchDisksMap;
+    // Map between the backed-up disk ID to the created scratch disk image
+    // and the path to it after the scratch disk was prepared.
+    private Map<Guid, ScratchDiskInfo> scratchDisksMap;
 
     public VmBackupVDSParameters() {
     }
 
     public VmBackupVDSParameters(Guid vdsId, VmBackup vmBackup) {
-        this(vdsId, vmBackup, false);
+        this(vdsId, vmBackup, false, new HashMap<>());
     }
 
-    public VmBackupVDSParameters(Guid vdsId, VmBackup vmBackup, boolean requireConsistency) {
+    public VmBackupVDSParameters(Guid vdsId,
+            VmBackup vmBackup,
+            boolean requireConsistency,
+            Map<Guid, ScratchDiskInfo> scratchDisksMap) {
         super(vdsId);
         this.vmBackup = vmBackup;
         this.requireConsistency = requireConsistency;
+        this.scratchDisksMap = scratchDisksMap;
     }
 
     public VmBackup getVmBackup() {
@@ -38,11 +44,11 @@ public class VmBackupVDSParameters extends VdsIdVDSCommandParametersBase {
         return requireConsistency;
     }
 
-    public Map<Guid, String> getScratchDisksMap() {
+    public Map<Guid, ScratchDiskInfo> getScratchDisksMap() {
         return scratchDisksMap;
     }
 
-    public void setScratchDisksMap(Map<Guid, String> scratchDisksMap) {
+    public void setScratchDisksMap(Map<Guid, ScratchDiskInfo> scratchDisksMap) {
         this.scratchDisksMap = scratchDisksMap;
     }
 

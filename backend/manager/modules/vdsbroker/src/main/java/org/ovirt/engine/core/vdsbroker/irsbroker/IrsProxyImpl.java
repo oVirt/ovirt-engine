@@ -301,7 +301,7 @@ public class IrsProxyImpl implements IrsProxy {
 
         if (result == null
                 || !result.getSucceeded()
-                || (result.getSucceeded() && ((SpmStatusResult) result.getReturnValue()).getSpmStatus() != SpmStatus.SPM)) {
+                || result.getSucceeded() && ((SpmStatusResult) result.getReturnValue()).getSpmStatus() != SpmStatus.SPM) {
             // update pool status to problematic until fence will happen
             if (storagePool.getStatus() != StoragePoolStatus.NonResponsive
                     && storagePool.getStatus() != StoragePoolStatus.NotOperational) {
@@ -333,7 +333,7 @@ public class IrsProxyImpl implements IrsProxy {
                         }
                     }
                 }
-                if ((tasksList == null) || allTasksFinished) {
+                if (tasksList == null || allTasksFinished) {
                     nullifyInternalProxies();
                 } else {
                     if (_errorAttempts < Config.<Integer> getValue(ConfigValues.SPMFailOverAttempts)) {
@@ -439,8 +439,8 @@ public class IrsProxyImpl implements IrsProxy {
                             Collection<Guid> vdsConnectedToPool = getVdsConnectedToPool(storagePoolId);
                             Set<Guid> vdsDomInMaintenance = _domainsInMaintenance.get(domain.getId());
                             if (vdsConnectedToPool.isEmpty() ||
-                                    (vdsDomInMaintenance != null &&
-                                            vdsDomInMaintenance.containsAll(vdsConnectedToPool))) {
+                                    vdsDomInMaintenance != null &&
+                                            vdsDomInMaintenance.containsAll(vdsConnectedToPool)) {
                                 log.info("Moving domain '{}' to maintenance", domain.getId());
                                 storagePoolIsoMapDao.updateStatus(
                                         domain.getStoragePoolIsoMapData().getId(),
@@ -488,7 +488,7 @@ public class IrsProxyImpl implements IrsProxy {
             if (domainFromDb.getStorageDomainType() == StorageDomainType.Master && domainPoolMapFromDb != null
                     && domainPoolMapFromDb.getStatus() != StorageDomainStatus.Locked) {
                 // and the domain is not master in the VDSM
-                if (!((domainFromVdsm.getStorageDomainType() == StorageDomainType.Master) || (domainFromVdsm.getStorageDomainType() == StorageDomainType.Unknown))) {
+                if (!(domainFromVdsm.getStorageDomainType() == StorageDomainType.Master || domainFromVdsm.getStorageDomainType() == StorageDomainType.Unknown)) {
                     reconstructMasterDomainNotInSync(domainFromVdsm.getStoragePoolId(),
                             domainFromDb,
                             "Mismatch between master in DB and VDSM",
@@ -535,7 +535,7 @@ public class IrsProxyImpl implements IrsProxy {
             // if status didn't change and still not active no need to
             // update dynamic data
             if (statusChanged
-                    || (domainPoolMapFromDb.getStatus() != StorageDomainStatus.Inactive && domainFromVdsm.getStatus() == StorageDomainStatus.Active)) {
+                    || domainPoolMapFromDb.getStatus() != StorageDomainStatus.Inactive && domainFromVdsm.getStatus() == StorageDomainStatus.Active) {
                 storageDomainDynamicDao.update(domainFromVdsm.getStorageDynamicData());
                 if (domainFromVdsm.getAvailableDiskSize() != null && domainFromVdsm.getUsedDiskSize() != null) {
                     double freePercent = domainFromVdsm.getStorageDynamicData().getfreeDiskPercent();
@@ -1066,7 +1066,7 @@ public class IrsProxyImpl implements IrsProxy {
                         // fence it simply assume
                         // it is not SPM and continue.
                         } else if (destSpmStatus == null
-                                || (destSpmStatus.getSpmStatus() != SpmStatus.Free && destSpmStatus.getSpmStatus() != SpmStatus.Unknown_Pool)) {
+                                || destSpmStatus.getSpmStatus() != SpmStatus.Free && destSpmStatus.getSpmStatus() != SpmStatus.Unknown_Pool) {
                             vdsSpmIdToFence = spmStatus.getSpmId();
                         }
                     } else {

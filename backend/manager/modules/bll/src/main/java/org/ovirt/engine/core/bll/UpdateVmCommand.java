@@ -1172,7 +1172,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.TOO_MANY_CPU_COMPONENTS);
         }
 
-        if (vmFromParams.isUseHostCpuFlags() && (ArchitectureType.ppc == getCluster().getArchitecture().getFamily())) {
+        if (vmFromParams.isUseHostCpuFlags() && ArchitectureType.ppc == getCluster().getArchitecture().getFamily()) {
             return failValidation(EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
         }
 
@@ -1348,7 +1348,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (memorySizeChangeMb != 0 && vmFromDB.isRunning() && isHotSetEnabled()
                 && HugePageUtils.isBackedByHugepages(vmFromDB.getStaticData())
-                && (memorySizeChangeMb > 0 || (memorySizeChangeMb < 0 && getParameters().isMemoryHotUnplugEnabled()))) {
+                && (memorySizeChangeMb > 0 || memorySizeChangeMb < 0 && getParameters().isMemoryHotUnplugEnabled())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_MEMORY_HOT_SET_NOT_SUPPORTED_FOR_HUGE_PAGES);
         }
 
@@ -1463,7 +1463,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private boolean memoryNextRunSnapshotRequired() {
         final int memoryChange = getParameters().getVm().getMemSizeMb() - oldVm.getMemSizeMb();
         return VMStatus.Down != getVm().getStatus()
-                && ((memoryChange < 0 && !getParameters().isMemoryHotUnplugEnabled())
+                && (memoryChange < 0 && !getParameters().isMemoryHotUnplugEnabled()
                         || memoryChange % getVm().getClusterArch().getHotplugMemorySizeFactorMb() != 0);
     }
 

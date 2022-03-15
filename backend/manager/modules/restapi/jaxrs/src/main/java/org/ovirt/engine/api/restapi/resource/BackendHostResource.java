@@ -489,7 +489,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public Response unregisteredStorageDomainsDiscover(Action action) {
         StorageType storageType =
-                ((action.getIscsi() != null) && (action.getIscsi().getAddress() != null)) ? StorageType.ISCSI
+                (action.getIscsi() != null && action.getIscsi().getAddress() != null) ? StorageType.ISCSI
                         : StorageType.FCP;
 
 

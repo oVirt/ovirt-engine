@@ -78,6 +78,14 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         getModel().getVmId().setIsAvailable(true);
         getModel().getVmId().setIsChangeable(false);
 
+        getModel().getIsStateless().setIsAvailable(vm.getVmPoolId() == null);
+        getModel().getIsRunAndPause().setIsAvailable(vm.getVmPoolId() == null);
+
+        // Storage domain and provisioning are not available for an existing VM.
+        getModel().getStorageDomain().setIsChangeable(false);
+        getModel().getProvisioning().setIsAvailable(false);
+        getModel().getProvisioning().setEntity(Guid.Empty.equals(vm.getVmtGuid()));
+
         loadDataCenter();
         instanceTypeManager = new ExistingVmInstanceTypeManager(getModel(), vm);
 
@@ -171,29 +179,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
         // Update model state according to VM properties.
         buildModel(vm.getStaticData(), (source, destination) -> {
-            getModel().getIsStateless().setIsAvailable(vm.getVmPoolId() == null);
-
-            getModel().getIsRunAndPause().setIsAvailable(vm.getVmPoolId() == null);
-
-            getModel().getCpuSharesAmount().setEntity(vm.getCpuShares());
-            updateCpuSharesSelection();
-
-            updateRngDevice(getVm().getId());
-            updateTimeZone(vm.getTimeZone());
-
-            updateGraphics(vm.getId());
-
-            getModel().getHostCpu().setEntity(isHostCpuValueStillBasedOnTemp() ? vm.isUseHostCpuFlags() : false);
-
-            // Storage domain and provisioning are not available for an existing VM.
-            getModel().getStorageDomain().setIsChangeable(false);
-            getModel().getProvisioning().setIsAvailable(false);
-            getModel().getProvisioning().setEntity(Guid.Empty.equals(vm.getVmtGuid()));
-
-            getModel().getCpuPinning().setEntity(vm.getCpuPinning());
-
-            getModel().getCustomPropertySheet().deserialize(vm.getCustomProperties());
-
+            // System
             if (isHotSetCpuSupported()) {
                 // cancel related events while fetching data
                 getModel().getTotalCPUCores().getEntityChangedEvent().removeListener(getModel());
@@ -207,15 +193,20 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     updateNumOfSockets();
                 }), vm.getRunOnVds());
             }
+            updateTimeZone(vm.getTimeZone());
 
-            updateCpuProfile(vm.getClusterId(), vm.getCpuProfileId());
+            // Console
+            updateGraphics(vm.getId());
+            // Host
+            getModel().getHostCpu().setEntity(isHostCpuValueStillBasedOnTemp() ? vm.isUseHostCpuFlags() : false);
+            // High availability
             getModel().updateResumeBehavior();
+            // Resource allocation
+            updateCpuProfile(vm.getClusterId(), vm.getCpuProfileId());
+            updateCpuSharesSelection();
+            // Random Generator
+            updateRngDevice(getVm().getId());
 
-            getModel().getMigrationMode().setSelectedItem(vm.getMigrationSupport());
-
-            getModel().getTscFrequency().setEntity(vm.getUseTscFrequency());
-
-            updateBiosType();
 
             getInstanceTypeManager().updateInstanceTypeFieldsFromSource();
         });
@@ -267,15 +258,10 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     @Override
     public void postDataCenterWithClusterSelectedItemChanged() {
-        updateDefaultHost();
-        updateCustomPropertySheet();
-        updateNumOfSockets();
+        super.postDataCenterWithClusterSelectedItemChanged();
+
         updateQuotaByCluster(vm.getQuotaId(), vm.getQuotaName());
         updateCpuPinningVisibility();
-        updateMemoryBalloon();
-        updateCpuSharesAvailability();
-        updateVirtioScsiAvailability();
-        updateOSValues();
         updateInstanceImages();
         updateLeaseStorageDomains(vm.getLeaseStorageDomainId());
 
@@ -324,7 +310,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     @Override
     protected void changeDefaultHost() {
         super.changeDefaultHost();
-        doChangeDefaultHost(vm.getDedicatedVmForVdsList());
+        updateDefaultHost(vm.getDedicatedVmForVdsList());
 
         if (isHostCpuValueStillBasedOnTemp()) {
             getModel().getHostCpu().setEntity(vm.isUseHostCpuFlags());

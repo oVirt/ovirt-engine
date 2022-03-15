@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.storage.backup;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,11 +44,7 @@ public class RemoveScratchDisksCommand<T extends VmBackupParameters> extends VmC
 
     @Override
     protected void executeCommand() {
-        List<DiskImage> scratchDisks = getParameters().getScratchDisksMap()
-                .values()
-                .stream()
-                .map(Pair::getFirst)
-                .collect(Collectors.toList());
+        Collection<DiskImage> scratchDisks = getParameters().getScratchDisksMap().values();
 
         // Scratch disks remain locked throughout the backup.
         // In order to remove the scratch disks they should be unlocked.

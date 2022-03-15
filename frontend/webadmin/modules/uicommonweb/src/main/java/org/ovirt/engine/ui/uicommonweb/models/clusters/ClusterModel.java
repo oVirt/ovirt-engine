@@ -1642,7 +1642,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             getBiosType().updateChangeability(ConfigValues.BiosTypeSupported, getEffectiveVersion());
         }
 
-        if (architecture == ArchitectureType.undefined || (!getBiosType().getIsChangable() && getBiosType().getSelectedItem() == null)) {
+        if (architecture == ArchitectureType.undefined || !getBiosType().getIsChangable() && getBiosType().getSelectedItem() == null) {
             getBiosType().setSelectedItem(null);
             return;
         }
@@ -2377,8 +2377,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 && getVersion().getIsValid()
                 && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
-                && (!getIsImportGlusterConfiguration().getEntity() || (getGlusterHostAddress().getIsValid()
-                && isHostSshPublicKeyVerified()));
+                && (!getIsImportGlusterConfiguration().getEntity() || getGlusterHostAddress().getIsValid()
+                        && isHostSshPublicKeyVerified());
 
         setValidTab(TabName.GENERAL_TAB, generalTabValid);
 

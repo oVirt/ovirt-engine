@@ -84,7 +84,7 @@ public class SelectionTreeNodeModel extends EntityModel {
     }
 
     public void setChildren(ArrayList<SelectionTreeNodeModel> value) {
-        if ((children == null && value != null) || (children != null && !children.equals(value))) {
+        if (children == null && value != null || children != null && !children.equals(value)) {
             children = value;
             onPropertyChanged(new PropertyChangedEventArgs("Children")); //$NON-NLS-1$
         }

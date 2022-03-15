@@ -9,14 +9,27 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
+import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUnitPinningHelper;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
 
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class CPUPolicyUnitTest {
+    @Mock
+    private VdsCpuUnitPinningHelper vdsCpuUnitPinningHelper;
+
+    @InjectMocks
     private final CPUPolicyUnit cpuPolicyUnit = new CPUPolicyUnit(null, null);
 
     private VDS vdsWithInvalidCpuInfo;

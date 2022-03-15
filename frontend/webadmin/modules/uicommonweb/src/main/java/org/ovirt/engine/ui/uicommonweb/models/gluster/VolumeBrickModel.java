@@ -346,9 +346,9 @@ public class VolumeBrickModel extends Model {
         }
 
         if (brickDir.charAt(1) == '/'
-                || (brickDir.charAt(1) == '.' && brickDir.length() == 2)
+                || brickDir.charAt(1) == '.' && brickDir.length() == 2
                 || brickDir.charAt(1) == '*'
-                || (brickDir.length() == 3 && brickDir.charAt(1) == '.' && brickDir.charAt(2) == '.')) {
+                || brickDir.length() == 3 && brickDir.charAt(1) == '.' && brickDir.charAt(2) == '.') {
             setMessage(ConstantsManager.getInstance().getConstants().invalidBrickDirectoryMsg());
             return false;
         }

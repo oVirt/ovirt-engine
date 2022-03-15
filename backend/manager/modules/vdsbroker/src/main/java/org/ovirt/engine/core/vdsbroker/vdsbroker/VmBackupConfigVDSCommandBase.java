@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskType;
+import org.ovirt.engine.core.common.vdscommands.ScratchDiskInfo;
 import org.ovirt.engine.core.common.vdscommands.VmBackupVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
@@ -42,13 +43,18 @@ public abstract class VmBackupConfigVDSCommandBase<P extends VmBackupVDSParamete
                 imageParams.put(VdsProperties.BACKUP_MODE, backupMode);
             }
 
-            Map<Guid, String> scratchDisksMap = getParameters().getScratchDisksMap();
+            Map<Guid, ScratchDiskInfo> scratchDisksMap = getParameters().getScratchDisksMap();
             if (scratchDisksMap != null && scratchDisksMap.containsKey(diskImage.getId())) {
                 Map<String, Object> scratchDiskParams = new HashMap<>();
-                scratchDiskParams.put(VdsProperties.Path, scratchDisksMap.get(diskImage.getId()));
+                ScratchDiskInfo scratchDiskInfo = scratchDisksMap.get(diskImage.getId());
+                DiskImage scratchDisk = scratchDiskInfo.getDisk();
+                scratchDiskParams.put(VdsProperties.Path, scratchDiskInfo.getPath());
                 StorageDomainStatic sourceDomain = storageDomainStaticDao.get(diskImage.getStorageIds().get(0));
                 DiskType diskType = sourceDomain.getStorageType().isBlockDomain() ? DiskType.Block : DiskType.File;
                 scratchDiskParams.put(VdsProperties.Type, diskType.getName());
+                scratchDiskParams.put(VdsProperties.DomainId, scratchDisk.getStorageIds().get(0).toString());
+                scratchDiskParams.put(VdsProperties.ImageId, scratchDisk.getId().toString());
+                scratchDiskParams.put(VdsProperties.VolumeId, scratchDisk.getImageId().toString());
                 imageParams.put(VdsProperties.SCRATCH_DISK, scratchDiskParams);
             }
             return imageParams;

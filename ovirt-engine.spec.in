@@ -329,6 +329,18 @@ Requires:	ovirt-cockpit-sso
 Obsoletes:	ovirt-engine-api-explorer
 %endif
 
+%if 0%{?rhel} < 9
+# fapolicyd should be installed but does not have to be running
+# needed for OpenScap DISA STIG compliance
+#
+# TODO: remove condition when fapolicyd-1.1 is available on CS9
+Requires:	fapolicyd >= 1.1
+%else
+Requires:	fapolicyd
+%endif
+
+Requires:	scap-security-guide >= 0.1.60-4
+
 # Metrics stuff
 Requires:	collectd
 Requires:	collectd-postgresql
@@ -365,7 +377,7 @@ Requires:	openstack-java-quantum-client >= %{openstack_java_version}
 Requires:	openstack-java-quantum-model >= %{openstack_java_version}
 Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 Requires:	python3-dnf-plugin-versionlock
-Requires:	apache-sshd >= 2.6.0
+Requires:	apache-sshd >= 2.8.0
 Requires:	ed25519-java >= 0.3.0
 Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	jcl-over-slf4j >= 1.7.0
@@ -403,7 +415,7 @@ Requires:	ovirt-provider-ovn >= 1.2.1
 
 #JavaScript and CSS libraries are currently bundled
 Provides:	bundled(js-jquery) = 3.4.1
-Provides:	bundled(js-jquery-ui) = 1.12.1
+Provides:	bundled(js-jquery-ui) = 1.13.1
 Provides:	bundled(js-bootstrap) = 3.4.1
 Provides:	bundled(js-patternfly) = 3.59.3
 Provides:	bundled(js-patternfly-next) = 2.26.1
@@ -1222,6 +1234,7 @@ fi
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
 %{_bindir}/engine-upgrade-check
 %{engine_data}/conf/ovirt-engine-proxy.conf.v2.in
+%{engine_data}/conf/fapolicyd-55-allow-ovirt-jboss.rules.in
 %{engine_data}/conf/ovirt-engine-root-redirect.conf.in
 %{engine_data}/firewalld/ovirt-engine/
 %{engine_data}/setup/bin/ovirt-engine-upgrade-check

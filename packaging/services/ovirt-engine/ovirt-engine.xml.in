@@ -223,6 +223,9 @@
           {% if config.getboolean('ENGINE_LOG_TO_CONSOLE') %}
           <handler name="CONSOLE"/>
           {% endif %}
+          {% if config.getboolean('SYSLOG_HANDLER_ENABLED') and config.getboolean('ENGINE_LOG_TO_SYSLOG') %}
+          <handler name="SYSLOG"/>
+          {% endif %}
         </handlers>
       </logger>
       <!-- Loggers for the UI -->
@@ -230,6 +233,9 @@
         <level name="INFO"/>
         <handlers>
           <handler name="UI"/>
+          {% if config.getboolean('SYSLOG_HANDLER_ENABLED') and config.getboolean('UI_LOG_TO_SYSLOG') %}
+          <handler name="SYSLOG"/>
+          {% endif %}
         </handlers>
       </logger>
        <logger category="org.ovirt.engine.core.bll">
@@ -244,7 +250,7 @@
         <handlers>
           <handler name="ovirt-logger"/>
           <handler name="SERVER"/>
-          {% if config.getboolean('SYSLOG_HANDLER_ENABLED') %}
+          {% if config.getboolean('SYSLOG_HANDLER_ENABLED') and config.getboolean('SERVER_LOG_TO_SYSLOG') %}
           <handler name="SYSLOG"/>
           {% endif %}
         </handlers>

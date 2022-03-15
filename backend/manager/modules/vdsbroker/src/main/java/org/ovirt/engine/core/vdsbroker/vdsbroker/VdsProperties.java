@@ -20,6 +20,11 @@ public final class VdsProperties {
     public static final String cpu_sockets = "cpuSockets";
     public static final String cpu_model = "cpuModel";
     public static final String online_cpus = "onlineCpus";
+    public static final String cpu_topology = "cpuTopology";
+    public static final String socket_id = "socket_id";
+    public static final String core_id = "core_id";
+    public static final String cpu_id = "cpu_id";
+    public static final String vdsm_cpus_affinity = "vdsmToCpusAffinity";
     public static final String cpu_speed_mh = "cpuSpeed";
     public static final String kvm_enabled = "kvmEnabled";
     public static final String physical_mem_mb = "memSize";

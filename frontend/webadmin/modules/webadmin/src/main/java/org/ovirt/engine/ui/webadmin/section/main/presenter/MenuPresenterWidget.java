@@ -5,7 +5,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
 import org.ovirt.engine.ui.common.widget.MenuDetailsProvider;
+import org.ovirt.engine.ui.uicommonweb.models.options.OptionsModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -18,6 +20,7 @@ import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 public class MenuPresenterWidget extends PresenterWidget<MenuPresenterWidget.ViewDef> implements MenuDetailsProvider {
 
     public interface ViewDef extends View {
+        HasClickHandlers getAccountSettingsItem();
         HasClickHandlers getConfigureItem();
         int addMenuItemPlace(int priority, String label, String href, Integer primaryMenuIndex, String iconCssName);
         int addPrimaryMenuItemContainer(int index, String label, String iconCssName);
@@ -25,15 +28,19 @@ public class MenuPresenterWidget extends PresenterWidget<MenuPresenterWidget.Vie
         void setMenuActive(String href);
     }
 
+    private final OptionsProvider optionsProvider;
     private final Provider<ConfigurePopupPresenterWidget> configurePopupProvider;
 
     private final List<String> menuContainers = new ArrayList<>();
 
     @Inject
-    public MenuPresenterWidget(EventBus eventBus, MenuPresenterWidget.ViewDef view,
-            Provider<ConfigurePopupPresenterWidget> configurePopupProvider) {
+    public MenuPresenterWidget(EventBus eventBus,
+            MenuPresenterWidget.ViewDef view,
+            Provider<ConfigurePopupPresenterWidget> configurePopupProvider,
+            OptionsProvider optionsProvider) {
         super(eventBus, view);
         this.configurePopupProvider = configurePopupProvider;
+        this.optionsProvider = optionsProvider;
         for (PrimaryMenuContainerType type: PrimaryMenuContainerType.values()) {
             menuContainers.add(type.getId());
         }
@@ -44,8 +51,14 @@ public class MenuPresenterWidget extends PresenterWidget<MenuPresenterWidget.Vie
     @Override
     public void onBind() {
         super.onBind();
-        registerHandler(getView().getConfigureItem().addClickHandler(event ->
-            RevealRootPopupContentEvent.fire(MenuPresenterWidget.this, configurePopupProvider.get())));
+        registerHandler(getView().getConfigureItem()
+                .addClickHandler(event -> RevealRootPopupContentEvent.fire(MenuPresenterWidget.this,
+                        configurePopupProvider.get())));
+
+        registerHandler(getView().getAccountSettingsItem().addClickHandler(event -> {
+            OptionsModel model = optionsProvider.getModel();
+            model.executeCommand(model.getEditCommand());
+        }));
     }
 
     public void addMenuItemPlace(int priority, String label, String historyToken, String primaryMenuId,

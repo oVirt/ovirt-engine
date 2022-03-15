@@ -1,14 +1,20 @@
 package org.ovirt.engine.ui.uicommonweb.models.options;
 
+import static org.ovirt.engine.ui.frontend.UserProfileManager.BaseConflictResolutionStrategy.OVERWRITE_REMOTE;
 import static org.ovirt.engine.ui.frontend.UserProfileManager.BaseConflictResolutionStrategy.REPORT_ERROR;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.UserProfileManager;
+import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.LocalStorage;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -19,9 +25,13 @@ import com.google.inject.Inject;
 public class OptionsModel extends EntityModel<EditOptionsModel> {
 
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
+    private static final String EDIT_SETTINGS = "EditSettings";//$NON-NLS-1$
+    public static String RESET_SETTINGS = "ResetSettings";//$NON-NLS-1$
+    public static String SAVE_SETTINGS = "SaveSettings";//$NON-NLS-1$
+    public static String CANCEL_SETTINGS = "CancelSettings";//$NON-NLS-1$
     private final UserProfileManager userProfileManager;
 
-    private UICommand editCommand;
+    private final UICommand editCommand;
 
     private final LocalStorage localStorage;
     private final ConfirmationModelSettingsManager confirmationModelSettingsManager;
@@ -32,18 +42,20 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
         this.localStorage = localStorage;
         this.confirmationModelSettingsManager = confirmationModelSettingsManager;
         this.userProfileManager = Frontend.getInstance().getUserProfileManager();
-        setEditCommand(new UICommand(constants.edit(), this));
+        this.editCommand = new UICommand(EDIT_SETTINGS, this, false, constants.edit());
     }
 
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
-        if (constants.edit().equalsIgnoreCase(command.getName())) {
+        if (EDIT_SETTINGS.equalsIgnoreCase(command.getName())) {
             onEdit();
-        } else if (constants.ok().equalsIgnoreCase(command.getName())) {
+        } else if (SAVE_SETTINGS.equals(command.getName())) {
             onSave();
-        } else if (constants.cancel().equalsIgnoreCase(command.getName())) {
+        } else if (CANCEL_SETTINGS.equals(command.getName())) {
             cancel();
+        } else if (RESET_SETTINGS.equals(command.getName())) {
+            resetSettings();
         }
     }
 
@@ -52,19 +64,19 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
             return;
         }
 
-        final EditOptionsModel model = new EditOptionsModel(confirmationModelSettingsManager, localStorage);
+        final EditOptionsModel model = new EditOptionsModel(
+                confirmationModelSettingsManager,
+                localStorage,
+                Frontend.getInstance()
+                        .getLoggedInUser(),
+                UICommand.createDefaultOkUiCommand(SAVE_SETTINGS, this),
+                UICommand.createCancelUiCommand(CANCEL_SETTINGS, this),
+                new UICommand(RESET_SETTINGS, this, false, constants.resetSettings()));
 
-        model.setTitle(constants.editOptionsTitle());
+        model.setTitle(constants.accountSettings());
 
         model.setHashName("edit_options"); //$NON-NLS-1$
         setWindow(model);
-
-        UICommand okCommand = UICommand.createDefaultOkUiCommand(constants.ok(), this);
-        model.getCommands().add(okCommand);
-        // enable if values are edited
-        okCommand.setIsExecutionAllowed(false);
-        UICommand cancelCommand = UICommand.createCancelUiCommand(constants.cancel(), this);
-        model.getCommands().add(cancelCommand);
 
         Frontend.getInstance()
                 .getUserProfileManager()
@@ -76,6 +88,8 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
                                 .findFirst()
                                 .ifPresent(field::fromProp);
                     }
+                    // toggles Reset command availability
+                    model.updateAvailability();
                 });
     }
 
@@ -111,18 +125,71 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
                         },
                         (remote, target) -> REPORT_ERROR,
                         model,
-                        true)
+                        true));
+    }
 
-                );
+    private void resetSettings() {
+        EditOptionsModel editModel = (EditOptionsModel) getWindow();
+
+        List<Field<?>> removals = editModel.getFields()
+                .stream()
+                .filter(Field::isResettable)
+                .filter(Field::isOnServer)
+                .filter(Field::isCustom)
+                .collect(Collectors.toList());
+
+        if (removals.isEmpty()) {
+            return;
+        }
+
+        ConfirmationModel model = new ConfirmationModel();
+        setConfirmWindow(model);
+        model.setHashName("edit_options_confirmation"); //$NON-NLS-1$
+        model.setTitle(constants.resetSettings());
+        model.setMessage(constants.areYouSureYouWantToResetTheFollowingSettings());
+        model.setItems(removals.stream()
+                .map(Field::getLabel)
+                .distinct()
+                .collect(Collectors.toList()));
+
+        List<Boolean> results = new ArrayList<>();
+        Consumer<Boolean> markAsDone = result ->{
+            results.add(result);
+            if(results.size() >= removals.size()) {
+                setConfirmWindow(null);
+                cancel();
+                onEdit();
+            }
+        };
+
+        UICommand ok = UICommand.createDefaultOkUiCommand("ConfirmReset", new BaseCommandTarget() {//$NON-NLS-1$
+            @Override
+            public void executeCommand(UICommand uiCommand) {
+                removals.stream()
+                        .map(Field::toProp)
+                        .forEach(prop -> userProfileManager.deleteProperty(
+                                prop,
+                                removedProp -> markAsDone.accept(true),
+                                result -> markAsDone.accept(false),
+                                // user has been warned so force remove
+                                (remote, target) -> OVERWRITE_REMOTE,
+                                model,
+                                false));
+            }
+        });
+        UICommand cancel = UICommand.createCancelUiCommand("AbortReset", new BaseCommandTarget() {//$NON-NLS-1$
+            @Override
+            public void executeCommand(UICommand uiCommand) {
+                setConfirmWindow(null);
+            }
+        });
+
+        model.getCommands().add(ok);
+        model.getCommands().add(cancel);
     }
 
     public UICommand getEditCommand() {
         return editCommand;
-    }
-
-    public void setEditCommand(UICommand editCommand) {
-        this.editCommand = editCommand;
-        getCommands().add(editCommand);
     }
 
     protected void cancel() {

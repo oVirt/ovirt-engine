@@ -810,19 +810,10 @@ public class RsdlBuilder {
         String link1ParamType = link1.getRequest().getBody().getType();
         String link2ParamType = link2.getRequest().getBody().getType();
         //Verify for both links that body is not mandatory
-        if (    (
-                (link1.getRequest().getBody().isRequired() != null)
-                &&
-                (link2.getRequest().getBody().isRequired() != null)
-                )
-
-                &&
-
-                (
-                (Boolean.FALSE.equals(link1.getRequest().getBody().isRequired()))
-                &&
-                (Boolean.FALSE.equals(link2.getRequest().getBody().isRequired()))
-                )
+        if (link1.getRequest().getBody().isRequired() != null
+                && link2.getRequest().getBody().isRequired() != null
+                && Boolean.FALSE.equals(link1.getRequest().getBody().isRequired())
+                && Boolean.FALSE.equals(link2.getRequest().getBody().isRequired())
            ) {
             if (link1ParamType!=null && link2ParamType==null) {
                 return link2;

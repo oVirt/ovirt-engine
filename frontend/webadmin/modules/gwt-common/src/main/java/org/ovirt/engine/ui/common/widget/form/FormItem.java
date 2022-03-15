@@ -185,7 +185,7 @@ public class FormItem {
         boolean showDefaultValue = defaultValueCondition != null && defaultValueCondition.showDefaultValue();
         Widget resolvedValueWidget = showDefaultValue ? defaultValueLabel : valueWidget;
 
-        boolean showEmptyValue = (resolvedValueWidget instanceof HasText)
+        boolean showEmptyValue = resolvedValueWidget instanceof HasText
                 && StringHelper.isNullOrEmpty(((HasText) resolvedValueWidget).getText());
         return showEmptyValue ? emptyValueLabel : resolvedValueWidget;
     }

@@ -14,12 +14,14 @@ from otopi import util
 
 from . import apache
 from . import environment
+from . import fapolicyd
 
 
 @util.export
 def createPlugins(context):
     environment.Plugin(context=context)
     apache.Plugin(context=context)
+    fapolicyd.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

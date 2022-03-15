@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.SELinuxMode;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo;
@@ -32,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -40,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.CpuPinningHelper;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.BrokerCommandCallback;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -178,6 +181,7 @@ public class VdsManager {
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     private HostConnectionRefresherInterface hostRefresher;
     private volatile boolean inServerRebootTimeout;
+    private List<VdsCpuUnit> cpuTopology;
 
     VdsManager(VDS vds, ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -188,6 +192,7 @@ public class VdsManager {
         vdsId = vds.getId();
         unrespondedAttempts = new AtomicInteger();
         autoStartVmsWithLeasesLock = new ReentrantLock();
+        cpuTopology = new ArrayList<>();
     }
 
     @PostConstruct
@@ -199,6 +204,7 @@ public class VdsManager {
         handlePreviousStatus();
         handleSecureSetup();
         initVdsBroker();
+        initAvailableCpus();
     }
 
     public void handleSecureSetup() {
@@ -550,13 +556,21 @@ public class VdsManager {
      * @param pendingMemory - scheduled memory in MiB
      * @param pendingCpuCount - scheduled number of CPUs
      */
-    public void updatePendingData(int pendingMemory, int pendingCpuCount) {
+    public void updatePendingData(int pendingMemory,
+            int pendingCpuCount,
+            Map<Guid, List<VdsCpuUnit>> vmToPendingPinning) {
         synchronized (this) {
             cachedVds.setPendingVcpusCount(pendingCpuCount);
             cachedVds.setPendingVmemSize(pendingMemory);
             List<VmDynamic> vmsOnVds = getVmDynamicDao().getAllRunningForVds(getVdsId());
             Map<Guid, VMStatus> vmIdToStatus = vmsOnVds.stream().collect(Collectors.toMap(VmDynamic::getId, VmDynamic::getStatus));
             HostMonitoring.refreshCommitedMemory(cachedVds, vmIdToStatus, resourceManager);
+            for (var vmPendingPinning : vmToPendingPinning.entrySet()) {
+                vmPendingPinning.getValue().forEach(cpu -> cpuTopology.stream()
+                        .filter(vdsCpuUnit -> vdsCpuUnit.getCpu() == cpu.getCpu()).findFirst()
+                        .ifPresent(cpuUnit -> cpu.getVmIds()
+                                .forEach(vmId -> cpuUnit.pinVm(vmId, cpu.getCpuPinningPolicy()))));
+            }
             updateDynamicData(cachedVds.getDynamicData());
         }
     }
@@ -791,8 +805,8 @@ public class VdsManager {
             // For gluster nodes, SELinux needs to be in enforcing mode,
             // hence warning in case of permissive as well.
             if (vds.getSELinuxEnforceMode() == null || vds.getSELinuxEnforceMode().equals(SELinuxMode.DISABLED)
-                    || (vds.getClusterSupportsGlusterService()
-                            && vds.getSELinuxEnforceMode().equals(SELinuxMode.PERMISSIVE))) {
+                    || vds.getClusterSupportsGlusterService()
+                            && vds.getSELinuxEnforceMode().equals(SELinuxMode.PERMISSIVE)) {
                 AuditLogable auditLogable = createAuditLogableForHost(vds);
                 auditLogable.addCustomValue("Mode",
                         vds.getSELinuxEnforceMode() == null ? "UNKNOWN" : vds.getSELinuxEnforceMode().name());
@@ -1244,7 +1258,27 @@ public class VdsManager {
         if (!isInitialized()) {
             log.info("VMs initialization finished for Host: '{}:{}'", cachedVds.getName(), cachedVds.getId());
             resourceManager.handleVmsFinishedInitOnVds(cachedVds.getId());
+            recoverCpuPinning(vmDao.getMonitoredVmsRunningByVds(cachedVds.getId()));
             setInitialized(true);
+        }
+    }
+
+    /**
+     * Once the engine starts, if any VM is running on the host - check the VM pinning and set it to the cached
+     * cpuTopology.
+     * @param vms VMs running on the host.
+     */
+    private void recoverCpuPinning(List<VM> vms) {
+        for (VM vm : vms) {
+            String pinning = CpuPinningHelper.getVmPinning(vm);
+            if (pinning != null) {
+                Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(pinning);
+                synchronized (this) {
+                    cpuTopology.stream()
+                            .filter(cpu -> pinnedCpus.contains(cpu.getCpu()))
+                            .forEach(cpu -> cpu.pinVm(vm.getId(), vm.getCpuPinningPolicy()));
+                }
+            }
         }
     }
 
@@ -1288,5 +1322,34 @@ public class VdsManager {
                 }
             }
         }
+    }
+
+
+    private void initAvailableCpus() {
+        List<VdsCpuUnit> cpuTopology = cachedVds.getCpuTopology();
+        if (cpuTopology == null) {
+            return;
+        }
+        int vdsmCpu;
+        try {
+            vdsmCpu = Integer.parseInt(cachedVds.getVdsmCpusAffinity());
+        } catch (NumberFormatException e) {
+            // we need the affinity otherwise we could exclusively pin vCPU to the one where VDSM is running
+            return;
+        }
+        this.cpuTopology = cpuTopology;
+        this.cpuTopology.stream().filter(cpu -> cpu.getCpu() == vdsmCpu)
+                .forEach(cpu -> cpu.pinVm(Guid.SYSTEM, CpuPinningPolicy.MANUAL));
+    }
+
+    public List<VdsCpuUnit> getCpuTopology() {
+        List<VdsCpuUnit> clone = new ArrayList<>();
+        cpuTopology.forEach(cpu -> clone.add(cpu.clone()));
+        return clone;
+    }
+
+    public void unpinVmCpus(Guid vmId) {
+        cpuTopology.stream().filter(cpu -> cpu.getVmIds().contains(vmId))
+                .forEach(cpu -> cpu.unPinVm(vmId));
     }
 }

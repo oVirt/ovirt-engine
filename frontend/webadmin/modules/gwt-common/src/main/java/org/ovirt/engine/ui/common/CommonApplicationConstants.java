@@ -4,9 +4,17 @@ import com.google.gwt.i18n.client.Constants;
 
 public interface CommonApplicationConstants extends Constants {
 
+    String homePage();
+
+    String homePageFormat();
+
+    String homePageIgnoreInvalid();
+
     String resetGridSettings();
 
     String changeColumnsVisibilityOrder();
+
+    String emailUser();
 
     @DefaultStringValue("") // Use annotation and not a properties key to leave it out of translations
     String empty();
@@ -18,6 +26,8 @@ public interface CommonApplicationConstants extends Constants {
     String errorPopupCaption();
 
     String closeButtonLabel();
+
+    String confirmations();
 
     String unAvailablePropertyLabel();
 
@@ -329,11 +339,7 @@ public interface CommonApplicationConstants extends Constants {
 
     String permanentlyRemoveLabel();
 
-    String persistGridSettingsOnServer();
-
     String persistGridSettingsOnServerTooltip();
-
-    String confirmSuspendingVm();
 
     String hideDisplayColumns();
 
@@ -862,6 +868,8 @@ public interface CommonApplicationConstants extends Constants {
     String provisionedSizeDisk();
 
     String sourceDisk();
+
+    String tables();
 
     String targetDisk();
 
@@ -1840,6 +1848,8 @@ public interface CommonApplicationConstants extends Constants {
     String enableUsbSupportNotAvailable();
 
     String graphicalConsoleOptionsVmPopup();
+
+    String serialConsole();
 
     String serialConsoleOptionsVmPopup();
 

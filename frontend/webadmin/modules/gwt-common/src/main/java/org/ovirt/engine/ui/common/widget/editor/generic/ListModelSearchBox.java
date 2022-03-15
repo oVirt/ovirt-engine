@@ -239,9 +239,9 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
     }
 
     public void onKeyUp(int keycode, boolean shiftKey) {
-        if (keycode == KeyCodes.KEY_UP || (keycode == KeyCodes.KEY_TAB && shiftKey)) {
+        if (keycode == KeyCodes.KEY_UP || keycode == KeyCodes.KEY_TAB && shiftKey) {
             decrementCurrentIndex();
-        } else if (keycode == KeyCodes.KEY_DOWN || (keycode == KeyCodes.KEY_TAB && !shiftKey)) {
+        } else if (keycode == KeyCodes.KEY_DOWN || keycode == KeyCodes.KEY_TAB && !shiftKey) {
             incrementCurrentIndex();
         } else if (keycode == KeyCodes.KEY_ENTER) {
             selectItem(((AnchorListItem)menu.getWidget(currentFocusIndex)).getText());

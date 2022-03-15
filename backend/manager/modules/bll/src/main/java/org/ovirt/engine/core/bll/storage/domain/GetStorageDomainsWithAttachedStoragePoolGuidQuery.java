@@ -48,7 +48,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
     @Override
     protected void executeQueryCommand() {
         List<StorageDomainStatic> storageDomainsWithAttachedStoragePoolId = new ArrayList<>();
-        if ((getVdsForConnectStorage() != null) && isDataCenterValidForAttachedStorageDomains()) {
+        if (getVdsForConnectStorage() != null && isDataCenterValidForAttachedStorageDomains()) {
             storageDomainsWithAttachedStoragePoolId = filterAttachedStorageDomains();
         }
         getQueryReturnValue().setReturnValue(storageDomainsWithAttachedStoragePoolId);
@@ -72,7 +72,7 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
     private boolean isDataCenterValidForAttachedStorageDomains() {
         if (getParameters().isCheckStoragePoolStatus()) {
             StoragePool storagePool = storagePoolDao.get(getParameters().getId());
-            if ((storagePool == null) || (storagePool.getStatus() != StoragePoolStatus.Up)) {
+            if (storagePool == null || storagePool.getStatus() != StoragePoolStatus.Up) {
                 log.info("The Data Center is not in UP status.");
                 return false;
             }

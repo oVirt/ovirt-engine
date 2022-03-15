@@ -17,7 +17,7 @@ public class ClusterVersionChangeValidation implements IValidation {
         ValidationResult result = new ValidationResult();
         Version newClusterVersion = (Version) value;
 
-        if (value == null || (hasActiveVm && !newClusterVersion.equals(oldClusterVersion))) {
+        if (value == null || hasActiveVm && !newClusterVersion.equals(oldClusterVersion)) {
             result.setSuccess(false);
             result.getReasons().add(ConstantsManager.getInstance().getConstants().cannotClusterVersionChangeWithActiveVm());
         }

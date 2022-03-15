@@ -1,10 +1,28 @@
 ---
-- name: Run query script
-  script: >
-    query_ova.py
-    "{{ entity_type }}"
-    "{{ ovirt_query_ova_path }}"
-    "{{ list_directory }}"
-  args:
-    executable: "{{ ansible_python_interpreter }}"
-  register: extraction_result
+- block:
+  - name: Create temporary directory
+    tempfile:
+      state: directory
+      suffix: ova
+    register: ova_temp
+
+  - name: Copy query_ova.py to temp directory
+    copy:
+      src: query_ova.py
+      dest: "{{ ova_temp.path }}/query_ova.py"
+
+  - name: Run query script
+    command: >
+      "{{ ansible_python_interpreter }}"
+      "{{ ova_temp.path }}/query_ova.py"
+      "{{ entity_type }}"
+      "{{ ovirt_query_ova_path }}"
+      "{{ list_directory }}"
+    async: "{{ ansible_timeout }}"
+    poll: 15
+    register: extraction_result
+  always:
+  - name: Remove temp directory
+    file:
+      state: absent
+      path: "{{ ova_temp.path }}"

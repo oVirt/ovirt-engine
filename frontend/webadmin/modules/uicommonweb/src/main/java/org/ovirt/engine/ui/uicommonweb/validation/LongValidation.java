@@ -37,7 +37,7 @@ public class LongValidation implements IValidation {
     public ValidationResult validate(Object value) {
         ValidationResult result = new ValidationResult();
 
-        if (value != null && ((value instanceof String && !"".equals(value)) || value instanceof Long)) { //$NON-NLS-1$
+        if (value != null && (value instanceof String && !"".equals(value) || value instanceof Long)) { //$NON-NLS-1$
             // Do not use org.apache.commons.lang.math.NumberUtils. Null is expected if conversion fails.
             Long longValue = value instanceof String ? tryParseLong((String) value) : (Long) value;
             String msg = ""; //$NON-NLS-1$

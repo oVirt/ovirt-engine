@@ -12,13 +12,19 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 class LocalStoragePersistenceField implements Field<Boolean> {
     private final EntityModel<Boolean> localStoragePersistedOnServer;
-    private boolean originalLocalStoragePersistedOnServer = true;
+    private boolean originalLocalStoragePersistedOnServer;
     private final LocalStorage localStorage;
+    private final Boolean defaultValue;
+    private final boolean resettable;
 
     public LocalStoragePersistenceField(EntityModel<Boolean> model,
-            LocalStorage localStorage) {
+            LocalStorage localStorage,
+            boolean resettable) {
         localStoragePersistedOnServer = model;
         this.localStorage = localStorage;
+        defaultValue = model.getEntity();
+        this.resettable = resettable;
+        originalLocalStoragePersistedOnServer = defaultValue;
     }
 
     @Override
@@ -58,5 +64,15 @@ class LocalStoragePersistenceField implements Field<Boolean> {
     @Override
     public boolean isSupported(UserProfileProperty prop) {
         return WebAdminSettings.WEB_ADMIN.equals(prop.getName());
+    }
+
+    @Override
+    public boolean isResettable() {
+        return resettable;
+    }
+
+    @Override
+    public boolean isCustom() {
+        return !Objects.equals(defaultValue, originalLocalStoragePersistedOnServer);
     }
 }

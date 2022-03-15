@@ -54,10 +54,7 @@
   block:
     # probe the new host, if new host is not the same old host
     - name: Peer probe the new host
-      gluster_peer:
-        state: present
-        nodes:
-          - "{{ gluster_new_node }}"
+      command: "gluster peer probe {{ gluster_new_node }}"
 
     # Workaround for Gluster Bug doesn't copy the peer file in rejected state
     - name: Workaround for the bug to copy peer file of reject node

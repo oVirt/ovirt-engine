@@ -77,7 +77,6 @@ public class VmBackupMapper {
         // should be created before the backup can start.
         case INITIALIZING:
         case CREATING_SCRATCH_DISKS:
-        case PREPARING_SCRATCH_DISK:
         case ADDING_BITMAPS:
         case WAITING_FOR_BITMAPS:
             return BackupPhase.INITIALIZING;

@@ -148,7 +148,7 @@ public class VmCpuCountHelper {
      * @return Whether the CPU count configuration is valid
      */
     public static boolean validateCpuCounts(VM vm, Version compatibilityVersion, ArchitectureType architecture) {
-        if (isAutoPinning(vm)) {
+        if (isResizeAndPinPolicy(vm)) {
             return true;
         }
 
@@ -169,16 +169,20 @@ public class VmCpuCountHelper {
         return true;
     }
 
-    public static boolean isAutoPinning(VM vm) {
+    public static boolean isResizeAndPinPolicy(VM vm) {
         return vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
     }
 
+    public static boolean isDynamicCpuPinning(VM vm) {
+        return vm.getCpuPinningPolicy() != CpuPinningPolicy.NONE && vm.getCpuPinningPolicy() != CpuPinningPolicy.MANUAL;
+    }
+
     public static int getDynamicNumOfCpu(VM vm) {
-        return isAutoPinning(vm) && vm.getCurrentNumOfCpus() > 0 ? vm.getCurrentNumOfCpus() : vm.getNumOfCpus();
+        return isResizeAndPinPolicy(vm) && vm.getCurrentNumOfCpus() > 0 ? vm.getCurrentNumOfCpus() : vm.getNumOfCpus();
     }
 
     public static boolean isDynamicCpuTopologySet(VM vm) {
-        return isAutoPinning(vm) && vm.getCurrentNumOfCpus() > 0;
+        return isResizeAndPinPolicy(vm) && vm.getCurrentNumOfCpus() > 0;
     }
 
     /**
@@ -194,7 +198,7 @@ public class VmCpuCountHelper {
      * @return required amount of CPUs
      */
     public static int getRuntimeNumOfCpu(VM vm, VDS host) {
-        if (VmCpuCountHelper.isAutoPinning(vm) && !VmCpuCountHelper.isDynamicCpuTopologySet(vm)) {
+        if (VmCpuCountHelper.isResizeAndPinPolicy(vm) && !VmCpuCountHelper.isDynamicCpuTopologySet(vm)) {
             return host.getCpuSockets() * ((host.getCpuCores() / host.getCpuSockets()) - 1) * (host.getCpuThreads() / host.getCpuCores());
         }
         return VmCpuCountHelper.getDynamicNumOfCpu(vm);

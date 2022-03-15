@@ -15,9 +15,7 @@ public class PoolUnitToVmBaseBuilder<T extends VmBase> extends CompositeSyncBuil
                 new CoreUnitToVmBaseBuilder(),
                 new NameUnitToVmBaseBuilder(),
                 new KernelParamsUnitToVmBaseBuilder(),
-                new MigrationOptionsUnitToVmBaseBuilder(),
-                new DedicatedVmForVdsUnitToVmBaseBuilder(),
-                new UsbPolicyUnitToVmBaseBuilder()
+                new DedicatedVmForVdsUnitToVmBaseBuilder()
         );
     }
 }

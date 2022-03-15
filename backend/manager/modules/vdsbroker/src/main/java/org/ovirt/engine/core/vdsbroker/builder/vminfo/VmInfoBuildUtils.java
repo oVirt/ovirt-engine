@@ -592,8 +592,8 @@ public class VmInfoBuildUtils {
                     boolean controllerOutOfRange = controllerInt >= vm.getNumOfIoThreads() + getDefaultVirtioScsiIndex(vm, dve.getDiskInterface());
                     boolean ioThreadsEnabled = vm.getNumOfIoThreads() > 0;
 
-                    if ((ioThreadsEnabled && !controllerOutOfRange) ||
-                            (controllerInt == getDefaultVirtioScsiIndex(vm, dve.getDiskInterface()))) {
+                    if (ioThreadsEnabled && !controllerOutOfRange ||
+                            controllerInt == getDefaultVirtioScsiIndex(vm, dve.getDiskInterface())) {
                         vmDeviceUnitMap.computeIfAbsent(controllerInt, i -> new HashMap<>());
                         vmDeviceUnitMap.get(controllerInt).put(vmDevice, Integer.valueOf(unitStr));
                     } else {
@@ -762,7 +762,7 @@ public class VmInfoBuildUtils {
 
         while (reserveForScsiCd && unit == cdPayloadUnitIndex ||
                reserveForScsiCd && unit == cdUnitIndex ||
-               (vmDeviceUnitMap != null && vmDeviceUnitMap.containsValue(unit))) {
+               vmDeviceUnitMap != null && vmDeviceUnitMap.containsValue(unit)) {
             unit++;
         }
         return unit;
@@ -1267,7 +1267,7 @@ public class VmInfoBuildUtils {
 
     public List<VmNumaNode> getVmNumaNodes(VM vm) {
         int onlineCpus = VmCpuCountHelper.getDynamicNumOfCpu(vm);
-        int vcpus = FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) && !VmCpuCountHelper.isAutoPinning(vm)?
+        int vcpus = FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) && !VmCpuCountHelper.isResizeAndPinPolicy(vm)?
                 VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
                 : onlineCpus;
         int offlineCpus = vcpus - onlineCpus;
@@ -1576,8 +1576,8 @@ public class VmInfoBuildUtils {
     public boolean shouldUseNativeIO(VM vm, DiskImage diskImage, VmDevice device) {
         StorageType storageType = diskImage.getStorageTypes().get(0);
         String diskType = getDiskType(vm, diskImage, device);
-        return (!"file".equals(diskType) || (storageType == StorageType.GLUSTERFS
-                && FeatureSupported.useNativeIOForGluster(vm.getCompatibilityVersion())))
+        return (!"file".equals(diskType) || storageType == StorageType.GLUSTERFS
+                && FeatureSupported.useNativeIOForGluster(vm.getCompatibilityVersion()))
                 && device.getSnapshotId() == null;
         // marked as transient disk (file type) and uses cache when snapshotId is not null
         // so native io should not be used
@@ -1672,7 +1672,7 @@ public class VmInfoBuildUtils {
 
     public static int maxNumberOfVcpus(VM vm) {
         return FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(),
-                vm.getClusterArch()) && !VmCpuCountHelper.isAutoPinning(vm) ? VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
+                vm.getClusterArch()) && !VmCpuCountHelper.isResizeAndPinPolicy(vm) ? VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
                         : VmCpuCountHelper.getDynamicNumOfCpu(vm);
     }
 

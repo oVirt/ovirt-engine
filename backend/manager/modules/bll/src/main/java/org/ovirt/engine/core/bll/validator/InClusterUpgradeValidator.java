@@ -70,7 +70,7 @@ public class InClusterUpgradeValidator {
         if (vm.getStatus().isSuspended()) {
             errors.addAll(toVmEngineMessage(vm, EngineMessage.CLUSTER_UPGRADE_DETAIL_VM_SUSPENDED));
         }
-        if (!StringUtils.isEmpty(VmCpuCountHelper.isAutoPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning())) {
+        if (!StringUtils.isEmpty(VmCpuCountHelper.isDynamicCpuPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning())) {
             errors.addAll(toVmEngineMessage(vm, EngineMessage.CLUSTER_UPGRADE_DETAIL_VM_CPUS_PINNED));
         }
         for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {

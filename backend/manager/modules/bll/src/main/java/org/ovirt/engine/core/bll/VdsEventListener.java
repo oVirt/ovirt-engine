@@ -264,7 +264,7 @@ public class VdsEventListener implements IVdsEventListener {
     private void processOnVmStopInternal(final Collection<Guid> vmIds, final Guid hostId) {
         for (Guid vmId : vmIds) {
             backend.runInternalAction(ActionType.ProcessDownVm,
-                    new ProcessDownVmParameters(vmId, true));
+                    new ProcessDownVmParameters(vmId, true, hostId));
         }
 
         HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);

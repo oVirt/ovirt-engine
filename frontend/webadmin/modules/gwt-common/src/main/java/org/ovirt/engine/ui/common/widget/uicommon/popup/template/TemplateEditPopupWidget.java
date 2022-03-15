@@ -40,6 +40,7 @@ public class TemplateEditPopupWidget extends AbstractVmPopupWidget {
                 putOne(dataCenterWithClusterEditor, hiddenField()).
                 putOne(biosTypeEditor, hiddenField()).
                 putOne(startRunningOnPanel, hiddenField()).
+                putOne(leaseRow, hiddenField()).
                 putOne(attachCdRow, hiddenField());
         }
 

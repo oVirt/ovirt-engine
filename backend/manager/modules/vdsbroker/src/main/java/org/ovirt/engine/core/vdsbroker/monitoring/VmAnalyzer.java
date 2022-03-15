@@ -202,7 +202,7 @@ public class VmAnalyzer {
     private void processUnmanagedVm() {
         VmDynamic vmDynamic = vdsmVm.getVmDynamic();
         if (vmDynamic.getStatus() == VMStatus.Down ||
-                (vmDynamic.getStatus() == VMStatus.Paused && vmDynamic.getPauseStatus() == VmPauseStatus.EIO)) {
+                vmDynamic.getStatus() == VMStatus.Paused && vmDynamic.getPauseStatus() == VmPauseStatus.EIO) {
             destroyVm();
             return;
         }

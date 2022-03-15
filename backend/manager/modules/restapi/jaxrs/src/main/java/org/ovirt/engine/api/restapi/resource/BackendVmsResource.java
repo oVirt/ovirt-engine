@@ -103,6 +103,7 @@ public class BackendVmsResource extends
 
     public static final String CLONE = "clone";
     public static final String CLONE_PERMISSIONS = "clone_permissions";
+    public static final String SEAL = "seal";
     public static final String OVF_AS_OVA = "ovf_as_ova";
     public static final String AUTO_PINNING_POLICY = "auto_pinning_policy";
     private static final String LEGAL_CLUSTER_COMPATIBILITY_VERSIONS =
@@ -464,6 +465,7 @@ public class BackendVmsResource extends
         }
 
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
+        setupSealing(params);
 
         return performCreate(ActionType.AddVmFromSnapshot,
                                 params,
@@ -482,6 +484,7 @@ public class BackendVmsResource extends
         addAutoPinningPolicy(vm, params);
         setupCloneTemplatePermissions(params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
+        setupSealing(params);
 
         return performCreate(ActionType.AddVmFromTemplate,
                 params,
@@ -625,6 +628,7 @@ public class BackendVmsResource extends
         addDevicesToParams(params, vm, template, instanceType, staticVm, cluster);
         IconHelper.setIconToParams(vm, params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
+        setupSealing(params);
 
         return performCreate(ActionType.AddVm,
                                params,
@@ -638,6 +642,11 @@ public class BackendVmsResource extends
         }
     }
 
+    private void setupSealing(AddVmParameters params) {
+        Boolean seal = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, SEAL, Boolean.TRUE, null);
+        params.setSeal(seal);
+    }
+
     protected Response addVmFromScratch(VmStatic staticVm, Vm vm, InstanceType instanceType, Cluster cluster) {
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setVmPayload(getPayload(vm));
@@ -646,6 +655,7 @@ public class BackendVmsResource extends
         addDevicesToParams(params, vm, null, instanceType, staticVm, cluster);
         IconHelper.setIconToParams(vm, params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
+        setupSealing(params);
 
         return performCreate(ActionType.AddVmFromScratch,
                                params,

@@ -134,8 +134,8 @@ public class VfSchedulerImpl implements VfScheduler {
                 List<String> skipVfs = new ArrayList<>();
                 HostDevice freeVf = getFreeVf(nicId, nicToUsedVfs, fetchedNics, skipVfs);
                 while (freeVf != null && (isSharingIommuGroup(freeVf)
-                        || (shouldCheckDirectlyAttachedVmDevices
-                                && shouldBeDirectlyAttached(freeVf.getName(), vmId)))) {
+                        || shouldCheckDirectlyAttachedVmDevices
+                                && shouldBeDirectlyAttached(freeVf.getName(), vmId))) {
                     skipVfs.add(freeVf.getName());
                     freeVf = getFreeVf(nicId, nicToUsedVfs, fetchedNics, skipVfs);
                 }

@@ -274,6 +274,7 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
             if (!StringUtils.isEmpty(backupMode)) {
                 entity.setBackupMode(DiskBackupMode.valueOf(backupMode));
             }
+            entity.getImage().setSequenceNumber(rs.getInt("sequence_number"));
         }
 
         @Override

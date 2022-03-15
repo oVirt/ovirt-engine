@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.builders.MigrationsModelToEntityBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -35,6 +36,7 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         vm.setClusterId(model.getSelectedCluster() != null ? model.getSelectedCluster().getId() : null);
         vm.setVmType(model.getVmType().getSelectedItem());
         vm.setOsId(model.getOSType().getSelectedItem());
+        vm.setBiosType(model.getBiosType().getSelectedItem());
         // General
         vm.setDeleteProtected(model.getIsDeleteProtected().getEntity());
         // System
@@ -48,6 +50,7 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
             vm.setCustomSerialNumber(null);
         }
         // Console
+        vm.setSsoMethod(model.extractSelectedSsoMethod());
         vm.setVncKeyboardLayout(model.getVncKeyboardLayout().getSelectedItem());
         vm.setConsoleDisconnectAction(model.getConsoleDisconnectAction().getSelectedItem());
         vm.setConsoleDisconnectActionDelay(model.getConsoleDisconnectActionDelay().getEntity());
@@ -57,6 +60,14 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         // Host
         vm.setUseHostCpuFlags(model.getHostCpu().getEntity());
         vm.setUseTscFrequency(model.getTscFrequency().getEntity());
+        // High availability
+        VmResumeBehavior selectedResumeBehavior = model.getResumeBehavior().getSelectedItem();
+        if (selectedResumeBehavior == null) {
+            // the default
+            vm.setResumeBehavior(VmResumeBehavior.AUTO_RESUME);
+        } else {
+            vm.setResumeBehavior(selectedResumeBehavior);
+        }
         // Resource allocation
         if (model.getCpuProfiles().getSelectedItem() != null) {
             vm.setCpuProfileId(model.getCpuProfiles().getSelectedItem().getId());

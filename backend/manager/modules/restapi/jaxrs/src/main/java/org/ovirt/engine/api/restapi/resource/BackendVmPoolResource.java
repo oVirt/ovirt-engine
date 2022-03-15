@@ -13,6 +13,7 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -33,6 +34,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendVmPoolResource
         extends AbstractBackendActionableResource<VmPool, org.ovirt.engine.core.common.businessentities.VmPool>
     implements VmPoolResource {
+
+    public static final String SEAL = "seal";
 
     private BackendVmPoolsResource parent;
 
@@ -141,8 +144,14 @@ public class BackendVmPoolResource
 
             final AddVmPoolParameters parameters = new AddVmPoolParameters(entity, vm, size);
             parameters.setStorageDomainId(getStorageDomainId(vm.getVmtGuid()));
+            setupSealing(parameters);
             return parameters;
         }
+    }
+
+    private void setupSealing(AddVmPoolParameters params) {
+        Boolean seal = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, SEAL, Boolean.TRUE, null);
+        params.setSeal(seal);
     }
 
     private Guid getTempalteId(Template template) {

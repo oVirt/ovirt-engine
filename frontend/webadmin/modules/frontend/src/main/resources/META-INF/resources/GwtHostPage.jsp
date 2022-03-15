@@ -12,6 +12,13 @@
     <obrand:stylesheets />
     <obrand:javascripts />
     <script type="text/javascript">
+        <c:if test="${requestScope['customHomePage'] != null}">
+        (function() {
+          if (!window.location.hash) {
+            window.location.hash = <c:out value="${requestScope['customHomePage']}" escapeXml="false"/>;
+          }
+        })();
+        </c:if>
         <c:if test="${requestScope['userInfo'] != null}">
             var userInfo = <c:out value="${requestScope['userInfo']}" escapeXml="false"/>;
         </c:if>

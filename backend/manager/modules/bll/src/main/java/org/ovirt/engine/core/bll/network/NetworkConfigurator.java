@@ -38,6 +38,7 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.network.function.NicToIpv4AddressFunction;
 import org.ovirt.engine.core.utils.network.function.NicToIpv6AddressFunction;
 import org.ovirt.engine.core.utils.network.predicate.InterfaceByNetworkNamePredicate;
+import org.ovirt.engine.core.utils.network.predicate.IpAddressPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,13 +69,13 @@ public class NetworkConfigurator {
             return;
         }
 
-        final String hostIp = NetworkUtils.getHostIp(host);
+        final var hostIpPredicate = new IpAddressPredicate(NetworkUtils.getHostIp(host));
         final String managementNetworkName = managementNetwork.getName();
 
         final String hostManagementNetworkIpv4Address = getIpv4AddressOfNetwork(managementNetworkName);
         final String hostManagementNetworkIpv6Address = getIpv6AddressOfNetwork(managementNetworkName);
-        if ((hostManagementNetworkIpv4Address != null && hostManagementNetworkIpv4Address.equals(hostIp)) ||
-                (hostManagementNetworkIpv6Address != null && hostManagementNetworkIpv6Address.equals(hostIp))) {
+        if (hostManagementNetworkIpv4Address != null && hostIpPredicate.test(hostManagementNetworkIpv4Address) ||
+                hostManagementNetworkIpv6Address != null && hostIpPredicate.test(hostManagementNetworkIpv6Address)) {
             log.info("The management network '{}' is already configured on host '{}'",
                     managementNetworkName,
                     host.getName());
