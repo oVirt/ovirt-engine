@@ -461,6 +461,7 @@ public final class VdsProperties {
     public static final String delay = "delay";
     public static final String actual = "actual";
     public static final String acquired = "acquired";
+    public static final String valid = "valid";
 
     public static final String DISK_STATS = "diskStats";
     public static final String DISK_STATS_FREE = "free";

@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.CommandHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
@@ -86,6 +88,7 @@ import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ReplacementUtils;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 
 @NonTransactiveCommandAttribute
@@ -124,6 +127,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Inject
     @Typed(TransferImageCommandCallback.class)
     private Instance<TransferImageCommandCallback> callbackProvider;
+    @Inject
+    private VdsCommandsHelper vdsCommandsHelper;
+    @Inject
+    private ResourceManager resourceManager;
 
     private ImageioClient proxyClient;
     private VmBackup backup;
@@ -1062,6 +1069,24 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         // - The administration portal is transferring images directly to the
         //   daemon.
         return Config.<Boolean>getValue(ConfigValues.ImageTransferProxyEnabled);
+    }
+
+    @Override
+    protected VDS checkForActiveVds() {
+        Guid hostForExecution = vdsCommandsHelper.getHostForExecution(getStoragePoolId(), host ->
+                resourceManager.getVdsManager(host.getId()).getDomains()
+                        .stream()
+                        .filter(vdsDomainsData -> vdsDomainsData.getDomainId().equals(getStorageDomainId()))
+                        .allMatch(VDSDomainsData::isValid)
+        );
+
+        if (hostForExecution == null) {
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
+            getReturnValue().setValid(false);
+            return null;
+        }
+
+        return vdsDao.get(hostForExecution);
     }
 
     @Override
