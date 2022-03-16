@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.CopyOnNewVersion;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.EditableVmField;
@@ -1302,8 +1303,10 @@ public class VmHandler implements BackendService {
     }
 
     public void updateCpuAndNumaPinning(VM vm, Guid vdsId) {
-        VdsDynamic host = vdsDynamicDao.get(vdsId);
-        NumaPinningHelper.applyAutoPinningPolicy(vm, host, vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
+        if (vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA && vm.getCurrentCpuPinning() == null) {
+            VdsDynamic host = vdsDynamicDao.get(vdsId);
+            NumaPinningHelper.applyAutoPinningPolicy(vm, host, vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
+        }
     }
 
     public void autoSelectResumeBehavior(VmBase vmBase) {

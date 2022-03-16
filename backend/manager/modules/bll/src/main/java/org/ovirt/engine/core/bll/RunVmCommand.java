@@ -957,7 +957,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getVm().setUseHostCpuFlags(true);
         }
 
-        addCpuAndNumaPinning();
+        addNumaPinning();
         setDedicatedCpus();
 
         return true;
@@ -1161,10 +1161,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return true;
     }
 
-    private void addCpuAndNumaPinning() {
+    private void addNumaPinning() {
+        // The CPU topology and CPU Pinning change happens under schedule(), when allocating CPUs
+        // - VdsCpuUnitPinningHelper::updatePhysicalCpuAllocations.
         if (getVm().getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
-            vmHandler.updateCpuAndNumaPinning(getVm(), getVdsId());
-
             List<VmNumaNode> newVmNumaList = getVm().getvNumaNodeList();
             VmNumaNodeOperationParameters params =
                     new VmNumaNodeOperationParameters(getVm(), new ArrayList<>(newVmNumaList));
