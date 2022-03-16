@@ -6,7 +6,7 @@ source $(dirname "$(readlink -f "$0")")/build-srpm.sh
 dnf builddep -y rpmbuild/SRPMS/*src.rpm
 
 # Perform reasonable quick build with unit tests execution
-BUILD_UT=0
+BUILD_UT=1
 BUILD_ALL_USER_AGENTS=0
 BUILD_LOCALES=0
 
