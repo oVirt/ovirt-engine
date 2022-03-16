@@ -76,7 +76,6 @@ class Plugin(plugin.PluginBase):
             'FROM providers WHERE '
             'auth_url !~ \'{valid_url}\''.format(
                 valid_url=self._VALID_AUTH_URL,
-                ownConnection=True,
             )
         )
         return dbstatement.execute(
