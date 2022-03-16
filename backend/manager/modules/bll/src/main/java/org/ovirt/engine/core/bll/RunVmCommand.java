@@ -598,7 +598,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private void removeStatlessSnapshot() {
         runInternalAction(ActionType.ProcessDownVm,
-                new ProcessDownVmParameters(getVm().getId(), true),
+                new ProcessDownVmParameters(getVm().getId(), true, getVdsId()),
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
         // setting lock to null in order not to release lock twice
         setLock(null);

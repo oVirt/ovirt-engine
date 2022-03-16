@@ -157,10 +157,13 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             refreshHostIfNeeded(hostId == null ? alternativeHostsList : hostId);
         }
 
-        VdsManager vdsManager = resourceManager.getVdsManager(getParameters().getHostId(), false);
-        if (vdsManager != null) {
-            vdsManager.unpinVmCpus(getVm().getId());
+        if (getParameters().getHostId() != null) {
+            VdsManager vdsManager = resourceManager.getVdsManager(getParameters().getHostId(), false);
+            if (vdsManager != null) {
+                vdsManager.unpinVmCpus(getVm().getId());
+            }
         }
+
         managedBlockStorageCommandUtil.disconnectManagedBlockStorageDisks(getVm(), vmHandler);
         vmNicDao.setVmInterfacesSyncedForVm(getVmId());
     }

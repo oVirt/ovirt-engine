@@ -116,7 +116,7 @@ public class RestartVdsVmsOperation {
             }
             Injector.get(BackendInternal.class).runInternalAction(
                     ActionType.ProcessDownVm,
-                    new ProcessDownVmParameters(vm.getId(), true),
+                    new ProcessDownVmParameters(vm.getId(), true, vds.getId()),
                     ExecutionHandler.createDefaultContextForTasks(commandContext)
             );
 
