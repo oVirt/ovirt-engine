@@ -216,7 +216,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected void processVmOnDown() {
         ThreadPoolUtil.execute(() -> runInternalActionWithTasksContext(
                 ActionType.ProcessDownVm,
-                new ProcessDownVmParameters(getVm().getId())
+                new ProcessDownVmParameters(getVm().getId(), getVdsId())
         ));
     }
 

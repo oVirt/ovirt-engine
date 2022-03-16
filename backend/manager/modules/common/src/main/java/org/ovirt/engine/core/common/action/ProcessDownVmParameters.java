@@ -13,18 +13,14 @@ public class ProcessDownVmParameters extends IdParameters {
         super();
     }
 
-    public ProcessDownVmParameters(Guid id) {
+    public ProcessDownVmParameters(Guid id, Guid hostId) {
         super(id);
-    }
-
-    public ProcessDownVmParameters(Guid id, boolean skipHostRefresh) {
-        this(id);
-        this.skipHostRefresh = skipHostRefresh;
+        this.hostId = hostId;
     }
 
     public ProcessDownVmParameters(Guid id, boolean skipHostRefresh, Guid hostId) {
-        this(id, skipHostRefresh);
-        this.hostId = hostId;
+        this(id, hostId);
+        this.skipHostRefresh = skipHostRefresh;
     }
 
     public boolean isSkipHostRefresh() {
