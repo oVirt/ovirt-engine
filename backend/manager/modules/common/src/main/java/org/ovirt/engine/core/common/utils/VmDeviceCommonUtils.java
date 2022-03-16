@@ -295,6 +295,7 @@ public class VmDeviceCommonUtils {
         }
 
         switch(type) {
+        case MDEV:
         case SOUND:
         case TPM:
             return true;

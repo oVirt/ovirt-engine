@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
@@ -195,6 +196,15 @@ public class FeatureSupported {
      */
     public static boolean isVgpuFramebufferSupported(Version version) {
         return supportedInConfig(ConfigValues.VgpuFramebufferSupported, version);
+    }
+
+    /**
+     * Check if vGPU driver parameters are supported
+     *
+     * @param version Compatibility version to check for.
+     */
+    public static boolean isVgpuDriverParametersSupported(Version version) {
+        return Version.v4_7.lessOrEquals(version);
     }
 
     /**
@@ -410,5 +420,15 @@ public class FeatureSupported {
      */
     public static boolean isConvertDiskSupported(VDS vds) {
         return vds != null && Version.v4_6.less(vds.getClusterCompatibilityVersion());
+    }
+
+    /**
+     * Checks if the hybrid backup can be performed on VM
+     *
+     * @param vm The VM
+     * @return true if VM can be backed up using hybrid backup
+     */
+    public static boolean isHybridBackupSupported(VM vm) {
+        return vm != null && supportedInConfig(ConfigValues.UseHybridBackup, vm.getCompatibilityVersion());
     }
 }

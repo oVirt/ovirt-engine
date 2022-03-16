@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransferBacken
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TimeoutPolicyType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
+import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
@@ -78,6 +79,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
@@ -116,6 +118,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Inject
     private VmBackupDao vmBackupDao;
     @Inject
+    private SnapshotDao snapshotDao;
+    @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
     @Typed(TransferImageCommandCallback.class)
@@ -124,6 +128,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     private ImageioClient proxyClient;
     private VmBackup backup;
     private VM backupVm;
+    private Guid backupDiskSnapshotId;
 
     // Used by engine to abort inactive transfer, and passed to imageio server for disconnecting inactive
     // connections.
@@ -184,6 +189,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
                 && validate(diskImagesValidator.diskImagesNotIllegal())
                 && validate(storageDomainValidator.isDomainExistAndActive());
         if (isBackup()) {
+            if (isHybridBackup()) {
+                if (!snapshotDao.exists(getBackup().getVmId(), getBackup().getSnapshotId())) {
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
+                }
+            }
             return isValid && validate(isVmBackupReady()) && validate(isFormatApplicableForBackup());
         }
         return isValid
@@ -234,6 +244,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private Guid getBitmap() {
+        if (isHybridBackup() && getDiskImage().isQcowFormat()) {
+            return getBackup().getFromCheckpointId();
+        }
+
         if (getParameters().getTransferType() == TransferType.Download
                 && getBackupVm() != null
                 && getBackupVm().isDown()
@@ -348,6 +362,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     protected DiskImage getDiskImage() {
+        if (isHybridBackup()) {
+            setImageId(getBackupDiskSnapshotId());
+            return super.getDiskImage();
+        }
         if (!Guid.isNullOrEmpty(getParameters().getImageId())) {
             setImageId(getParameters().getImageId());
             return super.getDiskImage();
@@ -407,6 +425,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<>();
+
         if (isBackup()) {
             // StartVmBackup should handle locks
             return locks;
@@ -1132,7 +1151,11 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private boolean isLiveBackup() {
-        return isBackup() && getBackup().isLiveBackup();
+        return isBackup() && getBackup().getBackupType() == VmBackupType.Live;
+    }
+
+    private boolean isHybridBackup() {
+        return isBackup() && getBackup().getBackupType() == VmBackupType.Hybrid;
     }
 
     private boolean isSupportsDirtyExtents() {
@@ -1430,6 +1453,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             proxyClient = new ImageioClient("localhost", PROXY_CONTROL_PORT);
         }
         return proxyClient;
+    }
+
+    private Guid getBackupDiskSnapshotId() {
+        if (Guid.isNullOrEmpty(backupDiskSnapshotId)) {
+            backupDiskSnapshotId = vmBackupDao.getDiskSnapshotIdForBackup(getParameters().getBackupId(),
+                    getParameters().getImageGroupID());
+        }
+
+        return backupDiskSnapshotId;
     }
 
     @Override

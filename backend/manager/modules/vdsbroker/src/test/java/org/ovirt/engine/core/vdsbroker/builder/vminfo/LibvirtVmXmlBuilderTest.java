@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.MDevTypesUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MemoizingSupplier;
@@ -114,15 +115,13 @@ public class LibvirtVmXmlBuilderTest {
 
         VmDevice device = mock(VmDevice.class);
         when(device.getDevice()).thenReturn("testDevice");
-        when(vm.getCustomProperties()).thenReturn("mdev_type=nvidia28");
-        setMdevDisplayOn(underTest, vm);
+        setMdevDevicesSupplier(underTest, "nvidia28", false);
 
         underTest.writeVideo(device);
         verify(writer, times(1)).writeAttributeString("type", "none");
 
         reset(writer);
-        when(vm.getCustomProperties()).thenReturn("mdev_type=nodisplay,nvidia28");
-        setMdevDisplayOn(underTest, vm);
+        setMdevDevicesSupplier(underTest, "nvidia28", true);
         underTest.writeVideo(device);
         verify(writer, times(0)).writeAttributeString("type", "none");
         verify(writer, times(1)).writeAttributeString("type", "testDevice");
@@ -138,71 +137,41 @@ public class LibvirtVmXmlBuilderTest {
         setUpMdevTest(underTest, writer, properties, Version.v4_3);
         VM vm = getVm(underTest);
 
+        setMdevDevicesSupplier(underTest, List.of(), false);
         underTest.writeVGpu();
         verify(writer, times(0)).writeStartElement("hostdev");
 
         // display="on" is the default
         reset(writer);
-        when(vm.getCustomProperties()).thenReturn("mdev_type=nvidia28");
-        setMdevDisplayOn(underTest, vm);
+        setMdevDevicesSupplier(underTest, "nvidia28", false);
         underTest.writeVGpu();
         verify(writer, times(1)).writeAttributeString("display", "on");
         verify(writer, times(0)).writeAttributeString("ramfb", "on");
 
         // display="on" is inserted for each mdev
         reset(writer);
-        when(vm.getCustomProperties()).thenReturn("mdev_type=nvidia28,nvidia10");
+        setMdevDevicesSupplier(underTest, List.of("nvidia28", "nvidia10"), false);
         underTest.writeVGpu();
         verify(writer, times(2)).writeAttributeString("display", "on");
 
         // nodisplay prevents adding display="on" in the xml
         reset(writer);
-        when(vm.getCustomProperties()).thenReturn("mdev_type=nodisplay,nvidia28");
-        setMdevDisplayOn(underTest, vm);
+        setMdevDevicesSupplier(underTest, "nvidia28", true);
         underTest.writeVGpu();
         verify(writer, times(0)).writeAttributeString("display", "on");
 
         // nodisplay affects all mdevs
         reset(writer);
-        when(vm.getCustomProperties()).thenReturn("mdev_type=nodisplay,nvidia10,nvidia28");
-        setMdevDisplayOn(underTest, vm);
+        setMdevDevicesSupplier(underTest, List.of("nvidia28", "nvidia10"), true);
         underTest.writeVGpu();
         verify(writer, times(0)).writeAttributeString("display", "on");
 
-        // nodisplay must be the first entry in the mdev_type list
-        reset(writer);
-        when(vm.getCustomProperties()).thenReturn("mdev_type=nvidia28,nodisplay");
-        setMdevDisplayOn(underTest, vm);
-        underTest.writeVGpu();
-        verify(writer, times(2)).writeAttributeString("display", "on");
-
-        // When there's only nodisplay in mdev list, no hostdev elements are added
-        reset(writer);
-        when(vm.getCustomProperties()).thenReturn("mdev_type=nodisplay");
-        setMdevDisplayOn(underTest, vm);
-        underTest.writeVGpu();
-        verify(writer, times(0)).writeStartElement("hostdev");
-
-        // Empty and null mdev_types produce no hostdev elements
-        reset(writer);
-        when(vm.getCustomProperties()).thenReturn("mdev_type=");
-        setMdevDisplayOn(underTest, vm);
-        underTest.writeVGpu();
-        verify(writer, times(0)).writeStartElement("hostdev");
-
-        reset(writer);
-        when(vm.getCustomProperties()).thenReturn(null);
-        setMdevDisplayOn(underTest, vm);
-        underTest.writeVGpu();
-        verify(writer, times(0)).writeStartElement("hostdev");
-
         // display="on" is not included in cluster version < 4.3
         reset(writer);
-        when(vm.getCustomProperties()).thenReturn("mdev_type=nvidia28");
+        setMdevDevicesSupplier(underTest, "nvidia28", false);
         VM vm2 = mock(VM.class);
         when(vm2.getCompatibilityVersion()).thenReturn(Version.v4_2);
         setVm(underTest, vm2);
-        setMdevDisplayOn(underTest, vm2);
         underTest.writeVGpu();
         verify(writer, times(0)).writeAttributeString("display", "on");
     }
@@ -217,8 +186,7 @@ public class LibvirtVmXmlBuilderTest {
         setUpMdevTest(underTest, writer, properties, Version.v4_5);
         VM vm = getVm(underTest);
 
-        when(vm.getCustomProperties()).thenReturn("mdev_type=nvidia28");
-        setMdevDisplayOn(underTest, vm);
+        setMdevDevicesSupplier(underTest, "nvidia28", false);
         underTest.writeVGpu();
         verify(writer, times(1)).writeAttributeString("display", "on");
         verify(writer, times(1)).writeAttributeString("ramfb", "on");
@@ -427,6 +395,27 @@ public class LibvirtVmXmlBuilderTest {
         accessor.set(vmDevicesSupplier, underTest, new MemoizingSupplier<>(() -> vmDevices));
     }
 
+    private void setMdevDevicesSupplier(LibvirtVmXmlBuilder underTest, String mdevType, boolean nodisplay)
+            throws NoSuchFieldException, IllegalAccessException {
+        setMdevDevicesSupplier(underTest, Collections.singletonList(mdevType), nodisplay);
+    }
+
+    private void setMdevDevicesSupplier(LibvirtVmXmlBuilder underTest, List<String> mdevTypes, boolean nodisplay)
+            throws NoSuchFieldException, IllegalAccessException {
+        List<VmDevice> devices = new ArrayList<>();
+        for (String mdevType : mdevTypes) {
+            Map<String, Object> specParams = new HashMap<>();
+            specParams.put(MDevTypesUtils.MDEV_TYPE, mdevType);
+            if (nodisplay) {
+                specParams.put(MDevTypesUtils.NODISPLAY, Boolean.TRUE);
+            }
+            VmDevice device = new VmDevice(new VmDeviceId(Guid.newGuid(), null), VmDeviceGeneralType.MDEV,
+                    VmDeviceType.VGPU.getName(), "", specParams, true, true, false, "", null, null, null);
+            devices.add(device);
+        }
+        setVmDevicesSupplier(underTest, devices);
+    }
+
     private void setTscFreqSupplier(LibvirtVmXmlBuilder underTest) throws NoSuchFieldException, IllegalAccessException {
         Field tscFrequencySupplier = LibvirtVmXmlBuilder.class.getDeclaredField("tscFrequencySupplier");
         accessor.set(tscFrequencySupplier, underTest, new MemoizingSupplier<>(() -> "1234567980"));
@@ -448,11 +437,6 @@ public class LibvirtVmXmlBuilderTest {
         return (VM) vmField.get(underTest);
     }
 
-    private void setMdevDisplayOn(LibvirtVmXmlBuilder underTest, VM vm) throws NoSuchFieldException, IllegalAccessException {
-        Field mdevDisplayOnField = LibvirtVmXmlBuilder.class.getDeclaredField("mdevDisplayOn");
-        accessor.set(mdevDisplayOnField, underTest, MDevTypesUtils.isMdevDisplayOn(vm));
-    }
-
     private void setUpMdevTest(LibvirtVmXmlBuilder underTest, XmlTextWriter writer, Map<String, String> properties, Version compatibilityVersion) throws NoSuchFieldException, IllegalAccessException {
         doCallRealMethod().when(underTest).writeVGpu();
         Map<String, Map<String, String>> metadata = new HashMap<>();
@@ -460,7 +444,6 @@ public class LibvirtVmXmlBuilderTest {
         when(vm.getCompatibilityVersion()).thenReturn(compatibilityVersion);
         setVm(underTest, vm);
         setProperties(underTest, properties);
-        setMdevDisplayOn(underTest, vm);
         setWriter(underTest, writer);
         setMetadata(underTest, metadata);
     }

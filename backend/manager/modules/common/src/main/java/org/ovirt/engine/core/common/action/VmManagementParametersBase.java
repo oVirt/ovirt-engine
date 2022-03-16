@@ -141,6 +141,15 @@ public class VmManagementParametersBase extends VmOperationParameterBase
                                    name = "graphicsProtocol")
     private Map<GraphicsType, GraphicsDevice> graphicsDevices = new HashMap<>();
 
+    /**
+     * This attribute contains information about mediated devices.
+     *
+     * Mediated device of a VM is touched only if there is an entry in this map (non-null for adding/updating,
+     * null for removing the device. If the map doesn't contain entry for a mediated device id, the corresponding
+     * mediated device is not modified.
+     */
+    private Map<Guid, Map<String, Object>> mdevs = new HashMap<>();
+
     private List<AffinityGroup> affinityGroups;
 
     /**
@@ -185,6 +194,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
         setAffinityLabels(baseParams.getAffinityLabels());
 
         getGraphicsDevices().putAll(baseParams.getGraphicsDevices());
+        getMdevs().putAll(baseParams.getMdevs());
         setDiskInfoDestinationMap(baseParams.getDiskInfoDestinationMap());
 
         setVmLargeIcon(baseParams.getVmLargeIcon());
@@ -374,6 +384,10 @@ public class VmManagementParametersBase extends VmOperationParameterBase
     @Override
     public Map<GraphicsType, GraphicsDevice> getGraphicsDevices() {
         return graphicsDevices;
+    }
+
+    public Map<Guid, Map<String, Object>> getMdevs() {
+        return mdevs;
     }
 
     public Version getClusterLevelChangeFromVersion() {

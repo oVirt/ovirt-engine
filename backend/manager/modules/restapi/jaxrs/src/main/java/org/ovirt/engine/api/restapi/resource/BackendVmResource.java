@@ -36,6 +36,7 @@ import org.ovirt.engine.api.resource.VmCheckpointsResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
 import org.ovirt.engine.api.resource.VmHostDevicesResource;
+import org.ovirt.engine.api.resource.VmMediatedDevicesResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmNumaNodesResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
@@ -307,6 +308,11 @@ public class BackendVmResource
         EntityIdResolver<Guid> resolver = new QueryIdResolver<>(QueryType.GetVmByVmId, IdQueryParameters.class);
         VmStatisticalQuery query = new VmStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<>(entityType, guid, query));
+    }
+
+    @Override
+    public VmMediatedDevicesResource getMediatedDevicesResource() {
+        return inject(new BackendVmMediatedDevicesResource(guid));
     }
 
     @Override

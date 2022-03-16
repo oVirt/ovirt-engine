@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -58,6 +59,9 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
 
     @Inject
     private VmDao vmDao;
+
+    @Inject
+    private BaseDiskDao baseDiskDao;
 
     @Inject
     private ImagesHandler imagesHandler;
@@ -124,7 +128,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         return ImagesHandler.checkImageConfiguration(storageDomain.getStorageStaticData(),
                 getVolumeType(getDiskImage()),
                 getVolumeFormat(getDiskImage()),
-                getDiskImage().getBackup(),
+                getParameters().getBackup() != null ? getParameters().getBackup() : getDiskImage().getBackup(),
                 getReturnValue().getValidationMessages());
     }
 
@@ -175,8 +179,12 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
 
         // Delete old image
         if (getParameters().getConvertDiskPhase() == ConvertDiskCommandParameters.ConvertDiskPhase.REMOVE_SOURCE_VOLUME) {
-            switchImage();
+            if (!switchImage()) {
+                setCommandStatus(CommandStatus.FAILED);
+                return true;
+            }
             runInternalAction(ActionType.DestroyImage, createDestroyImageParameters(getDiskImage().getImageId()));
+
             updatePhase(ConvertDiskCommandParameters.ConvertDiskPhase.COMPLETE);
 
             return true;
@@ -248,7 +256,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         runInternalActionWithTasksContext(ActionType.CopyData, parameters);
     }
 
-    private void switchImage() {
+    private boolean switchImage() {
         DiskImage info = imagesHandler.getVolumeInfoFromVdsm(getDiskImage().getStoragePoolId(),
                 getDiskImage().getStorageIds().get(0),
                 getDiskImage().getId(),
@@ -261,8 +269,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
             if (info.getVolumeFormat() != getParameters().getVolumeFormat()) {
                 log.error("Requested format '{}' doesn't match format on storage '{}'",
                         getParameters().getVolumeFormat(), info.getVolumeFormat());
-                setCommandStatus(CommandStatus.FAILED);
-                return;
+                return false;
             }
 
             newImage.setVolumeFormat(getParameters().getVolumeFormat());
@@ -272,8 +279,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
             if (info.getVolumeType() != getParameters().getPreallocation()) {
                 log.error("Requested allocation policy '{}' doesn't match allocation policy on storage '{}'",
                         getParameters().getPreallocation(), info.getVolumeType());
-                setCommandStatus(CommandStatus.FAILED);
-                return;
+                return false;
             }
 
             newImage.setVolumeType(getParameters().getPreallocation());
@@ -287,6 +293,8 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
 
             return null;
         });
+
+        return true;
     }
 
     private void updatePhase(ConvertDiskCommandParameters.ConvertDiskPhase phase) {
@@ -350,7 +358,16 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         imageDao.remove(getDiskImage().getImageId());
 
         freeLock();
-        imagesHandler.updateImageStatus(getParameters().getNewVolGuid(), ImageStatus.OK);
+        TransactionSupport.executeInNewTransaction(() -> {
+            imagesHandler.updateImageStatus(getParameters().getNewVolGuid(), ImageStatus.OK);
+            DiskImage convertedImage = diskImageDao.get(getParameters().getNewVolGuid());
+            if (getParameters().getBackup() != null) {
+                convertedImage.setBackup(getParameters().getBackup());
+                baseDiskDao.update(convertedImage);
+            }
+
+            return null;
+        });
 
         setSucceeded(true);
     }

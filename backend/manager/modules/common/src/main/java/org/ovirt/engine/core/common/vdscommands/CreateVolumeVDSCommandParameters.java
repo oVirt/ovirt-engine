@@ -17,6 +17,7 @@ public class CreateVolumeVDSCommandParameters extends StoragePoolDomainAndGroupI
     private boolean shouldAddBitmaps;
     private boolean legal = true;
     private Integer sequenceNumber;
+    private Guid bitmap = null;
 
     // Initialize with Guid.Empty for creating a new image.
     private Guid _imageId;
@@ -167,6 +168,15 @@ public class CreateVolumeVDSCommandParameters extends StoragePoolDomainAndGroupI
                 .append("sourceImageGroupId", getSourceImageGroupId())
                 .append("shouldAddBitmaps", shouldAddBitmaps())
                 .append("legal", isLegal())
-                .append("sequenceNumber", getSequenceNumber());
+                .append("sequenceNumber", getSequenceNumber())
+                .append("bitmap", getBitmap());
+    }
+
+    public Guid getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Guid bitmap) {
+        this.bitmap = bitmap;
     }
 }

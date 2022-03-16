@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.VmBackupResource;
 import org.ovirt.engine.api.resource.VmBackupsResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -22,6 +23,8 @@ public class BackendVmBackupsResource
         implements VmBackupsResource {
 
     protected static final String REQUIRE_CONSISTENCY_CONSTRAINT_PARAMETER = "require_consistency";
+    protected static final String LEGACY = "legacy";
+
 
     private org.ovirt.engine.core.compat.Guid vmId;
 
@@ -57,8 +60,19 @@ public class BackendVmBackupsResource
         boolean requireConsistency = ParametersHelper.getBooleanParameter(
                 httpHeaders, uriInfo, REQUIRE_CONSISTENCY_CONSTRAINT_PARAMETER, true, false);
         entity.setVmId(vmId);
-        return performCreate(ActionType.StartVmBackup,
-                new VmBackupParameters(entity, requireConsistency),
+
+        org.ovirt.engine.core.common.businessentities.VM vm =
+                getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
+                        QueryType.GetVmByVmId,
+                        new IdQueryParameters(vmId),
+                        vmId.toString());
+        if (legacy() || vm.isHostedEngine() || !FeatureSupported.isHybridBackupSupported(vm)) {
+            return performCreate(ActionType.StartVmBackup,
+                    new VmBackupParameters(entity, requireConsistency),
+                    new QueryIdResolver<Guid>(QueryType.GetVmBackupById, IdQueryParameters.class));
+        }
+
+        return performCreate(ActionType.HybridBackup, new VmBackupParameters(entity),
                 new QueryIdResolver<Guid>(QueryType.GetVmBackupById, IdQueryParameters.class));
     }
 
@@ -66,4 +80,9 @@ public class BackendVmBackupsResource
     public VmBackupResource getBackupResource(String id) {
         return inject(new BackendVmBackupResource(id, vmId, this));
     }
+
+    private boolean legacy() {
+        return ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, LEGACY, false, false);
+    }
+
 }

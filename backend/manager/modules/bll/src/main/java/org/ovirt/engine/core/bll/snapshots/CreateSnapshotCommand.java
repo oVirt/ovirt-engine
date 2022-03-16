@@ -180,6 +180,11 @@ public class CreateSnapshotCommand<T extends CreateSnapshotParameters> extends B
                 && !getParameters().isLiveSnapshot()) {
             parameters.setShouldAddBitmaps(true);
         }
+
+        if (getImage().getVolumeFormat() == VolumeFormat.COW) {
+            parameters.setBitmap(getParameters().getBitmap());
+        }
+
         return parameters;
     }
 
