@@ -431,4 +431,14 @@ public class FeatureSupported {
     public static boolean isHybridBackupSupported(VM vm) {
         return vm != null && supportedInConfig(ConfigValues.UseHybridBackup, vm.getCompatibilityVersion());
     }
+
+    /**
+     * Checks if the dedicated CpuPinningPolicy is supported.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if the VM is capable to be set with dedicated policy.
+     */
+    public static boolean isDedicatePolicySupported(Version version) {
+        return supportedInConfig(ConfigValues.IsDedicatedSupported, version);
+    }
 }

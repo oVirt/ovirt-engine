@@ -1375,7 +1375,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
         }
         if (!validate(vmHandler.validateCpuPinningPolicy(getParameters().getVmStaticData(),
-                getParameters().isUpdateNuma()))) {
+                getParameters().isUpdateNuma(), getEffectiveCompatibilityVersion()))) {
             return false;
         }
         return true;

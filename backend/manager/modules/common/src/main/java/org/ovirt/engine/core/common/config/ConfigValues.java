@@ -1615,6 +1615,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     RemainingMacsInPoolWarningThreshold,
 
+    @TypeConverterAttribute(Boolean.class)
+    IsDedicatedSupported,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;
