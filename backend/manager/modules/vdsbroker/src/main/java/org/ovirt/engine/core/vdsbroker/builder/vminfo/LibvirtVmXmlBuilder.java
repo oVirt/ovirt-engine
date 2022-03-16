@@ -1379,7 +1379,7 @@ public class LibvirtVmXmlBuilder {
             String mdevDriverParameters = (String) mdevSpecParams.get(MDevTypesUtils.DRIVER_PARAMETERS);
             if (mdevDriverParameters != null) {
                 metadata.put("mdevDriverParameters", mdevDriverParameters);
-                if (!FeatureSupported.isVgpuDriverParametersSupported(compatibilityVersion)) {
+                if (!FeatureSupported.isVgpuAsVmDevices(compatibilityVersion)) {
                     log.warn("vGPU driver parameters not supported in cluster version {}", compatibilityVersion);
                 }
             }

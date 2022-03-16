@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -21,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -318,7 +321,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         writeBiosType();
         writeCustomCpuName();
 
-        _writer.writeElement(PREDEFINED_PROPERTIES, vmBase.getPredefinedProperties());
+        _writer.writeElement(PREDEFINED_PROPERTIES, predefinedProperties());
         _writer.writeElement(USER_DEFINED_PROPERTIES, vmBase.getUserDefinedProperties());
         _writer.writeElement(MAX_MEMORY_SIZE_MB, String.valueOf(vmBase.getMaxMemorySizeMb()));
 
@@ -332,6 +335,36 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeElement(USE_HOST_CPU, String.valueOf(vmBase.isUseHostCpuFlags()));
         _writer.writeElement(BALLOON_ENABLED, String.valueOf(vmBase.isBalloonEnabled()));
         _writer.writeElement(CPU_PINNING_POLICY, String.valueOf(vmBase.getCpuPinningPolicy().getValue()));
+    }
+
+    private boolean isMdevTypeRequired() {
+        final Version version = vmBase.getCustomCompatibilityVersion() != null ? vmBase.getCustomCompatibilityVersion()
+                : this.version;
+        return !FeatureSupported.isVgpuAsVmDevices(version);
+    }
+
+    private String predefinedProperties() {
+        String predefinedProperties = vmBase.getPredefinedProperties();
+        if (isMdevTypeRequired()) {
+            final Collection<VmDevice> devices = vmBase.getManagedDeviceMap().values().stream()
+                    .filter(device -> device.getType() == VmDeviceGeneralType.MDEV).collect(Collectors.toList());
+            if (!devices.isEmpty()) {
+                String vgpuProperties = devices.stream()
+                        .map(device -> (String) device.getSpecParams().get(MDevTypesUtils.MDEV_TYPE))
+                        .collect(Collectors.joining(","));
+                if (devices.stream().anyMatch(device -> Boolean.TRUE
+                        .equals((Boolean) device.getSpecParams().get(MDevTypesUtils.NODISPLAY)))) {
+                    vgpuProperties = "nodisplay," + vgpuProperties;
+                }
+                vgpuProperties = "mdev_type=" + vgpuProperties;
+                if (predefinedProperties == null || predefinedProperties.isEmpty()) {
+                    predefinedProperties = vgpuProperties;
+                } else {
+                    predefinedProperties = predefinedProperties + ";" + vgpuProperties;
+                }
+            }
+        }
+        return predefinedProperties;
     }
 
     protected void writeVirtioMultiQueues() {
@@ -438,6 +471,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         Collection<VmDevice> managedDevices = vmBase.getManagedDeviceMap().values();
         for (VmDevice device : managedDevices) {
             if (isSpecialDevice(device)) {
+                if (device.getType() == VmDeviceGeneralType.MDEV && isMdevTypeRequired()) {
+                    // mdev_type predefined property is written instead
+                    continue;
+                }
                 devices.add(device);
             }
         }
