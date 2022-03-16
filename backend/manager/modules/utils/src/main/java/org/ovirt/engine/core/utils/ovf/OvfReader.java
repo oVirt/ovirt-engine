@@ -41,9 +41,11 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -637,7 +639,7 @@ public abstract class OvfReader implements IOvfBuilder {
         consumeReadProperty(content, CUSTOM_EMULATED_MACHINE, val -> vmBase.setCustomEmulatedMachine(val));
         readBiosType(content);
         consumeReadProperty(content, CUSTOM_CPU_NAME, val -> vmBase.setCustomCpuName(val));
-        consumeReadProperty(content, PREDEFINED_PROPERTIES, val -> vmBase.setPredefinedProperties(val));
+        consumeReadProperty(content, PREDEFINED_PROPERTIES, val -> addPredefinedProperties(val));
         consumeReadProperty(content, USER_DEFINED_PROPERTIES, val -> vmBase.setUserDefinedProperties(val));
         consumeReadProperty(content, MAX_MEMORY_SIZE_MB, val -> vmBase.setMaxMemorySizeMb(Integer.parseInt(val)));
 
@@ -895,6 +897,39 @@ public abstract class OvfReader implements IOvfBuilder {
                 vmDevice.setDevice(VmDeviceType.BRIDGE.getName());
             }
         }
+    }
+
+    private void addPredefinedProperties(String properties) {
+        if (properties != null) {
+            final SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
+            final Map<String, String> customProperties = util.convertProperties(properties);
+            String mdev_type = "mdev_type";
+            final String mdevTypes = customProperties.get(mdev_type);
+            if (mdevTypes != null && !mdevTypes.trim().isEmpty()) {
+                Boolean nodisplay = Boolean.FALSE;
+                for (String type : mdevTypes.split(",")) {
+                    if (type.equals("nodisplay")) {
+                        nodisplay = Boolean.TRUE;
+                    } else {
+                        VmDevice device = new VmDevice();
+                        device.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
+                        device.setType(VmDeviceGeneralType.MDEV);
+                        device.setDevice(VmDeviceType.VGPU.getName());
+                        device.setAddress("");
+                        device.setManaged(true);
+                        device.setPlugged(true);
+                        Map<String, Object> specParams = new HashMap<>();
+                        specParams.put(MDevTypesUtils.MDEV_TYPE, type);
+                        specParams.put(MDevTypesUtils.NODISPLAY, nodisplay);
+                        device.setSpecParams(specParams);
+                        addManagedVmDevice(device);
+                    }
+                }
+                customProperties.remove(mdev_type);
+                properties = util.convertProperties(customProperties);
+            }
+        }
+        vmBase.setPredefinedProperties(properties);
     }
 
     private void addDefaultGraphicsDevice() {

@@ -199,11 +199,11 @@ public class FeatureSupported {
     }
 
     /**
-     * Check if vGPU driver parameters are supported
+     * Check if vGPU parameters are represented as VM devices
      *
      * @param version Compatibility version to check for.
      */
-    public static boolean isVgpuDriverParametersSupported(Version version) {
+    public static boolean isVgpuAsVmDevices(final Version version) {
         return Version.v4_7.lessOrEquals(version);
     }
 
