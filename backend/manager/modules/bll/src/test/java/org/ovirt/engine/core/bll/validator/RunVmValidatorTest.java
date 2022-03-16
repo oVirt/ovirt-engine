@@ -100,7 +100,7 @@ public class RunVmValidatorTest {
     }
 
     @Test
-    public void testValidEmptyCustomProerties() {
+    public void testValidEmptyCustomProperties() {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_2);
         vm.setCustomProperties("");
@@ -110,7 +110,7 @@ public class RunVmValidatorTest {
     }
 
     @Test
-    public void testWrongFormatCustomProerties() {
+    public void testWrongFormatCustomProperties() {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_2);
         vm.setCustomProperties("sap_agent;"); // missing '= true'
@@ -120,7 +120,7 @@ public class RunVmValidatorTest {
     }
 
     @Test
-    public void testNotValidCustomProerties() {
+    public void testNotValidCustomProperties() {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_2);
         vm.setCustomProperties("property=value;");
@@ -130,7 +130,7 @@ public class RunVmValidatorTest {
     }
 
     @Test
-    public void testValidCustomProerties() {
+    public void testValidCustomProperties() {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_2);
         vm.setCustomProperties("sap_agent=true;");
