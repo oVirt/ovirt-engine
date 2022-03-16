@@ -391,4 +391,13 @@ class RPMDistroEnv(object):
     OVIRT_JBOSS_PACKAGES = 'OVESETUP_RPMDISTRO/jbossPackages'
 
 
+@util.export
+@util.codegen
+@osetupattrsclass
+class KeycloakEnv(object):
+    KEYCLOAK_ENABLED = 'OVESETUP_CONFIG/keycloakEnabled'
+    KEYCLOAK_OVIRT_ADMIN_USER = 'OVESETUP_CONFIG/keycloakOvirtAdmin'
+    KEYCLOAK_OVIRT_ADMIN_PASSWD = 'OVESETUP_CONFIG/keycloakOvirtAdminPasswd'
+
+
 # vim: expandtab tabstop=4 shiftwidth=4

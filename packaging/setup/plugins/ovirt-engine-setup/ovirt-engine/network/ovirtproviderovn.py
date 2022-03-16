@@ -121,6 +121,18 @@ class Plugin(plugin.PluginBase):
             OvnEnv.OVN_FIREWALLD_SERVICES,
             Defaults.DEFAULT_OVN_FIREWALLD_SERVICES
         )
+        self.environment.setdefault(
+            oengcommcons.KeycloakEnv.KEYCLOAK_OVIRT_ADMIN_USER,
+            None
+        )
+        self.environment.setdefault(
+            oengcommcons.KeycloakEnv.KEYCLOAK_OVIRT_ADMIN_PASSWD,
+            None
+        )
+        self.environment.setdefault(
+            oengcommcons.KeycloakEnv.KEYCLOAK_ENABLED,
+            False
+        )
 
     def _check_provider_exists(self):
         statement = database.Statement(
@@ -454,13 +466,29 @@ class Plugin(plugin.PluginBase):
         if user:
             return user, password
 
+        keycloak_enabled = self.environment.get(
+            oengcommcons.KeycloakEnv.KEYCLOAK_ENABLED
+        )
+        if keycloak_enabled:
+            self.logger.debug(
+                'Setting up OVN provider credentials '
+                'for Keycloak based authentication'
+            )
+            user = self.environment[
+                oengcommcons.KeycloakEnv.KEYCLOAK_OVIRT_ADMIN_USER
+            ]
+            password = self.environment[
+                oengcommcons.KeycloakEnv.KEYCLOAK_OVIRT_ADMIN_PASSWD
+            ]
+        else:
+            user = self.environment[
+                oenginecons.ConfigEnv.ADMIN_USER
+            ]
+            password = self.environment[
+                oenginecons.ConfigEnv.ADMIN_PASSWORD
+            ]
+
         use_default_credentials = False
-        user = self.environment[
-            oenginecons.ConfigEnv.ADMIN_USER
-        ]
-        password = self.environment[
-            oenginecons.ConfigEnv.ADMIN_PASSWORD
-        ]
 
         if user is not None and password is not None:
             use_default_credentials = self._query_default_credentials(user)
@@ -739,6 +767,23 @@ class Plugin(plugin.PluginBase):
                 'port-security-enabled-default': True
             }
         }
+
+        keycloak_enabled = self.environment.get(
+            oengcommcons.KeycloakEnv.KEYCLOAK_ENABLED
+        )
+        if keycloak_enabled:
+            keycloak_admin = self.environment[
+                oengcommcons.KeycloakEnv.KEYCLOAK_OVIRT_ADMIN_USER
+            ]
+
+            self.logger.debug(
+                'Setting up ovirt OVN provider service '
+                'for Keycloak based authentication '
+                ' with user %s',
+                keycloak_admin
+            )
+            parameters['[OVIRT]']['ovirt-admin-user-name'] = keycloak_admin
+
         return self._format_config_file_content(parameters)
 
     def _configure_ovirt_provider_ovn(self):
@@ -885,6 +930,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=oenginecons.Stages.OVN_PROVIDER_CREDENTIALS_CUSTOMIZATION,
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_MISC,
         ),

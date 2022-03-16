@@ -81,6 +81,10 @@ class Plugin(plugin.PluginBase):
             oenginecons.ConfigEnv.ADMIN_PASSWORD,
             None
         )
+        self.environment.setdefault(
+            oengcommcons.KeycloakEnv.KEYCLOAK_ENABLED,
+            False
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -271,9 +275,14 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
         ),
-        condition=lambda self: self.environment[
-            oenginecons.ConfigEnv.ADMIN_PASSWORD
-        ] is not None,
+        condition=lambda self: (
+            self.environment[
+                oenginecons.ConfigEnv.ADMIN_PASSWORD
+            ] is not None and
+            self.environment[
+                oengcommcons.KeycloakEnv.KEYCLOAK_ENABLED
+            ] is False
+        )
     )
     def _closeup(self):
         self.dialog.note(
