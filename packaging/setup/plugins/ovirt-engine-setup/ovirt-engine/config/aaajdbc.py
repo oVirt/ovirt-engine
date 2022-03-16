@@ -261,7 +261,6 @@ class Plugin(plugin.PluginBase):
 
                     'config.datasource.file = {dbConfigFile}\n'
                 ).format(
-                    profile=profile,
                     authzName=self.environment[
                         oenginecons.ConfigEnv.ADMIN_USER_AUTHZ_NAME
                     ],
