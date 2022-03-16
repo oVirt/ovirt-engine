@@ -26,6 +26,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.ExternalNetworkProviderConfigurationsResource;
 import org.ovirt.engine.api.resource.FenceAgentsResource;
+import org.ovirt.engine.api.resource.HostCpuUnitsResource;
 import org.ovirt.engine.api.resource.HostDevicesResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
 import org.ovirt.engine.api.resource.HostNumaNodesResource;
@@ -833,5 +834,10 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public ExternalNetworkProviderConfigurationsResource getExternalNetworkProviderConfigurationsResource() {
         return inject(new BackendHostExternalNetworkProviderConfigurationsResource(guid));
+    }
+
+    @Override
+    public HostCpuUnitsResource getCpuUnitsResource() {
+        return inject(new BackendHostCpuUnitsResource(guid));
     }
 }
