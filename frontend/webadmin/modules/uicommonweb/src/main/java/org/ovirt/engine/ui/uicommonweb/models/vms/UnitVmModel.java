@@ -4065,7 +4065,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
         boolean isDedicatedCpusSupported = false;
         if(getSelectedCluster() != null && getSelectedCluster().getCompatibilityVersion() != null) {
-            isDedicatedCpusSupported = Version.v4_7.lessOrEquals(getSelectedCluster().getCompatibilityVersion());
+            isDedicatedCpusSupported = AsyncDataProvider.getInstance()
+                    .isDedicatedPolicySupportedByVersion(getCompatibilityVersion());
         }
         cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.MANUAL, defaultHostSelected);
         cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.DEDICATED, isDedicatedCpusSupported);

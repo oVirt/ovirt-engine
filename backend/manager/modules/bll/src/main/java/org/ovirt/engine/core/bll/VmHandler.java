@@ -1558,7 +1558,7 @@ public class VmHandler implements BackendService {
         }
     }
 
-    public ValidationResult validateCpuPinningPolicy(VmBase vmBase, boolean numaSet) {
+    public ValidationResult validateCpuPinningPolicy(VmBase vmBase, boolean numaSet, Version version) {
         ValidationResult result = ValidationResult.VALID;
 
         switch (vmBase.getCpuPinningPolicy()) {
@@ -1578,6 +1578,11 @@ public class VmHandler implements BackendService {
                     .anyMatch(vdsDynamic -> vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets() == 1);
             if (singleCoreHostFound) {
                 result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_RESIZE_AND_PIN_SINGLE_CORE);
+            }
+            break;
+        case DEDICATED:
+            if (!FeatureSupported.isDedicatePolicySupported(version)) {
+                result = new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DEDICATED_IS_NOT_SUPPORTED);
             }
             break;
         default:

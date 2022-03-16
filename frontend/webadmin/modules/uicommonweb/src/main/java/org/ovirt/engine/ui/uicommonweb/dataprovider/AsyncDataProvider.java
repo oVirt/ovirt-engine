@@ -500,6 +500,10 @@ public class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(ConfigValues.ParallelMigrationsSupported, version.getValue());
     }
 
+    public Boolean isDedicatedPolicySupportedByVersion(Version version) {
+        return (Boolean) getConfigValuePreConverted(ConfigValues.IsDedicatedSupported, version.getValue());
+    }
+
     private void initMigrationSupportMap() {
         Frontend.getInstance().runQuery(QueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMigrationSupport),
