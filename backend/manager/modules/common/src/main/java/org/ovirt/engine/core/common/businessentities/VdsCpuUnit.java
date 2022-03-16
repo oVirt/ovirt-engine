@@ -139,6 +139,9 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
         if (!this.vmIds.contains(vmId)) {
             this.vmIds.add(vmId);
         }
+        if (cpuPinningPolicy == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
+            cpuPinningPolicy = CpuPinningPolicy.MANUAL;
+        }
         this.cpuPinningPolicy = cpuPinningPolicy;
         return true;
     }

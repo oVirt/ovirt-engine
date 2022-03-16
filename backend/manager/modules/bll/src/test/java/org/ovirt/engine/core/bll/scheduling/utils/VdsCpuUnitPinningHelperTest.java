@@ -185,7 +185,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setCpuPerSocket(1);
         vm.setThreadsPerCpu(1);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
-        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host.getId());
+        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm, new HashMap<>(), host.getId());
         assertEquals(1, cpus.size());
         assertEquals(0, cpus.get(0).getSocket());
         assertEquals(0, cpus.get(0).getCore());
@@ -200,7 +200,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setCpuPerSocket(2);
         vm.setThreadsPerCpu(1);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
-        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host.getId());
+        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm, new HashMap<>(), host.getId());
         assertEquals(2, cpus.size());
         assertEquals(0, cpus.get(0).getSocket());
         assertEquals(0, cpus.get(0).getCore());
@@ -219,7 +219,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setCpuPerSocket(1);
         vm.setThreadsPerCpu(1);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
-        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host.getId());
+        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm, new HashMap<>(), host.getId());
         assertEquals(2, cpus.size());
         assertEquals(0, cpus.get(0).getSocket());
         assertEquals(0, cpus.get(0).getCore());
@@ -238,7 +238,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setCpuPerSocket(1);
         vm.setThreadsPerCpu(2);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
-        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host.getId());
+        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm, new HashMap<>(), host.getId());
         assertEquals(4, cpus.size());
 
         assertEquals(0, cpus.get(0).getSocket());
@@ -266,7 +266,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setCpuPerSocket(5);
         vm.setThreadsPerCpu(1);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
-        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host.getId());
+        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm, new HashMap<>(), host.getId());
         assertNull(cpus);
     }
 
@@ -278,7 +278,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setCpuPerSocket(3);
         vm.setThreadsPerCpu(1);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
-        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host.getId());
+        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm, new HashMap<>(), host.getId());
         assertEquals(3, cpus.size());
 
         assertEquals(0, cpus.get(0).getSocket());
@@ -312,7 +312,7 @@ public class VdsCpuUnitPinningHelperTest {
         cpuTopology.add(new VdsCpuUnit(1, 0, 0));
         when(vdsManager.getCpuTopology()).thenReturn(cpuTopology);
 
-        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host.getId());
+        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm, new HashMap<>(), host.getId());
         assertEquals(2, cpus.size());
 
         assertEquals(0, cpus.get(0).getSocket());
@@ -348,7 +348,7 @@ public class VdsCpuUnitPinningHelperTest {
         cpuTopology.add(vdsCpuUnit);
         when(vdsManager.getCpuTopology()).thenReturn(cpuTopology);
 
-        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host.getId());
+        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm, new HashMap<>(), host.getId());
         assertEquals(2, cpus.size());
 
         assertEquals(0, cpus.get(0).getSocket());
@@ -373,7 +373,7 @@ public class VdsCpuUnitPinningHelperTest {
         cpuTopology.add(new VdsCpuUnit(1, 0, 1));
         cpuTopology.add(new VdsCpuUnit(2, 1, 0));
         when(vdsManager.getCpuTopology()).thenReturn(cpuTopology);
-        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.allocateDedicatedCpus(vm, new HashMap<>(), host.getId());
+        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm, new HashMap<>(), host.getId());
         assertNull(cpus);
     }
 

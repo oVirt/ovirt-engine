@@ -31,7 +31,7 @@ public class VdsCpuUnitPinningHelper {
      *
      * @param vmToPendingPinnings Map of VDS GUID keys to list of VdsCpuUnits pending to be taken.
      * @param vm VM object.
-     * @param hostId GUID of the VDS object..
+     * @param hostId GUID of the VDS object.
      * @return boolean. True if possible to dedicate the VM on the host. Otherwise false.
      */
     public boolean isDedicatedCpuPinningPossibleAtHost(Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings,
@@ -67,7 +67,7 @@ public class VdsCpuUnitPinningHelper {
     }
 
     /**
-     * This function will tell if the host is capable to run a given dedicated CPU policy VM.
+     * This function will allocate the host CPUs to the given CPU pinning policy.
      *
      * The function apply the pending CPU pinning on the host topology, then:
      * The function will select the most available socket (most free CPUs). It will allocate the CPUs and check if we
@@ -77,9 +77,9 @@ public class VdsCpuUnitPinningHelper {
      * @param vm VM object.
      * @param vmToPendingPinnings Map of VDS GUID keys to list of VdsCpuUnits pending to be taken.
      * @param hostId GUID of the VDS object.
-     * @return List<{@link VdsCpuUnit}>. The list of VdsCpuUnit we are going to use. If not possible, return an empty List.
+     * @return List<{@link VdsCpuUnit}>. The list of VdsCpuUnit we are going to use. If not possible, return null.
      */
-    public List<VdsCpuUnit> allocateDedicatedCpus(VM vm, Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings, Guid hostId) {
+    public List<VdsCpuUnit> updatePhysicalCpuAllocations(VM vm, Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings, Guid hostId) {
         if (vm.getCpuPinningPolicy() == CpuPinningPolicy.NONE) {
             return new ArrayList<>();
         }
