@@ -4,7 +4,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.ClusterUpgradeAction;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
 import org.ovirt.engine.api.resource.AssignedCpuProfilesResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
@@ -23,6 +22,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
+import org.ovirt.engine.core.common.action.ClusterUpgradeParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -73,10 +73,25 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     @Override
     public Response upgrade(Action action) {
-        if(action.getUpgradeAction() == ClusterUpgradeAction.START) {
-            return doAction(ActionType.StartClusterUpgrade, new ClusterParametersBase(guid), action);
+        switch (action.getUpgradeAction()) {
+            case START:
+                return doAction(ActionType.StartClusterUpgrade,
+                                new ClusterUpgradeParameters(guid, action.getCorrelationId()),
+                                action);
+
+            case UPDATE_PROGRESS:
+                return doAction(ActionType.UpdateClusterUpgrade,
+                                new ClusterUpgradeParameters(guid,
+                                                             action.getCorrelationId(),
+                                                             action.getUpgradePercentComplete()),
+                                action);
+
+            case FINISH:
+            default:
+                return doAction(ActionType.FinishClusterUpgrade,
+                                new ClusterUpgradeParameters(guid, action.getCorrelationId()),
+                                action);
         }
-        return doAction(ActionType.FinishClusterUpgrade, new ClusterParametersBase(guid), action);
     }
 
     @Override

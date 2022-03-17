@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.ClusterParametersBase;
+import org.ovirt.engine.core.common.action.ClusterUpgradeParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -19,8 +19,7 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class StartClusterUpgradeCommand<T extends ClusterParametersBase> extends
-        ClusterCommandBase<T> {
+public class StartClusterUpgradeCommand<T extends ClusterUpgradeParameters> extends ClusterCommandBase<T> {
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -46,9 +45,9 @@ public class StartClusterUpgradeCommand<T extends ClusterParametersBase> extends
     @Override
     protected void executeCommand() {
         TransactionSupport.executeInNewTransaction(() -> {
-            boolean updated = clusterDao.setUpgradeRunning(cluster.getId());
+            boolean updated = clusterDao.setUpgradeRunning(cluster.getId(), getParameters().getEffectiveCorrelationid());
             if (updated) {
-                log.info("Successfully set upgrade running flag on cluster '{}'.", cluster.getId());
+                log.debug("Successfully set upgrade running flag on cluster '{}'.", cluster.getId());
             } else {
                 String msg = String.format("Failed to set upgrade running flag on cluster '%s'.", cluster.getId());
                 log.error(msg);
@@ -60,10 +59,10 @@ public class StartClusterUpgradeCommand<T extends ClusterParametersBase> extends
         });
     }
 
-
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_START_CLUSTER_UPGRADE
+        return getSucceeded()
+                ? AuditLogType.USER_START_CLUSTER_UPGRADE
                 : AuditLogType.USER_START_CLUSTER_UPGRADE_FAILED;
     }
 
