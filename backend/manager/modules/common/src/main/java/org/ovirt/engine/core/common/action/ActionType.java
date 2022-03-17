@@ -280,6 +280,7 @@ public enum ActionType {
     ManageNetworkClusters(712, ActionGroup.ASSIGN_CLUSTER_NETWORK, QuotaDependency.NONE),
     StartClusterUpgrade(713, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
     FinishClusterUpgrade(714, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
+    UpdateClusterUpgrade(715, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
 
     /**
      * MultiLevelAdministration

@@ -394,7 +394,7 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
 
         assertNotSame(updatedValue, preUpdate);
 
-        dao.setUpgradeRunning(existingCluster.getId());
+        dao.setUpgradeRunning(existingCluster.getId(), null);
 
         assertEquals(updatedValue, dao.get(existingCluster.getId()).isUpgradeRunning());
     }
@@ -406,7 +406,7 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
 
         assertNotSame(updatedValue, preUpdate);
 
-        boolean updated = dao.setUpgradeRunning(upgradeRunningCluster.getId());
+        boolean updated = dao.setUpgradeRunning(upgradeRunningCluster.getId(), null);
         assertEquals(updated, false);
     }
 
@@ -430,7 +430,7 @@ public class ClusterDaoTest extends BaseDaoTestCase<ClusterDao> {
 
         assertNotSame(updatedValue, preUpdate);
 
-        dao.setUpgradeRunning(existingCluster.getId());
+        dao.setUpgradeRunning(existingCluster.getId(), null);
 
         assertEquals(updatedValue, dao.get(existingCluster.getId()).isUpgradeRunning());
 

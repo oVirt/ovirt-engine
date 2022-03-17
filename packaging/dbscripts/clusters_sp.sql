@@ -554,6 +554,7 @@ LANGUAGE plpgsql;
 --was successful.
 CREATE OR REPLACE FUNCTION SetClusterUpgradeRunning (
     v_cluster_id UUID,
+    v_correlation_id VARCHAR(50),
     OUT v_updated BOOLEAN
     )
 AS $PROCEDURE$
@@ -567,7 +568,35 @@ BEGIN
 
     IF FOUND THEN
         UPDATE cluster
-        SET upgrade_running = true
+        SET upgrade_running = true,
+            upgrade_correlation_id = v_correlation_id,
+            upgrade_percent_complete = 0
+        WHERE cluster_id = c_id;
+    END IF;
+
+    v_updated := FOUND;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+--This SP updates the cluster upgrade progress if the cluster one is found with upgrade running flag true.
+--Returns true if update was successful.
+CREATE OR REPLACE FUNCTION UpdateClusterUpgradeProgress (
+    v_cluster_id UUID,
+    v_upgrade_percent_complete INT,
+    OUT v_updated BOOLEAN
+    )
+AS $PROCEDURE$
+DECLARE c_id UUID;
+BEGIN
+    SELECT cluster_id INTO c_id
+    FROM cluster
+    WHERE cluster_id = v_cluster_id
+        AND upgrade_running = true
+    FOR UPDATE;
+
+    IF FOUND THEN
+        UPDATE cluster
+        SET upgrade_percent_complete = v_upgrade_percent_complete
         WHERE cluster_id = c_id;
     END IF;
 
@@ -583,7 +612,8 @@ CREATE OR REPLACE FUNCTION ClearClusterUpgradeRunning (
 AS $PROCEDURE$
 BEGIN
     UPDATE cluster
-    SET upgrade_running = false
+    SET upgrade_running = false,
+        upgrade_percent_complete = 0
     WHERE cluster_id = v_cluster_id;
 
     v_updated := FOUND;
@@ -595,7 +625,8 @@ CREATE OR REPLACE FUNCTION ClearAllClusterUpgradeRunning ()
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE cluster
-    SET upgrade_running = false
+    SET upgrade_running = false,
+        upgrade_percent_complete = 0
     WHERE upgrade_running = true;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
