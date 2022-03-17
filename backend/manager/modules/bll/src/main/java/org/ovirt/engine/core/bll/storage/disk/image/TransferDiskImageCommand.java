@@ -1319,10 +1319,13 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private boolean stopImageTransferSession(ImageTransfer entity) {
-        if (entity.getImagedTicketId() == null) {
-            log.warn("Failed to stop image transfer '{}'. Ticket does not exist for image '{}'",
+        if (Guid.isNullOrEmpty(entity.getImagedTicketId())) {
+            log.warn("Image transfer '{}'. Ticket does not exist for image '{}'",
                     getCommandId(), entity.getDiskId());
-            return false;
+
+            // Shouldn't happen, but if the image ticket id is missing in the
+            // database it is very likely that it wasn't created
+            return true;
         }
 
         // If we failed to remove the ticket from the daemon, we must fail and
