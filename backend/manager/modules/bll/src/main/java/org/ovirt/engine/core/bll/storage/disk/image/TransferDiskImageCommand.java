@@ -1034,6 +1034,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
 
         Guid imagedTicketId = Guid.newGuid();
+        ImageTransfer updates = new ImageTransfer();
+        updates.setImagedTicketId(imagedTicketId);
+        updates.setVdsId(getVdsId());
+        updates.setProxyUri(getProxyUri() + IMAGES_PATH);
+        updates.setDaemonUri(getImageDaemonUri(getVds().getHostName()) + IMAGES_PATH);
+        updateEntity(updates);
 
         if (!addImageTicketToDaemon(imagedTicketId, imagePath)) {
             log.error("Failed to add host image ticket for image transfer '{}'", getCommandId());
@@ -1056,13 +1062,6 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
 
         log.info("Started image transfer '{}', timeout {} seconds", getCommandId(), getClientTicketLifetime());
-
-        ImageTransfer updates = new ImageTransfer();
-        updates.setVdsId(getVdsId());
-        updates.setImagedTicketId(imagedTicketId);
-        updates.setProxyUri(getProxyUri() + IMAGES_PATH);
-        updates.setDaemonUri(getImageDaemonUri(getVds().getHostName()) + IMAGES_PATH);
-        updateEntity(updates);
 
         setNewSessionExpiration(getClientTicketLifetime());
         updateEntityPhase(ImageTransferPhase.TRANSFERRING);
