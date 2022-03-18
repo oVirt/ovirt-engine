@@ -28,4 +28,9 @@ public class AddMdevCommand extends AbstractMdevCommand<MdevParameters> {
         setSucceeded(true);
         setActionReturnValue(mdev.getId().getDeviceId());
     }
+
+    @Override
+    protected boolean shouldValidateDeviceId() {
+        return false;
+    }
 }
