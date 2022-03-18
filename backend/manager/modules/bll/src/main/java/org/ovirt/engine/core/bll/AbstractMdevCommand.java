@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MdevParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
@@ -43,6 +44,25 @@ public abstract class AbstractMdevCommand<T extends MdevParameters> extends Comm
         if (!getParameters().isVm() && getVmTemplate() == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
+        if (shouldValidateDeviceId()) {
+            if (device.getDeviceId() == null || device.getVmId() == null) {
+                return failValidation(EngineMessage.ACTION_TYPE_MDEV_INVALID_PARAMS);
+            }
+        }
+        if (shouldValidateSpecParams()) {
+            if (device.getSpecParams() == null || device.getSpecParams().containsValue(null)
+                    || !device.getSpecParams().containsKey(MDevTypesUtils.MDEV_TYPE)) {
+                return failValidation(EngineMessage.ACTION_TYPE_MDEV_INVALID_PARAMS);
+            }
+        }
+        return true;
+    }
+
+    protected boolean shouldValidateDeviceId() {
+        return true;
+    }
+
+    protected boolean shouldValidateSpecParams() {
         return true;
     }
 

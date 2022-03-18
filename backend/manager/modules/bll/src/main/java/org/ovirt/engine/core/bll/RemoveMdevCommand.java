@@ -4,9 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.MdevParameters;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public class RemoveMdevCommand extends AbstractMdevCommand<MdevParameters> {
@@ -26,11 +24,7 @@ public class RemoveMdevCommand extends AbstractMdevCommand<MdevParameters> {
     }
 
     @Override
-    protected boolean validate() {
-        VmDevice device = getParameters().getDevice();
-        if (device.getDeviceId() == null || device.getVmId() == null) {
-            return failValidation(EngineMessage.ACTION_TYPE_REMOVE_MDEV_INVALID_PARAMS);
-        }
-        return true;
+    protected boolean shouldValidateSpecParams() {
+        return false;
     }
 }
