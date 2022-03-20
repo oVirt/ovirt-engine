@@ -160,10 +160,13 @@ public class AnsibleExecutor {
         try {
             runnerClient = ansibleClientFactory.create(commandConfig);
             ret.setLogFile(runnerClient.getLogger().getLogFile());
+            playUuid = commandConfig.getUuid().toString();
             List<String> command = commandConfig.build();
 
             // Run the playbook:
             runPlaybook(command, timeout);
+            ret = runnerClient.artifactHandler(0, timeout, fn, commandConfig.getUuid());
+//            runnerClient.processEvents(commandConfig.getUuid().toString(), 0, fn, "", ret.getLogFile());
 //            playUuid = runnerClient.runPlaybook(command);
 
 //            if (runnerClient.isHostUnreachable(playUuid)) {
@@ -227,7 +230,7 @@ public class AnsibleExecutor {
             ret.setStderr(ex.getMessage());
         } finally {
             // Make sure all events are proccessed even in case of failure:
-            if (playUuid != null && runnerClient != null && !async) {
+            if (playUuid != null && runnerClient != null && !async) { //TODO
                 runnerClient.processEvents(playUuid, lastEventId, fn, msg, ret.getLogFile());
             }
         }

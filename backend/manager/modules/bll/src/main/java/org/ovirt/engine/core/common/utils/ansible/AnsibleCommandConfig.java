@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 
@@ -29,7 +31,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
 
     public static final String ANSIBLE_COMMAND = "ansible-runner";
-    public static final String ANSIBLE_EXECUTION_METHOD = "run";
+    public static final String ANSIBLE_EXECUTION_METHOD = "start";
 
     private String cluster;
     private List<String> hostnames;
@@ -63,11 +65,11 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
                 .findAndAddModules()
                 .build()
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        this.uuid = UUID.randomUUID();
     }
 
-    public AnsibleCommandConfig uuid(UUID uuid) {
+    public void setUUID(UUID uuid) {
         this.uuid = uuid;
-        return this;
     }
 
     public UUID getUuid() {
@@ -257,16 +259,25 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
 
     public List<String> build() {
         createTempVarsFile();
-        createSpecificPlayBook();
+//        createSpecificPlayBook();
         addExtraVarsToPlaybook();
         List<String> ansibleCommand = new ArrayList<>();
-        String playbook = specificPlaybook.toString().substring(specificPlaybook.toString().lastIndexOf("/")+1);
+        try {
+            createInventoryFile();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+//        uuid(UUID.randomUUID());
+//        String playbook = specificPlaybook.toString().substring(specificPlaybook.toString().lastIndexOf("/")+1);
         ansibleCommand.add(ANSIBLE_COMMAND);
+        ansibleCommand.add("--directory-isolation-base-path");
+        ansibleCommand.add("/home/delfassy/ovirt-engine-master-git3/share/ovirt-engine/ansible-runner-service-project");
         ansibleCommand.add(ANSIBLE_EXECUTION_METHOD);
         ansibleCommand.add(AnsibleConstants.HOST_DEPLOY_PROJECT_DIR);
         ansibleCommand.add("-p");
-//        ansibleCommand.add(AnsibleConstants.HOST_DEPLOY_PLAYBOOK_DIR);
         ansibleCommand.add(playbook);
+//        ansibleCommand.add(AnsibleConstants.HOST_DEPLOY_PLAYBOOK);
+//        ansibleCommand.add(playbook);
         ansibleCommand.add("--artifact-dir");
         ansibleCommand.add(AnsibleConstants.ARTIFACTS_DIR);
         ansibleCommand.add("--inventory");
@@ -275,8 +286,24 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
         ansibleCommand.add(String.valueOf(uuid));
 //        ansibleCommand.add("--private-key");
 //        ansibleCommand.add("/home/delfassy/ovirt-engine-master-git/etc/pki/ovirt-engine/keys/engine_id_rsa");
-        ansibleCommand.add("-vvvv");
+//        ansibleCommand.add("-vvvv");
         return ansibleCommand;
+    }
+
+    private void createInventoryFile() {
+        Path inventoryFile;
+        if (getInventoryFile() == null) {
+//             If hostnames are empty we just don't pass any inventory file:
+            if (CollectionUtils.isNotEmpty(hostnames())) {
+                try {
+                    inventoryFile = Files.createTempFile("ansible-inventory", "");
+                    Files.write(inventoryFile, StringUtils.join(hostnames(), System.lineSeparator()).getBytes());
+                    inventoryFile(inventoryFile);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     //create temp extraVars file with play uuid name
@@ -316,10 +343,17 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
 
     private void addExtraVarsToPlaybook() {
         try {
-            List<String> lines = Files.readAllLines(specificPlaybook, StandardCharsets.UTF_8);
+//            List<String> lines = Files.readAllLines(AnsibleConstants.HOST_DEPLOY_PLAYBOOK_PATH, StandardCharsets.UTF_8);
+            List<String> lines = Files.readAllLines(Paths.get(AnsibleConstants.PROJECT_PATH + playbook), StandardCharsets.UTF_8);
+//            lines.remove(lines.indexOf("        file: "));
             int position = lines.indexOf("      include_vars:") + 1;
-            lines.add(position, "        file: " + "\"" + extraVars.getPath() + "\"");
-            Files.write(specificPlaybook, lines, StandardCharsets.UTF_8);
+//            lines.add(position, "        file: " + "\"" + extraVars.getPath() + "\"");
+            lines.add(position, "        file: " + "\"" + extraVars.getPath() + "\""); //TODO
+            Files.write(Paths.get(AnsibleConstants.PROJECT_PATH + playbook), lines, StandardCharsets.UTF_8); //NEED TO FIX THIS.
+//            List<String> lines = Files.readAllLines(specificPlaybook, StandardCharsets.UTF_8);
+//            int position = lines.indexOf("      include_vars:") + 1;
+//            lines.add(position, "        file: " + "\"" + extraVars.getPath() + "\"");
+//            Files.write(specificPlaybook, lines, StandardCharsets.UTF_8);
         } catch(Exception e) {
             e.printStackTrace();
         }

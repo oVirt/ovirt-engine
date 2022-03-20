@@ -128,6 +128,12 @@ public final class RunnerJsonNode {
         return node.get("event").textValue().equals("playbook_on_task_start");
     }
 
+    /**
+     * Return true if the event is 'verbose', which mean the event unexpectedly failed.
+     */
+    public static boolean isEventVerbose(JsonNode node) {
+        return node.get("event").textValue().equals("verbose");
+    }
 
     /**
      * Return true if the event is 'error', which means it's event unexpectedly failed.
@@ -241,14 +247,16 @@ public final class RunnerJsonNode {
      * Return true if the event should be ignored.
      */
     public static boolean ignore(JsonNode node) {
-        return node.get("data").get("event_data").get("ignore_errors").asBoolean();
+//        return node.get("data").get("event_data").get("ignore_errors").asBoolean();
+        return node.get("event_data").get("ignore_errors").asBoolean();
     }
 
     /**
      * Return the data of the task output.
      */
     public static JsonNode taskNode(JsonNode node) {
-        return node.get("data").get("event_data").get("res");
+//        return node.get("data").get("event_data").get("res");
+        return node.get("event_data").get("res");
     }
 
     /**
@@ -321,7 +329,7 @@ public final class RunnerJsonNode {
      * Return stdout value of the command task.
      */
     public static String getStdout(JsonNode node) {
-        return node.get("stdout").textValue();
+        return node.get("stdout").textValue().strip();
     }
 
     /**
