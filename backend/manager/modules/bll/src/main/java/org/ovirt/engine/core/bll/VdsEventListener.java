@@ -266,10 +266,9 @@ public class VdsEventListener implements IVdsEventListener {
      */
     @Override
     public void syncStorageDomainsLuns(Guid vdsId, Collection<Guid> storageDomainsToSync) {
-        ThreadPoolUtil.execute(() -> {
-            backend.runInternalAction(ActionType.SyncStorageDomainsLuns, new SyncStorageDomainsLunsParameters(
-                    vdsId, storageDomainsToSync));
-        });
+        ThreadPoolUtil.execute(() -> backend.runInternalAction(
+                ActionType.SyncStorageDomainsLuns,
+                new SyncStorageDomainsLunsParameters(vdsId, storageDomainsToSync)));
     }
 
     @Override
@@ -447,7 +446,7 @@ public class VdsEventListener implements IVdsEventListener {
         if (command != null) {
             // The command will be invoked in a different VDS in its rerun method, so we're calling
             // its rerun method from a new thread so that it won't be executed within our current VDSM lock
-            ThreadPoolUtil.execute(() -> command.rerun());
+            ThreadPoolUtil.execute(command::rerun);
         }
     }
 
