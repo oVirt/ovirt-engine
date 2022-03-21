@@ -95,6 +95,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDeviceFeEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWidget;
@@ -2197,6 +2198,8 @@ public class PresenterModule extends BasePresenterModule {
             new TypeLiteral<DetailActionPanelView<VM, Snapshot>>(){});
         bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<VM, HostDeviceView>>(){},
             new TypeLiteral<DetailActionPanelView<VM, HostDeviceView>>(){});
+        bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<VM, VmDeviceFeEntity>>(){},
+                new TypeLiteral<DetailActionPanelView<VM, VmDeviceFeEntity>>(){});
         bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<VDS, HostInterfaceLineModel>>(){},
             new TypeLiteral<DetailActionPanelView<VDS, HostInterfaceLineModel>>(){});
         bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<VDS, HostDeviceView>>(){},
