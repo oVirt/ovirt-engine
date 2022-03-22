@@ -40,6 +40,9 @@ ovirt_vdsm_key_size: 2048
 ovirt_vdsm_key_type: rsa
 
 # OVN
+ovirt_ovn_ca_file: 'ovn/ca-cert.pem'
+ovirt_ovn_cert_file: 'ovn/ovn-cert.pem'
+ovirt_ovn_key_file: 'ovn/ovn-key.pem'
 ovn_central: "{{ host_deploy_ovn_central | default(omit) }}"
 ovn_tunneling_interface: "{{ host_deploy_ovn_tunneling_interface | default('ovirtmgmt') }}"
 ovn_host_fqdn: "{{ ovirt_vds_hostname | default('') }}"
