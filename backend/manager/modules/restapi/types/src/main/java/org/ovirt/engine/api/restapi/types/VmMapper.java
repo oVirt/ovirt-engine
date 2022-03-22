@@ -300,7 +300,7 @@ public class VmMapper extends VmBaseMapper {
                 Boot boot = map(entity.getBootSequence(), null);
                 model.getOs().setBoot(boot);
             }
-            if (VmCpuCountHelper.isDynamicCpuPinning(entity)) {
+            if (entity.getCurrentCpuPinning() != null) {
                 model.setDynamicCpu(new DynamicCpu());
                 model.getDynamicCpu().setCpuTune(stringToCpuTune(entity.getCurrentCpuPinning()));
                 if (VmCpuCountHelper.isResizeAndPinPolicy(entity)) {

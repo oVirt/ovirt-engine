@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
@@ -283,12 +284,12 @@ public class LibvirtVmXmlBuilder {
         writeClock();
         writePowerEvents();
         writeFeatures();
-        boolean numaEnabled = vmInfoBuildUtils.isNumaEnabled(hostNumaNodesSupplier, vmNumaNodesSupplier, vm);
+        boolean numaEnabled = vmInfoBuildUtils.isNumaEnabled(hostNumaNodesSupplier.get(), vmNumaNodesSupplier.get(), vm);
         if (numaEnabled) {
             writeNumaTune();
         }
         writeCpu(numaEnabled || vm.isHostedEngine() && !vmNumaNodesSupplier.get().isEmpty());
-        writeCpuTune(numaEnabled);
+        writeCpuTune();
         writeQemuCapabilities();
         writeDevices();
         writePowerManagement();
@@ -517,15 +518,9 @@ public class LibvirtVmXmlBuilder {
         });
     }
 
-    private void writeCpuTune(boolean numaEnabled) {
+    private void writeCpuTune() {
         writer.writeStartElement("cputune");
-        Map<String, Object> cpuPinning = vmInfoBuildUtils.parseCpuPinning(VmCpuCountHelper.isDynamicCpuPinning(vm) ?
-                vm.getCurrentCpuPinning() : vm.getCpuPinning());
-        if (cpuPinning.isEmpty() && numaEnabled) {
-            cpuPinning = NumaSettingFactory.buildCpuPinningWithNumaSetting(
-                    vmNumaNodesSupplier.get(),
-                    hostNumaNodesSupplier.get());
-        }
+        Map<String, Object> cpuPinning = vmInfoBuildUtils.parseCpuPinning(vm.getVmPinning());
         cpuPinning.forEach((vcpu, cpuset) -> {
             writer.writeStartElement("vcpupin");
             writer.writeAttributeString("vcpu", vcpu);
@@ -1042,7 +1037,12 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeCpuPinningPolicyMetadata() {
-        writer.writeElement(OVIRT_VM_URI, "cpuPolicy", vm.getCpuPinningPolicy().name().toLowerCase());
+        CpuPinningPolicy cpuPinningPolicy = vm.getCpuPinningPolicy();
+        // CpuPinningPolicy.NONE may happen when the engine generates CPU pinning based on the NUMA pinning.
+        if (vm.getVmPinning() != null && cpuPinningPolicy == CpuPinningPolicy.NONE) {
+            cpuPinningPolicy = CpuPinningPolicy.MANUAL;
+        }
+        writer.writeElement(OVIRT_VM_URI, "cpuPolicy", cpuPinningPolicy.name().toLowerCase());
     }
 
     private void writePowerEvents() {

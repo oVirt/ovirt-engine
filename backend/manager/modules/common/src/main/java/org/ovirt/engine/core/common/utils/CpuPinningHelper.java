@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 
 public class CpuPinningHelper {
@@ -92,18 +91,6 @@ public class CpuPinningHelper {
             return returnList;
         } else {
             return null;
-        }
-    }
-
-    public static String getVmPinning(VM vm) {
-        switch (vm.getCpuPinningPolicy()) {
-            case MANUAL:
-                return vm.getCpuPinning();
-            case RESIZE_AND_PIN_NUMA:
-            case DEDICATED:
-                return vm.getCurrentCpuPinning();
-            default:
-                return null;
         }
     }
 

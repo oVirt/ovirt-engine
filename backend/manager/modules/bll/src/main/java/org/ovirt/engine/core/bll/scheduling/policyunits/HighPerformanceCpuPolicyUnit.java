@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Guid;
 
 @SchedulingUnit(
@@ -60,7 +59,7 @@ public class HighPerformanceCpuPolicyUnit extends PolicyUnitImpl {
     private boolean policyUnitEnabled(VM vm) {
         if (vm.getVmType() == VmType.HighPerformance ||
                 vm.isUsingCpuPassthrough() ||
-                StringUtils.isNotEmpty(VmCpuCountHelper.isDynamicCpuPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning())) {
+                StringUtils.isNotEmpty(vm.getVmPinning())) {
             return true;
         }
 
