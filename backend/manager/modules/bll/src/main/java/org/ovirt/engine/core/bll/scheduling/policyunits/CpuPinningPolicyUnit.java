@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.CpuPinningHelper;
-import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
@@ -61,7 +60,7 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
             final List<VDS> hosts,
             final VM vm,
             final PerHostMessages messages) {
-        final String cpuPinning = VmCpuCountHelper.isDynamicCpuPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning();
+        final String cpuPinning = vm.getVmPinning();
 
         // return all hosts when no CPU pinning is requested
         if (vm.getCpuPinningPolicy() == CpuPinningPolicy.NONE) {

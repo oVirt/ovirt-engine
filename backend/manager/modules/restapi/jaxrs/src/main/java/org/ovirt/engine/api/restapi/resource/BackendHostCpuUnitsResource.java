@@ -57,7 +57,7 @@ public class BackendHostCpuUnitsResource extends AbstractBackendCollectionResour
 
     private void addPinnedVms(List<HostCpuUnit> hostCpuUnits, List<VM> vms) {
         for (VM vm : vms) {
-            String vmPinning = CpuPinningHelper.getVmPinning(vm);
+            String vmPinning = vm.getVmPinning();
             if (vmPinning == null) {
                 continue;
             }

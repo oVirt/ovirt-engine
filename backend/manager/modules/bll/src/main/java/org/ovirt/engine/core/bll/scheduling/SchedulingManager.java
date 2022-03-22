@@ -432,6 +432,7 @@ public class SchedulingManager implements BackendService {
 
                 for (VM vm : vmsNotOnHost) {
                     vmHandler.updateCpuAndNumaPinning(vm, host.getId());
+                    vmHandler.setCpuPinningByNumaPinning(vm, host.getId());
                     List<VdsCpuUnit> dedicatedCpuPinning = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm,
                             PendingCpuPinning.collectForHost(getPendingResourceManager(), host.getId()), host.getId());
                     addPendingResources(vm, host, numaConsumptionPerVm.getOrDefault(vm.getId(), Collections.emptyMap()), dedicatedCpuPinning);
@@ -558,7 +559,7 @@ public class SchedulingManager implements BackendService {
 
 
         boolean considerCpuPinning = filteredVms.stream()
-                .anyMatch(vm -> !StringUtils.isEmpty(VmCpuCountHelper.isDynamicCpuPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning()));
+                .anyMatch(vm -> !StringUtils.isEmpty(vm.getVmPinning()));
 
         Optional<Map<Guid, Integer>> nodeAssignment = Optional.empty();
         if (considerCpuPinning) {

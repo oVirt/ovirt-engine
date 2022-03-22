@@ -2008,4 +2008,20 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     public void setCpuPinningPolicy(CpuPinningPolicy cpuPinningPolicy) {
         vmStatic.setCpuPinningPolicy(cpuPinningPolicy);
     }
+
+    /**
+     * Get the CPU pinning string for the VM.
+     *
+     * Manual policy is an exception in which the pinning is specified in vm_static, otherwise
+     * we take it from vm_dynamic.
+     * @return the CPU pinning string.
+     */
+    public String getVmPinning() {
+        if (getCpuPinningPolicy() == CpuPinningPolicy.MANUAL) {
+            return getCpuPinning();
+        }
+        // For VMs with NUMA and without CPU pinning set, the engine creates the CPU pinning.
+        // In this case we save it as dynamic pinning.
+        return getCurrentCpuPinning();
+    }
 }

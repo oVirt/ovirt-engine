@@ -80,9 +80,6 @@ public class VdsCpuUnitPinningHelper {
      * @return List<{@link VdsCpuUnit}>. The list of VdsCpuUnit we are going to use. If not possible, return null.
      */
     public List<VdsCpuUnit> updatePhysicalCpuAllocations(VM vm, Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings, Guid hostId) {
-        if (vm.getCpuPinningPolicy() == CpuPinningPolicy.NONE) {
-            return new ArrayList<>();
-        }
         List<VdsCpuUnit> cpuTopology = resourceManager.getVdsManager(hostId).getCpuTopology();
         if (cpuTopology.isEmpty()) {
             return new ArrayList<>();
@@ -92,7 +89,10 @@ public class VdsCpuUnitPinningHelper {
 
         if (vm.getCpuPinningPolicy() != CpuPinningPolicy.DEDICATED) {
             List<VdsCpuUnit> cpusToBeAllocated = new ArrayList<>();
-            String cpuPinning = vm.getCpuPinningPolicy() == CpuPinningPolicy.MANUAL ? vm.getCpuPinning() : vm.getCurrentCpuPinning();
+            String cpuPinning = vm.getVmPinning();
+            if (cpuPinning == null || cpuPinning.isEmpty()) {
+                return cpusToBeAllocated;
+            }
             Set<Integer> requestedCpus = CpuPinningHelper.getAllPinnedPCpus(cpuPinning);
             for (Integer cpuId : requestedCpus) {
                 VdsCpuUnit vdsCpuUnit = getCpu(cpuTopology, cpuId);

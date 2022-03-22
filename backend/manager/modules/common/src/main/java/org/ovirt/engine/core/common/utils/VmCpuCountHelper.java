@@ -173,10 +173,6 @@ public class VmCpuCountHelper {
         return vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
     }
 
-    public static boolean isDynamicCpuPinning(VM vm) {
-        return vm.getCpuPinningPolicy() != CpuPinningPolicy.NONE && vm.getCpuPinningPolicy() != CpuPinningPolicy.MANUAL;
-    }
-
     public static int getDynamicNumOfCpu(VM vm) {
         return isResizeAndPinPolicy(vm) && vm.getCurrentNumOfCpus() > 0 ? vm.getCurrentNumOfCpus() : vm.getNumOfCpus();
     }

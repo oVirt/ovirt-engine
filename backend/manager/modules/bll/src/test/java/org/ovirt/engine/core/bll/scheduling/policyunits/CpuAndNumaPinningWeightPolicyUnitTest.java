@@ -18,6 +18,7 @@ import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -66,6 +67,7 @@ public class CpuAndNumaPinningWeightPolicyUnitTest extends NumaPolicyTestBase {
     @Test
     public void testNoVmNuma() {
         vm.setCpuPinning("0#0_1#1");
+        vm.setCpuPinningPolicy(CpuPinningPolicy.MANUAL);
         vm.setvNumaNodeList(Collections.emptyList());
 
         assertThat(score()).extracting("first", "second").contains(
@@ -78,6 +80,7 @@ public class CpuAndNumaPinningWeightPolicyUnitTest extends NumaPolicyTestBase {
     @Test
     public void testNoNumaPinning() {
         vm.setCpuPinning("0#0_1#1");
+        vm.setCpuPinningPolicy(CpuPinningPolicy.MANUAL);
         vm.setvNumaNodeList(Arrays.asList(
                 createVmNode(NODE_SIZE, 0, Collections.emptyList(), Arrays.asList(0)),
                 createVmNode(NODE_SIZE, 1, Collections.emptyList(), Arrays.asList(1))
@@ -108,6 +111,7 @@ public class CpuAndNumaPinningWeightPolicyUnitTest extends NumaPolicyTestBase {
     @Test
     public void testCpuAndNumaPinning() {
         vm.setCpuPinning("0#0_1#1");
+        vm.setCpuPinningPolicy(CpuPinningPolicy.MANUAL);
         vm.setvNumaNodeList(Arrays.asList(
                 createVmNode(NODE_SIZE, 0, Arrays.asList(0), Arrays.asList(0)),
                 createVmNode(NODE_SIZE, 1, Arrays.asList(1), Arrays.asList(1))

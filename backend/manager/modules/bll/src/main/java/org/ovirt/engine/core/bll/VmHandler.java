@@ -73,6 +73,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -145,6 +146,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.NumaSettingFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -236,6 +238,9 @@ public class VmHandler implements BackendService {
 
     @Inject
     private DiskHandler diskHandler;
+
+    @Inject
+    VmInfoBuildUtils vmInfoBuildUtils;
 
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
@@ -1307,6 +1312,30 @@ public class VmHandler implements BackendService {
             VdsDynamic host = vdsDynamicDao.get(vdsId);
             NumaPinningHelper.applyAutoPinningPolicy(vm, host, vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
         }
+    }
+
+    public void setCpuPinningByNumaPinning(VM vm, Guid vdsId) {
+        String cpuPinning = vm.getVmPinning();
+        if (StringUtils.isNotEmpty(cpuPinning)) {
+            return;
+        }
+        List<VmNumaNode> vmNumaNodes = vmInfoBuildUtils.getVmNumaNodes(vm);
+        List<VdsNumaNode> vdsNumaNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vdsId);
+        boolean numaEnabled = vmInfoBuildUtils.isNumaEnabled(vdsNumaNodes, vmNumaNodes, vm);
+        if (!numaEnabled) {
+            return;
+        }
+        Map <String, Object> pinningMap = NumaSettingFactory.buildCpuPinningWithNumaSetting(
+                vmNumaNodes,
+                vdsNumaNodes);
+        if (pinningMap.isEmpty()) {
+            return;
+        }
+        String res = pinningMap.entrySet()
+                .stream()
+                .map(pin -> String.format("%s#%s", pin.getKey(), pin.getValue()))
+                .collect(Collectors.joining("_"));
+        vm.setCurrentCpuPinning(res);
     }
 
     public void autoSelectResumeBehavior(VmBase vmBase) {

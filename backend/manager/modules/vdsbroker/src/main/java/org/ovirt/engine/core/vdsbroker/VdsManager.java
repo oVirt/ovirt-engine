@@ -1270,7 +1270,7 @@ public class VdsManager {
      */
     private void recoverCpuPinning(List<VM> vms) {
         for (VM vm : vms) {
-            String pinning = CpuPinningHelper.getVmPinning(vm);
+            String pinning = vm.getVmPinning();
             if (pinning != null) {
                 Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(pinning);
                 synchronized (this) {

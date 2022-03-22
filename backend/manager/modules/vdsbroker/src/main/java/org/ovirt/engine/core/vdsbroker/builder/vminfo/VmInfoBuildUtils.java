@@ -1328,15 +1328,13 @@ public class VmInfoBuildUtils {
                 .collect(Collectors.toMap(split -> split[0], split -> split[1]));
     }
 
-    public boolean isNumaEnabled(MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier,
-            MemoizingSupplier<List<VmNumaNode>> vmNumaNodesSupplier, VM vm) {
-        List<VdsNumaNode> hostNumaNodes = hostNumaNodesSupplier.get();
+    public boolean isNumaEnabled(List<VdsNumaNode> hostNumaNodes,
+            List<VmNumaNode> vmNumaNodes, VM vm) {
         if (hostNumaNodes.isEmpty()) {
             log.warn("No host NUMA nodes found for vm {} ({})", vm.getName(), vm.getId());
             return false;
         }
 
-        List<VmNumaNode> vmNumaNodes = vmNumaNodesSupplier.get();
         if (vmNumaNodes.isEmpty()) {
             return false;
         }
