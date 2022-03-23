@@ -1376,11 +1376,10 @@ public class LibvirtVmXmlBuilder {
                 mdevTypeMeta = mdevTypeMeta + "|" + vgpuPlacementString;
             }
             metadata.put("mdevType", mdevTypeMeta);
-            String mdevDriverParameters = (String) mdevSpecParams.get(MDevTypesUtils.DRIVER_PARAMETERS);
-            if (mdevDriverParameters != null) {
-                metadata.put("mdevDriverParameters", mdevDriverParameters);
-                if (!FeatureSupported.isVgpuAsVmDevices(compatibilityVersion)) {
-                    log.warn("vGPU driver parameters not supported in cluster version {}", compatibilityVersion);
+            if (FeatureSupported.isVgpuAsVmDevices(compatibilityVersion)) {
+                String mdevDriverParameters = (String) mdevSpecParams.get(MDevTypesUtils.DRIVER_PARAMETERS);
+                if (mdevDriverParameters != null) {
+                    metadata.put("mdevDriverParameters", mdevDriverParameters);
                 }
             }
             mdevMetadata.put(address, metadata);
