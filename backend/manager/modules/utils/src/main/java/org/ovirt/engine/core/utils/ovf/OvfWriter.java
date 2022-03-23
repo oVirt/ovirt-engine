@@ -338,9 +338,13 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     private boolean isMdevTypeRequired() {
-        final Version version = vmBase.getCustomCompatibilityVersion() != null ? vmBase.getCustomCompatibilityVersion()
-                : this.version;
-        return !FeatureSupported.isVgpuAsVmDevices(version);
+        Version version = this.version;
+        if (vmBase.getCustomCompatibilityVersion() != null) {
+            version = vmBase.getCustomCompatibilityVersion();
+        }
+        // Before supporting vGPU driver parameters, the properties of vGPU devices were
+        // defined using a VM custom property named mdev_type
+        return !FeatureSupported.isVgpuDriverParametersSupported(version);
     }
 
     private String predefinedProperties() {

@@ -203,7 +203,7 @@ public class FeatureSupported {
      *
      * @param version Compatibility version to check for.
      */
-    public static boolean isVgpuAsVmDevices(final Version version) {
+    public static boolean isVgpuDriverParametersSupported(final Version version) {
         return Version.v4_7.lessOrEquals(version);
     }
 

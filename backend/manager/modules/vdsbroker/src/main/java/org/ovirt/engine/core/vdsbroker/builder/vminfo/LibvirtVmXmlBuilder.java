@@ -1376,7 +1376,7 @@ public class LibvirtVmXmlBuilder {
                 mdevTypeMeta = mdevTypeMeta + "|" + vgpuPlacementString;
             }
             metadata.put("mdevType", mdevTypeMeta);
-            if (FeatureSupported.isVgpuAsVmDevices(compatibilityVersion)) {
+            if (FeatureSupported.isVgpuDriverParametersSupported(compatibilityVersion)) {
                 String mdevDriverParameters = (String) mdevSpecParams.get(MDevTypesUtils.DRIVER_PARAMETERS);
                 if (mdevDriverParameters != null) {
                     metadata.put("mdevDriverParameters", mdevDriverParameters);
