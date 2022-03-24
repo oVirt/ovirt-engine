@@ -250,6 +250,11 @@ class FileLocations(object):
         'ansible-runner-service-project',
     )
 
+    ANSIBLE_RUNNER_PROJECT = os.path.join(
+        OVIRT_ENGINE_LOCALSTATEDIR,
+        'ansible-runner-project',
+    )
+
     DIR_HTTPD = os.path.join(
         SYSCONFDIR,
         'httpd',

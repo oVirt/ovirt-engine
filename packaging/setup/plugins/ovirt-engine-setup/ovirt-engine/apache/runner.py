@@ -43,7 +43,7 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _misc(self):
-        project_dir = oenginecons.FileLocations.ANSIBLE_RUNNER_SERVICE_PROJECT
+        project_dir = oenginecons.FileLocations.ANSIBLE_RUNNER_PROJECT
         pki_path = oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_SSH_KEY
         runner_wsgi_file = oenginecons.FileLocations.HTTPD_RUNNER_WSGI_SCRIPT
         port = oenginecons.Defaults.DEFAULT_ANSIBLE_RUNNER_SERVICE_PORT
