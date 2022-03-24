@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
@@ -399,7 +400,8 @@ public class LibvirtVmXmlBuilder {
     private void writevCpu() {
         writer.writeStartElement("vcpu");
         writer.writeAttributeString("current", String.valueOf(VmCpuCountHelper.getDynamicNumOfCpu(vm)));
-        writer.writeRaw(String.valueOf(VmCpuCountHelper.isResizeAndPinPolicy(vm) ?
+        writer.writeRaw(String.valueOf(VmCpuCountHelper.isResizeAndPinPolicy(vm) ||
+                vm.getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED ?
                 VmCpuCountHelper.getDynamicNumOfCpu(vm) : VmInfoBuildUtils.maxNumberOfVcpus(vm)));
         writer.writeEndElement();
     }
