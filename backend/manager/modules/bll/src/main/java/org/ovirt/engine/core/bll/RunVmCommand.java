@@ -94,6 +94,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -380,6 +381,19 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (needsHostDevices) {
             // Only single dedicated host allowed for host devices, verified on validates
             hostLocking.releaseHostDevicesLock(getVm().getDedicatedVmForVdsList().get(0));
+        }
+    }
+
+    private void warnIfRequiredHostDeviceUsed() {
+        if (!needsHostDevices) {
+            return;
+        }
+        Guid hostId = getVm().getDedicatedVmForVdsList().get(0);
+        String deviceName = hostDeviceManager.findUsedPassthroughHostDevice(getVmId(), hostId);
+        if (deviceName != null) {
+            AuditLogableBase event = Injector.injectMembers(new AuditLogableBase(hostId));
+            event.addCustomValue("HostDeviceName", deviceName);
+            auditLogDirector.log(event, AuditLogType.VM_HOST_DEVICE_USED);
         }
     }
 
@@ -1130,6 +1144,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (!checkRequiredHostDevicesAvailability()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_AVAILABLE);
             }
+            warnIfRequiredHostDeviceUsed();
         } finally {
             releaseHostDevicesLock();
         }

@@ -1608,6 +1608,7 @@ public enum AuditLogType {
     // Host Devices
     VM_ADD_HOST_DEVICES(10800),
     VM_REMOVE_HOST_DEVICES(10801),
+    VM_HOST_DEVICE_USED(10807, AuditLogSeverity.WARNING),
 
     VDS_BROKER_COMMAND_FAILURE(10802, AuditLogSeverity.ERROR, 30),
     IRS_BROKER_COMMAND_FAILURE(10803, AuditLogSeverity.ERROR),

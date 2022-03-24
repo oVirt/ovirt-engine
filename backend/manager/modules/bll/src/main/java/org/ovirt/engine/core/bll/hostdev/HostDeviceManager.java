@@ -1,6 +1,12 @@
 package org.ovirt.engine.core.bll.hostdev;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -8,6 +14,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.common.BackendService;
@@ -20,6 +27,8 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -50,6 +59,8 @@ public class HostDeviceManager implements BackendService {
     @Inject
     private NetworkDeviceHelper networkDeviceHelper;
 
+    private Set<String> allowedHostDeviceDrivers;
+
     @PostConstruct
     private void init() {
         // It is sufficient to refresh only the devices of 'UP' hosts since other hosts
@@ -62,6 +73,10 @@ public class HostDeviceManager implements BackendService {
 
         backend.runInternalMultipleActions(ActionType.RefreshHostDevices, parameters);
         hostDeviceDao.cleanDownVms();
+
+        allowedHostDeviceDrivers =
+                Arrays.stream(Config.<String> getValue(ConfigValues.AllowedHostDeviceDrivers).split(","))
+                        .collect(Collectors.toSet());
     }
 
     /**
@@ -141,5 +156,22 @@ public class HostDeviceManager implements BackendService {
 
     public void freeVmHostDevices(Guid vmId) {
         hostDeviceDao.freeHostDevicesUsedByVmId(vmId);
+    }
+
+    public String findUsedPassthroughHostDevice(Guid vmId, Guid hostId) {
+        List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.HOSTDEV);
+        Map<String, HostDevice> hostDevices = hostDeviceDao.getHostDevicesByHostId(hostId).stream()
+                .collect(Collectors.toMap(HostDevice::getDeviceName, Function.identity()));
+        return devices.stream()
+                .map(d -> hostDevices.get(d.getDevice()))
+                .filter(Objects::nonNull)
+                .filter(hd -> !isHostDeviceDriverAllowed(hd.getDriver()))
+                .map(HostDevice::getDeviceName)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private boolean isHostDeviceDriverAllowed(String driver) {
+        return StringUtils.isEmpty(driver) || allowedHostDeviceDrivers.contains(driver);
     }
 }

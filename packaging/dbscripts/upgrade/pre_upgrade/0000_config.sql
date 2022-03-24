@@ -841,6 +841,8 @@ select fn_db_add_config_value_for_versions_up_to('PredefinedVMProperties', 'sap_
 select fn_db_add_config_value('HostMonitoringWatchdogIntervalInSeconds','900','general');
 select fn_db_add_config_value('HostMonitoringWatchdogInactivityThresholdInSeconds','1200','general');
 
+select fn_db_add_config_value('AllowedHostDeviceDrivers','vfio-pci,pci-stub','general');
+
 ------------------------------------------------------------------------------------
 --                  SCALE
 ------------------------------------------------------------------------------------

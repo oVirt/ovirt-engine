@@ -1415,6 +1415,9 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     HostDevicePassthroughCapabilities(ClientAccessLevel.Admin),
 
+    @TypeConverterAttribute(String.class)
+    AllowedHostDeviceDrivers,
+
     /**
      * The interval in hours of checking for available updates on the host.
      */
