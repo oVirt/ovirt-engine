@@ -389,10 +389,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return;
         }
         Guid hostId = getVm().getDedicatedVmForVdsList().get(0);
-        String deviceName = hostDeviceManager.findUsedPassthroughHostDevice(getVmId(), hostId);
-        if (deviceName != null) {
+        String deviceNames = hostDeviceManager.findUsedPassthroughHostDevices(getVmId(), hostId);
+        if (!StringUtils.isEmpty(deviceNames)) {
             AuditLogableBase event = Injector.injectMembers(new AuditLogableBase(hostId));
-            event.addCustomValue("HostDeviceName", deviceName);
+            event.addCustomValue("HostDeviceNames", deviceNames);
             auditLogDirector.log(event, AuditLogType.VM_HOST_DEVICE_USED);
         }
     }

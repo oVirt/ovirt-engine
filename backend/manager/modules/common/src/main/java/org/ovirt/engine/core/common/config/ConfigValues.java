@@ -1415,7 +1415,8 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     HostDevicePassthroughCapabilities(ClientAccessLevel.Admin),
 
-    @TypeConverterAttribute(String.class)
+    @TypeConverterAttribute(List.class)
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     AllowedHostDeviceDrivers,
 
     /**

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.hostdev;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -74,9 +73,7 @@ public class HostDeviceManager implements BackendService {
         backend.runInternalMultipleActions(ActionType.RefreshHostDevices, parameters);
         hostDeviceDao.cleanDownVms();
 
-        allowedHostDeviceDrivers =
-                Arrays.stream(Config.<String> getValue(ConfigValues.AllowedHostDeviceDrivers).split(","))
-                        .collect(Collectors.toSet());
+        allowedHostDeviceDrivers = new HashSet<>(Config.<List<String>> getValue(ConfigValues.AllowedHostDeviceDrivers));
     }
 
     /**
@@ -158,7 +155,7 @@ public class HostDeviceManager implements BackendService {
         hostDeviceDao.freeHostDevicesUsedByVmId(vmId);
     }
 
-    public String findUsedPassthroughHostDevice(Guid vmId, Guid hostId) {
+    public String findUsedPassthroughHostDevices(Guid vmId, Guid hostId) {
         List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.HOSTDEV);
         Map<String, HostDevice> hostDevices = hostDeviceDao.getHostDevicesByHostId(hostId).stream()
                 .collect(Collectors.toMap(HostDevice::getDeviceName, Function.identity()));
@@ -167,8 +164,7 @@ public class HostDeviceManager implements BackendService {
                 .filter(Objects::nonNull)
                 .filter(hd -> !isHostDeviceDriverAllowed(hd.getDriver()))
                 .map(HostDevice::getDeviceName)
-                .findFirst()
-                .orElse(null);
+                .collect(Collectors.joining(","));
     }
 
     private boolean isHostDeviceDriverAllowed(String driver) {
