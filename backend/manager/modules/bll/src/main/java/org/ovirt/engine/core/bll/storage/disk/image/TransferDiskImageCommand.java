@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackupMode;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTicket;
@@ -247,14 +248,15 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private Guid getBitmap() {
-        if (isHybridBackup() && getDiskImage().isQcowFormat()) {
+        if (isHybridBackup() && getDiskImage().getBackupMode() == DiskBackupMode.Incremental) {
             return getBackup().getFromCheckpointId();
         }
 
         if (getParameters().getTransferType() == TransferType.Download
                 && getBackupVm() != null
                 && getBackupVm().isDown()
-                && getDiskImage().isQcowFormat()) {
+                && getDiskImage().isQcowFormat()
+                && getDiskImage().getBackupMode() == DiskBackupMode.Incremental) {
             return getBackup().getFromCheckpointId();
         }
         return null;
