@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.ovirt.engine.core.compat.Guid;
 
@@ -13,6 +14,11 @@ public class AnsibleCommandParameters extends ActionParametersBase {
     private Guid hostId;
     private String playAction;
     private Map<String, Object> variables;
+
+    public AnsibleCommandParameters() {
+        super();
+        this.playUuid = UUID.randomUUID().toString();
+    }
 
     public int getLastEventId() {
         return lastEventId;
