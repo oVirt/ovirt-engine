@@ -39,7 +39,7 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _misc(self):
-        project_dir = oenginecons.FileLocations.ANSIBLE_RUNNER_SERVICE_PROJECT
+        project_dir = oenginecons.FileLocations.ANSIBLE_RUNNER_PROJECT
         port = oenginecons.Defaults.DEFAULT_ANSIBLE_RUNNER_SERVICE_PORT
 
         self.environment[osetupcons.SystemEnv.SELINUX_CONTEXTS].append({
