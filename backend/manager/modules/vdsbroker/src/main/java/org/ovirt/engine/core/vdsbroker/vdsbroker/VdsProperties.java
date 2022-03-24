@@ -22,6 +22,7 @@ public final class VdsProperties {
     public static final String online_cpus = "onlineCpus";
     public static final String cpu_topology = "cpuTopology";
     public static final String socket_id = "socket_id";
+    public static final String numa_id = "numa_cell_id";
     public static final String core_id = "core_id";
     public static final String cpu_id = "cpu_id";
     public static final String vdsm_cpus_affinity = "vdsmToCpusAffinity";

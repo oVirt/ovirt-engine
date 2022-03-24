@@ -431,8 +431,8 @@ public class VdsBrokerObjectsBuilderTest {
         VDS vds = getVds();
         vdsBrokerObjectsBuilder.updateCpuTopology(vds, vmStruct);
         assertEquals(4, vds.getCpuTopology().size());
-        assertThat(vds.getCpuTopology(), contains(new VdsCpuUnit(0, 0, 0), new VdsCpuUnit(0, 0, 1),
-                new VdsCpuUnit(0, 1, 2), new VdsCpuUnit(1, 0, 3)));
+        assertThat(vds.getCpuTopology(), contains(new VdsCpuUnit(0, 0, 0, 0), new VdsCpuUnit(0, 0, 0, 1),
+                new VdsCpuUnit(0, 0, 1, 2), new VdsCpuUnit(1, 1, 0, 3)));
     }
 
     @Test
@@ -459,18 +459,22 @@ public class VdsBrokerObjectsBuilderTest {
         Map<String, Integer> cpuCapability1 = new HashMap<>();
         cpuCapability1.put(VdsProperties.cpu_id, 0);
         cpuCapability1.put(VdsProperties.core_id, 0);
+        cpuCapability1.put(VdsProperties.numa_id, 0);
         cpuCapability1.put(VdsProperties.socket_id, 0);
         Map<String, Integer> cpuCapability2 = new HashMap<>();
         cpuCapability2.put(VdsProperties.cpu_id, 1);
         cpuCapability2.put(VdsProperties.core_id, 0);
+        cpuCapability1.put(VdsProperties.numa_id, 0);
         cpuCapability2.put(VdsProperties.socket_id, 0);
         Map<String, Integer> cpuCapability3 = new HashMap<>();
         cpuCapability3.put(VdsProperties.cpu_id, 2);
         cpuCapability3.put(VdsProperties.core_id, 1);
+        cpuCapability1.put(VdsProperties.numa_id, 0);
         cpuCapability3.put(VdsProperties.socket_id, 0);
         Map<String, Integer> cpuCapability4 = new HashMap<>();
         cpuCapability4.put(VdsProperties.cpu_id, 3);
         cpuCapability4.put(VdsProperties.core_id, 0);
+        cpuCapability1.put(VdsProperties.numa_id, 1);
         cpuCapability4.put(VdsProperties.socket_id, 1);
         Map<String, Object> struct = new HashMap<>();
         struct.put(VdsProperties.cpu_topology,

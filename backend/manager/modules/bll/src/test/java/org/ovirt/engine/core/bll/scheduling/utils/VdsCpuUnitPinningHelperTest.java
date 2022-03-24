@@ -42,18 +42,18 @@ public class VdsCpuUnitPinningHelperTest {
     @BeforeEach
     public void setup() {
         cpuTopology = new ArrayList<>();
-        cpuTopology.add(new VdsCpuUnit(0, 0, 0));
-        cpuTopology.add(new VdsCpuUnit(0, 0, 1));
-        cpuTopology.add(new VdsCpuUnit(0, 1, 2));
-        cpuTopology.add(new VdsCpuUnit(0, 1, 3));
-        cpuTopology.add(new VdsCpuUnit(1, 0, 4));
-        cpuTopology.add(new VdsCpuUnit(1, 0, 5));
-        cpuTopology.add(new VdsCpuUnit(1, 1, 6));
-        cpuTopology.add(new VdsCpuUnit(1, 1, 7));
-        cpuTopology.add(new VdsCpuUnit(2, 0, 8));
-        cpuTopology.add(new VdsCpuUnit(2, 0, 9));
-        cpuTopology.add(new VdsCpuUnit(2, 1, 10));
-        cpuTopology.add(new VdsCpuUnit(2, 1, 11));
+        cpuTopology.add(new VdsCpuUnit(0, 0, 0, 0));
+        cpuTopology.add(new VdsCpuUnit(0, 0, 0, 1));
+        cpuTopology.add(new VdsCpuUnit(0, 0, 1, 2));
+        cpuTopology.add(new VdsCpuUnit(0, 0, 1, 3));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 0, 4));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 0, 5));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 1, 6));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 1, 7));
+        cpuTopology.add(new VdsCpuUnit(2, 2, 0, 8));
+        cpuTopology.add(new VdsCpuUnit(2, 2, 0, 9));
+        cpuTopology.add(new VdsCpuUnit(2, 2, 1, 10));
+        cpuTopology.add(new VdsCpuUnit(2, 2, 1, 11));
         host = new VDS();
         host.setId(Guid.EVERYONE);
         host.setCpuSockets(3);
@@ -88,8 +88,8 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
 
         List<VdsCpuUnit> pendingCpus = new ArrayList<>();
-        pendingCpus.add(new VdsCpuUnit(0, 0, 0));
-        pendingCpus.add(new VdsCpuUnit(0, 0, 1));
+        pendingCpus.add(new VdsCpuUnit(0, 0, 0, 0));
+        pendingCpus.add(new VdsCpuUnit(0, 0, 0, 1));
         Map<Guid, List<VdsCpuUnit>> vmToPendingCpus = new HashMap<>();
         vmToPendingCpus.put(Guid.Empty, pendingCpus);
         boolean result =
@@ -308,8 +308,8 @@ public class VdsCpuUnitPinningHelperTest {
         host.setCpuCores(2);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         List<VdsCpuUnit> cpuTopology = new ArrayList<>();
-        cpuTopology.add(new VdsCpuUnit(0, 0, 0));
-        cpuTopology.add(new VdsCpuUnit(1, 0, 0));
+        cpuTopology.add(new VdsCpuUnit(0, 0, 0, 0));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 0, 0));
         when(vdsManager.getCpuTopology()).thenReturn(cpuTopology);
 
         List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm, new HashMap<>(), host.getId());
@@ -338,12 +338,12 @@ public class VdsCpuUnitPinningHelperTest {
         host.setCpuCores(2);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         List<VdsCpuUnit> cpuTopology = new ArrayList<>();
-        cpuTopology.add(new VdsCpuUnit(0, 0, 0));
-        VdsCpuUnit vdsCpuUnit = new VdsCpuUnit(0, 0, 1);
+        cpuTopology.add(new VdsCpuUnit(0, 0, 0, 0));
+        VdsCpuUnit vdsCpuUnit = new VdsCpuUnit(0, 0, 0, 1);
         vdsCpuUnit.pinVm(Guid.newGuid(), CpuPinningPolicy.DEDICATED);
         cpuTopology.add(vdsCpuUnit);
-        cpuTopology.add(new VdsCpuUnit(1, 0, 0));
-        vdsCpuUnit = new VdsCpuUnit(1, 0, 1);
+        cpuTopology.add(new VdsCpuUnit(1, 1, 0, 0));
+        vdsCpuUnit = new VdsCpuUnit(1, 1, 0, 1);
         vdsCpuUnit.pinVm(Guid.newGuid(), CpuPinningPolicy.DEDICATED);
         cpuTopology.add(vdsCpuUnit);
         when(vdsManager.getCpuTopology()).thenReturn(cpuTopology);
@@ -369,9 +369,9 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(1);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         List<VdsCpuUnit> cpuTopology = new ArrayList<>();
-        cpuTopology.add(new VdsCpuUnit(0, 0, 0));
-        cpuTopology.add(new VdsCpuUnit(1, 0, 1));
-        cpuTopology.add(new VdsCpuUnit(2, 1, 0));
+        cpuTopology.add(new VdsCpuUnit(0, 0, 0, 0));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 0, 1));
+        cpuTopology.add(new VdsCpuUnit(2, 2, 1, 0));
         when(vdsManager.getCpuTopology()).thenReturn(cpuTopology);
         List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm, new HashMap<>(), host.getId());
         assertNull(cpus);
