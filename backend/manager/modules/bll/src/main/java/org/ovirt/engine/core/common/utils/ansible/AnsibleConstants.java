@@ -25,8 +25,14 @@ public class AnsibleConstants {
     public static final String EXTRA_VARS_DIR = EngineLocalConfig.getInstance().getUsrDir().toString() +
             "/ansible-runner-service-project" + "/env/";
 
+//    public static final String EXTRA_VARS_DIR = EngineLocalConfig.getInstance().getVarDir().toString() +
+//            "/ansible-runner-project/env/";
+
     public static final String ARTIFACTS_DIR = EngineLocalConfig.getInstance().getUsrDir().toString() +
             "/ansible-runner-service-project/artifacts/";
+//
+//    public static final String ARTIFACTS_DIR = EngineLocalConfig.getInstance().getVarDir().toString() +
+//            "/ansible-runner-project/artifacts/";
 
     public static final String PROJECT_PATH = EngineLocalConfig.getInstance().getUsrDir().toString() +
             "/ansible-runner-service-project/project/";

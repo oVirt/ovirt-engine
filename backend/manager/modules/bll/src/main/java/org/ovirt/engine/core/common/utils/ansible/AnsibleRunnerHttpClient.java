@@ -7,21 +7,18 @@ package org.ovirt.engine.core.common.utils.ansible;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -30,20 +27,6 @@ import java.util.stream.Stream;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,34 +38,31 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 @Singleton
 public class AnsibleRunnerHttpClient {
 
-    private static final Object inventoryLock = new Object();
-    private static final Object executeLock = new Object();
-    private static final String HOST_GROUP = "ovirt";
-    private static final String API_VERSION = "/api/v1";
+//    private static final Object inventoryLock = new Object();
+//    private static final Object executeLock = new Object();
+//    private static final String HOST_GROUP = "ovirt";
+//    private static final String API_VERSION = "/api/v1";
 
     private static Logger log = LoggerFactory.getLogger(AnsibleRunnerHttpClient.class);
 
     private ObjectMapper mapper;
-    private HttpClient httpClient;
     private AnsibleRunnerLogger runnerLogger;
-    private String jobEvents;
     private String lastEvent = "";
     private static final int POLL_INTERVAL = 3000;
-    private UUID uuid;
     private AnsibleReturnValue returnValue;
 
     public AnsibleRunnerHttpClient() {
-        this.httpClient = HttpClientBuilder.create().build();
         this.mapper = JsonMapper
                 .builder()
                 .findAndAddModules()
                 .build()
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        this.returnValue = new AnsibleReturnValue(AnsibleReturnCode.OK);
+        this.returnValue = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
     }
 
-    public Boolean playHasEnded() {
-        File lastEvent = new File(this.jobEvents + this.lastEvent);
+    public Boolean playHasEnded(UUID uuid) {
+        String jobEvents = getJobEventsDir(uuid.toString());
+        File lastEvent = new File(jobEvents + this.lastEvent);
         String res = "";
         try {
                 res = Files.readString(lastEvent.toPath());
@@ -92,31 +72,33 @@ public class AnsibleRunnerHttpClient {
         return res.contains("playbook_on_stats");
     }
 
-    public AnsibleReturnValue artifactHandler(int lastEventID, int timeout, BiConsumer<String, String> fn, UUID uuid)
-            throws TimeoutException { // TODO is this the correct place?
-//        this.uuid = uuid;
-//        this.jobEvents =
-//                String.format("%1$s/artifacts/%2$s/job_events/", AnsibleConstants.HOST_DEPLOY_PROJECT_DIR, uuid); //TODO check with / after project//artifacts or  not
+    public AnsibleReturnValue artifactHandler(UUID uuid, int lastEventID, int timeout, BiConsumer<String, String> fn)
+            throws Exception {
         int iteration = 0;
-        // retrieve timeout from engine constants.
-        while (!playHasEnded()) { //return -1 incase of an error)
+        setReturnValue(uuid);
+        while (!playHasEnded(uuid)) {//return -1 incase of an error)
+            if (lastEventID == -1) {
+                return returnValue;
+            }
             if (iteration > timeout * 60) {
                 // Cancel playbook, and raise exception in case timeout occur:
-                //            runnerClient.cancelPlaybook(playUuid);
+                cancelPlaybook(uuid, timeout);
                 throw new TimeoutException(
                         "Play execution has reached timeout");
             }
             lastEventID = processEvents(uuid.toString(), lastEventID, fn, "", Paths.get(""));
             iteration += POLL_INTERVAL / 1000;
         }
+        returnValue.setAnsibleReturnCode(AnsibleReturnCode.OK);
         return returnValue;
     }
 
-    public void setJobEvents(String jobEvents) {
-        this.jobEvents = jobEvents;
+    public void setReturnValue(UUID uuid) {
+        returnValue.setPlayUuid(uuid.toString());
+        returnValue.setLogFile(runnerLogger.getLogFile());
     }
 
-    public List<String> getSortedEvents(int lastEventId) throws InterruptedException, IOException {
+    public List<String> getSortedEvents(String playUuid, int lastEventId) throws InterruptedException, IOException {
         Boolean artifactsIsPopulated = false;
         List<String> sortedEvents = new ArrayList<>();
 
@@ -124,8 +106,9 @@ public class AnsibleRunnerHttpClient {
             Thread.sleep(1500);
 
             // ignoring incompleted json files, add to list only events that haven't been handles yet.
-            if (Files.exists(Paths.get(this.jobEvents))) {
-                sortedEvents = Stream.of(new File(this.jobEvents).listFiles())
+            String jobEvents = getJobEventsDir(playUuid);
+            if (Files.exists(Paths.get(jobEvents))) {
+                sortedEvents = Stream.of(new File(jobEvents).listFiles())
                         .map(File::getName)
                         .distinct()
                         .filter(item -> !item.contains("partial"))
@@ -137,105 +120,93 @@ public class AnsibleRunnerHttpClient {
         return sortedEvents;
     }
 
+    public int getLastEventId() {
+        return Integer.valueOf(lastEvent.split("-")[0]);
+    }
+
+    public String getJobEventsDir(String playUuid) {
+        return String.format("%1$s/artifacts/%2$s/job_events/", AnsibleConstants.HOST_DEPLOY_PROJECT_DIR, playUuid);
+    }
+
     // TODO: get rid of the 2nd try & catch// blocks
-    public int processEvents(String playUuid, int lastEventId, BiConsumer<String, String> fn, String msg, Path logFile) {
+    public int processEvents(String playUuid,
+            int lastEventId,
+            BiConsumer<String, String> fn,
+            String msg,
+            Path logFile) {
         List<String> sortedEvents = new ArrayList<>();
         try {
-            sortedEvents = getSortedEvents(lastEventId);
+            sortedEvents = getSortedEvents(playUuid, lastEventId);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        String jobEvents = getJobEventsDir(playUuid);
         for (String event : sortedEvents) {
             JsonNode currentNode = getEvent(jobEvents + event);
-//            try {
-//                ObjectMapper mapper = new ObjectMapper();
-//                // File from = new File(this.job_events + event);
-//                FileReader reader = new FileReader(this.job_events + event, StandardCharsets.UTF_8); /////
-//                if (!jsonIsValid(Files.readString(Paths.get(this.job_events + event), StandardCharsets.UTF_8))) {
-////                if (!jsonIsValid(reader.)) { //TODO- check this result.
-//                    return Integer.valueOf(event.split("-")[0]) - 1;
-//                }
-//                String myTest = Files.readString(Paths.get(this.job_events + event), StandardCharsets.UTF_8); //check if this is valid
-//                boolean valid = jsonIsValid(myTest); //todo- tested and valid, so fix and use this for all.
-//                 JsonNode currentNode = mapper.readTree(reader);
-                 String stdout = RunnerJsonNode.getStdout(currentNode);
+            String stdout = RunnerJsonNode.getStdout(currentNode);
 
-                if (RunnerJsonNode.isEventUnreachable(currentNode)) {
+            if (RunnerJsonNode.isEventUnreachable(currentNode)) {
+                runnerLogger.log(currentNode);
+                returnValue.setAnsibleReturnCode(AnsibleReturnCode.UNREACHABLE);
+                return -1;
+            }
+
+            // might need special attention
+            if (RunnerJsonNode.isEventVerbose(currentNode)) {
+                if (!stdout.contains("Identity added")) {
+                    runnerLogger.log(stdout);
+                }
+            }
+
+            // want to log only these kind of events:
+            if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.isEventOk(currentNode)
+                    || RunnerJsonNode.playbookStats(currentNode) || RunnerJsonNode.isEventFailed(currentNode)) {
+
+                String taskName = "";
+                JsonNode eventNode = currentNode.get("event_data");
+
+                JsonNode taskNode = eventNode.get("task");
+                if (taskNode != null) {
+                    taskName = taskNode.textValue();
+                }
+
+                if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.playbookStats(currentNode)) {
+                    runnerLogger.log(stdout);
+                }
+
+                String action = "";
+                JsonNode eventAction = eventNode.get("task_action");
+                if (eventAction != null) {
+                    action = eventAction.asText();
+                }
+
+                if (RunnerJsonNode.isEventOk(currentNode)) {
                     runnerLogger.log(currentNode);
-                    returnValue.setAnsibleReturnCode(AnsibleReturnCode.UNREACHABLE);
-                    returnValue.setStderr(""); // TODO: set status from file
-                    return -1;
-                    // returnValue.setStderr(); //TODO!! what is the msg i'm getting?
-                }
 
-                // might need special attention
-                if (RunnerJsonNode.isEventVerbose(currentNode)) {
-                    if (!stdout.contains("Identity added")) {
-                        runnerLogger.log(stdout);
-                    }
-                    // hostDeployLog.log(stdout);
-                }
+                    String taskText = action.equals("debug")
+                            ? RunnerJsonNode.formatDebugMessage(taskName, stdout)
+                            : taskName;
+                    fn.accept(taskText, String.format(jobEvents + event));
 
-                // want to log only these kind of events:
-                if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.isEventOk(currentNode)
-                        || RunnerJsonNode.playbookStats(currentNode) || RunnerJsonNode.isEventFailed(currentNode)) {
-
-                    String taskName = "";
-                    JsonNode eventNode = currentNode.get("event_data");
-
-                    JsonNode taskNode = eventNode.get("task");
-                    if (taskNode != null) {
-                        taskName = taskNode.textValue();
-                    }
-
-                    if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.playbookStats(currentNode)) {
-                        runnerLogger.log(stdout);
-                        // hostDeployLog.log(stdout);
-                    }
-
-                    String action = "";
-                    JsonNode eventAction = eventNode.get("task_action");
-                    if (eventAction != null) {
-                        action = eventAction.asText();
-                    }
-
-                    if (RunnerJsonNode.isEventOk(currentNode)) {
-                        runnerLogger.log(currentNode);
-                        // hostDeployLog.log(currentNode);
-
-                        String taskText = action.equals("debug") // TODO - where??
-                                ? RunnerJsonNode.formatDebugMessage(taskName, stdout)
-                                : taskName;
-//                        fn.accept(taskName, String.format("jobs/%1$s/events/%2$s", uuid, event));
-//                        fn.accept(taskText, String.format("jobs/%1$s/events/%2$s", uuid, event));
-//                        fn.accept(taskText, String.format(AnsibleConstants.HOST_DEPLOY_PROJECT_DIR + "artifacts/%1$s/job_events/%2$s", uuid, event));
-                        fn.accept(taskText, String.format(jobEvents + event));
-
-//                        System.out.println(
-//                                "Thread: " + Thread.currentThread().getName() + " Processing EVENT: " + taskName);
-                    } else if (RunnerJsonNode.isEventFailed(currentNode)
-                            || RunnerJsonNode.isEventUnreachable(currentNode)) { // TODO: set return code to host
-                                                                                 // unreachable
-                        runnerLogger.log(currentNode);
-                        if (!RunnerJsonNode.ignore(currentNode)) {
-                            // TODO: check where is this saved?
-                            throw new AnsibleRunnerCallException(
-                                    String.format(
-                                            "Task %1$s failed to execute. Please check logs for more details: %2$s",
-                                            taskName,
-                                            this.runnerLogger.getLogFile()));
-                        }
+                } else if (RunnerJsonNode.isEventFailed(currentNode)) {
+                    runnerLogger.log(currentNode);
+                    if (!RunnerJsonNode.ignore(currentNode)) {
+                        returnValue.setAnsibleReturnCode(AnsibleReturnCode.FAIL);
+                        throw new AnsibleRunnerCallException(
+                                String.format(
+                                        "Task %1$s failed to execute. Please check logs for more details: %2$s",
+                                        taskName,
+                                        runnerLogger.getLogFile()));
                     }
                 }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-            this.lastEvent = event;
+            }
+            lastEvent = event;
+            returnValue.setLastEventId(getLastEventId());
         }
-        return this.lastEvent.isEmpty() ? lastEventId : Integer.valueOf(this.lastEvent.split("-")[0]);
+        return lastEvent.isEmpty() ? lastEventId : getLastEventId();
     }
 
     private Boolean jsonIsValid(String content) {
@@ -248,49 +219,67 @@ public class AnsibleRunnerHttpClient {
         }
     }
 
-    public void setUUID(UUID uuid ) {
-        this.uuid = uuid;
-    }
+//    public void addHost(String hostname, int port) {
+//        if (existsHost(hostname)) {
+//            return;
+//        }
 //
-//    public UUID getUUID() {
-//        return this.uuid;
+//        URI uri = buildRunnerURI(
+//            String.format("hosts/%1$s/groups/%2$s", hostname, HOST_GROUP),
+//            new BasicNameValuePair("port", String.valueOf(port))
+//        );
+//
+//        StringEntity entity = new StringEntity("{}", ContentType.APPLICATION_JSON);
+//        HttpPost request = new HttpPost(uri);
+//        request.setEntity(entity);
+//
+//        // There is no synchronization in ansible-runner-service for accessing the inventory file,
+//        // so we need to synchronize it here:
+//        synchronized (inventoryLock) {
+//            HttpResponse response = execute(request);
+//            JsonNode node = readResponse(response);
+//            if (!RunnerJsonNode.isStatusOk(node)) {
+//                throw new InventoryException("Failed to add host to inventory: %1$s", RunnerJsonNode.msg(node));
+//            }
+//        }
 //    }
 
-    public void addHost(String hostname, int port) {
-        if (existsHost(hostname)) {
-            return;
+    public void cancelPlaybook(UUID uuid, int timeout) throws Exception {
+        Process ansibleProcess;
+        File output = File.createTempFile("output", ".log");
+        String command = String.format("ansible-runner stop %1$s", uuid);
+        ProcessBuilder ansibleProcessBuilder = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
+        ansibleProcess = ansibleProcessBuilder.start();
+        if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
+            throw new Exception("Timeout occurred while canceling Ansible playbook.");
         }
-
-        URI uri = buildRunnerURI(
-            String.format("hosts/%1$s/groups/%2$s", hostname, HOST_GROUP),
-            new BasicNameValuePair("port", String.valueOf(port))
-        );
-
-        StringEntity entity = new StringEntity("{}", ContentType.APPLICATION_JSON);
-        HttpPost request = new HttpPost(uri);
-        request.setEntity(entity);
-
-        // There is no synchronization in ansible-runner-service for accessing the inventory file,
-        // so we need to synchronize it here:
-        synchronized (inventoryLock) {
-            HttpResponse response = execute(request);
-            JsonNode node = readResponse(response);
-            if (!RunnerJsonNode.isStatusOk(node)) {
-                throw new InventoryException("Failed to add host to inventory: %1$s", RunnerJsonNode.msg(node));
-            }
+        if (ansibleProcess.exitValue() != 0) {
+            throw new AnsibleRunnerCallException(
+                    "Failed to execute call to cancel playbook. %1$s",
+                    output.toString());
         }
     }
 
-    public void cancelPlaybook(String playUuid) {
-        URI uri = buildRunnerURI(String.format("playbooks/", playUuid));
-
-        HttpDelete request = new HttpDelete(uri);
-        HttpResponse response = execute(request);
-        JsonNode node = readResponse(response);
-
-        if (!RunnerJsonNode.isStatusOk(node)) {
-            throw new PlaybookExecutionException("Failed to cancel playbook: %1$s", RunnerJsonNode.msg(node));
+    public void runPlaybook(List<String> command, int timeout) throws Exception {
+        final Object executeLock = new Object();
+        log.error("***inside run playbook***");
+        Process ansibleProcess;
+        File output = File.createTempFile("output", ".log");
+        synchronized (executeLock) {
+            log.error(String.format("executing playbook for host: %1$s uuid: %2$s"), command.get(10), command.get(12));
+            ProcessBuilder ansibleProcessBuilder =
+                    new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
+            ansibleProcess = ansibleProcessBuilder.start();
+            if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
+                throw new Exception("Timeout occurred while executing Ansible playbook.");
+            }
+            if (ansibleProcess.exitValue() != 0) {
+                throw new AnsibleRunnerCallException(
+                        "Failed to execute call to start playbook. %1$s",
+                        output.toString()); // TODO: need to pass not path but content
+            }
         }
+        log.error(String.format("finished executing playbook for host: %1$s uuid: %2$s"), command.get(10), command.get(12));
     }
 
 //    public String runPlaybook(AnsibleCommandConfig command) {
@@ -341,47 +330,26 @@ public class AnsibleRunnerHttpClient {
     }
 
     public PlaybookStatus getPlaybookStatus(String playUuid) {
-        URI statusUri = buildRunnerURI(String.format("playbooks/%1$s", playUuid));
-
-        HttpGet statusReguest = new HttpGet(statusUri);
-        HttpResponse statusResponse = execute(statusReguest);
-        JsonNode statusNode = readResponse(statusResponse);
-
-        String status = RunnerJsonNode.status(statusNode).toLowerCase();
-        String msg = RunnerJsonNode.msg(statusNode).toLowerCase();
-        return new PlaybookStatus(status, msg);
+        String status = "";
+        String rc = "";
+        try {
+            status = Files.readString(Paths.get(AnsibleConstants.ARTIFACTS_DIR, playUuid , "/status"));
+            rc = Files.readString(Paths.get(AnsibleConstants.ARTIFACTS_DIR, playUuid , "/rc"));
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return new PlaybookStatus(rc, status);
     }
 
-    private JsonNode getEvents(String playUuid) {
-        URI eventsUri = buildRunnerURI(String.format("jobs/%1$s/events", playUuid));
+    private String[] getEvents(String playUuid) {
+        File jobEvents = new File(getJobEventsDir(playUuid));
+        return jobEvents.list();
 
-        HttpGet eventsRequest = new HttpGet(eventsUri);
-        HttpResponse eventsResponse = execute(eventsRequest);
-        JsonNode events = readResponse(eventsResponse);
-        if (eventsResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new AnsibleRunnerCallException(
-                "Failed to fetch info playbook events. %1$s: %2$s",
-                RunnerJsonNode.status(events),
-                RunnerJsonNode.msg(events)
-            );
-        }
-        return events;
     }
 
     public int getTotalEvents(String playUuid) {
-        JsonNode responseNode = getEvents(playUuid);
-        return RunnerJsonNode.totalEvents(responseNode);
-    }
-
-    public boolean isHostUnreachable(String playUuid){ //TODO
-//        JsonNode events = getEvents(playUuid);
-//        Iterator<JsonNode> it = events.get("data").get("events").iterator();
-//        while (it.hasNext()) {
-//            if (RunnerJsonNode.isEventUnreachable(it.next())) {
-//                return true;
-//            }
-//        }
-        return false;
+        String[] events = getEvents(playUuid);
+        return events.length;
     }
 
 //    public int processEvents(String playUuid, int lastEventId, BiConsumer<String, String> fn, String msg, Path logFile) {
@@ -439,106 +407,49 @@ public class AnsibleRunnerHttpClient {
 //        return eventInfo.isEmpty() ? lastEventId : Integer.valueOf(eventInfo.split("-")[0]);
 //    }
 
-//    private SortedSet<String> sortedEvents(Iterator<String> it, int lastEventId) {
-//        // Ansible-runner return the events randomly so we need to sort them:
-//        SortedSet<String> set = new TreeSet<>(
-//            Comparator.comparing(s -> Integer.parseInt(s.substring(0, s.indexOf("-"))))
-//        );
-//        while (it.hasNext()) {
-//            String n = it.next();
-//            int index = Integer.parseInt(n.substring(0, n.indexOf("-")));
-//            if (index > lastEventId) {
-//                set.add(n);
-//            }
-//        }
-//
-//        return set;
-//    }
-
-    private JsonNode getEvent(String eventUrl) {
+    private JsonNode getEvent(String eventPath) {
         // Fetch the event info:
         JsonNode currentNode = null;
-//        String eventDir = AnsibleConstants.HOST_DEPLOY_PROJECT_DIR + eventUrl; //TODO: changes name to event path.
         ObjectMapper mapper = new ObjectMapper();
         try {
-//            String jsonOutput = Files.readString(Paths.get(eventDir), StandardCharsets.UTF_8);
-            String jsonOutput = Files.readString(Paths.get(eventUrl), StandardCharsets.UTF_8); //TODO: changes name to event path.
+            String jsonOutput = Files.readString(Paths.get(eventPath), StandardCharsets.UTF_8);
             if (!jsonIsValid(jsonOutput)) {
-//            if (!jsonIsValid(Files.readString(Paths.get(eventDir), StandardCharsets.UTF_8))) {
 //                throw new AnsibleRunnerCallException(
 //                        "Failed to fetch info about event. %1$s: %2$s",
 //                        RunnerJsonNode.status(eventDir), //TODO check where and how to retrieve status & msg?
 //                        RunnerJsonNode.msg(eventDir)
 //                );
             }
-//            FileReader reader = new FileReader(eventDir, StandardCharsets.UTF_8); /////
-//            currentNode = mapper.readTree(reader); //////
             currentNode = mapper.readTree(jsonOutput);
-//            String stdout = RunnerJsonNode.getStdout(currentNode); //TODO: do I need this?
         } catch(Exception e) {
             e.printStackTrace();
         }
-
-
-
-//        URI eventsUri = buildRunnerURI(eventUrl);
-//        HttpGet events = new HttpGet(eventsUri);
-//        HttpResponse statusResponse = execute(events);
-//        JsonNode event = readResponse(statusResponse);
-//        if (statusResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-//            throw new AnsibleRunnerCallException(
-//                    "Failed to fetch info about event. %1$s: %2$s",
-//                    RunnerJsonNode.status(event),
-//                    RunnerJsonNode.msg(event)
-//            );
-//        }
-
         return currentNode;
     }
 
     public String getVdsmId(String eventUrl) {
-        // Fetch the event info:
         JsonNode event = getEvent(eventUrl);
-
-        // Parse the output of the events info:
         JsonNode taskNode = RunnerJsonNode.taskNode(event);
         return RunnerJsonNode.content(taskNode);
     }
 
     public Set<String> getYumPackages(String eventUrl) {
-        // Fetch the event info:
         JsonNode event = getEvent(eventUrl);
-
-        // Parse the output of the events info:
         JsonNode taskNode = RunnerJsonNode.taskNode(event);
         Set<String> packages = new HashSet<>();
         if (RunnerJsonNode.hasUpdates(taskNode)) {
             packages = RunnerJsonNode.getPackages(taskNode);
         }
-
         if (!packages.isEmpty()) {
             log.info("Found updates of packages: {}", StringUtils.join(packages, ","));
         }
-
         return packages;
-
     }
 
     public String getCommandStdout(String eventUrl) {
-        URI eventsUri = buildRunnerURI(eventUrl);
-        HttpGet events = new HttpGet(eventsUri);
-        HttpResponse statusResponse = execute(events);
-        JsonNode event = readResponse(statusResponse);
-        if (statusResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new AnsibleRunnerCallException(
-                "Failed to fetch info command task output'. %1$s: %2$s",
-                RunnerJsonNode.status(event),
-                RunnerJsonNode.msg(event)
-            );
-        }
-
+        JsonNode event = getEvent(eventUrl);
         JsonNode taskNode = RunnerJsonNode.taskNode(event);
-        return RunnerJsonNode.getStdout(taskNode);
+        return RunnerJsonNode.getStdout(taskNode); //get "res"
     }
 
     public void setLogger(AnsibleRunnerLogger runnerLogger) {
@@ -547,71 +458,6 @@ public class AnsibleRunnerHttpClient {
 
     public AnsibleRunnerLogger getLogger() {
         return this.runnerLogger;
-    }
-
-    private URIBuilder baseURI() {
-        return new URIBuilder()
-                .setScheme("http")
-                .setHost("localhost")
-                .setPort(50001);
-    }
-
-    private URI buildRunnerURI(String path) {
-        return buildRunnerURI(path, null);
-    }
-
-    private URI buildRunnerURI(String path, NameValuePair... query) {
-        StringBuilder v1path = new StringBuilder(String.format("%1$s/%2$s", API_VERSION, path));
-        try {
-            URIBuilder uri = baseURI()
-                .setPath(v1path.toString());
-            if (query != null && query.length > 0) {
-                uri.addParameters(Arrays.asList(query).stream().filter(Objects::nonNull).collect(Collectors.toList()));
-            }
-            return uri.build();
-        } catch (URISyntaxException ex) {
-            throw new AnsibleRunnerCallException(String.format("Failed to build Ansible runner URI %1$s", v1path), ex);
-        }
-    }
-
-    private JsonNode readResponse(HttpResponse response) {
-        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-            throw new AnsibleRunnerCallException("Internal server error");
-        }
-
-        try {
-            HttpEntity httpEntity = response.getEntity();
-            InputStream inputStream = httpEntity.getContent();
-            return mapper.readTree(inputStream);
-        } catch (IOException ex) {
-            throw new AnsibleRunnerCallException("Failed to read the runner-service response.", ex);
-        }
-    }
-
-    private HttpResponse execute(HttpUriRequest request) {
-        try {
-            return httpClient.execute(request);
-        } catch (IOException ex) {
-            throw new AnsibleRunnerCallException(
-                String.format("Failed to execute call to ansible runner service: %1$s", request.getURI()), ex
-            );
-        }
-    }
-
-    private boolean existsHost(String hostname) {
-        URI uri = buildRunnerURI(String.format("hosts/%1$s", hostname));
-        HttpGet request = new HttpGet(uri);
-        HttpResponse response = execute(request);
-        JsonNode node = readResponse(response);
-
-        return !RunnerJsonNode.isStatusNotFound(node);
-    }
-
-    private JsonNode readUrl(String url) {
-        URI eventsUri = buildRunnerURI(url);
-        HttpGet events = new HttpGet(eventsUri);
-        HttpResponse statusResponse = execute(events);
-        return readResponse(statusResponse);
     }
 
     public static class PlaybookStatus {

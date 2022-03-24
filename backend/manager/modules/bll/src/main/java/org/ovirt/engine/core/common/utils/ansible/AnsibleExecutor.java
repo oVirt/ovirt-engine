@@ -7,7 +7,6 @@ package org.ovirt.engine.core.common.utils.ansible;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -147,34 +146,37 @@ public class AnsibleExecutor {
             timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
         }
 
+        log.error("****** inside runCommand****");
         log.trace("Enter AnsibleExecutor::runCommand");
 
         AnsibleReturnValue ret = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
         int lastEventId = 0;
-        int iteration = 0;
-        int totalEvents;
 
         String playUuid = null;
         String msg = "";
         AnsibleRunnerHttpClient runnerClient = null;
         try {
             runnerClient = ansibleClientFactory.create(commandConfig);
-            ret.setLogFile(runnerClient.getLogger().getLogFile());
             playUuid = commandConfig.getUuid().toString();
+            ret.setLogFile(runnerClient.getLogger().getLogFile());
+            ret.setPlayUuid(playUuid);
             List<String> command = commandConfig.build();
 
-            // Run the playbook:
-            runPlaybook(command, timeout);
-            ret = runnerClient.artifactHandler(0, timeout, fn, commandConfig.getUuid());
-//            runnerClient.processEvents(commandConfig.getUuid().toString(), 0, fn, "", ret.getLogFile());
-//            playUuid = runnerClient.runPlaybook(command);
 
-//            if (runnerClient.isHostUnreachable(playUuid)) {
-//                ret.setAnsibleReturnCode(AnsibleReturnCode.UNREACHABLE);
-//                return ret;
-//            }
-//
-//            if (async) {
+            log.error("****before running the playbook***");
+
+            // Run the playbook:
+            runnerClient.runPlaybook(command, timeout);
+
+            if (async) {
+                ret.setPlayUuid(playUuid);
+                ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
+                return ret;
+            }
+
+            ret = runnerClient.artifactHandler(commandConfig.getUuid(), lastEventId, timeout, fn);
+
+//            if (async) { //TODO - verify
 //                ret.setPlayUuid(playUuid);
 //                ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
 //                return ret;
@@ -213,11 +215,6 @@ public class AnsibleExecutor {
 //                }
 //            }
 
-            // Cancel playbook, and raise exception in case timeout occur:
-//            runnerClient.cancelPlaybook(playUuid);
-//            throw new PlaybookExecutionException(
-//                "Timeout exceed while waiting for playbook. ", commandConfig.playbook()
-//            );
         } catch (InventoryException ex) {
             String message = ex.getMessage();
             log.error("Error executing playbook: {}", message);
@@ -229,8 +226,10 @@ public class AnsibleExecutor {
             log.debug("Exception: ", ex);
             ret.setStderr(ex.getMessage());
         } finally {
+            commandConfig.cleanup();
             // Make sure all events are proccessed even in case of failure:
             if (playUuid != null && runnerClient != null && !async) { //TODO
+                lastEventId = runnerClient.getLastEventId();
                 runnerClient.processEvents(playUuid, lastEventId, fn, msg, ret.getLogFile());
             }
         }
@@ -250,19 +249,5 @@ public class AnsibleExecutor {
                 command.correlationId(),
                 Map.of("Message", taskName, "PlayAction", command.playAction())
         );
-    }
-
-    private void runPlaybook(List<String> command, int timeout) {
-        Process ansibleProcess = null;
-        try {
-            ProcessBuilder ansibleProcessBuilder = new ProcessBuilder(command);
-            ansibleProcess = ansibleProcessBuilder.start();
-            if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
-                throw new Exception("Timeout occurred while executing Ansible playbook.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("thread: " + Thread.currentThread().getName() + " ansible process exit value: " + ansibleProcess.exitValue());
     }
 }

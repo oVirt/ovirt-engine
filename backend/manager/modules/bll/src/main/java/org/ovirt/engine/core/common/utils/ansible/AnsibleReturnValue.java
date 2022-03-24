@@ -39,6 +39,11 @@ public class AnsibleReturnValue {
      */
     private String playUuid;
 
+    /**
+     *  Holds the id of the last event that was processed..
+     */
+    private int lastEventId;
+
     public AnsibleReturnValue(AnsibleReturnCode ansibleReturnCode) {
         this(ansibleReturnCode, null);
     }
@@ -92,5 +97,13 @@ public class AnsibleReturnValue {
 
     public String getPlayUuid() {
         return playUuid;
+    }
+
+    public void setLastEventId(int lastEventId) {
+        this.lastEventId = lastEventId;
+    }
+
+    public int getLastEventId() {
+        return lastEventId;
     }
 }

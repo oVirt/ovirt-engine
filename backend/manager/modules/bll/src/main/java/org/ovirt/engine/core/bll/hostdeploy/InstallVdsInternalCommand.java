@@ -279,10 +279,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             boolean isGlusterServiceSupported = hostCluster.supportsGlusterService();
             String tunedProfile = isGlusterServiceSupported ? hostCluster.getGlusterTunedProfile() : null;
             String clusterVersion = hostCluster.getCompatibilityVersion().getValue();
-//            UUID uuid = UUID.randomUUID();
             AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                     .hosts(vds)
-//                    .uuid(uuid)
                     .variable("host_deploy_cluster_version", clusterVersion)
                     .variable("host_deploy_cluster_name", hostCluster.getName())
                     .variable("host_deploy_cluster_switch_type",
@@ -338,12 +336,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     .playAction(String.format("Installing Host %s", vds.getName()))
                     .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK);
 
-//            try {
-//                createInventoryFile(commandConfig);
-//            } catch(Exception e) {
-//                e.printStackTrace();
-//            }
-
             AuditLogable logable = new AuditLogableImpl();
             logable.setVdsName(vds.getName());
             logable.setVdsId(vds.getId());
@@ -380,25 +372,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             }
         }
     }
-
-//    private void createInventoryFile(AnsibleCommandConfig command) throws IOException {
-//        Path inventoryFile;
-//        if (command.getInventoryFile() == null) {
-////             If hostnames are empty we just don't pass any inventory file:
-//            if (CollectionUtils.isNotEmpty(command.hostnames())) {
-//                try {
-//                    inventoryFile = Files.createTempFile("ansible-inventory", "");
-////                    String host = command.hosts() + " ansible_user=root";
-//                    Files.write(inventoryFile, StringUtils.join(command.hostnames(), System.lineSeparator()).getBytes());
-////                    Files.write(inventoryFile, StringUtils.join(command.hosts(), System.lineSeparator()).getBytes());
-////                    Files.write(inventoryFile, StringUtils.join(host, System.lineSeparator()).getBytes());
-//                    command.inventoryFile(inventoryFile);
-//                } catch(Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//    }
 
     private void runAnsibleReconfigureGluster(String oldGlusterClusterNode, String firstGlusterClusterNode,
                                               String secondGlusterClusterNode,

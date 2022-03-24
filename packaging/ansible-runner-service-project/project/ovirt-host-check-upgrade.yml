@@ -10,6 +10,7 @@
   pre_tasks:
     - name: add host specific extra vars
       include_vars:
+        file: ../vars.yml
 
   roles:
   - role: ovirt-host-deploy-facts

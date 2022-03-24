@@ -13,10 +13,6 @@ public class AnsibleClientFactory {
         AnsibleRunnerLogger runnerLogger = ansibleCommandLogFileFactory.create(command);
         AnsibleRunnerHttpClient client = new AnsibleRunnerHttpClient();
         client.setLogger(runnerLogger);
-//        UUID uuid = UUID.randomUUID();
-//        command.setUUID(uuid);
-        client.setUUID(command.getUuid());
-        client.setJobEvents(String.format("%1$s/artifacts/%2$s/job_events/", AnsibleConstants.HOST_DEPLOY_PROJECT_DIR, command.getUuid()));
         return client;
     }
 

@@ -56,7 +56,7 @@ public class AnsibleImageMeasureCommand <T extends AnsibleImageMeasureCommandPar
     protected BiConsumer<String, String> getEventUrlConsumer() {
         StringBuilder stdout = new StringBuilder();
         getParameters().setStringBuilder(stdout);
-        return (eventName, eventUrl) -> stdout.append(runnerClient.getCommandStdout(eventUrl));
+        return (eventName, eventUrl) -> stdout.append(runnerClient.getCommandStdout(eventUrl)); //TODO: fix this@
     }
 
     @Override

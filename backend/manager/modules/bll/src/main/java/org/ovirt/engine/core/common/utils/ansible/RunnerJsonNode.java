@@ -247,7 +247,6 @@ public final class RunnerJsonNode {
      * Return true if the event should be ignored.
      */
     public static boolean ignore(JsonNode node) {
-//        return node.get("data").get("event_data").get("ignore_errors").asBoolean();
         return node.get("event_data").get("ignore_errors").asBoolean();
     }
 
@@ -255,7 +254,6 @@ public final class RunnerJsonNode {
      * Return the data of the task output.
      */
     public static JsonNode taskNode(JsonNode node) {
-//        return node.get("data").get("event_data").get("res");
         return node.get("event_data").get("res");
     }
 
@@ -329,7 +327,7 @@ public final class RunnerJsonNode {
      * Return stdout value of the command task.
      */
     public static String getStdout(JsonNode node) {
-        return node.get("stdout").textValue().strip();
+        return node.get("stdout") != null ? node.get("stdout").textValue().strip() : "";
     }
 
     /**
