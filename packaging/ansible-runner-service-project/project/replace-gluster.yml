@@ -1,5 +1,10 @@
 - hosts: all
   remote_user: root
 
+  pre_tasks:
+    - name: include replace gluster vars
+      include_vars:
+        file: ../vars.yml
+
   roles:
     - gluster-replace-peers
