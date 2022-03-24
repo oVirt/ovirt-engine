@@ -1,5 +1,10 @@
 - hosts: all
   remote_user: root
 
+  pre_tasks:
+    - name: include enroll certs vars
+      include_vars:
+        file: ../vars.yml
+
   roles:
     - ovirt-host-enroll-certificate

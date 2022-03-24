@@ -20,16 +20,29 @@ public class AnsibleConstants {
 //    );
     public static final String HOST_DEPLOY_PROJECT_DIR =
             EngineLocalConfig.getInstance().getUsrDir().toString() +
-                    "/ansible-runner-service-project";
+                    "/ansible-runner-service-project/";
 
     public static final String EXTRA_VARS_DIR = EngineLocalConfig.getInstance().getUsrDir().toString() +
             "/ansible-runner-service-project" + "/env/";
 
+//    public static final String EXTRA_VARS_DIR = EngineLocalConfig.getInstance().getVarDir().toString() +
+//            "/ansible-runner-project/env/";
+
     public static final String ARTIFACTS_DIR = EngineLocalConfig.getInstance().getUsrDir().toString() +
-            "/ansible-runner-service-project/artifacts";
+            "/ansible-runner-service-project/artifacts/";
+//
+//    public static final String ARTIFACTS_DIR = EngineLocalConfig.getInstance().getVarDir().toString() +
+//            "/ansible-runner-project/artifacts/";
+
+    public static final String PROJECT_PATH = EngineLocalConfig.getInstance().getUsrDir().toString() +
+            "/ansible-runner-service-project/project/";
 
     public static final String HOST_DEPLOY_PLAYBOOK_DIR = EngineLocalConfig.getInstance().getUsrDir().toString() +
             "/ansible-runner-service-project/project/ovirt-host-deploy.yml";
+
+    public static final Path HOST_DEPLOY_PLAYBOOK_PATH =
+            Paths.get(EngineLocalConfig.getInstance().getUsrDir().toString(),
+                    "/ansible-runner-service-project/project/ovirt-host-deploy.yml");
 
     /**
      * Path to host-deploy-post-tasks. User can create a tasks in this file to extend host-deploy process.

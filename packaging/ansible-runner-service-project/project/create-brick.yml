@@ -2,5 +2,10 @@
   remote_user: root
   gather_facts: no
 
+  pre_tasks:
+    - name: include create brick vars
+      include_vars:
+        file: ../vars.yml
+
   roles:
     - gluster-brick-create

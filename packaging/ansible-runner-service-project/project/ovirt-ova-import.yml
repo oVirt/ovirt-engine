@@ -2,6 +2,11 @@
   remote_user: root
   gather_facts: no
 
+  pre_tasks:
+    - name: include ova import vars
+      include_vars:
+        file: ../vars.yml
+
   roles:
     - python-ver-detect
     - ovirt-ova-extract
