@@ -175,14 +175,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             return vmBackupDao.getBackupUrlForDisk(
                     getParameters().getBackupId(), getDiskImage().getId());
         }
+
         VDSReturnValue vdsRetVal = runVdsCommand(VDSCommandType.PrepareImage,
-                    getPrepareParameters(vdsId));
-        if (usingNbdServer()) {
-            vdsRetVal = runVdsCommand(VDSCommandType.StartNbdServer, getStartNbdServerParameters(vdsId));
-            return (String) vdsRetVal.getReturnValue();
-        } else {
-            return FILE_URL_SCHEME + ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
-        }
+                getPrepareParameters(vdsId));
+        return FILE_URL_SCHEME + ((PrepareImageReturn) vdsRetVal.getReturnValue()).getImagePath();
     }
 
     protected boolean validateImageTransfer() {
@@ -1025,14 +1021,19 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
             return false;
         }
+
         String imagePath;
         try {
             imagePath = prepareImage(getVdsId());
         } catch (Exception e) {
             log.error("Failed to prepare image for image transfer '{}': {}", getCommandId(), e);
+            setImageStatus(ImageStatus.OK);
+            setCommandStatus(CommandStatus.FAILED);
+
             return false;
         }
 
+        // From this point if an operation fails we have to perform cleanup
         Guid imagedTicketId = Guid.newGuid();
         ImageTransfer updates = new ImageTransfer();
         updates.setImagedTicketId(imagedTicketId);
@@ -1040,6 +1041,19 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         updates.setProxyUri(getProxyUri() + IMAGES_PATH);
         updates.setDaemonUri(getImageDaemonUri(getVds().getHostName()) + IMAGES_PATH);
         updateEntity(updates);
+
+        if (usingNbdServer()) {
+            try {
+                VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.StartNbdServer,
+                        getStartNbdServerParameters(getVdsId()));
+                imagePath = (String) vdsReturnValue.getReturnValue();
+            } catch (Exception e) {
+                log.error("Failed to start NBD server for image transfer '{}': {}", getCommandId(), e);
+                updateEntityPhaseToStoppedBySystem(
+                        AuditLogType.TRANSFER_IMAGE_STOPPED_BY_SYSTEM_FAILED_TO_CREATE_TICKET);
+                return false;
+            }
+        }
 
         if (!addImageTicketToDaemon(imagedTicketId, imagePath)) {
             log.error("Failed to add host image ticket for image transfer '{}'", getCommandId());
