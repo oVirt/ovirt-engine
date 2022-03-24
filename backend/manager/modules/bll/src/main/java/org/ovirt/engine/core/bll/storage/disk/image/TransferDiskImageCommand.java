@@ -1209,7 +1209,9 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private boolean isSupportsDirtyExtents() {
-        if (!isBackup() || getParameters().getTransferType() != TransferType.Download) {
+        if (!isBackup() ||
+                getParameters().getTransferType() != TransferType.Download ||
+                getDiskImage().getBackupMode() != DiskBackupMode.Incremental) {
             return false;
         }
         VmBackup backup = getBackup();
