@@ -15,6 +15,7 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
     private static final long serialVersionUID = -397254497953366129L;
     private int core;
     private int socket;
+    private int numa;
     private int cpu;
     @JsonIgnore
     private List<Guid> vmIds;
@@ -26,8 +27,9 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
         this.vmIds = new ArrayList<>();
     }
 
-    public VdsCpuUnit(int socket, int core, int cpu) {
+    public VdsCpuUnit(int socket, int numa, int core, int cpu) {
         this.socket = socket;
+        this.numa = numa;
         this.core = core;
         this.cpu = cpu;
         this.cpuPinningPolicy = CpuPinningPolicy.NONE;
@@ -36,6 +38,7 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
 
     public VdsCpuUnit(VdsCpuUnit vdsCpuUnit) {
         this.socket = vdsCpuUnit.getSocket();
+        this.numa = vdsCpuUnit.getNuma();
         this.core = vdsCpuUnit.getCore();
         this.cpu = vdsCpuUnit.getCpu();
         this.vmIds = vdsCpuUnit.getVmIds();
@@ -48,6 +51,14 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
 
     public void setSocket(int socket) {
         this.socket = socket;
+    }
+
+    public int getNuma() {
+        return numa;
+    }
+
+    public void setNuma(int numa) {
+        this.numa = numa;
     }
 
     public int getCore() {
@@ -110,7 +121,7 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
             return false;
         }
         VdsCpuUnit other = (VdsCpuUnit) obj;
-        return socket == other.socket && core == other.core && cpu == other.cpu;
+        return socket == other.socket && numa == other.numa && core == other.core && cpu == other.cpu;
     }
 
     @Override

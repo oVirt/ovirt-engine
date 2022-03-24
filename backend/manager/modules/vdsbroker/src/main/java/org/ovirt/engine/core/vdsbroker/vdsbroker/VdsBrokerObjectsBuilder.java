@@ -2594,9 +2594,10 @@ public class VdsBrokerObjectsBuilder {
             for (Object cpuCapabilityObject : cpuTopology) {
                 Map<String, Object> cpuCapability = (Map<String, Object>) cpuCapabilityObject;
                 int socket = (Integer) cpuCapability.get(VdsProperties.socket_id);
+                int numa = (Integer) cpuCapability.get(VdsProperties.numa_id);
                 int core = (Integer) cpuCapability.get(VdsProperties.core_id);
                 int cpuId = (Integer) cpuCapability.get(VdsProperties.cpu_id);
-                VdsCpuUnit vdsCpuUnit = new VdsCpuUnit(socket, core, cpuId);
+                VdsCpuUnit vdsCpuUnit = new VdsCpuUnit(socket, numa, core, cpuId);
                 vdsCpuTopology.add(vdsCpuUnit);
             }
             vds.setCpuTopology(vdsCpuTopology);
