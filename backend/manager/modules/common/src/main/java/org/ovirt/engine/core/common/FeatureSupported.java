@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
@@ -34,6 +35,11 @@ public class FeatureSupported {
 
     public static boolean hotPlugCpu(Version version, ArchitectureType arch) {
         return supportedInConfig(ConfigValues.HotPlugCpuSupported, version, arch);
+    }
+
+    public static boolean hotPlugCpu(Version version, ArchitectureType arch, CpuPinningPolicy cpuPinningPolicy) {
+        return hotPlugCpu(version, arch) &&
+                (cpuPinningPolicy == CpuPinningPolicy.NONE || cpuPinningPolicy == CpuPinningPolicy.MANUAL);
     }
 
     public static boolean hotUnplugCpu(Version version, ArchitectureType arch) {
