@@ -364,7 +364,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                 if (predefinedProperties == null || predefinedProperties.isEmpty()) {
                     predefinedProperties = vgpuProperties;
                 } else {
-                    predefinedProperties = predefinedProperties + ";" + vgpuProperties;
+                    predefinedProperties += ";" + vgpuProperties;
                 }
             }
         }
