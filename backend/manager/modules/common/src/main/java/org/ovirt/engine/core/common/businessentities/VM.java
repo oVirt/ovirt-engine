@@ -1246,6 +1246,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         this.vmDynamic.setCurrentThreadsPerCore(threads);
     }
 
+    public String getCurrentNumaPinning() {
+        return this.vmDynamic.getCurrentNumaPinning();
+    }
+
+    public void setCurrentNumaPinning(String pinning) {
+        this.vmDynamic.setCurrentNumaPinning(pinning);
+    }
+
     public Boolean isRunAndPause() {
         return vmStatic.isRunAndPause();
     }

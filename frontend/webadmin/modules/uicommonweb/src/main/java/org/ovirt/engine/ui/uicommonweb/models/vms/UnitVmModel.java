@@ -2299,6 +2299,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 updateTpmEnabled();
             } else if (sender == getCpuPinningPolicy()) {
                 cpuPinningPolicyChanged();
+                behavior.updateNumaEnabled();
             } else if (sender == getConsoleDisconnectAction()){
                 consoleDisconnectActionSelectedItemChanged();
             }

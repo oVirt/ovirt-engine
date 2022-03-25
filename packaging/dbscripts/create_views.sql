@@ -1477,6 +1477,7 @@ SELECT vm_static.vm_name AS vm_name,
     vm_dynamic.current_sockets AS current_sockets,
     vm_dynamic.current_cores AS current_cores,
     vm_dynamic.current_threads AS current_threads,
+    vm_dynamic.current_numa_pinning AS current_numa_pinning,
     vm_static.parallel_migrations AS parallel_migrations
 FROM vm_static
 INNER JOIN vm_dynamic
@@ -1721,6 +1722,7 @@ SELECT DISTINCT vms.vm_name,
     vms.current_sockets,
     vms.current_cores,
     vms.current_threads,
+    vms.current_numa_pinning,
     vms.parallel_migrations
 FROM vms
 LEFT JOIN tags_vm_map_view

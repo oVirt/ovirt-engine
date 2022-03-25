@@ -413,7 +413,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     protected String getDedicatedCpuPinning(VdsManager vdsManager) {
         List<VdsCpuUnit> vdsCpuUnits = vdsManager.getCpuTopology().stream()
                 .filter(cpu -> cpu.getVmIds().contains(getVmId())).sorted().collect(Collectors.toList());
-        return CpuPinningHelper.createCpuPinning(vdsCpuUnits);
+        return CpuPinningHelper.createCpuPinningString(vdsCpuUnits);
     }
 
     protected VdsManager getVdsManager() {
