@@ -57,8 +57,8 @@ Install the following system components:
 - python3-otopi >= 1.10.0
 - python3-ovirt-setup-lib
 - maven >= 3.5
-- ansible >= 2.9.0
-- ansible-runner-service-dev >= 1.0.6
+- ansible-core >= 2.12.0
+- ansible-runner >= 2.1.3
 - ovirt-ansible-roles >= 1.2.0
 - ovirt-imageio-daemon >= 2.0.6
 - ovirt-engine-metrics (optional)
@@ -158,14 +158,14 @@ For Fedora prerequisites installation, following command can be applied:
 Install additional packages for Fedora:
 
   $ sudo yum install -y \
-        ansible \
-        ansible-runner-service-dev \
+        ansible-core \
+        ansible-runner \
         bind-utils \
         libxml2-python \
         m2crypto \
         mailcap \
         openssl \
-        ovirt-ansible-roles \
+        ovirt-ansible-collection \
         ovirt-engine-metrics \
         ovirt-engine-wildfly \
         ovirt-engine-wildfly-overlay \
@@ -278,29 +278,15 @@ Enable uuid-ossp extension for the database:
   engine=# CREATE EXTENSION "uuid-ossp";
   engine=# \q
 
-==== Ansible Runner Service configration
+==== Ansible Runner configration
 
-Since oVirt 4.4 the engine is integrated with Ansible Runner Service. To properly integrate the development
-environment with the Ansible Runner Service, you need to edit `/etc/ansible-runner-service/config.yaml` file
-as follows:
+Since oVirt 4.5 the engine is integrated with ansible-core and ansible-runner,
+so you need to install RPM packages for both, but not additional configuration
+is required.
 
-  ---
-  playbooks_root_dir: '$PREFIX/var/lib/ovirt-engine/ansible-runner-project'
-  ssh_private_key: '$PREFIX/etc/pki/ovirt-engine/keys/engine_id_rsa'
-  port: 50001
-  target_user: root
-
-Please replace `$PREFIX` with the real path of your development environment, which you've specified during
-the compilation of the engine, for example:
-
-  playbooks_root_dir: '/home/user/ovirt-engine/var/lib/ovirt-engine/ansible-runner-project'
-  ssh_private_key: '/home/user/ovirt-engine/etc/pki/ovirt-engine/keys/engine_id_rsa'
-
-
-After edditing the file, make sure you've restarted the Ansible Runner Service service:
-
-  # systemctl restart ansible-runner-service
-  # systemctl enable ansible-runner-service
+All previously used configuration for ansible-runner-service is no longer
+relevant and 'ansible-runner-service*' packages and configuration can be
+removed.
 
 === Development
 
