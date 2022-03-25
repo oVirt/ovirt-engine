@@ -32,7 +32,6 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.scheduling.utils.NumaPinningHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
@@ -72,6 +71,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -105,6 +105,7 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
+import org.ovirt.engine.core.common.utils.NumaPinningHelper;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -1336,6 +1337,23 @@ public class VmHandler implements BackendService {
                 .map(pin -> String.format("%s#%s", pin.getKey(), pin.getValue()))
                 .collect(Collectors.joining("_"));
         vm.setCurrentCpuPinning(res);
+    }
+
+    public void addNumaPinningForDedicated(VM vm, Guid vdsId) {
+        if (vdsId == null) {
+            return;
+        }
+
+        List<VdsCpuUnit> cpuUnits = resourceManager.getVdsManager(vdsId)
+                .getCpuTopology()
+                .stream()
+                .filter(cpuUnit -> cpuUnit.getVmIds().contains(vm.getId()))
+                .collect(Collectors.toList());
+
+        String numaPinningString = NumaPinningHelper.createNumaPinningAccordingToCpuPinning(
+                vm.getvNumaNodeList(),
+                cpuUnits);
+        vm.setCurrentNumaPinning(numaPinningString);
     }
 
     public void autoSelectResumeBehavior(VmBase vmBase) {

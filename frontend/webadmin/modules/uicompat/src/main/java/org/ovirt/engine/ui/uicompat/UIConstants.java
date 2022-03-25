@@ -1935,6 +1935,8 @@ public interface UIConstants extends Constants {
 
     String numaDisabledInfoMessage();
 
+    String numaDisabledForDedicatedCpusInfoMessage();
+
     String numaInfoMessage();
 
     String eitherTotalOrReadWriteCanHaveValues();

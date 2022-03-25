@@ -464,17 +464,17 @@ public class VdsBrokerObjectsBuilderTest {
         Map<String, Integer> cpuCapability2 = new HashMap<>();
         cpuCapability2.put(VdsProperties.cpu_id, 1);
         cpuCapability2.put(VdsProperties.core_id, 0);
-        cpuCapability1.put(VdsProperties.numa_id, 0);
+        cpuCapability2.put(VdsProperties.numa_id, 0);
         cpuCapability2.put(VdsProperties.socket_id, 0);
         Map<String, Integer> cpuCapability3 = new HashMap<>();
         cpuCapability3.put(VdsProperties.cpu_id, 2);
         cpuCapability3.put(VdsProperties.core_id, 1);
-        cpuCapability1.put(VdsProperties.numa_id, 0);
+        cpuCapability3.put(VdsProperties.numa_id, 0);
         cpuCapability3.put(VdsProperties.socket_id, 0);
         Map<String, Integer> cpuCapability4 = new HashMap<>();
         cpuCapability4.put(VdsProperties.cpu_id, 3);
         cpuCapability4.put(VdsProperties.core_id, 0);
-        cpuCapability1.put(VdsProperties.numa_id, 1);
+        cpuCapability4.put(VdsProperties.numa_id, 1);
         cpuCapability4.put(VdsProperties.socket_id, 1);
         Map<String, Object> struct = new HashMap<>();
         struct.put(VdsProperties.cpu_topology,

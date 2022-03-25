@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.compat.Guid;
@@ -63,14 +64,14 @@ public class NumaSettingFactoryTest {
                 NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, vdsNumaNodes);
         assertThat(cpuPinning).isEmpty();
         Map<String, Object> mapping =
-                NumaSettingFactory.buildVmNumatuneSetting(vmNumaNodes);
+                NumaSettingFactory.buildVmNumatuneSetting(new VM(), vmNumaNodes);
         assertThat(mapping).doesNotContainKeys(VdsProperties.NUMA_TUNE_MODE, VdsProperties.NUMA_TUNE_NODESET);
     }
 
     @Test
     public void testBuildVmNumatuneSetting() {
         Map<String, Object> numaTune =
-                NumaSettingFactory.buildVmNumatuneSetting(vmNumaNodes);
+                NumaSettingFactory.buildVmNumatuneSetting(new VM(), vmNumaNodes);
         assertEquals(1, numaTune.size());
 
         assertTrue(numaTune.containsKey(VdsProperties.NUMA_TUNE_MEMNODES));

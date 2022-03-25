@@ -1338,6 +1338,7 @@ public class VdsManager {
             return;
         }
         this.cpuTopology = cpuTopology;
+        Collections.sort(this.cpuTopology);
         this.cpuTopology.stream().filter(cpu -> cpu.getCpu() == vdsmCpu)
                 .forEach(cpu -> cpu.pinVm(Guid.SYSTEM, CpuPinningPolicy.MANUAL));
     }

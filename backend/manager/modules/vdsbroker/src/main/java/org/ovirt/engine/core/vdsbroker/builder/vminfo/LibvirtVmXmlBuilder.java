@@ -610,7 +610,7 @@ public class LibvirtVmXmlBuilder {
 
     private Map<String, Object> getNumaTuneSetting() {
         Map<String, Object> numaTuneSetting = NumaSettingFactory.buildVmNumatuneSetting(
-                vmNumaNodesSupplier.get());
+                vm, vmNumaNodesSupplier.get());
         if (numaTuneSetting.isEmpty()) {
             return null;
         }
