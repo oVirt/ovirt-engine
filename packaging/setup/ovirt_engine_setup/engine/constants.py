@@ -234,11 +234,6 @@ class FileLocations(object):
         'nssdb',
     )
 
-    ANSIBLE_RUNNER_SERVICE_SELINUX = os.path.join(
-        OVIRT_ENGINE_DATADIR,
-        'selinux',
-    )
-
     ANSIBLE_RUNNER_SERVICE_CONF = os.path.join(
         SYSCONFDIR,
         'ansible-runner-service',
