@@ -360,7 +360,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                         .equals((Boolean) device.getSpecParams().get(MDevTypesUtils.NODISPLAY)))) {
                     vgpuProperties = "nodisplay," + vgpuProperties;
                 }
-                vgpuProperties = "mdev_type=" + vgpuProperties;
+                vgpuProperties = String.format("%s=%s", MDevTypesUtils.DEPRECATED_CUSTOM_PROPERTY_NAME, vgpuProperties);
                 if (predefinedProperties == null || predefinedProperties.isEmpty()) {
                     predefinedProperties = vgpuProperties;
                 } else {
