@@ -901,9 +901,9 @@ public abstract class OvfReader implements IOvfBuilder {
 
     private void addPredefinedProperties(String properties) {
         if (properties != null) {
-            final SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
-            final Map<String, String> customProperties = util.convertProperties(properties);
-            final String mdevTypes = customProperties.get(MDevTypesUtils.DEPRECATED_CUSTOM_PROPERTY_NAME);
+            var simpleCustomPropertiesUtil = SimpleCustomPropertiesUtil.getInstance();
+            var customProperties = simpleCustomPropertiesUtil.convertProperties(properties);
+            String mdevTypes = customProperties.remove(MDevTypesUtils.DEPRECATED_CUSTOM_PROPERTY_NAME);
             if (mdevTypes != null && !mdevTypes.trim().isEmpty()) {
                 Boolean nodisplay = Boolean.FALSE;
                 for (String type : mdevTypes.split(",")) {
@@ -924,8 +924,7 @@ public abstract class OvfReader implements IOvfBuilder {
                         addManagedVmDevice(device);
                     }
                 }
-                customProperties.remove(MDevTypesUtils.DEPRECATED_CUSTOM_PROPERTY_NAME);
-                properties = util.convertProperties(customProperties);
+                properties = simpleCustomPropertiesUtil.convertProperties(customProperties);
             }
         }
         vmBase.setPredefinedProperties(properties);
