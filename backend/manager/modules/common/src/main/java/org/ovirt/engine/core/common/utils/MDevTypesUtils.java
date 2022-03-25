@@ -9,6 +9,7 @@ import org.ovirt.engine.core.compat.Version;
 
 public class MDevTypesUtils {
 
+    public static final String DEPRECATED_CUSTOM_PROPERTY_NAME = "mdev_type";
     public static final String MDEV_TYPE = "mdevType";
     public static final String DRIVER_PARAMETERS = "driverParams";
     public static final String NODISPLAY = "nodisplay";

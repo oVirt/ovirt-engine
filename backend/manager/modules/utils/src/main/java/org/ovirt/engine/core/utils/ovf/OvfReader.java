@@ -903,8 +903,7 @@ public abstract class OvfReader implements IOvfBuilder {
         if (properties != null) {
             final SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
             final Map<String, String> customProperties = util.convertProperties(properties);
-            String mdev_type = "mdev_type";
-            final String mdevTypes = customProperties.get(mdev_type);
+            final String mdevTypes = customProperties.get(MDevTypesUtils.DEPRECATED_CUSTOM_PROPERTY_NAME);
             if (mdevTypes != null && !mdevTypes.trim().isEmpty()) {
                 Boolean nodisplay = Boolean.FALSE;
                 for (String type : mdevTypes.split(",")) {
@@ -925,7 +924,7 @@ public abstract class OvfReader implements IOvfBuilder {
                         addManagedVmDevice(device);
                     }
                 }
-                customProperties.remove(mdev_type);
+                customProperties.remove(MDevTypesUtils.DEPRECATED_CUSTOM_PROPERTY_NAME);
                 properties = util.convertProperties(customProperties);
             }
         }
