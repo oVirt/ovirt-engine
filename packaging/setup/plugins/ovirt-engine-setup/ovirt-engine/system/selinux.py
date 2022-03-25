@@ -14,16 +14,10 @@ SELinux configuration plugin.
 import gettext
 import re
 
-
-from os import listdir
-from os.path import isfile
-from os.path import join
-
 from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine import constants as oenginecons
 
 
 def _(m):
@@ -85,25 +79,6 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_LOW,
     )
     def _misc(self):
-        selinux_dir = oenginecons.FileLocations.ANSIBLE_RUNNER_SERVICE_SELINUX
-        for f in listdir(selinux_dir):
-            file_path = join(selinux_dir, f)
-            if isfile(file_path):
-                self.logger.info(
-                    _(
-                        'Install selinux module {}'.format(file_path)
-                    )
-                )
-                rc, stdout, stderr = self.execute(
-                    (
-                        self.command.get('semodule'),
-                        '-i', file_path
-                    )
-                )
-                if rc != 0:
-                    self.logger.info(
-                        _('Failed to apply SELINUX file {f}'.format(f=f))
-                    )
         for entry in self.environment[osetupcons.SystemEnv.SELINUX_PORTS]:
             rc, stdout, stderr = self.execute(
                 (self.command.get('semanage'), 'port', '-l')
