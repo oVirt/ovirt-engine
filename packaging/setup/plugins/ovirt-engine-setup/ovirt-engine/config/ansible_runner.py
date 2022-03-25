@@ -17,6 +17,8 @@ import stat
 from otopi import plugin
 from otopi import util
 
+from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
 
 
@@ -46,9 +48,17 @@ class Plugin(plugin.PluginBase):
             oenginecons.FileLocations.ANSIBLE_RUNNER_PROJECT,
             'inventory'
         )
-        project_link_dir = os.path.join(
+        project_playbooks_dir = os.path.join(
             oenginecons.FileLocations.ANSIBLE_RUNNER_PROJECT,
             'project'
+        )
+        project_roles_link = os.path.join(
+            project_playbooks_dir,
+            'roles'
+        )
+        ansible_cfg_link = os.path.join(
+            project_playbooks_dir,
+            'ansible.cfg'
         )
         project_ssh_key = os.path.join(
             project_env_dir,
@@ -58,6 +68,10 @@ class Plugin(plugin.PluginBase):
         rpm_project_dir = os.path.join(
             oenginecons.FileLocations.ANSIBLE_RUNNER_SERVICE_PROJECT,
             'project'
+        )
+        rpm_ansible_cfg = os.path.join(
+            oenginecons.FileLocations.ANSIBLE_RUNNER_SERVICE_PROJECT,
+            'project/ansible.cfg'
         )
 
         dir_permissions = (
@@ -84,11 +98,37 @@ class Plugin(plugin.PluginBase):
                 dir_permissions,
             )
 
-        # create link to roles and playbooks included within RPM
-        if not os.path.exists(project_link_dir):
+        # change ownership to ovirt:ovirt for RPM installations
+        if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+            usr_engine = osetuputil.getUid(
+                self.environment[osetupcons.SystemEnv.USER_ENGINE],
+            )
+            grp_engine = osetuputil.getGid(
+                self.environment[osetupcons.SystemEnv.GROUP_ENGINE],
+            )
+            for dirpath, dirnames, filenames in os.walk(
+                oenginecons.FileLocations.ANSIBLE_RUNNER_PROJECT
+            ):
+                os.chown(dirpath, usr_engine, grp_engine)
+                for filename in filenames:
+                    os.chown(
+                        os.path.join(dirpath, filename),
+                        usr_engine,
+                        grp_engine,
+                    )
+
+        # create a link to ansible.cfg included in RPM
+        if not os.path.exists(ansible_cfg_link):
             os.symlink(
-                rpm_project_dir,
-                project_link_dir
+                rpm_ansible_cfg,
+                ansible_cfg_link
+            )
+
+        # create a link to roles directory included in RPM
+        if not os.path.exists(project_roles_link):
+            os.symlink(
+                rpm_roles_dir,
+                project_roles_link
             )
 
         # create link to engine SSH private key
