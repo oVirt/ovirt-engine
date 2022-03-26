@@ -905,25 +905,8 @@ public abstract class OvfReader implements IOvfBuilder {
             var customProperties = simpleCustomPropertiesUtil.convertProperties(properties);
             String mdevTypes = customProperties.remove(MDevTypesUtils.DEPRECATED_CUSTOM_PROPERTY_NAME);
             if (mdevTypes != null && !mdevTypes.trim().isEmpty()) {
-                Boolean nodisplay = Boolean.FALSE;
-                for (String type : mdevTypes.split(",")) {
-                    if (type.equals("nodisplay")) {
-                        nodisplay = Boolean.TRUE;
-                    } else {
-                        VmDevice device = new VmDevice();
-                        device.setId(new VmDeviceId(Guid.newGuid(), vmBase.getId()));
-                        device.setType(VmDeviceGeneralType.MDEV);
-                        device.setDevice(VmDeviceType.VGPU.getName());
-                        device.setAddress("");
-                        device.setManaged(true);
-                        device.setPlugged(true);
-                        Map<String, Object> specParams = new HashMap<>();
-                        specParams.put(MDevTypesUtils.MDEV_TYPE, type);
-                        specParams.put(MDevTypesUtils.NODISPLAY, nodisplay);
-                        device.setSpecParams(specParams);
-                        addManagedVmDevice(device);
-                    }
-                }
+                var mdevDevices = MDevTypesUtils.convertDeprecatedCustomPropertyToVmDevices(mdevTypes, vmBase.getId());
+                mdevDevices.forEach(this::addManagedVmDevice);
                 properties = simpleCustomPropertiesUtil.convertProperties(customProperties);
             }
         }
