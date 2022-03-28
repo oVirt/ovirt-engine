@@ -425,7 +425,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doNothing().when(cmd).saveImage(collapsedDisk);
         doNothing().when(cmd).saveBaseDisk(collapsedDisk);
         doNothing().when(cmd).saveDiskImageDynamic(collapsedDisk);
-        doNothing().when(cmd).saveDiskVmElement(any(), any(), any());
+        doNothing().when(cmd).saveDiskVmElement(collapsedDisk);
         doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any());
         cmd.addVmImagesAndSnapshots();
         assertEquals("testVm_Disk1", collapsedDisk.getDiskAlias(), "Disk alias not generated.");
@@ -461,7 +461,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doNothing().when(cmd).updateImage(activeDisk);
         doNothing().when(cmd).saveBaseDisk(activeDisk);
         doNothing().when(cmd).updateActiveSnapshot(any());
-        doNothing().when(cmd).saveDiskVmElement(any(), any(), any());
+        doNothing().when(cmd).saveDiskVmElement(activeDisk);
 
         cmd.addVmImagesAndSnapshots();
         assertEquals("testVm_Disk1", activeDisk.getDiskAlias(), "Disk alias not generated.");
@@ -480,7 +480,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doNothing().when(cmd).saveImage(activeDisk);
         doNothing().when(cmd).saveDiskImageDynamic(activeDisk);
         doNothing().when(cmd).saveBaseDisk(activeDisk);
-        doNothing().when(cmd).saveDiskVmElement(any(), any(), any());
+        doNothing().when(cmd).saveDiskVmElement(activeDisk);
         doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any());
 
         cmd.addVmImagesAndSnapshots();
