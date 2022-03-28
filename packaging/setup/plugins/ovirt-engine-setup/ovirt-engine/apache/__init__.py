@@ -14,7 +14,6 @@ from otopi import util
 
 from . import engine
 from . import root
-from . import runner
 from . import selinux
 
 
@@ -22,7 +21,6 @@ from . import selinux
 def createPlugins(context):
     engine.Plugin(context=context)
     root.Plugin(context=context)
-    runner.Plugin(context=context)
     selinux.Plugin(context=context)
 
 

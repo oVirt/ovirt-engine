@@ -13,12 +13,14 @@
 from otopi import util
 
 from . import ca
+from . import runner
 from . import ssh
 
 
 @util.export
 def createPlugins(context):
     ca.Plugin(context=context)
+    runner.Plugin(context=context)
     ssh.Plugin(context=context)
 
 

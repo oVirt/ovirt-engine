@@ -772,6 +772,16 @@ class Plugin(plugin.PluginBase):
                 oengcommcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
             )
 
+        if not os.path.exists(
+            oengcommcons.FileLocations.OVIRT_ENGINE_PKI_ANSIBLE_CA_CERT
+        ):
+            os.symlink(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+                oengcommcons.FileLocations.OVIRT_ENGINE_PKI_ANSIBLE_CA_CERT
+            )
+            uninstall_files.append(
+                oengcommcons.FileLocations.OVIRT_ENGINE_PKI_ANSIBLE_CA_CERT
+            )
         self._enrollCertificates(False, uninstall_files)
 
     @plugin.event(

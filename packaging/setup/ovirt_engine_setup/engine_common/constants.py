@@ -79,6 +79,12 @@ class FileLocations(object):
         OVIRT_ENGINE_PKIKEYSDIR,
         'apache.key.nopass',
     )
+    OVIRT_ENGINE_PKI_ANSIBLE_CA_CERT = os.path.join(
+        OVIRT_ENGINE_COMMON_DATADIR,
+        'ansible-runner-service-project',
+        'env',
+        'ssh_key',
+    )
     FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE_TEMPLATE = os.path.join(
         osetupcons.FileLocations.OVIRT_SETUP_DATADIR,
         'conf',
