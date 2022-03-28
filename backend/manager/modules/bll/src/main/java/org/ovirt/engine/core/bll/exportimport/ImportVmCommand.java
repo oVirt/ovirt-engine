@@ -1100,7 +1100,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 } else {
                     newDiskIdForDisk.put(disk.getId(), disk);
                 }
-                disk.setCreationDate(new Date());
                 saveImage(disk);
                 ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
                 saveBaseDisk(disk);
