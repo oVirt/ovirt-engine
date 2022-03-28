@@ -435,6 +435,16 @@ public class VdsBrokerObjectsBuilderTest {
                 new VdsCpuUnit(0, 1, 2), new VdsCpuUnit(1, 0, 3)));
     }
 
+    @Test
+    public void testSetDiskReadRateAsLong() {
+        String longValue = "2";
+        Map<String, Object> diskData = setDiskData();
+        diskData.put(VdsProperties.vm_disk_read_rate, longValue);
+        Map<String, Object> xml = setMockForTesting(diskData);
+        List<DiskImageDynamic> disks = vdsBrokerObjectsBuilder.buildVmDiskStatistics(xml);
+        assertEquals(Long.valueOf(2), disks.get(0).getReadRate());
+    }
+
     private Map<String, Object> createCpuTopologyStruct() {
         Map<String, Integer> cpuCapability1 = new HashMap<>();
         cpuCapability1.put(VdsProperties.cpu_id, 0);

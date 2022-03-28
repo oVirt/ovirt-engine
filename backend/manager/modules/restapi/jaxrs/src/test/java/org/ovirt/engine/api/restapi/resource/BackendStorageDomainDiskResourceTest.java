@@ -133,9 +133,9 @@ public class BackendStorageDomainDiskResourceTest
         return setUpStatisticalEntityExpectations(entity);
     }
     static org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
-        entity.setReadRate(1);
+        entity.setReadRate(1L);
         entity.setReadOps(2L);
-        entity.setWriteRate(3);
+        entity.setWriteRate(3L);
         entity.setWriteOps(4L);
         entity.setReadLatency(5.0);
         entity.setWriteLatency(6.0);

@@ -53,9 +53,9 @@ public class DiskImageDynamicDaoImpl extends MassOperationsGenericDao<DiskImageD
         return (rs, rowNum) -> {
             DiskImageDynamic entity = new DiskImageDynamic();
             entity.setId(getGuidDefaultEmpty(rs, "image_id"));
-            entity.setReadRate((Integer) rs.getObject("read_rate"));
+            entity.setReadRate((Long) rs.getObject("read_rate"));
             entity.setReadOps((Long) rs.getObject("read_ops"));
-            entity.setWriteRate((Integer) rs.getObject("write_rate"));
+            entity.setWriteRate((Long) rs.getObject("write_rate"));
             entity.setWriteOps((Long) rs.getObject("write_ops"));
             entity.setActualSize(rs.getLong("actual_size"));
             entity.setReadLatency(rs.getObject("read_latency_seconds") != null ? rs.getDouble("read_latency_seconds")

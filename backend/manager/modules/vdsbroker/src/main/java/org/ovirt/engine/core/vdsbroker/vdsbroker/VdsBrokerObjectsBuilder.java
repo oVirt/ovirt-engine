@@ -1795,9 +1795,9 @@ public class VdsBrokerObjectsBuilder {
             if (!StringUtils.isEmpty(imageGroupIdString)) {
                 Guid imageGroupIdGuid = new Guid(imageGroupIdString);
                 diskData.setId(imageGroupIdGuid);
-                diskData.setReadRate(assignIntValue(disk, VdsProperties.vm_disk_read_rate));
+                diskData.setReadRate(assignLongValue(disk, VdsProperties.vm_disk_read_rate));
                 diskData.setReadOps(assignLongValue(disk, VdsProperties.vm_disk_read_ops));
-                diskData.setWriteRate(assignIntValue(disk, VdsProperties.vm_disk_write_rate));
+                diskData.setWriteRate(assignLongValue(disk, VdsProperties.vm_disk_write_rate));
                 diskData.setWriteOps(assignLongValue(disk, VdsProperties.vm_disk_write_ops));
 
                 if (disk.containsKey(VdsProperties.disk_true_size)) {
