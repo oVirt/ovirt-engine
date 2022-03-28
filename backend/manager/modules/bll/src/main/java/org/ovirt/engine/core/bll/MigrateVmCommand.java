@@ -618,12 +618,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     public void runningSucceded() {
         try {
             queryDowntime();
-            vmDynamicDao.clearMigratingToVds(getVmId());
+            setDedicatedCpus(getDestinationVdsManager());
+            vmDynamicDao.clearMigratingToVdsAndSetDynamicCpuPinning(getVmId(), getVm().getCurrentCpuPinning());
             updateVmAfterMigrationToDifferentCluster();
             plugPassthroughNics();
             initParametersForExternalNetworks(destinationVds, true);
-            setDedicatedCpus(getDestinationVdsManager());
-            vmDynamicDao.update(getVm().getDynamicData());
         } finally {
             super.runningSucceded();
         }
