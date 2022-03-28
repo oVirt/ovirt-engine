@@ -1102,7 +1102,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 saveImage(disk);
                 ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
                 saveBaseDisk(disk);
-                saveDiskVmElement(disk.getId(), getVmId(), disk.getDiskVmElementForVm(getParameters().getVmId()));
+                saveDiskVmElement(disk);
                 saveDiskImageDynamic(disk);
             }
 
@@ -1128,7 +1128,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
                 updateImage(disk);
                 saveBaseDisk(disk);
-                saveDiskVmElement(disk.getId(), getVmId(), disk.getDiskVmElementForVm(getParameters().getVmId()));
+                saveDiskVmElement(disk);
             }
 
             // Update active snapshot's data, since it was inserted as a regular snapshot.
@@ -1143,40 +1143,44 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     /**
-     * Saves the base disk object
+     * Saves the base disk object.
      */
     protected void saveBaseDisk(DiskImage disk) {
         baseDiskDao.save(disk);
     }
 
-    protected void saveDiskVmElement(Guid diskId, Guid vmId, DiskVmElement diskVmElement) {
-        diskVmElementDao.save(DiskVmElement.copyOf(diskVmElement, diskId, vmId));
+    /**
+     * Saves the {@code DiskVmElement} object.
+     */
+    protected void saveDiskVmElement(DiskImage disk) {
+        DiskVmElement diskVmElement = disk.getDiskVmElementForVm(getParameters().getVmId());
+        diskVmElementDao.save(DiskVmElement.copyOf(diskVmElement, disk.getId(), getVmId()));
     }
 
     /**
-     * Save the entire image, including it's storage mapping
+     * Save the entire image, including it's storage mapping.
      */
     protected void saveImage(DiskImage disk) {
         imagesHandler.saveImage(disk);
     }
 
     /**
-     * Updates an image of a disk
+     * Updates an image of a disk.
      */
     protected void updateImage(DiskImage disk) {
         imageDao.update(disk.getImage());
     }
 
     /**
-     * Generates and saves a {@link DiskImageDynamic} for the given <code>disk</code>
+     * Generates and saves a {@link DiskImageDynamic} for the given {@code disk}.
      *
-     * @param disk The imported disk
+     * @param disk the disk being imported
      **/
     protected void saveDiskImageDynamic(DiskImage disk) {
-        DiskImageDynamic diskDynamic = new DiskImageDynamic();
-        diskDynamic.setId(disk.getImageId());
-        diskDynamic.setActualSize(disk.getActualSizeInBytes());
-        diskImageDynamicDao.save(diskDynamic);
+        DiskImageDynamic diskImageDynamic = new DiskImageDynamic();
+        diskImageDynamic.setId(disk.getImageId());
+        diskImageDynamic.setActualSize(disk.getActualSizeInBytes());
+        diskImageDynamicDao.save(diskImageDynamic);
     }
 
     /**
