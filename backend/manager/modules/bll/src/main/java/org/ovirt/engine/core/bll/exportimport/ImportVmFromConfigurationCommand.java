@@ -140,7 +140,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmFromConfParamete
     private boolean isValidDisks() {
         ImportValidator importValidator = getImportValidator();
         if (isImagesAlreadyOnTarget()) {
-            if (!validate(importValidator.validateDiskImagesNotExist(getImages(),
+            if (!validate(importValidator.validateDiskImagesNotExistOrShareable(getImages(),
                     getParameters().isAllowPartialImport(),
                     imageToDestinationDomainMap,
                     failedDisksToImportForAuditLog))) {

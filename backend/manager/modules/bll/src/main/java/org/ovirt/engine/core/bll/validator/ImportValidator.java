@@ -47,7 +47,9 @@ public class ImportValidator {
 
     /**
      * Validate the existence of the VM's disk images in the engine database. If a disk image already exists,
-     * the engine should fail the validation, unless the {@code allowPartial} flag is true.
+     * the engine should fail the validation, unless either:
+     * 1) Both the existing and the new disks are shareable.
+     * 2) The {@code allowPartial} flag is true.
      * Once the {@code allowPartial} flag is true the operation should not fail and the disk will be removed from
      * the VM's disks list and also from the {@code imageToDestinationDomainMap}, so the operation will pass
      * the {@code CommandActionState.EXECUTE} phase and import the VM partially without the invalid disks.
@@ -61,14 +63,14 @@ public class ImportValidator {
      *            - Map from src storage to dst storage which might be filtered if the {@code allowPartial} flag is true.
      * @return - the validation result
      */
-    public ValidationResult validateDiskImagesNotExist(List<DiskImage> disks,
+    public ValidationResult validateDiskImagesNotExistOrShareable(List<DiskImage> disks,
             boolean allowPartial,
             Map<Guid, Guid> imageToDestinationDomainMap,
             Map<Guid, String> failedDisksToImport) {
         // Creating new ArrayList in order to manipulate the original List and remove the existing disks.
         for (DiskImage newDisk : new ArrayList<>(disks)) {
             DiskImage existingDisk = getDiskImageDao().get(newDisk.getImageId());
-            if (existingDisk != null) {
+            if (!DiskImagesValidator.diskNotExistsOrBothShareable(existingDisk, newDisk)) {
                 log.info("Disk image '{}' already exists for disk '{}' with id '{}' in storage domain '{}'",
                         newDisk.getImageId(),
                         existingDisk.getDiskAlias(),

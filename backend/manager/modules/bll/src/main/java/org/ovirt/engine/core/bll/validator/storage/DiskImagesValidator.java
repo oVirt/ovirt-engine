@@ -78,15 +78,16 @@ public class DiskImagesValidator {
     }
 
     /**
-     * Validates that none of the disks exists.
+     * Validates that none of the new disks already exists in the database
+     * or that both the existing and the new disks are shareable.
      *
      * @return A {@link ValidationResult} with the validation information.
      */
-    public ValidationResult disksNotExist() {
+    public ValidationResult disksNotExistOrShareable() {
         List<String> existingDisksAliases = new ArrayList<>();
         for (Disk newDisk : diskImages) {
             Disk existingDisk = getExistingDisk(newDisk.getId());
-            if (existingDisk != null) {
+            if (!diskNotExistsOrBothShareable(existingDisk, newDisk)) {
                 existingDisksAliases.add(
                         newDisk.getDiskAlias().isEmpty() ? existingDisk.getDiskAlias() : newDisk.getDiskAlias());
             }
@@ -98,6 +99,11 @@ public class DiskImagesValidator {
         }
 
         return ValidationResult.VALID;
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean diskNotExistsOrBothShareable(Disk existingDisk, Disk newDisk) {
+        return existingDisk == null || existingDisk.isShareable() && newDisk.isShareable();
     }
 
     /**
