@@ -79,6 +79,8 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
 
     void clearMigratingToVds(Guid id);
 
+    void clearMigratingToVdsAndSetDynamicCpuPinning(Guid id, String cpuPinning);
+
 
     /**
      * Update vm dynamics ovirt_guest_agent_status field
