@@ -137,9 +137,9 @@ public class DiskImagesValidatorTest {
     }
 
     @Test
-    public void disksNotExistBothExist() {
+    public void disksNotExistOrShareableBothExist() {
         doReturn(new DiskImage()).when(validator).getExistingDisk(any());
-        assertThat(validator.disksNotExist(),
+        assertThat(validator.disksNotExistOrShareable(),
                 both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST))
                         .and(replacements(hasItem(createAliasReplacements(disk1, disk2)))));
     }
@@ -149,7 +149,7 @@ public class DiskImagesValidatorTest {
      * the CDA message should be taken from the disks existing on the setup.
      */
     @Test
-    public void disksNotExistDisksWithNullAlias() {
+    public void disksNotExistOrShareableDisksWithNullAlias() {
         disk1.setDiskAlias(null);
         disk2.setDiskAlias(null);
         DiskImage existingImage1 = new DiskImage();
@@ -159,24 +159,24 @@ public class DiskImagesValidatorTest {
 
         doReturn(existingImage1).when(validator).getExistingDisk(disk1.getId());
         doReturn(existingImage2).when(validator).getExistingDisk(disk2.getId());
-        assertThat(validator.disksNotExist(),
+        assertThat(validator.disksNotExistOrShareable(),
                 both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST))
                         .and(replacements(hasItem(createAliasReplacements(existingImage1, existingImage2)))));
     }
 
     @Test
-    public void disksNotExistOneExists() {
+    public void disksNotExistOrShareableOneExists() {
         doReturn(new DiskImage()).when(validator).getExistingDisk(disk1.getId());
         doReturn(null).when(validator).getExistingDisk(disk2.getId());
-        assertThat(validator.disksNotExist(),
+        assertThat(validator.disksNotExistOrShareable(),
                 both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST))
                         .and(replacements(hasItem(createAliasReplacements(disk1)))));
     }
 
     @Test
-    public void disksNotExistBothNotExist() {
+    public void disksNotExistOrShareableBothNotExist() {
         doReturn(null).when(validator).getExistingDisk(any());
-        assertThat(validator.disksNotExist(), isValid());
+        assertThat(validator.disksNotExistOrShareable(), isValid());
     }
 
     @Test

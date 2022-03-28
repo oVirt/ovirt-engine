@@ -475,7 +475,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
         // Iterate over all the VM disks (active image and snapshots).
         for (DiskImage image : getImages()) {
-            if (Guid.Empty.equals(image.getVmSnapshotId())) {
+            if (Guid.Empty.equals(image.getVmSnapshotId()) && !image.isShareable()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
             }
 
@@ -751,7 +751,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected boolean validateNoDuplicateDiskImages(Collection<DiskImage> images) {
         if (!getParameters().isImportAsNewEntity()) {
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(images);
-            return validate(diskImagesValidator.disksNotExist());
+            return validate(diskImagesValidator.disksNotExistOrShareable());
         }
 
         return true;
