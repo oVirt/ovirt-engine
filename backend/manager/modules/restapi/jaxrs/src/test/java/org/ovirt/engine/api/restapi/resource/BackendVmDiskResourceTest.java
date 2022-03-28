@@ -287,9 +287,9 @@ public class BackendVmDiskResourceTest
     protected DiskImage setUpStatisticalExpectations() {
         DiskImage entity = mock(DiskImage.class);
         when(entity.getId()).thenReturn(DISK_ID);
-        when(entity.getReadRate()).thenReturn(10);
+        when(entity.getReadRate()).thenReturn(10L);
         when(entity.getReadOps()).thenReturn(15L);
-        when(entity.getWriteRate()).thenReturn(20);
+        when(entity.getWriteRate()).thenReturn(20L);
         when(entity.getWriteOps()).thenReturn(25L);
         when(entity.getReadLatency()).thenReturn(30.0);
         when(entity.getWriteLatency()).thenReturn(40.0);
@@ -526,9 +526,9 @@ public class BackendVmDiskResourceTest
     }
 
     private org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
-        when(entity.getReadRate()).thenReturn(1);
+        when(entity.getReadRate()).thenReturn(1L);
         when(entity.getReadOps()).thenReturn(2L);
-        when(entity.getWriteRate()).thenReturn(3);
+        when(entity.getWriteRate()).thenReturn(3L);
         when(entity.getWriteOps()).thenReturn(4L);
         when(entity.getReadLatency()).thenReturn(5.0);
         when(entity.getWriteLatency()).thenReturn(6.0);
