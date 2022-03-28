@@ -71,6 +71,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -80,6 +81,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMapId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -1146,7 +1148,14 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
      * Saves the base disk object.
      */
     protected void saveBaseDisk(DiskImage disk) {
-        baseDiskDao.save(disk);
+        BaseDisk existingDisk = baseDiskDao.get(disk.getId());
+
+        if (existingDisk != null) {
+            log.info("Shared disk '{}' already exists.", disk.getId());
+        } else {
+            log.debug("Adding disk '{}' to the database.", disk.getId());
+            baseDiskDao.save(disk);
+        }
     }
 
     /**
@@ -1154,6 +1163,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
      */
     protected void saveDiskVmElement(DiskImage disk) {
         DiskVmElement diskVmElement = disk.getDiskVmElementForVm(getParameters().getVmId());
+        log.debug("Adding disk VM element '{}' to the database.", diskVmElement.getId());
         diskVmElementDao.save(DiskVmElement.copyOf(diskVmElement, disk.getId(), getVmId()));
     }
 
@@ -1161,7 +1171,14 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
      * Save the entire image, including it's storage mapping.
      */
     protected void saveImage(DiskImage disk) {
-        imagesHandler.saveImage(disk);
+        Image existingImage = imageDao.get(disk.getImageId());
+
+        if (existingImage != null) {
+            log.info("Disk image '{}' for shared disk '{}' already exists.", disk.getImageId(), disk.getId());
+        } else {
+            log.debug("Adding disk image '{}' for disk '{}' to the database.", disk.getImageId(), disk.getId());
+            imagesHandler.saveImage(disk);
+        }
     }
 
     /**
@@ -1177,10 +1194,19 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
      * @param disk the disk being imported
      **/
     protected void saveDiskImageDynamic(DiskImage disk) {
-        DiskImageDynamic diskImageDynamic = new DiskImageDynamic();
-        diskImageDynamic.setId(disk.getImageId());
-        diskImageDynamic.setActualSize(disk.getActualSizeInBytes());
-        diskImageDynamicDao.save(diskImageDynamic);
+        DiskImageDynamic existingDiskImageDynamic = diskImageDynamicDao.get(disk.getImageId());
+
+        if (existingDiskImageDynamic != null) {
+            log.info("Disk image dynamic '{}' for shared disk '{}' already exists.",
+                    existingDiskImageDynamic.getId(), disk.getId());
+        } else {
+            DiskImageDynamic diskImageDynamic = new DiskImageDynamic();
+            diskImageDynamic.setId(disk.getImageId());
+            diskImageDynamic.setActualSize(disk.getActualSizeInBytes());
+            log.debug("Adding disk image dynamic '{}' for disk '{}' to the database.",
+                    diskImageDynamic.getId(), disk.getId());
+            diskImageDynamicDao.save(diskImageDynamic);
+        }
     }
 
     /**
