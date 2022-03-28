@@ -274,7 +274,7 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
     protected boolean validateNoDuplicateDiskImages(Collection<DiskImage> images) {
         if (!getParameters().isImportAsNewEntity() && !getParameters().isImagesExistOnTargetStorageDomain()) {
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(images);
-            return validate(diskImagesValidator.diskImagesAlreadyExist());
+            return validate(diskImagesValidator.disksNotExist());
         }
 
         return true;

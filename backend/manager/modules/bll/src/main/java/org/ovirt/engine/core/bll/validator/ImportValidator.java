@@ -46,40 +46,41 @@ public class ImportValidator {
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     /**
-     * Validate the existence of the VM's disks. If a disk already exist in the engine,
-     * the engine should fail the validation, unless the allowPartial flag is true. Once the
-     * allowPartial flag is true the operation should not fail and the disk will be removed from the VM's disk list and
-     * also from the imageToDestinationDomainMap, so the operation will pass the execute phase and import the VM
-     * partially without the invalid disks.
+     * Validate the existence of the VM's disk images in the engine database. If a disk image already exists,
+     * the engine should fail the validation, unless the {@code allowPartial} flag is true.
+     * Once the {@code allowPartial} flag is true the operation should not fail and the disk will be removed from
+     * the VM's disks list and also from the {@code imageToDestinationDomainMap}, so the operation will pass
+     * the {@code CommandActionState.EXECUTE} phase and import the VM partially without the invalid disks.
      *
-     * @param images
-     *            - The images list to validate their storage domains. This list might be filtered if the allowPartial
-     *            flag is true
+     * @param disks
+     *            - The disks list to validate their storage domains.
+     *            This list might be filtered if the {@code allowPartial} flag is true.
      * @param allowPartial
-     *            - Flag which determine if the VM can be imported partially.
+     *            - Flag which determines if the VM can be imported partially.
      * @param imageToDestinationDomainMap
-     *            - Map from src storage to dst storage which might be filtered if the allowPartial flag is true.
-     * @return - The validation result.
+     *            - Map from src storage to dst storage which might be filtered if the {@code allowPartial} flag is true.
+     * @return - the validation result
      */
-    public ValidationResult validateDiskNotAlreadyExistOnDB(List<DiskImage> images,
+    public ValidationResult validateDiskImagesNotExist(List<DiskImage> disks,
             boolean allowPartial,
             Map<Guid, Guid> imageToDestinationDomainMap,
             Map<Guid, String> failedDisksToImport) {
-        // Creating new ArrayList in order to manipulate the original List and remove the existing disks
-        for (DiskImage image : new ArrayList<>(images)) {
-            DiskImage diskImage = getDiskImageDao().get(image.getImageId());
-            if (diskImage != null) {
-                log.info("Disk '{}' with id '{}', already exist on storage domain '{}'",
-                        diskImage.getDiskAlias(),
-                        diskImage.getImageId(),
-                        diskImage.getStoragesNames().get(0));
+        // Creating new ArrayList in order to manipulate the original List and remove the existing disks.
+        for (DiskImage newDisk : new ArrayList<>(disks)) {
+            DiskImage existingDisk = getDiskImageDao().get(newDisk.getImageId());
+            if (existingDisk != null) {
+                log.info("Disk image '{}' already exists for disk '{}' with id '{}' in storage domain '{}'",
+                        newDisk.getImageId(),
+                        existingDisk.getDiskAlias(),
+                        existingDisk.getId(),
+                        existingDisk.getStoragesNames().get(0));
                 if (!allowPartial) {
                     return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST,
-                            String.format("$diskAliases %s", diskImage.getDiskAlias()));
+                            String.format("$diskAliases %s", existingDisk.getDiskAlias()));
                 }
-                failedDisksToImport.putIfAbsent(image.getId(), image.getDiskAlias());
-                imageToDestinationDomainMap.remove(image.getId());
-                images.remove(image);
+                failedDisksToImport.putIfAbsent(newDisk.getId(), newDisk.getDiskAlias());
+                imageToDestinationDomainMap.remove(newDisk.getId());
+                disks.remove(newDisk);
             }
         }
         return ValidationResult.VALID;
