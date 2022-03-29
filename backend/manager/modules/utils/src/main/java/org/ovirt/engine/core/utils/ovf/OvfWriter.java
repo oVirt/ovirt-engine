@@ -296,6 +296,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeElement(IS_SPICE_COPY_PASTE_ENABLED, String.valueOf(vmBase.isSpiceCopyPasteEnabled()));
         _writer.writeElement(ALLOW_CONSOLE_RECONNECT, String.valueOf(vmBase.isAllowConsoleReconnect()));
         _writer.writeElement(CONSOLE_DISCONNECT_ACTION, String.valueOf(vmBase.getConsoleDisconnectAction()));
+        _writer.writeElement(CONSOLE_DISCONNECT_ACTION_DELAY, String.valueOf(vmBase.getConsoleDisconnectActionDelay()));
 
         if (vmBase.getAutoConverge() != null) {
             _writer.writeElement(IS_AUTO_CONVERGE, String.valueOf(vmBase.getAutoConverge()));

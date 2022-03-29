@@ -624,6 +624,9 @@ public abstract class OvfReader implements IOvfBuilder {
         consumeReadProperty(content,
                 CONSOLE_DISCONNECT_ACTION,
                 val -> vmBase.setConsoleDisconnectAction(ConsoleDisconnectAction.fromString(val)));
+        consumeReadProperty(content,
+                CONSOLE_DISCONNECT_ACTION_DELAY,
+                val -> vmBase.setConsoleDisconnectActionDelay(Integer.parseInt(val)));
         consumeReadProperty(content, IS_AUTO_CONVERGE, val -> vmBase.setAutoConverge(Boolean.parseBoolean(val)));
         consumeReadProperty(content,
                 IS_MIGRATE_COMPRESSED,
