@@ -7,8 +7,11 @@ package org.ovirt.engine.core.common.utils.ansible;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,6 +47,7 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
     private Path inventoryFile;
     private UUID uuid;
     private File extraVars;
+    private Path specificPlaybook;
     private File hostDir;
     // Logging
     private String logFileDirectory;
@@ -256,30 +260,28 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
     }
 
     public List<String> build() {
-        final Object executeLock = new Object();
-        synchronized (executeLock) {
-            createTempVarsFile();
-            List<String> ansibleCommand = new ArrayList<>();
-            try {
-                createInventoryFile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            ansibleCommand.add(ANSIBLE_COMMAND);
-            ansibleCommand.add("--directory-isolation-base-path");
-            ansibleCommand.add(AnsibleConstants.EXTRA_VARS_DIR + uuid);
-            ansibleCommand.add(ANSIBLE_EXECUTION_METHOD);
-            ansibleCommand.add(AnsibleConstants.HOST_DEPLOY_PROJECT_DIR);
-            ansibleCommand.add("-p");
-            ansibleCommand.add(playbook);
-            ansibleCommand.add("--artifact-dir");
-            ansibleCommand.add(AnsibleConstants.ARTIFACTS_DIR);
-            ansibleCommand.add("--inventory");
-            ansibleCommand.add(String.valueOf(inventoryFile));
-            ansibleCommand.add("-i");
-            ansibleCommand.add(String.valueOf(uuid));
-            return ansibleCommand;
+        createTempVarsFile();
+        createSpecificPlayBook();
+        addExtraVarsToPlaybook();
+        List<String> ansibleCommand = new ArrayList<>();
+        String playbook = specificPlaybook.toString().substring(specificPlaybook.toString().lastIndexOf("/")+1);
+        try {
+            createInventoryFile();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        ansibleCommand.add(ANSIBLE_COMMAND);
+        ansibleCommand.add(ANSIBLE_EXECUTION_METHOD);
+        ansibleCommand.add(AnsibleConstants.HOST_DEPLOY_PROJECT_DIR);
+        ansibleCommand.add("-p");
+        ansibleCommand.add(playbook);
+        ansibleCommand.add("--artifact-dir");
+        ansibleCommand.add(AnsibleConstants.ARTIFACTS_DIR);
+        ansibleCommand.add("--inventory");
+        ansibleCommand.add(String.valueOf(inventoryFile));
+        ansibleCommand.add("-i");
+        ansibleCommand.add(String.valueOf(uuid));
+        return ansibleCommand;
     }
 
     private void createInventoryFile() {
@@ -311,6 +313,30 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
             e.printStackTrace();
         }
     }
+
+    private void createSpecificPlayBook() {
+        Path orgPlaybook = Paths.get(AnsibleConstants.PROJECT_PATH + playbook);
+        specificPlaybook = Paths.get(AnsibleConstants.HOST_DEPLOY_PROJECT_DIR + "/project/" + uuid + ".yml");
+        try {
+            Files.copy(orgPlaybook, specificPlaybook, StandardCopyOption.REPLACE_EXISTING);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addExtraVarsToPlaybook() {
+        try {
+            List<String> lines = Files.readAllLines(specificPlaybook, StandardCharsets.UTF_8);
+            int position = lines.indexOf("      include_vars:");
+            if (position != -1) {
+                lines.add(position + 1, "        file: " + "\"" + extraVars.getPath() + "\"");
+                Files.write(specificPlaybook, lines, StandardCharsets.UTF_8);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     protected String formatCommandVariables(Map<String, Object> variables) {
         String result;

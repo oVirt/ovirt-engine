@@ -168,6 +168,9 @@ public class AnsibleExecutor {
             // Run the playbook:
             runnerClient.runPlaybook(command, timeout);
 
+            log.error(String.format("***after running playbook, before artifacts %1$s *****", Thread.currentThread().getName()));
+            log.error(String.format("***after running playbook, command config: %1$s %2$s*****", Thread.currentThread().getName(), commandConfig.getUuid().toString()));
+
             if (async) {
                 ret.setPlayUuid(playUuid);
                 ret.setAnsibleReturnCode(AnsibleReturnCode.OK);

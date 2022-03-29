@@ -5,7 +5,6 @@
   pre_tasks:
     - name: add image measure vars
       include_vars:
-        file: ../vars.yml
 
   roles:
     - ovirt-image-measure

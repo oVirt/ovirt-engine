@@ -64,10 +64,9 @@ class Plugin(plugin.PluginBase):
             project_env_dir,
             'ssh_key'
         )
-
-        rpm_project_dir = os.path.join(
+        rpm_roles_dir = os.path.join(
             oenginecons.FileLocations.ANSIBLE_RUNNER_SERVICE_PROJECT,
-            'project'
+            'project/roles'
         )
         rpm_ansible_cfg = os.path.join(
             oenginecons.FileLocations.ANSIBLE_RUNNER_SERVICE_PROJECT,
@@ -95,6 +94,11 @@ class Plugin(plugin.PluginBase):
         if not os.path.exists(project_inventory_dir):
             os.makedirs(
                 project_inventory_dir,
+                dir_permissions,
+            )
+        if not os.path.exists(project_playbooks_dir):
+            os.makedirs(
+                project_playbooks_dir,
                 dir_permissions,
             )
 

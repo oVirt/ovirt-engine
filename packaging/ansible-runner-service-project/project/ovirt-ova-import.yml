@@ -5,7 +5,6 @@
   pre_tasks:
     - name: include ova import vars
       include_vars:
-        file: ../vars.yml
 
   roles:
     - python-ver-detect

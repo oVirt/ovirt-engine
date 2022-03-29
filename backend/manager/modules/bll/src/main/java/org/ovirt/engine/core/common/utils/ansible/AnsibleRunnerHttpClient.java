@@ -37,19 +37,12 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 
 @Singleton
 public class AnsibleRunnerHttpClient {
-
-//    private static final Object inventoryLock = new Object();
-//    private static final Object executeLock = new Object();
-//    private static final String HOST_GROUP = "ovirt";
-//    private static final String API_VERSION = "/api/v1";
-
     private static Logger log = LoggerFactory.getLogger(AnsibleRunnerHttpClient.class);
-
     private ObjectMapper mapper;
     private AnsibleRunnerLogger runnerLogger;
     private String lastEvent = "";
     private static final int POLL_INTERVAL = 3000;
-//    private UUID uuid;
+    private UUID uuid;
     private AnsibleReturnValue returnValue;
 
     public AnsibleRunnerHttpClient() {
@@ -75,6 +68,7 @@ public class AnsibleRunnerHttpClient {
 
     public AnsibleReturnValue artifactHandler(UUID uuid, int lastEventID, int timeout, BiConsumer<String, String> fn)
             throws Exception { // TODO is this the correct place?
+        log.error(String.format("*** inside artifacts handle*** %1$s", Thread.currentThread().getName()));
         int iteration = 0;
         setReturnValue(uuid);
         // retrieve timeout from engine constants.
@@ -84,7 +78,6 @@ public class AnsibleRunnerHttpClient {
             }
             if (iteration > timeout * 60) {
                 // Cancel playbook, and raise exception in case timeout occur:
-                //            runnerClient.cancelPlaybook(playUuid);
                 cancelPlaybook(uuid, timeout);
                 throw new TimeoutException(
                         "Play execution has reached timeout");
@@ -241,13 +234,17 @@ public class AnsibleRunnerHttpClient {
 
     public void runPlaybook(List<String> command, int timeout) throws Exception {
         final Object executeLock = new Object();
-        log.error("***inside run playbook***");
+        log.error(String.format("***inside run playbook*** %1%s", Thread.currentThread()));
         Process ansibleProcess;
         File output = File.createTempFile("output", ".log");
         synchronized (executeLock) {
+            log.error(String.format("***inside run playbook, syncronized block*** %1$s %2$s", Thread.currentThread().getName(), command.get(command.size() -1)));
             ProcessBuilder ansibleProcessBuilder =
                     new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
+            String str = String.join(" ", command);
+            log.error(String.format("command: %1$s", str));
             ansibleProcess = ansibleProcessBuilder.start();
+            log.error(String.format("***inside run playbook*** after starting the process %1$s %2$s", Thread.currentThread().getName(), command.get(command.size() -1)));
             if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
                 throw new Exception("Timeout occurred while executing Ansible playbook.");
             }
@@ -257,6 +254,7 @@ public class AnsibleRunnerHttpClient {
                         output.toString()); // TODO: need to pass not path but content
             }
         }
+        log.error(String.format("***inside run playbook*** finished running the process. %1$s %2$s", Thread.currentThread().getName(), command.get(command.size() -1)));
     }
 
     protected String formatCommandVariables(Map<String, Object> variables, String playAction) {
