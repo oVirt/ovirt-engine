@@ -47,7 +47,6 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 
 @ExtendWith({MockitoExtension.class, RandomUtilsSeedingExtension.class})
@@ -74,13 +73,9 @@ public class DiskImagesValidatorTest {
 
     @BeforeEach
     public void setUp() {
-        disk1 = createDisk();
-        disk1.setDiskAlias("disk1");
-        disk1.setStoragePoolId(Guid.newGuid());
-        disk2 = createDisk();
-        disk2.setDiskAlias("disk2");
-        disk2.setStoragePoolId(Guid.newGuid());
-        validator = spy(new DiskImagesValidator(Arrays.asList(disk1, disk2)));
+        disk1 = createDisk("disk1");
+        disk2 = createDisk("disk2");
+        validator = spy(new DiskImagesValidator(disk1, disk2));
         doReturn(vmDao).when(validator).getVmDao();
         doReturn(vmDeviceDao).when(validator).getVmDeviceDao();
         doReturn(snapshotDao).when(validator).getSnapshotDao();
@@ -88,15 +83,15 @@ public class DiskImagesValidatorTest {
         doReturn(storagePoolDao).when(validator).getStoragePoolDao();
     }
 
-    private static DiskImage createDisk() {
+    private static DiskImage createDisk(String diskAlias) {
         DiskImage disk = new DiskImage();
+        disk.setDiskAlias(diskAlias);
         disk.setId(Guid.newGuid());
-        disk.setDiskAlias(RandomUtils.instance().nextString(10));
+        disk.setShareable(false);
         disk.setActive(true);
         disk.setImageStatus(ImageStatus.OK);
-        ArrayList<Guid> storageDomainIds = new ArrayList<>();
-        storageDomainIds.add(Guid.newGuid());
-        disk.setStorageIds(storageDomainIds);
+        disk.setStoragePoolId(Guid.newGuid());
+        disk.setStorageIds(Collections.singletonList(Guid.newGuid()));
         return disk;
     }
 
@@ -142,6 +137,33 @@ public class DiskImagesValidatorTest {
         assertThat(validator.disksNotExistOrShareable(),
                 both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST))
                         .and(replacements(hasItem(createAliasReplacements(disk1, disk2)))));
+    }
+
+    @Test
+    public void disksNotExistOrShareableFirstExistsSecondShareable() {
+        DiskImage existingShareableDisk = new DiskImage();
+        existingShareableDisk.setShareable(true);
+        disk2.setShareable(true);
+
+        doReturn(new DiskImage()).when(validator).getExistingDisk(disk1.getId());
+        doReturn(existingShareableDisk).when(validator).getExistingDisk(disk2.getId());
+
+
+        assertThat(validator.disksNotExistOrShareable(),
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST))
+                        .and(replacements(hasItem(createAliasReplacements(disk1)))));
+    }
+
+    @Test
+    public void disksNotExistOrShareableFirstNotExistsSecondShareable() {
+        DiskImage existingShareableDisk = new DiskImage();
+        existingShareableDisk.setShareable(true);
+        disk2.setShareable(true);
+
+        doReturn(null).when(validator).getExistingDisk(disk1.getId());
+        doReturn(existingShareableDisk).when(validator).getExistingDisk(disk2.getId());
+
+        assertThat("Neither disk has collision with an existing disk", validator.disksNotExistOrShareable(), isValid());
     }
 
     /**
