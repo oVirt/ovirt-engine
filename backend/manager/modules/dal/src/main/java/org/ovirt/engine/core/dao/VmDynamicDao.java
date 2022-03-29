@@ -79,7 +79,7 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
 
     void clearMigratingToVds(Guid id);
 
-    void clearMigratingToVdsAndSetDynamicCpuPinning(Guid id, String cpuPinning);
+    void clearMigratingToVdsAndSetDynamicPinning(Guid id, String cpuPinning, String numaPinning);
 
 
     /**

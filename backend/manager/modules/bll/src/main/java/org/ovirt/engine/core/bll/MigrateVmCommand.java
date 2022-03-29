@@ -68,6 +68,7 @@ import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 import org.ovirt.engine.core.common.utils.CpuPinningHelper;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
+import org.ovirt.engine.core.common.utils.NumaPinningHelper;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.vdscommands.MigrateStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
@@ -407,6 +408,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         Integer maxIncomingMigrations = 1;
         Integer maxOutgoingMigrations = 1;
         List<String> cpuSets = null;
+        List<String> numaNodeSets = null;
 
         MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(
                 getCluster().getMigrationPolicyId(),
@@ -430,6 +432,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         if (getVm().getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED) {
             cpuSets = CpuPinningHelper.getAllPinnedPCpus(getDedicatedCpuPinning(getDestinationVdsManager())).stream().sorted()
                     .map(Object::toString).collect(Collectors.toList());
+            String numaPinningString = vmHandler.createNumaPinningForDedicated(getVm(), getDestinationVdsId());
+            numaNodeSets = NumaPinningHelper.parseNumaSets(numaPinningString);
         }
 
         return new MigrateVDSCommandParameters(getVdsId(),
@@ -452,7 +456,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 enableGuestEvents,
                 maxIncomingMigrations,
                 maxOutgoingMigrations,
-                cpuSets);
+                cpuSets,
+                numaNodeSets);
     }
 
     private ConvergenceConfig filterOutPostcopy(ConvergenceConfig config) {
@@ -618,8 +623,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     public void runningSucceded() {
         try {
             queryDowntime();
+            addNumaPinningForDedicated(getDestinationVdsId());
             setDedicatedCpus(getDestinationVdsManager());
-            vmDynamicDao.clearMigratingToVdsAndSetDynamicCpuPinning(getVmId(), getVm().getCurrentCpuPinning());
+            vmDynamicDao.clearMigratingToVdsAndSetDynamicPinning(getVmId(), getVm().getCurrentCpuPinning(), getVm().getCurrentNumaPinning());
             updateVmAfterMigrationToDifferentCluster();
             plugPassthroughNics();
             initParametersForExternalNetworks(destinationVds, true);

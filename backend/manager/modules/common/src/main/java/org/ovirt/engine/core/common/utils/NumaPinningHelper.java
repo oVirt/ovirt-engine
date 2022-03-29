@@ -324,6 +324,16 @@ public class NumaPinningHelper {
         return pinnedCpus.stream().collect(Collectors.toMap(PinnedCpu::getvCpu, PinnedCpu::getpCpus));
     }
 
+    public static List<String> parseNumaSets(String numaPinningString) {
+        if (numaPinningString == null || numaPinningString.isEmpty()) {
+            return null;
+        }
+        return Arrays.asList(numaPinningString.split("_"))
+                .stream()
+                .map(nodesetEntry -> nodesetEntry.split("#")[1])
+                .collect(Collectors.toList());
+    }
+
     public static List<VmNumaNode> initVmNumaNode(int numCpus, List<VdsNumaNode> hostNodes) {
         List<VmNumaNode> vmNumaNodes = new ArrayList<>(numCpus);
         int index = 0;

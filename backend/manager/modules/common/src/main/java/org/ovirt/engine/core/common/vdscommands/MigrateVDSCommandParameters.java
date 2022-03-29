@@ -27,6 +27,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private Integer maxIncomingMigrations;
     private Integer maxOutgoingMigrations;
     private List<String> cpuSets;
+    private List<String> numaNodeSets;
 
     private Map<String, Object> convergenceSchedule;
 
@@ -35,7 +36,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
             int migrationDowntime, Boolean autoConverge, Boolean migrateCompressed, Boolean migrateEncrypted,
             String consoleAddress, Integer maxBandwidth, Integer parallelMigrations,
             Map<String, Object> convergenceSchedule, Boolean enableGuestEvents, Integer maxIncomingMigrations,
-            Integer maxOutgoingMigrations, List<String> cpuSets) {
+            Integer maxOutgoingMigrations, List<String> cpuSets, List<String> numaNodeSets) {
         super(vdsId, vmId);
         this.srcHost = srcHost;
         this.dstVdsId = dstVdsId;
@@ -56,6 +57,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.maxIncomingMigrations = maxIncomingMigrations;
         this.maxOutgoingMigrations = maxOutgoingMigrations;
         this.cpuSets = cpuSets;
+        this.numaNodeSets = numaNodeSets;
     }
 
     public String getSrcHost() {
@@ -186,6 +188,14 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.cpuSets = cpuSets;
     }
 
+    public List<String> getNumaNodeSets() {
+        return numaNodeSets;
+    }
+
+    public void setNumaNodeSets(List<String> numaNodeSets) {
+        this.numaNodeSets = numaNodeSets;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
@@ -206,6 +216,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                 .append("maxOutgoingMigrations", getMaxOutgoingMigrations())
                 .append("convergenceSchedule", getConvergenceSchedule())
                 .append("dstQemu", getDstQemu())
-                .append("cpusets", getCpuSets());
+                .append("cpusets", getCpuSets())
+                .append("numaNodesets", getNumaNodeSets());
     }
 }
