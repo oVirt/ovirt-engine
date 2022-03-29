@@ -403,6 +403,11 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         }
     }
 
+    protected void addNumaPinningForDedicated(Guid vdsId) {
+        String numaPinningString = vmHandler.createNumaPinningForDedicated(getVm(), vdsId);
+        getVm().setCurrentNumaPinning(numaPinningString);
+    }
+
     protected void setDedicatedCpus(VdsManager vdsManager) {
         if (getVm().getCpuPinningPolicy() != CpuPinningPolicy.DEDICATED) {
             return;

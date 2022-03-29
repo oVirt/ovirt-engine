@@ -619,12 +619,13 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION ClearMigratingToVdsAndSetDynamicCpuPinning (v_vm_guid UUID, v_current_cpu_pinning VARCHAR(4000))
+CREATE OR REPLACE FUNCTION ClearMigratingToVdsAndSetDynamicPinning (v_vm_guid UUID, v_current_cpu_pinning VARCHAR(4000), v_current_numa_pinning VARCHAR(4000))
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE vm_dynamic
     SET migrating_to_vds = NULL,
-        current_cpu_pinning = v_current_cpu_pinning
+        current_cpu_pinning = v_current_cpu_pinning,
+        current_numa_pinning = v_current_numa_pinning
     WHERE vm_guid = v_vm_guid;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

@@ -81,6 +81,10 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
             migrationInfo.put(VdsProperties.MIGRATION_CPUSETS, parameters.getCpuSets());
         }
 
+        if (parameters.getNumaNodeSets() != null) {
+            migrationInfo.put(VdsProperties.MIGRATION_NUMA_NODE_SETS, parameters.getNumaNodeSets());
+        }
+
         return migrationInfo;
     }
 }

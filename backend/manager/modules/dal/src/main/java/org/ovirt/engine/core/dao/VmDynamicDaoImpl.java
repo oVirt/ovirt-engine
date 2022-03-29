@@ -82,12 +82,13 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     }
 
     @Override
-    public void clearMigratingToVdsAndSetDynamicCpuPinning(Guid id, String currentCpuPinning) {
+    public void clearMigratingToVdsAndSetDynamicPinning(Guid id, String currentCpuPinning, String currentNumaPinning) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", id)
-                .addValue("current_cpu_pinning", currentCpuPinning);
+                .addValue("current_cpu_pinning", currentCpuPinning)
+                .addValue("current_numa_pinning", currentNumaPinning);
 
-        getCallsHandler().executeModification("ClearMigratingToVdsAndSetDynamicCpuPinning", parameterSource);
+        getCallsHandler().executeModification("ClearMigratingToVdsAndSetDynamicPinning", parameterSource);
     }
 
     @Override
