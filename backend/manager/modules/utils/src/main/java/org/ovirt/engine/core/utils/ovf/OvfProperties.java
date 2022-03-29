@@ -77,6 +77,7 @@ public interface OvfProperties {
     String IS_SPICE_COPY_PASTE_ENABLED = "IsSpiceCopyPasteEnabled";
     String ALLOW_CONSOLE_RECONNECT = "AllowConsoleReconnect";
     String CONSOLE_DISCONNECT_ACTION = "ConsoleDisconnectAction";
+    String CONSOLE_DISCONNECT_ACTION_DELAY = "ConsoleDisconnectActionDelay";
     String COMMENT = "Comment";
     String IS_AUTO_CONVERGE = "IsAutoConverge";
     String IS_MIGRATE_COMPRESSED = "IsMigrateCompressed";
