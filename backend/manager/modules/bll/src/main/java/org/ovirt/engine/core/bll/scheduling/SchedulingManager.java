@@ -423,6 +423,8 @@ public class SchedulingManager implements BackendService {
                 }
 
                 VDS host = hostsMap.get(bestHostId);
+                // For dedicate VMs we are going to miss adding up the pending resources for NUMA.
+                // TODO move the NUMA sets into scheduling phase and add the pending NUMA resources.
                 Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> numaConsumptionPerVm = vmNumaRequirements(vmGroup, host);
                 Map<Integer, NumaNodeMemoryConsumption> numaConsumption = numaConsumptionPerVm.values().stream()
                         .flatMap(m -> m.entrySet().stream())

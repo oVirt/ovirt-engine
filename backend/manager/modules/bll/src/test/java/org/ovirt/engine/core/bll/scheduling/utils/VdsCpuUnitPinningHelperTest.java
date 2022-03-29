@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 
@@ -33,6 +34,8 @@ public class VdsCpuUnitPinningHelperTest {
     private VdsManager vdsManager;
     @Mock
     private ResourceManager resourceManager;
+    @Mock
+    private VdsNumaNodeDao vdsNumaNodeDao;
     @InjectMocks
     @Spy
     private VdsCpuUnitPinningHelper vdsCpuUnitPinningHelper;

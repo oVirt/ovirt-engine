@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.NumaNode;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -274,7 +275,8 @@ public class NumaPinningHelper {
                     HugePageUtils.getHugePageSize(vm.getStaticData()),
                     vm.getCurrentNumOfCpus(),
                     NumaTuneMode.STRICT,
-                    vm.getCurrentThreadsPerCore());
+                    vm.getCurrentThreadsPerCore(),
+                    vm.getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED);
         }
         vm.setvNumaNodeList(vmNumaNodes);
     }

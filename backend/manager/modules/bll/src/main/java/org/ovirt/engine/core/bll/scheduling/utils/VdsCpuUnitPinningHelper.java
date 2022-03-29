@@ -10,16 +10,21 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
+import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
+import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.utils.CpuPinningHelper;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class VdsCpuUnitPinningHelper {
     @Inject
     private ResourceManager resourceManager;
+    @Inject
+    private VdsNumaNodeDao vdsNumaNodeDao;
 
     /**
      * This function will tell if the host is capable to run a given dedicated CPU policy VM.
@@ -49,7 +54,12 @@ public class VdsCpuUnitPinningHelper {
 
         for (int socket : getOnlineSockets(cpuTopology)) {
             int coresInSocket = getAvailableCores(cpuTopology, socket, vm.getThreadsPerCpu());
-            socketsLeft -= coresInSocket / vm.getCpuPerSocket();
+            int totalSocketsTaken = coresInSocket / vm.getCpuPerSocket();
+            if (!vm.getvNumaNodeList().isEmpty()) {
+                int highestAmountOfvNumaNodesInSocket = getVirtualNumaNodesInSocket(cpuTopology, vm, hostId, socket);
+                totalSocketsTaken = Math.min(highestAmountOfvNumaNodesInSocket, totalSocketsTaken);
+            }
+            socketsLeft -= totalSocketsTaken;
             if (socketsLeft <= 0) {
                 return true;
             }
@@ -106,27 +116,41 @@ public class VdsCpuUnitPinningHelper {
             return cpusToBeAllocated;
         }
 
-        List<VdsCpuUnit> cpusToBeAllocated = allocateDedicatedCpus(cpuTopology, vm);
+        filterSocketsWithInsufficientMemoryForNumaNode(cpuTopology, vm, hostId);
+        List<VdsCpuUnit> cpusToBeAllocated = allocateDedicatedCpus(cpuTopology, vm, hostId);
         return cpusToBeAllocated.size() == vm.getNumOfCpus() ? cpusToBeAllocated : null;
     }
 
-    private List<VdsCpuUnit> allocateDedicatedCpus(List<VdsCpuUnit> cpuTopology, VM vm) {
+    private List<VdsCpuUnit> allocateDedicatedCpus(List<VdsCpuUnit> cpuTopology, VM vm, Guid hostId) {
         // We can assume that a valid pinning exists here (because the host was filtered beforehand).
         List<VdsCpuUnit> cpusToBeAllocated = new ArrayList<>();
         int socketsLeft = vm.getNumOfSockets();
         int onlineSockets = getOnlineSockets(cpuTopology).size();
         while (onlineSockets > 0 && socketsLeft > 0) {
             List<VdsCpuUnit> cpusInChosenSocket = getMaxFreedSocket(cpuTopology);
+            if (cpusInChosenSocket.isEmpty()) {
+                break;
+            }
+            int highestAmountOfvNumaNodesInSocket = Integer.MAX_VALUE;
+            int amountOfCpusPerNuma = vm.getNumOfCpus();
+            if (!vm.getvNumaNodeList().isEmpty()) {
+                highestAmountOfvNumaNodesInSocket = getVirtualNumaNodesInSocket(cpuTopology, vm, hostId, cpusInChosenSocket.get(0).getSocket());
+                amountOfCpusPerNuma /= vm.getvNumaNodeList().size();
+            }
             // coreCount is based on the VM topology
             int coreCount = 0;
+            int cpuCounter = 0;
             for (int core : getOnlineCores(cpusInChosenSocket)) {
                 List<VdsCpuUnit> freeCpusInCore = getFreeCpusInCore(cpusInChosenSocket, core);
                 int coreThreads = freeCpusInCore.size();
-                while (coreThreads >= vm.getThreadsPerCpu() && cpusToBeAllocated.size() < vm.getNumOfCpus()) {
+                while (coreThreads >= vm.getThreadsPerCpu() &&
+                        cpusToBeAllocated.size() < vm.getNumOfCpus() &&
+                        cpuCounter / amountOfCpusPerNuma < highestAmountOfvNumaNodesInSocket) {
                     for (int thread = 0; thread < vm.getThreadsPerCpu() && cpusToBeAllocated.size() < vm.getNumOfCpus(); thread++) {
                         VdsCpuUnit cpuUnit = freeCpusInCore.remove(0);
                         cpuUnit.pinVm(vm.getId(), vm.getCpuPinningPolicy());
                         cpusToBeAllocated.add(cpuUnit);
+                        cpuCounter++;
                     }
                     coreCount++;
                     coreThreads -= vm.getThreadsPerCpu();
@@ -223,5 +247,63 @@ public class VdsCpuUnitPinningHelper {
             count += freeCpusInCore.size() / vThreads;
         }
         return count;
+    }
+
+    /**
+     * Filters and removes physical sockets from being available based on the VM NUMA nodes memory requirements.
+     * The memory is accumulated per physical socket (can be multiple physical NUMA nodes), as we use INTERLEAVED
+     * tune for the pinning.
+     * The cpuTopology is a deep copy made locally for this specific call, therefore we can change it.
+     * @param cpuTopology List<{@link VdsCpuUnit}>. The list of VdsCpuUnit.
+     * @param vm VM object.
+     * @param vdsId GUID of the VDS object.
+     */
+    private void filterSocketsWithInsufficientMemoryForNumaNode(List<VdsCpuUnit> cpuTopology, VM vm, Guid vdsId) {
+        if (vm.getvNumaNodeList().isEmpty()) {
+            return;
+        }
+
+        List<VdsNumaNode> vdsNumaNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vdsId);
+        if (vdsNumaNodes == null || vdsNumaNodes.isEmpty()) {
+            return;
+        }
+
+        // assuming the memory is split equally between all vNuma nodes
+        Long memRequired = vm.getvNumaNodeList().get(0).getMemTotal();
+        for (int socket : getOnlineSockets(cpuTopology)) {
+            List<Integer> numaIdsInSocket = getNumaIdsInSocket(cpuTopology, socket);
+            List<VdsNumaNode> numasInSocket = vdsNumaNodes.stream()
+                    .filter(numa -> numaIdsInSocket.contains(numa.getIndex()))
+                    .collect(Collectors.toList());
+            Long totalMemory = numasInSocket.stream()
+                    .map(VdsNumaNode::getNumaNodeStatistics)
+                    .map(NumaNodeStatistics::getMemFree)
+                    .reduce(0L, Long::sum);
+            if (totalMemory < memRequired) {
+                // Memory is missing or there is no enough total memory available for the socket.
+                cpuTopology.removeAll(cpuTopology.stream().filter(cpu -> cpu.getSocket() == socket).collect(Collectors.toList()));
+            }
+        }
+    }
+
+    private List<Integer> getNumaIdsInSocket(List<VdsCpuUnit> cpuTopology, int socket) {
+        return cpuTopology.stream().filter(cpu -> cpu.getSocket() == socket).map(VdsCpuUnit::getNuma).distinct().collect(Collectors.toList());
+    }
+
+    private int getVirtualNumaNodesInSocket(List<VdsCpuUnit> cpuTopology, VM vm, Guid vdsId, int socket) {
+        List<VdsNumaNode> vdsNumaNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vdsId);
+        if (vdsNumaNodes == null || vdsNumaNodes.isEmpty()) {
+            return Integer.MAX_VALUE;
+        }
+
+        List<Integer> numaIdsInSocket = getNumaIdsInSocket(cpuTopology, socket);
+        List<VdsNumaNode> numasInSocket = vdsNumaNodes.stream()
+                .filter(numa -> numaIdsInSocket.contains(numa.getIndex()))
+                .collect(Collectors.toList());
+        Long totalMemory = numasInSocket.stream()
+                .map(VdsNumaNode::getNumaNodeStatistics)
+                .map(NumaNodeStatistics::getMemFree)
+                .reduce(0L, Long::sum);
+        return (int) (totalMemory / vm.getvNumaNodeList().get(0).getMemTotal());
     }
 }
