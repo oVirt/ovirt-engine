@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 public class NumaUtils {
 
     public static void setNumaListConfiguration(List<VmNumaNode> nodeList, long memTotal, Optional<Integer> hugepages,
-            int cpuCount, int threadsPerCore) {
+            int cpuCount, int threadsPerCore, boolean dedicated) {
         // Sorting is needed, otherwise the list will be ordered by nodeId,
         // as it was returned by DB. It can assign wrong CPU IDs to nodes.
         nodeList.sort(Comparator.comparing(NumaNode::getIndex));
@@ -39,7 +39,7 @@ public class NumaUtils {
             }
 
             // Update Memory
-            if (hasRemainderMemBlocks) {
+            if (hasRemainderMemBlocks || dedicated) {
                 // splitting memory to the nodes equally
                 long nodeBlocks = memBlocksPerNode + (remainingBlocks > 0 ? 1 : 0);
                 --remainingBlocks;
@@ -58,9 +58,9 @@ public class NumaUtils {
     }
 
     public static void setNumaListConfiguration(List<VmNumaNode> nodeList, long memTotal, Optional<Integer> hugepages,
-            int cpuCount, NumaTuneMode numaTuneMode, int threadsPerCore) {
+            int cpuCount, NumaTuneMode numaTuneMode, int threadsPerCore, boolean dedicated) {
 
-        setNumaListConfiguration(nodeList, memTotal, hugepages, cpuCount, threadsPerCore);
+        setNumaListConfiguration(nodeList, memTotal, hugepages, cpuCount, threadsPerCore, dedicated);
         for (VmNumaNode vmNumaNode : nodeList) {
             // Update tune mode
             vmNumaNode.setNumaTuneMode(numaTuneMode);

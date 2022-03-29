@@ -53,10 +53,9 @@ public class NumaSettingFactory {
     }
 
     public static Map<String, Object> buildVmNumatuneSetting(VM vm, List<VmNumaNode> vmNumaNodes) {
-
         Map<Integer, Collection<Integer>> currentNumaPinning = NumaPinningHelper.parseNumaMapping(vm.getCurrentNumaPinning());
-
         List<Map<String, String>> memNodeList = new ArrayList<>();
+
         for (VmNumaNode node : vmNumaNodes) {
             if (currentNumaPinning != null) {
                 if (currentNumaPinning.containsKey(node.getIndex())) {
@@ -68,7 +67,6 @@ public class NumaSettingFactory {
                 memNodeList.add(createMemNode(node.getIndex(), node.getVdsNumaNodeList(), node.getNumaTuneMode()));
             }
         }
-
         // If no node is pinned, leave pinning implicit
         if (memNodeList.isEmpty()) {
             return Collections.emptyMap();

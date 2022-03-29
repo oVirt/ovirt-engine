@@ -28,7 +28,7 @@ public class NumaUtilsTest {
 
     @Test
     public void testNumaConfigurationSingle() {
-        NumaUtils.setNumaListConfiguration(nodeList, 1024, Optional.empty(), 2, NumaTuneMode.STRICT, 1);
+        NumaUtils.setNumaListConfiguration(nodeList, 1024, Optional.empty(), 2, NumaTuneMode.STRICT, 1, false);
 
         assertThat(nodeList.get(0).getCpuIds().size(), is(1));
         assertThat(nodeList.get(0).getMemTotal(), is((long)512));
@@ -37,7 +37,7 @@ public class NumaUtilsTest {
 
     @Test
     public void testNumaConfigurationDual() {
-        NumaUtils.setNumaListConfiguration(nodeList, 1024, Optional.empty(), 4, NumaTuneMode.STRICT, 1);
+        NumaUtils.setNumaListConfiguration(nodeList, 1024, Optional.empty(), 4, NumaTuneMode.STRICT, 1, false);
 
         assertThat(nodeList.get(0).getCpuIds().size(), is(2));
         assertThat(nodeList.get(0).getMemTotal(), is((long)512));
@@ -46,7 +46,7 @@ public class NumaUtilsTest {
 
     @Test
     public void testNumaConfigurationHugePages() {
-        NumaUtils.setNumaListConfiguration(nodeList, 1024, Optional.of(1048576), 2, NumaTuneMode.STRICT, 1);
+        NumaUtils.setNumaListConfiguration(nodeList, 1024, Optional.of(1048576), 2, NumaTuneMode.STRICT, 1, false);
 
         assertThat(nodeList.get(0).getCpuIds().size(), is(1));
         assertThat(nodeList.get(0).getMemTotal(), is((long)1024));
@@ -55,7 +55,7 @@ public class NumaUtilsTest {
 
     @Test
     public void testNumaConfigurationHugePagesBigMemory() {
-        NumaUtils.setNumaListConfiguration(nodeList, 8192, Optional.of(1048576), 2, NumaTuneMode.STRICT, 1);
+        NumaUtils.setNumaListConfiguration(nodeList, 8192, Optional.of(1048576), 2, NumaTuneMode.STRICT, 1, false);
 
         assertThat(nodeList.get(0).getCpuIds().size(), is(1));
         assertThat(nodeList.get(0).getMemTotal(), is((long)4096));
@@ -71,7 +71,7 @@ public class NumaUtilsTest {
         VmNumaNode vmNumaNode1 = new VmNumaNode();
         vmNumaNode1.setIndex(3);
         nodes.add(vmNumaNode1);
-        NumaUtils.setNumaListConfiguration(nodes, 1024, Optional.empty(), 46, NumaTuneMode.STRICT, 2);
+        NumaUtils.setNumaListConfiguration(nodes, 1024, Optional.empty(), 46, NumaTuneMode.STRICT, 2, false);
 
         assertThat(nodes.get(0).getCpuIds().size(), is(12));
         assertThat(nodes.get(1).getCpuIds().size(), is(12));
@@ -90,7 +90,7 @@ public class NumaUtilsTest {
         VmNumaNode vmNumaNode1 = new VmNumaNode();
         vmNumaNode1.setIndex(3);
         nodes.add(vmNumaNode1);
-        NumaUtils.setNumaListConfiguration(nodes, 46 * 32, Optional.empty(), 46, NumaTuneMode.STRICT, 2);
+        NumaUtils.setNumaListConfiguration(nodes, 46 * 32, Optional.empty(), 46, NumaTuneMode.STRICT, 2, false);
 
         assertThat(nodes.get(0).getCpuIds().size(), is(12));
         assertThat(nodes.get(1).getCpuIds().size(), is(12));
