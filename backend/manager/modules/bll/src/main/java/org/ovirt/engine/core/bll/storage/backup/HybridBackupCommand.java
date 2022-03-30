@@ -268,6 +268,10 @@ public class HybridBackupCommand<T extends VmBackupParameters> extends StartVmBa
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
         parameters.setBitmap(bitmapId);
+        parameters.setDiskIds(getParameters().getVmBackup().getDisks()
+                .stream()
+                .map(DiskImage::getId)
+                .collect(Collectors.toSet()));
         return parameters;
     }
 
