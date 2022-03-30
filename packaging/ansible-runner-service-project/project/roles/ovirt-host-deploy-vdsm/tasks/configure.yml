@@ -75,7 +75,13 @@
      allow perm=any trust=1 : dir=/etc/vdsm/mom.d/ ftype=text/x-lisp
   when: ansible_distribution == 'RedHat'
 
+- name: collect facts about system services
+  service_facts:
+
 - name: restart fapolicy service
   systemd:
    state: restarted
    name: fapolicyd
+  when:
+    - "'fapolicyd.service' in services"
+    - ansible_facts.services["fapolicyd.service"].state == 'running'
