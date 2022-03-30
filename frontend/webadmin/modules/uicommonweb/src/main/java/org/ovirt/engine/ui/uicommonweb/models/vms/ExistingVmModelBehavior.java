@@ -181,6 +181,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
         // Update model state according to VM properties.
         buildModel(vm.getStaticData(), (source, destination) -> {
+            // General
+            updateStateless();
             // System
             if (isHotSetCpuSupported()) {
                 // cancel related events while fetching data

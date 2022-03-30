@@ -154,7 +154,11 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             // General
             getModel().getIsRunAndPause().setEntity(template.isRunAndPause());
             // update fields special for new VM
-            if (updateStatelessFlag) {
+            // if the selected template is the latest, the VM has to be stateless,
+            // otherwise copy from the template
+            if (isLatestTemplateSelected()) {
+                getModel().getIsStateless().setEntity(true);
+            } else if (updateStatelessFlag) {
                 getModel().getIsStateless().setEntity(template.isStateless());
             }
             updateStatelessFlag = true;
