@@ -41,9 +41,8 @@
 
   # workaround for BZ 2054323
   - name: Change the openvswitch_t to permissive
-    selinux_permissive:
-      name: openvswitch_t
-      permissive: true
+    command: semanage permissive -a openvswitch_t
+    changed_when: True
 
   when: el_ver|int >= 9
 
