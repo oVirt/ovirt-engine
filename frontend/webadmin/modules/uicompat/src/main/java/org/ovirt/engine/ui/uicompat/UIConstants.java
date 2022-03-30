@@ -2246,4 +2246,6 @@ public interface UIConstants extends Constants {
     String confirmSuspendingVm();
 
     String homePageCustom();
+
+    String statelessVmFieldDisabledReason();
 }
