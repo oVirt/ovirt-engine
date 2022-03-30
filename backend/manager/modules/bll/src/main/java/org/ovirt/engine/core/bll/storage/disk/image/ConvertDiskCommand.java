@@ -280,6 +280,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
 
         DiskImage newImage = DiskImage.copyOf(getDiskImage());
         newImage.setImageId(getParameters().getNewVolGuid());
+        newImage.setSize(info.getSize());
 
         if (getParameters().getVolumeFormat() != null) {
             if (info.getVolumeFormat() != getParameters().getVolumeFormat()) {
