@@ -380,4 +380,39 @@ public class VdsCpuUnitPinningHelperTest {
         assertNull(cpus);
     }
 
+    @Test
+    public void shouldSucceedToDedicateEqualSockets() {
+        VM vm = new VM();
+        vm.setId(Guid.newGuid());
+        vm.setNumOfSockets(2);
+        vm.setCpuPerSocket(3);
+        vm.setThreadsPerCpu(2);
+        vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
+        List<VdsCpuUnit> cpuTopology = new ArrayList<>();
+        cpuTopology.add(new VdsCpuUnit(0, 0, 0, 0));
+        cpuTopology.add(new VdsCpuUnit(0, 0, 0, 1));
+        cpuTopology.add(new VdsCpuUnit(0, 0, 1, 0));
+        VdsCpuUnit vdsmTaken = new VdsCpuUnit(0, 0, 1, 1);
+        vdsmTaken.pinVm(Guid.SYSTEM, CpuPinningPolicy.MANUAL);
+        cpuTopology.add(vdsmTaken);
+        cpuTopology.add(new VdsCpuUnit(0, 0, 2, 0));
+        cpuTopology.add(new VdsCpuUnit(0, 0, 2, 1));
+        cpuTopology.add(new VdsCpuUnit(0, 0, 3, 0));
+        cpuTopology.add(new VdsCpuUnit(0, 0, 3, 1));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 0, 0));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 0, 1));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 1, 0));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 1, 1));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 2, 0));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 2, 1));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 3, 0));
+        cpuTopology.add(new VdsCpuUnit(1, 1, 3, 1));
+        when(vdsManager.getCpuTopology()).thenReturn(cpuTopology);
+        List<VdsCpuUnit> cpus = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm, new HashMap<>(), host.getId());
+        assertEquals(12, cpus.size());
+
+        assertEquals(6, cpus.stream().filter(cpu -> cpu.getSocket() == 0).count());
+        assertEquals(6, cpus.stream().filter(cpu -> cpu.getSocket() == 1).count());
+    }
+
 }

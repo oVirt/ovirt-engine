@@ -131,32 +131,36 @@ public class VdsCpuUnitPinningHelper {
             if (cpusInChosenSocket.isEmpty()) {
                 break;
             }
-            int highestAmountOfvNumaNodesInSocket = Integer.MAX_VALUE;
-            int amountOfCpusPerNuma = vm.getNumOfCpus();
+            int amountOfVSocketsInPSockets = Integer.MAX_VALUE;
             if (!vm.getvNumaNodeList().isEmpty()) {
-                highestAmountOfvNumaNodesInSocket = getVirtualNumaNodesInSocket(cpuTopology, vm, hostId, cpusInChosenSocket.get(0).getSocket());
-                amountOfCpusPerNuma /= vm.getvNumaNodeList().size();
+                int highestAmountOfvNumaNodesInSocket = getVirtualNumaNodesInSocket(cpuTopology, vm, hostId, cpusInChosenSocket.get(0).getSocket());
+                int vNumaNodesInVirtualSocket = (int) Math.ceil((float)vm.getvNumaNodeList().size() / (float)vm.getNumOfSockets());
+                amountOfVSocketsInPSockets = highestAmountOfvNumaNodesInSocket / vNumaNodesInVirtualSocket;
             }
             // coreCount is based on the VM topology
             int coreCount = 0;
-            int cpuCounter = 0;
             for (int core : getOnlineCores(cpusInChosenSocket)) {
                 List<VdsCpuUnit> freeCpusInCore = getFreeCpusInCore(cpusInChosenSocket, core);
                 int coreThreads = freeCpusInCore.size();
                 while (coreThreads >= vm.getThreadsPerCpu() &&
                         cpusToBeAllocated.size() < vm.getNumOfCpus() &&
-                        cpuCounter / amountOfCpusPerNuma < highestAmountOfvNumaNodesInSocket) {
+                        coreCount / vm.getCpuPerSocket() < amountOfVSocketsInPSockets) {
                     for (int thread = 0; thread < vm.getThreadsPerCpu() && cpusToBeAllocated.size() < vm.getNumOfCpus(); thread++) {
                         VdsCpuUnit cpuUnit = freeCpusInCore.remove(0);
                         cpuUnit.pinVm(vm.getId(), vm.getCpuPinningPolicy());
                         cpusToBeAllocated.add(cpuUnit);
-                        cpuCounter++;
                     }
                     coreCount++;
                     coreThreads -= vm.getThreadsPerCpu();
                 }
             }
             socketsLeft -= coreCount / vm.getCpuPerSocket();
+            int coresReminder = coreCount % vm.getCpuPerSocket();
+            for (int i = 0; i < coresReminder * vm.getThreadsPerCpu(); i++) {
+                if (!cpusToBeAllocated.isEmpty()) {
+                    cpusToBeAllocated.remove(cpusToBeAllocated.size() - 1);
+                }
+            }
 
             onlineSockets--;
         }
