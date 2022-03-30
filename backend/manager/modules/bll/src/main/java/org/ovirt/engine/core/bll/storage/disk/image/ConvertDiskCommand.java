@@ -199,7 +199,8 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
                 setCommandStatus(CommandStatus.FAILED);
                 return true;
             }
-            runInternalAction(ActionType.DestroyImage, createDestroyImageParameters(getDiskImage().getImageId()));
+            runInternalAction(ActionType.DestroyImage, createDestroyImageParameters(getDiskImage().getImageId(),
+                    getActionType()));
 
             updatePhase(ConvertDiskCommandParameters.ConvertDiskPhase.COMPLETE);
 
@@ -238,7 +239,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         return parameters;
     }
 
-    private DestroyImageParameters createDestroyImageParameters(Guid imageId) {
+    private DestroyImageParameters createDestroyImageParameters(Guid imageId, ActionType parentCommand) {
         DestroyImageParameters parameters = new DestroyImageParameters(getParameters().getVdsRunningOn(),
                 Guid.Empty,
                 getDiskImage().getStoragePoolId(),
@@ -247,8 +248,10 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
                 Arrays.asList(imageId),
                 false,
                 false);
+
         parameters.setParentParameters(getParameters());
-        parameters.setParentCommand(getActionType());
+        parameters.setParentCommand(parentCommand);
+
         parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
 
         return parameters;
@@ -281,7 +284,6 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         DiskImage newImage = DiskImage.copyOf(getDiskImage());
         newImage.setImageId(getParameters().getNewVolGuid());
         newImage.setSize(info.getSize());
-
         if (getParameters().getVolumeFormat() != null) {
             if (info.getVolumeFormat() != getParameters().getVolumeFormat()) {
                 log.error("Requested format '{}' doesn't match format on storage '{}'",
@@ -411,8 +413,13 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         if (getParameters().getConvertDiskPhase() == ConvertDiskCommandParameters.ConvertDiskPhase.CONVERT_VOLUME ||
                 getParameters().getConvertDiskPhase() == ConvertDiskCommandParameters.ConvertDiskPhase.SWITCH_IMAGE) {
             if (diskImageDao.get(getDiskImage().getImageId()) != null) {
-                runInternalAction(ActionType.DestroyImage, createDestroyImageParameters(getParameters().getNewVolGuid()),
-                        cloneContextAndDetachFromParent());
+
+                // Set parentCommand to Unknown as we don't need DestroyImage to notify the parent at this point,
+                // ConvertDiskCommand is going to be removed soon after this call, and DestroyImage may continue running
+                // after
+                DestroyImageParameters destroyImageParameters =
+                        createDestroyImageParameters(getParameters().getNewVolGuid(), ActionType.Unknown);
+                runInternalAction(ActionType.DestroyImage, destroyImageParameters, cloneContextAndDetachFromParent());
             }
         }
 
