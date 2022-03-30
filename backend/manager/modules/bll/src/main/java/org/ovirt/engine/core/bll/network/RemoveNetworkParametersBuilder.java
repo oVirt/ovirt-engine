@@ -64,10 +64,11 @@ public class RemoveNetworkParametersBuilder extends HostSetupNetworksParametersB
                     setupNetworkParams.getRemovedNetworkAttachments().add(networkAttachment.getId());
                 }
             } else {
-                VdsNetworkInterface nicWithNetwork = nicByNetworkName.get(network.getName());
+                var unmanagedNetworkName = network.getVdsmName();
+                VdsNetworkInterface nicWithNetwork = nicByNetworkName.get(unmanagedNetworkName);
 
                 if (nicWithNetwork != null && NetworkCommonUtils.stripVlan(nicWithNetwork).equals(nic.getName())) {
-                    setupNetworkParams.getRemovedUnmanagedNetworks().add(network.getName());
+                    setupNetworkParams.getRemovedUnmanagedNetworks().add(unmanagedNetworkName);
                 }
             }
             parameters.add(setupNetworkParams);
