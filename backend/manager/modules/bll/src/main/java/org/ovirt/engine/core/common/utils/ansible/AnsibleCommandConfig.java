@@ -24,6 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -273,6 +274,13 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
         ansibleCommand.add(ANSIBLE_COMMAND);
         ansibleCommand.add(ANSIBLE_EXECUTION_METHOD);
         ansibleCommand.add(AnsibleConstants.HOST_DEPLOY_PROJECT_DIR);
+        ansibleCommand.add("-vvv");
+        ansibleCommand.add("--debug");
+        ansibleCommand.add("--logfile");
+        ansibleCommand.add(
+            String.format("%s/debug-%s.log",
+                EngineLocalConfig.getInstance().getLogDir(),
+                String.valueOf(uuid)));
         ansibleCommand.add("-p");
         ansibleCommand.add(playbook);
         ansibleCommand.add("--artifact-dir");
