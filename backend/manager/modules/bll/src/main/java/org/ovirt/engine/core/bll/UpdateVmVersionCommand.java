@@ -76,6 +76,8 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     @Inject
     private DiskProfileDao diskProfileDao;
 
+    private Guid originalCpuProfileId;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -143,6 +145,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     protected void executeVmCommand() {
         // load vm init from db
         vmHandler.updateVmInitFromDB(getVmTemplate(), false);
+        originalCpuProfileId = getVm().getCpuProfileId();
         if (!VmHandler.copyData(getVmTemplate(), getVm().getStaticData())) {
             return;
         }
@@ -252,6 +255,11 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         // reset vm to not initialized
         addVmParams.getVmStaticData().setInitialized(false);
 
+        // the validation during add vm would failed because the template's cpu profile
+        // is not on the vm's cluster, lets keep the original cpu profile
+        if (!addVmParams.getVmStaticData().getClusterId().equals(getVmTemplate().getClusterId())) {
+            addVmParams.getVmStaticData().setCpuProfileId(originalCpuProfileId);
+        }
         return addVmParams;
     }
 
