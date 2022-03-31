@@ -249,9 +249,16 @@ public class AnsibleRunnerHttpClient {
                 throw new Exception("Timeout occurred while executing Ansible playbook.");
             }
             if (ansibleProcess.exitValue() != 0) {
+                String errorOutput = null;
+                try {
+                    errorOutput = Files.readString(output.toPath());
+                } catch (IOException ex) {
+                    log.error("Error reading output from ansible-runner execution: {}", ex.getMessage());
+                    log.debug("Exception", ex);
+                }
                 throw new AnsibleRunnerCallException(
                         "Failed to execute call to start playbook. %1$s",
-                        output.toString()); // TODO: need to pass not path but content
+                        errorOutput);
             }
         }
         log.error(String.format("***inside run playbook*** finished running the process. %1$s %2$s", Thread.currentThread().getName(), command.get(command.size() -1)));
