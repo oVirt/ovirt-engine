@@ -170,7 +170,9 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         long requiredSize =  actionReturnValue.getActionReturnValue();
 
         // Create volume in the same disk
-        runInternalAction(ActionType.CreateVolumeContainer, createVolumeCreationParameters(getDiskImage(), requiredSize));
+        runInternalAction(ActionType.CreateVolumeContainer,
+                createVolumeCreationParameters(getDiskImage(), requiredSize),
+                ExecutionHandler.createDefaultContextForTasks(getContext()));
         updatePhase(ConvertDiskCommandParameters.ConvertDiskPhase.CONVERT_VOLUME);
 
         setSucceeded(true);
@@ -199,8 +201,9 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
                 setCommandStatus(CommandStatus.FAILED);
                 return true;
             }
-            runInternalAction(ActionType.DestroyImage, createDestroyImageParameters(getDiskImage().getImageId(),
-                    getActionType()));
+            runInternalAction(ActionType.DestroyImage,
+                    createDestroyImageParameters(getDiskImage().getImageId(), getActionType()),
+                    ExecutionHandler.createDefaultContextForTasks(getContext()));
 
             updatePhase(ConvertDiskCommandParameters.ConvertDiskPhase.COMPLETE);
 
