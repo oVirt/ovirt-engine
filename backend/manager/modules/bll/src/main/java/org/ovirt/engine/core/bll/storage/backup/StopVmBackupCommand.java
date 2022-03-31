@@ -90,6 +90,7 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
                             vmBackup.getId(), phase);
                     log.warn(errorMsg);
                     getReturnValue().setExecuteFailedMessages(new ArrayList<>(Collections.singleton(errorMsg)));
+                    getParameters().setBackupStoppedBeforeReady(true);
                     updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
                 }
             } else {
@@ -163,6 +164,10 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
     public AuditLogType getAuditLogTypeValue() {
         addCustomValue("VmName", getVm().getName());
         addCustomValue("backupId", getParameters().getVmBackup().getId().toString());
-        return getSucceeded() ? AuditLogType.VM_BACKUP_FINALIZED : AuditLogType.VM_BACKUP_FAILED_TO_FINALIZE;
+        if (getParameters().isBackupStoppedBeforeReady()) {
+            return AuditLogType.VM_BACKUP_STOPPED_BEFORE_READY;
+        } else {
+            return getSucceeded() ? AuditLogType.VM_BACKUP_FINALIZED : AuditLogType.VM_BACKUP_FAILED_TO_FINALIZE;
+        }
     }
 }
