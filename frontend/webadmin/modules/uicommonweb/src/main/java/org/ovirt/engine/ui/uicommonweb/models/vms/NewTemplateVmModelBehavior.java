@@ -94,9 +94,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                                     Arrays.asList(dataCenter),
                                                     filteredClusters,
                                                     vm.getClusterId());
-
-                                            initTemplate();
-
                                         }),
                                         true,
                                         false);
@@ -110,7 +107,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                 vm.getStoragePoolId());
     }
 
-    protected void updateTemplate() {
+    protected void initBaseTemplate() {
         final DataCenterWithCluster dataCenterWithCluster =
                 getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool dataCenter = dataCenterWithCluster == null ? null : dataCenterWithCluster.getDataCenter();
@@ -119,11 +116,11 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         }
 
         AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery<>(
-                templates -> postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
+                templates -> postInitBaseTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
                         dataCenterWithCluster.getCluster().getArchitecture()))), dataCenter.getId());
     }
 
-    private void postInitTemplate(List<VmTemplate> templates) {
+    private void postInitBaseTemplate(List<VmTemplate> templates) {
         List<VmTemplate> baseWithoutBlank = filterOutBlank(keepBaseTemplates(templates));
 
         getModel().getIsSubTemplate().setEntity(false);
@@ -233,7 +230,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         super.postDataCenterWithClusterSelectedItemChanged();
         updateQuotaByCluster(vm.getQuotaId(), vm.getQuotaName());
 
-        updateTemplate();
+        initBaseTemplate();
         updateCpuProfile(getModel().getSelectedCluster(), vm.getCpuProfileId());
         updateLeaseStorageDomains(vm.getLeaseStorageDomainId());
     }
@@ -372,6 +369,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             // template.name for version should be the same as the base template name
             getModel().getName().setEntity(getModel().getBaseTemplate().getSelectedItem().getName());
         }
+        initTemplate();
     }
 
     @Override
