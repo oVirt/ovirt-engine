@@ -44,7 +44,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
-/** A test case for the {@link CreateAllSnapshotsFromVmCommand} class. */
+/** A test case for the {@link CreateSnapshotForVmCommand} class. */
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class CreateSnapshotForVmCommandTest extends BaseCommandTest {
     @Spy
