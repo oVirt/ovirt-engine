@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.validator.storage.DiskExistenceValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -109,6 +110,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedDiskNotExists() {
+        mockVm(VMStatus.Up);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST))
                 .when(diskExistenceValidator).disksNotExist();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST);
@@ -117,6 +119,7 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedDiskLocked() {
+        mockVm(VMStatus.Up);
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED))
                 .when(diskImagesValidator).diskImagesNotLocked();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
@@ -283,6 +286,14 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
                 EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
     }
 
+    @Test
+    @MockedConfig("mockConfigIsIncrementalBackupSupported")
+    public void validateHostedEngineVm() {
+        mockVm(VMStatus.Up, OriginType.HOSTED_ENGINE);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_VM_BACKUP_NOT_SUPPORTED);
+    }
+
     private VmBackup mockVmBackup() {
         VmBackup vmBackup = new VmBackup();
         vmBackup.setId(Guid.newGuid());
@@ -328,9 +339,14 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
     }
 
     private void mockVm(VMStatus vmStatus) {
+        mockVm(vmStatus, OriginType.OVIRT);
+    }
+
+    private void mockVm(VMStatus vmStatus, OriginType origin) {
         vm.setStatus(vmStatus);
         vm.setId(vmId);
         vm.setRunOnVds(Guid.newGuid());
+        vm.setOrigin(origin);
         when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
     }
 

@@ -66,7 +66,7 @@ public class BackendVmBackupsResource
                         QueryType.GetVmByVmId,
                         new IdQueryParameters(vmId),
                         vmId.toString());
-        if (legacy() || vm.isHostedEngine() || !FeatureSupported.isHybridBackupSupported(vm)) {
+        if (legacy() || !FeatureSupported.isHybridBackupSupported(vm)) {
             return performCreate(ActionType.StartVmBackup,
                     new VmBackupParameters(entity, requireConsistency),
                     new QueryIdResolver<Guid>(QueryType.GetVmBackupById, IdQueryParameters.class));
