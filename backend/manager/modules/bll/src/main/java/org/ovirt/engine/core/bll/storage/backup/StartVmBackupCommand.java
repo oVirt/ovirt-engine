@@ -128,6 +128,11 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
 
     @Override
     protected boolean validate() {
+        // BZ#1989121: Blocking HostedEngine VM backup
+        if (getVm().isHostedEngine()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_VM_BACKUP_NOT_SUPPORTED);
+        }
+
         DiskExistenceValidator diskExistenceValidator = createDiskExistenceValidator(getDiskIds());
         if (!validate(diskExistenceValidator.disksNotExist())) {
             return false;

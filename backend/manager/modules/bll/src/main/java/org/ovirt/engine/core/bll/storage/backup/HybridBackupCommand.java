@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.action.CreateSnapshotForVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -88,7 +89,13 @@ public class HybridBackupCommand<T extends VmBackupParameters> extends StartVmBa
 
     @Override
     protected boolean validate() {
-        if (!FeatureSupported.isHybridBackupSupported(getVm())) {
+        final VM vm = getVm();
+
+        if (vm == null) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+
+        if (!FeatureSupported.isHybridBackupSupported(vm)) {
             return false;
         }
 
