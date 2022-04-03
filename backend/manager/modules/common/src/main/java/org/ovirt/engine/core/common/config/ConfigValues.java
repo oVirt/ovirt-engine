@@ -1574,6 +1574,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     LiveSnapshotFreezeTimeout,
 
+    @TypeConverterAttribute(Integer.class)
+    VolumeUtilizationChunkInMB,
+
     @TypeConverterAttribute(Boolean.class)
     IsIncrementalBackupSupported,
 
