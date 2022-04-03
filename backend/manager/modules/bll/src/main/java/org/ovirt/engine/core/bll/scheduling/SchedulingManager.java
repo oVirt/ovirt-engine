@@ -469,11 +469,8 @@ public class SchedulingManager implements BackendService {
                 var vdsNumaNodesPinned = currentNumaPinning.get(vmNumaNode.getIndex());
                 vmNumaNode.setVdsNumaNodeList(new ArrayList<>(vdsNumaNodesPinned));
             }
-            Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> vmNumaConsumption = new HashMap<>();
-            vmNumaRequirements(vm, Optional.empty(), vmNumaConsumption);
-            if (!vmNumaConsumption.isEmpty() && vmNumaConsumption.containsKey(vm.getId())) {
-                numaConsumptionPerVm.put(vm.getId(), vmNumaConsumption.get(vm.getId()));
-            }
+            var vmNumaConsumption = vmNumaRequirements(vm, Optional.empty());
+            numaConsumptionPerVm.putAll(vmNumaConsumption);
             updateNumaConsumptionOnHost(host, numaConsumptionPerVm);
         }
     }
@@ -604,18 +601,18 @@ public class SchedulingManager implements BackendService {
             return Collections.emptyMap();
         }
 
-        Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> result = new HashMap<>();
+        Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> numaConsumptionPerVm = new HashMap<>();
         for (VM vm : filteredVms) {
-            vmNumaRequirements(vm, nodeAssignment, result);
+            var vmNumaConsumption = vmNumaRequirements(vm, nodeAssignment);
+            numaConsumptionPerVm.putAll(vmNumaConsumption);
         }
-
-        return result;
+        return numaConsumptionPerVm;
     }
 
-    private void vmNumaRequirements(VM vm, Optional<Map<Guid, Integer>> nodeAssignment,
-            Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> result) {
+    private Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> vmNumaRequirements(
+            VM vm, Optional<Map<Guid, Integer>> nodeAssignment) {
         if (vm.getvNumaNodeList().isEmpty()) {
-            return;
+            return Collections.emptyMap();
         }
 
         Map<Integer, NumaNodeMemoryConsumption> hostNumaMemRequirements = new HashMap<>();
@@ -641,7 +638,7 @@ public class SchedulingManager implements BackendService {
                 }
             }
         }
-        result.put(vm.getId(), hostNumaMemRequirements);
+        return Collections.singletonMap(vm.getId(), hostNumaMemRequirements);
     }
 
     private void releaseCluster(Guid cluster) {
