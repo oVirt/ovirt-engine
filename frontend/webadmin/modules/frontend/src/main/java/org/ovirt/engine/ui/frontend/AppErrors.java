@@ -2707,6 +2707,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__DETAIL__VM_PINNING_DEDICATED_NOT_FIT();
 
+    String VAR__DETAIL__VM_PINNING_CANT_RESIZE_WITH_DEDICATED();
+
     String VAR__DETAIL__NUMA_PINNING_FAILED();
 
     String VAR__DETAIL__CLUSTER_IN_MAINTENANCE();
