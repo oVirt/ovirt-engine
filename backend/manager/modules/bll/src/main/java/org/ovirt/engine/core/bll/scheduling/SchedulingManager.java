@@ -56,6 +56,7 @@ import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUnitPinningHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -424,7 +425,7 @@ public class SchedulingManager implements BackendService {
 
                 VDS host = hostsMap.get(bestHostId);
                 // For dedicate VMs we are going to miss adding up the pending resources for NUMA.
-                // TODO move the NUMA sets into scheduling phase and add the pending NUMA resources.
+                // We will update the pending resources per VM below and then the overall
                 Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> numaConsumptionPerVm = vmNumaRequirements(vmGroup, host);
                 Map<Integer, NumaNodeMemoryConsumption> numaConsumption = numaConsumptionPerVm.values().stream()
                         .flatMap(m -> m.entrySet().stream())
@@ -437,6 +438,8 @@ public class SchedulingManager implements BackendService {
                     vmHandler.setCpuPinningByNumaPinning(vm, host.getId());
                     List<VdsCpuUnit> dedicatedCpuPinning = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm,
                             PendingCpuPinning.collectForHost(getPendingResourceManager(), host.getId()), host.getId());
+                    String numaPinningString = vmHandler.createNumaPinningForDedicated(vm, dedicatedCpuPinning);
+                    updateDedicatedNumaMemoryConsumption(vm, host, numaPinningString, numaConsumptionPerVm);
                     addPendingResources(vm, host, numaConsumptionPerVm.getOrDefault(vm.getId(), Collections.emptyMap()), dedicatedCpuPinning);
                     hostsToNotifyPending.add(bestHostId);
                     vfsUpdates.add(() -> markVfsAsUsedByVm(vm, bestHostId));
@@ -456,6 +459,31 @@ public class SchedulingManager implements BackendService {
 
             log.debug("Scheduling ended, correlation Id: {}", correlationId);
         }
+    }
+
+    private void updateDedicatedNumaMemoryConsumption(VM vm, VDS host, String numaPinningString,
+            Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> numaConsumptionPerVm) {
+        if (vm.getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED) {
+            var currentNumaPinning = NumaPinningHelper.parseNumaMapping(numaPinningString);
+            for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {
+                var vdsNumaNodesPinned = currentNumaPinning.get(vmNumaNode.getIndex());
+                vmNumaNode.setVdsNumaNodeList(new ArrayList<>(vdsNumaNodesPinned));
+            }
+            Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> vmNumaConsumption = new HashMap<>();
+            vmNumaRequirements(vm, Optional.empty(), vmNumaConsumption);
+            if (!vmNumaConsumption.isEmpty() && vmNumaConsumption.containsKey(vm.getId())) {
+                numaConsumptionPerVm.put(vm.getId(), vmNumaConsumption.get(vm.getId()));
+            }
+            updateNumaConsumptionOnHost(host, numaConsumptionPerVm);
+        }
+    }
+
+    private void updateNumaConsumptionOnHost(VDS host,
+            Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> numaConsumptionPerVm) {
+        Map<Integer, NumaNodeMemoryConsumption> numaConsumption = numaConsumptionPerVm.values().stream()
+                .flatMap(m -> m.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, NumaNodeMemoryConsumption::merge));
+        updateHostNumaNodes(host, numaConsumption);
     }
 
     private Optional<Guid> selectHost(ClusterPolicy policy,
@@ -578,29 +606,42 @@ public class SchedulingManager implements BackendService {
 
         Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> result = new HashMap<>();
         for (VM vm : filteredVms) {
-            if (vm.getvNumaNodeList().isEmpty()) {
-                continue;
-            }
+            vmNumaRequirements(vm, nodeAssignment, result);
+        }
 
-            Map<Integer, NumaNodeMemoryConsumption> hostNumaMemRequirements = new HashMap<>();
-            Optional<Integer> hugePageSize = HugePageUtils.getHugePageSize(vm.getStaticData());
+        return result;
+    }
 
-            for (VmNumaNode vmNode : vm.getvNumaNodeList()) {
+    private void vmNumaRequirements(VM vm, Optional<Map<Guid, Integer>> nodeAssignment,
+            Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> result) {
+        if (vm.getvNumaNodeList().isEmpty()) {
+            return;
+        }
+
+        Map<Integer, NumaNodeMemoryConsumption> hostNumaMemRequirements = new HashMap<>();
+        Optional<Integer> hugePageSize = HugePageUtils.getHugePageSize(vm.getStaticData());
+
+        for (VmNumaNode vmNode : vm.getvNumaNodeList()) {
+            if (nodeAssignment.isPresent()) {
                 Integer hostNodeIndex = nodeAssignment.get().get(vmNode.getId());
                 // Ignore unpinned numa nodes
                 if (hostNodeIndex == null) {
                     continue;
                 }
-
                 hostNumaMemRequirements.merge(
                         hostNodeIndex,
                         new NumaNodeMemoryConsumption(vmNode.getMemTotal(), hugePageSize),
                         NumaNodeMemoryConsumption::merge);
+            } else if (!vmNode.getVdsNumaNodeList().isEmpty()) {
+                for (Integer vdsNumaIndex : vmNode.getVdsNumaNodeList()) {
+                    hostNumaMemRequirements.merge(
+                            vdsNumaIndex,
+                            new NumaNodeMemoryConsumption(vmNode.getMemTotal(), hugePageSize),
+                            NumaNodeMemoryConsumption::merge);
+                }
             }
-            result.put(vm.getId(), hostNumaMemRequirements);
         }
-
-        return result;
+        result.put(vm.getId(), hostNumaMemRequirements);
     }
 
     private void releaseCluster(Guid cluster) {

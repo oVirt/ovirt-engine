@@ -1358,6 +1358,19 @@ public class VmHandler implements BackendService {
                 cpuUnits);
     }
 
+    public String createNumaPinningForDedicated(VM vm, List<VdsCpuUnit> cpuUnits) {
+        if (vm.getCpuPinningPolicy() != CpuPinningPolicy.DEDICATED
+                || vm.getvNumaNodeList() == null
+                || vm.getvNumaNodeList().isEmpty()
+                || cpuUnits == null) {
+            return null;
+        }
+
+        return NumaPinningHelper.createNumaPinningAccordingToCpuPinning(
+                vm.getvNumaNodeList(),
+                cpuUnits);
+    }
+
     public void autoSelectResumeBehavior(VmBase vmBase) {
         if (vmBase.isAutoStartup() && vmBase.getLeaseStorageDomainId() != null) {
             // since 4.2 the only supported resume behavior for HA vms with lease is kill
