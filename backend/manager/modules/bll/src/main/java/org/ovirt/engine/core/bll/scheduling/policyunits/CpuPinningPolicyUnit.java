@@ -73,19 +73,22 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
 
         switch (vm.getCpuPinningPolicy()) {
             case MANUAL:
-            case RESIZE_AND_PIN_NUMA:
                 if (StringUtils.isEmpty(cpuPinning)) {
-                    // The logic below applies to MigrateVm in which we get here with CPU pinning that was set on the
-                    // source host. On RunVm, we get here before determining the CPU pinning for the VM so the dynamic
-                    // CPU pinning is not set and hosts should not be filtered by the logic below.
                     return hosts;
                 }
+            case RESIZE_AND_PIN_NUMA:
                 // collect all pinned host cpus and merge them into one set
                 final Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(cpuPinning);
                 for (final VDS host : hosts) {
                     final Collection<Integer> onlineHostCpus = SlaValidator.getOnlineCpus(host);
                     var cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
                     final Collection<Integer> dedicatedCpus = cpuTopology.stream().filter(VdsCpuUnit::isDedicated).map(VdsCpuUnit::getCpu).collect(Collectors.toList());
+                    if (!dedicatedCpus.isEmpty() && vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA && pinnedCpus.isEmpty()) {
+                        messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__VM_PINNING_CANT_RESIZE_WITH_DEDICATED.name());
+                        log.debug("Host {} does not satisfy CPU pinning constraints, cannot match virtual topology " +
+                                "with available CPUs due to exclusively pinned cpus on the host .", host.getId());
+                        continue;
+                    }
                     final Collection availableCpus = CollectionUtils.subtract(onlineHostCpus, dedicatedCpus);
                     final Collection difference = CollectionUtils.subtract(pinnedCpus, availableCpus);
                     if (difference.isEmpty()) {

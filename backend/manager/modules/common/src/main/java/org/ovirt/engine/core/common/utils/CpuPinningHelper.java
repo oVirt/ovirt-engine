@@ -57,6 +57,9 @@ public class CpuPinningHelper {
      * @return a set of all used host cpus
      */
     public static Set<Integer> getAllPinnedPCpus(String cpuPinning) {
+        if (cpuPinning == null || cpuPinning.isEmpty()) {
+            return new LinkedHashSet<>();
+        }
         // collect all pinned cpus and merge them into one set
         final Set<Integer> pinnedCpus = new LinkedHashSet<>();
         for (final String rule : cpuPinning.split("_")) {
