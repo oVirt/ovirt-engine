@@ -276,6 +276,14 @@ BuildRequires:	unzip
 BuildRequires:	ovirt-jboss-modules-maven-plugin >= 2.0.1
 BuildRequires:	javapackages-local
 
+# core
+BuildRequires:  java-client-kubevirt
+BuildRequires:  openstack-java-quantum-client
+BuildRequires:  openstack-java-resteasy-connector
+BuildRequires:  ovirt-dependencies
+BuildRequires:  vdsm-jsonrpc-java
+BuildRequires:  xmlrpc-client
+
 # common-dependencies
 BuildRequires:	ed25519-java
 BuildRequires:	jackson-jaxrs-json-provider
@@ -291,6 +299,22 @@ BuildRequires:	ebay-cors-filter
 
 # findbugs filter
 BuildRequires:	maven-surefire-plugin
+
+# restapi
+BuildRequires:  bean-validation-api
+BuildRequires:  istack-commons-runtime
+BuildRequires:  ovirt-engine-api-metamodel
+BuildRequires:  snakeyaml
+
+# tools
+BuildRequires:  apache-commons-configuration
+BuildRequires:  apache-commons-lang
+BuildRequires:  jakarta-mail
+BuildRequires:  snmp4j
+
+# utils
+BuildRequires:  apache-commons-beanutils
+BuildRequires:  apache-commons-collections
 
 Requires(pre):	shadow-utils
 
@@ -1065,11 +1089,22 @@ perl -i -pe 's/^SHA1-Digest: [^\n]+\n//g' "%{buildroot}%{engine_ear}/META-INF/MA
 
 %endif
 
-#FIXME installation fails because:
+# FIXME installation fails because:
 # Exception: Following dependencies were not resolved and requires cannot be generated.
-#   Either remove the dependencies from pom.xml or add proper packages to BuildRequires:
-#   org.hibernate.validator:hibernate-validator:6.0.18.Final required by org.ovirt.engine.core:common
-#   org.infinispan:infinispan-core:9.4.18.Final required by org.ovirt.engine.core:utils
+# Either remove the dependencies from pom.xml or add proper packages to BuildRequires:
+# org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.3_spec:2.0.0.Final required by org.ovirt.engine.api:restapi-definition
+# javax.activation:activation:1.1 required by org.ovirt.engine.api:restapi-definition
+#
+# Exception: Following dependencies were not resolved and requires cannot be generated.
+# Either remove the dependencies from pom.xml or add proper packages to BuildRequires:
+# org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec:1.0.0.Final required by org.ovirt.engine.core:bll
+#
+# Exception: Following dependencies were not resolved and requires cannot be generated.
+# Either remove the dependencies from pom.xml or add proper packages to BuildRequires:
+# org.infinispan:infinispan-core:9.4.18.Final required by org.ovirt.engine.core:utils
+# org.jboss.modules:jboss-modules:1.1.1.GA required by org.ovirt.engine.core:extensions-manager
+# org.hibernate.validator:hibernate-validator:6.0.18.Final required by org.ovirt.engine.core:common
+#
 #
 #   asocha:
 #   Unfortunately, we cannot mark these 2 dependencies as 'provided' because they are required at 'compile' time
