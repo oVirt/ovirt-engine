@@ -1137,13 +1137,14 @@ fi
 %dir %{engine_etc}
 %dir %{engine_etc}/ansible
 %dir %{engine_etc}/branding
+%dir %{engine_etc}/cinderlib
 %dir %{engine_etc}/extensions.d
 %dir %{engine_java}
 %license LICENSE
 %{engine_data}/brands/ovirt.brand/
 %{engine_etc}/branding/00-ovirt.brand
 %{engine_etc}/engine.conf.d/
-%{engine_etc}/cinderlib/
+%{engine_etc}/cinderlib/README
 %{engine_etc}/timezones/
 %config %{engine_data}/cinderlib/logger.conf
 %config %attr(0700,%{engine_user},%{engine_group}) %{engine_etc}/cinderlib/ssh_known_hosts
@@ -1161,6 +1162,16 @@ fi
 %if "%{name}" != "%{engine_name}"
 %{_javadir}/%{name}
 %endif
+
+%{_mavenpomdir}/JPP.ovirt-engine-branding.pom
+%{_mavenpomdir}/JPP.ovirt-engine-common.pom
+%{_mavenpomdir}/JPP.ovirt-engine-common-parent.pom
+%{_mavenpomdir}/JPP.ovirt-engine-compat.pom
+%{_mavenpomdir}/JPP.ovirt-engine-extensions-manager.pom
+%{_mavenpomdir}/JPP.ovirt-engine-logutils.pom
+%{_mavenpomdir}/JPP.ovirt-engine-root.pom
+%{_mavenpomdir}/JPP.ovirt-engine-utils.pom
+%{_mavenpomdir}/JPP.ovirt-engine-uutils.pom
 
 %if %{rhv_build}
 %files -n rhvm
@@ -1210,6 +1221,17 @@ fi
 %{engine_ear}/welcome.war/
 %{engine_etc}/osinfo.conf.d/
 %{engine_jboss_modules}/
+
+%{_mavenpomdir}/JPP.ovirt-engine-aaa.pom
+%{_mavenpomdir}/JPP.ovirt-engine-backend.pom
+%{_mavenpomdir}/JPP.ovirt-engine-bll.pom
+%{_mavenpomdir}/JPP.ovirt-engine-builtin.pom
+%{_mavenpomdir}/JPP.ovirt-engine-dal.pom
+%{_mavenpomdir}/JPP.ovirt-engine-manager-modules.pom
+%{_mavenpomdir}/JPP.ovirt-engine-manager.pom
+%{_mavenpomdir}/JPP.ovirt-engine-scheduler.pom
+%{_mavenpomdir}/JPP.ovirt-engine-searchbackend.pom
+%{_mavenpomdir}/JPP.ovirt-engine-vdsbroker.pom
 
 %{engine_data}/services/ovirt-engine
 %{_unitdir}/ovirt-engine.service
@@ -1340,6 +1362,12 @@ fi
 %license LICENSE
 %{engine_restapi_war}/
 %{engine_apidoc_war}/
+%{_mavenpomdir}/JPP.ovirt-engine-interface.pom
+%{_mavenpomdir}/JPP.ovirt-engine-interface-common-jaxrs.pom
+%{_mavenpomdir}/JPP.ovirt-engine-restapi-definition.pom
+%{_mavenpomdir}/JPP.ovirt-engine-restapi-jaxrs.pom
+%{_mavenpomdir}/JPP.ovirt-engine-restapi-parent.pom
+%{_mavenpomdir}/JPP.ovirt-engine-restapi-types.pom
 
 %files webadmin-portal
 %license LICENSE
@@ -1415,7 +1443,9 @@ fi
 %{engine_etc}/engine-config/engine-config.*properties
 %{engine_etc}/notifier/notifier.conf.d/
 %{engine_etc}/ovirt-fence-kdump-listener.conf.d/
-
+%{_mavenpomdir}/JPP.ovirt-engine-extensions-tool.pom
+%{_mavenpomdir}/JPP.ovirt-engine-sso-client-registration-tool.pom
+%{_mavenpomdir}/JPP.ovirt-engine-tools.pom
 
 %{_unitdir}/ovirt-engine-notifier.service
 %{_unitdir}/ovirt-fence-kdump-listener.service
