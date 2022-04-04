@@ -3985,7 +3985,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         if (ParallelMigrationsType.CUSTOM.equals(parallelMigrationsType.getSelectedItem())) {
             getCustomParallelMigrations().setIsChangeable(true);
             if (getCustomParallelMigrations().getEntity() == null) {
-                getCustomParallelMigrations().setEntity(0);
+                getCustomParallelMigrations().setEntity(2);
             }
         } else {
             getCustomParallelMigrations().setIsChangeable(false, constants.customParallelMigrationsDisabledReason());
