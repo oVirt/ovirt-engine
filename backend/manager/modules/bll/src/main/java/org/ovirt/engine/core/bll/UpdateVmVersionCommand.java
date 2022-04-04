@@ -255,9 +255,9 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         // reset vm to not initialized
         addVmParams.getVmStaticData().setInitialized(false);
 
+        // the validation during add vm would failed because the template's cpu profile
+        // is not on the vm's cluster, lets keep the original cpu profile
         if (!addVmParams.getVmStaticData().getClusterId().equals(getVmTemplate().getClusterId())) {
-            // the validation during add vm would fail because the template's cpu profile
-            // is not at the same cluster as the vm, lets keep the original cpu profile
             addVmParams.getVmStaticData().setCpuProfileId(originalCpuProfileId);
         }
         return addVmParams;
