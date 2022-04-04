@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -255,8 +256,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         // reset vm to not initialized
         addVmParams.getVmStaticData().setInitialized(false);
 
-        if (addVmParams.getVmStaticData().getClusterId() != null && getVmTemplate().getClusterId() != null &&
-                !addVmParams.getVmStaticData().getClusterId().equals(getVmTemplate().getClusterId())) {
+        if (!Objects.equals(addVmParams.getVmStaticData().getClusterId(), getVmTemplate().getClusterId())) {
             // the validation during add vm would fail because the template's cpu profile
             // is not at the same cluster as the vm, lets keep the original cpu profile
             addVmParams.getVmStaticData().setCpuProfileId(originalCpuProfileId);
