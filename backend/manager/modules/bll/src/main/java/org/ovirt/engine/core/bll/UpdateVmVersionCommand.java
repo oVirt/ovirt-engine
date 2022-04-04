@@ -154,6 +154,12 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         getParameters().setPreviousDiskOperatorAuthzPrincipalDbId(getIdOfDiskOperator());
         getParameters().setVmStaticData(getVm().getStaticData());
 
+        if (!Objects.equals(getVm().getClusterId(), getVmTemplate().getClusterId())) {
+            // the validation during add vm would fail because the template's cpu profile
+            // is not at the same cluster as the vm, lets keep the original cpu profile
+            getParameters().getVmStaticData().setCpuProfileId(originalCpuProfileId);
+        }
+
         if (getParameters().getUseLatestVersion() != null) {
             getParameters().getVmStaticData().setUseLatestVersion(getParameters().getUseLatestVersion());
         }
@@ -256,11 +262,6 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         // reset vm to not initialized
         addVmParams.getVmStaticData().setInitialized(false);
 
-        if (!Objects.equals(addVmParams.getVmStaticData().getClusterId(), getVmTemplate().getClusterId())) {
-            // the validation during add vm would fail because the template's cpu profile
-            // is not at the same cluster as the vm, lets keep the original cpu profile
-            addVmParams.getVmStaticData().setCpuProfileId(originalCpuProfileId);
-        }
         return addVmParams;
     }
 
