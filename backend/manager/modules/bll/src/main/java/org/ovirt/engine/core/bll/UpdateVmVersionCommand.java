@@ -77,8 +77,6 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     @Inject
     private DiskProfileDao diskProfileDao;
 
-    private Guid originalCpuProfileId;
-
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -146,7 +144,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     protected void executeVmCommand() {
         // load vm init from db
         vmHandler.updateVmInitFromDB(getVmTemplate(), false);
-        originalCpuProfileId = getVm().getCpuProfileId();
+        Guid originalCpuProfileId = getVm().getCpuProfileId();
         if (!VmHandler.copyData(getVmTemplate(), getVm().getStaticData())) {
             return;
         }
