@@ -71,6 +71,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -80,6 +81,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMapId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -295,7 +297,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private boolean validateLunExistsAndInitDeviceData(LUNs lun, StorageType storageType, Guid vdsId) {
-        List<LUNs> lunFromStorage = null;
+        List<LUNs> lunFromStorage;
         try {
             StorageServerConnectionManagementVDSParameters connectParams =
                     new StorageServerConnectionManagementVDSParameters(vdsId,
@@ -310,7 +312,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                             Collections.singleton(lun.getLUNId()));
             lunFromStorage = (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
         } catch (Exception e) {
-            log.debug("Exception while validating LUN disk: '{}'", e);
+            log.debug("Exception while validating LUN disk", e);
             return false;
         }
         if (lunFromStorage == null || lunFromStorage.isEmpty()) {
@@ -473,18 +475,17 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected boolean validateImages(Map<Guid, StorageDomain> domainsMap) {
         List<String> validationMessages = getReturnValue().getValidationMessages();
 
-        // Iterate over all the VM images (active image and snapshots)
+        // Iterate over all the VM disks (active image and snapshots).
         for (DiskImage image : getImages()) {
-            if (Guid.Empty.equals(image.getVmSnapshotId())) {
+            if (Guid.Empty.equals(image.getVmSnapshotId()) && !image.isShareable()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
             }
 
             if (getParameters().getCopyCollapse()) {
                 // If copy collapse sent then iterate over the images got from the parameters, until we got
-                // a match with the image from the VM.
+                // a match with the disk from the VM.
                 for (DiskImage p : imageList) {
-                    // copy the new disk volume format/type if provided,
-                    // only if requested by the user
+                    // Copy the new disk volume format/type if provided, only if requested by the user.
                     if (p.getImageId().equals(image.getImageId())) {
                         if (p.getVolumeFormat() != null) {
                             image.setVolumeFormat(p.getVolumeFormat());
@@ -492,7 +493,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                         if (p.getVolumeType() != null) {
                             image.setVolumeType(p.getVolumeType());
                         }
-                        // Validate the configuration of the image got from the parameters.
+                        // Validate the configuration of the disk received from the parameters.
                         if (!validateImageConfig(validationMessages, domainsMap, image)) {
                             return false;
                         }
@@ -502,10 +503,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             }
 
             image.setStoragePoolId(getParameters().getStoragePoolId());
-            // we put the source domain id in order that copy will
-            // work properly.
-            // we fix it to DestDomainId in
-            // MoveOrCopyAllImageGroups();
+            // We put the source domain id in order that copy will work properly.
+            // We fix it to "DestDomainId" in "MoveOrCopyAllImageGroups()".
             image.setStorageIds(new ArrayList<>(Arrays.asList(getSourceDomainId(image))));
         }
 
@@ -754,7 +753,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected boolean validateNoDuplicateDiskImages(Collection<DiskImage> images) {
         if (!getParameters().isImportAsNewEntity()) {
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(images);
-            return validate(diskImagesValidator.diskImagesAlreadyExist());
+            return validate(diskImagesValidator.disksNotExistOrShareable());
         }
 
         return true;
@@ -1101,11 +1100,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 } else {
                     newDiskIdForDisk.put(disk.getId(), disk);
                 }
-                disk.setCreationDate(new Date());
                 saveImage(disk);
                 ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
                 saveBaseDisk(disk);
-                saveDiskVmElement(disk.getId(), getVmId(), disk.getDiskVmElementForVm(getParameters().getVmId()));
+                saveDiskVmElement(disk);
                 saveDiskImageDynamic(disk);
             }
 
@@ -1131,7 +1129,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
                 updateImage(disk);
                 saveBaseDisk(disk);
-                saveDiskVmElement(disk.getId(), getVmId(), disk.getDiskVmElementForVm(getParameters().getVmId()));
+                saveDiskVmElement(disk);
             }
 
             // Update active snapshot's data, since it was inserted as a regular snapshot.
@@ -1146,40 +1144,68 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     /**
-     * Saves the base disk object
+     * Saves the base disk object.
      */
     protected void saveBaseDisk(DiskImage disk) {
-        baseDiskDao.save(disk);
-    }
+        BaseDisk existingDisk = baseDiskDao.get(disk.getId());
 
-    protected void saveDiskVmElement(Guid diskId, Guid vmId, DiskVmElement diskVmElement) {
-        diskVmElementDao.save(DiskVmElement.copyOf(diskVmElement, diskId, vmId));
+        if (existingDisk != null) {
+            log.info("Shared disk '{}' already exists.", disk.getId());
+        } else {
+            log.debug("Adding disk '{}' to the database.", disk.getId());
+            baseDiskDao.save(disk);
+        }
     }
 
     /**
-     * Save the entire image, including it's storage mapping
+     * Saves the {@code DiskVmElement} object.
+     */
+    protected void saveDiskVmElement(DiskImage disk) {
+        DiskVmElement diskVmElement = disk.getDiskVmElementForVm(getParameters().getVmId());
+        log.debug("Adding disk VM element '{}' to the database.", diskVmElement.getId());
+        diskVmElementDao.save(DiskVmElement.copyOf(diskVmElement, disk.getId(), getVmId()));
+    }
+
+    /**
+     * Save the entire image, including it's storage mapping.
      */
     protected void saveImage(DiskImage disk) {
-        imagesHandler.saveImage(disk);
+        Image existingImage = imageDao.get(disk.getImageId());
+
+        if (existingImage != null) {
+            log.info("Disk image '{}' for shared disk '{}' already exists.", disk.getImageId(), disk.getId());
+        } else {
+            log.debug("Adding disk image '{}' for disk '{}' to the database.", disk.getImageId(), disk.getId());
+            imagesHandler.saveImage(disk);
+        }
     }
 
     /**
-     * Updates an image of a disk
+     * Updates an image of a disk.
      */
     protected void updateImage(DiskImage disk) {
         imageDao.update(disk.getImage());
     }
 
     /**
-     * Generates and saves a {@link DiskImageDynamic} for the given <code>disk</code>
+     * Generates and saves a {@link DiskImageDynamic} for the given {@code disk}.
      *
-     * @param disk The imported disk
+     * @param disk the disk being imported
      **/
     protected void saveDiskImageDynamic(DiskImage disk) {
-        DiskImageDynamic diskDynamic = new DiskImageDynamic();
-        diskDynamic.setId(disk.getImageId());
-        diskDynamic.setActualSize(disk.getActualSizeInBytes());
-        diskImageDynamicDao.save(diskDynamic);
+        DiskImageDynamic existingDiskImageDynamic = diskImageDynamicDao.get(disk.getImageId());
+
+        if (existingDiskImageDynamic != null) {
+            log.info("Disk image dynamic '{}' for shared disk '{}' already exists.",
+                    existingDiskImageDynamic.getId(), disk.getId());
+        } else {
+            DiskImageDynamic diskImageDynamic = new DiskImageDynamic();
+            diskImageDynamic.setId(disk.getImageId());
+            diskImageDynamic.setActualSize(disk.getActualSizeInBytes());
+            log.debug("Adding disk image dynamic '{}' for disk '{}' to the database.",
+                    diskImageDynamic.getId(), disk.getId());
+            diskImageDynamicDao.save(diskImageDynamic);
+        }
     }
 
     /**

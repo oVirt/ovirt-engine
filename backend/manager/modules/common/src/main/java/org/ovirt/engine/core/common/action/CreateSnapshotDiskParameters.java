@@ -25,6 +25,7 @@ public class CreateSnapshotDiskParameters extends VmOperationParameterBase imple
     private Guid newActiveSnapshotId;
     private Map<Guid, DiskImage> diskImagesMap;
     private boolean isLiveSnapshot;
+    private Guid bitmap;
 
     @JsonIgnore
     private Set<Guid> diskIdsToIgnoreInChecks;
@@ -86,5 +87,13 @@ public class CreateSnapshotDiskParameters extends VmOperationParameterBase imple
 
     public void setLiveSnapshot(boolean isLiveSnapshot) {
         this.isLiveSnapshot = isLiveSnapshot;
+    }
+
+    public Guid getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Guid bitmap) {
+        this.bitmap = bitmap;
     }
 }

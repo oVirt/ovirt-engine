@@ -33,6 +33,12 @@ public class UserProfileTestHelper {
         return user;
     }
 
+    public static DbUser createAdmin(Guid id) {
+        DbUser user = createWithId(id);
+        user.setAdmin(true);
+        return user;
+    }
+
     public static DbUser emptyUser() {
         return createWithId(Guid.Empty);
     }

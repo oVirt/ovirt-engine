@@ -832,10 +832,10 @@ select fn_db_add_config_value_for_versions_up_to('VgpuFramebufferSupported', 'tr
 -- not in ConfigValues enum, used on python side, do not delete
 select fn_db_add_config_value('DbJustRestored','0','general');
 
-select fn_db_add_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^.*$;hugepages=^[0-9]+$', '4.2');
-select fn_db_add_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^[^,](,?[0-9A-Za-z_-]+)+$;hugepages=^[0-9]+$', '4.3');
-select fn_db_add_config_value_for_versions_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_-]*):(true|false))(,(([a-zA-Z0-9_-]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^[^,](,?[0-9A-Za-z_-]+)+$;hugepages=^[0-9]+$;scsi_hostdev=^(scsi_generic|scsi_block|scsi_hd|virtio_blk_pci)$;nvram_template=^.*$', '4.5');
-select fn_db_add_config_value_for_versions_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_-]*):(true|false))(,(([a-zA-Z0-9_-]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^[^,](,?[0-9A-Za-z_-]+)+$;hugepages=^[0-9]+$;scsi_hostdev=^(scsi_generic|scsi_block|scsi_hd|virtio_blk_pci)$;nvram_template=^.*$;extra_cpu_flags=^([+-]?[a-zA-Z0-9_-]+)(,[+-]?[a-zA-Z0-9_-]+)*$', '4.7');
+select fn_db_add_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;hugepages=^[0-9]+$', '4.2');
+select fn_db_add_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;hugepages=^[0-9]+$', '4.3');
+select fn_db_add_config_value_for_versions_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_-]*):(true|false))(,(([a-zA-Z0-9_-]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;hugepages=^[0-9]+$;scsi_hostdev=^(scsi_generic|scsi_block|scsi_hd|virtio_blk_pci)$;nvram_template=^.*$', '4.5');
+select fn_db_add_config_value_for_versions_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_-]*):(true|false))(,(([a-zA-Z0-9_-]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;hugepages=^[0-9]+$;scsi_hostdev=^(scsi_generic|scsi_block|scsi_hd|virtio_blk_pci)$;nvram_template=^.*$;extra_cpu_flags=^([+-]?[a-zA-Z0-9_-]+)(,[+-]?[a-zA-Z0-9_-]+)*$', '4.7');
 
 -- Host monitoring watchdog
 select fn_db_add_config_value('HostMonitoringWatchdogIntervalInSeconds','900','general');
@@ -927,10 +927,14 @@ select fn_db_add_config_value_for_versions_up_to('EnableBochsDisplay','false','4
 select fn_db_add_config_value_for_versions_up_to('EnableBochsDisplay','true','4.7');
 select fn_db_add_config_value_for_versions_up_to('ParallelMigrationsSupported', 'false', '4.6');
 select fn_db_add_config_value_for_versions_up_to('ParallelMigrationsSupported', 'true', '4.7');
+select fn_db_add_config_value_for_versions_up_to('IsDedicatedSupported', 'false', '4.6');
+select fn_db_add_config_value_for_versions_up_to('IsDedicatedSupported', 'true', '4.7');
 
 -- Incremental backup
 select fn_db_add_config_value_for_versions_up_to('IsIncrementalBackupSupported', 'false', '4.4');
 select fn_db_add_config_value_for_versions_up_to('IsIncrementalBackupSupported', 'true', '4.7');
+select fn_db_add_config_value_for_versions_up_to('UseHybridBackup', 'false', '4.6');
+select fn_db_add_config_value_for_versions_up_to('UseHybridBackup', 'true', '4.7');
 select fn_db_add_config_value('SucceededBackupCleanupTimeInMinutes','15','general');
 select fn_db_add_config_value('FailedBackupCleanupTimeInMinutes','30','general');
 select fn_db_add_config_value('SucceededImageTransferCleanupTimeInMinutes','15','general');
@@ -1110,10 +1114,10 @@ select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x8
 select fn_db_update_config_value('HotPlugCpuSupported', '{"x86":"true","ppc":"true","s390x":"true"}', '4.2');
 select fn_db_update_config_value('HotUnplugCpuSupported', '{"x86":"true","ppc":"true","s390x":"false"}', '4.2');
 
-select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^.*$;hugepages=^[0-9]+$', '4.2');
-select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^[^,](,?[0-9A-Za-z_-]+)+$;hugepages=^[0-9]+$', '4.3');
-select fn_db_update_config_value_for_versions_from_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_-]*):(true|false))(,(([a-zA-Z0-9_-]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^[^,](,?[0-9A-Za-z_-]+)+$;hugepages=^[0-9]+$;scsi_hostdev=^(scsi_generic|scsi_block|scsi_hd|virtio_blk_pci)$;nvram_template=^.*$', '4.4','4.5');
-select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_-]*):(true|false))(,(([a-zA-Z0-9_-]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;mdev_type=^[^,](,?[0-9A-Za-z_-]+)+$;hugepages=^[0-9]+$;scsi_hostdev=^(scsi_generic|scsi_block|scsi_hd|virtio_blk_pci)$;nvram_template=^.*$;extra_cpu_flags=^([+-]?[a-zA-Z0-9_-]+)(,[+-]?[a-zA-Z0-9_-]+)*$', '4.6');
+select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;hugepages=^[0-9]+$', '4.2');
+select fn_db_update_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;hugepages=^[0-9]+$', '4.3');
+select fn_db_update_config_value_for_versions_from_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_-]*):(true|false))(,(([a-zA-Z0-9_-]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;hugepages=^[0-9]+$;scsi_hostdev=^(scsi_generic|scsi_block|scsi_hd|virtio_blk_pci)$;nvram_template=^.*$', '4.4','4.5');
+select fn_db_update_config_value_for_versions_from_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_-]*):(true|false))(,(([a-zA-Z0-9_-]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$;hugepages=^[0-9]+$;scsi_hostdev=^(scsi_generic|scsi_block|scsi_hd|virtio_blk_pci)$;nvram_template=^.*$;extra_cpu_flags=^([+-]?[a-zA-Z0-9_-]+)(,[+-]?[a-zA-Z0-9_-]+)*$', '4.6', '4.7');
 
 select fn_db_update_config_value('HotPlugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}', '4.2');
 select fn_db_update_config_value('HotUnplugMemorySupported','{"x86":"true","ppc":"true","s390x":"false"}','4.2');

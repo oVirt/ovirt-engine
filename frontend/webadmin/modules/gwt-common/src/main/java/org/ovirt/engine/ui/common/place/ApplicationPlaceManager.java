@@ -64,7 +64,7 @@ public abstract class ApplicationPlaceManager extends PlaceManagerImpl implement
         revealPlace(getDefaultPlace());
     }
 
-    protected PlaceRequest getDefaultPlace() {
+    public PlaceRequest getDefaultPlace() {
         return getDefaultMainSectionPlace();
     }
 

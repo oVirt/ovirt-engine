@@ -82,7 +82,7 @@ public interface IVdsEventListener {
      */
     void updateSlaPolicies(List<Guid> vmIds, Guid vdsId);
 
-    void refreshHostIfAnyVmHasHostDevices(List<Guid> vmIds, Guid hostId);
+    void refreshHostIfAnyVmHasHostDevices(List<Guid> succeededToRunVms, List<Guid> movedToDownVms, Guid hostId);
 
     void refreshHostCapabilities(Guid hostId);
 

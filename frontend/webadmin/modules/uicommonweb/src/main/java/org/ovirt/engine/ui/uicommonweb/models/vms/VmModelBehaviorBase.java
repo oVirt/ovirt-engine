@@ -256,6 +256,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public void templateWithVersion_SelectedItemChanged() {
         updateSeal();
+        updateStateless();
     }
 
     public void postDataCenterWithClusterSelectedItemChanged() {
@@ -1724,6 +1725,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getIsSealed().setEntity(isSealByDefault(template));
     }
 
+    protected void updateStateless() {
+            getModel().getIsStateless()
+                    .setIsChangeable(!isLatestTemplateSelected(),
+                            constants.statelessVmFieldDisabledReason());
+    }
+
     protected boolean isSealByDefault(VmTemplate template) {
         return template.isSealed();
     }
@@ -1834,5 +1841,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
      protected List<Integer> getOsValues(ArchitectureType architectureType, Version version) {
          return AsyncDataProvider.getInstance().getOsIds(architectureType);
+     }
+
+     protected boolean isLatestTemplateSelected() {
+         return getModel().getTemplateWithVersion() != null
+                 && getModel().getTemplateWithVersion().getSelectedItem() != null
+                 && getModel().getTemplateWithVersion().getSelectedItem().isLatest();
      }
 }

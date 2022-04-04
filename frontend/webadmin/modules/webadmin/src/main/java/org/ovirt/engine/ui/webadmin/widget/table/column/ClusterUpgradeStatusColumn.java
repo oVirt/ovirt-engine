@@ -50,16 +50,29 @@ public class ClusterUpgradeStatusColumn extends AbstractColumn<Cluster, Cluster>
         }
     }
 
-    private static class UpgradeProgressColumn extends AbstractTextColumn<Cluster> {
+    private static class UpgradeProgressColumn extends AbstractOneColorPercentColumn<Cluster> {
+        public UpgradeProgressColumn() {
+            super(AbstractOneColorPercentColumn.ProgressBarColors.GREEN);
+        }
+
         @Override
-        public String getValue(Cluster object) {
+        public SafeHtml getValue(Cluster object) {
           if (!object.isUpgradeRunning()) {
               return null;
           }
 
-          return constants.clusterUpgradeInProgress();
+          return super.getValue(object);
+        }
+
+        @Override
+        public Integer getProgressValue(Cluster object) {
+            return object.getUpgradePercentComplete();
+        }
+
+        @Override
+        protected String getStyle() {
+            return "engine-progress-box-migration";//$NON-NLS-1$
         }
     }
-
 
 }

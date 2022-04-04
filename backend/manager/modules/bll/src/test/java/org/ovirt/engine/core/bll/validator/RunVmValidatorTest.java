@@ -100,7 +100,7 @@ public class RunVmValidatorTest {
     }
 
     @Test
-    public void testValidEmptyCustomProerties() {
+    public void testValidEmptyCustomProperties() {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_2);
         vm.setCustomProperties("");
@@ -110,7 +110,7 @@ public class RunVmValidatorTest {
     }
 
     @Test
-    public void testWrongFormatCustomProerties() {
+    public void testWrongFormatCustomProperties() {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_2);
         vm.setCustomProperties("sap_agent;"); // missing '= true'
@@ -120,7 +120,7 @@ public class RunVmValidatorTest {
     }
 
     @Test
-    public void testNotValidCustomProerties() {
+    public void testNotValidCustomProperties() {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_2);
         vm.setCustomProperties("property=value;");
@@ -130,7 +130,7 @@ public class RunVmValidatorTest {
     }
 
     @Test
-    public void testValidCustomProerties() {
+    public void testValidCustomProperties() {
         VM vm = new VM();
         vm.setClusterCompatibilityVersion(Version.v4_2);
         vm.setCustomProperties("sap_agent=true;");
@@ -392,7 +392,7 @@ public class RunVmValidatorTest {
         doReturn("sap_agent=^(true|false)$;sndbuf=^[0-9]+$;" +
                 "vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;" +
                 "viodiskcache=^(none|writeback|writethrough)$;" +
-                "mdev_type=^[^,](,?[0-9A-Za-z-]+)+$;hugepages=^[0-9]+$;" +
+                "hugepages=^[0-9]+$;" +
                 "scsi_hostdev=^(scsi_generic|scsi_block|scsi_hd|virtio_blk_pci)$").
                 when(utils)
                 .getPredefinedVMProperties(any());

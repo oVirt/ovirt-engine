@@ -66,6 +66,8 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
 
     private boolean shouldFreezeOrThaw;
 
+    private Guid bitmap;
+
 
     public CreateSnapshotForVmParameters() {
         needsLocking = true;
@@ -237,6 +239,14 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
 
     public boolean getShouldFreezeOrThaw() {
         return shouldFreezeOrThaw;
+    }
+
+    public Guid getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Guid bitmap) {
+        this.bitmap = bitmap;
     }
 
     public enum CreateSnapshotStage {

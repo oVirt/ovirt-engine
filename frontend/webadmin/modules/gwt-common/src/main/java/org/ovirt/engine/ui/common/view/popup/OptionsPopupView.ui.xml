@@ -20,9 +20,14 @@
             font-family: "Courier New", Courier, monospace;
         }
 
+        .customHomePageEditor {
+           height: 30px;
+           width: 100%;
+        }
+
         .inlineBlock {
             display: inline-block;
-            vertical-align: middle;
+            vertical-align: top;
             padding-right: 5px;
         }
 
@@ -51,7 +56,7 @@
         }
 
     </ui:style>
-    <d:SimpleDialogPanel width="800px" height="500px">
+    <d:SimpleDialogPanel width="800px" height="550px">
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%" width="100%">
                 <t:tab>
@@ -72,6 +77,34 @@
                                     </b:Column>
                                     <b:Column size="SM_6">
                                         <g:Label ui:field="email"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_6">
+                                        <g:Label text="{constants.homePage}"
+                                                 addStyleNames="{style.headerLabel} {style.verticalSpacing}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_6">
+                                        <ge:EntityModelRadioButtonEditor ui:field="isHomePageDefault"
+                                                                         removeFormGroup="true"
+                                                                         usePatternFly="true"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_6">
+                                        <ge:EntityModelRadioButtonEditor ui:field="isHomePageCustom"
+                                                                         addStyleNames="{style.inlineBlock}"
+                                                                         removeFormGroup="true"
+                                                                         usePatternFly="true"/>
+                                        <d:InfoIcon ui:field="isHomePageCustomInfo"
+                                                    addStyleNames="{style.inlineBlock} {style.infoIcon}"/>
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row addStyleNames="{style.verticalSpacing}">
+                                    <b:Column size="SM_12" addStyleNames="{style.indentation}">
+                                        <ge:StringEntityModelTextArea ui:field="customHomePage" addStyleNames="{style.customHomePageEditor}"/>
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>
@@ -101,7 +134,6 @@
                                 <b:Row>
                                     <b:Column size="SM_12" addStyleNames="{style.indentation}">
                                         <ge:EntityModelCheckBoxEditor ui:field="localStoragePersistedOnServerCheckBox"
-                                                                      label="{constants.persistGridSettingsOnServer}"
                                                                       removeFormGroup="true"
                                                                       usePatternFly="true"
                                                                       addStyleNames="{style.overrideClearBoth}"/>
@@ -120,7 +152,6 @@
                                 <b:Row>
                                     <b:Column size="SM_12" addStyleNames="{style.indentation}">
                                         <ge:EntityModelCheckBoxEditor ui:field="confirmSuspendingVmCheckBox"
-                                                                      label="{constants.confirmSuspendingVm}"
                                                                       removeFormGroup="true"
                                                                       usePatternFly="true"
                                                                       addStyleNames="{style.overrideClearBoth}"/>

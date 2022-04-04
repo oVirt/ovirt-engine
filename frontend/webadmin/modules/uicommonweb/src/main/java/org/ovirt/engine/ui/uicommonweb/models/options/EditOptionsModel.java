@@ -6,30 +6,46 @@ import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.LocalStorage;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelSettingsManager;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class EditOptionsModel extends Model {
+
+    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private final List<Field<?>> fields;
 
     private final EntityModel<String> publicKey = new EntityModel<>("");
-    private EntityModel<Boolean> localStoragePersistedOnServer = new EntityModel<>(true);
-    private EntityModel<Boolean> confirmSuspendingVm = new EntityModel<>(true);
+    private EntityModel<Boolean> localStoragePersistedOnServer =
+            new EntityModel<>(constants.persistGridSettingsOnServer(), true);
+    private EntityModel<Boolean> confirmSuspendingVm = new EntityModel<>(constants.confirmSuspendingVm(), true);
     private final EntityModel<String> userName = new EntityModel<>("");
     private final EntityModel<String> email = new EntityModel<>("");
+    private final EntityModel<Boolean> isHomePageCustom = new EntityModel<>(constants.homePageCustom(), false);
+    // in the UI customHomePage(text area) shares the same label with radio button that enables it
+    private final EntityModel<String> customHomePage = new EntityModel<>(constants.homePageCustom(), "");
+    private final UICommand okCommand;
+    private final UICommand resetCommand;
 
     public EditOptionsModel(ConfirmationModelSettingsManager confirmationModelSettingsManager,
             LocalStorage localStorage,
-            DbUser user) {
+            DbUser user,
+            UICommand okCommand,
+            UICommand cancelCommand,
+            UICommand resetCommand) {
         this.fields = Arrays.asList(
+                new UseCustomHomePageField(isHomePageCustom, true),
+                new CustomHomePageField(customHomePage, true),
                 new PublicSshKeyField(publicKey, UserProfileProperty.builder().withDefaultSshProp().build()),
-                new LocalStoragePersistenceField(localStoragePersistedOnServer, localStorage),
-                new ConfirmSuspendingVmField(confirmSuspendingVm, confirmationModelSettingsManager));
+                new LocalStoragePersistenceField(localStoragePersistedOnServer, localStorage, true),
+                new ConfirmSuspendingVmField(confirmSuspendingVm, confirmationModelSettingsManager, true));
 
         for (Field<?> field : fields) {
             field.getEntity().getEntityChangedEvent().addListener(this::updateAvailability);
@@ -37,6 +53,13 @@ public class EditOptionsModel extends Model {
 
         userName.setEntity(user.getLoginName());
         email.setEntity(user.getEmail());
+
+        this.okCommand = okCommand;
+        this.resetCommand = resetCommand;
+        // enable if values are edited
+        okCommand.setIsExecutionAllowed(false);
+        getCommands().addAll(Arrays.asList(okCommand, cancelCommand, resetCommand));
+
     }
 
     private void updateAvailability(Event<? extends EventArgs> ev,
@@ -46,10 +69,13 @@ public class EditOptionsModel extends Model {
     }
 
     void updateAvailability() {
-        getCommands().stream()
-                .filter(command -> !command.getIsCancel())
-                .findFirst()
-                .ifPresent(action -> action.setIsExecutionAllowed(hasChangedValues()));
+        // Cancel is always enabled
+        okCommand.setIsExecutionAllowed(hasChangedValues());
+        resetCommand.setIsExecutionAllowed(!hasChangedValues() && hasCustomValues());
+    }
+
+    private boolean hasCustomValues() {
+        return fields.stream().filter(Field::isResettable).anyMatch(Field::isCustom);
     }
 
     public boolean hasChangedValues() {
@@ -107,5 +133,13 @@ public class EditOptionsModel extends Model {
 
     public EntityModel<String> getEmail() {
         return email;
+    }
+
+    public EntityModel<Boolean> getIsHomePageCustom() {
+        return isHomePageCustom;
+    }
+
+    public EntityModel<String> getCustomHomePage() {
+        return customHomePage;
     }
 }

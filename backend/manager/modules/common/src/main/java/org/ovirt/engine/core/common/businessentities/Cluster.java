@@ -68,6 +68,10 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
 
     private boolean upgradeRunning;
 
+    private int upgradePercentComplete;
+
+    private String upgradeCorrelationId;
+
     private boolean smtDisabled;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
@@ -320,6 +324,22 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
      */
     public void setUpgradeRunning(boolean upgradeRunning) {
         this.upgradeRunning = upgradeRunning;
+    }
+
+    public int getUpgradePercentComplete() {
+      return upgradePercentComplete;
+    }
+
+    public void setUpgradePercentComplete(int upgradePercentComplete) {
+      this.upgradePercentComplete = upgradePercentComplete;
+    }
+
+    public String getUpgradeCorrelationId() {
+      return upgradeCorrelationId;
+    }
+
+    public void setUpgradeCorrelationId(String upgradeCorrelationId) {
+      this.upgradeCorrelationId = upgradeCorrelationId;
     }
 
     public boolean getSmtDisabled() {
@@ -802,7 +822,10 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 vncEncryptionEnabled,
                 hostNamesOutOfSync,
                 managed,
-                fipsMode
+                fipsMode,
+                upgradeRunning,
+                upgradePercentComplete,
+                upgradeCorrelationId
         );
     }
 
@@ -870,7 +893,10 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
                 && vncEncryptionEnabled == other.vncEncryptionEnabled
                 && Objects.equals(hostNamesOutOfSync, other.hostNamesOutOfSync)
                 && managed == other.managed
-                && fipsMode == other.fipsMode;
+                && fipsMode == other.fipsMode
+                && upgradeRunning == other.upgradeRunning
+                && upgradePercentComplete == other.upgradePercentComplete
+                && Objects.equals(upgradeCorrelationId, other.upgradeCorrelationId);
     }
 
     @Override

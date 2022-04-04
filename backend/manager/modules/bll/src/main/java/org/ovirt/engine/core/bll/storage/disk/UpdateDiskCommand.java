@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
@@ -786,7 +787,12 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();
-            jobProperties.put("diskalias", getDiskAlias());
+            String vmNames = vmsDiskOrSnapshotAttachedTo
+                    .stream()
+                    .map(VM::getName)
+                    .sorted()
+                    .collect(Collectors.joining(", "));
+            jobProperties.put("vm", vmNames.isEmpty()? "N/A" : vmNames);
         }
         return jobProperties;
     }
@@ -1039,7 +1045,7 @@ public class UpdateDiskCommand<T extends UpdateDiskParameters> extends AbstractD
             for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
                 VM vm = pair.getFirst();
                 vmsDiskOrSnapshotAttachedTo.add(vm);
-                if (Boolean.TRUE.equals(pair.getSecond().isPlugged())) {
+                if (pair.getSecond().isPlugged()) {
                     if (pair.getSecond().getSnapshotId() != null) {
                         vmsDiskSnapshotPluggedTo.add(vm);
                     } else {

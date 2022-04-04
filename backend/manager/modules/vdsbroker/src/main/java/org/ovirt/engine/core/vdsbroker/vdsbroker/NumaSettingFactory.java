@@ -10,8 +10,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.utils.NumaPinningHelper;
 
 public class NumaSettingFactory {
 
@@ -49,29 +52,38 @@ public class NumaSettingFactory {
         return cpuPinDict;
     }
 
-    public static Map<String, Object> buildVmNumatuneSetting(List<VmNumaNode> vmNumaNodes) {
-
+    public static Map<String, Object> buildVmNumatuneSetting(VM vm, List<VmNumaNode> vmNumaNodes) {
+        Map<Integer, Collection<Integer>> currentNumaPinning = NumaPinningHelper.parseNumaMapping(vm.getCurrentNumaPinning());
         List<Map<String, String>> memNodeList = new ArrayList<>();
+
         for (VmNumaNode node : vmNumaNodes) {
-            if (node.getVdsNumaNodeList().isEmpty()) {
-                continue;
+            if (currentNumaPinning != null) {
+                if (currentNumaPinning.containsKey(node.getIndex())) {
+                    memNodeList.add(createMemNode(node.getIndex(),
+                            currentNumaPinning.get(node.getIndex()),
+                            NumaTuneMode.INTERLEAVE));
+                }
+            } else if (!node.getVdsNumaNodeList().isEmpty()) {
+                memNodeList.add(createMemNode(node.getIndex(), node.getVdsNumaNodeList(), node.getNumaTuneMode()));
             }
-
-            Map<String, String> memNode = new HashMap<>(3);
-            memNode.put(VdsProperties.NUMA_TUNE_VM_NODE_INDEX, String.valueOf(node.getIndex()));
-            memNode.put(VdsProperties.NUMA_TUNE_NODESET,
-                    buildStringFromListForNuma(node.getVdsNumaNodeList()));
-            memNode.put(VdsProperties.NUMA_TUNE_MODE, node.getNumaTuneMode().getValue());
-
-            memNodeList.add(memNode);
         }
-
         // If no node is pinned, leave pinning implicit
         if (memNodeList.isEmpty()) {
             return Collections.emptyMap();
         }
 
         return Collections.singletonMap(VdsProperties.NUMA_TUNE_MEMNODES, memNodeList);
+    }
+
+    private static Map<String, String> createMemNode(Integer nodeIndex,
+            Collection<Integer> pinnedPNodes,
+            NumaTuneMode tuneMode) {
+        Map<String, String> memNode = new HashMap<>(3);
+        memNode.put(VdsProperties.NUMA_TUNE_VM_NODE_INDEX, String.valueOf(nodeIndex));
+        memNode.put(VdsProperties.NUMA_TUNE_NODESET,
+                buildStringFromListForNuma(pinnedPNodes));
+        memNode.put(VdsProperties.NUMA_TUNE_MODE, tuneMode.getValue());
+        return memNode;
     }
 
     private static String buildStringFromListForNuma(Collection<Integer> list) {

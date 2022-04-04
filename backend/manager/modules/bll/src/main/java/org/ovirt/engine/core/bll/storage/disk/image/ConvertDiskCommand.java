@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -22,12 +23,14 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ConvertDiskCommandParameters;
 import org.ovirt.engine.core.common.action.CopyDataCommandParameters;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.MeasureVolumeParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -41,6 +44,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -58,6 +62,9 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
 
     @Inject
     private VmDao vmDao;
+
+    @Inject
+    private BaseDiskDao baseDiskDao;
 
     @Inject
     private ImagesHandler imagesHandler;
@@ -124,7 +131,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         return ImagesHandler.checkImageConfiguration(storageDomain.getStorageStaticData(),
                 getVolumeType(getDiskImage()),
                 getVolumeFormat(getDiskImage()),
-                getDiskImage().getBackup(),
+                getParameters().getBackup() != null ? getParameters().getBackup() : getDiskImage().getBackup(),
                 getReturnValue().getValidationMessages());
     }
 
@@ -134,6 +141,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
                 FeatureSupported::isConvertDiskSupported);
         if (Guid.isNullOrEmpty(hostForExecution)) {
             log.error("Could not find a host to perform conversion");
+            setCommandStatus(CommandStatus.FAILED);
             return;
         }
 
@@ -148,8 +156,21 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
                 ImageStatus.OK,
                 getCompensationContext());
 
+        // Measure volume for new format
+        ActionReturnValue actionReturnValue =
+                runInternalAction(ActionType.MeasureVolume, createMeasureVolumeParameters(),
+                        ExecutionHandler.createDefaultContextForTasks(getContext()));
+
+        if (!actionReturnValue.getSucceeded()) {
+            log.error("Failed to measure volume '{}'", getDiskImage().getImageId());
+            setCommandStatus(CommandStatus.FAILED);
+            return;
+        }
+
+        long requiredSize =  actionReturnValue.getActionReturnValue();
+
         // Create volume in the same disk
-        runInternalAction(ActionType.CreateVolumeContainer, createVolumeCreationParameters(getDiskImage()));
+        runInternalAction(ActionType.CreateVolumeContainer, createVolumeCreationParameters(getDiskImage(), requiredSize));
         updatePhase(ConvertDiskCommandParameters.ConvertDiskPhase.CONVERT_VOLUME);
 
         setSucceeded(true);
@@ -174,8 +195,13 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
 
         // Delete old image
         if (getParameters().getConvertDiskPhase() == ConvertDiskCommandParameters.ConvertDiskPhase.REMOVE_SOURCE_VOLUME) {
-            switchImage();
-            runInternalAction(ActionType.DestroyImage, createDestroyImageParameters(getDiskImage().getImageId()));
+            if (!switchImage()) {
+                setCommandStatus(CommandStatus.FAILED);
+                return true;
+            }
+            runInternalAction(ActionType.DestroyImage, createDestroyImageParameters(getDiskImage().getImageId(),
+                    getActionType()));
+
             updatePhase(ConvertDiskCommandParameters.ConvertDiskPhase.COMPLETE);
 
             return true;
@@ -191,7 +217,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
                 getActionType().getActionGroup()));
     }
 
-    private CreateVolumeContainerCommandParameters createVolumeCreationParameters(DiskImage diskImage) {
+    private CreateVolumeContainerCommandParameters createVolumeCreationParameters(DiskImage diskImage, long requiredSize) {
         CreateVolumeContainerCommandParameters parameters =
                 new CreateVolumeContainerCommandParameters(diskImage.getStoragePoolId(),
                         getLocationInfo().getStorageDomainId(),
@@ -203,7 +229,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
                         getVolumeType(diskImage),
                         imagesHandler.getJsonDiskDescription(diskImage),
                         diskImage.getSize(),
-                        diskImage.getInitialSizeInBytes(),
+                        requiredSize,
                         imageDao.getMaxSequenceNumber(diskImage.getId()) + 1);
         parameters.setLegal(false);
         parameters.setParentParameters(getParameters());
@@ -213,7 +239,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         return parameters;
     }
 
-    private DestroyImageParameters createDestroyImageParameters(Guid imageId) {
+    private DestroyImageParameters createDestroyImageParameters(Guid imageId, ActionType parentCommand) {
         DestroyImageParameters parameters = new DestroyImageParameters(getParameters().getVdsRunningOn(),
                 Guid.Empty,
                 getDiskImage().getStoragePoolId(),
@@ -222,8 +248,10 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
                 Arrays.asList(imageId),
                 false,
                 false);
+
         parameters.setParentParameters(getParameters());
-        parameters.setParentCommand(getActionType());
+        parameters.setParentCommand(parentCommand);
+
         parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
 
         return parameters;
@@ -247,21 +275,20 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         runInternalActionWithTasksContext(ActionType.CopyData, parameters);
     }
 
-    private void switchImage() {
+    private boolean switchImage() {
         DiskImage info = imagesHandler.getVolumeInfoFromVdsm(getDiskImage().getStoragePoolId(),
                 getDiskImage().getStorageIds().get(0),
                 getDiskImage().getId(),
                 getParameters().getNewVolGuid());
 
         DiskImage newImage = DiskImage.copyOf(getDiskImage());
-
         newImage.setImageId(getParameters().getNewVolGuid());
+        newImage.setSize(info.getSize());
         if (getParameters().getVolumeFormat() != null) {
             if (info.getVolumeFormat() != getParameters().getVolumeFormat()) {
                 log.error("Requested format '{}' doesn't match format on storage '{}'",
                         getParameters().getVolumeFormat(), info.getVolumeFormat());
-                setCommandStatus(CommandStatus.FAILED);
-                return;
+                return false;
             }
 
             newImage.setVolumeFormat(getParameters().getVolumeFormat());
@@ -271,8 +298,7 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
             if (info.getVolumeType() != getParameters().getPreallocation()) {
                 log.error("Requested allocation policy '{}' doesn't match allocation policy on storage '{}'",
                         getParameters().getPreallocation(), info.getVolumeType());
-                setCommandStatus(CommandStatus.FAILED);
-                return;
+                return false;
             }
 
             newImage.setVolumeType(getParameters().getPreallocation());
@@ -286,6 +312,8 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
 
             return null;
         });
+
+        return true;
     }
 
     private void updatePhase(ConvertDiskCommandParameters.ConvertDiskPhase phase) {
@@ -305,6 +333,20 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
 
     private VdsmImageLocationInfo getLocationInfo() {
         return (VdsmImageLocationInfo) getParameters().getLocationInfo();
+    }
+
+    private MeasureVolumeParameters createMeasureVolumeParameters() {
+        Guid storageDomainId = ((VdsmImageLocationInfo) getParameters().getLocationInfo()).getStorageDomainId();
+        MeasureVolumeParameters parameters = new MeasureVolumeParameters(getDiskImage().getStoragePoolId(),
+                storageDomainId,
+                getDiskImage().getId(),
+                getDiskImage().getImageId(),
+                getVolumeFormat(getDiskImage()).getValue());
+        parameters.setParentCommand(getActionType());
+        parameters.setEndProcedure(ActionParametersBase.EndProcedure.PARENT_MANAGED);
+        parameters.setVdsRunningOn(getParameters().getVdsRunningOn());
+        parameters.setCorrelationId(getCorrelationId());
+        return parameters;
     }
 
     @Override
@@ -349,7 +391,16 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         imageDao.remove(getDiskImage().getImageId());
 
         freeLock();
-        imagesHandler.updateImageStatus(getParameters().getNewVolGuid(), ImageStatus.OK);
+        TransactionSupport.executeInNewTransaction(() -> {
+            imagesHandler.updateImageStatus(getParameters().getNewVolGuid(), ImageStatus.OK);
+            DiskImage convertedImage = diskImageDao.get(getParameters().getNewVolGuid());
+            if (getParameters().getBackup() != null) {
+                convertedImage.setBackup(getParameters().getBackup());
+                baseDiskDao.update(convertedImage);
+            }
+
+            return null;
+        });
 
         setSucceeded(true);
     }
@@ -362,8 +413,13 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         if (getParameters().getConvertDiskPhase() == ConvertDiskCommandParameters.ConvertDiskPhase.CONVERT_VOLUME ||
                 getParameters().getConvertDiskPhase() == ConvertDiskCommandParameters.ConvertDiskPhase.SWITCH_IMAGE) {
             if (diskImageDao.get(getDiskImage().getImageId()) != null) {
-                runInternalAction(ActionType.DestroyImage, createDestroyImageParameters(getParameters().getNewVolGuid()),
-                        cloneContextAndDetachFromParent());
+
+                // Set parentCommand to Unknown as we don't need DestroyImage to notify the parent at this point,
+                // ConvertDiskCommand is going to be removed soon after this call, and DestroyImage may continue running
+                // after
+                DestroyImageParameters destroyImageParameters =
+                        createDestroyImageParameters(getParameters().getNewVolGuid(), ActionType.Unknown);
+                runInternalAction(ActionType.DestroyImage, destroyImageParameters, cloneContextAndDetachFromParent());
             }
         }
 

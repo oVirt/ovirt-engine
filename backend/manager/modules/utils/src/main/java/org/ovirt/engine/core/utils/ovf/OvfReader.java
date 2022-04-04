@@ -41,9 +41,11 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -622,6 +624,9 @@ public abstract class OvfReader implements IOvfBuilder {
         consumeReadProperty(content,
                 CONSOLE_DISCONNECT_ACTION,
                 val -> vmBase.setConsoleDisconnectAction(ConsoleDisconnectAction.fromString(val)));
+        consumeReadProperty(content,
+                CONSOLE_DISCONNECT_ACTION_DELAY,
+                val -> vmBase.setConsoleDisconnectActionDelay(Integer.parseInt(val)));
         consumeReadProperty(content, IS_AUTO_CONVERGE, val -> vmBase.setAutoConverge(Boolean.parseBoolean(val)));
         consumeReadProperty(content,
                 IS_MIGRATE_COMPRESSED,
@@ -637,7 +642,7 @@ public abstract class OvfReader implements IOvfBuilder {
         consumeReadProperty(content, CUSTOM_EMULATED_MACHINE, val -> vmBase.setCustomEmulatedMachine(val));
         readBiosType(content);
         consumeReadProperty(content, CUSTOM_CPU_NAME, val -> vmBase.setCustomCpuName(val));
-        consumeReadProperty(content, PREDEFINED_PROPERTIES, val -> vmBase.setPredefinedProperties(val));
+        consumeReadProperty(content, PREDEFINED_PROPERTIES, val -> addPredefinedProperties(val));
         consumeReadProperty(content, USER_DEFINED_PROPERTIES, val -> vmBase.setUserDefinedProperties(val));
         consumeReadProperty(content, MAX_MEMORY_SIZE_MB, val -> vmBase.setMaxMemorySizeMb(Integer.parseInt(val)));
 
@@ -895,6 +900,20 @@ public abstract class OvfReader implements IOvfBuilder {
                 vmDevice.setDevice(VmDeviceType.BRIDGE.getName());
             }
         }
+    }
+
+    private void addPredefinedProperties(String properties) {
+        if (properties != null) {
+            var simpleCustomPropertiesUtil = SimpleCustomPropertiesUtil.getInstance();
+            var customProperties = simpleCustomPropertiesUtil.convertProperties(properties);
+            String mdevTypes = customProperties.remove(MDevTypesUtils.DEPRECATED_CUSTOM_PROPERTY_NAME);
+            if (mdevTypes != null && !mdevTypes.trim().isEmpty()) {
+                var mdevDevices = MDevTypesUtils.convertDeprecatedCustomPropertyToVmDevices(mdevTypes, vmBase.getId());
+                mdevDevices.forEach(this::addManagedVmDevice);
+                properties = simpleCustomPropertiesUtil.convertProperties(customProperties);
+            }
+        }
+        vmBase.setPredefinedProperties(properties);
     }
 
     private void addDefaultGraphicsDevice() {

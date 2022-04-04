@@ -95,6 +95,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDeviceFeEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWidget;
@@ -191,7 +192,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.NetworkAtt
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.AddVmHostDevicePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.VmRepinHostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.InstanceTypesPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.label.AffinityLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
@@ -535,7 +535,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmNextRunConfigur
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRepinHostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRunOncePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCreatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCustomPreviewPopupView;
@@ -1898,10 +1897,6 @@ public class PresenterModule extends BasePresenterModule {
                 AddVmHostDevicePopupPresenterWidget.ViewDef.class,
                 AddVmHostDevicePopupView.class);
 
-        bindPresenterWidget(VmRepinHostPopupPresenterWidget.class,
-                VmRepinHostPopupPresenterWidget.ViewDef.class,
-                VmRepinHostPopupView.class);
-
         // Volume
         bindPresenter(VolumeSubTabPanelPresenter.class,
                 VolumeSubTabPanelPresenter.ViewDef.class,
@@ -2203,6 +2198,8 @@ public class PresenterModule extends BasePresenterModule {
             new TypeLiteral<DetailActionPanelView<VM, Snapshot>>(){});
         bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<VM, HostDeviceView>>(){},
             new TypeLiteral<DetailActionPanelView<VM, HostDeviceView>>(){});
+        bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<VM, VmDeviceFeEntity>>(){},
+                new TypeLiteral<DetailActionPanelView<VM, VmDeviceFeEntity>>(){});
         bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<VDS, HostInterfaceLineModel>>(){},
             new TypeLiteral<DetailActionPanelView<VDS, HostInterfaceLineModel>>(){});
         bindActionPanel(new TypeLiteral<DetailActionPanelPresenterWidget.ViewDef<VDS, HostDeviceView>>(){},

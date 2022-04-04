@@ -1,26 +1,27 @@
-package org.ovirt.engine.core.bll.scheduling.utils;
+package org.ovirt.engine.core.common.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.NumaNode;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.utils.CpuPinningHelper;
-import org.ovirt.engine.core.common.utils.HugePageUtils;
-import org.ovirt.engine.core.common.utils.NumaUtils;
-import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
+import org.ovirt.engine.core.common.utils.CpuPinningHelper.PinnedCpu;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,9 @@ public class NumaPinningHelper {
     private Map<Integer, HostNumaNodeData> hostNumaNodesData;
     private List<Runnable> commandStack;
     private Map<Guid, Integer> currentAssignment;
+
+    private NumaPinningHelper() {
+    }
 
     private NumaPinningHelper(List<VmNumaNodeData> vmNumaNodesData, Map<Integer, HostNumaNodeData> hostNumaNodesData) {
         this.vmNumaNodesData = vmNumaNodesData;
@@ -78,7 +82,7 @@ public class NumaPinningHelper {
         List<VmNumaNodeData> vmNodesData = vms.stream()
                 .flatMap(vm -> {
                     Map<Integer, Collection<Integer>> cpuPinning = considerCpuPinning ?
-                            CpuPinningHelper.parseCpuPinning(VmCpuCountHelper.isDynamicCpuPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning()).stream()
+                            CpuPinningHelper.parseCpuPinning(vm.getVmPinning()).stream()
                                     .collect(Collectors.toMap(p -> p.getvCpu(), p -> p.getpCpus())) :
                             null;
                     Optional<Integer> hugePageSize = HugePageUtils.getHugePageSize(vm.getStaticData());
@@ -271,9 +275,65 @@ public class NumaPinningHelper {
                     HugePageUtils.getHugePageSize(vm.getStaticData()),
                     vm.getCurrentNumOfCpus(),
                     NumaTuneMode.STRICT,
-                    vm.getCurrentThreadsPerCore());
+                    vm.getCurrentThreadsPerCore(),
+                    vm.getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED);
         }
         vm.setvNumaNodeList(vmNumaNodes);
+    }
+
+    public static String createNumaPinningAccordingToCpuPinning(
+            List<VmNumaNode> vmNodeList,
+            List<VdsCpuUnit> cpuUnits) {
+
+        Map<Integer, Integer> cpuMappings =
+                CpuPinningHelper.createCpuPinningMap(cpuUnits);
+        Map<Integer, Set<Integer>> numaMappings = new HashMap<>();
+
+        for (VmNumaNode vmNode : vmNodeList) {
+            Set<Integer> pNumaNodesIndexes = new HashSet<>();
+            for (Integer vCpuId : vmNode.getCpuIds()) {
+                Integer pCpu = cpuMappings.get(vCpuId);
+                VdsCpuUnit found =
+                        cpuUnits.stream().filter(cpuUnit -> cpuUnit.getCpu() == pCpu).findFirst().orElse(null);
+                if (found != null) {
+                    pNumaNodesIndexes.add(found.getNuma());
+                }
+            }
+            numaMappings.put(vmNode.getIndex(), pNumaNodesIndexes);
+        }
+
+        return createNumaMappingString(numaMappings);
+    }
+
+    private static String createNumaMappingString(Map<Integer, Set<Integer>> numaMapping) {
+        return numaMapping
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    String stringValues = (String) new ArrayList<Integer>(entry.getValue()).stream()
+                            .map(String::valueOf)
+                            .collect(Collectors.joining(","));
+                    return String.format("%d#%s", entry.getKey(), stringValues);
+                })
+                .collect(Collectors.joining("_"));
+    }
+
+    public static Map<Integer, Collection<Integer>> parseNumaMapping(String numaPinningString) {
+        if (numaPinningString == null) {
+            return null;
+        }
+        List<PinnedCpu> pinnedCpus = CpuPinningHelper.parseCpuPinning(numaPinningString);
+        return pinnedCpus.stream().collect(Collectors.toMap(PinnedCpu::getvCpu, PinnedCpu::getpCpus));
+    }
+
+    public static List<String> parseNumaSets(String numaPinningString) {
+        if (numaPinningString == null || numaPinningString.isEmpty()) {
+            return null;
+        }
+        return Arrays.asList(numaPinningString.split("_"))
+                .stream()
+                .map(nodesetEntry -> nodesetEntry.split("#")[1])
+                .collect(Collectors.toList());
     }
 
     public static List<VmNumaNode> initVmNumaNode(int numCpus, List<VdsNumaNode> hostNodes) {
@@ -298,6 +358,9 @@ public class NumaPinningHelper {
         private List<Integer> cpuIds = new ArrayList<>();
 
         private List<HugePage> hugePages;
+
+        private  HostNumaNodeData() {
+        }
 
         public HostNumaNodeData(VdsNumaNode numaNode, boolean considerCpuPinning) {
             setMemFree(numaNode.getNumaNodeStatistics().getMemFree());
@@ -341,6 +404,9 @@ public class NumaPinningHelper {
         private Map<Integer, Collection<Integer>> cpuPinning;
 
         private Optional<Integer> hugePageSize;
+
+        public VmNumaNodeData() {
+        }
 
         public VmNumaNodeData(VmNumaNode vmNumaNode, Map<Integer, Collection<Integer>> cpuPinning, Optional<Integer> hugePageSize) {
             this.vmNumaNode = vmNumaNode;

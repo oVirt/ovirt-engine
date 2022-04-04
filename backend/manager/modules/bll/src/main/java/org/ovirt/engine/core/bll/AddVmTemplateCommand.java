@@ -1054,6 +1054,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         restoreCommandState();
 
         vmStaticDao.incrementDbGeneration(getVmTemplateId());
+        freeLock();
         if (reloadVmTemplateFromDB() != null) {
             endDefaultOperations();
         }

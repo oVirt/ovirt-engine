@@ -24,7 +24,8 @@ CREATE OR REPLACE FUNCTION InsertVmBackup (
     v__create_date TIMESTAMP WITH TIME ZONE,
     v__update_date TIMESTAMP WITH TIME ZONE,
     v_description VARCHAR(1024),
-    v_is_live_backup BOOLEAN
+    v_backup_type VARCHAR(50),
+    v_snapshot_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -38,7 +39,8 @@ BEGIN
         _create_date,
         _update_date,
         description,
-        is_live_backup
+        backup_type,
+        snapshot_id
         )
     VALUES (
         v_backup_id,
@@ -50,7 +52,8 @@ BEGIN
         v__create_date,
         v__update_date,
         v_description,
-        v_is_live_backup
+        v_backup_type,
+        v_snapshot_id
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -64,7 +67,8 @@ CREATE OR REPLACE FUNCTION UpdateVmBackup (
     v_phase TEXT,
     v__update_date TIMESTAMP WITH TIME ZONE,
     v_description VARCHAR(1024),
-    v_is_live_backup BOOLEAN
+    v_backup_type VARCHAR(50),
+    v_snapshot_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -77,7 +81,8 @@ BEGIN
         phase = v_phase,
         _update_date = v__update_date,
         description = v_description,
-        is_live_backup = v_is_live_backup
+        backup_type = v_backup_type,
+        snapshot_id = v_snapshot_id
     WHERE backup_id = v_backup_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -118,18 +123,21 @@ LANGUAGE plpgsql;
 ----------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION InsertVmBackupDiskMap (
     v_backup_id UUID,
-    v_disk_id UUID
+    v_disk_id UUID,
+    v_disk_snapshot_id UUID
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
     BEGIN
         INSERT INTO vm_backup_disk_map (
             backup_id,
-            disk_id
+            disk_id,
+            disk_snapshot_id
             )
         VALUES (
             v_backup_id,
-            v_disk_id
+            v_disk_id,
+            v_disk_snapshot_id
             );
     END;
 
@@ -175,6 +183,15 @@ BEGIN
     );
 END;$FUNCTION$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetDiskSnapshotIdForBackup (v_backup_id UUID, v_disk_id UUID)
+RETURNS UUID STABLE AS $FUNCTION$
+    SELECT disk_snapshot_id
+    FROM vm_backup_disk_map
+    WHERE backup_id = v_backup_id AND disk_id = v_disk_id;
+$FUNCTION$
+LANGUAGE sql;
+
 
 -----------------------------------------------------------
 -- Cleanup backup entities by create time and phase

@@ -95,6 +95,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
+import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
@@ -194,6 +195,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private VmStatic newVmStatic;
     private List<GraphicsDevice> cachedGraphics;
     private boolean isUpdateVmTemplateVersion = false;
+    private String mdevType; // the value of the deprecated custom property mdev_type, if specified
 
     private BiConsumer<AuditLogable, AuditLogDirector> affinityGroupLoggingMethod = (a, b) -> {};
 
@@ -210,6 +212,13 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (isVmExist() && isCompatibilityVersionSupportedByCluster(getEffectiveCompatibilityVersion())) {
+            var givenVm = getParameters().getVmStaticData();
+            var customProperties = getVmPropertiesUtils().convertProperties(givenVm.getCustomProperties());
+            mdevType = customProperties.remove(MDevTypesUtils.DEPRECATED_CUSTOM_PROPERTY_NAME);
+            if (mdevType != null) {
+                givenVm.setCustomProperties(getVmPropertiesUtils().convertProperties(customProperties));
+            }
+
             Version compatibilityVersion = getEffectiveCompatibilityVersion();
             getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(
                     compatibilityVersion, getParameters().getVmStaticData());
@@ -329,6 +338,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             VmStatic oldStatic = oldVm.getStaticData();
             getCompensationContext().snapshotEntityUpdated(oldStatic);
         }
+
         resourceManager.getVmManager(getVmId()).update(newVmStatic);
 
         // Hosted Engine and kubevirt doesn't use next-run snapshots. Instead it requires the configuration
@@ -342,6 +352,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             updateVmHostDevices();
             updateVmDevicesOnEmulatedMachineChange();
             updateVmDevicesOnChipsetChange();
+            updateMdevDevices();
         }
         iconUtils.removeUnusedIcons(oldIconIds, getCompensationContextIfEnabledByCaller());
         vmHandler.updateVmInitToDB(getParameters().getVmStaticData(), getCompensationContextIfEnabledByCaller());
@@ -445,6 +456,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
             log.info("Pinned host changed for VM: {}. Dropping configured host devices.", getVm().getName());
             vmDeviceDao.removeVmDevicesByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV);
+        }
+    }
+
+    private void updateMdevDevices() {
+        if (mdevType != null) {
+            var convertedMdevDevices = MDevTypesUtils.convertDeprecatedCustomPropertyToVmDevices(mdevType, getVmId());
+            vmDeviceDao.removeVmDevicesByVmIdAndType(getVmId(), VmDeviceGeneralType.MDEV);
+            vmDeviceDao.saveAll(convertedMdevDevices);
         }
     }
 
@@ -1375,7 +1394,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
         }
         if (!validate(vmHandler.validateCpuPinningPolicy(getParameters().getVmStaticData(),
-                getParameters().isUpdateNuma()))) {
+                getParameters().isUpdateNuma(), getEffectiveCompatibilityVersion()))) {
             return false;
         }
         return true;

@@ -280,6 +280,7 @@ public enum ActionType {
     ManageNetworkClusters(712, ActionGroup.ASSIGN_CLUSTER_NETWORK, QuotaDependency.NONE),
     StartClusterUpgrade(713, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
     FinishClusterUpgrade(714, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
+    UpdateClusterUpgrade(715, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
 
     /**
      * MultiLevelAdministration
@@ -552,6 +553,11 @@ public enum ActionType {
     HotUnplugMemoryWithoutVmUpdate(2401, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
     SaveVmExternalData(2402, false, QuotaDependency.NONE),
 
+    // Mediated devices
+    AddMdev(2450, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    UpdateMdev(2451, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    RemoveMdev(2452, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+
     // Audit Log
     RemoveAuditLogById(2100, false, QuotaDependency.NONE),
     ClearAllAuditLogEvents(2101, false, QuotaDependency.NONE),
@@ -618,6 +624,7 @@ public enum ActionType {
     RemoveVolumeBitmap(3308, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
     ClearVolumeBitmaps(3309, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
     DeleteAllVmCheckpoints(3310, ActionGroup.BACKUP_DISK, false, QuotaDependency.NONE),
+    HybridBackup(3311, ActionGroup.BACKUP_DISK, QuotaDependency.NONE),
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),

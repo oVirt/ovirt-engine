@@ -22,6 +22,7 @@ public final class VdsProperties {
     public static final String online_cpus = "onlineCpus";
     public static final String cpu_topology = "cpuTopology";
     public static final String socket_id = "socket_id";
+    public static final String numa_id = "numa_cell_id";
     public static final String core_id = "core_id";
     public static final String cpu_id = "cpu_id";
     public static final String vdsm_cpus_affinity = "vdsmToCpusAffinity";
@@ -448,6 +449,8 @@ public final class VdsProperties {
     public static final String MIGRATION_DESTINATION = "Migration Destination";
     public static final String MIGRATION_OUTGOING_LIMIT = "outgoingLimit";
     public static final String MIGRATION_INCOMING_LIMIT = "incomingLimit";
+    public static final String MIGRATION_CPUSETS = "cpusets";
+    public static final String MIGRATION_NUMA_NODE_SETS = "numaNodesets";
 
     // multipath health
     public static final String MULTIPATH_HEALTH = "multipathHealth";
@@ -460,6 +463,7 @@ public final class VdsProperties {
     public static final String delay = "delay";
     public static final String actual = "actual";
     public static final String acquired = "acquired";
+    public static final String valid = "valid";
 
     public static final String DISK_STATS = "diskStats";
     public static final String DISK_STATS_FREE = "free";

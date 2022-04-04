@@ -210,7 +210,11 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
                     .getWebAdminSettings());
             Frontend.getInstance()
                     .getUserProfileManager()
-                    .reload(profile -> {});
+                    // the injected version will be obsolete after first modification
+                    // after reload, pass the control over it to the profile manager
+                    .reload(profile -> Frontend.getInstance()
+                            .getUserProfileManager()
+                            .setInjectedWebAdminUserOption(null));
         });
 
         user.setUserInfo(userInfo);

@@ -11,6 +11,7 @@ public class VDSDomainsData implements Serializable {
     private double delay;
     private boolean actual;
     private boolean acquired;
+    private boolean valid;
 
     public Guid getDomainId() {
         return privateDomainId;
@@ -64,5 +65,13 @@ public class VDSDomainsData implements Serializable {
 
     public void setAcquired(boolean acquired) {
         this.acquired = acquired;
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
     }
 }

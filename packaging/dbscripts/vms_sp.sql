@@ -324,7 +324,8 @@ CREATE OR REPLACE FUNCTION InsertVmDynamic (
     v_current_cpu_pinning VARCHAR(4000),
     v_current_sockets INT,
     v_current_cores INT,
-    v_current_threads INT
+    v_current_threads INT,
+    v_current_numa_pinning VARCHAR(4000)
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -384,7 +385,8 @@ BEGIN
         current_cpu_pinning,
         current_sockets,
         current_cores,
-        current_threads
+        current_threads,
+        current_numa_pinning
         )
     VALUES (
         v_app_list,
@@ -442,7 +444,8 @@ BEGIN
         v_current_cpu_pinning,
         v_current_sockets,
         v_current_cores,
-        v_current_threads
+        v_current_threads,
+        v_current_numa_pinning
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -504,7 +507,8 @@ CREATE OR REPLACE FUNCTION UpdateVmDynamic (
     v_current_cpu_pinning VARCHAR(4000),
     v_current_sockets INT,
     v_current_cores INT,
-    v_current_threads INT
+    v_current_threads INT,
+    v_current_numa_pinning VARCHAR(4000)
     )
 RETURNS VOID
     --The [vm_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -566,7 +570,8 @@ BEGIN
         current_cpu_pinning = v_current_cpu_pinning,
         current_sockets = v_current_sockets,
         current_cores = v_current_cores,
-        current_threads = v_current_threads
+        current_threads = v_current_threads,
+        current_numa_pinning = v_current_numa_pinning
     WHERE vm_guid = v_vm_guid;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -610,6 +615,17 @@ RETURNS VOID AS $PROCEDURE$
 BEGIN
     UPDATE vm_dynamic
     SET migrating_to_vds = NULL
+    WHERE vm_guid = v_vm_guid;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION ClearMigratingToVdsAndSetDynamicPinning (v_vm_guid UUID, v_current_cpu_pinning VARCHAR(4000), v_current_numa_pinning VARCHAR(4000))
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE vm_dynamic
+    SET migrating_to_vds = NULL,
+        current_cpu_pinning = v_current_cpu_pinning,
+        current_numa_pinning = v_current_numa_pinning
     WHERE vm_guid = v_vm_guid;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.CpuPinningHelper;
-import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
@@ -61,7 +60,7 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
             final List<VDS> hosts,
             final VM vm,
             final PerHostMessages messages) {
-        final String cpuPinning = VmCpuCountHelper.isDynamicCpuPinning(vm) ? vm.getCurrentCpuPinning() : vm.getCpuPinning();
+        final String cpuPinning = vm.getVmPinning();
 
         // return all hosts when no CPU pinning is requested
         if (vm.getCpuPinningPolicy() == CpuPinningPolicy.NONE) {
@@ -74,6 +73,9 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
 
         switch (vm.getCpuPinningPolicy()) {
             case MANUAL:
+                if (StringUtils.isEmpty(cpuPinning)) {
+                    return hosts;
+                }
             case RESIZE_AND_PIN_NUMA:
                 // collect all pinned host cpus and merge them into one set
                 final Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(cpuPinning);
@@ -81,6 +83,12 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
                     final Collection<Integer> onlineHostCpus = SlaValidator.getOnlineCpus(host);
                     var cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
                     final Collection<Integer> dedicatedCpus = cpuTopology.stream().filter(VdsCpuUnit::isDedicated).map(VdsCpuUnit::getCpu).collect(Collectors.toList());
+                    if (!dedicatedCpus.isEmpty() && vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA && pinnedCpus.isEmpty()) {
+                        messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__VM_PINNING_CANT_RESIZE_WITH_DEDICATED.name());
+                        log.debug("Host {} does not satisfy CPU pinning constraints, cannot match virtual topology " +
+                                "with available CPUs due to exclusively pinned cpus on the host .", host.getId());
+                        continue;
+                    }
                     final Collection availableCpus = CollectionUtils.subtract(onlineHostCpus, dedicatedCpus);
                     final Collection difference = CollectionUtils.subtract(pinnedCpus, availableCpus);
                     if (difference.isEmpty()) {
@@ -109,7 +117,7 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
                             vdsCpuUnitPinningHelper.isDedicatedCpuPinningPossibleAtHost(
                                     vmToPendingDedicatedCpuPinnings,
                                     vm,
-                                    host);
+                                    host.getId());
                     if (isDedicatedCpuPinningPossibleAtHost) {
                         candidates.add(host);
                     } else {

@@ -96,6 +96,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         if (vm.isNextRunConfigurationExists()) {
             getModel().setVmNumaNodes(vm.getvNumaNodeList());
             getModel().updateNodeCount(vm.getvNumaNodeList().size());
+            getModel().updateCpuPinningPolicy();
         } else {
             Frontend.getInstance().runQuery(QueryType.GetVmNumaNodesByVmId,
                     new IdQueryParameters(vm.getId()),
@@ -103,6 +104,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                         List<VmNumaNode> nodes = returnValue.getReturnValue();
                         getModel().setVmNumaNodes(nodes);
                         getModel().updateNodeCount(nodes.size());
+                        getModel().updateCpuPinningPolicy();
                     }));
         }
         // load dedicated host names into host names list
@@ -179,6 +181,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
         // Update model state according to VM properties.
         buildModel(vm.getStaticData(), (source, destination) -> {
+            // General
+            updateStateless();
             // System
             if (isHotSetCpuSupported()) {
                 // cancel related events while fetching data
@@ -499,6 +503,11 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         updateNumaEnabledHelper();
         if (Boolean.TRUE.equals(getModel().getNumaEnabled().getEntity()) && getModel().getVmNumaNodes() != null) {
             getModel().getNumaNodeCount().setEntity(getModel().getVmNumaNodes().size());
+        }
+
+        if (vm.getCurrentNumaPinning() != null) {
+            getModel().getNumaEnabled().setMessage(constants.numaDisabledInfoMessage());
+            getModel().getNumaEnabled().setEntity(false);
         }
     }
 

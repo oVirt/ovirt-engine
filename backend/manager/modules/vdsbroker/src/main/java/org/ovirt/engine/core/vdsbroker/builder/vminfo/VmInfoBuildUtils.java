@@ -792,7 +792,7 @@ public class VmInfoBuildUtils {
 
     public boolean needsIommuCachingMode(VM vm, MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier,
             MemoizingSupplier<List<VmDevice>> vmDevicesSupplier) {
-        if (!MDevTypesUtils.getMDevTypes(vm).isEmpty()) {
+        if (!MDevTypesUtils.getMdevs(vmDevicesSupplier.get(), VmDeviceType.VGPU).isEmpty()) {
             return true;
         }
         for (VmDevice device : vmDevicesSupplier.get()) {
@@ -1267,9 +1267,8 @@ public class VmInfoBuildUtils {
 
     public List<VmNumaNode> getVmNumaNodes(VM vm) {
         int onlineCpus = VmCpuCountHelper.getDynamicNumOfCpu(vm);
-        int vcpus = FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(), vm.getClusterArch()) && !VmCpuCountHelper.isResizeAndPinPolicy(vm)?
-                VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
-                : onlineCpus;
+        int vcpus = FeatureSupported.hotPlugCpu(vm.getCompatibilityVersion(), vm.getClusterArch(), vm.getCpuPinningPolicy()) ?
+                VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion()): onlineCpus;
         int offlineCpus = vcpus - onlineCpus;
         List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
         if (!vmNumaNodes.isEmpty()) {
@@ -1328,15 +1327,13 @@ public class VmInfoBuildUtils {
                 .collect(Collectors.toMap(split -> split[0], split -> split[1]));
     }
 
-    public boolean isNumaEnabled(MemoizingSupplier<List<VdsNumaNode>> hostNumaNodesSupplier,
-            MemoizingSupplier<List<VmNumaNode>> vmNumaNodesSupplier, VM vm) {
-        List<VdsNumaNode> hostNumaNodes = hostNumaNodesSupplier.get();
+    public boolean isNumaEnabled(List<VdsNumaNode> hostNumaNodes,
+            List<VmNumaNode> vmNumaNodes, VM vm) {
         if (hostNumaNodes.isEmpty()) {
             log.warn("No host NUMA nodes found for vm {} ({})", vm.getName(), vm.getId());
             return false;
         }
 
-        List<VmNumaNode> vmNumaNodes = vmNumaNodesSupplier.get();
         if (vmNumaNodes.isEmpty()) {
             return false;
         }
@@ -1671,14 +1668,13 @@ public class VmInfoBuildUtils {
     }
 
     public static int maxNumberOfVcpus(VM vm) {
-        return FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported, vm.getCompatibilityVersion(),
-                vm.getClusterArch()) && !VmCpuCountHelper.isResizeAndPinPolicy(vm) ? VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
-                        : VmCpuCountHelper.getDynamicNumOfCpu(vm);
+        return FeatureSupported.hotPlugCpu(vm.getCompatibilityVersion(), vm.getClusterArch(), vm.getCpuPinningPolicy()) ?
+                VmCpuCountHelper.calcMaxVCpu(vm, vm.getCompatibilityVersion())
+                : VmCpuCountHelper.getDynamicNumOfCpu(vm);
     }
 
     public static boolean isVmWithHighNumberOfX86Vcpus(VM vm) {
         return vm.getClusterArch().getFamily() == ArchitectureType.x86
-                && (VmCpuCountHelper.isDynamicCpuTopologySet(vm) ?
-                vm.getCurrentNumOfCpus() : maxNumberOfVcpus(vm)) >= VmCpuCountHelper.HIGH_NUMBER_OF_X86_VCPUS;
+                && maxNumberOfVcpus(vm) >= VmCpuCountHelper.HIGH_NUMBER_OF_X86_VCPUS;
     }
 }

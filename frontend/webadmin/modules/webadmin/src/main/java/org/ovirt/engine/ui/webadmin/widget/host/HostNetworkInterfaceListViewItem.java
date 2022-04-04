@@ -230,11 +230,12 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         dropRateCol.addStyleName(NIC_SPEED_DROP);
         dropRateCol.add(createDropRateIcon());
         Span valueSpan = new Span();
-        valueSpan.getElement()
-                .setInnerSafeHtml(templates.dropRate(
-                hostInterface.getStatistics().getReceiveDrops().doubleValue() +
-                      hostInterface.getStatistics().getTransmitDrops().doubleValue()
-                ));
+        double totalDrops = hostInterface.getStatistics().getReceiveDrops() != null ?
+                hostInterface.getStatistics().getReceiveDrops().doubleValue() : 0;
+        if (hostInterface.getStatistics().getTransmitDrops() != null) {
+            totalDrops += hostInterface.getStatistics().getTransmitDrops().doubleValue();
+        }
+        valueSpan.getElement().setInnerSafeHtml(templates.dropRate(totalDrops));
         dropRateCol.add(valueSpan);
         return dropRateCol;
     }

@@ -10,11 +10,11 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
     private static final long serialVersionUID = 6357763045419255853L;
     private Guid id;
 
-    private Integer readRate;
+    private Long readRate;
 
     private Long readOps;
 
-    private Integer writeRate;
+    private Long writeRate;
 
     private Long writeOps;
 
@@ -30,11 +30,11 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
     public DiskImageDynamic() {
     }
 
-    public Integer getReadRate() {
+    public Long getReadRate() {
         return readRate;
     }
 
-    public void setReadRate(Integer rate) {
+    public void setReadRate(Long rate) {
         readRate = rate;
     }
 
@@ -46,11 +46,11 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
         readOps = ops;
     }
 
-    public Integer getWriteRate() {
+    public Long getWriteRate() {
         return writeRate;
     }
 
-    public void setWriteRate(Integer rate) {
+    public void setWriteRate(Long rate) {
         writeRate = rate;
     }
 

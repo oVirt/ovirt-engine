@@ -41,9 +41,8 @@
 
   # workaround for BZ 2054323
   - name: Change the openvswitch_t to permissive
-    selinux_permissive:
-      name: openvswitch_t
-      permissive: true
+    command: semanage permissive -a openvswitch_t
+    changed_when: True
 
   when: el_ver|int >= 9
 
@@ -64,3 +63,24 @@
 - name: Configure host for vdsm
   command: vdsm-tool configure --force
   changed_when: True
+
+- name: add vdsm-mom allow rule to fapolicy
+  copy:
+   dest: /etc/fapolicyd/rules.d/32-allow-vdsm-mom.rules
+   group: fapolicyd
+   mode: '0644'
+   remote_src: yes
+   content: |
+     allow perm=any trust=1 : dir=/etc/vdsm/mom.d/ ftype=text/x-lisp
+  when: ansible_distribution == 'RedHat'
+
+- name: collect facts about system services
+  service_facts:
+
+- name: restart fapolicy service
+  systemd:
+   state: restarted
+   name: fapolicyd
+  when:
+    - "'fapolicyd.service' in services"
+    - ansible_facts.services["fapolicyd.service"].state == 'running'

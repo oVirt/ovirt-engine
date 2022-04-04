@@ -47,7 +47,6 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingExtension;
 
 @ExtendWith({MockitoExtension.class, RandomUtilsSeedingExtension.class})
@@ -74,13 +73,9 @@ public class DiskImagesValidatorTest {
 
     @BeforeEach
     public void setUp() {
-        disk1 = createDisk();
-        disk1.setDiskAlias("disk1");
-        disk1.setStoragePoolId(Guid.newGuid());
-        disk2 = createDisk();
-        disk2.setDiskAlias("disk2");
-        disk2.setStoragePoolId(Guid.newGuid());
-        validator = spy(new DiskImagesValidator(Arrays.asList(disk1, disk2)));
+        disk1 = createDisk("disk1");
+        disk2 = createDisk("disk2");
+        validator = spy(new DiskImagesValidator(disk1, disk2));
         doReturn(vmDao).when(validator).getVmDao();
         doReturn(vmDeviceDao).when(validator).getVmDeviceDao();
         doReturn(snapshotDao).when(validator).getSnapshotDao();
@@ -88,20 +83,22 @@ public class DiskImagesValidatorTest {
         doReturn(storagePoolDao).when(validator).getStoragePoolDao();
     }
 
-    private static DiskImage createDisk() {
+    private static DiskImage createDisk(String diskAlias) {
         DiskImage disk = new DiskImage();
+        disk.setDiskAlias(diskAlias);
         disk.setId(Guid.newGuid());
-        disk.setDiskAlias(RandomUtils.instance().nextString(10));
+        disk.setShareable(false);
         disk.setActive(true);
         disk.setImageStatus(ImageStatus.OK);
-        ArrayList<Guid> storageDomainIds = new ArrayList<>();
-        storageDomainIds.add(Guid.newGuid());
-        disk.setStorageIds(storageDomainIds);
+        disk.setStoragePoolId(Guid.newGuid());
+        disk.setStorageIds(Collections.singletonList(Guid.newGuid()));
         return disk;
     }
 
     private static String createAliasReplacements(DiskImage... disks) {
-        return Arrays.stream(disks).map(DiskImage::getDiskAlias).collect(Collectors.joining(", ", "$diskAliases ", ""));
+        return Arrays.stream(disks)
+                .map(DiskImage::getDiskAlias)
+                .collect(Collectors.joining(", ", "$diskAliases ", ""));
     }
 
     @Test
@@ -113,14 +110,16 @@ public class DiskImagesValidatorTest {
     public void diskImagesNotIllegalFirstIllegal() {
         disk1.setImageStatus(ImageStatus.ILLEGAL);
         assertThat(validator.diskImagesNotIllegal(),
-                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).and(replacements(hasItem(createAliasReplacements(disk1)))));
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL))
+                        .and(replacements(hasItem(createAliasReplacements(disk1)))));
     }
 
     @Test
-    public void diskImagesNotIllegalSecondtIllegal() {
+    public void diskImagesNotIllegalSecondIllegal() {
         disk2.setImageStatus(ImageStatus.ILLEGAL);
         assertThat(validator.diskImagesNotIllegal(),
-                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).and(replacements(hasItem(createAliasReplacements(disk2)))));
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL))
+                        .and(replacements(hasItem(createAliasReplacements(disk2)))));
     }
 
     @Test
@@ -128,24 +127,51 @@ public class DiskImagesValidatorTest {
         disk1.setImageStatus(ImageStatus.ILLEGAL);
         disk2.setImageStatus(ImageStatus.ILLEGAL);
         assertThat(validator.diskImagesNotIllegal(),
-                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL)).and(replacements
-                        (hasItem(createAliasReplacements(disk1, disk2)))));
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_ILLEGAL))
+                        .and(replacements(hasItem(createAliasReplacements(disk1, disk2)))));
     }
 
     @Test
-    public void diskImagesAlreadyExistBothExist() {
+    public void disksNotExistOrShareableBothExist() {
         doReturn(new DiskImage()).when(validator).getExistingDisk(any());
-        assertThat(validator.diskImagesAlreadyExist(),
-                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
-                        (hasItem(createAliasReplacements(disk1, disk2)))));
+        assertThat(validator.disksNotExistOrShareable(),
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST))
+                        .and(replacements(hasItem(createAliasReplacements(disk1, disk2)))));
+    }
+
+    @Test
+    public void disksNotExistOrShareableFirstExistsSecondShareable() {
+        DiskImage existingShareableDisk = new DiskImage();
+        existingShareableDisk.setShareable(true);
+        disk2.setShareable(true);
+
+        doReturn(new DiskImage()).when(validator).getExistingDisk(disk1.getId());
+        doReturn(existingShareableDisk).when(validator).getExistingDisk(disk2.getId());
+
+
+        assertThat(validator.disksNotExistOrShareable(),
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST))
+                        .and(replacements(hasItem(createAliasReplacements(disk1)))));
+    }
+
+    @Test
+    public void disksNotExistOrShareableFirstNotExistsSecondShareable() {
+        DiskImage existingShareableDisk = new DiskImage();
+        existingShareableDisk.setShareable(true);
+        disk2.setShareable(true);
+
+        doReturn(null).when(validator).getExistingDisk(disk1.getId());
+        doReturn(existingShareableDisk).when(validator).getExistingDisk(disk2.getId());
+
+        assertThat("Neither disk has collision with an existing disk", validator.disksNotExistOrShareable(), isValid());
     }
 
     /**
      * Test a case when the two validated disks exists and have a null disk alias, in that case the disk aliases in
-     * the CDA message should be taken from the disks existing on the setup
+     * the CDA message should be taken from the disks existing on the setup.
      */
     @Test
-    public void diskImagesAlreadyDiskInImportWithNullAlias() {
+    public void disksNotExistOrShareableDisksWithNullAlias() {
         disk1.setDiskAlias(null);
         disk2.setDiskAlias(null);
         DiskImage existingImage1 = new DiskImage();
@@ -155,44 +181,45 @@ public class DiskImagesValidatorTest {
 
         doReturn(existingImage1).when(validator).getExistingDisk(disk1.getId());
         doReturn(existingImage2).when(validator).getExistingDisk(disk2.getId());
-        assertThat(validator.diskImagesAlreadyExist(),
-                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
-                        (hasItem(createAliasReplacements(existingImage1, existingImage2)))));
+        assertThat(validator.disksNotExistOrShareable(),
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST))
+                        .and(replacements(hasItem(createAliasReplacements(existingImage1, existingImage2)))));
     }
 
-
     @Test
-    public void diskImagesAlreadyExistOneExist() {
+    public void disksNotExistOrShareableOneExists() {
         doReturn(new DiskImage()).when(validator).getExistingDisk(disk1.getId());
         doReturn(null).when(validator).getExistingDisk(disk2.getId());
-        assertThat(validator.diskImagesAlreadyExist(),
-                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST)).and(replacements
-                        (hasItem(createAliasReplacements(disk1)))));
+        assertThat(validator.disksNotExistOrShareable(),
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST))
+                        .and(replacements(hasItem(createAliasReplacements(disk1)))));
     }
 
     @Test
-    public void diskImagesAlreadyExistBothDoesntExist() {
+    public void disksNotExistOrShareableBothNotExist() {
         doReturn(null).when(validator).getExistingDisk(any());
-        assertThat(validator.diskImagesAlreadyExist(), isValid());
+        assertThat(validator.disksNotExistOrShareable(), isValid());
     }
 
     @Test
     public void diskImagesNotLockedBothOK() {
-        assertThat("Neither disk is Locked", validator.diskImagesNotLocked(), isValid());
+        assertThat("Neither disk is locked", validator.diskImagesNotLocked(), isValid());
     }
 
     @Test
     public void diskImagesNotLockedFirstLocked() {
         disk1.setImageStatus(ImageStatus.LOCKED);
         assertThat(validator.diskImagesNotLocked(),
-                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED)).and(replacements(hasItem(createAliasReplacements(disk1)))));
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED))
+                        .and(replacements(hasItem(createAliasReplacements(disk1)))));
     }
 
     @Test
-    public void diskImagesNotLockedSecondtLocked() {
+    public void diskImagesNotLockedSecondLocked() {
         disk2.setImageStatus(ImageStatus.LOCKED);
         assertThat(validator.diskImagesNotLocked(),
-                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED)).and(replacements(hasItem(createAliasReplacements(disk2)))));
+                both(failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED))
+                        .and(replacements(hasItem(createAliasReplacements(disk2)))));
     }
 
     @Test
@@ -217,8 +244,7 @@ public class DiskImagesValidatorTest {
     @Test
     public void diskImagesHasDerivedDisksNoStorageDomainSpecifiedSuccess() {
         disk1.setVmEntityType(VmEntityType.TEMPLATE);
-        assertThat(validator.diskImagesHaveNoDerivedDisks(null),
-                isValid());
+        assertThat(validator.diskImagesHaveNoDerivedDisks(null), isValid());
     }
 
     @Test

@@ -286,6 +286,15 @@ public class ClusterMapper {
         }
         model.setFipsMode(map(entity.getFipsMode(), null));
 
+        if (entity.isUpgradeRunning()) {
+            model.setUpgradeInProgress(true);
+            model.setUpgradePercentComplete(entity.getUpgradePercentComplete());
+        } else {
+            model.setUpgradeInProgress(false);
+            model.setUpgradePercentComplete(0);
+        }
+        model.setUpgradeCorrelationId(entity.getUpgradeCorrelationId());
+
         return model;
     }
 

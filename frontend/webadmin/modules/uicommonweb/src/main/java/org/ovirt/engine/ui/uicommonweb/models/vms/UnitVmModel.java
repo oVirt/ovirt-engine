@@ -2299,6 +2299,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 updateTpmEnabled();
             } else if (sender == getCpuPinningPolicy()) {
                 cpuPinningPolicyChanged();
+                behavior.updateNumaEnabled();
             } else if (sender == getConsoleDisconnectAction()){
                 consoleDisconnectActionSelectedItemChanged();
             }
@@ -3808,6 +3809,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         model.getVm().setvNumaNodeList(getVmNumaNodes());
 
         behavior.useNumaPinningChanged(getVmNumaNodes());
+        updateCpuPinningPolicy();
     }
 
     public void setNumaChanged(boolean numaChanged) {
@@ -4065,10 +4067,19 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
         boolean isDedicatedCpusSupported = false;
         if(getSelectedCluster() != null && getSelectedCluster().getCompatibilityVersion() != null) {
-            isDedicatedCpusSupported = Version.v4_7.lessOrEquals(getSelectedCluster().getCompatibilityVersion());
+            isDedicatedCpusSupported = AsyncDataProvider.getInstance()
+                    .isDedicatedPolicySupportedByVersion(getCompatibilityVersion());
         }
+
+        boolean numaNodesUnpinned =
+                getNumaEnabled() == null
+                        || getNumaEnabled().getEntity() == null
+                        || !getNumaEnabled().getEntity()
+                        || getVmNumaNodes() == null
+                        || getVmNumaNodes().stream().allMatch(numa -> numa.getVdsNumaNodeList().isEmpty());
+
         cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.MANUAL, defaultHostSelected);
-        cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.DEDICATED, isDedicatedCpusSupported);
+        cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.DEDICATED, isDedicatedCpusSupported && numaNodesUnpinned);
     }
 
     protected void cpuPinningPolicyChanged() {

@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -66,6 +67,7 @@ import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSuccessListener;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
@@ -624,10 +626,30 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     public boolean isVmDuringBackup() {
+        if (!shouldBlockDuringBackup()) {
+            return false;
+        }
+
         List<VmBackup> vmBackups = vmBackupDao.getAllForVm(getVmId());
+
+        // No need to block during hybrid backup
+        boolean allBackupsHybrid = !CollectionUtils.isEmpty(vmBackups) && vmBackups
+                .stream()
+                .allMatch(vmBackup -> VmBackupType.Hybrid == vmBackup.getBackupType());
+        if (allBackupsHybrid) {
+            return false;
+        }
 
         return !CollectionUtils.isEmpty(vmBackups) && vmBackups
                 .stream()
                 .anyMatch(vmBackup -> !vmBackup.getPhase().isBackupFinished());
+    }
+
+    private boolean shouldBlockDuringBackup() {
+        return getParentParameters() == null || getParentParameters().getCommandType() != ActionType.HybridBackup;
+    }
+
+    protected VdsManager getVdsManager(Guid vdsId) {
+        return resourceManager.getVdsManager(vdsId);
     }
 }

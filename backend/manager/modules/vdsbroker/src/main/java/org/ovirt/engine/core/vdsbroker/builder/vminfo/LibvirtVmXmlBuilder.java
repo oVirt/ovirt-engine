@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
@@ -159,7 +160,6 @@ public class LibvirtVmXmlBuilder {
     private VmNic nic;
     private Disk disk;
     private VmDevice device;
-    private boolean mdevDisplayOn;
     private int sdIndex;
 
     /**
@@ -269,7 +269,6 @@ public class LibvirtVmXmlBuilder {
         }
         vmDevicesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmDevices(vm.getId()));
         vmNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVmNumaNodes(vm));
-        mdevDisplayOn = MDevTypesUtils.isMdevDisplayOn(vm);
         legacyVirtio = vmInfoBuildUtils.isLegacyVirtio(vm.getVmOsId(), ChipsetType.fromMachineType(emulatedMachine));
     }
 
@@ -285,12 +284,12 @@ public class LibvirtVmXmlBuilder {
         writeClock();
         writePowerEvents();
         writeFeatures();
-        boolean numaEnabled = vmInfoBuildUtils.isNumaEnabled(hostNumaNodesSupplier, vmNumaNodesSupplier, vm);
+        boolean numaEnabled = vmInfoBuildUtils.isNumaEnabled(hostNumaNodesSupplier.get(), vmNumaNodesSupplier.get(), vm);
         if (numaEnabled) {
             writeNumaTune();
         }
         writeCpu(numaEnabled || vm.isHostedEngine() && !vmNumaNodesSupplier.get().isEmpty());
-        writeCpuTune(numaEnabled);
+        writeCpuTune();
         writeQemuCapabilities();
         writeDevices();
         writePowerManagement();
@@ -401,7 +400,8 @@ public class LibvirtVmXmlBuilder {
     private void writevCpu() {
         writer.writeStartElement("vcpu");
         writer.writeAttributeString("current", String.valueOf(VmCpuCountHelper.getDynamicNumOfCpu(vm)));
-        writer.writeRaw(String.valueOf(VmCpuCountHelper.isResizeAndPinPolicy(vm) ?
+        writer.writeRaw(String.valueOf(VmCpuCountHelper.isResizeAndPinPolicy(vm) ||
+                vm.getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED ?
                 VmCpuCountHelper.getDynamicNumOfCpu(vm) : VmInfoBuildUtils.maxNumberOfVcpus(vm)));
         writer.writeEndElement();
     }
@@ -519,15 +519,9 @@ public class LibvirtVmXmlBuilder {
         });
     }
 
-    private void writeCpuTune(boolean numaEnabled) {
+    private void writeCpuTune() {
         writer.writeStartElement("cputune");
-        Map<String, Object> cpuPinning = vmInfoBuildUtils.parseCpuPinning(VmCpuCountHelper.isDynamicCpuPinning(vm) ?
-                vm.getCurrentCpuPinning() : vm.getCpuPinning());
-        if (cpuPinning.isEmpty() && numaEnabled) {
-            cpuPinning = NumaSettingFactory.buildCpuPinningWithNumaSetting(
-                    vmNumaNodesSupplier.get(),
-                    hostNumaNodesSupplier.get());
-        }
+        Map<String, Object> cpuPinning = vmInfoBuildUtils.parseCpuPinning(vm.getVmPinning());
         cpuPinning.forEach((vcpu, cpuset) -> {
             writer.writeStartElement("vcpupin");
             writer.writeAttributeString("vcpu", vcpu);
@@ -616,7 +610,7 @@ public class LibvirtVmXmlBuilder {
 
     private Map<String, Object> getNumaTuneSetting() {
         Map<String, Object> numaTuneSetting = NumaSettingFactory.buildVmNumatuneSetting(
-                vmNumaNodesSupplier.get());
+                vm, vmNumaNodesSupplier.get());
         if (numaTuneSetting.isEmpty()) {
             return null;
         }
@@ -1044,7 +1038,12 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeCpuPinningPolicyMetadata() {
-        writer.writeElement(OVIRT_VM_URI, "cpuPolicy", vm.getCpuPinningPolicy().name().toLowerCase());
+        CpuPinningPolicy cpuPinningPolicy = vm.getCpuPinningPolicy();
+        // CpuPinningPolicy.NONE may happen when the engine generates CPU pinning based on the NUMA pinning.
+        if (vm.getVmPinning() != null && cpuPinningPolicy == CpuPinningPolicy.NONE) {
+            cpuPinningPolicy = CpuPinningPolicy.MANUAL;
+        }
+        writer.writeElement(OVIRT_VM_URI, "cpuPolicy", cpuPinningPolicy.name().toLowerCase());
     }
 
     private void writePowerEvents() {
@@ -1335,22 +1334,24 @@ public class LibvirtVmXmlBuilder {
     }
 
     void writeVGpu() {
-        for (String mdevType : MDevTypesUtils.getMDevTypes(vm)) {
+        for (VmDevice mdev : MDevTypesUtils.getMdevs(vmDevicesSupplier.get(), VmDeviceType.VGPU)) {
+            final Version compatibilityVersion = vm.getCompatibilityVersion();
+
             writer.writeStartElement("hostdev");
             writer.writeAttributeString("mode", "subsystem");
             writer.writeAttributeString("type", "mdev");
             writer.writeAttributeString("model", "vfio-pci");
-            if (mdevDisplayOn) {
-                // Nvidia vGPU VNC console is only supported on RHEL >= 7.6
-                // See https://bugzilla.redhat.com/show_bug.cgi?id=1633623 for details and discussion
+            final Map<String, Object> mdevSpecParams = mdev.getSpecParams();
+            if (!Boolean.TRUE.equals(mdevSpecParams.get(MDevTypesUtils.NODISPLAY))
+                    && MDevTypesUtils.isMdevDisplayOnSupported(compatibilityVersion)) {
                 writer.writeAttributeString("display", "on");
-                if (FeatureSupported.isVgpuFramebufferSupported(vm.getCompatibilityVersion())) {
+                if (FeatureSupported.isVgpuFramebufferSupported(compatibilityVersion)) {
                     writer.writeAttributeString("ramfb", "on");
                 }
             }
 
+            String address = mdev.getDeviceId().toString();
             writer.writeStartElement("source");
-            String address = Guid.newGuid().toString();
             writer.writeStartElement("address");
             writer.writeAttributeString("uuid", address);
             writer.writeEndElement();
@@ -1358,8 +1359,9 @@ public class LibvirtVmXmlBuilder {
 
             writer.writeEndElement();
 
-            String mdevTypeMeta = mdevType;
-            if (FeatureSupported.isVgpuPlacementSupported(vm.getCompatibilityVersion())) {
+            Map<String, String> metadata = new HashMap<>();
+            String mdevTypeMeta = (String)mdevSpecParams.get(MDevTypesUtils.MDEV_TYPE);
+            if (FeatureSupported.isVgpuPlacementSupported(compatibilityVersion)) {
                 VgpuPlacement vgpuPlacement = hostVgpuPlacementSupplier.get();
                 String vgpuPlacementString;
                 if (vgpuPlacement == VgpuPlacement.CONSOLIDATED) {
@@ -1374,9 +1376,14 @@ public class LibvirtVmXmlBuilder {
                 }
                 mdevTypeMeta = mdevTypeMeta + "|" + vgpuPlacementString;
             }
-            // removing from custom properties since it will be processed separately
-            vmCustomProperties.remove("mdev_type");
-            mdevMetadata.put(address, Collections.singletonMap("mdevType", mdevTypeMeta));
+            metadata.put("mdevType", mdevTypeMeta);
+            if (FeatureSupported.isVgpuDriverParametersSupported(compatibilityVersion)) {
+                String mdevDriverParameters = (String) mdevSpecParams.get(MDevTypesUtils.DRIVER_PARAMETERS);
+                if (mdevDriverParameters != null) {
+                    metadata.put("mdevDriverParameters", mdevDriverParameters);
+                }
+            }
+            mdevMetadata.put(address, metadata);
         }
     }
 
@@ -2985,6 +2992,9 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("video");
 
         writer.writeStartElement("model");
+        boolean mdevDisplayOn = MDevTypesUtils
+                .getMdevs(vmDevicesSupplier.get(), VmDeviceType.VGPU).stream()
+                .anyMatch(mdev -> !Boolean.TRUE.equals(mdev.getSpecParams().get(MDevTypesUtils.NODISPLAY)));
         if (mdevDisplayOn) {
             writer.writeAttributeString("type", "none");
         } else {

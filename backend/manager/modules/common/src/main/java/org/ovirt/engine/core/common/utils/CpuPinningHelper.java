@@ -10,11 +10,12 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 
 public class CpuPinningHelper {
@@ -56,6 +57,9 @@ public class CpuPinningHelper {
      * @return a set of all used host cpus
      */
     public static Set<Integer> getAllPinnedPCpus(String cpuPinning) {
+        if (cpuPinning == null || cpuPinning.isEmpty()) {
+            return new LinkedHashSet<>();
+        }
         // collect all pinned cpus and merge them into one set
         final Set<Integer> pinnedCpus = new LinkedHashSet<>();
         for (final String rule : cpuPinning.split("_")) {
@@ -95,16 +99,16 @@ public class CpuPinningHelper {
         }
     }
 
-    public static String getVmPinning(VM vm) {
-        switch (vm.getCpuPinningPolicy()) {
-            case MANUAL:
-                return vm.getCpuPinning();
-            case RESIZE_AND_PIN_NUMA:
-            case DEDICATED:
-                return vm.getCurrentCpuPinning();
-            default:
-                return null;
-        }
+    /**
+     * Provides a CPU pinning map based on the VdsCpuUnit list. The pinning will be based on the list order.
+     *
+     * @param vdsCpuUnits a list of VdsCpuUnit
+     * @return a map of CPU pinning
+     */
+    public static Map<Integer, Integer> createCpuPinningMap(List<VdsCpuUnit> vdsCpuUnits) {
+        return IntStream.range(0, vdsCpuUnits.size())
+                .boxed()
+                .collect(Collectors.toMap(Function.identity(), i -> vdsCpuUnits.get(i).getCpu()));
     }
 
     /**
@@ -114,9 +118,12 @@ public class CpuPinningHelper {
      * @param vdsCpuUnits a list of VdsCpuUnit
      * @return a string of CPU pinning
      */
-    public static String createCpuPinning(List<VdsCpuUnit> vdsCpuUnits) {
-        return IntStream.range(0, vdsCpuUnits.size())
-                .mapToObj(i-> String.format("%d#%d", i, vdsCpuUnits.get(i).getCpu())).collect(Collectors.joining("_"));
+    public static String createCpuPinningString(List<VdsCpuUnit> vdsCpuUnits) {
+        return createCpuPinningMap(vdsCpuUnits)
+                .entrySet()
+                .stream()
+                .map(entry -> String.format("%d#%d", entry.getKey(), entry.getValue()))
+                .collect(Collectors.joining("_"));
     }
 
     /**

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.scheduling.utils;
+package org.ovirt.engine.core.common.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
-import org.ovirt.engine.core.bll.utils.NumaTestUtils;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -217,13 +216,13 @@ class NumaPinningHelperTest {
     // TODO - add tests for multiple VMs
 
     private VmNumaNode createVmNumaNode(int index, List<Integer> hostNodeIndices) {
-        VmNumaNode node = NumaTestUtils.createVmNumaNode(index);
+        VmNumaNode node = createVmNumaNode(index);
         node.setVdsNumaNodeList(hostNodeIndices);
         return node;
     }
 
     private VdsNumaNode createHostNumaNode(int index, long freeMem) {
-        VdsNumaNode node = NumaTestUtils.createVdsNumaNode(index);
+        VdsNumaNode node = createVdsNumaNode(index);
         node.setNumaNodeStatistics(new NumaNodeStatistics());
         node.getNumaNodeStatistics().setMemFree(freeMem);
         return node;
@@ -249,5 +248,21 @@ class NumaPinningHelperTest {
         VdsNumaNode vdsNumaNode= createHostNumaNode(index, freeMem);
         vdsNumaNode.setCpuIds(cpus);
         return vdsNumaNode;
+     }
+
+     private static VmNumaNode createVmNumaNode(int index) {
+         VmNumaNode vmNumaNode = new VmNumaNode();
+         vmNumaNode.setId(Guid.newGuid());
+         vmNumaNode.setIndex(index);
+         vmNumaNode.setMemTotal(1000);
+         return vmNumaNode;
+     }
+
+     private static VdsNumaNode createVdsNumaNode(int index) {
+         VdsNumaNode vdsNumaNode = new VdsNumaNode();
+         vdsNumaNode.setIndex(index);
+         vdsNumaNode.setId(Guid.newGuid());
+         vdsNumaNode.setMemTotal(2000);
+         return vdsNumaNode;
      }
 }

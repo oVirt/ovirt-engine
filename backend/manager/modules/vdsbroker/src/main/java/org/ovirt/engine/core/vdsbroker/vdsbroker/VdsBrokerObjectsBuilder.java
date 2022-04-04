@@ -1602,6 +1602,12 @@ public class VdsBrokerObjectsBuilder {
                         acquired = (Boolean)internalValue.get(VdsProperties.acquired);
                     }
                     data.setAcquired(acquired);
+
+                    Boolean valid = Boolean.FALSE;
+                    if (internalValue.containsKey(VdsProperties.valid)) {
+                        valid = (Boolean)internalValue.get(VdsProperties.valid);
+                    }
+                    data.setValid(valid);
                     domainsData.add(data);
                 } catch (Exception e) {
                     log.error("failed building domains: {}", e.getMessage());
@@ -1789,9 +1795,9 @@ public class VdsBrokerObjectsBuilder {
             if (!StringUtils.isEmpty(imageGroupIdString)) {
                 Guid imageGroupIdGuid = new Guid(imageGroupIdString);
                 diskData.setId(imageGroupIdGuid);
-                diskData.setReadRate(assignIntValue(disk, VdsProperties.vm_disk_read_rate));
+                diskData.setReadRate(assignLongValue(disk, VdsProperties.vm_disk_read_rate));
                 diskData.setReadOps(assignLongValue(disk, VdsProperties.vm_disk_read_ops));
-                diskData.setWriteRate(assignIntValue(disk, VdsProperties.vm_disk_write_rate));
+                diskData.setWriteRate(assignLongValue(disk, VdsProperties.vm_disk_write_rate));
                 diskData.setWriteOps(assignLongValue(disk, VdsProperties.vm_disk_write_ops));
 
                 if (disk.containsKey(VdsProperties.disk_true_size)) {
@@ -2587,10 +2593,11 @@ public class VdsBrokerObjectsBuilder {
             Object[] cpuTopology = (Object[]) struct.get(VdsProperties.cpu_topology);
             for (Object cpuCapabilityObject : cpuTopology) {
                 Map<String, Object> cpuCapability = (Map<String, Object>) cpuCapabilityObject;
+                int numa = (Integer) cpuCapability.get(VdsProperties.numa_id);
                 int socket = (Integer) cpuCapability.get(VdsProperties.socket_id);
                 int core = (Integer) cpuCapability.get(VdsProperties.core_id);
                 int cpuId = (Integer) cpuCapability.get(VdsProperties.cpu_id);
-                VdsCpuUnit vdsCpuUnit = new VdsCpuUnit(socket, core, cpuId);
+                VdsCpuUnit vdsCpuUnit = new VdsCpuUnit(numa, socket, core, cpuId);
                 vdsCpuTopology.add(vdsCpuUnit);
             }
             vds.setCpuTopology(vdsCpuTopology);

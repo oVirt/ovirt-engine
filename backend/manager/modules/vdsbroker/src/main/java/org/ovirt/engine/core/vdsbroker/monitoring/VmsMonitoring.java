@@ -190,7 +190,7 @@ public class VmsMonitoring {
     }
 
     private void postFlush(List<VmAnalyzer> vmAnalyzers, VdsManager vdsManager, long fetchTime) {
-        Collection<Guid> movedToDownVms = new ArrayList<>();
+        List<Guid> movedToDownVms = new ArrayList<>();
         List<Guid> succeededToRunVms = new ArrayList<>();
         List<Guid> autoVmsToRun = new ArrayList<>();
         List<Guid> coldRebootVmsToRun = new ArrayList<>();
@@ -254,6 +254,9 @@ public class VmsMonitoring {
 
         getVdsEventListener().updateSlaPolicies(succeededToRunVms, vdsManager.getVdsId());
 
+        // need to execute this before processOnVmStop that might remove unmanaged devices
+        getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, movedToDownVms, vdsManager.getVdsId());
+
         // process all vms that went down
         getVdsEventListener().processOnVmStop(movedToDownVms, vdsManager.getVdsId());
 
@@ -262,8 +265,6 @@ public class VmsMonitoring {
 
         // run all vms that went down as a part of cold reboot process
         getVdsEventListener().runColdRebootVms(coldRebootVmsToRun);
-
-        getVdsEventListener().refreshHostIfAnyVmHasHostDevices(succeededToRunVms, vdsManager.getVdsId());
 
         // Looping only over powering up VMs as LUN device size
         // is updated by VDSM only once when running a VM.

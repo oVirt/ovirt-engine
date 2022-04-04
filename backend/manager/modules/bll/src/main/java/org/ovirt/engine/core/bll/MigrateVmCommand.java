@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -65,7 +66,9 @@ import org.ovirt.engine.core.common.migration.ConvergenceConfig;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
+import org.ovirt.engine.core.common.utils.CpuPinningHelper;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
+import org.ovirt.engine.core.common.utils.NumaPinningHelper;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.vdscommands.MigrateStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
@@ -80,6 +83,7 @@ import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateStatusReturn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -403,6 +407,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         Boolean enableGuestEvents = null;
         Integer maxIncomingMigrations = 1;
         Integer maxOutgoingMigrations = 1;
+        List<String> cpuSets = null;
+        List<String> numaNodeSets = null;
 
         MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(
                 getCluster().getMigrationPolicyId(),
@@ -422,6 +428,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         if (parallelMigrations == null) {
             maxIncomingMigrations = maxOutgoingMigrations = effectiveMigrationPolicy.getMaxMigrations();
+        }
+        if (getVm().getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED) {
+            cpuSets = CpuPinningHelper.getAllPinnedPCpus(getDedicatedCpuPinning(getDestinationVdsManager())).stream().sorted()
+                    .map(Object::toString).collect(Collectors.toList());
+            String numaPinningString = vmHandler.createNumaPinningForDedicated(getVm(), getDestinationVdsId());
+            numaNodeSets = NumaPinningHelper.parseNumaSets(numaPinningString);
         }
 
         return new MigrateVDSCommandParameters(getVdsId(),
@@ -443,7 +455,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 convergenceSchedule,
                 enableGuestEvents,
                 maxIncomingMigrations,
-                maxOutgoingMigrations);
+                maxOutgoingMigrations,
+                cpuSets,
+                numaNodeSets);
     }
 
     private ConvergenceConfig filterOutPostcopy(ConvergenceConfig config) {
@@ -609,7 +623,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     public void runningSucceded() {
         try {
             queryDowntime();
-            vmDynamicDao.clearMigratingToVds(getVmId());
+            addNumaPinningForDedicated(getDestinationVdsId());
+            setDedicatedCpus(getDestinationVdsManager());
+            vmDynamicDao.clearMigratingToVdsAndSetDynamicPinning(getVmId(), getVm().getCurrentCpuPinning(), getVm().getCurrentNumaPinning());
             updateVmAfterMigrationToDifferentCluster();
             plugPassthroughNics();
             initParametersForExternalNetworks(destinationVds, true);
@@ -629,6 +645,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 log.error("Failed to detach managed block disks from destination host");
             }
         } finally {
+            getDestinationVdsManager().unpinVmCpus(getVmId());
             super.runningFailed();
         }
     }
@@ -967,6 +984,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         if (getVm() != null && getVm().getStatus() == VMStatus.Up) {
             // this will clean all VF reservations made in {@link #initVdss}.
             cleanupPassthroughVnics(getDestinationVdsId());
+            getDestinationVdsManager().unpinVmCpus(getVmId());
             super.rerun();
         } else {
             // vm went down on the destination and source, migration failed.
@@ -1099,5 +1117,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         } finally {
             super.reportCompleted();
         }
+    }
+
+    private VdsManager getDestinationVdsManager() {
+        return resourceManager.getVdsManager(getDestinationVdsId());
     }
 }

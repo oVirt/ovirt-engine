@@ -125,6 +125,7 @@ public class VmMapperTest extends
         from.getMigration().setAutoConverge(InheritableBoolean.TRUE);
         from.getMigration().setCompressed(InheritableBoolean.TRUE);
         from.getDisplay().setDisconnectAction(DisplayDisconnectAction.LOCK_SCREEN.toString());
+        from.getDisplay().setDisconnectActionDelay(2);
         return from;
     }
 
@@ -191,6 +192,7 @@ public class VmMapperTest extends
         assertEquals(model.getMigration().getAutoConverge(), transform.getMigration().getAutoConverge());
         assertEquals(model.getMigration().getCompressed(), transform.getMigration().getCompressed());
         assertEquals(model.getDisplay().getDisconnectAction(), transform.getDisplay().getDisconnectAction());
+        assertEquals(model.getDisplay().getDisconnectActionDelay(), transform.getDisplay().getDisconnectActionDelay());
     }
 
     private void assertHostsListMatch(List<Host> modelHostsList, List<Host> trnsfHostsList) {

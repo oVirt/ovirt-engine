@@ -82,6 +82,16 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
     }
 
     @Override
+    public void clearMigratingToVdsAndSetDynamicPinning(Guid id, String currentCpuPinning, String currentNumaPinning) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_guid", id)
+                .addValue("current_cpu_pinning", currentCpuPinning)
+                .addValue("current_numa_pinning", currentNumaPinning);
+
+        getCallsHandler().executeModification("ClearMigratingToVdsAndSetDynamicPinning", parameterSource);
+    }
+
+    @Override
     public boolean updateConsoleUserWithOptimisticLocking(VmDynamic vm) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", vm.getId())
@@ -236,7 +246,8 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("current_cpu_pinning", vm.getCurrentCpuPinning())
                 .addValue("current_sockets", vm.getCurrentSockets())
                 .addValue("current_cores", vm.getCurrentCoresPerSocket())
-                .addValue("current_threads", vm.getCurrentThreadsPerCore());
+                .addValue("current_threads", vm.getCurrentThreadsPerCore())
+                .addValue("current_numa_pinning", vm.getCurrentNumaPinning());
     }
 
     private static ObjectMapper JSON_MAPPER = new ObjectMapper();
@@ -321,6 +332,7 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
         entity.setCurrentSockets(rs.getInt("current_sockets"));
         entity.setCurrentCoresPerSocket(rs.getInt("current_cores"));
         entity.setCurrentThreadsPerCore(rs.getInt("current_threads"));
+        entity.setCurrentNumaPinning(rs.getString("current_numa_pinning"));
         return entity;
     };
 

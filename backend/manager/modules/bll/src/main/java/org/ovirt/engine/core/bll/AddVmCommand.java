@@ -119,6 +119,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -129,7 +130,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.PermissionDao;
@@ -192,6 +192,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private VmTemplate vmDisksSource;
     private VmBase vmDevicesSource;
     private List<StorageDomain> poolDomains;
+    private String mdevType; // the value of the deprecated custom property mdev_type, if specified
 
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
 
@@ -227,8 +228,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private AffinityGroupDao affinityGroupDao;
     @Inject
     private LabelDao labelDao;
-    @Inject
-    private DiskImageDao diskImageDao;
 
     @Inject
     private VmInitDao vmInitDao;
@@ -305,6 +304,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             imageTypeId = parameters.getVmStaticData().getImageTypeId();
             vmInterfacesSourceId = parameters.getVmStaticData().getVmtGuid();
             vmDisksSource = getVmTemplate();
+
+            var givenVm = getParameters().getVmStaticData();
+            var vmPropertiesUtils = VmPropertiesUtils.getInstance();
+            var customProperties = vmPropertiesUtils.convertProperties(givenVm.getCustomProperties());
+            mdevType = customProperties.remove(MDevTypesUtils.DEPRECATED_CUSTOM_PROPERTY_NAME);
+            if (mdevType != null) {
+                givenVm.setCustomProperties(vmPropertiesUtils.convertProperties(customProperties));
+            }
         }
 
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
@@ -831,7 +838,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
         if (!validate(vmHandler.validateCpuPinningPolicy(getParameters().getVmStaticData(),
-                getParameters().isUpdateNuma()))) {
+                getParameters().isUpdateNuma(), getEffectiveCompatibilityVersion()))) {
             return false;
         }
         return true;
@@ -1072,6 +1079,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             updateSmartCardDevices();
             addVmWatchdog();
             addGraphicsDevice();
+            addMdevDevices();
             getVmDeviceUtils().updateVirtioScsiController(getVm().getStaticData(),
                     getParameters().isVirtioScsiEnabled());
             updateVmDevicesOnChipsetChange();
@@ -1115,6 +1123,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
             graphicsDevice.setVmId(getVmId());
             backend.runInternalAction(ActionType.AddGraphicsDevice, new GraphicsParameters(graphicsDevice));
+        }
+    }
+
+    private void addMdevDevices() {
+        if (mdevType != null) {
+            var convertedMdevDevices = MDevTypesUtils.convertDeprecatedCustomPropertyToVmDevices(mdevType, getVmId());
+            vmDeviceDao.saveAll(convertedMdevDevices);
         }
     }
 

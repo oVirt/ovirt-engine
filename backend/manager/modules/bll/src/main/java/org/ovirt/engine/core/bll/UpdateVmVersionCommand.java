@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -143,12 +144,19 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     protected void executeVmCommand() {
         // load vm init from db
         vmHandler.updateVmInitFromDB(getVmTemplate(), false);
+        Guid originalCpuProfileId = getVm().getCpuProfileId();
         if (!VmHandler.copyData(getVmTemplate(), getVm().getStaticData())) {
             return;
         }
 
         getParameters().setPreviousDiskOperatorAuthzPrincipalDbId(getIdOfDiskOperator());
         getParameters().setVmStaticData(getVm().getStaticData());
+
+        if (!Objects.equals(getVm().getClusterId(), getVmTemplate().getClusterId())) {
+            // the validation during add vm would fail because the template's cpu profile
+            // is not at the same cluster as the vm, lets keep the original cpu profile
+            getParameters().getVmStaticData().setCpuProfileId(originalCpuProfileId);
+        }
 
         if (getParameters().getUseLatestVersion() != null) {
             getParameters().getVmStaticData().setUseLatestVersion(getParameters().getUseLatestVersion());

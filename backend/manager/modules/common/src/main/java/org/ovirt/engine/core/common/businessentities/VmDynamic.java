@@ -106,6 +106,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private int currentCoresPerSocket;
     @UnchangeableByVdsm
     private int currentThreadsPerCore;
+    @UnchangeableByVdsm
+    private String currentNumaPinning;
 
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
 
@@ -163,7 +165,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 currentCpuPinning,
                 currentSockets,
                 currentCoresPerSocket,
-                currentThreadsPerCore
+                currentThreadsPerCore,
+                currentNumaPinning
         );
     }
 
@@ -227,7 +230,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(currentCpuPinning, other.currentCpuPinning)
                 && Objects.equals(currentSockets, other.currentSockets)
                 && Objects.equals(currentCoresPerSocket, other.currentCoresPerSocket)
-                && Objects.equals(currentThreadsPerCore, other.currentThreadsPerCore);
+                && Objects.equals(currentThreadsPerCore, other.currentThreadsPerCore)
+                && Objects.equals(currentNumaPinning, other.currentNumaPinning);
     }
 
     public Date getBootTime() {
@@ -348,6 +352,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         currentSockets = template.getCurrentSockets();
         currentCoresPerSocket = template.getCurrentCoresPerSocket();
         currentThreadsPerCore = template.getCurrentThreadsPerCore();
+        currentNumaPinning = template.getCurrentNumaPinning();
     }
 
     public String getAppList() {
@@ -773,6 +778,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setCurrentThreadsPerCore(int threads) {
         this.currentThreadsPerCore = threads;
+    }
+
+    public String getCurrentNumaPinning() {
+        return currentNumaPinning;
+    }
+
+    public void setCurrentNumaPinning(String currentNumaPinning) {
+        this.currentNumaPinning = currentNumaPinning;
     }
 
     /**

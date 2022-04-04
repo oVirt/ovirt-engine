@@ -13,9 +13,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneable {
 
     private static final long serialVersionUID = -397254497953366129L;
-    private int core;
+
+    private int numa;
+
     private int socket;
+
+    private int core;
+
     private int cpu;
+
     @JsonIgnore
     private List<Guid> vmIds;
     @JsonIgnore
@@ -26,7 +32,8 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
         this.vmIds = new ArrayList<>();
     }
 
-    public VdsCpuUnit(int socket, int core, int cpu) {
+    public VdsCpuUnit(int numa, int socket, int core, int cpu) {
+        this.numa = numa;
         this.socket = socket;
         this.core = core;
         this.cpu = cpu;
@@ -35,6 +42,7 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
     }
 
     public VdsCpuUnit(VdsCpuUnit vdsCpuUnit) {
+        this.numa = vdsCpuUnit.getNuma();
         this.socket = vdsCpuUnit.getSocket();
         this.core = vdsCpuUnit.getCore();
         this.cpu = vdsCpuUnit.getCpu();
@@ -48,6 +56,14 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
 
     public void setSocket(int socket) {
         this.socket = socket;
+    }
+
+    public int getNuma() {
+        return numa;
+    }
+
+    public void setNuma(int numa) {
+        this.numa = numa;
     }
 
     public int getCore() {
@@ -110,7 +126,7 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
             return false;
         }
         VdsCpuUnit other = (VdsCpuUnit) obj;
-        return socket == other.socket && core == other.core && cpu == other.cpu;
+        return socket == other.socket && numa == other.numa && core == other.core && cpu == other.cpu;
     }
 
     @Override
@@ -138,6 +154,10 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
         }
         if (!this.vmIds.contains(vmId)) {
             this.vmIds.add(vmId);
+        }
+        // CpuPinningPolicy.NONE may happen when the engine generates CPU pinning based on the NUMA pinning.
+        if (cpuPinningPolicy == CpuPinningPolicy.RESIZE_AND_PIN_NUMA || cpuPinningPolicy == CpuPinningPolicy.NONE) {
+            cpuPinningPolicy = CpuPinningPolicy.MANUAL;
         }
         this.cpuPinningPolicy = cpuPinningPolicy;
         return true;

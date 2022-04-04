@@ -1935,6 +1935,8 @@ public interface UIConstants extends Constants {
 
     String numaDisabledInfoMessage();
 
+    String numaDisabledForDedicatedCpusInfoMessage();
+
     String numaInfoMessage();
 
     String eitherTotalOrReadWriteCanHaveValues();
@@ -2052,8 +2054,6 @@ public interface UIConstants extends Constants {
     String removeHostDevices();
 
     String addVmHostDevicesTitle();
-
-    String repinHostTitle();
 
     String someNonDefaultTemplateHasToExistFirst();
 
@@ -2236,4 +2236,16 @@ public interface UIConstants extends Constants {
     String cpuPinningDedicatedDisabled();
 
     String accountSettings();
+
+    String resetSettings();
+
+    String areYouSureYouWantToResetTheFollowingSettings();
+
+    String persistGridSettingsOnServer();
+
+    String confirmSuspendingVm();
+
+    String homePageCustom();
+
+    String statelessVmFieldDisabledReason();
 }

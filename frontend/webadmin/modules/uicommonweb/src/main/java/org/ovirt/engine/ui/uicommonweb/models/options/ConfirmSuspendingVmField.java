@@ -9,13 +9,18 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 class ConfirmSuspendingVmField implements Field<Boolean> {
 
     private final EntityModel<Boolean> confirmSuspendingVm;
-    private boolean originalConfirmSuspendingVm = true;
+    private boolean originalConfirmSuspendingVm;
     private final ConfirmationModelSettingsManager confirmationModelSettingsManager;
+    private final boolean resettable;
+    private final Boolean defaultValue;
 
     public ConfirmSuspendingVmField(EntityModel<Boolean> model,
-            ConfirmationModelSettingsManager confirmationModelSettingsManager) {
+            ConfirmationModelSettingsManager confirmationModelSettingsManager, boolean resettable) {
         this.confirmSuspendingVm = model;
         this.confirmationModelSettingsManager = confirmationModelSettingsManager;
+        this.resettable = resettable;
+        this.defaultValue = model.getEntity();
+        originalConfirmSuspendingVm = defaultValue;
     }
 
     @Override
@@ -47,5 +52,15 @@ class ConfirmSuspendingVmField implements Field<Boolean> {
     @Override
     public boolean isSupported(UserProfileProperty prop) {
         return confirmationModelSettingsManager.getIsConfirmSuspendingVm().getName().equals(prop.getName());
+    }
+
+    @Override
+    public boolean isResettable() {
+        return resettable;
+    }
+
+    @Override
+    public boolean isCustom() {
+        return !Objects.equals(defaultValue, originalConfirmSuspendingVm);
     }
 }

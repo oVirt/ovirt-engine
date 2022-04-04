@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,10 +68,13 @@ public class NetworkConfiguratorTest {
     private static final Guid MANAGEMENT_NETWORK_ID = Guid.newGuid();
     private static final Guid CLUSTER_ID = Guid.newGuid();
     private static final String NIC_NAME = "nic name";
+    private static final String MANAGEMENT_NIC_NAME = "management nic name";
     private static final String MANAGEMENT_NETWORK_NAME = "management network name";
     private static final int NIC_VLAN_ID = 666;
     private static final int MANAGMENT_NETWORK_VLAN_ID = 777;
     private static final String HOST_NAME = "host name";
+    private static final String REAL_IPV4_ADDRESS = "192.168.0.100";
+    private static final String REAL_IPV6_ADDRESS = "fbc::10";
 
     @Mock
     @InjectedMock
@@ -85,6 +89,7 @@ public class NetworkConfiguratorTest {
 
     private VDS host;
     private VdsNetworkInterface nic = new VdsNetworkInterface();
+    private VdsNetworkInterface managementNic = new VdsNetworkInterface();
     private Network managementNetwork = new Network();
 
     private NetworkConfigurator underTest;
@@ -97,6 +102,9 @@ public class NetworkConfiguratorTest {
 
         nic.setNetworkName(NETWORK_NAME1);
         nic.setName(NIC_NAME);
+
+        managementNic.setNetworkName(MANAGEMENT_NETWORK_NAME);
+        managementNic.setName(MANAGEMENT_NIC_NAME);
 
         host = new VDS();
         host.setVdsName(HOST_NAME);
@@ -191,6 +199,36 @@ public class NetworkConfiguratorTest {
                 hasEntry("vlanid", String.valueOf(NIC_VLAN_ID)),
                 hasEntry("mgmtvlanid", String.valueOf(MANAGMENT_NETWORK_VLAN_ID)),
                 hasEntry("interfacename", NIC_NAME)));
+    }
+
+    @Test
+    public void testCreateManagementNetworkIfRequiredReturnsEarlyIfIPv4Exists() {
+        managementNic.setIpv4Address(REAL_IPV4_ADDRESS);
+        host.getInterfaces().add(managementNic);
+        host.setHostName(REAL_IPV4_ADDRESS);
+
+        final NetworkConfigurator spiedUnderTest = spy(underTest);
+        doReturn(backend).when(spiedUnderTest).getBackend();
+
+        underTest.createManagementNetworkIfRequired();
+
+        verify(backend, never()).runInternalAction(eq(ActionType.HostSetupNetworks), any(), any());
+        verify(backend, never()).runInternalAction(eq(ActionType.CommitNetworkChanges), any(), any());
+    }
+
+    @Test
+    public void testCreateManagementNetworkIfRequiredReturnsEarlyIfIPv6Exists() {
+        managementNic.setIpv6Address(REAL_IPV6_ADDRESS);
+        host.getInterfaces().add(managementNic);
+        host.setHostName(REAL_IPV6_ADDRESS);
+
+        final NetworkConfigurator spiedUnderTest = spy(underTest);
+        doReturn(backend).when(spiedUnderTest).getBackend();
+
+        underTest.createManagementNetworkIfRequired();
+
+        verify(backend, never()).runInternalAction(eq(ActionType.HostSetupNetworks), any(), any());
+        verify(backend, never()).runInternalAction(eq(ActionType.CommitNetworkChanges), any(), any());
     }
 
     private Map<String, String> verifyAuditLoggableBaseFilledProperly(NetworkConfigurator underTest, AuditLogType auditLogType) {

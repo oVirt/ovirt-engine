@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -52,6 +53,8 @@ public class BackendImageTransfersResource
     public Response addForSnapshot(ImageTransfer imageTransfer) {
         TransferDiskImageParameters params = new TransferDiskImageParameters();
         params.setImageId(GuidUtils.asGuid(imageTransfer.getSnapshot().getId()));
+        QueryReturnValue value = runQuery(QueryType.GetDiskIdBySnapshotId, new IdQueryParameters(params.getImageId()));
+        params.setImageGroupID(value.getReturnValue());
         return performCreate(imageTransfer, params);
     }
 

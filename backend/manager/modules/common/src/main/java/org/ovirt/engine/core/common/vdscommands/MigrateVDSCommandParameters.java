@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
@@ -25,6 +26,8 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private Boolean enableGuestEvents;
     private Integer maxIncomingMigrations;
     private Integer maxOutgoingMigrations;
+    private List<String> cpuSets;
+    private List<String> numaNodeSets;
 
     private Map<String, Object> convergenceSchedule;
 
@@ -33,7 +36,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
             int migrationDowntime, Boolean autoConverge, Boolean migrateCompressed, Boolean migrateEncrypted,
             String consoleAddress, Integer maxBandwidth, Integer parallelMigrations,
             Map<String, Object> convergenceSchedule, Boolean enableGuestEvents, Integer maxIncomingMigrations,
-            Integer maxOutgoingMigrations) {
+            Integer maxOutgoingMigrations, List<String> cpuSets, List<String> numaNodeSets) {
         super(vdsId, vmId);
         this.srcHost = srcHost;
         this.dstVdsId = dstVdsId;
@@ -53,6 +56,8 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.enableGuestEvents = enableGuestEvents;
         this.maxIncomingMigrations = maxIncomingMigrations;
         this.maxOutgoingMigrations = maxOutgoingMigrations;
+        this.cpuSets = cpuSets;
+        this.numaNodeSets = numaNodeSets;
     }
 
     public String getSrcHost() {
@@ -175,6 +180,22 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.maxOutgoingMigrations = maxOutgoingMigrations;
     }
 
+    public List<String> getCpuSets() {
+        return cpuSets;
+    }
+
+    public void setCpuSets(List<String> cpuSets) {
+        this.cpuSets = cpuSets;
+    }
+
+    public List<String> getNumaNodeSets() {
+        return numaNodeSets;
+    }
+
+    public void setNumaNodeSets(List<String> numaNodeSets) {
+        this.numaNodeSets = numaNodeSets;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
@@ -194,6 +215,8 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
                 .append("maxIncomingMigrations", getMaxIncomingMigrations())
                 .append("maxOutgoingMigrations", getMaxOutgoingMigrations())
                 .append("convergenceSchedule", getConvergenceSchedule())
-                .append("dstQemu", getDstQemu());
+                .append("dstQemu", getDstQemu())
+                .append("cpusets", getCpuSets())
+                .append("numaNodesets", getNumaNodeSets());
     }
 }

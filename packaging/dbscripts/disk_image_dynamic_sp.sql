@@ -5,9 +5,9 @@
 --
 CREATE OR REPLACE FUNCTION Insertdisk_image_dynamic (
     v_image_id UUID,
-    v_read_rate INT,
+    v_read_rate BIGINT,
     v_read_ops BIGINT,
-    v_write_rate INT,
+    v_write_rate BIGINT,
     v_write_ops BIGINT,
     v_actual_size BIGINT,
     v_read_latency_seconds NUMERIC(18, 9),
@@ -43,9 +43,9 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatedisk_image_dynamic (
     v_image_id UUID,
-    v_read_rate INT,
+    v_read_rate BIGINT,
     v_read_ops BIGINT,
-    v_write_rate INT,
+    v_write_rate BIGINT,
     v_write_ops BIGINT,
     v_actual_size BIGINT,
     v_read_latency_seconds NUMERIC(18, 9),
@@ -73,9 +73,9 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION Updatedisk_image_dynamic_by_disk_id_and_vm_id (
     v_image_group_id UUID,
     v_vm_id UUID,
-    v_read_rate INT,
+    v_read_rate BIGINT,
     v_read_ops BIGINT,
-    v_write_rate INT,
+    v_write_rate BIGINT,
     v_write_ops BIGINT,
     v_actual_size BIGINT,
     v_read_latency_seconds NUMERIC(18, 9),

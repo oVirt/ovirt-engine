@@ -13,7 +13,8 @@ public enum VmBackupPhase {
     FINALIZING("Finalizing"),
     FINALIZING_FAILURE("Finalizing Failure"),
     SUCCEEDED("Succeeded"),
-    FAILED("Failed");
+    FAILED("Failed"),
+    REMOVING_SNAPSHOT("Removing snapshot");
 
     private String name;
 

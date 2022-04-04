@@ -46,9 +46,9 @@ public class DiskImageDynamicDaoTest extends BaseGenericDaoTestCase<Guid, DiskIm
 
     public DiskImageDynamic createDiskImageDynamic(Guid id) {
         DiskImageDynamic dynamic = new DiskImageDynamic();
-        dynamic.setReadRate(5);
+        dynamic.setReadRate(5L);
         dynamic.setReadOps(6L);
-        dynamic.setWriteRate(7);
+        dynamic.setWriteRate(7L);
         dynamic.setWriteOps(8L);
         dynamic.setReadLatency(0d);
         dynamic.setFlushLatency(0.0202020d);
@@ -61,7 +61,7 @@ public class DiskImageDynamicDaoTest extends BaseGenericDaoTestCase<Guid, DiskIm
     public void testUpdateAll() {
         DiskImageDynamic existingEntity2 = dao.get(new Guid("42058975-3d5e-484a-80c1-01c31207f579"));
         existingEntity.setActualSize(100);
-        existingEntity2.setReadRate(120);
+        existingEntity2.setReadRate(120L);
         existingEntity.setReadLatency(100d);
         existingEntity2.setReadLatency(0.00001d);
 
@@ -77,10 +77,10 @@ public class DiskImageDynamicDaoTest extends BaseGenericDaoTestCase<Guid, DiskIm
         Guid imageGroupId = FixturesTool.IMAGE_GROUP_ID_2;
 
         DiskImageDynamic existingEntity2 = dao.get(imageId);
-        assertNotEquals(120, (int) existingEntity2.getReadRate());
+        assertNotEquals(120, existingEntity2.getReadRate());
 
         existingEntity2.setId(imageGroupId);
-        Integer readRate = 120;
+        Long readRate = 120L;
         existingEntity2.setReadRate(readRate);
 
         // test that the record is updated when the active disk is attached to the vm
@@ -90,7 +90,7 @@ public class DiskImageDynamicDaoTest extends BaseGenericDaoTestCase<Guid, DiskIm
         existingEntity2.setId(imageId);
         assertEquals(existingEntity2, dao.get(imageId));
 
-        existingEntity2.setReadRate(150);
+        existingEntity2.setReadRate(150L);
         dao.updateAllDiskImageDynamicWithDiskIdByVmId(Collections.singleton(new Pair<>(FixturesTool.VM_RHEL5_POOL_57,
                 existingEntity2)));
         assertEquals(readRate, dao.get(imageId).getReadRate());

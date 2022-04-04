@@ -290,9 +290,7 @@ public class CustomPropertiesUtils {
         }
 
         if (regExMap != null) {
-            for (ValidationError error : validateProperties(regExMap, map)) {
-                map.remove(error.getKeyName());
-            }
+            validateProperties(regExMap, map).stream().map(ValidationError::getKeyName).forEach(map::remove);
         }
 
         return map;

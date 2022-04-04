@@ -201,7 +201,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
         ImportValidator importValidator = new ImportValidator(getParameters());
 
-        if (!validate(importValidator.validateDiskNotAlreadyExistOnDB(
+        if (!validate(importValidator.validateDiskImagesNotExistOrShareable(
                 getImages(),
                 getParameters().isAllowPartialImport(),
                 imageToDestinationDomainMap,

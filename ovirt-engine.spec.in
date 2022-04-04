@@ -339,6 +339,8 @@ Requires:	fapolicyd >= 1.1
 Requires:	fapolicyd
 %endif
 
+Requires:	scap-security-guide >= 0.1.60-4
+
 # Metrics stuff
 Requires:	collectd
 Requires:	collectd-postgresql
@@ -413,7 +415,7 @@ Requires:	ovirt-provider-ovn >= 1.2.1
 
 #JavaScript and CSS libraries are currently bundled
 Provides:	bundled(js-jquery) = 3.4.1
-Provides:	bundled(js-jquery-ui) = 1.12.1
+Provides:	bundled(js-jquery-ui) = 1.13.1
 Provides:	bundled(js-bootstrap) = 3.4.1
 Provides:	bundled(js-patternfly) = 3.59.3
 Provides:	bundled(js-patternfly-next) = 2.26.1
@@ -1391,6 +1393,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Fri Mar 11 2022 Sandro Bonazzola <sbonazzo@redhat.com> - 4.5.0
+- Bump version to 4.5.0
+
 * Tue Aug 10 2021 Lev Veyde <lveyde@redhat.com> - 4.4.8.4
 - Bump version to 4.4.8.4
 

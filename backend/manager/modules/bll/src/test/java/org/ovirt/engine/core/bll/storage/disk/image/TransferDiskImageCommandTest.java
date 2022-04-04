@@ -76,6 +76,9 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
     @Mock
     private VmBackupDao vmBackupDao;
 
+    @Mock
+    private ImageTransferUpdater imageTransferUpdater;
+
     @Spy
     @InjectMocks
     private  TransferDiskImageCommand<TransferDiskImageParameters> transferImageCommand =
@@ -92,7 +95,7 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
         doNothing().when(transferImageCommand).createImage();
         doNothing().when(transferImageCommand).persistCommand(any(), anyBoolean());
         doNothing().when(transferImageCommand).lockImage();
-        doNothing().when(transferImageCommand).startImageTransferSession();
+        doReturn(true).when(transferImageCommand).startImageTransferSession();
     }
 
     private void initializeSuppliedImage() {
@@ -248,7 +251,7 @@ public class TransferDiskImageCommandTest extends BaseCommandTest {
     @Test
     public void testNotCreatingImageIfSupplied() {
         initializeSuppliedImage();
-        doNothing().when(transferImageCommand).handleImageIsReadyForTransfer();
+        doReturn(true).when(transferImageCommand).handleImageIsReadyForTransfer();
         transferImageCommand.executeCommand();
 
         // Make sure no image is created if an image Guid is supplied.

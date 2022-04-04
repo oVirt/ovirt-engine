@@ -16,9 +16,9 @@ public class DiskStatisticalQueryTest {
     private static final double READ_LATENCY = 1.1;
     private static final double WRITE_LATENCY = 2.2;
     private static final double FLUSH_LATENCY = 3.3;
-    private static final int READ_RATE = 4;
+    private static final long READ_RATE = 4L;
     private static final long READ_OPS = 5L;
-    private static final int WRITE_RATE = 6;
+    private static final long WRITE_RATE = 6L;
     private static final long WRITE_OPS = 7L;
 
     private DiskStatisticalQuery query = new DiskStatisticalQuery(getParent());
@@ -52,13 +52,13 @@ public class DiskStatisticalQueryTest {
 
     private void verifyStatistic(Statistic statistic) {
         if (statistic.getName().equals(DiskStatisticalQuery.DATA_READ.getName())) {
-            assertEquals(READ_RATE, statistic.getValues().getValues().get(0).getDatum().intValue());
+            assertEquals(READ_RATE, statistic.getValues().getValues().get(0).getDatum().longValue());
         }
         if (statistic.getName().equals(DiskStatisticalQuery.DATA_READ_OPS.getName())) {
             assertEquals(READ_OPS, statistic.getValues().getValues().get(0).getDatum().longValue());
         }
         if (statistic.getName().equals(DiskStatisticalQuery.DATA_WRITE.getName())) {
-            assertEquals(WRITE_RATE, statistic.getValues().getValues().get(0).getDatum().intValue());
+            assertEquals(WRITE_RATE, statistic.getValues().getValues().get(0).getDatum().longValue());
         }
         if (statistic.getName().equals(DiskStatisticalQuery.DATA_WRITE_OPS.getName())) {
             assertEquals(WRITE_OPS, statistic.getValues().getValues().get(0).getDatum().longValue());

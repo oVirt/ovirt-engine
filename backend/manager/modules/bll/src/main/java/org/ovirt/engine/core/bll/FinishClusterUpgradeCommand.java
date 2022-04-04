@@ -5,20 +5,15 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.ClusterParametersBase;
+import org.ovirt.engine.core.common.action.ClusterUpgradeParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class FinishClusterUpgradeCommand<T extends ClusterParametersBase> extends
-        ClusterCommandBase<T> {
-
-    @Inject
-    private AuditLogDirector auditLogDirector;
+public class FinishClusterUpgradeCommand<T extends ClusterUpgradeParameters> extends ClusterCommandBase<T> {
 
     @Inject
     private ClusterDao clusterDao;
@@ -43,7 +38,7 @@ public class FinishClusterUpgradeCommand<T extends ClusterParametersBase> extend
         TransactionSupport.executeInNewTransaction(() -> {
             boolean updated = clusterDao.clearUpgradeRunning(cluster.getId());
             if (updated) {
-                log.info("Cleared upgrade running flag on Cluster '{}'.", cluster.getId());
+                log.debug("Cleared upgrade running flag on Cluster '{}'.", cluster.getId());
             } else {
                 log.warn("Failed to clear upgrade running flag on Cluster '{}'.", cluster.getId());
             }
@@ -55,7 +50,8 @@ public class FinishClusterUpgradeCommand<T extends ClusterParametersBase> extend
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_FINISH_CLUSTER_UPGRADE
+        return getSucceeded()
+                ? AuditLogType.USER_FINISH_CLUSTER_UPGRADE
                 : AuditLogType.USER_FINISH_CLUSTER_UPGRADE_FAILED;
     }
 

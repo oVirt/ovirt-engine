@@ -246,9 +246,9 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
             }
             entity.setId(getGuidDefaultEmpty(rs, "image_group_id"));
             entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
-            entity.setReadRate(rs.getInt("read_rate"));
+            entity.setReadRate(rs.getLong("read_rate"));
             entity.setReadOps(rs.getLong("read_ops"));
-            entity.setWriteRate(rs.getInt("write_rate"));
+            entity.setWriteRate(rs.getLong("write_rate"));
             entity.setWriteOps(rs.getLong("write_ops"));
             entity.setImageTransferPhase(rs.getObject("image_transfer_phase") != null
                     ? ImageTransferPhase.forValue(rs.getInt("image_transfer_phase")) : null);

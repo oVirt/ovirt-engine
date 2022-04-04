@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -83,6 +84,7 @@ public class InClusterUpgradeValidatorTest {
     @Test
     public void shouldDetectInvalidVMOnClusterUpgradeCheck() {
         invalidVM.setCpuPinning("i am pinned");
+        invalidVM.setCpuPinningPolicy(CpuPinningPolicy.MANUAL);
         assertThat(validator.isUpgradePossible(Arrays.asList(newHost1, newHost2), Arrays.asList(validVM, invalidVM)))
                 .isNotEqualTo(ValidationResult.VALID);
     }
@@ -97,6 +99,7 @@ public class InClusterUpgradeValidatorTest {
     @Test
     public void shouldDetectCpuPinning() {
         invalidVM.setCpuPinning("i am pinned");
+        invalidVM.setCpuPinningPolicy(CpuPinningPolicy.MANUAL);
         assertThat(validator.checkVmReadyForUpgrade(invalidVM)).contains(
                 EngineMessage.CLUSTER_UPGRADE_DETAIL_VM_CPUS_PINNED.name());
     }
@@ -131,6 +134,7 @@ public class InClusterUpgradeValidatorTest {
     @Test
     public void shouldCreateNiceValidationResult() {
         invalidVM.setCpuPinning("i am pinned");
+        invalidVM.setCpuPinningPolicy(CpuPinningPolicy.MANUAL);
         invalidVM.setDedicatedVmForVdsList(Collections.singletonList(Guid.newGuid()));
         invalidVM.setMigrationSupport(PINNED_TO_HOST);
         invalidVM.setId(Guid.Empty);

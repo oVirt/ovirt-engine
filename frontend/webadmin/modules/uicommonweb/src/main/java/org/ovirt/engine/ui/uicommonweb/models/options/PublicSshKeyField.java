@@ -9,12 +9,15 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 class PublicSshKeyField implements Field<String> {
 
     private final EntityModel<String> publicKey;
-    private String originalPublicKey = "";
+    private final String defaultValue;
+    private String originalPublicKey;
     private UserProfileProperty sshProp;
 
     public PublicSshKeyField(EntityModel<String> model, UserProfileProperty sshProp) {
         this.publicKey = model;
         this.sshProp = sshProp;
+        this.defaultValue = model.getEntity();
+        originalPublicKey = defaultValue;
     }
 
     public UserProfileProperty toProp() {
@@ -38,6 +41,11 @@ class PublicSshKeyField implements Field<String> {
     @Override
     public boolean isSupported(UserProfileProperty prop) {
         return prop.isSshPublicKey();
+    }
+
+    @Override
+    public boolean isCustom() {
+        return !Objects.equals(defaultValue, originalPublicKey);
     }
 
     @Override

@@ -228,7 +228,7 @@ public enum QueryType implements Serializable {
     GetAllImageTransfers(QueryAuthType.Admin),
     GetDiskImageByDiskAndImageIds(QueryAuthType.User),
     GetNumberOfImagesByStorageDomainId(QueryAuthType.Admin),
-
+    GetDiskIdBySnapshotId(QueryAuthType.User),
     GetDiskVmElementById(QueryAuthType.User),
     GetDiskVmElementsByVmId(QueryAuthType.User),
 
@@ -489,6 +489,7 @@ public enum QueryType implements Serializable {
     GetGraphicsDevices(QueryAuthType.User),
     GetNextRunGraphicsDevices(QueryAuthType.User),
     GetGraphicsDevicesMultiple(QueryAuthType.User),
+    GetMdevs(QueryAuthType.User),
 
     GetVmHostDevices,
 

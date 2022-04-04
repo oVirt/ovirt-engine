@@ -64,7 +64,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -84,7 +83,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.common.utils.CpuPinningHelper;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.StartEntity;
@@ -410,6 +408,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     public void rerun() {
         cleanupPassthroughVnics();
         setFlow(null);
+        getVdsManager().unpinVmCpus(getVmId());
         super.rerun();
     }
 
@@ -598,7 +597,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private void removeStatlessSnapshot() {
         runInternalAction(ActionType.ProcessDownVm,
-                new ProcessDownVmParameters(getVm().getId(), true),
+                new ProcessDownVmParameters(getVm().getId(), true, getVdsId()),
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
         // setting lock to null in order not to release lock twice
         setLock(null);
@@ -957,19 +956,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getVm().setUseHostCpuFlags(true);
         }
 
-        addCpuAndNumaPinning();
-        setDedicatedCpus();
+        addNumaPinningForDedicated(getVdsId());
+        addNumaPinningForResizeAndPin();
+        setDedicatedCpus(getVdsManager());
 
         return true;
-    }
-
-    private void setDedicatedCpus() {
-        if (getVm().getCpuPinningPolicy() != CpuPinningPolicy.DEDICATED) {
-            return;
-        }
-        List<VdsCpuUnit> vdsCpuUnits = getVdsManager().getCpuTopology().stream()
-                .filter(cpu -> cpu.getVmIds().contains(getVmId())).sorted().collect(Collectors.toList());
-        getVm().setCurrentCpuPinning(CpuPinningHelper.createCpuPinning(vdsCpuUnits));
     }
 
     private void warnIfVmNotFitInNumaNode() {
@@ -1161,10 +1152,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return true;
     }
 
-    private void addCpuAndNumaPinning() {
+    private void addNumaPinningForResizeAndPin() {
+        // The CPU topology and CPU Pinning change happens under schedule(), when allocating CPUs
+        // - VdsCpuUnitPinningHelper::updatePhysicalCpuAllocations.
         if (getVm().getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
-            vmHandler.updateCpuAndNumaPinning(getVm(), getVdsId());
-
             List<VmNumaNode> newVmNumaList = getVm().getvNumaNodeList();
             VmNumaNodeOperationParameters params =
                     new VmNumaNodeOperationParameters(getVm(), new ArrayList<>(newVmNumaList));

@@ -20,12 +20,17 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.UserProfilePropertyParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.UserProfileDao;
 
 class UpdateUserProfilePropertyCommandTest extends BaseCommandTest {
     @Mock
     private UserProfileDao userProfileDaoMock;
+
+    @Mock
+    private DbUserDao userDaoMock;
 
     private UserProfilePropertyParameters parameters = mock(UserProfilePropertyParameters.class);
 
@@ -77,14 +82,20 @@ class UpdateUserProfilePropertyCommandTest extends BaseCommandTest {
 
     @Test
     void noProperty() {
-        when(parameters.getUserProfileProperty()).thenReturn(mock(UserProfileProperty.class));
+        when(parameters.getUserProfileProperty()).thenReturn(new UserProfileProperty());
+        when(userDaoMock.get(any())).thenReturn(mock(DbUser.class));
         assertFalse(updateCommand.validate(), buildValidationMessage(updateCommand.getReturnValue()));
     }
 
     @Test
     void notAuthorized() {
-        when(parameters.getUserProfileProperty()).thenReturn(mock(UserProfileProperty.class));
-        when(userProfileDaoMock.get(any())).thenReturn(mock(UserProfileProperty.class));
+        UserProfileProperty prop = UserProfileProperty.builder()
+                .withNewId()
+                .withUserId(Guid.newGuid())
+                .build();
+        when(parameters.getUserProfileProperty()).thenReturn(prop);
+        when(userProfileDaoMock.get(any())).thenReturn(prop);
+        when(userDaoMock.get(any())).thenReturn(mock(DbUser.class));
         assertFalse(updateCommand.validate(), buildValidationMessage(updateCommand.getReturnValue()));
     }
 }

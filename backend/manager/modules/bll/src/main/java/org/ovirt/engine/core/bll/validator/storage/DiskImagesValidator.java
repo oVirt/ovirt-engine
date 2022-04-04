@@ -39,7 +39,7 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 /**
- * A validator for the {@link DiskImage} class. Since most usecases require validations of multiple {@link DiskImage}s
+ * A validator for the {@link DiskImage} class. Since most use cases require validations of multiple {@link DiskImage}s
  * (e.g., all the disks belonging to a VM/template), this class works on a {@link Collection} of {@link DiskImage}s.
  *
  */
@@ -78,17 +78,18 @@ public class DiskImagesValidator {
     }
 
     /**
-     * Validates that non of the disks exists
+     * Validates that none of the new disks already exists in the database
+     * or that both the existing and the new disks are shareable.
      *
      * @return A {@link ValidationResult} with the validation information.
      */
-    public ValidationResult diskImagesAlreadyExist() {
-
+    public ValidationResult disksNotExistOrShareable() {
         List<String> existingDisksAliases = new ArrayList<>();
-        for (DiskImage diskImage : diskImages) {
-            Disk existingDisk = getExistingDisk(diskImage.getId());
-            if (existingDisk != null) {
-                existingDisksAliases.add(diskImage.getDiskAlias().isEmpty() ? existingDisk.getDiskAlias() : diskImage.getDiskAlias());
+        for (Disk newDisk : diskImages) {
+            Disk existingDisk = getExistingDisk(newDisk.getId());
+            if (!diskNotExistsOrBothShareable(existingDisk, newDisk)) {
+                existingDisksAliases.add(
+                        newDisk.getDiskAlias().isEmpty() ? existingDisk.getDiskAlias() : newDisk.getDiskAlias());
             }
         }
 
@@ -100,8 +101,13 @@ public class DiskImagesValidator {
         return ValidationResult.VALID;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean diskNotExistsOrBothShareable(Disk existingDisk, Disk newDisk) {
+        return existingDisk == null || existingDisk.isShareable() && newDisk.isShareable();
+    }
+
     /**
-     * Validates that non of the disk are in the given {@link #status}.
+     * Validates that non of the disk are in the given {@code status}.
      *
      * @param status
      *            The status to check
@@ -109,7 +115,7 @@ public class DiskImagesValidator {
      *            The validation message to return in case of failure.
      * @return A {@link ValidationResult} with the validation information. If none of the disks are in the given status,
      *         {@link ValidationResult#VALID} is returned. If one or more disks are in that status, a
-     *         {@link ValidationResult} with {@link #failMessage} and the names of the disks in that status is returned.
+     *         {@link ValidationResult} with {@code failMessage} and the names of the disks in that status is returned.
      */
     private ValidationResult diskImagesNotInStatus(ImageStatus status, EngineMessage failMessage) {
         List<String> disksInStatus = new ArrayList<>();
@@ -146,7 +152,7 @@ public class DiskImagesValidator {
                     onlyPlugged ? EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_PLUGGED_TO_ANOTHER_VM
                             : EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM;
             return new ValidationResult(message,
-                    String.format("$disksInfo %s", String.format(StringUtils.join(pluggedDiskSnapshotInfo, "%n"))));
+                    String.format("$disksInfo %s", StringUtils.join(pluggedDiskSnapshotInfo, "%n")));
         }
 
         return ValidationResult.VALID;
@@ -169,7 +175,7 @@ public class DiskImagesValidator {
         if (!diskSnapshotInfo.isEmpty()) {
             EngineMessage message = EngineMessage.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_NOT_ATTACHED_TO_VM;
             return new ValidationResult(message,
-                    String.format("$disksInfo %s", String.format(StringUtils.join(diskSnapshotInfo, "%n"))),
+                    String.format("$disksInfo %s", StringUtils.join(diskSnapshotInfo, "%n")),
                     String.format("$vmName %s", vm.getName()));
         }
 
@@ -197,8 +203,7 @@ public class DiskImagesValidator {
 
         if (!disksInfo.isEmpty()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DETECTED_DERIVED_DISKS,
-                    String.format("$disksInfo %s",
-                            String.format(StringUtils.join(disksInfo, "%n"))));
+                    String.format("$disksInfo %s", StringUtils.join(disksInfo, "%n")));
         }
 
         return ValidationResult.VALID;
