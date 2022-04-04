@@ -298,7 +298,8 @@ public class AnsibleRunnerHttpClient {
 
     public int getTotalEvents(String playUuid) {
         String[] events = getEvents(playUuid);
-        return events.length;
+        // if playbook artifacts directory is not yet populated, return 0
+        return events == null ? 0 : events.length;
     }
 
     private JsonNode getEvent(String eventPath) {
