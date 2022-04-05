@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
 import org.ovirt.engine.core.bll.tasks.CommandCallbacksPoller;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.CommandsRepository;
+import org.ovirt.engine.core.bll.validator.AnsibleRunnerCleanUpService;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -119,6 +120,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             serviceLoader.load(HostUpdatesCheckerService.class);
             serviceLoader.load(IPTablesDeprecationNotifier.class);
             serviceLoader.load(ExternalNetworkSyncService.class);
+            serviceLoader.load(AnsibleRunnerCleanUpService.class);
         } catch (Exception ex) {
             log.error("Failed to initialize backend", ex);
             throw ex;
