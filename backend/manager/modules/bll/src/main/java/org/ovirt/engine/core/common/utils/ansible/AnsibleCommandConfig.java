@@ -10,13 +10,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +49,8 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
     private String playAction;
     private Path inventoryFile;
     private UUID uuid;
+    private File extraVars;
+    private File tempProject;
     // Logging
     private String logFileDirectory;
     private String logFileName;
@@ -257,84 +263,114 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
 
     public List<String> build() {
         List<String> ansibleCommand = new ArrayList<>();
-        String artifactsDir = String.format("%1$s/%2$s/artifacts/", AnsibleConstants.ANSIBLE_RUNNER_PATH, this.uuid);
-        String projectDir = String.format("%1$s/project", AnsibleConstants.RUNNER_SERVICE_PROJECT_PATH);
+        String artifactsDir = String.format("%1$s/%2$s/artifacts/", AnsibleConstants.ANSIBLE_RUNNER_PATH, uuid);
         try {
-            File ansibleRunnerExecutionDir = setupAnsibleRunnerExecutionDir();
+            Path tempProject = copyProject();
+            setVars();
+            createInventoryFile();
             ansibleCommand.add(ANSIBLE_COMMAND);
             ansibleCommand.add(ANSIBLE_EXECUTION_METHOD);
-            ansibleCommand.add(ansibleRunnerExecutionDir.toString());
+            ansibleCommand.add(tempProject.toString());
             ansibleCommand.add("-p");
             ansibleCommand.add(playbook);
-            ansibleCommand.add("--project-dir");
-            ansibleCommand.add(projectDir);
             ansibleCommand.add("--artifact-dir");
             ansibleCommand.add(artifactsDir);
+            ansibleCommand.add("--inventory");
+            ansibleCommand.add(String.valueOf(inventoryFile));
             ansibleCommand.add("-i");
-            ansibleCommand.add(String.valueOf(this.uuid));
+            ansibleCommand.add(String.valueOf(uuid));
         } catch(Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
         return ansibleCommand;
     }
 
-    private File setupAnsibleRunnerExecutionDir() throws IOException {
-        File tempProject = new File(String.format("%1$s/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, this.uuid));
+    private Path copyProject() throws IOException {
+        Path src = AnsibleConstants.RUNNER_SERVICE_PROJECT_PATH;
+        Path dest = Paths.get(String.format("%1$s/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, uuid));
+        tempProject = new File(String.valueOf(dest));
         tempProject.mkdirs();
 
-        File env = new File(String.format("%1$s/%2$s/env", AnsibleConstants.ANSIBLE_RUNNER_PATH, this.uuid));
-        env.mkdir();
+        copyFolder(src, dest);
+        createTimestampFile(dest.toString());
 
-        // Create a link to engine private ssh key
+        // create a link to engine private ssh key
         Path engineSshKey = Paths.get(
             EngineLocalConfig.getInstance().getPKIDir().toString(),
             "/keys/engine_id_rsa");
         Path linkToEngineSshKey = Paths.get(
-            tempProject.toString(),
+            dest.toString(),
             "/env/ssh_key");
         Files.createSymbolicLink(linkToEngineSshKey, engineSshKey);
 
-        // Create a variable file in project env/extravars, which will be passed to the playbook by ansible-runner.
-        createExtraVarsFile(env);
-
-        File inventory = new File(String.format("%1$s/%2$s/inventory", AnsibleConstants.ANSIBLE_RUNNER_PATH, this.uuid));
-        inventory.mkdir();
-
-        // Create a host inventory file in project inventory/host, which will be passed to the playbook by ansible-runner.
-        createHostFile(inventory);
-
-        return tempProject;
+        return dest;
     }
 
-    private void createHostFile(File inventory) {
-        File hostsFile = new File(String.format("%1$s/hosts", inventory));
-        if (CollectionUtils.isNotEmpty(hostnames())) {
-            try {
-                hostsFile.createNewFile();
-                Files.write(hostsFile.toPath(), StringUtils.join(hostnames(), System.lineSeparator()).getBytes());
-            } catch (IOException ex) {
-                throw new AnsibleRunnerCallException(
-                    String.format("Failed to create inventory file '%s':", hostsFile.toString()), ex);
+    private void createTimestampFile(String dest) {
+        String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        File timeStamp = new File(String.format("%1$s/artifacts/%2$s", dest, date));
+        try {
+            timeStamp.createNewFile();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void copyFolder(Path src, Path dest) throws IOException {
+        try (Stream<Path> stream = Files.walk(src)) {
+            stream.filter(item -> !item.toString().contains("artifacts"))
+                    .forEach(source -> copy(source, dest.resolve(src.relativize(source))));
+        }
+        File artifacts = new File(String.format("%1$s/%2$s/artifacts", AnsibleConstants.ANSIBLE_RUNNER_PATH, uuid));
+        artifacts.mkdir();
+        File env = new File(String.format("%1$s/%2$s/env", AnsibleConstants.ANSIBLE_RUNNER_PATH, uuid));
+        env.mkdir();
+    }
+
+    private void copy(Path source, Path dest) {
+        try {
+            Files.copy(source, dest, StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception ex) {
+            throw new AnsibleRunnerCallException("Failed to copy project files into designated host execution directory", ex);
+        }
+    }
+
+
+    private void createInventoryFile() {
+        Path inventoryFile = null;
+        if (getInventoryFile() == null) {
+            // If hostnames are empty we just don't pass any inventory file:
+            if (CollectionUtils.isNotEmpty(hostnames())) {
+                try {
+                    inventoryFile = Files.createTempFile("ansible-inventory", "");
+                    Files.write(inventoryFile, StringUtils.join(hostnames(), System.lineSeparator()).getBytes());
+                    inventoryFile(inventoryFile);
+                } catch (Exception ex) {
+                    throw new AnsibleRunnerCallException(
+                        String.format(
+                            "Failed to create inventory file '%s':",
+                            inventoryFile == null ? null : inventoryFile.toString()), ex);
+                }
             }
         }
     }
 
-    private void createExtraVarsFile(File env) {
-        String vars = getFormattedVariables();
-        File extraVars = new File(String.format("%1$s/extravars", env));
+    private void setVars() {
+        String vars = formatCommandVariables(variables);
+        extraVars = new File(String.format("%1$s/%2$s/env/extravars", AnsibleConstants.ANSIBLE_RUNNER_PATH, uuid));
         try {
             extraVars.createNewFile();
             Files.writeString(extraVars.toPath(), vars);
-        } catch(IOException ex) {
+        } catch(Exception ex) {
             throw new AnsibleRunnerCallException(
                 String.format("Failed to create host variables file '%s':", extraVars.toString()), ex);
         }
     }
 
-    private String getFormattedVariables() {
+    protected String formatCommandVariables(Map<String, Object> variables) {
         String result;
         try {
-            result = this.mapper.writeValueAsString(this.variables);
+            result = mapper.writeValueAsString(variables);
         } catch (IOException ex) {
             throw new AnsibleRunnerCallException("Failed to create host deploy variables mapper", ex);
         }
@@ -342,6 +378,16 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
     }
 
     public void cleanup() {
-
+        /*
+        try {
+            Files.walk(Paths.get(tempProject.getAbsolutePath()))
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .filter(item -> !item.toString().contains("artifacts"))
+                    .forEach(File::delete);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        */
     }
 }
