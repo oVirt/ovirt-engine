@@ -1440,6 +1440,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     VMConsoleTicketTolerance,
 
+    @TypeConverterAttribute(Double.class)
+    ArtifactsOutdatedCheckTimeInHours,
+
     /**
      * In 4.1 gluster libgfapi is supported.
      */
