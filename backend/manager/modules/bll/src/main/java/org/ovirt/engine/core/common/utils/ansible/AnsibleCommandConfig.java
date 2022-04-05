@@ -271,6 +271,7 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
             ansibleCommand.add("--artifact-dir");
             ansibleCommand.add(artifactsDir);
             ansibleCommand.add("-i");
+            ansibleCommand.add("-vvv");
             ansibleCommand.add(String.valueOf(this.uuid));
         } catch(Exception e) {
             throw new RuntimeException(e.getMessage(), e);
