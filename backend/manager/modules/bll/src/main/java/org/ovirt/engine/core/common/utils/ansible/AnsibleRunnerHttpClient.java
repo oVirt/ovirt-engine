@@ -101,6 +101,8 @@ public class AnsibleRunnerHttpClient {
     public List<String> getSortedEvents(String playUuid, int lastEventId) throws InterruptedException {
         Boolean artifactsIsPopulated = false;
         List<String> sortedEvents = new ArrayList<>();
+        UUID runId = UUID.randomUUID();
+        log.debug("getSortedEvents [{}]: lastEventId: {}", runId, lastEventId);
 
         while (!artifactsIsPopulated) {
             Thread.sleep(1500);
@@ -110,9 +112,11 @@ public class AnsibleRunnerHttpClient {
             if (Files.exists(Paths.get(jobEvents))) {
                 sortedEvents = Stream.of(new File(jobEvents).listFiles())
                         .map(File::getName)
+                        .peek(item -> log.debug("getSortedEvents [{}]: processing file: '{}'", runId, item))
                         .filter(item -> !item.contains("partial"))
                         .filter(item -> !item.endsWith(".tmp"))
                         .filter(item -> (Integer.valueOf(item.split("-")[0])) > lastEventId)
+                        .peek(item -> log.debug("getSortedEvents [{}]: collected file: '{}'", runId, item))
                         .sorted()
                         .collect(Collectors.toList());
                 artifactsIsPopulated = true;
@@ -145,18 +149,24 @@ public class AnsibleRunnerHttpClient {
 
         String jobEvents = getJobEventsDir(playUuid);
         for (String event : sortedEvents) {
+            log.debug("processEvents(): playuid='{}', lastEventId='{}', eventFile='{}'",
+                    playUuid, getLastEventId(), event);
             JsonNode currentNode = getEvent(jobEvents + event);
+            log.debug("processEvents(): loaded event: '{}'", currentNode);
             String stdout = RunnerJsonNode.getStdout(currentNode);
+            log.debug("processEvents(): stdout: '{}'", stdout);
 
             if (RunnerJsonNode.isEventUnreachable(currentNode)) {
                 runnerLogger.log(currentNode);
                 returnValue.setAnsibleReturnCode(AnsibleReturnCode.UNREACHABLE);
+                log.debug("processEvents(): exiting, unreachable");
                 return -1;
             }
 
             // might need special attention
             if (RunnerJsonNode.isEventVerbose(currentNode)) {
                 if (!stdout.contains("Identity added")) {
+                    log.debug("processEvents(): Identity added not found, adding to log.");
                     runnerLogger.log(stdout);
                 }
             }
@@ -174,6 +184,10 @@ public class AnsibleRunnerHttpClient {
                 }
 
                 if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.playbookStats(currentNode)) {
+                    log.debug("processEvents(): event '{}', isEventStart='{}', playbookStats='{}', writing to log.",
+                            event,
+                            RunnerJsonNode.isEventStart(currentNode),
+                            RunnerJsonNode.playbookStats(currentNode));
                     runnerLogger.log(stdout);
                 }
 
@@ -189,10 +203,17 @@ public class AnsibleRunnerHttpClient {
                     String taskText = action.equals("debug")
                             ? RunnerJsonNode.formatDebugMessage(taskName, stdout)
                             : taskName;
+                    log.debug("processEvents(): event '{}' is OK, added to log, passing to function: arg0='{}', arg1='{}'",
+                            event,
+                            taskText,
+                            String.format(jobEvents + event));
                     fn.accept(taskText, String.format(jobEvents + event));
 
                 } else if (RunnerJsonNode.isEventFailed(currentNode)) {
                     runnerLogger.log(currentNode);
+                    log.debug("processEvents(): event '{}' is Failed, added to log, isIgnored='{}'",
+                            event,
+                            RunnerJsonNode.ignore(currentNode));
                     if (!RunnerJsonNode.ignore(currentNode)) {
                         returnValue.setAnsibleReturnCode(AnsibleReturnCode.FAIL);
                         throw new AnsibleRunnerCallException(
@@ -203,8 +224,10 @@ public class AnsibleRunnerHttpClient {
                     }
                 }
             }
+
             lastEvent = event;
             returnValue.setLastEventId(getLastEventId());
+            log.debug("Finished processing event file '{}'", event);
         }
         return lastEvent.isEmpty() ? lastEventId : getLastEventId();
     }
@@ -294,11 +317,15 @@ public class AnsibleRunnerHttpClient {
     private List<String> getEvents(String playUuid) {
         List<String> sortedEvents = new ArrayList<>();
         File jobEvents = new File(getJobEventsDir(playUuid));
+        UUID runId = UUID.randomUUID();
+        log.debug("playUuid[()], getEvents [{}]", playUuid, runId);
         if (jobEvents.exists()) {
             sortedEvents = Stream.of(jobEvents.listFiles())
                 .map(File::getName)
+                .peek(item -> log.debug("playUuid[()], getEvents [{}]: processing file: '{}'", playUuid, runId, item))
                 .filter(item -> !item.contains("partial"))
                 .filter(item -> !item.endsWith(".tmp"))
+                .peek(item -> log.debug("playUuid[()], getEvents [{}]: collected file: '{}'", playUuid, runId, item))
                 .sorted()
                 .collect(Collectors.toList());
         }
