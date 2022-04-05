@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -308,9 +309,10 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
 
     private void createTimestampFile(String dest) {
         String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        File timeStamp = new File(String.format("%1$s/artifacts/%2$s", dest, date));
+        File timeStamp = new File(String.format("%1$s/%2$s", dest, "execution_date.txt"));
         try {
             timeStamp.createNewFile();
+            Files.writeString(timeStamp.toPath(), date, StandardOpenOption.CREATE);
         } catch(Exception e) {
             e.printStackTrace();
         }
