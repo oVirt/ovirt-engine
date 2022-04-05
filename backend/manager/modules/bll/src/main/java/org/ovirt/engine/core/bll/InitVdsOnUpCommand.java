@@ -206,6 +206,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             processStoragePoolStatus();
             runUpdateMomPolicy(getCluster(), getVds());
             refreshHostDeviceList();
+            // Check FIPS compatibility
+            resourceManager.getEventListener().handleVdsFips(getVdsId());
         } else {
             Map<String, String> customLogValues = new HashMap<>();
             customLogValues.put("StoragePoolName", getStoragePoolName());

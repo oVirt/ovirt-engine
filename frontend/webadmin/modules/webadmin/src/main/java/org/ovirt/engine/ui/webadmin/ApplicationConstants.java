@@ -3557,8 +3557,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String vncEncryptionLabel();
 
-    String fipsEnabledLabel();
-
     String ovnConfiguredLabel();
 
     String vdsmName();
