@@ -1477,7 +1477,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         if (ParallelMigrationsType.CUSTOM.equals(getParallelMigrationsType().getSelectedItem())) {
             getCustomParallelMigrations().setIsChangeable(true);
             if (getCustomParallelMigrations().getEntity() == null) {
-                getCustomParallelMigrations().setEntity(0);
+                getCustomParallelMigrations().setEntity(ParallelMigrationsType.MIN_PARALLEL_CONNECTIONS);
             }
         } else {
             getCustomParallelMigrations().setIsChangeable(false, constants.customParallelMigrationsDisabledReason());
