@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -88,6 +89,7 @@ public class AnsibleRunnerHttpClient {
             }
             lastEventID = processEvents(uuid.toString(), lastEventID, fn, "", Paths.get(""));
             iteration += POLL_INTERVAL / 1000;
+            Thread.sleep(POLL_INTERVAL);
         }
         returnValue.setAnsibleReturnCode(AnsibleReturnCode.OK);
         return returnValue;
@@ -98,27 +100,19 @@ public class AnsibleRunnerHttpClient {
         returnValue.setLogFile(runnerLogger.getLogFile());
     }
 
-    public List<String> getSortedEvents(String playUuid, int lastEventId) throws InterruptedException {
-        Boolean artifactsIsPopulated = false;
-        List<String> sortedEvents = new ArrayList<>();
-
-        while (!artifactsIsPopulated) {
-            Thread.sleep(1500);
-
-            // ignoring incompleted json files, add to list only events that haven't been handles yet.
-            String jobEvents = getJobEventsDir(playUuid);
-            if (Files.exists(Paths.get(jobEvents))) {
-                sortedEvents = Stream.of(new File(jobEvents).listFiles())
-                        .map(File::getName)
-                        .filter(item -> !item.contains("partial"))
-                        .filter(item -> !item.endsWith(".tmp"))
-                        .filter(item -> (Integer.valueOf(item.split("-")[0])) > lastEventId)
-                        .sorted()
-                        .collect(Collectors.toList());
-                artifactsIsPopulated = true;
-            }
+    public String getNextEvent(String playUuid, int lastEventId) {
+        Optional<String> nextEvent = Optional.empty();
+        // ignoring incompleted json files, add to list only events that haven't been handles yet.
+        String jobEvents = getJobEventsDir(playUuid);
+        if (Files.exists(Paths.get(jobEvents))) {
+            nextEvent = Stream.of(new File(jobEvents).listFiles())
+                    .map(File::getName)
+                    .filter(item -> !item.contains("partial"))
+                    .filter(item -> !item.endsWith(".tmp"))
+                    .filter(item -> item.startsWith((lastEventId + 1) + "-"))
+                    .findFirst();
         }
-        return sortedEvents;
+        return nextEvent.isPresent() ? nextEvent.get() : null;
     }
 
     public int getLastEventId() {
@@ -134,17 +128,9 @@ public class AnsibleRunnerHttpClient {
             BiConsumer<String, String> fn,
             String msg,
             Path logFile) {
-        List<String> sortedEvents = new ArrayList<>();
-        try {
-            sortedEvents = getSortedEvents(playUuid, lastEventId);
-        } catch (InterruptedException ex) {
-            throw new AnsibleRunnerCallException(
-                    "Failed to get list of events for play: %1$s",
-                    playUuid);
-        }
-
         String jobEvents = getJobEventsDir(playUuid);
-        for (String event : sortedEvents) {
+        String event = getNextEvent(playUuid, lastEventId);
+        while(event != null){
             JsonNode currentNode = getEvent(jobEvents + event);
             String stdout = RunnerJsonNode.getStdout(currentNode);
 
@@ -205,6 +191,8 @@ public class AnsibleRunnerHttpClient {
             }
             lastEvent = event;
             returnValue.setLastEventId(getLastEventId());
+            lastEventId++;
+            event = getNextEvent(playUuid, lastEventId);
         }
         return lastEvent.isEmpty() ? lastEventId : getLastEventId();
     }
