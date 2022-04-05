@@ -170,14 +170,12 @@ public class AnsibleExecutor {
 
             ret = runnerClient.artifactHandler(commandConfig.getUuid(), lastEventId, timeout, fn);
         } catch (InventoryException ex) {
-            commandConfig.cleanup();
             String message = ex.getMessage();
             log.error("Error executing playbook: {}", message);
             log.debug("InventoryException: ", ex);
             ret.setStderr(message);
             ret.setAnsibleReturnCode(message.contains(SSH_TIMEOUT) ? AnsibleReturnCode.UNREACHABLE: AnsibleReturnCode.FAIL);
         } catch (Exception ex) {
-            commandConfig.cleanup();
             log.error("Exception: {}", ex.getMessage());
             log.debug("Exception: ", ex);
             ret.setStderr(ex.getMessage());
@@ -187,7 +185,6 @@ public class AnsibleExecutor {
                 lastEventId = runnerClient.getLastEventId();
                 runnerClient.processEvents(playUuid, lastEventId, fn, msg, ret.getLogFile());
             }
-            commandConfig.cleanup();
         }
 
         return ret;
