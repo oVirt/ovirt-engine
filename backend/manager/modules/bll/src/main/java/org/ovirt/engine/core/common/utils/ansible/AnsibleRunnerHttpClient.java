@@ -110,10 +110,10 @@ public class AnsibleRunnerHttpClient {
             if (Files.exists(Paths.get(jobEvents))) {
                 sortedEvents = Stream.of(new File(jobEvents).listFiles())
                         .map(File::getName)
-                        .distinct()
                         .filter(item -> !item.contains("partial"))
                         .filter(item -> !item.endsWith(".tmp"))
                         .filter(item -> (Integer.valueOf(item.split("-")[0])) > lastEventId)
+                        .sorted()
                         .collect(Collectors.toList());
                 artifactsIsPopulated = true;
             }
@@ -291,15 +291,24 @@ public class AnsibleRunnerHttpClient {
         return new PlaybookStatus(rc, status);
     }
 
-    private String[] getEvents(String playUuid) {
+    private List<String> getEvents(String playUuid) {
+        List<String> sortedEvents = new ArrayList<>();
         File jobEvents = new File(getJobEventsDir(playUuid));
-        return jobEvents.list();
+        if (jobEvents.exists()) {
+            sortedEvents = Stream.of(jobEvents.listFiles())
+                .map(File::getName)
+                .filter(item -> !item.contains("partial"))
+                .filter(item -> !item.endsWith(".tmp"))
+                .sorted()
+                .collect(Collectors.toList());
+        }
+        return sortedEvents;
     }
 
     public int getTotalEvents(String playUuid) {
-        String[] events = getEvents(playUuid);
+        List<String> events = getEvents(playUuid);
         // if playbook artifacts directory is not yet populated, return 0
-        return events == null ? 0 : events.length;
+        return events.size();
     }
 
     private JsonNode getEvent(String eventPath) {
