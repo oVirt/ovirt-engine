@@ -340,8 +340,4 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
         }
         return result;
     }
-
-    public void cleanup() {
-
-    }
 }
