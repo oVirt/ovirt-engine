@@ -208,6 +208,8 @@ select fn_db_add_config_value('CertificationValidityCheckTimeInHours','24','gene
 -- Refresh rate (in hours) for outdated artifacts check
 select fn_db_add_config_value('ArtifactsOutdatedCheckTimeInHours','24','general');
 
+select fn_db_add_config_value('AnsibleRunnerArtifactsLifetimeInDays', '14', 'general');
+
 select fn_db_add_config_value('MaxIoThreadsPerVm','127','general');
 
 select fn_db_add_config_value('DisplayUncaughtUIExceptions', 'true', 'general');

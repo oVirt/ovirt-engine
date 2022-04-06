@@ -1443,6 +1443,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Double.class)
     ArtifactsOutdatedCheckTimeInHours,
 
+    @TypeConverterAttribute(Integer.class)
+    AnsibleRunnerArtifactsLifetimeInDays,
+
     /**
      * In 4.1 gluster libgfapi is supported.
      */
