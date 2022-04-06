@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll.validator;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -22,12 +24,19 @@ import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class AnsibleRunnerCleanUpService implements BackendService {
 
+    private static Logger log = LoggerFactory.getLogger(AnsibleRunnerCleanUpService.class);
     private final String executionDate = "execution_date.txt";
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
@@ -45,22 +54,29 @@ public class AnsibleRunnerCleanUpService implements BackendService {
     }
 
     private void checkExecutionTimeStamp() {
-        List<File> uuids = Stream.of(new File(AnsibleConstants.ANSIBLE_RUNNER_PATH.toString()).listFiles()).collect(Collectors.toList());
+        List<File> uuids = Stream.of(new File(AnsibleConstants.ANSIBLE_RUNNER_PATH.toString()).listFiles())
+                .collect(Collectors.toList());
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMddHHmmss");
         Calendar cal = Calendar.getInstance();
+        int artifactsLifeTime = Config.<Integer>getValue(ConfigValues.AnsibleRunnerArtifactsLifetimeInDays);
+        String timeStamp = "";
         for (File uuid : uuids) {
             Path executionDatePath = Paths.get(uuid.getAbsolutePath(), this.executionDate);
             try {
-                String timeStamp = Files.readString(executionDatePath);
+                timeStamp = Files.readString(executionDatePath);
                 Date executionDate = dateFormatter.parse(timeStamp);
                 cal.setTime(executionDate);
-                cal.add(Calendar.DAY_OF_MONTH, 14);
+                cal.add(Calendar.DAY_OF_MONTH, artifactsLifeTime);
                 Date today = dateFormatter.parse(dateFormatter.format(new Date()));
                 if (cal.getTime().before(today)) {
                     deleteDir(uuid);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                log.error("Failed to read file: {}", executionDatePath);
+                log.debug("Exception: ", e);
+            } catch (ParseException e) {
+                log.error("Failed to parse timestamp: {}", timeStamp);
+                log.debug("Exception: ", e);
             }
         }
     }
@@ -71,8 +87,9 @@ public class AnsibleRunnerCleanUpService implements BackendService {
                     .sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
                     .forEach(File::delete);
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(IOException e) {
+            log.error("Failed to delete dir content: {}", uuid.getAbsolutePath());
+            log.debug("Exception: ", e);
         }
     }
 }
