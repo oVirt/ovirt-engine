@@ -188,6 +188,18 @@
         <append value="true"/>
       </file-handler>
 
+      {% if config.getboolean('KEYCLOAK_BUNDLED') %}
+      <!-- Keycloak messages go here: -->
+      <file-handler name="KEYCLOAK" autoflush="true">
+        <level name="ALL"/>
+        <formatter>
+          <named-formatter name="WITH_CORRELATION_ID"/>
+        </formatter>
+        <file path="{{ config.get('ENGINE_LOG') }}/keycloak.log"/>
+        <append value="true"/>
+      </file-handler>
+      {% endif %}
+
       <!-- Console -->
       <console-handler name="CONSOLE" autoflush="true">
         <level name="ALL"/>
@@ -232,6 +244,20 @@
           {% endif %}
         </handlers>
       </logger>
+
+      {% if config.getboolean('KEYCLOAK_BUNDLED') %}
+      <!-- Loggers for the Keycloak: -->
+      <logger category="org.keycloak" use-parent-handlers="false">
+        <level name="INFO"/>
+        <handlers>
+          <handler name="KEYCLOAK"/>
+          {% if config.getboolean('SYSLOG_HANDLER_ENABLED') and config.getboolean('KEYCLOAK_BUNDLED') %}
+          <handler name="SYSLOG"/>
+          {% endif %}
+        </handlers>
+      </logger>
+      {% endif %}
+
       <!-- Loggers for the UI -->
       <logger category="org.ovirt.engine.ui.frontend.server.gwt.OvirtRemoteLoggingService" use-parent-handlers="false">
         <level name="INFO"/>
