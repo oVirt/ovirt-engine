@@ -37,13 +37,12 @@
         register: iscorrect
 
       - name: Get host certificate info
-        openssl_certificate_info:
-          path: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_cert_file }}"
+        command: openssl x509 -noout -ext subjectAltName -in "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_cert_file }}"
         register: host_certificate
 
       - name: Check if host certificate contains subject alternative name
         set_fact:
-          contains_san: "{{ host_certificate['subject_alt_name'] is search(ovirt_vds_hostname) }}"
+          contains_san: "{{ host_certificate.stdout is search(ovirt_vds_hostname) }}"
 
       - name: Check if QEMU migration client certificates are present
         stat:
