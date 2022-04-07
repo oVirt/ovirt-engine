@@ -1240,7 +1240,7 @@ fi
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
 %{_bindir}/engine-upgrade-check
 %{engine_data}/conf/ovirt-engine-proxy.conf.v2.in
-%{engine_data}/conf/fapolicyd-55-allow-ovirt-jboss.rules.in
+%{engine_data}/conf/fapolicyd-55-allow-ovirt.rules.in
 %{engine_data}/conf/ovirt-engine-root-redirect.conf.in
 %{engine_data}/firewalld/ovirt-engine/
 %{engine_data}/setup/bin/ovirt-engine-upgrade-check

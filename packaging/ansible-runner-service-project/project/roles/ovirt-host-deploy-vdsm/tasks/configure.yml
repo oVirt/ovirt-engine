@@ -76,6 +76,7 @@
      remote_src: yes
      content: |
        allow perm=any trust=1 : dir=/etc/vdsm/mom.d/ ftype=text/x-lisp
+       allow perm=any trust=1 : dir=/var/tmp/ ftype=text/x-python
 
   - name: restart fapolicy service
     systemd:

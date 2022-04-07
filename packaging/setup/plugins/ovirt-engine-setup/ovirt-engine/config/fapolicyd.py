@@ -7,7 +7,7 @@
 #
 
 
-"""Jboss fapolicyd plugin."""
+"""Engine fapolicyd plugin."""
 
 
 import gettext
@@ -18,7 +18,6 @@ from otopi import filetransaction
 from otopi import plugin
 from otopi import util
 
-from ovirt_engine import configfile
 from ovirt_engine import util as outil
 
 from ovirt_engine_setup import constants as osetupcons
@@ -43,7 +42,7 @@ class Plugin(plugin.PluginBase):
     def _init(self):
         self.environment.setdefault(
             oengcommcons.FapolicydEnv.FAPOLICYD_ALLOW_OVIRT_RULE,
-            oengcommcons.FileLocations.FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE
+            oengcommcons.FileLocations.FAPOLICYD_ALLOW_OVIRT_ENGINE_RULE
         )
 
     @plugin.event(
@@ -51,20 +50,16 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: (
                 self.environment[oenginecons.CoreEnv.ENABLE] and
                 not os.path.exists(
-                    oengcommcons.FileLocations.FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE
+                    oengcommcons.FileLocations.
+                    FAPOLICYD_ALLOW_OVIRT_ENGINE_RULE
                 ) and not self.environment[
                     osetupcons.CoreEnv.DEVELOPER_MODE
                 ]
         ),
     )
     def _misc(self):
-        config = configfile.ConfigFile([
-            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_DEFAULTS,
-            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG
-        ])
-        engine_tmp_dir = os.path.join(
-            config.get('JBOSS_RUNTIME'),
-            'tmp'
+        engine_runtime_dir = (
+            oenginecons.FileLocations.OVIRT_ENGINE_LOCALSTATEDIR
         )
 
         self.environment[oengcommcons.FapolicydEnv.NEED_RESTART] = True
@@ -76,10 +71,10 @@ class Plugin(plugin.PluginBase):
                 content=outil.processTemplate(
                     template=(
                         oengcommcons.FileLocations.
-                        FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE_TEMPLATE
+                        FAPOLICYD_ALLOW_OVIRT_ENGINE_RULE_TEMPLATE
                     ),
                     subst={
-                        '@JBOSS_RUNTIME_TMP_DIR@': engine_tmp_dir,
+                        '@ENGINE_RUNTIME_DIR@': engine_runtime_dir,
                     },
                 ),
                 modifiedList=self.environment[
