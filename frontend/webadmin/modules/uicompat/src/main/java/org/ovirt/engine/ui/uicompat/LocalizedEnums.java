@@ -653,7 +653,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionType___SetupNetworks();
 
-    String ActionType___CreateAllSnapshotsFromVm();
+    String ActionType___CreateSnapshotForVm();
 
     String ActionType___DetachActionFromRole();
 

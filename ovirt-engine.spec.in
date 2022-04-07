@@ -567,6 +567,9 @@ Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
 Requires:	%{name}-setup-plugin-cinderlib = %{version}-%{release}
 Requires:	%{name}-setup-plugin-imageio = %{version}-%{release}
 Requires:	%{name}-dwh-setup >= 4.4.1.2
+%if !%{rhv_build}
+Requires:	ovirt-engine-keycloak-setup
+%endif
 Requires:	ovirt-engine-extension-aaa-jdbc >= 1.2.0
 Requires:	openssh
 Requires:       postgresql-server >= 12.0
@@ -1237,7 +1240,7 @@ fi
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
 %{_bindir}/engine-upgrade-check
 %{engine_data}/conf/ovirt-engine-proxy.conf.v2.in
-%{engine_data}/conf/fapolicyd-55-allow-ovirt-jboss.rules.in
+%{engine_data}/conf/fapolicyd-55-allow-ovirt.rules.in
 %{engine_data}/conf/ovirt-engine-root-redirect.conf.in
 %{engine_data}/firewalld/ovirt-engine/
 %{engine_data}/setup/bin/ovirt-engine-upgrade-check
@@ -1392,6 +1395,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Mon Mar 28 2022 Sandro Bonazzola <sbonazzo@redhat.com> - 4.5.0.1
+- Bump version to 4.5.0.1
+
 * Fri Mar 11 2022 Sandro Bonazzola <sbonazzo@redhat.com> - 4.5.0
 - Bump version to 4.5.0
 

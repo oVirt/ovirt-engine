@@ -304,6 +304,18 @@ class Daemon(service.Daemon):
             dir=jbossConfigDir,
         )
 
+
+        keycloak_add_user_file = os.path.join(
+            os.path.dirname(sys.argv[0]),
+            'keycloak-add-user.json'
+        )
+        if os.path.exists(keycloak_add_user_file):
+            keycloakInitialAdminUserConfigFile = self._processTemplate(
+                template=keycloak_add_user_file,
+                dir=jbossConfigDir,
+                mode=0o600,
+            )
+
         # We start with an empty list of arguments:
         self._engineArgs = []
 

@@ -79,16 +79,16 @@ class FileLocations(object):
         OVIRT_ENGINE_PKIKEYSDIR,
         'apache.key.nopass',
     )
-    FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE_TEMPLATE = os.path.join(
+    FAPOLICYD_ALLOW_OVIRT_ENGINE_RULE_TEMPLATE = os.path.join(
         osetupcons.FileLocations.OVIRT_SETUP_DATADIR,
         'conf',
-        'fapolicyd-55-allow-ovirt-jboss.rules.in',
+        'fapolicyd-55-allow-ovirt.rules.in',
     )
-    FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE = os.path.join(
+    FAPOLICYD_ALLOW_OVIRT_ENGINE_RULE = os.path.join(
         SYSCONFDIR,
         'fapolicyd',
         'rules.d',
-        '55-allow-ovirt-jboss.rules',
+        '55-allow-ovirt.rules',
     )
 
 
@@ -389,6 +389,15 @@ class FapolicydEnv(object):
 @osetupattrsclass
 class RPMDistroEnv(object):
     OVIRT_JBOSS_PACKAGES = 'OVESETUP_RPMDISTRO/jbossPackages'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class KeycloakEnv(object):
+    KEYCLOAK_ENABLED = 'OVESETUP_CONFIG/keycloakEnabled'
+    KEYCLOAK_OVIRT_ADMIN_USER = 'OVESETUP_CONFIG/keycloakOvirtAdmin'
+    KEYCLOAK_OVIRT_ADMIN_PASSWD = 'OVESETUP_CONFIG/keycloakOvirtAdminPasswd'
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

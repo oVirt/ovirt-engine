@@ -109,7 +109,7 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     private void initSpyCommand() {
         doReturn(true).when(command).validateDestDomainsSpaceRequirements();
-        doReturn(true).when(command).validateCreateAllSnapshotsFromVmCommand();
+        doReturn(true).when(command).validateCreateSnapshotForVmCommand();
         doReturn(true).when(command).setAndValidateQuota();
         doReturn(ActionType.LiveMigrateDisk).when(command).getActionType();
     }
@@ -132,7 +132,7 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
-        doReturn(false).when(command).validateCreateAllSnapshotsFromVmCommand();
+        doReturn(false).when(command).validateCreateSnapshotForVmCommand();
         assertFalse(command.validate());
     }
 

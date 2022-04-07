@@ -530,10 +530,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         log.info("Creating stateless snapshot for VM '{}' ({})",
                 getVm().getName(), getVm().getId());
-        CreateSnapshotForVmParameters createAllSnapshotsFromVmParameters = buildCreateSnapshotParameters();
+        CreateSnapshotForVmParameters createSnapshotForVmParameters = buildCreateSnapshotParameters();
 
         ActionReturnValue actionReturnValue = runInternalAction(ActionType.CreateSnapshotForVm,
-                createAllSnapshotsFromVmParameters,
+                createSnapshotForVmParameters,
                 createContextForStatelessSnapshotCreation());
 
         // setting lock to null in order not to release lock twice

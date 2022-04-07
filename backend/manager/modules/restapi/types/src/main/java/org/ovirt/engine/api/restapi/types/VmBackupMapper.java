@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.api.model.Backup;
 import org.ovirt.engine.api.model.BackupPhase;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.compat.Guid;
 
 public class VmBackupMapper {
     @Mapping(from = Backup.class, to = VmBackup.class)
@@ -66,6 +68,11 @@ public class VmBackupMapper {
             Host host = new Host();
             host.setId(entity.getHostId().toString());
             model.setHost(host);
+        }
+        if (!Guid.isNullOrEmpty(entity.getSnapshotId())) {
+            Snapshot snapshot = new Snapshot();
+            snapshot.setId(entity.getSnapshotId().toString());
+            model.setSnapshot(snapshot);
         }
         return model;
     }
