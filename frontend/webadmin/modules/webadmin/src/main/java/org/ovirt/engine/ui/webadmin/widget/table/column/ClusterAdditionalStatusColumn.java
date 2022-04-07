@@ -64,7 +64,7 @@ public class ClusterAdditionalStatusColumn extends EntityAdditionalStatusColumn<
             images.add(getImageSafeHtml(IconType.EXCLAMATION));
         }
 
-        if (!object.getHostNamesOutOfSync().isEmpty()) {
+        if (object.getHostNamesOutOfSync() != null && !object.getHostNamesOutOfSync().isEmpty()) {
             images.add(templates.brokenLinkRed());
         }
 
