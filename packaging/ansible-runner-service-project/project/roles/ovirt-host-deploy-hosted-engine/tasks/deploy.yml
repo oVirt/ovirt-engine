@@ -27,7 +27,9 @@
   copy:
     src: "{{ hosted_engine_tmp_cfg_file }}"
     dest: "{{ hosted_engine_conf }}"
-    mode: preserve
+    owner: 'vdsm'
+    group: 'kvm'
+    mode: 0440
 
 - name: Update host ID in hosted engine configuration
   lineinfile:
