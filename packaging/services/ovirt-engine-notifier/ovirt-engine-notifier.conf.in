@@ -308,3 +308,12 @@ REPEAT_NON_RESPONSIVE_NOTIFICATION=false
 
 # Location of engine pid
 ENGINE_PID=@ENGINE_VAR@/ovirt-engine.pid
+
+# The password for the trust store containing the certificate of the external OIDC server.
+SENSITIVE_KEYS="${SENSITIVE_KEYS},EXTERNAL_OIDC_HTTPS_PKI_TRUST_STORE_PASSWORD"
+
+# Client password to use for external OIDC server.
+SENSITIVE_KEYS="${SENSITIVE_KEYS},EXTERNAL_OIDC_CLIENT_SECRET"
+
+# Keycloak Database connection details
+SENSITIVE_KEYS="${SENSITIVE_KEYS},KEYCLOAK_DB_PASSWORD"
