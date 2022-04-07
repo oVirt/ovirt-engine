@@ -79,16 +79,16 @@ class FileLocations(object):
         OVIRT_ENGINE_PKIKEYSDIR,
         'apache.key.nopass',
     )
-    FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE_TEMPLATE = os.path.join(
+    FAPOLICYD_ALLOW_OVIRT_ENGINE_RULE_TEMPLATE = os.path.join(
         osetupcons.FileLocations.OVIRT_SETUP_DATADIR,
         'conf',
-        'fapolicyd-55-allow-ovirt-jboss.rules.in',
+        'fapolicyd-55-allow-ovirt.rules.in',
     )
-    FAPOLICYD_ALLOW_OVIRT_JBOSS_RULE = os.path.join(
+    FAPOLICYD_ALLOW_OVIRT_ENGINE_RULE = os.path.join(
         SYSCONFDIR,
         'fapolicyd',
         'rules.d',
-        '55-allow-ovirt-jboss.rules',
+        '55-allow-ovirt.rules',
     )
 
 

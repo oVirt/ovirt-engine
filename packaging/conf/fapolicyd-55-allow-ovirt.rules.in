@@ -1,0 +1,5 @@
+#
+# This is Ovirt Engine configuration and MUST NOT be changed manually
+#
+%java=application/java-archive,text/x-java,application/x-java-applet,application/javascript,text/javascript,text/x-python
+allow perm=any trust=1 : dir=@ENGINE_RUNTIME_DIR@ ftype=%lang
