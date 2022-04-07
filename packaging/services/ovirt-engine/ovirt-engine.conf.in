@@ -259,6 +259,21 @@ CINDERLIB_DB_DRIVER=org.postgresql.Driver
 CINDERLIB_DB_URL="jdbc:postgresql://${CINDERLIB_DB_HOST}:${CINDERLIB_DB_PORT}/${CINDERLIB_DB_DATABASE}?sslfactory=org.postgresql.ssl.NonValidatingFactory"
 
 #
+# Keycloak Database connection details
+#
+SENSITIVE_KEYS="${SENSITIVE_KEYS},KEYCLOAK_DB_PASSWORD"
+KEYCLOAK_DB_HOST="localhost"
+KEYCLOAK_DB_PORT="5432"
+KEYCLOAK_DB_USER="ovirt_engine_keycloak"
+KEYCLOAK_DB_PASSWORD=
+KEYCLOAK_DB_DATABASE="ovirt_engine_keycloak"
+KEYCLOAK_DB_SECURED="False"
+KEYCLOAK_DB_SECURED_VALIDATION="False"
+KEYCLOAK_DB_DRIVER=org.postgresql.Driver
+KEYCLOAK_DB_URL="jdbc:postgresql://${KEYCLOAK_DB_HOST}:${KEYCLOAK_DB_PORT}/${KEYCLOAK_DB_DATABASE}?sslfactory=org.postgresql.ssl.NonValidatingFactory"
+
+
+#
 # Size of the database connection pool:
 #
 ENGINE_DB_MIN_CONNECTIONS=1
@@ -337,6 +352,7 @@ ENGINE_SSO_ENABLE_EXTERNAL_SSO=false
 EXTERNAL_OIDC_CLIENT_ID=
 
 # Client password to use for external OIDC server.
+SENSITIVE_KEYS="${SENSITIVE_KEYS},EXTERNAL_OIDC_CLIENT_SECRET"
 EXTERNAL_OIDC_CLIENT_SECRET=
 
 # The token end point to use for external OIDC server.
@@ -429,6 +445,7 @@ EXTERNAL_OIDC_HTTPS_PKI_TRUST_STORE_TYPE="${ENGINE_PKI_TRUST_STORE_TYPE}"
 EXTERNAL_OIDC_HTTPS_PKI_TRUST_STORE="${ENGINE_PKI_TRUST_STORE}"
 
 # The password for the trust store containing the certificate of the external OIDC server.
+SENSITIVE_KEYS="${SENSITIVE_KEYS},EXTERNAL_OIDC_HTTPS_PKI_TRUST_STORE_PASSWORD"
 EXTERNAL_OIDC_HTTPS_PKI_TRUST_STORE_PASSWORD="${ENGINE_PKI_TRUST_STORE_PASSWORD}"
 
 #
