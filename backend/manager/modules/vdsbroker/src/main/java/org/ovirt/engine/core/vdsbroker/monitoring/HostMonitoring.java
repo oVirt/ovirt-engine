@@ -888,6 +888,7 @@ public class HostMonitoring implements HostMonitoringInterface {
         int memCommited = host.getGuestOverhead();
         int vmsCoresCount = 0;
         int maxSharedCpus = 0;
+        int vmsSharedCpusCount = 0;
 
         for (Map.Entry<Guid, VMStatus> entry : vmIdToStatus.entrySet()) {
             VMStatus status = entry.getValue();
@@ -901,6 +902,10 @@ public class HostMonitoring implements HostMonitoringInterface {
                     int sharedCpus = vmManager.getCpuPinningPolicy() != null && !vmManager.getCpuPinningPolicy().isExclusive()
                             ? vmManager.getNumOfCpus() : 0;
                     maxSharedCpus = Math.max(maxSharedCpus, sharedCpus);
+
+                    if (!vmManager.getCpuPinningPolicy().isExclusive()) {
+                        vmsSharedCpusCount += vmManager.getNumOfCpus();
+                    }
                 }
             }
         }
@@ -915,6 +920,8 @@ public class HostMonitoring implements HostMonitoringInterface {
             host.setVmsCoresCount(vmsCoresCount);
             memoryUpdated = true;
         }
+
+        resourceManager.getVdsManager(host.getId()).setVmsSharedCpusCount(vmsSharedCpusCount);
 
         return memoryUpdated;
     }

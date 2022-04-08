@@ -20,12 +20,14 @@ public class PendingCpuCores extends PendingResource {
         super(host, vm);
         this.cpuPinningPolicy = vm.getCpuPinningPolicy();
         this.coreCount = coreCount;
+        this.cpuPinningPolicy = vm.getCpuPinningPolicy();
     }
 
     public PendingCpuCores(Guid host, VM vm, int coreCount) {
         super(host, vm);
         this.cpuPinningPolicy = vm.getCpuPinningPolicy();
         this.coreCount = coreCount;
+        this.cpuPinningPolicy = vm.getCpuPinningPolicy();
     }
 
     public long getCoreCount() {
@@ -55,6 +57,17 @@ public class PendingCpuCores extends PendingResource {
         int sum = 0;
         for (PendingCpuCores resource: manager.pendingHostResources(host, PendingCpuCores.class)) {
             sum += resource.getCoreCount();
+        }
+
+        return sum;
+    }
+
+    public static int collectSharedForHost(PendingResourceManager manager, Guid host) {
+        int sum = 0;
+        for (PendingCpuCores resource: manager.pendingHostResources(host, PendingCpuCores.class)) {
+            if (!resource.getCpuPinningPolicy().isExclusive()) {
+                sum += resource.getCoreCount();
+            }
         }
 
         return sum;

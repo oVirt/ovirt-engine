@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -150,5 +151,25 @@ public abstract class PolicyUnitImpl {
             return null;
         }
         return vdsDynamicDao.get(vm.getRunOnVds());
+    }
+
+    protected void stretchScores(List<Pair<Guid, Integer>> scores) {
+        if (scores.isEmpty()) {
+            return;
+        }
+
+        IntSummaryStatistics stats = scores.stream().collect(Collectors.summarizingInt(Pair::getSecond));
+        // Avoid division by 0
+        if (stats.getMin() == stats.getMax()) {
+            scores.forEach(p -> p.setSecond(1));
+            return;
+        }
+
+        // Stretch the scores to fit to interval [1, getMaxSchedulerWeight()]
+        for (Pair<Guid, Integer> pair : scores) {
+            double coef = (pair.getSecond() - stats.getMin()) / (double) (stats.getMax() - stats.getMin());
+            int newScore = (int) Math.round(1 + coef * (getMaxSchedulerWeight() - 1));
+            pair.setSecond(newScore);
+        }
     }
 }

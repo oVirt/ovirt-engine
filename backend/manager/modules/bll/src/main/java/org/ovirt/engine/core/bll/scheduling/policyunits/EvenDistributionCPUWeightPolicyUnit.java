@@ -1,22 +1,21 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
-import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
-import org.ovirt.engine.core.bll.scheduling.SlaValidator;
-import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
-import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuLoad;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.bll.scheduling.utils.HostCpuLoadHelper;
+import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUnitPinningHelper;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -24,6 +23,7 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @SchedulingUnit(
         guid = "7db4ab05-81ab-42e8-868a-aee2df483edb",
@@ -35,6 +35,12 @@ import org.ovirt.engine.core.compat.Guid;
 )
 public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
 
+    @Inject
+    protected ResourceManager resourceManager;
+
+    @Inject
+    protected VdsCpuUnitPinningHelper vdsCpuUnitPinningHelper;
+
     public EvenDistributionCPUWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -44,16 +50,23 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
     public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, List<VM> vmGroup) {
         double configuredVcpuRatio = NumberUtils.toDouble(context.getPolicyParameters().get(PolicyUnitParameter.VCPU_TO_PHYSICAL_CPU_RATIO.getDbName()), 0);
         boolean countThreadsAsCores = context.getCluster().getCountThreadsAsCores();
+
         List<Pair<Guid, Integer>> scores = new ArrayList<>();
         List<Guid> hostsWithMaxScore = new ArrayList<>();
+
         for (VDS vds : hosts) {
-            Integer effectiveCpuCores = SlaValidator.getEffectiveCpuCores(vds, countThreadsAsCores);
-            if (effectiveCpuCores == null || vds.getUsageCpuPercent() == null) {
+            HostCpuLoadHelper cpuLoadHelper = new HostCpuLoadHelper(vds,
+                    resourceManager,
+                    vdsCpuUnitPinningHelper,
+                    pendingResourceManager,
+                    countThreadsAsCores);
+
+            if (!cpuLoadHelper.hostStatisticsPresent()) {
                 hostsWithMaxScore.add(vds.getId());
                 continue;
             }
 
-            int score = (int)Math.round(calcHostLoadPerCore(vds, vmGroup, effectiveCpuCores, configuredVcpuRatio));
+            int score = (int) Math.round(calcHostScore(vmGroup, cpuLoadHelper, configuredVcpuRatio));
             scores.add(new Pair<>(vds.getId(), score));
         }
 
@@ -65,79 +78,69 @@ public class EvenDistributionCPUWeightPolicyUnit extends PolicyUnitImpl {
         return scores;
     }
 
-    protected double calcHostLoadPerCore(VDS vds, List<VM> vmGroup, int hostCores, double configuredVcpuRatio) {
-        return calcHostLoadPerCore(vds, vmGroup, hostCores, null, configuredVcpuRatio);
-    }
+    protected double calcHostScore(List<VM> vmGroup, HostCpuLoadHelper cpuLoadHelper, double configuredVcpuRatio) {
+        int hostSharedLoad = cpuLoadHelper.getEffectiveSharedCpuTotalLoad();
+        int addedSharedVmLoad = calcAddedSharedVmsLoad(cpuLoadHelper.getHost(), vmGroup);
+        int totalHostLoad = hostSharedLoad + addedSharedVmLoad;
 
-    protected double calcHostLoadPerCore(VDS vds, List<VM> vmGroup, int hostCores, Integer hostLoad, double configuredVcpuRatio) {
-        int vcpu = Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage);
-        hostLoad = hostLoad != null ? hostLoad : calcHostLoad(vds, hostCores, vcpu);
+        long hostSharedCpuCount = cpuLoadHelper.getEffectiveSharedPCpusCount();
+        int addedExclusiveCpuCount = calcAddedVmsExclusiveCpusCount(vmGroup, cpuLoadHelper.getHost());
+        long totalHostSharedCpus = hostSharedCpuCount - addedExclusiveCpuCount;
 
-        int addedVmLoad = vmGroup.stream()
-                .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
-                // If the VM is running, use its current CPU load, otherwise use the config value
-                .mapToInt(vm -> vm.getRunOnVds() != null && vm.getStatisticsData() != null  && vm.getUsageCpuPercent() != null ?
-                        vm.getUsageCpuPercent() * VmCpuCountHelper.getRuntimeNumOfCpu(vm, vds) :
-                        vcpu * VmCpuCountHelper.getRuntimeNumOfCpu(vm, vds))
-                .sum();
-
-        double loadScore = (double)(hostLoad + addedVmLoad) / (double)hostCores;
-        double vcpuPenalty = calculateVCpuPenalty(vds, vmGroup, hostCores, configuredVcpuRatio);
+        double loadScore = totalHostLoad / (double) totalHostSharedCpus;
+        double vcpuPenalty = calculateVCpuPenalty(vmGroup, cpuLoadHelper, configuredVcpuRatio);
         return vcpuPenalty * loadScore;
     }
 
-    protected int calcHostLoad(VDS host, int hostCores) {
-        return calcHostLoad(host, hostCores, Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage));
+    private int calcAddedSharedVmsLoad(VDS vds, List<VM> vmGroup) {
+        int vcpuLoadPerCore = Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage);
+        int addedVmLoad = vmGroup.stream()
+                .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
+                .filter(vm -> !vm.getCpuPinningPolicy().isExclusive())
+                // If the VM is running, use its current CPU load, otherwise use the config value
+                .mapToInt(vm -> vm.getRunOnVds() != null && vm.getStatisticsData() != null  && vm.getUsageCpuPercent() != null ?
+                        vm.getUsageCpuPercent() * VmCpuCountHelper.getRuntimeNumOfCpu(vm, vds) :
+                        vcpuLoadPerCore * VmCpuCountHelper.getRuntimeNumOfCpu(vm, vds))
+                .sum();
+        return addedVmLoad;
     }
 
-    protected int calcHostLoad(VDS host, int hostCores, int vcpuLoadPerCore) {
-        int spmCpu = (host.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
-                .<Integer>getValue(ConfigValues.SpmVCpuConsumption);
+    private int calcAddedVmsExclusiveCpusCount(List<VM> vmGroup, VDS host) {
+        return vmGroup.stream()
+                .filter(vm -> !host.getId().equals(vm.getRunOnVds()))
+                .filter(vm -> vm.getCpuPinningPolicy().isExclusive())
+                .mapToInt(vm -> vm.getNumOfCpus())
+                .sum();
+    }
 
-        int hostLoad = host.getUsageCpuPercent() * hostCores;
-        int pendingCpuLoad = PendingCpuLoad.collectForHost(getPendingResourceManager(), host.getId());
-
-        return hostLoad + pendingCpuLoad + vcpuLoadPerCore * spmCpu;
+    private int calcAddedVmsSharedCpusCount(List<VM> vmGroup, VDS host) {
+        return vmGroup.stream()
+                .filter(vm -> !host.getId().equals(vm.getRunOnVds()))
+                .filter(vm -> !vm.getCpuPinningPolicy().isExclusive())
+                .mapToInt(vm -> vm.getNumOfCpus())
+                .sum();
     }
 
     /**
      * If the virtual / physical threshold was specified and adding the VM on a host would
      * exceeded the threshold, punish the host by multiplying its score with the penalty > 0.
      *
-     * @return 1 if the threshold is not specified or reached, otherwise 1000.
+     * @return 1 if the threshold is not specified or not reached, otherwise 1000.
      */
-    protected int calculateVCpuPenalty(VDS vds, List<VM> vmGroup, int hostCores, double configuredVcpuRatio) {
+    protected int calculateVCpuPenalty(List<VM> vmGroup, HostCpuLoadHelper cpuLoadHelper, double configuredVcpuRatio) {
         if (configuredVcpuRatio == 0) {
             return 1;
         }
 
-        int hostVCpuCount = vds.getVmsCoresCount() + PendingCpuCores.collectForHost(getPendingResourceManager(), vds.getId());
-        int addedVCpuCount = vmGroup.stream()
-                .filter(vm -> !vds.getId().equals(vm.getRunOnVds()))
-                .mapToInt(vm -> vm.getNumOfCpus())
-                .sum();
-        double vcpuRatio = (double) (addedVCpuCount + hostVCpuCount) / (double) hostCores;
+        long hostSharedPCpuCount = cpuLoadHelper.getEffectiveSharedPCpusCount();
+        int addedExclusivelyPinnedPCpuCount = calcAddedVmsExclusiveCpusCount(vmGroup, cpuLoadHelper.getHost());
+
+        int hostSharedVCpuCount = cpuLoadHelper.getEffectiveVmsSharedCpusCount();
+        int addedSharedVCpuCount = calcAddedVmsSharedCpusCount(vmGroup, cpuLoadHelper.getHost());
+
+        double vcpuRatio = (double) (addedSharedVCpuCount + hostSharedVCpuCount)
+                / (double) (hostSharedPCpuCount - addedExclusivelyPinnedPCpuCount);
 
         return vcpuRatio < configuredVcpuRatio ? 1 : 1000;
-    }
-
-    protected void stretchScores(List<Pair<Guid, Integer>> scores) {
-        if (scores.isEmpty()) {
-            return;
-        }
-
-        IntSummaryStatistics stats = scores.stream().collect(Collectors.summarizingInt(Pair::getSecond));
-        // Avoid division by 0
-        if (stats.getMin() == stats.getMax()) {
-            scores.forEach(p -> p.setSecond(1));
-            return;
-        }
-
-        // Stretch the scores to fit to interval [1, maxSchedulerScore]
-        for (Pair<Guid, Integer> pair : scores) {
-            double coef = (double)(pair.getSecond() - stats.getMin()) / (double)(stats.getMax() - stats.getMin());
-            int newScore = (int) Math.round(1 + coef * (getMaxSchedulerWeight() - 1));
-            pair.setSecond(newScore);
-        }
     }
 }

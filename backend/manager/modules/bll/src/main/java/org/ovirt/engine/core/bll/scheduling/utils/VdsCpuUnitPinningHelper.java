@@ -291,6 +291,11 @@ public class VdsCpuUnitPinningHelper {
         }
     }
 
+    public int getDedicatedCount(Guid vdsId) {
+        return (int) resourceManager.getVdsManager(vdsId).getCpuTopology().stream()
+                .filter(VdsCpuUnit::isExclusive).count();
+    }
+
     private List<Integer> getOnlineSockets(List<VdsCpuUnit> cpuTopology) {
         return cpuTopology.stream().map(VdsCpuUnit::getSocket).distinct().collect(Collectors.toList());
     }

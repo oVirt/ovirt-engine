@@ -52,6 +52,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityFilterPolicyUn
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.VmToHostAffinityWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.selector.SelectorInstance;
+import org.ovirt.engine.core.bll.scheduling.utils.HostCpuLoadHelper;
 import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUnitPinningHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
@@ -1443,12 +1444,17 @@ public class SchedulingManager implements BackendService {
      * * CPU load duration interval over/under policy threshold
      */
     public void updateHostSchedulingStats(VDS vds) {
-        if (vds.getUsageCpuPercent() != null) {
+        HostCpuLoadHelper cpuLoadHelper = new HostCpuLoadHelper(vds,
+                resourceManager,
+                vdsCpuUnitPinningHelper);
+
+        if (cpuLoadHelper.hostStatisticsPresent()) {
             Cluster cluster = clusterDao.get(vds.getClusterId());
-            if (vds.getUsageCpuPercent() >= NumberUtils.toInt(cluster.getClusterPolicyProperties()
+            double effectiveSharedCpuLoad = cpuLoadHelper.getEffectiveSharedCpuLoad();
+            if (effectiveSharedCpuLoad >= NumberUtils.toInt(cluster.getClusterPolicyProperties()
                     .get(HIGH_UTILIZATION),
                     Config.<Integer> getValue(ConfigValues.HighUtilizationForEvenlyDistribute))
-                    || vds.getUsageCpuPercent() <= NumberUtils.toInt(cluster.getClusterPolicyProperties()
+                    || effectiveSharedCpuLoad <= NumberUtils.toInt(cluster.getClusterPolicyProperties()
                             .get(LOW_UTILIZATION),
                             Config.<Integer> getValue(ConfigValues.LowUtilizationForEvenlyDistribute))) {
                 if (vds.getCpuOverCommitTimestamp() == null) {
