@@ -50,7 +50,12 @@ public class EvenDistributionBalancePolicyUnit extends CpuAndMemoryBalancingPoli
                 0L
         );
 
-        return new FindVmAndDestinations(cluster, highCpuUtilization, overUtilizedMemory);
+        return new FindVmAndDestinations(
+                cluster,
+                highCpuUtilization,
+                overUtilizedMemory,
+                resourceManager,
+                vdsCpuUnitPinningHelper);
     }
 
     @Override

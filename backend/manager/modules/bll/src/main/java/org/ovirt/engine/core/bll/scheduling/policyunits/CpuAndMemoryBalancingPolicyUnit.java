@@ -16,10 +16,11 @@ import javax.inject.Inject;
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
-import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
+import org.ovirt.engine.core.bll.scheduling.utils.HostCpuLoadHelper;
+import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUnitPinningHelper;
 import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUsageComparator;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -44,7 +45,9 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
     @Inject
     private VmDao vmDao;
     @Inject
-    private ResourceManager resourceManager;
+    protected ResourceManager resourceManager;
+    @Inject
+    protected VdsCpuUnitPinningHelper vdsCpuUnitPinningHelper;
     @Override
     protected Set<PolicyUnitParameter> getParameters() {
         Set<PolicyUnitParameter> params = super.getParameters();
@@ -176,12 +179,16 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             CpuAndMemoryBalancingParameters params) {
 
         long duration = TimeUnit.MINUTES.toMillis(params.getCpuOverCommitDurationMinutes());
-        Integer effectiveCpuCores = SlaValidator.getEffectiveCpuCores(host, params.isCountThreadsAsCores());
+        HostCpuLoadHelper cpuLoadHelper = new HostCpuLoadHelper(host,
+                resourceManager,
+                vdsCpuUnitPinningHelper,
+                params.isCountThreadsAsCores());
 
-        boolean cpuOvercommited = host.getUsageCpuPercent() + calcSpmCpuConsumption(host) >= params.getUtilization() &&
-                host.getCpuOverCommitTimestamp() != null &&
-                getTime().getTime() - host.getCpuOverCommitTimestamp().getTime() >= duration &&
-                host.getVmCount() > 0;
+        boolean cpuOvercommited =
+                cpuLoadHelper.getEffectiveSharedCpuLoad() >= params.getUtilization()
+                        && host.getCpuOverCommitTimestamp() != null
+                        && getTime().getTime() - host.getCpuOverCommitTimestamp().getTime() >= duration
+                        && host.getVmCount() > 0;
 
         // do not calculate vcpuCountOverLimit if not needed
         if (cpuOvercommited) {
@@ -189,12 +196,31 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         }
 
         boolean vcpuCountOverLimit = false;
-        if (params.getVcpuToPhysicalCpuRatio() > 0 && effectiveCpuCores != null && effectiveCpuCores > 0) {
-            double actualVcpuToPhysicalCpuRatio = (double) host.getVmsCoresCount() / (double) effectiveCpuCores;
+        if (params.getVcpuToPhysicalCpuRatio() > 0) {
+            double actualVcpuToPhysicalCpuRatio = cpuLoadHelper.getEffectiveVmsSharedCpusCount()
+                    / (double) cpuLoadHelper.getEffectiveSharedPCpusCount();
             vcpuCountOverLimit = actualVcpuToPhysicalCpuRatio >= params.getVcpuToPhysicalCpuRatio();
         }
 
-        return  vcpuCountOverLimit;
+        return vcpuCountOverLimit;
+    }
+
+    protected boolean isHostCpuUnderUtilized(VDS host,
+            CpuAndMemoryBalancingParameters params) {
+
+        long duration = TimeUnit.MINUTES.toMillis(params.getCpuOverCommitDurationMinutes());
+        HostCpuLoadHelper cpuLoadHelper = new HostCpuLoadHelper(host,
+                resourceManager,
+                vdsCpuUnitPinningHelper,
+                params.isCountThreadsAsCores());
+
+        boolean cpuUnderUtilized =
+                cpuLoadHelper.getEffectiveSharedCpuLoad() < params.getUtilization()
+                        && (host.getCpuOverCommitTimestamp() == null
+                                || getTime().getTime() - host.getCpuOverCommitTimestamp().getTime() >= duration)
+                        && host.getVmCount() >= params.getVmCount();
+
+        return cpuUnderUtilized;
     }
 
     /**
@@ -216,7 +242,10 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             // Assume all hosts belong to the same cluster
             Cluster cluster = clusterDao.get(overUtilizedHosts.get(0).getClusterId());
             overUtilizedHosts.sort(new VdsCpuUsageComparator(
-                    cluster != null && cluster.getCountThreadsAsCores()).reversed());
+                    resourceManager,
+                    vdsCpuUnitPinningHelper,
+                    cluster != null && cluster.getCountThreadsAsCores())
+                            .reversed());
         }
 
         return overUtilizedHosts;
@@ -241,17 +270,15 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             CpuAndMemoryBalancingParameters params) {
 
         List<VDS> underUtilizedHosts = relevantHosts.stream()
-                .filter(p -> (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) < params.getUtilization()
-                    && p.getVmCount() >= params.getVmCount()
-                    && (p.getCpuOverCommitTimestamp() == null
-                        || (getTime().getTime() - p.getCpuOverCommitTimestamp().getTime()) >=
-                            TimeUnit.MINUTES.toMillis(params.getCpuOverCommitDurationMinutes())))
+                .filter(p -> isHostCpuUnderUtilized(p, params))
                 .collect(Collectors.toList());
 
         if (underUtilizedHosts.size() > 1) {
             // Assume all hosts belong to the same cluster
             Cluster cluster = clusterDao.get(underUtilizedHosts.get(0).getClusterId());
             underUtilizedHosts.sort(new VdsCpuUsageComparator(
+                    resourceManager,
+                    vdsCpuUnitPinningHelper,
                     cluster != null && cluster.getCountThreadsAsCores()));
         }
 

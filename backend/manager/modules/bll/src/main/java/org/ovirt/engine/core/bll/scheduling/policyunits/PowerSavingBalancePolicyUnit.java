@@ -297,7 +297,12 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
                 0L
         );
 
-        return new FindVmAndDestinations(cluster, highUtilization, overUtilizedMemory);
+        return new FindVmAndDestinations(
+                cluster,
+                highUtilization,
+                overUtilizedMemory,
+                resourceManager,
+                vdsCpuUnitPinningHelper);
     }
 
     /**

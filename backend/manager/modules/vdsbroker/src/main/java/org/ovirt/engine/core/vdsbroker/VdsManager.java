@@ -183,6 +183,7 @@ public class VdsManager {
     private volatile boolean inServerRebootTimeout;
     private List<VdsCpuUnit> cpuTopology;
     private int minRequiredSharedCpusCount;
+    private int vmsSharedCpusCount;
 
     VdsManager(VDS vds, ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -190,6 +191,7 @@ public class VdsManager {
         refreshIteration = new AtomicInteger(NUMBER_HOST_REFRESHES_BEFORE_SAVE - 1);
         log.info("Entered VdsManager constructor");
         cachedVds = vds;
+        vmsSharedCpusCount = cachedVds.getVmsCoresCount();
         vdsId = vds.getId();
         unrespondedAttempts = new AtomicInteger();
         autoStartVmsWithLeasesLock = new ReentrantLock();
@@ -545,6 +547,12 @@ public class VdsManager {
     public void updateStatisticsData(VdsStatistics statisticsData) {
         vdsStatisticsDao.update(statisticsData);
         cachedVds.setStatisticsData(statisticsData);
+
+        statisticsData.getCpuCoreStatistics().stream().forEach(statistics -> {
+            cpuTopology.stream()
+                .filter(cpu -> cpu.getCpu() == statistics.getCpuId())
+                .forEach(cpu -> cpu.setCpuUsagePercent(statistics.getCpuUsagePercent()));
+        });
     }
 
     /**
@@ -1358,5 +1366,13 @@ public class VdsManager {
 
     public int getMinRequiredSharedCpusCount() {
         return minRequiredSharedCpusCount < 1 ? 1 : minRequiredSharedCpusCount;
+    }
+
+    public void setVmsSharedCpusCount(int sharedCpuCount) {
+        this.vmsSharedCpusCount = sharedCpuCount;
+    }
+
+    public int getVmsSharedCpusCount() {
+        return vmsSharedCpusCount;
     }
 }

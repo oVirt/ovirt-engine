@@ -24,6 +24,7 @@ import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUnitPinningHelper;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -34,6 +35,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 
 @ExtendWith({ MockitoExtension.class, MockConfigExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -58,6 +61,18 @@ public class PowerSavingWeightPolicyUnitTest extends AbstractPolicyUnitTest {
     @Mock
     private VmOverheadCalculator vmOverheadCalculator;
 
+    @Mock
+    private ResourceManager resourceManager;
+
+    @Mock
+    private VdsCpuUnitPinningHelper vdsCpuUnitPinningHelper;
+
+    @Mock
+    private PendingResourceManager pendingResourceManager;
+
+    @Mock
+    private VdsManager vdsManager;
+
     @InjectMocks
     private PowerSavingCPUWeightPolicyUnit powerSavingCPUWeightPolicyUnit =  new PowerSavingCPUWeightPolicyUnit(null, new PendingResourceManager());
 
@@ -69,6 +84,8 @@ public class PowerSavingWeightPolicyUnitTest extends AbstractPolicyUnitTest {
     @BeforeEach
     public void setUp() {
         when(vmOverheadCalculator.getTotalRequiredMemMb(any(VM.class))).thenAnswer(invocation -> invocation.<VM>getArgument(0).getMemSizeMb());
+        when(resourceManager.getVdsManager(any())).thenReturn(vdsManager);
+        when(vdsManager.getCpuTopology()).thenReturn(Collections.emptyList());
 
         parameters.put(PolicyUnitParameter.HIGH_UTILIZATION.getDbName(), "80");
         parameters.put(PolicyUnitParameter.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED.getDbName(), "600");

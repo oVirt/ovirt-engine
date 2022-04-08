@@ -23,6 +23,9 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
     private int cpu;
 
     @JsonIgnore
+    private int cpuUsagePercent;
+
+    @JsonIgnore
     private List<Guid> vmIds;
     @JsonIgnore
     private CpuPinningPolicy cpuPinningPolicy;
@@ -48,6 +51,7 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
         this.cpu = vdsCpuUnit.getCpu();
         this.vmIds = vdsCpuUnit.getVmIds();
         this.cpuPinningPolicy = vdsCpuUnit.getCpuPinningPolicy();
+        this.cpuUsagePercent = vdsCpuUnit.getCpuUsagePercent();
     }
 
     public int getSocket() {
@@ -169,6 +173,14 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
             this.cpuPinningPolicy = CpuPinningPolicy.NONE;
         }
         return true;
+    }
+
+    public void setCpuUsagePercent(int cpuUsagePercent) {
+        this.cpuUsagePercent = cpuUsagePercent;
+    }
+
+    public int getCpuUsagePercent() {
+        return cpuUsagePercent;
     }
 
     public VdsCpuUnit clone() {

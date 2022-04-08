@@ -25,14 +25,27 @@ import org.slf4j.LoggerFactory;
 public class FindVmAndDestinations {
     private static final Logger log = LoggerFactory.getLogger(FindVmAndDestinations.class);
 
+    private ResourceManager resourceManager;
+
+    private VdsCpuUnitPinningHelper vdsCpuUnitPinningHelper;
+
     private Cluster cluster;
+
     private int highCpuUtilization;
+
     private long requiredMemory;
 
-    public FindVmAndDestinations(Cluster cluster, int highCpuUtilization, long requiredMemory) {
+    public FindVmAndDestinations(
+            Cluster cluster,
+            int highCpuUtilization,
+            long requiredMemory,
+            ResourceManager resourceManager,
+            VdsCpuUnitPinningHelper vdsCpuUnitPinningHelper) {
         this.cluster = cluster;
         this.highCpuUtilization = highCpuUtilization;
         this.requiredMemory = requiredMemory;
+        this.resourceManager = resourceManager;
+        this.vdsCpuUnitPinningHelper = vdsCpuUnitPinningHelper;
     }
 
     public List<BalanceResult> invoke(List<VDS> sourceHosts,
@@ -112,13 +125,35 @@ public class FindVmAndDestinations {
                 continue;
             }
 
+            HostCpuLoadHelper cpuLoadHelper = new HostCpuLoadHelper(vds,
+                    resourceManager,
+                    vdsCpuUnitPinningHelper);
+
+            int currentHostLoad = cpuLoadHelper.getEffectiveSharedCpuTotalLoad();
             // Using host threads, so the predicted VM cpu is consistent
             // with the percentage that vdsm returns
-            int predictedVmCpu = (vm.getStatisticsData() != null && vm.getUsageCpuPercent() != null && vds.getCpuThreads() != null) ?
-                    (vm.getUsageCpuPercent() * VmCpuCountHelper.getDynamicNumOfCpu(vm) / vds.getCpuThreads()):
-                    0;
+            int addedLoad = 0;
 
-            if (vds.getUsageCpuPercent() + predictedVmCpu <= highCpuUtilization
+            if (!vm.getCpuPinningPolicy().isExclusive()) {
+                addedLoad = (vm.getStatisticsData() != null && vm.getUsageCpuPercent() != null
+                        && vds.getCpuThreads() != null)
+                                ? (vm.getUsageCpuPercent() * VmCpuCountHelper.getDynamicNumOfCpu(vm))
+                                : 0;
+            }
+
+            int predictedSharedLoadTotal = currentHostLoad + addedLoad;
+
+            long currentHostSharedCpuCount = cpuLoadHelper.getEffectiveSharedPCpusCount();
+            int addedExclusivelyPinnedCpuCount = 0;
+
+            if (vm.getCpuPinningPolicy().isExclusive()) {
+                addedExclusivelyPinnedCpuCount = vm.getNumOfCpus();
+            }
+            long predictedSharedCpuCount = currentHostSharedCpuCount - addedExclusivelyPinnedCpuCount;
+
+            double predictedHostUsage = (double) predictedSharedLoadTotal / (double) predictedSharedCpuCount;
+
+            if (predictedHostUsage <= highCpuUtilization
                     && vds.getMaxSchedulingMemory() - vm.getMemSizeMb() > minimalFreeMemory) {
                 result.add(vds);
             }

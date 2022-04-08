@@ -1,15 +1,22 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuPinning;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUnitPinningHelper;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
@@ -24,20 +31,45 @@ import org.ovirt.engine.core.compat.Guid;
 )
 public class HighPerformanceCpuPolicyUnit extends PolicyUnitImpl {
 
+    @Inject
+    private VdsCpuUnitPinningHelper vdsCpuUnitPinningHelper;
+
     public HighPerformanceCpuPolicyUnit(PolicyUnit policyUnit, PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
     }
 
     @Override
     public List<Pair<Guid, Integer>> score(SchedulingContext context, List<VDS> hosts, VM vm) {
-        return hosts.stream()
+        List<Pair<Guid, Integer>> scores = hosts.stream()
                 .map(host -> new Pair<>(host.getId(), hostScore(vm, host)))
                 .collect(Collectors.toList());
+        stretchScores(scores);
+        return scores;
     }
 
     private int hostScore(VM vm, VDS host) {
         if (!policyUnitEnabled(vm)) {
             return 1;
+        }
+
+        if (vm.getCpuPinningPolicy().isExclusive()
+                && host.getCpuTopology() != null
+                && !host.getCpuTopology().isEmpty()) {
+
+            List<VdsCpuUnit> proposedPinning = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm,
+                    PendingCpuPinning.collectForHost(getPendingResourceManager(), host.getId()),
+                    host.getId());
+
+            Set<Integer> neededSockets = new HashSet<>();
+            Set<Integer> neededCores = new HashSet<>();
+
+            for (VdsCpuUnit cpuUnit : proposedPinning) {
+                neededSockets.add(cpuUnit.getSocket());
+                neededCores.add(cpuUnit.getCore());
+            }
+
+            // the more sockets is needed, the worse the score is
+            return 1000 * neededSockets.size() + neededCores.size();
         }
 
         int hostCoresPerSocket = host.getCpuCores() / host.getCpuSockets();
@@ -59,7 +91,8 @@ public class HighPerformanceCpuPolicyUnit extends PolicyUnitImpl {
     private boolean policyUnitEnabled(VM vm) {
         if (vm.getVmType() == VmType.HighPerformance ||
                 vm.isUsingCpuPassthrough() ||
-                StringUtils.isNotEmpty(vm.getVmPinning())) {
+                StringUtils.isNotEmpty(vm.getVmPinning()) ||
+                vm.getCpuPinningPolicy().isExclusive()) {
             return true;
         }
 
