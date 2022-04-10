@@ -39,8 +39,6 @@ public interface IVdsEventListener {
 
     void handleVdsVersion(Guid vdsId);
 
-    void handleVdsFips(Guid vdsId);
-
     void rerun(Guid vmId);
 
     void runningSucceded(Guid vmId);
