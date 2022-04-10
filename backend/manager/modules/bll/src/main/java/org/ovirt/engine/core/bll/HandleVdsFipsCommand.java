@@ -37,14 +37,21 @@ public class HandleVdsFipsCommand <T extends VdsActionParameters> extends VdsCom
             setSucceeded(true);
             return;
         }
+
+        FipsMode hostFipsMode = getVds().isFipsEnabled() ? FipsMode.ENABLED : FipsMode.DISABLED;
         if (getCluster().getFipsMode() == FipsMode.UNDEFINED) {
             // cluster is not configured yet, initiate by the first VDS
-            getCluster().setFipsMode(getVds().isFipsEnabled() ? FipsMode.ENABLED : FipsMode.DISABLED);
+            getCluster().setFipsMode(hostFipsMode);
             log.info("Updating FIPS mode configuration of the cluster {} to {}",
                      getCluster().getName(), getVds().isFipsEnabled());
 
             clusterDao.update(getCluster());
-        } else if (getCluster().getFipsMode() != map(getVds().isFipsEnabled())) {
+            setSucceeded(true);
+            return;
+        }
+
+        boolean fipsModeCompatible = getCluster().getFipsMode() == hostFipsMode;
+        if (!fipsModeCompatible) {
             addCustomValue("VdsFips", String.valueOf(getVds().isFipsEnabled()));
             addCustomValue("ClusterFips", getCluster().getFipsMode().name());
 
@@ -55,14 +62,7 @@ public class HandleVdsFipsCommand <T extends VdsActionParameters> extends VdsCom
                     params,
                     ExecutionHandler.createInternalJobContext(getContext()));
         }
-        setSucceeded(true);
-    }
 
-    private FipsMode map(boolean hostFipsEnabled) {
-        if(hostFipsEnabled) {
-            return FipsMode.ENABLED;
-        } else {
-            return FipsMode.DISABLED;
-        }
+        setSucceeded(fipsModeCompatible);
     }
 }
