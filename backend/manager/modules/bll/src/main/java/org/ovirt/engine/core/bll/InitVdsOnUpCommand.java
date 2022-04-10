@@ -206,23 +206,15 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private boolean initVirtResources() {
         resourceManager.clearLastStatusEventStampsFromVds(getVdsId());
-        if (initializeStorage()) {
+        if (checkFipsMode() && initializeStorage()) {
             processFence();
             processStoragePoolStatus();
             runUpdateMomPolicy(getCluster(), getVds());
             refreshHostDeviceList();
-            checkFipsMode();
-        } else {
-            Map<String, String> customLogValues = new HashMap<>();
-            customLogValues.put("StoragePoolName", getStoragePoolName());
-            if (problematicDomains != null && !problematicDomains.isEmpty()) {
-                customLogValues.put("StorageDomainNames",
-                        problematicDomains.stream().map(StorageDomainStatic::getName).collect(Collectors.joining(", ")));
-            }
-            setNonOperational(NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE, customLogValues);
-            return false;
+            return true;
         }
-        return true;
+
+        return false;
     }
 
     private boolean checkFipsMode() {
@@ -319,7 +311,16 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             } else {
                 connectPoolSucceeded = false;
             }
+        }
 
+        if (!returnValue) {
+            Map<String, String> customLogValues = new HashMap<>();
+            customLogValues.put("StoragePoolName", getStoragePoolName());
+            if (problematicDomains != null && !problematicDomains.isEmpty()) {
+                customLogValues.put("StorageDomainNames",
+                        problematicDomains.stream().map(StorageDomainStatic::getName).collect(Collectors.joining(", ")));
+            }
+            setNonOperational(NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE, customLogValues);
         }
         return returnValue;
     }
