@@ -910,7 +910,7 @@ public class VdsManager {
         }
         if (cachedVds.getStatus() != VDSStatus.Down) {
             unrespondedAttempts.incrementAndGet();
-            if (isHostInGracePeriod(false)) {
+            if (isHostInGracePeriod()) {
                 if (cachedVds.getStatus() != VDSStatus.Connecting
                         && cachedVds.getStatus() != VDSStatus.PreparingForMaintenance
                         && cachedVds.getStatus() != VDSStatus.NonResponsive) {
@@ -969,31 +969,16 @@ public class VdsManager {
     }
 
     /**
-     * Checks if host is in grace period from last successful communication to fencing attempt
+     * Checks if host is in grace period from last successful communication
      *
-     * @param sshSoftFencingExecuted
-     *            if SSH Soft Fencing was already executed we need to raise default timeout to determine if SSH Soft
-     *            Fencing was successful and host became Up
      * @return <code>true</code> if host is still in grace period, otherwise <code>false</code>
      */
-    public boolean isHostInGracePeriod(boolean sshSoftFencingExecuted) {
-        long timeoutToFence = calcTimeoutToFence(cachedVds.getVmCount(), cachedVds.getSpmStatus());
+    public boolean isHostInGracePeriod() {
         int unrespondedAttemptsBarrier = Config.<Integer>getValue(ConfigValues.VDSAttemptsToResetCount);
-
-        if (sshSoftFencingExecuted) {
-            // SSH Soft Fencing has already been executed, increase timeout to see if host is OK
-            timeoutToFence = timeoutToFence * 2;
-            unrespondedAttemptsBarrier = unrespondedAttemptsBarrier * 2;
-        }
-        // return when either attempts reached or timeout passed, the sooner takes
-        if (unrespondedAttempts.get() > unrespondedAttemptsBarrier) {
-            // too many unresponded attempts
-            return false;
-        } else if ((lastUpdate + timeoutToFence) > System.currentTimeMillis()) {
-            // timeout since last successful communication attempt passed
-            return false;
-        }
-        return true;
+        long timeToFence = calcTimeoutToFence(cachedVds.getVmCount(),
+                cachedVds.getSpmStatus());
+        return unrespondedAttempts.get() <= unrespondedAttemptsBarrier || lastUpdate + timeToFence >=
+                System.currentTimeMillis();
     }
 
     private void logHostFailToRespond(VDSNetworkException ex) {
