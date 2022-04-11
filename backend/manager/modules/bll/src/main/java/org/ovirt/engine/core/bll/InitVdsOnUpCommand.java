@@ -174,7 +174,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 haMaintenanceFailed = !hostedEngineHelper.updateHaLocalMaintenanceMode(getVds(), false);
             }
 
-            if (cluster.supportsTrustedService()) {
+            initSucceeded = checkFipsMode();
+            if (initSucceeded && cluster.supportsTrustedService()) {
                 initSucceeded = initTrustedService();
             }
 
@@ -206,7 +207,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private boolean initVirtResources() {
         resourceManager.clearLastStatusEventStampsFromVds(getVdsId());
-        if (checkFipsMode() && initializeStorage()) {
+        if (initializeStorage()) {
             processFence();
             processStoragePoolStatus();
             runUpdateMomPolicy(getCluster(), getVds());
