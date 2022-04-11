@@ -234,22 +234,6 @@ class FileLocations(object):
         'nssdb',
     )
 
-    ANSIBLE_RUNNER_SERVICE_CONF = os.path.join(
-        SYSCONFDIR,
-        'ansible-runner-service',
-        'config.yaml',
-    )
-
-    ANSIBLE_RUNNER_SERVICE_PROJECT = os.path.join(
-        OVIRT_ENGINE_DATADIR,
-        'ansible-runner-service-project',
-    )
-
-    ANSIBLE_RUNNER_PROJECT = os.path.join(
-        OVIRT_ENGINE_LOCALSTATEDIR,
-        'ansible-runner-project',
-    )
-
     DIR_HTTPD = os.path.join(
         SYSCONFDIR,
         'httpd',
@@ -264,12 +248,6 @@ class FileLocations(object):
         DIR_WWW,
         'runnner',
         'runner.wsgi',
-    )
-
-    HTTPD_CONF_ANSIBLE_RUNNER_SERVICE = os.path.join(
-        DIR_HTTPD,
-        'conf.d',
-        'zz-ansible-runner-service.conf',
     )
 
     HTTPD_CONF_OVIRT_ENGINE = os.path.join(
