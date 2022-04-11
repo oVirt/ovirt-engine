@@ -64,6 +64,11 @@
   command: vdsm-tool configure --force
   changed_when: True
 
+- name: Verify fapolicyd.rules file
+  stat:
+    path: /etc/fapolicyd/fapolicyd.rules
+  register: fapolicy_rules
+
 - name: collect facts about system services
   service_facts:
 
@@ -84,6 +89,6 @@
      name: fapolicyd
 
   when:
-    - ansible_distribution == 'RedHat'
+    - fapolicy_rules.stat.exists
     - "'fapolicyd.service' in services"
     - ansible_facts.services["fapolicyd.service"].state == 'running'
