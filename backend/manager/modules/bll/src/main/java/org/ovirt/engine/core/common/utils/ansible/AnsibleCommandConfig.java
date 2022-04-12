@@ -279,8 +279,8 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
     }
 
     private File setupAnsibleRunnerExecutionDir() throws IOException {
-        File tempProject = new File(String.format("%1$s/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, this.uuid));
-        tempProject.mkdirs();
+        File privateDataDir = new File(String.format("%1$s/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, this.uuid));
+        privateDataDir.mkdirs();
 
         File env = new File(String.format("%1$s/%2$s/env", AnsibleConstants.ANSIBLE_RUNNER_PATH, this.uuid));
         env.mkdir();
@@ -290,7 +290,7 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
             EngineLocalConfig.getInstance().getPKIDir().toString(),
             "/keys/engine_id_rsa");
         Path linkToEngineSshKey = Paths.get(
-            tempProject.toString(),
+            privateDataDir.toString(),
             "/env/ssh_key");
         Files.createSymbolicLink(linkToEngineSshKey, engineSshKey);
 
@@ -303,7 +303,7 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
         // Create a host inventory file in project inventory/host, which will be passed to the playbook by ansible-runner.
         createHostFile(inventory);
 
-        return tempProject;
+        return privateDataDir;
     }
 
     private void createHostFile(File inventory) {

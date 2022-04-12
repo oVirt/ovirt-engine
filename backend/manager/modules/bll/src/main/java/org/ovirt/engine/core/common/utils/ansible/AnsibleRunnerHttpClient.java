@@ -9,13 +9,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -40,10 +40,9 @@ public class AnsibleRunnerHttpClient {
     private static Logger log = LoggerFactory.getLogger(AnsibleRunnerHttpClient.class);
     private ObjectMapper mapper;
     private AnsibleRunnerLogger runnerLogger;
-    private String lastEvent = "";
+    private JsonNode lastEvent;
     private static final int POLL_INTERVAL = 3000;
     private AnsibleReturnValue returnValue;
-    private String artifactsDir = "";
 
     public AnsibleRunnerHttpClient() {
         this.mapper = JsonMapper
@@ -54,98 +53,89 @@ public class AnsibleRunnerHttpClient {
         this.returnValue = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
     }
 
-    public Boolean playHasEnded(UUID uuid) {
-        String jobEvents = getJobEventsDir(uuid.toString());
-        File lastEventFile = new File(jobEvents + lastEvent);
-        String res = "";
-        try {
-                res = Files.readString(lastEventFile.toPath());
-            } catch (IOException e) {
-                return false;
-            }
-        return res.contains("playbook_on_stats");
+    public Boolean playHasEnded() {
+        if(this.lastEvent == null){
+            return false;
+        }
+        return RunnerJsonNode.playbookStats(this.lastEvent);
     }
 
-    private void setArtifactsDir(UUID uuid) {
-        this.artifactsDir = String.format("%1$s/%2$s/artifacts/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, uuid);
-    }
-
-    public AnsibleReturnValue artifactHandler(UUID uuid, int lastEventID, int timeout, BiConsumer<String, String> fn)
+    public AnsibleReturnValue artifactHandler(UUID uuid, int timeout, BiConsumer<String, String> fn)
             throws Exception {
-        int executionTime = 0;
-        setArtifactsDir(uuid);
-        setReturnValue(uuid);
-        while (!playHasEnded(uuid)) {
-            lastEventID = processEvents(uuid.toString(), lastEventID, fn, "", Paths.get(""));
-            if (lastEventID == -1) {
+        int iteration = 0;
+        int processRet = 0;
+        this.setReturnValue(uuid);
+        // retrieve timeout from engine constants.
+        while (!this.playHasEnded()) {
+            // Host is unreachable
+            if (processRet == -1) {
                 return returnValue;
             }
             executionTime += POLL_INTERVAL / 1000;
             if (executionTime > timeout * 60) {
                 // Cancel playbook, and raise exception in case timeout occur:
-                cancelPlaybook(uuid, timeout);
+                this.cancelPlaybook(uuid, timeout);
                 throw new TimeoutException(
                         "Play execution has reached timeout");
             }
+            processRet = this.processEvents(uuid.toString(), fn);
+            iteration += POLL_INTERVAL / 1000;
             Thread.sleep(POLL_INTERVAL);
         }
-        returnValue.setAnsibleReturnCode(AnsibleReturnCode.OK);
+        this.returnValue.setAnsibleReturnCode(AnsibleReturnCode.OK);
         return returnValue;
     }
 
     public void setReturnValue(UUID uuid) {
-        returnValue.setPlayUuid(uuid.toString());
-        returnValue.setLogFile(runnerLogger.getLogFile());
+        this.returnValue.setPlayUuid(uuid.toString());
+        this.returnValue.setLogFile(this.runnerLogger.getLogFile());
     }
 
-    public String getNextEvent(String playUuid, int lastEventId) {
-        String jobEvents = getJobEventsDir(playUuid);
-        if (!Files.exists(Paths.get(jobEvents))) {
-            return null;
-        }
+    public String getNextEvent(String jobEventsDir) {
+        Optional<String> nextEvent = Optional.empty();
         // ignoring incompleted json files, add to list only events that haven't been handles yet.
-        return Stream.of(new File(jobEvents).listFiles())
-                .map(File::getName)
-                .filter(item -> !item.contains("partial"))
-                .filter(item -> !item.endsWith(".tmp"))
-                .filter(item -> item.startsWith((lastEventId + 1) + "-"))
-                .findFirst()
-                .orElse(null);
+        if (Files.exists(Paths.get(jobEventsDir))) {
+            nextEvent = Stream.of(new File(jobEventsDir).listFiles())
+                    .map(File::getName)
+                    .filter(item -> !item.contains("partial"))
+                    .filter(item -> !item.endsWith(".tmp"))
+                    .filter(item -> item.startsWith((getLastEventId() + 1) + "-"))
+                    .findFirst();
+        }
+        return nextEvent.isPresent() ? nextEvent.get() : null;
     }
 
     public int getLastEventId() {
-        return Integer.valueOf(lastEvent.split("-")[0]);
+        if(this.lastEvent == null){
+            return 0;
+        }
+        return Integer.valueOf(RunnerJsonNode.playCounter(this.lastEvent));
     }
 
     public String getJobEventsDir(String playUuid) {
         return String.format("%1$s/%2$s/artifacts/%2$s/job_events/", AnsibleConstants.ANSIBLE_RUNNER_PATH, playUuid);
     }
 
-    public int processEvents(String playUuid,
-            int lastEventId,
-            BiConsumer<String, String> fn,
-            String msg,
-            Path logFile) {
-        String jobEvents = getJobEventsDir(playUuid);
-        while(true){
-            String event = getNextEvent(playUuid, lastEventId);
-            if (event == null) {
-                break;
-            }
-
-            JsonNode currentNode = getEvent(jobEvents + event);
+    public int processEvents(
+            String playUuid,
+            BiConsumer<String, String> fn
+        ) {
+        String jobEventsDir = this.getJobEventsDir(playUuid);
+        String nodeDir = this.getNextEvent(jobEventsDir);
+        while(nodeDir != null){
+            JsonNode currentNode = this.getEvent(jobEventsDir + nodeDir);
             String stdout = RunnerJsonNode.getStdout(currentNode);
 
             if (RunnerJsonNode.isEventUnreachable(currentNode)) {
-                runnerLogger.log(currentNode);
-                returnValue.setAnsibleReturnCode(AnsibleReturnCode.UNREACHABLE);
+                this.runnerLogger.log(currentNode);
+                this.returnValue.setAnsibleReturnCode(AnsibleReturnCode.UNREACHABLE);
                 return -1;
             }
 
             // might need special attention
             if (RunnerJsonNode.isEventVerbose(currentNode)) {
                 if (!stdout.contains("Identity added")) {
-                    runnerLogger.log(stdout);
+                    this.runnerLogger.log(stdout);
                 }
             }
 
@@ -162,7 +152,7 @@ public class AnsibleRunnerHttpClient {
                 }
 
                 if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.playbookStats(currentNode)) {
-                    runnerLogger.log(stdout);
+                    this.runnerLogger.log(stdout);
                 }
 
                 String action = "";
@@ -172,49 +162,52 @@ public class AnsibleRunnerHttpClient {
                 }
 
                 if (RunnerJsonNode.isEventOk(currentNode)) {
-                    runnerLogger.log(currentNode);
+                    this.runnerLogger.log(currentNode);
 
                     String taskText = action.equals("debug")
                             ? RunnerJsonNode.formatDebugMessage(taskName, stdout)
                             : taskName;
-                    fn.accept(taskText, String.format(jobEvents + event));
+                    fn.accept(taskText, String.format(jobEventsDir + nodeDir));
 
                 } else if (RunnerJsonNode.isEventFailed(currentNode)) {
-                    runnerLogger.log(currentNode);
+                    this.runnerLogger.log(currentNode);
                     if (!RunnerJsonNode.ignore(currentNode)) {
-                        returnValue.setAnsibleReturnCode(AnsibleReturnCode.FAIL);
+                        this.returnValue.setAnsibleReturnCode(AnsibleReturnCode.FAIL);
                         throw new AnsibleRunnerCallException(
                                 String.format(
                                         "Task %1$s failed to execute. Please check logs for more details: %2$s",
                                         taskName,
-                                        runnerLogger.getLogFile()));
+                                        this.runnerLogger.getLogFile()));
                     }
                 }
             }
-            lastEvent = event;
-            returnValue.setLastEventId(getLastEventId());
-            lastEventId++;
+            this.lastEvent = currentNode;
+            this.returnValue.setLastEventId(this.getLastEventId());
+            nodeDir = this.getNextEvent(jobEventsDir);
         }
-        return lastEvent.isEmpty() ? lastEventId : getLastEventId();
+        return this.getLastEventId();
     }
 
     private Boolean jsonIsValid(String content) {
         try {
-            final ObjectMapper mapper = new ObjectMapper();
-            mapper.readTree(content);
+            this.mapper.readTree(content);
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
+    public void cancelPlaybook(UUID uuid) throws Exception {
+        this.cancelPlaybook(uuid, 0);
+    }
+
     public void cancelPlaybook(UUID uuid, int timeout) throws Exception {
-        Process ansibleProcess;
-        File output = File.createTempFile("output", ".log");
-        String command = String.format("ansible-runner stop %1$s", uuid);
+        File privateDataDir = new File(String.format("%1$s/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, uuid));
+        File output = new File(String.format("%1$s/engine-cancel-output.log", privateDataDir));
+        String command = String.format("ansible-runner stop %1$s", privateDataDir);
         ProcessBuilder ansibleProcessBuilder = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
-        ansibleProcess = ansibleProcessBuilder.start();
-        if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
+        Process ansibleProcess = ansibleProcessBuilder.start();
+        if (timeout != 0 && !ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
             throw new Exception("Timeout occurred while canceling Ansible playbook.");
         }
         if (ansibleProcess.exitValue() != 0) {
@@ -224,38 +217,34 @@ public class AnsibleRunnerHttpClient {
         }
     }
 
-    public void runPlaybook(List<String> command, int timeout) throws Exception {
-        final Object executeLock = new Object();
-        Process ansibleProcess;
-        File output = File.createTempFile("output", ".log");
-        synchronized (executeLock) {
-            ProcessBuilder ansibleProcessBuilder =
-                    new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
-            ansibleProcess = ansibleProcessBuilder.start();
-            String playCommand = String.join(" ", command);
-            log.debug(String.format("%1$s started executing command %2$s", Thread.currentThread().getName(), playCommand));
-            if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
-                throw new AnsibleRunnerCallException("Timeout occurred while executing Ansible playbook.");
+    public void runPlaybook(List<String> command, int timeout, String uuid) throws Exception {
+        File output = new File(String.format("%1$s/%2$s/engine-start-output.log", AnsibleConstants.ANSIBLE_RUNNER_PATH, uuid));
+        ProcessBuilder ansibleProcessBuilder =
+                new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
+        Process ansibleProcess = ansibleProcessBuilder.start();
+        String playCommand = String.join(" ", command);
+        log.debug(String.format("%1$s started executing command %2$s", Thread.currentThread().getName(), playCommand));
+        if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
+            throw new AnsibleRunnerCallException("Timeout occurred while executing Ansible playbook.");
+        }
+        if (ansibleProcess.exitValue() != 0) {
+            String errorOutput = null;
+            try {
+                errorOutput = Files.readString(output.toPath());
+            } catch (IOException ex) {
+                log.error("Error reading output from ansible-runner execution: {}", ex.getMessage());
+                log.debug("Exception", ex);
             }
-            if (ansibleProcess.exitValue() != 0) {
-                String errorOutput = null;
-                try {
-                    errorOutput = Files.readString(output.toPath());
-                } catch (IOException ex) {
-                    log.error("Error reading output from ansible-runner execution: {}", ex.getMessage());
-                    log.debug("Exception", ex);
-                }
-                throw new AnsibleRunnerCallException(
-                        "Failed to execute call to start playbook. %1$s",
-                        errorOutput);
-            }
+            throw new AnsibleRunnerCallException(
+                    "Failed to execute call to start playbook. %1$s",
+                    errorOutput);
         }
     }
 
-    protected String formatCommandVariables(Map<String, Object> variables, String playAction) {
+    public String formatCommandVariables(Map<String, Object> variables, String playAction) {
         String result;
         try {
-            result = mapper.writeValueAsString(variables);
+            result = this.mapper.writeValueAsString(variables);
         } catch (IOException ex) {
             throw new AnsibleRunnerCallException("Failed to create host deploy variables mapper", ex);
         }
@@ -282,7 +271,7 @@ public class AnsibleRunnerHttpClient {
 
     private List<String> getEvents(String playUuid) {
         List<String> sortedEvents = new ArrayList<>();
-        File jobEvents = new File(getJobEventsDir(playUuid));
+        File jobEvents = new File(this.getJobEventsDir(playUuid));
         if (jobEvents.exists()) {
             sortedEvents = Stream.of(jobEvents.listFiles())
                 .map(File::getName)
@@ -295,7 +284,7 @@ public class AnsibleRunnerHttpClient {
     }
 
     public int getTotalEvents(String playUuid) {
-        List<String> events = getEvents(playUuid);
+        List<String> events = this.getEvents(playUuid);
         // if playbook artifacts directory is not yet populated, return 0
         return events.size();
     }
@@ -303,17 +292,16 @@ public class AnsibleRunnerHttpClient {
     private JsonNode getEvent(String eventPath) {
         // Fetch the event info:
         JsonNode currentNode = null;
-        ObjectMapper mapper = new ObjectMapper();
         try {
             String jsonOutput = Files.readString(Paths.get(eventPath), StandardCharsets.UTF_8);
-            if (!jsonIsValid(jsonOutput)) {
+            if (!this.jsonIsValid(jsonOutput)) {
                 throw new AnsibleRunnerCallException(
                         "Failed to fetch info about event: %1$s",
                         eventPath
                 );
             }
-            currentNode = mapper.readTree(jsonOutput);
-        } catch(Exception ex) {
+            currentNode = this.mapper.readTree(jsonOutput);
+        } catch(IOException ex) {
             throw new AnsibleRunnerCallException("Failed to read event: %1$s", eventPath);
         }
         return currentNode;
@@ -321,7 +309,7 @@ public class AnsibleRunnerHttpClient {
 
     public String getVdsmId(String eventUrl) {
         // Fetch the event info:
-        JsonNode event = getEvent(eventUrl);
+        JsonNode event = this.getEvent(eventUrl);
 
         // Parse the output of the events info:
         JsonNode taskNode = RunnerJsonNode.taskNode(event);
@@ -330,7 +318,7 @@ public class AnsibleRunnerHttpClient {
 
     public Set<String> getYumPackages(String eventUrl) {
         // Fetch the event info:
-        JsonNode event = getEvent(eventUrl);
+        JsonNode event = this.getEvent(eventUrl);
 
         // Parse the output of the events info:
         JsonNode taskNode = RunnerJsonNode.taskNode(event);
@@ -348,7 +336,7 @@ public class AnsibleRunnerHttpClient {
     }
 
     public String getCommandStdout(String eventUrl) {
-        JsonNode event = getEvent(eventUrl);
+        JsonNode event = this.getEvent(eventUrl);
         JsonNode taskNode = RunnerJsonNode.taskNode(event);
         return RunnerJsonNode.getStdout(taskNode);
     }
