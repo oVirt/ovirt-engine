@@ -4080,6 +4080,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
         cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.MANUAL, defaultHostSelected);
         cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.DEDICATED, isDedicatedCpusSupported && numaNodesUnpinned);
+        cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.ISOLATE_THREADS, isDedicatedCpusSupported && numaNodesUnpinned);
     }
 
     protected void cpuPinningPolicyChanged() {

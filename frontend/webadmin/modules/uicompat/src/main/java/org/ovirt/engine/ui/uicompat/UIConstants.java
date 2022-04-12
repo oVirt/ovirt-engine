@@ -2233,6 +2233,8 @@ public interface UIConstants extends Constants {
 
     String cpuPinningDedicatedDescription();
 
+    String cpuPinningIsolateThreadsDescription();
+
     String cpuPinningDedicatedDisabled();
 
     String accountSettings();
