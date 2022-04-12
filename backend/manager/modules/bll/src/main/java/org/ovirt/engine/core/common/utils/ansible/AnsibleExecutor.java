@@ -149,7 +149,7 @@ public class AnsibleExecutor {
         AnsibleReturnValue ret = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
 
         String playUuid = null;
-        AnsibleRunnerHttpClient runnerClient = null;
+        AnsibleRunnerClient runnerClient = null;
         try {
             runnerClient = ansibleClientFactory.create(commandConfig);
             playUuid = commandConfig.getUuid().toString();

@@ -30,7 +30,7 @@ public class AnsibleRunnerHttpClientTest {
     HttpClient httpClient;
 
     @InjectMocks
-    AnsibleRunnerHttpClient client;
+    AnsibleRunnerClient client;
 
 
     @ParameterizedTest
