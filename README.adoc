@@ -11,23 +11,21 @@ Welcome to the oVirt Engine - Open Virtualization Manager source repository.
 
 Patches are welcome!
 
-Please submit patches to [gerrit.ovirt.org:ovirt-engine](https://gerrit.ovirt.org/#/admin/projects/ovirt-engine).
-If you are not familiar with the review process for Gerrit patches you can read about
-[Working with oVirt Gerrit](https://ovirt.org/develop/dev-process/working-with-gerrit.html)
-on the [oVirt](https://ovirt.org/) website.
-
-**NOTE**: We might not notice pull requests that you create on Github, because we only use Github for backups.
+Please submit patches to https://github.com/oVirt/ovirt-engine[github.com:ovirt-engine].
+If you are not familiar with the review process you can read about
+https://ovirt.org/develop/dev-process/working-with-github.html[Working with oVirt on GitHub]
+on the https://ovirt.org/[oVirt] website.
 
 
 === Found a bug or documentation issue?
 To submit a bug or suggest an enhancement for oVirt Engine please use
-[oVirt Bugzilla for ovirt-engine product](https://bugzilla.redhat.com/enter_bug.cgi?product=ovirt-engine).
+https://bugzilla.redhat.com/enter_bug.cgi?product=ovirt-engine[oVirt Bugzilla for ovirt-engine product].
 
 If you find a documentation issue on the oVirt website please navigate and click "Report an issue on GitHub" in the page footer.
 
 
 == Still need help?
-If you have any other questions, please join [oVirt Users forum / mailing list](https://lists.ovirt.org/admin/lists/users.ovirt.org/) and ask there.
+If you have any other questions, please join https://lists.ovirt.org/admin/lists/users.ovirt.org/[oVirt Users forum / mailing list] and ask there.
 
 
 
@@ -339,7 +337,7 @@ dist:: Create source tarball out of git repository.
 maven:: Force execution of maven.
 generated-files:: Create file from templates (.in files).
 +
-  When creating new templates, generated files will be automatically appears in .gitignore, updated .gitignore should be part of commiting new templates.
+  When creating new templates, generated files will be automatically appears in .gitignore, updated .gitignore should be part of committing new templates.
 
 
 ===== Build customization
