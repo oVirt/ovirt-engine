@@ -63,6 +63,10 @@ public final class RunnerJsonNode {
         return node.get("data").get("play_uuid").textValue();
     }
 
+    public static String playCounter(JsonNode node) {
+        return node.get("counter").toString();
+    }
+
     /**
      * Return if status is notfound.
      */
