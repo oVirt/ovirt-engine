@@ -232,13 +232,16 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
     private void sortImages() {
 
-        // Sort images from parent to leaf (active) - needed only once as the sorted list is
-        // being saved in the parameters.  The conditions to check vary between cold and live
-        // merge (and we can't yet run isLiveMerge()), so we just use an explicit flag.
         if (!getParameters().isImageIdsSorted()) {
             // Retrieve and sort the entire chain of images
             List<DiskImage> images = getAllImagesForDisk();
             ImagesHandler.sortImageList(images);
+
+            // We reverse the list here because since 4.4 we use block commit which merges the child into
+            // the snapshot we remove. To prevent a situation where the child was already removed we need
+            // reverse the list to ensure the children are removed first, so we don't attempt to remove them
+            // again.
+            Collections.reverse(images);
 
             // Get a sorted list of the selected images
             List<DiskImage> sortedImages =
