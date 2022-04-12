@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUnitPinningHelper;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -57,7 +56,7 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
             if (cores != null) {
                 int numOfCpus = VmCpuCountHelper.isDynamicCpuTopologySet(vm) ?
                         vm.getCurrentNumOfCpus(false) : vm.getNumOfCpus(false);
-                if (vm.getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED) {
+                if (vm.getCpuPinningPolicy().isExclusive()) {
                     int futureCpus = context.getCluster().getCountThreadsAsCores() ? cores - vds.getVmsCoresCount() :
                             cores - (int) Math.ceil(vds.getVmsCoresCount() / (vds.getCpuThreads() / vds.getCpuCores()));
                     if (numOfCpus > futureCpus) {

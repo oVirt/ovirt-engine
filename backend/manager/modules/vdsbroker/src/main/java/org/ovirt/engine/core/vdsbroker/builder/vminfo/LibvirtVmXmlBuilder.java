@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
@@ -401,7 +400,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("vcpu");
         writer.writeAttributeString("current", String.valueOf(VmCpuCountHelper.getDynamicNumOfCpu(vm)));
         writer.writeRaw(String.valueOf(VmCpuCountHelper.isResizeAndPinPolicy(vm) ||
-                vm.getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED ?
+                vm.getCpuPinningPolicy().isExclusive() ?
                 VmCpuCountHelper.getDynamicNumOfCpu(vm) : VmInfoBuildUtils.maxNumberOfVcpus(vm)));
         writer.writeEndElement();
     }
@@ -1045,14 +1044,7 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeCpuPinningPolicyMetadata() {
-        CpuPinningPolicy cpuPinningPolicy = vm.getCpuPinningPolicy();
-        // CpuPinningPolicy.NONE may happen when the engine generates CPU pinning based on the NUMA pinning.
-        // VDSM doesn't recognize 'resize and pin numa' we need to switch it to 'manual'.
-        if (cpuPinningPolicy == CpuPinningPolicy.RESIZE_AND_PIN_NUMA ||
-                vm.getVmPinning() != null && cpuPinningPolicy == CpuPinningPolicy.NONE) {
-            cpuPinningPolicy = CpuPinningPolicy.MANUAL;
-        }
-        writer.writeElement(OVIRT_VM_URI, "cpuPolicy", cpuPinningPolicy.name().toLowerCase());
+        writer.writeElement(OVIRT_VM_URI, "cpuPolicy", vmInfoBuildUtils.getVdsmCpuPinningPolicy(vm));
     }
 
     private void writePowerEvents() {

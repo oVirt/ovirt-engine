@@ -77,7 +77,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(1);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isDedicatedCpuPinningPossibleAtHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
         assertTrue(result);
     }
 
@@ -96,7 +96,7 @@ public class VdsCpuUnitPinningHelperTest {
         Map<Guid, List<VdsCpuUnit>> vmToPendingCpus = new HashMap<>();
         vmToPendingCpus.put(Guid.Empty, pendingCpus);
         boolean result =
-                vdsCpuUnitPinningHelper.isDedicatedCpuPinningPossibleAtHost(vmToPendingCpus, vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(vmToPendingCpus, vm, host.getId());
 
         assertTrue(result);
     }
@@ -110,7 +110,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(1);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isDedicatedCpuPinningPossibleAtHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
         assertTrue(result);
     }
 
@@ -123,7 +123,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(1);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isDedicatedCpuPinningPossibleAtHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
         assertTrue(result);
     }
 
@@ -136,7 +136,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(2);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isDedicatedCpuPinningPossibleAtHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
         assertTrue(result);
     }
 
@@ -149,7 +149,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(2);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isDedicatedCpuPinningPossibleAtHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
         assertFalse(result);
     }
 
@@ -162,7 +162,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(2);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isDedicatedCpuPinningPossibleAtHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
         assertTrue(result);
     }
 
@@ -175,7 +175,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(2);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isDedicatedCpuPinningPossibleAtHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
         assertFalse(result);
     }
 

@@ -108,8 +108,8 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
     }
 
     @JsonIgnore
-    public boolean isDedicated() {
-        return cpuPinningPolicy == CpuPinningPolicy.DEDICATED;
+    public boolean isExclusive() {
+        return cpuPinningPolicy.isExclusive();
     }
 
     @JsonIgnore
@@ -149,7 +149,7 @@ public class VdsCpuUnit implements Comparable<VdsCpuUnit>, Serializable, Cloneab
 
 
     public boolean pinVm(Guid vmId, CpuPinningPolicy cpuPinningPolicy) {
-        if (this.isDedicated() || this.isPinned() && cpuPinningPolicy == CpuPinningPolicy.DEDICATED) {
+        if (this.isExclusive() || this.isPinned() && cpuPinningPolicy.isExclusive()) {
             return false;
         }
         if (!this.vmIds.contains(vmId)) {

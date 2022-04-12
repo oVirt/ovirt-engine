@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -1706,7 +1707,7 @@ public class VmInfoBuildUtils {
         // If the VM is small, we also use the default value, because the TSEG size is taken
         // from the memory available to the guest.
         final int cpuLimit = Config.getValue(ConfigValues.ManyVmCpus);
-        final int smallMemory = Config.<Integer> getValue(ConfigValues.UefiBigVmMemoryGB) * 1024;
+        final int smallMemory = Config.<Integer>getValue(ConfigValues.UefiBigVmMemoryGB) * 1024;
         if (maxNumberOfVcpus(vm) < cpuLimit && vm.getMaxMemorySizeMb() < smallMemory) {
             return null;
         }
@@ -1722,5 +1723,21 @@ public class VmInfoBuildUtils {
         final long memorySize = vm.getMaxMemorySizeMb() + getNvdimmTotalSize(vm, hostDevicesSupplier) / (1024 * 1024);
         size += (memorySize / (1024 * 1024) + 1) * PER_TB_TSEG_SIZE_INCREASE_MB;
         return size;
+    }
+
+    public String getVdsmCpuPinningPolicy(VM vm) {
+        CpuPinningPolicy cpuPinningPolicy = vm.getCpuPinningPolicy();
+        // CpuPinningPolicy.NONE may happen when the engine generates CPU pinning based on the NUMA pinning.
+        // VDSM doesn't recognize 'resize and pin numa' we need to switch it to 'manual'.
+        if (cpuPinningPolicy == CpuPinningPolicy.RESIZE_AND_PIN_NUMA ||
+                vm.getVmPinning() != null && cpuPinningPolicy == CpuPinningPolicy.NONE) {
+            cpuPinningPolicy = CpuPinningPolicy.MANUAL;
+        }
+        String cpuPinningPolicyName = cpuPinningPolicy.name().toLowerCase();
+        if (cpuPinningPolicy == CpuPinningPolicy.ISOLATE_THREADS) {
+            // in VDSM the policy is `isolate-threads` while in JAVA ENUM can't be set with a dash.
+            cpuPinningPolicyName = "isolate-threads";
+        }
+        return cpuPinningPolicyName;
     }
 }

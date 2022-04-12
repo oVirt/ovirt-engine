@@ -1250,10 +1250,31 @@ public class VdsManager {
             if (pinning != null) {
                 Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(pinning);
                 synchronized (this) {
-                    cpuTopology.stream()
-                            .filter(cpu -> pinnedCpus.contains(cpu.getCpu()))
-                            .forEach(cpu -> cpu.pinVm(vm.getId(), vm.getCpuPinningPolicy()));
+                    List<VdsCpuUnit> vdsCpuUnits = new ArrayList<>();
+                    for (int pCpu : pinnedCpus) {
+                        VdsCpuUnit cpu = cpuTopology.stream()
+                                .filter(vdsCpu -> vdsCpu.getCpu() == pCpu)
+                                .findFirst().orElse(null);
+                        if (cpu == null) {
+                            return;
+                        }
+                        if (vm.getCpuPinningPolicy() == CpuPinningPolicy.ISOLATE_THREADS) {
+                            addWithThreadSiblings(vdsCpuUnits, cpu);
+                        } else {
+                            vdsCpuUnits.add(cpu);
+                        }
+                    }
+                    vdsCpuUnits.forEach(cpu -> cpu.pinVm(vm.getId(), vm.getCpuPinningPolicy()));
                 }
+            }
+        }
+    }
+
+    private void addWithThreadSiblings(List<VdsCpuUnit> vdsCpuUnits, VdsCpuUnit cpu) {
+        for (VdsCpuUnit vdsCpuUnit : cpuTopology) {
+            if (vdsCpuUnit.getSocket() == cpu.getSocket() &&
+                    vdsCpuUnit.getCore() == cpu.getCore()) {
+                vdsCpuUnits.add(vdsCpuUnit);
             }
         }
     }

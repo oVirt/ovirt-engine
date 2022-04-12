@@ -958,7 +958,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         addNumaPinningForDedicated(getVdsId());
         addNumaPinningForResizeAndPin();
-        setDedicatedCpus(getVdsManager());
+        setExclusiveCpuPinning(getVdsManager());
 
         return true;
     }

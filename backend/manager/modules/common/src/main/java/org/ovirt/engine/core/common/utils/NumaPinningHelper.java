@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -276,21 +277,22 @@ public class NumaPinningHelper {
                     vm.getCurrentNumOfCpus(),
                     NumaTuneMode.STRICT,
                     vm.getCurrentThreadsPerCore(),
-                    vm.getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED);
+                    vm.getCpuPinningPolicy().isExclusive());
         }
         vm.setvNumaNodeList(vmNumaNodes);
     }
 
     public static String createNumaPinningAccordingToCpuPinning(
             List<VmNumaNode> vmNodeList,
-            List<VdsCpuUnit> cpuUnits) {
+            List<VdsCpuUnit> cpuUnits,
+            CpuPinningPolicy cpuPinningPolicy) {
 
         Map<Integer, Integer> cpuMappings =
-                CpuPinningHelper.createCpuPinningMap(cpuUnits);
-        Map<Integer, Set<Integer>> numaMappings = new HashMap<>();
+                CpuPinningHelper.createExclusiveCpuPinningMap(cpuUnits, cpuPinningPolicy);
+        Map<Integer, Set<Integer>> numaMappings = new LinkedHashMap<>();
 
         for (VmNumaNode vmNode : vmNodeList) {
-            Set<Integer> pNumaNodesIndexes = new HashSet<>();
+            Set<Integer> pNumaNodesIndexes = new LinkedHashSet<>();
             for (Integer vCpuId : vmNode.getCpuIds()) {
                 Integer pCpu = cpuMappings.get(vCpuId);
                 VdsCpuUnit found =
@@ -302,20 +304,7 @@ public class NumaPinningHelper {
             numaMappings.put(vmNode.getIndex(), pNumaNodesIndexes);
         }
 
-        return createNumaMappingString(numaMappings);
-    }
-
-    private static String createNumaMappingString(Map<Integer, Set<Integer>> numaMapping) {
-        return numaMapping
-                .entrySet()
-                .stream()
-                .map(entry -> {
-                    String stringValues = (String) new ArrayList<Integer>(entry.getValue()).stream()
-                            .map(String::valueOf)
-                            .collect(Collectors.joining(","));
-                    return String.format("%d#%s", entry.getKey(), stringValues);
-                })
-                .collect(Collectors.joining("_"));
+        return CpuPinningHelper.createMappingString(numaMappings);
     }
 
     public static Map<Integer, Collection<Integer>> parseNumaMapping(String numaPinningString) {

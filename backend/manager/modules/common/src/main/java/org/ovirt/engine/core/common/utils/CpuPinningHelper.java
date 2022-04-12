@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -16,6 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 
 public class CpuPinningHelper {
@@ -100,15 +102,59 @@ public class CpuPinningHelper {
     }
 
     /**
-     * Provides a CPU pinning map based on the VdsCpuUnit list. The pinning will be based on the list order.
+     * Provides a dedicated CPU pinning map based on the VdsCpuUnit list. The pinning will be based on the list order.
      *
      * @param vdsCpuUnits a list of VdsCpuUnit
      * @return a map of CPU pinning
      */
-    public static Map<Integer, Integer> createCpuPinningMap(List<VdsCpuUnit> vdsCpuUnits) {
+    public static Map<Integer, Integer> createDedicatedCpuPinningMap(List<VdsCpuUnit> vdsCpuUnits) {
         return IntStream.range(0, vdsCpuUnits.size())
                 .boxed()
                 .collect(Collectors.toMap(Function.identity(), i -> vdsCpuUnits.get(i).getCpu()));
+    }
+
+    /**
+     * Provides a CPU pinning map based on the VdsCpuUnit list and the CPU pinning policy. The pinning will be based on the list order.
+     * @param vdsCpuUnits a list of VdsCpuUnit
+     * @param cpuPinningPolicy the CPU pinning policy
+     * @return a map of CPU pinning
+     */
+    public static Map<Integer, Integer> createExclusiveCpuPinningMap(List<VdsCpuUnit> vdsCpuUnits, CpuPinningPolicy cpuPinningPolicy) {
+        switch(cpuPinningPolicy) {
+            case DEDICATED:
+                return createDedicatedCpuPinningMap(vdsCpuUnits);
+            case ISOLATE_THREADS:
+                return createIsolatedThreadsCpuPinningMap(vdsCpuUnits);
+        }
+        return null;
+    }
+
+    /**
+     * Provides an isolate threads CPU pinning map based on the VdsCpuUnit list. The pinning will be based on the list order.
+     *
+     * @param vdsCpuUnits a list of VdsCpuUnit
+     * @return a map of CPU pinning
+     */
+    private static Map<Integer, Integer> createIsolatedThreadsCpuPinningMap(List<VdsCpuUnit> vdsCpuUnits) {
+        List<Integer> socketsUsedInAllocation = vdsCpuUnits.stream()
+                .map(VdsCpuUnit::getSocket)
+                .distinct()
+                .collect(Collectors.toList());
+        Map<Integer, Integer> mapping = new HashMap<>();
+        int vcpu = 0;
+        for (int socket : socketsUsedInAllocation) {
+            List<VdsCpuUnit> cpusInSocket = vdsCpuUnits.stream().filter(cpu -> cpu.getSocket() == socket).collect(Collectors.toList());
+            List<Integer> cores = cpusInSocket.stream().map(VdsCpuUnit::getCore).distinct().collect(Collectors.toList());
+            for (int core : cores) {
+                mapping.put(vcpu++, cpusInSocket
+                        .stream()
+                        .filter(cpu -> cpu.getCore() == core)
+                        .map(VdsCpuUnit::getCpu)
+                        .findFirst().orElseThrow(() -> new RuntimeException(
+                                "Physical CPUs not found. Can't create a pinning.")));
+            }
+        }
+        return mapping;
     }
 
     /**
@@ -118,8 +164,35 @@ public class CpuPinningHelper {
      * @param vdsCpuUnits a list of VdsCpuUnit
      * @return a string of CPU pinning
      */
-    public static String createCpuPinningString(List<VdsCpuUnit> vdsCpuUnits) {
-        return createCpuPinningMap(vdsCpuUnits)
+    public static String createCpuPinningString(List<VdsCpuUnit> vdsCpuUnits, CpuPinningPolicy cpuPinningPolicy) {
+        return createMappingStringSinglePhysicalCpu(createExclusiveCpuPinningMap(vdsCpuUnits, cpuPinningPolicy));
+    }
+
+    /**
+     * Creates the CPU pinning string based on a mapping of the virtual CPUs to the physical CPUs
+     * @param mapping a Map of vCPU to a set of pCPUs
+     * @return a string of CPU pinning
+     */
+    public static String createMappingString(Map<Integer, Set<Integer>> mapping) {
+        return mapping
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    String stringValues = new ArrayList<>(entry.getValue()).stream()
+                            .map(String::valueOf)
+                            .collect(Collectors.joining(","));
+                    return String.format("%d#%s", entry.getKey(), stringValues);
+                })
+                .collect(Collectors.joining("_"));
+    }
+
+    /**
+     * Creates the CPU pinning string based on a mapping of the virtual CPUs to the physical CPUs
+     * @param mapping a Map of vCPU to a single pCPU
+     * @return a string of CPU pinning
+     */
+    public static String createMappingStringSinglePhysicalCpu(Map<Integer, Integer> mapping) {
+        return mapping
                 .entrySet()
                 .stream()
                 .map(entry -> String.format("%d#%d", entry.getKey(), entry.getValue()))
