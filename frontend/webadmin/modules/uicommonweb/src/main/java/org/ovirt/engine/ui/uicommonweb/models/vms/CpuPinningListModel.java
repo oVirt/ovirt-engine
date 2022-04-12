@@ -36,6 +36,10 @@ public class CpuPinningListModel extends ListModel<CpuPinningListModelItem> {
                 CpuPinningPolicy.DEDICATED,
                 constants.cpuPinningDedicatedDescription(),
                 constants.cpuPinningDedicatedDisabled()));
+        items.add(new CpuPinningListModelItem(
+                CpuPinningPolicy.ISOLATE_THREADS,
+                constants.cpuPinningIsolateThreadsDescription(),
+                constants.cpuPinningDedicatedDisabled()));
 
         setItems(items);
         setSelectedCpuPolicy(CpuPinningPolicy.NONE);
