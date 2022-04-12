@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -429,10 +428,17 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         if (parallelMigrations == null) {
             maxIncomingMigrations = maxOutgoingMigrations = effectiveMigrationPolicy.getMaxMigrations();
         }
-        if (getVm().getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED) {
-            cpuSets = CpuPinningHelper.getAllPinnedPCpus(getDedicatedCpuPinning(getDestinationVdsManager())).stream()
-                    .map(Object::toString).collect(Collectors.toList());
-            String numaPinningString = vmHandler.createNumaPinningForDedicated(getVm(), getDestinationVdsId());
+        if (getVm().getCpuPinningPolicy().isExclusive()) {
+            String cpuPinning = getExclusiveCpuPinning(getDestinationVdsManager());
+            List<CpuPinningHelper.PinnedCpu> pinnedCpus = CpuPinningHelper.parseCpuPinning(cpuPinning);
+            cpuSets = new LinkedList<>();
+            for (CpuPinningHelper.PinnedCpu pin : pinnedCpus) {
+                for (Integer pCpu : pin.getpCpus()) {
+                    cpuSets.add(pCpu.toString());
+                    break;
+                }
+            }
+            String numaPinningString = vmHandler.createNumaPinningForExclusiveCpuPinning(getVm(), getDestinationVdsId());
             numaNodeSets = NumaPinningHelper.parseNumaSets(numaPinningString);
         }
 
@@ -624,7 +630,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         try {
             queryDowntime();
             addNumaPinningForDedicated(getDestinationVdsId());
-            setDedicatedCpus(getDestinationVdsManager());
+            setExclusiveCpuPinning(getDestinationVdsManager());
             vmDynamicDao.clearMigratingToVdsAndSetDynamicPinning(getVmId(), getVm().getCurrentCpuPinning(), getVm().getCurrentNumaPinning());
             updateVmAfterMigrationToDifferentCluster();
             plugPassthroughNics();

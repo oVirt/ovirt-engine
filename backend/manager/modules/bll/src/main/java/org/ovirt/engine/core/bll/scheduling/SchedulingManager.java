@@ -56,7 +56,6 @@ import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUnitPinningHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -438,7 +437,7 @@ public class SchedulingManager implements BackendService {
                     vmHandler.setCpuPinningByNumaPinning(vm, host.getId());
                     List<VdsCpuUnit> dedicatedCpuPinning = vdsCpuUnitPinningHelper.updatePhysicalCpuAllocations(vm,
                             PendingCpuPinning.collectForHost(getPendingResourceManager(), host.getId()), host.getId());
-                    String numaPinningString = vmHandler.createNumaPinningForDedicated(vm, dedicatedCpuPinning);
+                    String numaPinningString = vmHandler.createNumaPinningForExclusiveCpuPinning(vm, dedicatedCpuPinning);
                     updateDedicatedNumaMemoryConsumption(vm, host, numaPinningString, numaConsumptionPerVm);
                     addPendingResources(vm, host, numaConsumptionPerVm.getOrDefault(vm.getId(), Collections.emptyMap()), dedicatedCpuPinning);
                     hostsToNotifyPending.add(bestHostId);
@@ -463,7 +462,7 @@ public class SchedulingManager implements BackendService {
 
     private void updateDedicatedNumaMemoryConsumption(VM vm, VDS host, String numaPinningString,
             Map<Guid, Map<Integer, NumaNodeMemoryConsumption>> numaConsumptionPerVm) {
-        if (vm.getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED) {
+        if (vm.getCpuPinningPolicy().isExclusive()) {
             var currentNumaPinning = NumaPinningHelper.parseNumaMapping(numaPinningString);
             for (VmNumaNode vmNumaNode : vm.getvNumaNodeList()) {
                 var vdsNumaNodesPinned = currentNumaPinning.get(vmNumaNode.getIndex());

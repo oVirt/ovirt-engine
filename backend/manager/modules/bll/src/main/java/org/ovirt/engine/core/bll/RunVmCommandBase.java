@@ -29,7 +29,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -404,21 +403,21 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     protected void addNumaPinningForDedicated(Guid vdsId) {
-        String numaPinningString = vmHandler.createNumaPinningForDedicated(getVm(), vdsId);
+        String numaPinningString = vmHandler.createNumaPinningForExclusiveCpuPinning(getVm(), vdsId);
         getVm().setCurrentNumaPinning(numaPinningString);
     }
 
-    protected void setDedicatedCpus(VdsManager vdsManager) {
-        if (getVm().getCpuPinningPolicy() != CpuPinningPolicy.DEDICATED) {
+    protected void setExclusiveCpuPinning(VdsManager vdsManager) {
+        if (!getVm().getCpuPinningPolicy().isExclusive()) {
             return;
         }
-        getVm().setCurrentCpuPinning(getDedicatedCpuPinning(vdsManager));
+        getVm().setCurrentCpuPinning(getExclusiveCpuPinning(vdsManager));
     }
 
-    protected String getDedicatedCpuPinning(VdsManager vdsManager) {
+    protected String getExclusiveCpuPinning(VdsManager vdsManager) {
         List<VdsCpuUnit> vdsCpuUnits = vdsManager.getCpuTopology().stream()
                 .filter(cpu -> cpu.getVmIds().contains(getVmId())).sorted().collect(Collectors.toList());
-        return CpuPinningHelper.createCpuPinningString(vdsCpuUnits);
+        return CpuPinningHelper.createCpuPinningString(vdsCpuUnits, getVm().getCpuPinningPolicy());
     }
 
     protected VdsManager getVdsManager() {

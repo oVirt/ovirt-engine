@@ -15,7 +15,9 @@ public enum CpuPinningPolicy {
     /** Switch the VM topology to be maximized on the selected host. Sets the CPU pinning and NUMA accordingly */
     RESIZE_AND_PIN_NUMA(2),
     /** Dynamically dedicate pCPUs to be exclusively pinned to VM virtual CPU topology **/
-    DEDICATED(3);
+    DEDICATED(3),
+    /** Dynamically dedicate pCPUs to be exclusively pinned to VM virtual CPU topology. Each virtual CPU gets a physical core **/
+    ISOLATE_THREADS(4);
 
     private int value;
 
@@ -36,5 +38,9 @@ public enum CpuPinningPolicy {
 
     public int getValue() {
         return value;
+    }
+
+    public boolean isExclusive() {
+        return this == DEDICATED || this == ISOLATE_THREADS;
     }
 }

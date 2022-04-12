@@ -1339,27 +1339,18 @@ public class VmHandler implements BackendService {
         vm.setCurrentCpuPinning(res);
     }
 
-    public String createNumaPinningForDedicated(VM vm, Guid vdsId) {
-        if (vm.getCpuPinningPolicy() != CpuPinningPolicy.DEDICATED
-                || vm.getvNumaNodeList() == null
-                || vm.getvNumaNodeList().isEmpty()
-                || vdsId == null) {
-            return null;
-        }
-
+    public String createNumaPinningForExclusiveCpuPinning(VM vm, Guid vdsId) {
         List<VdsCpuUnit> cpuUnits = resourceManager.getVdsManager(vdsId)
                 .getCpuTopology()
                 .stream()
                 .filter(cpuUnit -> cpuUnit.getVmIds().contains(vm.getId()))
                 .collect(Collectors.toList());
 
-        return NumaPinningHelper.createNumaPinningAccordingToCpuPinning(
-                vm.getvNumaNodeList(),
-                cpuUnits);
+        return createNumaPinningForExclusiveCpuPinning(vm, cpuUnits);
     }
 
-    public String createNumaPinningForDedicated(VM vm, List<VdsCpuUnit> cpuUnits) {
-        if (vm.getCpuPinningPolicy() != CpuPinningPolicy.DEDICATED
+    public String createNumaPinningForExclusiveCpuPinning(VM vm, List<VdsCpuUnit> cpuUnits) {
+        if (!vm.getCpuPinningPolicy().isExclusive()
                 || vm.getvNumaNodeList() == null
                 || vm.getvNumaNodeList().isEmpty()
                 || cpuUnits == null) {
@@ -1368,7 +1359,8 @@ public class VmHandler implements BackendService {
 
         return NumaPinningHelper.createNumaPinningAccordingToCpuPinning(
                 vm.getvNumaNodeList(),
-                cpuUnits);
+                cpuUnits,
+                vm.getCpuPinningPolicy());
     }
 
     public void autoSelectResumeBehavior(VmBase vmBase) {

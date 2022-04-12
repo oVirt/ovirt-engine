@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.NumaUtils;
@@ -40,7 +39,7 @@ public class NumaUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
                 getHugePageSize(model),
                 Integer.parseInt(model.getTotalCPUCores().getEntity()),
                 model.getThreadsPerCore().getSelectedItem(),
-                vm.getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED);
+                vm.getCpuPinningPolicy().isExclusive());
         vm.setvNumaNodeList(nodeList);
     }
 
