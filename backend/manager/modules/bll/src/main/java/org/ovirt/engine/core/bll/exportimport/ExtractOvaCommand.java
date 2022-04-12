@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHttpClient;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerClient;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,7 +49,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     @Inject
     private AnsibleExecutor ansibleExecutor;
     @Inject
-    private AnsibleRunnerHttpClient runnerClient;
+    private AnsibleRunnerClient runnerClient;
     @Inject
     private VmHandler vmHandler;
     @Inject

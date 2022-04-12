@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHttpClient;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerClient;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -51,7 +51,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
     private AnsibleExecutor ansibleExecutor;
 
     @Inject
-    private AnsibleRunnerHttpClient runnerClient;
+    private AnsibleRunnerClient runnerClient;
 
     @Inject
     private ClusterDao clusterDao;

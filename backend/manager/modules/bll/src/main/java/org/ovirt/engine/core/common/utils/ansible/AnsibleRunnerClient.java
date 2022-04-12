@@ -36,15 +36,15 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
 @Singleton
-public class AnsibleRunnerHttpClient {
-    private static Logger log = LoggerFactory.getLogger(AnsibleRunnerHttpClient.class);
+public class AnsibleRunnerClient {
+    private static Logger log = LoggerFactory.getLogger(AnsibleRunnerClient.class);
     private ObjectMapper mapper;
     private AnsibleRunnerLogger runnerLogger;
     private JsonNode lastEvent;
     private static final int POLL_INTERVAL = 3000;
     private AnsibleReturnValue returnValue;
 
-    public AnsibleRunnerHttpClient() {
+    public AnsibleRunnerClient() {
         this.mapper = JsonMapper
                 .builder()
                 .findAndAddModules()
@@ -196,17 +196,13 @@ public class AnsibleRunnerHttpClient {
         }
     }
 
-    public void cancelPlaybook(UUID uuid) throws Exception {
-        this.cancelPlaybook(uuid, 0);
-    }
-
     public void cancelPlaybook(UUID uuid, int timeout) throws Exception {
         File privateDataDir = new File(String.format("%1$s/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, uuid));
         File output = new File(String.format("%1$s/engine-cancel-output.log", privateDataDir));
         String command = String.format("ansible-runner stop %1$s", privateDataDir);
         ProcessBuilder ansibleProcessBuilder = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
         Process ansibleProcess = ansibleProcessBuilder.start();
-        if (timeout != 0 && !ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
+        if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
             throw new Exception("Timeout occurred while canceling Ansible playbook.");
         }
         if (ansibleProcess.exitValue() != 0) {

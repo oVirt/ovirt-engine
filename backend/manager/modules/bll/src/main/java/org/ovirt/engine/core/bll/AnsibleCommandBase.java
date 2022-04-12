@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHttpClient;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerClient;
 import org.ovirt.engine.core.compat.CommandStatus;
 
 public abstract class AnsibleCommandBase <T extends AnsibleCommandParameters> extends CommandBase<T> {
@@ -26,7 +26,7 @@ public abstract class AnsibleCommandBase <T extends AnsibleCommandParameters> ex
     private AnsibleExecutor ansibleExecutor;
 
     @Inject
-    private AnsibleRunnerHttpClient runnerClient;
+    private AnsibleRunnerClient runnerClient;
 
     @Inject
     @Typed(AnsibleCallback.class)
