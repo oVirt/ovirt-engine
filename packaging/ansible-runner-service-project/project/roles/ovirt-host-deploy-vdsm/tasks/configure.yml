@@ -64,9 +64,9 @@
   command: vdsm-tool configure --force
   changed_when: True
 
-- name: Verify fapolicyd.rules file
+- name: Check existence of /etc/fapolicyd/rules.d directory
   stat:
-    path: /etc/fapolicyd/fapolicyd.rules
+    path: /etc/fapolicyd/rules.d
   register: fapolicy_rules
 
 - name: collect facts about system services
