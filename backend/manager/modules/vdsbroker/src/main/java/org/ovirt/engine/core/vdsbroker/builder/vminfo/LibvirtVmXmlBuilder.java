@@ -1040,7 +1040,9 @@ public class LibvirtVmXmlBuilder {
     private void writeCpuPinningPolicyMetadata() {
         CpuPinningPolicy cpuPinningPolicy = vm.getCpuPinningPolicy();
         // CpuPinningPolicy.NONE may happen when the engine generates CPU pinning based on the NUMA pinning.
-        if (vm.getVmPinning() != null && cpuPinningPolicy == CpuPinningPolicy.NONE) {
+        // VDSM doesn't recognize 'resize and pin numa' we need to switch it to 'manual'.
+        if (cpuPinningPolicy == CpuPinningPolicy.RESIZE_AND_PIN_NUMA ||
+                vm.getVmPinning() != null && cpuPinningPolicy == CpuPinningPolicy.NONE) {
             cpuPinningPolicy = CpuPinningPolicy.MANUAL;
         }
         writer.writeElement(OVIRT_VM_URI, "cpuPolicy", cpuPinningPolicy.name().toLowerCase());
