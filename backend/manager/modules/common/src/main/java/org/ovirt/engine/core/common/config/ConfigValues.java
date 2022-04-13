@@ -1441,7 +1441,7 @@ public enum ConfigValues {
     VMConsoleTicketTolerance,
 
     @TypeConverterAttribute(Double.class)
-    ArtifactsOutdatedCheckTimeInHours,
+    AnsibleRunnerArtifactsCleanupCheckTimeInHours,
 
     @TypeConverterAttribute(Integer.class)
     AnsibleRunnerArtifactsLifetimeInDays,
