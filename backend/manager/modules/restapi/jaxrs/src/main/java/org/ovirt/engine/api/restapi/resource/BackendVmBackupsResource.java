@@ -58,7 +58,7 @@ public class BackendVmBackupsResource
                 backup.getSnapshot().setVm(vm);
             }
 
-            collection.getBackups().add(addLinks(backup));
+            collection.getBackups().add(addLinks(backup, Vm.class));
         }
         return collection;
     }
