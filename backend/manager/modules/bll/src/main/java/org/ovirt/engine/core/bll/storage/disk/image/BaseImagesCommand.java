@@ -384,6 +384,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                                 newStorageDomainID,
                                 getDestinationDiskImage());
                     }
+
+                    // Update image's size if it's changed
+                    getDestinationDiskImage().setSize(newImageIRS.getSize());
                 }
             } catch (EngineException e) {
                 // Logging only
