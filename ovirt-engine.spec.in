@@ -567,9 +567,9 @@ Requires:	%{name}-setup-plugin-vmconsole-proxy-helper = %{version}-%{release}
 Requires:	%{name}-setup-plugin-cinderlib = %{version}-%{release}
 Requires:	%{name}-setup-plugin-imageio = %{version}-%{release}
 Requires:	%{name}-dwh-setup >= 4.4.1.2
-%if !%{rhv_build}
-Requires:	ovirt-engine-keycloak-setup
-%endif
+#%if !%{rhv_build}
+#Requires:	ovirt-engine-keycloak-setup
+#%endif
 Requires:	ovirt-engine-extension-aaa-jdbc >= 1.2.0
 Requires:	openssh
 Requires:       postgresql-server >= 12.0
