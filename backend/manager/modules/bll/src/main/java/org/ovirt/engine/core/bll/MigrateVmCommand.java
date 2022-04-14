@@ -430,7 +430,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             maxIncomingMigrations = maxOutgoingMigrations = effectiveMigrationPolicy.getMaxMigrations();
         }
         if (getVm().getCpuPinningPolicy() == CpuPinningPolicy.DEDICATED) {
-            cpuSets = CpuPinningHelper.getAllPinnedPCpus(getDedicatedCpuPinning(getDestinationVdsManager())).stream().sorted()
+            cpuSets = CpuPinningHelper.getAllPinnedPCpus(getDedicatedCpuPinning(getDestinationVdsManager())).stream()
                     .map(Object::toString).collect(Collectors.toList());
             String numaPinningString = vmHandler.createNumaPinningForDedicated(getVm(), getDestinationVdsId());
             numaNodeSets = NumaPinningHelper.parseNumaSets(numaPinningString);
