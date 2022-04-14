@@ -52,7 +52,7 @@ public class AnsibleRunnerCleanUpService implements BackendService {
     private void checkExecutionTimeStamp() {
         int artifactsLifeTime = Config.<Integer> getValue(ConfigValues.AnsibleRunnerArtifactsLifetimeInDays);
         Stream.of(new File(AnsibleConstants.ANSIBLE_RUNNER_PATH.toString()).listFiles()).forEach(file -> {
-            long creationInDays = 0;
+            long creationInDays;
             try {
                 creationInDays = Files.readAttributes(file.toPath(), BasicFileAttributes.class)
                         .creationTime()
@@ -60,6 +60,7 @@ public class AnsibleRunnerCleanUpService implements BackendService {
             } catch (IOException e) {
                 log.error("Failed to read file attributes: {}", file.toPath());
                 log.debug("Exception: ", e);
+                return;
             }
             long todayInDays = FileTime.fromMillis(new Date().getTime()).to(TimeUnit.DAYS);
             if (todayInDays - creationInDays > artifactsLifeTime) {
