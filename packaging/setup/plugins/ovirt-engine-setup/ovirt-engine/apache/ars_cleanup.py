@@ -7,7 +7,7 @@
 #
 
 
-"""Apache ansible-runner plugin."""
+"""Apache ansible-runner-service cleanup plugin."""
 
 
 import gettext
@@ -29,7 +29,7 @@ def _(m):
 
 @util.export
 class Plugin(plugin.PluginBase):
-    """Cleanup of the ansible-runner plugin."""
+    """Apache ansible-runner-service cleanup plugin."""
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)

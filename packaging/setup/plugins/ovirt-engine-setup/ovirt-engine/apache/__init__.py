@@ -12,16 +12,16 @@
 
 from otopi import util
 
+from . import ars_cleanup
 from . import engine
 from . import root
-from . import runner
 
 
 @util.export
 def createPlugins(context):
     engine.Plugin(context=context)
     root.Plugin(context=context)
-    runner.Plugin(context=context)
+    ars_cleanup.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
