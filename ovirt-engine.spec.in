@@ -345,13 +345,13 @@ Requires:	fapolicyd
 Requires:	scap-security-guide >= 0.1.60-4
 
 # Metrics stuff
-Requires:	collectd >= 5.12.0-7
-Requires:	collectd-postgresql >= 5.12.0-7
-Requires:	collectd-disk >= 5.12.0-7
-Requires:	collectd-write_http >= 5.12.0-7
+Requires:	collectd >= 5.12.0-7.2
+Requires:	collectd-postgresql >= 5.12.0-7.2
+Requires:	collectd-disk >= 5.12.0-7.2
+Requires:	collectd-write_http >= 5.12.0-7.2
 %if 0%{?rhel}
 # collectd-write_syslog is available only on EL
-Requires:	collectd-write_syslog >= 5.12.0-7
+Requires:	collectd-write_syslog >= 5.12.0-7.2
 %endif
 
 
