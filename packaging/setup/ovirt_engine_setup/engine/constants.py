@@ -244,10 +244,10 @@ class FileLocations(object):
         'www',
     )
 
-    HTTPD_RUNNER_WSGI_SCRIPT = os.path.join(
-        DIR_WWW,
-        'runnner',
-        'runner.wsgi',
+    HTTPD_CONF_ANSIBLE_RUNNER_SERVICE = os.path.join(
+        DIR_HTTPD,
+        'conf.d',
+        'zz-ansible-runner-service.conf',
     )
 
     HTTPD_CONF_OVIRT_ENGINE = os.path.join(
@@ -344,8 +344,6 @@ class Defaults(object):
     DEFAULT_CONFIG_STORAGE_IS_LOCAL = False
 
     DEFAULT_CLEAR_TASKS_WAIT_PERIOD = 20
-
-    DEFAULT_ANSIBLE_RUNNER_SERVICE_PORT = '50001'
 
     DEFAULT_DB_HOST = 'localhost'
     DEFAULT_DB_PORT = 5432
