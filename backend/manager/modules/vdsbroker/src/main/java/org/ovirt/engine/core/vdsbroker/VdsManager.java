@@ -635,29 +635,23 @@ public class VdsManager {
 
     private void handleRefreshCapabilitiesResponse(VDS vds, VDSReturnValue caps) {
         try {
-            invokeGetHardwareInfo(vds, caps);
             processRefreshCapabilitiesResponse(new AtomicBoolean(), vds, vds.clone(), caps);
         } catch (Throwable t) {
             logRefreshCapabilitiesFailure(t);
             throw t;
-        } finally {
-            if (vds != null) {
-                updateDynamicData(vds.getDynamicData());
-                updateNumaData(vds);
-
-                // Update VDS after testing special hardware capabilities
-                monitoringStrategy.processHardwareCapabilities(vds);
-
-                // Always check VdsVersion
-                resourceManager.getEventListener().handleVdsVersion(vds.getId());
-            }
         }
-    }
 
-    public void invokeGetHardwareInfo(VDS vds, VDSReturnValue caps) {
-        if (caps.getSucceeded()) {
+        try {
             getHardwareInfo(vds);
+        } catch (Throwable t) {
+            log.error("Failed to get hardware information: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
         }
+
+        updateDynamicData(vds.getDynamicData());
+        updateNumaData(vds);
+        monitoringStrategy.processHardwareCapabilities(vds);
+        resourceManager.getEventListener().handleVdsVersion(vds.getId());
     }
 
     public void getHardwareInfo(VDS vds) {

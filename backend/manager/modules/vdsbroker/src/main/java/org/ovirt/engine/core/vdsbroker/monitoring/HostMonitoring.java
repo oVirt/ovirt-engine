@@ -202,7 +202,9 @@ public class HostMonitoring implements HostMonitoringInterface {
             try {
                 final AtomicBoolean processHardwareNeededAtomic = new AtomicBoolean();
                 VDSReturnValue caps = (VDSReturnValue) response.get("result");
-                vdsManager.invokeGetHardwareInfo(vds, caps);
+                if (caps.getSucceeded()) {
+                    vdsManager.getHardwareInfo(vds);
+                }
                 VDSStatus refreshReturnStatus = vdsManager.processRefreshCapabilitiesResponse(processHardwareNeededAtomic,
                         vds,
                         oldVds,
@@ -804,7 +806,9 @@ public class HostMonitoring implements HostMonitoringInterface {
             try {
                 final AtomicBoolean processHardwareCapsNeededTemp = new AtomicBoolean();
                 VDSReturnValue caps = (VDSReturnValue) response.get("result");
-                vdsManager.invokeGetHardwareInfo(vds, caps);
+                if (caps.getSucceeded()) {
+                    vdsManager.getHardwareInfo(vds);
+                }
                 vdsManager.processRefreshCapabilitiesResponse(processHardwareCapsNeededTemp,
                         vds,
                         oldVds,
