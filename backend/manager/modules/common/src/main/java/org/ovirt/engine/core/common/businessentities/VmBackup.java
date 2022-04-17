@@ -36,6 +36,8 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
 
     private Guid snapshotId;
 
+    private boolean stopped;
+
     public Guid getId() {
         return id;
     }
@@ -136,6 +138,14 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
         this.snapshotId = snapshotId;
     }
 
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -150,7 +160,8 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
                 modificationDate,
                 description,
                 backupType,
-                snapshotId
+                snapshotId,
+                stopped
         );
     }
 
@@ -174,7 +185,8 @@ public class VmBackup implements Queryable, BusinessEntity<Guid> {
                 && Objects.equals(modificationDate, other.modificationDate)
                 && Objects.equals(description, other.description)
                 && Objects.equals(backupType, other.backupType)
-                && Objects.equals(snapshotId, other.snapshotId);
+                && Objects.equals(snapshotId, other.snapshotId)
+                && Objects.equals(stopped, other.isStopped());
     }
 
     @Override

@@ -70,31 +70,41 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
             vmBackup.setDisks(vmBackupDao.getDisksByBackupId(vmBackup.getId()));
 
             VmBackupPhase phase = vmBackup.getPhase();
-            if (phase.isBackupFinalizing() || phase.isBackupFinished()) {
-                String errorMsg = String.format(
-                        "VM '%s' backup '%s' is already in '%s' phase, no need to stop the backup again",
-                        vmBackup.getVmId(), vmBackup.getId(), phase);
+            if (phase.isBackupFinalizing() || phase.isBackupFinished() || vmBackup.isStopped()) {
+                String errorMsg = phase.isBackupFinalizing() || phase.isBackupFinished()
+                        ? String.format(
+                            "VM '%s' backup '%s' is already in '%s' phase, no need to stop the backup again",
+                            vmBackup.getVmId(), vmBackup.getId(), phase)
+                        : String.format(
+                            "VM '%s' backup '%s' is already stopped, no need to stop the backup again",
+                            vmBackup.getVmId(), vmBackup.getId());
                 log.warn(errorMsg);
                 getReturnValue().setExecuteFailedMessages(new ArrayList<>(Collections.singleton(errorMsg)));
                 return;
             }
 
-            if (stopVmBackup()) {
-                if (phase == VmBackupPhase.READY) {
-                    updateVmBackupPhase(VmBackupPhase.FINALIZING);
-                    setSucceeded(true);
+            if (isHybridBackup()) {
+                updateVmBackupStopped();
+                setSucceeded(true);
+            } else {
+                if (stopVmBackup()) {
+                    if (phase == VmBackupPhase.READY) {
+                        // Finalize backup
+                        updateVmBackupPhase(VmBackupPhase.FINALIZING);
+                        setSucceeded(true);
+                    } else {
+                        // Premature backup finish
+                        String errorMsg = String.format(
+                                "Backup '%s' is in '%s' phase, premature backup stop was initiated.",
+                                vmBackup.getId(), phase);
+                        log.warn(errorMsg);
+                        getReturnValue().setExecuteFailedMessages(new ArrayList<>(Collections.singleton(errorMsg)));
+                        updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
+                    }
                 } else {
-                    // Premature backup finish.
-                    String errorMsg = String.format(
-                            "Backup '%s' is in '%s' phase, premature backup stop was initiated.",
-                            vmBackup.getId(), phase);
-                    log.warn(errorMsg);
-                    getReturnValue().setExecuteFailedMessages(new ArrayList<>(Collections.singleton(errorMsg)));
+                    log.error("Failed to stop backup '{}' in '{}' phase", vmBackup.getId(), phase);
                     updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
                 }
-            } else {
-                log.error("Failed to stop backup '{}' in '{}' phase", vmBackup.getId(), phase);
-                updateVmBackupPhase(VmBackupPhase.FINALIZING_FAILURE);
             }
         }
     }
@@ -130,11 +140,20 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
         return vmBackup.getBackupType() == VmBackupType.Live;
     }
 
+    private boolean isHybridBackup() {
+        return vmBackup.getBackupType() == VmBackupType.Hybrid;
+    }
+
     private void updateVmBackupPhase(VmBackupPhase phase) {
         log.info("Change VM '{}' backup '{}' phase from '{}' to '{}'",
                 vmBackup.getVmId(), vmBackup.getId(), vmBackup.getPhase(), phase);
         vmBackup.setPhase(phase);
         vmBackupDao.update(vmBackup);
+    }
+
+    private void updateVmBackupStopped() {
+        log.info("VM '{}' backup '{}' marked as stopped", vmBackup.getVmId(), vmBackup.getId());
+        vmBackupDao.setBackupStopped(vmBackup.getId());
     }
 
     private EngineLock getEntityUpdateLock(Guid backupId) {
@@ -163,6 +182,10 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
     public AuditLogType getAuditLogTypeValue() {
         addCustomValue("VmName", getVm().getName());
         addCustomValue("backupId", getParameters().getVmBackup().getId().toString());
-        return getSucceeded() ? AuditLogType.VM_BACKUP_FINALIZED : AuditLogType.VM_BACKUP_FAILED_TO_FINALIZE;
+        if (isHybridBackup()) {
+            return getSucceeded() ? AuditLogType.VM_BACKUP_STOPPED : AuditLogType.UNASSIGNED;
+        } else {
+            return getSucceeded() ? AuditLogType.VM_BACKUP_FINALIZED : AuditLogType.VM_BACKUP_FAILED_TO_FINALIZE;
+        }
     }
 }
