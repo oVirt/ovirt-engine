@@ -374,10 +374,18 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
     @Override
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
+            String allocationPolicy = getParameters().getPreallocation() != null ?
+                    getParameters().getPreallocation().toString() :
+                    getDiskImage().getVolumeType().toString();
+
+            String diskFormat = getParameters().getVolumeFormat() != null ?
+                    getParameters().getVolumeFormat().toString() :
+                    getDiskImage().getVolumeFormat().toString();
+
             jobProperties = super.getJobMessageProperties();
             jobProperties.put("diskname", getDiskImage().getName());
-            jobProperties.put("allocationpolicy", getParameters().getPreallocation().toString());
-            jobProperties.put("diskformat", getParameters().getVolumeFormat().toString());
+            jobProperties.put("allocationpolicy", allocationPolicy);
+            jobProperties.put("diskformat", diskFormat);
         }
 
         return super.getJobMessageProperties();
