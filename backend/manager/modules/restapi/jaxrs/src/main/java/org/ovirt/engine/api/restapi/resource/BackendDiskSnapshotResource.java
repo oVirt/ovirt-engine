@@ -30,9 +30,11 @@ public class BackendDiskSnapshotResource
                 new IdQueryParameters(guid), Disk.class);
         diskSnapshot.setDisk(new Disk());
         diskSnapshot.getDisk().setId(diskId.toString());
+        diskSnapshot.getDisk().setHref(backendDiskSnapshotsResource.buildParentHref(diskId.toString(), false));
         diskSnapshot.setHref(backendDiskSnapshotsResource.buildHref(diskId.toString(), diskSnapshot.getId().toString()));
         if (diskSnapshot.getParent() != null) {
-            diskSnapshot.getParent().setHref(backendDiskSnapshotsResource.buildParentHref(diskId.toString(), true));
+            diskSnapshot.getParent().setHref(backendDiskSnapshotsResource.buildHref(diskId.toString(),
+                    diskSnapshot.getParent().getId()));
         }
         return diskSnapshot;
     }
