@@ -74,4 +74,11 @@ public interface VmBackupDao extends GenericDao<VmBackup, Guid> {
      * @param failedBackups all failed backups having older end time than this date will be deleted.
      */
     void deleteCompletedBackups(Date succeededBackups, Date failedBackups);
+
+    /**
+     * Marks the backup as stopped
+     *
+     * @param backupId the VM backup ID
+     */
+    void setBackupStopped(Guid backupId);
 }

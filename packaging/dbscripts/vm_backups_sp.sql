@@ -117,6 +117,15 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION UpdateVmBackupStopped (v_backup_id UUID)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    UPDATE vm_backups
+    SET is_stopped = true
+    WHERE backup_id = v_backup_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 
 ----------------------------------------------------------------
 -- [vm_backup_disk_map] Table

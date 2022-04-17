@@ -31,7 +31,7 @@ public enum VmBackupPhase {
     }
 
     public boolean isBackupFinalizing() {
-        return this == FINALIZING || this == FINALIZING_FAILURE;
+        return this == FINALIZING || this == FINALIZING_FAILURE || this == REMOVING_SNAPSHOT;
     }
 
     public static VmBackupPhase forName(String name) {

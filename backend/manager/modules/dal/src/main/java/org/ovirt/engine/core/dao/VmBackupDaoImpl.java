@@ -66,6 +66,7 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
         entity.setDescription(rs.getString("description"));
         entity.setBackupType(VmBackupType.forName(rs.getString("backup_type")));
         entity.setSnapshotId(getGuid(rs, "snapshot_id"));
+        entity.setStopped(rs.getBoolean("is_stopped"));
         return entity;
     };
 
@@ -140,5 +141,12 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
                 .addValue("succeeded_end_time", succeededBackups)
                 .addValue("failed_end_time", failedBackups);
         getCallsHandler().executeModification("DeleteCompletedBackupsOlderThanDate", parameterSource);
+    }
+
+    @Override
+    public void setBackupStopped(Guid backupId) {
+        getCallsHandler().executeModification("UpdateVmBackupStopped",
+                getCustomMapSqlParameterSource()
+                        .addValue("backup_id", backupId));
     }
 }
