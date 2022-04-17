@@ -167,11 +167,22 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
             return;
         }
 
-        long requiredSize =  actionReturnValue.getActionReturnValue();
+        long requiredSize = actionReturnValue.getActionReturnValue();
+
+        CreateVolumeContainerCommandParameters parameters = createVolumeCreationParameters(getDiskImage(), requiredSize);
+
+        // Initial size will not be used for this configuration, meaning the required size will not
+        // be used at all. However, when converting to COW/Preallocated the required size may be larger
+        if (parameters.getVolumeType() == VolumeType.Preallocated &&
+                parameters.getVolumeFormat() == VolumeFormat.COW) {
+            parameters.setSize(Math.max(getDiskImage().getSize(), requiredSize));
+            if (parameters.getSize() > getDiskImage().getSize()) {
+                log.info("Updated disk's '{}' size to: '{}'", getDiskImage().getId(), parameters.getSize());
+            }
+        }
 
         // Create volume in the same disk
-        runInternalAction(ActionType.CreateVolumeContainer,
-                createVolumeCreationParameters(getDiskImage(), requiredSize),
+        runInternalAction(ActionType.CreateVolumeContainer, parameters,
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
         updatePhase(ConvertDiskCommandParameters.ConvertDiskPhase.CONVERT_VOLUME);
 
