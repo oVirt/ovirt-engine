@@ -7,7 +7,7 @@ import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.resource.DiskSnapshotResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
-import org.ovirt.engine.core.common.queries.DiskSnapshotsQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -26,10 +26,8 @@ public class BackendDiskSnapshotResource
 
     @Override
     public DiskSnapshot get() {
-        // TODO: GetAllDiskSnapshots is an incorrect query to use here, it fetches all the disk snapshots, so the one
-        // returned here is not necessarily the one requested
-        DiskSnapshot diskSnapshot = performGet(QueryType.GetAllDiskSnapshots,
-                new DiskSnapshotsQueryParameters(diskId, true, false), Disk.class);
+        DiskSnapshot diskSnapshot = performGet(QueryType.GetDiskSnapshotByImageId,
+                new IdQueryParameters(guid), Disk.class);
         diskSnapshot.setDisk(new Disk());
         diskSnapshot.getDisk().setId(diskId.toString());
         diskSnapshot.setHref(backendDiskSnapshotsResource.buildHref(diskId.toString(), diskSnapshot.getId().toString()));
