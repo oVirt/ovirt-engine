@@ -131,6 +131,7 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setBiosType(entity.getBiosType());
         staticVm.setCustomCpuName(entity.getCustomCpuName());
         staticVm.setConsoleDisconnectAction(entity.getConsoleDisconnectAction());
+        staticVm.setConsoleDisconnectActionDelay(entity.getConsoleDisconnectActionDelay());
         staticVm.setSmallIconId(entity.getSmallIconId());
         staticVm.setLargeIconId(entity.getLargeIconId());
         staticVm.setQuotaId(entity.getQuotaId());
