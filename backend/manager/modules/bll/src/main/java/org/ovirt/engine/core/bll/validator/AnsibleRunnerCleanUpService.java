@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +29,6 @@ import org.slf4j.LoggerFactory;
 public class AnsibleRunnerCleanUpService implements BackendService {
 
     private static Logger log = LoggerFactory.getLogger(AnsibleRunnerCleanUpService.class);
-
-    @Inject
-    private AuditLogDirector auditLogDirector;
 
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
