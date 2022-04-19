@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -113,7 +114,8 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     }
 
     private boolean runAnsibleImportOvaPlaybook(String disksPathToFormat) {
-        int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
+        long timeout = TimeUnit.MINUTES.toSeconds(
+            EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("ovirt_import_ova_path", getParameters().getOvaPath())
