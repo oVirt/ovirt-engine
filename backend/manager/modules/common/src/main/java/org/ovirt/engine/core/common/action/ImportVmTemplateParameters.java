@@ -1,10 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -87,16 +85,6 @@ public class ImportVmTemplateParameters extends MoveOrCopyParameters implements 
 
     public void setDiskTemplateMap(Map<Guid, DiskImage> diskTemplateMap) {
         this.diskTemplateMap = diskTemplateMap;
-    }
-
-    private Map<Guid, Set<Guid>> imageToAvailableStorageDomains = new HashMap<>();
-
-    public Map<Guid, Set<Guid>> getImageToAvailableStorageDomains() {
-        return imageToAvailableStorageDomains;
-    }
-
-    public void setImageToAvailableStorageDomains(Map<Guid, Set<Guid>> imageToAvailableStorageDomains) {
-        this.imageToAvailableStorageDomains = imageToAvailableStorageDomains;
     }
 
     public ImportVmTemplateParameters() {

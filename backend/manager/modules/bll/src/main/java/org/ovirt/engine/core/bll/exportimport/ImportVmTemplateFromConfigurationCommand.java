@@ -641,6 +641,18 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     @Override
     protected void updateDiskSizeByQcowImageInfo(DiskImage diskImage, Guid storageId) {
+        Set<Guid> storageDomains = getParameters().getImageToAvailableStorageDomains().get(diskImage.getImageId());
+
+        if (storageDomains != null && !storageDomains.isEmpty()) {
+            // Try to use the target SD, otherwise fallback to one of the available SDs
+            // for the image
+            if (storageDomains.contains(getStorageDomainId())) {
+                storageId = getStorageDomainId();
+            } else {
+                storageId = storageDomains.stream().findFirst().get();
+            }
+        }
+
         if (!Guid.isNullOrEmpty(storageId)) {
             super.updateDiskSizeByQcowImageInfo(diskImage, storageId);
             return;
