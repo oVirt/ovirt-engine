@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -19,7 +20,8 @@ public class AnsiblePackOvaCommand <T extends AnsibleCommandParameters> extends 
 
     @Override
     protected AnsibleCommandConfig createCommand() {
-        int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
+        long timeout = TimeUnit.MINUTES.toSeconds(
+            EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
         Map<String, Object> vars = getParameters().getVariables();
         return new AnsibleCommandConfig()
                 .hosts(getVds())
