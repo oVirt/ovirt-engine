@@ -54,7 +54,7 @@ public class AnsibleRunnerCleanUpService implements BackendService {
                         .creationTime()
                         .to(TimeUnit.DAYS);
             } catch (IOException e) {
-                log.error("Failed to read file attributes: {}", file.toPath());
+                log.error("Failed to read file '{}' attributes: {}", file.getAbsolutePath(), e.getMessage());
                 log.debug("Exception: ", e);
                 return;
             }
@@ -66,7 +66,7 @@ public class AnsibleRunnerCleanUpService implements BackendService {
                             .map(Path::toFile)
                             .forEach(File::delete);
                 } catch (IOException e) {
-                    log.error("Failed to delete dir content: {}", file.getAbsolutePath());
+                    log.error("Failed to delete dir '{}' content: {}", file.getAbsolutePath(), e.getMessage());
                     log.debug("Exception: ", e);
                 }
             }
