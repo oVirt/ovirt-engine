@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -47,7 +48,8 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
     }
 
     private String runAnsibleQueryOvaInfoPlaybook() {
-        int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
+        long timeout = TimeUnit.MINUTES.toSeconds(
+            EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
         VDS host = vdsDao.get(getParameters().getVdsId());
         AnsibleCommandConfig command = new AnsibleCommandConfig()
                 .hosts(host)
