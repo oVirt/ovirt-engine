@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.exportimport;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -94,7 +95,8 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
     }
 
     private ValidationResult validateTargetFolder() {
-        int timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
+        long timeout = TimeUnit.MINUTES.toSeconds(
+            EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                 .hosts(getVds())
                 .variable("target_directory", getParameters().getDirectory())
