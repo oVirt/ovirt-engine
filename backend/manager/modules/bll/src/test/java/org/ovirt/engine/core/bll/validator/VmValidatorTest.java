@@ -78,6 +78,8 @@ public class VmValidatorTest extends BaseCommandTest {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
                         createMaxNumberOfVmCpusMap()),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfCpusCoefficient, 2),
+                MockConfigDescriptor.of(ConfigValues.ManyVmCpus, 128),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets,
                         COMPAT_VERSION_FOR_CPU_SOCKET_TEST,
                         MAX_NUM_SOCKETS),
