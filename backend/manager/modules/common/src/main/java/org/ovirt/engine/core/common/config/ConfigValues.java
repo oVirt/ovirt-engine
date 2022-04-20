@@ -206,6 +206,8 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     MaxNumOfCpusCoefficient(ClientAccessLevel.User),
     @TypeConverterAttribute(Integer.class)
+    ManyVmCpus(ClientAccessLevel.User),
+    @TypeConverterAttribute(Integer.class)
     NumberVmRefreshesBeforeSave,
     @TypeConverterAttribute(Integer.class)
     NumberVdsRefreshesBeforeTryToStartUnknownVms,
