@@ -151,7 +151,7 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
             // If we import from a Storage Domain, we'll need to use the image's Storage
             // Domain ID and not the target domain's.
             if (!getParameters().isImagesExistOnTargetStorageDomain()) {
-                updateDiskSizeByQcowImageInfo(image);
+                updateDiskSizeByQcowImageInfo(image, getParameters().getSourceDomainId());
             } else {
                 updateDiskSizeByQcowImageInfo(image, image.getStorageIds().get(0));
             }
@@ -266,10 +266,6 @@ public class ImportVmTemplateCommand<T extends ImportVmTemplateParameters> exten
 
             getCompensationContext().snapshotNewEntity(diskDynamic);
         }
-    }
-
-    private void updateDiskSizeByQcowImageInfo(DiskImage diskImage) {
-        updateDiskSizeByQcowImageInfo(diskImage, getParameters().getSourceDomainId());
     }
 
     protected void updateDiskSizeByQcowImageInfo(DiskImage diskImage, Guid storageId) {
