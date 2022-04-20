@@ -96,7 +96,9 @@ public class OvfManagerTest {
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.v4_3, 16),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.v4_3, createMaxNumberOfVmCpusMap()),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 16),
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), createMaxNumberOfVmCpusMap())
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), createMaxNumberOfVmCpusMap()),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfCpusCoefficient, 2),
+                MockConfigDescriptor.of(ConfigValues.ManyVmCpus, 128)
         );
     }
 
