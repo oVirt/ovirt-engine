@@ -335,6 +335,7 @@ select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmCpus', '{"x86":710,"
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmSockets', '16', '4.5');
 select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmSockets', '10000', '4.7');
 select fn_db_add_config_value('MaxNumOfCpusCoefficient', '2', 'general');
+select fn_db_add_config_value('ManyVmCpus', '128', 'general');
 select fn_db_add_config_value('MaxRerunVmOnVdsCount','3','general');
 select fn_db_add_config_value('MaxStorageVdsDelayCheckSec','5','general');
 select fn_db_add_config_value('MaxStorageVdsTimeoutCheckSec','30','general');

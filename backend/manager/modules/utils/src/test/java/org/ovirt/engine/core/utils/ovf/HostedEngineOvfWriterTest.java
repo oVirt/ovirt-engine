@@ -50,7 +50,9 @@ public class HostedEngineOvfWriterTest {
         return Stream.of(
                 MockConfigDescriptor.of(ConfigValues.VdcVersion, Version.getLast().getValue()),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, Version.getLast(), createMaxNumberOfVmCpusMap()),
-                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 4)
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 4),
+                MockConfigDescriptor.of(ConfigValues.MaxNumOfCpusCoefficient, 2),
+                MockConfigDescriptor.of(ConfigValues.ManyVmCpus, 128)
         );
     }
 

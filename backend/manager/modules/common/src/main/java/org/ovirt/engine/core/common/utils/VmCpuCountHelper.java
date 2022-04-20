@@ -98,18 +98,20 @@ public class VmCpuCountHelper {
 
         int threadsPerCore = vm.getThreadsPerCpu();
         int cpuPerSocket = vm.getCpuPerSocket();
-        if (compatibilityVersion.greaterOrEquals(Version.v4_6) && maxSockets > LEGACY_MAX_SOCKETS) {
-            // Maximum vCPUs, even when unused, take some memory from the RAM available to
-            // the guest OS.
-            // So it's desirable not to set the maximum number of vCPUs unnecessarily high,
-            // in order to not waste memory. This concerns primarily configurations with a
-            // limit of CPU sockets higher than the one of 16, used for ages and no longer
-            // needed.
-            Integer maxVCpusCoefficient = Config.getValue(ConfigValues.MaxNumOfCpusCoefficient);
+        if (compatibilityVersion.greaterOrEquals(Version.v4_6)) {
+            // Maximum vCPUs, even when unused, take some memory from
+            // the RAM available to the guest OS. Moreover, many vCPUs
+            // can possibly cause other problems (see e.g.
+            // https://bugzilla.redhat.com/2074149). That means it's
+            // better not to set the maximum number of vCPUs
+            // unnecessarily high.
+            final Integer maxVCpusCoefficient = Config.getValue(ConfigValues.MaxNumOfCpusCoefficient);
             final int threadsPerSocket = cpuPerSocket * threadsPerCore;
             final int maxComputedSockets = Math.min(maxSockets,
                     maxVCpusCoefficient * vm.getNumOfCpus() / threadsPerSocket);
-            maxVCpus = Math.min(maxVCpus, Math.max(maxComputedSockets, LEGACY_MAX_SOCKETS) * threadsPerSocket);
+            final Integer manyVmCpus = Config.getValue(ConfigValues.ManyVmCpus);
+            final int maxLegacySockets = Math.min(LEGACY_MAX_SOCKETS, (manyVmCpus - 1) / threadsPerSocket);
+            maxVCpus = Math.min(maxVCpus, Math.max(maxComputedSockets, maxLegacySockets) * threadsPerSocket);
         }
         final BiosType biosType = vm.getBiosType();
         return calcMaxVCpu(architectureFamily, maxSockets, maxVCpus, threadsPerCore, cpuPerSocket, biosType);
