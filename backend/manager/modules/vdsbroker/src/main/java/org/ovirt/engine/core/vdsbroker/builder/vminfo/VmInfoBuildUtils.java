@@ -180,6 +180,10 @@ public class VmInfoBuildUtils {
             Pattern.compile(String.format(BLOCK_DOMAIN_DISK_PATH, ValidationUtils.GUID,
                     ValidationUtils.GUID, ValidationUtils.GUID));
 
+    private static final int DEFAULT_TSEG_SIZE_MB = 16;
+    private static final int MANY_VCPUS_TSEG_SIZE_INCREASE_MB = 24;
+    private static final int PER_TB_TSEG_SIZE_INCREASE_MB = 8;
+
     public static final int NVDIMM_LABEL_SIZE = 128 * 1024;
 
     @Inject
@@ -1676,5 +1680,47 @@ public class VmInfoBuildUtils {
     public static boolean isVmWithHighNumberOfX86Vcpus(VM vm) {
         return vm.getClusterArch().getFamily() == ArchitectureType.x86
                 && maxNumberOfVcpus(vm) >= VmCpuCountHelper.HIGH_NUMBER_OF_X86_VCPUS;
+    }
+
+    /**
+     * Return a recommended TSEG size in MB or null to use the default value.
+     *
+     * Large VMs with UEFI will not start if they don't have TSEG large enough.
+     * There is no rule what "large" is, it's a VM with "too many" vCPUs or "too large" memory.
+     * There are just some suggestions:
+     * - To use 48 MB for VMs with many vCPUs or large memory:
+     *   https://bugzilla.redhat.com/show_bug.cgi?id=2074149#c22
+     * - The same in a different context:
+     *   https://bugzilla.redhat.com/show_bug.cgi?id=1469338#c30
+     * - To increase the size by unspecified amount for many vCPUs and by 8 MB of each TB of
+     *   address space (which is max RAM + NVDIMM size in our case):
+     *   https://bugzilla.redhat.com/show_bug.cgi?id=1469338#c7
+     * - Confirmation that 48 MB may not be enough for really large VMs:
+     *   https://bugzilla.redhat.com/show_bug.cgi?id=2074149#c28
+     **/
+    public Integer tsegSizeMB(VM vm, MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier) {
+        // If UEFI is not used, we should be safe and use the default value.
+        if (vm.getBiosType() == null || !vm.getBiosType().isOvmf()) {
+            return null;
+        }
+        // If the VM is small, we also use the default value, because the TSEG size is taken
+        // from the memory available to the guest.
+        final int cpuLimit = Config.getValue(ConfigValues.ManyVmCpus);
+        final int smallMemory = Config.<Integer> getValue(ConfigValues.UefiBigVmMemoryGB) * 1024;
+        if (maxNumberOfVcpus(vm) < cpuLimit && vm.getMaxMemorySizeMb() < smallMemory) {
+            return null;
+        }
+        // Otherwise, we start with the default value (16 MB currently) and add 24 MB
+        // (which implies at least the recommended value of 48 MB together with the default value
+        // and additional value per memory) for VMs with many vCPUs and 8 MB per each (even partial)
+        // TB of RAM. This is probably a bit wasteful but it's better than risking the VM won't
+        // start.
+        int size = DEFAULT_TSEG_SIZE_MB;
+        if (maxNumberOfVcpus(vm) >= cpuLimit) {
+            size += MANY_VCPUS_TSEG_SIZE_INCREASE_MB;
+        }
+        final long memorySize = vm.getMaxMemorySizeMb() + getNvdimmTotalSize(vm, hostDevicesSupplier) / (1024 * 1024);
+        size += (memorySize / (1024 * 1024) + 1) * PER_TB_TSEG_SIZE_INCREASE_MB;
+        return size;
     }
 }

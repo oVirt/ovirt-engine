@@ -778,7 +778,8 @@ public class LibvirtVmXmlBuilder {
         boolean acpiEnabled = vm.getAcpiEnable();
         boolean kaslrEnabled = vmInfoBuildUtils.isKASLRDumpEnabled(vm.getVmOsId());
         boolean secureBootEnabled = vm.getBiosType() == BiosType.Q35_SECURE_BOOT;
-        if (!acpiEnabled && !hypervEnabled && !kaslrEnabled && !secureBootEnabled) {
+        Integer tsegSize = vmInfoBuildUtils.tsegSizeMB(vm, hostDevicesSupplier);
+        if (!acpiEnabled && !hypervEnabled && !kaslrEnabled && !secureBootEnabled && tsegSize == null) {
             return;
         }
 
@@ -858,9 +859,15 @@ public class LibvirtVmXmlBuilder {
             writer.writeElement("vmcoreinfo");
         }
 
-        if (secureBootEnabled) {
+        if (secureBootEnabled || tsegSize != null) {
             writer.writeStartElement("smm");
             writer.writeAttributeString("state", "on");
+            if (tsegSize != null) {
+                writer.writeStartElement("tseg");
+                writer.writeAttributeString("unit", "MiB");
+                writer.writeRaw(tsegSize.toString());
+                writer.writeEndElement();
+            }
             writer.writeEndElement();
         }
 

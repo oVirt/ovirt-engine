@@ -184,6 +184,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmCpus, version, createMaxNumberOfVmCpusMap()),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfCpusCoefficient, 2),
                 MockConfigDescriptor.of(ConfigValues.ManyVmCpus, 128),
+                MockConfigDescriptor.of(ConfigValues.UefiBigVmMemoryGB, 16),
                 MockConfigDescriptor.of(ConfigValues.MaxNumOfVmSockets, version, 16),
                 MockConfigDescriptor.of(ConfigValues.VM32BitMaxMemorySizeInMB, version, 20480),
                 MockConfigDescriptor.of(ConfigValues.VM64BitMaxMemorySizeInMB, version, 4194304),
