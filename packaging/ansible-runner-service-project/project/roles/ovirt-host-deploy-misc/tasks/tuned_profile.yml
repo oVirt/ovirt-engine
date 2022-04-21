@@ -1,28 +1,35 @@
 ---
 - name: Set profile
   set_fact:
-    profile: >
-      "{{ 'virtual-host' if (host_deploy_tuned_profile is none and host_deploy_virt_enabled|bool)
-      else host_deploy_tuned_profile }}"
+    profile:
+      "{{ 'virtual-host'
+          if ((host_deploy_tuned_profile is none or host_deploy_tuned_profile|length < 1)
+              and host_deploy_virt_enabled|bool)
+          else host_deploy_tuned_profile }}"
 
-- name: Get lastest tune package
-  yum:
-    name: tuned
-    state: present
+- block:
+    - name: Get lastest tune package
+      yum:
+        name: tuned
+        state: present
 
-- name: Start tune service
-  service:
-    name: tuned
-    state: started
+    - name: Start tune service
+      service:
+        name: tuned
+        state: started
 
-- name: Set tune profile
-  shell: "tuned-adm profile {{ profile }}"
-  register: tune_profile_set
-  tags:
-    - skip_ansible_lint # E305
+    - name: Set tune profile
+      shell: "tuned-adm profile {{ profile }}"
+      register: tune_profile_set
+      tags:
+        - skip_ansible_lint # E305
 
-- name: Enable tune service
-  service:
-    name: tuned
-    enabled: yes
-  when: tune_profile_set.rc == 0
+    - name: Enable tune service
+      service:
+        name: tuned
+        enabled: yes
+      when: tune_profile_set.rc == 0
+
+  when:
+    - profile is defined
+    - profile|length > 0
