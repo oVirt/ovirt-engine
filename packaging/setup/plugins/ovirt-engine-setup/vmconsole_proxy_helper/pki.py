@@ -22,6 +22,7 @@ from ovirt_engine import util as outil
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import pki_utils
 from ovirt_engine_setup.vmconsole_proxy_helper import constants as ovmpcons
 
 
@@ -29,10 +30,12 @@ def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
-def _refresh_needed(cert_path):
+def _refresh_needed(cert_path, check_cert=True):
     ca_cert_path = oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
     return (not os.path.exists(cert_path) or
-            os.stat(ca_cert_path).st_mtime > os.stat(cert_path).st_mtime)
+            os.stat(ca_cert_path).st_mtime > os.stat(cert_path).st_mtime or
+            (check_cert and
+             pki_utils.cert_expires(pki_utils.x509_load_cert(cert_path))))
 
 
 @util.export
@@ -186,7 +189,7 @@ class Plugin(plugin.PluginBase):
                 ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
             ] and _refresh_needed(
                 ovmpcons.FileLocations.
-                OVIRT_ENGINE_PKI_VMCONSOLE_PROXY_HELPER_KEY
+                OVIRT_ENGINE_PKI_VMCONSOLE_PROXY_HELPER_CERT
             )
         ),
     )
@@ -283,7 +286,8 @@ class Plugin(plugin.PluginBase):
                 os.path.join(
                     ovmpcons.FileLocations.VMCONSOLE_PKI_DIR,
                     'proxy-ssh_host_rsa',
-                )
+                ),
+                check_cert=False
             )
         ),
     )
