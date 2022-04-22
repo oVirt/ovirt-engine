@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.CpuAndNumaPinningWeightP
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuOverloadPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuPinningPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.CpuTopologyPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EmulatedMachineFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionCPUWeightPolicyUnit;
@@ -101,6 +102,7 @@ public class InternalPolicyUnits {
 
         mandatoryUnits.add(CompatibilityVersionFilterPolicyUnit.class);
         mandatoryUnits.add(CpuLevelFilterPolicyUnit.class);
+        mandatoryUnits.add(CpuTopologyPolicyUnit.class);
         mandatoryUnits.add(CpuPinningPolicyUnit.class);
         mandatoryUnits.add(HostDeviceFilterPolicyUnit.class);
         mandatoryUnits.add(PinToHostPolicyUnit.class);
