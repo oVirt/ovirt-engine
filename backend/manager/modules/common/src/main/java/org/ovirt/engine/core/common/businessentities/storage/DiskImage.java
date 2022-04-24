@@ -74,9 +74,9 @@ public class DiskImage extends DiskImageBase {
         }
         setQuotaEnforcementType(diskImage.getQuotaEnforcementType());
         setActive(diskImage.getActive());
-        setCreationDate(new Date(diskImage.getCreationDate().getTime()));
+        setCreationDate(diskImage.getCreationDate());
         setSnapshotCreationDate(diskImage.getSnapshotCreationDate());
-        setLastModifiedDate(new Date(diskImage.getLastModifiedDate().getTime()));
+        setLastModifiedDate(diskImage.getLastModifiedDate());
         actualSizeInBytes = diskImage.actualSizeInBytes;
         initialSizeInBytes = diskImage.initialSizeInBytes;
         readRateFromDiskImageDynamic = diskImage.readRateFromDiskImageDynamic;
@@ -94,7 +94,7 @@ public class DiskImage extends DiskImageBase {
         setParentId(diskImage.getParentId());
         setImageStatus(diskImage.getImageStatus());
         if (diskImage.getLastModified() != null) {
-            setLastModified(new Date(diskImage.getLastModified().getTime()));
+            setLastModified(diskImage.getLastModified());
         }
         storageIds = new ArrayList<>(diskImage.storageIds);
         setVmSnapshotId(diskImage.getVmSnapshotId());
