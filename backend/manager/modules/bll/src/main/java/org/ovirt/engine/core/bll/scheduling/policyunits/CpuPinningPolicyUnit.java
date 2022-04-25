@@ -85,7 +85,7 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
                     Map<Guid, List<VdsCpuUnit>> vmToPendingDedicatedCpuPinnings =
                             PendingCpuPinning.collectForHost(getPendingResourceManager(), host.getId());
                     var cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
-                    vdsCpuUnitPinningHelper.previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingDedicatedCpuPinnings, vm.getCpuPinningPolicy());
+                    vdsCpuUnitPinningHelper.previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingDedicatedCpuPinnings);
                     final Collection<Integer> dedicatedCpus = cpuTopology.stream().filter(VdsCpuUnit::isDedicated).map(VdsCpuUnit::getCpu).collect(Collectors.toList());
 
                     if (!dedicatedCpus.isEmpty() && vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA && pinnedCpus.isEmpty()) {

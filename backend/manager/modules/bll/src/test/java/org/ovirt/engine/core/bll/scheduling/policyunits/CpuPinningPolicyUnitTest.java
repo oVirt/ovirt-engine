@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +27,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
+import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUnitPinningHelper;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -44,8 +47,14 @@ public class CpuPinningPolicyUnitTest {
 
     private VM vm;
 
+    @Mock
+    private VdsCpuUnitPinningHelper vdsCpuUnitPinningHelper;
+
+    @Mock
+    private PendingResourceManager pendingResourceManager;
+
     @InjectMocks
-    private final CpuPinningPolicyUnit policyUnit = new CpuPinningPolicyUnit(null, null);
+    private final CpuPinningPolicyUnit policyUnit = new CpuPinningPolicyUnit(null, pendingResourceManager);
 
     private PerHostMessages perHostMessages;
 
@@ -75,6 +84,7 @@ public class CpuPinningPolicyUnitTest {
         cluster = new Cluster();
         doReturn(vdsManager).when(resourceManager).getVdsManager(any());
         doReturn(new ArrayList<>()).when(vdsManager).getCpuTopology();
+        when(pendingResourceManager.pendingHostResources(any(), any())).thenReturn(Collections.emptyList());
     }
 
     @Test
