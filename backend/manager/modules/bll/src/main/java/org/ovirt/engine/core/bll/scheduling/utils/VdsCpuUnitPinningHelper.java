@@ -67,7 +67,7 @@ public class VdsCpuUnitPinningHelper {
         return false;
     }
 
-    private void previewPinOfPendingExclusiveCpus(List<VdsCpuUnit> cpuTopology, Map<Guid, List<VdsCpuUnit>> vmToPendingPinning, CpuPinningPolicy cpuPinningPolicy) {
+    public void previewPinOfPendingExclusiveCpus(List<VdsCpuUnit> cpuTopology, Map<Guid, List<VdsCpuUnit>> vmToPendingPinning, CpuPinningPolicy cpuPinningPolicy) {
         for (var vmToPendingPinningEntry : vmToPendingPinning.entrySet()) {
             vmToPendingPinningEntry.getValue().forEach(vdsCpuUnit -> {
                 VdsCpuUnit cpuUnit = getCpu(cpuTopology, vdsCpuUnit.getCpu());
