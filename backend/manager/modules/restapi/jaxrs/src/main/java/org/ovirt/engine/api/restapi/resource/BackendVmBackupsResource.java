@@ -50,15 +50,7 @@ public class BackendVmBackupsResource
     private org.ovirt.engine.api.model.Backups mapCollection(java.util.List<org.ovirt.engine.core.common.businessentities.VmBackup> entities) {
         Backups collection = new Backups();
         for (org.ovirt.engine.core.common.businessentities.VmBackup entity : entities) {
-            Backup backup = map(entity);
-
-            if (backup.isSetSnapshot()) {
-                Vm vm = new Vm();
-                vm.setId(vmId.toString());
-                backup.getSnapshot().setVm(vm);
-            }
-
-            collection.getBackups().add(addLinks(backup, Vm.class));
+            collection.getBackups().add(addLinks(map(entity), Vm.class));
         }
         return collection;
     }
