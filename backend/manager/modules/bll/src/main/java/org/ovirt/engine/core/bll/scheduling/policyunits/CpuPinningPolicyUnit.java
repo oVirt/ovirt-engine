@@ -81,8 +81,13 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
                 final Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(cpuPinning);
                 for (final VDS host : hosts) {
                     final Collection<Integer> onlineHostCpus = SlaValidator.getOnlineCpus(host);
+
+                    Map<Guid, List<VdsCpuUnit>> vmToPendingDedicatedCpuPinnings =
+                            PendingCpuPinning.collectForHost(getPendingResourceManager(), host.getId());
                     var cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
+                    vdsCpuUnitPinningHelper.previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingDedicatedCpuPinnings, vm.getCpuPinningPolicy());
                     final Collection<Integer> dedicatedCpus = cpuTopology.stream().filter(VdsCpuUnit::isDedicated).map(VdsCpuUnit::getCpu).collect(Collectors.toList());
+
                     if (!dedicatedCpus.isEmpty() && vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA && pinnedCpus.isEmpty()) {
                         messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__VM_PINNING_CANT_RESIZE_WITH_DEDICATED.name());
                         log.debug("Host {} does not satisfy CPU pinning constraints, cannot match virtual topology " +
@@ -96,7 +101,7 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
                     } else {
                         messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__VM_PINNING_PCPU_DOES_NOT_EXIST.name());
                         messages.addMessage(host.getId(), String.format("$missingCores %1$s", StringUtils.join(difference, ", ")));
-                        log.debug("Host {} does not satisfy the cpu pinning constraints because of missing or offline cpus {}.",
+                        log.debug("Host {} does not satisfy the cpu pinning constraints because of missing, exclusively pinned or offline cpus {}.",
                                 host.getId(),
                                 StringUtils.join(difference, ", "));
                     }
