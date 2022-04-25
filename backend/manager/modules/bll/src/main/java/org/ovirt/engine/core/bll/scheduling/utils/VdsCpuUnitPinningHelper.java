@@ -48,7 +48,7 @@ public class VdsCpuUnitPinningHelper {
             return false;
         }
 
-        previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingPinnings, vm.getCpuPinningPolicy());
+        previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingPinnings);
 
         int socketsLeft = vm.getNumOfSockets();
 
@@ -67,11 +67,11 @@ public class VdsCpuUnitPinningHelper {
         return false;
     }
 
-    public void previewPinOfPendingExclusiveCpus(List<VdsCpuUnit> cpuTopology, Map<Guid, List<VdsCpuUnit>> vmToPendingPinning, CpuPinningPolicy cpuPinningPolicy) {
+    public void previewPinOfPendingExclusiveCpus(List<VdsCpuUnit> cpuTopology, Map<Guid, List<VdsCpuUnit>> vmToPendingPinning) {
         for (var vmToPendingPinningEntry : vmToPendingPinning.entrySet()) {
-            vmToPendingPinningEntry.getValue().forEach(vdsCpuUnit -> {
-                VdsCpuUnit cpuUnit = getCpu(cpuTopology, vdsCpuUnit.getCpu());
-                cpuUnit.pinVm(vmToPendingPinningEntry.getKey(), cpuPinningPolicy);
+            vmToPendingPinningEntry.getValue().forEach(pendingPinning -> {
+                VdsCpuUnit cpuUnit = getCpu(cpuTopology, pendingPinning.getCpu());
+                cpuUnit.pinVm(vmToPendingPinningEntry.getKey(), pendingPinning.getCpuPinningPolicy());
             });
         }
     }
@@ -95,7 +95,7 @@ public class VdsCpuUnitPinningHelper {
             return new ArrayList<>();
         }
 
-        previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingPinnings, vm.getCpuPinningPolicy());
+        previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingPinnings);
 
         if (vm.getCpuPinningPolicy() != CpuPinningPolicy.DEDICATED) {
             List<VdsCpuUnit> cpusToBeAllocated = new ArrayList<>();
