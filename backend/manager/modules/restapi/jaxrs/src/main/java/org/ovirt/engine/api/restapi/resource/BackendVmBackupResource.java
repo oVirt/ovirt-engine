@@ -9,7 +9,6 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Backup;
-import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.VmBackupDisksResource;
 import org.ovirt.engine.api.resource.VmBackupResource;
@@ -40,15 +39,7 @@ public class BackendVmBackupResource
 
     @Override
     public Backup get() {
-        Backup backup = performGet(QueryType.GetVmBackupById, new IdQueryParameters(guid));
-
-        if (backup.isSetSnapshot()) {
-            Vm vm = new Vm();
-            vm.setId(vmId.toString());
-            backup.getSnapshot().setVm(vm);
-        }
-
-        return addLinks(backup);
+        return addLinks(performGet(QueryType.GetVmBackupById, new IdQueryParameters(guid)));
     }
 
     @Override
