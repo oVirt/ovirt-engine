@@ -128,8 +128,12 @@ public class AnsibleRunnerHttpClient {
             String msg,
             Path logFile) {
         String jobEvents = getJobEventsDir(playUuid);
-        String event = getNextEvent(playUuid, lastEventId);
-        while(event != null){
+        while(true){
+            String event = getNextEvent(playUuid, lastEventId);
+            if (event == null) {
+                break;
+            }
+
             JsonNode currentNode = getEvent(jobEvents + event);
             String stdout = RunnerJsonNode.getStdout(currentNode);
 
@@ -191,7 +195,6 @@ public class AnsibleRunnerHttpClient {
             lastEvent = event;
             returnValue.setLastEventId(getLastEventId());
             lastEventId++;
-            event = getNextEvent(playUuid, lastEventId);
         }
         return lastEvent.isEmpty() ? lastEventId : getLastEventId();
     }
