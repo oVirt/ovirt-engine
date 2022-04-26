@@ -73,7 +73,7 @@ public class AnsibleRunnerHttpClient {
 
     public AnsibleReturnValue artifactHandler(UUID uuid, int lastEventID, int timeout, BiConsumer<String, String> fn)
             throws Exception {
-        int iteration = 0;
+        int executionTime = 0;
         setArtifactsDir(uuid);
         setReturnValue(uuid);
         while (!playHasEnded(uuid)) {
@@ -81,8 +81,8 @@ public class AnsibleRunnerHttpClient {
             if (lastEventID == -1) {
                 return returnValue;
             }
-            iteration += POLL_INTERVAL / 1000;
-            if (iteration > timeout * 60) {
+            executionTime += POLL_INTERVAL / 1000;
+            if (executionTime > timeout * 60) {
                 // Cancel playbook, and raise exception in case timeout occur:
                 cancelPlaybook(uuid, timeout);
                 throw new TimeoutException(
