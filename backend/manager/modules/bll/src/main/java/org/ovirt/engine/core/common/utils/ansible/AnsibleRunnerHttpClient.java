@@ -76,8 +76,7 @@ public class AnsibleRunnerHttpClient {
         int iteration = 0;
         setArtifactsDir(uuid);
         setReturnValue(uuid);
-        // retrieve timeout from engine constants.
-        while (!playHasEnded(uuid)) { //return -1 incase of an error)
+        while (!playHasEnded(uuid)) {
             if (lastEventID == -1) {
                 return returnValue;
             }
