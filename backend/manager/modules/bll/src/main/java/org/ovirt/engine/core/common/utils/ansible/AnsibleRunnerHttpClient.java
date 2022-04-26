@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -100,18 +99,18 @@ public class AnsibleRunnerHttpClient {
     }
 
     public String getNextEvent(String playUuid, int lastEventId) {
-        Optional<String> nextEvent = Optional.empty();
-        // ignoring incompleted json files, add to list only events that haven't been handles yet.
         String jobEvents = getJobEventsDir(playUuid);
-        if (Files.exists(Paths.get(jobEvents))) {
-            nextEvent = Stream.of(new File(jobEvents).listFiles())
-                    .map(File::getName)
-                    .filter(item -> !item.contains("partial"))
-                    .filter(item -> !item.endsWith(".tmp"))
-                    .filter(item -> item.startsWith((lastEventId + 1) + "-"))
-                    .findFirst();
+        if (!Files.exists(Paths.get(jobEvents))) {
+            return null;
         }
-        return nextEvent.isPresent() ? nextEvent.get() : null;
+        // ignoring incompleted json files, add to list only events that haven't been handles yet.
+        return Stream.of(new File(jobEvents).listFiles())
+                .map(File::getName)
+                .filter(item -> !item.contains("partial"))
+                .filter(item -> !item.endsWith(".tmp"))
+                .filter(item -> item.startsWith((lastEventId + 1) + "-"))
+                .findFirst()
+                .orElse(null);
     }
 
     public int getLastEventId() {
