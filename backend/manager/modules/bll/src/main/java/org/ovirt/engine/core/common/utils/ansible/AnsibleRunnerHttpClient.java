@@ -77,17 +77,17 @@ public class AnsibleRunnerHttpClient {
         setArtifactsDir(uuid);
         setReturnValue(uuid);
         while (!playHasEnded(uuid)) {
+            lastEventID = processEvents(uuid.toString(), lastEventID, fn, "", Paths.get(""));
             if (lastEventID == -1) {
                 return returnValue;
             }
+            iteration += POLL_INTERVAL / 1000;
             if (iteration > timeout * 60) {
                 // Cancel playbook, and raise exception in case timeout occur:
                 cancelPlaybook(uuid, timeout);
                 throw new TimeoutException(
                         "Play execution has reached timeout");
             }
-            lastEventID = processEvents(uuid.toString(), lastEventID, fn, "", Paths.get(""));
-            iteration += POLL_INTERVAL / 1000;
             Thread.sleep(POLL_INTERVAL);
         }
         returnValue.setAnsibleReturnCode(AnsibleReturnCode.OK);
