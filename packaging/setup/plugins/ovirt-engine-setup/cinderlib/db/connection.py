@@ -105,7 +105,6 @@ class Plugin(plugin.PluginBase):
             dbenvkeys=oclcons.Const.CINDERLIB_DB_ENV_KEYS,
         ).getCredentials(
             name='Cinderlib',
-            queryprefix='OVESETUP_CINDERLIB_DB_',
             defaultdbenvkeys=oclcons.Const.DEFAULT_CINDERLIB_DB_ENV_KEYS,
             show_create_msg=True,
         )

@@ -44,6 +44,7 @@ def osetupattrs(
     answerfile_condition=lambda env: True,
     summary_condition=lambda env: True,
     is_secret=False,
+    asked_on=None,
     doc_text=None,
 ):
     class decorator(classproperty):
@@ -58,8 +59,11 @@ def osetupattrs(
                 answerfile_condition=answerfile_condition,
                 summary_condition=summary_condition,
                 is_secret=is_secret,
+                asked_on=asked_on,
                 doc_text=doc_text,
             )
+    if is_secret and asked_on is None:
+        raise RuntimeError('asked_on must be set when is_secret is set')
     return decorator
 
 
@@ -477,6 +481,7 @@ class ConfigEnv(object):
     @osetupattrs(
         answerfile=True,
         is_secret=True,
+        asked_on=('SSH_ACCESS_REMOTE_ENGINE_PASSWORD',),
     )
     def REMOTE_ENGINE_HOST_ROOT_PASSWORD(self):
         return 'OVESETUP_CONFIG/remoteEngineHostRootPassword'

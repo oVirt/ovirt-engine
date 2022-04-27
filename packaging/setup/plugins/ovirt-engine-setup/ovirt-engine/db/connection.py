@@ -103,7 +103,6 @@ class Plugin(plugin.PluginBase):
             dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
         ).getCredentials(
             name='Engine',
-            queryprefix='OVESETUP_ENGINE_DB_',
             defaultdbenvkeys=oenginecons.Const.DEFAULT_ENGINE_DB_ENV_KEYS,
             show_create_msg=True,
         )

@@ -1248,7 +1248,6 @@ class OvirtUtils(base.Base):
     def getCredentials(
         self,
         name,
-        queryprefix,
         defaultdbenvkeys,
         show_create_msg=False,
         note=None,
@@ -1314,6 +1313,9 @@ class OvirtUtils(base.Base):
             ):
                 dbenv[self._dbenvkeys[k]] = _ind_env(self, k)
 
+            def question_name(what):
+                return self._dbenvkeys[DEK.CREDS_Q_NAME_FUNC](what.upper())
+
             def query_dbenv(
                 what,
                 note,
@@ -1321,10 +1323,7 @@ class OvirtUtils(base.Base):
                 **kwargs
             ):
                 dialog.queryEnvKey(
-                    name='{qpref}{what}'.format(
-                        qpref=queryprefix,
-                        what=what.upper(),
-                    ),
+                    name=question_name(what.upper()),
                     dialog=self.dialog,
                     logger=self.logger,
                     env=dbenv,
@@ -1365,7 +1364,7 @@ class OvirtUtils(base.Base):
             if dbenv[self._dbenvkeys[DEK.SECURED]] is None:
                 dbenv[self._dbenvkeys[DEK.SECURED]] = dialog.queryBoolean(
                     dialog=self.dialog,
-                    name='{qpref}SECURED'.format(qpref=queryprefix),
+                    name=question_name('SECURED'),
                     note=_(
                         '{name} database secured connection (@VALUES@) '
                         '[@DEFAULT@]: '
@@ -1384,9 +1383,7 @@ class OvirtUtils(base.Base):
                     self._dbenvkeys[DEK.HOST_VALIDATION]
                 ] = dialog.queryBoolean(
                     dialog=self.dialog,
-                    name='{qpref}SECURED_HOST_VALIDATION'.format(
-                        qpref=queryprefix
-                    ),
+                    name=question_name('SECURED_HOST_VALIDATION'),
                     note=_(
                         '{name} database host name validation in secured '
                         'connection (@VALUES@) [@DEFAULT@]: '
