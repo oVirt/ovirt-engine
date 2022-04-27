@@ -529,12 +529,13 @@ Requires:	bind-utils
 Requires:	iproute
 Requires:	python3-libxml2
 Requires:	logrotate
-Requires:	python3-otopi >= 1.10.0
+Requires:	python3-otopi >= 1.10.3
 Requires:	python3-paramiko
 Requires:	python3-distro
 Requires(pre):	shadow-utils
 Conflicts:	%{name}-dwh < 4.4.0
-Conflicts:	%{name}-dwh-setup < 4.4.0
+Conflicts:	%{name}-dwh-setup < 4.5.5
+Conflicts:	%{name}-keycloak-setup < 15.0.2-6
 
 %description setup-base
 %{ovirt_product_name_short} suite base setup components.
@@ -686,7 +687,7 @@ Requires:	%{name}-setup-plugin-ovirt-engine-common >= %{version}-%{release}
 Requires:	tar
 Requires:	bzip2
 Requires:	xz
-Requires:	python3-otopi >= 1.10.0
+Requires:	python3-otopi >= 1.10.3
 Requires:	python3-distro
 Requires:	postgresql >= 12.0
 Requires:	sqlite

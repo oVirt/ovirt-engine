@@ -449,6 +449,7 @@ class Const(object):
             DEK.FILTER: EngineDBEnv.FILTER,
             DEK.RESTORE_JOBS: EngineDBEnv.RESTORE_JOBS,
             DEK.INVALID_CONFIG_ITEMS: EngineDBEnv.INVALID_CONFIG_ITEMS,
+            DEK.CREDS_Q_NAME_FUNC: engine_question_name,
         }
 
     @classproperty
@@ -465,6 +466,10 @@ class Const(object):
             DEK.FILTER: Defaults.DEFAULT_DB_FILTER,
             DEK.RESTORE_JOBS: Defaults.DEFAULT_DB_RESTORE_JOBS,
         }
+
+
+def engine_question_name(what):
+    return f'OVESETUP_ENGINE_DB_{what.upper()}'
 
 
 @util.export
@@ -526,6 +531,7 @@ class EngineDBEnv(object):
             oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
         ),
         is_secret=True,
+        asked_on=(engine_question_name(DEK.PASSWORD),),
     )
     def PASSWORD(self):
         return 'OVESETUP_DB/password'
@@ -623,6 +629,7 @@ class SystemEnv(object):
 class PKIEnv(object):
     @osetupattrs(
         is_secret=True,
+        asked_on=(),
     )
     def STORE_PASS(self):
         return 'OVESETUP_PKI/storePassword'
@@ -723,6 +730,7 @@ class ConfigEnv(object):
     @osetupattrs(
         answerfile=True,
         is_secret=True,
+        asked_on=('OVESETUP_CONFIG_ADMIN_SETUP',),
     )
     def ADMIN_PASSWORD(self):
         return 'OVESETUP_CONFIG/adminPassword'
@@ -822,6 +830,7 @@ class OvnEnv(object):
         answerfile=True,
         description=_('oVirt OVN provider password'),
         is_secret=True,
+        asked_on=('ovirt-provider-ovn-password',),
     )
     def OVIRT_PROVIDER_OVN_PASSWORD(self):
         return 'OVESETUP_OVN/ovirtProviderOvnPassword'
@@ -842,6 +851,7 @@ class OvnEnv(object):
 
     @osetupattrs(
         is_secret=True,
+        asked_on=(),
         answerfile=True,
         postinstallfile=True,
     )

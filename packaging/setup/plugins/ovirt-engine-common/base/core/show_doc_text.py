@@ -66,6 +66,7 @@ class Plugin(plugin.PluginBase):
             '- reconfigurable: Can it be set using '
             '--reconfigure-optional-components.\n'
             '- is_secret: Should it be filtered out in the log.\n'
+            '- asked_on: If key is secret: Question names setting it.\n'
             '- doc_text: Documentation for this key.\n\n'
         ))
         attrs_defaults = {

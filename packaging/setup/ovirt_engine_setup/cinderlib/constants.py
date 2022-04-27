@@ -94,6 +94,7 @@ class Const(object):
             DEK.DUMPER: CinderlibDBEnv.DUMPER,
             DEK.FILTER: CinderlibDBEnv.FILTER,
             DEK.RESTORE_JOBS: CinderlibDBEnv.RESTORE_JOBS,
+            DEK.CREDS_Q_NAME_FUNC: cinderlib_question_name,
         }
 
     @classproperty
@@ -111,6 +112,10 @@ class Const(object):
             DEK.FILTER: Defaults.DEFAULT_CINDERLIB_DB_FILTER,
             DEK.RESTORE_JOBS: Defaults.DEFAULT_CINDERLIB_DB_RESTORE_JOBS,
         }
+
+
+def cinderlib_question_name(what):
+    return f'OVESETUP_CINDERLIB_DB_{what.upper()}'
 
 
 @util.export
@@ -172,6 +177,7 @@ class CinderlibDBEnv(object):
             ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
         ),
         is_secret=True,
+        asked_on=(cinderlib_question_name(DEK.PASSWORD),),
     )
     def PASSWORD(self):
         return 'OVESETUP_CL_DB/password'

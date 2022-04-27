@@ -220,6 +220,10 @@ class DBEnvKeysConst(object):
     FILTER = 'filter'
     RESTORE_JOBS = 'restoreJobs'
     INVALID_CONFIG_ITEMS = 'invalidConfigItems'
+    # Abusing this for the following item, which is not related to the
+    # environment, but I do need it with each DB and this looks like
+    # a good place.
+    CREDS_Q_NAME_FUNC = 'credsQNameFunc'
 
     REQUIRED_KEYS = (
         HOST,
@@ -236,6 +240,7 @@ class DBEnvKeysConst(object):
         DUMPER,
         FILTER,
         RESTORE_JOBS,
+        CREDS_Q_NAME_FUNC,
     )
 
     DEFAULTS_KEYS = (
@@ -409,6 +414,7 @@ class KeycloakEnv(object):
 
     @osetupattrs(
         is_secret=True,
+        asked_on=(),
         answerfile=True,
         postinstallfile=True,
     )
@@ -423,6 +429,10 @@ class KeycloakEnv(object):
 
     @osetupattrs(
         is_secret=True,
+        # This is the name used by ovirt-setup-lib's dialog.queryPassword.
+        # TODO: Consider doing something to not hard-code this here.
+        asked_on=('queryEnvKey_input_OVESETUP_CONFIG/keycloakAdminPasswd',),
+
     )
     def ADMIN_PASSWORD(self):
         return 'OVESETUP_CONFIG/keycloakAdminPasswd'
