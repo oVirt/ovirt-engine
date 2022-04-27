@@ -1,6 +1,11 @@
 - hosts: all
   remote_user: root
 
+  pre_tasks:
+    - name: set host_action var
+      set_fact:
+        host_action: host_deploy
+
   roles:
     - role: ovirt-host-deploy
     - role: hc-gluster-cgroups
