@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CA_DAYS="3650"
+CA_DAYS="7300"
 KEYTOOL="${JAVA_HOME:-/usr}/bin/keytool"
 
 clean_pki_dir() {
