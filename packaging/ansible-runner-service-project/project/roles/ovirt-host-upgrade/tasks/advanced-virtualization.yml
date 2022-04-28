@@ -46,7 +46,7 @@
 
       when:
         - ansible_facts.packages['redhat-release'] is defined
-        - ansible_facts.packages['redhat-release'].version is version(latest_rh_rel, '!=')
+        - ansible_facts.packages['redhat-release'][0].version is version(latest_rh_rel, '!=')
 
   when:
     - host_deploy_origin_type != ovirt_origin_type
