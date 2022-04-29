@@ -162,7 +162,8 @@ public class HostValidator {
 
     public ValidationResult validateStatusForEnrollCertificate() {
         return ValidationResult.failWith(EngineMessage.CANNOT_ENROLL_CERTIFICATE_HOST_STATUS_ILLEGAL)
-                .unless(host.getStatus() == VDSStatus.Maintenance || host.getStatus() == VDSStatus.InstallFailed);
+                .unless(host.getStatus() == VDSStatus.Maintenance || host.getStatus() == VDSStatus.InstallFailed
+                        || host.getStatus() == VDSStatus.NonResponsive);
     }
 
     public ValidationResult supportsDeployingHostedEngine(HostedEngineDeployConfiguration heConfig,
