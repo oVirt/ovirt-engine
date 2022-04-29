@@ -68,7 +68,7 @@ ID=""
 HOST=""
 PRINCIPALS=""
 OPTIONS="clear,permit-pty"
-DAYS="398"
+DAYS="1827"
 while [ -n "$1" ]; do
 	x="$1"
 	v="${x#*=}"

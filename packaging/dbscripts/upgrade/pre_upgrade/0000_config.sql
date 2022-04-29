@@ -647,7 +647,7 @@ select fn_db_add_config_value('VdsRefreshRate','2','general');
 select fn_db_add_config_value('vdsRetries','0','general');
 select fn_db_add_config_value('vdsTimeout','180','general');
 select fn_db_add_config_value('WindowsGuestAgentUpdateCheckInternal', '180', 'general');
-select fn_db_add_config_value('VdsCertificateValidityInDays','398','general');
+select fn_db_add_config_value('VdsCertificateValidityInDays','1827','general');
 --Handling Virtual Machine Domain Name
 select fn_db_add_config_value_for_versions_up_to('VM32BitMaxMemorySizeInMB','20480','4.7');
 select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','6291456','4.5');
@@ -1412,6 +1412,9 @@ select fn_db_update_default_config_value('NvramPersistenceSupported', 'false', '
 
 -- Increase default ServerRebootTimeout from 5 to 10 minutes
 select fn_db_update_default_config_value('ServerRebootTimeout', '300', '600', 'general', false);
+
+-- Increase the lifetime of VDS certificates from 398 to 3650 days
+select fn_db_update_default_config_value('VdsCertificateValidityInDays', '398', '1827', 'general', false);
 
 ------------------------------------------------------------------------------------
 --                  Split config section
