@@ -155,7 +155,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
     private void setAnsibleCommandConfigVars(AnsibleCommandConfig command, final VDS host) {
         //The number of days allowed before certificate expiration.
         //(less time left than this requires enrolling for new certificate).
-        Integer daysAllowedUntilExpiration = Config.<Integer> getValue(ConfigValues.CertExpirationAlertPeriodInDays);
+        Integer daysAllowedUntilExpiration = Config.<Integer> getValue(ConfigValues.CertExpirationWarnPeriodInDays);
         //The date in the future (in seconds), against which to validate the certificates.
         //For example if we allow certificates which expire in 7 days or more, this
         //variable will contain a seconds-since-1/1/1970 representation 7 days from the current moment.

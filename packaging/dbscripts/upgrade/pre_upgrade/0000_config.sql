@@ -858,7 +858,7 @@ select fn_db_add_config_value('BootstrapCommand',
 select fn_db_add_config_value('BootstrapPackageDirectory', '/usr/share/ovirt-host-deploy/interface-3', 'general');
 select fn_db_add_config_value('BootstrapPackageName', 'ovirt-host-deploy.tar', 'general');
 select fn_db_add_config_value('CertExpirationAlertPeriodInDays', '30', 'general');
-select fn_db_add_config_value('CertExpirationWarnPeriodInDays', '120', 'general');
+select fn_db_add_config_value('CertExpirationWarnPeriodInDays', '365', 'general');
 select fn_db_add_config_value('DBI18NPrefix', '', 'general');
 select fn_db_add_config_value('DBLikeSyntax', 'ILIKE', 'general');
 select fn_db_add_config_value('DBPagingSyntax', ' WHERE RowNum BETWEEN %1$s AND %2$s', 'general');
@@ -1311,7 +1311,7 @@ select fn_db_update_config_value('ServerCPUList',
 select fn_db_update_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-guest-agent,qemu-guest-agent','general');
 
 select fn_db_update_config_value('CertExpirationAlertPeriodInDays', '30', 'general');
-select fn_db_update_config_value('CertExpirationWarnPeriodInDays', '120', 'general');
+select fn_db_update_config_value('CertExpirationWarnPeriodInDays', '365', 'general');
 
 ------------------------------------------------------------------------------------
 --   Update only if default not changed section
