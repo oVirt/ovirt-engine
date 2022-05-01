@@ -225,18 +225,26 @@ public class LinkHelper {
      * @return           the parent object, or null if not set
      */
     private static <R extends BaseResource> BaseResource getParent(R model, Class<?> parentType) {
+        Object assignedFromParent = null;
+
+        // Try to match a method whose parent matches parentType first, only fallback to a subclass if parentType was
+        // not found in the list.
         for (Method method : getRelevantMethods(model.getClass())) {
             try {
                 Object potentialParent = method.invoke(model);
+                if (potentialParent != null && potentialParent.getClass().equals(parentType)) {
+                    return (BaseResource) potentialParent;
+                }
                 if (potentialParent != null && parentType.isAssignableFrom(potentialParent.getClass())) {
-                    return (BaseResource)potentialParent;
+                    assignedFromParent = potentialParent;
                 }
             } catch (Exception e) {
                 log.error("Error invoking method when adding links to an API entity", e);
                 continue;
             }
         }
-        return null;
+
+        return (BaseResource) assignedFromParent;
     }
 
     /**
