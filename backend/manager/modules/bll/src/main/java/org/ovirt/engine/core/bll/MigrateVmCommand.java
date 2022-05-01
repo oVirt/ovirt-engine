@@ -146,6 +146,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return lockProperties.withScope(Scope.Command);
     }
 
+    @Override
+    protected boolean shouldBlockDuringBackup() {
+        return false;
+    }
+
     /**
      * this property is used for audit log events
      */

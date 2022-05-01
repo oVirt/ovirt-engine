@@ -1152,6 +1152,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return true;
     }
 
+    @Override
+    protected boolean shouldBlockDuringBackup() {
+        return false;
+    }
+
     private void addNumaPinningForResizeAndPin() {
         // The CPU topology and CPU Pinning change happens under schedule(), when allocating CPUs
         // - VdsCpuUnitPinningHelper::updatePhysicalCpuAllocations.

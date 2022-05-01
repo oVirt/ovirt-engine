@@ -28,6 +28,11 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
         setActionReturnValue((getVm() != null) ? getVm().getStatus() : VMStatus.Down);
     }
 
+    @Override
+    protected boolean shouldBlockDuringBackup() {
+        return false;
+    }
+
     /**
      * This method checks if the virtual machine is running in some host. It also
      * has the side effect of storing the reference to the host inside the command.
