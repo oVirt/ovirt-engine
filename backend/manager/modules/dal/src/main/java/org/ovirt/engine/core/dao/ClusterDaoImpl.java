@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -193,7 +194,10 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("correlation_id", correlationId);
 
         Map<String, Object> results =
-                getCallsHandler().executeModification("SetClusterUpgradeRunning", parameterSource);
+                getCallsHandler().executeModification("SetClusterUpgradeRunning",
+                        parameterSource,
+                        "updated",
+                        Types.BIT);
 
         return (Boolean) results.get("updated");
     }
@@ -205,7 +209,10 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("upgrade_percent_complete", upgradePercentComplete);
 
         Map<String, Object> results =
-                getCallsHandler().executeModification("UpdateClusterUpgradeProgress", parameterSource);
+                getCallsHandler().executeModification("UpdateClusterUpgradeProgress",
+                        parameterSource,
+                        "updated",
+                        Types.BIT);
 
         return (Boolean) results.get("updated");
     }
@@ -216,7 +223,10 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("cluster_id", clusterId);
 
         Map<String, Object> results =
-                getCallsHandler().executeModification("ClearClusterUpgradeRunning", parameterSource);
+                getCallsHandler().executeModification("ClearClusterUpgradeRunning",
+                        parameterSource,
+                        "updated",
+                        Types.BIT);
         return (Boolean) results.get("updated");
     }
 
