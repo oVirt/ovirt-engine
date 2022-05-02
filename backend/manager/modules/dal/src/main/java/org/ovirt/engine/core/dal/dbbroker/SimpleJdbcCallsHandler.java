@@ -11,9 +11,11 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.utils.Pair;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -24,6 +26,7 @@ public class SimpleJdbcCallsHandler {
     private static final String RETURN_VALUE_PARAMETER = "RETURN_VALUE";
 
     private final ConcurrentMap<String, SimpleJdbcCall> callsMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Pair<String, Integer>> outParamsMap = new ConcurrentHashMap<>();
 
     private final DbEngineDialect dialect;
     private final JdbcTemplate jdbcTemplate;
@@ -74,6 +77,25 @@ public class SimpleJdbcCallsHandler {
 
     public Map<String, Object> executeModification(final String procedureName, final MapSqlParameterSource paramSource) {
         return executeImpl(procedureName, paramSource, createCallForModification(procedureName));
+    }
+
+    /**
+     * Execute a procedure (function) that returns a value, should be called when a value is returned to the caller
+     * The OUT parameters are stored in the outParamsMap and used in getCall method to define the OUT parameter explicitly.
+     * @param procedureName The procedure name
+     * @param paramSource The IN parameters map
+     * @param outParamName The OUT parameter name
+     * @param outParamType The OUT parameter type int value as defined in java.sql.Types
+     * @return the original call to executeModification
+     */
+    public Map<String, Object> executeModification(final String procedureName,
+            final MapSqlParameterSource paramSource,
+            String outParamName,
+            Integer outParamType) {
+        if (!outParamsMap.containsKey(procedureName)) {
+            outParamsMap.put(procedureName, new Pair<>(outParamName, outParamType));
+        }
+        return executeModification(procedureName, paramSource);
     }
 
     public int executeModificationReturnResult(final String procedureName, final MapSqlParameterSource paramSource) {
@@ -154,6 +176,10 @@ public class SimpleJdbcCallsHandler {
         SimpleJdbcCall call = callsMap.get(procedureName);
         if (call == null) {
             call = callCreator.createCall();
+            if (outParamsMap.containsKey(procedureName)) {
+                Pair<String, Integer>  pair = outParamsMap.get(procedureName);
+                call.declareParameters(new SqlOutParameter("v_" + pair.getFirst(), pair.getSecond()));
+            }
             call.compile();
             callsMap.putIfAbsent(procedureName, call);
         } else if (mapper != null) {
