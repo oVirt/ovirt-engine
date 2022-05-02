@@ -10,7 +10,7 @@
       set_fact:
         latest_rh_rel: "{{ item.version }}"
       loop: "{{ available_releases.results }}"
-      when: latest_rh_rhel |default('0') is version(item.version, '<')
+      when: latest_rh_rel |default('0') is version(item.version, '<')
 
     - block:
         - name: Reset configuration of advanced virtualization module
