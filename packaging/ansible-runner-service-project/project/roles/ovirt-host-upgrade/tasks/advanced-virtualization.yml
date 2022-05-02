@@ -22,22 +22,22 @@
           set_fact:
             virt_mod_ver: "rhel"
           when:
-            - ansible_distribution_version is version('8.6', '>=')
+            - latest_rh_rel is version('8.6', '>=')
 
         - name: Set virt module version for RHEL 8.4 and 8.5
           set_fact:
             virt_mod_ver: "av"
           when:
             - virt_mod_ver is not defined
-            - ansible_distribution_version is version('8.4', '>=')
-            - ansible_distribution_version is version('8.5', '<=')
+            - latest_rh_rel is version('8.4', '>=')
+            - latest_rh_rel is version('8.5', '<=')
 
         - name: Set virt module version for RHEL 8.3 and older
           set_fact:
-            virt_mod_ver: "{{ ansible_distribution_version }}"
+            virt_mod_ver: "{{ latest_rh_rel }}"
           when:
             - virt_mod_ver is not defined
-            - ansible_distribution_version is version('8.3', '<=')
+            - latest_rh_rel is version('8.3', '<=')
 
         - name: Enable advanced virtualization module for relevant OS version
           shell: "dnf -y module enable virt:{{ virt_mod_ver }}"
