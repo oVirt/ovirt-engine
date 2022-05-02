@@ -35,6 +35,8 @@
           - 'ca': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_ca_file }}"
             'cert': "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_cert_file }}"
         register: iscorrect
+        # If the certificate is invalid, an error code is returned and we must proceed, not stop.
+        ignore_errors: yes
 
       - name: Get host certificate info
         command: openssl x509 -noout -ext subjectAltName -in "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_cert_file }}"
