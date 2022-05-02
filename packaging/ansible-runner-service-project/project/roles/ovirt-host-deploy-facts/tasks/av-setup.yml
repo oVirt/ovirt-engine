@@ -35,4 +35,4 @@
     - host_deploy_origin_type != ovirt_origin_type
     - el_ver|int >= 8
     - not node_host|bool
-    - host_action is not defined or (host_action is defined and host_action == 'host_deploy' and not vdsm_preinstalled|bool)
+    - host_action is not defined or (host_action == 'host_deploy' and not vdsm_preinstalled|bool)
