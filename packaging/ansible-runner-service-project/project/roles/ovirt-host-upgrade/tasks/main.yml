@@ -5,6 +5,9 @@
 # analazying packages to be updates/installed please tag it by 'updatecheck'
 # tag.
 
+- name: Configure advanced virtualization
+  import_tasks: advanced-virtualization.yml
+
 - name: Install ovirt-host package if it isn't installed
   yum:
     name: ovirt-host
@@ -14,14 +17,6 @@
   tags:
     - updatecheck
     - skip_ansible_lint # E403
-
-- name: Import oVirt host facts
-  import_role:
-    name: ovirt-host-deploy-facts
-    tasks_from: host-os.yml
-
-- name: Configure advanced virtualization
-  import_tasks: advanced-virtualization.yml
 
 # We need to check for updates after we enable new advanced virt module
 - name: Check for updated packages
