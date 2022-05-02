@@ -69,6 +69,19 @@
       mode: 0440
       remote_src: yes
 
+  - name: Populate service facts
+    service_facts:
+
+  - name: Restart OVN services
+    service:
+      name: "{{ item }}"
+      state: restarted
+    loop:
+      - openvswitch.service
+      - openvswitch-ipsec.service
+      - ovn-controller.service
+    when: "ansible_facts.services.get(item, {}).get('status') == 'enabled'"
+
   always:
     - name: Remove temp file
       file:
