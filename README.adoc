@@ -580,34 +580,56 @@ And install a drop-in configuration file to override engine developement setup:
   # yum-builddep @srpm@
   # rpmbuild -tb @tarball@
 
-The following spec file variables are available for package customization:
+The following spec file options / conditional builds (set with `--with` or `--without`)
+are available for package customization:
 
-ovirt_build_quick:: Quick build, best for syntax checks. Default is `0`.
+ovirt_build_quick::
+  Quick build, best for syntax checks. Default is `without`.
 
-ovirt_build_minimal:: Build minimal Firefox only package. Default is
-`0`.
+ovirt_build_minimal::
+  Build minimal user agent (Gecko/Firefox and WebKit/Chrome/Safari) and locale (English)
+  package. For snapshot builds, the default is `with`, otherwise default is `without`.
 
-ovirt_build_user_agent:: When using quick or minimal build, build only
-for this user agent. Default is `gecko1_8` (Firefox). To build for
-Chrome use `safari`.
+ovirt_build_full::
+  Build all GWT components with all user agents and locales.  Selected by default when
+  `ovirt_build_quick` or `ovirt_build_minimal` is not explicitly selected.
 
-ovirt_build_gwt:: Build GWT components. Default is `1`.
+ovirt_build_gwt::
+  Build GWT components. Default is `with`, but is `without` when the `ovirt_build_quick`
+  option is enalbed.
 
-ovirt_build_all_user_agents:: Build GWT components for all supported
-browsers. Default is `1`.
+ovirt_build_all_user_agents::
+  Build GWT components for all supported browsers. Default is `with`, but is `without`
+  when the `ovirt_build_minimal` option is enabled.
 
-ovirt_build_locales:: Build GWT components for all supported locales.
-Default is `1`.
+ovirt_build_all_locales::
+  Build GWT components for all supported locales. Default is `with`, but is `without`
+  when the `ovirt_build_minimal` option is enabled.
 
-Examples:
+ovirt_build_ut::
+  Run unit tests with the build.  Default is `with` when `ovirt_build_full` is selected,
+  otherwise defaults to `without`.
 
-Build minimal rpm package for Firefox::
+The following spec file variables (set with `--define`) are available for package customization:
 
-    $ rpmbuild -D"ovirt_build_minimal 1" -tb @tarball@
+ovirt_build_user_agent::
+  When using quick or minimal build, build only for this user agent. Default is
+  `gecko1_8,safari` (Firefox and Chrome/Safari).
 
-Build minimal rpm package for Chrome or Safari::
+ovirt_build_locales::
+  When using quick or minimal build, build only for this set of locales. Default is
+  `en_US`. To build for additional locales, use a comma separated list.  For example,
+  setting to `en_US,ja_JP` will build for English and Japanese.
 
-    $ rpmbuild -D"ovirt_build_minimal 1" -D"ovirt_build_user_agent safari" -tb @tarball@
+==== Examples
+
+Build minimal rpm package for Firefox and Chrome/Safari::
+
+    $ rpmbuild --with ovirt_build_minimal -tb @tarball@
+
+Build minimal rpm package for Chrome/Safari only::
+
+    $ rpmbuild --with ovirt_build_minimal --define "ovirt_build_user_agent safari" -tb @tarball@
 
 === Ansible Lint
 

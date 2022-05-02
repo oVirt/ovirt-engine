@@ -92,7 +92,7 @@ jobs:
 
     - name: Perform build
       run: |
-        .automation/build-rpm.sh $ARTIFACTS_DIR
+        .automation/build-rpm.sh -a $ARTIFACTS_DIR
 
     - name: Create DNF repository
       run: |

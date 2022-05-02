@@ -18,25 +18,7 @@ export CHANGELOG
 # Add changelog to the spec file
 sed -i "/^%changelog/a ${CHANGELOG}" ovirt-engine.spec.in
 
-# Adjust copr build config for releasing
-patch -p0 --ignore-whitespace .copr/Makefile <<'__EOF__'
-diff --git a/.copr/Makefile b/.copr/Makefile
-index 51e3299e3e5..b2d4a195740 100644
---- a/.copr/Makefile
-+++ b/.copr/Makefile
-@@ -9,9 +9,9 @@ git_cfg_safe:
-        git config --global --add safe.directory "$(shell pwd)"
-
- srpm: installdeps git_cfg_safe
--       $(eval SUFFIX=.git$(shell git rev-parse --short HEAD))
-+       # $(eval SUFFIX=.git$(shell git rev-parse --short HEAD))
-        # changing the spec file as passing -D won't preserve the suffix when rebuilding in mock
--       sed "s:%{?release_suffix}:${SUFFIX}:" -i ovirt-engine.spec.in
-+       # sed "s:%{?release_suffix}:${SUFFIX}:" -i ovirt-engine.spec.in
-        mkdir -p tmp.repos/SOURCES
-        make dist
-        rpmbuild \
-__EOF__
+# copr/build-srpm.sh will skip the snapshot suffix if `version.mak` does not select a MILESTONE
 
 # commit
 git add -u

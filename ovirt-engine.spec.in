@@ -1,47 +1,100 @@
 # CUSTOMIZATION-BEGIN
 #
-# ovirt_build_extra_flags
-# ovirt_build_ut
-%if "@MILESTONE@"!="" && 0%{!?ovirt_build_minimal:1}
-%global ovirt_build_minimal 1
-%endif
-%if 0%{?ovirt_build_user_agent:1}
-%global _ovirt_build_user_agent %{ovirt_build_user_agent}
+# Note: rpm 4.18 has a much better `bcond()` macro that makes the if/else blocks a single line
+#       `bcond_with abc` means "require `rpmbuild --with abc` to enable this option" (off by default)
+#       `bcond_without abc` means "require `rpmbuild --without abc` to disable this option" (on by default)
+#
+# == build types (group of flags)
+# conditional build "quick" consists of the following build options:
+#   --without ovirt_build_gwt
+#   --without ovirt_build_ut
+%bcond_with ovirt_build_quick
+
+# conditional build "draft" consists of the "minimal" options plus extra build flag '-Pgwtdraft':
+#   --with ovirt_build_gwt
+#   --without ovirt_build_all_user_agents
+#   --without ovirt_build_all_locales
+#   --without ovirt_build_ut
+#   --define ovirt_build_user_agent gecko1_8,safari
+#   --define ovirt_build_locales en_US
+#   EXTRA_BUILD_FLAGS=..." -P gwtdraft "
+%bcond_with ovirt_build_draft
+
+# conditional build "minimal" consists of the following build options:
+#   --with ovirt_build_gwt
+#   --without ovirt_build_all_user_agents
+#   --without ovirt_build_all_locales
+#   --without ovirt_build_ut
+#   --define ovirt_build_user_agent gecko1_8,safari
+#   --define ovirt_build_locales en_US
+#
+#   *** This is the default build if a MILESTONE (snapshot build) is set
+%global MILESTONE "@MILESTONE@"
+%if %{defined _with_ovirt_build_quick} || %{defined _with_ovirt_build_draft} || %{defined _with_ovirt_build_full} || %{MILESTONE}==""
+%bcond_with ovirt_build_minimal
 %else
-%global _ovirt_build_user_agent gecko1_8,safari
+%bcond_without ovirt_build_minimal
 %endif
-%if 0%{?ovirt_build_quick}
-%global _ovirt_build_ut 0
-%global ovirt_build_gwt 0
-%endif
-%if 0%{?ovirt_build_minimal}
-%global _ovirt_build_ut 0
-%global ovirt_build_all_user_agents 0
-%global ovirt_build_locales 0
-%global _ovirt_build_extra_flags -D gwt.userAgent=%{_ovirt_build_user_agent}
-%endif
-%if 0%{?ovirt_build_draft}
-%global _ovirt_build_ut 0
-%global ovirt_build_all_user_agents 0
-%global ovirt_build_locales 0
-%global _ovirt_build_extra_flags -D gwt.userAgent=%{_ovirt_build_user_agent} -P gwtdraft
-%endif
-%if 0%{!?ovirt_build_ut:1}
-%if 0%{?_ovirt_build_ut:1}
-%global ovirt_build_ut %{_ovirt_build_ut}
+
+%global ovirt_build_minimal_user_agents gecko1_8,safari
+%global ovirt_build_minimal_user_locales en_US
+
+# conditional build "full" performs unit tests, and builds GWT for all  user agents and locales
+#   *** This is the default build if no other build type has been selected
+%if %{with ovirt_build_quick} || %{with ovirt_build_draft} || %{with ovirt_build_minimal}
+%bcond_with ovirt_build_full
 %else
-%global ovirt_build_ut 1
+%bcond_without ovirt_build_full
 %endif
+
+%{echo:build type: %{?with_ovirt_build_quick:quick}%{?with_ovirt_build_minimal:minimal}%{?with_ovirt_build_draft:draft}%{?with_ovirt_build_full:full}}
+
+# == build flags
+# build GWT (webadmin), but NOT when "quick"
+%if %{without ovirt_build_quick}
+%bcond_without ovirt_build_gwt
+%else
+%bcond_with ovirt_build_gwt
 %endif
-%if 0%{!?ovirt_build_gwt:1}
-%global ovirt_build_gwt 1
+
+# build all user agents, but only by default when "full"
+%if %{with ovirt_build_full}
+%bcond_without ovirt_build_all_user_agents
+%else
+%bcond_with ovirt_build_all_user_agents
 %endif
-%if 0%{!?ovirt_build_locales:1}
-%global ovirt_build_locales 1
+
+# build all locales, but only by default when "full"
+%if %{with ovirt_build_full}
+%bcond_without ovirt_build_all_locales
+%else
+%bcond_with ovirt_build_all_locales
 %endif
-%if 0%{!?ovirt_build_all_user_agents:1}
-%global ovirt_build_all_user_agents 1
+
+# build unit tests, but only by default when "full"
+%if %{with ovirt_build_full}
+%bcond_without ovirt_build_ut
+%else
+%bcond_with ovirt_build_ut
 %endif
+
+# == convert the build flags to `EXTRA_BUILD_FLAGS` as needed
+%if %{defined ovirt_build_user_agent} || %{with ovirt_build_minimal} || %{with ovirt_build_draft}
+%global extra_build_flags_user_agents -Dgwt.userAgent=%{?ovirt_build_user_agent}%{!?ovirt_build_user_agent:%{?ovirt_build_minimal_user_agents}}
+%endif
+
+%if %{defined ovirt_build_locales} || %{with ovirt_build_minimal} || %{with ovirt_build_draft}
+%global extra_build_flags_locales -Dgwt.locale=%{?ovirt_build_locales}%{!?ovirt_build_locales:%{?ovirt_build_minimal_user_locales}}
+%endif
+
+%if %{defined extra_build_flags_user_agents} || %{defined extra_build_flags_locales} || %{with ovirt_build_draft} || %{defined ovirt_build_extra_flags}
+%global EXTRA_BUILD_FLAGS \
+    %{?extra_build_flags_user_agents} \
+    %{?extra_build_flags_locales} \
+    %{?with_ovirt_build_draft:-P gwtdraft} \
+    %{?ovirt_build_extra_flags}
+%endif
+
 # define "rhv_build 1" to perform RHV Manager build
 #if True
 %global rhv_build 1
@@ -50,7 +103,6 @@
 #end if
 #
 # CUSTOMIZATION-END
-#
 
 #raw
 
@@ -64,14 +116,6 @@
 # see rhbz#1019637
 #
 %global _jarsign_opts --unsign=/usr/share/ovirt-engine
-%endif
-
-#
-# rpm does not support override
-# nor modify of variables
-#
-%if %{?_ovirt_build_extra_flags:1}%{?ovirt_build_extra_flags:1}0
-%global EXTRA_BUILD_FLAGS %{?_ovirt_build_extra_flags:%{_ovirt_build_extra_flags}}%{?ovirt_build_extra_flags: %{ovirt_build_extra_flags}}
 %endif
 
 #
@@ -160,10 +204,10 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 
 %global make_common_opts \\\
 	-j1 \\\
-	BUILD_GWT=%{ovirt_build_gwt} \\\
-	BUILD_ALL_USER_AGENTS=%{ovirt_build_all_user_agents} \\\
-	BUILD_LOCALES=%{ovirt_build_locales} \\\
-	BUILD_UT=%{ovirt_build_ut} \\\
+	%{!?with_ovirt_build_gwt:BUILD_GWT=0} \\\
+	%{?with_ovirt_build_all_user_agents:BUILD_ALL_USER_AGENTS=1} \\\
+	%{?with_ovirt_build_all_locales:BUILD_LOCALES=1} \\\
+	%{!?with_ovirt_build_ut:BUILD_UT=0} \\\
 	BUILD_VALIDATION=0 \\\
 	PACKAGE_NAME=%{name} \\\
 	RPM_VERSION=%{version} \\\
@@ -198,7 +242,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PKG_GROUP=%{engine_group} \\\
 	POSTGRESQL_SYSTEMD_SERVICE=postgresql.service \\\
 	WILDFLY_OVERLAY_MODULES=%{wildfly_overlay_modules} \\\
-	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"} \\\
+	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{shrink:%{EXTRA_BUILD_FLAGS}}"} \\\
 	%{?extra_common_opts}
 
 %if %{rhv_build}
