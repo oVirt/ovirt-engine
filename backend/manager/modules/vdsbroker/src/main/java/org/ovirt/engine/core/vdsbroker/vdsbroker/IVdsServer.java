@@ -595,9 +595,9 @@ public interface IVdsServer {
     StatusOnlyReturn glusterVolumeResetBrickCommitForce(String volumeName,
             String existingBrickDir);
 
-    DeviceInfoReturn attachManagedBlockStorageVolume(Guid volumeId, Map<String, Object> connectionInfo);
+    DeviceInfoReturn attachManagedBlockStorageVolume(Guid volumeId, Guid sdUUID, Map<String, Object> connectionInfo);
 
-    StatusOnlyReturn detachManagedBlockStorageVolume(Guid volumeId);
+    StatusOnlyReturn detachManagedBlockStorageVolume(Guid volumeId, Guid sdUUID);
 
     VDSInfoReturn getLeaseStatus(String leaseUUID, String sdUUID);
 

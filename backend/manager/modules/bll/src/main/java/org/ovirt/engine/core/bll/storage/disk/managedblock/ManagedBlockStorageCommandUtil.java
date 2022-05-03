@@ -142,7 +142,9 @@ public class ManagedBlockStorageCommandUtil {
 
         disk.setConnectionInfo(returnValue.getActionReturnValue());
         AttachManagedBlockStorageVolumeVDSCommandParameters params =
-                new AttachManagedBlockStorageVolumeVDSCommandParameters(vds, returnValue.getActionReturnValue());
+                new AttachManagedBlockStorageVolumeVDSCommandParameters(vds,
+                        returnValue.getActionReturnValue(),
+                        disk.getStorageIds().get(0));
         params.setVolumeId(disk.getImageId());
         return resourceManager.runVdsCommand(VDSCommandType.AttachManagedBlockStorageVolume, params);
     }
