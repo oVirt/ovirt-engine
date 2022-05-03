@@ -1078,11 +1078,11 @@ public class NullVdsServer implements IVdsServer {
     }
 
     @Override
-    public DeviceInfoReturn attachManagedBlockStorageVolume(Guid volumeId, Map<String, Object> connectionInfo) {
+    public DeviceInfoReturn attachManagedBlockStorageVolume(Guid volumeId, Guid sdUUID, Map<String, Object> connectionInfo) {
         return null;
     }
 
-    @Override public StatusOnlyReturn detachManagedBlockStorageVolume(Guid volumeId) {
+    @Override public StatusOnlyReturn detachManagedBlockStorageVolume(Guid volumeId, Guid sdUUID) {
         return null;
     }
 
