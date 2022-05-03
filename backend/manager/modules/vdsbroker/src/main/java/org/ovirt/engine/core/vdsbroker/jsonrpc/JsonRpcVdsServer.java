@@ -2643,10 +2643,11 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturn detachManagedBlockStorageVolume(Guid volumeId) {
+    public StatusOnlyReturn detachManagedBlockStorageVolume(Guid volumeId, Guid sdUUID) {
         JsonRpcRequest request =
                 new RequestBuilder("ManagedVolume.detach_volume")
                         .withParameter("vol_id", volumeId.toString())
+                        .withParameter("sd_id", sdUUID.toString())
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
