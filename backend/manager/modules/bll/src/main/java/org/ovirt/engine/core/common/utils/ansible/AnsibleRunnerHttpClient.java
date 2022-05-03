@@ -72,22 +72,22 @@ public class AnsibleRunnerHttpClient {
 
     public AnsibleReturnValue artifactHandler(UUID uuid, int lastEventID, int timeout, BiConsumer<String, String> fn)
             throws Exception {
-        int iteration = 0;
+        int executionTime = 0;
         setArtifactsDir(uuid);
         setReturnValue(uuid);
-        // retrieve timeout from engine constants.
-        while (!playHasEnded(uuid)) { //return -1 incase of an error)
+        while (!playHasEnded(uuid)) {
+            lastEventID = processEvents(uuid.toString(), lastEventID, fn, "", Paths.get(""));
             if (lastEventID == -1) {
                 return returnValue;
             }
-            if (iteration > timeout * 60) {
+            executionTime += POLL_INTERVAL / 1000;
+            if (executionTime > timeout * 60) {
                 // Cancel playbook, and raise exception in case timeout occur:
                 cancelPlaybook(uuid, timeout);
                 throw new TimeoutException(
                         "Play execution has reached timeout");
             }
-            lastEventID = processEvents(uuid.toString(), lastEventID, fn, "", Paths.get(""));
-            iteration += POLL_INTERVAL / 1000;
+            Thread.sleep(POLL_INTERVAL);
         }
         returnValue.setAnsibleReturnCode(AnsibleReturnCode.OK);
         return returnValue;
@@ -98,27 +98,19 @@ public class AnsibleRunnerHttpClient {
         returnValue.setLogFile(runnerLogger.getLogFile());
     }
 
-    public List<String> getSortedEvents(String playUuid, int lastEventId) throws InterruptedException {
-        Boolean artifactsIsPopulated = false;
-        List<String> sortedEvents = new ArrayList<>();
-
-        while (!artifactsIsPopulated) {
-            Thread.sleep(1500);
-
-            // ignoring incompleted json files, add to list only events that haven't been handles yet.
-            String jobEvents = getJobEventsDir(playUuid);
-            if (Files.exists(Paths.get(jobEvents))) {
-                sortedEvents = Stream.of(new File(jobEvents).listFiles())
-                        .map(File::getName)
-                        .filter(item -> !item.contains("partial"))
-                        .filter(item -> !item.endsWith(".tmp"))
-                        .filter(item -> (Integer.valueOf(item.split("-")[0])) > lastEventId)
-                        .sorted()
-                        .collect(Collectors.toList());
-                artifactsIsPopulated = true;
-            }
+    public String getNextEvent(String playUuid, int lastEventId) {
+        String jobEvents = getJobEventsDir(playUuid);
+        if (!Files.exists(Paths.get(jobEvents))) {
+            return null;
         }
-        return sortedEvents;
+        // ignoring incompleted json files, add to list only events that haven't been handles yet.
+        return Stream.of(new File(jobEvents).listFiles())
+                .map(File::getName)
+                .filter(item -> !item.contains("partial"))
+                .filter(item -> !item.endsWith(".tmp"))
+                .filter(item -> item.startsWith((lastEventId + 1) + "-"))
+                .findFirst()
+                .orElse(null);
     }
 
     public int getLastEventId() {
@@ -134,17 +126,13 @@ public class AnsibleRunnerHttpClient {
             BiConsumer<String, String> fn,
             String msg,
             Path logFile) {
-        List<String> sortedEvents = new ArrayList<>();
-        try {
-            sortedEvents = getSortedEvents(playUuid, lastEventId);
-        } catch (InterruptedException ex) {
-            throw new AnsibleRunnerCallException(
-                    "Failed to get list of events for play: %1$s",
-                    playUuid);
-        }
-
         String jobEvents = getJobEventsDir(playUuid);
-        for (String event : sortedEvents) {
+        while(true){
+            String event = getNextEvent(playUuid, lastEventId);
+            if (event == null) {
+                break;
+            }
+
             JsonNode currentNode = getEvent(jobEvents + event);
             String stdout = RunnerJsonNode.getStdout(currentNode);
 
@@ -205,6 +193,7 @@ public class AnsibleRunnerHttpClient {
             }
             lastEvent = event;
             returnValue.setLastEventId(getLastEventId());
+            lastEventId++;
         }
         return lastEvent.isEmpty() ? lastEventId : getLastEventId();
     }

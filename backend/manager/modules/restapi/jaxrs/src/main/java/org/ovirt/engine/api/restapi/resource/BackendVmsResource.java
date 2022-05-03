@@ -397,8 +397,14 @@ public class BackendVmsResource extends
         }
         return performCreate(ActionType.ImportVmFromConfiguration,
                 parameters,
+                new QueryIdResolver<Guid>(QueryType.GetVmByVmId, IdQueryParameters.class),
                 PollingType.JOB,
-                new QueryIdResolver<Guid>(QueryType.GetVmByVmId, IdQueryParameters.class));
+                // we don't normally to this but in case of ImportVmFromConfiguration it makes some sense to execute it as a blocking
+                // (sync) operation as it doesn't involve disk operations and it may only have an async operation related to vm lease
+                // which is relatively quick. The main reason to do this is that some backup applications rely on getting 201-Created
+                // response and can't cope with 202-Accepted but it also makes to do that because it is often the case that clients
+                // attempt to start the VM right after the execution of ImportVmFromConfiguration is completed.
+                true);
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM getVmConfiguration(String snapshotId) {

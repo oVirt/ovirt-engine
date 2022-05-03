@@ -545,9 +545,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         VmLeaseParameters params = new VmLeaseParameters(getStoragePoolId(), leaseStorageDomainId, vmId);
         params.setParentCommand(getActionType());
         params.setParentParameters(getParameters());
-        if (getParameters().getEntityInfo() == null) {
-            getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, vmId));
-        }
+        params.setEntityInfo(getParameters().getEntityInfo() != null ? getParameters().getEntityInfo()
+                : new EntityInfo(VdcObjectType.VM, vmId));
         ActionReturnValue returnValue = runInternalActionWithTasksContext(ActionType.RemoveVmLease, params);
         if (returnValue.getSucceeded()) {
             getTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
@@ -576,9 +575,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
         params.setParentCommand(getActionType());
         params.setParentParameters(getParameters());
-        if (getParameters().getEntityInfo() == null) {
-            getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, vmId));
-        }
+        params.setEntityInfo(getParameters().getEntityInfo() != null ? getParameters().getEntityInfo()
+                : new EntityInfo(VdcObjectType.VM, vmId));
         ActionReturnValue returnValue = runInternalActionWithTasksContext(ActionType.AddVmLease, params);
         if (returnValue.getSucceeded()) {
             getTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());

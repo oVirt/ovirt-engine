@@ -35,4 +35,7 @@
     - host_deploy_origin_type != ovirt_origin_type
     - el_ver|int >= 8
     - not node_host|bool
+    # Below conditions limit the execution for host deploy only
+    - host_action is defined
+    - host_action == 'host_deploy'
     - not vdsm_preinstalled|bool
