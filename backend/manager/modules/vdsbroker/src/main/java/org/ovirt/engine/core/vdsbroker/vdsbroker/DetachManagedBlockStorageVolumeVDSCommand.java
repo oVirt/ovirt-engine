@@ -10,7 +10,8 @@ public class DetachManagedBlockStorageVolumeVDSCommand<P extends AttachManagedBl
 
     @Override
     protected void executeVdsBrokerCommand() {
-        status = getBroker().detachManagedBlockStorageVolume(getParameters().getVolumeId());
+        status = getBroker().detachManagedBlockStorageVolume(getParameters().getVolumeId(),
+                getParameters().getStorageDomainId());
         proceedProxyReturnValue();
         setReturnValue(status);
     }
