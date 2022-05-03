@@ -205,8 +205,6 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global extra_backend_requires Requires: rhvm-branding-rhv >= 4.3.0
 %global extra_setup_requires Requires: rhvm-setup-plugins >= 4.5.0-0.1
 %global spice_version 8.0
-%else
-%global ovirt_dependencies ovirt-dependencies/4.4
 %endif
 
 %if !%{rhv_build}
@@ -385,7 +383,7 @@ Requires:	ed25519-java >= 0.3.0
 Requires:	slf4j-jdk14 >= 1.7.0
 Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 3.6.4
-Requires:	ovirt-dependencies >= 4.5.0
+Requires:	ovirt-dependencies >= 4.5.2
 
 # cinderlib integration
 # https://bugzilla.redhat.com/1955375
