@@ -231,7 +231,8 @@ class Plugin(plugin.PluginBase):
                         self.environment[osetupcons.RenameEnv.FQDN],
                     ),
                 ),
-            ),
+            )
+            + (('--days=398',) if entity['shortLife'] else ())
         )
 
         self.uninstall_files.extend(

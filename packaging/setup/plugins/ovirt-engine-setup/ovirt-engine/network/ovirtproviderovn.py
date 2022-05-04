@@ -514,6 +514,7 @@ class Plugin(plugin.PluginBase):
                     'extract': True,
                     'user': oengcommcons.SystemEnv.USER_ROOT,
                     'keepKey': False,
+                    'shortLife': False,
                 },
                 {
                     'name':
@@ -521,6 +522,7 @@ class Plugin(plugin.PluginBase):
                     'extract': True,
                     'user': oengcommcons.SystemEnv.USER_ROOT,
                     'keepKey': False,
+                    'shortLife': False,
                 },
                 {
                     'name':
@@ -528,6 +530,7 @@ class Plugin(plugin.PluginBase):
                     'extract': True,
                     'user': oengcommcons.SystemEnv.USER_ROOT,
                     'keepKey': False,
+                    'shortLife': False,
                 }
             )
         )
