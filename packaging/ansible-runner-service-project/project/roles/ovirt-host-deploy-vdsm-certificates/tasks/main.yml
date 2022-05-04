@@ -165,6 +165,18 @@
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_client_key_file }}"
       state: link
 
+  - name: Populate service facts
+    service_facts:
+
+  - name: Restart services
+    service:
+      name: "{{ item }}"
+      state: restarted
+    loop:
+      - libvirtd.service
+      - ovirt-imageio.service
+    when: "ansible_facts.services.get(item, {}).get('status') == 'enabled' or ansible_facts.services.get(item, {}).get('state') == 'running'""
+
   always:
     - name: Remove temp file
       file:
