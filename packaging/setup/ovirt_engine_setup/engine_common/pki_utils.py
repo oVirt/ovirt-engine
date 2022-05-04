@@ -88,20 +88,6 @@ def cert_has_SAN(logger, x509cert):
     return res
 
 
-def cert_validity_period_short_enough(logger, x509cert):
-    # input: x509cert: cryptography.x509.Certificate object
-    # return: bool
-    before = x509cert.not_valid_before
-    after = x509cert.not_valid_after
-    validity_in_days = ((after - before).days) - 1
-    logger.debug(
-        f"Certificate's validity is {validity_in_days} days. "
-        "HTTPS certificate validity shouldn't be longer than 398 days"
-    )
-    # HTTPS certificate validity shouldn't be longer than 398 days
-    return validity_in_days <= 398
-
-
 def ok_to_renew_cert(logger, x509cert, ca_cert, name, extract):
     # input:
     # - x509cert: cryptography.x509.Certificate object
@@ -112,8 +98,7 @@ def ok_to_renew_cert(logger, x509cert, ca_cert, name, extract):
     res = False
     if x509cert and (
         cert_expires(x509cert) or
-        not cert_has_SAN(logger, x509cert) or
-        not cert_validity_period_short_enough(logger, x509cert)
+        not cert_has_SAN(logger, x509cert)
     ):
         if not extract or ca_cert is None:
             # In remote machines (websocket-proxy/grafana), we do not
