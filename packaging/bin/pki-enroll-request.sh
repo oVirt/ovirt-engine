@@ -72,7 +72,7 @@ trap cleanup 0
 NAME=""
 SUBJECT=""
 TIMEOUT="20"
-DAYS="398"
+DAYS="1827"
 OVIRT_KU=""
 OVIRT_EKU=""
 CA_FILE=ca

@@ -220,7 +220,8 @@ class Plugin(plugin.PluginBase):
                 )
             )
 
-    def _enrollCertificate(self, name, uninstall_files, keepKey=False):
+    def _enrollCertificate(self, name, uninstall_files, keepKey=False,
+                           shortLife=False):
         self.execute(
             (
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
@@ -244,7 +245,9 @@ class Plugin(plugin.PluginBase):
                         self.environment[osetupcons.ConfigEnv.FQDN],
                     ),
                 ),
-            ) + (('--keep-key',) if keepKey else ())
+            )
+            + (('--keep-key',) if keepKey else ())
+            + (('--days=398',) if shortLife else ())
         )
         uninstall_files.extend(
             (
@@ -262,30 +265,35 @@ class Plugin(plugin.PluginBase):
             'extract': False,
             'user': osetupcons.SystemEnv.USER_ENGINE,
             'keepKey': True,
+            'shortLife': False,
         },
         {
             'name': 'jboss',
             'extract': False,
             'user': osetupcons.SystemEnv.USER_ENGINE,
             'keepKey': False,
+            'shortLife': False,
         },
         {
             'name': 'websocket-proxy',
             'extract': True,
             'user': osetupcons.SystemEnv.USER_ENGINE,
             'keepKey': False,
+            'shortLife': True,
         },
         {
             'name': 'apache',
             'extract': True,
             'user': oengcommcons.SystemEnv.USER_ROOT,
             'keepKey': False,
+            'shortLife': True,
         },
         {
             'name': 'reports',
             'extract': True,
             'user': oengcommcons.SystemEnv.USER_ROOT,
             'keepKey': False,
+            'shortLife': False,
         },
     )
 
@@ -346,6 +354,7 @@ class Plugin(plugin.PluginBase):
                     entry['name'],
                     uninstall_files,
                     keepKey=entry['keepKey'] and renew,
+                    shortLife=entry['shortLife'],
                 )
                 os.chown(
                     pkcs12,
