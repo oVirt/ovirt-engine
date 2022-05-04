@@ -20,7 +20,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
  */
 public class OvirtSelectionModel<T> implements SelectionModel<T> {
 
-    private enum Mode {
+    public enum Mode {
         SINGLE_SELECTION,
         MULTI_SELECTION,
         NO_SELECTION
@@ -29,19 +29,28 @@ public class OvirtSelectionModel<T> implements SelectionModel<T> {
     private final SelectionModel<T> delegate;
     private final Mode mode;
 
-    public OvirtSelectionModel(boolean singleSelectionOnly) {
-        this.mode = singleSelectionOnly ? Mode.SINGLE_SELECTION : Mode.MULTI_SELECTION;
-        this.delegate = singleSelectionOnly
-                ? new SingleSelectionModel<>(new QueryableEntityKeyProvider<>())
-                : new OrderedMultiSelectionModel<>(new QueryableEntityKeyProvider<>());
-
-    }
-
     public OvirtSelectionModel() {
-        this.mode = Mode.NO_SELECTION;
-        this.delegate = new NoSelectionModel<>();
+        this(Mode.NO_SELECTION);
     }
 
+    public OvirtSelectionModel(Mode mode) {
+        this.mode = mode;
+        switch (mode) {
+        case SINGLE_SELECTION:
+            this.delegate = new SingleSelectionModel<>(new QueryableEntityKeyProvider<>());
+            break;
+        case MULTI_SELECTION:
+            this.delegate = new OrderedMultiSelectionModel<>(new QueryableEntityKeyProvider<>());
+            break;
+        default:
+            this.delegate = new NoSelectionModel<>();
+            break;
+        }
+    }
+
+    public Mode getMode() {
+        return mode;
+    }
 
     @Override
     public HandlerRegistration addSelectionChangeHandler(Handler handler) {
