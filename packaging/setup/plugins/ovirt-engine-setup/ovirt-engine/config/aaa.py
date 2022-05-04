@@ -82,7 +82,7 @@ class Plugin(plugin.PluginBase):
             None
         )
         self.environment.setdefault(
-            oengcommcons.KeycloakEnv.KEYCLOAK_ENABLED,
+            oengcommcons.KeycloakEnv.ENABLE,
             False
         )
 
@@ -280,7 +280,7 @@ class Plugin(plugin.PluginBase):
                 oenginecons.ConfigEnv.ADMIN_PASSWORD
             ] is not None and
             self.environment[
-                oengcommcons.KeycloakEnv.KEYCLOAK_ENABLED
+                oengcommcons.KeycloakEnv.ENABLE
             ] is False
         )
     )
