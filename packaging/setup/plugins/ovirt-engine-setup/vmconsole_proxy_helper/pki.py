@@ -274,6 +274,16 @@ class Plugin(plugin.PluginBase):
             )
         )
 
+    def _ssh_cert_file(self, suffix):
+        file_name = '%s-%s.cer' % (
+            ovmpcons.Const.VMCONSOLE_PROXY_PKI_NAME,
+            suffix
+        )
+        return os.path.join(
+            oenginecons.FileLocations.OVIRT_ENGINE_PKICERTSDIR,
+            file_name
+        )
+
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
@@ -282,12 +292,16 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: (
             self.environment[
                 ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-            ] and _refresh_needed(
-                os.path.join(
-                    ovmpcons.FileLocations.VMCONSOLE_PKI_DIR,
-                    'proxy-ssh_host_rsa',
-                ),
-                check_cert=False
+            ] and (
+                _refresh_needed(
+                    os.path.join(
+                        ovmpcons.FileLocations.VMCONSOLE_PKI_DIR,
+                        'proxy-ssh_host_rsa',
+                    ),
+                    check_cert=False
+                ) or
+                _refresh_needed(self._ssh_cert_file('user')) or
+                _refresh_needed(self._ssh_cert_file('host'))
             )
         ),
     )
