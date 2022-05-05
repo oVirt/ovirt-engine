@@ -1713,10 +1713,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         getApproveCommand().setIsExecutionAllowed(approveAvailability);
 
         boolean installAvailability = false;
-        boolean nonResponsive = false;
         if (singleHostSelected(items)) {
             VDS host = items.get(0);
-            nonResponsive = host.getStatus() == VDSStatus.NonResponsive;
             installAvailability = host.getStatus() == VDSStatus.InstallFailed ||
                     host.getStatus() == VDSStatus.Maintenance;
         }
@@ -1738,7 +1736,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             upgradeAvailability = canUpgradeHost(host);
         }
         getUpgradeCommand().setIsExecutionAllowed(upgradeAvailability);
-        getEnrollCertificateCommand().setIsExecutionAllowed(installAvailability || nonResponsive);
+        getEnrollCertificateCommand().setIsExecutionAllowed(installAvailability);
 
         getMaintenanceCommand().setIsExecutionAllowed(items.size() > 0
                 && ActionUtils.canExecute(items, VDS.class, ActionType.MaintenanceVds));
