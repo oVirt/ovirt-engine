@@ -175,7 +175,7 @@
     loop:
       - libvirtd.service
       - ovirt-imageio.service
-    when: "ansible_facts.services.get(item, {}).get('status') == 'enabled' or ansible_facts.services.get(item, {}).get('state') == 'running'""
+    when: "ansible_facts.services.get(item, {}).get('status') == 'enabled' or ansible_facts.services.get(item, {}).get('state') == 'running'"
 
   always:
     - name: Remove temp file
