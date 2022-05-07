@@ -41,7 +41,7 @@ jobs:
 
         # Configure CS8 repositories
         dnf config-manager --enable powertools
-        dnf module enable -y pki-deps javapackages-tools
+        dnf module enable -y pki-deps javapackages-tools maven:3.6
 
     - name: Prepare CentOS Stream 9 environment
       if: ${{ matrix.shortcut == 'cs9' }}

@@ -20,6 +20,7 @@ MILESTONE=master
 # GH RPM builds will be used only for OST so Firefox and Chrome are enough
 # GWT build memory needs to be limited
 EXTRA_BUILD_FLAGS=""
+EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} --no-transfer-progress"
 EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} -Dgwt.userAgent=gecko1_8,safari"
 EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} -Dgwt.compiler.localWorkers=1"
 EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} -Dgwt.jvmArgs='-Xms1G -Xmx3G'"
