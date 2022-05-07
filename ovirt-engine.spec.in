@@ -264,7 +264,7 @@ BuildArch:	noarch
 BuildRequires:  perl
 %else
 BuildRequires:	assertj-core >= 2.2.0
-BuildRequires:	maven >= 3.5.0
+BuildRequires:	maven >= 3.6.0
 BuildRequires:  maven-enforcer-plugin
 %endif
 
