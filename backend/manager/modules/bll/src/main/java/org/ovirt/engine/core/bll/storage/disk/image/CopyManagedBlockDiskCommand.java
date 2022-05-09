@@ -167,7 +167,7 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
         // Attach source to host (if source is Managed Block Storage)
         // TODO: handle failures
         if (sourceDomainType == StorageDomainType.ManagedBlockStorage) {
-            String sourcePath = attachVolume(createManagedBlockDiskFromDiskImage(sourceDisk));
+            String sourcePath = attachVolume((ManagedBlockStorageDisk) sourceDisk);
             getParameters().setSourcePath(sourcePath);
         }
     }
