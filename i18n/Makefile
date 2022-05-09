@@ -5,7 +5,7 @@
 
 .PHONY: prepare zanata-push push zanata-pull normalize copy-changed pull
 
-ZANATA_LOCALES=de,es,fr,it,ja,ko,pt-BR,zh-CN,ru,cs
+ZANATA_LOCALES=de,es,fr,it,ja,ko,pt-BR,zh-CN,ru,cs,ka
 
 prepare:
 	mvn clean

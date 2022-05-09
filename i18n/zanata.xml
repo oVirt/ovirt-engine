@@ -11,7 +11,7 @@
     <!--
         Source Language: en_US
         Translated locales: es_ES, fr_FR, ja_JP, pt_BR, zh_CN, de_DE, ko_KR
-        Community translated locales: it_IT, cs, ru
+        Community translated locales: it_IT, cs, ru, ka_GE
 
         NOTE: Language to Java locale aliases are defined on the project+version
               on the zanata server itself.  No aliases need to be defined in this
