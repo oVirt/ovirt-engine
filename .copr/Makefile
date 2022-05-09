@@ -4,6 +4,9 @@ installdeps:
 	dnf -y install git
 
 srpm: installdeps
+	# just to debug current COPR issues
+	echo "GITHASH=$(git rev-parse --short HEAD)"
+	git log -1
 	$(eval SUFFIX=$(shell sh -c "echo '.git$$(git rev-parse --short HEAD)'"))
 	# changing the spec file as passing -D won't preserve the suffix when rebuilding in mock
 	sed "s:%{?release_suffix}:${SUFFIX}:" -i ovirt-engine.spec.in
