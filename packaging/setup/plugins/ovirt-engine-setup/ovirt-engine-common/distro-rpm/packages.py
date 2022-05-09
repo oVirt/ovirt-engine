@@ -462,8 +462,10 @@ class Plugin(plugin.PluginBase):
                     '--queryformat=%{version}-%{release}',
                     oenginecons.Const.ENGINE_PACKAGE_NAME,
                 ),
+                raiseOnError=False,
             )
-            engineVersion = stdout[0]
+            if rc == 0:
+                engineVersion = stdout[0]
         if (
             engineVersion is not None and
             osetupcons.Const.DISPLAY_VERSION != engineVersion
