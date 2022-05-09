@@ -20,12 +20,11 @@ MILESTONE=master
 # GH RPM builds will be used only for OST so Firefox and Chrome are enough
 # GWT build memory needs to be limited
 EXTRA_BUILD_FLAGS=""
-EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} --no-transfer-progress"
 EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} -Dgwt.userAgent=gecko1_8,safari"
 EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} -Dgwt.compiler.localWorkers=1"
 EXTRA_BUILD_FLAGS="${EXTRA_BUILD_FLAGS} -Dgwt.jvmArgs='-Xms1G -Xmx3G'"
 
-export MAVEN_OPTS="-Xms1G -Xmx2G"
+export MAVEN_OPTS="-Xms1G -Xmx2G --no-transfer-progress"
 
 # Set the location of the JDK that will be used for compilation:
 export JAVA_HOME="${JAVA_HOME:=/usr/lib/jvm/java-11}"
