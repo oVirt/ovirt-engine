@@ -1,18 +1,18 @@
-.PHONY: installdeps srpm
+.PHONY: installdeps git-safe patchspec srpm
 
 installdeps:
 	dnf -y install git
 
-srpm: installdeps
-	# From git 2.35.2 we need to mark temporary directory, where the project is cloned to, as safe, otherwise
-	# git commands won't work, and the remove afterwards to make git user config clean
-	$(eval REPO_DIR=$(shell pwd))
-	git config --global --add safe.directory ${REPO_DIR}
-	$(eval SUFFIX=.git$(shell git rev-parse --short HEAD))
-	echo ${SUFFIX}
-	git config --global --unset safe.directory ${REPO_DIR}
-	# changing the spec file as passing -D won't preserve the suffix when rebuilding in mock
-	sed "s:%{?release_suffix}:${SUFFIX}:" -i ovirt-engine.spec.in
+# explicity mark the copr generated git repo directory (which is done prior to the mock
+# call to the make_srpm and will be the current pwd) as safe for git commands
+git-safe:
+	git config --global --add safe.directory "$(shell pwd)"
+
+# patch the spec file directly as passing -D won't be preserved in chroot rebuilds
+patchspec: git-safe
+	sed "s:%{?release_suffix}:.git$(shell git rev-parse --short HEAD):" -i ovirt-engine.spec.in
+
+srpm: installdeps git-safe patchspec
 	mkdir -p tmp.repos/SOURCES
 	make dist
 	rpmbuild \
