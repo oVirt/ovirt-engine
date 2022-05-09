@@ -8,8 +8,7 @@ srpm: installdeps
 	# git commands won't work, and the remove afterwards to make git user config clean
 	$(eval REPO_DIR=$(shell pwd))
 	git config --global --add safe.directory ${REPO_DIR}
-	git log -1
-	$(eval SUFFIX=$(shell sh -c "echo '.git$$(git rev-parse --short HEAD)'"))
+	$(eval SUFFIX=.git$(shell git rev-parse --short HEAD))
 	echo ${SUFFIX}
 	git config --global --unset safe.directory ${REPO_DIR}
 	# changing the spec file as passing -D won't preserve the suffix when rebuilding in mock
