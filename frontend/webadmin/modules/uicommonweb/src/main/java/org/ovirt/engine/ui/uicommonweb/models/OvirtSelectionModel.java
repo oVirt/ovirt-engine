@@ -1,33 +1,47 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
  * Higher-order {@link SelectionModel} that delegates to either {@linkplain SingleSelectionModel single}
- * or {@linkplain OrderedMultiSelectionModel multi} selection model implementation, depending on the
- * {@code singleSelectionOnly} parameter.
+ * or {@linkplain OrderedMultiSelectionModel multi} or {@linkplain NoSelectionModel }selection model implementation.
  *
  * @param <T> Type of items tracked by the selection model.
  */
 public class OvirtSelectionModel<T> implements SelectionModel<T> {
 
+    private enum Mode {
+        SINGLE_SELECTION,
+        MULTI_SELECTION,
+        NO_SELECTION
+    }
+
     private final SelectionModel<T> delegate;
-    private final boolean singleSelectionOnly;
+    private final Mode mode;
 
     public OvirtSelectionModel(boolean singleSelectionOnly) {
-        this.singleSelectionOnly = singleSelectionOnly;
+        this.mode = singleSelectionOnly ? Mode.SINGLE_SELECTION : Mode.MULTI_SELECTION;
         this.delegate = singleSelectionOnly
                 ? new SingleSelectionModel<>(new QueryableEntityKeyProvider<>())
                 : new OrderedMultiSelectionModel<>(new QueryableEntityKeyProvider<>());
+
     }
+
+    public OvirtSelectionModel() {
+        this.mode = Mode.NO_SELECTION;
+        this.delegate = new NoSelectionModel<>();
+    }
+
 
     @Override
     public HandlerRegistration addSelectionChangeHandler(Handler handler) {
@@ -58,22 +72,34 @@ public class OvirtSelectionModel<T> implements SelectionModel<T> {
      * Clear the current selection.
      */
     public void clear() {
-        if (singleSelectionOnly) {
+        switch (mode) {
+        case SINGLE_SELECTION:
             asSingleSelectionModel().clear();
-        } else {
+            break;
+        case MULTI_SELECTION:
             asMultiSelectionModel().clear();
+            break;
+        case NO_SELECTION:
+            // no selection to clear
+            break;
         }
     }
 
     /**
-     * @return List of currently selected items. If {@code singleSelectionOnly}
-     * is {@code false}, the list order reflects the order in which items were
+     * @return List of currently selected items. If {@code #isMultiSelectionOnly}
+     * is {@code true}, the list order reflects the order in which items were
      * selected.
      */
     public List<T> getSelectedObjects() {
-        return singleSelectionOnly
-                ? new ArrayList<>(((SingleSelectionModel<T>) delegate).getSelectedSet())
-                : ((OrderedMultiSelectionModel<T>) delegate).getSelectedList();
+        switch (mode) {
+        case SINGLE_SELECTION:
+            return new ArrayList<>(asSingleSelectionModel().getSelectedSet());
+        case MULTI_SELECTION:
+            return asMultiSelectionModel().getSelectedList();
+        case NO_SELECTION:
+        default:
+            return Collections.emptyList();
+        }
     }
 
     /**
@@ -87,30 +113,34 @@ public class OvirtSelectionModel<T> implements SelectionModel<T> {
 
     /**
      * @return Delegate selection model as {@link SingleSelectionModel}.
-     * Don't call this if {@link #singleSelectionOnly} is {@code false}.
+     * Call this if {@link #isSingleSelectionOnly()} is {@code true}.
      */
     public SingleSelectionModel<T> asSingleSelectionModel() {
-        assert singleSelectionOnly : "singleSelectionOnly value mismatch"; //$NON-NLS-1$
+        assert isSingleSelectionOnly(): "singleSelectionOnly value mismatch"; //$NON-NLS-1$
         return (SingleSelectionModel<T>) delegate;
     }
 
     /**
      * @return Delegate selection model as {@link OrderedMultiSelectionModel}.
-     * Don't call this if {@link #singleSelectionOnly} is {@code true}.
+     * Call this if {@link #isMultiSelectionOnly()} is {@code true}.
      */
     public OrderedMultiSelectionModel<T> asMultiSelectionModel() {
-        assert !singleSelectionOnly : "singleSelectionOnly value mismatch"; //$NON-NLS-1$
+        assert isMultiSelectionOnly() : "singleSelectionOnly value mismatch"; //$NON-NLS-1$
         return (OrderedMultiSelectionModel<T>) delegate;
     }
 
+    private boolean isMultiSelectionOnly() {
+        return mode.equals(Mode.MULTI_SELECTION);
+    }
+
     public void setDataDisplay(HasData<T> dataDisplay) {
-        if (!isSingleSelectionOnly()) {
+        if (isMultiSelectionOnly()) {
             asMultiSelectionModel().setDataDisplay(dataDisplay);
         }
     }
 
     public boolean isSingleSelectionOnly() {
-        return singleSelectionOnly;
+        return mode.equals(Mode.SINGLE_SELECTION);
     }
 
     /**
@@ -118,7 +148,7 @@ public class OvirtSelectionModel<T> implements SelectionModel<T> {
      * otherwise does nothing.
      */
     public void setMultiSelectEnabled(boolean multiSelectEnabled) {
-        if (!isSingleSelectionOnly()) {
+        if (isMultiSelectionOnly()) {
             asMultiSelectionModel().setMultiSelectEnabled(multiSelectEnabled);
         }
     }
@@ -128,7 +158,7 @@ public class OvirtSelectionModel<T> implements SelectionModel<T> {
      * otherwise does nothing.
      */
     public void setMultiRangeSelectEnabled(boolean multiRangeSelectEnabled) {
-        if (!isSingleSelectionOnly()) {
+        if (isMultiSelectionOnly()) {
             asMultiSelectionModel().setMultiRangeSelectEnabled(multiRangeSelectEnabled);
         }
     }
