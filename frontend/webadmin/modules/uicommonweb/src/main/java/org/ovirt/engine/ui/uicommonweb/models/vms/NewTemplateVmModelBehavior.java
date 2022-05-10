@@ -128,6 +128,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             // it is not allowed to create sub-templates of Blank template
             getModel().getIsSubTemplate().setIsChangeable(false,
                     constants.someNonDefaultTemplateHasToExistFirst());
+            initTemplate();
             return;
         }
 
