@@ -170,11 +170,19 @@ public class MoveDiskCommand<T extends MoveDiskParameters> extends CommandBase<T
 
     private String getDiskIsBeingMigratedMessage() {
         if (cachedDiskIsBeingMigratedMessage == null) {
+            String diskName = "";
+            if (getParameters().getNewAlias() != null) {
+                diskName = getParameters().getNewAlias();
+            } else {
+                DiskImage diskImage = diskImageDao.get(getParameters().getImageId());
+                if (diskImage != null && diskImage.getDiskAlias() != null) {
+                    diskName = diskImage.getDiskAlias();
+                }
+            }
             cachedDiskIsBeingMigratedMessage = new LockMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_BEING_MIGRATED)
-                    .withOptional("DiskName", getParameters().getNewAlias())
+                    .with("DiskName", diskName)
                     .toString();
         }
-
         return cachedDiskIsBeingMigratedMessage;
     }
 }
