@@ -1393,6 +1393,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Tue May 10 2022 Michal Skrivanek <michal.skrivanek@redhat.com> - 4.5.0.8
+- Bump version to 4.5.0.8
+
 * Mon May 09 2022 Michal Skrivanek <michal.skrivanek@redhat.com> - 4.5.0.7
 - Bump version to 4.5.0.7
 
