@@ -612,6 +612,10 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     private void setupParameters() {
+        if (getParameters().isEdited()) {
+            getParameters().setEditedVm(getParameters().getVm());
+        }
+
         setVmId(Guid.newGuid());
         getParameters().setNewVmGuid(getVmId());
         VM vmToClone = getVm();
@@ -668,7 +672,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     private VmManagementParametersBase createUpdateVmParameters() {
-        VM editedVM = getParameters().getVm();
+        VM editedVM = getParameters().getEditedVm();
         editedVM.setId(getVmId());
         editedVM.setVmCreationDate(getVm().getVmCreationDate());
         editedVM.setCreatedByUserId(getVm().getCreatedByUserId());
