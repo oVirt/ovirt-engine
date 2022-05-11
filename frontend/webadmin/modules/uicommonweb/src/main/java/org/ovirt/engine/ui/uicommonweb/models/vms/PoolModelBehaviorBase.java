@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.MultiQueuesVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
+import org.ovirt.engine.ui.uicommonweb.models.VirtioMultiQueueType;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolModel;
 import org.ovirt.engine.ui.uicommonweb.validation.HostWithProtocolAndPortAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -162,6 +163,16 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
                 getModel().getCdImage().setIsChangeable(hasCd);
                 getModel().getCdAttached().setEntity(hasCd);
+                // VirtIO SCSI
+                int queues = vmBase.getVirtioScsiMultiQueues();
+                if (queues == -1) {
+                    getModel().getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.AUTOMATIC);
+                } else if (queues == 0) {
+                    getModel().getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.DISABLED);
+                } else {
+                    getModel().getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.CUSTOM);
+                    getModel().getNumOfVirtioScsiMultiQueues().setEntity(queues);
+                }
 
                 // A workaround for setting the current saved CustomCompatibilityVersion value after
                 // it was reset by getTemplateWithVersion event

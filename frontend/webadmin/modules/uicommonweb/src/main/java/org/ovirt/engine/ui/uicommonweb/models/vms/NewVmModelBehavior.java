@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.MultiQueuesVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.VirtioMultiQueueType;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewVmInstanceTypeManager;
@@ -205,6 +206,16 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             isoPath = template.getIsoPath();
             // Random Generator
             updateRngDevice(template.getId());
+            // VirtIO SCSI
+            int queues = template.getVirtioScsiMultiQueues();
+            if (queues == -1) {
+                getModel().getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.AUTOMATIC);
+            } else if (queues == 0) {
+                getModel().getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.DISABLED);
+            } else {
+                getModel().getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.CUSTOM);
+                getModel().getNumOfVirtioScsiMultiQueues().setEntity(queues);
+            }
 
             // A workaround for setting the current saved CustomCompatibilityVersion value after
             // it was reset by getTemplateWithVersion event
