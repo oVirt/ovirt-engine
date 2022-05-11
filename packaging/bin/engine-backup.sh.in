@@ -174,7 +174,8 @@ BACKUP_PATHS="/etc/ovirt-engine
 VAR_LIB_OVIRT_ENGINE_EXCLUSIONS="/var/lib/ovirt-engine/backups
 /var/lib/ovirt-engine/jboss_runtime
 /var/lib/ovirt-engine/ansible-runner-service.log
-/var/lib/ovirt-engine/ansible-runner"
+/var/lib/ovirt-engine/ansible-runner
+/var/lib/ovirt-engine/.ansible"
 for p in /var/lib/ovirt-engine/*; do
 	echo "${VAR_LIB_OVIRT_ENGINE_EXCLUSIONS}" | grep -q "^${p}\$" || BACKUP_PATHS="${BACKUP_PATHS}
 ${p}"
