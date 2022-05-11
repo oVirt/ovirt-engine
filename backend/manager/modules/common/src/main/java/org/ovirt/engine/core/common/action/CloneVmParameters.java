@@ -23,6 +23,8 @@ public class CloneVmParameters extends AddVmParameters {
 
     private boolean edited;
 
+    private VM editedVm;
+
     public CloneVmParameters() {
 
     }
@@ -60,6 +62,14 @@ public class CloneVmParameters extends AddVmParameters {
 
     public void setEdited(boolean edited) {
         this.edited = edited;
+    }
+
+    public VM getEditedVm() {
+        return editedVm;
+    }
+
+    public void setEditedVm(VM editedVm) {
+        this.editedVm = editedVm;
     }
 
     public Guid getDestStorageDomainId() {
