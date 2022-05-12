@@ -259,12 +259,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     protected void postCopyOrMoveInit() {
-        ICommandTarget target = (ICommandTarget) getEntity();
-
         if (getActiveStorageDomains().isEmpty()) {
             setMessage(constants.noStorageDomainAvailableMsg());
 
-            UICommand closeCommand = new UICommand("Cancel", target); //$NON-NLS-1$
+            UICommand closeCommand = new UICommand("Cancel", this); //$NON-NLS-1$
             closeCommand.setTitle(constants.close());
             closeCommand.setIsDefault(true);
             closeCommand.setIsCancel(true);
@@ -278,7 +276,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             actionCommand.setTitle(constants.ok());
             actionCommand.setIsDefault(true);
             getCommands().add(actionCommand);
-            UICommand cancelCommand = new UICommand("Cancel", target); //$NON-NLS-1$
+            UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
             cancelCommand.setTitle(constants.cancel());
             cancelCommand.setIsCancel(true);
             getCommands().add(cancelCommand);
@@ -360,6 +358,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
+        if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
+            cancel();
+            return;
+        }
         onExecute();
     }
 
@@ -390,5 +392,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     protected void cancel() {
         stopProgress();
         ((ListModel) getEntity()).setWindow(null);
+        setEntity(null);
+        super.cleanup();
     }
 }
