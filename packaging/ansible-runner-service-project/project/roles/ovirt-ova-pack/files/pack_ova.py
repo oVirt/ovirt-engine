@@ -44,7 +44,7 @@ def pad_to_block_size(file):
 def write_ovf(entity, ova_file, ovf):
     print("writing ovf: %s" % ovf)
     tar_info = create_tar_info(entity + ".ovf", len(ovf))
-    ova_file.write(tar_info.tobuf())
+    ova_file.write(tar_info.tobuf(format=tarfile.GNU_FORMAT))
     ova_file.write(ovf if python2 else ovf.encode())
     pad_to_block_size(ova_file)
 
@@ -52,7 +52,7 @@ def write_ovf(entity, ova_file, ovf):
 def write_file(name, ova_file, data):
     print("writing file: %s" % name)
     tar_info = create_tar_info(name, len(data))
-    ova_file.write(tar_info.tobuf())
+    ova_file.write(tar_info.tobuf(format=tarfile.GNU_FORMAT))
     ova_file.write(data.encode())
     pad_to_block_size(ova_file)
 
@@ -120,7 +120,7 @@ def write_disk_headers(ova_file, disks_info):
         disk_name = os.path.basename(disk_path)
         tar_info = create_tar_info(disk_name, disk_size)
         # write tar info
-        ova_file.write(tar_info.tobuf())
+        ova_file.write(tar_info.tobuf(format=tarfile.GNU_FORMAT))
         path_to_offset[disk_path] = str(ova_file.tell())
         ova_file.seek(disk_size, 1)
 
