@@ -73,9 +73,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
         cleanupEvents(getPropertyChangedEvent());
 
-        for (UICommand command : getCommands()) {
-            command.cleanup();
-        }
+        getCommands().forEach(UICommand::cleanup);
 
         clearTabsValidity();
     }
