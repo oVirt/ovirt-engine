@@ -23,6 +23,7 @@ public class CloneVmParameters extends AddVmParameters {
 
     private boolean edited;
 
+    // For internal use only
     private VM editedVm;
 
     public CloneVmParameters() {
@@ -68,6 +69,9 @@ public class CloneVmParameters extends AddVmParameters {
         return editedVm;
     }
 
+    /**
+     * This method is for internal use only, disregard in API.
+     */
     public void setEditedVm(VM editedVm) {
         this.editedVm = editedVm;
     }
