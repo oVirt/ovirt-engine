@@ -519,10 +519,9 @@ class Plugin(plugin.PluginBase):
                     note=_(
                         'One or more of the certificates should be renewed, '
                         'because they expire soon, or include an invalid '
-                        'expiry date, or they were created with validity '
-                        'period longer than 398 days, or do not include the '
-                        'subjectAltName extension, which can cause them to be '
-                        'rejected by recent browsers and up to date hosts.\n'
+                        'expiry date, or do not include the subjectAltName '
+                        'extension, which can cause them to be rejected by '
+                        'recent browsers and up to date hosts.\n'
                         'See {url} for more details.\n'
                         'Renew certificates? '
                         '(@VALUES@) [@DEFAULT@]: '
