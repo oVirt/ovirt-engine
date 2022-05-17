@@ -29,51 +29,25 @@ public class VdsCpuUnitPinningHelper {
      * This function will tell if the host is capable to run a given dedicated CPU policy VM.
      *
      * The function apply the pending CPU pinning on the host topology, then:
-     * Pass on the online sockets for the host, check its available cores and count them as long we don't break
-     * the virtual topology.
-     * If there are enough pCPUs - return true, otherwise false.
+     * Allocates the pCPU based on each VM virtual topology, if it couldn't generate an allocation,
+     * return false. Otherwise return true.
      *
      * @param vmToPendingPinnings Map of VDS GUID keys to list of VdsCpuUnits pending to be taken.
-     * @param vm VM object.
+     * @param vmGroup List of VM objects.
      * @param hostId GUID of the VDS object.
+     * @param cpuTopology List<{@link VdsCpuUnit}>. The list of VdsCpuUnit.
      * @return boolean. True if possible to dedicate the VM on the host. Otherwise false.
      */
     public boolean isExclusiveCpuPinningPossibleOnHost(Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings,
-                                                       VM vm, Guid hostId) {
-        List<VdsCpuUnit> cpuTopology = resourceManager.getVdsManager(hostId).getCpuTopology();
+                                                       List<VM> vmGroup, Guid hostId, List<VdsCpuUnit> cpuTopology) {
 
-        if (!vm.getCpuPinningPolicy().isExclusive()) {
-            // TODO: Implementation for siblings
-            return false;
-        }
-
-        previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingPinnings);
-
-        int socketsLeft = vm.getNumOfSockets();
-
-        for (int socket : getOnlineSockets(cpuTopology)) {
-            int coresInSocket;
-            switch (vm.getCpuPinningPolicy()) {
-                case DEDICATED:
-                    coresInSocket = getAvailableCores(cpuTopology, socket, vm.getThreadsPerCpu());
-                    break;
-                case ISOLATE_THREADS:
-                    coresInSocket = getAvailableCoresIsolated(cpuTopology, socket);
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + vm.getCpuPinningPolicy());
-            }
-            int totalSocketsTaken = coresInSocket / vm.getCpuPerSocket();
-            if (!vm.getvNumaNodeList().isEmpty()) {
-                int highestAmountOfvNumaNodesInSocket = getVirtualNumaNodesInSocket(cpuTopology, vm, hostId, socket);
-                totalSocketsTaken = Math.min(highestAmountOfvNumaNodesInSocket, totalSocketsTaken);
-            }
-            socketsLeft -= totalSocketsTaken;
-            if (socketsLeft <= 0) {
-                return true;
+        for (VM vm : vmGroup) {
+            List<VdsCpuUnit> allocatedCpus = updatePhysicalCpuAllocations(vm, vmToPendingPinnings, hostId, cpuTopology);
+            if (allocatedCpus == null || allocatedCpus.isEmpty()) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public void previewPinOfPendingExclusiveCpus(List<VdsCpuUnit> cpuTopology, Map<Guid, List<VdsCpuUnit>> vmToPendingPinning) {
@@ -83,6 +57,10 @@ public class VdsCpuUnitPinningHelper {
                 cpuUnit.pinVm(vmToPendingPinningEntry.getKey(), pendingPinning.getCpuPinningPolicy());
             });
         }
+    }
+
+    public List<VdsCpuUnit> updatePhysicalCpuAllocations(VM vm, Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings, Guid hostId) {
+        return updatePhysicalCpuAllocations(vm, vmToPendingPinnings, hostId, resourceManager.getVdsManager(hostId).getCpuTopology());
     }
 
     /**
@@ -96,10 +74,10 @@ public class VdsCpuUnitPinningHelper {
      * @param vm VM object.
      * @param vmToPendingPinnings Map of VDS GUID keys to list of VdsCpuUnits pending to be taken.
      * @param hostId GUID of the VDS object.
+     * @param cpuTopology List<{@link VdsCpuUnit}>. The list of VdsCpuUnit.
      * @return List<{@link VdsCpuUnit}>. The list of VdsCpuUnit we are going to use. If not possible, return null.
      */
-    public List<VdsCpuUnit> updatePhysicalCpuAllocations(VM vm, Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings, Guid hostId) {
-        List<VdsCpuUnit> cpuTopology = resourceManager.getVdsManager(hostId).getCpuTopology();
+    public List<VdsCpuUnit> updatePhysicalCpuAllocations(VM vm, Map<Guid, List<VdsCpuUnit>> vmToPendingPinnings, Guid hostId, List<VdsCpuUnit> cpuTopology) {
         if (cpuTopology.isEmpty()) {
             return new ArrayList<>();
         }
@@ -127,22 +105,7 @@ public class VdsCpuUnitPinningHelper {
 
         // 'Resize and pin NUMA' policy also acts as manual pinning.
         if (!vm.getCpuPinningPolicy().isExclusive()) {
-            List<VdsCpuUnit> cpusToBeAllocated = new ArrayList<>();
-            String cpuPinning = vm.getVmPinning();
-            if (cpuPinning == null || cpuPinning.isEmpty()) {
-                return cpusToBeAllocated;
-            }
-            Set<Integer> requestedCpus = CpuPinningHelper.getAllPinnedPCpus(cpuPinning);
-            for (Integer cpuId : requestedCpus) {
-                VdsCpuUnit vdsCpuUnit = getCpu(cpuTopology, cpuId);
-                if (vdsCpuUnit == null) {
-                    // Taking offline CPU, should filter out on CpuPinningPolicyUnit.
-                    return new ArrayList<>();
-                }
-                vdsCpuUnit.pinVm(vm.getId(), vm.getCpuPinningPolicy());
-                cpusToBeAllocated.add(vdsCpuUnit);
-            }
-            return cpusToBeAllocated;
+            return allocateManualCpus(cpuTopology, vm);
         }
 
         filterSocketsWithInsufficientMemoryForNumaNode(cpuTopology, vm, hostId);
@@ -156,6 +119,25 @@ public class VdsCpuUnitPinningHelper {
             return pCores == vm.getNumOfCpus() ? cpusToBeAllocated : null;
         }
         return cpusToBeAllocated.size() == vm.getNumOfCpus() ? cpusToBeAllocated : null;
+    }
+
+    public List<VdsCpuUnit> allocateManualCpus(List<VdsCpuUnit> cpuTopology, VM vm) {
+        List<VdsCpuUnit> cpusToBeAllocated = new ArrayList<>();
+        String cpuPinning = vm.getVmPinning();
+        if (cpuPinning == null || cpuPinning.isEmpty()) {
+            return cpusToBeAllocated;
+        }
+        Set<Integer> requestedCpus = CpuPinningHelper.getAllPinnedPCpus(cpuPinning);
+        for (Integer cpuId : requestedCpus) {
+            VdsCpuUnit vdsCpuUnit = getCpu(cpuTopology, cpuId);
+            if (vdsCpuUnit == null) {
+                // Taking offline CPU, should filter out on CpuPinningPolicyUnit.
+                return new ArrayList<>();
+            }
+            vdsCpuUnit.pinVm(vm.getId(), vm.getCpuPinningPolicy());
+            cpusToBeAllocated.add(vdsCpuUnit);
+        }
+        return cpusToBeAllocated;
     }
 
     private List<VdsCpuUnit> allocateDedicatedCpus(List<VdsCpuUnit> cpuTopology, VM vm, Guid hostId) {
@@ -255,10 +237,6 @@ public class VdsCpuUnitPinningHelper {
         return getCoresInSocket(cpuTopology, socketId).stream().filter(cpu -> !cpu.isPinned()).collect(Collectors.toList());
     }
 
-    private List<VdsCpuUnit> getFreeCpusInCore(List<VdsCpuUnit> cpuTopology, int socketId, int coreId) {
-        return getCpusInCore(getCoresInSocket(cpuTopology, socketId), coreId).stream().filter(cpu -> !cpu.isPinned()).collect(Collectors.toList());
-    }
-
     private List<VdsCpuUnit> getFreeCpusInCore(List<VdsCpuUnit> cpuTopology, int coreId) {
         return getCpusInCore(cpuTopology, coreId).stream().filter(cpu -> !cpu.isPinned()).collect(Collectors.toList());
     }
@@ -318,27 +296,6 @@ public class VdsCpuUnitPinningHelper {
             }
         }
         return chosenSocket;
-    }
-
-    private int getAvailableCores(List<VdsCpuUnit> cpuTopology, int socket, int vThreads) {
-        int count = 0;
-        for (int core : getOnlineCores(cpuTopology, socket)) {
-            List<VdsCpuUnit> freeCpusInCore = getFreeCpusInCore(cpuTopology, socket, core);
-            count += freeCpusInCore.size() / vThreads;
-        }
-        return count;
-    }
-
-    private int getAvailableCoresIsolated(List<VdsCpuUnit> cpuTopology, int socket) {
-        int count = 0;
-        for (int core : getOnlineCores(cpuTopology, socket)) {
-            List<VdsCpuUnit> cpusInCore = getCpusInCore(getCoresInSocket(cpuTopology, socket), core);
-            if (cpusInCore.stream().anyMatch(VdsCpuUnit::isPinned)) {
-                continue;
-            }
-            count++;
-        }
-        return count;
     }
 
     /**

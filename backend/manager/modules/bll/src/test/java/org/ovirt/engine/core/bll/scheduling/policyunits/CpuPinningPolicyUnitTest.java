@@ -160,7 +160,7 @@ public class CpuPinningPolicyUnitTest {
 
     private List<VDS> filter() {
         return policyUnit.filter(new SchedulingContext(cluster, Collections.emptyMap()),
-                Arrays.asList(hostWithCpus, hostWithoutCpus), vm,
+                Arrays.asList(hostWithCpus, hostWithoutCpus), Collections.singletonList(vm),
                 perHostMessages);
     }
 
