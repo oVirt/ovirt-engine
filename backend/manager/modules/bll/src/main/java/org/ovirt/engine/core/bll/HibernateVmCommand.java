@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -279,7 +280,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     private DiskImage getMemoryDumpDisk(List<ActionReturnValue> returnValues) {
         for (ActionReturnValue returnValue : returnValues) {
             DiskImage disk = returnValue.getActionReturnValue();
-            if (disk.getSize() != MemoryUtils.METADATA_SIZE_IN_BYTES) {
+            if (disk.getContentType() == DiskContentType.MEMORY_DUMP_VOLUME) {
                 return disk;
             }
         }
@@ -290,7 +291,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     private DiskImage getMemoryMetadataDisk(List<ActionReturnValue> returnValues) {
         for (ActionReturnValue returnValue : returnValues) {
             DiskImage disk = returnValue.getActionReturnValue();
-            if (disk.getSize() == MemoryUtils.METADATA_SIZE_IN_BYTES) {
+            if (disk.getContentType() == DiskContentType.MEMORY_METADATA_VOLUME) {
                 return disk;
             }
         }
