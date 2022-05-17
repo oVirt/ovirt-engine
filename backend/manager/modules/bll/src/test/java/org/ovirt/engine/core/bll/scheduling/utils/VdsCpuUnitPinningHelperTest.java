@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +78,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(1);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), Collections.singletonList(vm), host.getId(), cpuTopology);
         assertTrue(result);
     }
 
@@ -96,7 +97,7 @@ public class VdsCpuUnitPinningHelperTest {
         Map<Guid, List<VdsCpuUnit>> vmToPendingCpus = new HashMap<>();
         vmToPendingCpus.put(Guid.Empty, pendingCpus);
         boolean result =
-                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(vmToPendingCpus, vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(vmToPendingCpus, Collections.singletonList(vm), host.getId(), cpuTopology);
 
         assertTrue(result);
     }
@@ -110,7 +111,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(1);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), Collections.singletonList(vm), host.getId(), cpuTopology);
         assertTrue(result);
     }
 
@@ -123,7 +124,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(1);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), Collections.singletonList(vm), host.getId(), cpuTopology);
         assertTrue(result);
     }
 
@@ -136,7 +137,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(2);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), Collections.singletonList(vm), host.getId(), cpuTopology);
         assertTrue(result);
     }
 
@@ -149,7 +150,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(2);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), Collections.singletonList(vm), host.getId(), cpuTopology);
         assertFalse(result);
     }
 
@@ -162,7 +163,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(2);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), Collections.singletonList(vm), host.getId(), cpuTopology);
         assertTrue(result);
     }
 
@@ -175,7 +176,7 @@ public class VdsCpuUnitPinningHelperTest {
         vm.setThreadsPerCpu(2);
         vm.setCpuPinningPolicy(CpuPinningPolicy.DEDICATED);
         boolean result =
-                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), vm, host.getId());
+                vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(new HashMap<>(), Collections.singletonList(vm), host.getId(), cpuTopology);
         assertFalse(result);
     }
 

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,79 +59,102 @@ public class CpuPinningPolicyUnit extends PolicyUnitImpl {
     @Override
     public List<VDS> filter(final SchedulingContext context,
             final List<VDS> hosts,
-            final VM vm,
+            final List<VM> vmGroup,
             final PerHostMessages messages) {
-        final String cpuPinning = vm.getVmPinning();
 
         // return all hosts when no CPU pinning is requested
-        if (vm.getCpuPinningPolicy() == CpuPinningPolicy.NONE) {
+        if (vmGroup.stream().allMatch(vm -> vm.getCpuPinningPolicy() == CpuPinningPolicy.NONE)) {
             return hosts;
         }
 
         // only add hosts as candidates which have all required CPUs up and running
         final List<VDS> candidates = new ArrayList<>();
 
-        if (vm.getCpuPinningPolicy().isExclusive()) {
-            for (final VDS host : hosts) {
-                if (host.getCpuTopology() == null || host.getCpuTopology().isEmpty()) {
+        List<VM> exclusiveVms = vmGroup.stream()
+                .filter(vm -> vm.getCpuPinningPolicy().isExclusive())
+                .collect(Collectors.toList());
+        List<VM> sharedVms = vmGroup.stream()
+                // For 'Resize and Pin NUMA', on RunVm, we get here before determining the CPU pinning for the VM
+                // so the dynamic CPU pinning is not set and hosts should not be filtered by the logic below.
+                .filter(vm -> !vm.getCpuPinningPolicy().isExclusive() && !StringUtils.isEmpty(vm.getVmPinning()))
+                .collect(Collectors.toList());
+
+        for (final VDS host : hosts) {
+            var cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
+            Map<Guid, List<VdsCpuUnit>> vmToPendingDedicatedCpuPinnings =
+                    PendingCpuPinning.collectForHost(getPendingResourceManager(), host.getId());
+            vdsCpuUnitPinningHelper.previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingDedicatedCpuPinnings);
+            allocateSharedVms(cpuTopology, sharedVms);
+
+            if (!exclusiveVms.isEmpty()) {
+                if (cpuTopology == null || cpuTopology.isEmpty()) {
                     // means CPU topology not reported for this host, lets ignore it
                     messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__NO_HOST_CPU_DATA.name());
                     log.debug("Host {} does not have the cpu topology data.", host.getId());
                     continue;
                 }
-
-                Map<Guid, List<VdsCpuUnit>> vmToPendingDedicatedCpuPinnings =
-                        PendingCpuPinning.collectForHost(getPendingResourceManager(), host.getId());
                 boolean isDedicatedCpuPinningPossibleAtHost =
                         vdsCpuUnitPinningHelper.isExclusiveCpuPinningPossibleOnHost(
                                 vmToPendingDedicatedCpuPinnings,
-                                vm,
-                                host.getId());
-                if (isDedicatedCpuPinningPossibleAtHost) {
-                    candidates.add(host);
-                } else {
+                                vmGroup,
+                                host.getId(),
+                                cpuTopology);
+                if (!isDedicatedCpuPinningPossibleAtHost) {
                     messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__VM_PINNING_DEDICATED_NOT_FIT.name());
                     log.debug("Host {} does not satisfy CPU pinning constraints, cannot match virtual topology " +
                             "with available CPUs.", host.getId());
+                    continue;
                 }
             }
-            return candidates;
-        }
-        // shared CPUs
-        if (StringUtils.isEmpty(cpuPinning)) {
-            // For 'Resize and Pin NUMA', on RunVm, we get here before determining the CPU pinning for the VM
-            // so the dynamic CPU pinning is not set and hosts should not be filtered by the logic below.
-            return hosts;
-        }
-        // collect all pinned host cpus and merge them into one set
-        final Set<Integer> pinnedCpus = CpuPinningHelper.getAllPinnedPCpus(cpuPinning);
-        for (final VDS host : hosts) {
-            final Collection<Integer> onlineHostCpus = SlaValidator.getOnlineCpus(host);
-
-            Map<Guid, List<VdsCpuUnit>> vmToPendingDedicatedCpuPinnings =
-                    PendingCpuPinning.collectForHost(getPendingResourceManager(), host.getId());
-            var cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
-            vdsCpuUnitPinningHelper.previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingDedicatedCpuPinnings);
-            final Collection<Integer> dedicatedCpus = cpuTopology.stream().filter(VdsCpuUnit::isExclusive).map(VdsCpuUnit::getCpu).collect(Collectors.toList());
-
-            if (!dedicatedCpus.isEmpty() && vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA && pinnedCpus.isEmpty()) {
+            if (isResizeAndExclusive(cpuTopology, vmGroup, exclusiveVms)) {
                 messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__VM_PINNING_CANT_RESIZE_WITH_DEDICATED.name());
                 log.debug("Host {} does not satisfy CPU pinning constraints, cannot match virtual topology " +
                         "with available CPUs due to exclusively pinned cpus on the host .", host.getId());
                 continue;
             }
+
+            // shared CPUs
+            Set<Integer> pinnedCpus = new LinkedHashSet<>();
+            // collect all pinned host cpus and merge them into one set
+            sharedVms.forEach(vm -> pinnedCpus.addAll(CpuPinningHelper.getAllPinnedPCpus(vm.getCpuPinning())));
+            final Collection<Integer> onlineHostCpus = SlaValidator.getOnlineCpus(host);
+            final Collection<Integer> dedicatedCpus = getExclusivelyPinnedCpus(cpuTopology);
+
             final Collection availableCpus = CollectionUtils.subtract(onlineHostCpus, dedicatedCpus);
             final Collection difference = CollectionUtils.subtract(pinnedCpus, availableCpus);
-            if (difference.isEmpty()) {
-                candidates.add(host);
-            } else {
+            if (!difference.isEmpty()) {
                 messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__VM_PINNING_PCPU_DOES_NOT_EXIST.name());
                 messages.addMessage(host.getId(), String.format("$missingCores %1$s", StringUtils.join(difference, ", ")));
                 log.debug("Host {} does not satisfy the cpu pinning constraints because of missing, exclusively pinned or offline cpus {}.",
                         host.getId(),
                         StringUtils.join(difference, ", "));
+                continue;
             }
+            candidates.add(host);
         }
         return candidates;
+    }
+
+    private Collection<Integer> getExclusivelyPinnedCpus(List<VdsCpuUnit> cpuTopology) {
+        return cpuTopology.stream()
+                .filter(VdsCpuUnit::isExclusive)
+                .map(VdsCpuUnit::getCpu)
+                .collect(Collectors.toList());
+    }
+
+    private void allocateSharedVms(List<VdsCpuUnit> cpuTopology, List<VM> sharedVms) {
+        sharedVms.forEach(vm -> vdsCpuUnitPinningHelper.allocateManualCpus(cpuTopology, vm));
+    }
+
+    private boolean isResizeAndExclusive(List<VdsCpuUnit> cpuTopology, List<VM> vmGroup, List<VM> exclusiveVms) {
+        boolean isAnyVmResizeAndPin = vmGroup.stream()
+                .anyMatch(vm -> vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA);
+        if (!exclusiveVms.isEmpty() && isAnyVmResizeAndPin) {
+            return true;
+        }
+        if (!getExclusivelyPinnedCpus(cpuTopology).isEmpty() && isAnyVmResizeAndPin) {
+            return true;
+        }
+        return false;
     }
 }
