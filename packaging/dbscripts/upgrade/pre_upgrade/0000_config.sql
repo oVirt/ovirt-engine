@@ -824,6 +824,7 @@ select fn_db_add_config_value_for_versions_up_to('BiosTypeSupported', 'true', '4
 select fn_db_add_config_value('LiveSnapshotTimeoutInMinutes', '30', 'general');
 select fn_db_add_config_value('LiveSnapshotAllowInconsistent', 'true', 'general');
 select fn_db_add_config_value('LiveSnapshotFreezeTimeout', '8', 'general');
+select fn_db_add_config_value('VolumeUtilizationChunkInMB', '2560', 'general'); -- Cluster level 4.7 and above.
 
 -- VirtIO-Win drivers path
 select fn_db_add_config_value('VirtioWinIsoPath','/usr/share/virtio-win','general');
