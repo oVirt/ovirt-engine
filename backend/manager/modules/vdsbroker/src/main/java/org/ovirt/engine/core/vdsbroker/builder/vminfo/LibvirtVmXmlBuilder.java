@@ -289,6 +289,7 @@ public class LibvirtVmXmlBuilder {
         }
         writeCpu(numaEnabled || vm.isHostedEngine() && !vmNumaNodesSupplier.get().isEmpty());
         writeCpuTune();
+        writeMemtune();
         writeQemuCapabilities();
         writeDevices();
         writePowerManagement();
@@ -1559,6 +1560,17 @@ public class LibvirtVmXmlBuilder {
             if (vmInfoBuildUtils.needsIommuCachingMode(vm, hostDevicesSupplier, vmDevicesSupplier)) {
                 writer.writeAttributeString("caching_mode", "on");
             }
+            writer.writeEndElement();
+            writer.writeEndElement();
+        }
+    }
+
+    private void writeMemtune() {
+        if (VmInfoBuildUtils.needsMemtune(vm)) {
+            writer.writeStartElement("memtune");
+            writer.writeStartElement("hard_limit");
+            writer.writeAttributeString("unit", "TiB");
+            writer.writeRaw("1024");
             writer.writeEndElement();
             writer.writeEndElement();
         }
