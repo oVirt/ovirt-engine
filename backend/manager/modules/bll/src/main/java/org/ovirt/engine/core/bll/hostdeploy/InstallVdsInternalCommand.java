@@ -277,7 +277,9 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             }
             Cluster hostCluster = clusterDao.get(getClusterId());
             boolean isGlusterServiceSupported = hostCluster.supportsGlusterService();
-            String tunedProfile = isGlusterServiceSupported ? hostCluster.getGlusterTunedProfile() : null;
+            boolean isVirtEnabled = hostCluster.supportsVirtService();
+            String tunedProfile = isVirtEnabled && !isGlusterServiceSupported ? "virtual-host"
+                    : isGlusterServiceSupported ? hostCluster.getGlusterTunedProfile() : null;
             String clusterVersion = hostCluster.getCompatibilityVersion().getValue();
             AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                     .hosts(vds)
@@ -286,7 +288,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     .variable("host_deploy_cluster_switch_type",
                             hostCluster.getRequiredSwitchTypeForCluster().getOptionValue())
                     .variable("host_deploy_gluster_enabled", hostCluster.supportsGlusterService())
-                    .variable("host_deploy_virt_enabled", hostCluster.supportsVirtService())
+                    .variable("host_deploy_virt_enabled", isVirtEnabled)
                     .variable("host_deploy_vdsm_port", vds.getPort())
                     .variable("host_deploy_override_firewall", getParameters().getOverrideFirewall())
                     .variable("host_deploy_firewall_type", hostCluster.getFirewallType().name())
