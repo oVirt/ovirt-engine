@@ -1,10 +1,4 @@
 ---
-- name: Set profile
-  set_fact:
-    profile: >
-      "{{ 'virtual-host' if (host_deploy_tuned_profile is none and host_deploy_virt_enabled|bool)
-      else host_deploy_tuned_profile }}"
-
 - name: Get lastest tune package
   yum:
     name: tuned
@@ -16,7 +10,7 @@
     state: started
 
 - name: Set tune profile
-  shell: "tuned-adm profile {{ profile }}"
+  shell: "tuned-adm profile {{ host_deploy_tuned_profile }}"
   register: tune_profile_set
   tags:
     - skip_ansible_lint # E305

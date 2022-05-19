@@ -277,7 +277,11 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             }
             Cluster hostCluster = clusterDao.get(getClusterId());
             boolean isGlusterServiceSupported = hostCluster.supportsGlusterService();
-            String tunedProfile = isGlusterServiceSupported ? hostCluster.getGlusterTunedProfile() : null;
+            String tunedProfile = "virtual-host";
+            if (hostCluster.supportsGlusterService() && StringUtils.isNotBlank(hostCluster.getGlusterTunedProfile())) {
+                // custom tuned profile is specified for gluster cluster
+                tunedProfile = hostCluster.getGlusterTunedProfile();
+            }
             String clusterVersion = hostCluster.getCompatibilityVersion().getValue();
             AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
                     .hosts(vds)
