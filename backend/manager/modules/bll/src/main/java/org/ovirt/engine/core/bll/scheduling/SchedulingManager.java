@@ -67,6 +67,7 @@ import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.comparators.VmsCpuPinningPolicyComparator;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -432,7 +433,6 @@ public class SchedulingManager implements BackendService {
                         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, NumaNodeMemoryConsumption::merge));
                 updateHostNumaNodes(host, numaConsumption);
 
-
                 for (VM vm : vmsNotOnHost) {
                     vmHandler.updateCpuAndNumaPinning(vm, host.getId());
                     vmHandler.setCpuPinningByNumaPinning(vm, host.getId());
@@ -701,6 +701,7 @@ public class SchedulingManager implements BackendService {
         if (vms.size() < 2) {
             return Collections.singletonList(vms);
         }
+        vms.sort(new VmsCpuPinningPolicyComparator().reversed());
 
         if (context.isDoNotGroupVms() || context.isIgnoreHardVmToVmAffinity()) {
             return vms.stream()
