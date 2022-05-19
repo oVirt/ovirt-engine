@@ -168,7 +168,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
      */
     public final List<String> resolveMessages(List<String> translatedMessages) {
         List<String> translatedErrors = new ArrayList<>();
-        Map<String, String> variables = new HashMap<>();
+        Map<String, List<String>> variables = new HashMap<>();
         for (String currentMessage : translatedMessages) {
             if (isDynamicVariable(currentMessage)) {
                 addVariable(currentMessage, variables);
@@ -180,19 +180,39 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
          * Place to global variable adding
          */
         List<String> returnValue = new ArrayList<>();
+        int i = 0;
         for (String error : translatedErrors) {
-            returnValue.add(resolveMessage(error, variables));
+            returnValue.add(resolveMessage(error, chooseVariable(variables, i)));
+            i++;
         }
         return returnValue;
     }
 
-    private void addVariable(String variable, Map<String, String> variables) {
+    private Map<String, String> chooseVariable(Map<String, List<String>> variables, int index) {
+        Map<String, String> newVariables = new HashMap<>();
+        for(Map.Entry<String, List<String>> entry:  variables.entrySet()) {
+            if (entry.getValue().size() > 1) {
+                newVariables.put(entry.getKey(), entry.getValue().get(index));
+            } else {
+                newVariables.put(entry.getKey(), entry.getValue().get(0));
+            }
+        }
+        return newVariables;
+    }
+
+    private void addVariable(String variable, Map<String, List<String>> variables) {
         int firstSpace = variable.indexOf(' ');
         if (firstSpace != -1 && firstSpace < variable.length()) {
             String key = variable.substring(1, firstSpace);
             String value = variable.substring(firstSpace + 1);
+            List<String> listValue = new ArrayList<>();
+            listValue.add(value);
             if (!variables.containsKey(key)) {
-                variables.put(key, value);
+                variables.put(key, listValue);
+            } else {
+                List<String> currentListValue = variables.get(key);
+                currentListValue.add(value);
+                variables.put(key, currentListValue);
             }
         }
     }
