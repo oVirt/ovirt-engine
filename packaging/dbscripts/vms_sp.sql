@@ -576,28 +576,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION UpdateConsoleUserWithOptimisticLocking (
-    v_vm_guid UUID,
-    v_console_user_id UUID,
-    v_guest_cur_user_name TEXT,
-    v_console_cur_user_name VARCHAR(255),
-    OUT v_updated BOOLEAN
-    ) AS $PROCEDURE$
-BEGIN
-    UPDATE vm_dynamic
-    SET console_user_id = v_console_user_id,
-        guest_cur_user_name = v_guest_cur_user_name,
-        console_cur_user_name = v_console_cur_user_name
-    WHERE vm_guid = v_vm_guid
-        AND (
-            console_user_id = v_console_user_id
-            OR console_user_id IS NULL
-            );
-
-    v_updated := FOUND;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION UpdateVmDynamicStatus (
     v_vm_guid UUID,
     v_status INT
