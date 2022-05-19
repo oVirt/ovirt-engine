@@ -43,4 +43,38 @@ public enum CpuPinningPolicy {
     public boolean isExclusive() {
         return this == DEDICATED || this == ISOLATE_THREADS;
     }
+
+    public static int compare(CpuPinningPolicy policy, CpuPinningPolicy other) {
+        if (policy == other) {
+            return 0;
+        }
+        if (policy == CpuPinningPolicy.NONE) {
+            return -1;
+        }
+        if (other == CpuPinningPolicy.NONE) {
+            return 1;
+        }
+        // both not none
+        if (policy == CpuPinningPolicy.MANUAL) {
+            return 1;
+        }
+        if (other == CpuPinningPolicy.MANUAL) {
+            return -1;
+        }
+        // not none, not manual
+        if (policy == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
+            // automatically vm2 is exclusive
+            return 1;
+        }
+        if (other == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
+            // automatically vm1 is exclusive
+            return -1;
+        }
+        if (policy == CpuPinningPolicy.ISOLATE_THREADS) {
+            // automatically vm2 is dedicated
+            return 1;
+        }
+        // vm1 is dedicated and vm2 is isolate-threads
+        return -1;
+    }
 }
