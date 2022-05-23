@@ -966,6 +966,11 @@ select fn_db_add_config_value('InstanceId', uuid_generate_v1()::varchar, 'genera
 -- Number of MAC address left in pool to invoke audit warning
 select fn_db_add_config_value('RemainingMacsInPoolWarningThreshold', '10', 'general');
 
+-- Number of times that the Notification Service was rebooted, this is needed for
+-- SNMP V3 security requirements and should not be modified manually.
+
+select fn_db_add_config_value('NotificationServiceBoots', '0', 'general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

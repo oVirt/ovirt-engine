@@ -86,6 +86,12 @@ public class NotificationService implements Runnable {
                         TimeUnit.SECONDS
                 )
         );
+        try {
+            int boots = eventsManager.getNotificationServiceBoots();
+            eventsManager.setNotificationServiceBoots(++boots);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
