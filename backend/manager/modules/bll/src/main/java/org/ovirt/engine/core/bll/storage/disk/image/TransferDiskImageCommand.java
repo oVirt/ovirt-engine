@@ -436,7 +436,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             // StartVmBackup should handle locks
             return locks;
         }
-        if (!Guid.isNullOrEmpty(getParameters().getImageId())) {
+        if (!Guid.isNullOrEmpty(getParameters().getImageId()) && getDiskImage() != null) {
             List<VM> vms = vmDao.getVmsListForDisk(getDiskImage().getId(), true);
             vms.forEach(vm -> locks.put(vm.getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingTransferredLockMessage())));
@@ -446,12 +446,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
     }
 
     private String getDiskIsBeingTransferredLockMessage() {
-        String diskName = "";
-        if (getDiskImage() != null) {
-            diskName = getDiskImage().getDiskAlias() != null ? getDiskImage().getDiskAlias() : "";
-        }
         return new LockMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_BEING_TRANSFERRED)
-                .withOptional("DiskName", diskName)
+                .withOptional("DiskName", getDiskImage().getDiskAlias() != null ? getDiskImage().getDiskAlias() : "")
                 .toString();
     }
 
