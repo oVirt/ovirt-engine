@@ -45,8 +45,10 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -1039,6 +1041,19 @@ public class VmHandler implements BackendService {
         List<VmNumaNode> nodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
 
         vm.setvNumaNodeList(nodes);
+    }
+
+    public void addVmNumaNodes(VM vm) {
+        List<VmNumaNode> numaNodes = vm.getvNumaNodeList();
+        if (numaNodes.isEmpty()) {
+            return;
+        }
+        VmNumaNodeOperationParameters params = new VmNumaNodeOperationParameters(vm, numaNodes);
+
+        ActionReturnValue returnValueBase = backend.runInternalAction(ActionType.AddVmNumaNodes, params);
+        if (!returnValueBase.getSucceeded()) {
+            auditLogDirector.log(new AuditLogableImpl(), AuditLogType.NUMA_ADD_VM_NUMA_NODE_FAILED);
+        }
     }
 
     public static List<PermissionSubject> getPermissionsNeededToChangeCluster(Guid vmId, Guid clusterId) {

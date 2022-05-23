@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
@@ -60,6 +63,18 @@ public class OvfOvaVmWriter extends OvfOvaWriter {
         if (vm.getCpuPinning() != null) {
             _writer.writeElement(CPU_PINNING, vm.getCpuPinning());
         }
+        writeNumaNodeList();
+    }
+
+    @Override
+    protected void writeNumaNodeList() {
+        List<VmNumaNode> vmNumaNodes = vm.getvNumaNodeList();
+
+        if (vmNumaNodes == null || vmNumaNodes.isEmpty()) {
+            return;
+        }
+        _writer.writeStartElement("NumaNodeSection");
+        super.writeNumaNodeList();
     }
 
     @Override

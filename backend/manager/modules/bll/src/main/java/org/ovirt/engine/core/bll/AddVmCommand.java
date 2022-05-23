@@ -67,7 +67,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.SealVmParameters;
-import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -93,7 +92,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
-import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -1295,16 +1293,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private void addVmNumaNodes() {
-        List<VmNumaNode> numaNodes = getParameters().getVm().getvNumaNodeList();
-        if (numaNodes.isEmpty()) {
-            return;
-        }
-        VmNumaNodeOperationParameters params = new VmNumaNodeOperationParameters(getParameters().getVm(), numaNodes);
-
-        ActionReturnValue returnValueBase = backend.runInternalAction(ActionType.AddVmNumaNodes, params);
-        if (!returnValueBase.getSucceeded()) {
-            auditLogDirector.log(this, AuditLogType.NUMA_ADD_VM_NUMA_NODE_FAILED);
-        }
+        vmHandler.addVmNumaNodes(getParameters().getVm());
     }
 
     private void addVmInit() {

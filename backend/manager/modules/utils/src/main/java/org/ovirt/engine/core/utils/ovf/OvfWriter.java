@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -763,5 +764,40 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     protected int convertBytesToGigabyte(long bytes) {
         return (int) Math.ceil((double) bytes / BYTES_IN_GB);
+    }
+
+    /**
+     * Write the numa nodes of the VM.<br>
+     * If no numa nodes were set to be written, this section will not be written.
+     */
+    protected void writeNumaNodeList() {
+        List<VmNumaNode> vmNumaNodes = vmBase.getvNumaNodeList();
+
+        if (vmNumaNodes == null || vmNumaNodes.isEmpty()) {
+            return;
+        }
+
+        for (VmNumaNode vmNumaNode : vmNumaNodes) {
+            _writer.writeStartElement(NUMA_NODE);
+            if (vmNumaNode.getId() != null) {
+                _writer.writeElement("id", String.valueOf(vmNumaNode.getId()));
+            }
+            _writer.writeElement(NUMA_INDEX, String.valueOf(vmNumaNode.getIndex()));
+            writeIntegerList(NUMA_CPU_ID_LIST, vmNumaNode.getCpuIds());
+            writeIntegerList(NUMA_VDS_NUMA_LIST, vmNumaNode.getVdsNumaNodeList());
+            _writer.writeElement(NUMA_TOTAL_MEMORY, String.valueOf(vmNumaNode.getMemTotal()));
+            _writer.writeElement(NUMA_TUNE_MODE, vmNumaNode.getNumaTuneMode().getValue());
+            _writer.writeEndElement();
+        }
+        _writer.writeEndElement();
+    }
+
+    private void writeIntegerList(String label, List<Integer> list) {
+        if (list != null && !list.isEmpty()) {
+            String writeList = list.stream().map(i -> i.toString()).collect(Collectors.joining(","));
+            _writer.writeElement(label, writeList);
+        } else {
+            _writer.writeElement(label, "");
+        }
     }
 }

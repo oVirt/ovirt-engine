@@ -323,6 +323,7 @@ public class SnapshotsManager {
         if (vm.getStaticData().getVmInit() == null) {
             vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
         }
+        vmHandler.updateNumaNodesFromDb(vm);
         return ovfManager.exportVm(vm,
                 fullEntityOvfData,
                 clusterUtils.getCompatibilityVersion(vm));

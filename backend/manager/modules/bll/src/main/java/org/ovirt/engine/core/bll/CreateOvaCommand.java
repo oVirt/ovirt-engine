@@ -114,6 +114,7 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         default:
             VM vm = vmDao.get(getParameters().getEntityId());
             vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
+            vmHandler.updateNumaNodesFromDb(vm);
             vm.setVmExternalData(getVmExternalData());
             interfaces = vmNetworkInterfaceDao.getAllForVm(vm.getId());
             vm.setInterfaces(interfaces);

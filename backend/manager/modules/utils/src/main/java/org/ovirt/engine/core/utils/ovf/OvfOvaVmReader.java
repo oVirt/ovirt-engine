@@ -25,6 +25,10 @@ public class OvfOvaVmReader extends OvfOvaReader {
         if (!StringUtils.isBlank(vm.getCpuPinning())) {
             vm.setCpuPinningPolicy(CpuPinningPolicy.MANUAL);
         }
+        XmlNode node = selectSingleNode(content, "NumaNodeSection");
+        if (node != null) {
+            readNumaNodeListSection(node, true);
+        }
     }
 
     @Override
