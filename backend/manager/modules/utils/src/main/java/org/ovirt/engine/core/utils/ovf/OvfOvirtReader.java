@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -100,7 +99,7 @@ public abstract class OvfOvirtReader extends OvfReader {
 
             node = getNode(list, "xsi:type", "ovf:NumaNodeSection_Type");
             if (node != null) {
-                readNumaNodeListSection(node);
+                readNumaNodeListSection(node, false);
             }
         }
 
@@ -111,22 +110,6 @@ public abstract class OvfOvirtReader extends OvfReader {
         super.readGeneralData(content);
         consumeReadProperty(content, CLUSTER_NAME, val -> fullEntityOvfData.setClusterName(val));
     }
-
-    protected List<Integer> readIntegerList(XmlNode node, String label) {
-        List<Integer> integerList = new ArrayList<>();
-        XmlNode xmlNode = selectSingleNode(node, label, _xmlNS);
-        if (xmlNode != null) {
-            String valueList = xmlNode.innerText;
-            if (valueList != null && !valueList.isEmpty()) {
-                String[] values = valueList.split(",");
-                for (String value : values) {
-                    integerList.add(Integer.valueOf(value));
-                }
-            }
-        }
-        return integerList;
-    }
-
 
     @Override
     protected void readLunDisk(XmlNode node, LunDisk lun) {

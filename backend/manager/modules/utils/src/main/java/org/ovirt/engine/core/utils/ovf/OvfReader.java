@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmResumeBehavior;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -967,6 +970,44 @@ public abstract class OvfReader implements IOvfBuilder {
             lunDisk.getDiskVmElements().forEach(dve -> dve.setId(new VmDeviceId(lunDisk.getId(), vmBase.getId())));
             lunDisk.setDiskVmElements(lunDisk.getDiskVmElements());
         }
+    }
+
+    protected void readNumaNodeListSection(XmlNode section, boolean ova) {
+        XmlNodeList list = selectNodes(section, NUMA_NODE);
+        List<VmNumaNode> vmNumaNodes = new ArrayList<>();
+
+        for (XmlNode node : list) {
+            VmNumaNode vmNumaNode = new VmNumaNode();
+            XmlNode id = selectSingleNode(node, "id", _xmlNS);
+            if (id != null) {
+                vmNumaNode.setId(new Guid(id.innerText));
+            }
+            vmNumaNode.setIndex(Integer.valueOf(selectSingleNode(node, NUMA_INDEX, _xmlNS).innerText));
+            vmNumaNode.setCpuIds(readIntegerList(node, NUMA_CPU_ID_LIST));
+            vmNumaNode.setVdsNumaNodeList(ova ? new ArrayList<>() : readIntegerList(node, NUMA_VDS_NUMA_LIST));
+            vmNumaNode.setMemTotal(Long.valueOf(selectSingleNode(node, NUMA_TOTAL_MEMORY, _xmlNS).innerText));
+            XmlNode numaTuneMode = selectSingleNode(node, NUMA_TUNE_MODE, _xmlNS);
+            if (numaTuneMode != null) {
+                vmNumaNode.setNumaTuneMode(NumaTuneMode.forValue(numaTuneMode.innerText));
+            }
+            vmNumaNodes.add(vmNumaNode);
+        }
+        vmBase.setvNumaNodeList(vmNumaNodes);
+    }
+
+    private List<Integer> readIntegerList(XmlNode node, String label) {
+        List<Integer> integerList = new ArrayList<>();
+        XmlNode xmlNode = selectSingleNode(node, label, _xmlNS);
+        if (xmlNode != null) {
+            String valueList = xmlNode.innerText;
+            if (valueList != null && !valueList.isEmpty()) {
+                String[] values = valueList.split(",");
+                for (String value : values) {
+                    integerList.add(Integer.valueOf(value));
+                }
+            }
+        }
+        return integerList;
     }
 
     private static Map<String, Object> getMapNode(XmlNode node) {

@@ -101,7 +101,6 @@ public interface OvfProperties {
     String CPU_PINNING = "CpuPinning";
     String MULTI_QUEUES_ENABLED = "MultiQueuesEnabled";
     String VIRTIO_SCSI_MULTI_QUEUES_ENABLED = "VirtioScsiMultiQueuesEnabled";
-    String NUMA_TUNE_MODE = "NumaTuneMode";
     String BALLOON_ENABLED = "BalloonEnabled";
     String CPU_PINNING_POLICY = "CpuPinningPolicy";
 
@@ -128,4 +127,12 @@ public interface OvfProperties {
     String VM_EXTERNAL_DATA_ITEM = "VmExternalDataItem";
     String VM_EXTERNAL_DATA_KIND = "kind";
     String VM_EXTERNAL_DATA_CONTENT = "VmExternalDataContent";
+
+    // NUMA
+    String NUMA_NODE = "NumaNode";
+    String NUMA_INDEX = "Index";
+    String NUMA_CPU_ID_LIST = "cpuIdList";
+    String NUMA_VDS_NUMA_LIST = "vdsNumaNodeList";
+    String NUMA_TOTAL_MEMORY = "MemTotal";
+    String NUMA_TUNE_MODE = "NumaTuneMode";
 }

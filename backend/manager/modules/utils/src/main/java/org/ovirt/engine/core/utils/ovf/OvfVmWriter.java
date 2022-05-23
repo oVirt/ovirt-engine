@@ -119,7 +119,8 @@ public class OvfVmWriter extends OvfOvirtWriter {
      * Write the numa nodes of the VM.<br>
      * If no numa nodes were set to be written, this section will not be written.
      */
-    private void writeNumaNodeList() {
+    @Override
+    protected void writeNumaNodeList() {
         List<VmNumaNode> vmNumaNodes = vm.getvNumaNodeList();
 
         if (vmNumaNodes == null || vmNumaNodes.isEmpty()) {
@@ -127,20 +128,7 @@ public class OvfVmWriter extends OvfOvirtWriter {
         }
         _writer.writeStartElement("Section");
         _writer.writeAttributeString(XSI_URI, "type", "ovf:NumaNodeSection_Type");
-
-        for (VmNumaNode vmNumaNode : vmNumaNodes) {
-            _writer.writeStartElement("NumaNode");
-            if (vmNumaNode.getId() != null) {
-                _writer.writeElement("id", String.valueOf(vmNumaNode.getId()));
-            }
-            _writer.writeElement("Index", String.valueOf(vmNumaNode.getIndex()));
-            writeIntegerList("cpuIdList", vmNumaNode.getCpuIds());
-            writeIntegerList("vdsNumaNodeList", vmNumaNode.getVdsNumaNodeList());
-            _writer.writeElement("MemTotal", String.valueOf(vmNumaNode.getMemTotal()));
-            _writer.writeElement(NUMA_TUNE_MODE, vmNumaNode.getNumaTuneMode().getValue());
-            _writer.writeEndElement();
-        }
-        _writer.writeEndElement();
+        super.writeNumaNodeList();
     }
 
     /**

@@ -568,6 +568,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             addVmStatistics();
             addVmInterfaces();
             addVmPermission();
+            addVmNuma();
             getCompensationContext().stateChanged();
             return null;
         });
@@ -596,6 +597,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
                 ActionGroup.MANIPULATE_PERMISSIONS,
                 getVmId(),
                 VdcObjectType.VM);
+    }
+
+    private void addVmNuma() {
+        vmHandler.addVmNumaNodes(getVm());
     }
 
     protected void addVmStatic() {
