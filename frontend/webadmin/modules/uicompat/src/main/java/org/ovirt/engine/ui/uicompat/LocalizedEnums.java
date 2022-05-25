@@ -1487,6 +1487,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String DisplayType___vga();
 
+    String DisplayType___bochs();
+
     String DisplayType___none();
 
     String GraphicsType___SPICE();
