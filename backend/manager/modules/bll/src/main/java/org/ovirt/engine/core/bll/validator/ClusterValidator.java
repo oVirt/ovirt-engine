@@ -468,6 +468,17 @@ public class ClusterValidator {
         return FeatureSupported.isMigrationSupported(arch, cluster.getCompatibilityVersion());
     }
 
+    public ValidationResult parallelMigrationsNonDefault() {
+        Cluster eCluster = newCluster != null ? newCluster : cluster;
+        return ValidationResult.failWith(EngineMessage.VALIDATION_PARALLEL_MIGRATIONS_NO_DEFAULT)
+                .when(eCluster.getParallelMigrations() == null);
+    }
+
+    public ValidationResult parallelMigrationsInRange() {
+        Cluster eCluster = newCluster != null ? newCluster : cluster;
+        return VmValidator.isParallelMigrationsValid(eCluster.getParallelMigrations());
+    }
+
     public ValidationResult nonDefaultBiosType() {
         Cluster eCluster = newCluster != null ? newCluster : cluster;
         ArchitectureType architecture = getArchitecture();

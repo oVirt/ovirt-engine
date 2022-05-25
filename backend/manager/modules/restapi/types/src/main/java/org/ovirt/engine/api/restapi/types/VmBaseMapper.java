@@ -362,7 +362,7 @@ public class VmBaseMapper {
         model.getHighAvailability().setPriority(entity.getPriority());
 
         model.setMigrationDowntime(mapNullToMinusOne(entity.getMigrationDowntime()));
-        model.setMigration(MigrationOptionsMapper.map(entity, null));
+        model.setMigration(MigrationOptionsMapper.map(entity, null, false));
 
         if (entity.getCustomEmulatedMachine() != null) {
             model.setCustomEmulatedMachine(entity.getCustomEmulatedMachine());

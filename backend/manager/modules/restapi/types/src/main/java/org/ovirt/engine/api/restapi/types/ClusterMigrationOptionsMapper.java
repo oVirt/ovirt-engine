@@ -10,7 +10,7 @@ public class ClusterMigrationOptionsMapper {
 
     @Mapping(from = Cluster.class, to = MigrationOptions.class)
     public static MigrationOptions map(Cluster entity, MigrationOptions template) {
-        template = MigrationOptionsMapper.map(entity, template);
+        template = MigrationOptionsMapper.map(entity, template, true);
 
         MigrationBandwidth bandwidth = template.getBandwidth();
         if (bandwidth == null) {
