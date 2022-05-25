@@ -730,6 +730,8 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
                 && validate(clusterValidator.disableGluster())
                 && validate(clusterValidator.setTrustedAttestation())
                 && validate(clusterValidator.migrationOnError(getArchitecture()))
+                && validate(clusterValidator.parallelMigrationsNonDefault())
+                && validate(clusterValidator.parallelMigrationsInRange())
                 && validate(clusterValidator.nonDefaultBiosType())
                 && validate(clusterValidator.implicitAffinityGroup())
                 && validateClusterPolicy(oldCluster)

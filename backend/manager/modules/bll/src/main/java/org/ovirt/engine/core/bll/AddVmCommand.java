@@ -841,6 +841,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 getEffectiveCompatibilityVersion()))) {
             return false;
         }
+
+        if (!validate(VmValidator.isParallelMigrationsValid(vmFromParams.getParallelMigrations()))) {
+            return false;
+        }
+
         return true;
     }
 

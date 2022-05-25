@@ -166,6 +166,8 @@ public class AddClusterCommand<T extends ClusterOperationParameters>
                 && validate(validator.mixedClusterServicesSupported())
                 && validate(validator.attestationServerConfigured())
                 && validate(validator.migrationSupported(getArchitecture()))
+                && validate(validator.parallelMigrationsNonDefault())
+                && validate(validator.parallelMigrationsInRange())
                 && validate(validator.rngSourcesAllowed())
                 && validateClusterPolicy(null)
                 && validateManagementNetwork()

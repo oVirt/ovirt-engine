@@ -3,19 +3,42 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.InheritableBoolean;
 import org.ovirt.engine.api.model.MigrationOptions;
 import org.ovirt.engine.api.model.MigrationPolicy;
+import org.ovirt.engine.api.model.ParallelMigrationsPolicy;
 import org.ovirt.engine.core.common.businessentities.HasMigrationOptions;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MigrationOptionsMapper {
 
     @Mapping(from = HasMigrationOptions.class, to = MigrationOptions.class)
-    public static MigrationOptions map(HasMigrationOptions entity, MigrationOptions template) {
+    public static MigrationOptions map(HasMigrationOptions entity, MigrationOptions template, boolean isCluster) {
         if (template == null) {
             template = new MigrationOptions();
         }
         template.setAutoConverge(mapToInheritableBoolean(entity.getAutoConverge()));
         template.setCompressed(mapToInheritableBoolean(entity.getMigrateCompressed()));
         template.setEncrypted(mapToInheritableBoolean(entity.getMigrateEncrypted()));
+
+        ParallelMigrationsPolicy parallelMigrations = isCluster ? ParallelMigrationsPolicy.DISABLED
+                : ParallelMigrationsPolicy.INHERIT;
+        Integer customParallelMigrations = null;
+        if (entity.getParallelMigrations() != null) {
+            switch (entity.getParallelMigrations().intValue()) {
+            case -2:
+                parallelMigrations = ParallelMigrationsPolicy.AUTO;
+                break;
+            case -1:
+                parallelMigrations = ParallelMigrationsPolicy.AUTO_PARALLEL;
+                break;
+            case 0:
+                parallelMigrations = ParallelMigrationsPolicy.DISABLED;
+                break;
+            default:
+                parallelMigrations = ParallelMigrationsPolicy.CUSTOM;
+                customParallelMigrations = entity.getParallelMigrations();
+            }
+        }
+        template.setParallelMigrationsPolicy(parallelMigrations);
+        template.setCustomParallelMigrations(customParallelMigrations);
 
         if (entity.getMigrationPolicyId() != null) {
             MigrationPolicy policy = template.getPolicy();
@@ -40,6 +63,36 @@ public class MigrationOptionsMapper {
 
         if (model.isSetEncrypted()) {
             entity.setMigrateEncrypted(mapFromInheritableBoolean(model.getEncrypted()));
+        }
+
+        if (model.isSetParallelMigrationsPolicy()) {
+            Integer parallelMigrations = null;
+            final Integer customParallelMigrations = model.getCustomParallelMigrations();
+            switch (model.getParallelMigrationsPolicy()) {
+            case INHERIT:
+                break;
+            case AUTO:
+                parallelMigrations = -2;
+                break;
+            case AUTO_PARALLEL:
+                parallelMigrations = -1;
+                break;
+            case DISABLED:
+                parallelMigrations = 0;
+                break;
+            case CUSTOM:
+                if (customParallelMigrations != null && customParallelMigrations >= 1) {
+                    parallelMigrations = customParallelMigrations;
+                } else {
+                    // Artificial invalid value in case the (invalid) value collides with other
+                    // policy values. This will be caught and reported nicely in the backend.
+                    parallelMigrations = -Integer.MIN_VALUE;
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unhandled parallel migration connections specification");
+            }
+            entity.setParallelMigrations(parallelMigrations);
         }
 
         if (model.isSetPolicy()) {

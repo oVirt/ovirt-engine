@@ -490,4 +490,12 @@ public class VmValidator {
         }
         return ValidationResult.VALID;
     }
+
+    public static ValidationResult isParallelMigrationsValid(Integer parallelMigrations) {
+        if (parallelMigrations != null
+                && (parallelMigrations < -2 || parallelMigrations == 1 || parallelMigrations > 255)) {
+            return new ValidationResult(EngineMessage.VALIDATION_PARALLEL_MIGRATIONS_RANGE);
+        }
+        return ValidationResult.VALID;
+    }
 }
