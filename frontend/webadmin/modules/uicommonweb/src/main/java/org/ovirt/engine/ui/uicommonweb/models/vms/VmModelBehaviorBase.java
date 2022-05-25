@@ -1407,9 +1407,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         if (vmType == VmType.Server) {
             getModel().getIoThreadsEnabled().setEntity(true);
-            if (getModel().getDisplayType().getItems().contains(DisplayType.bochs)) {
-                getModel().getDisplayType().setSelectedItem(DisplayType.bochs);
-            }
         }
 
         // Configuration relevant only for High Performance
@@ -1441,6 +1438,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         } else {
             getModel().getHostCpu().setEntity(false);
         }
+
+        assignDefaultDisplayType();
 
         // Configuration relevant for either High Performance or VMs with pinned configuration
         if (isVmHpOrPinningConfigurationEnabled()) {
@@ -1856,4 +1855,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                  && getModel().getTemplateWithVersion().getSelectedItem() != null
                  && getModel().getTemplateWithVersion().getSelectedItem().isLatest();
      }
+
+    protected void assignDefaultDisplayType() {
+        if (getModel().getVmType() != null && getModel().getVmType().getSelectedItem() == VmType.Server
+                && getModel().getDisplayType().getItems() != null
+                && getModel().getDisplayType().getItems().contains(DisplayType.bochs)) {
+            getModel().getDisplayType().setSelectedItem(DisplayType.bochs);
+        }
+    }
+
 }
