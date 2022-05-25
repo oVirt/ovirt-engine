@@ -36,15 +36,19 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBackup;
+import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
 /** A test case for the {@link RemoveSnapshotCommand} class. */
@@ -68,6 +72,9 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
 
     @Mock
     private SnapshotDao snapshotDao;
+
+    @Mock
+    private VmBackupDao vmBackupDao;
 
     @Spy
     private SnapshotsValidator snapshotValidator;
@@ -116,6 +123,13 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         snapshot.setId(cmd.getParameters().getSnapshotId());
         snapshot.setType(snapshotType);
         doReturn(snapshot).when(snapshotDao).get(snapshot.getId());
+    }
+
+    private void mockBackup() {
+        VmBackup vmBackup = new VmBackup();
+        vmBackup.setPhase(VmBackupPhase.READY);
+        vmBackup.setBackupType(VmBackupType.Hybrid);
+        doReturn(List.of(vmBackup)).when(vmBackupDao).getAllForVm(any());
     }
 
     private void spySdValidator() {
@@ -217,6 +231,24 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         cmd.getVm().setStatus(VMStatus.MigratingTo);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
+    }
+
+    @Test
+    public void testValidateVmInBackup() {
+        mockBackup();
+        cmd.getVm().setStatus(VMStatus.Up);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP);
+    }
+
+    @Test
+    public void testValidateVmInBackupFinalizing() {
+        prepareForVmValidatorTests();
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(), any());
+        mockBackup();
+        cmd.getVm().setStatus(VMStatus.Up);
+        cmd.getParameters().setParentCommand(ActionType.HybridBackup);
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
     /** Mocks a call to {@link RemoveSnapshotCommand#getSourceImages()} and returns its image guid */
