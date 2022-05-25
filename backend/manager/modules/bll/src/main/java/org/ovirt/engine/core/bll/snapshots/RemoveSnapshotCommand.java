@@ -389,6 +389,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             return false;
         }
 
+        if (getParameters().getParentCommand() != ActionType.HybridBackup && isVmDuringBackup()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_BACKUP);
+        }
+
         VmValidator vmValidator = createVmValidator(getVm());
         if (!validate(new StoragePoolValidator(getStoragePool()).existsAndUp()) ||
                 !validateVmSnapshotDisksNotDuringMerge() ||
