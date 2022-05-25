@@ -2307,6 +2307,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 updateResumeBehavior();
             } else if (sender == getBiosType()) {
                 updateDisplayAndGraphics();
+                behavior.assignDefaultDisplayType();
                 updateTpmEnabled();
             } else if (sender == getCpuPinningPolicy()) {
                 cpuPinningPolicyChanged();
@@ -2388,6 +2389,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     private void compatibilityVersionChanged(Object sender, EventArgs args) {
         dataCenterWithClusterSelectedItemChanged(sender, args);
         updateDisplayAndGraphics();
+        behavior.assignDefaultDisplayType();
         behavior.updateNumOfIoThreads();
         initUsbPolicy();
         updateMultiQueues();
