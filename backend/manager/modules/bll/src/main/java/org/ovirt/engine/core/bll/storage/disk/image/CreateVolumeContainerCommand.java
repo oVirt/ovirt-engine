@@ -13,9 +13,9 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -81,7 +81,8 @@ public class CreateVolumeContainerCommand<T extends CreateVolumeContainerCommand
     }
 
     private VolumeType getType() {
-        if (getParentParameters() != null && getParentParameters().getParentCommand() == ActionType.ConvertDisk) {
+        // When the incremental backup flag is set, we have no limitation on the format/allocation policy combination
+        if (getParameters().getBackup() == DiskBackup.Incremental) {
             return getParameters().getVolumeType();
         }
 

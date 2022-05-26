@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -14,6 +15,8 @@ public class CreateVolumeContainerCommandParameters extends StorageJobCommandPar
     private boolean legal = true;
 
     private Integer sequenceNumber;
+
+    private DiskBackup backup;
 
     public CreateVolumeContainerCommandParameters() {
     }
@@ -99,5 +102,13 @@ public class CreateVolumeContainerCommandParameters extends StorageJobCommandPar
 
     public void setSequenceNumber(Integer sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
+    }
+
+    public DiskBackup getBackup() {
+        return backup;
+    }
+
+    public void setBackup(DiskBackup backup) {
+        this.backup = backup;
     }
 }
