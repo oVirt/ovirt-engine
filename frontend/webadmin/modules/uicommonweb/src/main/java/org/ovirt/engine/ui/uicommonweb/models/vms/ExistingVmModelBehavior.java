@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -95,6 +96,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
         if (vm.isNextRunConfigurationExists()) {
             getModel().setVmNumaNodes(vm.getvNumaNodeList());
+            getModel().setInitialVmNumaNodes(vm.getvNumaNodeList());
             getModel().updateNodeCount(vm.getvNumaNodeList().size());
             getModel().updateCpuPinningPolicy();
         } else {
@@ -103,6 +105,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     new AsyncQuery<QueryReturnValue>(returnValue -> {
                         List<VmNumaNode> nodes = returnValue.getReturnValue();
                         getModel().setVmNumaNodes(nodes);
+                        getModel().setInitialVmNumaNodes(nodes);
                         getModel().updateNodeCount(nodes.size());
                         getModel().updateCpuPinningPolicy();
                     }));
@@ -500,14 +503,26 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     @Override
     protected void updateNumaEnabled() {
         super.updateNumaEnabled();
-        updateNumaEnabledHelper();
+        boolean isResizeAndPin =
+                getModel().getCpuPinningPolicy().getSelectedItem().getPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
+        updateNumaEnabledHelper(!isResizeAndPin);
+
         if (getModel().getVmNumaNodes() != null) {
             getModel().getNumaNodeCount().setEntity(getModel().getVmNumaNodes().size());
         }
 
-        if (vm.getCurrentNumaPinning() != null) {
-            getModel().getNumaEnabled().setMessage(constants.numaDisabledInfoMessage());
-            getModel().getNumaEnabled().setEntity(false);
+        if (isResizeAndPin) {
+            if (!getModel().getTotalCPUCores().getEntity().equals(Integer.toString(getVm().getNumOfCpus()))) {
+                getModel().getTotalCPUCores().setEntity(Integer.toString(getVm().getNumOfCpus()));
+            }
+
+            if (!getModel().getNumaNodeCount().getEntity().equals(getModel().getInitialVmNumaNodes().size())) {
+                getModel().getNumaNodeCount().setEntity(getModel().getInitialVmNumaNodes().size());
+            }
+
+            if (!getModel().getVmNumaNodes().equals(getModel().getInitialVmNumaNodes())) {
+                getModel().setVmNumaNodes(getModel().getInitialVmNumaNodes());
+            }
         }
     }
 

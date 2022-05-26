@@ -1707,7 +1707,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         affinityGroupSelectionWidget.init(model.getAffinityGroupList());
         affinityLabelSelectionWidget.init(model.getLabelList());
         quotaEditor.setEnabled(!model.isHostedEngine());
-        numaNodeCount.setEnabled(true);
         initTabAvailabilityListeners(model);
         initListeners(model);
         hideAlwaysHiddenFields();

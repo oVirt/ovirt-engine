@@ -1623,8 +1623,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
     private EntityModel<Boolean> numaEnabled;
 
-    private int initialsNumaNodeCount;
-
     private NotChangableForVmInPoolEntityModel<Integer> numaNodeCount;
 
     public EntityModel<Integer> getNumaNodeCount() {
@@ -1633,6 +1631,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
     public void setNumaNodeCount(NotChangableForVmInPoolEntityModel<Integer> numaNodeCount) {
         this.numaNodeCount = numaNodeCount;
+    }
+
+    private List<VmNumaNode> initialVmNumaNodes = new ArrayList<>();
+
+    public List<VmNumaNode> getInitialVmNumaNodes() {
+        return initialVmNumaNodes;
+    }
+
+    public void setInitialVmNumaNodes(List<VmNumaNode> vmNumaNodes) {
+        this.initialVmNumaNodes = new ArrayList<>(vmNumaNodes);
     }
 
     private List<VmNumaNode> vmNumaNodes;
@@ -2371,10 +2379,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     }
 
     private void disableCpuFields() {
-        getTotalCPUCores().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
-        getNumOfSockets().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
-        getCoresPerSocket().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
-        getThreadsPerCore().setIsChangeable(false, constants.cpuChangesConflictWithAutoPin());
+        getTotalCPUCores().setIsChangeable(false, constants.changesConflictWithAutoPin());
+        getNumOfSockets().setIsChangeable(false, constants.changesConflictWithAutoPin());
+        getCoresPerSocket().setIsChangeable(false, constants.changesConflictWithAutoPin());
+        getThreadsPerCore().setIsChangeable(false, constants.changesConflictWithAutoPin());
     }
 
     private void compatibilityVersionChanged(Object sender, EventArgs args) {
@@ -3826,11 +3834,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     }
 
     public boolean isNumaChanged() {
-        return numaChanged || initialsNumaNodeCount != getNumaNodeCount().getEntity();
+        return numaChanged || initialVmNumaNodes.size() != getNumaNodeCount().getEntity();
     }
 
     public void updateNodeCount(int size) {
-        initialsNumaNodeCount = size;
         getNumaNodeCount().setEntity(size);
     }
 
@@ -4094,6 +4101,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
     protected void cpuPinningPolicyChanged() {
         updateCpuFields();
+        updateNumaCountField();
         behavior.updateCpuPinningVisibility();
     }
 
@@ -4103,6 +4111,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         } else {
             enableCpuFields();
         }
+    }
+
+    protected void updateNumaCountField() {
+        boolean enable = getCpuPinningPolicy().getSelectedItem().getPolicy() != CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
+        getNumaNodeCount().setIsChangeable(enable, constants.changesConflictWithAutoPin());
     }
 
     protected void cpuPinningChanged() {

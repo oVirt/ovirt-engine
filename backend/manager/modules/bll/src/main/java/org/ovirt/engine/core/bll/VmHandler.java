@@ -1615,21 +1615,27 @@ public class VmHandler implements BackendService {
         }
     }
 
-    public ValidationResult validateCpuPinningPolicy(VmBase vmBase, boolean numaSet, Version version) {
+    public ValidationResult validateCpuPinningPolicy(VmBase vmFromParams, Version version) {
+        return validateCpuPinningPolicy(vmFromParams, null, version);
+    }
+
+    public ValidationResult validateCpuPinningPolicy(VmBase vmFromParams, VmBase vmFromDb, Version version) {
         ValidationResult result = ValidationResult.VALID;
 
-        switch (vmBase.getCpuPinningPolicy()) {
+        switch (vmFromParams.getCpuPinningPolicy()) {
         case MANUAL:
-            if (StringUtils.isBlank(vmBase.getCpuPinning())) {
+            if (StringUtils.isBlank(vmFromParams.getCpuPinning())) {
                 result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_SET_MANUAL_PINNING);
             }
             break;
         case RESIZE_AND_PIN_NUMA:
-            if (numaSet) {
+            if (vmFromDb != null
+                    && (vmFromDb.getNumOfCpus() != vmFromParams.getNumOfCpus()
+                            || !vmFromDb.getvNumaNodeList().equals(vmFromParams.getvNumaNodeList()))) {
                 result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_RESIZE_AND_PIN_AND_NUMA_SET);
                 break;
             }
-            boolean singleCoreHostFound = vmBase.getDedicatedVmForVdsList()
+            boolean singleCoreHostFound = vmFromParams.getDedicatedVmForVdsList()
                     .stream()
                     .map(vdsId -> vdsDynamicDao.get(vdsId))
                     .anyMatch(vdsDynamic -> vdsDynamic.getCpuCores() / vdsDynamic.getCpuSockets() == 1);
@@ -1644,7 +1650,7 @@ public class VmHandler implements BackendService {
             }
 
             boolean anyNodePinned =
-                vmBase.getvNumaNodeList().stream().anyMatch(numa -> !numa.getVdsNumaNodeList().isEmpty());
+                vmFromParams.getvNumaNodeList().stream().anyMatch(numa -> !numa.getVdsNumaNodeList().isEmpty());
             if (anyNodePinned) {
                 result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_SET_DEDICATED_PINNING_WITH_NUMA_NODES_PINNED);
             }
