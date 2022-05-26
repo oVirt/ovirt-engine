@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImagesActionsParametersBase extends StorageDomainParametersBase {
@@ -19,6 +20,7 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
     private boolean importEntity;
     private boolean leaveLocked;
     private Long initialSizeInBytes;
+    private DiskBackup backup;
 
     public ImagesActionsParametersBase() {
         imageId = Guid.Empty;
@@ -140,5 +142,13 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
 
     public Long getInitialSizeInBytes() {
         return initialSizeInBytes;
+    }
+
+    public DiskBackup getBackup() {
+        return backup;
+    }
+
+    public void setBackup(DiskBackup backup) {
+        this.backup = backup;
     }
 }

@@ -266,6 +266,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         retDiskImage.setQuotaId(getParameters().getQuotaId());
         retDiskImage.setDiskProfileId(getParameters().getDiskProfileId());
         retDiskImage.setDiskAlias(getParameters().getDiskAlias());
+        retDiskImage.setBackup(getParameters().getBackup());
         return retDiskImage;
     }
 

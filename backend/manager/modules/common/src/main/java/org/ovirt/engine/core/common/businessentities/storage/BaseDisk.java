@@ -241,7 +241,10 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
     }
 
     public DiskBackup getBackup() {
-        return backup;
+        if (backup != null) {
+            return backup;
+        }
+        return DiskBackup.None;
     }
 
     public void setBackup(DiskBackup backup) {
