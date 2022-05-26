@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.VirtioMultiQueueType;
 import org.ovirt.engine.ui.uicommonweb.models.vms.CustomInstanceType;
 import org.ovirt.engine.ui.uicommonweb.models.vms.PriorityUtil;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -294,6 +295,8 @@ public abstract class InstanceTypeManager {
             model.getMinAllocatedMemory().setEntity(vmBase.getMinAllocatedMem());
         }
 
+        updateVirtioScsiMultiQueues(vmBase);
+
         activate();
 
         AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery<>(returnValue -> {
@@ -500,6 +503,17 @@ public abstract class InstanceTypeManager {
                 }));
     }
 
+    protected void updateVirtioScsiMultiQueues(final VmBase vmBase) {
+        int queues = vmBase.getVirtioScsiMultiQueues();
+        if (queues == -1) {
+            model.getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.AUTOMATIC);
+        } else if (queues == 0) {
+            model.getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.DISABLED);
+        } else {
+            model.getVirtioScsiMultiQueueTypeSelection().setSelectedItem(VirtioMultiQueueType.CUSTOM);
+            model.getNumOfVirtioScsiMultiQueues().setEntity(queues);
+        }
+    }
 
     protected <T> void maybeSetSelectedItem(ListModel<T> entityModel, T value) {
         if (alwaysEnabledFieldUpdate || entityModel != null && entityModel.getIsChangable() && entityModel.getIsAvailable()) {
