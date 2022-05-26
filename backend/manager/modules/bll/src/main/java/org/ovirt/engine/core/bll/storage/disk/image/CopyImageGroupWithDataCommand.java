@@ -156,6 +156,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        parameters.setBackup(getDiskImage().getBackup());
         runInternalAction(ActionType.CreateVolumeContainer, parameters);
     }
 
