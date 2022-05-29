@@ -12,7 +12,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -147,9 +149,10 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
                 // in kvm we just copy the image, in other modes such as vmware or xen we use
                 // virt-v2v which converts the image format as well
                 if (vm.getOrigin() != OriginType.KVM) {
-                    disk.setVolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
-                            disk.getVolumeType(),
-                            getStorage().getSelectedItem().getStorageType()));
+                    disk.setVolumeFormat(disk.getBackup() == DiskBackup.Incremental ? VolumeFormat.COW :
+                            AsyncDataProvider.getInstance().getDiskVolumeFormat(
+                                    disk.getVolumeType(),
+                                    getStorage().getSelectedItem().getStorageType()));
                 }
 
                 if (getDiskImportData(disk.getDiskAlias()).getSelectedQuota() != null) {

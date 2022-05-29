@@ -111,6 +111,7 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         _writer.writeAttributeString(getOvfUri(), "shareable", String.valueOf(image.isShareable()));
         _writer.writeAttributeString(getOvfUri(), "boot", String.valueOf(dve.isBoot()));
         _writer.writeAttributeString(getOvfUri(), "pass-discard", String.valueOf(dve.isPassDiscard()));
+        _writer.writeAttributeString(getOvfUri(), "incremental-backup", String.valueOf(image.isIncrementalBackup()));
         if (image.getDiskAlias() != null) {
             _writer.writeAttributeString(getOvfUri(), "disk-alias", image.getDiskAlias());
         }

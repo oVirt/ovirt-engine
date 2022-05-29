@@ -251,6 +251,10 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
         this.backup = backup;
     }
 
+    public boolean isIncrementalBackup() {
+        return getBackup() == DiskBackup.Incremental;
+    }
+
     public DiskBackupMode getBackupMode() {
         return backupMode;
     }

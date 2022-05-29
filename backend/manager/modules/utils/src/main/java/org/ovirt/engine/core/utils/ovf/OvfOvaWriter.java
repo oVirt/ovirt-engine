@@ -108,6 +108,8 @@ public abstract class OvfOvaWriter extends OvfWriter {
         _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "disk_storage_type", image.getDiskStorageType().name());
         _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "cinder_volume_type",
                 StringUtils.defaultString(image.getCinderVolumeType()));
+        _writer.writeAttributeString(OVF_PREFIX, getOvfUri(), "incremental-backup",
+                String.valueOf(image.isIncrementalBackup()));
     }
 
     @Override
