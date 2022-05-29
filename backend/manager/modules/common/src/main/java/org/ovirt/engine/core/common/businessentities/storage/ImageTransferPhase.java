@@ -62,4 +62,8 @@ public enum ImageTransferPhase implements Identifiable {
     public boolean canBeCancelled() {
         return canBePaused() || isPaused();
     }
+
+    public boolean isFinished() {
+        return this == FINISHED_FAILURE || this == FINISHED_SUCCESS;
+    }
 }
