@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -152,9 +153,9 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
                 // in kvm we just copy the image, in other modes such as vmware or xen we use
                 // virt-v2v which converts the image format as well
                 if (vm.getOrigin() != OriginType.KVM) {
-                    disk.setVolumeFormat(getDiskVolumeFormat(
-                            disk.getVolumeType(),
-                            getStorageDomain().getStorageType()));
+                    disk.setVolumeFormat(disk.getBackup() == DiskBackup.Incremental ? VolumeFormat.COW :
+                            getDiskVolumeFormat(disk.getVolumeType(),
+                                    getStorageDomain().getStorageType()));
                 }
 
                 if (getParameters().getQuotaId() != null) {

@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -161,6 +162,14 @@ public abstract class OvfReader implements IOvfBuilder {
         } else {
             image.setVolumeType(getDefaultVolumeType());
         }
+
+        if (node.attributes.get("ovf:incremental-backup") != null &&
+                Boolean.parseBoolean(node.attributes.get("ovf:incremental-backup").getValue())) {
+                    image.setBackup(DiskBackup.Incremental);
+        } else {
+            image.setBackup(DiskBackup.None);
+        }
+
         if (node.attributes.get("ovf:wipe-after-delete") != null) {
             if (!StringUtils.isEmpty(node.attributes.get("ovf:wipe-after-delete").getValue())) {
                 image.setWipeAfterDelete(Boolean.parseBoolean(node.attributes.get("ovf:wipe-after-delete")
