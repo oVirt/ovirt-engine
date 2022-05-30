@@ -501,7 +501,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     protected void updateNumaEnabled() {
         super.updateNumaEnabled();
         updateNumaEnabledHelper();
-        if (Boolean.TRUE.equals(getModel().getNumaEnabled().getEntity()) && getModel().getVmNumaNodes() != null) {
+        if (getModel().getVmNumaNodes() != null) {
             getModel().getNumaNodeCount().setEntity(getModel().getVmNumaNodes().size());
         }
 

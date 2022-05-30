@@ -1641,6 +1641,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         if (getModel().getIsAutoAssign().getEntity() ||
                 getModel().getDefaultHost().getSelectedItems() == null ||
+                getModel().getDefaultHost().getSelectedItems().isEmpty() ||
                 getModel().getDefaultHost().getSelectedItems().stream().anyMatch(x -> !x.isNumaSupport())) {
             enabled = false;
         }
@@ -1648,8 +1649,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getNumaEnabled().setMessage(constants.numaInfoMessage());
         } else {
             getModel().getNumaEnabled().setMessage(constants.numaDisabledInfoMessage());
-            getModel().getNumaNodeCount().setEntity(0);
-
         }
         getModel().getNumaEnabled().setEntity(enabled);
     }
