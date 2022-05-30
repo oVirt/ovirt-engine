@@ -1065,6 +1065,22 @@ public class ImagesHandler {
         return images;
     }
 
+    public boolean isSnapshotUsed(VM vm, DiskImage image) {
+        if (vm.isRunningOrPaused()) {
+            Set<Guid> volumeChain = getVolumeChain(vm.getId(),
+                    vm.getRunOnVds(),
+                    image);
+
+            if (volumeChain != null && !volumeChain.contains(image.getImageId())) {
+                return false;
+            } else {
+                log.warn("Can not get image chain or image '{}' is still in the chain", image.getImageId());
+            }
+        }
+
+        return true;
+    }
+
     private Map[] getVms(Guid vdsId, Guid vmId) {
         return (Map[]) fullListAdapter.getVmFullList(
                 vdsId,
