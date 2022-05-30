@@ -55,7 +55,8 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_db_change_column_null (
     v_table VARCHAR(128),
     v_column VARCHAR(128),
-    v_allow_null BOOLEAN
+    v_allow_null BOOLEAN,
+    v_type varchar
     )
 RETURNS void AS $PROCEDURE$
 DECLARE v_sql TEXT;
@@ -63,10 +64,35 @@ DECLARE v_sql TEXT;
 BEGIN
     IF (v_allow_null) THEN
         v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' DROP NOT NULL';
+        EXECUTE v_sql;
     ELSE
+        -- Get the column type
+        IF v_type =  'bool' THEN
+            v_sql := ' = false';
+        ELSIF v_type = 'char' THEN
+            v_sql := ' = '''' ';
+        ELSIF v_type = 'varchar' THEN
+            v_sql := ' = '''' ';
+        ELSIF v_type = 'text' THEN
+            v_sql :=  ' = '''' ';
+        ELSIF v_type = 'int' THEN
+            v_sql :=  ' = 0  ';
+        ELSIF v_type = 'float' THEN
+            v_sql :=  ' = 0.0 ';
+        ELSIF v_type = 'numeric' THEN
+            v_sql := ' = 0 ';
+        ELSIF v_type = 'uuid' THEN
+            v_sql := ' = ''00000000-0000-0000-0000-000000000000'' ';
+        ELSE
+            RAISE EXCEPTION  'fn_db_change_column_null(%,%,%,%) unrecognized type', v_table, v_column, v_allow_null, v_type;
+        END IF;
+        -- Insure that there are no NULL values in the table column before setting it to NOT NULL
+        v_sql := 'update ' || v_table || ' set ' || v_column || v_sql || ' where '  || v_column || ' IS NULL';
+        EXECUTE v_sql;
         v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' SET NOT NULL';
+        EXECUTE v_sql;
+
     END IF;
-    EXECUTE v_sql;
 
 END;$PROCEDURE$
 LANGUAGE plpgsql;
