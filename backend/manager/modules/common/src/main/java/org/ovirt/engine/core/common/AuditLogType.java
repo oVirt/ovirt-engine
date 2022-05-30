@@ -1585,6 +1585,8 @@ public enum AuditLogType {
     USER_FAILED_TO_THAW_VM(10770, AuditLogSeverity.WARNING),
     VDS_CANNOT_CONNECT_TO_GLUSTERFS(10771, AuditLogSeverity.ERROR),
 
+    SNAPSHOT_MAY_BE_INCONSISTENT(10774, AuditLogSeverity.WARNING),
+
     // Managed Block Storage
     CONNECTOR_INFO_MISSING_ON_VDS(10772, AuditLogSeverity.ERROR),
     UNDO_SNAPSHOT_FAILURE_PARTIAL(10773, AuditLogSeverity.ERROR),

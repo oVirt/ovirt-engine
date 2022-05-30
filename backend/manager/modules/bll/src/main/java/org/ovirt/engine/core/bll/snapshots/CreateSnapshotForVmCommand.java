@@ -80,6 +80,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -112,6 +113,8 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     private ImageDao imageDao;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    private DiskImageDao diskImageDao;
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
@@ -437,19 +440,38 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         if (getParameters().getTaskGroupSuccess()) {
             snapshotDao.updateStatus(getParameters().getCreatedSnapshotId(), Snapshot.SnapshotStatus.OK);
         } else {
+            Snapshot createdSnapshot = snapshotDao.get(getParameters().getCreatedSnapshotId());
             if (!isSnapshotCreated()) {
                 log.warn("No snapshot was created for VM '{}' which is in LOCKED status", getVmId());
             } else {
-                Snapshot createdSnapshot = snapshotDao.get(getParameters().getCreatedSnapshotId());
-                revertToActiveSnapshot(createdSnapshot.getId());
+                Snapshot activeSnapshot = snapshotDao.get(getVmId(), Snapshot.SnapshotType.ACTIVE);
+                boolean snapshotUsed = false;
+                for (DiskImage disk : getDisksList()) {
+                    DiskImage snapshotImage = diskImageDao.getDiskSnapshotForVmSnapshot(disk.getId(),
+                            activeSnapshot.getId());
+                    if (snapshotImage != null && imagesHandler.isSnapshotUsed(getVm(), snapshotImage)) {
+                        snapshotUsed = true;
+                        break;
+                    }
+                }
+
+                if (snapshotUsed) {
+                    log.warn("Active snapshot '{}' appears to be in use despite failure, cleanup may be required",
+                            createdSnapshot.getId());
+                    logSnapshotInconsistent();
+                    unlockSnapshot(createdSnapshot.getId());
+                } else {
+                    revertToActiveSnapshot(getParameters().getCreatedSnapshotId());
+                }
+
                 // If the removed snapshot contained memory, remove the memory volumes
                 // Note that the memory volumes might not have been created
                 if (snapshotWithMemory(createdSnapshot)) {
                     removeMemoryVolumesOfSnapshot(createdSnapshot);
                 }
-
             }
         }
+
 
         // In case of failure the memory disks will remain on the storage but not on the engine
         // this will be handled in: https://bugzilla.redhat.com/1568887
@@ -521,6 +543,12 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         addCustomValue("SnapshotName", getSnapshotName());
         addCustomValue("VmName", getVmName());
         auditLogDirector.log(this, AuditLogType.USER_CREATE_LIVE_SNAPSHOT_NO_MEMORY_FAILURE);
+    }
+
+    private void logSnapshotInconsistent() {
+        addCustomValue("SnapshotName", getSnapshotName());
+        addCustomValue("VmName", getVmName());
+        auditLogDirector.log(this, AuditLogType.SNAPSHOT_MAY_BE_INCONSISTENT);
     }
 
     private boolean shouldPerformLiveSnapshot(Snapshot snapshot) {
