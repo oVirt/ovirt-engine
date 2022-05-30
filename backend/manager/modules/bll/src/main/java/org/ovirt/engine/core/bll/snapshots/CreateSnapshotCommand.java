@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -213,7 +212,7 @@ public class CreateSnapshotCommand<T extends CreateSnapshotParameters> extends B
         List<VM> vms = vmDao.getVmsListForDisk(getDestinationDiskImage().getId(), false);
         if (getDestinationDiskImage() != null
                 && !vms.isEmpty()
-                && !isSnapshotUsed(vms.get(0))) {
+                && !imagesHandler.isSnapshotUsed(vms.get(0), getDiskImage())) {
 
             // Empty Guid, means new disk rather than snapshot, so no need to add a map to the db for new disk.
             if (!getDestinationDiskImage().getParentId().equals(Guid.Empty)) {
@@ -241,23 +240,6 @@ public class CreateSnapshotCommand<T extends CreateSnapshotParameters> extends B
             unLockImage();
         }
         setSucceeded(true);
-    }
-
-    private boolean isSnapshotUsed(VM vm) {
-        if (vm.isRunningOrPaused()) {
-            Set<Guid> volumeChain = imagesHandler.getVolumeChain(vm.getId(),
-                    vm.getRunOnVds(),
-                    getDiskImage());
-
-            if (volumeChain != null && !volumeChain.contains(getDiskImage().getImageId())) {
-                return false;
-            } else {
-                log.warn("Can not get image chain or image '{}' is still in the chain, skipping deletion",
-                        getDiskImage().getImageId());
-            }
-        }
-
-        return true;
     }
 
     protected DestroyImageParameters buildDestroyImageParameters(Guid imageGroupId, List<Guid> imageList) {
