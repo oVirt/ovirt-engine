@@ -100,13 +100,12 @@ public class AddVmNumaNodesCommandTest
     }
 
     @Test
-    public void canNotDoWithoutPinnedHost() {
+    public void canDoWithoutPinnedHost() {
         mockCommandWithVmFromDb();
         vm.setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
 
         vm.setDedicatedVmForVdsList(new ArrayList<>());
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_AT_LEAST_ONE_HOST);
+        assertThat(command.validate()).isTrue();
     }
 
     @Test

@@ -330,7 +330,7 @@ public class NumaValidator {
         }
 
         // Check if the VM is pinned to at least one host
-        if (vm.getDedicatedVmForVdsList().isEmpty() && !VmCpuCountHelper.isResizeAndPinPolicy(vm)) {
+        if (vm.getDedicatedVmForVdsList().isEmpty() && !VmCpuCountHelper.isResizeAndPinPolicy(vm) && isNumaPinning(vmNumaNodes)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_AT_LEAST_ONE_HOST);
         }
 
@@ -344,6 +344,10 @@ public class NumaValidator {
         }
 
         return validateNumaCompatibility(vm, vmNumaNodes, hostsNumaNodesMap);
+    }
+
+    private boolean isNumaPinning(final List<VmNumaNode> vmNumaNodes) {
+        return vmNumaNodes.stream().anyMatch(node -> !node.getVdsNumaNodeList().isEmpty());
     }
 
     private String formatMissingIndices(List<Integer> missingIndices) {
