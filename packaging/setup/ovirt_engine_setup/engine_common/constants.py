@@ -395,9 +395,44 @@ class RPMDistroEnv(object):
 @util.codegen
 @osetupattrsclass
 class KeycloakEnv(object):
-    KEYCLOAK_ENABLED = 'OVESETUP_CONFIG/keycloakEnabled'
-    KEYCLOAK_OVIRT_ADMIN_USER = 'OVESETUP_CONFIG/keycloakOvirtAdmin'
-    KEYCLOAK_OVIRT_ADMIN_PASSWD = 'OVESETUP_CONFIG/keycloakOvirtAdminPasswd'
+    @osetupattrs(
+        answerfile=True,
+        postinstallfile=True,
+        summary=True,
+        reconfigurable=True,
+        description=_('Keycloak installation'),
+    )
+    def ENABLE(self):
+        return 'OVESETUP_CONFIG/keycloakEnable'
+
+    @osetupattrs(
+        is_secret=True,
+        answerfile=True,
+        postinstallfile=True,
+    )
+    def KEYCLOAK_OVIRT_INTERNAL_CLIENT_SECRET(self):
+        return 'OVESETUP_CONFIG/keycloakOvirtClientSecret'
+
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def KEYCLOAK_OVIRT_ADMIN_USER_WITH_PROFILE(self):
+        return 'OVESETUP_CONFIG/keycloakOvirtAdminWithProfile'
+
+    @osetupattrs(
+        is_secret=True,
+    )
+    def ADMIN_PASSWORD(self):
+        return 'OVESETUP_CONFIG/keycloakAdminPasswd'
+
+    CONFIGURED = 'OVESETUP_CONFIG/keycloakConfigured'
+    KEYCLOAK_AUTH_URL = 'OVESETUP_CONFIG/keycloakAuthUrl'
+    KEYCLOAK_TOKEN_URL = 'OVESETUP_CONFIG/keycloakTokenUrl'
+    KEYCLOAK_USERINFO_URL = 'OVESETUP_CONFIG/keycloakUserinfoUrl'
+    KEYCLOAK_GRAFANA_ADMIN_ROLE = 'OVESETUP_CONFIG/keycloakGrafanaAdminRole'
+    KEYCLOAK_GRAFANA_EDITOR_ROLE = 'OVESETUP_CONFIG/keycloakGrafanaEditorRole'
+    KEYCLOAK_GRAFANA_VIEWER_ROLE = 'OVESETUP_CONFIG/keycloakGrafanaViewerRole'
+    KEYCLOAK_OVIRT_INTERNAL_CLIENT_ID = 'OVESETUP_CONFIG/keycloakOvirtClientId'
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
