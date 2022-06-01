@@ -210,6 +210,8 @@ select fn_db_add_config_value('AnsibleRunnerArtifactsCleanupCheckTimeInHours','2
 
 select fn_db_add_config_value('AnsibleRunnerArtifactsLifetimeInDays', '14', 'general');
 
+select fn_db_add_config_value('AsyncAnsibleTimeout','180','general');
+
 select fn_db_add_config_value('MaxIoThreadsPerVm','127','general');
 
 select fn_db_add_config_value('DisplayUncaughtUIExceptions', 'true', 'general');

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 
 import javax.enterprise.inject.Typed;
@@ -11,6 +12,8 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AnsibleCommandParameters;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHttpClient;
@@ -27,6 +30,7 @@ import org.slf4j.LoggerFactory;
 @Typed(AnsibleCallback.class)
 public class AnsibleCallback implements CommandCallback {
     private static final Logger log = LoggerFactory.getLogger(AnsibleCallback.class);
+    private static final long TIMEOUT_LIMIT = Config.<Integer>getValue(ConfigValues.AsyncAnsibleTimeout) * 1000L;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -83,14 +87,29 @@ public class AnsibleCallback implements CommandCallback {
             command.setSucceeded(true);
             command.setCommandStatus(CommandStatus.SUCCEEDED);
         } else if (status.equalsIgnoreCase("unknown")) {
-            // ignore and continue:
-            return;
+            if (System.currentTimeMillis() - command.getParameters().getCommandStartTime() <= TIMEOUT_LIMIT) {
+                // ignore and continue:
+                return;
+            } else {
+                // timeout passed, status is still unknown. try to cancel the playbook and fail.
+                try {
+                    runnerClient.cancelPlaybook(UUID.fromString(command.getParameters().getPlayUuid()), 1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    failCommand(command);
+                }
+            }
         } else {
             // Playbook failed:
-            command.setSucceeded(false);
-            command.setCommandStatus(CommandStatus.FAILED);
+            failCommand(command);
         }
         command.persistCommand(command.getParameters().getParentCommand(), true);
+    }
+
+    private void failCommand(CommandBase<AnsibleCommandParameters> command) {
+        command.setSucceeded(false);
+        command.setCommandStatus(CommandStatus.FAILED);
     }
 
     private AuditLogable createAuditLogable(CommandBase<AnsibleCommandParameters> command, String taskName) {

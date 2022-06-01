@@ -14,10 +14,12 @@ public class AnsibleCommandParameters extends ActionParametersBase {
     private Guid hostId;
     private String playAction;
     private Map<String, Object> variables;
+    private long commandStartTime;
 
     public AnsibleCommandParameters() {
         super();
         this.playUuid = UUID.randomUUID().toString();
+        this.commandStartTime = System.currentTimeMillis();
     }
 
     public int getLastEventId() {
@@ -74,5 +76,13 @@ public class AnsibleCommandParameters extends ActionParametersBase {
 
     public Map<String, Object> getVariables() {
         return variables;
+    }
+
+    public long getCommandStartTime() {
+        return commandStartTime;
+    }
+
+    public void setCommandStartTime(long commandStartTime) {
+        this.commandStartTime = commandStartTime;
     }
 }

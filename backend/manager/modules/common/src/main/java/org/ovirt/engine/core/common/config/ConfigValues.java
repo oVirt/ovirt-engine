@@ -1628,6 +1628,12 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     IsDedicatedSupported,
 
+    /**
+     * Defines max timeout in seconds for async ansible callback when status is unknown.
+     */
+    @TypeConverterAttribute(Integer.class)
+    AsyncAnsibleTimeout,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;
