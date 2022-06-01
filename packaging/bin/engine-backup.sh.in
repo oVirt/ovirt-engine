@@ -132,7 +132,7 @@ cinderlib_enabled() {
 }
 
 keycloak_enabled() {
-	engine_setup_service_enabled "OVESETUP_KEYCLOAK_CORE/enable"
+	engine_setup_service_enabled "OVESETUP_CONFIG/keycloakEnable"
 }
 
 grafana_enabled() {
@@ -159,9 +159,12 @@ BACKUP_PATHS="/etc/ovirt-engine
 /etc/pki/ovirt-engine
 /etc/pki/ovirt-vmconsole
 /etc/ovirt-engine-setup.conf.d
+/etc/httpd/conf.d/internalsso-openidc.conf
+/etc/httpd/conf.d/ovirt-engine-grafana-proxy.conf
 /etc/httpd/conf.d/ovirt-engine-root-redirect.conf
 /etc/httpd/conf.d/ssl.conf
 /etc/httpd/conf.d/z-ovirt-engine-proxy.conf
+/etc/httpd/conf.d/z-ovirt-engine-keycloak-proxy.conf
 /etc/httpd/http.keytab
 /etc/httpd/conf.d/ovirt-sso.conf
 /etc/yum/pluginconf.d/versionlock.list
