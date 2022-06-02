@@ -213,7 +213,14 @@ public class AnsibleRunnerHttpClient {
         File output = File.createTempFile("output", ".log");
         String command = String.format("ansible-runner stop %1$s", uuid);
         ProcessBuilder ansibleProcessBuilder = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
-        ansibleProcess = ansibleProcessBuilder.start();
+        try {
+            ansibleProcess = ansibleProcessBuilder.start();
+            // if play execution was already completed, the command fails.
+        } catch (IOException e) {
+            log.error(String.format("Failed to execute call to cancel playbook. %1$s, %2$s ",
+                    output.toString(), Paths.get(this.getJobEventsDir(uuid.toString()) + "../stdout")));
+            return;
+        }
         if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
             throw new Exception("Timeout occurred while canceling Ansible playbook.");
         }
