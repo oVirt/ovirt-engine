@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.BrokerCommandCallback;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
@@ -315,7 +316,7 @@ public class HostMonitoring implements HostMonitoringInterface {
      */
     private void checkVdsMemoryThreshold(Cluster cluster, VdsStatistics stat) {
 
-        if (stat.getMemFree() == null || stat.getUsageMemPercent() == null) {
+        if (stat.getMemFree() == null || vds.getPhysicalMemMb() == null) {
             return;
         }
 
@@ -328,8 +329,12 @@ public class HostMonitoring implements HostMonitoringInterface {
 
     private void checkVdsMemoryThresholdPercentage(Cluster cluster, VdsStatistics stat) {
         Integer maxUsedPercentageThreshold = cluster.getLogMaxMemoryUsedThreshold();
+        int memTotal = vds.getPhysicalMemMb() - HugePageUtils.totalHugePageMemMb(vds);
+        long memFree = stat.getMemFree();
+        // usage for the normal memory (hugepages are excluded)
+        long memUsage = 100 - Math.round(100 * memFree / (double) memTotal);
 
-        if (stat.getUsageMemPercent() > maxUsedPercentageThreshold) {
+        if (memUsage > maxUsedPercentageThreshold) {
             logMemoryAuditLog(vds, cluster, stat, AuditLogType.VDS_HIGH_MEM_USE, maxUsedPercentageThreshold);
         }
     }

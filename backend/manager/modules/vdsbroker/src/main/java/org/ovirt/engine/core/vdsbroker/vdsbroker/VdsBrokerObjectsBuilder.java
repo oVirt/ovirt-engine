@@ -106,6 +106,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
+import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -1268,9 +1269,6 @@ public class VdsBrokerObjectsBuilder {
     }
 
     public void updateVDSStatisticsData(VDS vds, Map<String, Object> struct) {
-        // ------------- vds memory usage ---------------------------
-        vds.setUsageMemPercent(assignIntValue(struct, VdsProperties.mem_usage));
-
         // ------------- vds network statistics ---------------------
         Map<String, Object> interfaces = (Map<String, Object>) struct.get(VdsProperties.NETWORK);
         if (interfaces != null) {
@@ -1408,8 +1406,22 @@ public class VdsBrokerObjectsBuilder {
 
         vds.setBootTime(assignLongValue(struct, VdsProperties.bootTime));
 
+        // this method needs to be called after the free memory and hugepages are set to vds
+        updateMemoryUsage(vds);
         updateNumaStatisticsData(vds, struct);
         updateV2VJobs(vds, struct);
+    }
+
+    private void updateMemoryUsage(VDS vds) {
+        if (vds.getPhysicalMemMb() == null || vds.getMemFree() == null || vds.getHugePages() == null) {
+            return;
+        }
+        int memTotal = vds.getPhysicalMemMb();
+        long memFree = vds.getMemFree() + HugePageUtils.totalHugePageFreeMemMb(vds);
+        // usage for the memory (hugepages are included)
+        long memUsage = 100 - Math.round(100 * memFree / (double) memTotal);
+
+        vds.setUsageMemPercent((int) memUsage);
     }
 
     private static void extractInterfaceStatistics(Map<String, Object> dict, NetworkInterface<?> iface) {

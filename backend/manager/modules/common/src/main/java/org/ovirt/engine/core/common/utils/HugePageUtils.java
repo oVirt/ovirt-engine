@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.ovirt.engine.core.common.businessentities.HugePage;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 
@@ -86,6 +87,30 @@ public class HugePageUtils {
     public static int totalHugePageMemMb(Map<Integer, Integer> hugepages) {
         long hugePageMemKb = hugepages.entrySet().stream()
                 .mapToLong(entry -> entry.getKey() * entry.getValue())
+                .sum();
+
+        return (int)((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
+    }
+
+    public static int totalHugePageMemMb(VDS vds) {
+        if (vds.getHugePages() == null) {
+            return 0;
+        }
+
+        long hugePageMemKb = vds.getHugePages().stream()
+                .mapToLong(hugePage -> hugePage.getTotal() * hugePage.getSizeKB())
+                .sum();
+
+        return (int)((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
+    }
+
+    public static int totalHugePageFreeMemMb(VDS vds) {
+        if (vds.getHugePages() == null) {
+            return 0;
+        }
+
+        long hugePageMemKb = vds.getHugePages().stream()
+                .mapToLong(hugePage -> hugePage.getFree() * hugePage.getSizeKB())
                 .sum();
 
         return (int)((hugePageMemKb + KIB_IN_MIB - 1) / KIB_IN_MIB);
