@@ -3,8 +3,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.vdscommands.VmReplicateDiskParameters;
-import org.springframework.util.StringUtils;
 
 public abstract class VmReplicateDiskVDSCommand<P extends VmReplicateDiskParameters> extends VdsBrokerCommand<P> {
 
