@@ -9,6 +9,7 @@ public class AttachManagedBlockStorageVolumeVDSCommandParameters extends VdsIdAn
 
     private Map<String, Object> connectionInfo;
     private Guid volumeId;
+    private Guid storageDomainId;
 
     public AttachManagedBlockStorageVolumeVDSCommandParameters() {
     }
@@ -18,9 +19,11 @@ public class AttachManagedBlockStorageVolumeVDSCommandParameters extends VdsIdAn
     }
 
     public AttachManagedBlockStorageVolumeVDSCommandParameters(VDS vds,
-            Map<String, Object> connectionInfo) {
+            Map<String, Object> connectionInfo,
+            Guid storageDomainId) {
         super(vds);
         this.connectionInfo = connectionInfo;
+        this.storageDomainId = storageDomainId;
     }
 
     public AttachManagedBlockStorageVolumeVDSCommandParameters(Map<String, Object> connectionInfo) {
@@ -41,5 +44,13 @@ public class AttachManagedBlockStorageVolumeVDSCommandParameters extends VdsIdAn
 
     public void setVolumeId(Guid volumeId) {
         this.volumeId = volumeId;
+    }
+
+    public Guid getStorageDomainId() {
+        return storageDomainId;
+    }
+
+    public void setStorageDomainId(Guid storageDomainId) {
+        this.storageDomainId = storageDomainId;
     }
 }

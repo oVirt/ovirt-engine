@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.ExternalDataStatus;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -47,6 +48,7 @@ public class VmManager {
     private int memSizeMb;
     private int minAllocatedMem;
     private int numOfCpus;
+    private CpuPinningPolicy cpuPinningPolicy;
     private Version clusterCompatibilityVersion;
     private ArchitectureType clusterArchitecture;
     private BiosType clusterBiosType;
@@ -126,6 +128,7 @@ public class VmManager {
         memSizeMb = vmStatic.getMemSizeMb();
         minAllocatedMem = vmStatic.getMinAllocatedMem();
         numOfCpus = vmStatic.getNumOfCpus();
+        cpuPinningPolicy = vmStatic.getCpuPinningPolicy();
         final Cluster cluster = clusterDao.get(vmStatic.getClusterId());
         clusterCompatibilityVersion = cluster.getCompatibilityVersion();
         clusterArchitecture = cluster.getArchitecture();
@@ -291,6 +294,10 @@ public class VmManager {
 
     public int getNumOfCpus() {
         return numOfCpus;
+    }
+
+    public CpuPinningPolicy getCpuPinningPolicy() {
+        return cpuPinningPolicy;
     }
 
     public void setClusterCompatibilityVersion(Version version) {

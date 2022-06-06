@@ -266,6 +266,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         retDiskImage.setQuotaId(getParameters().getQuotaId());
         retDiskImage.setDiskProfileId(getParameters().getDiskProfileId());
         retDiskImage.setDiskAlias(getParameters().getDiskAlias());
+        retDiskImage.setBackup(getParameters().getBackup());
         return retDiskImage;
     }
 
@@ -384,6 +385,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                                 newStorageDomainID,
                                 getDestinationDiskImage());
                     }
+
+                    // Update image's size if it's changed
+                    getDestinationDiskImage().setSize(newImageIRS.getSize());
                 }
             } catch (EngineException e) {
                 // Logging only

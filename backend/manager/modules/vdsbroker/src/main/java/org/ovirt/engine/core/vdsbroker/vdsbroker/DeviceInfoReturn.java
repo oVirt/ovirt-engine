@@ -7,6 +7,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturn;
 
 public class DeviceInfoReturn extends StatusReturn {
     public static final String PATH = "path";
+    public static final String MANAGED_PATH = "managed_path";
     public static final String TYPE = "type";
     public static final String SCSI_WWN = "scsi_wwn";
     public static final String ATTACHMENT = "attachment";

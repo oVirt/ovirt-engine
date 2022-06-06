@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
@@ -113,9 +115,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         // Check that the virtual machine exists:
         final VM vm = getVm();
         if (vm == null) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-
-            return false;
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -142,16 +142,12 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
             ticket = Ticketing.generateOTP();
         }
 
+        final DbUser user = getCurrentUser();
+
         VmManager vmManager = resourceManager.getVmManager(getParameters().getVmId());
         vmManager.lockVm();
-
         try {
-            // Update the dynamic information of the virtual machine in memory (we need it
-            // to update the database later):
-            final VM vm = getVm();
-            final DbUser user = getCurrentUser();
-            vm.setConsoleUserId(user.getId());
-            vm.setConsoleCurrentUserName(getConsoleUserName());
+            var vm = vmDynamicDao.get(getVm().getId());
 
             // If the virtual machine has the allow reconnect flag or the user
             // needed additional permissions to connect to the console then we just
@@ -166,12 +162,16 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
             // and proceed only if the previous user in the database is null. This
             // is needed to prevent races between different users trying to access
             // the console of the same virtual machine simultaneously.
-            if (vm.getAllowConsoleReconnect() || neededPermissions) {
-                vmManager.update(vm.getDynamicData());
+            if (getVm().getAllowConsoleReconnect() || neededPermissions) {
+                if (!Objects.equals(user.getId(), vm.getConsoleUserId())) {
+                    updateConsoleUser(user, vmManager, vm);
+                }
                 sendTicket();
             } else {
-                final boolean saved = vmDynamicDao.updateConsoleUserWithOptimisticLocking(vm.getDynamicData());
-                if (saved) {
+                if (vm.getConsoleUserId() == null || vm.getConsoleUserId().equals(user.getId())) {
+                    if (vm.getConsoleUserId() == null) {
+                        updateConsoleUser(user, vmManager, vm);
+                    }
                     sendTicket();
                 } else {
                     dontSendTicket();
@@ -180,6 +180,12 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         } finally {
             vmManager.unlockVm();
         }
+    }
+
+    private void updateConsoleUser(final DbUser user, VmManager vmManager, VmDynamic vm) {
+        vm.setConsoleUserId(user.getId());
+        vm.setConsoleCurrentUserName(getConsoleUserName());
+        vmManager.update(vm);
     }
 
     /**

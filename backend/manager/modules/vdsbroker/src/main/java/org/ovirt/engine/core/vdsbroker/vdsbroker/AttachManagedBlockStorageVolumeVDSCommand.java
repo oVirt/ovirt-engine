@@ -13,7 +13,9 @@ public class AttachManagedBlockStorageVolumeVDSCommand<P extends AttachManagedBl
     @Override
     protected void executeVdsBrokerCommand() {
         deviceInfoReturn =
-                getBroker().attachManagedBlockStorageVolume(getParameters().getVolumeId(), getParameters().getConnectionInfo());
+                getBroker().attachManagedBlockStorageVolume(getParameters().getVolumeId(),
+                        getParameters().getStorageDomainId(),
+                        getParameters().getConnectionInfo());
         proceedProxyReturnValue();
         setReturnValue(deviceInfoReturn.getDeviceInfo());
     }

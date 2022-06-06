@@ -289,6 +289,7 @@ public class LibvirtVmXmlBuilder {
         }
         writeCpu(numaEnabled || vm.isHostedEngine() && !vmNumaNodesSupplier.get().isEmpty());
         writeCpuTune();
+        writeMemtune();
         writeQemuCapabilities();
         writeDevices();
         writePowerManagement();
@@ -1564,6 +1565,17 @@ public class LibvirtVmXmlBuilder {
         }
     }
 
+    private void writeMemtune() {
+        if (VmInfoBuildUtils.needsMemtune(vm)) {
+            writer.writeStartElement("memtune");
+            writer.writeStartElement("hard_limit");
+            writer.writeAttributeString("unit", "TiB");
+            writer.writeRaw("1024");
+            writer.writeEndElement();
+            writer.writeEndElement();
+        }
+    }
+
     private void writeSpiceVmcChannel() {
         writer.writeStartElement("channel");
         writer.writeAttributeString("type", "spicevmc");
@@ -2437,21 +2449,22 @@ public class LibvirtVmXmlBuilder {
         case MANAGED_BLOCK_STORAGE:
             ManagedBlockStorageDisk managedBlockStorageDisk = (ManagedBlockStorageDisk) disk;
             Map<String, String> metadata = new HashMap<>();
-            String path = (String) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.PATH);
+            String path;
+            if (Version.v4_7.lessOrEquals(vm.getCompatibilityVersion())) {
+                path = (String) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.MANAGED_PATH);
+            } else {
+                path = (String) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.PATH);
+            }
 
             if (managedBlockStorageDisk.getCinderVolumeDriver() == CinderVolumeDriver.RBD) {
-                // For rbd we need to pass the entire path since we rely on more than a single
-                // variable e.g: /dev/rbd/<pool-name>/<vol-name>
-                metadata = Collections.singletonMap("RBD", path);
+                metadata.put("RBD", path);
             } else if (managedBlockStorageDisk.getCinderVolumeDriver() == CinderVolumeDriver.BLOCK) {
                 Map<String, Object> attachment =
                         (Map<String, Object>) managedBlockStorageDisk.getDevice().get(DeviceInfoReturn.ATTACHMENT);
-                metadata = Map.of(
-                        "GUID", (String)attachment.get(DeviceInfoReturn.SCSI_WWN),
-                        "managed", "true"
-                );
+                metadata.put("GUID", (String)attachment.get(DeviceInfoReturn.SCSI_WWN));
             }
 
+            metadata.put("managed", "true");
             writer.writeAttributeString("dev", path);
             diskMetadata.put(dev, metadata);
 

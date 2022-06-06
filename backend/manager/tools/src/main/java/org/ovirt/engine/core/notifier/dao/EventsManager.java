@@ -234,4 +234,33 @@ public class EventsManager implements Observer {
             log.error("Could not insert event notification history event", e);
         }
     }
+
+    public void setNotificationServiceBoots(int bootsValue)
+            throws SQLException {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     "UPDATE vdc_options " +
+                             "SET option_value = '" + Integer.toString(bootsValue) + "' " +
+                             "WHERE option_name = 'NotificationServiceBoots';")) {
+            int updated = ps.executeUpdate();
+            if (updated != 1) {
+                log.error("Failed to update vdc_options:NotificationServiceBoots to : {}",
+                        bootsValue);
+            }
+        }
+    }
+
+    public int getNotificationServiceBoots()
+            throws SQLException {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     "SELECT option_value from  vdc_options " +
+                             "WHERE option_name = 'NotificationServiceBoots';")) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                return Integer.parseInt(rs.getString("option_value"));
+            }
+        }
+        return 0;
+    }
 }

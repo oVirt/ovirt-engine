@@ -182,6 +182,7 @@ public class VdsManager {
     private HostConnectionRefresherInterface hostRefresher;
     private volatile boolean inServerRebootTimeout;
     private List<VdsCpuUnit> cpuTopology;
+    private int minRequiredSharedCpusCount;
 
     VdsManager(VDS vds, ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -1349,5 +1350,13 @@ public class VdsManager {
     public void unpinVmCpus(Guid vmId) {
         cpuTopology.stream().filter(cpu -> cpu.getVmIds().contains(vmId))
                 .forEach(cpu -> cpu.unPinVm(vmId));
+    }
+
+    public void setMinRequiredSharedCpusCount(int minSharedCpusCount) {
+        this.minRequiredSharedCpusCount = minSharedCpusCount;
+    }
+
+    public int getMinRequiredSharedCpusCount() {
+        return minRequiredSharedCpusCount < 1 ? 1 : minRequiredSharedCpusCount;
     }
 }

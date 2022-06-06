@@ -12,6 +12,7 @@ import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandActionState;
+import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -435,12 +436,19 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             // StartVmBackup should handle locks
             return locks;
         }
-        if (!Guid.isNullOrEmpty(getParameters().getImageId())) {
+        if (!Guid.isNullOrEmpty(getParameters().getImageId()) && getDiskImage() != null) {
             List<VM> vms = vmDao.getVmsListForDisk(getDiskImage().getId(), true);
             vms.forEach(vm -> locks.put(vm.getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED)));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingTransferredLockMessage())));
         }
+
         return locks;
+    }
+
+    private String getDiskIsBeingTransferredLockMessage() {
+        return new LockMessage(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_BEING_TRANSFERRED)
+                .withOptional("DiskName", getDiskImage().getDiskAlias() != null ? getDiskImage().getDiskAlias() : "")
+                .toString();
     }
 
     @Override
@@ -452,7 +460,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         }
         if (getDiskImage() != null) {
             locks.put(getDiskImage().getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISK_IS_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskIsBeingTransferredLockMessage()));
         }
         return locks;
     }

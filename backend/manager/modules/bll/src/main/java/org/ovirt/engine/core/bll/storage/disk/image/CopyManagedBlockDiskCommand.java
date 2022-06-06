@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -167,7 +168,7 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
         // Attach source to host (if source is Managed Block Storage)
         // TODO: handle failures
         if (sourceDomainType == StorageDomainType.ManagedBlockStorage) {
-            String sourcePath = attachVolume(createManagedBlockDiskFromDiskImage(sourceDisk));
+            String sourcePath = attachVolume((ManagedBlockStorageDisk) sourceDisk);
             getParameters().setSourcePath(sourcePath);
         }
     }
@@ -329,7 +330,7 @@ public class CopyManagedBlockDiskCommand<T extends CopyImageGroupWithDataCommand
         managedBlockDisk.setImageId(getParameters().getDestinationImageId());
         managedBlockDisk.setDiskAlias(getParameters().getDiskAlias());
         managedBlockDisk.setDiskDescription(getParameters().getDescription());
-        managedBlockDisk.getStorageIds().add(getParameters().getDestDomain());
+        managedBlockDisk.setStorageIds(Arrays.asList(getParameters().getDestDomain()));
 
         return managedBlockDisk;
     }

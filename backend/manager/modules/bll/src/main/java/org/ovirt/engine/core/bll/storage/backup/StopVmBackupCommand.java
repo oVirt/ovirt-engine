@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.VmBackupType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmBackupVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 
@@ -38,6 +40,9 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
 
     @Inject
     private VmBackupDao vmBackupDao;
+
+    @Inject
+    private ImageTransferDao imageTransferDao;
 
     private VmBackup vmBackup;
 
@@ -55,6 +60,10 @@ public class StopVmBackupCommand<T extends VmBackupParameters> extends VmCommand
 
     @Override
     protected boolean validate() {
+        List<ImageTransfer> imageTransfers = imageTransferDao.getByBackupId(vmBackup.getId());
+        if (imageTransfers.stream().anyMatch(transfer -> !transfer.getPhase().isFinished())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_ACTIVE_IMAGE_TRANSFER_FOR_VM_BACKUP);
+        }
         return true;
     }
 

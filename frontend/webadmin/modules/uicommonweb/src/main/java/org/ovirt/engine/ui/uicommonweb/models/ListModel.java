@@ -142,10 +142,23 @@ public class ListModel<T> extends Model {
     }
 
     public ListModel() {
+        initChangeEvents();
+        initSelectionModels(isSingleSelectionOnly() ? OvirtSelectionModel.Mode.SINGLE_SELECTION : OvirtSelectionModel.Mode.MULTI_SELECTION);
+    }
+
+    public ListModel(OvirtSelectionModel.Mode selectionMode) {
+        initChangeEvents();
+        initSelectionModels(selectionMode);
+    }
+
+    private void initChangeEvents() {
         setSelectedItemChangedEvent(new Event<>(selectedItemChangedEventDefinition));
         setSelectedItemsChangedEvent(new Event<>(selectedItemsChangedEventDefinition));
         setItemsChangedEvent(new Event<>(itemsChangedEventDefinition));
-        this.selectionModel = new OvirtSelectionModel<>(isSingleSelectionOnly());
+    }
+
+    private void initSelectionModels(OvirtSelectionModel.Mode selectionMode) {
+        this.selectionModel = new OvirtSelectionModel<>(selectionMode);
         this.selectionModel.setDataDisplay(new HasDataMinimalDelegate<T>() {
             @Override
             public Iterable<T> getVisibleItems() {
@@ -347,7 +360,7 @@ public class ListModel<T> extends Model {
         return true;
     }
 
-    private final OvirtSelectionModel<T> selectionModel;
+    private OvirtSelectionModel<T> selectionModel;
 
     public OvirtSelectionModel<T> getSelectionModel() {
         return selectionModel;
@@ -359,9 +372,11 @@ public class ListModel<T> extends Model {
      * setSelectedItems.
      */
     private void synchronizeSelection() {
-        if (isSingleSelectionOnly()) {
+        switch (selectionModel.getMode()) {
+        case SINGLE_SELECTION:
             setSelectedItem(selectionModel.asSingleSelectionModel().getSelectedObject());
-        } else {
+            break;
+        case MULTI_SELECTION:
             List<T> selectedItems = selectionModel.getSelectedObjects();
             setSelectedItems(selectedItems);
             if (selectedItems.size() == 1) {
@@ -369,6 +384,9 @@ public class ListModel<T> extends Model {
             } else if (selectedItems.size() == 0) {
                 setSelectedItem(null);
             }
+            break;
+        default:
+            break;
         }
     }
 

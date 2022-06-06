@@ -4,6 +4,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -47,6 +48,10 @@ public class ScreenshotVmCommand<T extends VmOperationParameterBase> extends VmO
 
         if (!FeatureSupported.isVMScreenshotSupported(vm.getCompatibilityVersion())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_SCREENSHOT_VM_IS_NOT_SUPPORTED);
+        }
+
+        if (vm.getDefaultDisplayType() == DisplayType.none) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANNOT_SCREENSHOT_HEADLESS_VM);
         }
 
         if (!canRunActionOnNonManagedVm()) {

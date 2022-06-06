@@ -70,6 +70,7 @@ import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.ModelWithMigrationsOptions;
+import org.ovirt.engine.ui.uicommonweb.models.OvirtSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
@@ -1823,7 +1824,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         setCustomProperties(new NotChangableForVmInPoolEntityModel<String>());
         setCustomPropertySheet(new NotChangableForVmInPoolKeyValueModel());
         getCustomPropertySheet().setShowInvalidKeys(true);
-        setDisplayType(new NotChangableForVmInPoolListModel<DisplayType>());
+        // Do not use selection model. The selection model causes synchronization problems
+        // when we use setSelectedItem() and setItems(items, selectedItem) together
+        setDisplayType(new NotChangableForVmInPoolListModel<DisplayType>(OvirtSelectionModel.Mode.NO_SELECTION));
         setGraphicsType(new NotChangableForVmInPoolListModel<GraphicsTypes>());
         setSecondBootDevice(new NotChangableForVmInPoolListModel<EntityModel<BootSequence>>());
         setBootMenuEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
@@ -2598,13 +2601,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     }
 
     public void initDisplayModels(Set<DisplayType> displayTypes, DisplayType selectedDisplayType) {
-        // set items and set selected one
         if (displayTypes.contains(selectedDisplayType)) {
-            getDisplayType().setItems(displayTypes);
-            getDisplayType().setSelectedItem(selectedDisplayType);
+            getDisplayType().setItems(displayTypes, selectedDisplayType);
         } else if (displayTypes.size() > 0) {
-            getDisplayType().setItems(displayTypes);
-            getDisplayType().setSelectedItem(displayTypes.iterator().next());
+            getDisplayType().setItems(displayTypes, displayTypes.iterator().next());
         }
     }
 
@@ -3569,6 +3569,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     }
 
     private class NotChangableForVmInPoolListModel<T> extends ListModel<T> {
+
+        public NotChangableForVmInPoolListModel() {
+            super();
+        }
+
+        public NotChangableForVmInPoolListModel(OvirtSelectionModel.Mode selectionMode) {
+            super(selectionMode);
+        }
+
         @Override
         public ListModel<T> setIsChangeable(boolean value) {
             if (!isVmAttachedToPool()) {

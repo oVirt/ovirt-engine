@@ -36,6 +36,13 @@ public interface ImageTransferDao extends GenericDao<ImageTransfer, Guid>, Searc
     List<ImageTransfer> getByStorageId(Guid storageId);
 
     /**
+     * Retrieves ImageTransfer entities based on backup ID
+     *
+     * @return ImageTransfer entities
+     */
+    List<ImageTransfer> getByBackupId(Guid backupId);
+
+    /**
      * Deletes completed image transfers.
      * Successful backups have {@link ImageTransferPhase#FINISHED_SUCCESS} or
      * {@link ImageTransferPhase#FINISHED_CLEANUP} statuses.

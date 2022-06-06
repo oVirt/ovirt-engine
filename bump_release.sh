@@ -24,12 +24,12 @@ diff --git a/.copr/Makefile b/.copr/Makefile
 index 51e3299e3e5..b2d4a195740 100644
 --- a/.copr/Makefile
 +++ b/.copr/Makefile
-@@ -4,9 +4,9 @@ installdeps:
-        dnf -y install git
+@@ -9,9 +9,9 @@ git_cfg_safe:
+        git config --global --add safe.directory "$(shell pwd)"
 
- srpm: installdeps
--       $(eval SUFFIX=$(shell sh -c "echo '.git$$(git rev-parse --short HEAD)'"))
-+       # $(eval SUFFIX=$(shell sh -c "echo '.git$$(git rev-parse --short HEAD)'"))
+ srpm: installdeps git_cfg_safe
+-       $(eval SUFFIX=.git$(shell git rev-parse --short HEAD))
++       # $(eval SUFFIX=.git$(shell git rev-parse --short HEAD))
         # changing the spec file as passing -D won't preserve the suffix when rebuilding in mock
 -       sed "s:%{?release_suffix}:${SUFFIX}:" -i ovirt-engine.spec.in
 +       # sed "s:%{?release_suffix}:${SUFFIX}:" -i ovirt-engine.spec.in

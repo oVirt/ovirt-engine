@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
@@ -106,6 +105,25 @@ public class VdsCpuUnitPinningHelper {
         }
 
         previewPinOfPendingExclusiveCpus(cpuTopology, vmToPendingPinnings);
+        return updatePhysicalCpuAllocations(vm, cpuTopology, hostId);
+    }
+
+    /**
+     * This function will allocate the host CPUs to the given CPU pinning policy.
+     *
+     * The function will select the most available socket (most free CPUs). It will allocate the CPUs and check if we
+     * pass the virtual topology.
+     * When there are no more vCPUs to allocate - return the list of VdsCpuUnit we chose.
+     *
+     * @param vm VM object.
+     * @param cpuTopology topology we want to apply the pinning to
+     * @param hostId GUID of the VDS object.
+     * @return List<{@link VdsCpuUnit}>. The list of VdsCpuUnit we are going to use. If not possible, return null.
+     */
+    public List<VdsCpuUnit> updatePhysicalCpuAllocations(VM vm, List<VdsCpuUnit> cpuTopology, Guid hostId) {
+        if (cpuTopology.isEmpty()) {
+            return new ArrayList<>();
+        }
 
         // 'Resize and pin NUMA' policy also acts as manual pinning.
         if (!vm.getCpuPinningPolicy().isExclusive()) {
@@ -210,8 +228,7 @@ public class VdsCpuUnitPinningHelper {
         return cpusToBeAllocated;
     }
 
-    public int countTakenCores(VDS host) {
-        List<VdsCpuUnit> cpuTopology = resourceManager.getVdsManager(host.getId()).getCpuTopology();
+    private int countTakenCores(List<VdsCpuUnit> cpuTopology) {
         if (cpuTopology.isEmpty()) {
             return 0;
         }
@@ -254,9 +271,24 @@ public class VdsCpuUnitPinningHelper {
         return getCpusInCore(getCoresInSocket(cpuTopology, socketId), coreId).stream().filter(cpu -> !cpu.isExclusive()).collect(Collectors.toList());
     }
 
-    public int getDedicatedCount(Guid vdsId) {
-        return (int) resourceManager.getVdsManager(vdsId).getCpuTopology().stream()
-                .filter(VdsCpuUnit::isExclusive).count();
+    private int getDedicatedCount(List<VdsCpuUnit> cpuTopology) {
+        return (int) cpuTopology.stream().filter(VdsCpuUnit::isExclusive).count();
+    }
+
+    /**
+     * Counts how many CPUs (cores or threads, depending on the countThreadsAsCores) will be unavailable
+     * due to the exclusive pinning.
+     *
+     * @param cpuTopology CPU topology we want to process
+     * @param countThreadsAsCores If the threads should be counted as cores
+     * @return Number of CPUs that are exclusively pinned or blocked by an exclusive pinning
+     */
+    public int countUnavailableCpus(List<VdsCpuUnit> cpuTopology, boolean countThreadsAsCores) {
+        if (countThreadsAsCores) {
+            return getDedicatedCount(cpuTopology);
+        } else {
+            return countTakenCores(cpuTopology);
+        }
     }
 
     private List<Integer> getOnlineSockets(List<VdsCpuUnit> cpuTopology) {

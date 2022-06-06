@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.pending;
 
 import org.ovirt.engine.core.bll.scheduling.utils.VmSpecificPendingResourceEqualizer;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
@@ -10,15 +11,20 @@ import org.ovirt.engine.core.compat.Guid;
  * by not yet started VM on a specified host
  */
 public class PendingCpuCores extends PendingResource {
+
+    private CpuPinningPolicy cpuPinningPolicy;
+
     private int coreCount;
 
     public PendingCpuCores(VDS host, VM vm, int coreCount) {
         super(host, vm);
+        this.cpuPinningPolicy = vm.getCpuPinningPolicy();
         this.coreCount = coreCount;
     }
 
     public PendingCpuCores(Guid host, VM vm, int coreCount) {
         super(host, vm);
+        this.cpuPinningPolicy = vm.getCpuPinningPolicy();
         this.coreCount = coreCount;
     }
 
@@ -28,6 +34,10 @@ public class PendingCpuCores extends PendingResource {
 
     public void setCoreCount(int coreCount) {
         this.coreCount = coreCount;
+    }
+
+    public CpuPinningPolicy getCpuPinningPolicy() {
+        return cpuPinningPolicy;
     }
 
     @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")

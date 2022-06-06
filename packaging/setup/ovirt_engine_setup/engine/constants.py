@@ -841,6 +841,8 @@ class OvnEnv(object):
 
     @osetupattrs(
         is_secret=True,
+        answerfile=True,
+        postinstallfile=True,
     )
     def OVIRT_PROVIDER_OVN_SECRET(self):
         return 'OVESETUP_OVN/ovirtProviderOvnSecret'

@@ -1740,4 +1740,9 @@ public class VmInfoBuildUtils {
         }
         return cpuPinningPolicyName;
     }
+
+    public static boolean needsMemtune(VM vm) {
+        return vm.getBiosType() != null && vm.getBiosType().getChipsetType() == ChipsetType.Q35
+                && maxNumberOfVcpus(vm) >= 256;
+    }
 }

@@ -67,16 +67,6 @@ public interface VmDynamicDao extends GenericDao<VmDynamic, Guid>, StatusAwareDa
     @Override
     void save(VmDynamic vm);
 
-    /**
-     * Update the console user name and id, but only if it was empty before. This
-     * method is needed in order to implement optimistic locking for the functionality
-     * that allows reconnection to the console without rebooting the virtual machine.
-     *
-     * @param vm the dynamic data of the virtual machine
-     * @return {@code true} if at least one row was updated, {@code false} otherwise
-     */
-    boolean updateConsoleUserWithOptimisticLocking(VmDynamic vm);
-
     void clearMigratingToVds(Guid id);
 
     void clearMigratingToVdsAndSetDynamicPinning(Guid id, String cpuPinning, String numaPinning);

@@ -1423,6 +1423,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         tempVar.setParentParameters(getParameters());
         tempVar.setQuotaId(diskInfoDestinationMap.get(image.getId()).getQuotaId());
         tempVar.setDiskProfileId(diskInfoDestinationMap.get(image.getId()).getDiskProfileId());
+        tempVar.setBackup(diskInfoDestinationMap.get(image.getId()).getBackup());
 
         return tempVar;
     }

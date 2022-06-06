@@ -76,6 +76,7 @@ public class DisconnectManagedBlockStorageDeviceCommand<T extends DisconnectMana
         AttachManagedBlockStorageVolumeVDSCommandParameters params =
                 new AttachManagedBlockStorageVolumeVDSCommandParameters(vds);
         params.setVolumeId(getParameters().getDiskId());
+        params.setStorageDomainId(getParameters().getStorageDomainId());
         return runVdsCommand(VDSCommandType.DetachManagedBlockStorageVolume, params);
     }
 

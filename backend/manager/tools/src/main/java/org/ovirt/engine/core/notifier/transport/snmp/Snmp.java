@@ -2,6 +2,7 @@ package org.ovirt.engine.core.notifier.transport.snmp;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.notifier.NotificationServiceException;
 import org.ovirt.engine.core.notifier.dao.DispatchResult;
+import org.ovirt.engine.core.notifier.dao.EventsManager;
 import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
 import org.ovirt.engine.core.notifier.transport.Transport;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
@@ -259,6 +261,7 @@ public class Snmp extends Transport {
 
     private org.snmp4j.Snmp createSnmp3(Profile profile) {
         try {
+            EventsManager eventsManager = new EventsManager();
             TransportMapping<?> transport = new DefaultUdpTransportMapping();
             org.snmp4j.Snmp snmp = new org.snmp4j.Snmp(transport);
             SecurityProtocols securityProtocols = SecurityProtocols.getInstance();
@@ -268,7 +271,8 @@ public class Snmp extends Transport {
             securityProtocols.addPrivacyProtocol(new PrivAES128());
             securityProtocols.addPrivacyProtocol(new PrivAES192());
             securityProtocols.addPrivacyProtocol(new PrivAES256());
-            USM usm = new USM(securityProtocols, profile.engineId, 0);
+            // Send persisted boots value to match SNMP V3 security restrictions
+            USM usm = new USM(securityProtocols, profile.engineId, eventsManager.getNotificationServiceBoots());
             ((org.snmp4j.mp.MPv3) snmp.getMessageProcessingModel(org.snmp4j.mp.MPv3.ID))
                     .setLocalEngineID(profile.engineId.getValue());
             ((org.snmp4j.mp.MPv3) snmp.getMessageProcessingModel(org.snmp4j.mp.MPv3.ID))
@@ -282,7 +286,10 @@ public class Snmp extends Transport {
             return snmp;
         } catch (IOException e) {
             throw new NotificationServiceException("error creating version 3 snmp " + getClass().getName());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     private UsmUser getUsmUser(Profile profile) {

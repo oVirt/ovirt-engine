@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,22 +89,6 @@ public class VmDynamicDaoImpl extends MassOperationsGenericDao<VmDynamic, Guid>
                 .addValue("current_numa_pinning", currentNumaPinning);
 
         getCallsHandler().executeModification("ClearMigratingToVdsAndSetDynamicPinning", parameterSource);
-    }
-
-    @Override
-    public boolean updateConsoleUserWithOptimisticLocking(VmDynamic vm) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_guid", vm.getId())
-                .addValue("console_user_id", vm.getConsoleUserId())
-                .addValue("guest_cur_user_name", vm.getGuestCurrentUserName())
-                .addValue("console_cur_user_name", vm.getConsoleCurrentUserName());
-
-        Map<String, Object> results = getCallsHandler().executeModification("UpdateConsoleUserWithOptimisticLocking",
-                parameterSource,
-                "updated",
-                Types.BIT);
-
-        return (Boolean) results.get("updated");
     }
 
     @Override

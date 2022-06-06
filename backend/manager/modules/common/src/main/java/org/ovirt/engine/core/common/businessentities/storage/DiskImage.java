@@ -74,9 +74,9 @@ public class DiskImage extends DiskImageBase {
         }
         setQuotaEnforcementType(diskImage.getQuotaEnforcementType());
         setActive(diskImage.getActive());
-        setCreationDate(new Date(diskImage.getCreationDate().getTime()));
+        setCreationDate(diskImage.getCreationDate());
         setSnapshotCreationDate(diskImage.getSnapshotCreationDate());
-        setLastModifiedDate(new Date(diskImage.getLastModifiedDate().getTime()));
+        setLastModifiedDate(diskImage.getLastModifiedDate());
         actualSizeInBytes = diskImage.actualSizeInBytes;
         initialSizeInBytes = diskImage.initialSizeInBytes;
         readRateFromDiskImageDynamic = diskImage.readRateFromDiskImageDynamic;
@@ -92,10 +92,7 @@ public class DiskImage extends DiskImageBase {
         appList = diskImage.appList;
         setImageTemplateId(diskImage.getImageTemplateId());
         setParentId(diskImage.getParentId());
-        setImageStatus(diskImage.getImageStatus());
-        if (diskImage.getLastModified() != null) {
-            setLastModified(new Date(diskImage.getLastModified().getTime()));
-        }
+        setLastModified(diskImage.getLastModified() != null ? diskImage.getLastModified() : new Date());
         storageIds = new ArrayList<>(diskImage.storageIds);
         setVmSnapshotId(diskImage.getVmSnapshotId());
         setId(diskImage.getId());
@@ -111,8 +108,6 @@ public class DiskImage extends DiskImageBase {
         // TODO: is it ok to use shallow copy here?!
         snapshots = new ArrayList<>(diskImage.snapshots);
         actualDiskWithSnapthotsSize = diskImage.actualDiskWithSnapthotsSize;
-        setCreationDate(new Date());
-        setLastModified(new Date());
         setImageStatus(ImageStatus.LOCKED);
         setDiskProfileId(diskImage.getDiskProfileId());
         getImage().setSequenceNumber(diskImage.getImage().getSequenceNumber());

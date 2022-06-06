@@ -23,6 +23,9 @@ public class CloneVmParameters extends AddVmParameters {
 
     private boolean edited;
 
+    // For internal use only
+    private VM editedVm;
+
     public CloneVmParameters() {
 
     }
@@ -60,6 +63,17 @@ public class CloneVmParameters extends AddVmParameters {
 
     public void setEdited(boolean edited) {
         this.edited = edited;
+    }
+
+    public VM getEditedVm() {
+        return editedVm;
+    }
+
+    /**
+     * This method is for internal use only, disregard in API.
+     */
+    public void setEditedVm(VM editedVm) {
+        this.editedVm = editedVm;
     }
 
     public Guid getDestStorageDomainId() {
