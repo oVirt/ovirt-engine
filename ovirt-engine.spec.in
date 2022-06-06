@@ -296,6 +296,7 @@ BuildRequires:	openstack-java-glance-client >= %{openstack_java_version}
 # backend
 BuildRequires:	%{name}-extensions-api >= 1.0.1
 BuildRequires:	ebay-cors-filter
+BuildRequires:	jboss-modules
 
 # findbugs filter
 BuildRequires:	maven-surefire-plugin
@@ -1102,7 +1103,6 @@ perl -i -pe 's/^SHA1-Digest: [^\n]+\n//g' "%{buildroot}%{engine_ear}/META-INF/MA
 # Exception: Following dependencies were not resolved and requires cannot be generated.
 # Either remove the dependencies from pom.xml or add proper packages to BuildRequires:
 # org.infinispan:infinispan-core:9.4.18.Final required by org.ovirt.engine.core:utils
-# org.jboss.modules:jboss-modules:1.1.1.GA required by org.ovirt.engine.core:extensions-manager
 # org.hibernate.validator:hibernate-validator:6.0.18.Final required by org.ovirt.engine.core:common
 #
 #
