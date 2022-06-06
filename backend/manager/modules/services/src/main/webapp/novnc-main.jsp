@@ -192,7 +192,8 @@
 
             // Creating a new RFB object will start a new connection
             rfb = new RFB(document.getElementById('screen'), url,
-                          { credentials: { password: password } });
+                          { credentials: { password: password },
+                           wsProtocols: ['binary'] });
 
             // Add listeners to important events from the RFB module
             rfb.addEventListener("connect",  connectedToServer);
