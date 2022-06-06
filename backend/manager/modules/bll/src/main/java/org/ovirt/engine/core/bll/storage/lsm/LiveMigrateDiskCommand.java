@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -180,6 +182,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         p.setDestImageGroupId(getImageGroupId());
         p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         p.setJobWeight(Job.MAX_WEIGHT);
+        p.setLiveMigration(true);
+
         return p;
     }
 
@@ -214,6 +218,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         params.setDiskIdsToIgnoreInChecks(getImageGroupIds());
         params.setNeedsLocking(false);
         params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        params.setDiskImagesMap(createDiskImagesMap());
+
         return params;
     }
 
@@ -221,6 +227,21 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         return Collections.singleton(getImageGroupId());
     }
 
+    private Map<Guid, DiskImage> createDiskImagesMap() {
+        if (FeatureSupported.isReplicateExtendSupported(getCluster().getCompatibilityVersion())) {
+            StorageDomainStatic sourceDomain = storageDomainStaticDao.get(getParameters().getSourceStorageDomainId());
+            if (sourceDomain.getStorageType().isBlockDomain()) {
+                DiskImage disk = getDiskImage();
+                DiskImage diskParams = new DiskImage();
+
+                diskParams.setInitialSizeInBytes(ImagesHandler.computeImageInitialSizeInBytes(disk.getImage()));
+                return new HashMap<>() {{
+                    put(disk.getId(), diskParams);
+                }};
+            }
+        }
+        return new HashMap<>();
+    }
 
     @Override
     public boolean performNextOperation(int completedChildCount) {
@@ -430,7 +451,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     private void replicateDiskFinish(Guid srcDomain, Guid dstDomain) {
-        VmReplicateDiskParameters migrationStartParams = new VmReplicateDiskParameters(getParameters().getVdsId(),
+        VmReplicateDiskParameters migrationFinishParams = new VmReplicateDiskParameters(getParameters().getVdsId(),
                 getParameters().getVmId(),
                 getParameters().getStoragePoolId(),
                 srcDomain,
@@ -440,7 +461,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 null);
 
         VDSReturnValue ret = resourceManager.runVdsCommand(
-                VDSCommandType.VmReplicateDiskFinish, migrationStartParams);
+                VDSCommandType.VmReplicateDiskFinish, migrationFinishParams);
 
         if (!ret.getSucceeded()) {
             throw new EngineException(ret.getVdsError().getCode(), ret.getVdsError().getMessage());
@@ -552,8 +573,11 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 getParameters().getImageGroupID(),
                 getParameters().getDestinationImageId(),
                 diskType.orElse(null));
-        VDSReturnValue ret = resourceManager.runVdsCommand(VDSCommandType.VmReplicateDiskStart, migrationStartParams);
+        if (FeatureSupported.isReplicateExtendSupported(getCluster().getCompatibilityVersion())) {
+            migrationStartParams.setNeedExtend(false);
+        }
 
+        VDSReturnValue ret = resourceManager.runVdsCommand(VDSCommandType.VmReplicateDiskStart, migrationStartParams);
         if (!ret.getSucceeded()) {
             log.error("Failed VmReplicateDiskStart (Disk '{}' , VM '{}')",
                     getParameters().getImageGroupID(),
