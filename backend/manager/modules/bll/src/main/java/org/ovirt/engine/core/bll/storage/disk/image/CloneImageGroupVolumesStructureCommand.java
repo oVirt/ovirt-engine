@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.action.MeasureVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
@@ -211,10 +212,16 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
             Guid srcDomain,
             Guid dstDomain,
             Guid imageGroupID) {
+        StorageType srcDomainStorageType = storageDomainDao.get(srcDomain).getStorageType();
+        StorageType dstDomainStorageType = storageDomainDao.get(dstDomain).getStorageType();
+        if (getParameters().isLiveMigration() && sourceImage.isActive() && dstDomainStorageType.isBlockDomain()) {
+            return ImagesHandler.computeImageInitialSizeInBytes(sourceImage);
+        }
+
         Guid hostId = imagesHandler.getHostForMeasurement(storagePoolId, imageGroupID);
         if (hostId != null) {
-            if ((storageDomainDao.get(srcDomain).getStorageType().isBlockDomain() || !sourceImage.isActive()) &&
-                    storageDomainDao.get(dstDomain).getStorageType().isBlockDomain()) {
+            if ((srcDomainStorageType.isBlockDomain() || !sourceImage.isActive()) &&
+                    dstDomainStorageType.isBlockDomain()) {
                 MeasureVolumeParameters parameters = new MeasureVolumeParameters(storagePoolId,
                         srcDomain,
                         imageGroupID,

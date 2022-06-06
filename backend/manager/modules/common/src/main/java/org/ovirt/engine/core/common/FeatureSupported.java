@@ -447,4 +447,14 @@ public class FeatureSupported {
     public static boolean isDedicatePolicySupported(Version version) {
         return supportedInConfig(ConfigValues.IsDedicatedSupported, version);
     }
+
+    /**
+     * Check if replicate extend (allocating snapshot with initial size during Live Storage Migration) is supported.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if replicate extend is supported during Live Storage Migration
+     */
+    public static boolean isReplicateExtendSupported(Version version) {
+        return Version.v4_7.lessOrEquals(version);
+    }
 }

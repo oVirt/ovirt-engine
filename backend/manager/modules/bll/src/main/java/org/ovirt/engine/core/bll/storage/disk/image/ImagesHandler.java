@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMapId;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -53,11 +54,14 @@ import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
@@ -961,6 +965,15 @@ public class ImagesHandler {
         return sourceFormat == VolumeFormat.COW
                 ? Double.valueOf(Math.ceil(actualSize / StorageConstants.QCOW_OVERHEAD_FACTOR)).longValue()
                 : actualSize;
+    }
+
+    public static long computeImageInitialSizeInBytes(Image image) {
+        // Used in Live Storage Migration flow to calculate initial image size (cluster version 4.7 and above).
+        int volumeUtilizationChunkInMB = Config.getValue(ConfigValues.VolumeUtilizationChunkInMB);
+        long volumeUtilizationChunkInBytes = SizeConverter.convert(volumeUtilizationChunkInMB,
+                SizeConverter.SizeUnit.MiB,
+                SizeConverter.SizeUnit.BYTES).longValue();
+        return Math.min(3 * volumeUtilizationChunkInBytes, image.getSize());
     }
 
     /**

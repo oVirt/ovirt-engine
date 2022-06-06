@@ -13,6 +13,7 @@ public class CloneImageGroupVolumesStructureCommandParameters extends ImagesActi
     private Guid destImageGroupId;
     private Guid destImageId;
     private List<DiskImage> destImages = new ArrayList<>();
+    private boolean isLiveMigration = false;
 
     public CloneImageGroupVolumesStructureCommandParameters() {
     }
@@ -77,5 +78,13 @@ public class CloneImageGroupVolumesStructureCommandParameters extends ImagesActi
 
     public void setDestImages(List<DiskImage> destImages) {
         this.destImages = destImages;
+    }
+
+    public boolean isLiveMigration() {
+        return isLiveMigration;
+    }
+
+    public void setLiveMigration(boolean isLiveMigration) {
+        this.isLiveMigration = isLiveMigration;
     }
 }
