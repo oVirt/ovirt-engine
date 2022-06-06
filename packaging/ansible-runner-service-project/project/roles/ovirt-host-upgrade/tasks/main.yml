@@ -33,6 +33,9 @@
   set_fact:
     previous_vdsm_package: "{{ ansible_facts.packages['vdsm'] | first }}"
 
+- name: Remove network-scripts-openvswitch 2.11 package
+  shell: rpm -e --nodeps network-scripts-openvswitch2.11
+
 - name: Upgrade packages
   yum:
     name: '*'
