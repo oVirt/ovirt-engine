@@ -569,11 +569,16 @@ public class NullVdsServer implements IVdsServer {
         return null;
     }
 
-    @Override public StatusOnlyReturn diskReplicateStart(String vmUUID, Map srcDisk, Map dstDisk) {
+    @Override public StatusOnlyReturn diskReplicateStart(String vmUUID,
+            Map<String, Object> srcDisk,
+            Map<String, Object> dstDisk,
+            boolean needExtend) {
         return null;
     }
 
-    @Override public StatusOnlyReturn diskReplicateFinish(String vmUUID, Map srcDisk, Map dstDisk) {
+    @Override public StatusOnlyReturn diskReplicateFinish(String vmUUID,
+            Map<String, Object> srcDisk,
+            Map<String, Object> dstDisk) {
         return null;
     }
 

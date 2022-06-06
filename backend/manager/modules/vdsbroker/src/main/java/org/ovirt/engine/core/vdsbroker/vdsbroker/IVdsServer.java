@@ -326,9 +326,14 @@ public interface IVdsServer {
 
     GlusterServersListReturn glusterServersList();
 
-    StatusOnlyReturn diskReplicateStart(String vmUUID, Map srcDisk, Map dstDisk);
+    StatusOnlyReturn diskReplicateStart(String vmUUID,
+            Map<String, Object> srcDisk,
+            Map<String, Object> dstDisk,
+            boolean needExtend);
 
-    StatusOnlyReturn diskReplicateFinish(String vmUUID, Map srcDisk, Map dstDisk);
+    StatusOnlyReturn diskReplicateFinish(String vmUUID,
+            Map<String, Object> srcDisk,
+            Map<String, Object> dstDisk);
 
     StatusOnlyReturn glusterVolumeProfileStart(String volumeName);
 

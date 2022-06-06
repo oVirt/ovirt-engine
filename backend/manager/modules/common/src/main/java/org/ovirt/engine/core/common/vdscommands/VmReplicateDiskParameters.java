@@ -5,6 +5,14 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmReplicateDiskParameters extends VdsAndVmIDVDSParametersBase {
 
+    private Guid storagePoolId;
+    private Guid srcStorageDomainId;
+    private Guid targetStorageDomainId;
+    private Guid imageGroupId;
+    private Guid imageId;
+    private String diskType;
+    private boolean needExtend = true;
+
     public VmReplicateDiskParameters(Guid vdsId,
             Guid vmId,
             Guid storagePoolId,
@@ -73,12 +81,13 @@ public class VmReplicateDiskParameters extends VdsAndVmIDVDSParametersBase {
         this.diskType = diskType;
     }
 
-    private Guid storagePoolId;
-    private Guid srcStorageDomainId;
-    private Guid targetStorageDomainId;
-    private Guid imageGroupId;
-    private Guid imageId;
-    private String diskType;
+    public boolean isNeedExtend() {
+        return needExtend;
+    }
+
+    public void setNeedExtend(boolean needExtend) {
+        this.needExtend = needExtend;
+    }
 
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
@@ -87,7 +96,9 @@ public class VmReplicateDiskParameters extends VdsAndVmIDVDSParametersBase {
                 .append("srcStorageDomainId", getSrcStorageDomainId())
                 .append("targetStorageDomainId", getTargetStorageDomainId())
                 .append("imageGroupId", getImageGroupId())
-                .append("imageId", getImageId());
+                .append("imageId", getImageId())
+                .append("diskType", getDiskType())
+                .append("needExtend", isNeedExtend());
     }
 
 }

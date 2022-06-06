@@ -1426,26 +1426,30 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new GlusterServersListReturn(response);
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturn diskReplicateStart(String vmUUID, Map srcDisk, Map dstDisk) {
+    public StatusOnlyReturn diskReplicateStart(String vmUUID,
+            Map<String, Object> srcDisk,
+            Map<String, Object> dstDisk,
+            boolean needExtend) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.diskReplicateStart").withParameter("vmID", vmUUID)
                         .withParameter("srcDisk", srcDisk)
                         .withParameter("dstDisk", dstDisk)
+                        .withParameter("needExtend", needExtend)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturn diskReplicateFinish(String vmUUID, Map srcDisk, Map dstDisk) {
-        JsonRpcRequest request =
-                new RequestBuilder("VM.diskReplicateFinish").withParameter("vmID", vmUUID)
-                        .withParameter("srcDisk", srcDisk)
-                        .withParameter("dstDisk", dstDisk)
-                        .build();
+    public StatusOnlyReturn diskReplicateFinish(String vmUUID,
+            Map<String, Object> srcDisk,
+            Map<String, Object> dstDisk) {
+        JsonRpcRequest request = new RequestBuilder("VM.diskReplicateFinish")
+                .withParameter("vmID", vmUUID)
+                .withParameter("srcDisk", srcDisk)
+                .withParameter("dstDisk", dstDisk)
+                .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturn(response);
     }
