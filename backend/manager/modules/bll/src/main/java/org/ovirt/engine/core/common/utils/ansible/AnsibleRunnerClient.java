@@ -201,7 +201,15 @@ public class AnsibleRunnerClient {
         File output = new File(String.format("%1$s/engine-cancel-output.log", privateDataDir));
         String command = String.format("ansible-runner stop %1$s", privateDataDir);
         ProcessBuilder ansibleProcessBuilder = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
-        Process ansibleProcess = ansibleProcessBuilder.start();
+        Process ansibleProcess;
+        try {
+            ansibleProcess = ansibleProcessBuilder.start();
+            // if play execution was already completed, the command fails.
+        } catch (IOException e) {
+            log.error(String.format("Failed to execute call to cancel playbook. %1$s, %2$s ",
+                    output.toString(), Paths.get(this.getJobEventsDir(uuid.toString()) + "../stdout")));
+            return;
+        }
         if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
             throw new Exception("Timeout occurred while canceling Ansible playbook.");
         }
