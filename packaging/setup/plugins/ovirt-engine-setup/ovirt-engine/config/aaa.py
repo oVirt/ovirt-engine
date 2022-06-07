@@ -54,6 +54,15 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+    )
+    def _boot(self):
+        self.environment.setdefault(
+            oengcommcons.KeycloakEnv.SUPPORTED,
+            False
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
@@ -85,6 +94,15 @@ class Plugin(plugin.PluginBase):
             oengcommcons.KeycloakEnv.ENABLE,
             False
         )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+        condition=lambda self: not self.environment[
+            oengcommcons.KeycloakEnv.SUPPORTED
+        ],
+    )
+    def _setup(self):
+        self.environment[oengcommcons.KeycloakEnv.ENABLE] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,

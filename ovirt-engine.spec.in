@@ -1020,6 +1020,14 @@ OVESETUP_CONFIG/jbossHome=str:/opt/rh/eap7/root/usr/share/wildfly
 OVESETUP_CONFIG/pkiRenewalDocUrl=str:https://access.redhat.com/solutions/1572983
 __EOF__
 
+# Disable automatic keycloak integration in RHV.
+# Manual integration of RHV with Red Hat Single Sign On, aka RHSSO, is documented at
+# "Installing and Configuring Red Hat Single Sign-On" in:
+# https://access.redhat.com/documentation/en-us/red_hat_virtualization/4.4/html/administration_guide
+cat >> "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" << __EOF__
+OVESETUP_CONFIG/keycloakSupported=bool:False
+__EOF__
+
 cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-wsp.conf" << __EOF__
 [environment:default]
 __EOF__
