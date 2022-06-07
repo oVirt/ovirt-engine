@@ -62,7 +62,7 @@ public class AnsibleRunnerClient {
 
     public AnsibleReturnValue artifactHandler(UUID uuid, int timeout, BiConsumer<String, String> fn)
             throws Exception {
-        int iteration = 0;
+        int executionTime = 0;
         int processRet = 0;
         this.setReturnValue(uuid);
         // retrieve timeout from engine constants.
@@ -79,7 +79,6 @@ public class AnsibleRunnerClient {
                         "Play execution has reached timeout");
             }
             processRet = this.processEvents(uuid.toString(), fn);
-            iteration += POLL_INTERVAL / 1000;
             Thread.sleep(POLL_INTERVAL);
         }
         this.returnValue.setAnsibleReturnCode(AnsibleReturnCode.OK);
