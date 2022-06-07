@@ -405,6 +405,8 @@ class KeycloakEnv(object):
     def ENABLE(self):
         return 'OVESETUP_CONFIG/keycloakEnable'
 
+    SUPPORTED = 'OVESETUP_CONFIG/keycloakSupported'
+
     @osetupattrs(
         is_secret=True,
         answerfile=True,
