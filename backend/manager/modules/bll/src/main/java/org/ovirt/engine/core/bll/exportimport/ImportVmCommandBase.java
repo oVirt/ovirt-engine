@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -73,6 +74,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
@@ -119,6 +121,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private CloudInitHandler cloudInitHandler;
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     private final List<String> macsAdded = new ArrayList<>();
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
@@ -507,6 +511,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     @Override
     protected void executeVmCommand() {
+        handleVmLease();
         try {
             addVmToDb();
             addVmToAffinityGroups();
@@ -515,6 +520,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             processImages();
             vmHandler.addVmInitToDB(getVm().getStaticData().getVmInit());
             discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
+            addVmLeaseIfNeeded();
         } catch (RuntimeException e) {
             macPool.freeMacs(macsAdded);
             throw e;
@@ -745,6 +751,43 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         return getVm().getMemSizeMb();
+    }
+
+    private Guid findDefaultStorageDomainForVmLease() {
+        return storageDomainStaticDao.getAllForStoragePool(getStoragePoolId()).stream()
+                .map(StorageDomainStatic::getId)
+                .filter(this::validateLeaseStorageDomain)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void handleVmLease() {
+        Guid importedLeaseStorageDomainId = getVm().getLeaseStorageDomainId();
+        if (importedLeaseStorageDomainId == null) {
+            return;
+        }
+        if (!getVm().isAutoStartup() || !shouldAddLease(getVm().getStaticData())) {
+            getVm().setLeaseStorageDomainId(null);
+            return;
+        }
+        if (validateLeaseStorageDomain(importedLeaseStorageDomainId)) {
+            return;
+        }
+        getVm().setLeaseStorageDomainId(findDefaultStorageDomainForVmLease());
+        if (getVm().getLeaseStorageDomainId() == null) {
+            auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_WITH_LEASE_STORAGE_DOMAIN);
+        } else {
+            log.warn("Creating the lease for the VM '{}' on storage domain '{}', because storage domain '{}' is unavailable",
+                    getVm().getId(),
+                    getVm().getLeaseStorageDomainId(),
+                    importedLeaseStorageDomainId);
+        }
+    }
+
+    private void addVmLeaseIfNeeded() {
+        if (getVm().getLeaseStorageDomainId() != null) {
+            addVmLease(getVm().getLeaseStorageDomainId(), getVm().getId(), false);
+        }
     }
 
     @Override
