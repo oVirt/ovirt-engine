@@ -398,50 +398,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return true;
     }
 
-    private Guid findDefaultStorageDomainForVmLease() {
-        return storageDomainStaticDao.getAllForStoragePool(getStoragePoolId()).stream()
-                .map(StorageDomainStatic::getId)
-                .filter(this::validateLeaseStorageDomain)
-                .findFirst()
-                .orElse(null);
-    }
-
-    private void handleVmLease() {
-        Guid importedLeaseStorageDomainId = getVm().getLeaseStorageDomainId();
-        if (importedLeaseStorageDomainId == null) {
-            return;
-        }
-        if (!getVm().isAutoStartup() || !shouldAddLease(getVm().getStaticData())) {
-            getVm().setLeaseStorageDomainId(null);
-            return;
-        }
-        if (validateLeaseStorageDomain(importedLeaseStorageDomainId)) {
-            return;
-        }
-        getVm().setLeaseStorageDomainId(findDefaultStorageDomainForVmLease());
-        if (getVm().getLeaseStorageDomainId() == null) {
-            auditLogDirector.log(this, AuditLogType.CANNOT_IMPORT_VM_WITH_LEASE_STORAGE_DOMAIN);
-        } else {
-            log.warn("Creating the lease for the VM '{}' on storage domain '{}', because storage domain '{}' is unavailable",
-                    getVm().getId(),
-                    getVm().getLeaseStorageDomainId(),
-                    importedLeaseStorageDomainId);
-        }
-    }
-
-    private void addVmLeaseIfNeeded() {
-        if (getVm().getLeaseStorageDomainId() != null) {
-            addVmLease(getVm().getLeaseStorageDomainId(), getVm().getId(), false);
-        }
-    }
-
-    @Override
-    protected void executeVmCommand() {
-        handleVmLease();
-        super.executeVmCommand();
-        addVmLeaseIfNeeded();
-    }
-
     @Override
     public CommandCallback getCallback() {
         return callbackProvider.get();
