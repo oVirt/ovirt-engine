@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.inject.Inject;
 
@@ -54,9 +56,12 @@ import org.ovirt.engine.core.dao.provider.HostProviderBindingDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoReturn;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Activate or deactivate a virtual network interface of a VM in case it is in a valid status. If the VM is down, simply
@@ -65,6 +70,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoReturn;
 @NonTransactiveCommandAttribute
 public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicParameters> extends VmCommand<T> {
 
+    private static final Logger log = LoggerFactory.getLogger(ActivateDeactivateVmNicCommand.class);
     private static List<VMStatus> ALLOWED_VM_STATES =
             Arrays.asList(VMStatus.Up, VMStatus.Down, VMStatus.ImageLocked, VMStatus.PoweringDown, VMStatus.PoweringUp);
 
@@ -117,6 +123,9 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     @Inject
     private NetworkDao networkDao;
+
+    @Inject
+    private ResourceManager resourceManager;
 
     public ActivateDeactivateVmNicCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -248,21 +257,46 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     @Override
     protected void executeVmCommand() {
-        switch (getParameters().getAction()) {
-        case PLUG:
-            plugNic();
-            break;
-        case UNPLUG:
-            unplugNic();
-            break;
-        default:
-            throw new RuntimeException("Coding error: unknown enum value");
-        }
+        boolean hotPlug = getVm().getStatus().isUpOrPaused();
+        Lock vmDevicesLock = getVmDevicesLock(hotPlug, getParameters().getAction());
+        vmDevicesLock.lock();
+        try {
+            switch (getParameters().getAction()) {
+            case PLUG:
+                plugNic();
+                break;
+            case UNPLUG:
+                unplugNic();
+                break;
+            default:
+                throw new RuntimeException("Coding error: unknown enum value");
+            }
 
-        var success = handleFailoverIfNeeded();
-        // In any case, the device is updated
-        updateDevice();
-        setSucceeded(success);
+            var success = handleFailoverIfNeeded();
+            // In any case, the device is updated
+            updateDevice();
+            setSucceeded(success);
+        } finally {
+            vmDevicesLock.unlock();
+            log.debug("Released lock for {}", getParameters().getAction());
+        }
+    }
+
+    protected Lock getVmDevicesLock(boolean runningVmChanges, PlugAction action) {
+        if (!runningVmChanges) {
+            // dummy lock
+            log.debug("Acquired dummy lock for {}", action);
+            return new ReentrantLock() {
+                @Override
+                public void lock() {
+                }
+                @Override
+                public void unlock() {
+                }
+            };
+        }
+        log.debug("Acquired lock for {}", action);
+        return resourceManager.getVmManager(getVmId()).getVmDevicesLock();
     }
 
     private void plugNic() {
