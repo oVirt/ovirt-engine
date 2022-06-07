@@ -147,7 +147,7 @@ public class VdsCpuUnitPinningHelper {
         int onlineSockets = getOnlineSockets(cpuTopology).size();
         int numOfAllocatedCPUs = 0;
         while (onlineSockets > 0 && socketsLeft > 0) {
-            List<VdsCpuUnit> cpusInChosenSocket = getMaxFreedSocket(cpuTopology);
+            List<VdsCpuUnit> cpusInChosenSocket = getCoresInSocket(cpuTopology, getMaxFreedSocket(cpuTopology));
             if (cpusInChosenSocket.isEmpty()) {
                 break;
             }
@@ -269,11 +269,6 @@ public class VdsCpuUnitPinningHelper {
         }
     }
 
-    public int getDedicatedCount(Guid vdsId) {
-        return (int) resourceManager.getVdsManager(vdsId).getCpuTopology().stream()
-                .filter(VdsCpuUnit::isExclusive).count();
-    }
-
     private List<Integer> getOnlineSockets(List<VdsCpuUnit> cpuTopology) {
         return cpuTopology.stream().map(VdsCpuUnit::getSocket).distinct().collect(Collectors.toList());
     }
@@ -286,16 +281,18 @@ public class VdsCpuUnitPinningHelper {
         return cpuTopology.stream().map(VdsCpuUnit::getCore).distinct().collect(Collectors.toList());
     }
 
-    private List<VdsCpuUnit> getMaxFreedSocket(List<VdsCpuUnit> cpuTopology) {
+    private int getMaxFreedSocket(List<VdsCpuUnit> cpuTopology) {
         List<VdsCpuUnit> chosenSocket = Collections.emptyList();
-        List<VdsCpuUnit> temp;
-        for (int socket : getOnlineSockets(cpuTopology)) {
-            temp = getFreeCpusInSocket(cpuTopology, socket);
-            if (temp.size() > chosenSocket.size()) {
-                chosenSocket = temp;
+        List<Integer> onlineSocketIds = getOnlineSockets(cpuTopology);
+        int chosenSocketId = onlineSocketIds.get(0);
+        for (int socket : onlineSocketIds) {
+            List<VdsCpuUnit> freeCpusInSocket = getFreeCpusInSocket(cpuTopology, socket);
+            if (freeCpusInSocket.size() > chosenSocket.size()) {
+                chosenSocket = freeCpusInSocket;
+                chosenSocketId = socket;
             }
         }
-        return chosenSocket;
+        return chosenSocketId;
     }
 
     /**
