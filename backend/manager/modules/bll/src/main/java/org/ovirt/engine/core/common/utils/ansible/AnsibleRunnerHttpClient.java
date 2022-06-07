@@ -217,8 +217,10 @@ public class AnsibleRunnerHttpClient {
             ansibleProcess = ansibleProcessBuilder.start();
             // if play execution was already completed, the command fails.
         } catch (IOException e) {
-            log.error(String.format("Failed to execute call to cancel playbook. %1$s, %2$s ",
-                    output.toString(), Paths.get(this.getJobEventsDir(uuid.toString()) + "../stdout")));
+            log.error(String.format("Failed to execute call to cancel playbook. %1$s, %2$s../stdout ",
+                    output.toString(),
+                    Paths.get(this.getJobEventsDir(uuid.toString()))));
+            log.debug("Exception: ", e);
             return;
         }
         if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
