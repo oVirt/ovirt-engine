@@ -36,8 +36,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
 @Singleton
-public class AnsibleRunnerHttpClient {
-    private static Logger log = LoggerFactory.getLogger(AnsibleRunnerHttpClient.class);
+public class AnsibleRunnerClient {
+    private static Logger log = LoggerFactory.getLogger(AnsibleRunnerClient.class);
     private ObjectMapper mapper;
     private AnsibleRunnerLogger runnerLogger;
     private String lastEvent = "";
@@ -45,7 +45,7 @@ public class AnsibleRunnerHttpClient {
     private AnsibleReturnValue returnValue;
     private String artifactsDir = "";
 
-    public AnsibleRunnerHttpClient() {
+    public AnsibleRunnerClient() {
         this.mapper = JsonMapper
                 .builder()
                 .findAndAddModules()
