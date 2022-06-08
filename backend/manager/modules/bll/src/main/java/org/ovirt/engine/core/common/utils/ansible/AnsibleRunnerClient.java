@@ -228,12 +228,11 @@ public class AnsibleRunnerClient {
         }
     }
 
-    public void runPlaybook(List<String> command, int timeout) throws Exception {
-        Process ansibleProcess;
-        File output = File.createTempFile("output", ".log");
+    public void runPlaybook(List<String> command, int timeout, String uuid) throws Exception {
+        File output = new File(String.format("%1$s/%2$s/engine-start-output.log", AnsibleConstants.ANSIBLE_RUNNER_PATH, uuid));
         ProcessBuilder ansibleProcessBuilder =
                 new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
-        ansibleProcess = ansibleProcessBuilder.start();
+        Process ansibleProcess = ansibleProcessBuilder.start();
         String playCommand = String.join(" ", command);
         log.debug(String.format("%1$s started executing command %2$s", Thread.currentThread().getName(), playCommand));
         if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {

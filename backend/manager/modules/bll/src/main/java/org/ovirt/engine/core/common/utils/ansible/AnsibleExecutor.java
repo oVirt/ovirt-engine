@@ -160,7 +160,7 @@ public class AnsibleExecutor {
             List<String> command = commandConfig.build();
 
             // Run the playbook:
-            runnerClient.runPlaybook(command, timeout);
+            runnerClient.runPlaybook(command, timeout, playUuid);
 
             if (async) {
                 ret.setPlayUuid(playUuid);
