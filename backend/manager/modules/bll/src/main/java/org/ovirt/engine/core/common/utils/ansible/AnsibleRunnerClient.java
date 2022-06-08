@@ -43,7 +43,6 @@ public class AnsibleRunnerClient {
     private String lastEvent = "";
     private static final int POLL_INTERVAL = 3000;
     private AnsibleReturnValue returnValue;
-    private String artifactsDir = "";
 
     public AnsibleRunnerClient() {
         this.mapper = JsonMapper
@@ -66,14 +65,9 @@ public class AnsibleRunnerClient {
         return res.contains("playbook_on_stats");
     }
 
-    private void setArtifactsDir(UUID uuid) {
-        this.artifactsDir = String.format("%1$s/%2$s/artifacts/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, uuid);
-    }
-
     public AnsibleReturnValue artifactHandler(UUID uuid, int lastEventID, int timeout, BiConsumer<String, String> fn)
             throws Exception {
         int executionTime = 0;
-        setArtifactsDir(uuid);
         setReturnValue(uuid);
         while (!playHasEnded(uuid)) {
             lastEventID = processEvents(uuid.toString(), lastEventID, fn, "", Paths.get(""));
