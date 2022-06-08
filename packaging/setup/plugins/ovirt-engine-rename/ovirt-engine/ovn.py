@@ -53,6 +53,7 @@ class Plugin(plugin.PluginBase):
                 'ca_cert': None,
                 'extract_key': True,
                 'extra_action': None,
+                'shortLife': False,
             }
         )
 
