@@ -81,6 +81,7 @@ class Plugin(plugin.PluginBase):
             ),
             'extract_key': True,
             'extra_action': _apache_extra_action,
+            'shortLife': True,
         },
     )
 
