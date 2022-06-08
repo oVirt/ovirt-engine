@@ -229,30 +229,27 @@ public class AnsibleRunnerClient {
     }
 
     public void runPlaybook(List<String> command, int timeout) throws Exception {
-        final Object executeLock = new Object();
         Process ansibleProcess;
         File output = File.createTempFile("output", ".log");
-        synchronized (executeLock) {
-            ProcessBuilder ansibleProcessBuilder =
-                    new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
-            ansibleProcess = ansibleProcessBuilder.start();
-            String playCommand = String.join(" ", command);
-            log.debug(String.format("%1$s started executing command %2$s", Thread.currentThread().getName(), playCommand));
-            if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
-                throw new AnsibleRunnerCallException("Timeout occurred while executing Ansible playbook.");
+        ProcessBuilder ansibleProcessBuilder =
+                new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
+        ansibleProcess = ansibleProcessBuilder.start();
+        String playCommand = String.join(" ", command);
+        log.debug(String.format("%1$s started executing command %2$s", Thread.currentThread().getName(), playCommand));
+        if (!ansibleProcess.waitFor(timeout, TimeUnit.MINUTES)) {
+            throw new AnsibleRunnerCallException("Timeout occurred while executing Ansible playbook.");
+        }
+        if (ansibleProcess.exitValue() != 0) {
+            String errorOutput = null;
+            try {
+                errorOutput = Files.readString(output.toPath());
+            } catch (IOException ex) {
+                log.error("Error reading output from ansible-runner execution: {}", ex.getMessage());
+                log.debug("Exception", ex);
             }
-            if (ansibleProcess.exitValue() != 0) {
-                String errorOutput = null;
-                try {
-                    errorOutput = Files.readString(output.toPath());
-                } catch (IOException ex) {
-                    log.error("Error reading output from ansible-runner execution: {}", ex.getMessage());
-                    log.debug("Exception", ex);
-                }
-                throw new AnsibleRunnerCallException(
-                        "Failed to execute call to start playbook. %1$s",
-                        errorOutput);
-            }
+            throw new AnsibleRunnerCallException(
+                    "Failed to execute call to start playbook. %1$s",
+                    errorOutput);
         }
     }
 
