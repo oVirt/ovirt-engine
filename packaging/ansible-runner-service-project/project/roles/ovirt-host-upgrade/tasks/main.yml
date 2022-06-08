@@ -37,7 +37,7 @@
   shell: rpm -e --nodeps network-scripts-openvswitch2.11
   ignore_errors: true
   when:
-    - el_ver|int >= 8
+    - el_ver|int == 8
     - ovirt_openvswitch_pre is defined
     - ovirt_openvswitch_pre is version ('2.11', '==')
 
