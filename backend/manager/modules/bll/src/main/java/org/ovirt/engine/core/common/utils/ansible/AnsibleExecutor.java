@@ -151,7 +151,7 @@ public class AnsibleExecutor {
 
         String playUuid = null;
         String msg = "";
-        AnsibleRunnerHttpClient runnerClient = null;
+        AnsibleRunnerClient runnerClient = null;
         try {
             runnerClient = ansibleClientFactory.create(commandConfig);
             playUuid = commandConfig.getUuid().toString();

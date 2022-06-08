@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerHttpClient;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerClient;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
@@ -32,7 +32,7 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
     @Inject
     private AnsibleExecutor ansibleExecutor;
     @Inject
-    private AnsibleRunnerHttpClient runnerClient;
+    private AnsibleRunnerClient runnerClient;
 
     public GetFromOvaQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
