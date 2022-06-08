@@ -203,9 +203,10 @@ public class AnsibleRunnerClient {
     }
 
     public void cancelPlaybook(UUID uuid, int timeout) throws Exception {
+        File privateDataDir = new File(String.format("%1$s/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, uuid));
+        File output = new File(String.format("%1$s/engine-cancel-output.log", privateDataDir));
+        String command = String.format("ansible-runner stop %1$s", privateDataDir);
         Process ansibleProcess;
-        File output = File.createTempFile("output", ".log");
-        String command = String.format("ansible-runner stop %1$s", uuid);
         ProcessBuilder ansibleProcessBuilder = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(output);
         try {
             ansibleProcess = ansibleProcessBuilder.start();
