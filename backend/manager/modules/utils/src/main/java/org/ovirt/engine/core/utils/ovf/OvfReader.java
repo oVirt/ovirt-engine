@@ -147,23 +147,17 @@ public abstract class OvfReader implements IOvfBuilder {
             image.setVmSnapshotId(new Guid(node.attributes.get("ovf:vm_snapshot_id").getValue()));
         }
 
-        if (node.attributes.get("ovf:volume-format") != null) {
-            if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-format").getValue())) {
+        if (node.attributes.get("ovf:volume-format") != null &&
+            !StringUtils.isEmpty(node.attributes.get("ovf:volume-format").getValue())) {
                 image.setVolumeFormat(VolumeFormat.valueOf(node.attributes.get("ovf:volume-format")
                         .getValue()));
-            } else {
-                image.setVolumeFormat(VolumeFormat.Unassigned);
-            }
         } else {
             image.setVolumeFormat(VolumeFormat.Unassigned);
         }
 
-        if (node.attributes.get("ovf:volume-type") != null) {
-            if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-type").getValue())) {
+        if (node.attributes.get("ovf:volume-type") != null &&
+            !StringUtils.isEmpty(node.attributes.get("ovf:volume-type").getValue())) {
                 image.setVolumeType(VolumeType.valueOf(node.attributes.get("ovf:volume-type").getValue()));
-            } else {
-                image.setVolumeType(getDefaultVolumeType());
-            }
         } else {
             image.setVolumeType(getDefaultVolumeType());
         }
