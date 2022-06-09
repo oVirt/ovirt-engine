@@ -1398,6 +1398,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 getEffectiveCompatibilityVersion()))) {
             return false;
         }
+
+        if (getParameters().getVmStaticData().getConsoleDisconnectActionDelay() < 0) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+        }
+
         return true;
     }
 
