@@ -481,8 +481,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
 
             return null;
         });
-        setSucceeded(getParameters().getTaskGroupSuccess() &&
-                (!getParameters().isLiveSnapshotRequired() || getParameters().isLiveSnapshotSucceeded()));
+        setSucceeded(true);
         getReturnValue().setEndActionTryAgain(false);
     }
 
