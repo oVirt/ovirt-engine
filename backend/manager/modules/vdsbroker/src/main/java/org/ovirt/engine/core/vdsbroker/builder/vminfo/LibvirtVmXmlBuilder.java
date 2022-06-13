@@ -1336,6 +1336,7 @@ public class LibvirtVmXmlBuilder {
     }
 
     void writeVGpu() {
+        boolean hasRamfb = false;
         for (VmDevice mdev : MDevTypesUtils.getMdevs(vmDevicesSupplier.get(), VmDeviceType.VGPU)) {
             final Version compatibilityVersion = vm.getCompatibilityVersion();
 
@@ -1347,8 +1348,9 @@ public class LibvirtVmXmlBuilder {
             if (!Boolean.TRUE.equals(mdevSpecParams.get(MDevTypesUtils.NODISPLAY))
                     && MDevTypesUtils.isMdevDisplayOnSupported(compatibilityVersion)) {
                 writer.writeAttributeString("display", "on");
-                if (FeatureSupported.isVgpuFramebufferSupported(compatibilityVersion)) {
+                if (!hasRamfb && FeatureSupported.isVgpuFramebufferSupported(compatibilityVersion)) {
                     writer.writeAttributeString("ramfb", "on");
+                    hasRamfb = true;
                 }
             }
 
