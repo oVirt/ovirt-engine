@@ -1400,7 +1400,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (getParameters().getVmStaticData().getConsoleDisconnectActionDelay() < 0) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_CONSOLE_DISCONNECT_ACTION_DELAY);
         }
 
         return true;
