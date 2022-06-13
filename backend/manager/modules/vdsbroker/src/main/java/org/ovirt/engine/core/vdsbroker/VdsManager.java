@@ -182,7 +182,7 @@ public class VdsManager {
     private HostConnectionRefresherInterface hostRefresher;
     private volatile boolean inServerRebootTimeout;
     private List<VdsCpuUnit> cpuTopology;
-    private int minRequiredSharedCpusCount;
+    private int maxRunningVmsSharedCoresCount;
     private int vmsSharedCpusCount;
 
     VdsManager(VDS vds, ResourceManager resourceManager) {
@@ -1360,12 +1360,12 @@ public class VdsManager {
                 .forEach(cpu -> cpu.unPinVm(vmId));
     }
 
-    public void setMinRequiredSharedCpusCount(int minSharedCpusCount) {
-        this.minRequiredSharedCpusCount = minSharedCpusCount;
+    public void setMaxRunningVmsSharedCoresCount(int maxRunningVmsSharedCoresCount) {
+        this.maxRunningVmsSharedCoresCount = maxRunningVmsSharedCoresCount;
     }
 
-    public int getMinRequiredSharedCpusCount() {
-        return minRequiredSharedCpusCount < 1 ? 1 : minRequiredSharedCpusCount;
+    public int getMaxRunningVmsSharedCoresCount() {
+        return maxRunningVmsSharedCoresCount < 1 ? 1 : maxRunningVmsSharedCoresCount;
     }
 
     public void setVmsSharedCpusCount(int sharedCpuCount) {

@@ -892,7 +892,7 @@ public class HostMonitoring implements HostMonitoringInterface {
 
         int memCommited = host.getGuestOverhead();
         int vmsCoresCount = 0;
-        int maxSharedCpus = 0;
+        int maxSharedCores = 0;
         int vmsSharedCpusCount = 0;
 
         for (Map.Entry<Guid, VMStatus> entry : vmIdToStatus.entrySet()) {
@@ -904,9 +904,9 @@ public class HostMonitoring implements HostMonitoringInterface {
                 if (vmManager != null) {
                     memCommited += vmManager.getVmMemoryWithOverheadInMB();
                     vmsCoresCount += vmManager.getNumOfCpus();
-                    int sharedCpus = vmManager.getCpuPinningPolicy() != null && !vmManager.getCpuPinningPolicy().isExclusive()
-                            ? vmManager.getNumOfCpus() : 0;
-                    maxSharedCpus = Math.max(maxSharedCpus, sharedCpus);
+                    int sharedCores = vmManager.getCpuPinningPolicy() != null && !vmManager.getCpuPinningPolicy().isExclusive()
+                            ? vmManager.getNumOfCores() : 0;
+                    maxSharedCores = Math.max(maxSharedCores, sharedCores);
 
                     if (!vmManager.getCpuPinningPolicy().isExclusive()) {
                         vmsSharedCpusCount += vmManager.getNumOfCpus();
@@ -915,7 +915,7 @@ public class HostMonitoring implements HostMonitoringInterface {
             }
         }
 
-        resourceManager.getVdsManager(host.getId()).setMinRequiredSharedCpusCount(maxSharedCpus);
+        resourceManager.getVdsManager(host.getId()).setMaxRunningVmsSharedCoresCount(maxSharedCores);
 
         if (memCommited != host.getMemCommited()) {
             host.setMemCommited(memCommited);
