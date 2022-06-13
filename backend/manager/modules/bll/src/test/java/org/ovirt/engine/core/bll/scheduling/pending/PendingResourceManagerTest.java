@@ -29,7 +29,7 @@ public class PendingResourceManagerTest {
         manager.addPending(new PendingVM(host, vm1));
         manager.addPending(new PendingVM(host, vm2));
         manager.addPending(new PendingMemory(host, vm2, 1024));
-        manager.addPending(new PendingCpuCores(host, vm2, 10));
+        manager.addPending(new PendingCpuCores(host, vm2, 10, 5));
 
         manager.clearVm(vm2);
 
@@ -59,7 +59,7 @@ public class PendingResourceManagerTest {
         manager.addPending(new PendingVM(host, vm1));
         manager.addPending(new PendingVM(host, vm2));
         manager.addPending(new PendingMemory(host, vm2, 1024));
-        manager.addPending(new PendingCpuCores(host, vm2, 10));
+        manager.addPending(new PendingCpuCores(host, vm2, 10, 5));
 
         manager.clearHost(host);
 
@@ -84,11 +84,11 @@ public class PendingResourceManagerTest {
 
         manager.addPending(new PendingVM(host, vm1));
         manager.addPending(new PendingMemory(host, vm1, 768));
-        manager.addPending(new PendingCpuCores(host, vm1, 1));
+        manager.addPending(new PendingCpuCores(host, vm1, 1, 1));
 
         manager.addPending(new PendingVM(host, vm2));
         manager.addPending(new PendingMemory(host, vm2, 1024));
-        manager.addPending(new PendingCpuCores(host, vm2, 10));
+        manager.addPending(new PendingCpuCores(host, vm2, 10, 5));
 
         Set<Guid> pending = PendingVM.collectForHost(manager, host.getId());
         assertEquals(2, pending.size());
@@ -116,11 +116,11 @@ public class PendingResourceManagerTest {
 
         manager.addPending(new PendingVM(host1, vm1));
         manager.addPending(new PendingMemory(host1, vm1, 768));
-        manager.addPending(new PendingCpuCores(host1, vm1, 1));
+        manager.addPending(new PendingCpuCores(host1, vm1, 1, 1));
 
         manager.addPending(new PendingVM(host2, vm2));
         manager.addPending(new PendingMemory(host2, vm2, 1024));
-        manager.addPending(new PendingCpuCores(host2, vm2, 10));
+        manager.addPending(new PendingCpuCores(host2, vm2, 10, 5));
 
         assertEquals(host1.getId(), PendingVM.getScheduledHost(manager, vm1));
         assertEquals(host2.getId(), PendingVM.getScheduledHost(manager, vm2));
@@ -147,15 +147,15 @@ public class PendingResourceManagerTest {
 
         manager.addPending(new PendingVM(host1, vm1));
         manager.addPending(new PendingMemory(host1, vm1, 768));
-        manager.addPending(new PendingCpuCores(host1, vm1, 1));
+        manager.addPending(new PendingCpuCores(host1, vm1, 1, 1));
 
         manager.addPending(new PendingVM(host2, vm2));
         manager.addPending(new PendingMemory(host2, vm2, 1024));
-        manager.addPending(new PendingCpuCores(host2, vm2, 10));
+        manager.addPending(new PendingCpuCores(host2, vm2, 10, 5));
 
         manager.addPending(new PendingVM(host1, vm3));
         manager.addPending(new PendingMemory(host1, vm3, 1024));
-        manager.addPending(new PendingCpuCores(host1, vm3, 10));
+        manager.addPending(new PendingCpuCores(host1, vm3, 10, 5));
 
 
         List<PendingVM> vms = manager.pendingHostResources(host1.getId(), PendingVM.class);
@@ -184,11 +184,11 @@ public class PendingResourceManagerTest {
 
         manager.addPending(new PendingVM(host1, vm1));
         manager.addPending(new PendingMemory(host1, vm1, 768));
-        manager.addPending(new PendingCpuCores(host1, vm1, 1));
+        manager.addPending(new PendingCpuCores(host1, vm1, 1, 1));
 
         manager.addPending(new PendingVM(host2, vm2));
         manager.addPending(new PendingMemory(host2, vm2, 1024));
-        manager.addPending(new PendingCpuCores(host2, vm2, 10));
+        manager.addPending(new PendingCpuCores(host2, vm2, 10, 5));
 
         List<PendingMemory> memories = manager.pendingVmResources(vm1.getId(), PendingMemory.class);
 

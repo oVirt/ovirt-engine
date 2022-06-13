@@ -76,7 +76,7 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
             long maxSharedCpuCount = Math.max(countMaxRunningVmsSharedCpuCount(host), maxVmGroupSharedCpuCount);
 
             if (hostCpuCount - exclusiveCpus - maxSharedCpuCount < 0) {
-                messageNotEnoughCores(host, messages);
+                messageNotEnoughCores(host, messages, hostCpuCount, exclusiveCpus, maxSharedCpuCount);
                 continue;
             }
 
@@ -138,7 +138,7 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
         // the number of host's shared CPUs has to >= as the number of CPUs of any VM
         int maxVmGroupSharedCpuCount = vmGroup.stream()
                 .filter(vm -> !vm.getCpuPinningPolicy().isExclusive())
-                .mapToInt(vm -> VmCpuCountHelper.getDynamicNumOfCpu(vm))
+                .mapToInt(vm -> VmCpuCountHelper.getDynamicNumOfCpu(vm, false))
                 .max()
                 .orElse(0);
         return maxVmGroupSharedCpuCount;
@@ -152,21 +152,29 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
      */
     private long countMaxRunningVmsSharedCpuCount(VDS host) {
 
-        long maxPendingSharedCount = pendingResourceManager.pendingHostResources(host.getId(), PendingCpuCores.class)
+        long maxPendingSharedCoresCount = pendingResourceManager.pendingHostResources(host.getId(), PendingCpuCores.class)
                 .stream()
                 .filter(pending -> !pending.getCpuPinningPolicy().isExclusive())
                 .mapToLong(pending -> pending.getCoreCount())
                 .max()
                 .orElse(0);
 
-        long maxRunningSharedCpuCount = resourceManager.getVdsManager(host.getId()).getMinRequiredSharedCpusCount();
+        long maxRunningVmsSharedCoresCount = resourceManager.getVdsManager(host.getId()).getMaxRunningVmsSharedCoresCount();
 
-        return Math.max(maxPendingSharedCount, maxRunningSharedCpuCount);
+        return Math.max(maxPendingSharedCoresCount, maxRunningVmsSharedCoresCount);
     }
 
-    private void messageNotEnoughCores(VDS vds, PerHostMessages messages) {
+    private void messageNotEnoughCores(VDS vds,
+            PerHostMessages messages,
+            int hostCpuCount,
+            int exclusiveCpus,
+            long maxSharedCpuCount) {
         messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_CORES.toString());
-        log.debug("Host '{}' has not enough available cores to schedule vms)",
-                vds.getName());
+        log.debug(
+                "Host '{}' has not enough available cores to schedule vms. After all vms in the vm group are run, there are expected '{}' exclusively pinned CPUs and '{}' shared CPUs to be available, but host has only '{}' CPUs.",
+                vds.getName(),
+                exclusiveCpus,
+                maxSharedCpuCount,
+                hostCpuCount);
     }
 }

@@ -7,30 +7,42 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * Represents a cpu core allocation that is going to be used
+ * Represents a cpu and core allocation that is going to be used
  * by not yet started VM on a specified host
  */
 public class PendingCpuCores extends PendingResource {
 
     private CpuPinningPolicy cpuPinningPolicy;
 
+    private int cpuCount;
+
     private int coreCount;
 
-    public PendingCpuCores(VDS host, VM vm, int coreCount) {
+    public PendingCpuCores(VDS host, VM vm, int cpuCount, int coreCount) {
         super(host, vm);
         this.cpuPinningPolicy = vm.getCpuPinningPolicy();
+        this.cpuCount = cpuCount;
         this.coreCount = coreCount;
         this.cpuPinningPolicy = vm.getCpuPinningPolicy();
     }
 
-    public PendingCpuCores(Guid host, VM vm, int coreCount) {
+    public PendingCpuCores(Guid host, VM vm, int cpuCount, int coreCount) {
         super(host, vm);
         this.cpuPinningPolicy = vm.getCpuPinningPolicy();
+        this.cpuCount = cpuCount;
         this.coreCount = coreCount;
         this.cpuPinningPolicy = vm.getCpuPinningPolicy();
     }
 
-    public long getCoreCount() {
+    public long getCpuCount() {
+        return cpuCount;
+    }
+
+    public void setCpuCount(int cpuCount) {
+        this.cpuCount = cpuCount;
+    }
+
+    public int getCoreCount() {
         return coreCount;
     }
 
@@ -56,7 +68,7 @@ public class PendingCpuCores extends PendingResource {
     public static int collectForHost(PendingResourceManager manager, Guid host) {
         int sum = 0;
         for (PendingCpuCores resource: manager.pendingHostResources(host, PendingCpuCores.class)) {
-            sum += resource.getCoreCount();
+            sum += resource.getCpuCount();
         }
 
         return sum;
@@ -66,7 +78,7 @@ public class PendingCpuCores extends PendingResource {
         int sum = 0;
         for (PendingCpuCores resource: manager.pendingHostResources(host, PendingCpuCores.class)) {
             if (!resource.getCpuPinningPolicy().isExclusive()) {
-                sum += resource.getCoreCount();
+                sum += resource.getCpuCount();
             }
         }
 

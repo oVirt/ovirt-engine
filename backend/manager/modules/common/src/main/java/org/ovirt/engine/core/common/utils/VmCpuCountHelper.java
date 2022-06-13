@@ -176,7 +176,11 @@ public class VmCpuCountHelper {
     }
 
     public static int getDynamicNumOfCpu(VM vm) {
-        return isResizeAndPinPolicy(vm) && vm.getCurrentNumOfCpus() > 0 ? vm.getCurrentNumOfCpus() : vm.getNumOfCpus();
+        return getDynamicNumOfCpu(vm, true);
+    }
+
+    public static int getDynamicNumOfCpu(VM vm, boolean countThreadsAsCores) {
+        return isResizeAndPinPolicy(vm) && vm.getCurrentNumOfCpus(countThreadsAsCores) > 0 ? vm.getCurrentNumOfCpus(countThreadsAsCores) : vm.getNumOfCpus(countThreadsAsCores);
     }
 
     public static boolean isDynamicCpuTopologySet(VM vm) {
@@ -200,5 +204,24 @@ public class VmCpuCountHelper {
             return host.getCpuSockets() * ((host.getCpuCores() / host.getCpuSockets()) - 1) * (host.getCpuThreads() / host.getCpuCores());
         }
         return VmCpuCountHelper.getDynamicNumOfCpu(vm);
+    }
+
+    /**
+     * Return the total amount of cores of a VM (no threads).
+     * If the VM is set with auto pinning before running it will calculate the future
+     * amount of cores on runtime.
+     * In other cases it will return the dynamic or the static cores.
+     *
+     * Note, it might return 0 if the auto pinning is set on undesired host with one core.
+     *
+     * @param vm the relevant VM
+     * @param host the relevant host
+     * @return required amount of CPUs
+     */
+    public static int getRuntimeNumOfCores(VM vm, VDS host) {
+        if (VmCpuCountHelper.isResizeAndPinPolicy(vm) && !VmCpuCountHelper.isDynamicCpuTopologySet(vm)) {
+            return host.getCpuSockets() * ((host.getCpuCores() / host.getCpuSockets()) - 1);
+        }
+        return VmCpuCountHelper.getDynamicNumOfCpu(vm, false);
     }
 }

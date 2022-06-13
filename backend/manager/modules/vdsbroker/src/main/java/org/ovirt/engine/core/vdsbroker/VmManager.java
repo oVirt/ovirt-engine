@@ -48,6 +48,7 @@ public class VmManager {
     private int memSizeMb;
     private int minAllocatedMem;
     private int numOfCpus;
+    private int numOfCores;
     private CpuPinningPolicy cpuPinningPolicy;
     private Version clusterCompatibilityVersion;
     private ArchitectureType clusterArchitecture;
@@ -119,6 +120,10 @@ public class VmManager {
         if (vmStatic != null) {
             updateStaticFields(vmStatic);
         }
+        VmDynamic vmDynamic = vmDynamicDao.get(vmId);
+        if (vmDynamic != null) {
+            updateDynamicFields(vmDynamic);
+        }
     }
 
     private void updateStaticFields(VmStatic vmStatic) {
@@ -129,12 +134,21 @@ public class VmManager {
         minAllocatedMem = vmStatic.getMinAllocatedMem();
         numOfCpus = vmStatic.getNumOfCpus();
         cpuPinningPolicy = vmStatic.getCpuPinningPolicy();
+        if (cpuPinningPolicy != CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
+            numOfCores = vmStatic.getNumOfCpus(false);
+        }
         final Cluster cluster = clusterDao.get(vmStatic.getClusterId());
         clusterCompatibilityVersion = cluster.getCompatibilityVersion();
         clusterArchitecture = cluster.getArchitecture();
         clusterBiosType = cluster.getBiosType();
 
         vmMemoryWithOverheadInMB = estimateOverhead(vmStatic);
+    }
+
+    private void updateDynamicFields(VmDynamic vmDynamic) {
+        if (cpuPinningPolicy == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
+            numOfCores = vmDynamic.getCurrentSockets() * vmDynamic.getCurrentCoresPerSocket();
+        }
     }
 
     private int estimateOverhead(VmStatic vmStatic) {
@@ -169,6 +183,7 @@ public class VmManager {
 
     public void update(VmDynamic dynamic) {
         vmDynamicDao.update(dynamic);
+        updateDynamicFields(dynamic);
     }
 
     public void update(VmStatistics statistics) {
@@ -294,6 +309,10 @@ public class VmManager {
 
     public int getNumOfCpus() {
         return numOfCpus;
+    }
+
+    public int getNumOfCores() {
+        return numOfCores;
     }
 
     public CpuPinningPolicy getCpuPinningPolicy() {

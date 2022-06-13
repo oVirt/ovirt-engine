@@ -541,8 +541,9 @@ public class SchedulingManager implements BackendService {
 
     private void addPendingResources(VM vm, VDS host, Map<Integer, NumaNodeMemoryConsumption> numaConsumption, List<VdsCpuUnit>  dedicatedCpus) {
         int numOfCpus = VmCpuCountHelper.getRuntimeNumOfCpu(vm, host);
+        int numOfCores = VmCpuCountHelper.getRuntimeNumOfCores(vm, host);
         Guid hostId = host.getId();
-        getPendingResourceManager().addPending(new PendingCpuCores(hostId, vm, numOfCpus));
+        getPendingResourceManager().addPending(new PendingCpuCores(hostId, vm, numOfCpus, numOfCores));
         getPendingResourceManager().addPending(new PendingMemory(hostId, vm, vmOverheadCalculator.getStaticOverheadInMb(vm)));
         getPendingResourceManager().addPending(new PendingOvercommitMemory(hostId, vm, vmOverheadCalculator.getTotalRequiredMemWithoutHugePagesMb(vm, numOfCpus)));
         getPendingResourceManager().addPending(new PendingVM(hostId, vm));
