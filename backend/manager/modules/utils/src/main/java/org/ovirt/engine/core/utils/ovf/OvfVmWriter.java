@@ -91,7 +91,6 @@ public class OvfVmWriter extends OvfOvirtWriter {
 
         writeAffinityGroups();
         writeAffinityLabels();
-        writeNumaNodeList();
     }
 
     private void writeLogEvent(String name, String value) {
@@ -109,26 +108,17 @@ public class OvfVmWriter extends OvfOvirtWriter {
     protected void writeHardware() {
         super.writeHardware();
         writeSnapshotsSection();
+        writeNumaNodeList();
     }
 
     protected boolean isSpecialDevice(VmDevice vmDevice) {
         return VmDeviceCommonUtils.isSpecialDevice(vmDevice.getDevice(), vmDevice.getType(), true);
     }
 
-    /**
-     * Write the numa nodes of the VM.<br>
-     * If no numa nodes were set to be written, this section will not be written.
-     */
     @Override
-    protected void writeNumaNodeList() {
-        List<VmNumaNode> vmNumaNodes = vm.getvNumaNodeList();
-
-        if (vmNumaNodes == null || vmNumaNodes.isEmpty()) {
-            return;
-        }
+    protected void startNUMASection() {
         _writer.writeStartElement("Section");
         _writer.writeAttributeString(XSI_URI, "type", "ovf:NumaNodeSection_Type");
-        super.writeNumaNodeList();
     }
 
     /**
