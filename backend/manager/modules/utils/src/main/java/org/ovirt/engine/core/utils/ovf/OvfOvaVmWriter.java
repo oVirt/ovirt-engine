@@ -63,7 +63,6 @@ public class OvfOvaVmWriter extends OvfOvaWriter {
         if (vm.getCpuPinning() != null) {
             _writer.writeElement(CPU_PINNING, vm.getCpuPinning());
         }
-        writeNumaNodeList();
     }
 
     @Override
@@ -82,4 +81,9 @@ public class OvfOvaVmWriter extends OvfOvaWriter {
         return VmCpuCountHelper.calcMaxVCpu(vm, getVersion());
     }
 
+    @Override
+    protected void writeHardware() {
+        super.writeHardware();
+        writeNumaNodeList();
+    }
 }
