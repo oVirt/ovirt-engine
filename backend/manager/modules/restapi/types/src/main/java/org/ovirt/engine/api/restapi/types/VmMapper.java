@@ -846,6 +846,8 @@ public class VmMapper extends VmBaseMapper {
                 return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
             case DEDICATED:
                 return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.DEDICATED;
+            case ISOLATE_THREADS:
+                return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.ISOLATE_THREADS;
             default:
                 return org.ovirt.engine.core.common.businessentities.CpuPinningPolicy.NONE;
         }
@@ -860,6 +862,8 @@ public class VmMapper extends VmBaseMapper {
                 return CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
             case DEDICATED:
                 return CpuPinningPolicy.DEDICATED;
+            case ISOLATE_THREADS:
+                return CpuPinningPolicy.ISOLATE_THREADS;
             default:
                 return CpuPinningPolicy.NONE;
         }
