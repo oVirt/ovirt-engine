@@ -1,10 +1,7 @@
 package org.ovirt.engine.core.utils.ovf;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;

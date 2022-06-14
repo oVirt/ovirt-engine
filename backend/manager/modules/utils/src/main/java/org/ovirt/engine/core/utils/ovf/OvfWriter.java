@@ -793,7 +793,8 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeEndElement();
     }
 
-    protected abstract void startNUMASection();
+    protected void startNUMASection() {
+    }
 
     private void writeIntegerList(String label, List<Integer> list) {
         if (list != null && !list.isEmpty()) {
