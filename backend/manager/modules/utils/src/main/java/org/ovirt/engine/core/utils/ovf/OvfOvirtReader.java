@@ -99,7 +99,7 @@ public abstract class OvfOvirtReader extends OvfReader {
 
             node = getNode(list, "xsi:type", "ovf:NumaNodeSection_Type");
             if (node != null) {
-                readNumaNodeListSection(node, false);
+                readNumaNodeListSection(node, true);
             }
         }
 

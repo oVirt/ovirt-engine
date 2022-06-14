@@ -27,7 +27,7 @@ public class OvfOvaVmReader extends OvfOvaReader {
         }
         XmlNode node = selectSingleNode(content, "NumaNodeSection");
         if (node != null) {
-            readNumaNodeListSection(node, true);
+            readNumaNodeListSection(node, false);
         }
     }
 
