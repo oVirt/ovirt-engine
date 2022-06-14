@@ -108,7 +108,7 @@ public class OvfVmWriter extends OvfOvirtWriter {
     protected void writeHardware() {
         super.writeHardware();
         writeSnapshotsSection();
-        writeNumaNodeList();
+        writeNumaSection();
     }
 
     protected boolean isSpecialDevice(VmDevice vmDevice) {
