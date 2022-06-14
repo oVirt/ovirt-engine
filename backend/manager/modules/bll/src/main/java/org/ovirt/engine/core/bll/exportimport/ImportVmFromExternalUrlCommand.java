@@ -153,9 +153,10 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
                 // in kvm we just copy the image, in other modes such as vmware or xen we use
                 // virt-v2v which converts the image format as well
                 if (vm.getOrigin() != OriginType.KVM) {
-                    disk.setVolumeFormat(disk.getBackup() == DiskBackup.Incremental ? VolumeFormat.COW :
-                            getDiskVolumeFormat(disk.getVolumeType(),
-                                    getStorageDomain().getStorageType()));
+                    disk.setVolumeFormat(getDiskVolumeFormat(
+                            disk.getVolumeType(),
+                            getStorageDomain().getStorageType(),
+                            disk.getBackup()));
                 }
 
                 if (getParameters().getQuotaId() != null) {
@@ -290,7 +291,10 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
     }
 
     // TODO: remove code duplication with frontend AsyncDataProvider
-    private static VolumeFormat getDiskVolumeFormat(VolumeType volumeType, StorageType storageType) {
+    private static VolumeFormat getDiskVolumeFormat(VolumeType volumeType, StorageType storageType, DiskBackup backup) {
+        if (backup == DiskBackup.Incremental) {
+            return VolumeFormat.COW;
+        }
         if (storageType.isFileDomain()) {
             return VolumeFormat.RAW;
         } else if (storageType.isBlockDomain()) {

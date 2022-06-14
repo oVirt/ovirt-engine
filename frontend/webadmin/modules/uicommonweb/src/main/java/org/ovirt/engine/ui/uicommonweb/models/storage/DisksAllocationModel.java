@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
-import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -367,9 +366,8 @@ public class DisksAllocationModel extends EntityModel {
             } else if (diskModel.getVolumeType().getIsAvailable()) {
                 VolumeType volumeType = diskModel.getVolumeType().getSelectedItem();
                 diskImage.setVolumeType(volumeType);
-                diskImage.setVolumeFormat(diskImage.getBackup() == DiskBackup.Incremental ? VolumeFormat.COW :
-                        AsyncDataProvider.getInstance().getDiskVolumeFormat(
-                                volumeType, storageDomain.getStorageType()));
+                diskImage.setVolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
+                        volumeType, storageDomain.getStorageType(), diskImage.getBackup()));
             }
 
             imageToDestinationDomainMap.put(diskImage.getId(), diskImage);

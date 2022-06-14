@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -445,11 +444,10 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
                 DiskImage disk = (DiskImage) entry.getValue();
                 map.put(disk.getId(), getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
-                disk.setVolumeFormat(
-                        disk.getBackup() == DiskBackup.Incremental ? VolumeFormat.COW :
-                                AsyncDataProvider.getInstance().getDiskVolumeFormat(
-                                        getDiskImportData(disk.getId()).getSelectedVolumeType(),
-                                        getDiskImportData(disk.getId()).getSelectedStorageDomain().getStorageType()));
+                disk.setVolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
+                        getDiskImportData(disk.getId()).getSelectedVolumeType(),
+                        getDiskImportData(disk.getId()).getSelectedStorageDomain().getStorageType(),
+                        disk.getBackup()));
                 disk.setVolumeType(getDiskImportData(disk.getId()).getSelectedVolumeType());
 
                 if (getDiskImportData(disk.getId()).getSelectedQuota() != null) {

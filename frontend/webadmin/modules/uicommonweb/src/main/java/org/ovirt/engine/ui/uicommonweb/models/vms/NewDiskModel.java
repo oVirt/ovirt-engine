@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -141,9 +142,10 @@ public class NewDiskModel extends AbstractDiskModel {
                 }
                 diskImage.setVolumeType(getVolumeType().getSelectedItem());
                 // Incremental backup can be enabled only for COW VolumeFormat
-                VolumeFormat volumeFormat = getIsIncrementalBackup().getEntity() ? VolumeFormat.COW :
-                        AsyncDataProvider.getInstance().getDiskVolumeFormat(
-                                diskImage.getVolumeType(), getStorageDomain().getSelectedItem().getStorageType());
+                VolumeFormat volumeFormat = AsyncDataProvider.getInstance().getDiskVolumeFormat(
+                                diskImage.getVolumeType(),
+                                getStorageDomain().getSelectedItem().getStorageType(),
+                                getIsIncrementalBackup().getEntity() ? DiskBackup.Incremental : DiskBackup.None);
                 diskImage.setVolumeFormat(volumeFormat);
                 break;
         }

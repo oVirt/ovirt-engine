@@ -98,6 +98,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskBackup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
@@ -1127,7 +1128,10 @@ public class AsyncDataProvider {
     }
 
     // NOTE: This logic is duplicated in ovirt-web-ui for disk and VM creation.  Any changes here should also be made there.
-    public VolumeFormat getDiskVolumeFormat(VolumeType volumeType, StorageType storageType) {
+    public VolumeFormat getDiskVolumeFormat(VolumeType volumeType, StorageType storageType, DiskBackup backup) {
+        if (backup == DiskBackup.Incremental) {
+            return VolumeFormat.COW;
+        }
         if (storageType.isFileDomain()) {
             return VolumeFormat.RAW;
         } else if (storageType.isBlockDomain()) {
