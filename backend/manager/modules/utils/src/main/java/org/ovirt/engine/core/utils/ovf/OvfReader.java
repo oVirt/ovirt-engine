@@ -972,7 +972,7 @@ public abstract class OvfReader implements IOvfBuilder {
         }
     }
 
-    protected void readNumaNodeListSection(XmlNode section, boolean ova) {
+    protected void readNumaNodeListSection(XmlNode section, boolean readNUMAPinning) {
         XmlNodeList list = selectNodes(section, NUMA_NODE);
         List<VmNumaNode> vmNumaNodes = new ArrayList<>();
 
@@ -984,7 +984,7 @@ public abstract class OvfReader implements IOvfBuilder {
             }
             vmNumaNode.setIndex(Integer.valueOf(selectSingleNode(node, NUMA_INDEX, _xmlNS).innerText));
             vmNumaNode.setCpuIds(readIntegerList(node, NUMA_CPU_ID_LIST));
-            vmNumaNode.setVdsNumaNodeList(ova ? new ArrayList<>() : readIntegerList(node, NUMA_VDS_NUMA_LIST));
+            vmNumaNode.setVdsNumaNodeList(readNUMAPinning ? readIntegerList(node, NUMA_VDS_NUMA_LIST) : new ArrayList<>());
             vmNumaNode.setMemTotal(Long.valueOf(selectSingleNode(node, NUMA_TOTAL_MEMORY, _xmlNS).innerText));
             XmlNode numaTuneMode = selectSingleNode(node, NUMA_TUNE_MODE, _xmlNS);
             if (numaTuneMode != null) {
