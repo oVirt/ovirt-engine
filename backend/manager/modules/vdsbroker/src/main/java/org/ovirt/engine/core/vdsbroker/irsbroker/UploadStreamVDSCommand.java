@@ -31,6 +31,11 @@ public class UploadStreamVDSCommand<P extends UploadStreamVDSCommandParameters> 
     }
 
     @Override
+    protected void executeVDSCommand() {
+        executeVdsCommandWithNetworkEvent(false);
+    }
+
+    @Override
     protected AsyncTaskType getCreatedTaskType() {
         return AsyncTaskType.downloadImageFromStream;
     }
