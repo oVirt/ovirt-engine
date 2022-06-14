@@ -777,6 +777,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             return;
         }
 
+        startNUMASection();
         for (VmNumaNode vmNumaNode : vmNumaNodes) {
             _writer.writeStartElement(NUMA_NODE);
             if (vmNumaNode.getId() != null) {
@@ -791,6 +792,8 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
         _writer.writeEndElement();
     }
+
+    protected abstract void startNUMASection();
 
     private void writeIntegerList(String label, List<Integer> list) {
         if (list != null && !list.isEmpty()) {

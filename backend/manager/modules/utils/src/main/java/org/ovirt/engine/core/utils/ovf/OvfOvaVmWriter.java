@@ -66,14 +66,8 @@ public class OvfOvaVmWriter extends OvfOvaWriter {
     }
 
     @Override
-    protected void writeNumaNodeList() {
-        List<VmNumaNode> vmNumaNodes = vm.getvNumaNodeList();
-
-        if (vmNumaNodes == null || vmNumaNodes.isEmpty()) {
-            return;
-        }
+    protected void startNUMASection() {
         _writer.writeStartElement("NumaNodeSection");
-        super.writeNumaNodeList();
     }
 
     @Override
