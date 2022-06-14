@@ -78,6 +78,6 @@ public class OvfOvaVmWriter extends OvfOvaWriter {
     @Override
     protected void writeHardware() {
         super.writeHardware();
-        writeNumaNodeList();
+        writeNumaSection();
     }
 }

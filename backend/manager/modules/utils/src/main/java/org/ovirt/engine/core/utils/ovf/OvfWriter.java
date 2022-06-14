@@ -770,7 +770,7 @@ public abstract class OvfWriter implements IOvfBuilder {
      * Write the numa nodes of the VM.<br>
      * If no numa nodes were set to be written, this section will not be written.
      */
-    protected void writeNumaNodeList() {
+    protected void writeNumaSection() {
         List<VmNumaNode> vmNumaNodes = vmBase.getvNumaNodeList();
 
         if (vmNumaNodes == null || vmNumaNodes.isEmpty()) {
