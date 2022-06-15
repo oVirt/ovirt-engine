@@ -13,6 +13,7 @@ import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.HostCpuUnitsResource;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
@@ -70,12 +71,29 @@ public class BackendHostCpuUnitsResource extends AbstractBackendCollectionResour
                         v.setName(vm.getName());
                         v.setCpuPinningPolicy(VmMapper.map(vm.getCpuPinningPolicy()));
 
-                        if (hostCpuUnit.getVms() == null) {
-                            hostCpuUnit.setVms(new Vms());
+                        if (vm.getCpuPinningPolicy() == CpuPinningPolicy.ISOLATE_THREADS) {
+                            addVmToCpuUnitWithThreadSiblings(hostCpuUnits, hostCpuUnit, v);
+                        } else {
+                            addVmToCpuUnit(hostCpuUnit, v);
                         }
-                        hostCpuUnit.getVms().getVms().add(v);
                     });
         }
+    }
+
+    private void addVmToCpuUnitWithThreadSiblings(List<HostCpuUnit> hostCpuUnits, HostCpuUnit pinnedCpuUnit, Vm v) {
+        hostCpuUnits.stream()
+                .filter(hostCpuUnit -> hostCpuUnit.getSocketId().equals(pinnedCpuUnit.getSocketId())
+                        && hostCpuUnit.getCoreId().equals(pinnedCpuUnit.getCoreId()))
+                .forEach(hostCpuUnit -> {
+                    addVmToCpuUnit(hostCpuUnit, v);
+                });
+    }
+
+    private void addVmToCpuUnit(HostCpuUnit hostCpuUnit, Vm v) {
+        if (hostCpuUnit.getVms() == null) {
+            hostCpuUnit.setVms(new Vms());
+        }
+        hostCpuUnit.getVms().getVms().add(v);
     }
 
     private void addVdsmCpusAffinity(List<HostCpuUnit> hostCpuUnits, String affinityString) {
