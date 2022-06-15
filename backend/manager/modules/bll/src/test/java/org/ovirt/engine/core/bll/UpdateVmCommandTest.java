@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_EDITING_HOSTED_ENGINE_IS_DISABLED;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
+import org.ovirt.engine.core.bll.scheduling.utils.VdsCpuUnitPinningHelper;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
@@ -52,6 +54,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsCpuUnit;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -77,6 +80,8 @@ import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.MockedConfig;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
 /** A test case for the {@link UpdateVmCommand}. */
@@ -145,6 +150,13 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private AffinityValidator affinityValidator;
     @Mock
     private VmNumaNodeDao vmNumaNodeDao;
+    @Mock
+    private VdsManager vdsManager;
+    @Mock
+    private ResourceManager resourceManager;
+    @Mock
+    private VdsCpuUnitPinningHelper vdsCpuUnitPinningHelper;
+
 
     private static Map<String, String> createMigrationMap() {
         Map<String, String> migrationMap = new HashMap<>();
@@ -262,6 +274,17 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         doReturn(numaValidator).when(command).getNumaValidator();
         doReturn(quotaValidator).when(command).createQuotaValidator(any());
         doReturn(Boolean.TRUE).when(command).isSystemSuperUser();
+
+        List<VdsCpuUnit> cpuTopology = new ArrayList<>();
+        VDS vds = new VDS();
+        vds.setCpuCores(1);
+        vds.setId(Guid.newGuid());
+        command.setVds(vds);
+
+        when(vdsManager.getCpuTopology()).thenReturn(cpuTopology);
+        when(resourceManager.getVdsManager(vds.getId())).thenReturn(vdsManager);
+        when(resourceManager.getVdsManager(vds.getId(), false)).thenReturn(vdsManager);
+        when(vdsCpuUnitPinningHelper.countUnavailableCpus(cpuTopology, false)).thenReturn(0);
 
         command.init();
     }

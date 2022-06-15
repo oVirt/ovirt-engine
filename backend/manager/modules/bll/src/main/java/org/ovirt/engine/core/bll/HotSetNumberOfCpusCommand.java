@@ -88,10 +88,6 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumberOfCpusParameters> e
             valid = failValidation(EngineMessage.HOT_PLUG_CPU_CONFLICT,
                     String.format("%1$s", getVm().getCpuPinningPolicy().name()));
         }
-        if (getVm().getCpuPinningPolicy().isExclusive()) {
-            valid = failValidation(EngineMessage.HOT_PLUG_CPU_IS_NOT_SUPPORTED_DEDICATED,
-                    String.format("$policy %1$s", getVm().getCpuPinningPolicy().name()));
-        }
 
         return valid;
     }
