@@ -1864,4 +1864,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
+    protected DisplayType getDefaultDisplayType(Set<DisplayType> displayTypes) {
+         // We know displayTypes size is > 0
+         if (displayTypes.contains(DisplayType.vga)) {
+             return DisplayType.vga;
+         }
+         return displayTypes.iterator().next();
+    }
+
 }
