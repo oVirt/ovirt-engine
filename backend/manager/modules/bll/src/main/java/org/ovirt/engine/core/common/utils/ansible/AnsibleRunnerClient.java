@@ -265,14 +265,19 @@ public class AnsibleRunnerClient {
     public PlaybookStatus getPlaybookStatus(String playUuid) {
         String status = "";
         String rc = "";
+        String privateRunDir = String.format("%1$s/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, playUuid);
         String playData = String.format("%1$s/%2$s/artifacts/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, playUuid);
         try {
-            if (!Files.exists(Paths.get(String.format("%1$s/status", playData)))) {
+            if (Files.exists(Paths.get(String.format("%1$s/status", playData)))) {
+                status = Files.readString(Paths.get(String.format("%1$s/status", playData)));
+                rc = Files.readString(Paths.get(String.format("%1$s/rc", playData)));
+            } else if (Files.exists(Paths.get(String.format("%1$s/daemon.log", privateRunDir)))) {
                 // artifacts are not yet present, try to fetch them in the next polling round
-                return new PlaybookStatus("unknown", "");
+                return new PlaybookStatus("", "running");
+            } else {
+                log.warn(String.format("The playbook failed with unknow error at: %1$s", playData));
+                return new PlaybookStatus("", "failed");
             }
-            status = Files.readString(Paths.get(String.format("%1$s/status", playData)));
-            rc = Files.readString(Paths.get(String.format("%1$s/rc", playData)));
         } catch (Exception e) {
             throw new AnsibleRunnerCallException(
                 String.format("Failed to read playbook result at: %1$s", playData), e);

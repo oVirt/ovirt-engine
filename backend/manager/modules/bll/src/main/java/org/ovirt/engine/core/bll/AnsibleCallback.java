@@ -61,12 +61,10 @@ public class AnsibleCallback implements CommandCallback {
 
         AnsibleReturnValue ret = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
         ret.setLogFile(runnerClient.getLogger().getLogFile());
-        String msg = "";
         int totalEvents;
         // Get the current status of the playbook:
         AnsibleRunnerClient.PlaybookStatus playbookStatus = runnerClient.getPlaybookStatus(playUuid);
-        String status = playbookStatus.getStatus();
-        msg = playbookStatus.getMsg();
+        String msg = playbookStatus.getMsg();
         // Process the events if the playbook is running:
         totalEvents = runnerClient.getTotalEvents(playUuid);
 
@@ -82,9 +80,6 @@ public class AnsibleCallback implements CommandCallback {
             ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
             command.setSucceeded(true);
             command.setCommandStatus(CommandStatus.SUCCEEDED);
-        } else if (status.equalsIgnoreCase("unknown")) {
-            // ignore and continue:
-            return;
         } else {
             // Playbook failed:
             command.setSucceeded(false);
