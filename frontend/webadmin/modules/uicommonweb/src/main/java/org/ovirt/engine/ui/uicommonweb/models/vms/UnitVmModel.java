@@ -2614,7 +2614,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         if (displayTypes.contains(selectedDisplayType)) {
             getDisplayType().setItems(displayTypes, selectedDisplayType);
         } else if (displayTypes.size() > 0) {
-            getDisplayType().setItems(displayTypes, displayTypes.iterator().next());
+            getDisplayType().setItems(displayTypes, behavior.getDefaultDisplayType(displayTypes));
         }
     }
 

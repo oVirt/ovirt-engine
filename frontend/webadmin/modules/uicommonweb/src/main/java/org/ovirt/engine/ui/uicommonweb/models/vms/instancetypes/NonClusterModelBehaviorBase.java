@@ -39,8 +39,8 @@ public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel
         initGraphicsModel(selectedGrahicsTypes);
 
         if (selected == DisplayType.none) {
-            getModel().getDisplayType().setSelectedItem(DisplayType.qxl);
-            getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.SPICE);
+            getModel().getDisplayType().setSelectedItem(DisplayType.vga);
+            getModel().getGraphicsType().setSelectedItem(UnitVmModel.GraphicsTypes.VNC);
             getModel().getIsHeadlessModeEnabled().setEntity(true);
         }
     }
