@@ -238,6 +238,25 @@ public class HybridBackupCommand<T extends VmBackupParameters> extends StartVmBa
     }
 
     @Override
+    public AuditLogType getAuditLogTypeValue() {
+        VmBackup vmBackup = getParameters().getVmBackup();
+        addCustomValue("backupId", vmBackup.getId().toString());
+        switch (getActionState()) {
+            case EXECUTE:
+                return AuditLogType.VM_BACKUP_STARTED;
+            case END_FAILURE:
+                if (vmBackup.getPhase() == VmBackupPhase.SUCCEEDED) {
+                    return AuditLogType.VM_BACKUP_SUCCEEDED;
+                }
+
+                return AuditLogType.VM_BACKUP_FAILED;
+            case END_SUCCESS:
+                return AuditLogType.VM_BACKUP_SUCCEEDED;
+        }
+        return null;
+    }
+
+    @Override
     protected void restoreCommandState() {
         Guid backupId = getParameters().getVmBackup().getId();
         VmBackup vmBackup = vmBackupDao.get(backupId);
