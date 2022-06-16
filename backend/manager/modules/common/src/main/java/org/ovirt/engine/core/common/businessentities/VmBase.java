@@ -393,7 +393,6 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
      * > 0 - number of queues
      */
 
-    @CopyOnNewVersion
     @EditableVmField(onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private int virtioScsiMultiQueues;
