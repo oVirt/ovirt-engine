@@ -156,7 +156,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         options.setSmartcardEnabled(getCachedVm().isSmartcardEnabled());
         if (getParameters().isSetTicket()) {
             options.setTicket(generateTicket());
-            if (isKernelFips()) {
+            if (isFips()) {
                 options.setUsername(ConfigureConsoleOptionsParams.VNC_USERNAME_PREFIX + getCachedVm().getId());
             }
         }
@@ -333,8 +333,8 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         return vdsDynamicDao.get(getCachedVm().getRunOnVds());
     }
 
-    protected boolean isKernelFips() {
-        return vdsStaticDao.get(getCachedVm().getRunOnVds()).isKernelCmdlineFips();
+    protected boolean isFips() {
+        return getHost().isFipsEnabled();
     }
 
     protected boolean isVncEncryptionEnabled() {
@@ -397,7 +397,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
                     new IdQueryParameters(getCachedVm().getId()));
             result = returnValue.getReturnValue();
         } else if (getParameters().getOptions().getGraphicsType() == GraphicsType.VNC
-                   && (isKernelFips() || isVncEncryptionEnabled())) {
+                   && (isFips() || isVncEncryptionEnabled())) {
             // If VNC encyption is enabled (at cluster level or because of FIPS mode)
             // the console descriptor must contain host name,
             // to match TLS certificate for connection

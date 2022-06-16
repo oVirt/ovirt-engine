@@ -133,7 +133,7 @@ public class ConfigureConsoleOptionsQueryTest extends
         result.setActionReturnValue("nbusr123");
         doReturn(result).when(backend).runAction(eq(ActionType.SetVmTicket), any());
         doReturn(null).when(getQuery()).getHost();
-        doReturn(false).when(getQuery()).isKernelFips();
+        doReturn(false).when(getQuery()).isFips();
         doReturn(false).when(getQuery()).isVncEncryptionEnabled();
 
         getQuery().getQueryReturnValue().setSucceeded(true);
@@ -157,7 +157,7 @@ public class ConfigureConsoleOptionsQueryTest extends
         VdsDynamic vds = new VdsDynamic();
         vds.setVncEncryptionEnabled(true);
         doReturn(vds).when(getQuery()).getHost();
-        doReturn(false).when(getQuery()).isKernelFips();
+        doReturn(false).when(getQuery()).isFips();
         doReturn(false).when(getQuery()).isVncEncryptionEnabled();
 
         getQuery().getQueryReturnValue().setSucceeded(true);
@@ -188,7 +188,7 @@ public class ConfigureConsoleOptionsQueryTest extends
         VdsDynamic vdsDynamic = new VdsDynamic();
         vdsDynamic.setVncEncryptionEnabled(true);
         doReturn(vdsDynamic).when(getQuery()).getHost();
-        doReturn(true).when(getQuery()).isKernelFips();
+        doReturn(true).when(getQuery()).isFips();
 
         getQuery().getQueryReturnValue().setSucceeded(true);
         getQuery().executeQueryCommand();
