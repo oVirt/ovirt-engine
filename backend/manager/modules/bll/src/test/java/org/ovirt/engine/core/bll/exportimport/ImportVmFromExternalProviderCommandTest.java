@@ -18,4 +18,11 @@ public class ImportVmFromExternalProviderCommandTest {
         String alias = ImportVmFromExternalProviderCommand.renameDiskAlias(OriginType.XEN, "/home/vdsm/Fedora22.img");
         assertEquals("Fedora22", alias);
     }
+
+    @Test
+    public void renameImageWithSpecialChars() {
+        String alias = ImportVmFromExternalProviderCommand.renameDiskAlias(OriginType.VMWARE, "[datastore] Fedora21/Fedora 21-yy%2fmm.vmdk");
+        assertEquals("Fedora_21-yy_2fmm", alias);
+    }
+
 }
