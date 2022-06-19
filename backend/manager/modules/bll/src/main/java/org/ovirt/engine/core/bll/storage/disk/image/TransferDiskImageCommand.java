@@ -299,14 +299,10 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         boolean tearDownFailed = false;
 
         if (getTransferBackend() == ImageTransferBackend.FILE) {
-            if (!Guid.Empty.equals(image.getImageTemplateId())) {
-                LockInfo lockInfo =
-                        lockManager.getLockInfo(getImage().getImageTemplateId() + LockingGroup.TEMPLATE.toString());
+            if (isTemplateBeingUsed(image)) {
+                log.info("Transfer '{}': The template image is being used, skipping teardown", getCommandId());
 
-                if (lockInfo != null) {
-                    log.info("The template image is used for image transfer '{}', skipping teardown", getCommandId());
-                    return;
-                }
+                return;
             }
 
             VDSReturnValue teardownImageVdsRetVal = runVdsCommand(VDSCommandType.TeardownImage,
@@ -324,6 +320,18 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             addCustomValue("DiskAlias", image.getDiskAlias());
             auditLogDirector.log(this, AuditLogType.TRANSFER_IMAGE_TEARDOWN_FAILED);
         }
+    }
+
+    private boolean isTemplateBeingUsed(DiskImage image) {
+        if (!Guid.Empty.equals(image.getImageTemplateId())) {
+            LockInfo lockInfo =
+                    lockManager.getLockInfo(getDiskImage().getImageTemplateId() + LockingGroup.TEMPLATE.toString());
+            if (lockInfo != null) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean stopNbdServer(Guid vdsId) {
