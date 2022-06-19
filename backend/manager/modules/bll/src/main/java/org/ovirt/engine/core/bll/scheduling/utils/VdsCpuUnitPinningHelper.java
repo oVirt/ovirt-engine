@@ -141,7 +141,6 @@ public class VdsCpuUnitPinningHelper {
     }
 
     private List<VdsCpuUnit> allocateDedicatedCpus(List<VdsCpuUnit> cpuTopology, VM vm, Guid hostId) {
-        // We can assume that a valid pinning exists here (because the host was filtered beforehand).
         List<VdsCpuUnit> cpusToBeAllocated = new ArrayList<>();
         int socketsLeft = vm.getNumOfSockets();
         int onlineSockets = getOnlineSockets(cpuTopology).size();
@@ -197,7 +196,8 @@ public class VdsCpuUnitPinningHelper {
             int coresReminder = coreCount % vm.getCpuPerSocket();
             for (int i = 0; i < coresReminder * vm.getThreadsPerCpu(); i++) {
                 if (!cpusToBeAllocated.isEmpty()) {
-                    cpusToBeAllocated.remove(cpusToBeAllocated.size() - 1);
+                    VdsCpuUnit releasedCpu = cpusToBeAllocated.remove(cpusToBeAllocated.size() - 1);
+                    releasedCpu.unPinVm(vm.getId());
                 }
             }
 
