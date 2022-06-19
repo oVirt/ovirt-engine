@@ -444,10 +444,16 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             // StartVmBackup should handle locks
             return locks;
         }
+
         if (!Guid.isNullOrEmpty(getParameters().getImageId()) && getDiskImage() != null) {
             List<VM> vms = vmDao.getVmsListForDisk(getDiskImage().getId(), true);
             vms.forEach(vm -> locks.put(vm.getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingTransferredLockMessage())));
+        }
+
+        if (getDiskImage() != null && getParameters().getTransferType() == TransferType.Download) {
+            locks.put(getDiskImage().getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISK_IS_LOCKED));
         }
 
         return locks;
@@ -466,7 +472,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
             // StartVmBackup should handle locks
             return locks;
         }
-        if (getDiskImage() != null) {
+
+        if (getDiskImage() != null && getParameters().getTransferType() == TransferType.Upload) {
             locks.put(getDiskImage().getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskIsBeingTransferredLockMessage()));
         }
