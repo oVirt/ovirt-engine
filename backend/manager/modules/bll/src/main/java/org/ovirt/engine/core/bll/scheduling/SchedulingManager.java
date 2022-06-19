@@ -754,6 +754,8 @@ public class SchedulingManager implements BackendService {
         // Create individual VmGroups for the rest of VMs that are not in affinity groups
         vmsById.values().forEach(vm -> vmGroups.add(Collections.singletonList(vm)));
 
+        vmGroups.forEach(vmGroup -> vmGroup.sort(new VmsCpuPinningPolicyComparator().reversed()));
+
         return vmGroups;
     }
 
