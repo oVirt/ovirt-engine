@@ -17,7 +17,7 @@ extractkey() {
 	else
 		common_backup "${key}"
 		touch "${key}"
-		chmod go-rwx "${key}" || die "Cannot set key permissions"
+		chmod 0644 "${key}" || die "Cannot set key permissions"
 	fi
 
 	openssl \
@@ -45,7 +45,7 @@ extractcert() {
 	else
 		common_backup "${cert}"
 		touch "${cert}"
-		chmod a+r "${cert}" || die "Cannot set certificate permissions"
+		chmod 0644 "${cert}" || die "Cannot set certificate permissions"
 	fi
 	openssl \
 		pkcs12 \

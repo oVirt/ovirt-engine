@@ -45,7 +45,7 @@ clean_pki_dir() {
 config() {
 	cp "${PKIDIR}/${CACERT_TEMPLATE}" "${PKIDIR}/${CACERT_CONF}" || die "Cannot create ${CACERT_CONF}"
 	cp "${PKIDIR}/${CERT_TEMPLATE}" "${PKIDIR}/${CERT_CONF}" || die "Cannot create ${CERT_CONF}"
-	chmod a+r "${PKIDIR}/${CACERT_CONF}" "${PKIDIR}/${CERT_CONF}" || die "Cannot set config files permissions"
+	chmod 0644 "${PKIDIR}/${CACERT_CONF}" "${PKIDIR}/${CERT_CONF}" || die "Cannot set config files permissions"
 }
 
 enroll() {
@@ -70,7 +70,7 @@ enroll() {
 
 
 	touch "${PKIDIR}/private/${CA_FILE}.pem"
-	chmod o-rwx "${PKIDIR}/private/${CA_FILE}.pem" || die "Cannot set CA permissions"
+	chmod 0644 "${PKIDIR}/private/${CA_FILE}.pem" || die "Cannot set CA permissions"
 	openssl genpkey \
 		-algorithm RSA \
 		-pkeyopt rsa_keygen_bits:2048 \
@@ -116,6 +116,7 @@ renew() {
 
 	common_backup "${PKIDIR}/${CA_FILE}.pem" || die "Cannot backup CA certificate"
 	mv "${PKIDIR}/${CA_FILE}.pem.new" "${PKIDIR}/${CA_FILE}.pem" || die "Cannot install renewed CA certificate"
+	chmod 0644 "${PKIDIR}/${CA_FILE}.pem" || die "Cannot set CA file permissions"
 
 	return 0
 }
@@ -142,7 +143,7 @@ keystore() {
 		-keystore "${PKIDIR}/.truststore" \
 		-storepass "${password}" \
 		|| die "Keystore import failed"
-	chmod a+r "${PKIDIR}/.truststore"
+	chmod 0644 "${PKIDIR}/.truststore"
 
 	return 0
 }
@@ -150,8 +151,8 @@ keystore() {
 cleanups() {
 	openssl x509 -in "${PKIDIR}/${CA_FILE}.pem" -out "${PKIDIR}/certs/${CA_FILE}.der" || die "Cannot read CA certificate"
 	chown --reference="${PKIDIR}/private" "${PKIDIR}/private/${CA_FILE}.pem" || die "Cannot set CA private key permissions"
-	chmod a+r "${PKIDIR}/${CA_FILE}.pem" "${PKIDIR}/certs/${CA_FILE}.der" || die "Cannot set CA certificate permissions"
-	chmod a+r "${PKIDIR}/.truststore"
+	chmod 0644 "${PKIDIR}/${CA_FILE}.pem" "${PKIDIR}/certs/${CA_FILE}.der" || die "Cannot set CA certificate permissions"
+	chmod 0644 "${PKIDIR}/.truststore"
 }
 
 usage() {
