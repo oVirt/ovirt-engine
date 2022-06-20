@@ -617,11 +617,13 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public ServerConnectionStatusReturn connectStorageServer(int serverType,
             String spUUID,
-            Map<String, String>[] args) {
+            Map<String, String>[] args,
+            List<String> devicesList) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.connectStorageServer").withParameter("storagepoolID", spUUID)
                         .withParameter("domainType", serverType)
                         .withParameter("connectionParams", args)
+                        .withOptionalParameter("devlist", devicesList)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("statuslist")

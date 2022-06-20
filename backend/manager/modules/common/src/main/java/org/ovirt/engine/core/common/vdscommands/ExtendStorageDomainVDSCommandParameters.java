@@ -15,14 +15,14 @@ public class ExtendStorageDomainVDSCommandParameters extends ActivateStorageDoma
         setForce(force);
     }
 
-    private Set<String> privateDeviceList;
+    private Set<String> deviceList;
 
     public Set<String> getDeviceList() {
-        return privateDeviceList;
+        return deviceList;
     }
 
     private void setDeviceList(Set<String> value) {
-        privateDeviceList = value;
+        deviceList = value;
     }
 
     private boolean force;

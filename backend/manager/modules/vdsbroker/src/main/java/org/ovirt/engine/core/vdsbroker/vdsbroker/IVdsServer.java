@@ -153,7 +153,8 @@ public interface IVdsServer {
     FenceStatusReturn fenceNode(String ip, String port, String type, String user, String password,
              String action, String secured, String options,  Map<String, Object> fencingPolicy);
 
-    ServerConnectionStatusReturn connectStorageServer(int serverType, String spUUID, Map<String, String>[] args);
+    ServerConnectionStatusReturn connectStorageServer(int serverType, String spUUID, Map<String, String>[] args,
+            List<String> devicesList);
 
     ServerConnectionStatusReturn disconnectStorageServer(int serverType, String spUUID,
             Map<String, String>[] args);

@@ -44,7 +44,8 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
     @Override
     protected void executeVdsBrokerCommand() {
         _result = getBroker().connectStorageServer(getParameters().getStorageType().getValue(),
-                getParameters().getStoragePoolId().toString(), buildStructFromConnectionListObject());
+                getParameters().getStoragePoolId().toString(), buildStructFromConnectionListObject(),
+                getParameters().getDeviceList());
         proceedProxyReturnValue();
         Map<String, String> returnValue = _result.convertToStatusList();
         setReturnValue(returnValue);

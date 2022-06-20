@@ -271,7 +271,8 @@ public class NullVdsServer implements IVdsServer {
 
     @Override public ServerConnectionStatusReturn connectStorageServer(int serverType,
             String spUUID,
-            Map<String, String>[] args) {
+            Map<String, String>[] args,
+            List<String> devicesList) {
         return null;
     }
 

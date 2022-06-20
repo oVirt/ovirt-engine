@@ -10,6 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class StorageServerConnectionManagementVDSParameters extends GetStorageConnectionsListVDSCommandParameters {
     private StorageType privateStorageType;
     private boolean sendNetworkEventOnFailure = true;
+    private List<String> deviceList;
 
     public boolean getSendNetworkEventOnFailure() {
         return sendNetworkEventOnFailure;
@@ -37,11 +38,25 @@ public class StorageServerConnectionManagementVDSParameters extends GetStorageCo
         privateConnectionList = value;
     }
 
+    public List<String> getDeviceList() {
+        return deviceList;
+    }
+
+    private void setDeviceList(List<String> value) {
+        deviceList = value;
+    }
+
     public StorageServerConnectionManagementVDSParameters(Guid vdsId, Guid storagePoolId, StorageType storageType,
             List<StorageServerConnections> connectionList) {
         super(vdsId, storagePoolId);
         setStorageType(storageType);
         setConnectionList(connectionList);
+    }
+
+    public StorageServerConnectionManagementVDSParameters(Guid vdsId, Guid storagePoolId, StorageType storageType,
+            List<StorageServerConnections> connectionList, List<String> deviceList) {
+        this(vdsId, storagePoolId, storageType, connectionList);
+        setDeviceList(deviceList);
     }
 
     public StorageServerConnectionManagementVDSParameters() {
@@ -53,6 +68,7 @@ public class StorageServerConnectionManagementVDSParameters extends GetStorageCo
         return super.appendAttributes(tsb)
                 .append("storageType", getStorageType())
                 .append("connectionList", getConnectionList())
-                .append("sendNetworkEventOnFailure", getSendNetworkEventOnFailure());
+                .append("sendNetworkEventOnFailure", getSendNetworkEventOnFailure())
+                .append("deviceList", getDeviceList());
     }
 }

@@ -298,6 +298,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                         .distinct()
                         .collect(groupingBy(StorageServerConnections::getStorageType, toList()));
 
+        List<String> lunIds = lunDisks.stream().map(d -> d.getLun().getLUNId()).collect(Collectors.toList());
+
         return connectionsByType.entrySet().stream()
                 .map(entry -> runVdsCommand(
                         VDSCommandType.ConnectStorageServer,
@@ -305,7 +307,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                                 hostId,
                                 getStoragePoolId(),
                                 entry.getKey(),
-                                entry.getValue())))
+                                entry.getValue(),
+                                lunIds)))
                 .noneMatch(vdsReturnValue -> !vdsReturnValue.getSucceeded());
     }
 
