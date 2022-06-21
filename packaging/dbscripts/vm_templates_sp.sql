@@ -83,7 +83,7 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_is_template_sealed BOOLEAN,
  v_cpu_pinning VARCHAR(4000),
  v_balloon_enabled BOOLEAN,
- v_console_disconnect_action_delay SMALLINT,
+ v_console_disconnect_action_delay INTEGER,
  v_cpu_pinning_policy SMALLINT,
  v_parallel_migrations SMALLINT)
 
@@ -362,7 +362,7 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_is_template_sealed BOOLEAN,
  v_cpu_pinning VARCHAR(4000),
  v_balloon_enabled BOOLEAN,
- v_console_disconnect_action_delay SMALLINT,
+ v_console_disconnect_action_delay INTEGER,
  v_cpu_pinning_policy SMALLINT,
  v_parallel_migrations SMALLINT)
 RETURNS VOID

@@ -742,7 +742,7 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_use_tsc_frequency BOOLEAN,
     v_namespace VARCHAR(253),
     v_balloon_enabled BOOLEAN,
-    v_console_disconnect_action_delay SMALLINT,
+    v_console_disconnect_action_delay INTEGER,
     v_cpu_pinning_policy SMALLINT,
     v_parallel_migrations SMALLINT)
   RETURNS VOID
@@ -1117,7 +1117,7 @@ v_virtio_scsi_multi_queues INTEGER,
 v_use_tsc_frequency BOOLEAN,
 v_namespace VARCHAR(253),
 v_balloon_enabled BOOLEAN,
-v_console_disconnect_action_delay SMALLINT,
+v_console_disconnect_action_delay INTEGER,
 v_cpu_pinning_policy SMALLINT,
 v_parallel_migrations SMALLINT)
 
