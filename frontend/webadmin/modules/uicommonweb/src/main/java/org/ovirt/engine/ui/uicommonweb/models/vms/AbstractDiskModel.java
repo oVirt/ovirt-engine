@@ -272,8 +272,9 @@ public abstract class AbstractDiskModel extends DiskModel {
         getIsSgIoUnfiltered().setEntity(false);
         getIsSgIoUnfiltered().getEntityChangedEvent().addListener(this);
 
+        // Incremental backup flag should be enabled by default (BZ 1915029)
         setIsIncrementalBackup(new EntityModel<>());
-        getIsIncrementalBackup().setEntity(false);
+        getIsIncrementalBackup().setEntity(true);
 
         setDiskStorageType(new EntityModel<>());
         getDiskStorageType().setEntity(DiskStorageType.IMAGE);
