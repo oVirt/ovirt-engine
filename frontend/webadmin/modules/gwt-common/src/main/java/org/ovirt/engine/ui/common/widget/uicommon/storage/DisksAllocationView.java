@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupSimpleTableResources;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
@@ -163,7 +162,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     void updateColumnsAvailability(DisksAllocationModel model) {
         setShowVolumeType(model.getIsVolumeTypeAvailable());
         setShowVolumeFormat(model.getIsVolumeFormatAvailable());
-        setShowQuota(model.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
+        setShowQuota(model.isQuotaEnforced());
         setShowSource(model.isSourceAvailable());
         setShowTarget(model.isTargetAvailable());
     }
@@ -183,6 +182,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
             } else if ("QuotaEnforcmentType".equals(args.propertyName)) { //$NON-NLS-1$
                 updateColumnsAvailability(model);
                 updateListHeader();
+                addDiskList(model);
             }
         });
     }
