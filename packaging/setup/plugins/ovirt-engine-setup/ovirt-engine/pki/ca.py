@@ -297,7 +297,7 @@ class Plugin(plugin.PluginBase):
         },
     )
 
-    def _ok_to_renew_cert(self, pkcs12, name, extract):
+    def _ok_to_renew_cert(self, pkcs12, name, extract, short_life):
         # input:
         # - pkcs12: A PKCS#12 file name
         # - name: A base name (--name param of pki-* scripts)
@@ -312,6 +312,8 @@ class Plugin(plugin.PluginBase):
             ),
             name,
             extract,
+            short_life,
+            self.environment,
         )
 
     def _enrollCertificates(self, renew, uninstall_files):
@@ -339,7 +341,8 @@ class Plugin(plugin.PluginBase):
                 enroll = self._ok_to_renew_cert(
                     pkcs12,
                     entry['name'],
-                    entry['extract']
+                    entry['extract'],
+                    entry['shortLife'],
                 )
 
                 if enroll:
@@ -496,7 +499,8 @@ class Plugin(plugin.PluginBase):
     )
     def _customization_upgrade(self):
         if True in [
-            pki_utils.cert_expires(pki_utils.x509_load_cert(cert))
+            pki_utils.cert_expires(pki_utils.x509_load_cert(cert), False,
+                                   self.environment, self.logger)
             for cert in self._CA_FILES
             if os.path.exists(cert)
         ] + [
@@ -506,7 +510,8 @@ class Plugin(plugin.PluginBase):
                     '%s.p12' % entry['name']
                 ),
                 entry['name'],
-                entry['extract']
+                entry['extract'],
+                entry['shortLife'],
             )
             for entry in self.environment[oenginecons.PKIEnv.ENTITIES]
         ]:
@@ -718,7 +723,12 @@ class Plugin(plugin.PluginBase):
             for ca_file in self._CA_FILES:
                 if (
                     os.path.exists(ca_file) and
-                    pki_utils.cert_expires(pki_utils.x509_load_cert(ca_file))
+                    pki_utils.cert_expires(
+                        pki_utils.x509_load_cert(ca_file),
+                        False,
+                        self.environment,
+                        self.logger,
+                    )
                 ):
                     self._renewed_ca_files.add(ca_file)
                     self.logger.info(_('Renewing CA: %s'), ca_file)

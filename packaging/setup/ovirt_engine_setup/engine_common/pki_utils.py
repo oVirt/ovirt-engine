@@ -21,6 +21,8 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.x509.extensions import ExtensionNotFound
 
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine import vdcoption
+from ovirt_engine_setup.engine_common import database
 
 
 def x509_load_cert(fname):
@@ -33,8 +35,13 @@ def x509_load_cert(fname):
         )
 
 
-def cert_expires(x509cert):
-    # input: x509cert: cryptography.x509.Certificate object
+def cert_expires(x509cert, short_life, environment, logger):
+    # input:
+    # - logger: The logger to use for logging
+    # - x509cert: cryptography.x509.Certificate object
+    # - short_life: Whether the certificate is a short-life (e.g. browser)
+    #   certificate.
+    # - environment: Environment to pass to database.Statement
     # return: bool
 
     #
@@ -59,10 +66,28 @@ def cert_expires(x509cert):
     # py cryptography to support timezones or by using other
     # means, such as calling the openssl utility, e.g.
     # openssl x509 -in ca.pem -noout -startdate
+    if short_life:
+        days = 60
+    else:
+        try:
+            days_str = vdcoption.VdcOption(
+                statement=database.Statement(
+                    dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+                    environment=environment,
+                ),
+            ).getVdcOption(
+                'CertExpirationWarnPeriodInDays',
+                ownConnection=True,
+            )
+            days = int(days_str)
+        except Exception as e:
+            logger.info("CertExpirationWarnPeriodInDays config value not "
+                        "available, using 365 days: %s", e)
+            days = 365
     return (
         x509cert.not_valid_after.replace(tzinfo=None) -
         datetime.datetime.utcnow() <
-        datetime.timedelta(days=60)
+        datetime.timedelta(days=days)
     )
 
 
@@ -88,16 +113,21 @@ def cert_has_SAN(logger, x509cert):
     return res
 
 
-def ok_to_renew_cert(logger, x509cert, ca_cert, name, extract):
+def ok_to_renew_cert(logger, x509cert, ca_cert, name, extract, short_life,
+                     environment):
     # input:
+    # - logger: The logger to use for logging
     # - x509cert: cryptography.x509.Certificate object
     # - ca_cert: cryptography.x509.Certificate object
     # - name: A base name (--name param of pki-* scripts)
     # - extract: bool. If True, we need to check the extracted cert
+    # - short_life: Whether the certificate is a short-life (e.g. browser)
+    #   certificate.
+    # - environment: Environment to pass to database.Statement
     # return: bool
     res = False
     if x509cert and (
-        cert_expires(x509cert) or
+        cert_expires(x509cert, short_life, environment, logger) or
         not cert_has_SAN(logger, x509cert)
     ):
         if not extract or ca_cert is None:

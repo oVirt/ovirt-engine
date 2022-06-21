@@ -30,20 +30,24 @@ def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
-def _refresh_needed(cert_path, check_cert=True):
-    ca_cert_path = oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-    return (not os.path.exists(cert_path) or
-            os.stat(ca_cert_path).st_mtime > os.stat(cert_path).st_mtime or
-            (check_cert and
-             pki_utils.cert_expires(pki_utils.x509_load_cert(cert_path))))
-
-
 @util.export
 class Plugin(plugin.PluginBase):
     """vmconsole proxy configuration plugin."""
 
     def _subjectComponentEscape(self, s):
         return outil.escape(s, '/\\')
+
+    def _refresh_needed(self, cert_path, check_cert=True):
+        ca_path = oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+        return (not os.path.exists(cert_path) or
+                os.stat(ca_path).st_mtime > os.stat(cert_path).st_mtime or
+                (check_cert and
+                 pki_utils.cert_expires(
+                     pki_utils.x509_load_cert(cert_path),
+                     False,
+                     self.environment,
+                     self.logger,
+                 )))
 
     def _enrollSSHKeys(self, host_mode, uninstall_files):
         suffix = 'host' if host_mode else 'user'
@@ -187,7 +191,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: (
             self.environment[
                 ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
-            ] and _refresh_needed(
+            ] and self._refresh_needed(
                 ovmpcons.FileLocations.
                 OVIRT_ENGINE_PKI_VMCONSOLE_PROXY_HELPER_CERT
             )
@@ -293,15 +297,15 @@ class Plugin(plugin.PluginBase):
             self.environment[
                 ovmpcons.ConfigEnv.VMCONSOLE_PROXY_CONFIG
             ] and (
-                _refresh_needed(
+                self._refresh_needed(
                     os.path.join(
                         ovmpcons.FileLocations.VMCONSOLE_PKI_DIR,
                         'proxy-ssh_host_rsa',
                     ),
                     check_cert=False
                 ) or
-                _refresh_needed(self._ssh_cert_file('user')) or
-                _refresh_needed(self._ssh_cert_file('host'))
+                self._refresh_needed(self._ssh_cert_file('user')) or
+                self._refresh_needed(self._ssh_cert_file('host'))
             )
         ),
     )

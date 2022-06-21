@@ -416,6 +416,8 @@ class EnrollCert(base.Base):
                 None,
                 self._base_name,
                 True,
+                False,
+                self.environment,
             ):
                 self._need_cert = True
 
