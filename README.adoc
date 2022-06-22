@@ -608,3 +608,18 @@ Build minimal rpm package for Firefox::
 Build minimal rpm package for Chrome or Safari::
 
     $ rpmbuild -D"ovirt_build_minimal 1" -D"ovirt_build_user_agent safari" -tb @tarball@
+
+=== Ansible Lint
+
+To use ansible-lint locally you need to install it from PyPI in a python virtualenv/venv, e.g.:
+```
+sudo dnf install python3-virtualenv
+mkdir -p $HOME/venv
+python3 -m venv $HOME/venv/ansible-lint
+. $HOME/venv/ansible-lint/bin/activate
+pip3 install "ansible-lint>=6.0.0,<7.0.0"
+```
+
+Run of the lint:
+
+    $ ansible-lint -c build/ansible-lint.conf packaging/ansible-runner-service-project/project/roles/*
