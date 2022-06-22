@@ -90,4 +90,9 @@ public class RemoveQuotaCommand extends CommandBase<IdParameters> {
     public void setQuota(Quota quota) {
         this.quota = quota;
     }
+
+    public String getQuotaName() {
+        return getQuota().getQuotaName();
+    }
+
 }
