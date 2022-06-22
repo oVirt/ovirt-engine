@@ -170,6 +170,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
             // PKI variables:
             .variable("ovirt_pki_dir", config.getPKIDir())
             .variable("ovirt_vds_hostname", host.getHostName())
+            .variable("ansible_port", host.getSshPort())
             .variable("ovirt_san", CertificateUtils.getSan(host.getHostName()))
             .variable("ovirt_engine_usr", config.getUsrDir())
             .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))
