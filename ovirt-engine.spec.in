@@ -414,8 +414,11 @@ Obsoletes:	%{name}-userportal
 Requires:	python3-pyOpenSSL
 Requires:	ovirt-provider-ovn >= 1.2.1
 
-#JavaScript and CSS libraries are currently bundled
-Provides:	bundled(js-jquery) = 3.4.1
+# JavaScript and CSS "private" libraries bundled in branding (for CVE scanning purposes)
+#    https://docs.fedoraproject.org/en-US/fesco/Bundled_Software_policy/
+#    https://docs.fedoraproject.org/en-US/packaging-guidelines/AutoProvidesAndRequiresFiltering/#_private_libraries
+#    https://docs.fedoraproject.org/en-US/packaging-guidelines/JavaScript/#_bundling_of_other_libraries
+Provides:	bundled(js-jquery) = 3.6.0
 Provides:	bundled(js-jquery-ui) = 1.13.1
 Provides:	bundled(js-bootstrap) = 3.4.1
 Provides:	bundled(js-patternfly) = 3.59.3
