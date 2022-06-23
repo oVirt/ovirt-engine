@@ -39,7 +39,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskSnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -433,9 +432,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     private boolean isRestoreMemory() {
-        return getParameters().isRestoreMemory() &&
-                FeatureSupported.isMemorySnapshotSupportedByArchitecture(
-                        getVm().getClusterArch(), getVm().getCompatibilityVersion());
+        return getParameters().isRestoreMemory();
     }
 
     private boolean updateClusterCompatibilityVersionToOldCluster(boolean disableLock) {

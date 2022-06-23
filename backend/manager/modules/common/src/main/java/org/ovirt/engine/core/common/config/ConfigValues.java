@@ -1191,9 +1191,6 @@ public enum ConfigValues {
     ScsiReservationSupported,
 
     @TypeConverterAttribute(Map.class)
-    IsMemorySnapshotSupported,
-
-    @TypeConverterAttribute(Map.class)
     IsSuspendSupported,
 
     @TypeConverterAttribute(SerialNumberPolicy.class)
