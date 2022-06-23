@@ -352,9 +352,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    protected void updateNumaEnabled() {
-        super.updateNumaEnabled();
-        updateNumaEnabledHelper(true);
+    protected void updateNumaFields() {
+        super.updateNumaFields();
+        updateNumaPinningEnabled();
     }
 
     @Override
