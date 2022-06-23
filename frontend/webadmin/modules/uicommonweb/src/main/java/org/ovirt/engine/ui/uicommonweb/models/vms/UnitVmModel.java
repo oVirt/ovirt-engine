@@ -346,8 +346,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             getParallelMigrationsType().setIsChangeable(false);
             getCustomParallelMigrations().setIsChangeable(false);
 
-            getNumaEnabled().setIsChangeable(false);
-
             // ==High Availability==
             getIsHighlyAvailable().setIsChangeable(false);
             getLease().setIsChangeable(false);
@@ -1511,6 +1509,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     private void setBehavior(VmModelBehaviorBase value) {
     }
 
+    private CpuPinningPolicy originalCpuPinningPolicy;
+
+    public void setOriginalCpuPinningPolicy(CpuPinningPolicy originalCpuPinningPolicy) {
+        this.originalCpuPinningPolicy = originalCpuPinningPolicy;
+    }
+
+    public CpuPinningPolicy getOriginalCpuPinningPolicy() {
+        return originalCpuPinningPolicy;
+    }
+
     private CpuPinningListModel cpuPinningPolicy;
 
     public CpuPinningListModel getCpuPinningPolicy() {
@@ -1621,8 +1629,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         this.cpuProfiles = cpuProfiles;
     }
 
-    private EntityModel<Boolean> numaEnabled;
-
     private NotChangableForVmInPoolEntityModel<Integer> numaNodeCount;
 
     public EntityModel<Integer> getNumaNodeCount() {
@@ -1631,16 +1637,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
     public void setNumaNodeCount(NotChangableForVmInPoolEntityModel<Integer> numaNodeCount) {
         this.numaNodeCount = numaNodeCount;
-    }
-
-    private List<VmNumaNode> initialVmNumaNodes = new ArrayList<>();
-
-    public List<VmNumaNode> getInitialVmNumaNodes() {
-        return initialVmNumaNodes;
-    }
-
-    public void setInitialVmNumaNodes(List<VmNumaNode> vmNumaNodes) {
-        this.initialVmNumaNodes = new ArrayList<>(vmNumaNodes);
     }
 
     private List<VmNumaNode> vmNumaNodes;
@@ -1662,8 +1658,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
     private void setNumaSupportCommand(UICommand numaSupportCommand) {
         this.numaSupportCommand = numaSupportCommand;
     }
-
-    private boolean numaChanged = false;
 
     private ListModelWithClusterDefault<Boolean> autoConverge;
 
@@ -2056,19 +2050,18 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         getCpuProfiles().setIsAvailable(false);
 
         setNumaNodeCount(new NotChangableForVmInPoolEntityModel<Integer>());
+        getNumaNodeCount().getEntityChangedEvent().addListener(this);
         getNumaNodeCount().setEntity(0);
-        setNumaEnabled(new EntityModel<Boolean>());
-        getNumaEnabled().setMessage(ConstantsManager.getInstance().getConstants().numaDisabledInfoMessage());
 
         setNumaSupportCommand(new UICommand("NumaSupport", new ICommandTarget() { //$NON-NLS-1$
                     @Override
                     public void executeCommand(UICommand command) {
-                        numaSupport();
+                        getBehavior().numaSupport();
                     }
 
                     @Override
                     public void executeCommand(UICommand uiCommand, Object... parameters) {
-                        numaSupport();
+                        getBehavior().numaSupport();
                     }
                 }));
 
@@ -2311,14 +2304,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                 updateTpmEnabled();
             } else if (sender == getCpuPinningPolicy()) {
                 cpuPinningPolicyChanged();
-                behavior.updateNumaEnabled();
+                behavior.updateNumaFields();
             } else if (sender == getConsoleDisconnectAction()){
                 consoleDisconnectActionSelectedItemChanged();
             }
         } else if (ev.matchesDefinition(ListModel.selectedItemsChangedEventDefinition)) {
             if (sender == getDefaultHost()) {
                 defaultHost_SelectedItemChanged(sender, args);
-                behavior.updateNumaEnabled();
+                behavior.updateNumaFields();
                 headlessModeChanged();
             }
         } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
@@ -2333,8 +2326,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
             } else if (sender == getIsAutoAssign()) {
                 behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
-                behavior.updateNumaEnabled();
+                behavior.updateNumaFields();
                 updateCpuPinningPolicy();
+            } else if (sender == getNumaNodeCount()) {
+                behavior.updateNumaPinningEnabled();
             } else if (sender == getProvisioning()) {
                 provisioning_SelectedItemChanged(sender, args);
             } else if (sender == getProvisioningThin_IsSelected()) {
@@ -3797,19 +3792,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         return ((CurrentUserRole) TypeResolver.getInstance().resolve(CurrentUserRole.class)).isCreateInstanceOnly();
     }
 
-    private void numaSupport() {
-        setNumaChanged(true);
-        getBehavior().numaSupport();
-    }
-
-    public EntityModel<Boolean> getNumaEnabled() {
-        return numaEnabled;
-    }
-
-    public void setNumaEnabled(EntityModel<Boolean> numaEnabled) {
-        this.numaEnabled = numaEnabled;
-    }
-
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
@@ -3829,14 +3811,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
 
         behavior.useNumaPinningChanged(getVmNumaNodes());
         updateCpuPinningPolicy();
-    }
-
-    public void setNumaChanged(boolean numaChanged) {
-        this.numaChanged = numaChanged;
-    }
-
-    public boolean isNumaChanged() {
-        return numaChanged || initialVmNumaNodes.size() != getNumaNodeCount().getEntity();
     }
 
     public void updateNodeCount(int size) {
@@ -4089,11 +4063,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
                     .isDedicatedPolicySupportedByVersion(getCompatibilityVersion());
         }
 
-        boolean numaNodesUnpinned =
-                getNumaEnabled() == null
-                        || getNumaEnabled().getEntity() == null
-                        || !getNumaEnabled().getEntity()
-                        || getVmNumaNodes() == null
+        boolean numaNodesUnpinned = getVmNumaNodes() == null
                         || getVmNumaNodes().stream().allMatch(numa -> numa.getVdsNumaNodeList().isEmpty());
 
         cpuPinningPolicy.setCpuPolicyEnabled(CpuPinningPolicy.MANUAL, defaultHostSelected);

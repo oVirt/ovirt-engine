@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.utils.NumaUtils;
@@ -24,8 +25,13 @@ public class NumaUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBuilder<U
             return;
         }
 
+        boolean isNumaPinningAllowed = model.getNumaSupportCommand().getIsExecutionAllowed();
+
+        boolean isResizeAndPinDropped = model.getOriginalCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA
+                && model.getCpuPinningPolicy().getSelectedItem().getPolicy() != CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
+
         List<VmNumaNode> nodeList = model.getVmNumaNodes();
-        if (nodeList == null || nodeList.size() != nodeCount) {
+        if (nodeList == null || nodeList.size() != nodeCount || !isNumaPinningAllowed || isResizeAndPinDropped) {
             nodeList = new ArrayList<>(nodeCount);
             for (int i = 0; i < nodeCount; i++) {
                 VmNumaNode newNode = new VmNumaNode();

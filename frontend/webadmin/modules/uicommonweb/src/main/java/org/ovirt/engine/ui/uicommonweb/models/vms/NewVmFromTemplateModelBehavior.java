@@ -99,4 +99,10 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
                 false);
     }
 
+    @Override
+    protected void updateNumaFields() {
+        super.updateNumaFields();
+        updateNumaPinningEnabled();
+    }
+
 }

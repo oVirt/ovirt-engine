@@ -119,6 +119,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel.ListModelWithClust
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -1087,6 +1088,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
+    private static final UIConstants uiConstants = GWT.create(UIConstants.class);
+
     private final Map<TabName, OvirtTabListItem> tabMap = new HashMap<>();
 
     public AbstractVmPopupWidget() {
@@ -1352,7 +1355,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         editPoolMaxAssignedVmsPerUserIcon =
                 new InfoIcon(templates.italicText(messages.maxAssignedVmsPerUserHelp()));
 
-        numaInfoIcon = new InfoIcon(SafeHtmlUtils.fromTrustedString("")); //$NON-NLS-1$
+        numaInfoIcon = new InfoIcon(SafeHtmlUtils.fromTrustedString(uiConstants.numaInfoMessage()));
 
         isRngEnabledInfoIcon = new InfoIcon(SafeHtmlUtils.fromTrustedString(constants.rngDevExplanation()));
 
@@ -1733,11 +1736,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private void enableNumaSupport(final UnitVmModel model) {
         numaSupportButton.setCommand(model.getNumaSupportCommand());
         numaPanel.setVisible(false);
-        enableNumaFields(false);
-        model.getNumaEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
+        model.getNumaSupportCommand().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             numaPanel.setVisible(true);
-            enableNumaFields(model.getNumaEnabled().getEntity());
-            setNumaInfoMsg(model.getNumaEnabled().getMessage());
         });
     }
 
@@ -1745,17 +1745,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         rngSourceUrandomInfoIcon.setText(SafeHtmlUtils.fromString(constants.vmUrandomInfoIcon()));
         detachableMaxMemorySizeEditor.setExplanation(SafeHtmlUtils.fromString(constants.maxMemoryInfoIcon()));
         detachableMinAllocatedMemoryEditor.setExplanation(SafeHtmlUtils.fromString(constants.physMemGuarInfoIcon()));
-    }
-
-    private void setNumaInfoMsg(String message) {
-        if (message == null) {
-            message = ""; //$NON-NLS-1$
-        }
-        numaInfoIcon.setText(multiLineItalicSafeHtml(message));
-    }
-
-    private void enableNumaFields(boolean enabled) {
-        numaSupportButton.setEnabled(enabled);
     }
 
     @UiHandler("refreshButton")

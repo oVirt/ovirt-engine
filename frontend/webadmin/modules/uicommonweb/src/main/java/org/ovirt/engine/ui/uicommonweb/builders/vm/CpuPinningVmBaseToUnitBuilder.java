@@ -9,6 +9,7 @@ public class CpuPinningVmBaseToUnitBuilder extends BaseSyncBuilder<VmBase, UnitV
 
     @Override
     protected void build(VmBase vm, UnitVmModel model) {
+        model.setOriginalCpuPinningPolicy(vm.getCpuPinningPolicy());
         model.getCpuPinningPolicy().setSelectedCpuPolicy(vm.getCpuPinningPolicy());
         if (vm.getCpuPinningPolicy() == CpuPinningPolicy.MANUAL) {
             model.getCpuPinning().setEntity(vm.getCpuPinning());

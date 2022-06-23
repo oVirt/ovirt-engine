@@ -58,6 +58,6 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior {
     }
 
     @Override
-    protected void updateNumaEnabled() {
+    protected void updateNumaFields() {
     }
 }
