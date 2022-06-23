@@ -20,7 +20,6 @@ public class ArchCapabilitiesParameters extends QueryParametersBase {
 
     public enum ArchCapabilitiesVerb {
         GetMigrationSupport,
-        GetMemorySnapshotSupport,
         GetSuspendSupport,
         GetMemoryHotUnplugSupport,
         GetTpmDeviceSupport

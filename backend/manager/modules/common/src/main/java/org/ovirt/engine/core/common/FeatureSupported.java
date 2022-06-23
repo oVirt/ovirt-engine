@@ -96,18 +96,6 @@ public class FeatureSupported {
     }
 
     /**
-     * Checks if memory snapshot is supported by architecture
-     *
-     * @param architecture
-     *            The CPU architecture
-     * @param version
-     *            Compatibility version to check for.
-     */
-    public static boolean isMemorySnapshotSupportedByArchitecture(ArchitectureType architecture, Version version) {
-        return supportedInConfig(ConfigValues.IsMemorySnapshotSupported, version, architecture);
-    }
-
-    /**
      * Checks if suspend is supported by architecture
      *
      * @param architecture

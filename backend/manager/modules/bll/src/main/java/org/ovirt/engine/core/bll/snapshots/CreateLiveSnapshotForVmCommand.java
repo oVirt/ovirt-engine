@@ -84,7 +84,7 @@ public class CreateLiveSnapshotForVmCommand<T extends CreateSnapshotForVmParamet
         List<Disk> pluggedDisksForVm = diskDao.getAllForVm(getVm().getId(), true);
         List<DiskImage> filteredPluggedDisksForVm = DisksFilter.filterImageDisks(pluggedDisksForVm,
                 ONLY_SNAPABLE, ONLY_ACTIVE);
-        boolean memoryDump = getParameters().isMemorySnapshotSupported() && snapshot.containsMemory();
+        boolean memoryDump = snapshot.containsMemory();
 
         // 'filteredPluggedDisks' should contain only disks from 'getDisksList()' that are plugged to the VM.
         List<DiskImage> filteredPluggedDisks = ImagesHandler.imagesIntersection(filteredPluggedDisksForVm, getParameters().getCachedSelectedActiveDisks());

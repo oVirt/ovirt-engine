@@ -96,7 +96,6 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     private List<DiskImage> cachedSelectedActiveDisks;
     private List<DiskImage> cachedImagesDisks;
     private boolean isLiveSnapshotApplicable;
-    private boolean isMemorySnapshotSupported;
     private boolean shouldFreezeOrThaw;
 
     @Inject
@@ -129,7 +128,6 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
         setSnapshotName(getParameters().getDescription());
         setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
-        isMemorySnapshotSupported = isMemorySnapshotSupported();
         isLiveSnapshotApplicable = isLiveSnapshotApplicable();
         shouldFreezeOrThaw = shouldFreezeOrThawVm();
     }
@@ -410,7 +408,6 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             params.setLegacyFlow(true);
         }
         params.setCachedSelectedActiveDisks(cachedSelectedActiveDisks);
-        params.setMemorySnapshotSupported(isMemorySnapshotSupported);
         params.setParentLiveMigrateDisk(getParameters().getParentCommand() == ActionType.LiveMigrateDisk);
         return params;
     }
@@ -679,7 +676,7 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
             return false; // only relevant for live snapshots
         }
 
-        if (isMemorySnapshotSupported && getParameters().isSaveMemory()) {
+        if (getParameters().isSaveMemory()) {
             return false; // irrelevant for snapshots that contain memory
         }
 
@@ -704,10 +701,6 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
     }
 
     private MemoryImageBuilder createMemoryImageBuilder() {
-        if (!isMemorySnapshotSupported) {
-            return new NullableMemoryImageBuilder();
-        }
-
         if (getParameters().getSnapshotType() == Snapshot.SnapshotType.STATELESS) {
             return new StatelessSnapshotMemoryImageBuilder(getVm());
         }
@@ -719,14 +712,6 @@ public class CreateSnapshotForVmCommand<T extends CreateSnapshotForVmParameters>
         }
 
         return new NullableMemoryImageBuilder();
-    }
-
-    /**
-     * Check if Memory Snapshot is supported
-     */
-    private boolean isMemorySnapshotSupported() {
-        return FeatureSupported.isMemorySnapshotSupportedByArchitecture(
-                getVm().getClusterArch(), getVm().getCompatibilityVersion());
     }
 
     private Guid updateActiveSnapshotId() {

@@ -210,12 +210,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected boolean shouldRestoreMemory() {
         // If the memory from the snapshot could have been restored already, the disks might be
         // non coherent with the memory, thus we don't want to try to restore the memory again
-        return !memoryFromSnapshotUsed &&
-                (getFlow() == RunVmFlow.RESUME_HIBERNATE ||
-                FeatureSupported.isMemorySnapshotSupportedByArchitecture(
-                getVm().getClusterArch(),
-                getVm().getCompatibilityVersion())) &&
-                getActiveSnapshot().containsMemory();
+        return !memoryFromSnapshotUsed && getActiveSnapshot().containsMemory();
     }
 
     /**
