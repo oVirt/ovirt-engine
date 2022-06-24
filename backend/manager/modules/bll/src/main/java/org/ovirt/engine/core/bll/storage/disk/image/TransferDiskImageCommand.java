@@ -453,7 +453,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
         if (getDiskImage() != null && getParameters().getTransferType() == TransferType.Download) {
             locks.put(getDiskImage().getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_DISK_IS_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskIsBeingTransferredLockMessage()));
         }
 
         return locks;
