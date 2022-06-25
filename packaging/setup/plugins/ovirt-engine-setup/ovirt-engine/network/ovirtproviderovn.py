@@ -975,9 +975,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         before=(
-            oenginecons.Stages.CA_AVAILABLE,
+            oenginecons.Stages.CA_UPGRADE,
         ),
-        condition=lambda self: self._enabled,
+        condition=lambda self: self._enabled or self._provider_installed,
     )
     def _misc_pki(self):
         self._generate_pki()
@@ -996,7 +996,10 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         before=(
-                oenginecons.Stages.OVN_SERVICES_RESTART,
+            oenginecons.Stages.OVN_SERVICES_RESTART,
+        ),
+        after=(
+            oenginecons.Stages.CA_AVAILABLE,
         ),
         condition=lambda self: (
                 self._provider_installed and
