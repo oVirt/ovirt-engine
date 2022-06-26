@@ -691,7 +691,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 MemoryUtils.createDiskDummies(vmOverheadCalculator.getSnapshotMemorySizeInBytes(getVm()),
                         MemoryUtils.METADATA_SIZE_IN_BYTES);
         StorageDomain storageDomain = memoryStorageHandler.findStorageDomainForMemory(
-                getParameters().getStoragePoolId(), memoryDisks, getVmDisksDummies(), getVm());
+                getParameters().getStoragePoolId(), memoryDisks, getVmDisksDummies(), getVm(), getUserId());
         disksList.addAll(memoryDisks.asList());
         return storageDomain;
     }

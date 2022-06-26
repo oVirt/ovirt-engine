@@ -44,12 +44,14 @@ public class MemoryStorageHandler {
      * @param vmForLogging
      *           The VM which the memory volumes being created belong to.<br/>
      *           Note: This parameter is used for logging purposed only.
+     * @param userId
+     *           The user doing the action.
      * @return storage domain in the given pool with at least the required amount of free space,
      *         or null if no such storage domain exists in the pool
      */
     public StorageDomain findStorageDomainForMemory(Guid storagePoolId, MemoryDisks memoryDisks,
-            Collection<DiskImage> vmDisks, VM vmForLogging) {
-        List<StorageDomain> domainsInPool = storageDomainDao.getAllForStoragePool(storagePoolId);
+            Collection<DiskImage> vmDisks, VM vmForLogging, Guid userId) {
+        List<StorageDomain> domainsInPool = storageDomainDao.getAllForStoragePool(storagePoolId, userId, true);
         StorageDomain storageDomainForMemory = findStorageDomainForMemory(domainsInPool, memoryDisks, vmDisks);
         if (storageDomainForMemory != null) {
             updateDisksStorage(storageDomainForMemory, memoryDisks);
