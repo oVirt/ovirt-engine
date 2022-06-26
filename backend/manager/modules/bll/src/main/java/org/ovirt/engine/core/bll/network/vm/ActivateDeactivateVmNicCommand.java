@@ -473,15 +473,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private void updateDevice() {
-        if (getParameters().getAction() == PlugAction.PLUG
-                && hotPlugVmNicRequired(getVm().getStatus())) {
-            VmDevicesMonitoring.Change change = vmDevicesMonitoring.createChange(getVdsId(), System.nanoTime());
-            change.updateVm(getVmId(), VmDevicesMonitoring.UPDATE_HASH);
-            change.flush();
-        } else {
-            vmDevice.setPlugged(getParameters().getAction() == PlugAction.PLUG);
-            vmDeviceDao.update(vmDevice);
-        }
+        vmDevice.setPlugged(getParameters().getAction() == PlugAction.PLUG);
+        vmDeviceDao.update(vmDevice);
     }
 
     private boolean handleFailoverIfNeeded() {
