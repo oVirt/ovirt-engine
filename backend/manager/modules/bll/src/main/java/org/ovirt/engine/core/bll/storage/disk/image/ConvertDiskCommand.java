@@ -298,6 +298,8 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         DiskImage newImage = DiskImage.copyOf(getDiskImage());
         newImage.setImageId(getParameters().getNewVolGuid());
         newImage.setSize(info.getSize());
+        newImage.setActualSize(info.getActualSize());
+        newImage.setActualSizeInBytes(info.getActualSizeInBytes());
         if (getParameters().getVolumeFormat() != null) {
             if (info.getVolumeFormat() != getParameters().getVolumeFormat()) {
                 log.error("Requested format '{}' doesn't match format on storage '{}'",
@@ -323,7 +325,6 @@ public class ConvertDiskCommand<T extends ConvertDiskCommandParameters> extends 
         TransactionSupport.executeInNewTransaction(() -> {
             addDiskImageToDb(newImage, getCompensationContext(), true);
             imageDao.update(getDiskImage().getImage());
-
             return null;
         });
 
