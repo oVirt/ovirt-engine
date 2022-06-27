@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
-import org.ovirt.engine.core.common.action.IdParameters;
+import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
@@ -60,7 +60,7 @@ public class RemoveQuotaCommandTest extends BaseCommandTest {
     }
 
     private RemoveQuotaCommand createCommand() {
-        IdParameters param = new IdParameters(quotaGuid);
+        QuotaCRUDParameters param = new QuotaCRUDParameters(quotaGuid);
         return new RemoveQuotaCommand(param, null);
     }
 
