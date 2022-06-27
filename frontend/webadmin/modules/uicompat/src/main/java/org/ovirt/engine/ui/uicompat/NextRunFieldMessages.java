@@ -86,6 +86,8 @@ public interface NextRunFieldMessages extends ConstantsWithLookup {
 
     String initrdUrl();
 
+    String vNumaNodeList();
+
     // Devices
 
     String memballoon();

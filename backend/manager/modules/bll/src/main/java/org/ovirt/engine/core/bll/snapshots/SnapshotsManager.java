@@ -293,7 +293,9 @@ public class SnapshotsManager {
      *            The VM to generate configuration from.
      * @return A String containing the VM configuration.
      */
-    private String generateVmConfiguration(VM vm, List<DiskImage> disks, Map<Guid, VmDevice> vmDevices) {
+    private String generateVmConfiguration(VM vm,
+            List<DiskImage> disks,
+            Map<Guid, VmDevice> vmDevices) {
         if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
             vm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(vm.getId()));
         }
@@ -323,7 +325,11 @@ public class SnapshotsManager {
         if (vm.getStaticData().getVmInit() == null) {
             vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
         }
-        vmHandler.updateNumaNodesFromDb(vm);
+
+        if (vm.getStaticData().getvNumaNodeList() == null) {
+            vmHandler.updateNumaNodesFromDb(vm);
+        }
+
         return ovfManager.exportVm(vm,
                 fullEntityOvfData,
                 clusterUtils.getCompatibilityVersion(vm));
