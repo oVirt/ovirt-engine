@@ -18,6 +18,7 @@ public class AnsibleCommandParameters extends ActionParametersBase {
     public AnsibleCommandParameters() {
         super();
         this.playUuid = UUID.randomUUID().toString();
+        this.lastEventId = 0;
     }
 
     public int getLastEventId() {
