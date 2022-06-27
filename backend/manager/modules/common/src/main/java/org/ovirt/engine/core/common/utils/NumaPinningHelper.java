@@ -150,8 +150,8 @@ public class NumaPinningHelper {
                         // in NumaValidator
                         int hugePageSizeMB = hugePageSize.get() / 1024;
                         int requiredHugePages = (int) vmNode.getMemTotal() / hugePageSizeMB;
-                        int hostFreePages = HugePageUtils.hugePagesToMap(hostNumaNodesData.get(pinnedIndex).getHugePages()).get(hugePageSize.get());
-                        if (hostFreePages < requiredHugePages) {
+                        Integer hostFreePages = HugePageUtils.hugePagesToMap(hostNumaNodesData.get(pinnedIndex).getHugePages()).get(hugePageSize.get());
+                        if (hostFreePages == null || hostFreePages < requiredHugePages) {
                             return;
                         }
 
