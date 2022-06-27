@@ -238,7 +238,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             hostedEngineAction =
                     getParameters().getHostedEngineDeployConfiguration().getDeployAction().name().toLowerCase();
             if (hostedEngineAction.equals("deploy")) {
-                long numHEHosts = vdsDao.getAll().stream().filter(VDS::isHostedEngineHost).count();
+                long numHEHosts = vdsDao.getAll().stream().filter(VDS::isHostedEngineDeployed).count();
                 int maxHEHosts = EngineLocalConfig.getInstance().getInteger("MAX_RECOMMENDED_HE_HOSTS");
                 if (numHEHosts >= maxHEHosts) {
                     log.warn(
