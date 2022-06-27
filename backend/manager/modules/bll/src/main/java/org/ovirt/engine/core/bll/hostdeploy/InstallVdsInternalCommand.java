@@ -356,9 +356,10 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 throw new VdsInstallException(
                     VDSStatus.InstallFailed,
                     String.format(
-                        "Failed to execute Ansible host-deploy: %1$s. Please check logs for more details: %2$s",
+                        "Failed to execute Ansible host-deploy: %1$s. Please check logs for more details: %2$s, %3$s",
                         ansibleReturnValue.getStderr(),
-                        ansibleReturnValue.getLogFile()
+                        ansibleReturnValue.getLogFile(),
+                        ansibleReturnValue.getStdout()
                     )
                 );
             }

@@ -90,6 +90,7 @@ public class AnsibleRunnerClient {
     public void setReturnValue(UUID uuid) {
         returnValue.setPlayUuid(uuid.toString());
         returnValue.setLogFile(runnerLogger.getLogFile());
+        returnValue.setStdout(Paths.get(this.getJobEventsDir(uuid.toString()), "../stdout").toString());
     }
 
     public String getNextEvent(String playUuid, int lastEventId) {
