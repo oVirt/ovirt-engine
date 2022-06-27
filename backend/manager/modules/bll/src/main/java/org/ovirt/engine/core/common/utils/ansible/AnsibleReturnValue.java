@@ -20,7 +20,7 @@ public class AnsibleReturnValue {
     private AnsibleReturnCode ansibleReturnCode;
 
     /**
-     * Stdout of playbook execution. It is set only if user is using custom stdout callback plugin.
+     * Stdout of playbook execution. Holds play execution stdout or set if user is using custom stdout callback plugin.
      */
     private String stdout;
 
