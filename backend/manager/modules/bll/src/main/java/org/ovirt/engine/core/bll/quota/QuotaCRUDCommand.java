@@ -25,7 +25,9 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
 
     public QuotaCRUDCommand(QuotaCRUDParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-        setStoragePoolId(getParameters().getQuota().getStoragePoolId());
+        if (getParameters().getQuota() != null) {
+            setStoragePoolId(getParameters().getQuota().getStoragePoolId());
+        }
     }
 
     public Quota getQuota() {
@@ -49,7 +51,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
         Quota quota = getParameters().getQuota();
 
         // Cannot add or update a quota to be default using this command
-        if (quota.isDefault()) {
+        if (quota == null || quota.isDefault()) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID);
             return false;
         }
@@ -78,9 +80,11 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
     private void fillQuotaParameter() {
         Quota quotaParameter = getParameters().getQuota();
 
-        setQuotaStorage(quotaParameter);
-        setQuotaCluster(quotaParameter);
-        setQuotaThresholdDefaults(quotaParameter);
+        if (quotaParameter != null) {
+            setQuotaStorage(quotaParameter);
+            setQuotaCluster(quotaParameter);
+            setQuotaThresholdDefaults(quotaParameter);
+        }
     }
 
     private void setQuotaStorage(Quota quota) {
@@ -157,7 +161,7 @@ public abstract class QuotaCRUDCommand extends CommandBase<QuotaCRUDParameters> 
     }
 
     public String getQuotaName() {
-        return quota.getQuotaName();
+        return getQuota().getQuotaName();
     }
 
 }

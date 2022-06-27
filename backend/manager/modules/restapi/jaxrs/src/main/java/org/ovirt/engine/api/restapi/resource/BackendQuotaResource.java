@@ -10,7 +10,6 @@ import org.ovirt.engine.api.resource.QuotaStorageLimitsResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -55,7 +54,7 @@ public class BackendQuotaResource extends AbstractBackendSubResource<Quota, org.
     @Override
     public Response remove() {
         get();
-        IdParameters prms = new IdParameters(asGuid(id));
+        QuotaCRUDParameters prms = new QuotaCRUDParameters(asGuid(id));
         return performAction(ActionType.RemoveQuota, prms);
     }
 
