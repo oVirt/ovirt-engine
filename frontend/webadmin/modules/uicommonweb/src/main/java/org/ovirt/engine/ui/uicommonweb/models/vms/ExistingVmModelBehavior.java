@@ -513,14 +513,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             if (!getModel().getTotalCPUCores().getEntity().equals(Integer.toString(getVm().getNumOfCpus()))) {
                 getModel().getTotalCPUCores().setEntity(Integer.toString(getVm().getNumOfCpus()));
             }
-
-            if (!getModel().getNumaNodeCount().getEntity().equals(initialVmNumaNodes.size())) {
-                getModel().getNumaNodeCount().setEntity(initialVmNumaNodes.size());
-            }
-
-            if (!getModel().getVmNumaNodes().equals(initialVmNumaNodes)) {
-                getModel().setVmNumaNodes(initialVmNumaNodes);
-            }
         }
     }
 
@@ -529,42 +521,5 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         if (vm.getStatus() != VMStatus.Up) {
             super.updateMaxMemory();
         }
-    }
-
-    /**
-     * Returns true if the NUMA should be updated on the backend.
-     */
-    @Override
-    public boolean shouldUpdateNuma() {
-
-        if (getModel().getCpuPinningPolicy().getSelectedItem().getPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
-            return false;
-        }
-
-        if (vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA && getModel().getCpuPinningPolicy()
-                .getSelectedItem()
-                .getPolicy() != CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
-            return true;
-        }
-
-        if (!getModel().getNumaNodeCount().getEntity().equals(initialVmNumaNodes.size())) {
-            return true;
-        }
-
-        if (!getModel().getVmNumaNodes().equals(initialVmNumaNodes)) {
-            return true;
-        }
-
-        if (getModel().getVmNumaNodes().size() > 0) {
-            if (!getModel().getMemSize().getEntity().equals(vm.getMemSizeMb())) {
-                return true;
-            }
-
-            if (!getModel().getTotalCPUCores().getEntity().equals(Integer.toString(vm.getNumOfCpus()))) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

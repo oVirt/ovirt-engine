@@ -77,7 +77,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
     private VM vm;
     private boolean copyTemplatePermissions;
     private boolean applyChangesLater;
-    private boolean updateNuma;
+    private Boolean updateNuma;
     private String vmLargeIcon;
     private Version clusterLevelChangeFromVersion;
     private Map<VmExternalDataKind, String> vmExternalData;
@@ -346,14 +346,15 @@ public class VmManagementParametersBase extends VmOperationParameterBase
     }
 
     /**
-     * Since NUMA configuration can be updated, this flag indicates whether client
-     * sends NUMA info that needs to be updated.
+     * This flag indicates whether NUMA info from the client should be saved.
+     * @return true if the backend should save the NUMA info, false if not, null if
+     * the clients leaves that decision on the backend
      */
-    public boolean isUpdateNuma() {
+    public Boolean isUpdateNuma() {
         return updateNuma;
     }
 
-    public void setUpdateNuma(boolean updateNuma) {
+    public void setUpdateNuma(Boolean updateNuma) {
         this.updateNuma = updateNuma;
     }
 

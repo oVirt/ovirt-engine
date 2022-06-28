@@ -1884,7 +1884,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         params.setTpmEnabled(model.getTpmEnabled().getEntity());
         params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         params.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-        params.setUpdateNuma(model.getBehavior().shouldUpdateNuma());
+        // it will be calculated on the backend
+        params.setUpdateNuma(null);
         params.setAffinityGroups(model.getAffinityGroupList().getSelectedItems());
         params.setAffinityLabels(model.getLabelList().getSelectedItems());
         if (model.getIsHeadlessModeEnabled().getEntity()) {
