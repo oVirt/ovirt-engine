@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SaveVmExternalDataParameters;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UnchangeableByVdsm;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -85,6 +86,7 @@ public class VmAnalyzer {
     private boolean vmBalloonDriverNotRequestedOrAvailable;
     private boolean guestAgentDownAndBalloonInfalted;
     private boolean guestAgentUpOrBalloonDeflated;
+    private boolean numaClear;
     private List<VmJob> vmJobs;
     private VmStatistics statistics;
     private List<VmNetworkInterface> ifaces;
@@ -429,6 +431,7 @@ public class VmAnalyzer {
                         alreadyDown ? dbVm.getExitMessage() : exitMessage,
                         alreadyDown ? dbVm.getExitReason() : vmExitReason);
                 dbVm.setStopReason(getVmManager().getStopReason(getVmId()));
+                numaClear = true;
             }
             saveDynamic(dbVm);
             resetVmStatistics();
@@ -476,6 +479,7 @@ public class VmAnalyzer {
         auditVmMigrationAbort(exitMessage);
         resourceManager.removeAsyncRunningVm(dbVm.getId());
         movedToDown = true;
+        numaClear = true;
     }
 
     private void auditVmMigrationAbort(String exitMessage) {
@@ -1127,6 +1131,14 @@ public class VmAnalyzer {
 
     public boolean isRemoveFromAsync() {
         return removeFromAsync;
+    }
+
+    public Guid getClearNumaVmId() {
+        return numaClear && isResizeAndPin() ? getVmId() : null;
+    }
+
+    private boolean isResizeAndPin() {
+        return getVmManager().getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
     }
 
     protected VmManager getVmManager() {

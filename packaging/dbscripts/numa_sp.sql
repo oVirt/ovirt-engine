@@ -130,6 +130,19 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION DeleteNumaNodeByVmId (v_vm_id UUID)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    BEGIN
+        DELETE
+        FROM numa_node
+        WHERE vm_id = v_vm_id;
+    END;
+
+    RETURN;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetNumaNodeByVdsId (v_vds_id UUID)
 RETURNS SETOF numa_node_cpus_view STABLE AS $PROCEDURE$
 BEGIN

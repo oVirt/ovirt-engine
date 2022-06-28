@@ -87,6 +87,13 @@ public class VmNumaNodeDaoImpl extends NumaNodeDaoBase<VmNumaNode> implements Vm
         insertNumaNodeMap(numaNodes);
     }
 
+    @Override
+    public void massRemoveAllNumaNodeByVmId(List<Guid> vmIds) {
+        getCallsHandler().executeStoredProcAsBatch("DeleteNumaNodeByVmId", vmIds.stream()
+                .map(vmId -> getCustomMapSqlParameterSource().addValue("vm_id", vmId))
+                .collect(Collectors.toList()));
+    }
+
 
     private Map<Guid, List<Integer>> getAllNumaNodeCpuMap() {
         List<Pair<Guid, Integer>> numaNodesCpus =

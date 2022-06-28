@@ -60,7 +60,6 @@ import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
-import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -958,7 +957,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             getVm().setvNumaNodeList(vNumaNodeList);
         }
 
-        if (getParameters().getVm().getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
+        if (VmCpuCountHelper.isResizeAndPinPolicy(getParameters().getVm())) {
             getParameters().setUpdateNuma(false);
         }
 
@@ -1294,7 +1293,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.TPM_DEVICE_REQUIRED_BY_OS);
         }
 
-        if (!validate(getNumaValidator().checkVmNumaNodesIntegrity(
+        if (!VmCpuCountHelper.isResizeAndPinPolicy(getParameters().getVm()) &&
+                !validate(getNumaValidator().checkVmNumaNodesIntegrity(
                 getParameters().getVm(),
                 getParameters().getVm().getvNumaNodeList()))) {
             return false;
@@ -1413,7 +1413,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failValidation(EngineMessage.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
         }
         if (!validate(vmHandler.validateCpuPinningPolicy(getParameters().getVmStaticData(),
-                getVm().getStaticData(),
                 getEffectiveCompatibilityVersion()))) {
             return false;
         }
