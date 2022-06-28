@@ -70,7 +70,7 @@ public class AnsibleCallback implements CommandCallback {
         // Process the events if the playbook is running:
         totalEvents = runnerClient.getTotalEvents(playUuid);
 
-        if (msg.equalsIgnoreCase("running") || totalEvents == 0 || msg.equalsIgnoreCase("successful")
+        if (msg.equalsIgnoreCase("running") || msg.equalsIgnoreCase("successful")
                 && command.getParameters().getLastEventId() < totalEvents) {
             command.getParameters().setLastEventId(runnerClient.processEvents(
                     playUuid, command.getParameters().getLastEventId(), fn, msg, ret.getLogFile()));

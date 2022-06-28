@@ -64,6 +64,7 @@ public abstract class AnsibleCommandBase <T extends AnsibleCommandParameters> ex
         } else {
             getParameters().setPlayUuid(ansibleReturnValue.getPlayUuid());
             getParameters().setLogFile(ansibleReturnValue.getLogFile().toString());
+            getParameters().setLastEventId(ansibleReturnValue.getLastEventId());
             persistCommand(getParameters().getParentCommand(), true);
             setSucceeded(true);
         }
