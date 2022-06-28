@@ -683,10 +683,7 @@ public class BackendVmResource
 
             VmManagementParametersBase params = new VmManagementParametersBase(updated);
 
-            if (incoming.isSetNumaTuneMode()) {
-                params.setUpdateNuma(true);
-            }
-
+            params.setUpdateNuma(incoming.isSetNumaTuneMode());
             params.setApplyChangesLater(isNextRunRequested());
             params.setMemoryHotUnplugEnabled(true);
 

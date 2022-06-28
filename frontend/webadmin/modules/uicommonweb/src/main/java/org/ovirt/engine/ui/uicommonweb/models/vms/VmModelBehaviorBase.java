@@ -1874,8 +1874,4 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
          }
          return displayTypes.iterator().next();
     }
-
-    public boolean shouldUpdateNuma() {
-        return getModel().getNumaNodeCount().getEntity() > 0;
-    }
 }
