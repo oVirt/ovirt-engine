@@ -53,4 +53,12 @@ public interface VmNumaNodeDao extends Dao {
      *            the numa node ids to be removed
      */
     void massRemoveNumaNodeByNumaNodeId(List<Guid> numaNodeIds);
+
+    /**
+     * Remove all numa nodes based on the VM ID.
+     *
+     * @param vmIds
+     *            a list of vm ids
+     */
+    void massRemoveAllNumaNodeByVmId(List<Guid> vmIds);
 }

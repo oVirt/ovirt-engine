@@ -1640,10 +1640,6 @@ public class VmHandler implements BackendService {
     }
 
     public ValidationResult validateCpuPinningPolicy(VmBase vmFromParams, Version version) {
-        return validateCpuPinningPolicy(vmFromParams, null, version);
-    }
-
-    public ValidationResult validateCpuPinningPolicy(VmBase vmFromParams, VmBase vmFromDb, Version version) {
         ValidationResult result = ValidationResult.VALID;
 
         switch (vmFromParams.getCpuPinningPolicy()) {
@@ -1653,12 +1649,6 @@ public class VmHandler implements BackendService {
             }
             break;
         case RESIZE_AND_PIN_NUMA:
-            if (vmFromDb != null
-                    && (vmFromDb.getNumOfCpus() != vmFromParams.getNumOfCpus()
-                            || !vmFromDb.getvNumaNodeList().equals(vmFromParams.getvNumaNodeList()))) {
-                result = new ValidationResult(EngineMessage.ACTION_TYPE_CANNOT_RESIZE_AND_PIN_AND_NUMA_SET);
-                break;
-            }
             boolean singleCoreHostFound = vmFromParams.getDedicatedVmForVdsList()
                     .stream()
                     .map(vdsId -> vdsDynamicDao.get(vdsId))

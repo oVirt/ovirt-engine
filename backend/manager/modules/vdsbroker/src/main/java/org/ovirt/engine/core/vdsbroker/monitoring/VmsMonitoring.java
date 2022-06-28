@@ -22,6 +22,7 @@ import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
@@ -65,6 +66,8 @@ public class VmsMonitoring {
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
     @Inject
     private VdsDynamicDao vdsDynamicDao;
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
 
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
 
@@ -289,6 +292,7 @@ public class VmsMonitoring {
         saveVmStatistics(vmAnalyzers);
         saveVmInterfaceStatistics(vmAnalyzers);
         saveVmDiskImageStatistics(vmAnalyzers);
+        clearVmNuma(vmAnalyzers);
     }
 
     private void saveVmDiskImageStatistics(List<VmAnalyzer> vmAnalyzers) {
@@ -324,6 +328,15 @@ public class VmsMonitoring {
                 vmManager.setStatistics(stats);
             }
         });
+    }
+
+    private void clearVmNuma(List<VmAnalyzer> vmAnalyzers) {
+        List<Guid> vmIds = vmAnalyzers.stream()
+                .map(VmAnalyzer::getClearNumaVmId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        vmNumaNodeDao.massRemoveAllNumaNodeByVmId(vmIds);
     }
 
     protected void addUnmanagedVms(List<VmAnalyzer> vmAnalyzers, Guid vdsId) {
