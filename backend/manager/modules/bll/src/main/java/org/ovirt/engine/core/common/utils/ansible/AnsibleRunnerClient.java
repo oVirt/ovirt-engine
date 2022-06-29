@@ -144,7 +144,7 @@ public class AnsibleRunnerClient {
                 }
             }
 
-            log.debug("Current node event: ", currentNode.get("event").textValue(), "lastEventId: ", lastEventId);
+            log.debug("Current node event: {} lastEventId: {} ", currentNode.get("event").textValue(), lastEventId);
             // want to log only these kind of events:
             if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.isEventOk(currentNode)
                     || RunnerJsonNode.playbookStats(currentNode) || RunnerJsonNode.isEventFailed(currentNode)) {
