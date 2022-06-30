@@ -77,6 +77,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
@@ -118,6 +119,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     private Instance<AddDiskCommandCallback> callbackProvider;
     @Inject
     private ImageDao imageDao;
+    @Inject
+    private DiskDao diskDao;
 
     @Inject
     private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
@@ -300,7 +303,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 canAddShareableDisk() &&
                 validate(diskVmElementValidator.isVirtIoScsiValid(vm)) &&
                 validate(diskVmElementValidator.isDiskInterfaceSupported(getVm())) &&
-                validateDiskImageNotExisting(((DiskImage) getParameters().getDiskInfo()).getImageId());
+                validateDiskImageNotExisting(((DiskImage) getParameters().getDiskInfo()).getImageId()) &&
+                validateDiskNotExisting(getParameters().getDiskInfo().getId());
 
         if (returnValue && vm != null) {
             StoragePool sp = getStoragePool(); // Note this is done according to the VM's spId.
@@ -312,6 +316,17 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         return returnValue;
+    }
+
+    private boolean validateDiskNotExisting(Guid diskId) {
+        Disk disk = diskDao.get(diskId);
+
+        if (disk != null && !Guid.isNullOrEmpty(disk.getId())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_ALREADY_EXISTS,
+                    String.format("$diskAlias %s", disk.getDiskAlias()),
+                    String.format("$diskID %s", diskId));
+        }
+        return true;
     }
 
     private boolean validateDiskImageNotExisting(Guid imageId) {
