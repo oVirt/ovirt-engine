@@ -67,6 +67,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
@@ -135,6 +136,9 @@ public class AddDiskCommandTest extends BaseCommandTest {
 
     @Mock
     private ImageDao imageDao;
+
+    @Mock
+    private DiskDao diskDao;
 
     /**
      * The command under test.
