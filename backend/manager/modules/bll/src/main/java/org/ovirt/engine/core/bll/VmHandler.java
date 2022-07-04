@@ -1586,7 +1586,7 @@ public class VmHandler implements BackendService {
         // first remove existing snapshot
         Snapshot runSnap = snapshotDao.get(existingVm.getId(), Snapshot.SnapshotType.NEXT_RUN);
         if (runSnap != null) {
-            snapshotDao.remove(runSnap.getId());
+            CompensationUtils.removeEntity(runSnap, snapshotDao, compensationContext);
         }
 
         final VM newVm = new VM();
