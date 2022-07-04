@@ -8,10 +8,18 @@
 - name: Configure advanced virtualization
   import_tasks: advanced-virtualization.yml
 
+- name: Remove network-scripts-openvswitch 2.11 package
+  shell: rpm -e --nodeps network-scripts-openvswitch2.11
+  ignore_errors: true
+  when:
+    - el_ver|int == 8
+    - ovirt_openvswitch_pre is defined
+    - ovirt_openvswitch_pre.version is version ('2.11', '==')
+
 - name: Install ovirt-host package if it isn't installed
   yum:
     name: ovirt-host
-    state: latest
+    state: present
     update_cache: yes
     lock_timeout: 300
   tags:
@@ -32,14 +40,6 @@
 - name: Get installed version of vdsm
   set_fact:
     previous_vdsm_package: "{{ ansible_facts.packages['vdsm'] | first }}"
-
-- name: Remove network-scripts-openvswitch 2.11 package
-  shell: rpm -e --nodeps network-scripts-openvswitch2.11
-  ignore_errors: true
-  when:
-    - el_ver|int == 8
-    - ovirt_openvswitch_pre is defined
-    - ovirt_openvswitch_pre is version ('2.11', '==')
 
 - name: Upgrade packages
   yum:
