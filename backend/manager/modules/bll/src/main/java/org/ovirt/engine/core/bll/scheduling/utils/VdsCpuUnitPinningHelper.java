@@ -109,7 +109,7 @@ public class VdsCpuUnitPinningHelper {
         }
 
         filterSocketsWithInsufficientMemoryForNumaNode(cpuTopology, vm, hostId);
-        List<VdsCpuUnit> cpusToBeAllocated = allocateDedicatedCpus(cpuTopology, vm, hostId);
+        List<VdsCpuUnit> cpusToBeAllocated = allocateExclusiveCpus(cpuTopology, vm, hostId);
         if (vm.getCpuPinningPolicy() == CpuPinningPolicy.ISOLATE_THREADS) {
             List<Integer> socketsUsed = cpusToBeAllocated.stream().map(VdsCpuUnit::getSocket).distinct().collect(Collectors.toList());
             int pCores = 0;
@@ -140,7 +140,66 @@ public class VdsCpuUnitPinningHelper {
         return cpusToBeAllocated;
     }
 
+    private List<VdsCpuUnit> allocateExclusiveCpus(List<VdsCpuUnit> cpuTopology, VM vm, Guid hostId) {
+        switch (vm.getCpuPinningPolicy()) {
+            case DEDICATED:
+                return allocateDedicatedCpus(cpuTopology, vm, hostId);
+            case ISOLATE_THREADS:
+                return allocateIsolatedThreadsCpus(cpuTopology, vm, hostId);
+            default:
+                return Collections.emptyList();
+        }
+    }
+
     private List<VdsCpuUnit> allocateDedicatedCpus(List<VdsCpuUnit> cpuTopology, VM vm, Guid hostId) {
+        List<VdsCpuUnit> cpusToBeAllocated = new ArrayList<>();
+        int socketsLeft = vm.getNumOfSockets();
+        int onlineSockets = getOnlineSockets(cpuTopology).size();
+        while (onlineSockets > 0 && socketsLeft > 0) {
+            List<VdsCpuUnit> cpusInChosenSocket = getCoresInSocket(cpuTopology, getMaxFreedSocket(cpuTopology));
+            if (cpusInChosenSocket.isEmpty()) {
+                break;
+            }
+            int amountOfVSocketsInPSockets = Integer.MAX_VALUE;
+            if (!vm.getvNumaNodeList().isEmpty()) {
+                int highestAmountOfvNumaNodesInSocket = getVirtualNumaNodesInSocket(cpuTopology, vm, hostId, cpusInChosenSocket.get(0).getSocket());
+                int vNumaNodesInVirtualSocket = (int) Math.ceil((float)vm.getvNumaNodeList().size() / (float)vm.getNumOfSockets());
+                amountOfVSocketsInPSockets = highestAmountOfvNumaNodesInSocket / vNumaNodesInVirtualSocket;
+            }
+            // coreCount is based on the VM topology
+            int coreCount = 0;
+            for (int core : getOnlineCores(cpusInChosenSocket)) {
+                List<VdsCpuUnit> freeCpusInCore = getFreeCpusInCore(cpusInChosenSocket, core);
+                int coreThreads = freeCpusInCore.size();
+                while (coreThreads >= vm.getThreadsPerCpu() &&
+                        cpusToBeAllocated.size() < vm.getNumOfCpus() &&
+                        coreCount / vm.getCpuPerSocket() < amountOfVSocketsInPSockets) {
+                    for (int thread = 0; thread < vm.getThreadsPerCpu() && cpusToBeAllocated.size() < vm.getNumOfCpus(); thread++) {
+                        VdsCpuUnit cpuUnit = freeCpusInCore.remove(0);
+                        cpuUnit.pinVm(vm.getId(), vm.getCpuPinningPolicy());
+                        cpusToBeAllocated.add(cpuUnit);
+                    }
+                    coreCount++;
+                    coreThreads -= vm.getThreadsPerCpu();
+                }
+            }
+            socketsLeft -= coreCount / vm.getCpuPerSocket();
+            int coresReminder = coreCount % vm.getCpuPerSocket();
+            for (int i = 0; i < coresReminder * vm.getThreadsPerCpu(); i++) {
+                if (!cpusToBeAllocated.isEmpty()) {
+                    releaseDedicatedCpu(vm.getId(), cpusToBeAllocated);
+                }
+            }
+            onlineSockets--;
+        }
+        if (socketsLeft > 0) {
+            // We didn't manage to allocate the required sockets. We should never get here.
+            return Collections.emptyList();
+        }
+        return cpusToBeAllocated;
+    }
+
+    private List<VdsCpuUnit> allocateIsolatedThreadsCpus(List<VdsCpuUnit> cpuTopology, VM vm, Guid hostId) {
         List<VdsCpuUnit> cpusToBeAllocated = new ArrayList<>();
         int socketsLeft = vm.getNumOfSockets();
         int onlineSockets = getOnlineSockets(cpuTopology).size();
@@ -159,48 +218,29 @@ public class VdsCpuUnitPinningHelper {
             // coreCount is based on the VM topology
             int coreCount = 0;
             for (int core : getOnlineCores(cpusInChosenSocket)) {
-                switch (vm.getCpuPinningPolicy()) {
-                    case DEDICATED:
-                        List<VdsCpuUnit> freeCpusInCore = getFreeCpusInCore(cpusInChosenSocket, core);
-                        int coreThreads = freeCpusInCore.size();
-                        while (coreThreads >= vm.getThreadsPerCpu() &&
-                                cpusToBeAllocated.size() < vm.getNumOfCpus() &&
-                                coreCount / vm.getCpuPerSocket() < amountOfVSocketsInPSockets) {
-                            for (int thread = 0; thread < vm.getThreadsPerCpu() && cpusToBeAllocated.size() < vm.getNumOfCpus(); thread++) {
-                                VdsCpuUnit cpuUnit = freeCpusInCore.remove(0);
-                                cpuUnit.pinVm(vm.getId(), vm.getCpuPinningPolicy());
-                                cpusToBeAllocated.add(cpuUnit);
-                            }
-                            coreCount++;
-                            coreThreads -= vm.getThreadsPerCpu();
-                        }
-                        break;
-                    case ISOLATE_THREADS:
-                        List<VdsCpuUnit> cpusInCore = getCpusInCore(cpusInChosenSocket, core);
-                        if (cpusInCore.stream().anyMatch(VdsCpuUnit::isPinned)) {
-                            continue;
-                        }
-                        if (numOfAllocatedCPUs < vm.getNumOfCpus() && coreCount / vm.getCpuPerSocket() < amountOfVSocketsInPSockets) {
-                            cpusInCore.forEach(cpu -> {
-                                cpu.pinVm(vm.getId(), vm.getCpuPinningPolicy());
-                                cpusToBeAllocated.add(cpu);
-                            });
-                            numOfAllocatedCPUs++;
-                            if (numOfAllocatedCPUs % vm.getThreadsPerCpu() == 0) {
-                                coreCount++;
-                            }
-                        }
+                List<VdsCpuUnit> cpusInCore = getCpusInCore(cpusInChosenSocket, core);
+                if (cpusInCore.stream().anyMatch(VdsCpuUnit::isPinned)) {
+                    continue;
+                }
+                if (numOfAllocatedCPUs < vm.getNumOfCpus() && coreCount / vm.getCpuPerSocket() < amountOfVSocketsInPSockets) {
+                    cpusInCore.forEach(cpu -> {
+                        cpu.pinVm(vm.getId(), vm.getCpuPinningPolicy());
+                        cpusToBeAllocated.add(cpu);
+                    });
+                    numOfAllocatedCPUs++;
+                    if (numOfAllocatedCPUs % vm.getThreadsPerCpu() == 0) {
+                        coreCount++;
+                    }
                 }
             }
             socketsLeft -= coreCount / vm.getCpuPerSocket();
             int coresReminder = coreCount % vm.getCpuPerSocket();
-            for (int i = 0; i < coresReminder * vm.getThreadsPerCpu(); i++) {
+            for (int i = 0; i < coresReminder; i++) {
                 if (!cpusToBeAllocated.isEmpty()) {
-                    VdsCpuUnit releasedCpu = cpusToBeAllocated.remove(cpusToBeAllocated.size() - 1);
-                    releasedCpu.unPinVm(vm.getId());
+                    releaseIsolateThreadsCpu(vm.getId(), cpusToBeAllocated);
+                    numOfAllocatedCPUs--;
                 }
             }
-
             onlineSockets--;
         }
         if (socketsLeft > 0) {
@@ -208,6 +248,22 @@ public class VdsCpuUnitPinningHelper {
             return Collections.emptyList();
         }
         return cpusToBeAllocated;
+    }
+
+    private void releaseDedicatedCpu(Guid vmId, List<VdsCpuUnit> cpusToBeAllocated) {
+        VdsCpuUnit releasedCpu = cpusToBeAllocated.remove(cpusToBeAllocated.size() - 1);
+        releasedCpu.unPinVm(vmId);
+    }
+
+    private void releaseIsolateThreadsCpu(Guid vmId, List<VdsCpuUnit> cpusToBeAllocated) {
+        VdsCpuUnit cpuUnit = cpusToBeAllocated.get(cpusToBeAllocated.size() - 1);
+        int coreId  = cpuUnit.getCore();
+        int socketId = cpuUnit.getSocket();
+        List<VdsCpuUnit> cpusToRemove = getCpusInCore(getCoresInSocket(cpusToBeAllocated, socketId), coreId);
+        cpusToRemove.forEach(vdsCpuUnit -> {
+            vdsCpuUnit.unPinVm(vmId);
+            cpusToBeAllocated.remove(vdsCpuUnit);
+        });
     }
 
     private int countTakenCores(List<VdsCpuUnit> cpuTopology) {
