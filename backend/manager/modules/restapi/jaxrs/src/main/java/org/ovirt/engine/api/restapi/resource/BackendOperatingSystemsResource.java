@@ -13,6 +13,7 @@ import org.ovirt.engine.api.model.OperatingSystemInfos;
 import org.ovirt.engine.api.resource.OperatingSystemResource;
 import org.ovirt.engine.api.resource.OperatingSystemsResource;
 import org.ovirt.engine.api.restapi.types.CPUMapper;
+import org.ovirt.engine.api.restapi.types.TpmSupportMapper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -52,6 +53,7 @@ public class BackendOperatingSystemsResource
                 model.setDescription(name);
             }
             model.setArchitecture(CPUMapper.map(repository.getArchitectureFromOS(id), null));
+            model.setTpmSupport(TpmSupportMapper.map(repository.getTpmSupport(id), null));
             collection.getOperatingSystemInfos().add(addLinks(model));
         }
         return collection;
