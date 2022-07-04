@@ -8,6 +8,7 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.OperatingSystemInfo;
 import org.ovirt.engine.api.resource.OperatingSystemResource;
 import org.ovirt.engine.api.restapi.types.CPUMapper;
+import org.ovirt.engine.api.restapi.types.TpmSupportMapper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.core.common.businessentities.VmIconDefault;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -47,6 +48,7 @@ public class BackendOperatingSystemResource
             model.setLargeIcon(IconHelper.createIcon(vmIconDefault.getLargeIconId()));
         }
         model.setArchitecture(CPUMapper.map(repository.getArchitectureFromOS(key), null));
+        model.setTpmSupport(TpmSupportMapper.map(repository.getTpmSupport(key), null));
         return addLinks(model);
     }
 
