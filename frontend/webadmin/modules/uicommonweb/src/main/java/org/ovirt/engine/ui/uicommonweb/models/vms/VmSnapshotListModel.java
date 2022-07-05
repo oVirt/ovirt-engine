@@ -842,6 +842,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         List<VM> vmList = vm != null ? Collections.singletonList(vm) : Collections.emptyList();
 
         boolean isVmDown = vm != null && vm.getStatus() == VMStatus.Down;
+        boolean isVmDownOrSuspended = vm != null && vm.getStatus() == VMStatus.Down || vm.getStatus() == VMStatus.Suspended;
         boolean isVmImageLocked = vm != null && vm.getStatus() == VMStatus.ImageLocked;
         boolean isVmQualifiedForSnapshotMerge = vm != null && vm.getStatus().isQualifiedForSnapshotMerge();
         boolean isPreviewing = getItems().stream().anyMatch(s -> s.getStatus() == SnapshotStatus.IN_PREVIEW);
@@ -856,8 +857,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless && isManaged);
         getPreviewCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
         getCustomPreviewCommand().setIsExecutionAllowed(getPreviewCommand().getIsExecutionAllowed());
-        getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
-        getUndoCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
+        getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDownOrSuspended && !isStateless);
+        getUndoCommand().setIsExecutionAllowed(isPreviewing && isVmDownOrSuspended && !isStateless);
         getRemoveCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && !isStateless
                 && isVmQualifiedForSnapshotMerge);
         getCloneVmCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing

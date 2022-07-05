@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmCheckpoint;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -142,13 +143,14 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution);
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override
     protected void executeVmCommand() {
-
-        if (!getImagesList().isEmpty()) {
+        // we can probably get rid of the following check getVm().getStatus() != VMStatus.Suspended
+        // and rely on memory locks instead of db locks but that requires more testing
+        if (!getImagesList().isEmpty() && getVm().getStatus() != VMStatus.Suspended) {
             lockVmWithCompensationIfNeeded();
             if (!isInternalExecution()) {
                 freeLock();
@@ -843,7 +845,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         MultipleStorageDomainsValidator storageValidator = createStorageDomainValidator();
         if (!validate(storageValidator.allDomainsExistAndActive()) ||
                 !performImagesChecks() ||
-                !validate(vmValidator.vmDown()) ||
+                !validate(vmValidator.validateVmStatusUsingMatrix(getActionType())) ||
                 !validate(storageValidator.isSupportedByManagedBlockStorageDomains(getActionType())) ||
                 // if the user choose to commit a snapshot the vm can't have disk snapshots attached to other vms.
                 getSnapshot().getType() == SnapshotType.REGULAR && !validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false))) {

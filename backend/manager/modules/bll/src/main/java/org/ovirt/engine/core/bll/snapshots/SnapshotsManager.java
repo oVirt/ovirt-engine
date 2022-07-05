@@ -38,9 +38,11 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -455,7 +457,9 @@ public class SnapshotsManager {
         }
 
         vm.setAppList(snapshot.getAppList());
-        vmDynamicDao.update(vm.getDynamicData());
+        VmDynamic vmDynamic = vm.getDynamicData();
+        vmDynamic.setStatus(withMemory ? VMStatus.Suspended : VMStatus.Down);
+        vmDynamicDao.update(vmDynamic);
 
         List<DiskImage> imagesToExclude = diskImageDao.getAttachedDiskSnapshotsToVm(vm.getId(), Boolean.TRUE);
 
