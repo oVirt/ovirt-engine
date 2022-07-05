@@ -218,7 +218,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 getCompensationContext(),
                 getCurrentUser(),
                 new VmInterfaceManager(getMacPool()),
-                isRestoreMemory());
+                getParameters().isRestoreMemory());
 
         // custom preview - without leases
         if (!getParameters().isRestoreLease()) {
@@ -242,7 +242,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected void executeVmCommand() {
-        final boolean restoreMemory = isRestoreMemory();
+        final boolean restoreMemory = getParameters().isRestoreMemory();
 
         final Guid newActiveSnapshotId = Guid.newGuid();
         final Snapshot snapshotToBePreviewed = getDstSnapshot();
@@ -431,13 +431,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         return dstLeaseDomainId != null ? LeaseAction.CREATE_NEW_LEASE : LeaseAction.DO_NOTHING;
     }
 
-    private boolean isRestoreMemory() {
-        return getParameters().isRestoreMemory();
-    }
-
     private boolean updateClusterCompatibilityVersionToOldCluster(boolean disableLock) {
         Version oldClusterVersion = getVm().getClusterCompatibilityVersionOrigin();
-        if (isRestoreMemory() && getVm().getCustomCompatibilityVersion() == null &&
+        if (getParameters().isRestoreMemory() && getVm().getCustomCompatibilityVersion() == null &&
                 oldClusterVersion.less(getVm().getClusterCompatibilityVersion())) {
             // the snapshot was taken before cluster version change, call the UpdateVmCommand
 
@@ -636,7 +632,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             return false;
         }
 
-        if (isRestoreMemory() && !validateMemoryTakenInSupportedVersion()) {
+        if (getParameters().isRestoreMemory() && !validateMemoryTakenInSupportedVersion()) {
             return false;
         }
 
