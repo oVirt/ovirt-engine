@@ -1612,6 +1612,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     EnableBochsDisplay,
 
+    @TypeConverterAttribute(Boolean.class)
+    VirtioVgaSupported,
+
     @TypeConverterAttribute(Integer.class)
     HostMonitoringWatchdogIntervalInSeconds,
 
