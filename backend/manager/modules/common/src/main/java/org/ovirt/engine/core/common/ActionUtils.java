@@ -157,7 +157,7 @@ public final class ActionUtils {
                 EnumSet.of(ActionType.HibernateVm, ActionType.RunVm,
                         ActionType.RunVmOnce, ActionType.AddVmTemplate, ActionType.RemoveVm,
                         ActionType.ExportVm, ActionType.ImportVm, ActionType.ChangeDisk,
-                        ActionType.AddVmInterface, ActionType.UpdateVmInterface,
+                        ActionType.AddVmInterface, ActionType.UpdateVmInterface, ActionType.RestoreAllSnapshots,
                         ActionType.RemoveVmInterface, ActionType.MigrateVm, ActionType.CancelMigrateVm,
                         ActionType.ExtendImageSize, ActionType.RebootVm, ActionType.ResetVm));
         vmMatrix.put(
@@ -173,7 +173,7 @@ public final class ActionUtils {
                         ActionType.AddVmTemplate, ActionType.RemoveVm, ActionType.MigrateVm,
                         ActionType.ExportVm, ActionType.ImportVm,
                         ActionType.ChangeDisk, ActionType.AddVmInterface,
-                        ActionType.UpdateVmInterface,
+                        ActionType.UpdateVmInterface, ActionType.RestoreAllSnapshots,
                         ActionType.RemoveVmInterface, ActionType.CancelMigrateVm,
                         ActionType.ExtendImageSize, ActionType.RebootVm, ActionType.ResetVm));
         vmMatrix.put(
@@ -181,7 +181,7 @@ public final class ActionUtils {
                 EnumSet.of(ActionType.HibernateVm, ActionType.RunVm,
                         ActionType.RunVmOnce, ActionType.AddVmTemplate, ActionType.RemoveVm,
                         ActionType.ExportVm, ActionType.ImportVm, ActionType.ChangeDisk,
-                        ActionType.AddVmInterface, ActionType.UpdateVmInterface,
+                        ActionType.AddVmInterface, ActionType.UpdateVmInterface, ActionType.RestoreAllSnapshots,
                         ActionType.RemoveVmInterface, ActionType.CancelMigrateVm,
                         ActionType.ExtendImageSize));
         vmMatrix.put(
@@ -189,7 +189,7 @@ public final class ActionUtils {
                 EnumSet.of(ActionType.HibernateVm, ActionType.RunVm,
                         ActionType.RunVmOnce, ActionType.AddVmTemplate, ActionType.RemoveVm,
                         ActionType.ExportVm, ActionType.ImportVm, ActionType.ChangeDisk,
-                        ActionType.AddVmInterface, ActionType.UpdateVmInterface,
+                        ActionType.AddVmInterface, ActionType.UpdateVmInterface, ActionType.RestoreAllSnapshots,
                         ActionType.RemoveVmInterface, ActionType.CancelMigrateVm,
                         ActionType.ExtendImageSize, ActionType.RebootVm));
         vmMatrix.put(
@@ -198,7 +198,7 @@ public final class ActionUtils {
                         ActionType.RunVmOnce, ActionType.AddVmTemplate, ActionType.RemoveVm,
                         ActionType.HibernateVm, ActionType.MigrateVm, ActionType.ExportVm,
                         ActionType.ImportVm, ActionType.ChangeDisk,
-                        ActionType.AddVmInterface, ActionType.UpdateVmInterface,
+                        ActionType.AddVmInterface, ActionType.UpdateVmInterface, ActionType.RestoreAllSnapshots,
                         ActionType.RemoveVmInterface, ActionType.CreateSnapshotForVm,
                         ActionType.ExtendImageSize, ActionType.RebootVm, ActionType.ResetVm));
         vmMatrix.put(
@@ -214,7 +214,7 @@ public final class ActionUtils {
                 EnumSet.of(ActionType.RemoveVm, ActionType.HibernateVm,
                         ActionType.AddVmTemplate, ActionType.RunVmOnce, ActionType.ExportVm,
                         ActionType.ImportVm, ActionType.ExtendImageSize,
-                        ActionType.AddVmInterface, ActionType.UpdateVmInterface,
+                        ActionType.AddVmInterface, ActionType.UpdateVmInterface, ActionType.RestoreAllSnapshots,
                         ActionType.RemoveVmInterface, ActionType.CancelMigrateVm,
                         ActionType.RebootVm, ActionType.ResetVm));
         vmMatrix.put(
@@ -224,7 +224,7 @@ public final class ActionUtils {
                         ActionType.HibernateVm, ActionType.MigrateVm, ActionType.RemoveVm,
                         ActionType.AddVmTemplate, ActionType.ExportVm,
                         ActionType.ImportVm, ActionType.ChangeDisk,
-                        ActionType.AddVmInterface, ActionType.UpdateVmInterface,
+                        ActionType.AddVmInterface, ActionType.UpdateVmInterface, ActionType.RestoreAllSnapshots,
                         ActionType.RemoveVmInterface, ActionType.CancelMigrateVm,
                         ActionType.ExtendImageSize, ActionType.RebootVm, ActionType.ResetVm));
         vmMatrix.put(
@@ -234,7 +234,7 @@ public final class ActionUtils {
                         ActionType.HibernateVm, ActionType.MigrateVm, ActionType.RemoveVm,
                         ActionType.AddVmTemplate, ActionType.ExportVm,
                         ActionType.ImportVm, ActionType.ChangeDisk,
-                        ActionType.AddVmInterface, ActionType.UpdateVmInterface,
+                        ActionType.AddVmInterface, ActionType.UpdateVmInterface, ActionType.RestoreAllSnapshots,
                         ActionType.RemoveVmInterface, ActionType.CancelMigrateVm, ActionType.ExtendImageSize,
                         ActionType.RebootVm, ActionType.ResetVm));
 
@@ -257,6 +257,7 @@ public final class ActionUtils {
                         ActionType.ChangeDisk,
                         ActionType.AddVmInterface,
                         ActionType.UpdateVmInterface,
+                        ActionType.RestoreAllSnapshots,
                         ActionType.CreateSnapshotForVm,
                         ActionType.RemoveVmInterface,
                         ActionType.CancelMigrateVm,
@@ -271,7 +272,7 @@ public final class ActionUtils {
                         ActionType.HibernateVm, ActionType.MigrateVm, ActionType.RemoveVm,
                         ActionType.AddVmTemplate, ActionType.ExportVm,
                         ActionType.ImportVm, ActionType.ChangeDisk, ActionType.CreateSnapshotForVm,
-                        ActionType.AddVmInterface, ActionType.UpdateVmInterface,
+                        ActionType.AddVmInterface, ActionType.UpdateVmInterface, ActionType.RestoreAllSnapshots,
                         ActionType.RemoveVmInterface, ActionType.CancelMigrateVm, ActionType.ExtendImageSize,
                         ActionType.RebootVm, ActionType.ResetVm));
         vmMatrix.put(
@@ -280,7 +281,7 @@ public final class ActionUtils {
                         ActionType.RunVmOnce, ActionType.HibernateVm, ActionType.MigrateVm,
                         ActionType.RemoveVm, ActionType.AddVmTemplate, ActionType.ExportVm,
                         ActionType.ImportVm, ActionType.ChangeDisk, ActionType.CreateSnapshotForVm,
-                        ActionType.AddVmInterface, ActionType.UpdateVmInterface,
+                        ActionType.AddVmInterface, ActionType.UpdateVmInterface, ActionType.RestoreAllSnapshots,
                         ActionType.RemoveVmInterface, ActionType.CancelMigrateVm, ActionType.ExtendImageSize,
                         ActionType.RebootVm, ActionType.ResetVm));
 
@@ -291,7 +292,7 @@ public final class ActionUtils {
                         ActionType.HibernateVm, ActionType.MigrateVm, ActionType.RemoveVm,
                         ActionType.AddVmTemplate, ActionType.ExportVm,
                         ActionType.ImportVm, ActionType.ChangeDisk, ActionType.CreateSnapshotForVm,
-                        ActionType.AddVmInterface, ActionType.UpdateVmInterface,
+                        ActionType.AddVmInterface, ActionType.UpdateVmInterface, ActionType.RestoreAllSnapshots,
                         ActionType.RemoveVmInterface, ActionType.CancelMigrateVm, ActionType.ExtendImageSize,
                         ActionType.RebootVm, ActionType.ResetVm));
         vmMatrix.put(
