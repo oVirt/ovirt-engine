@@ -41,6 +41,11 @@
   set_fact:
     previous_vdsm_package: "{{ ansible_facts.packages['vdsm'] | first }}"
 
+- name: Clean yum cache
+  command:
+    cmd: yum clean packages
+  ignore_errors: yes
+
 - name: Upgrade packages
   yum:
     name: '*'
