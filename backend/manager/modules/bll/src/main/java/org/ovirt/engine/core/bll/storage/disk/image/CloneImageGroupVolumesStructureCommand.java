@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.ovirt.engine.core.common.action.CloneImageGroupVolumesStructureComman
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.action.MeasureVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -37,6 +39,7 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.CollectionUtils;
 
 @InternalCommandAttribute
@@ -56,6 +59,9 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
+
+    @Inject
+    private VmDao vmDao;
 
     @Inject
     private ImagesHandler imagesHandler;
@@ -220,7 +226,8 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
 
         Guid hostId = imagesHandler.getHostForMeasurement(storagePoolId, imageGroupID);
         if (hostId != null) {
-            if ((srcDomainStorageType.isBlockDomain() || !sourceImage.isActive()) &&
+            boolean isPluggedToRunningVm = sourceImage.isActive() && isAttachedToRunningVMs(imageGroupID);
+            if ((srcDomainStorageType.isBlockDomain() || !isPluggedToRunningVm) &&
                     dstDomainStorageType.isBlockDomain()) {
                 MeasureVolumeParameters parameters = new MeasureVolumeParameters(storagePoolId,
                         srcDomain,
@@ -271,6 +278,13 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
         }
 
         return null;
+    }
+
+    private boolean isAttachedToRunningVMs(Guid imageGroupID) {
+        Map<Boolean, List<VM>> vms = vmDao.getForDisk(imageGroupID, false);
+        return !vms.isEmpty() && vms.computeIfAbsent(Boolean.TRUE, b -> new ArrayList<>())
+                .stream()
+                .anyMatch(VM::isRunning);
     }
 
     private VolumeFormat determineVolumeFormat(Guid destStorageDomainId,
