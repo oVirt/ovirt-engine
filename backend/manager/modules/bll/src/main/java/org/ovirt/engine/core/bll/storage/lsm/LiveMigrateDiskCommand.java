@@ -514,18 +514,20 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                             image.getImageId()));
             DiskImage imageFromIRS = (DiskImage) ret.getReturnValue();
 
-            // If an image is RAW/sparse and copied to a block SD it will become COW,
-            // use the information fetched from the storage to ensure it's the format change
-            // is persisted and visible in the engine.
-            image.setVolumeFormat(imageFromIRS.getVolumeFormat());
+            if (imageFromIRS != null) {
+                // If an image is RAW/sparse and copied to a block SD it will become COW,
+                // use the information fetched from the storage to ensure it's the format change
+                // is persisted and visible in the engine.
+                image.setVolumeFormat(imageFromIRS.getVolumeFormat());
 
-            setQcowCompatForSnapshot(image, imageFromIRS);
-            DiskImageDynamic diskImageDynamic = diskImageDynamicDao.get(image.getImageId());
+                setQcowCompatForSnapshot(image, imageFromIRS);
+                DiskImageDynamic diskImageDynamic = diskImageDynamicDao.get(image.getImageId());
 
-            // Update image's actual size in DB
-            if (imageFromIRS != null && diskImageDynamic != null) {
-                diskImageDynamic.setActualSize(imageFromIRS.getActualSizeInBytes());
-                diskImageDynamicDao.update(diskImageDynamic);
+                // Update image's actual size in DB
+                if (diskImageDynamic != null) {
+                    diskImageDynamic.setActualSize(imageFromIRS.getActualSizeInBytes());
+                    diskImageDynamicDao.update(diskImageDynamic);
+                }
             }
         }
     }
