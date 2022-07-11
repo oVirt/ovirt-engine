@@ -17,7 +17,7 @@ extractkey() {
 	else
 		common_backup "${key}"
 		touch "${key}"
-		chmod 0644 "${key}" || die "Cannot set key permissions"
+		chmod 0640 "${key}" || die "Cannot set key permissions"
 	fi
 
 	openssl \

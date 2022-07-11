@@ -70,7 +70,7 @@ enroll() {
 
 
 	touch "${PKIDIR}/private/${CA_FILE}.pem"
-	chmod 0644 "${PKIDIR}/private/${CA_FILE}.pem" || die "Cannot set CA permissions"
+	chmod 0640 "${PKIDIR}/private/${CA_FILE}.pem" || die "Cannot set CA permissions"
 	openssl genpkey \
 		-algorithm RSA \
 		-pkeyopt rsa_keygen_bits:2048 \

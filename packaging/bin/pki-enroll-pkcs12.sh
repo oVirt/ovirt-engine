@@ -59,7 +59,7 @@ enroll() {
 		|| die "Cannot sign request"
 
 	touch "${pkcs12}"
-	chmod 0644 "${pkcs12}" || die "Cannot set PKCS#12 permissions"
+	chmod 0640 "${pkcs12}" || die "Cannot set PKCS#12 permissions"
 	openssl \
 		pkcs12 \
 		-export \
