@@ -207,7 +207,7 @@ public class VdsManager {
         handlePreviousStatus();
         handleSecureSetup();
         initVdsBroker();
-        initAvailableCpus();
+        updateCpuTopology();
     }
 
     public void handleSecureSetup() {
@@ -300,7 +300,7 @@ public class VdsManager {
                                 getVdsName(), getVdsId());
                         return;
                     }
-
+                    updateCpuTopology();
                     try {
                         updateIteration();
                         if (isMonitoringNeeded()) {
@@ -761,9 +761,11 @@ public class VdsManager {
                     this.cachedVds.setUsageMemPercent(0);
                     this.cachedVds.setUsageNetworkPercent(0);
                 }
+                updateCpuTopology();
                 break;
             case Up:
                 vds.setInFenceFlow(false);
+                updateCpuTopology();
                 break;
             default:
                 break;
@@ -1331,7 +1333,19 @@ public class VdsManager {
     }
 
 
-    private void initAvailableCpus() {
+    private void updateCpuTopology() {
+
+        if (!cpuTopology.isEmpty()) {
+            if (cachedVds.getDynamicData().getStatus() == VDSStatus.Maintenance) {
+                cpuTopology = new ArrayList<>();
+            }
+            return;
+        }
+
+        if (cachedVds.getDynamicData().getStatus() != VDSStatus.Up) {
+            return;
+        }
+
         List<VdsCpuUnit> cpuTopology = cachedVds.getCpuTopology();
         if (cpuTopology == null) {
             return;
