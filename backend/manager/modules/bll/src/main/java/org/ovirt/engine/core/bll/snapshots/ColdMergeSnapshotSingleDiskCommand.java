@@ -52,7 +52,7 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
         // Let doPolling() drive the execution; we don't have any guarantee that
         // executeCommand() will finish before doPolling() is called, and we don't
         // want to possibly run the first command twice.
-        getParameters().setCommandStep(RemoveSnapshotSingleDiskStep.PREPARE_MERGE);
+        getParameters().setCommandStep(getInitialMergeStepForImage());
         getParameters().setChildCommands(new HashMap<>());
         setSucceeded(true);
     }
@@ -111,6 +111,14 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
         } else {
             return false;
         }
+    }
+
+    private RemoveSnapshotSingleDiskStep getInitialMergeStepForImage() {
+        if (getImageInfoFromVdsm(getDestinationDiskImage()) == null) {
+            log.info("Image does not exist, attempting to synchronize the database");
+            return RemoveSnapshotSingleDiskStep.COMPLETE;
+        }
+        return RemoveSnapshotSingleDiskStep.PREPARE_MERGE;
     }
 
     @Override
