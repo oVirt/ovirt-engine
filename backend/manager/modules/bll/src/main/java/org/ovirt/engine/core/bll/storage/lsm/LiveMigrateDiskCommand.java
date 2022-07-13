@@ -235,9 +235,9 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 DiskImage diskParams = new DiskImage();
 
                 diskParams.setInitialSizeInBytes(ImagesHandler.computeImageInitialSizeInBytes(disk.getImage()));
-                return new HashMap<>() {{
-                    put(disk.getId(), diskParams);
-                }};
+                Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
+                diskImagesMap.put(disk.getId(), diskParams);
+                return diskImagesMap;
             }
         }
         return new HashMap<>();
