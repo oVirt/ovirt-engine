@@ -182,6 +182,13 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 return RemoveSnapshotSingleDiskStep.DESTROY_IMAGE;
             }
         }
+        if (getImageInfoFromVdsm(getDestinationDiskImage()) == null) {
+            log.info("Image does not exist, attempting to synchronize the database");
+            Set<Guid> imagesToRemove = new HashSet<>();
+            imagesToRemove.add(getDestinationDiskImage().getImageId());
+            getParameters().setMergeStatusReturnValue(new MergeStatusReturnValue(imagesToRemove));
+            return RemoveSnapshotSingleDiskStep.COMPLETE;
+        }
         return RemoveSnapshotSingleDiskStep.EXTEND;
     }
 
