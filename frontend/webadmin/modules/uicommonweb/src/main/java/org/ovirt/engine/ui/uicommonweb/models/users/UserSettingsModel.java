@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -13,6 +14,7 @@ import org.ovirt.engine.ui.frontend.NotificationStatus;
 import org.ovirt.engine.ui.frontend.UserProfileManager;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -27,14 +29,51 @@ public class UserSettingsModel extends SearchableListModel<DbUser, UserProfilePr
         setTitle(ConstantsManager.getInstance().getConstants().accountSettings());
         setHashName("user_settings"); //$NON-NLS-1$
 
-        removeCommand = new UICommand("Remove", new BaseCommandTarget() {//$NON-NLS-1$
-            @Override
-            public void executeCommand(UICommand uiCommand) {
-                removeUserProfileProperty();
-            }
-        });
+        removeCommand = new UICommand(
+                "RemoveUserProfilePropertyWithConfirmation", //$NON-NLS-1$
+                new BaseCommandTarget() {
+                    @Override
+                    public void executeCommand(UICommand uiCommand) {
+                        confirmRemoval();
+                    }
+                });
 
         updateActionAvailability();
+    }
+
+    private void confirmRemoval() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        ConfirmationModel model = new ConfirmationModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().removeUserProfilePropertiesTitle());
+        model.setMessage(ConstantsManager.getInstance().getConstants().removeUserProfilePropertiesMessage());
+        model.setHashName("remove_user_profile_properties"); //$NON-NLS-1$
+
+        model.setItems(getSelectedItems().stream().map(UserProfileProperty::getName).collect(Collectors.toList()));
+
+        model.getCommands()
+                .add(
+                        UICommand.createDefaultOkUiCommand(
+                                "RemoveUserProfileProperty", //$NON-NLS-1$
+                                new BaseCommandTarget() {
+                                    @Override
+                                    public void executeCommand(UICommand uiCommand) {
+                                        removeUserProfileProperty();
+                                        setWindow(null);
+                                    }
+                                }));
+        model.getCommands()
+                .add(UICommand.createCancelUiCommand(
+                        "CancelRemovingUserProfileProperty", //$NON-NLS-1$
+                        new BaseCommandTarget() {
+                            @Override
+                            public void executeCommand(UICommand uiCommand) {
+                                setWindow(null);
+                            }
+                        }));
     }
 
     private void removeUserProfileProperty() {
