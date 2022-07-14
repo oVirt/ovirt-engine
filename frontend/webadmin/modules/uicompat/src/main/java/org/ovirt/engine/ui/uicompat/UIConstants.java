@@ -217,6 +217,10 @@ public interface UIConstants extends Constants {
 
     String removeUsersTitle();
 
+    String removeUserProfilePropertiesTitle();
+
+    String removeUserProfilePropertiesMessage();
+
     String directoryGroupsTitle();
 
     String quotaTitle();
