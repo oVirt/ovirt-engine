@@ -5,3 +5,10 @@
     - vmconsole
     - ovn
     - vnc
+
+- name: Update certs permissions
+  file:
+    path: '{{ ovirt_pki_dir }}'
+    mode: u=rwx,g=r,o=r
+    recurse: yes
+  delegate_to: localhost

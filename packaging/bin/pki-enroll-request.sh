@@ -37,8 +37,7 @@ sign() {
 		-utf8 \
 		${EXTRA_COMMAND} \
 		|| die "Cannot sign certificate"
-	chmod 0644 "${cert}" || die "Cannot set certificate permissions"
-	chmod 0644 "${ca_file}.pem" || die "Cannot set certificate permissions"
+	chmod a+r "${cert}" || die "Cannot set certificate permissions"
 
 	return 0
 }

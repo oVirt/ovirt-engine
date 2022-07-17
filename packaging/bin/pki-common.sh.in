@@ -31,7 +31,6 @@ common_restore_perms() {
 	# of these files, so we have to reset
 	# our defaults
 	chown --reference="${pkidir}" "${pkidir}"/serial.txt* "${pkidir}"/database.txt* "${pkidir}"/.rnd* > /dev/null 2>&1
-	chmod 0644 "${pkidir}"/serial.txt* "${pkidir}"/database.txt* "${pkidir}"/.rnd* || die "Cannot set files permissions"
 }
 
 common_set_conf_vars() {
