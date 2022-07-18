@@ -553,6 +553,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             return true;
         }
 
+        // Only VM-to-VM hard affinity is checked here. Other affinity types, including VM-to-host hard affinity are
+        // probed by SchedulingManager.canSchedule() call in execution phase of the command.
         List<AffinityGroup> affinityGroups =
                 affinityGroupDao.getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(vdsId);
         if (!affinityGroups.isEmpty()) {
