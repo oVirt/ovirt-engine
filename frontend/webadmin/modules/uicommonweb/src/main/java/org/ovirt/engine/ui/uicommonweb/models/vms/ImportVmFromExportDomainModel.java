@@ -82,7 +82,9 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         }
         getClusterQuota().setIsAvailable(dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
         getCluster().getSelectedItemChangedEvent().addListener(clusterChangedListener);
-        getCluster().getSelectedItemChangedEvent().addListener(vmImportGeneralModel);
+        if (vmImportGeneralModel != null) {
+            getCluster().getSelectedItemChangedEvent().addListener(vmImportGeneralModel);
+        }
         // get cluster
         getCluster().setItems(null);
         AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery<>(clusters -> {
