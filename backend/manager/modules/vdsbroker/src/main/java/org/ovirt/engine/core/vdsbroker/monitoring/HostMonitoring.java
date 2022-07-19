@@ -335,7 +335,7 @@ public class HostMonitoring implements HostMonitoringInterface {
         long memUsage = 100 - Math.round(100 * memFree / (double) memTotal);
 
         if (memUsage > maxUsedPercentageThreshold) {
-            logMemoryAuditLog(vds, cluster, stat, AuditLogType.VDS_HIGH_MEM_USE, maxUsedPercentageThreshold);
+            logMemoryAuditLog(vds, cluster, memUsage, AuditLogType.VDS_HIGH_MEM_USE, maxUsedPercentageThreshold);
         }
     }
 
@@ -346,6 +346,19 @@ public class HostMonitoring implements HostMonitoringInterface {
         if (stat.getMemFree() < maxUsedAbsoluteThreshold) {
             logMemoryAuditLog(vds, cluster, stat, AuditLogType.VDS_LOW_MEM, maxUsedAbsoluteThreshold);
         }
+    }
+
+    private void logMemoryAuditLog(VDS vds,
+            Cluster cluster,
+            Long memUsage,
+            AuditLogType valueToLog,
+            Integer threshold) {
+        AuditLogable logable = createAuditLogableForHost();
+        logable.addCustomValue("HostName", vds.getName());
+        logable.addCustomValue("Cluster", cluster.getName());
+        logable.addCustomValue("UsedMemory", memUsage.toString());
+        logable.addCustomValue("Threshold", threshold.toString());
+        auditLog(logable, valueToLog);
     }
 
     private void logMemoryAuditLog(VDS vds,
