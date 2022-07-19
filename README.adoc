@@ -623,3 +623,22 @@ pip3 install "ansible-lint>=6.0.0,<7.0.0"
 Run of the lint:
 
     $ ansible-lint -c build/ansible-lint.conf packaging/ansible-runner-service-project/project/roles/*
+
+== Branch/release management
+
+Git branch `master` should always have the latest version.
+
+Releases should be done from stable branches. So-called "bump patches", to
+increase the version, should be created using the script `bump_release.sh`.
+This creates two git commits - one for doing the release, which should be
+tagged, and the next one for getting back to development builds, which
+have a timestamp+git-hash in their RPMs names.
+
+When branching stable branches, master branch should be bumped to the next
+Y or Z version. There is currently no script for doing that. It can be done
+using something like:
+```
+find . -name pom.xml -exec sed -i "s:4.5.1.3-SNAPSHOT:4.5.2-SNAPSHOT:" {} +
+```
+Replace `4.5.1.3` with the current version, and `4.5.2` with the version you
+want to bump to.
