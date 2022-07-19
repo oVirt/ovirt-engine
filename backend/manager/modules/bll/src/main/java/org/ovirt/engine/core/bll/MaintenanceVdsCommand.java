@@ -92,7 +92,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
             ActionReturnValue returnValue = migrateAllVms(getExecutionContext());
             setSucceeded(returnValue.getSucceeded());
-            if (!returnValue.isValid()) {
+            if (!returnValue.getSucceeded() && !returnValue.isValid()) {
                 getReturnValue().setValid(false);
                 getReturnValue().getValidationMessages().addAll(returnValue.getValidationMessages());
             }
