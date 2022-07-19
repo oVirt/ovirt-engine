@@ -157,6 +157,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     private ActionReturnValue migrateVms(List<VM> vms, ExecutionContext parentContext) {
         if (vms.isEmpty()) {
             ActionReturnValue returnValue = new ActionReturnValue();
+            returnValue.setValid(true);
             returnValue.setSucceeded(true);
             return returnValue;
         }
