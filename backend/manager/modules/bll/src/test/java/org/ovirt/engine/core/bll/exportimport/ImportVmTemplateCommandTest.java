@@ -56,6 +56,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
 
@@ -79,6 +80,9 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
 
     @Mock
     private VmTemplateDao vmTemplateDao;
+
+    @Mock
+    private VmStaticDao vmStaticDao;
 
     @Mock
     private VmHandler vmHandler;
