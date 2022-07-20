@@ -39,7 +39,6 @@ import org.ovirt.engine.core.bll.validator.storage.DiskSnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -219,7 +218,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 getCompensationContext(),
                 getCurrentUser(),
                 new VmInterfaceManager(getMacPool()),
-                isRestoreMemory());
+                getParameters().isRestoreMemory());
 
         // custom preview - without leases
         if (!getParameters().isRestoreLease()) {
@@ -243,7 +242,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected void executeVmCommand() {
-        final boolean restoreMemory = isRestoreMemory();
+        final boolean restoreMemory = getParameters().isRestoreMemory();
 
         final Guid newActiveSnapshotId = Guid.newGuid();
         final Snapshot snapshotToBePreviewed = getDstSnapshot();
@@ -432,15 +431,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         return dstLeaseDomainId != null ? LeaseAction.CREATE_NEW_LEASE : LeaseAction.DO_NOTHING;
     }
 
-    private boolean isRestoreMemory() {
-        return getParameters().isRestoreMemory() &&
-                FeatureSupported.isMemorySnapshotSupportedByArchitecture(
-                        getVm().getClusterArch(), getVm().getCompatibilityVersion());
-    }
-
     private boolean updateClusterCompatibilityVersionToOldCluster(boolean disableLock) {
         Version oldClusterVersion = getVm().getClusterCompatibilityVersionOrigin();
-        if (isRestoreMemory() && getVm().getCustomCompatibilityVersion() == null &&
+        if (getParameters().isRestoreMemory() && getVm().getCustomCompatibilityVersion() == null &&
                 oldClusterVersion.less(getVm().getClusterCompatibilityVersion())) {
             // the snapshot was taken before cluster version change, call the UpdateVmCommand
 
@@ -639,7 +632,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             return false;
         }
 
-        if (isRestoreMemory() && !validateMemoryTakenInSupportedVersion()) {
+        if (getParameters().isRestoreMemory() && !validateMemoryTakenInSupportedVersion()) {
             return false;
         }
 

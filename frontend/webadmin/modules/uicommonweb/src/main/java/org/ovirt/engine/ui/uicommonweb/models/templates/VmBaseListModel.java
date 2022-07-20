@@ -620,8 +620,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
                     confirmModel.addRecommendationForCpuPinning(isVmAssignedToSpecificHosts, isVmCpuPinningSet);
 
                     // Handle NUMA
-                    final boolean isVmVirtNumaSet =
-                            model.getNumaEnabled().getEntity() && model.getNumaNodeCount().getEntity() > 0;
+                    final boolean isVmVirtNumaSet = model.getNumaNodeCount().getEntity() > 0;
                     final boolean isVmVirtNumaPinned =
                             model.getVmNumaNodes() != null
                                     && !model.getVmNumaNodes().isEmpty()

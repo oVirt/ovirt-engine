@@ -6,10 +6,12 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.Clusters;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
+import org.ovirt.engine.api.restapi.resource.utils.LinksTreeNode;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
@@ -147,5 +149,13 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
         }
 
         return cluster;
+    }
+
+    @Override
+    public void follow(ActionableResource entity, LinksTreeNode linksTree) {
+        Clusters clusters = (Clusters)entity;
+        for (org.ovirt.engine.api.model.Cluster cluster : clusters.getClusters()) {
+            BackendClusterResource.removeGlusterVolumesFromFollowTree(linksTree, cluster);
+        }
     }
 }

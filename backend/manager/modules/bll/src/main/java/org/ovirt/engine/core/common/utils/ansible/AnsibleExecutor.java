@@ -157,6 +157,7 @@ public class AnsibleExecutor {
             playUuid = commandConfig.getUuid().toString();
             ret.setLogFile(runnerClient.getLogger().getLogFile());
             ret.setPlayUuid(playUuid);
+            ret.setStdout(String.format("%1$s/%2$s/artifacts/%2$s/stdout", AnsibleConstants.ANSIBLE_RUNNER_PATH, playUuid));
             List<String> command = commandConfig.build();
 
             // Run the playbook:

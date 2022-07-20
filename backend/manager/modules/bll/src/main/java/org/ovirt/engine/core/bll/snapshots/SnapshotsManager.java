@@ -38,9 +38,11 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -293,7 +295,9 @@ public class SnapshotsManager {
      *            The VM to generate configuration from.
      * @return A String containing the VM configuration.
      */
-    private String generateVmConfiguration(VM vm, List<DiskImage> disks, Map<Guid, VmDevice> vmDevices) {
+    private String generateVmConfiguration(VM vm,
+            List<DiskImage> disks,
+            Map<Guid, VmDevice> vmDevices) {
         if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
             vm.setInterfaces(vmNetworkInterfaceDao.getAllForVm(vm.getId()));
         }
@@ -323,7 +327,11 @@ public class SnapshotsManager {
         if (vm.getStaticData().getVmInit() == null) {
             vmHandler.updateVmInitFromDB(vm.getStaticData(), true);
         }
-        vmHandler.updateNumaNodesFromDb(vm);
+
+        if (vm.getStaticData().getvNumaNodeList() == null) {
+            vmHandler.updateNumaNodesFromDb(vm);
+        }
+
         return ovfManager.exportVm(vm,
                 fullEntityOvfData,
                 clusterUtils.getCompatibilityVersion(vm));
@@ -449,7 +457,9 @@ public class SnapshotsManager {
         }
 
         vm.setAppList(snapshot.getAppList());
-        vmDynamicDao.update(vm.getDynamicData());
+        VmDynamic vmDynamic = vm.getDynamicData();
+        vmDynamic.setStatus(withMemory ? VMStatus.Suspended : VMStatus.Down);
+        vmDynamicDao.update(vmDynamic);
 
         List<DiskImage> imagesToExclude = diskImageDao.getAttachedDiskSnapshotsToVm(vm.getId(), Boolean.TRUE);
 

@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
 import org.ovirt.engine.core.common.action.MigrateMultipleVmsParameters;
@@ -89,7 +90,12 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 }
             }
 
-            setSucceeded(migrateAllVms(getExecutionContext()));
+            ActionReturnValue returnValue = migrateAllVms(getExecutionContext());
+            setSucceeded(returnValue.getSucceeded());
+            if (!returnValue.getSucceeded() && !returnValue.isValid()) {
+                getReturnValue().setValid(false);
+                getReturnValue().getValidationMessages().addAll(returnValue.getValidationMessages());
+            }
 
             // if non responsive move directly to maintenance
             if (getVds().getStatus() == VDSStatus.NonResponsive
@@ -120,17 +126,14 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     /**
      * Note: you must call {@link #orderListOfRunningVmsOnVds(Guid)} before calling this method
      */
-    protected boolean migrateAllVms(ExecutionContext parentContext) {
+    protected ActionReturnValue migrateAllVms(ExecutionContext parentContext) {
         return migrateAllVms(parentContext, false);
     }
 
     /**
      * Note: you must call {@link #orderListOfRunningVmsOnVds(Guid)} before calling this method
      */
-    protected boolean migrateAllVms(ExecutionContext parentContext, boolean HAOnly) {
-
-        boolean succeeded = true;
-
+    protected ActionReturnValue migrateAllVms(ExecutionContext parentContext, boolean HAOnly) {
         if (shouldSetMigrationClientCerts()) {
             runAnsibleMigrationCerts();
         }
@@ -143,17 +146,19 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             }
         }
 
-        if (!migrateVms(vmsToMigrate, parentContext)) {
-            succeeded = false;
+        ActionReturnValue returnValue = migrateVms(vmsToMigrate, parentContext);
+        if (!returnValue.getSucceeded()) {
             // There is no way to find out which VMs failed to migrate, so the error message is general.
             log.error("Failed to migrate one or more VMs.");
         }
-        return succeeded;
+        return returnValue;
     }
 
-    private boolean migrateVms(List<VM> vms, ExecutionContext parentContext) {
+    private ActionReturnValue migrateVms(List<VM> vms, ExecutionContext parentContext) {
         if (vms.isEmpty()) {
-            return true;
+            ActionReturnValue returnValue = new ActionReturnValue();
+            returnValue.setSucceeded(true);
+            return returnValue;
         }
 
         boolean forceMigration = !getParameters().isInternal();
@@ -177,8 +182,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         parameters.setReason(MessageBundler.getMessage(AuditLogType.MIGRATION_REASON_HOST_IN_MAINTENANCE));
         return runInternalAction(ActionType.MigrateMultipleVms,
                 parameters,
-                createMigrateVmsContext(parentContext))
-                .getSucceeded();
+                createMigrateVmsContext(parentContext));
     }
 
     protected CommandContext createMigrateVmsContext(ExecutionContext parentContext) {

@@ -60,6 +60,7 @@ import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BiosType;
+import org.ovirt.engine.core.common.businessentities.CpuPinningPolicy;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -955,6 +956,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         List<VmNumaNode> vNumaNodeList = vmNumaNodeDao.getAllVmNumaNodeByVmId(getParameters().getVmId());
         if (getVm() != null) {
             getVm().setvNumaNodeList(vNumaNodeList);
+        }
+
+        if (getParameters().getVm().getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
+            getParameters().setUpdateNuma(false);
+        }
+
+        if (getParameters().isUpdateNuma() == null) {
+            getParameters().setUpdateNuma(!vNumaNodeList.equals(getParameters().getVm().getvNumaNodeList()));
         }
 
         // we always need to verify new or existing numa nodes with the updated VM configuration

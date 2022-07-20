@@ -45,15 +45,3 @@ function checkConnection(url, onSuccess, onFail) {
         onFail();
     };
 }
-
-/**
- * @param {Array<string>} bullets
- * @return {jQuery} `ul` list
- */
-function toBulletList(bullets) {
-    var ul = $('<ul>');
-    bullets.forEach(function (bullet) {
-        ul.append('<li>' + bullet + '</li>');
-    });
-    return ul;
-}

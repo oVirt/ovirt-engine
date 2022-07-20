@@ -106,7 +106,7 @@ public class MigrateMultipleVmsCommand<T extends MigrateMultipleVmsParameters> e
                 .hostBlackList(getHostBlackList())
                 .hostWhiteList(getHostWhiteList())
                 .ignoreHardVmToVmAffinity(getParameters().isCanIgnoreHardVmAffinity())
-                // TODO - Use error messages from scheduling
+                .outputMessages(getReturnValue().getValidationMessages())
                 .canSchedule(getVms());
 
         possibleVmsToMigrate = new ArrayList<>(getVms().size());

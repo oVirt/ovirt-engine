@@ -1749,12 +1749,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         final UnitVmModel model = (UnitVmModel) getWindow();
         final String name = model.getName().getEntity();
 
-        if (!model.getIsNew() && !model.getIsClone() && model.getNumaEnabled().getEntity() &&
-                (!model.getMemSize().getEntity().equals(getcurrentVm().getMemSizeMb()) ||
-                !model.getTotalCPUCores().getEntity().equals(Integer.toString(getcurrentVm().getNumOfCpus())) )) {
-            model.setNumaChanged(true);
-        }
-
         validateVm(model, name);
     }
 
@@ -1890,7 +1884,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         params.setTpmEnabled(model.getTpmEnabled().getEntity());
         params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         params.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-        params.setUpdateNuma(model.isNumaChanged());
+        // it will be calculated on the backend
+        params.setUpdateNuma(null);
         params.setAffinityGroups(model.getAffinityGroupList().getSelectedItems());
         params.setAffinityLabels(model.getLabelList().getSelectedItems());
         if (model.getIsHeadlessModeEnabled().getEntity()) {

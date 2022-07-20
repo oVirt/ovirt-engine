@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -583,7 +582,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
 
         ArrayList<ActionParametersBase> prms = new ArrayList<>();
         for (Quota a : getSelectedItems()) {
-            IdParameters idParameters = new IdParameters(a.getId());
+            QuotaCRUDParameters idParameters = new QuotaCRUDParameters(a.getId());
             prms.add(idParameters);
         }
 

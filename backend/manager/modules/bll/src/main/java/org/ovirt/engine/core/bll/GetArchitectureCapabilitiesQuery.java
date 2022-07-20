@@ -58,8 +58,6 @@ public class GetArchitectureCapabilitiesQuery<P extends ArchCapabilitiesParamete
         switch (archCapabilitiesVerb) {
         case GetMigrationSupport:
             return FeatureSupported.isMigrationSupported(architecture, version);
-        case GetMemorySnapshotSupport:
-            return FeatureSupported.isMemorySnapshotSupportedByArchitecture(architecture, version);
         case GetSuspendSupport:
             return FeatureSupported.isSuspendSupportedByArchitecture(architecture, version);
         case GetMemoryHotUnplugSupport:

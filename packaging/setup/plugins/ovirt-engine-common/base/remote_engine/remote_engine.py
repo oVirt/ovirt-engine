@@ -65,7 +65,7 @@ class Plugin(plugin.PluginBase):
         ] = remote_engine.RemoteEngine(plugin=self)
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_CLEANUP,
+        stage=plugin.Stages.STAGE_CLOSEUP,
     )
     def _cleanup(self):
         self.environment[

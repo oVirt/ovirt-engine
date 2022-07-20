@@ -621,6 +621,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
+        name=oenginecons.Stages.CA_UPGRADE,
         before=(
             oenginecons.Stages.CA_AVAILABLE,
             oenginecons.Stages.QEMU_CA_AVAILABLE,

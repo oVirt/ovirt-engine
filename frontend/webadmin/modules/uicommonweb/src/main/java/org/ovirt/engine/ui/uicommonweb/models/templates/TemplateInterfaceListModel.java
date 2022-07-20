@@ -142,7 +142,7 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
     }
 
     private void updateActionAvailability() {
-        getNewCommand().setIsExecutionAllowed(getEntity() != null);
+        getNewCommand().setIsExecutionAllowed(getEntity() != null && !getEntity().isBlank());
         getEditCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1
                 && getSelectedItem() != null);
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);

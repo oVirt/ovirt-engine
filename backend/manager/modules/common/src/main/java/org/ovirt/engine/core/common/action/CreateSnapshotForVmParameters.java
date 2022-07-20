@@ -60,6 +60,7 @@ public class CreateSnapshotForVmParameters extends VmOperationParameterBase impl
 
     private List<DiskImage> cachedSelectedActiveDisks;
 
+    @Deprecated
     private boolean memorySnapshotSupported;
 
     private boolean parentLiveMigrateDisk;

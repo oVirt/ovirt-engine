@@ -5,7 +5,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -47,8 +46,8 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(
                 ActionType.RemoveQuota,
-                IdParameters.class,
-                new String[] { "Id" },
+                QuotaCRUDParameters.class,
+                new String[] { "QuotaId" },
                 new Object[] { QUOTA_ID },
                 true,
                 true));

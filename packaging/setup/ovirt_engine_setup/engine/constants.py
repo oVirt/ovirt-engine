@@ -382,6 +382,7 @@ class Stages(object):
 
     MEMORY_CHECK = 'osetup.memory.check'
 
+    CA_UPGRADE = 'osetup.pki.ca.upgrade'
     CA_AVAILABLE = 'osetup.pki.ca.available'
     QEMU_CA_AVAILABLE = 'osetup.pki.qemu.ca.available'
 

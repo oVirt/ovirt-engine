@@ -90,6 +90,7 @@ public class AnsibleRunnerClient {
     public void setReturnValue(UUID uuid) {
         returnValue.setPlayUuid(uuid.toString());
         returnValue.setLogFile(runnerLogger.getLogFile());
+        returnValue.setStdout(Paths.get(this.getJobEventsDir(uuid.toString()), "../stdout").toString());
     }
 
     public String getNextEvent(String playUuid, int lastEventId) {
@@ -143,6 +144,7 @@ public class AnsibleRunnerClient {
                 }
             }
 
+            log.debug("Current node event: {} lastEventId: {} ", currentNode.get("event").textValue(), lastEventId);
             // want to log only these kind of events:
             if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.isEventOk(currentNode)
                     || RunnerJsonNode.playbookStats(currentNode) || RunnerJsonNode.isEventFailed(currentNode)) {

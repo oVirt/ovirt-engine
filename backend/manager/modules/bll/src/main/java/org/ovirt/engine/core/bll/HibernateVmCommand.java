@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryDisks;
 import org.ovirt.engine.core.bll.memory.MemoryStorageHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -60,6 +61,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     private SnapshotDao snapshotDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    protected SnapshotsValidator snapshotsValidator;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -228,6 +231,12 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         }
 
         if (!validate(vmValidator.vmNotHavingNvdimmDevices())) {
+            return false;
+        }
+
+        // we block hibernating a vm in preview mode because there is a bug that
+        // would result in keeping the hibernation metadata volume
+        if (!validate(snapshotsValidator.vmNotInPreview(getVm().getId()))) {
             return false;
         }
 

@@ -1626,16 +1626,21 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     /**
-     * allows to enable numa models in all derived behaviors
-     * use updateNumaEnabledHelper in each behavior that requires numa
+     * allows to update numa models in all derived behaviors
+     * use updateNumaPinningEnabledHelper in each behavior that requires numa pinning
      */
-    protected void updateNumaEnabled() {
+    protected void updateNumaFields() {
     }
 
-    protected final void updateNumaEnabledHelper(boolean resetNumaCount) {
+    protected final void updateNumaPinningEnabled() {
         boolean enabled = true;
+
         if (getModel().getIsAutoAssign().getEntity() == null) {
             return;
+        }
+
+        if (getModel().getNumaNodeCount().getEntity() == 0) {
+            enabled = false;
         }
 
         if (getModel().getIsAutoAssign().getEntity() ||
@@ -1647,18 +1652,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         if (getModel().getCpuPinningPolicy().getSelectedItem().getPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
             enabled = false;
+            getModel().getNumaSupportCommand().getExecuteProhibitionReasons().add(constants.changesConflictWithAutoPin());
         }
 
         if (enabled) {
-            getModel().getNumaEnabled().setMessage(constants.numaInfoMessage());
+            getModel().getNumaSupportCommand().getExecuteProhibitionReasons().clear();
         } else {
-            getModel().getNumaEnabled().setMessage(constants.numaDisabledInfoMessage());
-
-            if (resetNumaCount) {
-                getModel().getNumaNodeCount().setEntity(0);
-            }
+            getModel().getNumaSupportCommand().getExecuteProhibitionReasons().add(constants.numaDisabledInfoMessage());
         }
-        getModel().getNumaEnabled().setEntity(enabled);
+
+        getModel().getNumaSupportCommand().setIsExecutionAllowed(enabled);
     }
 
     public boolean isBlankTemplateBehavior() {
@@ -1871,5 +1874,4 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
          }
          return displayTypes.iterator().next();
     }
-
 }

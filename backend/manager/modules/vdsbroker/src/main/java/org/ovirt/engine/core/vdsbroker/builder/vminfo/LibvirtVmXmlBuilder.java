@@ -3014,7 +3014,7 @@ public class LibvirtVmXmlBuilder {
         if (mdevDisplayOn) {
             writer.writeAttributeString("type", "none");
         } else {
-            writer.writeAttributeString("type", device.getDevice());
+            writer.writeAttributeString("type", getVideoType(device.getDevice()));
             Object vram = device.getSpecParams().get(VdsProperties.VIDEO_VRAM);
             writer.writeAttributeString("vram", vram != null ? vram.toString() : "32768");
             Object heads = device.getSpecParams().get(VdsProperties.VIDEO_HEADS);
@@ -3031,6 +3031,13 @@ public class LibvirtVmXmlBuilder {
         writeAlias(device);
         writeAddress(device);
         writer.writeEndElement();
+    }
+
+    private String getVideoType(String deviceType) {
+        if (!deviceType.equals("vga")) {
+            return deviceType;
+        }
+        return FeatureSupported.isVirtioVgaSupported(vm.getCompatibilityVersion()) && !legacyVirtio ? "virtio" : "vga";
     }
 
     private void writeDefaultVideo() {

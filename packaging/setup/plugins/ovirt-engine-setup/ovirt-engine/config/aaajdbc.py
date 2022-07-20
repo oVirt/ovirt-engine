@@ -293,7 +293,7 @@ class Plugin(plugin.PluginBase):
         ].rsplit('@', 1)[0]
 
         # Should this be configurable? User can change it later.
-        adminEmail = 'root@localhost'
+        adminEmail = 'admin@localhost'
 
         if not self._userExists(
             toolArgs=toolArgs,

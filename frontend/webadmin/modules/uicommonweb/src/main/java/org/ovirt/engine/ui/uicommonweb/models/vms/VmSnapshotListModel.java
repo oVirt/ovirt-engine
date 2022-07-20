@@ -165,19 +165,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         onPropertyChanged(new PropertyChangedEventArgs("SnapshotsMap")); //$NON-NLS-1$
     }
 
-    private boolean memorySnapshotSupported;
-
-    public boolean isMemorySnapshotSupported() {
-        return memorySnapshotSupported;
-    }
-
-    private void setMemorySnapshotSupported(boolean value) {
-        if (memorySnapshotSupported != value) {
-            memorySnapshotSupported = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsMemorySnapshotSupported")); //$NON-NLS-1$
-        }
-    }
-
     private List<DiskImage> vmDisks;
 
     public List<DiskImage> getVmDisks() {
@@ -248,7 +235,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
     @Override
     public void setEntity(VM value) {
-        updateIsMemorySnapshotSupported(value);
         super.setEntity(value);
         updateVmActiveDisks();
     }
@@ -390,7 +376,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             ArrayList<DiskImage> snapshotDisks = v.getDiskList();
             List<DiskImage> disksExcludedFromSnapshot = imagesSubtract(getVmDisks(), snapshotDisks);
 
-            boolean showMemorySnapshotWarning = isMemorySnapshotSupported() && snapshot.containsMemory();
+            boolean showMemorySnapshotWarning = snapshot.containsMemory();
             boolean showPartialSnapshotWarning = !disksExcludedFromSnapshot.isEmpty();
 
             if (showMemorySnapshotWarning || showPartialSnapshotWarning) {
@@ -856,6 +842,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         List<VM> vmList = vm != null ? Collections.singletonList(vm) : Collections.emptyList();
 
         boolean isVmDown = vm != null && vm.getStatus() == VMStatus.Down;
+        boolean isVmDownOrSuspended = vm != null && vm.getStatus() == VMStatus.Down || vm.getStatus() == VMStatus.Suspended;
         boolean isVmImageLocked = vm != null && vm.getStatus() == VMStatus.ImageLocked;
         boolean isVmQualifiedForSnapshotMerge = vm != null && vm.getStatus().isQualifiedForSnapshotMerge();
         boolean isPreviewing = getItems().stream().anyMatch(s -> s.getStatus() == SnapshotStatus.IN_PREVIEW);
@@ -870,8 +857,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless && isManaged);
         getPreviewCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
         getCustomPreviewCommand().setIsExecutionAllowed(getPreviewCommand().getIsExecutionAllowed());
-        getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
-        getUndoCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
+        getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDownOrSuspended && !isStateless);
+        getUndoCommand().setIsExecutionAllowed(isPreviewing && isVmDownOrSuspended && !isStateless);
         getRemoveCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && !isStateless
                 && isVmQualifiedForSnapshotMerge);
         getCloneVmCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
@@ -880,15 +867,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                 && !isVmImageLocked && !isStateless && !isVmConfigurationBroken);
     }
 
-    private void updateIsMemorySnapshotSupported(Object entity) {
-        if (entity == null) {
-            return;
-        }
-
-        VM vm = (VM) entity;
-
-        setMemorySnapshotSupported(AsyncDataProvider.getInstance().isMemorySnapshotSupported(vm));
-    }
 
     @Override
     public void executeCommand(UICommand command) {

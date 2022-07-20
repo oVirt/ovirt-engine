@@ -49,6 +49,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     private int hostCpu;
     private VDS runningOnHost;
     private Guid bootableDiskStorageDomainId;
+    private List<VmNumaNode> initialVmNumaNodes = new ArrayList<>();
 
     public ExistingVmModelBehavior(VM vm) {
         this.vm = vm;
@@ -96,18 +97,18 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
         if (vm.isNextRunConfigurationExists()) {
             getModel().setVmNumaNodes(vm.getvNumaNodeList());
-            getModel().setInitialVmNumaNodes(vm.getvNumaNodeList());
             getModel().updateNodeCount(vm.getvNumaNodeList().size());
             getModel().updateCpuPinningPolicy();
+            initialVmNumaNodes = vm.getvNumaNodeList();
         } else {
             Frontend.getInstance().runQuery(QueryType.GetVmNumaNodesByVmId,
                     new IdQueryParameters(vm.getId()),
                     new AsyncQuery<QueryReturnValue>(returnValue -> {
                         List<VmNumaNode> nodes = returnValue.getReturnValue();
                         getModel().setVmNumaNodes(nodes);
-                        getModel().setInitialVmNumaNodes(nodes);
                         getModel().updateNodeCount(nodes.size());
                         getModel().updateCpuPinningPolicy();
+                        initialVmNumaNodes = vm.getvNumaNodeList();
                     }));
         }
         // load dedicated host names into host names list
@@ -501,27 +502,16 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    protected void updateNumaEnabled() {
-        super.updateNumaEnabled();
+    protected void updateNumaFields() {
+        super.updateNumaFields();
+        super.updateNumaPinningEnabled();
+
         boolean isResizeAndPin =
                 getModel().getCpuPinningPolicy().getSelectedItem().getPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA;
-        updateNumaEnabledHelper(!isResizeAndPin);
-
-        if (getModel().getVmNumaNodes() != null) {
-            getModel().getNumaNodeCount().setEntity(getModel().getVmNumaNodes().size());
-        }
 
         if (isResizeAndPin) {
             if (!getModel().getTotalCPUCores().getEntity().equals(Integer.toString(getVm().getNumOfCpus()))) {
                 getModel().getTotalCPUCores().setEntity(Integer.toString(getVm().getNumOfCpus()));
-            }
-
-            if (!getModel().getNumaNodeCount().getEntity().equals(getModel().getInitialVmNumaNodes().size())) {
-                getModel().getNumaNodeCount().setEntity(getModel().getInitialVmNumaNodes().size());
-            }
-
-            if (!getModel().getVmNumaNodes().equals(getModel().getInitialVmNumaNodes())) {
-                getModel().setVmNumaNodes(getModel().getInitialVmNumaNodes());
             }
         }
     }

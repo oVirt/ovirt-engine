@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -134,9 +133,7 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
                     return;
                 }
 
-                boolean memorySnapshotSupported =
-                        AsyncDataProvider.getInstance().isMemorySnapshotSupported(vm);
-                memoryEditor.setVisible(memorySnapshotSupported && vm.isRunning());
+                memoryEditor.setVisible(vm.isRunning());
                 // The memory option is enabled by default, so in case its checkbox
                 // is not visible, we should disable it explicitly
                 if (!memoryEditor.isVisible()) {

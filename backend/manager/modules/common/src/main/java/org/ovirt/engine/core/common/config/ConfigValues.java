@@ -1191,9 +1191,6 @@ public enum ConfigValues {
     ScsiReservationSupported,
 
     @TypeConverterAttribute(Map.class)
-    IsMemorySnapshotSupported,
-
-    @TypeConverterAttribute(Map.class)
     IsSuspendSupported,
 
     @TypeConverterAttribute(SerialNumberPolicy.class)
@@ -1614,6 +1611,9 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     EnableBochsDisplay,
+
+    @TypeConverterAttribute(Boolean.class)
+    VirtioVgaSupported,
 
     @TypeConverterAttribute(Integer.class)
     HostMonitoringWatchdogIntervalInSeconds,

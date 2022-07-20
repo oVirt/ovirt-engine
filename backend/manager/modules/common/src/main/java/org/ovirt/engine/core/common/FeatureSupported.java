@@ -96,18 +96,6 @@ public class FeatureSupported {
     }
 
     /**
-     * Checks if memory snapshot is supported by architecture
-     *
-     * @param architecture
-     *            The CPU architecture
-     * @param version
-     *            Compatibility version to check for.
-     */
-    public static boolean isMemorySnapshotSupportedByArchitecture(ArchitectureType architecture, Version version) {
-        return supportedInConfig(ConfigValues.IsMemorySnapshotSupported, version, architecture);
-    }
-
-    /**
      * Checks if suspend is supported by architecture
      *
      * @param architecture
@@ -456,5 +444,15 @@ public class FeatureSupported {
      */
     public static boolean isReplicateExtendSupported(Version version) {
         return Version.v4_7.lessOrEquals(version);
+    }
+
+    /**
+     * Check 'virtio' driver for 'vga' display type is supported.
+     *
+     * @param version Compatibility version to check for.
+     * @return true if 'virtio' driver is supported
+     */
+    public static boolean isVirtioVgaSupported(Version version) {
+        return supportedInConfig(ConfigValues.VirtioVgaSupported, version);
     }
 }
