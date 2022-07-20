@@ -20,6 +20,11 @@ public class VmCommonUtils {
      * @return true, if any CPUs are to be hotplugged, false otherwise
      */
     public static boolean isCpusToBeHotpluggedOrUnplugged(VM source, VM destination) {
+        return cpuSocketsChanged(source, destination)
+                && !source.getCpuPinningPolicy().isExclusive();
+    }
+
+    private static boolean cpuSocketsChanged(VM source, VM destination) {
         return source.getCpuPerSocket() == destination.getCpuPerSocket()
                 && source.getNumOfSockets() != destination.getNumOfSockets()
                 && source.getThreadsPerCpu() == destination.getThreadsPerCpu();
