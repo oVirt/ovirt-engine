@@ -20,6 +20,8 @@ import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesUtils.AffinityGroupConflicts;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Label;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -27,6 +29,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.LabelDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
 
 @Singleton
@@ -64,6 +68,10 @@ public class AffinityValidator {
     private AffinityGroupDao affinityGroupDao;
     @Inject
     private LabelDao labelDao;
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     public Result validateAffinityUpdateForVm(Guid clusterId, Guid vmId, Collection<AffinityGroup> affinityGroups, Collection<Label> labels) {
         return validateAffinityUpdate(clusterId, vmId, affinityGroups, labels, AffinityGroup::getVmIds, Label::getVms);
@@ -193,7 +201,7 @@ public class AffinityValidator {
         return hostIds;
     }
 
-    public static Result checkAffinityGroupConflicts(List<AffinityGroup> groups) {
+    public Result checkAffinityGroupConflicts(List<AffinityGroup> groups) {
         if (groups.isEmpty()) {
             return Result.VALID;
         }
@@ -206,12 +214,12 @@ public class AffinityValidator {
                     .map(AffinityGroup::getName)
                     .collect(Collectors.joining(","));
 
-            String hosts = conflict.getHosts().stream()
-                    .map(Guid::toString)
+            String hosts = vdsStaticDao.getByIds(new ArrayList<>(conflict.getHosts())).stream()
+                    .map(VdsStatic::getName)
                     .collect(Collectors.joining(","));
 
-            String vms = conflict.getVms().stream()
-                    .map(Guid::toString)
+            String vms = vmStaticDao.getByIds(new ArrayList<>(conflict.getVms())).stream()
+                    .map(VmStatic::getName)
                     .collect(Collectors.joining(","));
 
             if (conflict.getType().canBeSaved()) {
@@ -228,9 +236,10 @@ public class AffinityValidator {
                 return Result.newFailed(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_RULES_COLLISION,
                         String.format("$UnifiedAffinityGroups %1$s", vms),
                         String.format("$negativeAR %1$s", affinityGroupsNames),
-                        String.format("$Vms %1$s", conflict.getNegativeVms().stream()
-                                .map(Guid::toString)
-                                .collect(Collectors.joining(",")))));
+                        String.format("$Vms %1$s",
+                                vmStaticDao.getByIds(new ArrayList<>(conflict.getNegativeVms())).stream()
+                                        .map(VmStatic::getName)
+                                        .collect(Collectors.joining(",")))));
             } else {
                 return Result.newFailed(new ValidationResult(
                         Arrays.asList(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_HOSTS_RULES_COLLISION,

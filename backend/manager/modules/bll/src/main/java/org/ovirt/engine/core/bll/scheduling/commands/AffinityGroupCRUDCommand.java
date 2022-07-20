@@ -47,6 +47,8 @@ public abstract class AffinityGroupCRUDCommand <T extends AffinityGroupCRUDParam
     private AffinityGroupDao affinityGroupDao;
     @Inject
     private LabelDao labelDao;
+    @Inject
+    private AffinityValidator affinityValidator;
 
     AffinityGroup affinityGroup = null;
 
@@ -179,7 +181,7 @@ public abstract class AffinityGroupCRUDCommand <T extends AffinityGroupCRUDParam
         affinityGroups.removeIf(g -> g.getId().equals(affinityGroupCopy.getId()));
         affinityGroups.add(affinityGroupCopy);
 
-        AffinityValidator.Result result = AffinityValidator.checkAffinityGroupConflicts(affinityGroups);
+        AffinityValidator.Result result = affinityValidator.checkAffinityGroupConflicts(affinityGroups);
         if (result.getValidationResult().isValid()) {
             result.getLoggingMethod().accept(this, auditLogDirector);
         }

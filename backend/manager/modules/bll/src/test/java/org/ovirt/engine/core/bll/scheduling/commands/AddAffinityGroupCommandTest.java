@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.bll.validator.AffinityValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
@@ -49,6 +50,9 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
     @Mock
     private VdsStaticDao vdsStaticDao;
 
+    @Mock
+    AffinityValidator affinityValidator;
+
     AffinityGroupCRUDParameters parameters = new AffinityGroupCRUDParameters(null, createAffinityGroup());
 
     @Spy
@@ -69,6 +73,8 @@ public class AddAffinityGroupCommandTest extends BaseCommandTest {
         Label vmLabel = new LabelBuilder().id(vmLabelId).build();
         Label hostLabel = new LabelBuilder().id(hostLabelId).build();
         doReturn(Arrays.asList(vmLabel, hostLabel)).when(labelDao).getAllByIds(any());
+
+        doReturn(AffinityValidator.Result.VALID).when(affinityValidator).checkAffinityGroupConflicts(any());
     }
 
     @Test
