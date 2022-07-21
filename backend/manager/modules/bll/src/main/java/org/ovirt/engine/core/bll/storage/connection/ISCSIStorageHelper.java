@@ -207,6 +207,14 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         return null;
     }
 
+    public List<StorageServerConnections> findConnectionsByAddressPortAndIqn(StorageServerConnections connection) {
+        return storageServerConnectionDao.getStorageConnectionsByConnectionPortAndIqn(
+                        connection.getConnection(),
+                        connection.getPort(),
+                        connection.getIqn()
+                );
+    }
+
     private void fillConnectionDetailsIfNeeded(StorageServerConnections connection) {
         // in case that the connection id is null (in case it wasn't loaded from the db before) - we can attempt to load
         // it from the db by its details.
