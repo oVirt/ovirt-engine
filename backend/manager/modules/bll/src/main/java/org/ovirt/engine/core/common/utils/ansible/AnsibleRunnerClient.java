@@ -40,7 +40,6 @@ public class AnsibleRunnerClient {
     private static Logger log = LoggerFactory.getLogger(AnsibleRunnerClient.class);
     private ObjectMapper mapper;
     private AnsibleRunnerLogger runnerLogger;
-    private String lastEvent = "";
     private static final int POLL_INTERVAL = 3000;
     private AnsibleReturnValue returnValue;
 
@@ -53,8 +52,12 @@ public class AnsibleRunnerClient {
         this.returnValue = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
     }
 
-    public Boolean playHasEnded(UUID uuid) {
-        String jobEvents = getJobEventsDir(uuid.toString());
+    public Boolean playHasEnded(String uuid, int lastEventId) {
+        String lastEvent = getEventFileName(uuid, lastEventId);
+        if (lastEvent == null) {
+            return false;
+        }
+        String jobEvents = getJobEventsDir(uuid);
         File lastEventFile = new File(jobEvents + lastEvent);
         String res = "";
         try {
@@ -69,7 +72,7 @@ public class AnsibleRunnerClient {
             throws Exception {
         int executionTime = 0;
         setReturnValue(uuid);
-        while (!playHasEnded(uuid)) {
+        while (!playHasEnded(uuid.toString(), lastEventID)) {
             lastEventID = processEvents(uuid.toString(), lastEventID, fn, "", Paths.get(""));
             if (lastEventID == -1) {
                 return returnValue;
@@ -93,7 +96,7 @@ public class AnsibleRunnerClient {
         returnValue.setStdout(Paths.get(this.getJobEventsDir(uuid.toString()), "../stdout").toString());
     }
 
-    public String getNextEvent(String playUuid, int lastEventId) {
+    public String getEventFileName(String playUuid, int eventId) {
         String jobEvents = getJobEventsDir(playUuid);
         if (!Files.exists(Paths.get(jobEvents))) {
             return null;
@@ -103,13 +106,9 @@ public class AnsibleRunnerClient {
                 .map(File::getName)
                 .filter(item -> !item.contains("partial"))
                 .filter(item -> !item.endsWith(".tmp"))
-                .filter(item -> item.startsWith((lastEventId + 1) + "-"))
+                .filter(item -> item.startsWith(eventId + "-"))
                 .findFirst()
                 .orElse(null);
-    }
-
-    public int getLastEventId() {
-        return Integer.valueOf(lastEvent.split("-")[0]);
     }
 
     public String getJobEventsDir(String playUuid) {
@@ -123,7 +122,8 @@ public class AnsibleRunnerClient {
             Path logFile) {
         String jobEvents = getJobEventsDir(playUuid);
         while(true){
-            String event = getNextEvent(playUuid, lastEventId);
+            // get next event
+            String event = getEventFileName(playUuid, lastEventId + 1);
             if (event == null) {
                 break;
             }
@@ -187,11 +187,10 @@ public class AnsibleRunnerClient {
                     }
                 }
             }
-            lastEvent = event;
-            returnValue.setLastEventId(getLastEventId());
-            lastEventId++;
+            lastEventId = Integer.valueOf(event.split("-")[0]);
+            returnValue.setLastEventId(lastEventId);
         }
-        return lastEvent.isEmpty() ? lastEventId : getLastEventId();
+        return lastEventId;
     }
 
     private Boolean jsonIsValid(String content) {
