@@ -11,8 +11,6 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AnsibleCommandParameters;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
-import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnValue;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerClient;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleRunnerLogger;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -59,8 +57,6 @@ public class AnsibleCallback implements CommandCallback {
             }
         };
 
-        AnsibleReturnValue ret = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
-        ret.setLogFile(runnerClient.getLogger().getLogFile());
         int totalEvents;
         // Get the current status of the playbook:
         AnsibleRunnerClient.PlaybookStatus playbookStatus = runnerClient.getPlaybookStatus(playUuid);
@@ -72,13 +68,12 @@ public class AnsibleCallback implements CommandCallback {
         if (msg.equalsIgnoreCase("running") || msg.equalsIgnoreCase("successful")
                 && command.getParameters().getLastEventId() < totalEvents) {
             command.getParameters().setLastEventId(runnerClient.processEvents(
-                    playUuid, command.getParameters().getLastEventId(), fn, msg, ret.getLogFile()));
+                    playUuid, command.getParameters().getLastEventId(), fn));
             return;
         } else if (msg.equalsIgnoreCase("successful")) {
             log.info("Playbook (Play uuid = {}, command = {}) has completed!",
                     command.getParameters().getPlayUuid(), command.getActionType().name());
             // Exit the processing if playbook finished:
-            ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
             command.setSucceeded(true);
             command.setCommandStatus(CommandStatus.SUCCEEDED);
         } else {

@@ -149,7 +149,6 @@ public class AnsibleExecutor {
         AnsibleReturnValue ret = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
 
         String playUuid = null;
-        String msg = "";
         AnsibleRunnerClient runnerClient = null;
         try {
             runnerClient = ansibleClientFactory.create(commandConfig);
@@ -182,7 +181,7 @@ public class AnsibleExecutor {
         } finally {
             // Make sure all events are proccessed even in case of failure:
             if (playUuid != null && runnerClient != null && !async) {
-                runnerClient.processEvents(playUuid, ret.getLastEventId(), fn, msg, ret.getLogFile());
+                runnerClient.processEvents(playUuid, ret.getLastEventId(), fn);
             }
         }
 
