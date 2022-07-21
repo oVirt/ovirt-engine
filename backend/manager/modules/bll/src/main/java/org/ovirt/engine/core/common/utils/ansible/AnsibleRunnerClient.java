@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -64,7 +63,7 @@ public class AnsibleRunnerClient {
         int executionTime = 0;
         setReturnValue(uuid);
         while (!playHasEnded(uuid.toString(), lastEventID)) {
-            lastEventID = processEvents(uuid.toString(), lastEventID, fn, "", Paths.get(""));
+            lastEventID = processEvents(uuid.toString(), lastEventID, fn);
             if (lastEventID == -1) {
                 return returnValue;
             }
@@ -108,9 +107,7 @@ public class AnsibleRunnerClient {
 
     public int processEvents(String playUuid,
             int lastEventId,
-            BiConsumer<String, String> fn,
-            String msg,
-            Path logFile) {
+            BiConsumer<String, String> fn) {
         String jobEvents = getJobEventsDir(playUuid);
         while(true){
             // get next event
