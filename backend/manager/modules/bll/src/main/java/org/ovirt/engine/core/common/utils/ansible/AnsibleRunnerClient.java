@@ -121,6 +121,8 @@ public class AnsibleRunnerClient {
             BiConsumer<String, String> fn,
             String msg,
             Path logFile) {
+        // Reset of the lastEvent because of the callback singleton usage
+        lastEvent = "";
         String jobEvents = getJobEventsDir(playUuid);
         while(true){
             String event = getNextEvent(playUuid, lastEventId);
