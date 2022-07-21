@@ -147,7 +147,6 @@ public class AnsibleExecutor {
         }
 
         AnsibleReturnValue ret = new AnsibleReturnValue(AnsibleReturnCode.ERROR);
-        int lastEventId = 0;
 
         String playUuid = null;
         String msg = "";
@@ -158,6 +157,7 @@ public class AnsibleExecutor {
             ret.setLogFile(runnerClient.getLogger().getLogFile());
             ret.setPlayUuid(playUuid);
             ret.setStdout(String.format("%1$s/%2$s/artifacts/%2$s/stdout", AnsibleConstants.ANSIBLE_RUNNER_PATH, playUuid));
+            ret.setLastEventId(0);
             List<String> command = commandConfig.build();
 
             // Run the playbook:
@@ -168,7 +168,7 @@ public class AnsibleExecutor {
                 return ret;
             }
 
-            ret = runnerClient.artifactHandler(commandConfig.getUuid(), lastEventId, timeout, fn);
+            ret = runnerClient.artifactHandler(commandConfig.getUuid(), ret.getLastEventId(), timeout, fn);
         } catch (InventoryException ex) {
             String message = ex.getMessage();
             log.error("Error executing playbook: {}", message);
@@ -182,8 +182,7 @@ public class AnsibleExecutor {
         } finally {
             // Make sure all events are proccessed even in case of failure:
             if (playUuid != null && runnerClient != null && !async) {
-                lastEventId = runnerClient.getLastEventId();
-                runnerClient.processEvents(playUuid, lastEventId, fn, msg, ret.getLogFile());
+                runnerClient.processEvents(playUuid, ret.getLastEventId(), fn, msg, ret.getLogFile());
             }
         }
 
