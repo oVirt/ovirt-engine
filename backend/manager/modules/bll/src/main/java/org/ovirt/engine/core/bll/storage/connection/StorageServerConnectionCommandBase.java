@@ -80,10 +80,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
             String connectionField = connection.getConnection();
             connections = storageServerConnectionDao.getAllForStorage(connectionField);
         } else {
-            StorageServerConnections sameConnection = iscsiStorageHelper.findConnectionWithSameDetails(connection);
-            connections =
-                    sameConnection != null ? Collections.singletonList(sameConnection)
-                            : Collections.emptyList();
+            connections = iscsiStorageHelper.findConnectionsByAddressPortAndIqn(connection);
         }
 
         return (connections != null && connections.size() > 0 &&

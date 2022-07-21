@@ -117,6 +117,18 @@ public class StorageServerConnectionDaoImpl extends BaseDao implements
     }
 
     @Override
+    public List<StorageServerConnections> getStorageConnectionsByConnectionPortAndIqn(
+            String connection, String port, String iqn) {
+        return getCallsHandler().executeReadList("GetStorageConnectionsByConnectionPortAndIqn",
+                mapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("iqn", iqn)
+                        .addValue("connection", connection)
+                        .addValue("port", port));
+    }
+
+
+    @Override
     public List<StorageServerConnections> getAllForDomain(Guid domainId) {
         return getCallsHandler().executeReadList("GetStorageServerConnectionsForDomain", mapper,
                         getCustomMapSqlParameterSource().addValue("storage_domain_id", domainId));

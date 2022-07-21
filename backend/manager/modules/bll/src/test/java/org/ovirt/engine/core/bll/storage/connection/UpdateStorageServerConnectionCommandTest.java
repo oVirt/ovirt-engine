@@ -645,7 +645,7 @@ public class UpdateStorageServerConnectionCommandTest extends
        StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
 
        StorageServerConnections connection1 = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
-       when(iscsiStorageHelper.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(connection1);
+       when(iscsiStorageHelper.findConnectionsByAddressPortAndIqn(newISCSIConnection)).thenReturn(Collections.singletonList(connection1));
        boolean isExists = !command.isConnWithSameDetailsExists(newISCSIConnection, null).isEmpty();
        assertTrue(isExists);
     }
@@ -653,7 +653,7 @@ public class UpdateStorageServerConnectionCommandTest extends
     @Test
     public void isConnWithSameDetailsExistCheckSameConn() {
        StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
-       when(iscsiStorageHelper.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(newISCSIConnection);
+       when(iscsiStorageHelper.findConnectionsByAddressPortAndIqn(newISCSIConnection)).thenReturn(Collections.singletonList(newISCSIConnection));
        boolean isExists = !command.isConnWithSameDetailsExists(newISCSIConnection, null).isEmpty();
         assertTrue(isExists);
     }
