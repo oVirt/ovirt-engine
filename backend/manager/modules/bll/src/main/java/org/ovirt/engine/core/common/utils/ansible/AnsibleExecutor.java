@@ -164,7 +164,6 @@ public class AnsibleExecutor {
             runnerClient.runPlaybook(command, timeout, playUuid);
 
             if (async) {
-                ret.setPlayUuid(playUuid);
                 ret.setAnsibleReturnCode(AnsibleReturnCode.OK);
                 return ret;
             }
