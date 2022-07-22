@@ -53,19 +53,10 @@ public class AnsibleRunnerClient {
     }
 
     public Boolean playHasEnded(String uuid, int lastEventId) {
-        String lastEvent = getEventFileName(uuid, lastEventId);
-        if (lastEvent == null) {
-            return false;
-        }
-        String jobEvents = getJobEventsDir(uuid);
-        File lastEventFile = new File(jobEvents + lastEvent);
-        String res = "";
-        try {
-                res = Files.readString(lastEventFile.toPath());
-            } catch (IOException e) {
-                return false;
-            }
-        return res.contains("playbook_on_stats");
+        // get current status, but new events might have appeared since last processing
+        PlaybookStatus currentPlaybookStatus = getPlaybookStatus(uuid);
+        String msg = currentPlaybookStatus.getMsg();
+        return !msg.equalsIgnoreCase("running") && !(lastEventId < getTotalEvents(uuid));
     }
 
     public AnsibleReturnValue artifactHandler(UUID uuid, int lastEventID, int timeout, BiConsumer<String, String> fn)
