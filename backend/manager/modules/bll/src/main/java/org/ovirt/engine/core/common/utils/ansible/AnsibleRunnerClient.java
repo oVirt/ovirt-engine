@@ -260,12 +260,17 @@ public class AnsibleRunnerClient {
         String privateRunDir = String.format("%1$s/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, playUuid);
         String playData = String.format("%1$s/%2$s/artifacts/%2$s/", AnsibleConstants.ANSIBLE_RUNNER_PATH, playUuid);
         try {
+            // regardless if we run sync or async playbook we launch ansible-runner the same way,
+            // "status" and "rc" are created only once the playbook finishes
             if (Files.exists(Paths.get(String.format("%1$s/status", playData)))) {
                 status = Files.readString(Paths.get(String.format("%1$s/status", playData)));
                 rc = Files.readString(Paths.get(String.format("%1$s/rc", playData)));
+            // we call ansible-runner synchronously and "damon.log" is crated by the main process before
+            // going to background. So we can rely on its existence if ansible managed to start and still runs
             } else if (Files.exists(Paths.get(String.format("%1$s/daemon.log", privateRunDir)))) {
                 // artifacts are not yet present, try to fetch them in the next polling round
                 return new PlaybookStatus("", "running");
+            // ansible-runner didn't manage to start the background process so we know it failed right away
             } else {
                 log.warn(String.format("The playbook failed with unknow error at: %1$s", playData));
                 return new PlaybookStatus("", "failed");
