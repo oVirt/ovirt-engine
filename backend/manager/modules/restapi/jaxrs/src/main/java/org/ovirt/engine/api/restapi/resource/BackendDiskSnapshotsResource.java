@@ -36,13 +36,18 @@ public class BackendDiskSnapshotsResource
     protected DiskSnapshots mapCollection(List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities) {
         DiskSnapshots collection = new DiskSnapshots();
         for (org.ovirt.engine.core.common.businessentities.storage.Disk disk : entities) {
-            DiskSnapshot diskSnapshot = getMapper(org.ovirt.engine.core.common.businessentities.storage.Disk.class, DiskSnapshot.class).map(disk, null);
+            DiskSnapshot diskSnapshot = getMapper(org.ovirt.engine.core.common.businessentities.storage.Disk.class, DiskSnapshot.class)
+                    .map(disk, null);
             diskSnapshot.setDisk(new Disk());
-            diskSnapshot.getDisk().setId(this.diskId.toString());
+            diskSnapshot.getDisk().setId(disk.getId().toString());
             collection.getDiskSnapshots().add(addLinks(populate(diskSnapshot, disk), Disk.class));
-            diskSnapshot.setHref(buildHref(diskId.toString(), diskSnapshot.getId().toString()));
-            if (diskSnapshot.getParent() != null) {
-                diskSnapshot.getParent().setHref(buildParentHref(diskId.toString(), false));
+            diskSnapshot.setHref(buildHref(disk.getId().toString(), diskSnapshot.getId()));
+            Guid parentDiskId = disk.getParentDiskId();
+            if (parentDiskId != null) {
+                diskSnapshot.getParent().setHref(buildHref(parentDiskId.toString(),
+                        diskSnapshot.getParent().getId()));
+            } else if (diskSnapshot.getParent() != null) {
+                diskSnapshot.getParent().setHref(buildHref(disk.getId().toString(), diskSnapshot.getParent().getId()));
             }
         }
         return collection;

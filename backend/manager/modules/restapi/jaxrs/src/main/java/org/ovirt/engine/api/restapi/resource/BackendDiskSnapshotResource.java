@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.resource.DiskSnapshotResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -26,14 +27,16 @@ public class BackendDiskSnapshotResource
 
     @Override
     public DiskSnapshot get() {
-        DiskSnapshot diskSnapshot = performGet(QueryType.GetDiskSnapshotByImageId,
-                new IdQueryParameters(guid), Disk.class);
+        DiskImage diskImage = runQuery(QueryType.GetDiskSnapshotByImageId,
+                new IdQueryParameters(guid)).getReturnValue();
+        DiskSnapshot diskSnapshot = map(diskImage, null);
         diskSnapshot.setDisk(new Disk());
         diskSnapshot.getDisk().setId(diskId.toString());
         diskSnapshot.getDisk().setHref(backendDiskSnapshotsResource.buildParentHref(diskId.toString(), false));
-        diskSnapshot.setHref(backendDiskSnapshotsResource.buildHref(diskId.toString(), diskSnapshot.getId().toString()));
-        if (diskSnapshot.getParent() != null) {
-            diskSnapshot.getParent().setHref(backendDiskSnapshotsResource.buildHref(diskId.toString(),
+        diskSnapshot.setHref(backendDiskSnapshotsResource.buildHref(diskId.toString(), diskSnapshot.getId()));
+        Guid parentDiskId = diskImage.getParentDiskId();
+        if (parentDiskId != null && diskSnapshot.getParent() != null) {
+            diskSnapshot.getParent().setHref(backendDiskSnapshotsResource.buildHref(parentDiskId.toString(),
                     diskSnapshot.getParent().getId()));
         }
         return diskSnapshot;
