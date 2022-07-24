@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -116,8 +117,9 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     private boolean runAnsibleImportOvaPlaybook(String disksPathToFormat) {
         long timeout = TimeUnit.MINUTES.toSeconds(
             EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
+        VDS host = getVds();
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                .hosts(getVds())
+                .hosts(host)
                 .variable("ovirt_import_ova_path", getParameters().getOvaPath())
                 .variable("ovirt_import_ova_disks", disksPathToFormat)
                 .variable("ovirt_import_ova_image_mappings",
@@ -127,6 +129,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                                         .format("\\\"%s\\\": \\\"%s\\\"", e.getValue().toString(), e.getKey().toString()))
                                 .collect(Collectors.joining(", ", "{", "}")))
                 .variable("ansible_timeout", timeout)
+                .variable("ansible_port", host.getSshPort())
                 // /var/log/ovirt-engine/ova/ovirt-import-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(IMPORT_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-import-ova-ansible")

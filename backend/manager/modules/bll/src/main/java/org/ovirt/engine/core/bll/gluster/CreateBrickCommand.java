@@ -165,8 +165,9 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
         int diskCount = getParameters().getNoOfPhysicalDisksInRaidVolume() == null ? 1
                 : getParameters().getNoOfPhysicalDisksInRaidVolume();
 
+        VDS host = getVds();
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                .hosts(getVds())
+                .hosts(host)
                 .variable("ssd", ssdDevice)
                 .variable("disks", disks)
                 .variable("vgname", "RHGS_vg_" + getParameters().getLvName())
@@ -182,6 +183,7 @@ public class CreateBrickCommand extends VdsCommand<CreateBrickParameters> {
                 .variable("cachemode", getParameters().getCacheMode())
                 .variable("fstype", GlusterConstants.FS_TYPE_XFS)
                 .variable("mntpath", getParameters().getMountPoint())
+                .variable("ansible_port", host.getSshPort())
                 // /var/log/ovirt-engine/brick-setup/ovirt-gluster-brick-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(CreateBrickCommand.CREATE_BRICK_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-gluster-brick-ansible")

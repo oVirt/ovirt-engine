@@ -57,6 +57,7 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
                 .variable("list_directory", getParameters().isListDirectory() ? "True" : "False")
                 .variable("entity_type", getEntityType().name().toLowerCase())
                 .variable("ansible_timeout", timeout)
+                .variable("ansible_port", host.getSshPort())
                 // /var/log/ovirt-engine/ova/ovirt-query-ova-ansible-{hostname}-{timestamp}.log
                 .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-query-ova-ansible")

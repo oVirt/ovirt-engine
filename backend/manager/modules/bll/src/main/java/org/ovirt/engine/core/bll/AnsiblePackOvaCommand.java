@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.AnsibleCommandParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
@@ -23,8 +24,9 @@ public class AnsiblePackOvaCommand <T extends AnsibleCommandParameters> extends 
         long timeout = TimeUnit.MINUTES.toSeconds(
             EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
         Map<String, Object> vars = getParameters().getVariables();
+        VDS host = getVds();
         return new AnsibleCommandConfig()
-                .hosts(getVds())
+                .hosts(host)
                 .variable("target_directory", vars.get("target_directory"))
                 .variable("entity_type", vars.get("entity_type"))
                 .variable("ova_size", vars.get("ova_size"))
@@ -35,6 +37,7 @@ public class AnsiblePackOvaCommand <T extends AnsibleCommandParameters> extends 
                 .variable("ovirt_ova_pack_nvram", vars.get("ovirt_ova_pack_nvram"))
                 .variable("ovirt_ova_pack_padding", vars.get("ovirt_ova_pack_padding"))
                 .variable("ansible_timeout", timeout)
+                .variable("ansible_port", host.getSshPort())
                 // /var/log/ovirt-engine/ova/ovirt-export-ova-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(CREATE_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-export-ova-ansible")

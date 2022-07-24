@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -97,11 +98,13 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
     private ValidationResult validateTargetFolder() {
         long timeout = TimeUnit.MINUTES.toSeconds(
             EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
+        VDS host = getVds();
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                .hosts(getVds())
+                .hosts(host)
                 .variable("target_directory", getParameters().getDirectory())
                 .variable("validate_only", "True")
                 .variable("ansible_timeout", timeout)
+                .variable("ansible_port", host.getSshPort())
                 // /var/log/ovirt-engine/ova/ovirt-export-ova-validate-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(CreateOvaCommand.CREATE_OVA_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-export-ova-validate-ansible")

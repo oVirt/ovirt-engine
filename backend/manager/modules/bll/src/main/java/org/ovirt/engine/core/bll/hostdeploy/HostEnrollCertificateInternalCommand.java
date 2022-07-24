@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -52,8 +53,9 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
     @Override
     protected void executeCommand() {
         setVdsStatus(VDSStatus.Installing);
+        VDS host = getVds();
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                .hosts(getVds())
+                .hosts(host)
                 .variable("ovirt_pki_dir", config.getPKIDir())
                 .variable("ovirt_vds_hostname", getVds().getHostName())
                 .variable("ovirt_san", CertificateUtils.getSan(getVds().getHostName()))
@@ -72,6 +74,7 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
                         PKIResources.getQemuCaCertificate()
                                 .toString(PKIResources.Format.OPENSSH_PUBKEY)
                                 .replace("\n", ""))
+                .variable("ansible_port", host.getSshPort())
                 // /var/log/ovirt-engine/host-deploy/ovirt-enroll-certs-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-enroll-certs-ansible")

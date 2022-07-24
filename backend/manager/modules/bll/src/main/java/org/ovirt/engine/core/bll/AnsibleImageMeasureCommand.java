@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.AnsibleImageMeasureCommandParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
@@ -28,9 +29,11 @@ public class AnsibleImageMeasureCommand <T extends AnsibleImageMeasureCommandPar
 
     @Override
     protected AnsibleCommandConfig createCommand() {
+        VDS host = getVds();
         return new AnsibleCommandConfig()
-                .hosts(getVds())
+                .hosts(host)
                 .variable("image_path", getParameters().getVariables().get("image_path"))
+                .variable("ansible_port", host.getSshPort())
                 .playAction(getParameters().getPlayAction())
                 // /var/log/ovirt-engine/ova/ovirt-image-measure-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory("ova")
