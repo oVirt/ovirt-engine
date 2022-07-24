@@ -42,23 +42,23 @@ public class GetAllDiskSnapshotsQuery<P extends DiskSnapshotsQueryParameters> ex
 
         // If the 'include_template' flag requested - check if one of the disk images' parents is a template disk,
         // fetch it and add to the result
-        if (getParameters().getIncludeTemplate()) {
-            Set<Guid> imageIds = imagesToReturn.stream().map(DiskImage::getImageId).collect(Collectors.toSet());
-            DiskImage imageWithMissingParent = imagesToReturn.stream().
-                    filter(image -> image.hasParent() && !imageIds.contains(image.getParentId()))
-                    .findFirst().orElse(null);
-            if (imageWithMissingParent != null) {
-                // Found image with parent guid that does not belong to the requested disk
-                DiskImage parentImage = diskImageDao.getAncestor(imageWithMissingParent.getImageId());
-                if (parentImage != null && parentImage.isTemplate()) {
+        Set<Guid> imageIds = imagesToReturn.stream().map(DiskImage::getImageId).collect(Collectors.toSet());
+        DiskImage imageWithMissingParent = imagesToReturn.stream()
+                .filter(image -> image.hasParent() && !imageIds.contains(image.getParentId()))
+                .findFirst().orElse(null);
+        if (imageWithMissingParent != null) {
+            // Found image with parent guid that does not belong to the requested disk
+            DiskImage parentImage = diskImageDao.getAncestor(imageWithMissingParent.getImageId());
+            if (parentImage != null && parentImage.isTemplate()) {
+                imageWithMissingParent.setParentDiskId(parentImage.getId());
+                if (getParameters().getIncludeTemplate()) {
                     imagesToReturn.add(parentImage);
-                } else {
-                    log.error("Image '{}' which is a parent of image '{}', was not found",
-                            imageWithMissingParent.getParentId(), imageWithMissingParent.getId());
                 }
+            } else {
+                log.error("Image '{}' which is a parent of image '{}', was not found",
+                        imageWithMissingParent.getParentId(), imageWithMissingParent.getId());
             }
         }
-
         getQueryReturnValue().setReturnValue(imagesToReturn);
     }
 }
