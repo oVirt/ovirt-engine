@@ -118,6 +118,9 @@ public class BackendVmPoolsResource
         AddVmPoolParameters params = new AddVmPoolParameters(entity, vm, size);
         params.setConsoleEnabled(pool.isSetVm() && pool.getVm().isSetConsole() && pool.getVm().getConsole().isSetEnabled() ?
                 pool.getVm().getConsole().isEnabled() : !getConsoleDevicesForEntity(template.getId()).isEmpty());
+        if (pool.isSetVm()) {
+            DisplayHelper.setGraphicsToParams(pool.getVm().getDisplay(), params);
+        }
         params.setVirtioScsiEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, template.getId()).isEmpty());
         params.setSoundDeviceEnabled(pool.isSetSoundcardEnabled() ? pool.isSoundcardEnabled() : !VmHelper.getSoundDevicesForEntity(this, template.getId()).isEmpty());
         params.setRngDevice(pool.isSetVm() && pool.getVm().isSetRngDevice() ?
