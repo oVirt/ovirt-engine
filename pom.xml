@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ovirt.engine</groupId>
   <artifactId>root</artifactId>
-  <version>4.5.2-SNAPSHOT</version>
+  <version>4.5.2</version>
   <packaging>pom</packaging>
   <name>ovirt-root</name>
   <description>oVirt Engine Root Project</description>
@@ -773,7 +773,7 @@
             <dependency>
               <groupId>org.ovirt.engine</groupId>
               <artifactId>ovirt-findbugs-filters</artifactId>
-              <version>4.5.2-SNAPSHOT</version>
+              <version>4.5.2</version>
             </dependency>
           </dependencies>
         </plugin>
