@@ -10,6 +10,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.quota.QuotaClusterConsumptionParameter;
@@ -296,6 +297,16 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
         default:
             return AuditLogType.USER_ATTACH_USER_TO_VM_FROM_POOL_FINISHED_FAILURE;
         }
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(VdcObjectType.VM.name().toLowerCase(), StringUtils.defaultString(getVmName()));
+            jobProperties.put(VdcObjectType.User.name().toLowerCase(), StringUtils.defaultString(getAdUserName()));
+        }
+        return jobProperties;
     }
 
     private void detachUserFromVmFromPool() {
