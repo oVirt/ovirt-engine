@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -45,6 +46,7 @@ import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CloudInitHandler;
@@ -62,6 +64,8 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
     private VmNetworkStatisticsDao vmNetworkStatisticsDao;
     @Inject
     protected ImageDao imageDao;
+    @Inject
+    private VmStaticDao vmStaticDao;
     @Inject
     private ImportUtils importUtils;
     @Inject
@@ -168,11 +172,14 @@ public abstract class ImportVmTemplateCommandBase<T extends ImportVmTemplatePara
             initImportClonedTemplate();
         }
 
-        VmTemplate duplicateTemplate = vmTemplateDao.get(getParameters().getVmTemplate().getId());
+        VmBase duplicateTemplateOrVm = vmStaticDao.get(getParameters().getVmTemplate().getId());
+        if (duplicateTemplateOrVm == null) {
+            duplicateTemplateOrVm = vmTemplateDao.get(getParameters().getVmTemplate().getId());
+        }
         // check that the template does not exists in the target domain
-        if (duplicateTemplate != null) {
+        if (duplicateTemplateOrVm != null) {
             return failValidation(EngineMessage.VMT_CANNOT_IMPORT_TEMPLATE_EXISTS,
-                    String.format("$TemplateName %1$s", duplicateTemplate.getName()));
+                    String.format("$TemplateOrVmName %1$s", duplicateTemplateOrVm.getName()));
         }
         if (getVmTemplate().isBaseTemplate() && isVmTemplateWithSameNameExist()) {
             return failValidation(EngineMessage.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
