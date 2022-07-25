@@ -232,7 +232,7 @@
 
       <!-- Loggers for the engine: -->
       <logger category="org.ovirt" use-parent-handlers="false">
-        <level name="INFO"/>
+        <level name="{{ config.get('ORG_OVIRT_LOG_LEVEL') }}"/>
         <handlers>
           <handler name="ENGINE"/>
           <handler name="ovirt-logger"/>
@@ -248,7 +248,7 @@
       {% if config.getboolean('KEYCLOAK_BUNDLED') %}
       <!-- Loggers for the Keycloak: -->
       <logger category="org.keycloak" use-parent-handlers="false">
-        <level name="INFO"/>
+        <level name="{{ config.get('KEYCLOAK_LOG_LEVEL') }}"/>
         <handlers>
           <handler name="KEYCLOAK"/>
           {% if config.getboolean('SYSLOG_HANDLER_ENABLED') and config.getboolean('KEYCLOAK_BUNDLED') %}
@@ -269,14 +269,14 @@
         </handlers>
       </logger>
        <logger category="org.ovirt.engine.core.bll">
-        <level name="INFO"/>
+        <level name="{{ config.get('CORE_BLL_LOG_LEVEL') }}"/>
       </logger>
       <logger category="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect$PostgresJdbcTemplate">
         <level name="WARN"/>
       </logger>
 
       <root-logger>
-        <level name="INFO"/>
+        <level name="{{ config.get('ROOT_LOG_LEVEL') }}"/>
         <handlers>
           <handler name="ovirt-logger"/>
           <handler name="SERVER"/>
