@@ -204,7 +204,7 @@ public abstract class AffinityGroupCRUDCommand <T extends AffinityGroupCRUDParam
 
     @Override
     public Guid getClusterId() {
-        return getAffinityGroup().getClusterId();
+        return getAffinityGroup() != null ? getAffinityGroup().getClusterId() : Guid.Empty;
     }
 
     @Override
