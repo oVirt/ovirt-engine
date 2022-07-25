@@ -173,7 +173,21 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && checkIfNeedToBeOverride()
                 && setAndValidateDiskProfiles()
                 && setAndValidateQuota()
-                && validatePassDiscardSupportedForDestinationStorageDomain();
+                && validatePassDiscardSupportedForDestinationStorageDomain()
+                && isCopyWithLocalDc();
+    }
+
+    protected boolean isCopyWithLocalDc() {
+        Guid sourceDomainId = getParameters().getSourceDomainId();
+        StorageDomain sourceStorageDomain = storageDomainDao.getForStoragePool(sourceDomainId, getImage().getStoragePoolId());
+
+        if (getStorageDomain().getStorageType() == StorageType.MANAGED_BLOCK_STORAGE
+                && sourceStorageDomain.getStorageType() == StorageType.LOCALFS || getStorageDomain().getStorageType() == StorageType.LOCALFS
+                && sourceStorageDomain.getStorageType() == StorageType.MANAGED_BLOCK_STORAGE) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_BETWEEN_MANAGED_BLOCK_STORAGE_TYPE_AND_LOCAL_STORAGE);
+        }
+
+        return true;
     }
 
     protected boolean isSourceAndDestTheSame() {
