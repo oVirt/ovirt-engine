@@ -22,6 +22,7 @@ sign() {
 		[ -e "${CERT_CONF}" ] || die "${CERT_CONF} is missing, Cannot sign certificate"
 		EXTRA_COMMAND="-extfile ${CERT_CONF} -extensions ${extsection}"
 	fi
+	umask "$(/bin/sh -l -c umask)"
 	OVIRT_KU="${ovirt_ku}" OVIRT_EKU="${ovirt_eku}" OVIRT_SAN="${ovirt_san}" \
 		openssl ca \
 		-batch \
