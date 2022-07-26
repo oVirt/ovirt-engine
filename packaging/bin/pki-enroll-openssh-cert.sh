@@ -14,6 +14,8 @@ sign() {
 
 	common_backup "${sshpub}" "${sshcert}"
 
+	umask "$(/bin/sh -l -c umask)"
+
 	#
 	# TODO: replace when el-6 supports -m PKCS8
 	#
