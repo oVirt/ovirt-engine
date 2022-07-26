@@ -849,7 +849,7 @@ public class VmAnalyzer {
      * 3. Otherwise, the VM went down unexpectedly
      */
     private void proceedDisappearedVm() {
-        if (System.nanoTime() - getVmManager().getPowerOffTimeout() < 0) {
+        if (!getVmManager().isColdReboot() && System.nanoTime() - getVmManager().getPowerOffTimeout() < 0) {
             auditVmOnDownNormal(true);
             resourceManager.removeAsyncRunningVm(dbVm.getId());
             clearVm(VmExitStatus.Normal,
@@ -874,15 +874,16 @@ public class VmAnalyzer {
 
             break;
 
+        case RebootInProgress:
         case PoweringDown:
+            if (getVmManager().isColdReboot()) {
+                setColdRebootFlag();
+                resourceManager.removeAsyncRunningVm(dbVm.getId());
+            }
             clearVm(VmExitStatus.Normal,
                     String.format("VM %s shutdown complete", getVmManager().getName()),
                     VmExitReason.Success);
 
-            // not sure about that..
-            if (getVmManager().isColdReboot()) {
-                setColdRebootFlag();
-            }
             break;
 
         default:
