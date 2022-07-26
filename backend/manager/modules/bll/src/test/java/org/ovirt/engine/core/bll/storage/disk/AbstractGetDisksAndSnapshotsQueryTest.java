@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -110,6 +111,7 @@ public abstract class AbstractGetDisksAndSnapshotsQueryTest<P extends QueryParam
     private LunDisk createLunDisk() {
         LunDisk lun = new LunDisk();
         lun.setId(Guid.newGuid());
+        lun.setLun(new LUNs());
         return lun;
     }
 }
