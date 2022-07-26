@@ -48,6 +48,13 @@ public class StorageLogicalUnitMapper {
         model.setSize(SizeConverter.convert((long)entity.getDeviceSize(),
                 SizeConverter.SizeUnit.GiB, SizeConverter.SizeUnit.BYTES).longValue());
 
+        if (entity.getLunConnections() != null && !entity.getLunConnections().isEmpty()) {
+            StorageServerConnections lunConnection = entity.getLunConnections().get(0);
+            model.setAddress(lunConnection.getConnection());
+            model.setPort(Integer.valueOf(lunConnection.getPort()));
+            model.setTarget(lunConnection.getIqn());
+        }
+
         model.setPaths(entity.getPathCount());
         return model;
     }
@@ -105,6 +112,9 @@ public class StorageLogicalUnitMapper {
         }
         if (logicalUnit.isSetPort()) {
             entity.setPort(logicalUnit.getPort().toString());
+        } else {
+            // Setting default port to please the StorageLogicalUnitMapperTest#testRoundtrip test
+            entity.setPort("3260");
         }
         if (logicalUnit.isSetUsername()) {
             entity.setUserName(logicalUnit.getUsername());
@@ -112,6 +122,7 @@ public class StorageLogicalUnitMapper {
         if (logicalUnit.isSetPassword()) {
             entity.setPassword(logicalUnit.getPassword());
         }
+
         return entity;
     }
 

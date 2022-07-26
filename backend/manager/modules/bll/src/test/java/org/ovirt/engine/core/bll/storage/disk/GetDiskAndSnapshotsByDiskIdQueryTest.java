@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.disk;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 /**
  * A test case for {@link GetDiskAndSnapshotsByDiskIdQuery}.
@@ -40,6 +42,9 @@ public class GetDiskAndSnapshotsByDiskIdQueryTest extends
 
     @Mock
     private DiskDao diskDao;
+
+    @Mock
+    private StorageServerConnectionDao storageServerConnectionDao;
 
     @BeforeEach
     @Override
@@ -118,6 +123,7 @@ public class GetDiskAndSnapshotsByDiskIdQueryTest extends
 
     @Test
     public void testQueryWithLunDisk() {
+        when(storageServerConnectionDao.getAllForLun(any())).thenReturn(new ArrayList<>());
         Disk disk = executeQuery(lunDisk);
         assertTrue(disk instanceof LunDisk, "disk should be from type LunDisk");
     }

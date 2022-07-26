@@ -8,11 +8,14 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
 public class GetDiskAndSnapshotsByDiskIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     @Inject
@@ -20,6 +23,9 @@ public class GetDiskAndSnapshotsByDiskIdQuery<P extends IdQueryParameters> exten
 
     @Inject
     private ImagesHandler imagesHandler;
+
+    @Inject
+    private StorageServerConnectionDao storageServerConnectionDao;
 
     public GetDiskAndSnapshotsByDiskIdQuery(P parameters, EngineContext context) {
         super(parameters, context);
@@ -33,7 +39,10 @@ public class GetDiskAndSnapshotsByDiskIdQuery<P extends IdQueryParameters> exten
 
         // In case of LUN disk
         if (allDisks.size() == 1 && allDisks.get(0).getDiskStorageType() == DiskStorageType.LUN) {
-            getQueryReturnValue().setReturnValue(allDisks.get(0));
+            LunDisk disk = (LunDisk) allDisks.get(0);
+            List<StorageServerConnections> connections = storageServerConnectionDao.getAllForLun(disk.getLun().getLUNId());
+            disk.getLun().setLunConnections(connections);
+            getQueryReturnValue().setReturnValue(disk);
             return;
         }
 
