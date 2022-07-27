@@ -117,7 +117,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
         long timeout = TimeUnit.MINUTES.toSeconds(
             EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                .hosts(getVds())
+                .host(getVds())
                 .variable("ovirt_import_ova_path", getParameters().getOvaPath())
                 .variable("ovirt_import_ova_disks", disksPathToFormat)
                 .variable("ovirt_import_ova_image_mappings",
@@ -146,7 +146,7 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
 
     private String runAnsibleOvaExternalDataPlaybook() {
         AnsibleCommandConfig command = new AnsibleCommandConfig()
-                .hosts(getVds())
+                .host(getVds())
                 .variable("ovirt_ova_path", getParameters().getOvaPath())
                 // /var/log/ovirt-engine/ova/ovirt-ova-external-data-ansible-{hostname}-{timestamp}.log
                 .logFileDirectory(ExtractOvaCommand.IMPORT_OVA_LOG_DIRECTORY)

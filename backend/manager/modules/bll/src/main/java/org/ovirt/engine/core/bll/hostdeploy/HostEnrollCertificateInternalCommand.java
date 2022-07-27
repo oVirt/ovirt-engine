@@ -53,7 +53,7 @@ public class HostEnrollCertificateInternalCommand extends VdsCommand<VdsActionPa
     protected void executeCommand() {
         setVdsStatus(VDSStatus.Installing);
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                .hosts(getVds())
+                .host(getVds())
                 .variable("ovirt_pki_dir", config.getPKIDir())
                 .variable("ovirt_vds_hostname", getVds().getHostName())
                 .variable("ovirt_san", CertificateUtils.getSan(getVds().getHostName()))

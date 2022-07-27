@@ -234,7 +234,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
     private void runAnsibleMigrationCerts() {
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                .hosts(getVds())
+                .host(getVds())
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-migration-certs-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-mgmt-ansible-migration-certs")

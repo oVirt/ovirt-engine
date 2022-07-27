@@ -64,7 +64,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
         AnsibleReturnValue ansibleReturnValue = null;
         try {
             AnsibleCommandConfig command = new AnsibleCommandConfig()
-                    .hosts(host)
+                    .host(host)
 
                     // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-check-{hostname}-{correlationid}-{timestamp}.log
                     .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
@@ -136,7 +136,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
     @Override
     public void update(final VDS host, int timeout) {
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                .hosts(host)
+                .host(host)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-mgmt-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
                 .logFilePrefix("ovirt-host-mgmt-ansible")
@@ -170,7 +170,7 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
             // PKI variables:
             .variable("ovirt_pki_dir", config.getPKIDir())
             .variable("ovirt_vds_hostname", host.getHostName())
-            .variable("ansible_port", host.getSshPort())
+//            .variable("ansible_port", host.getSshPort())
             .variable("ovirt_san", CertificateUtils.getSan(host.getHostName()))
             .variable("ovirt_engine_usr", config.getUsrDir())
             .variable("ovirt_organizationname", Config.getValue(ConfigValues.OrganizationName))

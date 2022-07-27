@@ -52,7 +52,7 @@ public abstract class GetFromOvaQuery <T, P extends GetVmFromOvaQueryParameters>
             EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
         VDS host = vdsDao.get(getParameters().getVdsId());
         AnsibleCommandConfig command = new AnsibleCommandConfig()
-                .hosts(host)
+                .host(host)
                 .variable("ovirt_query_ova_path", getParameters().getPath())
                 .variable("list_directory", getParameters().isListDirectory() ? "True" : "False")
                 .variable("entity_type", getEntityType().name().toLowerCase())

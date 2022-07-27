@@ -24,7 +24,7 @@ public class AnsiblePackOvaCommand <T extends AnsibleCommandParameters> extends 
             EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
         Map<String, Object> vars = getParameters().getVariables();
         return new AnsibleCommandConfig()
-                .hosts(getVds())
+                .host(getVds())
                 .variable("target_directory", vars.get("target_directory"))
                 .variable("entity_type", vars.get("entity_type"))
                 .variable("ova_size", vars.get("ova_size"))

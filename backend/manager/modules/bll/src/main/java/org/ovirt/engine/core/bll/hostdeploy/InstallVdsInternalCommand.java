@@ -284,7 +284,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             }
             String clusterVersion = hostCluster.getCompatibilityVersion().getValue();
             AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                    .hosts(vds)
+                    .host(vds)
                     .variable("host_deploy_cluster_version", clusterVersion)
                     .variable("host_deploy_cluster_name", hostCluster.getName())
                     .variable("host_deploy_cluster_switch_type",
@@ -384,7 +384,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         log.info("Started Replace Host playbook");
         VDS vds = getVds();
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                .hosts(maintenanceVds)
+                .host(maintenanceVds)
                 .variable("gluster_maintenance_old_node", oldGlusterClusterNode)
                 .variable("gluster_maintenance_new_node", newGlusterClusterNode)
                 .variable("gluster_maintenance_cluster_node", firstGlusterClusterNode)
@@ -429,7 +429,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     private void fetchHostedEngineConfigFile(String tmpHEConfigFileName) {
         VDS vds = vdsDao.get(hostedEngineHelper.getRunningHostId());
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                .hosts(vds)
+                .host(vds)
                 .variable("temp_he_config_file", tmpHEConfigFileName)
                 // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
                 .logFileDirectory(AnsibleConstants.HOST_DEPLOY_LOG_DIRECTORY)
