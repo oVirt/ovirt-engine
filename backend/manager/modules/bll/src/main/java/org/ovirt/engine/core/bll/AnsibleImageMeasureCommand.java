@@ -29,7 +29,7 @@ public class AnsibleImageMeasureCommand <T extends AnsibleImageMeasureCommandPar
     @Override
     protected AnsibleCommandConfig createCommand() {
         return new AnsibleCommandConfig()
-                .hosts(getVds())
+                .host(getVds())
                 .variable("image_path", getParameters().getVariables().get("image_path"))
                 .playAction(getParameters().getPlayAction())
                 // /var/log/ovirt-engine/ova/ovirt-image-measure-ansible-{hostname}-{correlationid}-{timestamp}.log

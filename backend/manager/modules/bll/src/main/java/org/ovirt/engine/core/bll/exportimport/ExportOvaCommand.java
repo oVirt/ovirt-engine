@@ -98,7 +98,7 @@ public abstract class ExportOvaCommand<T extends ExportOvaParameters> extends Co
         long timeout = TimeUnit.MINUTES.toSeconds(
             EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT"));
         AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                .hosts(getVds())
+                .host(getVds())
                 .variable("target_directory", getParameters().getDirectory())
                 .variable("validate_only", "True")
                 .variable("ansible_timeout", timeout)

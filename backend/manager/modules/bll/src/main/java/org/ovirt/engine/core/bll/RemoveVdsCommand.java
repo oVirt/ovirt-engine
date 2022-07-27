@@ -170,7 +170,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
         try {
             AnsibleCommandConfig commandConfig = new AnsibleCommandConfig()
-                    .hosts(vds)
+                    .host(vds)
                     .playbook(AnsibleConstants.HOST_REMOVE_PLAYBOOK);
 
             auditLogDirector.log(auditable, AuditLogType.VDS_ANSIBLE_HOST_REMOVE_STARTED);
