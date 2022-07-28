@@ -61,7 +61,7 @@
       src: "{{ ovirt_pki_dir }}/certs/{{ ovirt_vds_hostname }}-ssh-cert.pub"
       dest: "{{ ovirt_vmconsole_cert_file }}"
       remote_src: no
-      mode: preserve
+      mode: 0644
 
   - name: Set vmconsole key path
     set_fact:
