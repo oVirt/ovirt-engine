@@ -931,6 +931,7 @@ class Plugin(plugin.PluginBase):
         )
         if self._enabled or self._provider_installed:
             self._setup_firewalld_services()
+            self._generate_pki()
 
     def _print_commands(self, message, commands):
         self.dialog.note(
@@ -971,16 +972,6 @@ class Plugin(plugin.PluginBase):
         if ovnprovider_installed and \
                 keycloak_enabled and not keycloak_configured:
             self._user, self._password = self._get_provider_credentials()
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
-        before=(
-            oenginecons.Stages.CA_UPGRADE,
-        ),
-        condition=lambda self: self._enabled or self._provider_installed,
-    )
-    def _misc_pki(self):
-        self._generate_pki()
 
     def _restart_service(self, service):
         self.services.startup(
