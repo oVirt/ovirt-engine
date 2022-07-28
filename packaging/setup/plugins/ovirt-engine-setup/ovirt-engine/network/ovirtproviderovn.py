@@ -1113,6 +1113,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         before=(
             oenginecons.Stages.OVN_PROVIDER_SERVICE_RESTART,
+            oenginecons.Stages.OVN_PROVIDER_OVN_DB,
         ),
         after=(
             oenginecons.Stages.CA_AVAILABLE,
