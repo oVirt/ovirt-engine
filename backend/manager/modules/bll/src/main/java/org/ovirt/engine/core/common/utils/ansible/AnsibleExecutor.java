@@ -1,3 +1,4 @@
+
 /*
  * Copyright oVirt Authors
  * SPDX-License-Identifier: Apache-2.0
@@ -39,6 +40,9 @@ public class AnsibleExecutor {
 
     @Inject
     private AnsibleClientFactory ansibleClientFactory;
+
+    @Inject
+    private AnsibleCommandLogFileFactory ansibleCommandLogFileFactory;
 
     /**
      * Executes ansible-playbook command. Default timeout is specified by ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT variable
@@ -150,10 +154,12 @@ public class AnsibleExecutor {
 
         String playUuid = null;
         AnsibleRunnerClient runnerClient = null;
+        AnsibleRunnerLogger runnerLogger = null;
         try {
             runnerClient = ansibleClientFactory.create(commandConfig);
+            runnerLogger = ansibleCommandLogFileFactory.create(commandConfig);
+            ret.setLogFile(runnerLogger.getLogFile());
             playUuid = commandConfig.getUuid().toString();
-            ret.setLogFile(runnerClient.getLogger().getLogFile());
             ret.setPlayUuid(playUuid);
             ret.setStdout(String.format("%1$s/%2$s/artifacts/%2$s/stdout", AnsibleConstants.ANSIBLE_RUNNER_PATH, playUuid));
             ret.setLastEventId(0);
@@ -167,7 +173,7 @@ public class AnsibleExecutor {
                 return ret;
             }
 
-            ret = runnerClient.artifactHandler(commandConfig.getUuid(), ret.getLastEventId(), timeout, fn);
+            runnerClient.artifactHandler(ret, timeout, fn, runnerLogger);
         } catch (InventoryException ex) {
             String message = ex.getMessage();
             log.error("Error executing playbook: {}", message);
@@ -180,8 +186,8 @@ public class AnsibleExecutor {
             ret.setStderr(ex.getMessage());
         } finally {
             // Make sure all events are proccessed even in case of failure:
-            if (playUuid != null && runnerClient != null && !async) {
-                runnerClient.processEvents(playUuid, ret.getLastEventId(), fn);
+            if (playUuid != null && runnerClient != null && runnerLogger != null && !async) {
+                runnerClient.processEvents(ret, fn, runnerLogger);
             }
         }
 
