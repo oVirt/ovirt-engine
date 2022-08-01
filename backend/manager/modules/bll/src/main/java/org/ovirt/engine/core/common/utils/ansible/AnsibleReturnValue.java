@@ -51,6 +51,7 @@ public class AnsibleReturnValue {
     public AnsibleReturnValue(AnsibleReturnCode ansibleReturnCode, String stdout) {
         this.ansibleReturnCode = ansibleReturnCode;
         this.stdout = stdout;
+        this.lastEventId = 0;
     }
 
     public AnsibleReturnCode getAnsibleReturnCode() {
