@@ -30,7 +30,6 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
     public static final String ANSIBLE_EXECUTION_METHOD = "start";
 
     private String cluster;
-    private String hostname;
     private VDS host;
     private Map<String, Object> variables;
     private String variableFilePath;
@@ -101,10 +100,6 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
 
     public String playbook() {
         return playbook;
-    }
-
-    public String hostname() {
-        return this.hostname;
     }
 
     public String cluster() {
@@ -183,7 +178,6 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
     }
 
     public AnsibleCommandConfig host(VDS host) {
-        this.hostname = host.getHostName();
         this.host = host;
         return this;
     }
@@ -302,16 +296,14 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
 
     private void createHostFile(File inventory) {
         File hostFile = new File(String.format("%1$s/hosts", inventory));
-        if (!hostname.isEmpty()) {
-            try {
-                hostFile.createNewFile();
-                Files.write(hostFile.toPath(),
-                        String.format(this.hostname + " ansible_port=%1$s", this.host.getSshPort()).getBytes());
-            } catch (IOException ex) {
-                throw new AnsibleRunnerCallException(
-                        String.format("Failed to create inventory file '%s':", hostFile.toString()),
-                        ex);
-            }
+        try {
+            hostFile.createNewFile();
+            Files.write(hostFile.toPath(),
+                    String.format(this.host.getHostName() + " ansible_port=%1$s", this.host.getSshPort()).getBytes());
+        } catch (IOException ex) {
+            throw new AnsibleRunnerCallException(
+                    String.format("Failed to create inventory file '%s':", hostFile.toString()),
+                    ex);
         }
     }
 
