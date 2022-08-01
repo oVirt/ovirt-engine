@@ -94,6 +94,7 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
                 }
             } catch (Exception e) {
                 setVdsStatus(VDSStatus.InstallFailed);
+                addCustomValue("FailedUpgradeMessage", e.getMessage());
                 return;
             }
         }
