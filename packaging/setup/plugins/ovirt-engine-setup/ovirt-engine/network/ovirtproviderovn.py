@@ -519,7 +519,7 @@ class Plugin(plugin.PluginBase):
 
         return user, password
 
-    def _generate_pki(self):
+    def _add_ovn_pki_entities(self):
         self.environment[oenginecons.PKIEnv.ENTITIES].extend(
             (
                 {
@@ -931,7 +931,7 @@ class Plugin(plugin.PluginBase):
         )
         if self._enabled or self._provider_installed:
             self._setup_firewalld_services()
-            self._generate_pki()
+            self._add_ovn_pki_entities()
 
     def _print_commands(self, message, commands):
         self.dialog.note(
