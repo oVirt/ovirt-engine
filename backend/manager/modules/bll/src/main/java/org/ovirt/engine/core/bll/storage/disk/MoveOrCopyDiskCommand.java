@@ -65,7 +65,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -100,8 +99,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     private UnregisteredDisksDao unregisteredDisksDao;
     @Inject
     private VmDao vmDao;
-    @Inject
-    private SnapshotDao snapshotDao;
     @Inject
     @Typed(ConcurrentChildCommandsExecutionCallback.class)
     private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
@@ -174,10 +171,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && setAndValidateDiskProfiles()
                 && setAndValidateQuota()
                 && validatePassDiscardSupportedForDestinationStorageDomain()
-                && isCopyWithLocalDc();
+                && noCopyBetweenLocalAndManagedBlockStorages();
     }
 
-    protected boolean isCopyWithLocalDc() {
+    protected boolean noCopyBetweenLocalAndManagedBlockStorages() {
         Guid sourceDomainId = getParameters().getSourceDomainId();
         StorageDomain sourceStorageDomain = storageDomainDao.getForStoragePool(sourceDomainId, getImage().getStoragePoolId());
 
