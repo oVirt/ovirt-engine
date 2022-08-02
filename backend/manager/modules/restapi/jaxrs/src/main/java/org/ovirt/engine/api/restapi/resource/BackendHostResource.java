@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.core.common.businessentities.StorageServerConnections.DEFAULT_ISCSI_PORT;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -88,8 +90,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     public static final String FORCE = "force";
     public static final String STOP_GLUSTER_SERVICE = "stop_gluster_service";
-
-    private static final String DEFAULT_ISCSI_PORT = "3260";
 
     private BackendHostsResource parent;
 
