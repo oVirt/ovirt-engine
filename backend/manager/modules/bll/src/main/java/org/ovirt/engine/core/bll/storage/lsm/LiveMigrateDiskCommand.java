@@ -745,9 +745,12 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     private void cleanupDestDiskAfterFailure() {
-        if (getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.CREATE_SNAPSHOT &&
-                getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.CLONE_IMAGE_STRUCTURE &&
-                getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.SOURCE_IMAGE_DELETION) {
+        if (getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.CREATE_SNAPSHOT ||
+                getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.SOURCE_IMAGE_DELETION) {
+            return;
+        }
+
+        if (getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.CLONE_IMAGE_STRUCTURE) {
             if (Guid.Empty.equals(getParameters().getVdsId())) {
                 log.error("Failed during live storage migration of disk '{}' of vm '{}', as the vm is not running" +
                                 " on any host not attempting to end the replication before the target disk deletion",
@@ -770,14 +773,14 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                     }
                 }
             }
-
-            log.error("Attempting to delete the target of disk '{}' of vm '{}'",
-                    getParameters().getImageGroupID(), getParameters().getVmId());
-            removeImage(getParameters().getTargetStorageDomainId(),
-                    getParameters().getImageGroupID(),
-                    getParameters().getDestinationImageId(),
-                    AuditLogType.USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE);
         }
+
+        log.error("Attempting to delete the target of disk '{}' of vm '{}'",
+                getParameters().getImageGroupID(), getParameters().getVmId());
+        removeImage(getParameters().getTargetStorageDomainId(),
+                getParameters().getImageGroupID(),
+                getParameters().getDestinationImageId(),
+                AuditLogType.USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE);
     }
 
     @Override
