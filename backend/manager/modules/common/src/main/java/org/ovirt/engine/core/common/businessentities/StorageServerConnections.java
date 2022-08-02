@@ -13,6 +13,7 @@ public class StorageServerConnections implements BusinessEntity<String> {
     private static final long serialVersionUID = 5444293590307760809L;
 
     public static final String DEFAULT_TPGT = "1";
+    public static final String DEFAULT_ISCSI_PORT = "3260";
 
     public StorageServerConnections() {
         storageType = StorageType.UNKNOWN;

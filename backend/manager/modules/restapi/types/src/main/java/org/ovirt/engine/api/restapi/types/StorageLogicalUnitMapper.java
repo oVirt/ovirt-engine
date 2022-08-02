@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.ovirt.engine.core.common.businessentities.StorageServerConnections.DEFAULT_ISCSI_PORT;
+
+
 import java.util.ArrayList;
 
 import org.ovirt.engine.api.model.HostStorage;
@@ -114,7 +117,7 @@ public class StorageLogicalUnitMapper {
             entity.setPort(logicalUnit.getPort().toString());
         } else {
             // Setting default port to please the StorageLogicalUnitMapperTest#testRoundtrip test
-            entity.setPort("3260");
+            entity.setPort(DEFAULT_ISCSI_PORT);
         }
         if (logicalUnit.isSetUsername()) {
             entity.setUserName(logicalUnit.getUsername());
