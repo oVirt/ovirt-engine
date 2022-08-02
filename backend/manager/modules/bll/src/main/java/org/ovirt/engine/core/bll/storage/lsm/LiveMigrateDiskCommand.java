@@ -273,9 +273,10 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             }
 
             updateStage(LiveDiskMigrateStage.SOURCE_IMAGE_DELETION);
-            removeImage(getParameters().getSourceStorageDomainId(), getParameters()
-                    .getImageGroupID(), getParameters().getDestinationImageId(), AuditLogType
-                    .USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_SRC_IMAGE);
+            removeImage(getParameters().getSourceStorageDomainId(),
+                    getParameters().getImageGroupID(),
+                    getParameters().getDestinationImageId(),
+                    AuditLogType.USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_SRC_IMAGE);
             updateStage(LiveDiskMigrateStage.LIVE_MIGRATE_DISK_EXEC_COMPLETED);
             return true;
         }
@@ -388,7 +389,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         }
 
         super.endWithFailure();
-        handleDestDisk();
+        cleanupDestDiskAfterFailure();
 
         // Handle snapshot removal
         log.info("Attempting to remove the auto-generated snapshot");
@@ -743,7 +744,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 + String.format("$DiskName %1$s", disk != null ? disk.getDiskAlias() : "");
     }
 
-    private void handleDestDisk() {
+    private void cleanupDestDiskAfterFailure() {
         if (getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.CREATE_SNAPSHOT &&
                 getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.CLONE_IMAGE_STRUCTURE &&
                 getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.SOURCE_IMAGE_DELETION) {
@@ -772,9 +773,10 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
             log.error("Attempting to delete the target of disk '{}' of vm '{}'",
                     getParameters().getImageGroupID(), getParameters().getVmId());
-            removeImage(getParameters().getTargetStorageDomainId(), getParameters()
-                    .getImageGroupID(), getParameters().getDestinationImageId(), AuditLogType
-                    .USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE);
+            removeImage(getParameters().getTargetStorageDomainId(),
+                    getParameters().getImageGroupID(),
+                    getParameters().getDestinationImageId(),
+                    AuditLogType.USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE);
         }
     }
 
