@@ -39,7 +39,10 @@
         ignore_errors: yes
 
       - name: Get host certificate info
-        command: openssl x509 -noout -ext subjectAltName -in "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_cert_file }}"
+        shell: >
+          openssl x509 -in "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_cert_file }}" -text -noout
+          -certopt no_subject,no_header,no_version,no_serial,no_signame,no_validity,no_subject,no_issuer,no_pubkey,no_sigdump,no_aux
+          | awk '/X509v3 Subject Alternative Name/','/X509v3 Basic Constraints/'
         register: host_certificate
 
       - name: Check if host certificate contains subject alternative name
