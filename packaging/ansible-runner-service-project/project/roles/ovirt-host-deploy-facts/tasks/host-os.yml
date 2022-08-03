@@ -28,13 +28,6 @@
     node_host: "{{ not node_presence.changed }}"
 
 - block:
-  #  for rhel7
-  - name: Check version of openvswitch before upgrade
-    set_fact:
-      ovirt_openvswitch_pre: "{{ ansible_facts.packages['openvswitch'] | first }}"
-    when:
-      - ansible_facts.packages['openvswitch'] is defined
-
   - name: Check version of ovirt-openvswitch before upgrade
     set_fact:
       ovirt_openvswitch_pre: "{{ ansible_facts.packages['ovirt-openvswitch'] | first }}"
