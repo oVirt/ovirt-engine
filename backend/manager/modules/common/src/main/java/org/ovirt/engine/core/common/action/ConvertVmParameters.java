@@ -18,6 +18,7 @@ public class ConvertVmParameters extends VmOperationParameterBase {
     private Guid storageDomainId;
     private Guid proxyHostId;
     private Guid clusterId;
+    private Guid virtioIsoStorageDomainId;
     private String virtioIsoName;
     private OriginType originType;
     private String compatVersion;
@@ -100,6 +101,14 @@ public class ConvertVmParameters extends VmOperationParameterBase {
 
     public void setClusterId(Guid clusterId) {
         this.clusterId = clusterId;
+    }
+
+    public Guid getVirtioIsoStorageDomainId() {
+        return virtioIsoStorageDomainId;
+    }
+
+    public void setVirtioIsoStorageDomainId(Guid virtioIsoStorageDomainId) {
+        this.virtioIsoStorageDomainId = virtioIsoStorageDomainId;
     }
 
     public String getVirtioIsoName() {

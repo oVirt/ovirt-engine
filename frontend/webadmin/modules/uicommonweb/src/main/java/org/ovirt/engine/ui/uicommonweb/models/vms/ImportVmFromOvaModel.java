@@ -77,8 +77,13 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
             String ovaFilename = vmNameToOva.get(importVmData.getName());
             prm.setOvaPath(ovaFilename == null ? ovaPath : ovaPath + "/" + ovaFilename); //$NON-NLS-1$
             prm.setProxyHostId(hostId);
-            prm.setVirtioIsoName(getIso().getIsChangable() && getIso().getSelectedItem() != null ?
-                    getIso().getSelectedItem().getRepoImageId() : null);
+            if (getIso().getIsChangable() && getIso().getSelectedItem() != null) {
+                prm.setVirtioIsoStorageDomainId(getIso().getSelectedItem().getRepoDomainId());
+                prm.setVirtioIsoName(getIso().getSelectedItem().getRepoImageId());
+            } else {
+                prm.setVirtioIsoStorageDomainId(null);
+                prm.setVirtioIsoName(null);
+            }
             prm.setExternalName(importVmData.getName());
 
             if (getClusterQuota().getSelectedItem() != null &&

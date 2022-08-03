@@ -123,8 +123,13 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
             prm.setUsername(username);
             prm.setPassword(password);
             prm.setProxyHostId(proxyHostId);
-            prm.setVirtioIsoName(getIso().getIsChangable() && getIso().getSelectedItem() != null ?
-                    getIso().getSelectedItem().getRepoImageId() : null);
+            if (getIso().getIsChangable() && getIso().getSelectedItem() != null) {
+                prm.setVirtioIsoStorageDomainId(getIso().getSelectedItem().getRepoDomainId());
+                prm.setVirtioIsoName(getIso().getSelectedItem().getRepoImageId());
+            } else {
+                prm.setVirtioIsoStorageDomainId(null);
+                prm.setVirtioIsoName(null);
+            }
             prm.setExternalName(importVmData.getName());
 
             if (getClusterQuota().getSelectedItem() != null &&

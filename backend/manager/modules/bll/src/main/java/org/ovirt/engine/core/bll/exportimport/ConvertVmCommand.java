@@ -11,8 +11,10 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo.JobStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.ConvertVmVDSParameters;
@@ -26,6 +28,7 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +43,8 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
     private CommandCoordinatorUtil commandCoordinatorUtil;
 
     private ConvertVmCallback cachedCallback;
+
+    private StorageDomainType isoStorageDomainType;
 
     public ConvertVmCommand(Guid commandId) {
         super(commandId);
@@ -132,9 +137,44 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         return parameters;
     }
 
+    private StorageDomainType getIsoStorageDomainType() {
+        if (isoStorageDomainType == null) {
+            isoStorageDomainType = getParameters().getVirtioIsoStorageDomainId() != null
+                    ? storageDomainDao.get(getParameters().getVirtioIsoStorageDomainId()).getStorageDomainType()
+                    : StorageDomainType.ISO;
+        }
+        return isoStorageDomainType;
+    }
+
     protected String getVirtioIsoPath() {
-        return getParameters().getVirtioIsoName() == null ? null :
-            new File(getIsoPrefix(getStoragePoolId(), getVdsId()), getParameters().getVirtioIsoName()).getPath();
+        if (getParameters().getVirtioIsoName() == null) {
+            return null;
+        }
+        if (getIsoStorageDomainType() == StorageDomainType.ISO) {
+            return new File(getIsoPrefix(getStoragePoolId(), getVdsId()), getParameters().getVirtioIsoName()).getPath();
+        }
+        DiskImage isoImage = imagesHandler.getSnapshotLeaf(new Guid(getParameters().getVirtioIsoName()));
+        PrepareImageReturn preparedImage =
+                (PrepareImageReturn) imagesHandler
+                        .prepareImage(getStoragePoolId(),
+                                getParameters().getVirtioIsoStorageDomainId(),
+                                isoImage.getId(),
+                                isoImage.getImageId(),
+                                getVdsId())
+                        .getReturnValue();
+        return preparedImage.getImagePath();
+    }
+
+    private void teardownVirtioIso() {
+        if (getParameters().getVirtioIsoName() == null || getIsoStorageDomainType() == StorageDomainType.ISO) {
+            return;
+        }
+        DiskImage isoImage = imagesHandler.getSnapshotLeaf(new Guid(getParameters().getVirtioIsoName()));
+        imagesHandler.teardownImage(getStoragePoolId(),
+                getParameters().getVirtioIsoStorageDomainId(),
+                isoImage.getId(),
+                isoImage.getImageId(),
+                getVdsId());
     }
 
     ////////////////////
@@ -149,12 +189,14 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
             setSucceeded(true);
         } finally {
             deleteV2VJob();
+            teardownVirtioIso();
         }
     }
 
     protected void endSuccessfully() {
         getVdsManager().removeV2VJobInfoForVm(getVmId());
         getVmManager().setConvertProxyHostId(null);
+        teardownVirtioIso();
         setSucceeded(true);
     }
 
