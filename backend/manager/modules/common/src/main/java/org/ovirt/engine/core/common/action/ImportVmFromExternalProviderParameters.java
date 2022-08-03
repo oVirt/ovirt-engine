@@ -20,6 +20,7 @@ public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
     private String password;
     private Guid proxyHostId;
     private ArrayList<Guid> disks;
+    private Guid virtioIsoStorageDomainId;
     private String virtioIsoName;
     private String externalName;
     private Phase importPhase = Phase.CREATE_DISKS;
@@ -70,6 +71,14 @@ public class ImportVmFromExternalProviderParameters extends ImportVmParameters {
 
     public void setDisks(ArrayList<Guid> disks) {
         this.disks = disks;
+    }
+
+    public Guid getVirtioIsoStorageDomainId() {
+        return virtioIsoStorageDomainId;
+    }
+
+    public void setVirtioIsoStorageDomainId(Guid virtioIsoStorageDomainId) {
+        this.virtioIsoStorageDomainId = virtioIsoStorageDomainId;
     }
 
     public String getVirtioIsoName() {

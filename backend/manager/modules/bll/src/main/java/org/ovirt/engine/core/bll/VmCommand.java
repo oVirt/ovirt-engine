@@ -100,7 +100,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     @Inject
     private SnapshotDao snapshotDao;
     @Inject
-    private StorageDomainDao storageDomainDao;
+    protected StorageDomainDao storageDomainDao;
     @Inject
     private DiskDao diskDao;
     @Inject
