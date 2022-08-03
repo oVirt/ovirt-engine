@@ -14,9 +14,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class DiskStatisticalQuery extends AbstractStatisticalQuery<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
 
     static final Statistic DATA_READ  = create("data.current.read",  "Read data rate",  GAUGE, BYTES_PER_SECOND, DECIMAL);
-    static final Statistic DATA_READ_OPS  = create("data.current.read_ops",  "Read data ops",  GAUGE, StatisticUnit.SECONDS, DECIMAL);
+    static final Statistic DATA_READ_OPS  = create("data.current.read_ops",  "Read data ops",  COUNTER, StatisticUnit.NONE, DECIMAL);
     static final Statistic DATA_WRITE = create("data.current.write", "Write data rate", GAUGE, BYTES_PER_SECOND, DECIMAL);
-    static final Statistic DATA_WRITE_OPS = create("data.current.write_ops", "Write data ops", GAUGE, StatisticUnit.SECONDS, DECIMAL);
+    static final Statistic DATA_WRITE_OPS = create("data.current.write_ops", "Write data ops", COUNTER, StatisticUnit.NONE, DECIMAL);
     static final Statistic READ_LATENCY = create("disk.read.latency", "Read latency", GAUGE, StatisticUnit.SECONDS, DECIMAL);
     static final Statistic WRITE_LATENCY = create("disk.write.latency", "Write latency", GAUGE, StatisticUnit.SECONDS, DECIMAL);
     static final Statistic FLUSH_LATENCY = create("disk.flush.latency", "Flush latency", GAUGE, StatisticUnit.SECONDS, DECIMAL);
