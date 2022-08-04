@@ -1,7 +1,7 @@
 
 
 /* ----------------------------------------------------------------
- Stored procedures for database operations on Gluster Volume Snapshot
+ Stored FUNCTIONs for database operations on Gluster Volume Snapshot
  related tables:
       - gluster_volume_snapshot_schedules
 ----------------------------------------------------------------*/
@@ -18,7 +18,7 @@ CREATE OR REPLACE FUNCTION InsertGlusterVolumeSnapshotSchedule (
     v_days VARCHAR(256),
     v_end_by TIMESTAMP WITH TIME ZONE
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO gluster_volume_snapshot_schedules (
         volume_id,
@@ -50,22 +50,22 @@ BEGIN
     UPDATE gluster_volumes
     SET snapshot_scheduled = true
     WHERE id = v_volume_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterVolumeSnapshotScheduleByVolumeId (v_volume_id UUID)
-RETURNS SETOF gluster_volume_snapshot_schedules_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_volume_snapshot_schedules_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM gluster_volume_snapshot_schedules_view
     WHERE volume_id = v_volume_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterVolumeSnapshotScheduleByVolumeId (v_volume_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM gluster_volume_snapshot_schedules
@@ -74,7 +74,7 @@ BEGIN
     UPDATE gluster_volumes
     SET snapshot_scheduled = false
     WHERE id = v_volume_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterVolumeSnapshotScheduleByVolumeId (
@@ -90,7 +90,7 @@ CREATE OR REPLACE FUNCTION UpdateGlusterVolumeSnapshotScheduleByVolumeId (
     v_days VARCHAR(256),
     v_end_by TIMESTAMP WITH TIME ZONE
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_volume_snapshot_schedules
     SET job_id = v_job_id,
@@ -109,7 +109,7 @@ BEGIN
     UPDATE gluster_volumes
     SET snapshot_scheduled = true
     WHERE id = v_volume_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

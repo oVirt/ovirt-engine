@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION InsertNumaNode (
     v_hugepages TEXT,
     v_numa_tune_mode VARCHAR(20)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     BEGIN
         INSERT INTO numa_node (
@@ -60,7 +60,7 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateNumaNode (
@@ -72,7 +72,7 @@ CREATE OR REPLACE FUNCTION UpdateNumaNode (
     v_hugepages TEXT,
     v_numa_tune_mode VARCHAR(20)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     BEGIN
         UPDATE numa_node
@@ -86,7 +86,7 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateNumaNodeStatistics (
@@ -99,7 +99,7 @@ CREATE OR REPLACE FUNCTION UpdateNumaNodeStatistics (
     v_usage_cpu_percent INT,
     v_hugepages TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     BEGIN
         UPDATE numa_node
@@ -114,11 +114,11 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteNumaNode (v_numa_node_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     BEGIN
         DELETE
@@ -127,11 +127,11 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteNumaNodeByVmId (v_vm_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     BEGIN
         DELETE
@@ -140,11 +140,11 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNumaNodeByVdsId (v_vds_id UUID)
-RETURNS SETOF numa_node_cpus_view STABLE AS $PROCEDURE$
+RETURNS SETOF numa_node_cpus_view STABLE AS $FUNCTION$
 BEGIN
     BEGIN
         RETURN QUERY
@@ -156,11 +156,11 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNumaNodeByVmId (v_vm_id UUID)
-RETURNS SETOF numa_node_cpus_view STABLE AS $PROCEDURE$
+RETURNS SETOF numa_node_cpus_view STABLE AS $FUNCTION$
 BEGIN
     BEGIN
         RETURN QUERY
@@ -172,7 +172,7 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
@@ -183,7 +183,7 @@ CREATE OR REPLACE FUNCTION InsertNumaNodeCpu (
     v_numa_node_id UUID,
     v_cpu_core_id INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     BEGIN
         INSERT INTO numa_node_cpu_map (
@@ -199,11 +199,11 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteNumaNodeCpuByNumaNodeId (v_numa_node_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     BEGIN
         DELETE
@@ -212,11 +212,11 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromNumaNodeCpuMap ()
-RETURNS SETOF numa_node_cpu_map STABLE AS $PROCEDURE$
+RETURNS SETOF numa_node_cpu_map STABLE AS $FUNCTION$
 BEGIN
     BEGIN
         RETURN QUERY
@@ -226,7 +226,7 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
@@ -237,7 +237,7 @@ CREATE OR REPLACE FUNCTION InsertNumaNodeMap (
     v_vm_numa_node_id UUID,
     v_vds_numa_node_index SMALLINT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     BEGIN
         INSERT INTO vm_vds_numa_node_map (
@@ -253,11 +253,11 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteNumaNodeMapByVmNumaNodeId (v_vm_numa_node_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     BEGIN
         DELETE
@@ -266,7 +266,7 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
@@ -274,7 +274,7 @@ LANGUAGE plpgsql;
 --
 
 CREATE OR REPLACE FUNCTION GetAllAssignedNumaNodeInfomation ()
-RETURNS SETOF numa_node_assignment_view STABLE AS $PROCEDURE$
+RETURNS SETOF numa_node_assignment_view STABLE AS $FUNCTION$
 BEGIN
     BEGIN
         RETURN QUERY
@@ -284,14 +284,14 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
 -- [numa_node_with_cluster_view] View
 --
 CREATE OR REPLACE FUNCTION GetVmNumaNodeByCluster (v_cluster_id UUID)
-RETURNS SETOF numa_node_with_cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF numa_node_with_cluster_view STABLE AS $FUNCTION$
 BEGIN
     BEGIN
         RETURN QUERY
@@ -302,7 +302,7 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

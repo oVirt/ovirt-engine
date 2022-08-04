@@ -27,7 +27,7 @@ CREATE OR REPLACE FUNCTION Insertnetwork (
     v_dns_resolver_configuration_id UUID,
     v_port_isolation BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO network (
         addr,
@@ -75,7 +75,7 @@ BEGIN
         v_dns_resolver_configuration_id,
         v_port_isolation
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatenetwork (
@@ -103,7 +103,7 @@ CREATE OR REPLACE FUNCTION Updatenetwork (
     )
 RETURNS VOID
     --The [network] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE network
     SET addr = v_addr,
@@ -127,11 +127,11 @@ BEGIN
         dns_resolver_configuration_id = v_dns_resolver_configuration_id,
         port_isolation = v_port_isolation
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deletenetwork (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -149,14 +149,14 @@ BEGIN
 
     -- Delete the network's permissions
     PERFORM DeletePermissionsByEntityId(v_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromnetwork (
     v_user_id uuid,
     v_is_filtered boolean
     )
-RETURNS SETOF network STABLE AS $PROCEDURE$
+RETURNS SETOF network STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -169,7 +169,7 @@ BEGIN
             WHERE user_id = v_user_id
                 AND entity_id = network.id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetnetworkByid (
@@ -177,7 +177,7 @@ CREATE OR REPLACE FUNCTION GetnetworkByid (
     v_user_id uuid,
     v_is_filtered boolean
     )
-RETURNS SETOF network STABLE AS $PROCEDURE$
+RETURNS SETOF network STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -193,14 +193,14 @@ BEGIN
                     AND entity_id = v_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNetworkByNameAndDataCenter (
     v_name VARCHAR(256),
     v_storage_pool_id UUID
     )
-RETURNS SETOF network STABLE AS $PROCEDURE$
+RETURNS SETOF network STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -208,14 +208,14 @@ BEGIN
     FROM network
     WHERE network.name = v_name
         AND network.storage_pool_id = v_storage_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNetworkByNameAndCluster (
     v_name VARCHAR(256),
     v_cluster_id UUID
     )
-RETURNS SETOF network STABLE AS $PROCEDURE$
+RETURNS SETOF network STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -228,25 +228,25 @@ BEGIN
             WHERE network.id = network_cluster.network_id
                 AND network_cluster.cluster_id = v_cluster_id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllNetworksByProviderPhysicalNetworkId (v_network_id UUID)
-RETURNS SETOF network STABLE AS $PROCEDURE$
+RETURNS SETOF network STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT network.*
     FROM network
     WHERE provider_physical_network_id = v_network_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNetworkByVdsmNameAndDataCenterId (
     v_vdsm_name      VARCHAR(15),
     v_data_center_id UUID
     )
-RETURNS SETOF network STABLE AS $PROCEDURE$
+RETURNS SETOF network STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -254,11 +254,11 @@ BEGIN
     FROM network
     WHERE vdsm_name = v_vdsm_name
           AND storage_pool_id = v_data_center_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetManagementNetworkByCluster (v_cluster_id UUID)
-RETURNS SETOF network STABLE AS $PROCEDURE$
+RETURNS SETOF network STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -270,7 +270,7 @@ BEGIN
             WHERE network_cluster.cluster_id = v_cluster_id
                 AND network_cluster.management
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllNetworkByStoragePoolId (
@@ -278,7 +278,7 @@ CREATE OR REPLACE FUNCTION GetAllNetworkByStoragePoolId (
     v_user_id uuid,
     v_is_filtered boolean
     )
-RETURNS SETOF network STABLE AS $PROCEDURE$
+RETURNS SETOF network STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -294,7 +294,7 @@ BEGIN
                     AND entity_id = network.id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS networkViewClusterType CASCADE;
@@ -336,7 +336,7 @@ CREATE OR REPLACE FUNCTION GetAllNetworkByClusterId (
     v_user_id uuid,
     v_is_filtered boolean
     )
-RETURNS SETOF networkViewClusterType STABLE AS $PROCEDURE$
+RETURNS SETOF networkViewClusterType STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -384,44 +384,44 @@ BEGIN
                 )
             )
     ORDER BY network.name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllNetworksByQosId (v_id UUID)
-RETURNS SETOF network STABLE AS $PROCEDURE$
+RETURNS SETOF network STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network
     WHERE qos_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllNetworksByNetworkProviderId (v_id UUID)
-RETURNS SETOF network STABLE AS $PROCEDURE$
+RETURNS SETOF network STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network
     WHERE provider_network_provider_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllNetworkViewsByNetworkProviderId (v_id UUID)
-RETURNS SETOF network_view STABLE AS $PROCEDURE$
+RETURNS SETOF network_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network_view
     WHERE provider_network_provider_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllNetworkLabelsByDataCenterId (v_id UUID)
-RETURNS SETOF TEXT STABLE AS $PROCEDURE$
+RETURNS SETOF TEXT STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -429,11 +429,11 @@ BEGIN
     FROM network
     WHERE network.storage_pool_id = v_id
         AND label IS NOT NULL;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetRequiredNetworksByDataCenterId (v_data_center_id UUID)
-RETURNS SETOF network STABLE AS $PROCEDURE$
+RETURNS SETOF network STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -443,10 +443,10 @@ BEGIN
         ON network.id = network_cluster.network_id
     WHERE network_cluster.required
         AND network.storage_pool_id = v_data_center_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
---The GetByFK stored procedure cannot be created because the [network] table doesn't have at least one foreign key column or the foreign keys are also primary keys.
+--The GetByFK stored FUNCTION cannot be created because the [network] table doesn't have at least one foreign key column or the foreign keys are also primary keys.
 ----------------------------------------------------------------
 -- [vds_interface] Table
 --
@@ -481,7 +481,7 @@ CREATE OR REPLACE FUNCTION Insertvds_interface (
     v_ad_aggregator_id INT,
     v_bond_active_slave VARCHAR(50)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vds_interface (
         addr,
@@ -545,7 +545,7 @@ BEGIN
         v_ad_aggregator_id,
         v_bond_active_slave
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatevds_interface (
@@ -581,7 +581,7 @@ CREATE OR REPLACE FUNCTION Updatevds_interface (
     )
 RETURNS VOID
     --The [vds_interface] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE vds_interface
     SET addr = v_addr,
@@ -614,25 +614,25 @@ BEGIN
         ad_aggregator_id = v_ad_aggregator_id,
         bond_active_slave = v_bond_active_slave
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deletevds_interface (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vds_interface
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Clear_network_from_nics (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vds_interface
     SET network_name = NULL
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS vds_interface_view_qos_rs CASCADE;
@@ -693,7 +693,7 @@ CREATE OR REPLACE FUNCTION GetInterfaceViewWithQosByVdsId (
     v_user_id UUID,
     v_is_filtered boolean
     )
-RETURNS SETOF vds_interface_view_qos_rs STABLE AS $PROCEDURE$
+RETURNS SETOF vds_interface_view_qos_rs STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -768,7 +768,7 @@ BEGIN
         ) s2
         ON s1.id = s2.id
     ;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS host_networks_by_cluster_rs CASCADE;
@@ -778,7 +778,7 @@ CREATE TYPE host_networks_by_cluster_rs AS (
         );
 
 CREATE OR REPLACE FUNCTION GetHostNetworksByCluster (v_cluster_id UUID)
-RETURNS SETOF host_networks_by_cluster_rs STABLE AS $PROCEDURE$
+RETURNS SETOF host_networks_by_cluster_rs STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -788,14 +788,14 @@ BEGIN
     INNER JOIN vds_interface
         ON vds_interface.vds_id = vds_static.vds_id
             AND vds_static.cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getinterface_viewByAddr (
     v_cluster_id UUID,
     v_addr VARCHAR(50)
     )
-RETURNS SETOF vds_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vds_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -806,7 +806,7 @@ BEGIN
     WHERE (vds_interface_view.addr = v_addr
         OR vds_interface_view.ipv6_address = v_addr)
         AND vds_static.cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVdsManagedInterfaceByVdsId (
@@ -814,7 +814,7 @@ CREATE OR REPLACE FUNCTION GetVdsManagedInterfaceByVdsId (
     v_user_id UUID,
     v_is_filtered boolean
     )
-RETURNS SETOF vds_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vds_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -832,11 +832,11 @@ BEGIN
                     AND entity_id = v_vds_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVdsInterfacesByNetworkId (v_network_id UUID)
-RETURNS SETOF vds_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vds_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -850,25 +850,25 @@ BEGIN
         ON network.id = network_cluster.network_id
             AND network.name = vds_interface_view.network_name
     WHERE network.id = v_network_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVdsInterfaceById (v_vds_interface_id UUID)
-RETURNS SETOF vds_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vds_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vds_interface_view
     WHERE id = v_vds_interface_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVdsInterfaceByName (
     v_host_id UUID,
     v_name VARCHAR(50)
     )
-RETURNS SETOF vds_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vds_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -876,13 +876,13 @@ BEGIN
     FROM vds_interface_view
     WHERE name = v_name
         AND vds_id = v_host_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetInterfacesWithQosByClusterId (
     v_cluster_id UUID
     )
-RETURNS SETOF vds_interface_view_qos_rs STABLE AS $PROCEDURE$
+RETURNS SETOF vds_interface_view_qos_rs STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -950,11 +950,11 @@ BEGIN
         ) s2
         ON s1.id = s2.id
     ;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetInterfacesByDataCenterId (v_data_center_id UUID)
-RETURNS SETOF vds_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vds_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -965,7 +965,7 @@ BEGIN
     INNER JOIN cluster
         ON vds_static.cluster_id = cluster.cluster_id
     WHERE cluster.storage_pool_id = v_data_center_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
@@ -982,7 +982,7 @@ CREATE OR REPLACE FUNCTION InsertVmInterface (
     v_linked BOOLEAN,
     v_synced BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_interface (
         id,
@@ -1006,7 +1006,7 @@ BEGIN
         v_linked,
         v_synced
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmInterface (
@@ -1020,7 +1020,7 @@ CREATE OR REPLACE FUNCTION UpdateVmInterface (
     v_linked BOOLEAN,
     v_synced BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_interface
     SET mac_addr = v_mac_addr,
@@ -1033,11 +1033,11 @@ BEGIN
         linked = v_linked,
         synced = v_synced
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVmInterface (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -1054,32 +1054,32 @@ BEGIN
     DELETE
     FROM vm_interface
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmInterfaceByVmInterfaceId (v_id UUID)
-RETURNS SETOF vm_interface STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_interface
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromVmInterfaces ()
-RETURNS SETOF vm_interface STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_interface;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetActiveVmInterfacesByNetworkId (v_network_id UUID)
-RETURNS SETOF vm_interface STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1088,44 +1088,44 @@ BEGIN
     INNER JOIN vnic_profiles
         ON vm_interface.vnic_profile_id = vnic_profiles.id
     WHERE vnic_profiles.network_id = v_network_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetActiveVmInterfacesByProfileId (v_profile_id UUID)
-RETURNS SETOF vm_interface STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_interface.*
     FROM vm_interfaces_plugged_on_vm_not_down_view as vm_interface
     WHERE vm_interface.vnic_profile_id = v_profile_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmInterfacesByVmId (v_vm_id UUID)
-RETURNS SETOF vm_interface STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_interface
     WHERE vm_guid = v_vm_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmInterfaceByTemplateId (v_template_id UUID)
-RETURNS SETOF vm_interface STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_interface
     WHERE vm_guid = v_template_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmInterfacesByNetworkId (v_network_id UUID)
-RETURNS SETOF vm_interface STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1137,11 +1137,11 @@ BEGIN
         ON vm_interface.vm_guid = vm_static.vm_guid
     WHERE vnic_profiles.network_id = v_network_id
         AND vm_static.entity_type = 'VM';
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmTemplateInterfacesByNetworkId (v_network_id UUID)
-RETURNS SETOF vm_interface STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1153,11 +1153,11 @@ BEGIN
         ON vm_interface.vnic_profile_id = vnic_profiles.id
     WHERE vnic_profiles.network_id = v_network_id
         AND vm_static.entity_type = 'TEMPLATE';
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetMacsByDataCenterId (v_data_center_id UUID)
-RETURNS SETOF VARCHAR STABLE AS $PROCEDURE$
+RETURNS SETOF VARCHAR STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1171,11 +1171,11 @@ BEGIN
             WHERE cluster.storage_pool_id = v_data_center_id
                 AND vm_static.vm_guid = vm_interface.vm_guid
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetMacsByClusterId (v_cluster_id UUID)
-RETURNS SETOF VARCHAR STABLE AS $PROCEDURE$
+RETURNS SETOF VARCHAR STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1188,35 +1188,35 @@ BEGIN
               AND vm_static.vm_guid = vm_interface.vm_guid
               AND vm_interface.mac_addr IS NOT NULL
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
 -- VM Interface View
 ----------------------------------------------------------------
 CREATE OR REPLACE FUNCTION GetAllFromVmNetworkInterfaceViews ()
-RETURNS SETOF vm_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_interface_view;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmNetworkInterfaceViewByVmNetworkInterfaceViewId (v_id UUID)
-RETURNS SETOF vm_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_interface_view
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetPluggedVmInterfacesByMac (v_mac_address VARCHAR(20))
-RETURNS SETOF vm_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1224,7 +1224,7 @@ BEGIN
     FROM vm_interface_view
     WHERE mac_addr = v_mac_address
         AND is_plugged = true;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmNetworkInterfaceViewByVmId (
@@ -1232,7 +1232,7 @@ CREATE OR REPLACE FUNCTION GetVmNetworkInterfaceViewByVmId (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF vm_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1248,18 +1248,18 @@ BEGIN
                     AND entity_id = v_vm_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmNetworkInterfaceToMonitorByVmId (v_vm_id UUID)
-RETURNS SETOF vm_interface_monitoring_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface_monitoring_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_interface_monitoring_view
     WHERE vm_guid = v_vm_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmNetworkInterfaceViewByTemplateId (
@@ -1267,7 +1267,7 @@ CREATE OR REPLACE FUNCTION GetVmNetworkInterfaceViewByTemplateId (
     v_user_id UUID,
     v_is_filtered boolean
     )
-RETURNS SETOF vm_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1283,11 +1283,11 @@ BEGIN
                     AND entity_id = v_template_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmInterfaceViewsByNetworkId (v_network_id UUID)
-RETURNS SETOF vm_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1297,11 +1297,11 @@ BEGIN
         ON vnic_profiles.id = vm_interface_view.vnic_profile_id
     WHERE vnic_profiles.network_id = v_network_id
         AND vm_interface_view.vm_entity_type = 'VM';
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmTemplateInterfaceViewsByNetworkId (v_network_id UUID)
-RETURNS SETOF vm_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1311,21 +1311,21 @@ BEGIN
         ON vnic_profiles.id = vm_interface_view.vnic_profile_id
     WHERE vnic_profiles.network_id = v_network_id
         AND vm_interface_view.vm_entity_type = 'TEMPLATE';
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
 -- [vm_interface_statistics] Table
 --
 CREATE OR REPLACE FUNCTION Getvm_interface_statisticsById (v_id UUID)
-RETURNS SETOF vm_interface_statistics STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface_statistics STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_interface_statistics
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Insertvm_interface_statistics (
@@ -1342,7 +1342,7 @@ CREATE OR REPLACE FUNCTION Insertvm_interface_statistics (
     v_sample_time FLOAT,
     v_vm_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_interface_statistics (
         id,
@@ -1372,7 +1372,7 @@ BEGIN
         v_iface_status,
         v_sample_time
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatevm_interface_statistics (
@@ -1391,7 +1391,7 @@ CREATE OR REPLACE FUNCTION Updatevm_interface_statistics (
     )
 RETURNS VOID
     --The [vm_interface_statistics] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE vm_interface_statistics
     SET rx_drop = v_rx_drop,
@@ -1407,11 +1407,11 @@ BEGIN
         sample_time = v_sample_time,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deletevm_interface_statistics (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -1428,7 +1428,7 @@ BEGIN
     DELETE
     FROM vm_interface_statistics
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
@@ -1439,7 +1439,7 @@ CREATE OR REPLACE FUNCTION GetVmGuestAgentInterfacesByVmId (
     v_user_id UUID,
     v_filtered BOOLEAN
     )
-RETURNS SETOF vm_guest_agent_interfaces STABLE AS $PROCEDURE$
+RETURNS SETOF vm_guest_agent_interfaces STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1455,16 +1455,16 @@ BEGIN
                     AND entity_id = v_vm_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVmGuestAgentInterfacesByVmIds (v_vm_ids UUID[])
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_guest_agent_interfaces
     WHERE vm_id = ANY(v_vm_ids);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertVmGuestAgentInterface (
@@ -1474,7 +1474,7 @@ CREATE OR REPLACE FUNCTION InsertVmGuestAgentInterface (
     v_ipv4_addresses TEXT,
     v_ipv6_addresses TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_guest_agent_interfaces (
         vm_id,
@@ -1490,7 +1490,7 @@ BEGIN
         v_ipv4_addresses,
         v_ipv6_addresses
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
@@ -1510,7 +1510,7 @@ CREATE OR REPLACE FUNCTION Insertvds_interface_statistics (
     v_sample_time FLOAT,
     v_vds_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vds_interface_statistics (
         id,
@@ -1540,7 +1540,7 @@ BEGIN
         v_iface_status,
         v_sample_time
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatevds_interface_statistics (
@@ -1559,7 +1559,7 @@ CREATE OR REPLACE FUNCTION Updatevds_interface_statistics (
     )
 RETURNS VOID
     --The [vds_interface_statistics] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE vds_interface_statistics
     SET rx_drop = v_rx_drop,
@@ -1575,11 +1575,11 @@ BEGIN
         sample_time = v_sample_time,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deletevds_interface_statistics (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -1596,7 +1596,7 @@ BEGIN
     DELETE
     FROM vds_interface_statistics
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
@@ -1613,7 +1613,7 @@ CREATE OR REPLACE FUNCTION Insertnetwork_cluster (
     v_is_gluster BOOLEAN,
     v_default_route BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO network_cluster (
         cluster_id,
@@ -1637,7 +1637,7 @@ BEGIN
         v_is_gluster,
         v_default_route
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatenetwork_cluster (
@@ -1651,7 +1651,7 @@ CREATE OR REPLACE FUNCTION Updatenetwork_cluster (
     v_is_gluster BOOLEAN,
     v_default_route BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE network_cluster
     SET status = v_status,
@@ -1663,7 +1663,7 @@ BEGIN
         default_route = v_default_route
     WHERE cluster_id = v_cluster_id
         AND network_id = v_network_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatenetwork_cluster_status (
@@ -1671,51 +1671,51 @@ CREATE OR REPLACE FUNCTION Updatenetwork_cluster_status (
     v_network_id UUID,
     v_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE network_cluster
     SET status = v_status
     WHERE cluster_id = v_cluster_id
         AND network_id = v_network_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deletenetwork_cluster (
     v_cluster_id UUID,
     v_network_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM network_cluster
     WHERE cluster_id = v_cluster_id
         AND network_id = v_network_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromnetwork_cluster ()
-RETURNS SETOF network_cluster STABLE AS $PROCEDURE$
+RETURNS SETOF network_cluster STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network_cluster;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromnetwork_clusterByClusterId (v_cluster_id UUID)
-RETURNS SETOF network_cluster STABLE AS $PROCEDURE$
+RETURNS SETOF network_cluster STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network_cluster
     WHERE cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllManagementNetworksByDataCenterId (v_data_center_id UUID)
-RETURNS SETOF network STABLE AS $PROCEDURE$
+RETURNS SETOF network STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1727,25 +1727,25 @@ BEGIN
         ON network_cluster.cluster_id = cluster.cluster_id
     WHERE cluster.storage_pool_id = v_data_center_id
         AND network_cluster.management;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromnetwork_clusterByNetworkId (v_network_id UUID)
-RETURNS SETOF network_cluster STABLE AS $PROCEDURE$
+RETURNS SETOF network_cluster STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network_cluster
     WHERE network_id = v_network_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getnetwork_clusterBycluster_idAndBynetwork_id (
     v_cluster_id UUID,
     v_network_id UUID
     )
-RETURNS SETOF network_cluster STABLE AS $PROCEDURE$
+RETURNS SETOF network_cluster STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1753,14 +1753,14 @@ BEGIN
     FROM network_cluster
     WHERE cluster_id = v_cluster_id
         AND network_id = v_network_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetvmStaticByGroupIdAndNetwork (
     v_groupId UUID,
     v_networkName VARCHAR(50)
     )
-RETURNS SETOF vm_static_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_static_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1770,14 +1770,14 @@ BEGIN
         ON vm_static_view.vm_guid = vm_interface_view.vm_guid
             AND network_name = v_networkName
             AND vm_static_view.cluster_id = v_groupId;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION set_network_exclusively_as_display (
     v_cluster_id UUID,
     v_network_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE network_cluster
     SET is_display = true
@@ -1791,14 +1791,14 @@ BEGIN
             AND network_id != v_network_id;
     END IF;
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION set_network_exclusively_as_migration (
     v_cluster_id UUID,
     v_network_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE network_cluster
     SET migration = true
@@ -1812,14 +1812,14 @@ BEGIN
             AND network_id != v_network_id;
     END IF;
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION set_network_exclusively_as_default_role_network (
     v_cluster_id UUID,
     v_network_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE network_cluster
     SET default_route = true
@@ -1833,26 +1833,26 @@ BEGIN
             AND network_id != v_network_id;
     END IF;
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION set_network_exclusively_as_gluster (
     v_cluster_id UUID,
     v_network_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE network_cluster
     SET is_gluster = COALESCE(network_id = v_network_id, false)
     WHERE cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION set_network_exclusively_as_management (
     v_cluster_id UUID,
     v_network_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE network_cluster
     SET management = true
@@ -1866,21 +1866,21 @@ BEGIN
             AND network_id != v_network_id;
     END IF;
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------------
 --  Vnic Profile
 ----------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION GetVnicProfileByVnicProfileId (v_id UUID)
-RETURNS SETOF vnic_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF vnic_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vnic_profiles
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertVnicProfile (
@@ -1896,7 +1896,7 @@ CREATE OR REPLACE FUNCTION InsertVnicProfile (
     v_network_filter_id UUID,
     v_failover_vnic_profile_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vnic_profiles (
         id,
@@ -1924,7 +1924,7 @@ BEGIN
         v_network_filter_id,
         v_failover_vnic_profile_id
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVnicProfile (
@@ -1940,7 +1940,7 @@ CREATE OR REPLACE FUNCTION UpdateVnicProfile (
     v_network_filter_id UUID,
     v_failover_vnic_profile_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vnic_profiles
     SET id = v_id,
@@ -1956,11 +1956,11 @@ BEGIN
         network_filter_id = v_network_filter_id,
         failover_vnic_profile_id = v_failover_vnic_profile_id
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVnicProfile (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -1970,39 +1970,39 @@ BEGIN
 
     -- Delete the vnic profiles permissions
     PERFORM DeletePermissionsByEntityId(v_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromVnicProfiles ()
-RETURNS SETOF vnic_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF vnic_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vnic_profiles;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVnicProfilesByNetworkId (v_network_id UUID)
-RETURNS SETOF vnic_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF vnic_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vnic_profiles
     WHERE network_id = v_network_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVnicProfilesByFailoverVnicProfileId (v_failover_vnic_profile_id UUID)
-RETURNS SETOF vnic_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF vnic_profiles STABLE AS $FUNCTION$
 BEGIN
 RETURN QUERY
 
 SELECT *
 FROM vnic_profiles
 WHERE failover_vnic_profile_id = v_failover_vnic_profile_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------------
@@ -2013,7 +2013,7 @@ CREATE OR REPLACE FUNCTION GetVnicProfileViewByVnicProfileViewId (
     v_user_id uuid,
     v_is_filtered boolean
     )
-RETURNS SETOF vnic_profiles_view STABLE AS $PROCEDURE$
+RETURNS SETOF vnic_profiles_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -2029,14 +2029,14 @@ BEGIN
                     AND entity_id = vnic_profiles_view.id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromVnicProfileViews (
     v_user_id uuid,
     v_is_filtered boolean
     )
-RETURNS SETOF vnic_profiles_view STABLE AS $PROCEDURE$
+RETURNS SETOF vnic_profiles_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -2049,7 +2049,7 @@ BEGIN
             WHERE user_id = v_user_id
                 AND entity_id = vnic_profiles_view.id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVnicProfileViewsByNetworkId (
@@ -2057,7 +2057,7 @@ CREATE OR REPLACE FUNCTION GetVnicProfileViewsByNetworkId (
     v_user_id uuid,
     v_is_filtered boolean
     )
-RETURNS SETOF vnic_profiles_view STABLE AS $PROCEDURE$
+RETURNS SETOF vnic_profiles_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -2073,7 +2073,7 @@ BEGIN
                     AND entity_id = vnic_profiles_view.id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVnicProfileViewsByDataCenterId (
@@ -2081,7 +2081,7 @@ CREATE OR REPLACE FUNCTION GetVnicProfileViewsByDataCenterId (
     v_user_id uuid,
     v_is_filtered boolean
     )
-RETURNS SETOF vnic_profiles_view STABLE AS $PROCEDURE$
+RETURNS SETOF vnic_profiles_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -2097,7 +2097,7 @@ BEGIN
                     AND entity_id = vnic_profiles_view.id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVnicProfileViewsByClusterId (
@@ -2105,7 +2105,7 @@ CREATE OR REPLACE FUNCTION GetVnicProfileViewsByClusterId (
     v_user_id uuid,
     v_is_filtered boolean
     )
-RETURNS SETOF vnic_profiles_view STABLE AS $PROCEDURE$
+RETURNS SETOF vnic_profiles_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -2126,25 +2126,25 @@ BEGIN
                 AND entity_id = vnic_profiles_view.id
       )
     );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVnicProfileViewsByNetworkQosId (v_network_qos_id UUID)
-RETURNS SETOF vnic_profiles_view STABLE AS $PROCEDURE$
+RETURNS SETOF vnic_profiles_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vnic_profiles_view
     WHERE network_qos_id = v_network_qos_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetIscsiIfacesByHostIdAndStorageTargetId (
     v_host_id UUID,
     v_target_id VARCHAR(50)
     )
-RETURNS SETOF vds_interface_view STABLE AS $PROCEDURE$
+RETURNS SETOF vds_interface_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -2161,18 +2161,18 @@ BEGIN
         AND network.name = vds_interface_view.network_name
         AND network_cluster.cluster_id = vds_interface_view.cluster_id
         AND vds_interface_view.vds_id = v_host_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION getActiveMigrationNetworkInterfaceForHost (v_host_id UUID)
-RETURNS SETOF active_migration_network_interfaces STABLE AS $PROCEDURE$
+RETURNS SETOF active_migration_network_interfaces STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM active_migration_network_interfaces
     WHERE vds_id = v_host_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------------
@@ -2183,7 +2183,7 @@ CREATE OR REPLACE FUNCTION InsertHostNicVfsConfig (
     v_nic_id UUID,
     v_is_all_networks_allowed BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO host_nic_vfs_config (
         id,
@@ -2195,7 +2195,7 @@ BEGIN
         v_nic_id,
         v_is_all_networks_allowed
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateHostNicVfsConfig (
@@ -2203,7 +2203,7 @@ CREATE OR REPLACE FUNCTION UpdateHostNicVfsConfig (
     v_nic_id UUID,
     v_is_all_networks_allowed BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE host_nic_vfs_config
     SET id = v_id,
@@ -2211,52 +2211,52 @@ BEGIN
         is_all_networks_allowed = v_is_all_networks_allowed,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteHostNicVfsConfig (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM host_nic_vfs_config
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetHostNicVfsConfigById (v_id UUID)
-RETURNS SETOF host_nic_vfs_config STABLE AS $PROCEDURE$
+RETURNS SETOF host_nic_vfs_config STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM host_nic_vfs_config
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVfsConfigByNicId (v_nic_id UUID)
-RETURNS SETOF host_nic_vfs_config STABLE AS $PROCEDURE$
+RETURNS SETOF host_nic_vfs_config STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM host_nic_vfs_config
     WHERE nic_id = v_nic_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromHostNicVfsConfigs ()
-RETURNS SETOF host_nic_vfs_config STABLE AS $PROCEDURE$
+RETURNS SETOF host_nic_vfs_config STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM host_nic_vfs_config;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllVfsConfigByHostId (v_host_id UUID)
-RETURNS SETOF host_nic_vfs_config STABLE AS $PROCEDURE$
+RETURNS SETOF host_nic_vfs_config STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -2265,62 +2265,62 @@ BEGIN
     INNER JOIN vds_interface
         ON host_nic_vfs_config.nic_id = vds_interface.id
     WHERE vds_interface.vds_id = v_host_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------------------
 -- DnsResolverConfiguration
 -------------------------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION GetDnsResolverConfigurationByDnsResolverConfigurationId (v_id UUID)
-RETURNS SETOF dns_resolver_configuration STABLE AS $PROCEDURE$
+RETURNS SETOF dns_resolver_configuration STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM dns_resolver_configuration
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromDnsResolverConfigurations ()
-RETURNS SETOF dns_resolver_configuration STABLE AS $PROCEDURE$
+RETURNS SETOF dns_resolver_configuration STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM dns_resolver_configuration;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertDnsResolverConfiguration (
     v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO dns_resolver_configuration (id)
     VALUES (v_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateDnsResolverConfiguration (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE dns_resolver_configuration
     SET id = v_id
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteDnsResolverConfiguration (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM dns_resolver_configuration
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNameServersByDnsResolverConfigurationId (v_dns_resolver_configuration_id UUID)
-RETURNS SETOF name_server STABLE AS $PROCEDURE$
+RETURNS SETOF name_server STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -2328,14 +2328,14 @@ BEGIN
     FROM name_server
     WHERE dns_resolver_configuration_id = v_dns_resolver_configuration_id
     ORDER BY position ASC;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertNameServer (
     v_dns_resolver_configuration_id UUID,
     v_address VARCHAR(45),
     v_position SMALLINT)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO
     name_server(
@@ -2347,21 +2347,21 @@ BEGIN
       v_position,
       v_dns_resolver_configuration_id);
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteNameServersByDnsResolverConfigurationId (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM name_server
     WHERE dns_resolver_configuration_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION DeleteDnsResolverConfigurationByNetworkAttachmentId (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM dns_resolver_configuration
@@ -2372,11 +2372,11 @@ BEGIN
         network_attachments
       WHERE
         id = v_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteDnsResolverConfigurationByNetworkId (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM dns_resolver_configuration
@@ -2387,30 +2387,30 @@ BEGIN
         network
       WHERE
         id = v_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteDnsResolverConfigurationByVdsDynamicId (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM dns_resolver_configuration
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -------------------------------------------------------------------------------------------
 -- Network attachments
 -------------------------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION GetNetworkAttachmentByNetworkAttachmentId (v_id UUID)
-RETURNS SETOF network_attachments STABLE AS $PROCEDURE$
+RETURNS SETOF network_attachments STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network_attachments
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertNetworkAttachment (
@@ -2428,7 +2428,7 @@ CREATE OR REPLACE FUNCTION InsertNetworkAttachment (
     v_custom_properties TEXT,
     v_dns_resolver_configuration_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO network_attachments (
         id,
@@ -2460,7 +2460,7 @@ BEGIN
         v_custom_properties,
         v_dns_resolver_configuration_id
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateNetworkAttachment (
@@ -2478,7 +2478,7 @@ CREATE OR REPLACE FUNCTION UpdateNetworkAttachment (
     v_custom_properties TEXT,
     v_dns_resolver_configuration_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE network_attachments
     SET network_id = v_network_id,
@@ -2495,48 +2495,48 @@ BEGIN
         _update_date = LOCALTIMESTAMP,
         dns_resolver_configuration_id = v_dns_resolver_configuration_id
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteNetworkAttachment (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM network_attachments
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromNetworkAttachments ()
-RETURNS SETOF network_attachments STABLE AS $PROCEDURE$
+RETURNS SETOF network_attachments STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network_attachments;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNetworkAttachmentsByNicId (v_nic_id UUID)
-RETURNS SETOF network_attachments STABLE AS $PROCEDURE$
+RETURNS SETOF network_attachments STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network_attachments
     WHERE nic_id = v_nic_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNetworkAttachmentsByNetworkId (v_network_id UUID)
-RETURNS SETOF network_attachments STABLE AS $PROCEDURE$
+RETURNS SETOF network_attachments STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network_attachments
     WHERE network_id = v_network_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS network_attachments_qos_rs CASCADE;
@@ -2565,7 +2565,7 @@ CREATE TYPE network_attachments_qos_rs AS (
 );
 
 CREATE OR REPLACE FUNCTION GetNetworkAttachmentsWithQosByHostId (v_host_id UUID)
-RETURNS SETOF network_attachments_qos_rs STABLE AS $PROCEDURE$
+RETURNS SETOF network_attachments_qos_rs STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -2608,14 +2608,14 @@ BEGIN
         ) s2
         ON s1.id = s2.id
     ;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNetworkAttachmentWithQosByNicIdAndNetworkId (
     v_nic_id UUID,
     v_network_id UUID
     )
-RETURNS SETOF network_attachments_qos_rs STABLE AS $PROCEDURE$
+RETURNS SETOF network_attachments_qos_rs STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -2654,16 +2654,16 @@ BEGIN
         ) s2
         ON s1.id = s2.id
     ;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION RemoveNetworkAttachmentByNetworkId (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM network_attachments na
     WHERE na.network_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------------
@@ -2673,7 +2673,7 @@ CREATE OR REPLACE FUNCTION InsertVfsConfigNetwork (
     v_vfs_config_id UUID,
     v_network_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vfs_config_networks (
         vfs_config_id,
@@ -2683,40 +2683,40 @@ BEGIN
         v_vfs_config_id,
         v_network_id
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVfsConfigNetwork (
     v_vfs_config_id UUID,
     v_network_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vfs_config_networks
     WHERE vfs_config_id = v_vfs_config_id
         AND network_id = v_network_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteAllVfsConfigNetworks (v_vfs_config_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vfs_config_networks
     WHERE vfs_config_id = v_vfs_config_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNetworksByVfsConfigId (v_vfs_config_id UUID)
-RETURNS SETOF UUID STABLE AS $PROCEDURE$
+RETURNS SETOF UUID STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT network_id
     FROM vfs_config_networks
     WHERE vfs_config_id = v_vfs_config_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------------
@@ -2726,7 +2726,7 @@ CREATE OR REPLACE FUNCTION InsertVfsConfigLabel (
     v_vfs_config_id UUID,
     v_label TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vfs_config_labels (
         vfs_config_id,
@@ -2736,103 +2736,103 @@ BEGIN
         v_vfs_config_id,
         v_label
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVfsConfigLabel (
     v_vfs_config_id UUID,
     v_label TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vfs_config_labels
     WHERE vfs_config_id = v_vfs_config_id
         AND label = v_label;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteAllVfsConfigLabels (v_vfs_config_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vfs_config_labels
     WHERE vfs_config_id = v_vfs_config_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLabelsByVfsConfigId (v_vfs_config_id UUID)
-RETURNS SETOF TEXT STABLE AS $PROCEDURE$
+RETURNS SETOF TEXT STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT label
     FROM vfs_config_labels
     WHERE vfs_config_id = v_vfs_config_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetAllNetworkFilters ()
 RETURNS SETOF network_filter STABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network_filter;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetAllSupportedNetworkFiltersByVersion (v_version VARCHAR(40))
 RETURNS SETOF network_filter STABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network_filter
     WHERE v_version >= version;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNetworkFilterById (v_filter_id UUID)
 RETURNS SETOF network_filter STABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network_filter
     WHERE filter_id = v_filter_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNetworkFilterByName (v_filter_name VARCHAR(50))
 RETURNS SETOF network_filter STABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM network_filter
     WHERE filter_name like v_filter_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetHostProviderBinding (
     v_vds_id UUID,
     v_plugin_type character varying(64)
     )
-RETURNS SETOF character varying(64) STABLE AS $PROCEDURE$
+RETURNS SETOF character varying(64) STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
     SELECT binding_host_id
     FROM provider_binding_host_id
     WHERE vds_id = v_vds_id
         AND plugin_type = v_plugin_type;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -2841,7 +2841,7 @@ CREATE OR REPLACE FUNCTION UpdateHostProviderBinding (
     v_plugin_types character varying(64)[],
     v_provider_binding_host_ids character varying(64)[]
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     PERFORM 1 FROM provider_binding_host_id WHERE vds_id = v_vds_id FOR UPDATE;
     DELETE FROM provider_binding_host_id WHERE vds_id = v_vds_id;
@@ -2851,11 +2851,11 @@ BEGIN
         binding_host_id
         )
     SELECT v_vds_id, unnest(v_plugin_types), unnest(v_provider_binding_host_ids);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmIdsForVnicsOutOfSync (v_ids UUID[])
-RETURNS SETOF UUID STABLE AS $PROCEDURE$
+RETURNS SETOF UUID STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -2863,15 +2863,15 @@ BEGIN
     FROM vm_interface
     WHERE NOT synced
     AND vm_guid = ANY(v_ids);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION SetVmInterfacesSyncedForVm (v_vm_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_interface
     SET synced = true
     WHERE vm_interface.vm_guid = v_vm_id;
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;

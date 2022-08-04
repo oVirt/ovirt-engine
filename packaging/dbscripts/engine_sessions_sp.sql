@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION InsertEngineSession (
     v_group_ids VARCHAR(2048),
     v_role_ids VARCHAR(2048)
     )
-RETURNS INT AS $PROCEDURE$
+RETURNS INT AS $FUNCTION$
 BEGIN
     INSERT INTO engine_sessions (
         engine_session_id,
@@ -35,33 +35,33 @@ BEGIN
         );
 
     v_id := CURRVAL('engine_session_seq');
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetEngineSession (v_id INT)
-RETURNS SETOF engine_sessions STABLE AS $PROCEDURE$
+RETURNS SETOF engine_sessions STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM engine_sessions
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetEngineSessionBySessionId (v_engine_session_id TEXT)
-RETURNS SETOF engine_sessions STABLE AS $PROCEDURE$
+RETURNS SETOF engine_sessions STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM engine_sessions
     WHERE engine_session_id = v_engine_session_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteEngineSession (v_id INT)
-RETURNS INT AS $PROCEDURE$
+RETURNS INT AS $FUNCTION$
 DECLARE deleted_rows INT;
 
 BEGIN
@@ -72,11 +72,11 @@ BEGIN
     GET DIAGNOSTICS deleted_rows = ROW_COUNT;
 
     RETURN deleted_rows;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteAllFromEngineSessions ()
-RETURNS INT AS $PROCEDURE$
+RETURNS INT AS $FUNCTION$
 DECLARE deleted_rows INT;
 
 BEGIN
@@ -86,7 +86,7 @@ BEGIN
     GET DIAGNOSTICS deleted_rows = ROW_COUNT;
 
     RETURN deleted_rows;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

@@ -4,14 +4,14 @@
 --  Cpu Profiles
 ----------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION GetCpuProfileByCpuProfileId (v_id UUID)
-RETURNS SETOF cpu_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF cpu_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM cpu_profiles
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertCpuProfile (
@@ -21,7 +21,7 @@ CREATE OR REPLACE FUNCTION InsertCpuProfile (
     v_qos_id UUID,
     v_description TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO cpu_profiles (
         id,
@@ -37,7 +37,7 @@ BEGIN
         v_qos_id,
         v_description
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateCpuProfile (
@@ -47,7 +47,7 @@ CREATE OR REPLACE FUNCTION UpdateCpuProfile (
     v_qos_id UUID,
     v_description TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE cpu_profiles
     SET id = v_id,
@@ -57,11 +57,11 @@ BEGIN
         description = v_description,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteCpuProfile (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -71,17 +71,17 @@ BEGIN
 
     -- Delete the cpu profiles permissions
     PERFORM DeletePermissionsByEntityId(v_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromCpuProfiles ()
-RETURNS SETOF cpu_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF cpu_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM cpu_profiles;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetCpuProfilesByClusterId (
@@ -90,7 +90,7 @@ CREATE OR REPLACE FUNCTION GetCpuProfilesByClusterId (
     v_is_filtered boolean,
     v_action_group_id INTEGER
     )
-RETURNS SETOF cpu_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF cpu_profiles STABLE AS $FUNCTION$
 BEGIN
     IF v_is_filtered
     THEN
@@ -111,18 +111,18 @@ BEGIN
         WHERE cluster_id = v_cluster_id
         ORDER BY _create_date;
     END IF;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetCpuProfilesByQosId (v_qos_id UUID)
-RETURNS SETOF cpu_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF cpu_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM cpu_profiles
     WHERE qos_id = v_qos_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

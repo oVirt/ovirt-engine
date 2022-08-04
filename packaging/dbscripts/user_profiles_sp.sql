@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION InsertUserProfileProperty (
     v_property_type TEXT,
     v_property_content TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO user_profiles (
         user_id,
@@ -26,7 +26,7 @@ BEGIN
         v_property_type,
         v_property_content::jsonb
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateUserProfileProperty (
@@ -37,7 +37,7 @@ CREATE OR REPLACE FUNCTION UpdateUserProfileProperty (
     v_property_content TEXT,
     v_new_property_id UUID
     )
-RETURNS SETOF user_profiles AS $PROCEDURE$
+RETURNS SETOF user_profiles AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -53,59 +53,59 @@ BEGIN
         property_name = v_property_name AND
         property_type = v_property_type
     RETURNING *;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteUserProfileProperty (v_property_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM user_profiles
     WHERE property_id = v_property_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllPublicSshKeysFromUserProfiles ()
-RETURNS SETOF user_profiles_view STABLE AS $PROCEDURE$
+RETURNS SETOF user_profiles_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT user_profiles_view.*
     FROM user_profiles_view
     WHERE user_profiles_view.property_type = 'SSH_PUBLIC_KEY';
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetUserProfileByUserId (v_user_id UUID)
-RETURNS SETOF user_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF user_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM user_profiles
     WHERE user_id = v_user_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetUserProfileProperty (v_property_id UUID)
-RETURNS SETOF user_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF user_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM user_profiles
     WHERE property_id = v_property_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetUserProfilePropertyByName (v_user_id UUID, v_property_name TEXT)
-RETURNS SETOF user_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF user_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM user_profiles
     WHERE user_id = v_user_id AND property_name = v_property_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 

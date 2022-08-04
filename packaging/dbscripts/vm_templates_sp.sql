@@ -88,7 +88,7 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_parallel_migrations SMALLINT)
 
 RETURNS VOID
-   AS $procedure$
+   AS $FUNCTION$
 DECLARE
 v_template_version_number INTEGER;
 BEGIN
@@ -280,7 +280,7 @@ BEGIN
         v_vmt_guid,
         v_dedicated_vm_for_vds);
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -368,7 +368,7 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       UPDATE vm_static
       SET child_count = v_child_count,
@@ -459,7 +459,7 @@ BEGIN
 
       -- Update connections to dedicated hosts
       PERFORM UpdateDedicatedHostsToVm(v_vmt_guid, v_dedicated_vm_for_vds);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -468,19 +468,19 @@ Create or replace FUNCTION UpdateVmTemplateStatus(
         v_status INTEGER)
 RETURNS VOID
 
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       UPDATE vm_static
       SET    template_status = v_status
       WHERE  vm_guid = v_vmt_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 -- It abandons the base template of id v_base_template_id and makes its direct successor to be the next base template
 CREATE OR REPLACE FUNCTION UpdateVmTemplateShiftBaseTemplate(v_base_template_id UUID)
 RETURNS VOID
-    AS $procedure$
+    AS $FUNCTION$
 BEGIN
     UPDATE vm_static
     SET vmt_guid = (SELECT vm_guid
@@ -494,13 +494,13 @@ BEGIN
     WHERE entity_type = 'TEMPLATE'
         AND vmt_guid = v_base_template_id
         AND vm_guid != vmt_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION DeleteVmTemplates(v_vmt_guid UUID)
 RETURNS VOID
-   AS $procedure$
+   AS $FUNCTION$
    DECLARE
    v_val  UUID;
 BEGIN
@@ -515,7 +515,7 @@ BEGIN
       WHERE vm_guid = v_vmt_guid;
       -- delete Template permissions --
       PERFORM DeletePermissionsByEntityId(v_vmt_guid);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -523,7 +523,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllFromVmTemplates(v_user_id UUID, v_is_filtered boolean, v_entity_type VARCHAR(32)) RETURNS SETOF vm_templates_based_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY
       SELECT vm_templates.*
@@ -534,20 +534,20 @@ BEGIN
               WHERE  user_id = v_user_id
                   AND entity_id = vmt_guid))
       ORDER BY name;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 
 Create or replace FUNCTION GetVmTemplatesWithoutIcon() RETURNS SETOF vm_templates_view STABLE
-AS $procedure$
+AS $FUNCTION$
 BEGIN
 RETURN QUERY
    SELECT vm_template.*
    FROM vm_templates_view AS vm_template
    WHERE small_icon_id IS NULL OR large_icon_id IS NULL;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -555,12 +555,12 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetTemplateCount() RETURNS SETOF BIGINT STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY
       SELECT count (vm_templates.*)
       FROM vm_templates_based_view vm_templates;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -569,13 +569,13 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmTemplatesByIds(v_vm_templates_ids VARCHAR(5000)) RETURNS SETOF vm_templates_based_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY
    SELECT vm_templates.*
    FROM vm_templates_based_view vm_templates
    WHERE vm_templates.vmt_guid IN (SELECT * FROM fnSplitterUuid(v_vm_templates_ids));
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -585,7 +585,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION getAllVmTemplatesRelatedToQuotaId(v_quota_id UUID) RETURNS SETOF vm_templates_based_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY
       SELECT vm_templates.*
@@ -598,12 +598,12 @@ BEGIN
       INNER JOIN images ON images.image_group_id = vd.device_id AND images.active = TRUE
       INNER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
       WHERE image_storage_domain_map.quota_id = v_quota_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmTemplateByVmtGuid(v_vmt_guid UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_based_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY
       SELECT vm_templates.*
@@ -614,12 +614,12 @@ BEGIN
               FROM   user_vm_template_permissions_view
               WHERE  user_id = v_user_id
                   AND entity_id = v_vmt_guid));
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmTemplateByVmtName(v_storage_pool_id UUID, v_vmt_name VARCHAR(255), v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_based_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY
       SELECT vm_templates.*
@@ -632,7 +632,7 @@ BEGIN
               WHERE  user_id = v_user_id
                   AND entity_id = vmt_guid))
       ORDER BY vm_templates.template_version_number DESC;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -641,26 +641,26 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmTemplateByClusterId(v_cluster_id UUID) RETURNS SETOF vm_templates_based_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY
       SELECT vm_templates.*
       FROM vm_templates_based_view vm_templates
       WHERE cluster_id = v_cluster_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 
 Create or replace FUNCTION GetVmTemplatesByStoragePoolId(v_storage_pool_id UUID) RETURNS SETOF vm_templates_based_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY
       SELECT DISTINCT vm_templates.*
       FROM vm_templates_based_view vm_templates
       WHERE vm_templates.storage_pool_id = v_storage_pool_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -668,18 +668,18 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmTemplatesByImageId(v_image_guid UUID) RETURNS SETOF vm_templates_based_with_plug_info STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY
       SELECT *
       FROM vm_templates_based_with_plug_info t
       WHERE t.image_guid = v_image_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmTemplatesByStorageDomainId(v_storage_domain_id UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_based_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY
       SELECT DISTINCT vm_templates.*
@@ -695,13 +695,13 @@ BEGIN
                   FROM   user_vm_template_permissions_view
                   WHERE  user_id = v_user_id
                       AND entity_id = vm_templates.vmt_guid));
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 --This SP returns all templates with permissions to run the given action by user
 Create or replace FUNCTION fn_perms_get_templates_with_permitted_action(v_user_id UUID, v_action_group_id integer) RETURNS SETOF vm_templates_based_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY SELECT vm_templates_based_view.*
       FROM vm_templates_based_view, user_vm_template_permissions_view
@@ -712,12 +712,12 @@ BEGIN
               v_action_group_id,
               vm_templates_based_view.vmt_guid,
               4) IS NOT NULL);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmTemplatesByNetworkId(v_network_id UUID) RETURNS SETOF vm_templates_based_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
    RETURN QUERY SELECT *
    FROM vm_templates_based_view
@@ -729,11 +729,11 @@ BEGIN
       WHERE vnic_profiles.network_id = v_network_id
           AND vm_interface.vm_guid = vm_templates_based_view.vmt_guid
           AND vm_templates_based_view.entity_type = 'TEMPLATE');
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmTemplatesByVnicProfileId(v_vnic_profile_id UUID) RETURNS SETOF vm_templates_based_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
    RETURN QUERY
    SELECT *
@@ -744,12 +744,12 @@ BEGIN
       WHERE vm_interface.vnic_profile_id = v_vnic_profile_id
       AND vm_interface.vm_guid = vm_templates_based_view.vmt_guid
       AND vm_templates_based_view.entity_type = 'TEMPLATE');
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetTemplateVersionsForBaseTemplate(v_base_template_id UUID) RETURNS SETOF vm_templates_based_view STABLE
-AS $procedure$
+AS $FUNCTION$
 BEGIN
    RETURN QUERY
    SELECT *
@@ -757,12 +757,12 @@ BEGIN
    WHERE base_template_id = v_base_template_id
        AND vmt_guid != v_base_template_id
    ORDER BY template_version_number desc;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetTemplateWithLatestVersionInChain(v_template_id UUID) RETURNS SETOF vm_templates_based_view STABLE
-AS $procedure$
+AS $FUNCTION$
 BEGIN
    RETURN QUERY
    SELECT *
@@ -773,12 +773,12 @@ BEGIN
        WHERE vm_guid = v_template_id)
    ORDER BY template_version_number DESC
    LIMIT 1;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllVmTemplatesWithDisksOnOtherStorageDomain(v_storage_domain_id UUID) RETURNS SETOF vm_templates_based_view STABLE
-AS $procedure$
+AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT DISTINCT templates.*
       FROM vm_templates_based_view templates
@@ -794,23 +794,23 @@ RETURN QUERY SELECT DISTINCT templates.*
       INNER JOIN images i ON i.image_group_id = vd.device_id
       INNER JOIN image_storage_domain_map on i.image_guid = image_storage_domain_map.image_id
       WHERE image_storage_domain_map.storage_domain_id != v_storage_domain_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmTemplatesByCpuProfileId(v_cpu_profile_id UUID)
 RETURNS SETOF vm_templates_based_view STABLE
-AS $procedure$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT vm_templates_based_view.*
         FROM vm_templates_based_view
         WHERE cpu_profile_id = v_cpu_profile_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetAllVmTemplatesRelatedToDiskProfile(v_disk_profile_id UUID)
 RETURNS SETOF vm_templates_based_view STABLE
-AS $procedure$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT vm_templates.*
         FROM vm_templates_based_view vm_templates
@@ -819,7 +819,7 @@ BEGIN
             AND images.active = TRUE
         INNER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
         WHERE image_storage_domain_map.disk_profile_id = v_disk_profile_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -827,11 +827,11 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetTemplatesWithLeaseOnStorageDomain(v_storage_domain_id UUID)
 RETURNS SETOF vm_templates_based_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT *
     FROM vm_templates_based_view
     WHERE lease_sd_id = v_storage_domain_id
         AND entity_type = 'TEMPLATE';
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;

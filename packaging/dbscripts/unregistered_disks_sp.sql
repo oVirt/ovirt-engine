@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION InsertUnregisteredDisk (
     v_size bigint
     )
 RETURNS VOID
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     INSERT INTO unregistered_disks (
         disk_id,
@@ -42,7 +42,7 @@ BEGIN
         v_actual_size,
         v_size
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertUnregisteredDisksToVms (
@@ -52,7 +52,7 @@ CREATE OR REPLACE FUNCTION InsertUnregisteredDisksToVms (
     v_storage_domain_id UUID
     )
 RETURNS VOID
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     INSERT INTO unregistered_disks_to_vms (
         disk_id,
@@ -66,7 +66,7 @@ BEGIN
         v_entity_name,
         v_storage_domain_id
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -75,7 +75,7 @@ CREATE OR REPLACE FUNCTION RemoveDiskFromUnregistered (
     v_storage_domain_id UUID
     )
 RETURNS VOID
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     DELETE
     FROM unregistered_disks
@@ -85,7 +85,7 @@ BEGIN
             storage_domain_id = v_storage_domain_id
             OR v_storage_domain_id IS NULL
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION RemoveDiskFromUnregisteredRelatedToVM (
@@ -93,7 +93,7 @@ CREATE OR REPLACE FUNCTION RemoveDiskFromUnregisteredRelatedToVM (
     v_storage_domain_id UUID
     )
 RETURNS VOID
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     DELETE
     FROM unregistered_disks
@@ -104,7 +104,7 @@ BEGIN
             storage_domain_id = v_storage_domain_id
             OR v_storage_domain_id IS NULL
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -113,7 +113,7 @@ CREATE OR REPLACE FUNCTION GetDiskByDiskIdAndStorageDomainId (
     v_storage_domain_id UUID
     )
 RETURNS SETOF unregistered_disks STABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
     SELECT *
@@ -124,19 +124,19 @@ BEGIN
             storage_domain_id = v_storage_domain_id
             OR v_storage_domain_id IS NULL
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetEntitiesByDiskId (
     v_disk_id UUID)
 RETURNS SETOF unregistered_disks_to_vms STABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
     SELECT *
     FROM unregistered_disks_to_vms
     WHERE disk_id = v_disk_id
        OR v_disk_id IS NULL;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;

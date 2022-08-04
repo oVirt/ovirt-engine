@@ -185,7 +185,7 @@ _dbfunc_common_schema_upgrade() {
 		local updated=0
 		_dbfunc_common_validate_version_uniqueness
 		if [ -z "${DBFUNC_COMMON_MD5FILE}" ] || ! _dbfunc_common_is_view_or_sp_changed; then
-			dbfunc_output "upgrade script detected a change in Config, View or Stored Procedure..."
+			dbfunc_output "upgrade script detected a change in Config, View or Function..."
 			_dbfunc_common_run_pre_upgrade
 			updated=1
 		fi
@@ -284,7 +284,7 @@ Please fix numbering to interval 0$(( ${last} + 1)) to 0$(( ${last} + 10)) and r
 
 #drops views before upgrade or refresh operations
 _dbfunc_common_views_drop() {
-	# common stored procedures are executed first (for new added functions to be valid)
+	# common stored functions are executed first (for new added functions to be valid)
 	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 	statement="$(
 		dbfunc_psql_die --command="select * from generate_drop_all_views_syntax();"
@@ -307,10 +307,10 @@ _dbfunc_common_sps_drop() {
 
 #refreshes sps
 _dbfunc_common_sps_refresh() {
-	dbfunc_output "Creating stored procedures..."
+	dbfunc_output "Creating stored functions..."
 	local file
 	find "${DBFUNC_COMMON_DBSCRIPTS_DIR}" -name '*sp.sql' | sort | while read file; do
-		dbfunc_output "Creating stored procedures from ${file}..."
+		dbfunc_output "Creating stored functions from ${file}..."
 		dbfunc_psql_die_v --file="${file}" > /dev/null
 	done || exit $?
 	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
@@ -326,7 +326,7 @@ _dbfunc_common_get_custom_user_permissions() {
 _dbfunc_common_run_pre_upgrade() {
 	#Dropping all views & sps
 	_dbfunc_common_schema_refresh_drop
-	# common stored procedures are executed first (for new added functions to be valid)
+	# common stored functions are executed first (for new added functions to be valid)
 	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/common_sp.sql" > /dev/null
 	#update sequence numers
 	dbfunc_common_hook_sequence_numbers_update

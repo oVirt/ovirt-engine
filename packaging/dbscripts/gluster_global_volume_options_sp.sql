@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION InsertGlusterGlobalVolumeOption (
     v_option_key VARCHAR(8192),
     v_option_val VARCHAR(8192)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO gluster_global_volume_options (
         id,
@@ -19,18 +19,18 @@ BEGIN
         v_option_key,
         v_option_val
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlobalOptionsByGlusterClusterGuid (v_cluster_id UUID)
-RETURNS SETOF gluster_global_volume_options STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_global_volume_options STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM gluster_global_volume_options
     WHERE cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterGlobalVolumeOption (
@@ -38,11 +38,11 @@ CREATE OR REPLACE FUNCTION UpdateGlusterGlobalVolumeOption (
     v_option_key VARCHAR(8192),
     v_option_val VARCHAR(8192)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_global_volume_options
     SET option_val = v_option_val
     WHERE cluster_id = v_cluster_id
         AND option_key = v_option_key;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;

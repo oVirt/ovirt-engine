@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION InsertOVFDataForEntities (
     v_ovf_extra_data TEXT,
     v_status INTEGER
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO unregistered_ovf_of_entities (
         entity_guid,
@@ -44,14 +44,14 @@ BEGIN
     WHERE vog.vm_guid = u.entity_guid
         AND u.entity_guid = v_entity_guid
         AND v_ovf_data IS NULL;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION RemoveEntityFromUnregistered (
     v_entity_guid UUID,
     v_storage_domain_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM unregistered_ovf_of_entities
@@ -60,14 +60,14 @@ BEGIN
             storage_domain_id = v_storage_domain_id
             OR v_storage_domain_id IS NULL
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllOVFEntitiesForStorageDomainByEntityType (
     v_storage_domain_id UUID,
     v_entity_type VARCHAR(20)
     )
-RETURNS SETOF unregistered_ovf_of_entities STABLE AS $PROCEDURE$
+RETURNS SETOF unregistered_ovf_of_entities STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -78,14 +78,14 @@ BEGIN
             entity_type = v_entity_type
             OR v_entity_type IS NULL
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetOVFDataByEntityIdAndStorageDomain (
     v_entity_guid UUID,
     v_storage_domain_id UUID
     )
-RETURNS SETOF unregistered_ovf_of_entities STABLE AS $PROCEDURE$
+RETURNS SETOF unregistered_ovf_of_entities STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -96,7 +96,7 @@ BEGIN
             storage_domain_id = v_storage_domain_id
             OR v_storage_domain_id IS NULL
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

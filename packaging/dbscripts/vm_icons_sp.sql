@@ -2,31 +2,31 @@
 
 -- VmIcon vm_icons
 CREATE OR REPLACE FUNCTION GetVmIconByVmIconId (v_id UUID)
-RETURNS SETOF vm_icons STABLE AS $PROCEDURE$
+RETURNS SETOF vm_icons STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_icons
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromVmIcons ()
-RETURNS SETOF vm_icons STABLE AS $PROCEDURE$
+RETURNS SETOF vm_icons STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_icons;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromVmIconsFiltered (
     v_user_id UUID,
     v_is_filtered boolean
     )
-RETURNS SETOF vm_icons STABLE AS $PROCEDURE$
+RETURNS SETOF vm_icons STABLE AS $FUNCTION$
 BEGIN
     IF v_is_filtered THEN
         RETURN QUERY
@@ -70,14 +70,14 @@ BEGIN
     FROM vm_icons;
     END IF;
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertVmIcon (
     v_id UUID,
     v_data_url TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_icons (
         id,
@@ -87,44 +87,44 @@ BEGIN
         v_id,
         v_data_url
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmIcon (
     v_id UUID,
     v_data_url TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_icons
     SET id = v_id,
         data_url = v_data_url
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVmIcon (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_icons
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmIconByVmIconDataUrl (v_data_url TEXT)
-RETURNS SETOF vm_icons STABLE AS $PROCEDURE$
+RETURNS SETOF vm_icons STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_icons
     WHERE data_url = v_data_url;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVmIconIfUnused (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_icons
@@ -141,11 +141,11 @@ BEGIN
             WHERE vm_static.small_icon_id = vm_icons.id
                 OR vm_static.large_icon_id = vm_icons.id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteAllUnusedVmIcons ()
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_icons
@@ -161,11 +161,11 @@ BEGIN
             WHERE vm_static.small_icon_id = vm_icons.id
                 OR vm_static.large_icon_id = vm_icons.id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION IsVmIconExist (v_id UUID)
-RETURNS BOOLEAN STABLE AS $PROCEDURE$
+RETURNS BOOLEAN STABLE AS $FUNCTION$
 BEGIN
     RETURN (
             SELECT EXISTS (
@@ -174,29 +174,29 @@ BEGIN
                     WHERE id = v_id
                     )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- VmIconDefaults vm_icon_defaults
 CREATE OR REPLACE FUNCTION GetVmIconDefaultByVmIconDefaultId (v_id UUID)
-RETURNS SETOF vm_icon_defaults STABLE AS $PROCEDURE$
+RETURNS SETOF vm_icon_defaults STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_icon_defaults
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromVmIconDefaults ()
-RETURNS SETOF vm_icon_defaults STABLE AS $PROCEDURE$
+RETURNS SETOF vm_icon_defaults STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_icon_defaults;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertVmIconDefault (
@@ -205,7 +205,7 @@ CREATE OR REPLACE FUNCTION InsertVmIconDefault (
     v_small_icon_id UUID,
     v_large_icon_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_icon_defaults (
         id,
@@ -219,7 +219,7 @@ BEGIN
         v_small_icon_id,
         v_large_icon_id
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmIconDefault (
@@ -228,7 +228,7 @@ CREATE OR REPLACE FUNCTION UpdateVmIconDefault (
     v_small_icon_id UUID,
     v_large_icon_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_icon_defaults
     SET id = v_id,
@@ -236,46 +236,46 @@ BEGIN
         small_icon_id = v_small_icon_id,
         large_icon_id = v_large_icon_id
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVmIconDefault (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_icon_defaults
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmIconDefaultByVmIconDefaultLargeIconId (v_large_icon_id UUID)
-RETURNS SETOF vm_icon_defaults STABLE AS $PROCEDURE$
+RETURNS SETOF vm_icon_defaults STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_icon_defaults
     WHERE large_icon_id = v_large_icon_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmIconDefaultByVmIconDefaultOsId (v_os_id INT)
-RETURNS SETOF vm_icon_defaults STABLE AS $PROCEDURE$
+RETURNS SETOF vm_icon_defaults STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_icon_defaults
     WHERE os_id = v_os_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteAllFromVmIconDefaults ()
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_icon_defaults;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION InsertCommandEntity (
     v_return_value_class VARCHAR(256),
     v_data TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 
 BEGIN
     INSERT INTO command_entities (
@@ -55,7 +55,7 @@ BEGIN
         v_return_value_class,
         v_data
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 
@@ -76,7 +76,7 @@ CREATE OR REPLACE FUNCTION UpdateCommandEntity (
     v_return_value_class VARCHAR(256),
     v_data TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 
 BEGIN
     UPDATE command_entities
@@ -95,7 +95,7 @@ BEGIN
         return_value_class = v_return_value_class,
         data = v_data
     WHERE command_id = v_command_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 
@@ -103,13 +103,13 @@ CREATE OR REPLACE FUNCTION UpdateCommandEntityStatus (
     v_command_id uuid,
     v_status VARCHAR(20)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 
 BEGIN
     UPDATE command_entities
     SET status = v_status
     WHERE command_id = v_command_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 
@@ -117,13 +117,13 @@ CREATE OR REPLACE FUNCTION UpdateCommandEntityExecuted (
     v_command_id uuid,
     v_executed boolean
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 
 BEGIN
     UPDATE command_entities
     SET executed = v_executed
     WHERE command_id = v_command_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 
@@ -131,13 +131,13 @@ CREATE OR REPLACE FUNCTION UpdateCommandEntityNotified (
     v_command_id uuid,
     v_callback_notified boolean
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 
 BEGIN
     UPDATE command_entities
     SET callback_notified = v_callback_notified
     WHERE command_id = v_command_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 
@@ -159,7 +159,7 @@ CREATE OR REPLACE FUNCTION InsertOrUpdateCommandEntity (
     v_return_value_class VARCHAR(256),
     v_data TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 
 BEGIN
     IF NOT EXISTS (
@@ -203,11 +203,11 @@ BEGIN
                      v_data);
     END IF;
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetCommandEntityByCommandEntityId (v_command_id uuid)
-RETURNS SETOF command_entities AS $PROCEDURE$
+RETURNS SETOF command_entities AS $FUNCTION$
 
 BEGIN
     RETURN QUERY
@@ -215,24 +215,24 @@ BEGIN
     SELECT command_entities.*
     FROM command_entities
     WHERE command_id = v_command_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromCommandEntities ()
-RETURNS SETOF command_entities AS $PROCEDURE$
+RETURNS SETOF command_entities AS $FUNCTION$
 
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM command_entities;
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetCommandEntitiesByParentCmdId (v_root_command_id uuid)
-RETURNS SETOF command_entities STABLE AS $PROCEDURE$
+RETURNS SETOF command_entities STABLE AS $FUNCTION$
 
 BEGIN
     RETURN QUERY
@@ -240,12 +240,12 @@ BEGIN
     SELECT command_entities.*
     FROM command_entities
     WHERE root_command_id = v_root_command_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteCommandEntity (v_command_id uuid)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 
 BEGIN
     BEGIN
@@ -255,12 +255,12 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteCommandEntitiesOlderThanDate (v_date TIMESTAMP WITH TIME ZONE)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 
 DECLARE v_id INT;
 
@@ -274,7 +274,7 @@ BEGIN
             SELECT command_id
             FROM async_tasks
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 
@@ -283,7 +283,7 @@ CREATE OR REPLACE FUNCTION InsertCommandAssociatedEntities (
     v_entity_id UUID,
     v_entity_type VARCHAR(128)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 
 BEGIN
     INSERT INTO command_assoc_entities (
@@ -296,12 +296,12 @@ BEGIN
         v_entity_id,
         v_entity_type
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetCommandIdsByEntityId (v_entity_id UUID)
-RETURNS SETOF idUuidType STABLE AS $PROCEDURE$
+RETURNS SETOF idUuidType STABLE AS $FUNCTION$
 
 BEGIN
     RETURN QUERY
@@ -309,12 +309,12 @@ BEGIN
     SELECT command_id
     FROM command_assoc_entities
     WHERE entity_id = v_entity_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetCommandAssociatedEntities (v_command_id UUID)
-RETURNS SETOF command_assoc_entities STABLE AS $PROCEDURE$
+RETURNS SETOF command_assoc_entities STABLE AS $FUNCTION$
 
 BEGIN
     RETURN QUERY
@@ -322,7 +322,7 @@ BEGIN
     SELECT *
     FROM command_assoc_entities
     WHERE command_id = v_command_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 

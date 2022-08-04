@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION insertevent_notification_hist (
     v_sent_at TIMESTAMP WITH TIME ZONE,
     v_status BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO event_notification_hist (
         audit_log_id,
@@ -30,7 +30,7 @@ BEGIN
         v_sent_at,
         v_status
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
@@ -43,7 +43,7 @@ CREATE OR REPLACE FUNCTION Insertevent_subscriber (
     v_subscriber_id UUID,
     v_tag_name VARCHAR(50)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     IF NOT EXISTS (
             SELECT *
@@ -69,22 +69,22 @@ BEGIN
             );
     END IF;
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getevent_subscriberBysubscriber_id (v_subscriber_id UUID)
-RETURNS SETOF event_subscriber STABLE AS $PROCEDURE$
+RETURNS SETOF event_subscriber STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM event_subscriber
     WHERE subscriber_id = v_subscriber_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getevent_subscription (v_subscriber_id UUID, v_event_up_name VARCHAR(100))
-RETURNS SETOF event_subscriber STABLE AS $PROCEDURE$
+RETURNS SETOF event_subscriber STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -92,7 +92,7 @@ BEGIN
     FROM event_subscriber
     WHERE subscriber_id = v_subscriber_id
         AND event_up_name = v_event_up_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deleteevent_subscriber (
@@ -101,7 +101,7 @@ CREATE OR REPLACE FUNCTION Deleteevent_subscriber (
     v_subscriber_id UUID,
     v_tag_name VARCHAR(50)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     IF (v_tag_name IS NULL) THEN
         DELETE
@@ -118,19 +118,19 @@ BEGIN
             AND tag_name = v_tag_name;
     END IF;
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
 -- [dbo].[event_notification_hist] Table
 ----------------------------------------------------------------
 CREATE OR REPLACE FUNCTION Deleteevent_notification_hist (v_sent_at TIMESTAMP)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM event_notification_hist
     WHERE sent_at < v_sent_at;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION insert_entity_snapshot (
     v_snapshot_type INT,
     v_insertion_order INT
     )
-RETURNS void AS $PROCEDURE$
+RETURNS void AS $FUNCTION$
 BEGIN
     BEGIN
         INSERT INTO business_entity_snapshot (
@@ -39,22 +39,22 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_entity_snapshot_by_id (v_id uuid)
-RETURNS SETOF business_entity_snapshot STABLE AS $PROCEDURE$
+RETURNS SETOF business_entity_snapshot STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT business_entity_snapshot.*
     FROM business_entity_snapshot
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_entity_snapshot_by_command_id (v_command_id uuid)
-RETURNS SETOF business_entity_snapshot STABLE AS $PROCEDURE$
+RETURNS SETOF business_entity_snapshot STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -62,7 +62,7 @@ BEGIN
     FROM business_entity_snapshot
     WHERE command_id = v_command_id
     ORDER BY insertion_order DESC;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS get_all_commands_rs CASCADE;
@@ -72,18 +72,18 @@ CREATE TYPE get_all_commands_rs AS (
         );
 
 CREATE OR REPLACE FUNCTION get_all_commands ()
-RETURNS SETOF get_all_commands_rs STABLE AS $PROCEDURE$
+RETURNS SETOF get_all_commands_rs STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT DISTINCT business_entity_snapshot.command_id,
         business_entity_snapshot.command_type
     FROM business_entity_snapshot;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION delete_entity_snapshot_by_command_id (v_command_id uuid)
-RETURNS void AS $PROCEDURE$
+RETURNS void AS $FUNCTION$
 BEGIN
     BEGIN
         DELETE
@@ -92,7 +92,7 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

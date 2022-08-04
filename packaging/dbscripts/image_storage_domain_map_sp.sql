@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION Insertimage_storage_domain_map (
     v_quota_id UUID,
     v_disk_profile_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO image_storage_domain_map (
         image_id,
@@ -23,51 +23,51 @@ BEGIN
         v_quota_id,
         v_disk_profile_id
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deleteimage_storage_domain_map (
     v_image_id UUID,
     v_storage_domain_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM image_storage_domain_map
     WHERE image_id = v_image_id
         AND storage_domain_id = v_storage_domain_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deleteimage_storage_domain_map_by_image_id (v_image_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM image_storage_domain_map
     WHERE image_id = v_image_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getimage_storage_domain_mapByimage_id (v_image_id UUID)
-RETURNS SETOF image_storage_domain_map STABLE AS $PROCEDURE$
+RETURNS SETOF image_storage_domain_map STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM image_storage_domain_map
     WHERE image_id = v_image_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getimage_storage_domain_mapBystorage_domain_id (v_storage_domain_id UUID)
-RETURNS SETOF image_storage_domain_map STABLE AS $PROCEDURE$
+RETURNS SETOF image_storage_domain_map STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM image_storage_domain_map
     WHERE storage_domain_id = v_storage_domain_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateQuotaForImageAndSnapshots (
@@ -75,7 +75,7 @@ CREATE OR REPLACE FUNCTION UpdateQuotaForImageAndSnapshots (
     v_storage_domain_id UUID,
     v_quota_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE image_storage_domain_map AS isdm
     SET quota_id = v_quota_id
@@ -83,7 +83,7 @@ BEGIN
     WHERE i.image_group_id = v_disk_id
         AND i.image_guid = isdm.image_id
         AND storage_domain_id = v_storage_domain_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateDiskProfileByImageGroupId (
@@ -91,7 +91,7 @@ CREATE OR REPLACE FUNCTION UpdateDiskProfileByImageGroupId (
     v_storage_domain_id UUID,
     v_disk_profile_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE image_storage_domain_map AS isdm
     SET disk_profile_id = v_disk_profile_id
@@ -99,7 +99,7 @@ BEGIN
     WHERE i.image_group_id = v_image_group_id
         AND i.image_guid = isdm.image_id
         AND storage_domain_id = v_storage_domain_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

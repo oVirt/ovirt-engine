@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION GetAllFromDisks (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF all_disks STABLE AS $PROCEDURE$
+RETURNS SETOF all_disks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -22,7 +22,7 @@ BEGIN
                     AND entity_id = disk_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDiskByDiskId (
@@ -30,7 +30,7 @@ CREATE OR REPLACE FUNCTION GetDiskByDiskId (
     v_user_id UUID,
     v_is_filtered boolean
     )
-RETURNS SETOF all_disks STABLE AS $PROCEDURE$
+RETURNS SETOF all_disks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -46,7 +46,7 @@ BEGIN
                     AND entity_id = v_disk_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDisksVmGuid (
@@ -55,7 +55,7 @@ CREATE OR REPLACE FUNCTION GetDisksVmGuid (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF all_disks_for_vms STABLE AS $PROCEDURE$
+RETURNS SETOF all_disks_for_vms STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -75,7 +75,7 @@ BEGIN
                     AND entity_id = disk_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetImagesWithDamagedSnapshotForVm (
@@ -83,7 +83,7 @@ CREATE OR REPLACE FUNCTION GetImagesWithDamagedSnapshotForVm (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF UUID STABLE AS $PROCEDURE$
+RETURNS SETOF UUID STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -106,19 +106,19 @@ BEGIN
                     AND i.vm_snapshot_id is not null
                     AND i.vm_snapshot_id != '00000000-0000-0000-0000-000000000000'::uuid
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDisksVmGuids (
   v_vm_guids UUID[]
 )
-  RETURNS SETOF all_disks_for_vms STABLE AS $PROCEDURE$
+  RETURNS SETOF all_disks_for_vms STABLE AS $FUNCTION$
 BEGIN
   RETURN QUERY
   SELECT *
   FROM all_disks_for_vms
   WHERE vm_id = ANY(v_vm_guids);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS disks_basic_rs CASCADE;
@@ -134,7 +134,7 @@ CREATE OR REPLACE FUNCTION GetDisksVmGuidBasicView (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF disks_basic_rs STABLE AS $PROCEDURE$
+RETURNS SETOF disks_basic_rs STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -161,11 +161,11 @@ BEGIN
                     AND entity_id = disk_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmBootActiveDisk (v_vm_guid UUID)
-RETURNS SETOF all_disks STABLE AS $PROCEDURE$
+RETURNS SETOF all_disks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -179,7 +179,7 @@ BEGIN
         AND disk_vm_element.is_boot = TRUE
         AND vm_device.vm_id = v_vm_guid
         AND vm_device.snapshot_id IS NULL;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- Returns all the attachable disks in the storage pool
@@ -191,7 +191,7 @@ CREATE OR REPLACE FUNCTION GetAllAttachableDisksByPoolId (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF all_disks STABLE AS $PROCEDURE$
+RETURNS SETOF all_disks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -231,7 +231,7 @@ BEGIN
                     AND entity_id = disk_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromDisksByDiskStorageType (
@@ -239,7 +239,7 @@ CREATE OR REPLACE FUNCTION GetAllFromDisksByDiskStorageType (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF all_disks STABLE AS $PROCEDURE$
+RETURNS SETOF all_disks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -255,14 +255,14 @@ BEGIN
                     AND entity_id = disk_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromDisksIncludingSnapshots (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF all_disks_including_snapshots STABLE AS $PROCEDURE$
+RETURNS SETOF all_disks_including_snapshots STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -277,7 +277,7 @@ BEGIN
                     AND entity_id = disk_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDiskAndSnapshotsByDiskId (
@@ -285,7 +285,7 @@ CREATE OR REPLACE FUNCTION GetDiskAndSnapshotsByDiskId (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF all_disks_including_snapshots STABLE AS $PROCEDURE$
+RETURNS SETOF all_disks_including_snapshots STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -301,5 +301,5 @@ BEGIN
                     AND entity_id = v_disk_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;

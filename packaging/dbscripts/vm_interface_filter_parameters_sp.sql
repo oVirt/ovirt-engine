@@ -2,35 +2,35 @@
 -- [vm_interface_filter_parameters] Table
 --
 CREATE OR REPLACE FUNCTION GetVmInterfaceFilterParameterByVmInterfaceFilterParameterId (v_id UUID)
-RETURNS SETOF vm_interface_filter_parameters STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface_filter_parameters STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_interface_filter_parameters.*
     FROM vm_interface_filter_parameters
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromVmInterfaceFilterParameters ()
-RETURNS SETOF vm_interface_filter_parameters STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface_filter_parameters STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_interface_filter_parameters.*
     FROM vm_interface_filter_parameters;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmInterfaceFilterParametersByVmInterfaceId (v_vm_interface_id UUID)
-RETURNS SETOF vm_interface_filter_parameters STABLE AS $PROCEDURE$
+RETURNS SETOF vm_interface_filter_parameters STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_interface_filter_parameters.*
     FROM vm_interface_filter_parameters
     WHERE vm_interface_id = v_vm_interface_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertVmInterfaceFilterParameter (
@@ -39,7 +39,7 @@ CREATE OR REPLACE FUNCTION InsertVmInterfaceFilterParameter (
     v_value VARCHAR(255),
     v_vm_interface_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_interface_filter_parameters (
         id,
@@ -53,7 +53,7 @@ BEGIN
         v_value,
         v_vm_interface_id
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmInterfaceFilterParameter (
@@ -61,22 +61,22 @@ CREATE OR REPLACE FUNCTION UpdateVmInterfaceFilterParameter (
     v_name VARCHAR(255),
     v_value VARCHAR(255)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_interface_filter_parameters
     SET name = v_name,
         value = v_value
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVmInterfaceFilterParameter (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
     DELETE
     FROM vm_interface_filter_parameters
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;

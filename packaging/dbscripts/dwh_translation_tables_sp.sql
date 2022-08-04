@@ -1,17 +1,17 @@
 
 
 CREATE OR REPLACE FUNCTION clear_osinfo ()
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     TRUNCATE dwh_osinfo;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION insert_osinfo (
     v_os_id INT,
     v_os_name VARCHAR(255)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO dwh_osinfo (
         os_id,
@@ -25,7 +25,7 @@ BEGIN
     UPDATE dwh_history_timekeeping
     SET var_datetime = now()
     WHERE var_name = 'lastOsinfoUpdate';
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

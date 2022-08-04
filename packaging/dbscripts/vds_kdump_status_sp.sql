@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION UpsertKdumpStatus (
     v_status VARCHAR(20),
     v_address VARCHAR(255)
     )
-RETURNS INT AS $PROCEDURE$
+RETURNS INT AS $FUNCTION$
 BEGIN
     UPDATE vds_kdump_status
     SET status = v_status,
@@ -30,7 +30,7 @@ BEGIN
     END IF;
 
     RETURN 1;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpsertKdumpStatusForIp (
@@ -38,7 +38,7 @@ CREATE OR REPLACE FUNCTION UpsertKdumpStatusForIp (
     v_status VARCHAR(20),
     v_address VARCHAR(255)
     )
-RETURNS INT AS $PROCEDURE$
+RETURNS INT AS $FUNCTION$
 DECLARE v_vds_id UUID;
 
 updated_rows INT;
@@ -57,40 +57,40 @@ BEGIN
     END IF;
 
     RETURN updated_rows;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION RemoveFinishedKdumpStatusForVds (v_vds_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vds_kdump_status
     WHERE vds_id = v_vds_id
         AND status = 'finished';
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetKdumpStatusForVds (v_vds_id UUID)
-RETURNS SETOF vds_kdump_status STABLE AS $PROCEDURE$
+RETURNS SETOF vds_kdump_status STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vds_kdump_status
     WHERE vds_id = v_vds_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- GetAllUnfinishedKdumpStatus is used in fence_kdump listener
 CREATE OR REPLACE FUNCTION GetAllUnfinishedVdsKdumpStatus ()
-RETURNS SETOF vds_kdump_status STABLE AS $PROCEDURE$
+RETURNS SETOF vds_kdump_status STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vds_kdump_status
     WHERE status <> 'finished';
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

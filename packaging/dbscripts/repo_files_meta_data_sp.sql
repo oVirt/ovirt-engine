@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION InsertRepo_domain_file_meta_data (
     v_last_refreshed BIGINT,
     v_file_type INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO repo_file_meta_data (
         repo_domain_id,
@@ -32,14 +32,14 @@ BEGIN
         v_last_refreshed,
         v_file_type
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteRepo_domain_file_list (
     v_storage_domain_id UUID,
     v_file_type INT DEFAULT NULL
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM repo_file_meta_data
@@ -50,14 +50,14 @@ BEGIN
             );
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetRepo_files_by_storage_domain (
     v_storage_domain_id UUID,
     v_file_type INT DEFAULT NULL
     )
-RETURNS SETOF repo_file_meta_data STABLE AS $PROCEDURE$
+RETURNS SETOF repo_file_meta_data STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -69,5 +69,5 @@ BEGIN
             OR repo_file_meta_data.file_type = v_file_type
             )
     ORDER BY repo_file_meta_data.last_refreshed;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;

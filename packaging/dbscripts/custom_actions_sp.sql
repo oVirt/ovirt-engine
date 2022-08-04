@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION Insertcustom_actions (
     v_path VARCHAR(300),
     v_tab INT,
     v_description VARCHAR(4000)
-    ) AS $PROCEDURE$
+    ) AS $FUNCTION$
 BEGIN
     INSERT INTO custom_actions (
         action_name,
@@ -26,7 +26,7 @@ BEGIN
         );
 
     v_action_id := CURRVAL('custom_actions_seq');
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatecustom_actions (
@@ -38,7 +38,7 @@ CREATE OR REPLACE FUNCTION Updatecustom_actions (
     )
 RETURNS VOID
     --The [custom_actions] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE custom_actions
     SET action_name = v_action_name,
@@ -46,55 +46,55 @@ BEGIN
         tab = v_tab,
         description = v_description
     WHERE action_id = v_action_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deletecustom_actions (v_action_id INT)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM custom_actions
     WHERE action_id = v_action_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromcustom_actions ()
-RETURNS SETOF custom_actions STABLE AS $PROCEDURE$
+RETURNS SETOF custom_actions STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM custom_actions;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getcustom_actionsByaction_id (v_action_id INT)
-RETURNS SETOF custom_actions STABLE AS $PROCEDURE$
+RETURNS SETOF custom_actions STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM custom_actions
     WHERE action_id = v_action_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getcustom_actionsByTab_id (v_tab INT)
-RETURNS SETOF custom_actions STABLE AS $PROCEDURE$
+RETURNS SETOF custom_actions STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM custom_actions
     WHERE tab = v_tab;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getcustom_actionsByNameAndTab (
     v_action_name VARCHAR(50),
     v_tab INT
     )
-RETURNS SETOF custom_actions STABLE AS $PROCEDURE$
+RETURNS SETOF custom_actions STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -102,7 +102,7 @@ BEGIN
     FROM custom_actions
     WHERE tab = v_tab
         AND action_name = v_action_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

@@ -4,18 +4,18 @@
 
 CREATE OR REPLACE FUNCTION GetAllFromImageUploads()
 RETURNS SETOF image_transfers STABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
     SELECT image_transfers.*
     FROM image_transfers;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetImageUploadsByCommandId(v_command_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
 RETURNS SETOF image_transfers STABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
     SELECT image_transfers.*
@@ -25,36 +25,36 @@ BEGIN
                                   FROM      user_disk_permissions_view
                                   WHERE     user_disk_permissions_view.user_id = v_user_id AND
                                             user_disk_permissions_view.entity_id = image_transfers.disk_id ));
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetImageUploadsByDiskId(v_disk_id UUID)
 RETURNS SETOF image_transfers STABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
     SELECT image_transfers.*
     FROM image_transfers
     WHERE image_transfers.disk_id = v_disk_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetImageTransfersByVdsId(v_vds_id UUID)
 RETURNS SETOF image_transfers STABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
     SELECT image_transfers.*
     FROM image_transfers
     WHERE image_transfers.vds_id = v_vds_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetImageTransfersByStorageId(v_storage_id UUID)
 RETURNS SETOF image_transfers STABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
     SELECT image_transfers.*
@@ -62,18 +62,18 @@ BEGIN
     INNER JOIN images ON images.image_group_id = image_transfers.disk_id
     INNER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
     WHERE image_storage_domain_map.storage_domain_id = v_storage_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetImageTransfersByBackupId(v_backup_id UUID)
 RETURNS SETOF image_transfers STABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
     SELECT image_transfers.*
     FROM image_transfers
     WHERE image_transfers.backup_id = v_backup_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateImageUploads(
@@ -100,7 +100,7 @@ CREATE OR REPLACE FUNCTION UpdateImageUploads(
     v_shallow BOOLEAN
     )
 RETURNS VOID
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     UPDATE image_transfers
     SET command_id = v_command_id,
@@ -125,18 +125,18 @@ BEGIN
         client_type = v_client_type,
         shallow = v_shallow
     WHERE command_id = v_command_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION DeleteImageUploads(v_command_id UUID)
 RETURNS VOID
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     DELETE
     FROM image_transfers
     WHERE command_id = v_command_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -164,7 +164,7 @@ CREATE OR REPLACE FUNCTION InsertImageUploads(
     v_shallow BOOLEAN
     )
 RETURNS VOID
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     INSERT INTO image_transfers(
         command_id,
@@ -212,7 +212,7 @@ BEGIN
         v_client_type,
         v_shallow
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -223,7 +223,7 @@ CREATE OR REPLACE FUNCTION DeleteCompletedImageTransfersOlderThanDate (
     v_succeeded_end_time TIMESTAMP WITH TIME ZONE,
     v_failed_end_time TIMESTAMP WITH TIME ZONE
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM image_transfers
@@ -237,5 +237,5 @@ BEGIN
                 AND phase = 10
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;

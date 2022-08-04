@@ -4,14 +4,14 @@
 --  Disk Profiles
 ----------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION GetDiskProfileByDiskProfileId (v_id UUID)
-RETURNS SETOF disk_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF disk_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM disk_profiles
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertDiskProfile (
@@ -21,7 +21,7 @@ CREATE OR REPLACE FUNCTION InsertDiskProfile (
     v_qos_id UUID,
     v_description TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO disk_profiles (
         id,
@@ -37,7 +37,7 @@ BEGIN
         v_qos_id,
         v_description
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateDiskProfile (
@@ -47,7 +47,7 @@ CREATE OR REPLACE FUNCTION UpdateDiskProfile (
     v_qos_id UUID,
     v_description TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE disk_profiles
     SET id = v_id,
@@ -57,11 +57,11 @@ BEGIN
         description = v_description,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteDiskProfile (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -71,17 +71,17 @@ BEGIN
 
     -- Delete the disk profiles permissions
     PERFORM DeletePermissionsByEntityId(v_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromDiskProfiles ()
-RETURNS SETOF disk_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF disk_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM disk_profiles;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDiskProfilesByStorageDomainId (
@@ -89,7 +89,7 @@ CREATE OR REPLACE FUNCTION GetDiskProfilesByStorageDomainId (
     v_user_id UUID,
     v_is_filtered boolean
     )
-RETURNS SETOF disk_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF disk_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -105,27 +105,27 @@ BEGIN
                     AND entity_id = disk_profiles.id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION nullifyQosForStorageDomain (v_storage_domain_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE disk_profiles
     SET qos_id = NULL
     WHERE storage_domain_id = v_storage_domain_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDiskProfilesByQosId (v_qos_id UUID)
-RETURNS SETOF disk_profiles STABLE AS $PROCEDURE$
+RETURNS SETOF disk_profiles STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM disk_profiles
     WHERE qos_id = v_qos_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

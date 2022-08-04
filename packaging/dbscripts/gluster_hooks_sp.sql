@@ -1,7 +1,7 @@
 
 
 /* ----------------------------------------------------------------
- Stored procedures for database operations on Gluster Hooks
+ Stored FUNCTIONs for database operations on Gluster Hooks
  related tables:
       - gluster_hooks
       - gluster_server_hooks
@@ -18,7 +18,7 @@ CREATE OR REPLACE FUNCTION InsertGlusterHook (
     v_content TEXT,
     v_conflict_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO gluster_hooks (
         id,
@@ -44,14 +44,14 @@ BEGIN
         v_content,
         v_conflict_status
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterHookById (
     v_id UUID,
     v_includeContent BOOLEAN = false
     )
-RETURNS SETOF gluster_hooks STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_hooks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -73,22 +73,22 @@ BEGIN
         _update_date
     FROM gluster_hooks
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterHookContentById (v_id UUID)
-RETURNS SETOF TEXT STABLE AS $PROCEDURE$
+RETURNS SETOF TEXT STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT content
     FROM gluster_hooks
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterHooksByClusterId (v_cluster_id UUID)
-RETURNS SETOF gluster_hooks STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_hooks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -108,18 +108,18 @@ BEGIN
     WHERE cluster_id = v_cluster_id
     ORDER BY gluster_command ASC,
         stage ASC;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterServerHooksById (v_id UUID)
-RETURNS SETOF gluster_server_hooks_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_server_hooks_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM gluster_server_hooks_view
     WHERE hook_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterHook (
@@ -129,7 +129,7 @@ CREATE OR REPLACE FUNCTION GetGlusterHook (
     v_name VARCHAR(1000),
     v_includeContent BOOLEAN = false
     )
-RETURNS SETOF gluster_hooks STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_hooks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -154,16 +154,16 @@ BEGIN
         AND gluster_command = v_gluster_command
         AND stage = v_stage
         AND name = v_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterHookById (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM gluster_hooks
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterHook (
@@ -172,7 +172,7 @@ CREATE OR REPLACE FUNCTION DeleteGlusterHook (
     v_stage VARCHAR(100),
     v_name VARCHAR(1000)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM gluster_hooks
@@ -180,20 +180,20 @@ BEGIN
         AND gluster_command = v_gluster_command
         AND stage = v_stage
         AND name = v_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteAllGlusterHooks (v_cluster_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM gluster_hooks
     WHERE cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterHooksByIds (v_ids TEXT)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM gluster_hooks
@@ -201,33 +201,33 @@ BEGIN
             SELECT *
             FROM fnSplitterUuid(v_ids)
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterHookConflictStatus (
     v_id UUID,
     v_conflict_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_hooks
     SET conflict_status = v_conflict_status,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterHookContentType (
     v_id UUID,
     v_content_type VARCHAR(100)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_hooks
     SET content_type = v_content_type,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterHookContent (
@@ -235,14 +235,14 @@ CREATE OR REPLACE FUNCTION UpdateGlusterHookContent (
     v_checksum VARCHAR(256),
     v_content TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_hooks
     SET checksum = v_checksum,
         content = v_content,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterHook (
@@ -253,7 +253,7 @@ CREATE OR REPLACE FUNCTION UpdateGlusterHook (
     v_content TEXT,
     v_conflict_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_hooks
     SET hook_status = v_hook_status,
@@ -263,20 +263,20 @@ BEGIN
         conflict_status = v_conflict_status,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterHookStatus (
     v_id UUID,
     v_hook_status VARCHAR(50)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_hooks
     SET hook_status = v_hook_status,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertGlusterServerHook (
@@ -286,7 +286,7 @@ CREATE OR REPLACE FUNCTION InsertGlusterServerHook (
     v_content_type VARCHAR(50),
     v_checksum VARCHAR(256)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO gluster_server_hooks (
         hook_id,
@@ -306,14 +306,14 @@ BEGIN
     UPDATE gluster_hooks
     SET _update_date = LOCALTIMESTAMP
     WHERE id = v_hook_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterServerHook (
     v_hook_id UUID,
     v_server_id UUID
     )
-RETURNS SETOF gluster_server_hooks_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_server_hooks_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -321,7 +321,7 @@ BEGIN
     FROM gluster_server_hooks_view
     WHERE hook_id = v_hook_id
         AND server_id = v_server_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterServerHook (
@@ -331,7 +331,7 @@ CREATE OR REPLACE FUNCTION UpdateGlusterServerHook (
     v_content_type VARCHAR(50),
     v_checksum VARCHAR(256)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_server_hooks
     SET hook_status = v_hook_status,
@@ -344,7 +344,7 @@ BEGIN
     UPDATE gluster_hooks
     SET _update_date = LOCALTIMESTAMP
     WHERE id = v_hook_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterServerHookStatus (
@@ -352,7 +352,7 @@ CREATE OR REPLACE FUNCTION UpdateGlusterServerHookStatus (
     v_server_id UUID,
     v_hook_status VARCHAR(100)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_server_hooks
     SET hook_status = v_hook_status,
@@ -363,7 +363,7 @@ BEGIN
     UPDATE gluster_hooks
     SET _update_date = LOCALTIMESTAMP
     WHERE id = v_hook_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterServerHookChecksum (
@@ -371,18 +371,18 @@ CREATE OR REPLACE FUNCTION UpdateGlusterServerHookChecksum (
     v_server_id UUID,
     v_checksum VARCHAR(100)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_server_hooks
     SET checksum = v_checksum,
         _update_date = LOCALTIMESTAMP
     WHERE hook_id = v_hook_id
         AND server_id = v_server_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterServerHookById (v_hook_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM gluster_server_hooks
@@ -391,11 +391,11 @@ BEGIN
     UPDATE gluster_hooks
     SET _update_date = LOCALTIMESTAMP
     WHERE id = v_hook_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterServerHooksByIds (v_ids TEXT)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM gluster_server_hooks
@@ -410,14 +410,14 @@ BEGIN
             SELECT *
             FROM fnSplitterUuid(v_ids)
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterServerHook (
     v_hook_id UUID,
     v_server_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM gluster_server_hooks
@@ -427,7 +427,7 @@ BEGIN
     UPDATE gluster_hooks
     SET _update_date = LOCALTIMESTAMP
     WHERE id = v_hook_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
