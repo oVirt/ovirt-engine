@@ -287,6 +287,11 @@ Requires(pre):	shadow-utils
 %if %{rhv_build}
 Requires:	eap7-wildfly >= 7.4.2
 Requires:	rhvm = %{version}-%{release}
+
+# RHV 4.4 SP1 requires RHEL 8.6 EUS and it's not supported on RHEL 8.7+
+Requires:	redhat-release >= 8.6, redhat-release < 8.7
+Conflicts:	redhat-release >= 8.7
+
 %else
 # There is no way how to prevent WildFly not being upgraded, so we need to
 # fix engine to work with current and new WildFly version and only afterwards
@@ -542,6 +547,12 @@ Summary:	Setup and upgrade scripts for %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 %{?extra_setup_requires}
+
+%if %{rhv_build}
+# RHV 4.4 SP1 requires RHEL 8.6 EUS and it's not supported on RHEL 8.7+
+Requires:       redhat-release >= 8.6, redhat-release < 8.7
+Conflicts:      redhat-release >= 8.7
+%endif
 
 %description setup
 Setup and upgrade scripts for %{ovirt_product_name_short}
