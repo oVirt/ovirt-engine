@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -209,6 +210,10 @@ public class EngineLocalConfig extends ShellLikeConfd {
 
     public File getPKIEngineCert() {
         return getFile("ENGINE_PKI_ENGINE_CERT");
+    }
+
+    public File getPKIOvirtProviderOVNCert() {
+        return Paths.get(getProperty("ENGINE_PKI"), "ovirt-provider-ovn.cer").toFile();
     }
 
     public String getPKITrustStoreType() {
