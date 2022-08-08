@@ -143,7 +143,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
                 if (isDynamicVariable(errorMsg) || !changeIfNotFound) {
                     ret = errorMsg;
                 } else {
-                // just a message that doesn't have a value in the resource:
+                    // just a message that doesn't have a value in the resource:
                     String[] splitted = errorMsg.toLowerCase().split("[_]", -1);
                     ret = StringUtils.join(splitted, " ");
                 }
@@ -168,7 +168,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
      */
     public final List<String> resolveMessages(List<String> translatedMessages) {
         List<String> translatedErrors = new ArrayList<>();
-        Map<String, String> variables = new HashMap<>();
+        Map<String, List<String>> variables = new HashMap<>();
         for (String currentMessage : translatedMessages) {
             if (isDynamicVariable(currentMessage)) {
                 addVariable(currentMessage, variables);
@@ -181,18 +181,53 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
          */
         List<String> returnValue = new ArrayList<>();
         for (String error : translatedErrors) {
-            returnValue.add(resolveMessage(error, variables));
+            returnValue.add(resolveMessage(error, chooseVariable(variables)));
+            afterAddition(error, variables);
         }
         return returnValue;
     }
 
-    private void addVariable(String variable, Map<String, String> variables) {
+    private void afterAddition(String error, Map<String, List<String>> variables) {
+        try {
+            for (String linePart: error.split("\\$\\{")) {
+                try {
+                    String key = linePart.split("\\}")[0];
+                    if (variables.get(key).size() > 1) {
+                        variables.get(key).remove(0);
+                    }
+                } catch (Exception e) {
+                    continue;
+                }
+            }
+        } catch (Exception e) {
+            return;
+        }
+    }
+
+    private Map<String, String> chooseVariable(Map<String, List<String>> variables) {
+        Map<String, String> newVariables = new HashMap<>();
+        for(Map.Entry<String, List<String>> entry:  variables.entrySet()) {
+            newVariables.put(entry.getKey(), entry.getValue().get(0));
+            //            if (entry.getValue().size() > 1) {
+            //                variables.get(entry.getKey()).remove(0);
+            //            }
+        }
+        return newVariables;
+    }
+
+    private void addVariable(String variable, Map<String, List<String>> variables) {
         int firstSpace = variable.indexOf(' ');
         if (firstSpace != -1 && firstSpace < variable.length()) {
             String key = variable.substring(1, firstSpace);
             String value = variable.substring(firstSpace + 1);
+            List<String> listValue = new ArrayList<>();
+            listValue.add(value);
             if (!variables.containsKey(key)) {
-                variables.put(key, value);
+                variables.put(key, listValue);
+            } else {
+                List<String> currentListValue = variables.get(key);
+                currentListValue.add(value);
+                variables.put(key, currentListValue);
             }
         }
     }
