@@ -180,22 +180,38 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
          * Place to global variable adding
          */
         List<String> returnValue = new ArrayList<>();
-        int i = 0;
         for (String error : translatedErrors) {
-            returnValue.add(resolveMessage(error, chooseVariable(variables, i)));
-            i++;
+            returnValue.add(resolveMessage(error, chooseVariable(variables)));
+            afterAddition(error, variables);
         }
         return returnValue;
     }
 
-    private Map<String, String> chooseVariable(Map<String, List<String>> variables, int index) {
+    private void afterAddition(String error, Map<String, List<String>> variables) {
+        try {
+            for (String linePart: error.split("\\$\\{")) {
+                try {
+                    String key = linePart.split("\\}")[0];
+                    if (variables.get(key).size() > 1) {
+                        variables.get(key).remove(0);
+                    }
+                }
+                catch (Exception e) {
+                    continue;
+                }
+            }
+        } catch (Exception e) {
+            return;
+        }
+    }
+
+    private Map<String, String> chooseVariable(Map<String, List<String>> variables) {
         Map<String, String> newVariables = new HashMap<>();
         for(Map.Entry<String, List<String>> entry:  variables.entrySet()) {
-            if (entry.getValue().size() > 1) {
-                newVariables.put(entry.getKey(), entry.getValue().get(index));
-            } else {
-                newVariables.put(entry.getKey(), entry.getValue().get(0));
-            }
+            newVariables.put(entry.getKey(), entry.getValue().get(0));
+//            if (entry.getValue().size() > 1) {
+//                variables.get(entry.getKey()).remove(0);
+//            }
         }
         return newVariables;
     }
