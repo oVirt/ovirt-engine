@@ -71,14 +71,17 @@ public class CertificationValidityChecker implements BackendService {
                     AuditLogType.ENGINE_CA_CERTIFICATION_HAS_EXPIRED,
                     AuditLogType.ENGINE_CA_CERTIFICATION_IS_ABOUT_TO_EXPIRE_ALERT,
                     AuditLogType.ENGINE_CA_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
-                    null)
-                    ^ !checkCertificate((X509Certificate) EngineEncryptionUtils.getCertificate(),
+                    null)) {
+                // if engine CA is going to expire, then it needs to be renewed first and only then it makes sense
+                // to renew other certificates
+                return;
+            }
+
+            checkCertificate((X509Certificate) EngineEncryptionUtils.getCertificate(),
                     AuditLogType.ENGINE_CERTIFICATION_HAS_EXPIRED,
                     AuditLogType.ENGINE_CERTIFICATION_IS_ABOUT_TO_EXPIRE_ALERT,
                     AuditLogType.ENGINE_CERTIFICATION_IS_ABOUT_TO_EXPIRE,
-                    null)) {
-                return;
-            }
+                    null);
 
             // ovirt-provider-ovn certificate doesn't exist if OVN service is disabled during setup
             checkOptionalCertificate(EngineLocalConfig.getInstance().getPKIOvirtProviderOVNCert(),
