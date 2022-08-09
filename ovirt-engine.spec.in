@@ -1415,6 +1415,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Tue Aug 09 2022 Martin Perina <mperina@redhat.com> - 4.5.2.2
+- Bump version to 4.5.2.2
+
 * Wed Aug 03 2022 Martin Perina <mperina@redhat.com> - 4.5.2.1
 - Bump version to 4.5.2.1
 
