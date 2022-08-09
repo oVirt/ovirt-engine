@@ -9,9 +9,9 @@ git_cfg_safe:
 	git config --global --add safe.directory "$(shell pwd)"
 
 srpm: installdeps git_cfg_safe
-       # $(eval SUFFIX=.git$(shell git rev-parse --short HEAD))
+	$(eval SUFFIX=.git$(shell git rev-parse --short HEAD))
 	# changing the spec file as passing -D won't preserve the suffix when rebuilding in mock
-       # sed "s:%{?release_suffix}:${SUFFIX}:" -i ovirt-engine.spec.in
+	sed "s:%{?release_suffix}:${SUFFIX}:" -i ovirt-engine.spec.in
 	mkdir -p tmp.repos/SOURCES
 	make dist
 	rpmbuild \
