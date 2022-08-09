@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION InsertBaseDisk (
     v_backup VARCHAR(32),
     v_backup_mode VARCHAR(32)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO base_disks (
         disk_id,
@@ -47,7 +47,7 @@ BEGIN
         v_backup,
         v_backup_mode
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateBaseDisk (
@@ -64,7 +64,7 @@ CREATE OR REPLACE FUNCTION UpdateBaseDisk (
     v_backup VARCHAR(32),
     v_backup_mode VARCHAR(32)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE base_disks
     SET wipe_after_delete = v_wipe_after_delete,
@@ -79,11 +79,11 @@ BEGIN
         backup = v_backup,
         backup_mode = v_backup_mode
     WHERE disk_id = v_disk_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteBaseDisk (v_disk_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -93,40 +93,40 @@ BEGIN
 
     -- Delete the disk's permissions
     PERFORM DeletePermissionsByEntityId(v_disk_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromBaseDisks ()
-RETURNS SETOF base_disks STABLE AS $PROCEDURE$
+RETURNS SETOF base_disks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM base_disks;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetBaseDiskByBaseDiskId (v_disk_id UUID)
-RETURNS SETOF base_disks STABLE AS $PROCEDURE$
+RETURNS SETOF base_disks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM base_disks
     WHERE disk_id = v_disk_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetBaseDisksByAlias(v_disk_alias varchar(255))
 RETURNS SETOF base_disks STABLE
-AS $procedure$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
     SELECT *
     FROM   base_disks
     WHERE  disk_alias = v_disk_alias;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 

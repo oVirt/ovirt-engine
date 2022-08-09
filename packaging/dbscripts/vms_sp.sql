@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION UpdateOvfGenerations (
     v_ovf_data TEXT,
     v_ovf_data_seperator VARCHAR(10)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE curs_vmids CURSOR
 FOR
 SELECT *
@@ -62,11 +62,11 @@ CLOSE curs_vmids;
 
 CLOSE curs_newovfgen;
 
-CLOSE curs_newovfdata;END;$PROCEDURE$
+CLOSE curs_newovfdata;END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION LoadOvfDataForIds (v_ids VARCHAR(5000))
-RETURNS SETOF vm_ovf_generations STABLE AS $PROCEDURE$
+RETURNS SETOF vm_ovf_generations STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -76,11 +76,11 @@ BEGIN
             SELECT *
             FROM fnSplitterUuid(v_ids)
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetIdsForOvfDeletion (v_storage_pool_id UUID)
-RETURNS SETOF UUID STABLE AS $PROCEDURE$
+RETURNS SETOF UUID STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -91,22 +91,22 @@ BEGIN
             SELECT vm_guid
             FROM vm_static
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetOvfGeneration (v_vm_id UUID)
-RETURNS SETOF BIGINT STABLE AS $PROCEDURE$
+RETURNS SETOF BIGINT STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm.ovf_generation
     FROM vm_ovf_generations vm
     WHERE vm.vm_guid = v_vm_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmTemplatesIdsForOvfUpdate (v_storage_pool_id UUID)
-RETURNS SETOF UUID STABLE AS $PROCEDURE$
+RETURNS SETOF UUID STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -116,11 +116,11 @@ BEGIN
     WHERE generations.vm_guid = templates.vmt_guid
         AND templates.db_generation > generations.ovf_generation
         AND templates.storage_pool_id = v_storage_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmsIdsForOvfUpdate (v_storage_pool_id UUID)
-RETURNS SETOF UUID STABLE AS $PROCEDURE$
+RETURNS SETOF UUID STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -132,11 +132,11 @@ BEGIN
         AND vm.storage_pool_id = v_storage_pool_id
         -- filter out external VMs if needed.
         AND vm.origin != 4;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteOvfGenerations (v_vms_ids VARCHAR(5000))
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_ovf_generations
@@ -149,7 +149,7 @@ BEGIN
             SELECT vm_guid
             FROM vm_static
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
@@ -167,7 +167,7 @@ CREATE OR REPLACE FUNCTION InsertVmStatistics (
     v_guest_mem_buffered BIGINT,
     v_guest_mem_cached BIGINT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_statistics (
         cpu_sys,
@@ -193,7 +193,7 @@ BEGIN
         v_guest_mem_buffered,
         v_guest_mem_cached
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmStatistics (
@@ -208,7 +208,7 @@ CREATE OR REPLACE FUNCTION UpdateVmStatistics (
     v_guest_mem_buffered BIGINT,
     v_guest_mem_cached BIGINT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_statistics
     SET cpu_sys = v_cpu_sys,
@@ -222,47 +222,47 @@ BEGIN
         guest_mem_cached = v_guest_mem_cached,
         _update_date = LOCALTIMESTAMP
     WHERE vm_guid = v_vm_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVmStatistics (v_vm_guid UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_statistics
     WHERE vm_guid = v_vm_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromVmStatistics ()
-RETURNS SETOF vm_statistics STABLE AS $PROCEDURE$
+RETURNS SETOF vm_statistics STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_statistics.*
     FROM vm_statistics;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromVmDynamic ()
-RETURNS SETOF vm_dynamic STABLE AS $PROCEDURE$
+RETURNS SETOF vm_dynamic STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_dynamic.*
     FROM vm_dynamic;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmStatisticsByVmGuid (v_vm_guid UUID)
-RETURNS SETOF vm_statistics STABLE AS $PROCEDURE$
+RETURNS SETOF vm_statistics STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_statistics.*
     FROM vm_statistics
     WHERE vm_guid = v_vm_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
@@ -327,7 +327,7 @@ CREATE OR REPLACE FUNCTION InsertVmDynamic (
     v_current_threads INT,
     v_current_numa_pinning VARCHAR(4000)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_dynamic (
         app_list,
@@ -447,7 +447,7 @@ BEGIN
         v_current_threads,
         v_current_numa_pinning
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmDynamic (
@@ -512,7 +512,7 @@ CREATE OR REPLACE FUNCTION UpdateVmDynamic (
     )
 RETURNS VOID
     --The [vm_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE vm_dynamic
     SET app_list = v_app_list,
@@ -573,92 +573,92 @@ BEGIN
         current_threads = v_current_threads,
         current_numa_pinning = v_current_numa_pinning
     WHERE vm_guid = v_vm_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmDynamicStatus (
     v_vm_guid UUID,
     v_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_dynamic
     SET status = v_status
     WHERE vm_guid = v_vm_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION ClearMigratingToVds (v_vm_guid UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_dynamic
     SET migrating_to_vds = NULL
     WHERE vm_guid = v_vm_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION ClearMigratingToVdsAndSetDynamicPinning (v_vm_guid UUID, v_current_cpu_pinning VARCHAR(4000), v_current_numa_pinning VARCHAR(4000))
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_dynamic
     SET migrating_to_vds = NULL,
         current_cpu_pinning = v_current_cpu_pinning,
         current_numa_pinning = v_current_numa_pinning
     WHERE vm_guid = v_vm_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVmDynamic (v_vm_guid UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_dynamic
     WHERE vm_guid = v_vm_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromVmDynamic ()
-RETURNS SETOF vm_dynamic STABLE AS $PROCEDURE$
+RETURNS SETOF vm_dynamic STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_dynamic.*
     FROM vm_dynamic;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmDynamicByVmGuid (v_vm_guid UUID)
-RETURNS SETOF vm_dynamic STABLE AS $PROCEDURE$
+RETURNS SETOF vm_dynamic STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_dynamic.*
     FROM vm_dynamic
     WHERE vm_guid = v_vm_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS GetAllHashesFromVmDynamic_rs CASCADE;
 CREATE TYPE GetAllHashesFromVmDynamic_rs AS (vm_guid UUID, hash VARCHAR);
 CREATE OR REPLACE FUNCTION GetAllHashesFromVmDynamic ()
 RETURNS SETOF GetAllHashesFromVmDynamic_rs STABLE
-AS $procedure$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_guid, hash
     FROM vm_dynamic;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION SetHashByVmGuid (v_vm_guid UUID, v_hash VARCHAR(30))
 RETURNS VOID
-AS $procedure$
+AS $FUNCTION$
 BEGIN
     UPDATE vm_dynamic
     SET hash = v_hash
     WHERE vm_guid = v_vm_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
@@ -746,7 +746,7 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_cpu_pinning_policy SMALLINT,
     v_parallel_migrations SMALLINT)
   RETURNS VOID
-   AS $procedure$
+   AS $FUNCTION$
 DECLARE
   v_val UUID;
 BEGIN
@@ -937,7 +937,7 @@ INSERT INTO vm_static(description,
     SET child_count = child_count+1
     WHERE vm_guid = v_vmt_guid;
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -948,12 +948,12 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION IncrementDbGeneration(v_vm_guid UUID)
 RETURNS VOID
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       UPDATE vm_static
       SET db_generation  = db_generation + 1
       WHERE vm_guid = v_vm_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -962,12 +962,12 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION IncrementDbGenerationForVms(v_vm_guids UUID[])
 RETURNS VOID
-AS $procedure$
+AS $FUNCTION$
 BEGIN
     UPDATE vm_static
     SET db_generation = db_generation + 1
     WHERE vm_guid = ANY(v_vm_guids);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -976,12 +976,12 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetDbGeneration(v_vm_guid UUID)
 RETURNS SETOF BIGINT STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY SELECT db_generation
       FROM vm_static
       WHERE vm_guid = v_vm_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -990,7 +990,7 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION IncrementDbGenerationForAllInStoragePool(v_storage_pool_id UUID)
 RETURNS VOID
-   AS $procedure$
+   AS $FUNCTION$
 DECLARE
      curs CURSOR FOR SELECT vms.vm_guid FROM vm_static vms
                      WHERE vms.cluster_id IN (SELECT vgs.cluster_id FROM cluster vgs
@@ -1006,7 +1006,7 @@ BEGIN
          END IF;
          UPDATE vm_static SET db_generation  = db_generation + 1 WHERE vm_guid = id;
       END LOOP;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1017,7 +1017,7 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmsAndTemplatesIdsWithoutAttachedImageDisks(v_storage_pool_id UUID, v_shareable BOOLEAN)
 RETURNS SETOF UUID STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY SELECT vs.vm_guid
       FROM vm_static vs
@@ -1031,7 +1031,7 @@ BEGIN
       AND vs.cluster_id IN (SELECT vg.cluster_id
                               FROM cluster vg, storage_pool sp
                               WHERE vg.storage_pool_id = v_storage_pool_id);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1124,7 +1124,7 @@ v_parallel_migrations SMALLINT)
 RETURNS VOID
 
 	--The [vm_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
      UPDATE vm_static
      SET
@@ -1215,7 +1215,7 @@ BEGIN
           v_vm_guid,
           v_dedicated_vm_for_vds);
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1224,7 +1224,7 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION DeleteVmStatic(v_vm_guid UUID, v_remove_permissions boolean)
 RETURNS VOID
-   AS $procedure$
+   AS $FUNCTION$
    DECLARE
    v_val  UUID;
    v_vmt_guid  UUID;
@@ -1247,7 +1247,7 @@ BEGIN
       -- set the child_count for the template
       UPDATE vm_static
           SET child_count = child_count - 1 WHERE vm_guid = v_vmt_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1255,25 +1255,25 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllFromVmStatic() RETURNS SETOF vm_static_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT vm_static_view.*
    FROM vm_static_view
    WHERE entity_type = 'VM';
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 
 Create or replace FUNCTION GetVmStaticWithoutIcon() RETURNS SETOF vm_static_view STABLE
-AS $procedure$
+AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT vm_static_view.*
    FROM vm_static_view
    WHERE entity_type = 'VM'
       AND (small_icon_id IS NULL OR large_icon_id IS NULL);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1283,12 +1283,12 @@ Create or replace FUNCTION UpdateOriginalTemplateName(
 v_original_template_id UUID,
 v_original_template_name VARCHAR(255))
 RETURNS VOID
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       UPDATE vm_static
       SET original_template_name = v_original_template_name
       WHERE original_template_id = v_original_template_id;
-END; $procedure$
+END; $FUNCTION$
 
 
 
@@ -1299,12 +1299,12 @@ Create or replace FUNCTION UpdateVmLeaseInfo(
 v_vm_guid UUID,
 v_lease_info VARCHAR(1000))
 RETURNS VOID
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       UPDATE vm_dynamic
       SET lease_info = v_lease_info
       WHERE vm_guid = v_vm_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1314,44 +1314,44 @@ Create or replace FUNCTION UpdateVmLeaseStorageDomainId(
 v_vm_guid UUID,
 v_sd_id UUID)
 RETURNS VOID
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       UPDATE vm_static
       SET lease_sd_id = v_sd_id
       WHERE vm_guid = v_vm_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 
 Create or replace FUNCTION GetVmStaticByVmGuid(v_vm_guid UUID) RETURNS SETOF vm_static_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT vm_static_view.*
    FROM vm_static_view
    WHERE vm_guid = v_vm_guid
        AND   entity_type = 'VM';
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 CREATE OR REPLACE FUNCTION GetVmStaticByVmGuids(v_vm_guids UUID[]) RETURNS SETOF vm_static_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT vm_static_view.*
    FROM vm_static_view
    WHERE vm_guid = ANY(v_vm_guids)
        AND entity_type = 'VM';
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 Create or replace FUNCTION GetAllFromVmStaticByStoragePoolId(v_sp_id uuid) RETURNS SETOF vm_static_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT vm_static_view.*
    FROM vm_static_view INNER JOIN
@@ -1361,20 +1361,20 @@ RETURN QUERY SELECT vm_static_view.*
    WHERE v_sp_id = storage_pool.id
        AND entity_type = 'VM';
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 Create or replace FUNCTION GetVmStaticByName(v_vm_name VARCHAR(255)) RETURNS SETOF vm_static_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT vm_static_view.*
    FROM vm_static_view
    WHERE vm_name = v_vm_name
        AND entity_type = 'VM';
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1382,14 +1382,14 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmStaticByCluster(v_cluster_id UUID) RETURNS SETOF vm_static_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT vm_static_view.*
    FROM vm_static_view
    WHERE cluster_id = v_cluster_id
        AND entity_type = 'VM';
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1404,7 +1404,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllFromVms(v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 IF v_is_filtered THEN
    RETURN QUERY SELECT vms.*
@@ -1417,7 +1417,7 @@ ELSE
       ORDER BY vm_guid;
 END IF;
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1427,7 +1427,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllFromVmsFilteredAndSorted(v_user_id UUID, v_offset int, v_limit int) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
    RETURN QUERY SELECT *
       FROM (
@@ -1445,7 +1445,7 @@ BEGIN
       ) result
       ORDER BY vm_name ASC
       LIMIT v_limit OFFSET v_offset;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1455,7 +1455,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllRunningVmsForUserAndActionGroup(v_user_id UUID, v_action_group_id INTEGER) RETURNS SETOF vm_dynamic STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT DISTINCT vm_dynamic.*
       FROM vm_dynamic, vm_permissions_view, permissions_view, engine_session_user_flat_groups
@@ -1468,7 +1468,7 @@ RETURN QUERY SELECT DISTINCT vm_dynamic.*
           AND   permissions_view.ad_element_id = engine_session_user_flat_groups.granted_id
           AND   permissions_view.role_id IN (SELECT role_id FROM roles_groups WHERE action_group_id = v_action_group_id)
       ORDER BY vm_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1479,12 +1479,12 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmsByIds(v_vms_ids UUID[]) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT vm.*
              FROM vms vm
              WHERE vm.vm_guid = ANY(v_vms_ids);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1494,7 +1494,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmByVmGuid(v_vm_guid UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
    FROM vms
@@ -1502,7 +1502,7 @@ RETURN QUERY SELECT DISTINCT vms.*
        AND   (NOT v_is_filtered OR EXISTS (SELECT 1
                                        FROM   user_vm_permissions_view
                                        WHERE  user_id = v_user_id AND entity_id = v_vm_guid));
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1510,12 +1510,12 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetHostedEngineVm() RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
    FROM vms
    WHERE origin = 5 OR origin = 6;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1523,7 +1523,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmByVmNameForDataCenter(v_data_center_id UUID, v_vm_name VARCHAR(255), v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
    FROM vms
@@ -1532,30 +1532,30 @@ RETURN QUERY SELECT DISTINCT vms.*
        AND   (NOT v_is_filtered OR EXISTS (SELECT 1
                                        FROM   user_vm_permissions_view
                                        WHERE  user_id = v_user_id AND entity_id = vms.vm_guid));
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION getByNameAndNamespaceForCluster(v_cluster_id UUID, v_vm_name VARCHAR(255), v_namespace VARCHAR(253)) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
    FROM vms
    WHERE vm_name = v_vm_name
        AND namespace = v_namespace
        AND cluster_id = v_cluster_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 Create or replace FUNCTION GetVmsByVmtGuid(v_vmt_guid UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
    FROM vms
    WHERE vmt_guid = v_vmt_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1565,7 +1565,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmsByUserId(v_user_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 
 DECLARE v_vm_ids  UUID[];
 BEGIN
@@ -1577,7 +1577,7 @@ RETURN QUERY
 SELECT vms.*
 FROM vms
    WHERE vm_guid = ANY(v_vm_ids);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1587,11 +1587,11 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmsByInstanceTypeId(v_instance_type_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY select vms.* from vms
    WHERE instance_type_id = v_instance_type_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1601,7 +1601,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmsByUserIdWithGroupsAndUserRoles(v_user_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
    from vms
@@ -1612,23 +1612,23 @@ RETURN QUERY SELECT DISTINCT vms.*
            FROM getUserAndGroupsById(v_user_id)))
        AND perms.role_type = 2;
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmsRunningOnVds(v_vds_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
    FROM vms
    WHERE run_on_vds = v_vds_id;
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetVmsRunningOnMultipleVds(v_vds_ids UUID[])
-RETURNS SETOF vms STABLE AS $procedure$
+RETURNS SETOF vms STABLE AS $FUNCTION$
 BEGIN
    RETURN QUERY
 
@@ -1636,35 +1636,35 @@ BEGIN
    FROM vms
    WHERE run_on_vds = ANY(v_vds_ids);
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmsRunningByVds(v_vds_id UUID) RETURNS SETOF vms_monitoring_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY
 SELECT DISTINCT vms_monitoring_view.*
    FROM vms_monitoring_view
    WHERE run_on_vds = v_vds_id;
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetVmsMigratingToVds(v_vds_id UUID)
 RETURNS SETOF vm_dynamic STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT DISTINCT vm_dynamic.*
    FROM vm_dynamic
    WHERE migrating_to_vds = v_vds_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmsRunningOnOrMigratingToVds(v_vds_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
     -- use migrating_to_vds column when the VM is in status Migrating From
     RETURN QUERY SELECT DISTINCT V.* FROM VMS V
@@ -1672,17 +1672,17 @@ BEGIN
         OR (V.status = 5
             AND V.migrating_to_vds=v_vds_id)
     ORDER BY V.vm_name;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllForStoragePool(v_storage_pool_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT *
              FROM vms
              WHERE storage_pool_id = v_storage_pool_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1691,13 +1691,13 @@ Create or replace FUNCTION UpdateOvirtGuestAgentStatus(
 	v_ovirt_guest_agent_status INTEGER)
 RETURNS VOID
 
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       UPDATE vm_dynamic
       SET
       ovirt_guest_agent_status = v_ovirt_guest_agent_status
       WHERE vm_guid = v_vm_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1706,31 +1706,31 @@ Create or replace FUNCTION UpdateQemuGuestAgentStatus(
 	v_qemu_guest_agent_status INTEGER)
 RETURNS VOID
 
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       UPDATE vm_dynamic
       SET
       qemu_guest_agent_status = v_qemu_guest_agent_status
       WHERE vm_guid = v_vm_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 Create or replace FUNCTION GetVmsDynamicRunningOnVds(v_vds_id UUID) RETURNS SETOF vm_dynamic STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY SELECT vm_dynamic.*
       FROM vm_dynamic
       WHERE run_on_vds = v_vds_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 CREATE OR REPLACE FUNCTION IsAnyVmRunOnVds(v_vds_id UUID)
 RETURNS SETOF booleanResultType STABLE
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1739,14 +1739,14 @@ BEGIN
             FROM vm_dynamic
             WHERE run_on_vds = v_vds_id
            );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 Create or replace FUNCTION DeleteVm(v_vm_guid UUID)
 RETURNS VOID
-   AS $procedure$
+   AS $FUNCTION$
    DECLARE
    v_vmt_guid  UUID;
 BEGIN
@@ -1763,31 +1763,31 @@ BEGIN
       DELETE FROM vm_dynamic WHERE vm_guid = v_vm_guid;
       DELETE FROM vm_static WHERE vm_guid = v_vm_guid;
       PERFORM DeletePermissionsByEntityId(v_vm_guid);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 
 Create or replace FUNCTION GetVmsByAdGroupNames(v_ad_group_names VARCHAR(250)) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY select distinct vms.* from vms
    inner join permissions on vms.vm_guid = permissions.object_id
    inner join ad_groups on ad_groups.id = permissions.ad_element_id
    WHERE     (ad_groups.name in(select Id from fnSplitter(v_ad_group_names)));
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 Create or replace FUNCTION GetVmsByDiskId(v_disk_guid UUID) RETURNS SETOF vms_with_plug_info STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY SELECT DISTINCT vms_with_plug_info.*
       FROM vms_with_plug_info
       WHERE device_id = v_disk_guid;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1795,7 +1795,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllVMsWithDisksOnOtherStorageDomain(v_storage_domain_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
       FROM vms
@@ -1811,11 +1811,11 @@ BEGIN
       INNER JOIN images i ON i.image_group_id = vd.device_id
       INNER JOIN image_storage_domain_map on i.image_guid = image_storage_domain_map.image_id
       WHERE image_storage_domain_map.storage_domain_id != v_storage_domain_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetActiveVmsByStorageDomainId(v_storage_domain_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
       FROM vms
@@ -1825,7 +1825,7 @@ BEGIN
       WHERE status not in (0, 13)
       AND is_plugged = TRUE
       AND image_storage_domain_map.storage_domain_id = v_storage_domain_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1833,7 +1833,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmsByStorageDomainId(v_storage_domain_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
       FROM vms
@@ -1842,12 +1842,12 @@ BEGIN
           AND images.active = TRUE
       INNER JOIN image_storage_domain_map on images.image_guid = image_storage_domain_map.image_id
       WHERE image_storage_domain_map.storage_domain_id = v_storage_domain_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION getAllVmsRelatedToQuotaId(v_quota_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY SELECT vms.*
       FROM vms
@@ -1860,7 +1860,7 @@ BEGIN
           AND images.active = TRUE
       INNER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
       WHERE image_storage_domain_map.quota_id = v_quota_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1870,13 +1870,13 @@ Create or replace FUNCTION UpdateIsInitialized(v_vm_guid UUID,
 RETURNS VOID
 
 	--The [vm_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       UPDATE vm_static
       SET is_initialized = v_is_initialized
       WHERE vm_guid = v_vm_guid
           AND entity_type = 'VM';
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -1886,7 +1886,7 @@ LANGUAGE plpgsql;
 DROP TYPE IF EXISTS GetOrderedVmGuidsForRunMultipleActions_rs CASCADE;
 CREATE TYPE GetOrderedVmGuidsForRunMultipleActions_rs AS (vm_guid UUID);
 Create or replace FUNCTION GetOrderedVmGuidsForRunMultipleActions(v_vm_guids VARCHAR(4000)) RETURNS SETOF GetOrderedVmGuidsForRunMultipleActions_rs STABLE
-   AS $procedure$
+   AS $FUNCTION$
    DECLARE
    v_ordered_guids GetOrderedVmGuidsForRunMultipleActions_rs;
 BEGIN
@@ -1896,13 +1896,13 @@ BEGIN
       RETURN NEXT v_ordered_guids;
    END LOOP;
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 Create or replace FUNCTION GetVmsByNetworkId(v_network_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
    RETURN QUERY SELECT *
    FROM vms
@@ -1913,12 +1913,12 @@ BEGIN
       ON vnic_profiles.id = vm_interface.vnic_profile_id
       WHERE vnic_profiles.network_id = v_network_id
           AND vm_interface.vm_guid = vms.vm_guid);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmsByVnicProfileId(v_vnic_profile_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
    RETURN QUERY SELECT *
    FROM vms
@@ -1927,51 +1927,51 @@ BEGIN
       FROM vm_interface
       WHERE vm_interface.vnic_profile_id = v_vnic_profile_id
           AND vm_interface.vm_guid = vms.vm_guid);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmsByClusterId(v_cluster_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY SELECT vms.*
       FROM vms
       WHERE cluster_id = v_cluster_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 
 Create or replace FUNCTION GetVmsByVmPoolId(v_vm_pool_id UUID) RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY SELECT vms.*
       FROM vms
       WHERE vm_pool_id = v_vm_pool_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetFailedAutoStartVms() RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
       RETURN QUERY SELECT vms.*
       FROM vms
       WHERE auto_startup = TRUE
           AND status = 0
           AND exit_status = 1;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 -- Get all running vms for cluster
 Create or replace FUNCTION GetRunningVmsByClusterId(v_cluster_id UUID) RETURNS SETOF vms STABLE
-    AS $procedure$
+    AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT DISTINCT vms.*
     FROM vms
     WHERE run_on_vds IS NOT NULL
         AND cluster_id = v_cluster_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 ---------------------
@@ -1979,22 +1979,22 @@ LANGUAGE plpgsql;
 ---------------------
 
 Create or replace FUNCTION GetVmInitByVmId(v_vm_id UUID) RETURNS SETOF vm_init STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT vm_init.*
    FROM vm_init
    WHERE vm_id = v_vm_id;
 
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmInitByids(v_vm_init_ids UUID[]) RETURNS SETOF vm_init STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
 RETURN QUERY SELECT *
      FROM vm_init
      WHERE vm_init.vm_id = ANY(v_vm_init_ids);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -2020,7 +2020,7 @@ Create or replace FUNCTION UpdateVmInit(
     v_org_name VARCHAR(256),
     v_cloud_init_network_protocol VARCHAR(32)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_init
     SET host_name = v_host_name,
@@ -2043,16 +2043,16 @@ BEGIN
         org_name = v_org_name,
         cloud_init_network_protocol = v_cloud_init_network_protocol
     WHERE vm_id = v_vm_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVmInit (v_vm_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_init
     WHERE vm_id = v_vm_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertVmInit (
@@ -2077,7 +2077,7 @@ CREATE OR REPLACE FUNCTION InsertVmInit (
     v_org_name VARCHAR(256),
     v_cloud_init_network_protocol VARCHAR(32)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_init (
         vm_id,
@@ -2123,11 +2123,11 @@ BEGIN
         v_org_name,
         v_cloud_init_network_protocol
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmIdsForVersionUpdate (v_base_template_id UUID)
-RETURNS SETOF UUID STABLE AS $PROCEDURE$
+RETURNS SETOF UUID STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -2161,26 +2161,26 @@ BEGIN
                     )
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmCpuProfileIdForClusterId (
     v_cluster_id UUID,
     v_cpu_profile_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_static
     SET cpu_profile_id = v_cpu_profile_id
     WHERE cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertDedicatedHostsToVm (
     v_vm_guid UUID,
     v_dedicated_vm_for_vds TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_host_pinning_map (
         vm_id,
@@ -2189,36 +2189,36 @@ BEGIN
     SELECT v_vm_guid,
         vds_id
     FROM fnSplitterUuid(v_dedicated_vm_for_vds) AS vds_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateDedicatedHostsToVm (
     v_vm_guid UUID,
     v_dedicated_vm_for_vds TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_host_pinning_map
     WHERE vm_id = v_vm_guid;
 
     PERFORM InsertDedicatedHostsToVm(v_vm_guid, v_dedicated_vm_for_vds);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmsByCpuProfileIds(v_cpu_profile_ids UUID[])
 RETURNS SETOF vms STABLE
-AS $procedure$
+AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT vms.*
         FROM vms
         WHERE cpu_profile_id = ANY(v_cpu_profile_ids);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllVmsRelatedToDiskProfiles(v_disk_profile_ids UUID[])
 RETURNS SETOF vms STABLE
-AS $procedure$
+AS $FUNCTION$
 BEGIN
   RETURN QUERY SELECT vms.*
       FROM vms
@@ -2227,31 +2227,31 @@ BEGIN
               AND images.active = TRUE
           INNER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
           WHERE image_storage_domain_map.disk_profile_id = ANY(v_disk_profile_ids);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmsByOrigin(v_origins INT[])
 RETURNS SETOF vms STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
     RETURN QUERY
     SELECT vms.*
         FROM vms
         WHERE origin = ANY(v_origins);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION SetToUnknown (
     v_vm_ids UUID[],
     v_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_dynamic
     SET status = v_status
     WHERE vm_guid = ANY(v_vm_ids)
         AND run_on_vds IS NOT NULL;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -2259,13 +2259,13 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmsWithLeaseOnStorageDomain(v_storage_domain_id UUID)
 RETURNS SETOF vm_static_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT vm_static_view.*
     FROM vm_static_view
     WHERE lease_sd_id = v_storage_domain_id
         AND entity_type = 'VM';
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -2273,14 +2273,14 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetActiveVmNamesWithLeaseOnStorageDomain(v_storage_domain_id UUID)
 RETURNS SETOF varchar(255) STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT vs.vm_name
     FROM vm_static vs
     JOIN vm_dynamic vd ON vd.vm_guid = vs.vm_guid
     WHERE lease_sd_id = v_storage_domain_id
         AND vd.status <> 0;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -2288,14 +2288,14 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetActiveVmNamesWithIsoOnStorageDomain(v_storage_domain_id UUID)
 RETURNS SETOF varchar(255) STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT vd.vm_name
     FROM images_storage_domain_view image, vms_monitoring_view vd
     WHERE image.storage_id = v_storage_domain_id
     AND vd.status not in (0, 14, 15) -- Down, ImageIllegal, ImageLocked
     AND image.image_group_id::VARCHAR = vd.current_cd;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -2303,14 +2303,14 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetActiveVmNamesWithIsoAttached(v_iso_disk_id UUID)
 RETURNS SETOF varchar(255) STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT vs.vm_name
     FROM vm_static vs
     JOIN vm_dynamic vd ON vd.vm_guid = vs.vm_guid
     WHERE vs.iso_path = v_iso_disk_id::VARCHAR
         AND vd.status NOT IN (0, 14, 15);
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -2318,12 +2318,12 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmNamesWithSpecificIsoAttached(v_iso_disk_id UUID)
 RETURNS SETOF varchar(255) STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT vm.vm_name
     FROM vm_static vm
     WHERE vm.iso_path = v_iso_disk_id::VARCHAR;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -2331,12 +2331,12 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmIdsWithSpecificIsoAttached(v_iso_disk_id UUID)
 RETURNS SETOF UUID STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT vd.vm_guid
     FROM vm_dynamic vd
     WHERE vd.current_cd = v_iso_disk_id::VARCHAR;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -2344,24 +2344,24 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmsStaticRunningOnVds(v_vds_id UUID)
 RETURNS SETOF vm_static_view STABLE
-   AS $procedure$
+   AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT vs.*
     FROM vm_static_view vs
     JOIN vm_dynamic vd ON vd.vm_guid = vs.vm_guid
     WHERE run_on_vds = v_vds_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmsPinnedToHost(v_host_id UUID)
 RETURNS SETOF vms STABLE
-    AS $procedure$
+    AS $FUNCTION$
 BEGIN
     RETURN QUERY SELECT vms.*
     FROM vms
         JOIN vm_host_pinning_map pin ON pin.vm_id = vms.vm_guid
     WHERE pin.vds_id = v_host_id;
-END; $procedure$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -2385,7 +2385,7 @@ CREATE OR REPLACE FUNCTION UpdateTpmData (
     v_tpm_data TEXT,
     v_tpm_hash TEXT
 )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_external_data (
         device_id,
@@ -2400,23 +2400,23 @@ BEGIN
     UPDATE
     SET tpm_data = v_tpm_data,
         tpm_hash = v_tpm_hash;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteTpmData (
     v_vm_id UUID
 )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
     DELETE FROM vm_external_data
     WHERE vm_id = v_vm_id
-$PROCEDURE$
+$FUNCTION$
 LANGUAGE sql;
 
 CREATE OR REPLACE FUNCTION CopyTpmData (
     v_source_vm_id UUID,
     v_target_vm_id UUID
 )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE
     v_device_id UUID := (SELECT device_id
                          FROM vm_device
@@ -2433,7 +2433,7 @@ BEGIN
         FROM vm_external_data
         WHERE vm_id = v_source_vm_id;
     END IF;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNvramData (
@@ -2451,7 +2451,7 @@ CREATE OR REPLACE FUNCTION UpdateNvramData (
     v_nvram_data TEXT,
     v_nvram_hash TEXT
 )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_nvram_data (
         vm_id,
@@ -2467,23 +2467,23 @@ BEGIN
     UPDATE
     SET nvram_data = v_nvram_data,
         nvram_hash = v_nvram_hash;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteNvramData (
     v_vm_id UUID
 )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
     DELETE FROM vm_nvram_data
     WHERE vm_id = v_vm_id
-$PROCEDURE$
+$FUNCTION$
 LANGUAGE sql;
 
 CREATE OR REPLACE FUNCTION CopyNvramData (
     v_source_vm_id UUID,
     v_target_vm_id UUID
 )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_nvram_data (
         vm_id,
@@ -2493,7 +2493,7 @@ BEGIN
     SELECT v_target_vm_id, nvram_data, nvram_hash
     FROM vm_nvram_data
     WHERE vm_id = v_source_vm_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TRIGGER

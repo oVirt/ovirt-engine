@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION InsertMacPool (
     v_allow_duplicate_mac_addresses BOOLEAN,
     v_description VARCHAR(4000)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO mac_pools (
         id,
@@ -20,7 +20,7 @@ BEGIN
         v_allow_duplicate_mac_addresses,
         v_description
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateMacPool (
@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION UpdateMacPool (
     v_allow_duplicate_mac_addresses BOOLEAN,
     v_description VARCHAR(4000)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE mac_pools
     SET id = v_id,
@@ -37,42 +37,42 @@ BEGIN
         allow_duplicate_mac_addresses = v_allow_duplicate_mac_addresses,
         description = v_description
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteMacPool (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM mac_pools
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetMacPoolByMacPoolId (v_id UUID)
-RETURNS SETOF mac_pools STABLE AS $PROCEDURE$
+RETURNS SETOF mac_pools STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM mac_pools
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDefaultMacPool ()
-RETURNS SETOF mac_pools STABLE AS $PROCEDURE$
+RETURNS SETOF mac_pools STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM mac_pools
     WHERE default_pool IS true;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetMacPoolByClusterId (v_cluster_id UUID)
-RETURNS SETOF mac_pools STABLE AS $PROCEDURE$
+RETURNS SETOF mac_pools STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -81,21 +81,21 @@ BEGIN
     INNER JOIN cluster c
         ON c.mac_pool_id = mp.id
     WHERE c.cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromMacPools ()
-RETURNS SETOF mac_pools STABLE AS $PROCEDURE$
+RETURNS SETOF mac_pools STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM mac_pools;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllMacsByMacPoolId (v_id UUID)
-RETURNS SETOF VARCHAR STABLE AS $PROCEDURE$
+RETURNS SETOF VARCHAR STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -109,16 +109,16 @@ BEGIN
             WHERE c.mac_pool_id = v_id
                 AND vm_static.vm_guid = vm_interface.vm_guid
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
--- Procedures for MAC ranges
+-- Functions for MAC ranges
 CREATE OR REPLACE FUNCTION InsertMacPoolRange (
     v_mac_pool_id UUID,
     v_from_mac VARCHAR(17),
     v_to_mac VARCHAR(17)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO mac_pool_ranges (
         mac_pool_id,
@@ -130,27 +130,27 @@ BEGIN
         v_from_mac,
         v_to_mac
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteMacPoolRangesByMacPoolId (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM mac_pool_ranges
     WHERE mac_pool_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllMacPoolRangesByMacPoolId (v_id UUID)
-RETURNS SETOF mac_pool_ranges STABLE AS $PROCEDURE$
+RETURNS SETOF mac_pool_ranges STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM mac_pool_ranges
     WHERE mac_pool_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

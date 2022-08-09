@@ -1,7 +1,7 @@
 
 
 /* ----------------------------------------------------------------
- Stored procedures for database operations on Gluster Geo-replication
+ Stored FUNCTIONs for database operations on Gluster Geo-replication
  related tables:
       - gluster_georep_session
       - gluster_georep_config
@@ -18,7 +18,7 @@ CREATE OR REPLACE FUNCTION InsertGlusterGeoRepSession (
     v_status VARCHAR(50),
     v_user_name VARCHAR(255)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO gluster_georep_session (
         session_id,
@@ -42,7 +42,7 @@ BEGIN
         v_status,
         v_user_name
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertGlusterGeoRepSessionConfig (
@@ -50,7 +50,7 @@ CREATE OR REPLACE FUNCTION InsertGlusterGeoRepSessionConfig (
     v_config_key VARCHAR(50),
     v_config_value VARCHAR(50)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO gluster_georep_config (
         session_id,
@@ -62,7 +62,7 @@ BEGIN
         v_config_key,
         v_config_value
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertGlusterGeoRepSessionDetail (
@@ -82,7 +82,7 @@ CREATE OR REPLACE FUNCTION InsertGlusterGeoRepSessionDetail (
     v_checkpoint_completed_time TIMESTAMP,
     v_is_checkpoint_completed BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO gluster_georep_session_details (
         session_id,
@@ -118,7 +118,7 @@ BEGIN
         v_checkpoint_completed_time,
         v_is_checkpoint_completed
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterGeoRepSessionDetail (
@@ -138,7 +138,7 @@ CREATE OR REPLACE FUNCTION UpdateGlusterGeoRepSessionDetail (
     v_checkpoint_completed_time TIMESTAMP,
     v_is_checkpoint_completed BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_georep_session_details
     SET slave_host_name = v_slave_host_name,
@@ -157,7 +157,7 @@ BEGIN
         _update_date = LOCALTIMESTAMP
     WHERE session_id = v_session_id
         AND master_brick_id = v_master_brick_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterGeoRepSessionConfig (
@@ -165,29 +165,29 @@ CREATE OR REPLACE FUNCTION UpdateGlusterGeoRepSessionConfig (
     v_config_key VARCHAR(50),
     v_config_value VARCHAR(50)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_georep_config
     SET config_value = v_config_value,
         _update_date = LOCALTIMESTAMP
     WHERE session_id = v_session_id
         AND config_key = v_config_key;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionById (v_session_id UUID)
-RETURNS SETOF gluster_georep_sessions_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_georep_sessions_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM gluster_georep_sessions_view
     WHERE session_id = v_session_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionsByVolumeId (v_master_volume_id UUID)
-RETURNS SETOF gluster_georep_sessions_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_georep_sessions_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -195,11 +195,11 @@ BEGIN
     FROM gluster_georep_sessions_view
     WHERE master_volume_id = v_master_volume_id
     ORDER BY slave_volume_name ASC;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionsByClusterId (v_cluster_id UUID)
-RETURNS SETOF gluster_georep_sessions_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_georep_sessions_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -207,18 +207,18 @@ BEGIN
     FROM gluster_georep_sessions_view
     WHERE cluster_id = v_cluster_id
     ORDER BY slave_volume_name ASC;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionByKey (v_session_key VARCHAR(150))
-RETURNS SETOF gluster_georep_sessions_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_georep_sessions_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM gluster_georep_sessions_view
     WHERE session_key = v_session_key;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionBySlaveHostAndVolume (
@@ -226,7 +226,7 @@ CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionBySlaveHostAndVolume (
     v_slave_host_uuid UUID,
     v_slave_volume_name VARCHAR(150)
     )
-RETURNS SETOF gluster_georep_sessions_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_georep_sessions_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -235,7 +235,7 @@ BEGIN
     WHERE master_volume_id = v_master_volume_id
         AND slave_host_uuid = v_slave_host_uuid
         AND slave_volume_name = v_slave_volume_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionBySlaveHostNameAndVolume (
@@ -243,7 +243,7 @@ CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionBySlaveHostNameAndVolume (
     v_slave_host_name VARCHAR(150),
     v_slave_volume_name VARCHAR(150)
     )
-RETURNS SETOF gluster_georep_sessions_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_georep_sessions_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -252,7 +252,7 @@ BEGIN
     WHERE master_volume_id = v_master_volume_id
         AND slave_host_name = v_slave_host_name
         AND slave_volume_name = v_slave_volume_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterGeoRepSession (
@@ -261,7 +261,7 @@ CREATE OR REPLACE FUNCTION UpdateGlusterGeoRepSession (
     v_slave_host_uuid UUID,
     v_slave_volume_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_georep_session
     SET status = v_status,
@@ -269,11 +269,11 @@ BEGIN
         slave_volume_id = v_slave_volume_id,
         _update_date = LOCALTIMESTAMP
     WHERE session_id = v_session_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionDetails (v_session_id UUID)
-RETURNS SETOF gluster_georep_session_details STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_georep_session_details STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -281,14 +281,14 @@ BEGIN
     FROM gluster_georep_session_details
     WHERE session_id = v_session_id
     ORDER BY slave_host_name ASC;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionDetailsForBrick (
     v_session_id UUID,
     v_master_brick_id UUID
     )
-RETURNS SETOF gluster_georep_session_details STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_georep_session_details STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -296,11 +296,11 @@ BEGIN
     FROM gluster_georep_session_details
     WHERE session_id = v_session_id
         AND master_brick_id = v_master_brick_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionConfig (v_session_id UUID)
-RETURNS SETOF gluster_geo_rep_config_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_geo_rep_config_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -308,11 +308,11 @@ BEGIN
     FROM gluster_geo_rep_config_view
     WHERE session_id = v_session_id
     ORDER BY config_key ASC;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionUnSetConfig (v_session_id UUID)
-RETURNS SETOF gluster_config_master STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_config_master STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -324,14 +324,14 @@ BEGIN
             FROM gluster_georep_config
             WHERE gluster_georep_config.session_id = v_session_id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterGeoRepSessionConfigByKey (
     v_session_id UUID,
     v_config_key VARCHAR(50)
     )
-RETURNS SETOF gluster_geo_rep_config_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_geo_rep_config_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -339,37 +339,37 @@ BEGIN
     FROM gluster_geo_rep_config_view
     WHERE session_id = v_session_id
         AND config_key = v_config_key;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllGlusterGeoRepSessions ()
-RETURNS SETOF gluster_georep_sessions_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_georep_sessions_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM gluster_georep_sessions_view;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterGeoRepSession (v_session_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM gluster_georep_session
     WHERE session_id = v_session_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGeoRepSessionBySlaveVolume (v_slave_volume_id UUID)
-RETURNS SETOF gluster_georep_sessions_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_georep_sessions_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM gluster_georep_sessions_view
     WHERE slave_volume_id = v_slave_volume_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

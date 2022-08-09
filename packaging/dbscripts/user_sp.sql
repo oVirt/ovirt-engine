@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION InsertUser (
     v_external_id TEXT,
     v_namespace VARCHAR(2048)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO users (
         department,
@@ -42,7 +42,7 @@ BEGIN
         v_external_id,
         v_namespace
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateUserImpl (
@@ -59,7 +59,7 @@ CREATE OR REPLACE FUNCTION UpdateUserImpl (
     )
 RETURNS INT
     --The [users] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 DECLARE updated_rows INT;
 
 BEGIN
@@ -80,7 +80,7 @@ BEGIN
     GET DIAGNOSTICS updated_rows = ROW_COUNT;
 
     RETURN updated_rows;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateUser (
@@ -98,7 +98,7 @@ CREATE OR REPLACE FUNCTION UpdateUser (
     )
 RETURNS VOID
     --The [users] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     PERFORM UpdateUserImpl(
         v_department,
@@ -116,7 +116,7 @@ BEGIN
     SET last_admin_check_status = v_last_admin_check_status
     WHERE domain = v_domain
         AND external_id = v_external_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertOrUpdateUser (
@@ -131,7 +131,7 @@ CREATE OR REPLACE FUNCTION InsertOrUpdateUser (
     v_external_id TEXT,
     v_namespace VARCHAR(2048)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE updated_rows INT;
 
 BEGIN
@@ -161,12 +161,12 @@ BEGIN
             v_external_id,
             v_namespace);
     END IF;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
     CREATE
         OR REPLACE FUNCTION DeleteUser (v_user_id UUID)
-    RETURNS VOID AS $PROCEDURE$
+    RETURNS VOID AS $FUNCTION$
 
     DECLARE v_val UUID;
 
@@ -188,7 +188,7 @@ LANGUAGE plpgsql;
         DELETE
         FROM users
         WHERE user_id = v_user_id;
-    END;$PROCEDURE$
+    END;$FUNCTION$
 
     LANGUAGE plpgsql;
 
@@ -197,7 +197,7 @@ LANGUAGE plpgsql;
         v_user_id UUID,
         v_is_filtered BOOLEAN
         )
-    RETURNS SETOF users STABLE AS $PROCEDURE$
+    RETURNS SETOF users STABLE AS $FUNCTION$
 
     BEGIN
         RETURN QUERY
@@ -214,7 +214,7 @@ LANGUAGE plpgsql;
                         AND u.user_id = p.ad_element_id
                     )
                 );
-    END;$PROCEDURE$
+    END;$FUNCTION$
 
     LANGUAGE plpgsql;
 
@@ -223,7 +223,7 @@ LANGUAGE plpgsql;
         v_user_id UUID,
         v_is_filtered BOOLEAN
         )
-    RETURNS SETOF users STABLE AS $PROCEDURE$
+    RETURNS SETOF users STABLE AS $FUNCTION$
 
     BEGIN
         RETURN QUERY
@@ -241,7 +241,7 @@ LANGUAGE plpgsql;
                         AND u.user_id = p.ad_element_id
                     )
                 );
-    END;$PROCEDURE$
+    END;$FUNCTION$
 
     LANGUAGE plpgsql;
 
@@ -250,7 +250,7 @@ LANGUAGE plpgsql;
         v_domain VARCHAR(255),
         v_external_id TEXT
         )
-    RETURNS SETOF users STABLE AS $PROCEDURE$
+    RETURNS SETOF users STABLE AS $FUNCTION$
 
     BEGIN
         RETURN QUERY
@@ -259,7 +259,7 @@ LANGUAGE plpgsql;
         FROM users
         WHERE domain = v_domain
             AND external_id = v_external_id;
-    END;$PROCEDURE$
+    END;$FUNCTION$
 
     LANGUAGE plpgsql;
 
@@ -268,7 +268,7 @@ LANGUAGE plpgsql;
         v_username VARCHAR(255),
         v_domain VARCHAR(255)
         )
-    RETURNS SETOF users STABLE AS $PROCEDURE$
+    RETURNS SETOF users STABLE AS $FUNCTION$
 
     BEGIN
         RETURN QUERY
@@ -277,13 +277,13 @@ LANGUAGE plpgsql;
         FROM users
         WHERE username = v_username
             AND domain = v_domain;
-    END;$PROCEDURE$
+    END;$FUNCTION$
 
     LANGUAGE plpgsql;
 
     CREATE
         OR REPLACE FUNCTION GetUsersByVmGuid (v_vm_guid UUID)
-    RETURNS SETOF users STABLE AS $PROCEDURE$
+    RETURNS SETOF users STABLE AS $FUNCTION$
 
     BEGIN
         RETURN QUERY
@@ -294,12 +294,12 @@ LANGUAGE plpgsql;
             ON users.user_id = permissions.ad_element_id
         WHERE permissions.object_type_id = 2
             AND permissions.object_id = v_vm_guid;
-    END;$PROCEDURE$
+    END;$FUNCTION$
 
     LANGUAGE plpgsql;
 
     CREATE OR REPLACE FUNCTION GetUsersByTemplateGuid (v_template_guid UUID)
-    RETURNS SETOF users STABLE AS $PROCEDURE$
+    RETURNS SETOF users STABLE AS $FUNCTION$
 
     BEGIN
         RETURN QUERY
@@ -310,13 +310,13 @@ LANGUAGE plpgsql;
                 ON users.user_id = permissions.ad_element_id
         WHERE permissions.object_type_id = 4
             AND permissions.object_id = v_template_guid;
-    END;$PROCEDURE$
+    END;$FUNCTION$
 
     LANGUAGE plpgsql;
 
     CREATE
         OR REPLACE FUNCTION UpdateLastAdminCheckStatus (v_userIds VARCHAR(4000))
-    RETURNS VOID AS $PROCEDURE$
+    RETURNS VOID AS $FUNCTION$
 
     DECLARE v_id UUID;
 
@@ -384,14 +384,14 @@ LANGUAGE plpgsql;
 
 
     CLOSE myCursor;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSessionUserAndGroupsById (
     v_id UUID,
     v_engine_session_seq_id INT
     )
-RETURNS SETOF idUuidType STABLE AS $PROCEDURE$
+RETURNS SETOF idUuidType STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -412,11 +412,11 @@ BEGIN
 
     -- user is also member of 'Everyone'
     SELECT 'EEE00000-0000-0000-0000-123456789EEE';
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetUsersByTemplateGuid (v_template_guid UUID)
-RETURNS SETOF users STABLE AS $PROCEDURE$
+RETURNS SETOF users STABLE AS $FUNCTION$
 
 BEGIN
     RETURN QUERY
@@ -427,6 +427,6 @@ BEGIN
             ON users.user_id = permissions.ad_element_id
     WHERE permissions.object_type_id = 4
         AND permissions.object_id = v_template_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;

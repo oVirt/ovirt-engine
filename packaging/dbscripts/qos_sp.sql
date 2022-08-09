@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION InsertStorageQos (
     v_max_read_iops INT,
     v_max_write_iops INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO qos (
         id,
@@ -44,7 +44,7 @@ BEGIN
         v_max_read_iops,
         v_max_write_iops
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertCpuQos (
@@ -55,7 +55,7 @@ CREATE OR REPLACE FUNCTION InsertCpuQos (
     v_storage_pool_id uuid,
     v_cpu_limit INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO qos (
         id,
@@ -73,7 +73,7 @@ BEGIN
         v_storage_pool_id,
         v_cpu_limit
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertNetworkQos (
@@ -89,7 +89,7 @@ CREATE OR REPLACE FUNCTION InsertNetworkQos (
     v_outbound_peak INT,
     v_outbound_burst INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO qos (
         id,
@@ -117,7 +117,7 @@ BEGIN
         v_outbound_peak,
         v_outbound_burst
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertHostNetworkQos (
@@ -130,7 +130,7 @@ CREATE OR REPLACE FUNCTION InsertHostNetworkQos (
     v_out_average_upperlimit INT,
     v_out_average_realtime INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO qos (
         id,
@@ -152,7 +152,7 @@ BEGIN
         v_out_average_upperlimit,
         v_out_average_realtime
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateStorageQos (
@@ -168,7 +168,7 @@ CREATE OR REPLACE FUNCTION UpdateStorageQos (
     v_max_read_iops INT,
     v_max_write_iops INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE qos
     SET qos_type = v_qos_type,
@@ -183,7 +183,7 @@ BEGIN
         max_write_iops = v_max_write_iops,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateCpuQos (
@@ -194,7 +194,7 @@ CREATE OR REPLACE FUNCTION UpdateCpuQos (
     v_storage_pool_id uuid,
     v_cpu_limit INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE qos
     SET qos_type = v_qos_type,
@@ -204,7 +204,7 @@ BEGIN
         cpu_limit = v_cpu_limit,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateNetworkQos (
@@ -220,7 +220,7 @@ CREATE OR REPLACE FUNCTION UpdateNetworkQos (
     v_outbound_peak INT,
     v_outbound_burst INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE qos
     SET qos_type = v_qos_type,
@@ -235,7 +235,7 @@ BEGIN
         outbound_burst = v_outbound_burst,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateHostNetworkQos (
@@ -248,7 +248,7 @@ CREATE OR REPLACE FUNCTION UpdateHostNetworkQos (
     v_out_average_upperlimit INT,
     v_out_average_realtime INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE qos
     SET qos_type = v_qos_type,
@@ -260,34 +260,34 @@ BEGIN
         out_average_realtime = v_out_average_realtime,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteQos (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM qos
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetQosByQosId (v_id UUID)
-RETURNS SETOF qos STABLE AS $PROCEDURE$
+RETURNS SETOF qos STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM qos
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllQosForStoragePoolByQosType (
     v_storage_pool_id UUID,
     v_qos_type SMALLINT
     )
-RETURNS SETOF qos STABLE AS $PROCEDURE$
+RETURNS SETOF qos STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -295,22 +295,22 @@ BEGIN
     FROM qos
     WHERE storage_pool_id = v_storage_pool_id
         AND qos_type = v_qos_type;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllQosForStoragePool (v_storage_pool_id UUID)
-RETURNS SETOF qos STABLE AS $PROCEDURE$
+RETURNS SETOF qos STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM qos
     WHERE storage_pool_id = v_storage_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllQosByQosType (v_qos_type SMALLINT)
-RETURNS SETOF qos STABLE AS $PROCEDURE$
+RETURNS SETOF qos STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -318,11 +318,11 @@ BEGIN
     FROM qos
     WHERE qos_type = v_qos_type;
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllStorageQos (v_user_id UUID)
-RETURNS SETOF qos STABLE AS $PROCEDURE$
+RETURNS SETOF qos STABLE AS $FUNCTION$
 BEGIN
    RETURN QUERY SELECT *
       FROM qos WHERE
@@ -336,11 +336,11 @@ BEGIN
                 AND user_storage_domain_permissions_view.user_id = v_user_id
         );
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllCpuQos (v_user_id UUID)
-RETURNS SETOF qos STABLE AS $PROCEDURE$
+RETURNS SETOF qos STABLE AS $FUNCTION$
 BEGIN
    RETURN QUERY SELECT *
       FROM qos WHERE
@@ -354,11 +354,11 @@ BEGIN
                 AND user_cluster_permissions_view.user_id = v_user_id
         );
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllNetworkQos (v_user_id UUID)
-RETURNS SETOF qos STABLE AS $PROCEDURE$
+RETURNS SETOF qos STABLE AS $FUNCTION$
 BEGIN
    RETURN QUERY SELECT *
       FROM qos WHERE
@@ -372,11 +372,11 @@ BEGIN
                 AND user_vnic_profile_permissions_view.user_id = v_user_id
         );
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllHostNetworkQos ()
-RETURNS SETOF qos STABLE AS $PROCEDURE$
+RETURNS SETOF qos STABLE AS $FUNCTION$
 BEGIN
    RETURN QUERY SELECT *
       FROM qos WHERE
@@ -390,12 +390,12 @@ BEGIN
                 AND user_network_permissions_view.user_id = v_user_id
         );
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetQosByDiskProfiles (v_disk_profile_ids UUID[])
-RETURNS SETOF qos_for_disk_profile_view STABLE AS $PROCEDURE$
+RETURNS SETOF qos_for_disk_profile_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -403,29 +403,29 @@ BEGIN
     FROM qos_for_disk_profile_view
     WHERE disk_profile_id = ANY(v_disk_profile_ids);
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetQosByVmIds (v_vm_ids UUID[])
-RETURNS SETOF qos_for_vm_view STABLE AS $PROCEDURE$
+RETURNS SETOF qos_for_vm_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM qos_for_vm_view
     WHERE vm_id = ANY(v_vm_ids);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetHostNetworkQosOfMigrationNetworkByClusterId (v_cluster_id UUID)
-RETURNS SETOF host_network_qos_of_migration_network_by_cluster STABLE AS $PROCEDURE$
+RETURNS SETOF host_network_qos_of_migration_network_by_cluster STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM host_network_qos_of_migration_network_by_cluster
     WHERE cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

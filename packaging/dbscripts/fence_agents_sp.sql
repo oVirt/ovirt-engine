@@ -1,43 +1,43 @@
 
 
 CREATE OR REPLACE FUNCTION GetFenceAgentsByVdsId (v_vds_guid UUID)
-RETURNS SETOF fence_agents STABLE AS $PROCEDURE$
+RETURNS SETOF fence_agents STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT fence_agents.*
     FROM fence_agents
     WHERE vds_id = v_vds_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetFenceAgentById (v_guid UUID)
-RETURNS SETOF fence_agents STABLE AS $PROCEDURE$
+RETURNS SETOF fence_agents STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT fence_agents.*
     FROM fence_agents
     WHERE id = v_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteFenceAgent (v_guid UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM fence_agents
     WHERE id = v_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteFenceAgentsByVdsId (v_vds_guid UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM fence_agents
     WHERE vds_id = v_vds_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateFenceAgent (
@@ -52,7 +52,7 @@ CREATE OR REPLACE FUNCTION UpdateFenceAgent (
     v_encrypt_options BOOLEAN,
     v_port INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE fence_agents
     SET vds_id = v_vds_id,
@@ -65,7 +65,7 @@ BEGIN
         options = v_options,
         encrypt_options = v_encrypt_options
     WHERE id = v_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertFenceAgent (
@@ -80,7 +80,7 @@ CREATE OR REPLACE FUNCTION InsertFenceAgent (
     v_encrypt_options BOOLEAN,
     v_port INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO fence_agents (
         id,
@@ -106,7 +106,7 @@ BEGIN
         v_encrypt_options,
         v_port
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

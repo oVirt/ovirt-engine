@@ -1,7 +1,7 @@
 
 
 /* ----------------------------------------------------------------
- Stored procedures for database operations on Gluster Volume Snapshot
+ Stored FUNCTIONs for database operations on Gluster Volume Snapshot
  related tables:
       - gluster_volume_snapshots
       - gluster_volume_snapshot_config
@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION InsertGlusterVolumeSnapshot (
     v_status VARCHAR(32),
     v__create_date TIMESTAMP WITH TIME ZONE
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO gluster_volume_snapshots (
         snapshot_id,
@@ -34,47 +34,47 @@ BEGIN
         );
 
     PERFORM UpdateSnapshotCountInc(v_volume_id, 1);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterVolumeSnapshotById (v_snapshot_id UUID)
-RETURNS SETOF gluster_volume_snapshots_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_volume_snapshots_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM gluster_volume_snapshots_view
     WHERE snapshot_id = v_snapshot_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterVolumeSnapshotsByVolumeId (v_volume_id UUID)
-RETURNS SETOF gluster_volume_snapshots_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_volume_snapshots_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM gluster_volume_snapshots_view
     WHERE volume_id = v_volume_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterVolumeSnapshotsByClusterId (v_cluster_id UUID)
-RETURNS SETOF gluster_volume_snapshots_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_volume_snapshots_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM gluster_volume_snapshots_view
     WHERE cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterVolumeSnapshotByName (
     v_volume_id UUID,
     v_snapshot_name VARCHAR(1000)
     )
-RETURNS SETOF gluster_volume_snapshots_view STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_volume_snapshots_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -82,11 +82,11 @@ BEGIN
     FROM gluster_volume_snapshots_view
     WHERE volume_id = v_volume_id
         AND snapshot_name = v_snapshot_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterVolumeSnapshotByGuid (v_snapshot_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE ref_volume_id UUID;
 
 BEGIN
@@ -100,11 +100,11 @@ BEGIN
     WHERE snapshot_id = v_snapshot_id;
 
     PERFORM UpdateSnapshotCountDec(ref_volume_id, 1);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterVolumeSnapshotsByVolumeId (v_volume_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM gluster_volume_snapshots
@@ -113,14 +113,14 @@ BEGIN
     UPDATE gluster_volumes
     SET snapshot_count = 0
     WHERE id = v_volume_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterVolumeSnapshotByName (
     v_volume_id UUID,
     v_snapshot_name VARCHAR(1000)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM gluster_volume_snapshots
@@ -128,11 +128,11 @@ BEGIN
         AND snapshot_name = v_snapshot_name;
 
     PERFORM UpdateSnapshotCountDec(v_volume_id, 1);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteGlusterVolumesSnapshotByIds (v_snapshot_ids VARCHAR(5000))
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_volume_id UUID;
 
 v_snapshot_count INT;
@@ -171,20 +171,20 @@ WHERE snapshot_id IN (
         SELECT *
         FROM fnSplitterUuid(v_snapshot_ids)
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterVolumeSnapshotStatus (
     v_snapshot_id UUID,
     v_status VARCHAR(32)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_volume_snapshots
     SET status = v_status,
         _update_date = LOCALTIMESTAMP
     WHERE snapshot_id = v_snapshot_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateGlusterVolumeSnapshotStatusByName (
@@ -192,14 +192,14 @@ CREATE OR REPLACE FUNCTION UpdateGlusterVolumeSnapshotStatusByName (
     v_snapshot_name VARCHAR(1000),
     v_status VARCHAR(32)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_volume_snapshots
     SET status = v_status,
         _update_date = LOCALTIMESTAMP
     WHERE volume_id = v_volume_id
         AND snapshot_name = v_snapshot_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertGlusterVolumeSnapshotConfig (
@@ -208,7 +208,7 @@ CREATE OR REPLACE FUNCTION InsertGlusterVolumeSnapshotConfig (
     v_param_name VARCHAR(128),
     v_param_value VARCHAR(128)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO gluster_volume_snapshot_config (
         cluster_id,
@@ -222,25 +222,25 @@ BEGIN
         v_param_name,
         v_param_value
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterVolumeSnapshotConfigByClusterId (v_cluster_id UUID)
-RETURNS SETOF gluster_volume_snapshot_config STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_volume_snapshot_config STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM gluster_volume_snapshot_config
     WHERE cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterVolumeSnapshotConfigByVolumeId (
     v_cluster_id UUID,
     v_volume_id UUID
     )
-RETURNS SETOF gluster_volume_snapshot_config STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_volume_snapshot_config STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -248,14 +248,14 @@ BEGIN
     FROM gluster_volume_snapshot_config
     WHERE cluster_id = v_cluster_id
         AND volume_id = v_volume_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterVolumeSnapshotConfigByClusterIdAndName (
     v_cluster_id UUID,
     v_param_name VARCHAR(128)
     )
-RETURNS SETOF gluster_volume_snapshot_config STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_volume_snapshot_config STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -264,7 +264,7 @@ BEGIN
     WHERE cluster_id = v_cluster_id
         AND volume_id IS NULL
         AND param_name = v_param_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetGlusterVolumeSnapshotConfigByVolumeIdAndName (
@@ -272,7 +272,7 @@ CREATE OR REPLACE FUNCTION GetGlusterVolumeSnapshotConfigByVolumeIdAndName (
     v_volume_id UUID,
     v_param_name VARCHAR(128)
     )
-RETURNS SETOF gluster_volume_snapshot_config STABLE AS $PROCEDURE$
+RETURNS SETOF gluster_volume_snapshot_config STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -281,7 +281,7 @@ BEGIN
     WHERE cluster_id = v_cluster_id
         AND volume_id = v_volume_id
         AND param_name = v_param_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateConfigByClusterIdAndName (
@@ -289,7 +289,7 @@ CREATE OR REPLACE FUNCTION UpdateConfigByClusterIdAndName (
     v_param_name VARCHAR(128),
     v_param_value VARCHAR(128)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_volume_snapshot_config
     SET param_value = v_param_value,
@@ -297,7 +297,7 @@ BEGIN
     WHERE cluster_id = v_cluster_id
         AND volume_id IS NULL
         AND param_name = v_param_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateConfigByVolumeIdIdAndName (
@@ -306,7 +306,7 @@ CREATE OR REPLACE FUNCTION UpdateConfigByVolumeIdIdAndName (
     v_param_name VARCHAR(128),
     v_param_value VARCHAR(128)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_volume_snapshot_config
     SET param_value = v_param_value,
@@ -314,31 +314,31 @@ BEGIN
     WHERE cluster_id = v_cluster_id
         AND volume_id = v_volume_id
         AND param_name = v_param_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateSnapshotCountInc (
     v_volume_id UUID,
     v_num INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_volumes
     SET snapshot_count = snapshot_count + v_num
     WHERE id = v_volume_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateSnapshotCountDec (
     v_volume_id UUID,
     v_num INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE gluster_volumes
     SET snapshot_count = snapshot_count - v_num
     WHERE id = v_volume_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

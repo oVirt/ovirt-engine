@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION InsertLUNs (
     v_device_size INT,
     v_discard_max_size BIGINT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO LUNs (
         LUN_id,
@@ -38,7 +38,7 @@ BEGIN
         v_device_size,
         v_discard_max_size
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateLUNs (
@@ -52,7 +52,7 @@ CREATE OR REPLACE FUNCTION UpdateLUNs (
     v_device_size INT,
     v_discard_max_size BIGINT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE LUNs
     SET LUN_id = v_LUN_id,
@@ -65,30 +65,30 @@ BEGIN
         device_size = v_device_size,
         discard_max_size = v_discard_max_size
     WHERE LUN_id = v_LUN_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteLUN (v_LUN_id VARCHAR(255))
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM LUNs
     WHERE LUN_id = v_LUN_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromLUNs ()
-RETURNS SETOF luns_view STABLE AS $PROCEDURE$
+RETURNS SETOF luns_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM luns_view;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLUNsBystorage_server_connection (v_storage_server_connection VARCHAR(50))
-RETURNS SETOF luns_view STABLE AS $PROCEDURE$
+RETURNS SETOF luns_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -97,29 +97,29 @@ BEGIN
     INNER JOIN LUN_storage_server_connection_map
         ON LUN_storage_server_connection_map.LUN_id = luns_view.LUN_id
     WHERE LUN_storage_server_connection_map.storage_server_connection = v_storage_server_connection;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLUNsByVolumeGroupId (v_volume_group_id VARCHAR(50))
-RETURNS SETOF luns_view STABLE AS $PROCEDURE$
+RETURNS SETOF luns_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM luns_view
     WHERE volume_group_id = v_volume_group_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLUNByLUNId (v_LUN_id VARCHAR(255))
-RETURNS SETOF luns_view STABLE AS $PROCEDURE$
+RETURNS SETOF luns_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM luns_view
     WHERE LUN_id = v_LUN_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
@@ -132,7 +132,7 @@ CREATE OR REPLACE FUNCTION Insertstorage_domain_dynamic (
     v_id UUID,
     v_used_disk_size INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO storage_domain_dynamic (
         available_disk_size,
@@ -144,7 +144,7 @@ BEGIN
         v_id,
         v_used_disk_size
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatestorage_domain_dynamic (
@@ -154,14 +154,14 @@ CREATE OR REPLACE FUNCTION Updatestorage_domain_dynamic (
     )
 RETURNS VOID
     --The [storage_domain_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE storage_domain_dynamic
     SET available_disk_size = v_available_disk_size,
         used_disk_size = v_used_disk_size,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateStorageDomainConfirmedSize (
@@ -171,59 +171,59 @@ CREATE OR REPLACE FUNCTION UpdateStorageDomainConfirmedSize (
     )
 RETURNS VOID
     --The [storage_domain_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE storage_domain_dynamic
     SET confirmed_available_disk_size = v_confirmed_available_disk_size,
         vdo_savings = v_vdo_savings,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateStorageDomainExternalStatus (
     v_storage_id UUID,
     v_external_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE storage_domain_dynamic
     SET external_status = v_external_status
     WHERE id = v_storage_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deletestorage_domain_dynamic (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM storage_domain_dynamic
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromstorage_domain_dynamic ()
-RETURNS SETOF storage_domain_dynamic STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domain_dynamic STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_domain_dynamic;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domain_dynamicByid (v_id UUID)
-RETURNS SETOF storage_domain_dynamic STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domain_dynamic STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_domain_dynamic
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
---The GetByFK stored procedure cannot be created because the [storage_domain_dynamic] table doesn't have at least one foreign key column or the foreign keys are also primary keys.
+--The GetByFK stored FUNCTION cannot be created because the [storage_domain_dynamic] table doesn't have at least one foreign key column or the foreign keys are also primary keys.
 ----------------------------------------------------------------
 -- [storage_pool_iso_map] Table
 --
@@ -232,7 +232,7 @@ CREATE OR REPLACE FUNCTION Insertstorage_pool_iso_map (
     v_storage_pool_id UUID,
     v_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO storage_pool_iso_map (
         storage_id,
@@ -244,37 +244,37 @@ BEGIN
         v_storage_pool_id,
         v_status
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deletestorage_pool_iso_map (
     v_storage_id UUID,
     v_storage_pool_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM storage_pool_iso_map
     WHERE storage_id = v_storage_id
         AND storage_pool_id = v_storage_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromstorage_pool_iso_map ()
-RETURNS SETOF storage_pool_iso_map STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool_iso_map STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_pool_iso_map;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_pool_iso_mapBystorage_idAndBystorage_pool_id (
     v_storage_id UUID,
     v_storage_pool_id UUID
     )
-RETURNS SETOF storage_pool_iso_map STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool_iso_map STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -282,25 +282,25 @@ BEGIN
     FROM storage_pool_iso_map
     WHERE storage_id = v_storage_id
         AND storage_pool_id = v_storage_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_pool_iso_mapsBystorage_id (v_storage_id UUID)
-RETURNS SETOF storage_pool_iso_map STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool_iso_map STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_pool_iso_map
     WHERE storage_id = v_storage_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_pool_iso_mapsByBystorage_pool_id (
     v_storage_id UUID,
     v_storage_pool_id UUID
     )
-RETURNS SETOF storage_pool_iso_map STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool_iso_map STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -311,7 +311,7 @@ BEGIN
     WHERE storage_pool_id = v_storage_pool_id
         AND storage_domain_static.storage_type != 9
         AND storage_domain_static.storage_type != 10; -- filter Cinder and Managed block storage domains
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatestorage_pool_iso_map_status (
@@ -319,16 +319,16 @@ CREATE OR REPLACE FUNCTION Updatestorage_pool_iso_map_status (
     v_storage_pool_id UUID,
     v_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE storage_pool_iso_map
     SET status = v_status
     WHERE storage_pool_id = v_storage_pool_id
         AND storage_id = v_storage_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
---The GetByFK stored procedure cannot be created because the [storage_pool_iso_map] table doesn't have at least one foreign key column or the foreign keys are also primary keys.
+--The GetByFK stored FUNCTION cannot be created because the [storage_pool_iso_map] table doesn't have at least one foreign key column or the foreign keys are also primary keys.
 ----------------------------------------------------------------
 -- [storage_server_connections] Table
 --
@@ -350,7 +350,7 @@ CREATE OR REPLACE FUNCTION Insertstorage_server_connections (
     v_nfs_retrans SMALLINT,
     v_gluster_volume_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO storage_server_connections (
         connection,
@@ -384,7 +384,7 @@ BEGIN
         v_nfs_retrans,
         v_gluster_volume_id
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatestorage_server_connections (
@@ -405,7 +405,7 @@ CREATE OR REPLACE FUNCTION Updatestorage_server_connections (
     )
 RETURNS VOID
     --The [storage_server_connections] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE storage_server_connections
     SET connection = v_connection,
@@ -422,11 +422,11 @@ BEGIN
         nfs_retrans = v_nfs_retrans,
         gluster_volume_id = v_gluster_volume_id
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deletestorage_server_connections (v_id VARCHAR(50))
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val VARCHAR(50);
 
 BEGIN
@@ -441,33 +441,33 @@ BEGIN
     DELETE
     FROM storage_server_connections
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_server_connectionsByid (v_id VARCHAR(50))
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_server_connections
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_server_connectionsByConnection (v_connection VARCHAR(250))
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_server_connections
     WHERE connection = v_connection;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_server_connectionsByIqn (v_iqn VARCHAR(128))
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -476,14 +476,14 @@ BEGIN
     WHERE iqn = v_iqn
         OR iqn IS NULL
         AND v_iqn IS NULL;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_server_connectionsByIqnAndConnection (
     v_iqn VARCHAR(128),
     v_connection VARCHAR(250)
     )
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -494,7 +494,7 @@ BEGIN
             connection = v_connection
             OR connection IS NULL
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_server_connectionsByKey (
@@ -504,7 +504,7 @@ CREATE OR REPLACE FUNCTION Getstorage_server_connectionsByKey (
     v_portal VARCHAR(50),
     v_username VARCHAR(50)
     )
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -539,7 +539,7 @@ BEGIN
                 AND v_username IS NULL
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetStorageConnectionsByConnectionPortAndIqn (
@@ -547,7 +547,7 @@ CREATE OR REPLACE FUNCTION GetStorageConnectionsByConnectionPortAndIqn (
     v_connection VARCHAR(250),
     v_port VARCHAR(50)
     )
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -556,44 +556,44 @@ BEGIN
     WHERE iqn = v_iqn
         AND connection = v_connection
         AND port = v_port;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION Getstorage_server_connectionsByStorageType (v_storage_type INT)
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_server_connections
     WHERE storage_type = v_storage_type;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllstorage_server_connections ()
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_server_connections;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetStorageServerConnectionsByIds (v_ids TEXT)
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_server_connections
     WHERE id = ANY (string_to_array(v_ids, ',')::VARCHAR []);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_server_connectionsByVolumeGroupId (v_volume_group_id VARCHAR(50))
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -606,7 +606,7 @@ BEGIN
     INNER JOIN storage_server_connections
         ON LUN_storage_server_connection_map.storage_server_connection = storage_server_connections.id
     WHERE (storage_domain_static.storage = v_volume_group_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetStorageConnectionsByStorageTypeAndStatus (
@@ -614,7 +614,7 @@ CREATE OR REPLACE FUNCTION GetStorageConnectionsByStorageTypeAndStatus (
     v_storage_type INT,
     v_statuses VARCHAR(20)
     )
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 DECLARE statuses INT [];
 
 BEGIN
@@ -650,11 +650,11 @@ BEGIN
                     )
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_server_connectionsByLunId (v_lunId VARCHAR(50))
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -663,10 +663,10 @@ BEGIN
     INNER JOIN lun_storage_server_connection_map
         ON lun_storage_server_connection_map.storage_server_connection = storage_server_connections.id
     WHERE (lun_storage_server_connection_map.lun_id = v_lunId);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
---The GetByFK stored procedure cannot be created because the [storage_server_connections] table doesn't have at least one foreign key column or the foreign keys are also primary keys.
+--The GetByFK stored FUNCTION cannot be created because the [storage_server_connections] table doesn't have at least one foreign key column or the foreign keys are also primary keys.
 ----------------------------------------------------------------
 -- [LUN_storage_server_connection_map] Table
 --
@@ -674,7 +674,7 @@ CREATE OR REPLACE FUNCTION InsertLUN_storage_server_connection_map (
     v_LUN_id VARCHAR(255),
     v_storage_server_connection VARCHAR(50)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO LUN_storage_server_connection_map (
         LUN_id,
@@ -684,7 +684,7 @@ BEGIN
         v_LUN_id,
         v_storage_server_connection
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateLUN_storage_server_connection_map (
@@ -693,45 +693,45 @@ CREATE OR REPLACE FUNCTION UpdateLUN_storage_server_connection_map (
     )
 RETURNS VOID
     --The [LUN_storage_server_connection_map] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteLUN_storage_server_connection_map (
     v_LUN_id VARCHAR(255),
     v_storage_server_connection VARCHAR(50)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM LUN_storage_server_connection_map
     WHERE LUN_id = v_LUN_id
         AND storage_server_connection = v_storage_server_connection;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromLUN_storage_server_connection_map ()
-RETURNS SETOF LUN_storage_server_connection_map STABLE AS $PROCEDURE$
+RETURNS SETOF LUN_storage_server_connection_map STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM LUN_storage_server_connection_map lUN_storage_server_connection_map;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLUN_storage_server_connection_mapByLUN (
     v_LUN_id VARCHAR(255)
     )
-RETURNS SETOF LUN_storage_server_connection_map STABLE AS $PROCEDURE$
+RETURNS SETOF LUN_storage_server_connection_map STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM LUN_storage_server_connection_map lUN_storage_server_connection_map
     WHERE LUN_id = v_LUN_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -739,7 +739,7 @@ CREATE OR REPLACE FUNCTION GetLUN_storage_server_connection_mapByLUNBystorage_se
     v_LUN_id VARCHAR(255),
     v_storage_server_connection VARCHAR(50)
     )
-RETURNS SETOF LUN_storage_server_connection_map STABLE AS $PROCEDURE$
+RETURNS SETOF LUN_storage_server_connection_map STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -747,7 +747,7 @@ BEGIN
     FROM LUN_storage_server_connection_map lUN_storage_server_connection_map
     WHERE LUN_id = v_LUN_id
         AND storage_server_connection = v_storage_server_connection;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertStorageServerConnectionExtension (
@@ -757,7 +757,7 @@ CREATE OR REPLACE FUNCTION InsertStorageServerConnectionExtension (
     v_user_name TEXT,
     v_password TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO storage_server_connection_extension (
         id,
@@ -773,7 +773,7 @@ BEGIN
         v_user_name,
         v_password
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateStorageServerConnectionExtension (
@@ -783,7 +783,7 @@ CREATE OR REPLACE FUNCTION UpdateStorageServerConnectionExtension (
     v_user_name TEXT,
     v_password TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE storage_server_connection_extension
     SET vds_id = v_vds_id,
@@ -791,45 +791,45 @@ BEGIN
         user_name = v_user_name,
         password = v_password
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteStorageServerConnectionExtension (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM storage_server_connection_extension
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetStorageServerConnectionExtensionById (v_id UUID)
-RETURNS SETOF storage_server_connection_extension STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connection_extension STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_server_connection_extension
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetStorageServerConnectionExtensionsByHostId (v_vds_id UUID)
-RETURNS SETOF storage_server_connection_extension STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connection_extension STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_server_connection_extension
     WHERE vds_id = v_vds_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetStorageServerConnectionExtensionsByHostIdAndTarget (
     v_vds_id UUID,
     v_iqn VARCHAR(128)
     )
-RETURNS SETOF storage_server_connection_extension STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connection_extension STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -837,17 +837,17 @@ BEGIN
     FROM storage_server_connection_extension
     WHERE vds_id = v_vds_id
         AND iqn = v_iqn;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromStorageServerConnectionExtensions ()
-RETURNS SETOF storage_server_connection_extension STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connection_extension STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_server_connection_extension;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

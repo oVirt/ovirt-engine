@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION InsertImage (
     v_volume_classification SMALLINT,
     v_sequence_number INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO images (
         creation_date,
@@ -53,43 +53,43 @@ BEGIN
         v_volume_classification,
         v_sequence_number
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateImageStatus (
     v_image_id UUID,
     v_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE images
     SET imageStatus = v_status
     WHERE image_guid = v_image_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateStatusOfImagesByImageGroupId (
     v_image_group_id UUID,
     v_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE images
     SET imageStatus = v_status
     WHERE image_group_id = v_image_group_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateImageVmSnapshotId (
     v_image_id UUID,
     v_vm_snapshot_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE images
     SET vm_snapshot_id = v_vm_snapshot_id
     WHERE image_guid = v_image_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateImageSize (
@@ -97,13 +97,13 @@ CREATE OR REPLACE FUNCTION UpdateImageSize (
     v_size BIGINT,
     v_lastModified TIMESTAMP WITH TIME ZONE
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE images
     SET size = v_size,
         lastModified = v_lastModified
     WHERE image_guid = v_image_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateImage (
@@ -123,7 +123,7 @@ CREATE OR REPLACE FUNCTION UpdateImage (
     v_qcow_compat INT,
     v_sequence_number INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE images
     SET creation_date = v_creation_date,
@@ -142,44 +142,44 @@ BEGIN
         _update_date = LOCALTIMESTAMP,
         sequence_number = v_sequence_number
     WHERE image_guid = v_image_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteImage (v_image_guid UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
     DELETE
     FROM images
     WHERE image_guid = v_image_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromImages ()
-RETURNS SETOF images STABLE AS $PROCEDURE$
+RETURNS SETOF images STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM images;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetImageByImageId (v_image_guid UUID)
-RETURNS SETOF images STABLE AS $PROCEDURE$
+RETURNS SETOF images STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM images
     WHERE image_guid = v_image_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetIsoDisksByStoragePool (v_storage_pool_id UUID)
-RETURNS SETOF repo_file_meta_data STABLE AS $PROCEDURE$
+RETURNS SETOF repo_file_meta_data STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
     SELECT repo_domain_id,
@@ -193,7 +193,7 @@ BEGIN
     WHERE storage_pool_id = v_storage_pool_id
         AND status = 3  -- The status of an active storage domain is 3
     ORDER BY repo_image_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

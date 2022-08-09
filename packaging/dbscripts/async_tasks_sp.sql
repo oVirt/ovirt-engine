@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION Insertasync_tasks (
     v_storage_pool_id UUID,
     v_async_task_type INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO async_tasks (
         action_type,
@@ -47,7 +47,7 @@ BEGIN
         v_storage_pool_id,
         v_async_task_type
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updateasync_tasks (
@@ -64,7 +64,7 @@ CREATE OR REPLACE FUNCTION Updateasync_tasks (
     )
 RETURNS VOID
     --The [async_tasks] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE async_tasks
     SET action_type = v_action_type,
@@ -76,7 +76,7 @@ BEGIN
         vdsm_task_id = v_vdsm_task_id,
         storage_pool_id = v_storage_pool_id
     WHERE task_id = v_task_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertOrUpdateAsyncTasks (
@@ -93,7 +93,7 @@ CREATE OR REPLACE FUNCTION InsertOrUpdateAsyncTasks (
     v_storage_pool_id UUID,
     v_async_task_type INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     IF NOT EXISTS (
             SELECT 1
@@ -127,7 +127,7 @@ BEGIN
                      v_storage_pool_id);
 END
 
-IF ;END;$PROCEDURE$
+IF ;END;$FUNCTION$
     LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertAsyncTaskEntities (
@@ -135,7 +135,7 @@ CREATE OR REPLACE FUNCTION InsertAsyncTaskEntities (
     v_entity_id UUID,
     v_entity_type VARCHAR(128)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     IF NOT EXISTS (
             SELECT 1
@@ -155,33 +155,33 @@ BEGIN
             );
 END
 
-IF ;END;$PROCEDURE$
+IF ;END;$FUNCTION$
     LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAsyncTasksIdsByEntityId (v_entity_id UUID)
-RETURNS SETOF idUuidType STABLE AS $PROCEDURE$
+RETURNS SETOF idUuidType STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT async_task_id
     FROM async_tasks_entities
     WHERE entity_id = v_entity_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAsyncTaskEntitiesByTaskId (v_task_id UUID)
-RETURNS SETOF async_tasks_entities STABLE AS $PROCEDURE$
+RETURNS SETOF async_tasks_entities STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM async_tasks_entities
     WHERE async_task_id = v_task_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deleteasync_tasks (v_task_id UUID)
-RETURNS INT AS $PROCEDURE$
+RETURNS INT AS $FUNCTION$
 DECLARE deleted_rows INT;
 
 BEGIN
@@ -192,11 +192,11 @@ BEGIN
     GET DIAGNOSTICS deleted_rows = ROW_COUNT;
 
     RETURN deleted_rows;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteAsyncTasksByVdsmTaskId (v_vdsm_task_id UUID)
-RETURNS INT AS $PROCEDURE$
+RETURNS INT AS $FUNCTION$
 DECLARE deleted_rows INT;
 
 BEGIN
@@ -207,43 +207,43 @@ BEGIN
     GET DIAGNOSTICS deleted_rows = ROW_COUNT;
 
     RETURN deleted_rows;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAsyncTasksByStoragePoolId (v_storage_pool_id UUID)
-RETURNS SETOF async_tasks STABLE AS $PROCEDURE$
+RETURNS SETOF async_tasks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM async_tasks
     WHERE storage_pool_id = v_storage_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromasync_tasks ()
-RETURNS SETOF async_tasks STABLE AS $PROCEDURE$
+RETURNS SETOF async_tasks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM async_tasks;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getasync_tasksBytask_id (v_task_id UUID)
-RETURNS SETOF async_tasks STABLE AS $PROCEDURE$
+RETURNS SETOF async_tasks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM async_tasks
     WHERE task_id = v_task_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAsyncTasksByEntityId (v_entity_id UUID)
-RETURNS SETOF async_tasks STABLE AS $PROCEDURE$
+RETURNS SETOF async_tasks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -252,18 +252,18 @@ BEGIN
     INNER JOIN async_tasks_entities
         ON async_task_id = task_id
     WHERE entity_id = v_entity_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAsyncTasksByVdsmTaskId (v_vdsm_task_id UUID)
-RETURNS SETOF async_tasks STABLE AS $PROCEDURE$
+RETURNS SETOF async_tasks STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM async_tasks
     WHERE vdsm_task_id = v_vdsm_task_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

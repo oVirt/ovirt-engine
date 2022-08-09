@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION InsertQuota (
     v_grace_storage_percentage INT,
     v_is_default BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO quota (
         id,
@@ -35,7 +35,7 @@ BEGIN
         v_grace_storage_percentage,
         v_is_default
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertQuotaLimitation (
@@ -47,7 +47,7 @@ CREATE OR REPLACE FUNCTION InsertQuotaLimitation (
     v_mem_size_mb BIGINT,
     v_storage_size_gb BIGINT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO quota_limitation (
         id,
@@ -67,7 +67,7 @@ BEGIN
         v_mem_size_mb,
         v_storage_size_gb
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- Returns all the Quota storages in the storage pool if v_storage_id is null, if v_storage_id is not null then a specific quota storage will be returned.
@@ -77,7 +77,7 @@ CREATE OR REPLACE FUNCTION GetQuotaStorageByStorageGuid (
     v_id UUID,
     v_allow_empty BOOLEAN
     )
-RETURNS SETOF quota_storage_view STABLE AS $PROCEDURE$
+RETURNS SETOF quota_storage_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -102,7 +102,7 @@ BEGIN
             v_allow_empty
             OR storage_size_gb IS NOT NULL
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- Returns all the global quotas in the storage pool if v_storage_pool_id is null, if v_storage_id is not null then a specific quota storage will be returned.
@@ -111,7 +111,7 @@ CREATE OR REPLACE FUNCTION GetQuotaByAdElementId (
     v_storage_pool_id UUID,
     v_recursive BOOLEAN
     )
-RETURNS SETOF quota_view STABLE AS $PROCEDURE$
+RETURNS SETOF quota_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -139,39 +139,39 @@ BEGIN
             v_storage_pool_id = quota_view.storage_pool_id
             OR v_storage_pool_id IS NULL
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- Returns all the quotas in a thin view (only basic quota meta data. no limits or consumption)
 CREATE OR REPLACE FUNCTION getAllThinQuota ()
-RETURNS SETOF quota_view STABLE AS $PROCEDURE$
+RETURNS SETOF quota_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM quota_view;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION getQuotaCount ()
-RETURNS SETOF BIGINT STABLE AS $PROCEDURE$
+RETURNS SETOF BIGINT STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT count(*) AS num_quota
     FROM quota;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetQuotaStorageByQuotaGuid (v_id UUID)
-RETURNS SETOF quota_storage_view STABLE AS $PROCEDURE$
+RETURNS SETOF quota_storage_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM quota_storage_view
     WHERE quota_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetQuotaClusterByClusterGuid (
@@ -179,7 +179,7 @@ CREATE OR REPLACE FUNCTION GetQuotaClusterByClusterGuid (
     v_id UUID,
     v_allow_empty BOOLEAN
     )
-RETURNS SETOF quota_cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF quota_cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -205,36 +205,36 @@ BEGIN
     WHERE v_allow_empty
         OR virtual_cpu IS NOT NULL
         OR mem_size_mb IS NOT NULL;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetQuotaClusterByQuotaGuid (v_id UUID)
-RETURNS SETOF quota_cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF quota_cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT quota_cluster_view.*
     FROM quota_cluster_view
     WHERE quota_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteQuotaByQuotaGuid (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM quota
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteQuotaLimitationByQuotaGuid (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM quota_limitation
     WHERE quota_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateQuotaMetaData (
@@ -248,7 +248,7 @@ CREATE OR REPLACE FUNCTION UpdateQuotaMetaData (
     v_grace_storage_percentage INT,
     v_is_default BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE quota
     SET storage_pool_id = v_storage_pool_id,
@@ -261,12 +261,12 @@ BEGIN
         grace_storage_percentage = v_grace_storage_percentage,
         is_default = v_is_default
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- Returns all the Quota storages in the storage pool if v_storage_id is null, if v_storage_id is not null then a specific quota storage will be returned.
 CREATE OR REPLACE FUNCTION GetQuotaByStoragePoolGuid (v_storage_pool_id UUID)
-RETURNS SETOF quota_global_view STABLE AS $PROCEDURE$
+RETURNS SETOF quota_global_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -276,11 +276,11 @@ BEGIN
             storage_pool_id = v_storage_pool_id
             OR v_storage_pool_id IS NULL
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDefaultQuotaForStoragePool (v_storage_pool_id UUID)
-RETURNS SETOF quota_global_view STABLE AS $PROCEDURE$
+RETURNS SETOF quota_global_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -289,22 +289,22 @@ BEGIN
     WHERE is_default = TRUE
           AND storage_pool_id = v_storage_pool_id;
 END;
-$PROCEDURE$
+$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetQuotaByQuotaGuid (v_id UUID)
-RETURNS SETOF quota_global_view STABLE AS $PROCEDURE$
+RETURNS SETOF quota_global_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM quota_global_view
     WHERE quota_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetQuotaByQuotaName (v_quota_name VARCHAR, v_storage_pool_id UUID)
-RETURNS SETOF quota_global_view STABLE AS $PROCEDURE$
+RETURNS SETOF quota_global_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -312,7 +312,7 @@ BEGIN
     FROM quota_global_view
     WHERE quota_name = v_quota_name
         AND storage_pool_id = v_storage_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllThinQuotasByStorageId (
@@ -320,7 +320,7 @@ CREATE OR REPLACE FUNCTION GetAllThinQuotasByStorageId (
     v_engine_session_seq_id INT,
     v_is_filtered boolean
     )
-RETURNS SETOF quota_view STABLE AS $PROCEDURE$
+RETURNS SETOF quota_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -364,7 +364,7 @@ BEGIN
                     quota_id = p.object_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllThinQuotasByClusterId (
@@ -372,7 +372,7 @@ CREATE OR REPLACE FUNCTION GetAllThinQuotasByClusterId (
     v_engine_session_seq_id INT,
     v_is_filtered boolean
     )
-RETURNS SETOF quota_view STABLE AS $PROCEDURE$
+RETURNS SETOF quota_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -416,7 +416,7 @@ BEGIN
                     quota_id = p.object_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION IsQuotaInUse (v_quota_id UUID)

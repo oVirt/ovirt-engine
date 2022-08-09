@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION InsertSnapshot (
     v_memory_metadata_disk_id UUID,
     v_changed_fields TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO snapshots (
         snapshot_id,
@@ -44,7 +44,7 @@ BEGIN
         v_memory_metadata_disk_id,
         v_changed_fields
         );
-END; $PROCEDURE$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateSnapshot (
@@ -61,7 +61,7 @@ CREATE OR REPLACE FUNCTION UpdateSnapshot (
     v_vm_configuration_broken BOOLEAN,
     v_changed_fields TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE snapshots
     SET status = v_status,
@@ -77,54 +77,54 @@ BEGIN
         changed_fields = v_changed_fields,
         _update_date = NOW()
     WHERE snapshot_id = v_snapshot_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateSnapshotStatus (
     v_snapshot_id UUID,
     v_status VARCHAR(32)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE snapshots
     SET status = v_status
     WHERE snapshot_id = v_snapshot_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateSnapshotId (
     v_snapshot_id UUID,
     v_new_snapshot_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE snapshots
     SET snapshot_id = v_new_snapshot_id
     WHERE snapshot_id = v_snapshot_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteSnapshot (v_snapshot_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM snapshots
     WHERE snapshot_id = v_snapshot_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromSnapshots ()
-RETURNS SETOF snapshots STABLE AS $PROCEDURE$
+RETURNS SETOF snapshots STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM snapshots;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllSnapshotsByStorageDomainId (v_storage_id UUID)
-RETURNS SETOF snapshots STABLE AS $PROCEDURE$
+RETURNS SETOF snapshots STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -135,7 +135,7 @@ BEGIN
     INNER JOIN image_storage_domain_map
         ON image_storage_domain_map.storage_domain_id = v_storage_id
             AND image_storage_domain_map.image_id = images.image_guid;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSnapshotByVmIdAndType (
@@ -144,7 +144,7 @@ CREATE OR REPLACE FUNCTION GetSnapshotByVmIdAndType (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF snapshots STABLE AS $PROCEDURE$
+RETURNS SETOF snapshots STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -162,7 +162,7 @@ BEGIN
                 )
             )
     ORDER BY creation_date ASC LIMIT 1;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSnapshotByVmIdAndTypeAndStatus (
@@ -170,7 +170,7 @@ CREATE OR REPLACE FUNCTION GetSnapshotByVmIdAndTypeAndStatus (
     v_snapshot_type VARCHAR(32),
     v_status VARCHAR(32)
     )
-RETURNS SETOF snapshots STABLE AS $PROCEDURE$
+RETURNS SETOF snapshots STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -180,14 +180,14 @@ BEGIN
         AND snapshot_type = v_snapshot_type
         AND status = v_status
     ORDER BY creation_date ASC LIMIT 1;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSnapshotByVmIdAndStatus (
     v_vm_id UUID,
     v_status VARCHAR(32)
     )
-RETURNS SETOF snapshots STABLE AS $PROCEDURE$
+RETURNS SETOF snapshots STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -196,7 +196,7 @@ BEGIN
     WHERE vm_id = v_vm_id
         AND status = v_status
     ORDER BY creation_date ASC LIMIT 1;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS GetAllFromSnapshotsByVmId_rs CASCADE;
@@ -222,7 +222,7 @@ CREATE OR REPLACE FUNCTION GetAllFromSnapshotsByVmId (
     v_is_filtered BOOLEAN,
     v_fill_configuration BOOLEAN
     )
-RETURNS SETOF GetAllFromSnapshotsByVmId_rs STABLE AS $PROCEDURE$
+RETURNS SETOF GetAllFromSnapshotsByVmId_rs STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -256,7 +256,7 @@ BEGIN
                 )
             )
     ORDER BY creation_date ASC;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSnapshotBySnapshotId (
@@ -264,7 +264,7 @@ CREATE OR REPLACE FUNCTION GetSnapshotBySnapshotId (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF snapshots STABLE AS $PROCEDURE$
+RETURNS SETOF snapshots STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -284,14 +284,14 @@ BEGIN
                         )
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSnapshotIdsByVmIdAndType (
     v_vm_id UUID,
     v_snapshot_type VARCHAR(32)
     )
-RETURNS SETOF idUuidType STABLE AS $PROCEDURE$
+RETURNS SETOF idUuidType STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -300,7 +300,7 @@ BEGIN
     WHERE vm_id = v_vm_id
         AND snapshot_type = v_snapshot_type
     ORDER BY creation_date ASC;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetSnapshotIdsByVmIdAndTypeAndStatus (
@@ -308,7 +308,7 @@ CREATE OR REPLACE FUNCTION GetSnapshotIdsByVmIdAndTypeAndStatus (
     v_snapshot_type VARCHAR(32),
     v_status VARCHAR(32)
     )
-RETURNS SETOF idUuidType STABLE AS $PROCEDURE$
+RETURNS SETOF idUuidType STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -318,14 +318,14 @@ BEGIN
         AND snapshot_type = v_snapshot_type
         AND status = v_status
     ORDER BY creation_date ASC;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION CheckIfSnapshotExistsByVmIdAndType (
     v_vm_id UUID,
     v_snapshot_type VARCHAR(32)
     )
-RETURNS SETOF booleanResultType STABLE AS $PROCEDURE$
+RETURNS SETOF booleanResultType STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -335,14 +335,14 @@ BEGIN
             WHERE vm_id = v_vm_id
                 AND snapshot_type = v_snapshot_type
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION CheckIfSnapshotExistsByVmIdAndStatus (
     v_vm_id UUID,
     v_status VARCHAR(32)
     )
-RETURNS SETOF booleanResultType STABLE AS $PROCEDURE$
+RETURNS SETOF booleanResultType STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -352,14 +352,14 @@ BEGIN
             WHERE vm_id = v_vm_id
                 AND status = v_status
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION CheckIfSnapshotExistsByVmIdAndSnapshotId (
     v_vm_id UUID,
     v_snapshot_id UUID
     )
-RETURNS SETOF booleanResultType STABLE AS $PROCEDURE$
+RETURNS SETOF booleanResultType STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -369,11 +369,11 @@ BEGIN
             WHERE vm_id = v_vm_id
                 AND snapshot_id = v_snapshot_id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNumOfSnapshotsByMemoryVolume(v_memory_disk_ids UUID[])
-RETURNS SETOF BIGINT STABLE AS $PROCEDURE$
+RETURNS SETOF BIGINT STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -381,7 +381,7 @@ BEGIN
     FROM snapshots
     WHERE memory_dump_disk_id  = ANY(v_memory_disk_ids)
        OR memory_metadata_disk_id  = ANY(v_memory_disk_ids);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateMemory (
@@ -390,48 +390,48 @@ CREATE OR REPLACE FUNCTION UpdateMemory (
     v_vm_id UUID,
     v_snapshot_type VARCHAR(32)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE snapshots
     SET    memory_dump_disk_id = v_memory_dump_disk_id,
            memory_metadata_disk_id = v_memory_metadata_disk_id
     WHERE vm_id = v_vm_id
         AND snapshot_type = v_snapshot_type;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION RemoveMemoryFromSnapshotByVmIdAndType (
     v_vm_id UUID,
     v_snapshot_type VARCHAR(32)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE snapshots
     SET    memory_dump_disk_id = NULL,
            memory_metadata_disk_id = NULL
     WHERE  vm_id = v_vm_id
         AND snapshot_type = v_snapshot_type;
-END; $PROCEDURE$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION RemoveMemoryFromSnapshotBySnapshotId (v_snapshot_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE snapshots
     SET    memory_dump_disk_id = NULL,
            memory_metadata_disk_id = NULL
     WHERE  snapshot_id = v_snapshot_id;
-END; $PROCEDURE$
+END; $FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetAllSnapshotsByMemoryDisk(v_memory_disk_id UUID)
-RETURNS SETOF snapshots STABLE AS $PROCEDURE$
+RETURNS SETOF snapshots STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM snapshots
     WHERE v_memory_disk_id IN (memory_dump_disk_id, memory_metadata_disk_id);
-END; $PROCEDURE$
+END; $FUNCTION$
 LANGUAGE plpgsql;

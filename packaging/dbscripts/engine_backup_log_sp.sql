@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION LogEngineBackupEvent (
     v_fqdn VARCHAR(255),
     v_log_path TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     IF v_status = - 1 THEN
         INSERT INTO engine_backup_log (
@@ -104,11 +104,11 @@ BEGIN
         );
     END IF;
 
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLastSuccessfulEngineBackup (v_scope VARCHAR(64))
-RETURNS SETOF engine_backup_log STABLE AS $PROCEDURE$
+RETURNS SETOF engine_backup_log STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -118,7 +118,7 @@ BEGIN
         AND is_passed
     ORDER BY scope,
         done_at DESC LIMIT 1;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

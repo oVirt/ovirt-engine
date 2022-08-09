@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION InsertProvider (
     v_project_name VARCHAR(128) DEFAULT NULL,
     v_project_domain_name VARCHAR(128) DEFAULT NULL
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO providers (
         id,
@@ -68,7 +68,7 @@ BEGIN
         v_project_name,
         v_project_domain_name
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateProvider (
@@ -92,7 +92,7 @@ CREATE OR REPLACE FUNCTION UpdateProvider (
     v_project_name VARCHAR(128) DEFAULT NULL,
     v_project_domain_name VARCHAR(128) DEFAULT NULL
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE providers
     SET name = v_name,
@@ -115,59 +115,59 @@ BEGIN
         project_name = v_project_name,
         project_domain_name = v_project_domain_name
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteProvider (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM providers
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromProviders ()
-RETURNS SETOF providers STABLE AS $PROCEDURE$
+RETURNS SETOF providers STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM providers;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromProvidersByTypes(v_provider_types varchar[])
-RETURNS SETOF providers AS $PROCEDURE$
+RETURNS SETOF providers AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM providers
     WHERE provider_type = ANY(v_provider_types);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetProviderByProviderId (v_id UUID)
-RETURNS SETOF providers STABLE AS $PROCEDURE$
+RETURNS SETOF providers STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM providers
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetProviderByName (v_name VARCHAR)
-RETURNS SETOF providers STABLE AS $PROCEDURE$
+RETURNS SETOF providers STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM providers
     WHERE name = v_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

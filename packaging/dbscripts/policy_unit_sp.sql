@@ -3,25 +3,25 @@
 -- Policy units
 -- Get All policy units
 CREATE OR REPLACE FUNCTION GetAllFromPolicyUnits ()
-RETURNS SETOF policy_units STABLE AS $PROCEDURE$
+RETURNS SETOF policy_units STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM policy_units;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- get policy unit by id
 CREATE OR REPLACE FUNCTION GetPolicyUnitByPolicyUnitId (v_id UUID)
-RETURNS SETOF policy_units STABLE AS $PROCEDURE$
+RETURNS SETOF policy_units STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM policy_units
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- CRUD procs:
@@ -34,7 +34,7 @@ CREATE OR REPLACE FUNCTION InsertPolicyUnit (
     v_custom_properties_regex TEXT,
     v_enabled BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO policy_units (
         id,
@@ -54,7 +54,7 @@ BEGIN
         v_custom_properties_regex,
         v_enabled
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdatePolicyUnit (
@@ -63,23 +63,23 @@ CREATE OR REPLACE FUNCTION UpdatePolicyUnit (
     v_custom_properties_regex TEXT,
     v_description TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE policy_units
     SET custom_properties_regex = v_custom_properties_regex,
         enabled = v_enabled,
         description = v_description
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeletePolicyUnit (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM policy_units
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

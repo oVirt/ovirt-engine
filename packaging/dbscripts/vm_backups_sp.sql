@@ -4,14 +4,14 @@
 --  [vm_backups] Table
 ----------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION GetVmBackupByVmBackupId (v_backup_id UUID)
-RETURNS SETOF vm_backups STABLE AS $PROCEDURE$
+RETURNS SETOF vm_backups STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_backups
     WHERE backup_id = v_backup_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertVmBackup (
@@ -27,7 +27,7 @@ CREATE OR REPLACE FUNCTION InsertVmBackup (
     v_backup_type VARCHAR(50),
     v_snapshot_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_backups (
         backup_id,
@@ -55,7 +55,7 @@ BEGIN
         v_backup_type,
         v_snapshot_id
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmBackup (
@@ -70,7 +70,7 @@ CREATE OR REPLACE FUNCTION UpdateVmBackup (
     v_backup_type VARCHAR(50),
     v_snapshot_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_backups
     SET backup_id = v_backup_id,
@@ -84,46 +84,46 @@ BEGIN
         backup_type = v_backup_type,
         snapshot_id = v_snapshot_id
     WHERE backup_id = v_backup_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVmBackup (v_backup_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_backups
     WHERE backup_id = v_backup_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromVmBackups ()
-RETURNS SETOF vm_backups STABLE AS $PROCEDURE$
+RETURNS SETOF vm_backups STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_backups;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmBackupsByVmId (v_vm_id UUID)
-RETURNS SETOF vm_backups STABLE AS $PROCEDURE$
+RETURNS SETOF vm_backups STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM vm_backups
     WHERE vm_id = v_vm_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmBackupStopped (v_backup_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_backups
     SET is_stopped = true
     WHERE backup_id = v_backup_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
@@ -135,7 +135,7 @@ CREATE OR REPLACE FUNCTION InsertVmBackupDiskMap (
     v_disk_id UUID,
     v_disk_snapshot_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     BEGIN
         INSERT INTO vm_backup_disk_map (
@@ -151,7 +151,7 @@ BEGIN
     END;
 
     RETURN;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmBackupDiskMap (
@@ -159,18 +159,18 @@ CREATE OR REPLACE FUNCTION UpdateVmBackupDiskMap (
     v_disk_id UUID,
     v_backup_url TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_backup_disk_map
     SET backup_id = v_backup_id,
         disk_id = v_disk_id,
         backup_url = v_backup_url
     WHERE backup_id = v_backup_id AND disk_id = v_disk_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDisksByVmBackupId (v_backup_id UUID)
-RETURNS SETOF images_storage_domain_view STABLE AS $PROCEDURE$
+RETURNS SETOF images_storage_domain_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -178,7 +178,7 @@ BEGIN
     FROM   images_storage_domain_view
     JOIN   vm_backup_disk_map on vm_backup_disk_map.disk_id = images_storage_domain_view.image_group_id
     WHERE  images_storage_domain_view.active AND vm_backup_disk_map.backup_id = v_backup_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetBackupUrlForDiskId (v_backup_id UUID, v_disk_id UUID)
@@ -209,7 +209,7 @@ CREATE OR REPLACE FUNCTION DeleteCompletedBackupsOlderThanDate (
     v_succeeded_end_time TIMESTAMP WITH TIME ZONE,
     v_failed_end_time TIMESTAMP WITH TIME ZONE
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_backups
@@ -223,5 +223,5 @@ BEGIN
                 AND phase = 'Failed'
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;

@@ -17,7 +17,7 @@ CREATE OR REPLACE FUNCTION InsertVm_pools (
     v_spice_proxy VARCHAR(255),
     v_is_auto_storage_select BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_pools (
         vm_pool_id,
@@ -47,7 +47,7 @@ BEGIN
         v_spice_proxy,
         v_is_auto_storage_select
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVm_pools (
@@ -66,7 +66,7 @@ CREATE OR REPLACE FUNCTION UpdateVm_pools (
     )
 RETURNS VOID
     --The [vm_pools] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE vm_pools
     SET vm_pool_description = v_vm_pool_description,
@@ -81,11 +81,11 @@ BEGIN
         spice_proxy = v_spice_proxy,
         is_auto_storage_select = v_is_auto_storage_select
     WHERE vm_pool_id = v_vm_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVm_pools (v_vm_pool_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -105,19 +105,19 @@ BEGIN
 
     -- delete VmPool permissions --
     PERFORM DeletePermissionsByEntityId(v_vm_pool_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION SetVmPoolBeingDestroyed (
     v_vm_pool_id UUID,
     v_is_being_destroyed BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_pools
     SET is_being_destroyed = v_is_being_destroyed
     WHERE vm_pool_id = v_vm_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS GetAllFromVm_pools_rs CASCADE;
@@ -141,7 +141,7 @@ DROP TYPE IF EXISTS GetAllFromVm_pools_rs CASCADE;
         );
 
 CREATE OR REPLACE FUNCTION GetAllFromVm_pools ()
-RETURNS SETOF GetAllFromVm_pools_rs AS $PROCEDURE$
+RETURNS SETOF GetAllFromVm_pools_rs AS $FUNCTION$
 BEGIN
     -- BEGIN TRAN
     BEGIN
@@ -287,7 +287,7 @@ BEGIN
 
     SELECT *
     FROM tt_VM_POOL_RESULT;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVm_poolsByvm_pool_id (
@@ -295,7 +295,7 @@ CREATE OR REPLACE FUNCTION GetVm_poolsByvm_pool_id (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF vm_pools_full_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_pools_full_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -311,22 +311,22 @@ BEGIN
                     AND entity_id = v_vm_pool_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVm_poolsByvm_pool_name (v_vm_pool_name VARCHAR(255))
-RETURNS SETOF vm_pools_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_pools_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_pools_view.*
     FROM vm_pools_view
     WHERE vm_pool_name = v_vm_pool_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllVm_poolsByUser_id (v_user_id UUID)
-RETURNS SETOF vm_pools_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_pools_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -335,11 +335,11 @@ BEGIN
     INNER JOIN vm_pools_view
         ON users_and_groups_to_vm_pool_map_view.vm_pool_id = vm_pools_view.vm_pool_id
     WHERE (users_and_groups_to_vm_pool_map_view.user_id = v_user_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromVmPoolsFilteredAndSorted (v_user_id UUID, v_offset int, v_limit int)
-RETURNS SETOF vm_pools_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_pools_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -350,11 +350,11 @@ BEGIN
             AND entity_id = pools.vm_pool_id
     ORDER BY pools.vm_pool_name ASC
     LIMIT v_limit OFFSET v_offset;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVm_poolsByAdGroup_names (v_ad_group_names VARCHAR(4000))
-RETURNS SETOF vm_pools_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_pools_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -370,7 +370,7 @@ BEGIN
                 FROM fnSplitter(v_ad_group_names)
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmDataFromPoolByPoolId (
@@ -378,7 +378,7 @@ CREATE OR REPLACE FUNCTION GetVmDataFromPoolByPoolId (
     v_user_id uuid,
     v_is_filtered boolean
     )
-RETURNS SETOF vms STABLE AS $PROCEDURE$
+RETURNS SETOF vms STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -396,11 +396,11 @@ BEGIN
             )
         -- Limiting results to 1 since we only need a single VM from the pool to retrieve the pool data
         LIMIT 1;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllVm_poolsByUser_id_with_groups_and_UserRoles (v_user_id UUID)
-RETURNS SETOF vm_pools_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_pools_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -409,11 +409,11 @@ BEGIN
     INNER JOIN user_vm_pool_permissions_view
         ON user_id = v_user_id
             AND entity_id = pools.vm_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION BoundVmPoolPrestartedVms (v_vm_pool_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_pools
     SET prestarted_vms = LEAST (
@@ -424,5 +424,5 @@ BEGIN
             )
         )
     WHERE vm_pool_id = v_vm_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;

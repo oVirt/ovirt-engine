@@ -1033,7 +1033,7 @@ LANGUAGE plpgsql;
 -- addreses, in order to correct sorting.
 CREATE OR REPLACE FUNCTION fn_get_comparable_ip_list(TEXT)
 RETURNS inet [] IMMUTABLE STRICT
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     CASE
         WHEN ($1 IS NULL)
@@ -1042,7 +1042,7 @@ BEGIN
         ELSE
             RETURN regexp_split_to_array(trim(both FROM $1), E'\\s+')::inet [];
     END CASE ;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- Return csv list of dedicated hosts guids
@@ -1059,11 +1059,11 @@ LANGUAGE plpgsql;
 -- Computes number of vcpus for vm_static
 CREATE OR REPLACE FUNCTION fn_get_num_of_vcpus(vm_static)
 RETURNS INT IMMUTABLE
-AS $PROCEDURE$
+AS $FUNCTION$
 
 BEGIN
     RETURN $1. num_of_sockets * $1. cpu_per_socket * $1. threads_per_cpu;
-END;$PROCEDURE$
+END;$FUNCTION$
 
 LANGUAGE plpgsql;
 

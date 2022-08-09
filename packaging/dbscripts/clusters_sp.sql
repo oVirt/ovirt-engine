@@ -61,7 +61,7 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_fips_mode SMALLINT,
     v_parallel_migrations SMALLINT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO cluster (
         cluster_id,
@@ -179,7 +179,7 @@ BEGIN
         v_fips_mode,
         v_parallel_migrations
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateCluster (
@@ -243,7 +243,7 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE cluster
     SET description = v_description,
@@ -304,11 +304,11 @@ BEGIN
         fips_mode = v_fips_mode,
         parallel_migrations = v_parallel_migrations
     WHERE cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteCluster (v_cluster_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -326,14 +326,14 @@ BEGIN
 
     -- delete VDS group permissions --
     PERFORM DeletePermissionsByEntityId(v_cluster_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromCluster (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -348,7 +348,7 @@ BEGIN
                     AND entity_id = cluster_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetClusterByClusterId (
@@ -356,7 +356,7 @@ CREATE OR REPLACE FUNCTION GetClusterByClusterId (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -372,14 +372,14 @@ BEGIN
                     AND entity_id = v_cluster_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetClusterByClusterName (
     v_cluster_name VARCHAR(40),
     v_is_case_sensitive BOOLEAN
     )
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -390,7 +390,7 @@ BEGIN
             NOT v_is_case_sensitive
             AND name ilike v_cluster_name
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetClusterForUserByClusterName (
@@ -398,7 +398,7 @@ CREATE OR REPLACE FUNCTION GetClusterForUserByClusterName (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -414,7 +414,7 @@ BEGIN
                     AND entity_id = cluster_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetClustersByStoragePoolId (
@@ -422,7 +422,7 @@ CREATE OR REPLACE FUNCTION GetClustersByStoragePoolId (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -438,12 +438,12 @@ BEGIN
                     AND entity_id = cluster_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 --This SP returns the VDS group if it has running vms
 CREATE OR REPLACE FUNCTION GetClusterWithRunningVms (v_cluster_id UUID)
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -459,12 +459,12 @@ BEGIN
                     14
                     )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 --This SP returns all VDS groups where currently no migration is going on
 CREATE OR REPLACE FUNCTION GetClustersWithoutMigratingVms ()
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -480,12 +480,12 @@ BEGIN
                     6
                     )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 --This SP returns if the VDS group does not have any hosts or VMs
 CREATE OR REPLACE FUNCTION GetIsClusterEmpty (v_cluster_id UUID)
-RETURNS BOOLEAN AS $PROCEDURE$
+RETURNS BOOLEAN AS $FUNCTION$
 BEGIN
     RETURN NOT EXISTS (
             SELECT 1
@@ -498,7 +498,7 @@ BEGIN
             FROM vds_static
             WHERE cluster_id = v_cluster_id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 --This SP returns all cluster with permissions to run the given action by user
@@ -506,7 +506,7 @@ CREATE OR REPLACE FUNCTION fn_perms_get_clusters_with_permitted_action (
     v_user_id UUID,
     v_action_group_id INT
     )
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -516,12 +516,12 @@ BEGIN
             SELECT 1
             FROM get_entity_permissions(v_user_id, v_action_group_id, cluster_view.cluster_id, 9)
             ) IS NOT NULL;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- This SP returns all cluster which have valid hosts attached to them
 CREATE OR REPLACE FUNCTION GetClustersHavingHosts ()
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -532,7 +532,7 @@ BEGIN
             FROM vds_static
             WHERE cluster_id = cluster_view.cluster_id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 --This SP updates the cluster emulated machine and the detection mode
@@ -541,13 +541,13 @@ CREATE OR REPLACE FUNCTION UpdateClusterEmulatedMachine (
     v_emulated_machine VARCHAR(40),
     v_detect_emulated_machine BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE cluster
     SET emulated_machine = v_emulated_machine,
         detect_emulated_machine = v_detect_emulated_machine
     WHERE cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 --This SP sets the cluster upgrade running flag to true if one is found with flag false. Returns true if update
@@ -557,7 +557,7 @@ CREATE OR REPLACE FUNCTION SetClusterUpgradeRunning (
     v_correlation_id VARCHAR(50),
     OUT v_updated BOOLEAN
     )
-AS $PROCEDURE$
+AS $FUNCTION$
 DECLARE c_id UUID;
 BEGIN
     SELECT cluster_id INTO c_id
@@ -575,7 +575,7 @@ BEGIN
     END IF;
 
     v_updated := FOUND;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 --This SP updates the cluster upgrade progress if the cluster one is found with upgrade running flag true.
@@ -585,7 +585,7 @@ CREATE OR REPLACE FUNCTION UpdateClusterUpgradeProgress (
     v_upgrade_percent_complete INT,
     OUT v_updated BOOLEAN
     )
-AS $PROCEDURE$
+AS $FUNCTION$
 DECLARE c_id UUID;
 BEGIN
     SELECT cluster_id INTO c_id
@@ -601,7 +601,7 @@ BEGIN
     END IF;
 
     v_updated := FOUND;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 --This SP clears the cluster upgrade running flag
@@ -609,7 +609,7 @@ CREATE OR REPLACE FUNCTION ClearClusterUpgradeRunning (
     v_cluster_id UUID,
     OUT v_updated BOOLEAN
     )
-AS $PROCEDURE$
+AS $FUNCTION$
 BEGIN
     UPDATE cluster
     SET upgrade_running = false,
@@ -617,45 +617,45 @@ BEGIN
     WHERE cluster_id = v_cluster_id;
 
     v_updated := FOUND;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 --This SP clears the cluster upgrade running flag for all rows
 CREATE OR REPLACE FUNCTION ClearAllClusterUpgradeRunning ()
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE cluster
     SET upgrade_running = false,
         upgrade_percent_complete = 0
     WHERE upgrade_running = true;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetTrustedClusters ()
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT cluster_view.*
     FROM cluster_view
     WHERE trusted_service;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- returns all cluster attached to a specific cluster policy (given as a parameter to the SP)
 CREATE OR REPLACE FUNCTION GetClustersByClusterPolicyId (v_cluster_policy_id UUID)
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT cluster_view.*
     FROM cluster_view
     WHERE cluster_policy_id = v_cluster_policy_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNumberOfVmsInCluster (v_cluster_id UUID)
-RETURNS SETOF BIGINT STABLE AS $PROCEDURE$
+RETURNS SETOF BIGINT STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -663,7 +663,7 @@ BEGIN
     FROM vm_static vms
     WHERE vms.cluster_id = v_cluster_id
         AND vms.entity_type = 'VM';
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS host_vm_cluster_rs CASCADE;
@@ -675,7 +675,7 @@ CREATE TYPE host_vm_cluster_rs AS (
         );
 
 CREATE OR REPLACE FUNCTION GetHostsAndVmsForClusters (v_cluster_ids UUID [])
-RETURNS SETOF host_vm_cluster_rs STABLE AS $PROCEDURE$
+RETURNS SETOF host_vm_cluster_rs STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -700,7 +700,7 @@ BEGIN
     FROM cluster groups
     WHERE groups.cluster_id = ANY (v_cluster_ids)
     GROUP BY groups.cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetClustersByServiceAndCompatibilityVersion (
@@ -708,7 +708,7 @@ CREATE OR REPLACE FUNCTION GetClustersByServiceAndCompatibilityVersion (
     v_virt_service BOOLEAN,
     v_compatibility_version VARCHAR(40)
     )
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -717,35 +717,35 @@ BEGIN
     WHERE virt_service = v_virt_service
         AND gluster_service = v_gluster_service
         AND compatibility_version = v_compatibility_version;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetAllClustersByMacPoolId (v_id UUID)
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT cv.*
     FROM cluster_view cv
     WHERE cv.mac_pool_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetAllClustersByDefaultNetworkProviderId (v_id UUID)
-RETURNS SETOF cluster_view STABLE AS $PROCEDURE$
+RETURNS SETOF cluster_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT cv.*
     FROM cluster_view cv
     WHERE cv.default_network_provider_id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetClusterIdForHostByNameOrAddress (v_vds_name VARCHAR(255), v_host_address VARCHAR(39))
-RETURNS SETOF UUID STABLE AS $PROCEDURE$
+RETURNS SETOF UUID STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -756,5 +756,5 @@ BEGIN
             OR vds_interface.addr = v_host_address
             OR vds_interface.ipv6_address = v_host_address
         LIMIT 1;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;

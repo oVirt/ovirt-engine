@@ -1,7 +1,7 @@
 
 
 /* ----------------------------------------------------------------
- Stored procedures for database operations on Storage Device
+ Stored FUNCTIONs for database operations on Storage Device
  related table: storage_device
 ----------------------------------------------------------------*/
 CREATE OR REPLACE FUNCTION InsertStorageDevice (
@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION InsertStorageDevice (
     v_is_free BOOLEAN,
     v_is_gluster_brick BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO storage_device (
         id,
@@ -51,7 +51,7 @@ BEGIN
         v_is_free,
         v_is_gluster_brick
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateStorageDevice (
@@ -67,7 +67,7 @@ CREATE OR REPLACE FUNCTION UpdateStorageDevice (
     v_size BIGINT,
     v_is_free BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE storage_device
     SET name = v_name,
@@ -82,51 +82,51 @@ BEGIN
         is_free = v_is_free,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetStorageDeviceById (v_id UUID)
-RETURNS SETOF storage_device STABLE AS $PROCEDURE$
+RETURNS SETOF storage_device STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_device
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetStorageDevicesByVdsId (v_vds_id UUID)
-RETURNS SETOF storage_device STABLE AS $PROCEDURE$
+RETURNS SETOF storage_device STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_device
     WHERE vds_id = v_vds_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteStorageDeviceById (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM storage_device
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateIsFreeFlagById (
     v_id UUID,
     v_is_free BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE storage_device
     SET is_free = v_is_free,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

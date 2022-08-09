@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION CreateLabel (
     v_vms uuid[],
     v_hosts uuid[]
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE
    o uuid;
 BEGIN
@@ -48,7 +48,7 @@ BEGIN
             o
             );
     END LOOP;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateLabel (
@@ -61,7 +61,7 @@ CREATE OR REPLACE FUNCTION UpdateLabel (
     )
 RETURNS VOID
     --The [tags] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 DECLARE
    o uuid;
 BEGIN
@@ -99,53 +99,53 @@ BEGIN
             o
             );
     END LOOP;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteLabel (v_label_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 
 BEGIN
     DELETE
     FROM labels
     WHERE label_id = v_label_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllLabels ()
-RETURNS SETOF labels_map_view STABLE AS $PROCEDURE$
+RETURNS SETOF labels_map_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT labels_map_view.*
     FROM labels_map_view;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLabelById (v_label_id UUID)
-RETURNS SETOF labels_map_view STABLE AS $PROCEDURE$
+RETURNS SETOF labels_map_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT labels_map_view.*
     FROM labels_map_view
     WHERE label_id = v_label_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLabelByIds (v_label_ids UUID[])
-RETURNS SETOF labels_map_view STABLE AS $PROCEDURE$
+RETURNS SETOF labels_map_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT labels_map_view.*
     FROM labels_map_view
     WHERE label_id = ANY(v_label_ids);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllLabelsForCluster (v_cluster_id UUID)
-RETURNS SETOF labels_map_view STABLE AS $PROCEDURE$
+RETURNS SETOF labels_map_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -159,22 +159,22 @@ BEGIN
         WHERE vds_static.cluster_id = v_cluster_id OR
             vm_static.cluster_id = v_cluster_id
     );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLabelByName (v_label_name varchar(50))
-RETURNS SETOF labels_map_view STABLE AS $PROCEDURE$
+RETURNS SETOF labels_map_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT labels_map_view.*
     FROM labels_map_view
     WHERE label_name = v_label_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLabelsByReferencedIds (v_entity_ids UUID[])
-RETURNS SETOF labels_map_view STABLE AS $PROCEDURE$
+RETURNS SETOF labels_map_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -182,14 +182,14 @@ BEGIN
     FROM labels_map_view
     WHERE vm_ids::uuid[] && v_entity_ids
         OR vds_ids::uuid[] && v_entity_ids;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION AddVmToLabels (
     v_vm_id UUID,
     v_labels uuid[]
 )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE
     o uuid;
 BEGIN
@@ -198,14 +198,14 @@ BEGIN
         vm_id
     )
     SELECT unnest(v_labels), v_vm_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION AddHostToLabels (
     v_host_id UUID,
     v_labels uuid[]
 )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE
     o uuid;
 BEGIN
@@ -214,14 +214,14 @@ BEGIN
         vds_id
     )
     SELECT unnest(v_labels), v_host_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateLabelsForVm (
     v_vm_id UUID,
     v_labels uuid[]
 )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     -- Remove existing entries for the VM
     DELETE FROM labels_map
@@ -230,14 +230,14 @@ BEGIN
     -- Add the current entries for the VM
     PERFORM
         AddVmToLabels(v_vm_id, v_labels);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateLabelsForHost (
     v_host_id UUID,
     v_labels uuid[]
 )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     -- Remove existing entries for the host
     DELETE FROM labels_map
@@ -246,7 +246,7 @@ BEGIN
     -- Add the current entries for the host
     PERFORM
         AddHostToLabels(v_host_id, v_labels);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS entity_name_map_rs CASCADE;
@@ -256,7 +256,7 @@ CREATE TYPE entity_name_map_rs AS (
         );
 
 CREATE OR REPLACE FUNCTION GetEntitiesNameMap ()
-RETURNS SETOF entity_name_map_rs STABLE AS $PROCEDURE$
+RETURNS SETOF entity_name_map_rs STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -267,5 +267,5 @@ BEGIN
             ON vm_static.vm_guid = labels_map.vm_id
         LEFT JOIN vds_static
             ON vds_static.vds_id = labels_map.vds_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;

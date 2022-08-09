@@ -4,14 +4,14 @@
 --  Libvirt Secrets Table
 ----------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION GetLibvirtSecretByLibvirtSecretId (v_secret_id UUID)
-RETURNS SETOF libvirt_secrets STABLE AS $PROCEDURE$
+RETURNS SETOF libvirt_secrets STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM libvirt_secrets
     WHERE secret_id = v_secret_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertLibvirtSecret (
@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION InsertLibvirtSecret (
     v_provider_id UUID,
     v__create_date TIMESTAMP WITH TIME ZONE
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO libvirt_secrets (
         secret_id,
@@ -40,7 +40,7 @@ BEGIN
         v_provider_id,
         v__create_date
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateLibvirtSecret (
@@ -50,7 +50,7 @@ CREATE OR REPLACE FUNCTION UpdateLibvirtSecret (
     v_secret_description TEXT,
     v_provider_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE libvirt_secrets
     SET secret_id = v_secret_id,
@@ -60,41 +60,41 @@ BEGIN
         provider_id = v_provider_id,
         _update_date = LOCALTIMESTAMP
     WHERE secret_id = v_secret_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteLibvirtSecret (v_secret_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM libvirt_secrets
     WHERE secret_id = v_secret_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromLibvirtSecrets ()
-RETURNS SETOF libvirt_secrets STABLE AS $PROCEDURE$
+RETURNS SETOF libvirt_secrets STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM libvirt_secrets;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllLibvirtSecretsByProviderId (v_provider_id UUID)
-RETURNS SETOF libvirt_secrets STABLE AS $PROCEDURE$
+RETURNS SETOF libvirt_secrets STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM libvirt_secrets
     WHERE provider_id = v_provider_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetLibvirtSecretsByPoolIdOnActiveDomains (v_storage_pool_id UUID)
-RETURNS SETOF libvirt_secrets STABLE AS $PROCEDURE$
+RETURNS SETOF libvirt_secrets STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -106,7 +106,7 @@ BEGIN
         ON storage_domain_static.id = storage_pool_iso_map.storage_id
     WHERE storage_pool_iso_map.storage_pool_id = v_storage_pool_id
         AND storage_pool_iso_map.status = 3;-- Active
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

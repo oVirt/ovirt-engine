@@ -4,13 +4,13 @@
 -- vm_jobs functions
 ---------------------
 CREATE OR REPLACE FUNCTION GetAllVmJobs ()
-RETURNS SETOF vm_jobs STABLE AS $PROCEDURE$
+RETURNS SETOF vm_jobs STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_jobs.*
     FROM vm_jobs;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVmJobs (
@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION UpdateVmJobs (
     v_cursor_end BIGINT,
     v_image_group_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE vm_jobs
     SET vm_job_id = v_vm_job_id,
@@ -37,16 +37,16 @@ BEGIN
         cursor_end = v_cursor_end,
         image_group_id = v_image_group_id
     WHERE vm_job_id = v_vm_job_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteVmJobs (v_vm_job_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM vm_jobs
     WHERE vm_job_id = v_vm_job_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertVmJobs (
@@ -60,7 +60,7 @@ CREATE OR REPLACE FUNCTION InsertVmJobs (
     v_cursor_end BIGINT,
     v_image_group_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO vm_jobs (
         vm_job_id,
@@ -84,7 +84,7 @@ BEGIN
         v_cursor_end,
         v_image_group_id
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

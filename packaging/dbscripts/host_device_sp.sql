@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION InsertHostDevice (
     v_block_path TEXT,
     v_hostdev_spec_params TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     SET CONSTRAINTS ALL DEFERRED;
 
@@ -64,7 +64,7 @@ BEGIN
         v_block_path,
         v_hostdev_spec_params
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateHostDevice (
@@ -87,7 +87,7 @@ CREATE OR REPLACE FUNCTION UpdateHostDevice (
     v_block_path TEXT,
     v_hostdev_spec_params TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     SET CONSTRAINTS ALL DEFERRED;
 
@@ -112,14 +112,14 @@ BEGIN
         hostdev_spec_params = v_hostdev_spec_params
     WHERE host_id = v_host_id
         AND device_name = v_device_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteHostDevice (
     v_host_id UUID,
     v_device_name VARCHAR(255)
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     SET CONSTRAINTS ALL DEFERRED;
 
@@ -127,25 +127,25 @@ BEGIN
     FROM host_device
     WHERE host_id = v_host_id
         AND device_name = v_device_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetHostDevicesByHostId (v_host_id UUID)
-RETURNS SETOF host_device STABLE AS $PROCEDURE$
+RETURNS SETOF host_device STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM host_device
     WHERE host_id = v_host_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetHostDevicesByHostIdAndIommuGroup (
     v_host_id UUID,
     v_iommu_group INT
     )
-RETURNS SETOF host_device STABLE AS $PROCEDURE$
+RETURNS SETOF host_device STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -153,14 +153,14 @@ BEGIN
     FROM host_device
     WHERE host_id = v_host_id
         AND iommu_group = v_iommu_group;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetHostDeviceByHostIdAndDeviceName (
     v_host_id UUID,
     v_device_name VARCHAR(255)
     )
-RETURNS SETOF host_device STABLE AS $PROCEDURE$
+RETURNS SETOF host_device STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -168,46 +168,46 @@ BEGIN
     FROM host_device
     WHERE host_id = v_host_id
         AND device_name = v_device_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromHostDevices ()
-RETURNS SETOF host_device STABLE AS $PROCEDURE$
+RETURNS SETOF host_device STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM host_device;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmExtendedHostDevicesByVmId (v_vm_id UUID)
-RETURNS SETOF vm_host_device_view STABLE AS $PROCEDURE$
+RETURNS SETOF vm_host_device_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT vm_host_device_view.*
     FROM vm_host_device_view
     WHERE vm_host_device_view.configured_vm_id = v_vm_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetExtendedHostDevicesByHostId (v_host_id UUID)
-RETURNS SETOF host_device_view STABLE AS $PROCEDURE$
+RETURNS SETOF host_device_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT host_device_view.*
     FROM host_device_view
     WHERE host_device_view.host_id = v_host_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION CheckVmHostDeviceAvailability (
     v_vm_id UUID,
     v_host_id UUID
     )
-RETURNS BOOLEAN STABLE AS $PROCEDURE$
+RETURNS BOOLEAN STABLE AS $FUNCTION$
 BEGIN
     RETURN NOT EXISTS (
             SELECT 1
@@ -221,14 +221,14 @@ BEGIN
                         AND vm_id <> v_vm_id
                     )
             );-- device free or already belonging to the vm
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION MarkHostDevicesUsedByVmId (
     v_vm_id UUID,
     v_host_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE host_device
     SET vm_id = v_vm_id
@@ -239,7 +239,7 @@ BEGIN
             WHERE vm_id = v_vm_id
                 AND type = 'hostdev'
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION SetVmIdOnHostDevice (
@@ -247,37 +247,37 @@ CREATE OR REPLACE FUNCTION SetVmIdOnHostDevice (
     v_device_name VARCHAR(255),
     v_vm_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE host_device
     SET vm_id = v_vm_id
     WHERE host_id = v_host_id
         AND device_name = v_device_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION FreeHostDevicesUsedByVmId (v_vm_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE host_device
     SET vm_id = NULL
     WHERE vm_id = v_vm_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION CleanDownVms ()
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE host_device
     SET vm_id = NULL
     FROM vm_dynamic
     WHERE host_device.vm_id = vm_dynamic.vm_guid
         AND vm_dynamic.status = 0;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmDevicesAttachedToHost (v_host_id UUID)
-RETURNS SETOF vm_device AS $PROCEDURE$
+RETURNS SETOF vm_device AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -287,11 +287,11 @@ BEGIN
         ON vm_device.vm_id = vm_host_pinning_map.vm_id
             AND vm_host_pinning_map.vds_id = v_host_id
     WHERE vm_device.type = 'hostdev';
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetUsedScsiDevicesByHostId (v_host_id UUID)
-RETURNS SETOF host_device_view STABLE AS $PROCEDURE$
+RETURNS SETOF host_device_view STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -301,5 +301,5 @@ BEGIN
         INNER JOIN host_device_view hdv1
             ON hdv1.device_name = hdv.parent_device_name
         WHERE hdv1.host_id = v_host_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;

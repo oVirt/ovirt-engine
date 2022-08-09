@@ -1,8 +1,8 @@
 
 
--- The following stored procedures are relevant to oVirt Installer only
+-- The following stored FUNCTIONs are relevant to oVirt Installer only
 CREATE OR REPLACE FUNCTION inst_update_default_storage_pool_type (v_is_local boolean)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE storage_pool
     SET is_local = v_is_local,
@@ -13,7 +13,7 @@ BEGIN
             FROM storage_domains
             WHERE storage_domains.storage_pool_name = 'Default'
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- This function calls insert_server_connections, insertstorage_domain_static,insertstorage_domain_dynamic
@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION inst_add_iso_storage_domain (
     v_available INT,
     v_used INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE
 
 BEGIN
@@ -47,7 +47,7 @@ BEGIN
     exception when others then RAISE EXCEPTION 'NUM:%, DETAILS:%',
         SQLSTATE,
         SQLERRM;
-    END;$PROCEDURE$
+    END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- Updates service types(gluster and virt) in cluster table
@@ -56,13 +56,13 @@ CREATE OR REPLACE FUNCTION inst_update_service_type (
     v_virt_service boolean,
     v_gluster_service boolean
     )
-RETURNS void AS $PROCEDURE$
+RETURNS void AS $FUNCTION$
 BEGIN
     UPDATE cluster
     SET virt_service = v_virt_service,
         gluster_service = v_gluster_service
     WHERE cluster_id = v_cluster_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- Adds a new glance provider, according to the specified arguments
@@ -78,7 +78,7 @@ CREATE OR REPLACE FUNCTION inst_add_glance_provider (
     v_auth_url TEXT DEFAULT NULL,
     v_tenant_name VARCHAR(128) DEFAULT NULL
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     -- Adding the Glance provider
     INSERT INTO providers (
@@ -146,7 +146,7 @@ BEGIN
             FROM storage_domain_dynamic
             WHERE id = v_storage_domain_id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 

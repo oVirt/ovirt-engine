@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION Insertstorage_pool (
     v_quota_enforcement_type INT,
     v_managed BOOLEAN
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO storage_pool (
         description,
@@ -44,7 +44,7 @@ BEGIN
         v_quota_enforcement_type,
         v_managed
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatestorage_pool (
@@ -63,7 +63,7 @@ CREATE OR REPLACE FUNCTION Updatestorage_pool (
     )
 RETURNS VOID
     --The [storage_pool] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE storage_pool
     SET description = v_description,
@@ -79,7 +79,7 @@ BEGIN
         quota_enforcement_type = v_quota_enforcement_type,
         managed = v_managed
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatestorage_pool_partial (
@@ -94,7 +94,7 @@ CREATE OR REPLACE FUNCTION Updatestorage_pool_partial (
     )
 RETURNS VOID
     --The [storage_pool] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE storage_pool
     SET description = v_description,
@@ -106,24 +106,24 @@ BEGIN
         _update_date = LOCALTIMESTAMP,
         quota_enforcement_type = v_quota_enforcement_type
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatestorage_pool_status (
     v_id UUID,
     v_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE storage_pool
     SET status = v_status,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION IncreaseStoragePoolMasterVersion (v_id UUID)
-RETURNS INT AS $PROCEDURE$
+RETURNS INT AS $FUNCTION$
 DECLARE v_master_domain_version INT;
 
 BEGIN
@@ -133,11 +133,11 @@ BEGIN
     INTO v_master_domain_version;
 
     RETURN v_master_domain_version;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deletestorage_pool (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -208,14 +208,14 @@ BEGIN
 
     -- delete StoragePool permissions --
     PERFORM DeletePermissionsByEntityId(v_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromstorage_pool (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF storage_pool STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -230,18 +230,18 @@ BEGIN
                     AND entity_id = id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllByStatus (v_status INT)
-RETURNS SETOF storage_pool STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_pool
     WHERE status = v_status;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_poolByid (
@@ -249,7 +249,7 @@ CREATE OR REPLACE FUNCTION Getstorage_poolByid (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF storage_pool STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -265,14 +265,14 @@ BEGIN
                     AND entity_id = v_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_poolByName (
     v_name VARCHAR(40),
     v_is_case_sensitive BOOLEAN
     )
-RETURNS SETOF storage_pool STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -283,11 +283,11 @@ BEGIN
             NOT v_is_case_sensitive
             AND name ilike v_name
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_poolsByStorageDomainId (v_storage_domain_id UUID)
-RETURNS SETOF storage_pool STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -296,7 +296,7 @@ BEGIN
     INNER JOIN storage_pool_iso_map
         ON storage_pool.id = storage_pool_iso_map.storage_pool_id
     WHERE storage_pool_iso_map.storage_id = v_storage_domain_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetVmAndTemplatesIdsByStorageDomainId (
@@ -304,7 +304,7 @@ CREATE OR REPLACE FUNCTION GetVmAndTemplatesIdsByStorageDomainId (
     v_include_shareable BOOLEAN,
     v_active_only BOOLEAN
     )
-RETURNS SETOF UUID STABLE AS $PROCEDURE$
+RETURNS SETOF UUID STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -315,11 +315,11 @@ BEGIN
     WHERE i.storage_id = v_storage_domain_id
         AND i.active = v_active_only
         AND i.shareable = v_include_shareable;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_poolsByVdsId (v_vdsId UUID)
-RETURNS SETOF storage_pool STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool STABLE AS $FUNCTION$
 DECLARE v_clusterId UUID;
 
 BEGIN
@@ -337,11 +337,11 @@ BEGIN
             FROM cluster
             WHERE cluster_id = v_clusterId
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_poolsByClusterId (v_clusterId UUID)
-RETURNS SETOF storage_pool STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -352,32 +352,32 @@ BEGIN
             FROM cluster
             WHERE cluster_id = v_clusterId
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
 -- [storage_domains_ovf_info] Table
 --
 CREATE OR REPLACE FUNCTION LoadStorageDomainInfoByDomainId (v_storage_domain_id UUID)
-RETURNS SETOF storage_domains_ovf_info STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains_ovf_info STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_domains_ovf_info ovf
     WHERE ovf.storage_domain_id = v_storage_domain_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION LoadStorageDomainInfoByDiskId (v_disk_id UUID)
-RETURNS SETOF storage_domains_ovf_info STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains_ovf_info STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_domains_ovf_info ovf
     WHERE ovf.ovf_disk_id = v_disk_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertStorageDomainOvfInfo (
@@ -386,7 +386,7 @@ CREATE OR REPLACE FUNCTION InsertStorageDomainOvfInfo (
     v_ovf_disk_id UUID,
     v_stored_ovfs_ids TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO storage_domains_ovf_info (
         storage_domain_id,
@@ -400,18 +400,18 @@ BEGIN
         v_ovf_disk_id,
         v_stored_ovfs_ids
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION LoadStorageDomainsForOvfIds (v_ovfs_ids TEXT)
-RETURNS SETOF UUID AS $PROCEDURE$
+RETURNS SETOF UUID AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT ovf.storage_domain_id
     FROM storage_domains_ovf_info ovf
     WHERE string_to_array(ovf.stored_ovfs_ids, ',') && string_to_array(v_ovfs_ids, ',');
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateStorageDomainOvfInfo (
@@ -421,7 +421,7 @@ CREATE OR REPLACE FUNCTION UpdateStorageDomainOvfInfo (
     v_stored_ovfs_ids TEXT,
     v_last_updated TIMESTAMP WITH TIME ZONE
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     UPDATE storage_domains_ovf_info
     SET status = v_status,
@@ -430,16 +430,16 @@ BEGIN
         stored_ovfs_ids = v_stored_ovfs_ids,
         last_updated = v_last_updated
     WHERE ovf_disk_id = v_ovf_disk_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteStorageDomainOvfInfo (v_ovf_disk_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     DELETE
     FROM storage_domains_ovf_info
     WHERE ovf_disk_id = v_ovf_disk_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateOvfUpdatedInfo (
@@ -447,7 +447,7 @@ CREATE OR REPLACE FUNCTION UpdateOvfUpdatedInfo (
     v_status INT,
     v_except_status INT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE curs_storages_ids CURSOR
 FOR
 SELECT *
@@ -473,7 +473,7 @@ BEGIN
     END LOOP;
 
     CLOSE curs_storages_ids;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- ----------------------------------------------------------------
@@ -501,7 +501,7 @@ CREATE OR REPLACE FUNCTION Insertstorage_domain_static (
     v_backup BOOLEAN,
     v_block_size INTEGER
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO storage_domain_static (
         id,
@@ -543,11 +543,11 @@ BEGIN
         v_backup,
         v_block_size
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domains_List_By_ImageId (v_image_id UUID)
-RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -558,7 +558,7 @@ BEGIN
             FROM image_storage_domain_map
             WHERE image_id = v_image_id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Updatestorage_domain_static (
@@ -583,7 +583,7 @@ CREATE OR REPLACE FUNCTION Updatestorage_domain_static (
     )
 RETURNS VOID
     --The [storage_domain_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE storage_domain_static
     SET storage = v_storage,
@@ -605,11 +605,11 @@ BEGIN
         backup = v_backup,
         block_size = v_block_size
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Deletestorage_domain_static (v_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -627,39 +627,39 @@ BEGIN
 
     -- delete Storage permissions --
     PERFORM DeletePermissionsByEntityId(v_id);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromstorage_domain_static ()
-RETURNS SETOF storage_domain_static STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domain_static STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_domain_static;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domain_staticByid (v_id UUID)
-RETURNS SETOF storage_domain_static STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domain_static STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_domain_static
     WHERE id = v_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domain_staticByName (v_name VARCHAR(250))
-RETURNS SETOF storage_domain_static STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domain_static STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_domain_static
     WHERE storage_name = v_name;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domain_staticByNameFiltered (
@@ -667,7 +667,7 @@ CREATE OR REPLACE FUNCTION Getstorage_domain_staticByNameFiltered (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF storage_domain_static STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domain_static STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -683,11 +683,11 @@ BEGIN
                     AND entity_id = sds.id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domain_staticBystorage_pool_id (v_storage_pool_id UUID)
-RETURNS SETOF storage_domain_static STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domain_static STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -696,7 +696,7 @@ BEGIN
     INNER JOIN storage_pool_iso_map
         ON storage_pool_iso_map.storage_id = storage_domain_static.id
     WHERE storage_pool_iso_map.storage_pool_id = v_storage_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS GetStorageDomainIdsByStoragePoolIdAndStatus_rs CASCADE;
@@ -706,7 +706,7 @@ CREATE OR REPLACE FUNCTION GetStorageDomainIdsByStoragePoolIdAndStatus (
     v_storage_pool_id UUID,
     v_status INT
     )
-RETURNS SETOF GetStorageDomainIdsByStoragePoolIdAndStatus_rs STABLE AS $PROCEDURE$
+RETURNS SETOF GetStorageDomainIdsByStoragePoolIdAndStatus_rs STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -718,7 +718,7 @@ BEGIN
         AND status = v_status
         AND storage_domain_static.storage_type != 9
         AND storage_domain_static.storage_type != 10; -- filter Cinder and Managed block storage domains
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domains_By_id (
@@ -726,7 +726,7 @@ CREATE OR REPLACE FUNCTION Getstorage_domains_By_id (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF storage_domains_without_storage_pools STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains_without_storage_pools STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -742,7 +742,7 @@ BEGIN
                     AND entity_id = v_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domains_by_storage_pool_id_with_permitted_action (
@@ -750,7 +750,7 @@ CREATE OR REPLACE FUNCTION Getstorage_domains_by_storage_pool_id_with_permitted_
     v_action_group_id INT,
     v_storage_pool_id UUID
     )
-RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -760,14 +760,14 @@ BEGIN
         AND (
             SELECT get_entity_permissions(v_user_id, v_action_group_id, id, 11)
             ) IS NOT NULL;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domains_By_id_and_by_storage_pool_id (
     v_id UUID,
     v_storage_pool_id UUID
     )
-RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -775,7 +775,7 @@ BEGIN
     FROM storage_domains
     WHERE id = v_id
         AND storage_pool_id = v_storage_pool_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domains_By_storagePoolId (
@@ -783,7 +783,7 @@ CREATE OR REPLACE FUNCTION Getstorage_domains_By_storagePoolId (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -799,7 +799,7 @@ BEGIN
                     AND entity_id = id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domain_by_type_storagePoolId_and_status (
@@ -807,7 +807,7 @@ CREATE OR REPLACE FUNCTION Getstorage_domain_by_type_storagePoolId_and_status (
     v_storage_pool_id UUID,
     v_status INT
     )
-RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -819,11 +819,11 @@ BEGIN
             v_status IS NULL
             OR status = v_status
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domains_By_connection (v_connection VARCHAR)
-RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -834,25 +834,25 @@ BEGIN
             FROM storage_server_connections
             WHERE connection = v_connection
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromStorageDomainsByConnectionId (v_connection_id VARCHAR)
-RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM storage_domains
     WHERE storage = v_connection_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetAllFromstorage_domains (
     v_user_id UUID,
     v_is_filtered BOOLEAN
     )
-RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -867,11 +867,11 @@ BEGIN
                     AND entity_id = id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Remove_Entities_From_storage_domain (v_storage_domain_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_ids UUID[];
 BEGIN
     BEGIN
@@ -1139,11 +1139,11 @@ BEGIN
     -- Deletes the disks's permissions which the only storage domain they are reside on, is the storage domain.
     v_ids := array_agg(disk_id::UUID) FROM STORAGE_DOMAIN_MAP_TABLE;
     PERFORM DeletePermissionsByEntityIds(v_ids);
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Force_Delete_storage_domain (v_storage_domain_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     PERFORM Remove_Entities_From_storage_domain(v_storage_domain_id);
 
@@ -1156,11 +1156,11 @@ BEGIN
     DELETE
     FROM storage_domain_static
     WHERE id = v_storage_domain_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domains_List_By_storageDomainId (v_storage_domain_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1176,7 +1176,7 @@ BEGIN
                     AND entity_id = v_storage_domain_id
                 )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 --This SP returns all data centers containing cluster with permissions to run the given action by user
@@ -1186,7 +1186,7 @@ CREATE OR REPLACE FUNCTION fn_perms_get_storage_pools_with_permitted_action_on_c
     v_supports_virt_service boolean,
     v_supports_gluster_service boolean
     )
-RETURNS SETOF storage_pool STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1209,14 +1209,14 @@ BEGIN
                         )
                     )
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Getstorage_domains_By_storage_pool_id_and_connection (
     v_storage_pool_id UUID,
     v_connection VARCHAR
     )
-RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1228,11 +1228,11 @@ BEGIN
             FROM storage_server_connections
             WHERE connection = v_connection
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetFailingStorage_domains ()
-RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1240,11 +1240,11 @@ BEGIN
     FROM storage_domains
     WHERE recoverable
         AND status = 4;--inactive
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetFailingVdss ()
-RETURNS SETOF vds STABLE AS $PROCEDURE$
+RETURNS SETOF vds STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1252,14 +1252,14 @@ BEGIN
     FROM vds
     WHERE recoverable
         AND status = 10;--non operational
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetStoragePoolsByClusterService (
     v_supports_virt_service BOOLEAN,
     v_supports_gluster_service BOOLEAN
     )
-RETURNS SETOF storage_pool STABLE AS $PROCEDURE$
+RETURNS SETOF storage_pool STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1280,11 +1280,11 @@ BEGIN
                     )
                 AND vg.storage_pool_id = sp.id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetStorageServerConnectionsForDomain (v_storage_domain_id UUID)
-RETURNS SETOF storage_server_connections STABLE AS $PROCEDURE$
+RETURNS SETOF storage_server_connections STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1314,44 +1314,44 @@ BEGIN
             WHERE storage_domain_static.id = v_storage_domain_id
                 AND storage_domain_static.storage_type = 3 -- storage type = iscsi
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetDcIdByExternalNetworkId (v_external_id TEXT)
-RETURNS SETOF UUID STABLE AS $PROCEDURE$
+RETURNS SETOF UUID STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT storage_pool_id
     FROM network
     WHERE provider_network_external_id = v_external_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- This SP returns the number of images in the specified storage domain
 CREATE OR REPLACE FUNCTION GetNumberOfImagesInStorageDomain (v_storage_domain_id UUID)
-RETURNS SETOF BIGINT STABLE AS $PROCEDURE$
+RETURNS SETOF BIGINT STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT COUNT(*)
     FROM image_storage_domain_map
     WHERE storage_domain_id = v_storage_domain_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetHostedEngineStorageDomainIds()
-RETURNS SETOF UUID STABLE AS $PROCEDURE$
+RETURNS SETOF UUID STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT id
     FROM hosted_engine_storage_domains_ids_view;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetStorageDomainByGlusterVolumeId (v_gluster_vol_id UUID)
-RETURNS SETOF storage_domains STABLE AS $PROCEDURE$
+RETURNS SETOF storage_domains STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
@@ -1362,7 +1362,7 @@ BEGIN
             FROM storage_server_connections
             WHERE gluster_volume_id = v_gluster_vol_id
             );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- ----------------------------------------------------------------
@@ -1375,7 +1375,7 @@ CREATE OR REPLACE FUNCTION InsertCinderStorage (
     v_driver_options JSONB,
     v_driver_sensitive_options TEXT
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO cinder_storage (
         storage_domain_id,
@@ -1387,7 +1387,7 @@ BEGIN
         v_driver_options,
         v_driver_sensitive_options
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateCinderStorage (
@@ -1396,17 +1396,17 @@ CREATE OR REPLACE FUNCTION UpdateCinderStorage (
     v_driver_sensitive_options TEXT
     )
 RETURNS VOID
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE cinder_storage
     SET driver_options = v_driver_options,
         driver_sensitive_options = v_driver_sensitive_options
     WHERE storage_domain_id = v_storage_domain_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteCinderStorage (v_storage_domain_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -1421,30 +1421,30 @@ BEGIN
     DELETE
     FROM cinder_storage
     WHERE id = v_storage_domain_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetCinderStorage (v_storage_domain_id UUID)
-RETURNS SETOF cinder_storage STABLE AS $PROCEDURE$
+RETURNS SETOF cinder_storage STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM cinder_storage
     WHERE storage_domain_id = v_storage_domain_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetCinderStorageByDrivers (
     v_driver_options JSONB)
-RETURNS SETOF cinder_storage STABLE AS $PROCEDURE$
+RETURNS SETOF cinder_storage STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM cinder_storage
     WHERE driver_options = v_driver_options;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 -- ----------------------------------------------------------------
@@ -1454,7 +1454,7 @@ CREATE OR REPLACE FUNCTION InsertExternalLease (
     v_storage_domain_id UUID,
     v_lease_id UUID
     )
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 BEGIN
     INSERT INTO external_leases (
         storage_domain_id,
@@ -1464,7 +1464,7 @@ BEGIN
         v_storage_domain_id,
         v_lease_id
         );
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateExternalLease (
@@ -1472,16 +1472,16 @@ CREATE OR REPLACE FUNCTION UpdateExternalLease (
     v_storage_domain_id UUID
     )
 RETURNS VOID
-    AS $PROCEDURE$
+    AS $FUNCTION$
 BEGIN
     UPDATE external_leases
     SET storage_domain_id = v_storage_domain_id
     WHERE lease_id = v_lease_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteExternalLease (v_lease_id UUID)
-RETURNS VOID AS $PROCEDURE$
+RETURNS VOID AS $FUNCTION$
 DECLARE v_val UUID;
 
 BEGIN
@@ -1494,16 +1494,16 @@ BEGIN
     DELETE
     FROM external_leases
     WHERE lease_id = v_lease_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetExternalLease (v_lease_id UUID)
-RETURNS SETOF external_leases STABLE AS $PROCEDURE$
+RETURNS SETOF external_leases STABLE AS $FUNCTION$
 BEGIN
     RETURN QUERY
 
     SELECT *
     FROM external_leases
     WHERE lease_id = v_lease_id;
-END;$PROCEDURE$
+END;$FUNCTION$
 LANGUAGE plpgsql;
