@@ -47,6 +47,8 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelChain;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModelChain.ConfirmationModelChainItem;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -590,6 +592,12 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         setWindow(null);
     }
 
+    private void confirmClone(Runnable callback) {
+        ConfirmationModelChain chain = new ConfirmationModelChain();
+        chain.addConfirmation(createConfirmClone());
+        chain.execute(this, callback);
+    }
+
     private void cloneTemplate() {
         Snapshot snapshot = getSelectedItem();
         if (snapshot == null) {
@@ -885,9 +893,9 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         } else if (command == getRemoveCommand()) {
             remove();
         } else if (command == getCloneVmCommand()) {
-            cloneVM();
+            confirmClone(this::cloneVM);
         } else if (command == getCloneTemplateCommand()) {
-            cloneTemplate();
+            confirmClone(this::cloneTemplate);
         } else if ("OnNewTemplate".equals(command.getName())) { //$NON-NLS-1$
             onCloneTemplate();
         } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
@@ -914,5 +922,25 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     protected boolean isSingleSelectionOnly() {
         // Single selection model
         return true;
+    }
+
+    private ConfirmationModelChainItem createConfirmClone() {
+        return new ConfirmationModelChainItem() {
+
+            @Override
+            public boolean isRequired() {
+                return getSelectedItem() != null && getSelectedItem().containsMemory();
+            }
+
+            @Override
+            public ConfirmationModel getConfirmation() {
+                ConfirmationModel confirmModel = new ConfirmationModel();
+                confirmModel.setTitle(ConstantsManager.getInstance().getConstants().cloneFromSnapshotWithMemoryConfirmationTitle());
+                confirmModel.setMessage(ConstantsManager.getInstance().getConstants().cloneFromSnapshotWithMemoryConfirmationText());
+                confirmModel.setHelpTag(HelpTag.clone_snapshot_with_memory);
+                confirmModel.setHashName("clone_snapshot_with_memory"); //$NON-NLS-1$
+                return confirmModel;
+            }
+        };
     }
 }

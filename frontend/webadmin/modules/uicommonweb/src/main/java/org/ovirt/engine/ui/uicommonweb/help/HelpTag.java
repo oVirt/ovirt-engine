@@ -88,6 +88,8 @@ public enum HelpTag {
 
     clone_template_from_snapshot("clone_template_from_snapshot", HelpTagType.WEBADMIN, "VMs Tab > Snapshots Sub-Tab > Clone Template From Snapshot"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    clone_snapshot_with_memory("clone_snapshot_with_memory", HelpTagType.WEBADMIN, "VMs Tab > Snapshots Sub-Tab > Clone VM/Template From Snapshot With Memory"), //$NON-NLS-1$ //$NON-NLS-2$
+
     clusters("clusters", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     configure("configure", HelpTagType.WEBADMIN, "Main > Configure"), //$NON-NLS-1$ //$NON-NLS-2$
