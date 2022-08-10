@@ -394,9 +394,12 @@ public abstract class OvfReader implements IOvfBuilder {
                 break;
 
             case OvfHardware.OTHER:
-                VmDevice vmDevice = readOtherHardwareItem(item);
-                readVirtioSerial = readVirtioSerial ||
-                        VmDeviceType.VIRTIOSERIAL.getName().equals(vmDevice.getDevice());
+                final VmDeviceGeneralType type = VmDeviceGeneralType
+                        .forValue(String.valueOf(selectSingleNode(item, VMD_TYPE, _xmlNS).innerText));
+                final VmDevice vmDevice = type == VmDeviceGeneralType.TPM
+                        ? readManagedVmDevice(item, readDeviceId(item))
+                        : readOtherHardwareItem(item, type);
+                readVirtioSerial = readVirtioSerial || VmDeviceType.VIRTIOSERIAL.getName().equals(vmDevice.getDevice());
                 break;
             }
         }
@@ -510,12 +513,10 @@ public abstract class OvfReader implements IOvfBuilder {
         vmBase.setUsbPolicy(usbPolicy != null ? UsbPolicy.forStringValue(usbPolicy.innerText) : UsbPolicy.ENABLED_NATIVE);
     }
 
-    private VmDevice readOtherHardwareItem(XmlNode node) {
+    private VmDevice readOtherHardwareItem(XmlNode node, VmDeviceGeneralType type) {
         boolean managed = false;
         if (selectSingleNode(node, VMD_TYPE, _xmlNS) != null
                 && StringUtils.isNotEmpty(selectSingleNode(node, VMD_TYPE, _xmlNS).innerText)) {
-            VmDeviceGeneralType type = VmDeviceGeneralType
-                    .forValue(String.valueOf(selectSingleNode(node, VMD_TYPE, _xmlNS).innerText));
             String device = selectSingleNode(node, VMD_DEVICE, _xmlNS).innerText;
             // special devices are treated as managed devices but still have the OTHER OVF ResourceType
             managed = VmDeviceCommonUtils.isSpecialDevice(device, type, true);

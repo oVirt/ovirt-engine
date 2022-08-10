@@ -297,7 +297,6 @@ public class VmDeviceCommonUtils {
         switch(type) {
         case MDEV:
         case SOUND:
-        case TPM:
             return true;
         case CONSOLE:
             return VmDeviceType.CONSOLE.getName().equals(device);
