@@ -619,6 +619,10 @@ public interface UIConstants extends Constants {
 
     String cloneVmFromSnapshotTitle();
 
+    String cloneFromSnapshotWithMemoryConfirmationTitle();
+
+    String cloneFromSnapshotWithMemoryConfirmationText();
+
     String youAreAboutChangeClusterCompatibilityVersionMsg();
 
     String youAreAboutChangeClusterCompatibilityVersionNonResponsiveHostsMsg();
