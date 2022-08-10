@@ -481,10 +481,6 @@ public abstract class OvfWriter implements IOvfBuilder {
                     // mdev_type predefined property is written instead
                     continue;
                 }
-                if (device.getType() == VmDeviceGeneralType.TPM) {
-                    // TPM device has its own write method
-                    continue;
-                }
                 devices.add(device);
             }
         }
