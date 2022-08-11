@@ -81,8 +81,8 @@ jobs:
 
     - name: Checkout sources
       uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
 
     - name: Setup maven cache
       uses: actions/cache@v2
