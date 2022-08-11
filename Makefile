@@ -191,7 +191,6 @@ BUILD_TARGET=install
 # Once add new template file, if required chmod, add it in generated-files target.
 GENERATED = \
 	.gitignore \
-	.automation/milestone-config.sh \
 	ovirt-engine.spec \
 	build/helptag.py \
 	build/helptag_checker.py \
@@ -372,7 +371,7 @@ validations:	generated-files
 		fi; \
 	fi
 	if [ "$(BUILD_VALIDATION)" != 0 ]; then \
-                echo "Performing build validation." &&\
+		echo "Performing build validation." &&\
 		build/shell-check.sh && \
 		build/python-check.sh && \
 		build/ansible-check.sh && \

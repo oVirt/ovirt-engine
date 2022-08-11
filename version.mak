@@ -26,6 +26,7 @@ AUTO_MILESTONE=$(shell cat pom.xml | head -n 20 | grep '<version>' | head -n 1 |
 # AUTO_RPM_RELEASE is set to 0.0.something on SNAPSHOT builds, and to RPM_RELEASE_ON_RELEASE otherwise.
 AUTO_RPM_RELEASE=$(shell if cat pom.xml | head -n 20 | grep '<version>' | head -n 1 | sed -e 's/.*>\(.*\)<.*/\1/' | grep -q 'SNAPSHOT$$'; then echo 0.2.$(MILESTONE).$$(date -u +%Y%m%d%H%M%S); else echo $(RPM_RELEASE_ON_RELEASE); fi)
 
+# MILESTONE should be automatic.
 MILESTONE=$(AUTO_MILESTONE)
 
 # RPM release should be automatic. If needed to be set manually:
@@ -48,3 +49,6 @@ RPM_RELEASE=$(AUTO_RPM_RELEASE)
 # Or leave empty to have only mead numbering.
 #
 DOWNSTREAM_RPM_RELEASE_PREFIX=0.
+
+# Helper target to print the value of a Makefile variable (`make print-MILESTONE`)
+print-%: ; @echo $*=$($*)
