@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
-import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -111,7 +110,7 @@ public class OvfVmWriter extends OvfOvirtWriter {
     }
 
     protected boolean isSpecialDevice(VmDevice vmDevice) {
-        return VmDeviceCommonUtils.isSpecialDevice(vmDevice.getDevice(), vmDevice.getType(), true);
+        return OvfReaderWriterUtils.isSpecialDevice(vmDevice.getDevice(), vmDevice.getType(), true);
     }
 
     @Override

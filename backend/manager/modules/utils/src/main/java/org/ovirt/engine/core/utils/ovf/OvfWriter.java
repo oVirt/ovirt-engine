@@ -491,7 +491,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected boolean isSpecialDevice(VmDevice vmDevice) {
-        return VmDeviceCommonUtils.isSpecialDevice(vmDevice.getDevice(), vmDevice.getType(), false);
+        return OvfReaderWriterUtils.isSpecialDevice(vmDevice.getDevice(), vmDevice.getType(), false);
     }
 
     protected void writeVmDevice(VmDevice vmDevice) {

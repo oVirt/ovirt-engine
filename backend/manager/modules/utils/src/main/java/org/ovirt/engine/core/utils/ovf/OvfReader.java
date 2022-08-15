@@ -519,7 +519,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 && StringUtils.isNotEmpty(selectSingleNode(node, VMD_TYPE, _xmlNS).innerText)) {
             String device = selectSingleNode(node, VMD_DEVICE, _xmlNS).innerText;
             // special devices are treated as managed devices but still have the OTHER OVF ResourceType
-            managed = VmDeviceCommonUtils.isSpecialDevice(device, type, true);
+            managed = OvfReaderWriterUtils.isSpecialDevice(device, type, true);
         }
 
         return managed ? readManagedVmDevice(node, readDeviceId(node))
