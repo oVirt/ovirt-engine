@@ -146,9 +146,6 @@ public class AnsibleExecutor {
     }
 
     public AnsibleReturnValue runCommand(AnsibleCommandConfig commandConfig, int timeout, BiConsumer<String, String> fn, boolean async) {
-        if (commandConfig.host() == null) {
-            throw new AnsibleRunnerCallException("Invalid host");
-        }
         if (timeout <= 0) {
             timeout = EngineLocalConfig.getInstance().getInteger("ANSIBLE_PLAYBOOK_EXEC_DEFAULT_TIMEOUT");
         }
@@ -198,6 +195,12 @@ public class AnsibleExecutor {
     }
 
     private AuditLogable createAuditLogable(AnsibleCommandConfig command, String taskName) {
+        if (command.host() == null) {
+                return AuditLogableImpl.createEvent(
+                        command.correlationId(),
+                        Map.of("Message", taskName, "PlayAction", command.playAction())
+                    );
+        }
         return AuditLogableImpl.createHostEvent(
                 command.host(),
                 command.correlationId(),
