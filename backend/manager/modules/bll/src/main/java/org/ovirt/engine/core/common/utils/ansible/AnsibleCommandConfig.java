@@ -298,8 +298,11 @@ public class AnsibleCommandConfig implements LogFileConfig, PlaybookConfig {
         File hostFile = new File(String.format("%1$s/hosts", inventory));
         try {
             hostFile.createNewFile();
-            Files.write(hostFile.toPath(),
-                    String.format(this.host.getHostName() + " ansible_port=%1$s", this.host.getSshPort()).getBytes());
+            if (host != null) {
+                // if VDS is null then playbook is running on engine and ansible uses localhost inventory automatically
+                Files.write(hostFile.toPath(),
+                        String.format(this.host.getHostName() + " ansible_port=%1$s", this.host.getSshPort()).getBytes());
+            }
         } catch (IOException ex) {
             throw new AnsibleRunnerCallException(
                     String.format("Failed to create inventory file '%s':", hostFile.toString()),
