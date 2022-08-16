@@ -2,11 +2,8 @@ package org.ovirt.engine.core.config.entity;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.config.EngineConfig;
 import org.ovirt.engine.core.config.EngineConfigCLIParser;
@@ -14,12 +11,12 @@ import org.ovirt.engine.core.config.entity.helper.StringValueHelper;
 import org.ovirt.engine.core.config.entity.helper.ValueHelper;
 import org.slf4j.LoggerFactory;
 
-public class ConfigKeyFactory {
+import com.fasterxml.jackson.databind.JsonNode;
 
-    private HierarchicalConfiguration keysConfig;
-    private Map<String, String> alternateKeysMap;
+public class ConfigKeyFactory {
     private static ConfigKeyFactory instance;
     private EngineConfigCLIParser parser;
+    private  Map<String, JsonNode> props;
 
     static {
         instance = new ConfigKeyFactory();
@@ -28,11 +25,9 @@ public class ConfigKeyFactory {
     private ConfigKeyFactory() {
     }
 
-    public static void init(HierarchicalConfiguration keysConfig,
-            Map<String, String> alternateKeysMap,
-            EngineConfigCLIParser parser) {
-        instance.keysConfig = keysConfig;
-        instance.alternateKeysMap = alternateKeysMap;
+    public static void init(Map<String, JsonNode> props,
+                            EngineConfigCLIParser parser) {
+        instance.props = props;
         instance.parser = parser;
     }
 
@@ -41,33 +36,21 @@ public class ConfigKeyFactory {
     }
 
     public ConfigKey generateByPropertiesKey(String key) {
-        SubnodeConfiguration configurationAt = null;
-        try {
-            if (Character.isLetter(key.charAt(0))) {
-                configurationAt = keysConfig.configurationAt(key);
-            }
-        } catch (IllegalArgumentException e) {
-            // Can't find a key. maybe its an alternate key.
-        }
-        if (configurationAt == null || configurationAt.isEmpty()) {
-            key = alternateKeysMap.get(key);
-            configurationAt = keysConfig.configurationAt(key);
-        }
+        JsonNode node = props.get(key);
 
-        String type = configurationAt.getString("type");
+        String type = node.get("type") == null ? "" : node.get("type").asText();
         if (StringUtils.isBlank(type)) {
             type = "String";
         }
-        String[] validValues = configurationAt.getStringArray("validValues");
+        String[] validValues = node.findValuesAsText("validValues").toArray(new String[0]);
 
         // Description containing the list delimiter *will* be broken into an array, so rejoin it using that delimiter.
         // We pad the separator because the strings in the array are trimmed automatically.
-        String description = StringUtils.join(configurationAt.getStringArray("description"),
-                configurationAt.getListDelimiter() + " ");
-        String alternateKey = keysConfig.getString("/" + key + "/" + "alternateKey");
+        String description = node.get("description").asText();
+        String alternateKey = node.get("alternateKey") == null ? "" : node.get("alternateKey").asText();
 
         // If the isReloadable attribute isn't specified - assume it is false
-        boolean reloadable = configurationAt.getBoolean("isReloadable", false);
+        boolean reloadable = (node.get("isReloadable") == null ) ? false : node.get("isReloadable").booleanValue();
         ConfigKey configKey = new ConfigKey(type, description, alternateKey, key, "", validValues,
                 "", getHelperByType(type), reloadable, isDeprecated(key));
         configKey.setParser(parser);
@@ -75,22 +58,16 @@ public class ConfigKeyFactory {
     }
 
     private boolean isDeprecated(String key) {
-        final String pathToDeprecatedAttribute = key + "/deprecated";
-        if (!keysConfig.containsKey(pathToDeprecatedAttribute)) {
+        JsonNode node = props.get(key).get("deprecated");
+        if (node == null) {
             return false;
         }
 
-        final List list = keysConfig.getList(pathToDeprecatedAttribute);
-        if (list.size() != 1) {
-            throw new IllegalArgumentException("Configuration error; Key \""+key+"\" has ambiguous definition.");
-        }
-
-        final Object value = list.iterator().next();
         try {
-            return Boolean.parseBoolean((String) value);
+            return Boolean.parseBoolean(node.asText());
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("Configuration error;" +
-                    " Key \""+key+"\" should be either 'true' or 'false'. Value '"+value+"' is not valid.");
+                    " Key \""+key+"\" should be either 'true' or 'false'. Value '"+node+"' is not valid.");
         }
     }
 

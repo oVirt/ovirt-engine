@@ -31,11 +31,6 @@
     </dependency>
 
     <dependency>
-      <groupId>commons-configuration</groupId>
-      <artifactId>commons-configuration</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>commons-jxpath</groupId>
       <artifactId>commons-jxpath</artifactId>
     </dependency>
@@ -237,12 +232,6 @@
                 <groupId>org.ovirt.java-client-kubevirt</groupId>
                 <artifactId>java-client-kubevirt</artifactId>
                 <moduleName>org.ovirt.java-client-kubevirt</moduleName>
-              </module>
-
-              <module>
-                <groupId>commons-configuration</groupId>
-                <artifactId>commons-configuration</artifactId>
-                <moduleName>org.apache.commons.configuration</moduleName>
               </module>
 
               <module>

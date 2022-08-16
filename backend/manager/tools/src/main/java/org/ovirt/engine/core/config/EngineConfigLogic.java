@@ -5,18 +5,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.ConnectException;
+import java.nio.file.Files;
 import java.security.InvalidParameterException;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.commons.configuration.SubnodeConfiguration;
-import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.config.db.ConfigDao;
 import org.ovirt.engine.core.config.db.ConfigDaoImpl;
@@ -24,9 +22,13 @@ import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 import org.ovirt.engine.core.tools.ToolConsole;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * The <code>EngineConfigLogic</code> class is responsible for the logic of the EngineConfig tool.
  */
@@ -37,20 +39,23 @@ public class EngineConfigLogic {
     // The console:
     private static final ToolConsole console = ToolConsole.getInstance();
 
-    private static final String ALTERNATE_KEY = "alternateKey";
     private static final String MERGABLE_TOKEN = "mergable";
     private static final String DELIMITER_TOKEN = "delimiter";
     private static final String MERGE_NOT_SUPPORTED_MSG = "%s does not support merge of values.";
     private static final String MERGE_SAME_VALUE_MSG = "Merge operation cancelled as value is unchanged.";
     private static final String MERGE_PERSIST_ERR_MSG = "setValue: error merging %s value. No such entry%s.";
     private static final String KEY_NOT_FOUND_ERR_MSG = "Cannot display help for key %1$s. The key does not exist at the configuration file of engine-config.";
-
-    private Configuration appConfig;
-    private HierarchicalConfiguration keysConfig;
-    private Map<String, String> alternateKeysMap;
+    public static final File DEFAULT_CONFIG_PATH = new File(EngineLocalConfig.getInstance().getEtcDir(), "engine-config");
+    private static final String CONFIG_CONF = "engine-config.conf";
     private ConfigKeyFactory configKeyFactory;
     private ConfigDao configDao;
     private EngineConfigCLIParser parser;
+    private static Map<String, JsonNode> props;
+    private static final String OVIRT_CONFIG_PROPERTIES = "engine-config.properties";
+    private final String[] defaultPropertiesFileLocations = {
+            new File(DEFAULT_CONFIG_PATH, OVIRT_CONFIG_PROPERTIES).getAbsolutePath(),
+            new File(DEFAULT_CONFIG_PATH, "engine-config_" + Locale.getDefault() + ".properties").getAbsolutePath()
+    };
 
     public EngineConfigLogic(EngineConfigCLIParser parser) throws Exception {
         this.parser = parser;
@@ -62,10 +67,28 @@ public class EngineConfigLogic {
      */
     private void init() throws Exception {
         log.debug("init: beginning initiation of EngineConfigLogic");
-        appConfig = new AppConfig(parser.getAlternateConfigFile()).getFile();
-        keysConfig = new KeysConfig<>(parser.getAlternatePropertiesFile()).getFile();
-        populateAlternateKeyMap(keysConfig);
-        ConfigKeyFactory.init(keysConfig, alternateKeysMap, parser);
+        String alternateConfigFile = parser.getAlternateConfigFile();
+        File appConfigFile = !StringUtils.isBlank(alternateConfigFile)
+                ? EngineConfigUtils.locateFileInPaths(new String[] { alternateConfigFile })
+                : new File(EngineConfig.DEFAULT_CONFIG_PATH, CONFIG_CONF);
+
+        List<String> appConfigContent = Files.readAllLines(appConfigFile.toPath());
+
+        Map<String, String> appConfig = new HashMap<>();
+        for (String str: appConfigContent) {
+            String[] data = str.split("=");
+            if (data.length == 2) {
+                appConfig.put(data[0], data[1]);
+            }
+        }
+
+        String alternatePropertiesFile = parser.getAlternatePropertiesFile();
+        File keysConf = EngineConfigUtils.locateFileInPaths(
+                !StringUtils.isBlank(alternatePropertiesFile) ? new String[] { alternatePropertiesFile }
+                        : defaultPropertiesFileLocations);
+        this.props = new HashMap<>();
+        populateProperties(keysConf);
+        ConfigKeyFactory.init(props, parser);
         configKeyFactory = ConfigKeyFactory.getInstance();
         try {
             this.configDao = new ConfigDaoImpl(appConfig);
@@ -75,25 +98,11 @@ public class EngineConfigLogic {
         }
     }
 
-    private void populateAlternateKeyMap(HierarchicalConfiguration config) {
-        List<SubnodeConfiguration> configurationsAt = config.configurationsAt("/*/" + ALTERNATE_KEY);
-        alternateKeysMap = new HashMap<>(configurationsAt.size());
-        for (SubnodeConfiguration node : configurationsAt) {
-            String rootKey = node.getRootNode()
-                    .getParentNode().getName();
-            String[] alternateKeys = config.getStringArray("/" + rootKey + "/" + ALTERNATE_KEY);
-            for (String token : alternateKeys) {
-                alternateKeysMap.put(token, rootKey);
-            }
-        }
-    }
-
     /**
      * Executes desired action. Assumes the parser is now holding valid arguments.
      */
     public void execute() throws Exception {
         ConfigActionType actionType = parser.getConfigAction();
-        log.debug("execute: beginning execution of action {}.", actionType);
 
         switch (actionType) {
         case ACTION_ALL:
@@ -242,14 +251,11 @@ public class EngineConfigLogic {
      * Prints all configuration values. Is the actual execution of the 'get-all' action ('-a', '--all')
      */
     private void printAllValues() {
-        List<ConfigurationNode> configNodes = keysConfig.getRootNode().getChildren();
-        for (ConfigurationNode node : configNodes) {
-            ConfigKey key = configKeyFactory.generateByPropertiesKey(node.getName());
-            // TODO - move to one statement for all - time permitting;
+        for (String key: props.keySet()) {
             try {
-                printAllValuesForKey(key.getKey());
+                printAllValuesForKey(key);
             } catch (Exception exception) {
-                log.error("Error while retrieving value for key \"{}\".", key.getKey(), exception);
+                log.error("Error while retrieving value for key \"{}\".", key, exception);
             }
         }
     }
@@ -258,35 +264,30 @@ public class EngineConfigLogic {
      * Prints all available configuration keys.
      */
     public void printAvailableKeys() {
-        iterateAllKeys(configKeyFactory, keysConfig, key -> {
+        iterateAllKeys(configKeyFactory, key -> {
             printKeyInFormat(key);
             return true;
         });
     }
 
-    public static boolean iterateAllKeys(ConfigKeyFactory factory,
-            HierarchicalConfiguration config,
-            ConfigKeyHandler handler) {
-        List<ConfigurationNode> configNodes = config.getRootNode().getChildren();
-        for (ConfigurationNode node : configNodes) {
-            ConfigKey key = factory.generateByPropertiesKey(node.getName());
-            if (!handler.handle(key)) {
+    public static boolean iterateAllKeys(ConfigKeyFactory factory, ConfigKeyHandler handler) {
+        for (String key: props.keySet()) {
+            ConfigKey configKey = factory.generateByPropertiesKey(key);
+            if (!handler.handle(configKey)) {
                 return true;
             }
         }
         return false;
     }
-
     /**
      * Prints all reloadable configuration keys. Is the actual execution of the 'list' action ('-l', '--list') with the
      * --only-reloadable flag
      */
     public void printReloadableKeys() {
-        List<ConfigurationNode> configNodes = keysConfig.getRootNode().getChildren();
-        for (ConfigurationNode node : configNodes) {
-            ConfigKey key = configKeyFactory.generateByPropertiesKey(node.getName());
-            if (key.isReloadable()) {
-                printKeyInFormat(key);
+        for (String key: props.keySet()) {
+            ConfigKey configKey = configKeyFactory.generateByPropertiesKey(key);
+            if (configKey.isReloadable()) {
+                printKeyInFormat(configKey);
             }
         }
     }
@@ -367,11 +368,13 @@ public class EngineConfigLogic {
     private void mergeValue() throws Exception {
         String key = parser.getKey();
         String value = parser.getValue();
-        if(!keysConfig.getBoolean(key + "/" + MERGABLE_TOKEN, false)) {
-            console.writeFormat(MERGE_NOT_SUPPORTED_MSG, key);
-            console.writeLine();
+
+        JsonNode node = props.get(key);
+        if (!node.findValue(MERGABLE_TOKEN).asBoolean(false)) {
+            console.write(MERGE_NOT_SUPPORTED_MSG + " " + key + "\n");
             return;
         }
+
         String version = parser.getVersion();
         if (version == null) {
             version = startVersionDialog(key);
@@ -379,7 +382,7 @@ public class EngineConfigLogic {
         ConfigKey configKey = fetchConfigKey(key, version);
         if (configKey != null && configKey.getKey() != null && configKey.getDisplayValue().trim().length() > 0) {
             String valueInDb = configKey.getDisplayValue().trim();
-            String delimiter = keysConfig.getString(key + "/" + DELIMITER_TOKEN, ";");
+            String delimiter = node.get(DELIMITER_TOKEN).asText(";");
             value = mergedValues(value, valueInDb, delimiter);
             if(valueInDb.equals(value)) {
                 console.writeFormat(MERGE_SAME_VALUE_MSG);
@@ -413,10 +416,10 @@ public class EngineConfigLogic {
         return retValue.toString();
     }
 
-    private void printHelpForKey() throws Exception {
+    private void printHelpForKey() {
         final String keyName = parser.getKey();
-        boolean foundKey = iterateAllKeys(this.configKeyFactory, keysConfig, key -> {
-            if (key.getKey().equals(keyName)) {
+        boolean foundKey = iterateAllKeys(this.configKeyFactory, key -> {
+            if (key.equals(keyName)) {
                 console.writeLine(key.getValueHelper().getHelpNote(key));
                 return false;
             }
@@ -502,7 +505,7 @@ public class EngineConfigLogic {
     }
 
     private ConfigKey getConfigKey(String key) {
-        ConfigKey ckReturn = null;
+        ConfigKey ckReturn;
         ckReturn = configKeyFactory.generateByPropertiesKey(key);
         if (ckReturn == null || ckReturn.getKey() == null) {
             ckReturn = null;
@@ -554,5 +557,28 @@ public class EngineConfigLogic {
 
     public ConfigDao getConfigDao() {
         return configDao;
+    }
+
+    private void populateProperties(File file) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        List<String> lines = Files.readAllLines(file.toPath());
+        Map<String, String> allProps = new HashMap<>();
+        for (String line: lines) {
+            if (line.contains("=")) {
+                allProps.put(line.split("=")[0], line.split("=")[1]);
+            }
+        }
+        allProps.forEach((k, v) -> {
+            String[] mainKey = k.split("\\.");
+            if (this.props.get(mainKey[0]) != null) {
+                JsonNode oldNode = this.props.get(mainKey[0]);
+                ((ObjectNode) oldNode).put(mainKey[1], v);
+                this.props.put(mainKey[0], oldNode);
+            } else {
+                ObjectNode node = mapper.createObjectNode();
+                node.put(mainKey[1], v);
+                this.props.put(mainKey[0], node);
+            }
+        });
     }
 }

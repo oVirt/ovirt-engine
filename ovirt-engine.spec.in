@@ -319,7 +319,6 @@ Obsoletes:	python3-ansible-runner < 2.0.0
 %endif
 
 Requires:	apache-commons-compress
-Requires:	apache-commons-configuration
 Requires:	apache-commons-jxpath
 Requires:	java-11-openjdk-headless >= %{openjdk_version}
 Requires:	javapackages-tools
@@ -970,7 +969,6 @@ common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/r
 common/net/i2p/crypto/eddsa/main/eddsa.jar
 common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
-common/org/apache/commons/configuration/main/commons-configuration.jar
 common/org/apache/commons/jxpath/main/commons-jxpath.jar
 common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 common/org/apache/sshd/main/sshd-common.jar apache-sshd/sshd-common.jar
