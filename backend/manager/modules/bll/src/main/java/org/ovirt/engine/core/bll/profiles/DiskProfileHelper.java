@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -61,6 +62,9 @@ public class DiskProfileHelper {
             if (diskImage.getDiskStorageType() != DiskStorageType.IMAGE) {
                 log.info("Disk profiles is not supported for storage type '{}' (Disk '{}')",
                         diskImage.getDiskStorageType(), diskImage.getDiskAlias());
+                continue;
+            }
+            if (!shouldSetDiskProfileOnImage(diskImage)) {
                 continue;
             }
             if (diskImage.getDiskProfileId() == null && storageDomainId != null) {
@@ -148,5 +152,10 @@ public class DiskProfileHelper {
                         ActionGroup.ATTACH_DISK_PROFILE,
                         diskProfile.getId(),
                         VdcObjectType.DiskProfile) != null;
+    }
+
+    private boolean shouldSetDiskProfileOnImage(DiskImage diskImage) {
+        return !(diskImage.getContentType() == DiskContentType.MEMORY_DUMP_VOLUME
+                || diskImage.getContentType() == DiskContentType.MEMORY_METADATA_VOLUME);
     }
 }
