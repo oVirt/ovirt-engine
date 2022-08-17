@@ -80,7 +80,7 @@ jobs:
           tar
 
     - name: Checkout sources
-      uses: ovirt/checkout-action@main
+      uses:ovirt/checkout-action@michalskrivanek-patch-1
 
     - name: Setup maven cache
       uses: actions/cache@v2
