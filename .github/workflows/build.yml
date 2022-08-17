@@ -80,9 +80,7 @@ jobs:
           tar
 
     - name: Checkout sources
-      uses: actions/checkout@v2
-      with:
-        ref: ${{ github.event.pull_request.head.sha }}
+      uses: ovirt/checkout-action@main
 
     - name: Setup maven cache
       uses: actions/cache@v2
