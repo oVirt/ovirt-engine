@@ -3855,6 +3855,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         }
 
         List<MigrationPolicy> policies = AsyncDataProvider.getInstance().getMigrationPolicies(version);
+        if (version == null || !AsyncDataProvider.getInstance().isParallelMigrationsSupportedByVersion(version)) {
+            policies = policies.stream().filter(policy -> !policy.isZeroCopy()).collect(Collectors.toList());
+        }
 
         Guid clusterMigrationPolicyID = selectedCluster.getMigrationPolicyId();
         for (MigrationPolicy policy : policies) {

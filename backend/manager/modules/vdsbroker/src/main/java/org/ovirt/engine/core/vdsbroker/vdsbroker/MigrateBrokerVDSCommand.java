@@ -61,6 +61,10 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
             migrationInfo.put(VdsProperties.PARALLEL_MIGRATION_CONNECTIONS, parameters.getParallelMigrations());
         }
 
+        if (parameters.isZeroCopy()) {
+            migrationInfo.put(VdsProperties.MIGRATION_ZEROCOPY, parameters.isZeroCopy());
+        }
+
         if (parameters.getConvergenceSchedule() != null) {
             migrationInfo.put(VdsProperties.MIGRATION_CONVERGENCE_SCHEDULE, parameters.getConvergenceSchedule());
         }

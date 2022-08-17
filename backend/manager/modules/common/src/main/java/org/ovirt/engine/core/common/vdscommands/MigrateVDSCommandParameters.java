@@ -23,6 +23,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private String consoleAddress;
     private Integer maxBandwidth;
     private Integer parallelMigrations;
+    private boolean zeroCopy;
     private Boolean enableGuestEvents;
     private Integer maxIncomingMigrations;
     private Integer maxOutgoingMigrations;
@@ -34,7 +35,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     public MigrateVDSCommandParameters(Guid vdsId, Guid vmId, String srcHost, Guid dstVdsId, String dstHost,
             MigrationMethod migrationMethod, boolean tunnelMigration, String dstQemu, Version clusterVersion,
             int migrationDowntime, Boolean autoConverge, Boolean migrateCompressed, Boolean migrateEncrypted,
-            String consoleAddress, Integer maxBandwidth, Integer parallelMigrations,
+            String consoleAddress, Integer maxBandwidth, Integer parallelMigrations, boolean zeroCopy,
             Map<String, Object> convergenceSchedule, Boolean enableGuestEvents, Integer maxIncomingMigrations,
             Integer maxOutgoingMigrations, List<String> cpuSets, List<String> numaNodeSets) {
         super(vdsId, vmId);
@@ -52,6 +53,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.consoleAddress = consoleAddress;
         this.maxBandwidth = maxBandwidth;
         this.parallelMigrations = parallelMigrations;
+        this.zeroCopy = zeroCopy;
         this.convergenceSchedule = convergenceSchedule;
         this.enableGuestEvents = enableGuestEvents;
         this.maxIncomingMigrations = maxIncomingMigrations;
@@ -154,6 +156,14 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     public void setParallelMigrations(Integer parallelMigrations) {
         this.parallelMigrations = parallelMigrations;
+    }
+
+    public boolean isZeroCopy() {
+        return zeroCopy;
+    }
+
+    public void setZeroCopy(boolean zeroCopy) {
+        this.zeroCopy = zeroCopy;
     }
 
     public Boolean isEnableGuestEvents() {
