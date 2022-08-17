@@ -15,5 +15,9 @@ public interface LocalizedMigrationPolicies extends ConstantsWithLookup {
     String name_a7aeedb2_8d66_4e51_bb22_32595027ce71();
 
     String description_a7aeedb2_8d66_4e51_bb22_32595027ce71();
+
+    String name_57237b82_b8c2_425f_b425_114b35219626();
+
+    String description_57237b82_b8c2_425f_b425_114b35219626();
 }
 

@@ -21,6 +21,8 @@ public class MigrationPolicy implements Serializable, Nameable {
 
     private boolean enableGuestEvents;
 
+    private boolean zeroCopy;
+
     private ConvergenceConfig config;
 
     public MigrationPolicy() {}
@@ -94,5 +96,13 @@ public class MigrationPolicy implements Serializable, Nameable {
 
     public void setEnableGuestEvents(boolean enableGuestEvents) {
         this.enableGuestEvents = enableGuestEvents;
+    }
+
+    public boolean isZeroCopy() {
+        return zeroCopy;
+    }
+
+    public void setZeroCopy(boolean zeroCopy) {
+        this.zeroCopy = zeroCopy;
     }
 }

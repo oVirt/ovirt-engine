@@ -443,6 +443,7 @@ public final class VdsProperties {
     public static final String ENABLE_GUEST_EVENTS = "enableGuestEvents";
     public static final String MIGRATION_BANDWIDTH = "maxBandwidth";
     public static final String PARALLEL_MIGRATION_CONNECTIONS = "parallel";
+    public static final String MIGRATION_ZEROCOPY = "zerocopy";
     public static final String MIGRATION_INIT_STEPS = "init";
     public static final String MIGRATION_STALLING_STEPS = "stalling";
     public static final String MIGRATION_SOURCE = "Migration Source";

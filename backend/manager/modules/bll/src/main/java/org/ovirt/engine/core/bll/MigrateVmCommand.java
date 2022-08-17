@@ -405,19 +405,22 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         Integer maxBandwidth = null;
 
         Boolean autoConverge = getAutoConverge();
-        Integer parallelMigrations = getParallelMigrations();
-        Boolean migrateCompressed = parallelMigrations == null ? getMigrateCompressed() : false;
         Boolean migrateEncrypted = vmHandler.getMigrateEncrypted(getVm(), getCluster());
         Boolean enableGuestEvents = null;
+        MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(
+                getCluster().getMigrationPolicyId(),
+                getCluster().getCompatibilityVersion());
+        MigrationPolicy effectiveMigrationPolicy = findEffectiveConvergenceConfig(clusterMigrationPolicy);
+        boolean zeroCopy = effectiveMigrationPolicy.isZeroCopy()
+                && FeatureSupported.isParallelMigrationsSupported(getVm().getCompatibilityVersion())
+                && !migrateEncrypted;
+        Integer parallelMigrations = getParallelMigrations(zeroCopy);
+        Boolean migrateCompressed = parallelMigrations == null ? getMigrateCompressed() : false;
         Integer maxIncomingMigrations = 1;
         Integer maxOutgoingMigrations = 1;
         List<String> cpuSets = null;
         List<String> numaNodeSets = null;
 
-        MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(
-                getCluster().getMigrationPolicyId(),
-                getCluster().getCompatibilityVersion());
-        MigrationPolicy effectiveMigrationPolicy = findEffectiveConvergenceConfig(clusterMigrationPolicy);
         ConvergenceConfig convergenceConfig = getVm().getStatus() == VMStatus.Paused || parallelMigrations != null
                 ? filterOutPostcopy(effectiveMigrationPolicy.getConfig())
                 : effectiveMigrationPolicy.getConfig();
@@ -463,6 +466,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getDestinationVds().getConsoleAddress(),
                 maxBandwidth,
                 parallelMigrations,
+                zeroCopy,
                 convergenceSchedule,
                 enableGuestEvents,
                 maxIncomingMigrations,
@@ -572,14 +576,19 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     /**
+     * @param enforce If true then use parallel migration even if they would be normally disabled.
      * @return Number of parallel migrations to use in this migration or `null` to
      *         not use parallel migrations.
      */
-    private Integer getParallelMigrations() {
+    private Integer getParallelMigrations(boolean enforce) {
         if (!FeatureSupported.isParallelMigrationsSupported(getVm().getCompatibilityVersion())) {
             return null;
         }
         Integer parallelMigrationsRequested = getParallelMigrationsFromVmOrCluster();
+        if (enforce && (parallelMigrationsRequested == ParallelMigrationsType.DISABLED.getValue()
+                || parallelMigrationsRequested == ParallelMigrationsType.AUTO.getValue())) {
+            parallelMigrationsRequested = ParallelMigrationsType.AUTO_PARALLEL.getValue();
+        }
         Integer parallelMigrations = parallelMigrationsRequested;
         if (parallelMigrationsRequested == ParallelMigrationsType.AUTO.getValue()
                 || parallelMigrationsRequested == ParallelMigrationsType.AUTO_PARALLEL.getValue()) {

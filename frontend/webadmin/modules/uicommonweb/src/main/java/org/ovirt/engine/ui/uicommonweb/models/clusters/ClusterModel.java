@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -1523,6 +1524,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
 
         List<MigrationPolicy> policies = AsyncDataProvider.getInstance().getMigrationPolicies(version);
+        if (version == null || !AsyncDataProvider.getInstance().isParallelMigrationsSupportedByVersion(version)) {
+            policies = policies.stream().filter(policy -> !policy.isZeroCopy()).collect(Collectors.toList());
+        }
         getMigrationPolicies().setItems(policies);
 
         MigrationPolicy migrationPolicy;
