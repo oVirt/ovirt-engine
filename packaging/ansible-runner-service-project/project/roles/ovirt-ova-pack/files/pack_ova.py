@@ -67,7 +67,9 @@ def write_padding_file(ova_file, padding_size):
     # file_size - the size of the padding file
     #             (minus one block for the header).
     tar_info = create_tar_info("pad", file_size)
-    ova_file.write(tar_info.tobuf())
+    buf = (tar_info.tobuf() if python2 else
+           tar_info.tobuf(format=tarfile.GNU_FORMAT))
+    ova_file.write(buf)
     pad_to_block_size(ova_file)
     if file_size:
         ova_file.write(NUL * file_size)
