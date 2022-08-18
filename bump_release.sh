@@ -1,5 +1,17 @@
 #!/bin/bash -xe
 
+# Usage:
+#
+# RPM_PACKAGER='Name Lastname <email@address.com>' ./bump_release.sh
+#
+# The built version is always taken from current pom.xml, only removing -SNAPSHOT
+#
+# You can override the _next_ version. E.g. if you are on 4.6.8-SNAPSHOT and
+# intend to release 4.6.8 and then branch it to ovirt-engine-4.6, bumping master
+# to 4.7, you can do:
+#
+# NEXT_VERSION=4.7 RPM_PACKAGER='Name Lastname <email@address.com>' ./bump_release.sh
+
 if [ -z "${RPM_PACKAGER}" ] ; then
     echo 'Please export RPM_PACKAGER="Name Lastname <email@address.com>'
     exit 1
@@ -50,10 +62,24 @@ git show |patch -p 1 -R
 git checkout -- ovirt-engine.spec.in
 
 # Bump to next version
-NEXT_VERSION="$(echo ${VERSION} | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{if(length($NF+1)>length($NF))$(NF-1)++; $NF=sprintf("%0*d", length($NF), ($NF+1)%(10^length($NF))); print}')"
+if [ -z "${NEXT_VERSION}" ]; then
+	NEXT_VERSION="$(echo ${VERSION} | awk -F. '{for (i=1; i<NF; i++) res=res $i "."; res=res $NF+1; print res}')"
+	MSG="build: post ovirt-engine-${VERSION}"
+else
+	# If we did get NEXT_VERSION, we want the commit message to be
+	# post PREVIOUS
+	# where PREVIOUS only has the number of components as the NEXT VERSION.
+	# e.g. bumping from 4.6.8 to 4.7 should say "post 4.6", not "post 4.6.8".
+	# This isn't just cosmetic, it's also significant - because we are quite
+	# likely to branch a 4.6 branch from the 4.6.8 tag, and there we'll want
+	# a commit 'post 4.6.8'.
+	PREVIOUS_VERSION="$(echo ${NEXT_VERSION} | awk -F. '{for (i=1; i<NF; i++) res=res $i "."; res=res $NF-1; print res}')"
+	MSG="build: post ovirt-engine-${PREVIOUS_VERSION}"
+fi
+
 export NEXT_VERSION
 find . -name pom.xml -exec sed -i "s:${VERSION}-SNAPSHOT:${NEXT_VERSION}-SNAPSHOT:" {} +
 
 # commit
 git add -u
-git commit -s --message="build: post ovirt-engine-${VERSION}"
+git commit -s --message="${MSG}"
