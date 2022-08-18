@@ -18,7 +18,6 @@ from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
 from ovirt_engine_setup.engine_common import postgres
-from ovirt_engine_setup.engine_common.constants import ProvisioningEnv
 
 
 def _(m):
@@ -67,82 +66,6 @@ class Plugin(plugin.PluginBase):
         elif autofix_approved.upper() == _("No").upper():
             raise RuntimeError(_('Aborted by user'))
 
-    def _pg_conf_items(self):
-        return (
-            {
-                'key': 'autovacuum_vacuum_scale_factor',
-                'expected': self.environment[
-                    ProvisioningEnv.PG_AUTOVACUUM_VACUUM_SCALE_FACTOR
-                ],
-                'ok': lambda key, current, expected: (
-                    float(current) <= float(expected)
-                ),
-                'check_on_use': True,
-                'needed_on_create': True,
-                'error_msg': '{specific}'.format(
-                    specific='%s' % database.AT_MOST_EXPECTED,
-                )
-            },
-            {
-                'key': 'autovacuum_analyze_scale_factor',
-                'expected': self.environment[
-                    ProvisioningEnv.PG_AUTOVACUUM_ANALYZE_SCALE_FACTOR
-                ],
-                'ok': lambda key, current, expected: (
-                    float(current) <= float(expected)
-                ),
-                'check_on_use': True,
-                'needed_on_create': True,
-                'error_msg': '{specific}'.format(
-                    specific=database.AT_MOST_EXPECTED,
-                )
-            },
-            {
-                'key': 'autovacuum_max_workers',
-                'expected': self.environment[
-                    ProvisioningEnv.PG_AUTOVACUUM_MAX_WORKERS
-                ],
-                'ok': lambda key, current, expected: (
-                    int(current) >= int(expected)
-                ),
-                'check_on_use': True,
-                'needed_on_create': True,
-                'error_msg': '{specific}'.format(
-                    specific=database.AT_LEAST_EXPECTED,
-                )
-            },
-            {
-                'key': 'maintenance_work_mem',
-                'expected': self.environment[
-                    ProvisioningEnv.PG_AUTOVACUUM_MAINTENANCE_WORK_MEM
-                ],
-                'useQueryForValue': True,
-                'ok': lambda key, current, expected: (
-                    int(current) >= int(expected)
-                ),
-                'check_on_use': True,
-                'needed_on_create': True,
-                'error_msg': '{specific}'.format(
-                    specific='%s' % database.AT_LEAST_EXPECTED,
-                )
-            },
-            {
-                'key': 'work_mem',
-                'expected': self.environment[
-                    ProvisioningEnv.PG_WORK_MEM_KB
-                ],
-                'useQueryForValue': True,
-                'ok': lambda key, current, expected: (
-                    int(current) >= int(expected)
-                ),
-                'check_on_use': True,
-                'needed_on_create': True,
-                'error_msg': '{specific}'.format(
-                    specific='%s' % database.AT_LEAST_EXPECTED,
-                )
-            },
-        )
-
     # Checks if uuid-ossp extension was installed in DB
     def _uuidOsspInstalled(self):
         dbstatement = database.Statement(
@@ -178,14 +101,6 @@ class Plugin(plugin.PluginBase):
             oengcommcons.ProvisioningEnv.POSTGRES_EXTRA_CONFIG_ITEMS,
             ()
         )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
-    )
-    def _setup(self):
-        self.environment[
-            oengcommcons.ProvisioningEnv.POSTGRES_EXTRA_CONFIG_ITEMS
-        ] += self._pg_conf_items()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
