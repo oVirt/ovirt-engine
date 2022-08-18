@@ -11,27 +11,37 @@
 # to 4.7, you can do:
 #
 # NEXT_VERSION=4.7 RPM_PACKAGER='Name Lastname <email@address.com>' ./bump_release.sh
+#
+# Then you should branch and bump there, e.g.:
+# git branch ovirt-engine-4.6 ovirt-engine-4.6.8
+# git checkout ovirt-engine-4.6
+# RPM_PACKAGER='Name Lastname <email@address.com>' ./bump_release.sh
 
 if [ -z "${RPM_PACKAGER}" ] ; then
     echo 'Please export RPM_PACKAGER="Name Lastname <email@address.com>'
     exit 1
 fi
 
-# Set pom to build final release
-find . -name pom.xml -exec sed -i "s:-SNAPSHOT::" {} +
+if ! grep -E "<version"  pom.xml | head -n1 | awk -F '[<>]' '/version/{print $3}' | grep -q -- -SNAPSHOT; then
+	# We are already on a release. Most likely this is because we are right after branching a stable branch from master.
+	# Get current ovirt-engine version
+	VERSION="$(grep -E "<version"  pom.xml | head -n1 | awk -F '[<>]' '/version/{print $3}')"
+else
+	# Set pom to build final release
+	find . -name pom.xml -exec sed -i "s:-SNAPSHOT::" {} +
 
-# Get current ovirt-engine version
-VERSION="$(grep -E "<version"  pom.xml | head -n1 | awk -F '[<>]' '/version/{print $3}')"
+	# Get current ovirt-engine version
+	VERSION="$(grep -E "<version"  pom.xml | head -n1 | awk -F '[<>]' '/version/{print $3}')"
 
-# Prepare changelog
-CHANGELOG="* $(LC_ALL=C date "+%a %b %d %Y") ${RPM_PACKAGER} - ${VERSION}\n- Bump version to ${VERSION}\n"
-export CHANGELOG
+	# Prepare changelog
+	CHANGELOG="* $(LC_ALL=C date "+%a %b %d %Y") ${RPM_PACKAGER} - ${VERSION}\n- Bump version to ${VERSION}\n"
+	export CHANGELOG
 
-# Add changelog to the spec file
-sed -i "/^%changelog/a ${CHANGELOG}" ovirt-engine.spec.in
+	# Add changelog to the spec file
+	sed -i "/^%changelog/a ${CHANGELOG}" ovirt-engine.spec.in
 
-# Adjust copr build config for releasing
-patch -p0 --ignore-whitespace .copr/Makefile <<'__EOF__'
+	# Adjust copr build config for releasing
+	patch -p0 --ignore-whitespace .copr/Makefile <<'__EOF__'
 diff --git a/.copr/Makefile b/.copr/Makefile
 index 51e3299e3e5..b2d4a195740 100644
 --- a/.copr/Makefile
@@ -50,12 +60,13 @@ index 51e3299e3e5..b2d4a195740 100644
         rpmbuild \
 __EOF__
 
-# commit
-git add -u
-git commit -s --message="build: ovirt-engine-${VERSION}"
+	# commit
+	git add -u
+	git commit -s --message="build: ovirt-engine-${VERSION}"
 
-TAG="ovirt-engine-${VERSION}"
-git tag "${TAG}"
+	TAG="ovirt-engine-${VERSION}"
+	git tag "${TAG}"
+fi
 
 # Restore the -SNAPSHOT preserving latest changelog
 git show |patch -p 1 -R
