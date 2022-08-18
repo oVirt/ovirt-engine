@@ -42,6 +42,9 @@ __EOF__
 git add -u
 git commit -s --message="build: ovirt-engine-${VERSION}"
 
+TAG="ovirt-engine-${VERSION}"
+git tag "${TAG}"
+
 # Restore the -SNAPSHOT preserving latest changelog
 git show |patch -p 1 -R
 git checkout -- ovirt-engine.spec.in
