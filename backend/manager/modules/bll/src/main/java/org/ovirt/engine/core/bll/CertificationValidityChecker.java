@@ -125,6 +125,7 @@ public class CertificationValidityChecker implements BackendService {
             AuditLogType alertExpirationEventType,
             AuditLogType alertAboutToExpireEventType,
             AuditLogType warnAboutToExpireEventType) {
+        log.debug("Checking optional certificate '{}'.", certFile.getAbsolutePath());
         if (certFile == null || !certFile.exists()) {
             // certificate file doesn't exist, which may be OK, as the service using the certificate is optional
             return true;
