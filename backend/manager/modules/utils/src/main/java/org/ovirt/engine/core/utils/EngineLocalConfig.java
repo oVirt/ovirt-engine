@@ -213,7 +213,7 @@ public class EngineLocalConfig extends ShellLikeConfd {
     }
 
     public File getPKIOvirtProviderOVNCert() {
-        return Paths.get(getProperty("ENGINE_PKI"), "ovirt-provider-ovn.cer").toFile();
+        return Paths.get(getProperty("ENGINE_PKI"), "certs", "ovirt-provider-ovn.cer").toFile();
     }
 
     public String getPKITrustStoreType() {
