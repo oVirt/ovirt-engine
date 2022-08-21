@@ -618,7 +618,7 @@
           </dependencies>
           <configuration>
             <reportsDirectory>${ovirt.surefire.reportsDirectory}</reportsDirectory>
-            <argLine>--illegal-access=permit</argLine>
+			<argLine>--illegal-access=permit -Duser.country=US -Duser.language=en</argLine>
           </configuration>
         </plugin>
         <plugin>
