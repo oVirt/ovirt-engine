@@ -10,7 +10,7 @@ git_cfg_safe:
 
 srpm: installdeps git_cfg_safe
 	# Set SUFFIX to .git$HASH if we are on a -SNAPSHOT
-	$(eval SUFFIX=$(shell grep -E "<version"  pom.xml | head -n1 | awk -F '[<>]' '/version/{print $3}' | grep -q -- -SNAPSHOT && echo .git$(git rev-parse --short HEAD)))
+	$(eval SUFFIX=$(shell grep -E "<version"  pom.xml | head -n1 | awk -F '[<>]' '/version/{print $3}' | grep -q -- -SNAPSHOT && echo .git$$(git rev-parse --short HEAD)))
 	# changing the spec file as passing -D won't preserve the suffix when rebuilding in mock
 	sed "s:%{?release_suffix}:${SUFFIX}:" -i ovirt-engine.spec.in
 	mkdir -p tmp.repos/SOURCES
