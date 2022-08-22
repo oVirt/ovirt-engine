@@ -13,6 +13,7 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
     private ImageDbOperationScope dbOperationScope;
     private boolean removeFromSnapshots;
     private boolean shouldLockImage;
+    private String asyncTaskErrorMessage;
 
     public RemoveImageParameters(Guid imageId) {
         super(imageId, null);
@@ -54,5 +55,13 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
 
     public void setRemoveFromSnapshots(boolean removeFromSnapshots) {
         this.removeFromSnapshots = removeFromSnapshots;
+    }
+
+    public String getAsyncTaskErrorMessage() {
+        return asyncTaskErrorMessage;
+    }
+
+    public void setAsyncTaskErrorMessage(String asyncTaskErrorMessage) {
+        this.asyncTaskErrorMessage = asyncTaskErrorMessage;
     }
 }

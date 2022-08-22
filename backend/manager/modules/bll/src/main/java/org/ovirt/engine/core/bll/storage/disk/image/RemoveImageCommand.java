@@ -7,13 +7,19 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
@@ -32,6 +38,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
@@ -56,6 +63,8 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                     ActionType.RemoveVmTemplateFromImportExport,
                     ActionType.RemoveUnregisteredVmTemplate,
                     ActionType.RemoveUnregisteredVm));
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private PostDeleteActionHandler postDeleteActionHandler;
@@ -78,6 +87,11 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     private DiskImageDao diskImageDao;
     @Inject
     private VmDao vmDao;
+
+    @Inject
+    @Typed(RemoveImageCommandCallback.class)
+    private Instance<RemoveImageCommandCallback> callbackProvider;
+
 
     public RemoveImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -120,12 +134,13 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
 
                 VDSReturnValue vdsReturnValue = performDeleteImageVdsmOperation();
-                getTaskIdList().add(
-                        createTask(taskId,
-                                vdsReturnValue.getCreationInfo(),
-                                getParameters().getParentCommand(),
-                                VdcObjectType.Storage,
-                                getStorageDomainId()));
+                Guid vdsmTaskId = createTask(taskId,
+                        vdsReturnValue.getCreationInfo(),
+                        getParameters().getParentCommand(),
+                        VdcObjectType.Storage,
+                        getStorageDomainId());
+                getTaskIdList().add(vdsmTaskId);
+                getReturnValue().getVdsmTaskIdList().add(vdsmTaskId);
             } catch (EngineException e) {
                 if (e.getErrorCode() == EngineError.ImageDoesNotExistInDomainError) {
                     log.info("Disk '{}' doesn't exist on storage domain '{}', rolling forward",
@@ -139,10 +154,6 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 } else {
                     throw e;
                 }
-            }
-
-            if (!ACTIONS_NOT_REQUIRED_DB_OPERATION.contains(getParameters().getParentCommand())) {
-                performImageDbOperations();
             }
         } else {
             log.warn("DiskImage is null, nothing to remove");
@@ -295,6 +306,9 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     private void performImageDbOperations() {
+        if (ACTIONS_NOT_REQUIRED_DB_OPERATION.contains(getParameters().getParentCommand())) {
+            return;
+        }
         switch (getParameters().getDbOperationScope()) {
         case IMAGE:
             removeImageFromDB();
@@ -322,5 +336,34 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                                 getStorageDomainId(), getDiskImage().getId(),
                                 getDiskImage().isWipeAfterDelete(), getStorageDomain().getDiscardAfterDelete(),
                                 getParameters().isForceDelete())));
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
+    }
+
+    public void onSucceeded() {
+        performImageDbOperations();
+    }
+
+    public void onFailed() {
+        if (getParameters().getAsyncTaskErrorMessage() != null) {
+            Guid diskId = getParameters().getDiskImage().getId();
+            List<Guid> snapshotIds = diskImageDao
+                    .getAllSnapshotsForImageGroup(diskId).stream()
+                    .map(DiskImage::getImageId)
+                    .collect(Collectors.toList());
+            addCustomValue("DiskId", diskId.toString());
+            addCustomValue("VolumeIds", StringUtils.join(snapshotIds, ','));
+            addCustomValue("ErrorMessage", getParameters().getAsyncTaskErrorMessage());
+            auditLog(this, AuditLogType.DELETE_IMAGE_GROUP_TASK_FAILED);
+        }
+        imageDao.updateStatusOfImagesByImageGroupId(getImageGroupId(), ImageStatus.ILLEGAL);
+    }
+
+    @Override
+    protected void setSucceeded(boolean value) {
+        super.setSucceeded(value);
     }
 }
