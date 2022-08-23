@@ -50,6 +50,7 @@ public class MainEventView extends AbstractMainWithDetailsTableView<AuditLog, Ev
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         getTable().setTableOverhead(radioButtonPanel);
+        getTable().table.setElementId("MainEventViewTable");//$NON-NLS-1$
 
         tablePanel.add(getTable());
     }
