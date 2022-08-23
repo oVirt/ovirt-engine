@@ -18,6 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.ImageDao;
 
 /**
  * This command responsible to creating new snapshot. Usually it will be called
@@ -41,6 +42,8 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
     private BaseDiskDao baseDiskDao;
     @Inject
     private DiskImageDynamicDao diskImageDynamicDao;
+    @Inject
+    private ImageDao imageDao;
 
     public CreateSnapshotFromTemplateCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -88,6 +91,9 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
             baseDiskDao.remove(getDestinationDiskImage().getId());
             if (diskImageDynamicDao.get(getDestinationDiskImage().getImageId()) != null) {
                 diskImageDynamicDao.remove(getDestinationDiskImage().getImageId());
+            }
+            if (imageDao.get(getDestinationDiskImage().getImageId()) != null) {
+                imageDao.remove(getDestinationDiskImage().getImageId());
             }
         }
 
