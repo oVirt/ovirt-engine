@@ -5,6 +5,7 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.searchbackend.AuditLogConditionFieldAutoCompleter;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -26,6 +27,10 @@ import com.google.inject.Inject;
 
 public class MainEventView extends AbstractMainWithDetailsTableView<AuditLog, EventListModel<Void>>
     implements MainEventPresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<MainEventView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     interface ViewUiBinder extends UiBinder<Widget, MainEventView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -49,6 +54,7 @@ public class MainEventView extends AbstractMainWithDetailsTableView<AuditLog, Ev
         initTable();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         getTable().setTableOverhead(radioButtonPanel);
 
         tablePanel.add(getTable());
