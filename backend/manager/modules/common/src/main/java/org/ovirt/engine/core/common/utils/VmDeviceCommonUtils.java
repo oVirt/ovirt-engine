@@ -237,21 +237,32 @@ public class VmDeviceCommonUtils {
             Map<VmDeviceId, DiskVmElement> deviceIdTodiskVmElement) {
         LinkedList<VmDevice> diskDevices = new LinkedList<>();
         for (VmDevice device : devices) {
-            if (isDisk(device)) {
-                Guid id = device.getDeviceId();
-                if (id != null && !id.equals(Guid.Empty)) {
-                    if (device.getSnapshotId() == null) {
-                        diskDevices.addFirst(device);
-                    } else {
-                        diskDevices.addLast(device);
-                    }
-                }
+            if (!isDisk(device)) {
+                continue;
             }
+            Guid id = device.getDeviceId();
+            if (id == null || id.equals(Guid.Empty)) {
+                continue;
+            }
+            DiskVmElement dve = deviceIdTodiskVmElement.get(device.getId());
+            if (dve == null) {
+                continue;
+            }
+            if (device.getSnapshotId() == null) {
+                diskDevices.addFirst(device);
+            } else {
+                diskDevices.addLast(device);
+            }
+        }
+
+        if (diskDevices.size() == 1) {
+            diskDevices.get(0).setBootOrder(++bootOrder);
+            return bootOrder;
         }
 
         for (VmDevice device : diskDevices) {
             DiskVmElement dve = deviceIdTodiskVmElement.get(device.getId());
-            if (dve != null && dve.isBoot()) {
+            if (dve.isBoot()) {
                 device.setBootOrder(++bootOrder);
             }
         }
