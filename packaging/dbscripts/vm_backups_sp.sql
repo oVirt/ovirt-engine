@@ -225,3 +225,19 @@ BEGIN
             );
 END;$FUNCTION$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetUnmonitoredBackups ()
+RETURNS SETOF vm_backups STABLE AS $FUNCTION$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM vm_backups
+    WHERE phase != 'Succeeded' AND phase != 'Failed'
+    AND NOT EXISTS(
+        SELECT command_id
+        FROM command_entities
+        WHERE command_id = backup_id
+    );
+END;$FUNCTION$
+LANGUAGE plpgsql;
