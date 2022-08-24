@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -24,7 +23,6 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -135,9 +133,6 @@ public class ImagesHandler {
 
     @Inject
     private StorageHelperDirector storageHelperDirector;
-
-    @Inject
-    private ClusterUtils clusterUtils;
 
     @Inject
     private VdsCommandsHelper vdsCommandsHelper;
@@ -290,11 +285,7 @@ public class ImagesHandler {
         for (DiskImage disk : images) {
             DiskImage diskImage = diskInfoDestinationMap.get(disk.getId());
             Guid storageDomainId = diskImage.getStorageIds().get(0);
-            List<DiskImage> diskList = storageToDisksMap.get(storageDomainId);
-            if (diskList == null) {
-                diskList = new ArrayList<>();
-                storageToDisksMap.put(storageDomainId, diskList);
-            }
+            List<DiskImage> diskList = storageToDisksMap.computeIfAbsent(storageDomainId, k -> new ArrayList<>());
             diskList.add(disk);
         }
         return storageToDisksMap;
@@ -329,7 +320,7 @@ public class ImagesHandler {
      * @return map object is the collection is not null
      */
     public static Map<Guid, DiskImage> getDiskImagesByIdMap(Collection<DiskImage> diskImages) {
-        return diskImages.stream().collect(Collectors.toMap(d -> d.getImageId(), Function.identity()));
+        return diskImages.stream().collect(Collectors.toMap(DiskImage::getImageId, Function.identity()));
     }
 
     /**
@@ -1035,7 +1026,7 @@ public class ImagesHandler {
     }
 
     public Set<Guid> getVolumeChain(Guid vmId, Guid vdsId, DiskImage activeImage) {
-        Map[] vms = null;
+        Map<String, Object>[] vms = null;
         try {
             vms = getVms(vdsId, vmId);
         } catch (EngineException e) {
@@ -1047,7 +1038,7 @@ public class ImagesHandler {
             return null;
         }
 
-        Map vm = vms[0];
+        Map<String, Object> vm = vms[0];
         if (vm == null || vm.get(VdsProperties.vm_guid) == null) {
             log.error("Received incomplete VM information");
             return null;
@@ -1062,7 +1053,7 @@ public class ImagesHandler {
 
         Set<Guid> images = new HashSet<>();
         for (Object o : (Object[]) vm.get(VdsProperties.Devices)) {
-            Map device = (Map<String, Object>) o;
+            Map<String, Object> device = (Map<String, Object>) o;
             if (VmDeviceType.DISK.getName().equals(device.get(VdsProperties.Device))
                     && !device.get(VdsProperties.ImageId).equals("mapper")
                     && activeImage.getId().equals(Guid.createGuidFromString(
@@ -1094,8 +1085,8 @@ public class ImagesHandler {
         return true;
     }
 
-    private Map[] getVms(Guid vdsId, Guid vmId) {
-        return (Map[]) fullListAdapter.getVmFullList(
+    private Map<String, Object>[] getVms(Guid vdsId, Guid vmId) {
+        return (Map<String, Object>[]) fullListAdapter.getVmFullList(
                 vdsId,
                 Collections.singletonList(vmId),
                 true)
@@ -1115,7 +1106,7 @@ public class ImagesHandler {
             DiskImage newImage = DiskImage.copyOf(diskImage);
             newImage.setParentId(nextParentId);
             newImage.setId(newImageGroupID);
-            newImage.setStorageIds(Arrays.asList(targetStorageDomainID));
+            newImage.setStorageIds(Collections.singletonList(targetStorageDomainID));
             nextParentId = Guid.newGuid();
             newImage.setImageId(nextParentId);
             newImage.setVmSnapshotId(null);
@@ -1139,8 +1130,7 @@ public class ImagesHandler {
             }
         }
 
-        return vdsCommandsHelper.getHostForExecution(storagePoolID,
-                vds -> FeatureSupported.isMeasureVolumeSupported(vds));
+        return vdsCommandsHelper.getHostForExecution(storagePoolID, FeatureSupported::isMeasureVolumeSupported);
     }
 
     public Version getSpmCompatibilityVersion(Guid storagePoolId) {

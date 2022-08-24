@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskVmElement implements BusinessEntity<VmDeviceId> {
+    private static final long serialVersionUID = -8986247555459576804L;
     /**
      * The vm device id of the disk vm element, this will be consisted of the disk id along with the vm id
      */

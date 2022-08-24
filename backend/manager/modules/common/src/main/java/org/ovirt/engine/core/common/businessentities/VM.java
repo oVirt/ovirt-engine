@@ -80,8 +80,8 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         this.setStaticData(vmStatic);
         this.setDynamicData(vmDynamic);
         this.setStatisticsData(vmStatistics);
-        this.setvNumaNodeList(new ArrayList<VmNumaNode>());
-        this.setDiskMap(new HashMap<Guid, Disk>());
+        this.setvNumaNodeList(new ArrayList<>());
+        this.setDiskMap(new HashMap<>());
         this.setCdPath("");
         this.setWgtCdPath("");
         this.setFloppyPath("");
@@ -1126,7 +1126,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         if (diskSize == 0) {
             for (Disk disk : getDiskMap().values()) {
                 if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
-                    diskSize += disk.getSize() / Double.valueOf(1024 * 1024 * 1024);
+                    diskSize += disk.getSize() / (double) (1024 * 1024 * 1024);
                 }
             }
         }
@@ -1285,9 +1285,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         }
         VM eq = (VM) ((obj instanceof VM) ? obj : null);
         if (eq != null) {
-            if (eq.getId().equals(this.getId())) {
-                return true;
-            }
+            return eq.getId().equals(this.getId());
         }
         return false;
     }
