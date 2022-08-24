@@ -245,9 +245,13 @@ public class UploadImageModel extends Model implements ICommandTarget {
             if (imageInfoModel.getContentType() == DiskContentType.ISO) {
                 getDiskModel().getAlias().setEntity(imageInfoModel.getFileName());
                 getDiskModel().getDescription().setEntity(imageInfoModel.getFileName());
+                getDiskModel().getIsIncrementalBackup().setEntity(false);
+                getDiskModel().getIsIncrementalBackup().setIsChangeable(false);
             } else {
                 getDiskModel().getAlias().setEntity(null);
                 getDiskModel().getDescription().setEntity(null);
+                getDiskModel().getIsIncrementalBackup().setEntity(true);
+                getDiskModel().getIsIncrementalBackup().setIsChangeable(true);
             }
             getDiskModel().getSize().setEntity(getVirtualSizeInGB());
         });
