@@ -101,6 +101,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.profiles.ProfileBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -192,7 +193,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private List<StorageDomain> poolDomains;
     private String mdevType; // the value of the deprecated custom property mdev_type, if specified
 
-    private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
+    private final Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
 
     @Inject
     private InClusterUpgradeValidator clusterUpgradeValidator;
@@ -1016,7 +1017,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 .stream()
                 .filter(p -> image.getDiskProfileIds().contains(p.getId()))
                 .findFirst()
-                .map(p -> p.getId())
+                .map(ProfileBase::getId)
                 .orElse(null));
 
         return newImage;
@@ -1260,7 +1261,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         final VmStatic vmStaticData = getParameters().getVmStaticData();
 
         if (vmStaticData != null) {
-
             if (!isLegalClusterId(vmStaticData.getClusterId())) {
                 return false;
             }
@@ -1440,7 +1440,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                     params,
                     cloneContext().withoutExecutionContext().withoutLock());
             if (!actionReturnValue.getSucceeded()) {
-                log.error("Error cloning Cinder disk '{}': {}", cinderDisk.getDiskAlias());
+                log.error("Error cloning Cinder disk '{}'", cinderDisk.getDiskAlias());
                 getReturnValue().setFault(actionReturnValue.getFault());
                 return;
             }
@@ -1464,7 +1464,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                     params,
                     cloneContext().withoutExecutionContext().withoutLock());
             if (!actionReturnValue.getSucceeded()) {
-                log.error("Error cloning Managed block disk '{}': {}", managedBlockDisk.getDiskAlias());
+                log.error("Error cloning Managed block disk '{}'", managedBlockDisk.getDiskAlias());
                 getReturnValue().setFault(actionReturnValue.getFault());
                 return;
             }
@@ -1681,7 +1681,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (!permissionsToAdd.isEmpty()) {
             List<Permission> permissionsList = permissionsToAdd.asPermissionList();
             multiLevelAdministrationHandler
-                    .addPermission(permissionsList.toArray(new Permission[permissionsList.size()]));
+                    .addPermission(permissionsList.toArray(new Permission[0]));
 
             getCompensationContext().snapshotNewEntities(permissionsList);
         }

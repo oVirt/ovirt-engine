@@ -492,7 +492,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         AddManagedBlockStorageDiskParameters parameters =
                 new AddManagedBlockStorageDiskParameters(
                         getParameters().getDiskInfo(),
-                        getVm() == null ? false: shouldDiskBePlugged());
+                        getVm() != null && shouldDiskBePlugged());
         parameters.setPlugDiskToVm(getParameters().getPlugDiskToVm());
         parameters.setStorageDomainId(getParameters().getStorageDomainId());
         parameters.setParentParameters(getParameters());

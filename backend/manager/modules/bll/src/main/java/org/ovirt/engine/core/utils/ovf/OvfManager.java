@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class OvfManager {
 
-    private Logger log = LoggerFactory.getLogger(OvfManager.class);
+    private final Logger log = LoggerFactory.getLogger(OvfManager.class);
 
     @Inject
     private OvfVmIconDefaultsProvider iconDefaultsProvider;
