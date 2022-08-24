@@ -242,9 +242,9 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             } else {
                 RemoveSnapshotSingleDiskParameters parameters = buildRemoveSnapshotSingleDiskParameters(
                         source, dest, getSnapshotActionType());
-                ActionReturnValue actionReturnValueturnValue = runInternalActionWithTasksContext(
+                ActionReturnValue actionReturnValue = runInternalActionWithTasksContext(
                         getSnapshotActionType(), parameters);
-                getTaskIdList().addAll(actionReturnValueturnValue.getInternalVdsmTaskIdList());
+                getTaskIdList().addAll(actionReturnValue.getInternalVdsmTaskIdList());
             }
 
             List<Guid> quotasToRemoveFromCache = new ArrayList<>();
@@ -434,13 +434,12 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
      * @return True if there is enough space in all relevant storage domains. False otherwise.
      */
     private boolean validateStorageDomains() {
-        MultipleStorageDomainsValidator storageDomainsValidator = getStorageDomainsValidator(getStoragePoolId(), getStorageDomainsIds());
         if (DisksFilter.filterImageDisks(getSourceImages()).isEmpty()) {
             return true;
         }
 
+        MultipleStorageDomainsValidator storageDomainsValidator = getStorageDomainsValidator(getStoragePoolId(), getStorageDomainsIds());
         return validate(storageDomainsValidator.allDomainsExistAndActive())
-                && validate(storageDomainsValidator.allDomainsWithinThresholds())
                 && validate(storageDomainsValidator.allDomainsHaveSpaceForMerge(getAllDisksSnapshot(getSourceImages()), getSnapshotActionType()))
                 && validate(storageDomainsValidator.isSupportedByManagedBlockStorageDomains(getActionType()));
     }
