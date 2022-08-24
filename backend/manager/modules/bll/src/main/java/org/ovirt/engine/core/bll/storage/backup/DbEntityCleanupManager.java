@@ -9,11 +9,17 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.VmBackupDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +42,12 @@ public class DbEntityCleanupManager implements BackendService {
     @Inject
     private ImageTransferDao imageTransferDao;
     @Inject
+    private CommandEntityDao commandEntityDao;
+    @Inject
+    private VmDao vmDao;
+    @Inject
+    private AuditLogDirector auditLogDirector;
+    @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
     private ManagedScheduledExecutorService executor;
 
@@ -54,6 +66,15 @@ public class DbEntityCleanupManager implements BackendService {
         failedImageTransferTime = Config.<Integer> getValue(ConfigValues.FailedImageTransferCleanupTimeInMinutes);
 
         long cleanupFrequency = Config.<Integer> getValue(ConfigValues.DbEntitiesCleanupRateInMinutes);
+
+        try {
+            log.info("Failing backups that are no longer monitored");
+            failUnmonitoredBackups();
+        } catch (Throwable t) {
+            log.error("Failed to handle unmonitored backups: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
+
         executor.scheduleWithFixedDelay(this::cleanCompletedDbEntities,
                 cleanupFrequency,
                 cleanupFrequency,
@@ -99,5 +120,20 @@ public class DbEntityCleanupManager implements BackendService {
             log.error("Failed to delete completed image transfers: {}", ExceptionUtils.getRootCauseMessage(t));
             log.debug("Exception", t);
         }
+    }
+
+    private void failUnmonitoredBackups() {
+        AuditLogableImpl auditLogable = new AuditLogableImpl();
+
+        vmBackupDao.getUnmonitoredBackups()
+                .stream()
+                .forEach(vmBackup -> {
+                    auditLogable.addCustomValue("BackupId", vmBackup.getId().toString());
+                    auditLogable.addCustomValue("VmName", vmDao.get(vmBackup.getVmId()).getName());
+                    auditLogDirector.log(auditLogable, AuditLogType.VM_BACKUP_FAILED_UNMONITORED);
+
+                   vmBackup.setPhase(VmBackupPhase.FAILED);
+                   vmBackupDao.update(vmBackup);
+                });
     }
 }

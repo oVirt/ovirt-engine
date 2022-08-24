@@ -149,4 +149,10 @@ public class VmBackupDaoImpl extends DefaultGenericDao<VmBackup, Guid> implement
                 getCustomMapSqlParameterSource()
                         .addValue("backup_id", backupId));
     }
+
+    @Override
+    public List<VmBackup> getUnmonitoredBackups() {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+        return getCallsHandler().executeReadList("GetUnmonitoredBackups", vmBackupRowMapper, parameterSource);
+    }
 }

@@ -81,4 +81,6 @@ public interface VmBackupDao extends GenericDao<VmBackup, Guid> {
      * @param backupId the VM backup ID
      */
     void setBackupStopped(Guid backupId);
+
+    List<VmBackup> getUnmonitoredBackups();
 }
