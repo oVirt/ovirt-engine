@@ -96,6 +96,7 @@
     <jboss-modules.version>1.1.1.GA</jboss-modules.version>
     <jboss-servlet-api_3.1_spec.version>1.0.0.Final</jboss-servlet-api_3.1_spec.version>
     <jbosssx-bare.version>2.0.4</jbosssx-bare.version>
+    <jsass.version>5.10.4</jsass.version>
     <junit.version>5.7.1</junit.version>
     <mockito.version>3.8.0</mockito.version>
     <openstack-client.version>3.2.9</openstack-client.version>
@@ -547,6 +548,11 @@
         <artifactId>gwt-servlet</artifactId>
         <version>${gwt.version}</version>
         <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.bit3</groupId>
+        <artifactId>jsass</artifactId>
+        <version>${jsass.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
