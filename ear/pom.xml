@@ -40,35 +40,30 @@
       <version>${engine.version}</version>
       <type>war</type>
     </dependency>
-
     <dependency>
       <groupId>org.ovirt.engine.ui</groupId>
       <artifactId>webadmin</artifactId>
       <version>${engine.version}</version>
       <type>war</type>
     </dependency>
-
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>services</artifactId>
       <version>${engine.version}</version>
       <type>war</type>
     </dependency>
-
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>docs</artifactId>
       <version>${engine.version}</version>
       <type>war</type>
     </dependency>
-
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>enginesso</artifactId>
       <version>${engine.version}</version>
       <type>war</type>
     </dependency>
-
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>welcome</artifactId>
@@ -92,21 +87,18 @@
     </dependency>
 
     <!-- ** JARs -->
-	 <dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-core</artifactId>
-		<version>${spring.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-beans</artifactId>
-		<version>${spring.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-context</artifactId>
-		<version>${spring.version}</version>
-	</dependency>
+    <dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-core</artifactId>
+	  </dependency>
+	  <dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-beans</artifactId>
+	  </dependency>
+	  <dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-context</artifactId>
+	  </dependency>
 
     <!-- Set the scope of depedencies provided by JBoss so that
          they are not included in the resulting archive: -->
