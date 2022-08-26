@@ -41,69 +41,93 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <!-- Versions of the API model and tools: -->
+    <!-- oVirt dependencies versions -->
+    <kubevirt-client.version>0.5.0</kubevirt-client.version>
     <metamodel.version>1.3.9</metamodel.version>
     <model.version>4.5.11</model.version>
-
     <ovirt-engine-extensions-api.version>1.0.1</ovirt-engine-extensions-api.version>
-
-    <!-- JDK9+ now separated modules from the jdk -->
-    <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
-    <!-- Dependencies Versions -->
-    <junit.version>5.7.1</junit.version>
-    <commons-lang.version>2.6</commons-lang.version>
-    <commons-compress.version>1.21</commons-compress.version>
-    <postgres.jdbc.version>42.2.14</postgres.jdbc.version>
-    <javax.transaction>1.1</javax.transaction>
-    <javax.activation.version>1.1</javax.activation.version>
-    <xmlrpc-client.version>3.1.3</xmlrpc-client.version>
-    <spring.version>5.3.19</spring.version>
-    <jboss.ejb3.ext.api.version>2.0.0-beta-1</jboss.ejb3.ext.api.version>
-    <jboss.ejb3.core.version>1.1.18</jboss.ejb3.core.version>
-    <javax.ejb.api.version>1.0.2.Final</javax.ejb.api.version>
-    <javax.jstl.api.version>1.0.3.Final</javax.jstl.api.version>
-    <javax.interceptor.api.version>1.0.0.Final</javax.interceptor.api.version>
-    <dozer.version>5.2.0</dozer.version>
-    <cxf.version>2.2.7</cxf.version>
-    <sshd-core.version>2.8.0</sshd-core.version>
-    <eddsa.version>0.3.0</eddsa.version>
     <vdsm-jsonrpc-java.version>1.7.2</vdsm-jsonrpc-java.version>
-    <slf4j.version>1.7.22</slf4j.version>
-    <gwt.version>2.9.0</gwt.version>
-    <mockito.version>3.8.0</mockito.version>
-    <javassist.version>3.23.1-GA</javassist.version>
-    <javax.mail.version>1.4.4</javax.mail.version>
-    <hibernate-validator.version>6.0.18.Final</hibernate-validator.version>
-    <jackson2.version>2.12.1</jackson2.version>
+
+    <!-- External dependencies versions -->
+    <aopalliance.version>1.0</aopalliance.version>
+    <assertj-core.version>3.13.2</assertj-core.version>
+    <cdi.api.version>1.2</cdi.api.version>
+    <checkstyle.version>9.3</checkstyle.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
+    <commons-cli.version>1.3.1</commons-cli.version>
+    <commons-codec.version>1.10</commons-codec.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
+    <commons-compress.version>1.21</commons-compress.version>
     <commons-configuration.version>1.6</commons-configuration.version>
     <commons-jxpath.version>1.3</commons-jxpath.version>
-    <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <jaxb.version>2.3.1</jaxb.version>
-    <jbosssx-bare.version>2.0.4</jbosssx-bare.version>
-    <infinispan.version>9.4.18.Final</infinispan.version>
-    <snakeyaml.version>1.26</snakeyaml.version>
-    <ws-commons-util.version>1.0.2</ws-commons-util.version>
-    <aopalliance.version>1.0</aopalliance.version>
-    <snmp4j.version>3.6.4</snmp4j.version>
-    <kubevirt-client.version>0.5.0</kubevirt-client.version>
-    <resteasy.version>3.9.3.Final</resteasy.version>
-    <!-- OpenStack -->
-    <openstack-client.version>3.2.9</openstack-client.version>
-    <!-- libsass -->
-    <libsass-maven-plugin.version>0.2.8-libsass_3.4.4</libsass-maven-plugin.version>
-
-    <!-- Plugins Versions -->
-    <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
-    <maven-resources-plugin.version>2.4.3</maven-resources-plugin.version>
-    <maven-ejb-plugin.version>2.3</maven-ejb-plugin.version>
-    <cdi.api.version>1.2</cdi.api.version>
-    <jakarta-el.version>3.0.3</jakarta-el.version>
-    <validation-api.version>2.0.1.Final</validation-api.version>
-    <javacc.version>2.6</javacc.version>
+    <commons-lang.version>2.6</commons-lang.version>
+    <cxf.version>2.2.7</cxf.version>
+    <dozer.version>5.2.0</dozer.version>
+    <eddsa.version>0.3.0</eddsa.version>
+    <gwt.version>2.9.0</gwt.version>
     <hamcrest.version>1.3</hamcrest.version>
+    <hibernate-validator.version>6.0.18.Final</hibernate-validator.version>
+    <httpclient.version>4.5.13</httpclient.version>
+    <httpcore.version>4.4.14</httpcore.version>
+    <infinispan.version>9.4.18.Final</infinispan.version>
+    <jackson2.version>2.12.1</jackson2.version>
+    <jakarta-el.version>3.0.3</jakarta-el.version>
+    <javacc.version>2.6</javacc.version>
+    <javassist.version>3.23.1-GA</javassist.version>
+    <javax.activation.version>1.1</javax.activation.version>
+    <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
+    <javax.ejb.api.version>1.0.2.Final</javax.ejb.api.version>
+    <javax.interceptor.api.version>1.0.0.Final</javax.interceptor.api.version>
+    <javax.jstl.api.version>1.0.3.Final</javax.jstl.api.version>
+    <javax.mail.version>1.4.4</javax.mail.version>
+    <javax.transaction>1.1</javax.transaction>
+    <jaxb.version>2.3.1</jaxb.version>
+    <jboss-concurrency-api_1.0_spec.version>1.0.0.Final</jboss-concurrency-api_1.0_spec.version>
+    <jboss.ejb3.core.version>1.1.18</jboss.ejb3.core.version>
+    <jboss.ejb3.ext.api.version>2.0.0-beta-1</jboss.ejb3.ext.api.version>
+    <jboss-javaee-7.0.version>1.0.0.Final</jboss-javaee-7.0.version>
+    <jboss.jaxb.api.2.3.spec.version>2.0.0.Final</jboss.jaxb.api.2.3.spec.version>
+    <jboss-servlet-api_3.1_spec.version>1.0.0.Final</jboss-servlet-api_3.1_spec.version>
+    <jbosssx-bare.version>2.0.4</jbosssx-bare.version>
+    <junit.version>5.7.1</junit.version>
+    <mockito.version>3.8.0</mockito.version>
+    <openstack-client.version>3.2.9</openstack-client.version>
+    <postgres.jdbc.version>42.2.14</postgres.jdbc.version>
     <reflections.version>0.9.9</reflections.version>
-    <checkstyle.version>9.3</checkstyle.version>
+    <resteasy.version>3.9.3.Final</resteasy.version>
+    <slf4j.version>1.7.22</slf4j.version>
+    <snakeyaml.version>1.26</snakeyaml.version>
+    <spring.version>5.3.19</spring.version>
+    <sshd-core.version>2.8.0</sshd-core.version>
+    <validation-api.version>2.0.1.Final</validation-api.version>
+    <ws-commons-util.version>1.0.2</ws-commons-util.version>
+    <xmlrpc-client.version>3.1.3</xmlrpc-client.version>
+    <snmp4j.version>3.6.4</snmp4j.version>
+
+    <!-- oVirt plugins version -->
+    <ovirt-jboss-modules-maven-plugin.version>2.0.1</ovirt-jboss-modules-maven-plugin.version>
+
+    <!-- Extenal plugins versions -->
+    <build-helper-maven-plugin.version>1.5</build-helper-maven-plugin.version>
     <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+    <junit-platform-surefire-provider.version>1.2.0</junit-platform-surefire-provider.version>
+    <libsass-maven-plugin.version>0.2.8-libsass_3.4.4</libsass-maven-plugin.version>
+    <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
+    <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+    <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
+    <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+    <maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
+    <maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
+    <maven-deploy-plugin.version>2.8.1</maven-deploy-plugin.version>
+    <maven-ear-plugin.version>2.8</maven-ear-plugin.version>
+    <maven-ejb-plugin.version>2.3</maven-ejb-plugin.version>
+    <maven-jar-plugin.version>2.2</maven-jar-plugin.version>
+    <maven-resources-plugin.version>2.4.3</maven-resources-plugin.version>
+    <maven-source-plugin.version>2.1.2</maven-source-plugin.version>
+    <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
+    <maven-war-plugin.version>2.2</maven-war-plugin.version>
+    <spotbugs-maven-plugin.version>3.1.12</spotbugs-maven-plugin.version>
+    <taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
 
     <!-- Plugins configurations-->
     <ovirt.surefire.reportsDirectory>${project.build.directory}/surefire-reports</ovirt.surefire.reportsDirectory>
@@ -118,7 +142,7 @@
       <dependency>
         <groupId>org.jboss.spec.javax.xml.bind</groupId>
         <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-        <version>2.0.0.Final</version>
+        <version>${jboss.jaxb.api.2.3.spec.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
@@ -129,7 +153,7 @@
       <dependency>
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
-        <version>3.2.2</version>
+        <version>${commons-collections.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-beanutils</groupId>
@@ -181,12 +205,12 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore</artifactId>
-        <version>4.4.14</version>
+        <version>${httpcore.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
-        <version>4.5.13</version>
+        <version>${httpclient.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
@@ -197,7 +221,7 @@
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
-        <version>1.10</version>
+        <version>${commons-codec.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.ejb3</groupId>
@@ -214,13 +238,13 @@
       <dependency>
         <groupId>org.jboss.spec.javax.servlet</groupId>
         <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-        <version>1.0.0.Final</version>
+        <version>${jboss-servlet-api_3.1_spec.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
         <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
-        <version>1.0.0.Final</version>
+        <version>${jboss-concurrency-api_1.0_spec.version}</version>
         <scope>provided</scope>
       </dependency>
 
@@ -252,7 +276,7 @@
       <dependency>
         <groupId>commons-cli</groupId>
         <artifactId>commons-cli</artifactId>
-        <version>1.3.1</version>
+        <version>${commons-cli.version}</version>
       </dependency>
      <dependency>
        <groupId>commons-configuration</groupId>
@@ -403,7 +427,7 @@
       <dependency>
         <groupId>org.jboss.spec</groupId>
         <artifactId>jboss-javaee-7.0</artifactId>
-        <version>1.0.0.Final</version>
+        <version>${jboss-javaee-7.0.version}</version>
         <type>pom</type>
         <scope>provided</scope>
       </dependency>
@@ -465,7 +489,7 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.13.2</version>
+      <version>${assertj-core.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -535,7 +559,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
+          <version>${maven-compiler-plugin.version}</version>
           <configuration>
             <source>11</source>
             <target>11</target>
@@ -550,7 +574,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.1.2</version>
+          <version>${maven-checkstyle-plugin.version}</version>
           <dependencies>
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
@@ -587,7 +611,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.1.2</version>
+          <version>${maven-source-plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-ejb-plugin</artifactId>
@@ -613,7 +637,7 @@
             <dependency>
               <groupId>org.junit.platform</groupId>
               <artifactId>junit-platform-surefire-provider</artifactId>
-              <version>1.2.0</version>
+              <version>${junit-platform-surefire-provider.version}</version>
             </dependency>
           </dependencies>
           <configuration>
@@ -634,18 +658,18 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>taglist-maven-plugin</artifactId>
-          <version>2.4</version>
+          <version>${taglist-maven-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.5</version>
+          <version>${build-helper-maven-plugin.version}</version>
         </plugin>
         <!-- Create a test jar, so other modules can depend on the test utilities -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.2</version>
+          <version>${maven-jar-plugin.version}</version>
           <executions>
             <execution>
               <id>test-jar</id>
@@ -664,7 +688,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-ear-plugin</artifactId>
-          <version>2.8</version>
+          <version>${maven-ear-plugin.version}</version>
           <configuration>
             <fileNameMapping>no-version</fileNameMapping>
           </configuration>
@@ -673,7 +697,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
-          <version>2.2</version>
+          <version>${maven-war-plugin.version}</version>
           <configuration>
             <outputFileNameMapping>@{artifactId}@.@{extension}@</outputFileNameMapping>
           </configuration>
@@ -682,36 +706,36 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.1</version>
+          <version>${maven-deploy-plugin.version}</version>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.10</version>
+          <version>${maven-dependency-plugin.version}</version>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>${maven-assembly-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>com.github.warmuuh</groupId>
           <artifactId>libsass-maven-plugin</artifactId>
-          <version>0.2.8-libsass_3.4.4</version>
+          <version>${libsass-maven-plugin.version}</version>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.8</version>
+          <version>${maven-antrun-plugin.version}</version>
         </plugin>
 
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>3.1.12</version>
+          <version>${spotbugs-maven-plugin.version}</version>
           <configuration>
             <xmlOutput>true</xmlOutput>
             <xmlOutputDirectory>target/site</xmlOutputDirectory>
@@ -746,7 +770,7 @@
       <plugin>
         <groupId>org.ovirt.maven.plugins</groupId>
         <artifactId>ovirt-jboss-modules-maven-plugin</artifactId>
-        <version>2.0.1</version>
+        <version>${ovirt-jboss-modules-maven-plugin.version}</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -823,7 +847,7 @@
             <plugin>
               <groupId>org.eclipse.m2e</groupId>
               <artifactId>lifecycle-mapping</artifactId>
-              <version>1.0.0</version>
+              <version>${lifecycle-mapping.version}</version>
               <configuration>
                 <lifecycleMappingMetadata>
                     <pluginExecutions>
