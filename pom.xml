@@ -83,6 +83,7 @@
     <javax.mail.version>1.4.4</javax.mail.version>
     <javax.transaction>1.1</javax.transaction>
     <jaxb.version>2.3.1</jaxb.version>
+    <jboss-as-domain-management.version>7.2.0.Final</jboss-as-domain-management.version>
     <jboss-concurrency-api_1.0_spec.version>1.0.0.Final</jboss-concurrency-api_1.0_spec.version>
     <jboss.ejb3.core.version>1.1.18</jboss.ejb3.core.version>
     <jboss.ejb3.ext.api.version>2.0.0-beta-1</jboss.ejb3.ext.api.version>
@@ -275,6 +276,11 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
+        <groupId>org.jboss.as</groupId>
+        <artifactId>jboss-as-domain-management</artifactId>
+        <version>${jboss-as-domain-management.version}</version>
+      </dependency>
+        <dependency>
         <groupId>org.ebaysf.web</groupId>
         <artifactId>cors-filter</artifactId>
         <version>${cors-filter.version}</version>

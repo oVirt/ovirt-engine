@@ -33,7 +33,6 @@
     <dependency>
       <groupId>org.jboss.as</groupId>
       <artifactId>jboss-as-domain-management</artifactId>
-      <version>7.2.0.Final</version>
     </dependency>
 
   </dependencies>
