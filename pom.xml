@@ -72,6 +72,7 @@
     <httpclient.version>4.5.13</httpclient.version>
     <httpcore.version>4.4.14</httpcore.version>
     <infinispan.version>9.4.18.Final</infinispan.version>
+    <istack-commons-runtime.version>3.0.10</istack-commons-runtime.version>
     <jackson2.version>2.12.1</jackson2.version>
     <jakarta-el.version>3.0.3</jakarta-el.version>
     <javacc.version>2.6</javacc.version>
@@ -114,6 +115,7 @@
     <!-- Extenal plugins versions -->
     <build-helper-maven-plugin.version>1.5</build-helper-maven-plugin.version>
     <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+    <jaxb2-maven-plugin.version>2.5.0</jaxb2-maven-plugin.version>
     <junit-platform-surefire-provider.version>1.2.0</junit-platform-surefire-provider.version>
     <libsass-maven-plugin.version>0.2.8-libsass_3.4.4</libsass-maven-plugin.version>
     <lifecycle-mapping.version>1.0.0</lifecycle-mapping.version>
@@ -149,9 +151,19 @@
         <version>${metamodel.version}</version>
       </dependency>
       <dependency>
-          <groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
-          <artifactId>vdsm-jsonrpc-java-client</artifactId>
-          <version>${vdsm-jsonrpc-java.version}</version>
+        <groupId>org.ovirt.engine.api</groupId>
+        <artifactId>metamodel-runtime</artifactId>
+        <version>${metamodel.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.ovirt.engine.api</groupId>
+        <artifactId>metamodel-tool</artifactId>
+        <version>${metamodel.version}</version>
+      </dependency>
+        <dependency>
+        <groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
+        <artifactId>vdsm-jsonrpc-java-client</artifactId>
+        <version>${vdsm-jsonrpc-java.version}</version>
       </dependency>
 
       <dependency>
@@ -184,6 +196,12 @@
         <groupId>commons-jxpath</groupId>
         <artifactId>commons-jxpath</artifactId>
         <version>${commons-jxpath.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.istack</groupId>
+        <artifactId>istack-commons-runtime</artifactId>
+        <version>${istack-commons-runtime.version}</version>
+        <scope>runtime</scope>
       </dependency>
       <dependency>
         <groupId>javax.transaction</groupId>
@@ -902,8 +920,12 @@
             </dependency>
           </dependencies>
         </plugin>
-
-     </plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jaxb2-maven-plugin</artifactId>
+          <version>jaxb2-maven-plugin.version</version>
+        </plugin>
+       </plugins>
     </pluginManagement>
     <resources>
       <resource>
