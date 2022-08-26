@@ -23,7 +23,6 @@
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>ovirt-engine-extensions-api</artifactId>
-      <version>${ovirt-engine-extensions-api.version}</version>
     </dependency>
 
     <dependency>
@@ -34,43 +33,36 @@
     <dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
-      <version>${commons-configuration.version}</version>
     </dependency>
 
     <dependency>
       <groupId>commons-jxpath</groupId>
       <artifactId>commons-jxpath</artifactId>
-      <version>${commons-jxpath.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
-      <version>${commons-compress.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.sshd</groupId>
       <artifactId>sshd-common</artifactId>
-      <version>${sshd-core.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.sshd</groupId>
       <artifactId>sshd-core</artifactId>
-      <version>${sshd-core.version}</version>
     </dependency>
 
     <dependency>
       <groupId>net.i2p.crypto</groupId>
       <artifactId>eddsa</artifactId>
-      <version>${eddsa.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.ws.commons.util</groupId>
       <artifactId>ws-commons-util</artifactId>
-      <version>${ws-commons-util.version}</version>
       <exclusions>
         <!-- Note: avoid junit 3 as a dependency -->
         <exclusion>
@@ -83,7 +75,6 @@
     <dependency>
       <groupId>org.apache.xmlrpc</groupId>
       <artifactId>xmlrpc-client</artifactId>
-      <version>${xmlrpc-client.version}</version>
       <exclusions>
         <!-- Note: avoid junit 3 as a dependency -->
         <exclusion>
@@ -96,133 +87,111 @@
    <dependency>
       <groupId>org.apache.xmlrpc</groupId>
       <artifactId>xmlrpc-common</artifactId>
-      <version>${xmlrpc-client.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>metamodel-server</artifactId>
-      <version>${metamodel.version}</version>
     </dependency>
 
     <dependency>
         <groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
         <artifactId>vdsm-jsonrpc-java-client</artifactId>
-        <version>${vdsm-jsonrpc-java.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-instrument</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>${postgres.jdbc.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>openstack-client</artifactId>
-      <version>${openstack-client.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>keystone-client</artifactId>
-      <version>${openstack-client.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>keystone-model</artifactId>
-      <version>${openstack-client.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>glance-client</artifactId>
-      <version>${openstack-client.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>glance-model</artifactId>
-      <version>${openstack-client.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>cinder-client</artifactId>
-      <version>${openstack-client.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>cinder-model</artifactId>
-      <version>${openstack-client.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>quantum-client</artifactId>
-      <version>${openstack-client.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>quantum-model</artifactId>
-      <version>${openstack-client.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>resteasy-connector</artifactId>
-      <version>${openstack-client.version}</version>
       <exclusions>
         <exclusion>
           <groupId>commons-httpclient</groupId>
@@ -234,20 +203,17 @@
     <dependency>
       <groupId>aopalliance</groupId>
       <artifactId>aopalliance</artifactId>
-      <version>${aopalliance.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.snmp4j</groupId>
       <artifactId>snmp4j</artifactId>
-      <version>${snmp4j.version}</version>
     </dependency>
 
     <!-- This is needed to add CORS support to the RESTAPI: -->
     <dependency>
       <groupId>org.ebaysf.web</groupId>
       <artifactId>cors-filter</artifactId>
-      <version>1.0.1</version>
     </dependency>
   </dependencies>
 
