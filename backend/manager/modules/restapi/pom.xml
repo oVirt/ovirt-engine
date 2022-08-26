@@ -19,23 +19,4 @@
     <module>interface</module>
     <module>apidoc</module>
   </modules>
-
-  <dependencyManagement>
-    <dependencies>
-
-      <dependency>
-        <groupId>org.jboss.spec.javax.ws.rs</groupId>
-        <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
-        <version>1.0.0.Final</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-jaxrs</artifactId>
-        <version>3.0.24.Final</version>
-      </dependency>
-
-    </dependencies>
-  </dependencyManagement>
-
 </project>
