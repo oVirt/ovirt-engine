@@ -23,71 +23,60 @@
     <dependency>
       <groupId>org.gwtbootstrap3</groupId>
       <artifactId>gwtbootstrap3</artifactId>
-      <version>${gwtbootstrap3.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.gwtbootstrap3</groupId>
       <artifactId>gwtbootstrap3-extras</artifactId>
-      <version>${gwtbootstrap3.version}</version>
       <scope>provided</scope>
     </dependency>
     <!-- GWTP MVP component -->
     <dependency>
       <groupId>com.gwtplatform</groupId>
       <artifactId>gwtp-mvp-client</artifactId>
-      <version>${gwtp.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.gwtplatform</groupId>
       <artifactId>gwtp-processors</artifactId>
-      <version>${gwtp.version}</version>
       <scope>provided</scope>
     </dependency>
     <!-- Guice and GIN -->
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
-      <version>${guice.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.inject.extensions</groupId>
       <artifactId>guice-assistedinject</artifactId>
-      <version>${guice.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.github.gwtplus.gin</groupId>
       <artifactId>gin</artifactId>
-      <version>${gin.version}</version>
       <scope>provided</scope>
     </dependency>
     <!-- oVirt dependencies -->
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>uicommonweb</artifactId>
-      <version>${engine.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>uicompat</artifactId>
-      <version>${engine.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>uicompat</artifactId>
-      <version>${engine.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>frontend</artifactId>
-      <version>${engine.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -115,7 +104,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>properties-maven-plugin</artifactId>
-        <version>1.0.0</version>
         <executions>
           <execution>
             <goals>
@@ -141,7 +129,6 @@
       <plugin>
         <groupId>org.bsc.maven</groupId>
         <artifactId>maven-processor-plugin</artifactId>
-        <version>${maven-processor-plugin.version}</version>
         <executions>
           <execution>
             <id>process</id>
