@@ -61,6 +61,7 @@
     <commons-configuration.version>1.6</commons-configuration.version>
     <commons-jxpath.version>1.3</commons-jxpath.version>
     <commons-lang.version>2.6</commons-lang.version>
+    <cors-filter.version>1.0.1</cors-filter.version>
     <cxf.version>2.2.7</cxf.version>
     <dozer.version>5.2.0</dozer.version>
     <eddsa.version>0.3.0</eddsa.version>
@@ -135,6 +136,22 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.ovirt.engine.api</groupId>
+        <artifactId>ovirt-engine-extensions-api</artifactId>
+        <version>${ovirt-engine-extensions-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.ovirt.engine.api</groupId>
+        <artifactId>metamodel-server</artifactId>
+        <version>${metamodel.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
+          <artifactId>vdsm-jsonrpc-java-client</artifactId>
+          <version>${vdsm-jsonrpc-java.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.jboss.spec.javax.interceptor</groupId>
         <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
         <version>${javax.interceptor.api.version}</version>
@@ -159,6 +176,11 @@
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils</artifactId>
         <version>${commons-beanutils.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-jxpath</groupId>
+        <artifactId>commons-jxpath</artifactId>
+        <version>${commons-jxpath.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.transaction</groupId>
@@ -191,6 +213,11 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
+        <groupId>org.apache.xmlrpc</groupId>
+        <artifactId>xmlrpc-common</artifactId>
+        <version>${xmlrpc-client.version}</version>
+      </dependency>
+        <dependency>
         <groupId>org.apache.xmlrpc</groupId>
         <artifactId>xmlrpc-client</artifactId>
         <version>${xmlrpc-client.version}</version>
@@ -247,10 +274,51 @@
         <version>${jboss-concurrency-api_1.0_spec.version}</version>
         <scope>provided</scope>
       </dependency>
-
+      <dependency>
+        <groupId>org.ebaysf.web</groupId>
+        <artifactId>cors-filter</artifactId>
+        <version>${cors-filter.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.ws.commons.util</groupId>
+        <artifactId>ws-commons-util</artifactId>
+        <version>${ws-commons-util.version}</version>
+        <exclusions>
+          <!-- Note: avoid junit 3 as a dependency -->
+          <exclusion>
+            <artifactId>junit</artifactId>
+            <groupId>junit</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>aopalliance</groupId>
+        <artifactId>aopalliance</artifactId>
+        <version>${aopalliance.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+        <dependency>
+        <groupId>org.springframework</groupId>
         <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-expression</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-instrument</artifactId>
         <version>${spring.version}</version>
       </dependency>
       <dependency>
@@ -264,11 +332,77 @@
         <version>${spring.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.woorea</groupId>
+        <artifactId>openstack-client</artifactId>
+        <version>${openstack-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.woorea</groupId>
+        <artifactId>keystone-client</artifactId>
+        <version>${openstack-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.woorea</groupId>
+        <artifactId>keystone-model</artifactId>
+        <version>${openstack-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.woorea</groupId>
+        <artifactId>glance-client</artifactId>
+        <version>${openstack-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.woorea</groupId>
+        <artifactId>glance-model</artifactId>
+        <version>${openstack-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.woorea</groupId>
+        <artifactId>cinder-client</artifactId>
+        <version>${openstack-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.woorea</groupId>
+        <artifactId>cinder-model</artifactId>
+        <version>${openstack-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.woorea</groupId>
+        <artifactId>quantum-client</artifactId>
+        <version>${openstack-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.woorea</groupId>
+        <artifactId>quantum-model</artifactId>
+        <version>${openstack-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.woorea</groupId>
+        <artifactId>resteasy-connector</artifactId>
+        <version>${openstack-client.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>${postgres.jdbc.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.snmp4j</groupId>
+        <artifactId>snmp4j</artifactId>
+        <version>${snmp4j.version}</version>
+      </dependency>
+        <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
         <version>${commons-lang.version}</version>
