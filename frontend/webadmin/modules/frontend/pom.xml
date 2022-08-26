@@ -34,19 +34,16 @@
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
-      <version>${guice.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.inject.extensions</groupId>
       <artifactId>guice-assistedinject</artifactId>
-      <version>${guice.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.github.gwtplus.gin</groupId>
       <artifactId>gin</artifactId>
-      <version>${gin.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -56,7 +53,6 @@
     <dependency>
       <groupId>com.gwtplatform</groupId>
       <artifactId>gwtp-processors</artifactId>
-      <version>${gwtp.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

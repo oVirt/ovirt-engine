@@ -15,46 +15,38 @@
     <description>oVirt engine sso</description>
 
     <dependencies>
-
         <dependency>
             <groupId>${engine.groupId}</groupId>
             <artifactId>uutils</artifactId>
             <version>${engine.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>${engine.groupId}</groupId>
             <artifactId>extensions-manager</artifactId>
             <version>${engine.version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.ovirt.engine.api</groupId>
-            <artifactId>ovirt-engine-extensions-api</artifactId>
-            <version>${ovirt-engine-extensions-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_3.1_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <dependency>
             <groupId>${engine.groupId}</groupId>
             <artifactId>branding</artifactId>
             <version>${engine.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.ovirt.engine.api</groupId>
+            <artifactId>ovirt-engine-extensions-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>

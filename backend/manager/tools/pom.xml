@@ -19,46 +19,37 @@
   <description>oVirt Engine Tools</description>
 
   <dependencies>
-
-    <dependency>
-      <groupId>org.snmp4j</groupId>
-      <artifactId>snmp4j</artifactId>
-      <version>${snmp4j.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>common</artifactId>
       <version>${engine.version}</version>
     </dependency>
-
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>utils</artifactId>
       <version>${engine.version}</version>
     </dependency>
-
     <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>logutils</artifactId>
       <version>${engine.version}</version>
     </dependency>
-
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
-
     <dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
     </dependency>
-
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.snmp4j</groupId>
+      <artifactId>snmp4j</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

@@ -14,10 +14,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>compat</artifactId>
       <version>${engine.version}</version>
@@ -36,11 +32,6 @@
       <groupId>${engine.groupId}</groupId>
       <artifactId>extensions-manager</artifactId>
       <version>${engine.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ovirt.engine.api</groupId>
-      <artifactId>ovirt-engine-extensions-api</artifactId>
-      <version>${ovirt-engine-extensions-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.ovirt.engine.extension.aaa</groupId>
@@ -87,19 +78,31 @@
       <type>ejb</type>
     </dependency>
     <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>utils</artifactId>
+      <version>${engine.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ovirt.engine.api</groupId>
+      <artifactId>ovirt-engine-extensions-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>keystone-client</artifactId>
-      <version>${openstack-client.version}</version>
     </dependency>
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>quantum-client</artifactId>
-      <version>${openstack-client.version}</version>
     </dependency>
     <dependency>
       <groupId>com.woorea</groupId>
       <artifactId>resteasy-connector</artifactId>
-      <version>${openstack-client.version}</version>
       <exclusions>
         <exclusion>
           <groupId>commons-httpclient</groupId>
@@ -166,16 +169,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>utils</artifactId>
-      <version>${engine.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
-      <version>${reflections.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

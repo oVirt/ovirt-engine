@@ -31,45 +31,38 @@
     <dependency>
       <groupId>org.gwtbootstrap3</groupId>
       <artifactId>gwtbootstrap3</artifactId>
-      <version>${gwtbootstrap3.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.gwtbootstrap3</groupId>
       <artifactId>gwtbootstrap3-extras</artifactId>
-      <version>${gwtbootstrap3.version}</version>
       <scope>provided</scope>
     </dependency>
     <!-- GWTP MVP component -->
     <dependency>
       <groupId>com.gwtplatform</groupId>
       <artifactId>gwtp-mvp-client</artifactId>
-      <version>${gwtp.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.gwtplatform</groupId>
       <artifactId>gwtp-processors</artifactId>
-      <version>${gwtp.version}</version>
       <scope>provided</scope>
     </dependency>
     <!-- Guice and GIN -->
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
-      <version>${guice.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.inject.extensions</groupId>
       <artifactId>guice-assistedinject</artifactId>
-      <version>${guice.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.github.gwtplus.gin</groupId>
       <artifactId>gin</artifactId>
-      <version>${gin.version}</version>
       <scope>provided</scope>
     </dependency>
     <!-- oVirt dependencies -->
@@ -152,7 +145,6 @@
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
-      <version>2.1</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>
@@ -178,7 +170,6 @@
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
       <scope>provided</scope>
-      <version>${aspectj.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -235,7 +226,6 @@
       <plugin>
         <groupId>org.bsc.maven</groupId>
         <artifactId>maven-processor-plugin</artifactId>
-        <version>${maven-processor-plugin.version}</version>
         <executions>
           <execution>
             <id>process</id>
@@ -249,7 +239,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>${maven-resources-plugin.version}</version>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
