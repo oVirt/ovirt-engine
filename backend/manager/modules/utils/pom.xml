@@ -14,14 +14,35 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.ovirt.engine.api</groupId>
-      <artifactId>ovirt-engine-extensions-api</artifactId>
-      <version>${ovirt-engine-extensions-api.version}</version>
-    </dependency>
-    <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>extensions-manager</artifactId>
       <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>compat</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>uutils</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>common</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>common</artifactId>
+      <version>${engine.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ovirt.engine.api</groupId>
+      <artifactId>ovirt-engine-extensions-api</artifactId>
     </dependency>
     <dependency>
       <groupId>commons-beanutils</groupId>
@@ -31,53 +52,22 @@
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>compat</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>uutils</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>common</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>common</artifactId>
-      <version>${engine.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>
     </dependency>
-
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
-
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.spec.javax.ejb</groupId>
       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
@@ -103,7 +93,26 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.infinispan</groupId>
+      <artifactId>infinispan-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>keystone-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>glance-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>cinder-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.ebaysf.web</groupId>
+      <artifactId>cors-filter</artifactId>
+    </dependency>
 
     <!-- This is not used directly by the source, but the
          compiler some how requires it indirectly: -->
@@ -111,36 +120,6 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.infinispan</groupId>
-      <artifactId>infinispan-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.woorea</groupId>
-      <artifactId>keystone-client</artifactId>
-      <version>${openstack-client.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.woorea</groupId>
-      <artifactId>glance-client</artifactId>
-      <version>${openstack-client.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.woorea</groupId>
-      <artifactId>cinder-client</artifactId>
-      <version>${openstack-client.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ebaysf.web</groupId>
-      <artifactId>cors-filter</artifactId>
-      <version>1.0.1</version>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -158,16 +137,15 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
-        <version>${javacc.version}</version>
         <executions>
           <execution>
-              <id>javacc</id>
-              <goals>
-                  <goal>javacc</goal>
-              </goals>
+            <id>javacc</id>
+            <goals>
+                <goal>javacc</goal>
+            </goals>
           </execution>
         </executions>
-    </plugin>
+      </plugin>
     </plugins>
   </build>
 
