@@ -54,13 +54,11 @@
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>metamodel-runtime</artifactId>
-      <version>${metamodel.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>metamodel-server</artifactId>
-      <version>${metamodel.version}</version>
     </dependency>
 
     <!-- The metamodel tool isn't really a dependency of this project, but
@@ -70,7 +68,6 @@
     <dependency>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>metamodel-tool</artifactId>
-      <version>${metamodel.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -81,13 +78,11 @@
     <dependency>
       <groupId>org.jboss.spec.javax.xml.bind</groupId>
       <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-      <version>2.0.0.Final</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.sun.istack</groupId>
       <artifactId>istack-commons-runtime</artifactId>
-      <version>3.0.10</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
