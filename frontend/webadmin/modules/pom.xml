@@ -21,15 +21,6 @@
     <module>webadmin</module>
   </modules>
   <properties>
-    <aspectj.version>1.9.3.RC1</aspectj.version>
-    <gwtp.version>1.6</gwtp.version>
-    <guice.version>4.2.3</guice.version>
-    <gin.version>3.0.0</gin.version>
-    <!-- gwtbootstrap3 version -->
-    <gwtbootstrap3.version>0.9.4</gwtbootstrap3.version>
-    <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
-    <maven-clean-plugin.version>2.4.1</maven-clean-plugin.version>
-    <maven-processor-plugin.version>3.3.3</maven-processor-plugin.version>
     <!-- Directory where JSR-269 annotation processors generate their sources -->
     <generatedSourcesDirectory>generated-sources/annotations</generatedSourcesDirectory>
     <!-- Directory where GWT compiler generates normally-transient types for review (-gen compiler option) -->
@@ -61,26 +52,6 @@
     <!-- GWT CSS obfuscation style. production should be 'obf', use 'pretty' in development for easier css debugging -->
     <gwt.cssResourceStyle>obf</gwt.cssResourceStyle>
   </properties>
-  <dependencyManagement>
-    <dependencies>
-      <!-- Exclude Guice dependencies from GIN -->
-      <dependency>
-        <groupId>io.github.gwtplus.gin</groupId>
-        <artifactId>gin</artifactId>
-        <version>${gin.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.inject.extensions</groupId>
-            <artifactId>guice-assistedinject</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>javax.annotation</groupId>
@@ -90,7 +61,6 @@
   <build>
     <pluginManagement>
       <plugins>
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -110,7 +80,6 @@
         <plugin>
           <groupId>org.bsc.maven</groupId>
           <artifactId>maven-processor-plugin</artifactId>
-          <version>${maven-processor-plugin.version}</version>
           <configuration>
             <outputDirectory>${project.build.directory}/${generatedSourcesDirectory}</outputDirectory>
           </configuration>
@@ -118,14 +87,7 @@
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>${maven-resources-plugin.version}</version>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>${maven-clean-plugin.version}</version>
           <configuration>
             <filesets>
               <fileset>
@@ -141,23 +103,6 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
-          <dependencies>
-            <dependency>
-              <groupId>com.google.gwt</groupId>
-              <artifactId>gwt-user</artifactId>
-              <version>${gwt.version}</version>
-            </dependency>
-            <dependency>
-              <groupId>com.google.gwt</groupId>
-              <artifactId>gwt-dev</artifactId>
-              <version>${gwt.version}</version>
-            </dependency>
-            <dependency>
-              <groupId>com.google.gwt</groupId>
-              <artifactId>gwt-servlet</artifactId>
-              <version>${gwt.version}</version>
-            </dependency>
-          </dependencies>
           <configuration>
             <logLevel>${gwt.logLevel}</logLevel>
             <port>${engine.port.http}</port>
