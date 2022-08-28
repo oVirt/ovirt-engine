@@ -276,4 +276,13 @@ public class ReduceImageCommand<T extends ImagesActionsParametersBase> extends B
     private void addAuditLogCustomValues() {
         this.addCustomValue("DiskAlias", getDiskImage().getDiskAlias());
     }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put("diskalias", getDiskImage() != null ? getDiskImage().getDiskAlias() : "");
+        }
+        return jobProperties;
+    }
 }
