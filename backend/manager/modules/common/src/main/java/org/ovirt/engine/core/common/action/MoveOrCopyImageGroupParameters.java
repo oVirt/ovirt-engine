@@ -11,6 +11,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBase {
     private static final long serialVersionUID = -5874446297123213719L;
     private ImageOperation operation;
@@ -41,7 +43,7 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
             ImageOperation operation) {
         super(imageId);
         setSourceDomainId(sourceDomainId);
-        setStorageDomainId(destDomainId);
+        setDestDomainId(destDomainId);
         setOperation(operation);
         volumeFormat = VolumeFormat.UNUSED0;
         volumeType = VolumeType.Unassigned;
@@ -49,9 +51,9 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
     }
 
     public MoveOrCopyImageGroupParameters(Guid containerId, Guid imageGroupId, Guid leafSnapshotID,
-            Guid storageDomainId, ImageOperation operation) {
+            Guid destDomainId, ImageOperation operation) {
         super(leafSnapshotID, containerId);
-        setStorageDomainId(storageDomainId);
+        setDestDomainId(destDomainId);
         setImageGroupID(imageGroupId);
         setOperation(operation);
         setUseCopyCollapse(false);
@@ -161,6 +163,15 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
 
     public void setSourceDomainId(Guid sourceDomainId) {
         this.sourceDomainId = sourceDomainId;
+    }
+
+    @JsonIgnore
+    public Guid getDestDomainId() {
+        return getStorageDomainId();
+    }
+
+    public void setDestDomainId(Guid destDomainId) {
+        setStorageDomainId(destDomainId);
     }
 
     public ImageDbOperationScope getRevertDbOperationScope() {

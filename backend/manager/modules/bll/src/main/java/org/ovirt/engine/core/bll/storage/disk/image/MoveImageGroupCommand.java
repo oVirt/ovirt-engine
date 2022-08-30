@@ -64,7 +64,7 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected void endWithFailure() {
-        removeImage(getParameters().getStorageDomainId());
+        removeImage(getParameters().getDestDomainId());
         unLockImage();
     }
 

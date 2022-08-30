@@ -176,7 +176,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         CloneImageGroupVolumesStructureCommandParameters p =
                 new CloneImageGroupVolumesStructureCommandParameters(getParameters().getStoragePoolId(),
                         getParameters().getSourceDomainId(),
-                        getParameters().getTargetStorageDomainId(),
+                        getParameters().getDestDomainId(),
                         getImageGroupId(),
                         getActionType(),
                         getParameters());
@@ -405,12 +405,12 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     private boolean completeLiveMigration() {
         // Update the DB before sending the command (perform rollback on failure)
         moveDiskInDB(getParameters().getSourceDomainId(),
-                getParameters().getTargetStorageDomainId(),
+                getParameters().getDestDomainId(),
                 getParameters().getQuotaId(),
                 getParameters().getDiskProfileId());
 
         try {
-            replicateDiskFinish(getParameters().getSourceDomainId(), getParameters().getTargetStorageDomainId());
+            replicateDiskFinish(getParameters().getSourceDomainId(), getParameters().getDestDomainId());
         } catch (Exception e) {
             if (e instanceof EngineException &&
                     EngineError.unavail.equals(((EngineException) e).getErrorCode())) {
@@ -418,7 +418,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 return false;
             }
 
-            moveDiskInDB(getParameters().getTargetStorageDomainId(),
+            moveDiskInDB(getParameters().getDestDomainId(),
                     getParameters().getSourceDomainId(),
                     sourceQuotaId,
                     sourceDiskProfileId);
@@ -491,7 +491,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             VDSReturnValue ret = runVdsCommand(
                     VDSCommandType.GetImageInfo,
                     new GetImageInfoVDSCommandParameters(getParameters().getStoragePoolId(),
-                            getParameters().getTargetStorageDomainId(),
+                            getParameters().getDestDomainId(),
                             getParameters().getImageGroupID(),
                             image.getImageId()));
             DiskImage imageFromIRS = (DiskImage) ret.getReturnValue();
@@ -520,7 +520,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 new CopyImageGroupVolumesDataCommandParameters(getParameters().getStoragePoolId(),
                         getParameters().getSourceDomainId(),
                         getParameters().getImageGroupID(),
-                        getParameters().getTargetStorageDomainId(),
+                        getParameters().getDestDomainId(),
                         getActionType(),
                         getParameters());
 
@@ -552,7 +552,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 getParameters().getVmId(),
                 getParameters().getStoragePoolId(),
                 getParameters().getSourceDomainId(),
-                getParameters().getTargetStorageDomainId(),
+                getParameters().getDestDomainId(),
                 getParameters().getImageGroupID(),
                 getParameters().getDestinationImageId(),
                 diskType.orElse(null));
@@ -649,7 +649,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     private StorageDomain getDstStorageDomain() {
         if (dstStorageDomain == null) {
-            dstStorageDomain = storageDomainDao.getForStoragePool(getParameters().getTargetStorageDomainId(),
+            dstStorageDomain = storageDomainDao.getForStoragePool(getParameters().getDestDomainId(),
                     getStoragePoolId());
         }
         return dstStorageDomain;
@@ -774,7 +774,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
         log.error("Attempting to delete the target of disk '{}' of vm '{}'",
                 getParameters().getImageGroupID(), getParameters().getVmId());
-        removeImage(getParameters().getTargetStorageDomainId(),
+        removeImage(getParameters().getDestDomainId(),
                 getParameters().getImageGroupID(),
                 getParameters().getDestinationImageId(),
                 AuditLogType.USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE);

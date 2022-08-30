@@ -189,7 +189,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     protected boolean isSourceAndDestTheSame() {
         if (isMoveOperation()
-                && getParameters().getSourceDomainId().equals(getParameters().getStorageDomainId())) {
+                && getParameters().getSourceDomainId().equals(getParameters().getDestDomainId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
         }
         return true;
@@ -362,7 +362,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (isMoveOperation()
                 && !Guid.Empty.equals(getImage().getImageTemplateId())) {
             DiskImage templateImage = diskImageDao.get(getImage().getImageTemplateId());
-            if (!templateImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
+            if (!templateImage.getStorageIds().contains(getParameters().getDestDomainId())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
             if (templateImage.getImageStatus() != ImageStatus.OK) {
@@ -403,7 +403,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     private void addDiskMapping() {
         executeInNewTransaction(() -> {
             addStorageDomainMapForCopiedTemplateDisk();
-            unregisteredDisksDao.removeUnregisteredDisk(getImage().getId(), getParameters().getStorageDomainId());
+            unregisteredDisksDao.removeUnregisteredDisk(getImage().getId(), getParameters().getDestDomainId());
             incrementDbGenerationForRelatedEntities();
             return null;
         });
@@ -419,7 +419,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (isTemplate() && isCopyOperation()) {
             List<UnregisteredDisk> unregisteredDisks =
                     unregisteredDisksDao.getByDiskIdAndStorageDomainId(getImage().getId(),
-                            getParameters().getStorageDomainId());
+                            getParameters().getDestDomainId());
             if (!unregisteredDisks.isEmpty()) {
                 return true;
             }
@@ -430,7 +430,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     private void addStorageDomainMapForCopiedTemplateDisk() {
         imageStorageDomainMapDao.save
                 (new ImageStorageDomainMap(getParameters().getImageId(),
-                        getParameters().getStorageDomainId(),
+                        getParameters().getDestDomainId(),
                         getParameters().getQuotaId(),
                         getImage().getDiskProfileId()));
     }
@@ -503,7 +503,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             DiskImage image = getImage();
             Guid diskId = image == null ? Guid.Empty : image.getId();
             cachedPermsList.add(new PermissionSubject(diskId, VdcObjectType.Disk, ActionGroup.CONFIGURE_DISK_STORAGE));
-            cachedPermsList.add(new PermissionSubject(getParameters().getStorageDomainId(),
+            cachedPermsList.add(new PermissionSubject(getParameters().getDestDomainId(),
                     VdcObjectType.Storage, ActionGroup.CREATE_DISK));
         }
         return cachedPermsList;
@@ -565,7 +565,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         image.setDiskAlias(getDiskAlias());
         image.setStorageIds(new ArrayList<>());
-        image.getStorageIds().add(getParameters().getStorageDomainId());
+        image.getStorageIds().add(getParameters().getDestDomainId());
         image.setQuotaId(getParameters().getQuotaId());
         image.setDiskProfileId(getParameters().getDiskProfileId());
         image.setImageStatus(ImageStatus.LOCKED);
@@ -640,7 +640,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         getImage().setDiskProfileId(getParameters().getDiskProfileId());
         return validate(diskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getImage(),
-                getParameters().getStorageDomainId()), getCurrentUser()));
+                getParameters().getDestDomainId()), getCurrentUser()));
     }
 
     public boolean setAndValidateQuota() {
@@ -658,7 +658,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
         QuotaValidator validator = createQuotaValidator(getDestinationQuotaId());
         return validate(validator.isValid()) &&
-                validate(validator.isDefinedForStorageDomain(getParameters().getStorageDomainId()));
+                validate(validator.isDefinedForStorageDomain(getParameters().getDestDomainId()));
     }
 
     protected boolean validatePassDiscardSupportedForDestinationStorageDomain() {
@@ -666,7 +666,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 isCopyOperation() && isTemplate()) {
             MultipleDiskVmElementValidator multipleDiskVmElementValidator = createMultipleDiskVmElementValidator();
             return validate(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSd(
-                    getParameters().getStorageDomainId()));
+                    getParameters().getDestDomainId()));
         }
         return true;
     }
@@ -678,7 +678,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         list.add(new QuotaStorageConsumptionParameter(
                 getDestinationQuotaId(),
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
-                getParameters().getStorageDomainId(),
+                getParameters().getDestDomainId(),
                 (double)getImage().getSizeInGigabytes()));
 
         if (isMoveOperation()) {
@@ -737,7 +737,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     private boolean isManagedBlockCopy() {
-        return storageDomainDao.get(getParameters().getStorageDomainId()).getStorageType() == StorageType.MANAGED_BLOCK_STORAGE;
+        return storageDomainDao.get(getParameters().getDestDomainId()).getStorageType() == StorageType.MANAGED_BLOCK_STORAGE;
     }
 
     protected QuotaValidator createQuotaValidator(Guid quotaId) {
