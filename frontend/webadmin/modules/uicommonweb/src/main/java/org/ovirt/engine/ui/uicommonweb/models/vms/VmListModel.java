@@ -1303,9 +1303,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             return;
         }
 
-        if (!model.validate(false)) {
-            model.setIsValid(false);
-        } else  if (model.getIsSubTemplate().getEntity()) {
+        if (model.getIsSubTemplate().getEntity()) {
             postNameUniqueCheck();
         } else {
             String name = model.getName().getEntity();
