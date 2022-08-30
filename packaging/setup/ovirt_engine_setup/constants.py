@@ -219,6 +219,8 @@ class Stages(object):
 
     SETUP_SELINUX = 'osetup.setup.selinux'
 
+    REMOTE_ENGINE_CLEANUP = 'osetup.remote.engine.cleanup'
+
 
 @util.export
 @util.codegen
