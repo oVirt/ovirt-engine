@@ -65,6 +65,7 @@ class Plugin(plugin.PluginBase):
         ] = remote_engine.RemoteEngine(plugin=self)
 
     @plugin.event(
+        name=osetupcons.Stages.REMOTE_ENGINE_CLEANUP,
         stage=plugin.Stages.STAGE_CLOSEUP,
     )
     def _cleanup(self):
