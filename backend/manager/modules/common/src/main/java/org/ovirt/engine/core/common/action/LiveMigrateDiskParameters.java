@@ -27,10 +27,6 @@ public class LiveMigrateDiskParameters extends MoveOrCopyImageGroupParameters {
         setDiskProfileId(diskProfileId);
     }
 
-    public Guid getTargetStorageDomainId() {
-        return getStorageDomainId();
-    }
-
     private Guid vmId;
 
     public Guid getVmId() {

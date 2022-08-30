@@ -138,7 +138,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             if (!shouldUpdateStorageDisk() && getParameters().getAddImageDomainMapping()) {
                 imageStorageDomainMapDao.save
                         (new ImageStorageDomainMap(getParameters().getImageId(),
-                                getParameters().getStorageDomainId(),
+                                getParameters().getDestDomainId(),
                                 getParameters().getQuotaId(),
                                 getParameters().getDiskProfileId()));
             }
@@ -158,7 +158,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         CopyImageGroupWithDataCommandParameters p = new CopyImageGroupWithDataCommandParameters(
                 getStorageDomain().getStoragePoolId(),
                 sourceDomainId,
-                getParameters().getStorageDomainId(),
+                getParameters().getDestDomainId(),
                 getParameters().getImageGroupID(),
                 getParameters().getImageId(),
                 destImageGroupId,
@@ -173,7 +173,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         p.setDestImages(getParameters().getDestImages());
         p.setJobWeight(getParameters().getJobWeight());
-        p.setDestDomain(getParameters().getStorageDomainId());
+        p.setDestDomain(getParameters().getDestDomainId());
 
         return p;
     }
@@ -213,7 +213,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                                         getParameters().getDestImageGroupId(),
                                         getParameters().getDestinationImageId(),
                                         "",
-                                        getParameters().getStorageDomainId(),
+                                        getParameters().getDestDomainId(),
                                         getParameters().getCopyVolumeType(),
                                         getVolumeFormatForDomain(),
                                         getParameters().getVolumeType(),
@@ -230,7 +230,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                                         sourceDomainId,
                                         getDiskImage() != null ?
                                                 getDiskImage().getId() : getParameters().getImageGroupID(),
-                                        getParameters().getStorageDomainId(),
+                                        getParameters().getDestDomainId(),
                                         getParameters().getContainerId(),
                                         ImageOperation.Copy,
                                         isWipeAfterDelete(),
@@ -246,7 +246,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                                 getParameters().getParentCommand(),
                                 VdcObjectType.Storage,
                                 sourceDomainId,
-                                getParameters().getStorageDomainId()));
+                                getParameters().getDestDomainId()));
             }
 
             return vdsReturnValue.getSucceeded();
@@ -278,7 +278,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             return VolumeFormat.COW;
         }
 
-        StorageDomainStatic destDomain = storageDomainStaticDao.get(getParameters().getStorageDomainId());
+        StorageDomainStatic destDomain = storageDomainStaticDao.get(getParameters().getDestDomainId());
         if (destDomain.getStorageType().isBlockDomain() && getParameters().getVolumeType() == VolumeType.Sparse) {
             return VolumeFormat.COW;
         } else {
@@ -321,7 +321,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                                 snapshot.getStorageIds().get(0)));
                 imageStorageDomainMapDao.save
                         (new ImageStorageDomainMap(snapshot.getImageId(),
-                                getParameters().getStorageDomainId(),
+                                getParameters().getDestDomainId(),
                                 getParameters().getQuotaId(),
                                 getParameters().getDiskProfileId()));
                 setQcowCompatForSnapshot(snapshot, null);
@@ -336,7 +336,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             try {
                 if (info == null) {
                     info = getVolumeInfo(snapshot.getStoragePoolId(),
-                            getParameters().getStorageDomainId(),
+                            getParameters().getDestDomainId(),
                             snapshot.getId(),
                             snapshot.getImageId());
                 }
@@ -344,7 +344,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                     setQcowCompatByQemuImageInfo(snapshot.getStoragePoolId(),
                             snapshot.getId(),
                             snapshot.getImageId(),
-                            getParameters().getStorageDomainId(),
+                            getParameters().getDestDomainId(),
                             snapshot);
                 }
                 imageDao.update(snapshot.getImage());
@@ -353,13 +353,13 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                 log.error("Unable to update the image info for image '{}' (image group: '{}') on domain '{}'",
                         snapshot.getImageId(),
                         snapshot.getId(),
-                        getParameters().getStorageDomainId());
+                        getParameters().getDestDomainId());
             }
         }
     }
 
     private boolean shouldUpdateStorageDisk() {
-        if (storageDomainDao.get(getParameters().getStorageDomainId()).getStorageType() == StorageType.MANAGED_BLOCK_STORAGE) {
+        if (storageDomainDao.get(getParameters().getDestDomainId()).getStorageType() == StorageType.MANAGED_BLOCK_STORAGE) {
             return false;
         }
 
@@ -377,7 +377,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             // remove image-storage mapping
             imageStorageDomainMapDao.remove
                     (new ImageStorageDomainMapId(getParameters().getImageId(),
-                            getParameters().getStorageDomainId()));
+                            getParameters().getDestDomainId()));
         }
         revertTasks();
         setSucceeded(true);
@@ -395,7 +395,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             } else {
                 removeImageParams.setParentParameters(removeImageParams);
                 removeImageParams.setParentCommand(ActionType.RemoveImage);
-                removeImageParams.setStorageDomainId(getParameters().getStorageDomainId());
+                removeImageParams.setStorageDomainId(getParameters().getDestDomainId());
                 removeImageParams.setDbOperationScope(getParameters().getRevertDbOperationScope());
                 removeImageParams.setShouldLockImage(getParameters().isShouldLockImageOnRevert());
             }
@@ -435,6 +435,6 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private boolean isManagedBlockCopy() {
         return storageDomainDao.get(getParameters().getSourceDomainId()).getStorageType() == StorageType.MANAGED_BLOCK_STORAGE ||
-                storageDomainDao.get(getParameters().getStorageDomainId()).getStorageType() == StorageType.MANAGED_BLOCK_STORAGE;
+                storageDomainDao.get(getParameters().getDestDomainId()).getStorageType() == StorageType.MANAGED_BLOCK_STORAGE;
     }
 }
