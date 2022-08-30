@@ -159,8 +159,8 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
         return sourceDomainId;
     }
 
-    public void setSourceDomainId(Guid value) {
-        sourceDomainId = value;
+    public void setSourceDomainId(Guid sourceDomainId) {
+        this.sourceDomainId = sourceDomainId;
     }
 
     public ImageDbOperationScope getRevertDbOperationScope() {

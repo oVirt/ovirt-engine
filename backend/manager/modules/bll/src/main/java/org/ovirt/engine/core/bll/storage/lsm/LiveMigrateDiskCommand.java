@@ -175,7 +175,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     private CloneImageGroupVolumesStructureCommandParameters buildCloneImageGroupVolumesStructureCommandParams() {
         CloneImageGroupVolumesStructureCommandParameters p =
                 new CloneImageGroupVolumesStructureCommandParameters(getParameters().getStoragePoolId(),
-                        getParameters().getSourceStorageDomainId(),
+                        getParameters().getSourceDomainId(),
                         getParameters().getTargetStorageDomainId(),
                         getImageGroupId(),
                         getActionType(),
@@ -230,7 +230,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     private Map<Guid, DiskImage> createDiskImagesMap() {
         if (FeatureSupported.isReplicateExtendSupported(getCluster().getCompatibilityVersion())) {
-            StorageDomainStatic sourceDomain = storageDomainStaticDao.get(getParameters().getSourceStorageDomainId());
+            StorageDomainStatic sourceDomain = storageDomainStaticDao.get(getParameters().getSourceDomainId());
             if (sourceDomain.getStorageType().isBlockDomain()) {
                 DiskImage disk = getDiskImage();
                 DiskImage diskParams = new DiskImage();
@@ -274,7 +274,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             }
 
             updateStage(LiveDiskMigrateStage.SOURCE_IMAGE_DELETION);
-            removeImage(getParameters().getSourceStorageDomainId(),
+            removeImage(getParameters().getSourceDomainId(),
                     getParameters().getImageGroupID(),
                     getParameters().getDestinationImageId(),
                     AuditLogType.USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_SRC_IMAGE);
@@ -404,14 +404,13 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     private boolean completeLiveMigration() {
         // Update the DB before sending the command (perform rollback on failure)
-        moveDiskInDB(getParameters().getSourceStorageDomainId(),
+        moveDiskInDB(getParameters().getSourceDomainId(),
                 getParameters().getTargetStorageDomainId(),
                 getParameters().getQuotaId(),
                 getParameters().getDiskProfileId());
 
         try {
-            replicateDiskFinish(getParameters().getSourceStorageDomainId(),
-                    getParameters().getTargetStorageDomainId());
+            replicateDiskFinish(getParameters().getSourceDomainId(), getParameters().getTargetStorageDomainId());
         } catch (Exception e) {
             if (e instanceof EngineException &&
                     EngineError.unavail.equals(((EngineException) e).getErrorCode())) {
@@ -420,7 +419,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             }
 
             moveDiskInDB(getParameters().getTargetStorageDomainId(),
-                    getParameters().getSourceStorageDomainId(),
+                    getParameters().getSourceDomainId(),
                     sourceQuotaId,
                     sourceDiskProfileId);
             log.error("Failed VmReplicateDiskFinish (Disk '{}', VM '{}')",
@@ -519,7 +518,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         Guid vdsId = vdsCommandsHelper.getHostForExecution(getParameters().getStoragePoolId());
         CopyImageGroupVolumesDataCommandParameters parameters =
                 new CopyImageGroupVolumesDataCommandParameters(getParameters().getStoragePoolId(),
-                        getParameters().getSourceStorageDomainId(),
+                        getParameters().getSourceDomainId(),
                         getParameters().getImageGroupID(),
                         getParameters().getTargetStorageDomainId(),
                         getActionType(),
@@ -552,7 +551,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         VmReplicateDiskParameters migrationStartParams = new VmReplicateDiskParameters(getParameters().getVdsId(),
                 getParameters().getVmId(),
                 getParameters().getStoragePoolId(),
-                getParameters().getSourceStorageDomainId(),
+                getParameters().getSourceDomainId(),
                 getParameters().getTargetStorageDomainId(),
                 getParameters().getImageGroupID(),
                 getParameters().getDestinationImageId(),
@@ -759,8 +758,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                         "replication before deleting the target disk",
                         getParameters().getImageGroupID(), getParameters().getVmId());
                 try {
-                    replicateDiskFinish(getParameters().getSourceStorageDomainId(),
-                            getParameters().getSourceStorageDomainId());
+                    replicateDiskFinish(getParameters().getSourceDomainId(), getParameters().getSourceDomainId());
                 } catch (Exception e) {
                     if (e instanceof EngineException &&
                             EngineError.ReplicationNotInProgress.equals(((EngineException) e).getErrorCode())) {
