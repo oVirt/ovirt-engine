@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
@@ -41,7 +42,7 @@ public class MultipleServicesMonitoringStrategyTest {
 
     public MultipleServicesMonitoringStrategyTest() {
         virtStrategy =
-                spy(new VirtMonitoringStrategy(mock(ClusterDao.class), mock(VdsDao.class), mockVmDao(), null));
+                spy(new VirtMonitoringStrategy(mock(ClusterDao.class), mock(VdsDao.class), mockVmDao(), null, mock(ImageTransferDao.class)));
         doReturn(false).when(virtStrategy).isAnyVmRunOnVdsInDb(any());
         glusterStrategy = spy(new GlusterMonitoringStrategy());
         doNothing().when(virtStrategy).vdsNonOperational(any(), any(), any());
