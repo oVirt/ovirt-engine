@@ -270,16 +270,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             return true;
         }
 
-        List<Guid> sdsToValidate = new ArrayList<>();
-        sdsToValidate.add(getStorageDomainId());
-
-        if (getActionType() == ActionType.LiveMigrateDisk) {
-            sdsToValidate.add(getParameters().getSourceDomainId());
-        }
-
-        MultipleStorageDomainsValidator storageDomainsValidator =
-                createMultipleStorageDomainsValidator(sdsToValidate);
-
+        MultipleStorageDomainsValidator storageDomainsValidator = createMultipleStorageDomainsValidator();
         if (validate(storageDomainsValidator.allDomainsWithinThresholds())) {
             // If we are copying a template's disk we do not want all its copies
             if (getImage().getVmEntityType() == VmEntityType.TEMPLATE) {
@@ -724,7 +715,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 diskVmElementDao.getAllDiskVmElementsByDiskId(getParameters().getImageGroupID()));
     }
 
-    public MultipleStorageDomainsValidator createMultipleStorageDomainsValidator(List<Guid> sdsToValidate) {
+    protected MultipleStorageDomainsValidator createMultipleStorageDomainsValidator() {
+        List<Guid> sdsToValidate = new ArrayList<>();
+        sdsToValidate.add(getStorageDomainId());
+
         return new MultipleStorageDomainsValidator(getStoragePoolId(), sdsToValidate);
     }
 

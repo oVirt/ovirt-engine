@@ -251,6 +251,6 @@ public class LiveMigrateDiskCommandTest extends BaseCommandTest {
     private void mockValidators() {
         doReturn(diskValidator).when(command).createDiskValidator(any());
         doReturn(diskImagesValidator).when(command).createDiskImagesValidator(any());
-        doReturn(multipleStorageDomainsValidator).when(command).createMultipleStorageDomainsValidator(any());
+        doReturn(multipleStorageDomainsValidator).when(command).createMultipleStorageDomainsValidator();
     }
 }
