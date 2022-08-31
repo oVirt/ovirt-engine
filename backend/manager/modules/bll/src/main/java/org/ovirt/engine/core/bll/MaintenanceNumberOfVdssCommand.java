@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -375,8 +374,6 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             result = failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
                         } else if (!validateNoRunningJobs(vds)) {
                             result = false;
-                        } else if (!validateNoActiveImageTransfers(vds)) {
-                            result = false;
                         } else if (!clusters.get(vds.getClusterId()).isInUpgradeMode()) {
                             result = handlePositiveEnforcingAffinityGroup(vdsId, vms, clusters.get(vds.getClusterId()).getCompatibilityVersion());
                         }
@@ -472,22 +469,6 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             return failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_HOST_WITH_RUNNING_OPERATIONS, replacements);
         }
 
-        return true;
-    }
-
-    private boolean validateNoActiveImageTransfers(VDS vds) {
-        List<ImageTransfer> transfers = imageTransferDao.getByVdsId(vds.getId());
-        if (!transfers.stream().allMatch(ImageTransfer::isPausedOrFinished)) {
-            List<String> replacements = new ArrayList<>(3);
-            replacements.add(ReplacementUtils.createSetVariableString("host", vds.getName()));
-            replacements.addAll(ReplacementUtils.replaceWith("disks",
-                    transfers.stream()
-                            .filter(imageTransfer -> !imageTransfer.isPausedOrFinished())
-                            .map(ImageTransfer::getDiskId)
-                            .sorted()
-                            .collect(Collectors.toList())));
-            return failValidation(EngineMessage.VDS_CANNOT_MAINTENANCE_HOST_WITH_RUNNING_IMAGE_TRANSFERS, replacements);
-        }
         return true;
     }
 

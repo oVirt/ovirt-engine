@@ -21,21 +21,26 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ClusterEmulatedMachines;
 import org.ovirt.engine.core.common.utils.EmulatedMachineCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.ImageTransferDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class defines virt strategy entry points, which are needed in host monitoring phase
  */
 @Singleton
 public class VirtMonitoringStrategy implements MonitoringStrategy {
+    private static final Logger log = LoggerFactory.getLogger(VirtMonitoringStrategy.class);
 
     private final ClusterDao clusterDao;
     private final VdsDao vdsDao;
@@ -45,19 +50,29 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
     @Inject
     private Instance<IVdsEventListener> eventListener;
 
+    private ImageTransferDao imageTransferDao;
+
     @Inject
     public VirtMonitoringStrategy(ClusterDao clusterDao,
             VdsDao vdsDao,
             VmDao vmDao,
-            VmDynamicDao vmDynamicDao) {
+            VmDynamicDao vmDynamicDao,
+            ImageTransferDao imageTransferDao) {
         this.clusterDao = clusterDao;
         this.vdsDao = vdsDao;
         this.vmDao = vmDao;
         this.vmDynamicDao = vmDynamicDao;
+        this.imageTransferDao = imageTransferDao;
     }
 
     @Override
     public boolean canMoveToMaintenance(VDS vds) {
+        List<ImageTransfer> transfers = imageTransferDao.getByVdsId(vds.getId());
+        if (!transfers.stream().allMatch(ImageTransfer::isPausedOrFinished)) {
+            log.info("Can't move host '{}' to maintenance,"
+                    + " waiting for ongoing image transfers to complete", vds.getName());
+            return false;
+        }
         if (!Config.<Boolean>getValue(ConfigValues.MaintenanceVdsIgnoreExternalVms)) {
             // We can only move to maintenance in case no VMs are running on the host
             return vds.getVmCount() == 0 && !isAnyVmRunOnVdsInDb(vds.getId());
