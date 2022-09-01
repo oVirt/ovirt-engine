@@ -25,15 +25,25 @@ public class MigrationsModelToEntityBuilder<S extends ModelWithMigrationsOptions
         buildParallelMigrations(source, destination);
     }
 
+    private Integer sourceToDestinationMigrations(S source, ParallelMigrationsType parallelMigrationsType) {
+        if (parallelMigrationsType == null) {
+            return null;
+        }
+        switch (parallelMigrationsType) {
+        case AUTO:
+            return ParallelMigrationsType.AUTO.getValue();
+        case AUTO_PARALLEL:
+            return ParallelMigrationsType.AUTO_PARALLEL.getValue();
+        case DISABLED:
+            return ParallelMigrationsType.DISABLED.getValue();
+        default:
+            return source.getCustomParallelMigrations().getEntity();
+        }
+    }
+
     private void buildParallelMigrations(S source, D destination) {
         // null value is not applicable for clusters but it should never occur there
         final ParallelMigrationsType parallelMigrationsType = source.getParallelMigrationsType().getSelectedItem();
-        final Integer parallelMigrations =
-            parallelMigrationsType == null ? null :
-            parallelMigrationsType == ParallelMigrationsType.AUTO ? -2 :
-            parallelMigrationsType == ParallelMigrationsType.AUTO_PARALLEL ? -1 :
-            parallelMigrationsType == ParallelMigrationsType.DISABLED ? 0 :
-            source.getCustomParallelMigrations().getEntity();
-        destination.setParallelMigrations(parallelMigrations);
+        destination.setParallelMigrations(sourceToDestinationMigrations(source, parallelMigrationsType));
     }
 }
