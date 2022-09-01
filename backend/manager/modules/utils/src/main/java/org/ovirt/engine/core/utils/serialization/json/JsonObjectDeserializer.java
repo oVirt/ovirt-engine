@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
-import static com.fasterxml.jackson.databind.DeserializationFeature.READ_ENUMS_USING_TO_STRING;
 import static com.fasterxml.jackson.databind.DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL;
 
 import java.io.IOException;
@@ -56,7 +55,6 @@ public class JsonObjectDeserializer implements Deserializer {
         formattedMapper.addMixIn(EngineFault.class, JsonEngineFaultMixIn.class);
         formattedMapper.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
         formattedMapper.configure(READ_UNKNOWN_ENUM_VALUES_AS_NULL, true);
-        formattedMapper.configure(READ_ENUMS_USING_TO_STRING, true);
 
         formattedMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance);
     }
