@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -492,8 +493,10 @@ public class VmValidator {
     }
 
     public static ValidationResult isParallelMigrationsValid(Integer parallelMigrations) {
-        if (parallelMigrations != null
-                && (parallelMigrations < -2 || parallelMigrations == 1 || parallelMigrations > 255)) {
+        if (parallelMigrations != null && (parallelMigrations <= 1 || parallelMigrations > 255)
+                && parallelMigrations != ParallelMigrationsType.AUTO.getValue()
+                && parallelMigrations != ParallelMigrationsType.AUTO_PARALLEL.getValue()
+                && parallelMigrations != ParallelMigrationsType.DISABLED.getValue()) {
             return new ValidationResult(EngineMessage.VALIDATION_PARALLEL_MIGRATIONS_RANGE);
         }
         return ValidationResult.VALID;

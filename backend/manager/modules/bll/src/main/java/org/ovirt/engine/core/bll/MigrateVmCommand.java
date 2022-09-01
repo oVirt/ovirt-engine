@@ -581,9 +581,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
         Integer parallelMigrationsRequested = getParallelMigrationsFromVmOrCluster();
         Integer parallelMigrations = parallelMigrationsRequested;
-        if (parallelMigrationsRequested < 0) {
+        if (parallelMigrationsRequested == ParallelMigrationsType.AUTO.getValue()
+                || parallelMigrationsRequested == ParallelMigrationsType.AUTO_PARALLEL.getValue()) {
             parallelMigrations = calculateAutomaticParallelMigrations();
-            if (parallelMigrations == null && parallelMigrationsRequested == -1) {
+            if (parallelMigrations == null
+                    && parallelMigrationsRequested == ParallelMigrationsType.AUTO_PARALLEL.getValue()) {
                 parallelMigrations = ParallelMigrationsType.MIN_PARALLEL_CONNECTIONS;
             }
         } else {

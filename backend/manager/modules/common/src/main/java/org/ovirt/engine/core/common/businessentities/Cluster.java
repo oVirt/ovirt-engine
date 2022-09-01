@@ -10,6 +10,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -192,7 +193,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool,
         enableKsm = true;
         ksmMergeAcrossNumaNodes = true;
         migrationBandwidthLimitType = MigrationBandwidthLimitType.DEFAULT;
-        parallelMigrations = 0;
+        parallelMigrations = ParallelMigrationsType.DISABLED.getValue();
         requiredSwitchTypeForCluster = SwitchType.LEGACY;
         logMaxMemoryUsedThresholdType = LogMaxMemoryUsedThresholdType.PERCENTAGE;
         description = "";

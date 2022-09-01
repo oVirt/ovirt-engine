@@ -5,6 +5,7 @@ import org.ovirt.engine.api.model.MigrationOptions;
 import org.ovirt.engine.api.model.MigrationPolicy;
 import org.ovirt.engine.api.model.ParallelMigrationsPolicy;
 import org.ovirt.engine.core.common.businessentities.HasMigrationOptions;
+import org.ovirt.engine.core.common.migration.ParallelMigrationsType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MigrationOptionsMapper {
@@ -72,13 +73,13 @@ public class MigrationOptionsMapper {
             case INHERIT:
                 break;
             case AUTO:
-                parallelMigrations = -2;
+                parallelMigrations = ParallelMigrationsType.AUTO.getValue();
                 break;
             case AUTO_PARALLEL:
-                parallelMigrations = -1;
+                parallelMigrations = ParallelMigrationsType.AUTO_PARALLEL.getValue();
                 break;
             case DISABLED:
-                parallelMigrations = 0;
+                parallelMigrations = ParallelMigrationsType.DISABLED.getValue();
                 break;
             case CUSTOM:
                 if (customParallelMigrations != null && customParallelMigrations >= 1) {
