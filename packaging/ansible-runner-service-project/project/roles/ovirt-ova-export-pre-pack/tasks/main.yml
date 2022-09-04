@@ -1,40 +1,40 @@
 ---
 - name: Examine target directory
-  stat:
+  ansible.builtin.stat:
     path: "{{ target_directory }}"
   register: target_directory_stats
 
 - name: Fail if target directory does not exist
-  fail:
+  ansible.builtin.fail:
     msg: "Target directory does not exist"
   when: not target_directory_stats.stat.exists
 
 - name: Fail if target directory is not a directory
-  fail:
+  ansible.builtin.fail:
     msg: "Target directory is not a directory"
   when: not target_directory_stats.stat.isdir
 
 - name: Fail if target directory is not writeable
-  fail:
+  ansible.builtin.fail:
     msg: "Target directory is not writeable"
   when: not target_directory_stats.stat.writeable
 
 - name: Removing the temporary file
-  file:
+  ansible.builtin.file:
     path: "{{ target_directory }}/{{ ova_name }}.tmp"
     state: absent
   when: validate_only is not defined
 
 - name: Allocating the temporary path for the OVA file
-  command: xfs_mkfile -n "{{ ova_size }}" "{{ target_directory }}/{{ ova_name }}.tmp"
+  ansible.builtin.command: xfs_mkfile -n "{{ ova_size }}" "{{ target_directory }}/{{ ova_name }}.tmp"
   async: "{{ ansible_timeout }}"
   poll: 15
   when: validate_only is not defined
 
 - name: Retrieving the temporary path for the OVA file
-  file:
+  ansible.builtin.file:
     path: "{{ target_directory }}/{{ ova_name }}.tmp"
     state: touch
+    mode: '660'
   register: ova_file
   when: validate_only is not defined
-

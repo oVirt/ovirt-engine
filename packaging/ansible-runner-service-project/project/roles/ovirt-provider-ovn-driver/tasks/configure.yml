@@ -1,49 +1,49 @@
 ---
 - block:
   - name: Install ovs
-    package:
+    ansible.builtin.package:
         name: openvswitch
         state: present
 
   - name: Ensure Open vSwitch is started
-    service:
+    ansible.builtin.service:
         name: openvswitch
         state: started
-        enabled: yes
+        enabled: true
 
   when:
-    - cluster_switch == "ovs" or (ovn_central is defined and ovn_central | ipaddr)
+      - cluster_switch == "ovs" or (ovn_central is defined and ovn_central | ipaddr)
 
 - block:
-  - name: Install ovirt-provider-ovn-driver
-    package:
-        name: ovirt-provider-ovn-driver
-        state: present
+      - name: Install ovirt-provider-ovn-driver
+        ansible.builtin.package:
+            name: ovirt-provider-ovn-driver
+            state: present
 
-  - name: Ensure ovn-controller is started
-    service:
-        name: ovn-controller
-        state: started
-        enabled: yes
+      - name: Ensure ovn-controller is started
+        ansible.builtin.service:
+            name: ovn-controller
+            state: started
+            enabled: true
 
-  - name: Fetch installed packages
-    package_facts:
-      manager: rpm
+      - name: Fetch installed packages
+        ansible.builtin.package_facts:
+            manager: auto
 
-  - name: Get installed version of vdsm
-    set_fact:
-      vdsm_package: "{{ ansible_facts.packages['vdsm'] | first }}"
+      - name: Get installed version of vdsm
+        ansible.builtin.set_fact:
+            vdsm_package: "{{ ansible_facts.packages['vdsm'] | first }}"
 
-  - name: Skip Host FQDN for vdsm older than 4.50
-    set_fact:
-      ovn_host_fqdn: ""
-    when:
-      - vdsm_package.version is version('4.50', '<')
+      - name: Skip Host FQDN for vdsm older than 4.50
+        ansible.builtin.set_fact:
+            ovn_host_fqdn: ""
+        when:
+            - vdsm_package.version is version('4.50', '<')
 
-  - name: Configure OVN for oVirt
-    command: >
-        vdsm-tool ovn-config {{ ovn_central }} {{ ovn_tunneling_interface }} {{ ovn_host_fqdn }}
+      - name: Configure OVN for oVirt
+        ansible.builtin.command: >
+            vdsm-tool ovn-config {{ ovn_central }} {{ ovn_tunneling_interface }} {{ ovn_host_fqdn }}
 
   when:
-    - ovn_central is defined
-    - ovn_central | ipaddr
+      - ovn_central is defined
+      - ovn_central | ipaddr

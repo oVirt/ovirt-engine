@@ -1,12 +1,13 @@
 ---
 - name: Setup the configuration file
-  template:
+  ansible.builtin.template:
     src: libvirt-guests.j2
     dest: /etc/sysconfig/libvirt-guests
-    backup: yes
+    backup: true
+    mode: '644'
 
 - name: Start libvirt-guests service and ensure its enabled
-  service:
+  ansible.builtin.service:
     name: libvirt-guests
     state: started
-    enabled: yes
+    enabled: true

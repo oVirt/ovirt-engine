@@ -1,37 +1,29 @@
 ---
 - name: Verify that grubby package is installed
-  yum:
+  ansible.builtin.yum:
     name: grubby
     state: present
 
 - name: Detect if boot parameter is set when FIPS support is enabled
-  set_fact:
+  ansible.builtin.set_fact:
     add_boot_param: "{{ host_deploy_kernel_cmdline_new | regex_search('fips\\s*=\\s*1') and not host_deploy_kernel_cmdline_new | regex_search('boot\\s*=') }}"
   when: host_deploy_kernel_cmdline_new is not none
 
 - name: Fetch boot drive UUID
-  shell: findmnt --output=UUID --noheadings --target=/boot
+  ansible.builtin.command: findmnt --output=UUID --noheadings --target=/boot
   register: uuid
-  when: add_boot_param is defined and add_boot_param|bool
+  when: add_boot_param is defined and add_boot_param | bool
   failed_when: not uuid.stdout
-  tags:
-    - skip_ansible_lint # E305
 
 - name: Add boot parameter to kernel parameters
-  set_fact:
+  ansible.builtin.set_fact: # noqa no-handler
     host_deploy_kernel_cmdline_new: "boot=UUID={{ uuid.stdout }} {{ host_deploy_kernel_cmdline_new }}"
-  when: uuid.changed|bool
-  tags:
-    - skip_ansible_lint # E503
+  when: uuid.changed | bool
 
 - name: Removing old kernel arguments
-  shell: "grubby --update-kernel=ALL --remove-args '{{ host_deploy_kernel_cmdline_old }}'"
+  ansible.builtin.command: "grubby --update-kernel=ALL --remove-args '{{ host_deploy_kernel_cmdline_old }}'"
   when: host_deploy_kernel_cmdline_old is defined and host_deploy_kernel_cmdline_old
-  tags:
-    - skip_ansible_lint # E305
 
 - name: Adding new kernel arguments
-  shell: "grubby --update-kernel=ALL --args '{{ host_deploy_kernel_cmdline_new }}'"
+  ansible.builtin.command: "grubby --update-kernel=ALL --args '{{ host_deploy_kernel_cmdline_new }}'"
   when: host_deploy_kernel_cmdline_new is defined and host_deploy_kernel_cmdline_new
-  tags:
-    - skip_ansible_lint # E305

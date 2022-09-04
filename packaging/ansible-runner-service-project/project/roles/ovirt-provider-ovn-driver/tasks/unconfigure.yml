@@ -1,13 +1,9 @@
 ---
 - name: Check if ovirt-provider-ovn-driver is installed
-  package:
+  ansible.builtin.package:
     name: ovirt-provider-ovn-driver
     state: present
   check_mode: true
   register: ovn_packages
-
-- name: Unconfigure the OVN chassis
-  command: vdsm-tool ovn-unconfigure
-  when: not ovn_packages.changed
-  tags:
-    - skip_ansible_lint # E503
+  notify:
+    Unconfigure the OVN chassis

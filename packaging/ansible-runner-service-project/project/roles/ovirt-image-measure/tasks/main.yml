@@ -1,8 +1,7 @@
 ---
 - name: Measure an image
-  command: qemu-img measure -O qcow2 {{ image_path }}
+  ansible.builtin.command: qemu-img measure -O qcow2 {{ image_path }}
   register: measurement_result
-  become: yes
+  become: true
   become_user: vdsm
-  tags:
-    - skip_ansible_lint # E301
+  changed_when: measurement_result.rc != 0

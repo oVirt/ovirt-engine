@@ -1,0 +1,3 @@
+- name: Unconfigure the OVN chassis
+  ansible.builtin.command: vdsm-tool ovn-unconfigure
+  when: not ovn_packages.changed

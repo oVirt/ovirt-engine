@@ -1,18 +1,20 @@
 ---
-- block:
+- name: Ova query tasks
+  block:
   - name: Create temporary directory
-    tempfile:
+    ansible.builtin.tempfile:
       state: directory
       suffix: ova
     register: ova_temp
 
   - name: Copy query_ova.py to temp directory
-    copy:
+    ansible.builtin.copy:
       src: query_ova.py
       dest: "{{ ova_temp.path }}/query_ova.py"
+      mode: preserve
 
   - name: Run query script
-    command: >
+    ansible.builtin.command: >
       "{{ ansible_python_interpreter }}"
       "{{ ova_temp.path }}/query_ova.py"
       "{{ entity_type }}"
@@ -21,8 +23,9 @@
     async: "{{ ansible_timeout }}"
     poll: 15
     register: extraction_result
+    changed_when: extraction_result.rc != 0
   always:
-  - name: Remove temp directory
-    file:
-      state: absent
-      path: "{{ ova_temp.path }}"
+    - name: Remove temp directory
+      ansible.builtin.file:
+        state: absent
+        path: "{{ ova_temp.path }}"

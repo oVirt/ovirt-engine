@@ -1,83 +1,84 @@
 - name: Find ovirt-vmconsole user
-  getent:
+  ansible.builtin.getent:
     database: passwd
     key: ovirt-vmconsole
 
 - block:
-  - name: Create vmconsole key temporary file
-    tempfile:
-      state: file
-      suffix: vmconsole
-    register: vmconsolekey
+    - name: Create vmconsole key temporary file
+      ansible.builtin.tempfile:
+        state: file
+        suffix: vmconsole
+      register: vmconsolekey
 
-  - name: Generate vmconsole CSR
-    command: |
-      '/usr/bin/openssl'
-      'req'
-      '-new'
-      '-newkey'
-      '{{ ovirt_vmconsole_key_type }}:{{ ovirt_vmconsole_key_size }}'
-      '-nodes'
-      '-subj'
-      '/'
-      '-keyout'
-      '{{ vmconsolekey.path }}'
-    register: csr
+    - name: Generate vmconsole CSR
+      ansible.builtin.command: |
+        '/usr/bin/openssl'
+        'req'
+        '-new'
+        '-newkey'
+        '{{ ovirt_vmconsole_key_type }}:{{ ovirt_vmconsole_key_size }}'
+        '-nodes'
+        '-subj'
+        '/'
+        '-keyout'
+        '{{ vmconsolekey.path }}'
+      register: csr
+      changed_when: csr.rc != 0
 
-  - name: Copy vmconsole CSR
-    copy:
-      content: "{{ csr.stdout }}"
-      dest: "{{ ovirt_pki_dir }}/requests/{{ ovirt_vds_hostname }}-ssh.req"
-      mode: 0644
-    delegate_to: localhost
+    - name: Copy vmconsole CSR
+      ansible.builtin.copy:
+        content: "{{ csr.stdout }}"
+        dest: "{{ ovirt_pki_dir }}/requests/{{ ovirt_vds_hostname }}-ssh.req"
+        mode: 0644
+      delegate_to: localhost
 
-  - name: Run PKI enroll request for vmconsole
-    command: |
-      "{{ ovirt_engine_usr }}/bin/pki-enroll-request.sh"
-      "--name={{ ovirt_vds_hostname }}-ssh"
-      "--subject=/O={{ ovirt_organizationname }}/CN={{ ovirt_vds_hostname }}"
-      "--days={{ ovirt_vds_certificate_validity_in_days }}"
-      "--timeout={{ ovirt_signcerttimeoutinseconds }}"
-    delegate_to: localhost
+    - name: Run PKI enroll request for vmconsole
+      ansible.builtin.command: |
+        "{{ ovirt_engine_usr }}/bin/pki-enroll-request.sh"
+        "--name={{ ovirt_vds_hostname }}-ssh"
+        "--subject=/O={{ ovirt_organizationname }}/CN={{ ovirt_vds_hostname }}"
+        "--days={{ ovirt_vds_certificate_validity_in_days }}"
+        "--timeout={{ ovirt_signcerttimeoutinseconds }}"
+      delegate_to: localhost
 
-  - name: Run PKI enroll OpenSSH cert for vmconsole
-    command: |
-      "{{ ovirt_engine_usr }}/bin/pki-enroll-openssh-cert.sh"
-      "--name={{ ovirt_vds_hostname }}-ssh"
-      "--host"
-      "--id={{ ovirt_vds_hostname }}"
-      "--principals={{ ovirt_vds_hostname }}"
-      "--days={{ ovirt_vds_certificate_validity_in_days }}"
-    delegate_to: localhost
+    - name: Run PKI enroll OpenSSH cert for vmconsole
+      ansible.builtin.command: |
+        "{{ ovirt_engine_usr }}/bin/pki-enroll-openssh-cert.sh"
+        "--name={{ ovirt_vds_hostname }}-ssh"
+        "--host"
+        "--id={{ ovirt_vds_hostname }}"
+        "--principals={{ ovirt_vds_hostname }}"
+        "--days={{ ovirt_vds_certificate_validity_in_days }}"
+      delegate_to: localhost
 
-  - name: Add vmconsole cacert files
-    copy:
-      content: "{{ ovirt_ca_key }}"
-      dest: "{{ ovirt_vmconsole_ca_file }}"
-      mode: 0644
+    - name: Add vmconsole cacert files
+      ansible.builtin.copy:
+        content: "{{ ovirt_ca_key }}"
+        dest: "{{ ovirt_vmconsole_ca_file }}"
+        mode: 0644
 
-  - name: Add cert files
-    copy:
-      src: "{{ ovirt_pki_dir }}/certs/{{ ovirt_vds_hostname }}-ssh-cert.pub"
-      dest: "{{ ovirt_vmconsole_cert_file }}"
-      remote_src: no
-      mode: 0644
+    - name: Add cert files
+      ansible.builtin.copy:
+        src: "{{ ovirt_pki_dir }}/certs/{{ ovirt_vds_hostname }}-ssh-cert.pub"
+        dest: "{{ ovirt_vmconsole_cert_file }}"
+        remote_src: false
+        mode: 0644
 
-  - name: Set vmconsole key path
-    set_fact:
-      vmconsolekey_path: "{{ vmconsolekey.path  }}"
+    - name: Set vmconsole key path
+      ansible.builtin.set_fact:
+        vmconsolekey_path: "{{ vmconsolekey.path }}"
 
-  - name: Add vmconsole key file
-    copy:
-      src: "{{ vmconsolekey_path }}"
-      dest: "{{ ovirt_vmconsole_key_file }}"
-      owner: 'ovirt-vmconsole'
-      group: 'ovirt-vmconsole'
-      mode: 0400
-      remote_src: yes
+    - name: Add vmconsole key file
+      ansible.builtin.copy:
+        src: "{{ vmconsolekey_path }}"
+        dest: "{{ ovirt_vmconsole_key_file }}"
+        owner: 'ovirt-vmconsole'
+        group: 'ovirt-vmconsole'
+        mode: 0400
+        remote_src: true
 
   always:
-  - name: Remove temp file
-    file:
-      state: absent
-      path: "{{ vmconsolekey.path }}"
+    - name: Remove temp file
+      ansible.builtin.file:
+        state: absent
+        path: "{{ vmconsolekey.path }}"

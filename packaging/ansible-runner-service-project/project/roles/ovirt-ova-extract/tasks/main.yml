@@ -1,18 +1,20 @@
 ---
-- block:
+- name: Ova extract tasks
+  block:
   - name: Create temporary directory
-    tempfile:
+    ansible.builtin.tempfile:
       state: directory
       suffix: ova
     register: ova_temp
 
   - name: Copy extract_ova.py to temp directory
-    copy:
+    ansible.builtin.copy:
       src: extract_ova.py
       dest: "{{ ova_temp.path }}/extract_ova.py"
+      mode: preserve
 
   - name: Run extraction script
-    command: >
+    ansible.builtin.command: >
       "{{ ansible_python_interpreter }}"
       "{{ ova_temp.path }}/extract_ova.py"
       "{{ ovirt_import_ova_path }}"
@@ -21,13 +23,14 @@
     async: "{{ ansible_timeout }}"
     poll: 15
     register: extraction_result
+    changed_when: extraction_result.rc != 0
 
   - name: Check OVA extraction process result
-    fail:
+    ansible.builtin.fail:
       msg: "Failed to extract OVA file"
     when: extraction_result.rc is defined and extraction_result.rc != 0
   always:
-  - name: Remove temp directory
-    file:
-      state: absent
-      path: "{{ ova_temp.path }}"
+    - name: Remove temp directory
+      ansible.builtin.file:
+        state: absent
+        path: "{{ ova_temp.path }}"

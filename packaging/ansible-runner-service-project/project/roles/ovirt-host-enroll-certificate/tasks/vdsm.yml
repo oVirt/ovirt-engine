@@ -1,4 +1,4 @@
 - name: Run vdsm-certificates role
-  include_role:
+  ansible.builtin.include_role:
     name: ovirt-host-deploy-vdsm-certificates
-    public: yes
+    public: true

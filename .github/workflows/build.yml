@@ -61,6 +61,7 @@ jobs:
     - name: Install required packages
       run: |
         dnf install -y \
+          ansible-core \
           createrepo_c \
           dnf-utils \
           git \
@@ -75,9 +76,13 @@ jobs:
           python3-pyflakes \
           python3-pyOpenSSL \
           python3-dnf-plugin-versionlock \
+          python38-pip \
           rpm-build \
           sed \
           tar
+
+    - name: Install required PyPI packages
+      run: pip3.8 install "ansible-lint>=6.0.0,<7.0.0"
 
     - name: Checkout sources
       uses: ovirt/checkout-action@main
