@@ -470,6 +470,10 @@ public class ResourceManager implements BackendService {
         ReactorFactory.getWorker(this.parallelism, this.eventTimeoutInHours).getPublisher().subscribe(subscriber);
     }
 
+    public void refreshIsoCache(Guid storagePoolId) {
+        getEventListener().refreshIsoCache(storagePoolId);
+    }
+
     @Inject
     @ThreadPools(ThreadPools.ThreadPoolType.EngineThreadMonitoringThreadPool)
     private ManagedScheduledExecutorService monitoringExecutor;

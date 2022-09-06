@@ -86,6 +86,8 @@ public interface IVdsEventListener {
 
     void restartVmsWithLease(List<Guid> vmIds, Guid hostId);
 
+    void refreshIsoCache(Guid storagePoolId);
+
     Map<String, Pair<String, String>> getVdsPoolAndStorageConnectionsLock(Guid vdsId);
 
     ActionReturnValue saveExternalData(SaveVmExternalDataParameters parameters);
