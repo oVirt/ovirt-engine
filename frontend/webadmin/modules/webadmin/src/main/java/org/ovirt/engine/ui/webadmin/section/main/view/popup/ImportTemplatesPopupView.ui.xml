@@ -50,11 +50,11 @@
         <d:content>
             <b:Container fluid="true">
                 <b:Row addStyleNames="{style.topElement}">
-                    <e:ListModelListBoxEditor ui:field="dataCentersEditor" label="{constants.dataCenter}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_3" />
+                    <e:ListModelListBoxEditor ui:field="dataCentersEditor" label="{constants.dataCenter}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_6" />
                 </b:Row>
                 <b:Row addStyleNames="{style.headerBottom}">
-                    <b:Column size="SM_6" addStyleNames="{style.nopadding}">
-                        <e:ListModelListBoxEditor  ui:field="importSourcesEditor" label="{constants.importSource}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    <b:Column size="SM_12" addStyleNames="{style.nopadding}">
+                        <e:ListModelListBoxEditor  ui:field="importSourcesEditor" label="{constants.importSource}" usePatternFly="true" labelColSize="SM_3" widgetColSize="SM_6" />
                     </b:Column>
                 </b:Row>
                 <g:FlowPanel ui:field="exportPanel" visible="false">

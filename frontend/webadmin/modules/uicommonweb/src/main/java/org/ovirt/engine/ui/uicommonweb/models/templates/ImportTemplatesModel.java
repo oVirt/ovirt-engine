@@ -124,7 +124,7 @@ public class ImportTemplatesModel extends ListWithSimpleDetailsModel {
             validateSource();
             clearTemplates();
         });
-        importSources.setSelectedItem(ImportSource.EXPORT_DOMAIN);
+        importSources.setSelectedItem(ImportSource.OVA);
     }
 
     public void init() {

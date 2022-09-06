@@ -483,7 +483,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             clearValidations();
             loadProviders();
         });
-        importSources.setSelectedItem(ImportSource.EXPORT_DOMAIN);
+        importSources.setSelectedItem(ImportSource.OVA);
     }
 
     private void validateSource() {
