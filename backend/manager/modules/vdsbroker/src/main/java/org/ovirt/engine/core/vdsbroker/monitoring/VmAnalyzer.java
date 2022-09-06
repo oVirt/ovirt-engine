@@ -746,7 +746,9 @@ public class VmAnalyzer {
             vmGuestAgentNics = filterGuestAgentInterfaces(nullToEmptyList(vdsmVm.getVmGuestAgentInterfaces()));
             dbVm.setIp(extractVmIps(vmGuestAgentNics));
         }
-
+        if (!Objects.equals(vdsmVm.getVmDynamic().getAppList(), dbVm.getAppList())) {
+            resourceManager.refreshIsoCache(vdsManager.getCopyVds().getStoragePoolId());
+        }
         dbVm.updateRuntimeData(vdsmVm.getVmDynamic(), vdsManager.getVdsId());
         saveDynamic(dbVm);
     }

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -50,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -61,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.eventqueue.Event;
@@ -79,6 +82,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -118,6 +122,8 @@ public class VdsEventListener implements IVdsEventListener {
     @Inject
     private StoragePoolDao storagePoolDao;
     @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
     private CpuQosDao cpuQosDao;
     @Inject
     private StorageQosDao storageQosDao;
@@ -147,6 +153,8 @@ public class VdsEventListener implements IVdsEventListener {
     private StoragePoolStatusHandler storagePoolStatusHandler;
     @Inject
     private HostLocking hostLocking;
+    @Inject
+    private IsoDomainListSynchronizer isoDomainListSynchronizer;
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
@@ -610,6 +618,18 @@ public class VdsEventListener implements IVdsEventListener {
                         buildRunVmParameters(vmId),
                         ExecutionHandler.createInternalJobContext(engineLock));
             }
+        });
+    }
+
+    @Override
+    public void refreshIsoCache(Guid storagePoolId) {
+        ThreadPoolUtil.execute(() -> {
+            storageDomainDao.getAllForStoragePool(storagePoolId)
+                    .stream()
+                    .filter(sd -> sd.getStorageDomainType() == StorageDomainType.ISO
+                            || sd.getStorageDomainType().isDataDomain())
+                    .forEach(sd -> isoDomainListSynchronizer
+                            .getUserRequestForStorageDomainRepoFileList(sd.getId(), ImageFileType.ISO, true));
         });
     }
 
