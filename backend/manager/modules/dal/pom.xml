@@ -153,11 +153,10 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <properties>
-            <excludeTags>dao</excludeTags>
-          </properties>
+          <excludedGroups>dao</excludedGroups>
           <systemPropertyVariables>
             <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
           </systemPropertyVariables>
@@ -172,9 +171,9 @@
         <plugins>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
-            <configuration combine.self="override">
-              <properties />
-              <systemPropertyVariables>
+            <configuration>
+              <properties combine.self="override"/>
+              <systemPropertyVariables combine.self="override">
                 <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
                 <ovirt-engine.config.defaults>src/test/resources/engine.conf</ovirt-engine.config.defaults>
                 <ovirt-engine.config.vars>/dev/null</ovirt-engine.config.vars>
