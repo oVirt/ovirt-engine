@@ -133,7 +133,7 @@
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
     <maven-deploy-plugin.version>2.8.1</maven-deploy-plugin.version>
-    <maven-ear-plugin.version>2.8</maven-ear-plugin.version>
+    <maven-ear-plugin.version>3.2.0</maven-ear-plugin.version>
     <maven-ejb-plugin.version>2.3</maven-ejb-plugin.version>
     <maven-enforcer-plugin.version>1.1.1</maven-enforcer-plugin.version>
     <maven-jar-plugin.version>2.2</maven-jar-plugin.version>
@@ -1002,7 +1002,7 @@
           <artifactId>maven-ear-plugin</artifactId>
           <version>${maven-ear-plugin.version}</version>
           <configuration>
-            <fileNameMapping>no-version</fileNameMapping>
+            <outputFileNameMapping>@{artifactId}@.@{extension}@</outputFileNameMapping>
           </configuration>
         </plugin>
 
