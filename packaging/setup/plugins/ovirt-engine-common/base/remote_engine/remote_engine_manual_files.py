@@ -83,7 +83,7 @@ class Plugin(plugin.PluginBase):
                 ),
                 prompt=True,
             )
-            with open(resfilename) as f:
+            with open(resfilename, 'rb') as f:
                 res = f.read()
             return res
 
