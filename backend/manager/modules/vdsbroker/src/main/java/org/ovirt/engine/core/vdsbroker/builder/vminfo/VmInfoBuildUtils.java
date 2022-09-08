@@ -84,6 +84,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.MDevTypesUtils;
 import org.ovirt.engine.core.common.utils.PDIVMapBuilder;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -1371,11 +1372,11 @@ public class VmInfoBuildUtils {
         return node;
     }
 
-    public String tpmData(Guid vmId) {
+    public SecretValue<String> tpmData(Guid vmId) {
         return vmDao.getTpmData(vmId).getFirst();
     }
 
-    public String nvramData(Guid vmId) {
+    public SecretValue<String> nvramData(Guid vmId) {
         return vmDao.getNvramData(vmId).getFirst();
     }
 

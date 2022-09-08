@@ -56,6 +56,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmDeviceUpdate;
@@ -2291,19 +2292,19 @@ public class VmDeviceUtils {
     }
 
     public void updateVmExternalData(VM vm) {
-        Map<VmExternalDataKind, String> vmExternalData = vm.getVmExternalData();
+        Map<VmExternalDataKind, SecretValue<String>> vmExternalData = vm.getVmExternalData();
         if (vmExternalData == null) {
             return;
         }
         Guid vmId = vm.getId();
-        String tpmData = vmExternalData.get(VmExternalDataKind.TPM);
-        if (tpmData == null) {
+        SecretValue<String> tpmData = vmExternalData.get(VmExternalDataKind.TPM);
+        if (SecretValue.isNull(tpmData)) {
             vmDao.deleteTpmData(vmId);
         } else {
             vmDao.updateTpmData(vmId, tpmData, "");
         }
-        String nvramData = vmExternalData.get(VmExternalDataKind.NVRAM);
-        if (nvramData == null) {
+        SecretValue<String> nvramData = vmExternalData.get(VmExternalDataKind.NVRAM);
+        if (SecretValue.isNull(nvramData)) {
             vmDao.deleteNvramData(vmId);
         } else {
             vmDao.updateNvramData(vmId, nvramData, "");

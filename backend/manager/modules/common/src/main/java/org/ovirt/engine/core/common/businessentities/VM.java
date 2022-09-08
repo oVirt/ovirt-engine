@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.locks.LockInfo;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -66,7 +67,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     private BiosType clusterBiosType;
     @TransientField
     private boolean differentTimeZone;
-    private Map<VmExternalDataKind, String> vmExternalData;
+    private Map<VmExternalDataKind, SecretValue<String>> vmExternalData;
 
     @TransientField
     private boolean vnicsOutOfSync;
@@ -1985,11 +1986,11 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         vmStatic.setLargeIconId(largeIconId);
     }
 
-    public Map<VmExternalDataKind, String> getVmExternalData() {
+    public Map<VmExternalDataKind, SecretValue<String>> getVmExternalData() {
         return vmExternalData;
     }
 
-    public void setVmExternalData(Map<VmExternalDataKind, String> vmExternalData) {
+    public void setVmExternalData(Map<VmExternalDataKind, SecretValue<String>> vmExternalData) {
         this.vmExternalData = vmExternalData;
     }
 

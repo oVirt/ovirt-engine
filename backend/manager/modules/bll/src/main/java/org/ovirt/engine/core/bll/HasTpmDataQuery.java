@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.dao.VmDao;
 
 public class HasTpmDataQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
@@ -17,7 +18,7 @@ public class HasTpmDataQuery<P extends IdQueryParameters> extends QueriesCommand
 
     @Override
     protected void executeQueryCommand() {
-        Pair<String, String> result = vmDao.getTpmData(getParameters().getId());
-        getQueryReturnValue().setReturnValue(result.getFirst() != null);
+        Pair<SecretValue<String>, String> result = vmDao.getTpmData(getParameters().getId());
+        getQueryReturnValue().setReturnValue(!SecretValue.isNull(result.getFirst()));
     }
 }

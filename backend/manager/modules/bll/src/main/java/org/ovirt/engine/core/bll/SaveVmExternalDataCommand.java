@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -114,7 +115,7 @@ public class SaveVmExternalDataCommand<T extends SaveVmExternalDataParameters> e
                 }
             } else {
                 externalDataStatus.setFinished(dataKind);
-                String data = ((VmExternalDataReturn) returnValue.getReturnValue()).data;
+                SecretValue<String> data = ((VmExternalDataReturn) returnValue.getReturnValue()).data;
                 String hash = ((VmExternalDataReturn) returnValue.getReturnValue()).hash;
                 if (data != null) {
                     switch (dataKind) {

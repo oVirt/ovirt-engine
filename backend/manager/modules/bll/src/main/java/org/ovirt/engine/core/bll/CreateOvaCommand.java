@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -189,8 +190,8 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
     private AnsibleCommandParameters createPackOvaParameters(String ovf,
             Collection<DiskImage> disks,
             Map<Guid, String> diskIdToPath,
-            String tpmData,
-            String nvramData,
+            SecretValue<String> tpmData,
+            SecretValue<String> nvramData,
             Version compatibilityVersion) {
         String encodedOvf = encode(ovf);
         AnsibleCommandParameters params = new AnsibleCommandParameters();
@@ -229,24 +230,24 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         setSucceeded(true);
     }
 
-    private String getTpmData() {
+    private SecretValue<String> getTpmData() {
         var tpmDataAndHash = vmDao.getTpmData(getParameters().getEntityId());
         return tpmDataAndHash != null ? tpmDataAndHash.getFirst() : null;
     }
 
-    private String getNvramData() {
+    private SecretValue<String> getNvramData() {
         var nvramDataAndHash = vmDao.getNvramData(getParameters().getEntityId());
         return nvramDataAndHash != null ? nvramDataAndHash.getFirst() : null;
     }
 
-    private Map<VmExternalDataKind, String> getVmExternalData() {
-        Map<VmExternalDataKind, String> externalData = new HashMap<>();
-        String tpmData = getTpmData();
-        if (!StringUtils.isEmpty(tpmData)) {
+    private Map<VmExternalDataKind, SecretValue<String>> getVmExternalData() {
+        Map<VmExternalDataKind, SecretValue<String>> externalData = new HashMap<>();
+        SecretValue<String> tpmData = getTpmData();
+        if (tpmData != null && !StringUtils.isEmpty(tpmData.getValue())) {
             externalData.put(VmExternalDataKind.TPM, tpmData);
         }
-        String nvramData = getNvramData();
-        if (!StringUtils.isEmpty(nvramData)) {
+        SecretValue<String> nvramData = getNvramData();
+        if (nvramData != null && !StringUtils.isEmpty(nvramData.getValue())) {
             externalData.put(VmExternalDataKind.NVRAM, nvramData);
         }
         return externalData;
@@ -256,12 +257,12 @@ public class CreateOvaCommand<T extends CreateOvaParameters> extends CommandBase
         diskHandler.updateDiskVmElementFromDb(diskImage, getParameters().getEntityId());
     }
 
-    private long calcOvaSize(Collection<DiskImage> disks, String tpmData, String nvramData, String ovf) {
+    private long calcOvaSize(Collection<DiskImage> disks, SecretValue<String> tpmData, SecretValue<String> nvramData,
+            String ovf) {
         // 1 block for the OVF, 1 block per-disk and 2 null-blocks at the end
-        return TAR_BLOCK_SIZE * (1 + disks.size() + 2)
-                + blockAlignedSize(ovf.length())
-                + (tpmData != null ? blockAlignedSize(tpmData.length()) : 0)
-                + (nvramData != null ? blockAlignedSize(nvramData.length()) : 0)
+        return TAR_BLOCK_SIZE * (1 + disks.size() + 2) + blockAlignedSize(ovf.length())
+                + (SecretValue.isNull(tpmData) ? 0 : blockAlignedSize(tpmData.getValue().length()))
+                + (SecretValue.isNull(nvramData) ? 0 : blockAlignedSize(nvramData.getValue().length()))
                 + disks.stream().mapToLong(DiskImage::getActualSizeInBytes).sum();
     }
 

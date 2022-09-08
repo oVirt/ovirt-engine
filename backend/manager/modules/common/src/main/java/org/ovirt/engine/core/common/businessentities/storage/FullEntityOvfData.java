@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
+import org.ovirt.engine.core.common.utils.SecretValue;
 
 public class FullEntityOvfData implements Serializable {
     private VM vm;
@@ -31,7 +32,7 @@ public class FullEntityOvfData implements Serializable {
     private Set<DbUser> dbUsers = new HashSet<>();
     private Map<String, Set<String>> userToRoles = new HashMap<>();
     private List<Label> affinityLabelsNames = new ArrayList<>();
-    private Map<VmExternalDataKind, String> vmExternalData = new EnumMap<>(VmExternalDataKind.class);
+    private Map<VmExternalDataKind, SecretValue<String>> vmExternalData = new EnumMap<>(VmExternalDataKind.class);
 
     public FullEntityOvfData() {
     }
@@ -156,7 +157,7 @@ public class FullEntityOvfData implements Serializable {
         this.affinityLabelsNames = affinityLabelsNames;
     }
 
-    public Map<VmExternalDataKind, String> getVmExternalData() {
+    public Map<VmExternalDataKind, SecretValue<String>> getVmExternalData() {
         return vmExternalData;
     }
 
