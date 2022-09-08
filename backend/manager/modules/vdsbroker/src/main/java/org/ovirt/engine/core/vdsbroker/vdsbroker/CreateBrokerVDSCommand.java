@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.PDIVMapBuilder;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.XmlUtils;
@@ -73,14 +74,14 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
             createInfo.put("memoryConfVolume", memoryConfPDIV);
         }
 
-        String tpmData = vmInfoBuildUtils.tpmData(vm.getId());
-        if (tpmData != null) {
-            createInfo.put(VdsProperties.tpmData, tpmData);
+        SecretValue<String> tpmData = vmInfoBuildUtils.tpmData(vm.getId());
+        if (!SecretValue.isNull(tpmData)) {
+            createInfo.put(VdsProperties.tpmData, tpmData.getValue());
         }
         if (vm.getBiosType() == BiosType.Q35_SECURE_BOOT) {
-            String nvramData = vmInfoBuildUtils.nvramData(vm.getId());
-            if (nvramData != null) {
-                createInfo.put(VdsProperties.nvramData, nvramData);
+            SecretValue<String> nvramData = vmInfoBuildUtils.nvramData(vm.getId());
+            if (!SecretValue.isNull(nvramData)) {
+                createInfo.put(VdsProperties.nvramData, nvramData.getValue());
             }
         }
 

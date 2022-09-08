@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ManagedBlockStorageDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
@@ -188,12 +189,12 @@ public abstract class OvfOvirtReader extends OvfReader {
     }
 
     private void readExternalDataSection(@SuppressWarnings("unused") XmlNode section) {
-        Map<VmExternalDataKind, String> vmExternalData = fullEntityOvfData.getVmExternalData();
+        Map<VmExternalDataKind, SecretValue<String>> vmExternalData = fullEntityOvfData.getVmExternalData();
         XmlNodeList list = selectNodes(section, OvfProperties.VM_EXTERNAL_DATA_ITEM);
         for (XmlNode node : list) {
             String kind = node.attributes.get(OvfProperties.VM_EXTERNAL_DATA_KIND).getValue();
             String data = selectSingleNode(node, OvfProperties.VM_EXTERNAL_DATA_CONTENT).innerText;
-            vmExternalData.put(VmExternalDataKind.fromExternal(kind), data);
+            vmExternalData.put(VmExternalDataKind.fromExternal(kind), new SecretValue<String>(data));
         }
     }
 

@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -221,7 +222,7 @@ public abstract class OvfOvirtWriter extends OvfWriter {
     }
 
     private void writeVmExternalData() {
-        Map<VmExternalDataKind, String> vmExternalData = fullEntityOvfData.getVmExternalData();
+        Map<VmExternalDataKind, SecretValue<String>> vmExternalData = fullEntityOvfData.getVmExternalData();
         if (vmExternalData.isEmpty()) {
             return;
         }
@@ -231,7 +232,7 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         vmExternalData.forEach((kind, data) -> {
                 _writer.writeStartElement(OvfProperties.VM_EXTERNAL_DATA_ITEM);
                 _writer.writeAttributeString(OvfProperties.VM_EXTERNAL_DATA_KIND, kind.getExternal());
-                _writer.writeElement(OvfProperties.VM_EXTERNAL_DATA_CONTENT, data);
+                _writer.writeElement(OvfProperties.VM_EXTERNAL_DATA_CONTENT, data.getValue());
                 _writer.writeEndElement();
         });
         _writer.writeEndElement();

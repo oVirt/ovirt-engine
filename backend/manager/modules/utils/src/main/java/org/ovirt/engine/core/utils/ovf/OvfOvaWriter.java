@@ -10,17 +10,18 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.compat.Version;
 
 public abstract class OvfOvaWriter extends OvfWriter {
 
-    protected Map<VmExternalDataKind, String> vmExternalData;
+    protected Map<VmExternalDataKind, SecretValue<String>> vmExternalData;
     private OsRepository osRepository;
 
     public OvfOvaWriter(VmBase vmBase,
             List<DiskImage> images,
             Version version,
-            Map<VmExternalDataKind, String> vmExternalData,
+            Map<VmExternalDataKind, SecretValue<String>> vmExternalData,
             OsRepository osRepository) {
         super(vmBase, images, Collections.emptyList(), version);
         this.vmExternalData = vmExternalData;
@@ -58,7 +59,7 @@ public abstract class OvfOvaWriter extends OvfWriter {
     }
 
     private int getVmExternalDataSize(VmExternalDataKind kind) {
-        return vmExternalData != null ? vmExternalData.getOrDefault(kind, "").length() : 0;
+        return vmExternalData != null ? vmExternalData.getOrDefault(kind, new SecretValue<String>("")).getValue().length() : 0;
     }
 
     private void writeExternalDataFile(String fileName, int size) {
