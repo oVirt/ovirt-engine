@@ -80,8 +80,6 @@
 # EL >= 7
 #
 
-%global ovirt_install_poms 1
-
 %global ovirt_product_name oVirt Engine
 %global ovirt_product_name_short oVirt Engine
 %global ovirt_product_group Virtualization/Management
@@ -890,56 +888,6 @@ __EOF__
 ln -s "%{engine_name}" "%{buildroot}%{engine_java}/../%{name}"
 %endif
 
-#
-# Register poms
-#
-while read package pom; do
-	pomdir="$(dirname "%{_mavenpomdir}/${pom}")"
-	pom="$(basename "${pom}")"
-	jpppom="JPP.${pom}"
-	mv "%{buildroot}${pomdir}/${pom}" "%{buildroot}${pomdir}/${jpppom}"
-	artifact_id="$(echo "${pom}" | sed -e 's/^%{name}-//' -e 's/\.pom//')"
-	if [ -f "%{buildroot}%{engine_java}/${artifact_id}.jar" ]; then
-		%add_maven_depmap -f "${package}" "${jpppom}" "%{name}/${artifact_id}.jar"
-	else
-		%add_maven_depmap -f "${package}" "${jpppom}"
-	fi
-done << __EOF__
-backend %{name}-aaa.pom
-backend %{name}-backend.pom
-backend %{name}-bll.pom
-backend %{name}-builtin.pom
-backend %{name}-dal.pom
-backend %{name}-manager-modules.pom
-backend %{name}-manager.pom
-backend %{name}-scheduler.pom
-backend %{name}-searchbackend.pom
-backend %{name}-vdsbroker.pom
-base %{name}-branding.pom
-base %{name}-common.pom
-base %{name}-compat.pom
-base %{name}-extensions-manager.pom
-base %{name}-logutils.pom
-base %{name}-root.pom
-base %{name}-utils.pom
-base %{name}-uutils.pom
-restapi %{name}-interface-common-jaxrs.pom
-restapi %{name}-restapi-definition.pom
-restapi %{name}-restapi-jaxrs.pom
-restapi %{name}-restapi-parent.pom
-restapi %{name}-restapi-types.pom
-tools %{name}-extensions-tool.pom
-tools %{name}-sso-client-registration-tool.pom
-tools %{name}-tools.pom
-__EOF__
-
-%if "%{name}" != "%{engine_name}"
-sed -i 's#%{_javadir}/%{name}#%{engine_java}#' .mfiles*
-%endif
-
-%if !%{ovirt_install_poms}
-rm -fr "%{buildroot}%{_mavenpomdir}"
-%endif
 
 #
 # Link dependencies to system provided
@@ -1065,6 +1013,8 @@ perl -i -pe 's/^SHA1-Digest: [^\n]+\n//g' "%{buildroot}%{engine_ear}/META-INF/MA
 
 %endif
 
+echo "Install complete"
+
 %preun
 if [ "$1" -eq 0 ]; then
 	#
@@ -1094,7 +1044,7 @@ fi
 %pre
 %ovirt_create_user_engine
 
-%files -f .mfiles-base
+%files
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_cache}
 # see also relevant install command to set permissions
 %dir %attr(700, %{engine_user}, %{engine_group}) %{engine_log}
@@ -1137,6 +1087,24 @@ fi
 %{_javadir}/%{name}
 %endif
 
+%{_datadir}/maven-metadata/ovirt-engine-base.xml
+%{_mavenpomdir}/ovirt-engine/root.pom
+%{_mavenpomdir}/ovirt-engine/logutils.pom
+%{_mavenpomdir}/ovirt-engine/branding.pom
+%{_mavenpomdir}/ovirt-engine/common.pom
+%{_mavenpomdir}/ovirt-engine/compat.pom
+%{_mavenpomdir}/ovirt-engine/extensions-manager.pom
+%{_mavenpomdir}/ovirt-engine/utils.pom
+%{_mavenpomdir}/ovirt-engine/uutils.pom
+%{_javadir}/ovirt-engine/branding.jar
+%{_javadir}/ovirt-engine/common.jar
+%{_javadir}/ovirt-engine/compat.jar
+%{_javadir}/ovirt-engine/extensions-manager.jar
+%{_javadir}/ovirt-engine/logutils.jar
+%{_javadir}/ovirt-engine/utils.jar
+%{_javadir}/ovirt-engine/uutils.jar
+
+
 %if %{rhv_build}
 %files -n rhvm
 %license LICENSE
@@ -1147,7 +1115,7 @@ fi
 %{engine_data}/bin/java-home
 %{python3_sitelib}/ovirt_engine/
 
-%files backend -f .mfiles-backend
+%files backend
 %license LICENSE
 %license backend/manager/modules/services/src/main/webapp/gpl-3.0.txt
 %license backend/manager/modules/services/src/main/webapp/lgpl-3.0.txt
@@ -1185,6 +1153,25 @@ fi
 %{engine_ear}/welcome.war/
 %{engine_etc}/osinfo.conf.d/
 %{engine_jboss_modules}/
+
+%{_datadir}/maven-metadata/ovirt-engine-backend.xml
+%{_mavenpomdir}/ovirt-engine/backend.pom
+%{_mavenpomdir}/ovirt-engine/manager.pom
+%{_mavenpomdir}/ovirt-engine/manager-modules.pom
+%{_mavenpomdir}/ovirt-engine/aaa.pom
+%{_mavenpomdir}/ovirt-engine/bll.pom
+%{_mavenpomdir}/ovirt-engine/builtin.pom
+%{_mavenpomdir}/ovirt-engine/dal.pom
+%{_mavenpomdir}/ovirt-engine/scheduler.pom
+%{_mavenpomdir}/ovirt-engine/searchbackend.pom
+%{_mavenpomdir}/ovirt-engine/vdsbroker.pom
+%{_javadir}/ovirt-engine/aaa.jar
+%{_javadir}/ovirt-engine/bll.jar
+%{_javadir}/ovirt-engine/builtin.jar
+%{_javadir}/ovirt-engine/dal.jar
+%{_javadir}/ovirt-engine/scheduler.jar
+%{_javadir}/ovirt-engine/searchbackend.jar
+%{_javadir}/ovirt-engine/vdsbroker.jar
 
 %{engine_data}/services/ovirt-engine
 %{_unitdir}/ovirt-engine.service
@@ -1311,10 +1298,22 @@ fi
 %license LICENSE
 %{engine_data}/dbscripts/
 
-%files restapi -f .mfiles-restapi
+%files restapi
 %license LICENSE
 %{engine_restapi_war}/
 %{engine_apidoc_war}/
+%{_datadir}/maven-metadata/ovirt-engine-restapi.xml
+%{_mavenpomdir}/ovirt-engine/restapi-parent.pom
+%{_mavenpomdir}/ovirt-engine/interface.pom
+%{_mavenpomdir}/ovirt-engine/common-parent.pom
+%{_mavenpomdir}/ovirt-engine/interface-common-jaxrs.pom
+%{_mavenpomdir}/ovirt-engine/restapi-definition.pom
+%{_mavenpomdir}/ovirt-engine/restapi-jaxrs.pom
+%{_mavenpomdir}/ovirt-engine/restapi-types.pom
+%{_javadir}/ovirt-engine/interface-common-jaxrs.jar
+%{_javadir}/ovirt-engine/restapi-definition.jar
+%{_javadir}/ovirt-engine/restapi-jaxrs.jar
+%{_javadir}/ovirt-engine/restapi-types.jar
 
 %files webadmin-portal
 %license LICENSE
@@ -1336,7 +1335,7 @@ fi
 %{engine_data}/conf/ovirt-vmconsole-proxy-helper.conf
 %{engine_etc}/ovirt-vmconsole-proxy-helper.conf.d/
 
-%files tools -f .mfiles-tools
+%files tools
 %license LICENSE
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-notifier
 %config(noreplace) %{engine_etc}/engine-config/engine-config.conf
@@ -1390,7 +1389,13 @@ fi
 %{engine_etc}/engine-config/engine-config.*properties
 %{engine_etc}/notifier/notifier.conf.d/
 %{engine_etc}/ovirt-fence-kdump-listener.conf.d/
-
+%{_datadir}/maven-metadata/ovirt-engine-tools.xml
+%{_mavenpomdir}/ovirt-engine/extensions-tool.pom
+%{_mavenpomdir}/ovirt-engine/sso-client-registration-tool.pom
+%{_mavenpomdir}/ovirt-engine/tools.pom
+%{_javadir}/ovirt-engine/extensions-tool.jar
+%{_javadir}/ovirt-engine/sso-client-registration-tool.jar
+%{_javadir}/ovirt-engine/tools.jar
 
 %{_unitdir}/ovirt-engine-notifier.service
 %{_unitdir}/ovirt-fence-kdump-listener.service
