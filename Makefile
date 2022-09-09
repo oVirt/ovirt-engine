@@ -67,6 +67,11 @@ DEV_SETUP_ENV_DIR=
 PKG_USER=ovirt
 PKG_GROUP=ovirt
 WILDFLY_OVERLAY_MODULES=/usr/share/ovirt-engine-wildfly-overlay/modules
+
+# Used for offline build as a part of RPM build
+OFFLINE_BUILD=1
+OFFLINE_BUILD_MAVEN_SETTINGS=$(shell pwd)/build/offline-build-maven-settings.xml
+
 #
 # CUSTOMIZATION-END
 #
@@ -117,6 +122,11 @@ ifneq ($(BUILD_JAVA_OPTS_GWT),)
 BUILD_FLAGS:=$(BUILD_FLAGS) -D gwt.jvmArgs="$(BUILD_JAVA_OPTS_GWT)"
 endif
 BUILD_FLAGS:=$(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
+
+
+ifneq ($(OFFLINE_BUILD),0)
+BUILD_FLAGS:=$(BUILD_FLAGS) -s $(OFFLINE_BUILD_MAVEN_SETTINGS)
+endif
 
 PYTHON_SYS_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
 TARBALL=$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
@@ -573,6 +583,7 @@ install-dev:	\
 		BUILD_VALIDATION=0 \
 		PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
 		DEV_FLIST=tmp.dev.flist \
+		OFFLINE_BUILD=0 \
 		$(NULL)
 	cp tmp.dev.flist "$(DESTDIR)$(PREFIX)/dev.$(PACKAGE_NAME).flist"
 

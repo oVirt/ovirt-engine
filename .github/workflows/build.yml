@@ -30,14 +30,6 @@ jobs:
     - name: Checkout sources
       uses: ovirt/checkout-action@main
 
-    - name: Setup maven cache
-      uses: actions/cache@v2
-      with:
-        path: /root/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-
     - name: Perform build
       run: |
         .automation/build-rpm.sh $ARTIFACTS_DIR
