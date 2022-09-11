@@ -20,7 +20,7 @@
 
 - name: Get packages
   package_facts:
-    manager: auto
+    manager: rpm
 
 - name: Verify minimum vdsm version exists
   fail:

@@ -10,7 +10,7 @@
 
 - name: Fetch installed packages
   package_facts:
-    manager: auto
+    manager: rpm
 
 - name: Check if vdsm is preinstalled
   set_fact:
