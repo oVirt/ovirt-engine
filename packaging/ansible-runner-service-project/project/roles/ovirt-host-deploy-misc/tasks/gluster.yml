@@ -1,7 +1,7 @@
 ---
 - name: Fetch packages information
   package_facts:
-    manager: auto
+    manager: rpm
 
 - block:
     - name: Install vdsm-gluster package

@@ -28,7 +28,7 @@
 
   - name: Fetch installed packages
     package_facts:
-      manager: auto
+      manager: rpm
 
   - name: Get installed version of vdsm
     set_fact:

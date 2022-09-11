@@ -14,7 +14,7 @@
 
 - name: Fetch packages information
   package_facts:
-    manager: auto
+    manager: rpm
 
 - name: Verify if kexec-tools package version is supported
   fail:

@@ -1,6 +1,6 @@
 - name: Fetch installed packages
   package_facts:
-    manager: auto
+    manager: rpm
 
 - name: Check version of ovirt-openvswitch after upgrade
   set_fact:
