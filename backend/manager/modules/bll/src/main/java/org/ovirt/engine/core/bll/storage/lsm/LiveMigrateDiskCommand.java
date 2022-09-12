@@ -449,17 +449,17 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         }
     }
 
-    private boolean isMoveDiskInDbSucceeded(Guid targetStorageDomainId) {
+    private boolean isMoveDiskInDbSucceeded(Guid destDomainId) {
         Guid destinationImageId = getParameters().getDestinationImageId();
         DiskImage diskImage = diskImageDao.get(destinationImageId);
-        return diskImage != null && targetStorageDomainId.equals(diskImage.getStorageIds().get(0));
+        return diskImage != null && destDomainId.equals(diskImage.getStorageIds().get(0));
     }
 
-    private void moveDiskInDB(final Guid sourceStorageDomainId,
-            final Guid targetStorageDomainId,
-            final Guid targetQuota,
-            final Guid targetDiskProfile) {
-        if (isMoveDiskInDbSucceeded(targetStorageDomainId)) {
+    private void moveDiskInDB(final Guid sourceDomainId,
+            final Guid destDomainId,
+            final Guid destQuota,
+            final Guid destDiskProfile) {
+        if (isMoveDiskInDbSucceeded(destDomainId)) {
             return;
         }
 
@@ -467,11 +467,11 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                 () -> {
                     for (DiskImage di : diskImageDao.getAllSnapshotsForImageGroup(getParameters().getImageGroupID())) {
                         imageStorageDomainMapDao.remove(new ImageStorageDomainMapId(di.getImageId(),
-                                sourceStorageDomainId));
+                                sourceDomainId));
                         imageStorageDomainMapDao.save(new ImageStorageDomainMap(di.getImageId(),
-                                targetStorageDomainId,
-                                targetQuota,
-                                targetDiskProfile));
+                                destDomainId,
+                                destQuota,
+                                destDiskProfile));
                         // since moveDiskInDB can be called to 'rollback' the entity in case of
                         // an exception, we store locally the old quota and disk profile id.
                         if (sourceQuotaId == null) {
@@ -544,8 +544,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                     "VM " + getParameters().getVmId() + " is not running on any VDS");
         }
 
-        StorageType targetType = getDstStorageDomain().getStorageStaticData().getStorageType();
-        Optional<String> diskType = vmInfoBuildUtils.getNetworkDiskType(getVm(), targetType);
+        StorageType destType = getDstStorageDomain().getStorageStaticData().getStorageType();
+        Optional<String> diskType = vmInfoBuildUtils.getNetworkDiskType(getVm(), destType);
 
         // Start disk migration
         VmReplicateDiskParameters migrationStartParams = new VmReplicateDiskParameters(getParameters().getVdsId(),
@@ -751,28 +751,28 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         if (getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.CLONE_IMAGE_STRUCTURE) {
             if (Guid.Empty.equals(getParameters().getVdsId())) {
                 log.error("Failed during live storage migration of disk '{}' of vm '{}', as the vm is not running" +
-                                " on any host not attempting to end the replication before the target disk deletion",
+                                " on any host not attempting to end the replication before the destination disk deletion",
                         getParameters().getImageGroupID(), getParameters().getVmId());
             } else {
                 log.error("Failed during live storage migration of disk '{}' of vm '{}', attempting to end " +
-                        "replication before deleting the target disk",
+                        "replication before deleting the destination disk",
                         getParameters().getImageGroupID(), getParameters().getVmId());
                 try {
                     replicateDiskFinish(getParameters().getSourceDomainId(), getParameters().getSourceDomainId());
                 } catch (Exception e) {
                     if (e instanceof EngineException &&
                             EngineError.ReplicationNotInProgress.equals(((EngineException) e).getErrorCode())) {
-                        log.warn("Replication is not in progress, proceeding with removing the target disk");
+                        log.warn("Replication is not in progress, proceeding with removing the destination disk");
                     } else {
                         log.error("Replication end of disk '{}' in vm '{}' back to the source failed, skipping deletion of " +
-                                "the target disk", getParameters().getImageGroupID(), getParameters().getVmId());
+                                "the destination disk", getParameters().getImageGroupID(), getParameters().getVmId());
                         return;
                     }
                 }
             }
         }
 
-        log.error("Attempting to delete the target of disk '{}' of vm '{}'",
+        log.error("Attempting to delete the destination of disk '{}' of vm '{}'",
                 getParameters().getImageGroupID(), getParameters().getVmId());
         removeImage(getParameters().getDestDomainId(),
                 getParameters().getImageGroupID(),
