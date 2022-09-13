@@ -211,14 +211,15 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             activeSnapshotLeaseDomainId = getVm().getStaticData().getLeaseStorageDomainId();
         }
 
+        Snapshot snapshot = snapshotDao.get(getVm().getId(), SnapshotType.ACTIVE);
         getSnapshotsManager().attemptToRestoreVmConfigurationFromSnapshot(getVm(),
                 getDstSnapshot(),
-                snapshotDao.getId(getVm().getId(), SnapshotType.ACTIVE),
+                snapshot.getId(),
                 getFilteredImagesToPreview(),
                 getCompensationContext(),
                 getCurrentUser(),
                 new VmInterfaceManager(getMacPool()),
-                getParameters().isRestoreMemory());
+                snapshot.getMemoryDiskId() != null);
 
         // custom preview - without leases
         if (!getParameters().isRestoreLease()) {
