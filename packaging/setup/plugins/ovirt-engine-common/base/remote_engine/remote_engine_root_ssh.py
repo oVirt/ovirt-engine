@@ -107,6 +107,15 @@ class Plugin(plugin.PluginBase):
 
         def _ssh_connect(self):
             import paramiko
+
+            logger = self.logger
+
+            class my_missing_key_policy(paramiko.MissingHostKeyPolicy):
+                def missing_host_key(self, client, hostname, key):
+                    logger.warn(
+                        f'Unknown {key.get_name()} host key for {hostname}'
+                    )
+
             connected = False
             interactive = False
             password = self.environment[
@@ -130,9 +139,7 @@ class Plugin(plugin.PluginBase):
                             default='',
                         )
                     client = paramiko.SSHClient()
-                    client.set_missing_host_key_policy(
-                        paramiko.WarningPolicy()
-                    )
+                    client.set_missing_host_key_policy(my_missing_key_policy)
                     # TODO Currently the warning goes only to the log file.
                     # We should probably write our own policy with a custom
                     # exception so that we can catch it below and verify with
