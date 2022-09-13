@@ -86,7 +86,8 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends MoveOrCopyDiskCommand<T>implements SerialChildExecutingCommand {
+public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends MoveOrCopyDiskCommand<T>
+        implements SerialChildExecutingCommand {
 
     private Guid sourceQuotaId;
     private Guid sourceDiskProfileId;
@@ -617,8 +618,6 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         if (!getVm().isRunningAndQualifyForDisksMigration()) {
             return failValidation(EngineMessage.CANNOT_LIVE_MIGRATE_VM_SHOULD_BE_IN_PAUSED_OR_UP_STATUS);
         }
-
-        setStoragePoolId(getVm().getStoragePoolId());
 
         if (!validate(new StorageDomainValidator(getDstStorageDomain()).isNotBackupDomain())
                 || !validateDestDomainsSpaceRequirements()) {
