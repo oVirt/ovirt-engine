@@ -52,7 +52,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
                     }
                     return actionStatus(status, action, addLinks(newModel(id)));
                 } else {
-                    return actionAsync(actionResult, action);
+                    return actionAsync(actionResult, action, pollingType);
                 }
             } else {
                 Object model = resolveCreated(actionResult, entityResolver, null);
@@ -81,12 +81,12 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
             if (actionResult.getJobId() != null) {
                 setJobLink(action, actionResult);
             }
-            if (actionResult.getHasAsyncTasks()) {
+            if (isAsyncTaskOrJobExists(pollingType, actionResult)) {
                 if (expectBlocking(action)) {
                     CreationStatus status = awaitCompletion(actionResult, pollingType);
                     return actionStatus(status, action, addLinks(newModel(id)));
                 } else {
-                    return actionAsync(actionResult, action);
+                    return actionAsync(actionResult, action, pollingType);
                 }
             } else {
                 return actionSuccess(action, addLinks(newModel(id)));
@@ -183,7 +183,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         return Response.ok().entity(action).build();
     }
 
-    protected Response actionAsync(ActionReturnValue actionResult, Action action) {
+    protected Response actionAsync(ActionReturnValue actionResult, Action action, PollingType pollingType) {
         action.setAsync(true);
 
         String ids = asString(actionResult.getVdsmTaskIdList());
@@ -195,7 +195,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         addOrUpdateLink(action, "parent", path.substring(0, path.lastIndexOf("/")));
         addOrUpdateLink(action, "replay", path);
 
-        CreationStatus status = getAsynchronousStatus(actionResult);
+        CreationStatus status = getAsynchronousStatus(actionResult, pollingType);
         if (status != null) {
             action.setStatus(status.value());
         }
