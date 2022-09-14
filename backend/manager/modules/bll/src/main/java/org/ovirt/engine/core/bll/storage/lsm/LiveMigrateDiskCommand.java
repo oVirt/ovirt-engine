@@ -707,7 +707,17 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     protected StorageDomainValidator createStorageDomainValidator(StorageDomain storageDomain) {
-        return new StorageDomainValidator(storageDomain);
+        return new StorageDomainValidator(storageDomain) {
+            @Override
+            protected double getTotalSizeForClonedDisk(DiskImage diskImage) {
+                double basicSize = super.getTotalSizeForClonedDisk(diskImage);
+                // Add additional snapshot overhead (relevant only for Live Storage flow, cluster version 4.7 or above).
+                if (FeatureSupported.isReplicateExtendSupported(getCluster().getCompatibilityVersion())) {
+                    basicSize += ImagesHandler.computeImageInitialSizeInBytes(diskImage.getImage());
+                }
+                return basicSize;
+            }
+        };
     }
 
     @Override
