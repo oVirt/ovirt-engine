@@ -1119,13 +1119,14 @@ fi
 %dir %{engine_etc}
 %dir %{engine_etc}/ansible
 %dir %{engine_etc}/branding
+%dir %{engine_etc}/cinderlib/
 %dir %{engine_etc}/extensions.d
 %dir %{engine_java}
 %license LICENSE
 %{engine_data}/brands/ovirt.brand/
 %{engine_etc}/branding/00-ovirt.brand
 %{engine_etc}/engine.conf.d/
-%{engine_etc}/cinderlib/
+%{engine_etc}/cinderlib/README
 %{engine_etc}/timezones/
 %config %{engine_data}/cinderlib/logger.conf
 %config %attr(0700,%{engine_user},%{engine_group}) %{engine_etc}/cinderlib/ssh_known_hosts
