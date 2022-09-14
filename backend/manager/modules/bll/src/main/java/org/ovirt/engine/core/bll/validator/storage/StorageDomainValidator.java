@@ -159,7 +159,7 @@ public class StorageDomainValidator {
      * currently in the VDSM code.
      *
      * */
-    private double getTotalSizeForClonedDisk(DiskImage diskImage) {
+    protected double getTotalSizeForClonedDisk(DiskImage diskImage) {
         double sizeForDisk = ImagesHandler.getTotalActualSizeOfDisk(diskImage, storageDomain.getStorageStaticData());
 
         if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
