@@ -30,10 +30,10 @@ import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
-import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -302,7 +302,8 @@ public class BackendTemplateResourceTest
         setUriInfo(setUpActionExpectations(ActionType.ExportVmTemplate,
                 MoveOrCopyParameters.class,
                 new String[]{"ContainerId", "StorageDomainId", "ForceOverride"},
-                new Object[]{GUIDS[0], GUIDS[2], exclusive}));
+                new Object[]{GUIDS[0], GUIDS[2], exclusive},
+                JobExecutionStatus.FINISHED));
 
         Action action = new Action();
         action.setStorageDomain(storageDomain);
@@ -313,18 +314,23 @@ public class BackendTemplateResourceTest
     }
 
     @Test
-    public void testExportAsyncPending() {
-        doTestExportAsync(AsyncTaskStatusEnum.init, CreationStatus.PENDING);
-    }
-
-    @Test
     public void testExportAsyncInProgress() {
-        doTestExportAsync(AsyncTaskStatusEnum.running, CreationStatus.IN_PROGRESS);
-    }
+        setUriInfo(setUpActionExpectations(ActionType.ExportVmTemplate,
+                MoveOrCopyParameters.class,
+                new String[] { "ContainerId", "StorageDomainId", "ForceOverride" },
+                new Object[] { GUIDS[0], GUIDS[2], false },
+                JobExecutionStatus.STARTED));
 
-    @Test
-    public void testExportAsyncFinished() {
-        doTestExportAsync(AsyncTaskStatusEnum.finished, CreationStatus.COMPLETE);
+        Action action = new Action();
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setId(GUIDS[2].toString());
+        action.setStorageDomain(storageDomain);
+
+        Response response = resource.export(action);
+        verifyActionResponse(response, "templates/" + GUIDS[0], true, null);
+        action = (Action)response.getEntity();
+        assertTrue(action.isSetStatus());
+        assertEquals(CreationStatus.IN_PROGRESS.value(), action.getStatus());
     }
 
     @Test
@@ -372,36 +378,18 @@ public class BackendTemplateResourceTest
                 assertThrows(WebApplicationException.class, () -> verifyModel(resource.update(model), 0)), BAD_REQUEST);
     }
 
-    private void doTestExportAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) {
-        setUriInfo(setUpActionExpectations(ActionType.ExportVmTemplate,
-                                           MoveOrCopyParameters.class,
-                                           new String[] { "ContainerId", "StorageDomainId", "ForceOverride" },
-                                           new Object[] { GUIDS[0], GUIDS[2], false },
-                                           asList(GUIDS[1]),
-                                           asList(new AsyncTaskStatus(asyncStatus))));
-
-        Action action = new Action();
-        StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setId(GUIDS[2].toString());
-        action.setStorageDomain(storageDomain);
-
-        Response response = resource.export(action);
-        verifyActionResponse(response, "templates/" + GUIDS[0], true, null);
-        action = (Action)response.getEntity();
-        assertTrue(action.isSetStatus());
-        assertEquals(actionStatus.value(), action.getStatus());
-    }
-
     @Override
     protected VmTemplate getEntity(int index) {
         return setUpEntityExpectations(mock(VmTemplate.class), index);
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-                                              Class<? extends ActionParametersBase> clz,
-                                              String[] names,
-                                              Object[] values) {
-        return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
+            Class<? extends ActionParametersBase> clz,
+            String[] names,
+            Object[] values,
+            JobExecutionStatus jobExecutionStatus) {
+        String uri = "templates/" + GUIDS[0] + "/action";
+        return setUpActionExpectations(task, clz, names, values, true, true, null, null, null, Guid.newGuid(), jobExecutionStatus, uri, true);
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,

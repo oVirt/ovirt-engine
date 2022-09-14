@@ -264,28 +264,6 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     }
 
     /**
-     * Returns true if there are still processes running in the
-     * background, associated with the current request.
-     *
-     * For vdsm-task polling, the indication is the existence of running
-     * vdsm tasks.
-     *
-     * For job polling, the indication is that the job is in PENDING or
-     * IN_PROGRESS status.
-     */
-    private boolean isAsyncTaskOrJobExists(PollingType pollingType, ActionReturnValue createResult) {
-        if (pollingType==PollingType.VDSM_TASKS) {
-            //when the polling-type is vdsm_tasks, check for existing async-tasks
-            return createResult.getHasAsyncTasks();
-        } else if (pollingType==PollingType.JOB) {
-            //when the polling-type is job, check if the job is pending or in progress
-            CreationStatus status = getJobIdStatus(createResult);
-            return status==CreationStatus.PENDING || status==CreationStatus.IN_PROGRESS;
-        }
-        return false; //shouldn't reach here
-    }
-
-    /**
      * In rare cases, after entity creation there is a need to make modifications
      * to the created entity. Such changes should be done here
      *

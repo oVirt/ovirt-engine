@@ -119,6 +119,28 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q>
         return asyncStatus;
     }
 
+    /**
+     * Returns true if there are still processes running in the
+     * background, associated with the current request.
+     *
+     * For vdsm-task polling, the indication is the existence of running
+     * vdsm tasks.
+     *
+     * For job polling, the indication is that the job is in PENDING or
+     * IN_PROGRESS status.
+     */
+    protected boolean isAsyncTaskOrJobExists(PollingType pollingType, ActionReturnValue createResult) {
+        if (pollingType==PollingType.VDSM_TASKS) {
+            //when the polling-type is vdsm_tasks, check for existing async-tasks
+            return createResult.getHasAsyncTasks();
+        } else if (pollingType==PollingType.JOB) {
+            //when the polling-type is job, check if the job is pending or in progress
+            CreationStatus status = getJobIdStatus(createResult);
+            return status==CreationStatus.PENDING || status==CreationStatus.IN_PROGRESS;
+        }
+        return false; //shouldn't reach here
+    }
+
     protected CreationStatus getJobIdStatus(ActionReturnValue result) {
         Guid jobId = result.getJobId();
         if (jobId == null || jobId.equals(Guid.Empty)) {

@@ -104,6 +104,10 @@ public class BackendStorageDomainVmResource
             params.setClusterId(getClusterId(action));
         }
         params.setImagesExistOnTargetStorageDomain(true);
+        // disable async mode by default since this operation should be fairly quick
+        if (!action.isSetAsync()) {
+            action.setAsync(false);
+        }
 
         if (action.isSetClone()) {
             params.setImportAsNewEntity(action.isClone());
@@ -117,7 +121,7 @@ public class BackendStorageDomainVmResource
         if (action.isSetName()) {
             params.setName(action.getName());
         }
-        return doAction(ActionType.ImportVmFromConfiguration, params, action);
+        return doAction(ActionType.ImportVmFromConfiguration, params, action, PollingType.JOB);
     }
 
     @Override
