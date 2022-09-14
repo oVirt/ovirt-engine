@@ -14,12 +14,9 @@ jobs:
       matrix:
         include:
           - name: centos-stream-8
-            shortcut: cs8
             container-name: el8stream
-          # Try to enable CS9 after switch to xmaven is finished
-          # - name: centos-stream-9
-          #  shortcut: cs9
-          #  container-name: stream9
+          - name: centos-stream-9
+            container-name: el9stream
 
     name: ${{ matrix.name }}
 
