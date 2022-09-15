@@ -30,6 +30,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,9 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
     @Inject
     private KubevirtMonitoring kubevirt;
+
+    @Inject
+    protected ResourceManager resourceManager;
 
     private boolean suspendedVm;
 
@@ -174,6 +178,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
         suspendedVm = getVm().getStatus() == VMStatus.Suspended;
         if (suspendedVm) {
+            resourceManager.internalSetVmStatus(getVm().getDynamicData(), VMStatus.Down);
             endVmCommand();
             setCommandShouldBeLogged(true);
         } else {
