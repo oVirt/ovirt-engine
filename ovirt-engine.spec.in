@@ -538,7 +538,7 @@ Requires:	python3-paramiko
 Requires:	python3-distro
 Requires(pre):	shadow-utils
 Conflicts:	%{name}-dwh < 4.4.0
-Conflicts:	%{name}-dwh-setup < 4.5.5
+Conflicts:	%{name}-dwh-setup < 4.5.6
 Conflicts:	%{name}-keycloak-setup < 15.0.2-6
 
 %description setup-base
