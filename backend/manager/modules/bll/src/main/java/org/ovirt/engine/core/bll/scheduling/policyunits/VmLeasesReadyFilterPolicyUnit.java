@@ -46,7 +46,7 @@ public class VmLeasesReadyFilterPolicyUnit extends PolicyUnitImpl {
             return hosts;
         }
 
-        return hosts.stream()
+        List<VDS> filteredHosts = hosts.stream()
                 .filter(vds -> {
                     ArrayList<VDSDomainsData> domainsData = resourceManager.getVdsManager(vds.getId()).getDomains();
                     if (!isVmLeaseReadyForHost(domainsData, vm, vds.getName())) {
@@ -56,6 +56,12 @@ public class VmLeasesReadyFilterPolicyUnit extends PolicyUnitImpl {
                     }
                     return true;
                 }).collect(Collectors.toList());
+
+        if (filteredHosts.isEmpty() && !hosts.isEmpty()) {
+            resourceManager.getVmManager(vm.getId()).setFailedSchedulingDueToLeaseSd(true);
+        }
+
+        return filteredHosts;
     }
 
     private boolean isVmLeaseReadyForHost(ArrayList<VDSDomainsData> domainsData, VM vm, String vdsName) {

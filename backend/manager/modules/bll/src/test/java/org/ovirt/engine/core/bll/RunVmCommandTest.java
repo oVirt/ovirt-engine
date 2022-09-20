@@ -75,6 +75,7 @@ import org.ovirt.engine.core.utils.InjectedMock;
 import org.ovirt.engine.core.utils.MockConfigDescriptor;
 import org.ovirt.engine.core.utils.MockConfigExtension;
 import org.ovirt.engine.core.utils.MockedConfig;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 
 @ExtendWith({MockitoExtension.class, MockConfigExtension.class})
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -117,6 +118,9 @@ public class RunVmCommandTest extends BaseCommandTest {
     @Spy
     @InjectMocks
     VmHandler vmHandler;
+
+    @Mock
+    private VmManager vmManager;
 
     private static final String ACTIVE_ISO_PREFIX =
             "/rhev/data-center/mnt/some_computer/f6bccab4-e2f5-4e02-bba0-5748a7bc07b6/images/11111111-1111-1111-1111-111111111111";
@@ -334,6 +338,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         mockSuccessfulRunVmValidator();
         doNothing().when(command).initParametersForExternalNetworks(null, false);
         doReturn(Collections.emptyMap()).when(command).flushPassthroughVnicToVfMap();
+        doReturn(vmManager).when(command).getVmManager();
         mockBackend();
     }
 

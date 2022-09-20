@@ -67,6 +67,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -169,6 +170,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private StorageDomainDao storageDomainDao;
     @Inject
     private ManagedBlockStorageCommandUtil managedBlockStorageCommandUtil;
+    @Inject
+    private HaAutoStartVmsRunner haAutoStartVmsRunner;
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -1080,6 +1083,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         RunVmValidator runVmValidator = getRunVmValidator();
 
+        getVmManager().setFailedSchedulingDueToLeaseSd(false);
         if (!runVmValidator.canRunVm(
                 getReturnValue().getValidationMessages(),
                 getStoragePool(),
@@ -1087,6 +1091,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getVdsWhiteList(),
                 getCluster(),
                 getParameters().isRunInUnknownStatus())) {
+            if (!isInternalExecution() && getVmManager().isFailedSchedulingDueToLeaseSd()) {
+                getVm().setStatus(VMStatus.Down);
+                getVm().setExitStatus(VmExitStatus.Error);
+                getVmManager().update(getVm().getDynamicData());
+                haAutoStartVmsRunner.addVmsToRun(Collections.singletonList(getVmId()));
+            }
             return false;
         }
 

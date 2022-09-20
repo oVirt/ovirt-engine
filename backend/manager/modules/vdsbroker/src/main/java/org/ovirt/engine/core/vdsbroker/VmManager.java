@@ -59,6 +59,8 @@ public class VmManager {
     /** Locks the VM devices for changes of their dynamic properties (addresses, plugged/unplugged) */
     private final Lock vmDevicesLock;
 
+    private boolean failedSchedulingDueToLeaseSd;
+
     private Long vmDataChangedTime;
     /** how long to wait for a response for power-off operation, in nanoseconds */
     private long powerOffTimeout;
@@ -363,6 +365,14 @@ public class VmManager {
 
     public void setLastStatusBeforeMigration(VMStatus lastStatusBeforeMigration) {
         this.lastStatusBeforeMigration = lastStatusBeforeMigration;
+    }
+
+    public boolean isFailedSchedulingDueToLeaseSd() {
+        return failedSchedulingDueToLeaseSd;
+    }
+
+    public void setFailedSchedulingDueToLeaseSd(boolean failedSchedulingDueToLeaseSd) {
+        this.failedSchedulingDueToLeaseSd = failedSchedulingDueToLeaseSd;
     }
 
     public boolean isDeviceBeingHotUnlugged(Guid deviceId) {
