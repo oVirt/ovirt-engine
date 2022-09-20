@@ -542,6 +542,7 @@ public class UpdateClusterCommand<T extends ClusterOperationParameters> extends
             updateParams.setClusterLevelChangeFromVersion(oldCluster.getCompatibilityVersion());
         }
         updateParams.setCompensationEnabled(true);
+        updateParams.setUpdateNuma(false);
 
         if (updateParams.getVmStaticData().getCustomCompatibilityVersion() == null) {
             new CompatibilityVersionUpdater().updateVmBaseCompatibilityVersion(
