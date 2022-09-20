@@ -15,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.scheduling.SchedulingContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -24,8 +26,10 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class VmLeasesReadyFilterPolicyUnitTest {
 
     @Mock
@@ -36,6 +40,9 @@ class VmLeasesReadyFilterPolicyUnitTest {
 
     @Mock
     VdsManager host2VdsManager;
+
+    @Mock
+    VmManager vmManager;
 
     @InjectMocks
     VmLeasesReadyFilterPolicyUnit unit = new VmLeasesReadyFilterPolicyUnit(null, null);
@@ -174,6 +181,7 @@ class VmLeasesReadyFilterPolicyUnitTest {
     private void setUpMocks() {
         doReturn(host1VdsManager).when(resourceManager).getVdsManager(host1.getId());
         doReturn(host2VdsManager).when(resourceManager).getVdsManager(host2.getId());
+        doReturn(vmManager).when(resourceManager).getVmManager(vm.getId());
         doReturn(host1.getDomains()).when(host1VdsManager).getDomains();
         doReturn(host2.getDomains()).when(host2VdsManager).getDomains();
     }
