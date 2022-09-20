@@ -12,12 +12,12 @@
 # the local devices as FC storage in engine.
 
 - block:
-  - name: mask libvirt modular daemon units
-    systemd:
+  - name: Mask libvirt modular daemon units
+    ansible.builtin.systemd:
       name: "{{ item }}"
       state: stopped
-      enabled: no
-      masked: yes
+      enabled: false
+      masked: true
     with_items:
       - virtqemud.service
       - virtqemud.socket
@@ -29,21 +29,21 @@
       - virtstoraged.socket
       - virtproxyd.socket
 
-  - name: stop libvirtd
-    systemd:
+  - name: Stop libvirtd
+    ansible.builtin.systemd:
       name: "{{ item }}"
       state: stopped
     with_items:
       - libvirtd.service
       - libvirtd.socket
 
-  - name: remove modular sockets
-    shell: for i in virt{qemu,interface,network,nodedev,nwfilter,secret,storage,proxy}d libvirt; do rm -f /run/libvirt/${i}-*sock*; done;
+  - name: Remove modular sockets
+    ansible.builtin.shell: for i in virt{qemu,interface,network,nodedev,nwfilter,secret,storage,proxy}d libvirt; do rm -f /run/libvirt/${i}-*sock*; done;
 
-  - name: enable libvirtd monolithic daemon unit
-    systemd:
+  - name: Enable libvirtd monolithic daemon unit
+    ansible.builtin.systemd:
       name: "{{ item }}"
-      enabled: yes
+      enabled: true
       state: started
     with_items:
       - libvirtd.service
@@ -51,52 +51,52 @@
 
   # workaround for BZ 2054323
   - name: Change the openvswitch_t to permissive
-    command: semanage permissive -a openvswitch_t
-    changed_when: True
+    ansible.builtin.command: semanage permissive -a openvswitch_t
+    changed_when: true
 
-  when: el_ver|int >= 9
+  when: el_ver | int >= 9
 
 
 - name: Configure LVM filter
-  command: vdsm-tool config-lvm-filter -y
+  ansible.builtin.command: vdsm-tool config-lvm-filter -y
   register: lvm_filter_result
-  when: el_ver|int >= 8
+  when: el_ver | int >= 8
   ignore_errors: true
 
 - name: Check for LVM filter configuration error
-  debug:
+  ansible.builtin.debug:
     msg: "[ERROR] Cannot configure LVM filter on host, please run: vdsm-tool config-lvm-filter"
   when:
-    - el_ver|int >= 8
+    - el_ver | int >= 8
     - lvm_filter_result.rc != 0
 
 - name: Configure host for vdsm
-  command: vdsm-tool configure --force
-  changed_when: True
+  ansible.builtin.command: vdsm-tool configure --force
+  changed_when: true
 
 - name: Check existence of /etc/fapolicyd/rules.d directory
-  stat:
+  ansible.builtin.stat:
     path: /etc/fapolicyd/rules.d
   register: fapolicy_rules
 
-- name: collect facts about system services
-  service_facts:
+- name: Collect facts about system services
+  ansible.builtin.service_facts:
 
 - block:
-  - name: add vdsm-mom allow rule to fapolicy
-    copy:
-     dest: /etc/fapolicyd/rules.d/32-allow-vdsm-mom.rules
-     group: fapolicyd
-     mode: '0644'
-     remote_src: yes
-     content: |
-       allow perm=any trust=1 : dir=/etc/vdsm/mom.d/ ftype=text/x-lisp
-       allow perm=any trust=1 : dir=/var/tmp/ ftype=text/x-python
+    - name: Add vdsm-mom allow rule to fapolicy
+      ansible.builtin.copy:
+        dest: /etc/fapolicyd/rules.d/32-allow-vdsm-mom.rules
+        group: fapolicyd
+        mode: '0644'
+        remote_src: true
+        content: |
+          allow perm=any trust=1 : dir=/etc/vdsm/mom.d/ ftype=text/x-lisp
+          allow perm=any trust=1 : dir=/var/tmp/ ftype=text/x-python
 
-  - name: restart fapolicy service
-    systemd:
-     state: restarted
-     name: fapolicyd
+    - name: Restart fapolicy service
+      ansible.builtin.systemd:
+        state: restarted
+        name: fapolicyd
 
   when:
     - fapolicy_rules.stat.exists

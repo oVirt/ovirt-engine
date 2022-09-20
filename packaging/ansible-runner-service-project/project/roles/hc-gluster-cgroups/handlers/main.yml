@@ -1,5 +1,4 @@
 - name: Restart glusterd
-  service:
+  ansible.builtin.service:
     name: glusterd
     state: restarted
-

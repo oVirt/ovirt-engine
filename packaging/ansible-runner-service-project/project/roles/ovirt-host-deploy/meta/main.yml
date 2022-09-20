@@ -1,13 +1,13 @@
 dependencies:
-  - ovirt-host-deploy-facts
-  - ovirt-host-deploy-vdsm
-  - ovirt-host-deploy-misc
-  - ovirt-host-deploy-ovn-certificates
-  - ovirt-provider-ovn-driver
-  - ovirt-host-deploy-libvirt-guests
-  - ovirt-host-deploy-firewalld
-  - ovirt-host-deploy-vnc-certificates
-  - ovirt-host-deploy-kernel
-  - ovirt-host-deploy-vm-console
-  - ovirt-host-deploy-iptables
-  - ovirt-host-deploy-hosted-engine
+  - role: ovirt-host-deploy-facts
+  - role: ovirt-host-deploy-vdsm
+  - role: ovirt-host-deploy-misc
+  - role: ovirt-host-deploy-ovn-certificates
+  - role: ovirt-provider-ovn-driver
+  - role: ovirt-host-deploy-libvirt-guests
+  - role: ovirt-host-deploy-firewalld
+  - role: ovirt-host-deploy-vnc-certificates
+  - role: ovirt-host-deploy-kernel
+  - role: ovirt-host-deploy-vm-console
+  - role: ovirt-host-deploy-iptables
+  - role: ovirt-host-deploy-hosted-engine

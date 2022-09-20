@@ -1,38 +1,38 @@
 ---
-- name: populate service facts
-  service_facts:
+- name: Populate service facts
+  ansible.builtin.service_facts:
 
 - name: Stop services
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: stopped
   loop:
-  - vdsmd.service
-  - supervdsmd.service
-  - libvirtd.service
-  - ovirt-imageio.service
+    - vdsmd.service
+    - supervdsmd.service
+    - libvirtd.service
+    - ovirt-imageio.service
   when: "item in ansible_facts.services"
 
 - name: Start and enable services
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: started
-    enabled: yes
+    enabled: true
   loop:
   # vdsmd will start all its dependent services stopped earlier, libvirtd, ovirt-imageio, supervdsmd
-  - cgconfig.service
-  - messagebus.service
-  - vdsmd.service
+    - cgconfig.service
+    - messagebus.service
+    - vdsmd.service
   when: "item in ansible_facts.services"
 
 - name: Reload NetworkManager config
-  command: nmcli general reload conf
+  ansible.builtin.command: nmcli general reload conf
   when:
     - "'NetworkManager.service' in ansible_facts.services"
     - el_ver|int >= 8
 
 - name: Restart NetworkManager service
-  service:
+  ansible.builtin.service:
     name: NetworkManager.service
     state: restarted
   when:

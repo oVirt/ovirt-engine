@@ -1,6 +1,6 @@
 - block:
   - name: Create vdsm and QEMU key temporary files
-    tempfile:
+    ansible.builtin.tempfile:
       state: file
       suffix: '{{ item.suffix }}'
     with_items:
@@ -13,7 +13,7 @@
     register: vdsmkeys
 
   - name: Generate vdsm and QEMU CSRs
-    command: |
+    ansible.builtin.command: |
       '/usr/bin/openssl'
       'req'
       '-new'
@@ -28,7 +28,7 @@
     register: csrs
 
   - name: Copy vdsm and QEMU CSRs
-    copy:
+    ansible.builtin.copy:
       content: "{{ item.stdout }}"
       dest: "{{ ovirt_pki_dir }}/{{ item.item.item.req_dir }}/{{ ovirt_vds_hostname }}.req"
       mode: 0644
@@ -36,7 +36,7 @@
     delegate_to: localhost
 
   - name: Run PKI enroll request for vdsm and QEMU
-    command: |
+    ansible.builtin.command: |
        "{{ ovirt_engine_usr }}/bin/pki-enroll-request.sh"
        "--name={{ ovirt_vds_hostname }}"
        "--subject=/O={{ ovirt_organizationname }}/CN={{ ovirt_vds_hostname }}{{ item.ou }}"
@@ -59,7 +59,7 @@
     delegate_to: localhost
 
   - name: Prepare directories for vdsm certificate files
-    file:
+    ansible.builtin.file:
       dest: "{{ filedest }}"
       state: directory
       owner: 'vdsm'
@@ -76,7 +76,7 @@
       loop_var: filedest
 
   - name: Add vdsm cacert files
-    copy:
+    ansible.builtin.copy:
       content: "{{ ovirt_ca_cert }}"
       dest: "{{ filedest }}"
       owner: 'root'
@@ -90,7 +90,7 @@
       loop_var: filedest
 
   - name: Add QEMU cacert file
-    copy:
+    ansible.builtin.copy:
       content: "{{ ovirt_qemu_ca_cert }}"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_ca_file }}"
       owner: 'root'
@@ -98,13 +98,13 @@
       mode: 0644
 
   - name: Add vdsm cert files
-    copy:
+    ansible.builtin.copy:
       src: "{{ ovirt_pki_dir }}/certs/{{ ovirt_vds_hostname }}.cer"
       dest: "{{ filedest }}"
       owner: 'root'
       group: 'kvm'
       mode: 0644
-      remote_src: no
+      remote_src: false
     with_items:
       - "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_cert_file }}"
       - "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_cert_file }}"
@@ -113,32 +113,32 @@
       loop_var: filedest
 
   - name: Add QEMU server cert file
-    copy:
+    ansible.builtin.copy:
       src: "{{ ovirt_pki_dir }}/certs-qemu/{{ ovirt_vds_hostname }}.cer"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_cert_file }}"
       owner: 'root'
       group: 'kvm'
-      remote_src: no
+      remote_src: false
       mode: preserve
 
   - name: Add QEMU client cert file link
-    file:
+    ansible.builtin.file:
       src: "{{ ovirt_qemu_cert_file | basename }}"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_client_cert_file }}"
       state: link
 
   - name: Set vdsm key path
-    set_fact:
-      vdsmkey_path: "{{ vdsmkeys.results[0].path  }}"
+    ansible.builtin.set_fact:
+      vdsmkey_path: "{{ vdsmkeys.results[0].path }}"
 
   - name: Add vdsm key files
-    copy:
+    ansible.builtin.copy:
       src: "{{ vdsmkey_path }}"
       dest: "{{ filedest }}"
       owner: 'vdsm'
       group: 'kvm'
       mode: 0440
-      remote_src: yes
+      remote_src: true
     with_items:
       - "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_key_file }}"
       - "{{ ovirt_vdsm_trust_store }}/{{ ovirt_vdsm_spice_key_file }}"
@@ -147,29 +147,29 @@
       loop_var: filedest
 
   - name: Set QEMU key path
-    set_fact:
-      qemukey_path: "{{ vdsmkeys.results[1].path  }}"
+    ansible.builtin.set_fact:
+      qemukey_path: "{{ vdsmkeys.results[1].path }}"
 
   - name: Add QEMU server key file
-    copy:
+    ansible.builtin.copy:
       src: "{{ qemukey_path }}"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_key_file }}"
       owner: 'root'
       group: 'qemu'
       mode: 0440
-      remote_src: yes
+      remote_src: true
 
   - name: Add QEMU client key file link
-    file:
+    ansible.builtin.file:
       src: "{{ ovirt_qemu_key_file | basename }}"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_client_key_file }}"
       state: link
 
   - name: Populate service facts
-    service_facts:
+    ansible.builtin.service_facts:
 
   - name: Restart services
-    service:
+    ansible.builtin.service:
       name: "{{ item }}"
       state: restarted
     loop:
@@ -179,7 +179,7 @@
 
   always:
     - name: Remove temp file
-      file:
+      ansible.builtin.file:
         state: absent
         path: "{{ item.path }}"
       loop: "{{ vdsmkeys.results }}"
