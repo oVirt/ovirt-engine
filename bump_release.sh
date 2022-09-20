@@ -28,7 +28,7 @@ if ! grep -E "<version"  pom.xml | head -n1 | awk -F '[<>]' '/version/{print $3}
 	VERSION="$(grep -E "<version"  pom.xml | head -n1 | awk -F '[<>]' '/version/{print $3}')"
 else
 	# Set pom to build final release
-	find . -name pom.xml -exec sed -i "s:-SNAPSHOT::" {} +
+    { find . -name pom.xml -print0; find packaging/maven-metadata -name '*.xml' -print0; } | xargs -0 sed -i "s:-SNAPSHOT::"
 
 	# Get current ovirt-engine version
 	VERSION="$(grep -E "<version"  pom.xml | head -n1 | awk -F '[<>]' '/version/{print $3}')"
@@ -69,7 +69,7 @@ else
 fi
 
 export NEXT_VERSION
-find . -name pom.xml -exec sed -i "s:${VERSION}-SNAPSHOT:${NEXT_VERSION}-SNAPSHOT:" {} +
+{ find . -name pom.xml -print0; find packaging/maven-metadata -name '*.xml' -print0; } | xargs -0 sed -i "s:${VERSION}-SNAPSHOT:${NEXT_VERSION}-SNAPSHOT:"
 
 # commit
 git add -u
