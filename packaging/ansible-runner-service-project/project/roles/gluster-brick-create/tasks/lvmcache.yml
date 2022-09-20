@@ -1,27 +1,27 @@
 ---
 # rc 5 = Physical volume '/dev/name' is already in volume group
 - name: Setup SSD for caching | Extend the Volume Group
-  command: "vgextend --dataalignment 256K {{ vgname }} {{ ssd }}"
+  ansible.builtin.command: "vgextend --dataalignment 256K {{ vgname }} {{ ssd }}"
   register: resp
   failed_when: resp.rc not in [0, 5]
   changed_when: resp.rc == 0
 
 # rc 5 = Physical volume '/dev/name' is already in volume group
 - name: Setup SSD for caching | Create LV for cache
-  command: "lvcreate -L {{ cache_lvsize }} -n {{ cache_lvname }} {{ vgname }}"
+  ansible.builtin.command: "lvcreate -L {{ cache_lvsize }} -n {{ cache_lvname }} {{ vgname }}"
   register: resp
   failed_when: resp.rc not in [0, 5]
   changed_when: resp.rc == 0
 
 - name: Setup SSD for caching | Create metadata LV for cache
-  command: "lvcreate -L {{ cache_meta_lvsize }} -n {{ cache_meta_lv }} {{ vgname }}"
+  ansible.builtin.command: "lvcreate -L {{ cache_meta_lvsize }} -n {{ cache_meta_lv }} {{ vgname }}"
   when: cache_meta_lv is defined and cache_meta_lv != ' '
   register: resp
   failed_when: resp.rc not in [0, 5]
   changed_when: resp.rc == 0
 
 - name: Setup SSD for caching | Convert logical volume to a cache pool LV
-  command: >
+  ansible.builtin.command: >
      lvconvert -y --type cache-pool --poolmetadata {{ cache_meta_lv }}
         --poolmetadataspare n
         --cachemode {{ cachemode | default('writethrough') }}
@@ -35,7 +35,7 @@
 # It is valid not to have cachemetalvname! Writing a separate task not to
 # complicate things.
 - name: Setup SSD for caching | Convert logical volume to a cache pool LV without cachemetalvname
-  command: >
+  ansible.builtin.command: >
      lvconvert -y --type cache-pool
         --poolmetadataspare n
         --cachemode {{ cachemode | default('writethrough') }}
@@ -47,7 +47,7 @@
 
 # Run lvs -a -o +devices to see the cache settings
 - name: Setup SSD for caching | Convert an existing logical volume to a cache LV
-  command: >
+  ansible.builtin.command: >
      lvconvert -y --type cache --cachepool "/dev/{{ vgname }}/{{ cache_lvname }}"
      "/dev/{{ vgname }}/{{ lvname }}_pool"
   register: resp

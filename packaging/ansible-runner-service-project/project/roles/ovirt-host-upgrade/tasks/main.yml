@@ -9,7 +9,7 @@
   import_tasks: advanced-virtualization.yml
 
 - name: Remove network-scripts-openvswitch 2.11 package
-  shell: rpm -e --nodeps network-scripts-openvswitch2.11
+  ansible.builtin.shell: rpm -e --nodeps network-scripts-openvswitch2.11
   ignore_errors: true
   when:
     - el_ver|int == 8
@@ -17,10 +17,10 @@
     - ovirt_openvswitch_pre.version is version ('2.11', '==')
 
 - name: Install ovirt-host package if it isn't installed
-  yum:
+  ansible.builtin.yum:
     name: ovirt-host
     state: present
-    update_cache: yes
+    update_cache: true
     lock_timeout: 300
   tags:
     - updatecheck
@@ -28,73 +28,72 @@
 
 # We need to check for updates after we enable new advanced virt module
 - name: Check for updated packages
-  import_role:
+  ansible.builtin.import_role:
     name: ovirt-host-check-upgrade
 
 - name: Prepare NGN host for upgrade
-  file:
+  ansible.builtin.file:
     path: /var/imgbased/.image-updated
     state: absent
-  when: node_host|bool
+  when: node_host | bool
 
 - name: Get installed version of vdsm
-  set_fact:
+  ansible.builtin.set_fact:
     previous_vdsm_package: "{{ ansible_facts.packages['vdsm'] | first }}"
 
 - name: Clean yum cache
-  command:
-    cmd: yum clean packages
-  ignore_errors: yes
+  ansible.builtin.command: yum clean packages
+  ignore_errors: true
 
 - name: Upgrade packages
-  yum:
+  ansible.builtin.yum:
     name: '*'
     state: latest
   register: updated_packages
-  when: not node_host| bool
+  when: not node_host | bool
   tags:
     - skip_ansible_lint # E403
 
-- name: populate service facts
-  service_facts:
+- name: Populate service facts
+  ansible.builtin.service_facts:
 
 - name: Stop services
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: stopped
   loop:
-  - ovirt-ha-agent.service
-  - ovirt-ha-broker.service
+    - ovirt-ha-agent.service
+    - ovirt-ha-broker.service
   when: "item in ansible_facts.services"
 
 ## Ignoring empty lines and the title "Obsoleting packages"
 - name: Upgrade packages
-  yum:
+  ansible.builtin.yum:
     name: "{{ item }}"
     state: latest
     lock_timeout: 300
     conf_file: /tmp/yum.conf
   loop: "{{ yum_result.split('\n') }}"
   tags:
-  - updatecheck
-  - skip_ansible_lint # E403
+    - updatecheck
+    - skip_ansible_lint # E403
   register: updated_packages
-  when: node_host| bool
+  when: node_host | bool
 
 - name: Start ovirt-ha-agent service
-  service:
+  ansible.builtin.service:
     name: ovirt-ha-agent
-    enabled: yes
+    enabled: true
     state: restarted
   when: ansible_facts.services["ovirt-ha-agent.service"] is defined
 
 - name: Check if image was updated
-  set_fact:
+  ansible.builtin.set_fact:
     image_pkg_updated: "{{ yum_result is search('image-update') }}"
-  when: node_host|bool
+  when: node_host | bool
 
 - name: Check if image-updated file exists
-  stat:
+  ansible.builtin.stat:
     path: /var/imgbased/.image-updated
   register: image_updated_file
   when:
@@ -102,7 +101,7 @@
     - image_pkg_updated|bool
 
 - name: Verify image was updated successfully
-  fail:
+  ansible.builtin.fail:
     msg: "Node image upgrade failed"
   when:
     - node_host|bool
@@ -111,52 +110,52 @@
     - host_deploy_cluster_version|float >= 4.4
 
 - name: Configure LVM filter
-  command: vdsm-tool config-lvm-filter -y
+  ansible.builtin.command: vdsm-tool config-lvm-filter -y
   register: lvm_filter_result
-  when: el_ver|int >= 8
+  when: el_ver | int >= 8
   ignore_errors: true
 
 - name: Error configuring LVM filter
-  debug:
+  ansible.builtin.debug:
     msg: "[ERROR] Cannot configure LVM filter on host, please run: vdsm-tool config-lvm-filter"
   when:
     - el_ver|int >= 8
     - lvm_filter_result.rc != 0
 
 - name: Gather packages facts
-  package_facts:
+  ansible.builtin.package_facts:
     manager: rpm
 
 - name: Get upgraded version of vdsm
-  set_fact:
+  ansible.builtin.set_fact:
     upgraded_vdsm_package: "{{ ansible_facts.packages['vdsm'] | first }}"
 
 - name: Clean up no longer supported abrt integration
   block:
 
-  - name: Check existence of custom abrt coredump configuration
-    stat:
-      path: /etc/sysctl.d/50-coredump.conf
-    register: link
+    - name: Check existence of custom abrt coredump configuration
+      ansible.builtin.stat:
+        path: /etc/sysctl.d/50-coredump.conf
+      register: link
 
-  - name: Remove custom abrt coredump configuration
-    file:
-      path: /etc/sysctl.d/50-coredump.conf
-      state: absent
-    when:
-      - link.stat.islnk is defined
-      - link.stat.lnk_source=="/dev/null"
+    - name: Remove custom abrt coredump configuration
+      ansible.builtin.file:
+        path: /etc/sysctl.d/50-coredump.conf
+        state: absent
+      when:
+        - link.stat.islnk is defined
+        - link.stat.lnk_source=="/dev/null"
 
-  - name: Remove abrt packages
-    dnf:
-      name:
-        - abrt*
-      state: absent
-    when: "'abrt' in ansible_facts.packages"
+    - name: Remove abrt packages
+      ansible.builtin.dnf:
+        name:
+          - abrt*
+        state: absent
+      when: "'abrt' in ansible_facts.packages"
 
-  - name: Reload coredump pattern kernel configuration
-    command: /sbin/sysctl -p --system
+    - name: Reload coredump pattern kernel configuration
+      ansible.builtin.command: /sbin/sysctl -p --system
 
   when:
-    -  previous_vdsm_package.version is version('4.50', '<')
-    -  upgraded_vdsm_package.version is version('4.50', '>=')
+    - previous_vdsm_package.version is version('4.50', '<')
+    - upgraded_vdsm_package.version is version('4.50', '>=')

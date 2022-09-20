@@ -1,44 +1,44 @@
 ---
 - name: Detect host operating system
-  set_fact:
-    el_ver: "{{ ansible_distribution_major_version|int
+  ansible.builtin.set_fact:
+    el_ver: "{{ ansible_distribution_major_version | int
         if ansible_os_family == 'RedHat'
         else 0 }}"
-    fc_ver: "{{ ansible_distribution_major_version|int
+    fc_ver: "{{ ansible_distribution_major_version | int
         if ansible_distribution == 'Fedora'
         else 0 }}"
 
 - name: Fetch installed packages
-  package_facts:
+  ansible.builtin.package_facts:
     manager: rpm
 
 - name: Check if vdsm is preinstalled
-  set_fact:
+  ansible.builtin.set_fact:
     vdsm_preinstalled: "{{ 'vdsm' in ansible_facts.packages }}"
 
 - name: Parse operating system release
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/os-release
     line: 'VARIANT_ID="ovirt-node"'
-  check_mode: yes
+  check_mode: true
   register: node_presence
 
 - name: Detect if host is a prebuilt image
-  set_fact:
+  ansible.builtin.set_fact:
     node_host: "{{ not node_presence.changed }}"
 
 - block:
-  - name: Check version of ovirt-openvswitch before upgrade
-    set_fact:
-      ovirt_openvswitch_pre: "{{ ansible_facts.packages['ovirt-openvswitch'] | first }}"
-    when:
-      - ansible_facts.packages['ovirt-openvswitch'] is defined
+    - name: Check version of ovirt-openvswitch before upgrade
+      ansible.builtin.set_fact:
+        ovirt_openvswitch_pre: "{{ ansible_facts.packages['ovirt-openvswitch'] | first }}"
+      when:
+        - ansible_facts.packages['ovirt-openvswitch'] is defined
 
-  - name: Check version of rhv-openvswitch before upgrade
-    set_fact:
-      ovirt_openvswitch_pre: "{{ ansible_facts.packages['rhv-openvswitch'] | first }}"
-    when:
-      - ansible_facts.packages['rhv-openvswitch'] is defined
+    - name: Check version of rhv-openvswitch before upgrade
+      ansible.builtin.set_fact:
+        ovirt_openvswitch_pre: "{{ ansible_facts.packages['rhv-openvswitch'] | first }}"
+      when:
+        - ansible_facts.packages['rhv-openvswitch'] is defined
 
   when:
     - check_ovs_version is defined

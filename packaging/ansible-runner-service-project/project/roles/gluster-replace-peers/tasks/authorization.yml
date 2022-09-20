@@ -1,5 +1,5 @@
 - name: Make sure authorized_keys file is present
-  stat:
+  ansible.builtin.stat:
     path: "/root/.ssh/authorized_keys"
   register: authkey
 

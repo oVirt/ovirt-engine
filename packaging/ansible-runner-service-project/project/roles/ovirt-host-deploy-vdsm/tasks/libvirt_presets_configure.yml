@@ -1,6 +1,6 @@
 - block:
-  - name: create custom libvirt preset
-    copy:
+  - name: Create custom libvirt preset
+    ansible.builtin.copy:
       dest: /usr/lib/systemd/system-preset/88-ovirt-monolithic-libvirt.preset
       content: |
         # this is oVirt internal configuration and should not be updated manually
@@ -15,4 +15,4 @@
         disable virtproxyd.socket
         enable libvirtd.service
 
-  when: el_ver|int >= 9
+  when: el_ver | int >= 9

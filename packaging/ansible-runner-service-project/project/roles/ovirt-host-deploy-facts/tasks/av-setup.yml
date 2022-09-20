@@ -1,18 +1,18 @@
 ---
 - block:
     - name: Reset configuration of advanced virtualization module
-      shell: dnf -y module reset virt
+      ansible.builtin.command: dnf -y module reset virt
       tags:
         - skip_ansible_lint # E305
 
     - name: Set virt module version for RHEL 8.6 and newer
-      set_fact:
+      ansible.builtin.set_fact:
         virt_mod_ver: "rhel"
       when:
         - ansible_distribution_version is version('8.6', '>=')
 
     - name: Set virt module version for RHEL 8.4 and 8.5
-      set_fact:
+      ansible.builtin.set_fact:
         virt_mod_ver: "av"
       when:
         - virt_mod_ver is not defined
@@ -20,14 +20,14 @@
         - ansible_distribution_version is version('8.5', '<=')
 
     - name: Set virt module version for RHEL 8.3 and older
-      set_fact:
+      ansible.builtin.set_fact:
         virt_mod_ver: "{{ ansible_distribution_version }}"
       when:
         - virt_mod_ver is not defined
         - ansible_distribution_version is version('8.3', '<=')
 
     - name: Enable advanced virtualization module
-      shell: "dnf -y module enable virt:{{ virt_mod_ver }}"
+      ansible.builtin.command: "dnf -y module enable virt:{{ virt_mod_ver }}"
       tags:
         - skip_ansible_lint # E305
 

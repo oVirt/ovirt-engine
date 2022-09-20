@@ -1,42 +1,44 @@
 ---
 - name: Check for system updates (remove empty lines) on EL7
-  shell: yum check-update -q --exclude=ansible | grep '^[a-zA-Z0-9\_\-]\+[.][a-zA-Z0-9\_\-]\+' | cut -d ' ' -f1 | sed '/^$/d' >> /tmp/yum_updates
+  ansible.builtin.shell: >
+    yum check-update -q --exclude=ansible | grep '^[a-zA-Z0-9\_\-]\+[.][a-zA-Z0-9\_\-]\+' | cut -d ' ' -f1 |
+    sed '/^$/d' >> /tmp/yum_updates
   register: yum_updates_res
-  when: el_ver|int == 7
+  when: el_ver | int == 7
   failed_when: "'rc' in yum_updates_res and yum_updates_res.rc == 1"
   tags:
-  - updatecheck
-  - skip_ansible_lint # E305
+    - updatecheck
+    - skip_ansible_lint # E305
 
 # Grep for packages of the following form ensures package name starts at the beginning of a line, contains only
 # valid package name characters, and is made of a valid package name form
 # For example, Packages that will be found: redhat-virtualization-host-image-update.noarch, tar-1.32-6.fc33.x86_64
 # NetworkManager.x86_64, cockpit.x86_64
 - name: Check for system updates (remove empty lines)
-  shell: yum check-update -q | grep '^[a-zA-Z0-9\_\-]\+[.][a-zA-Z0-9\_\-]\+' | cut -d ' ' -f1 | sed '/^$/d' >> /tmp/yum_updates
+  ansible.builtin.shell: yum check-update -q | grep '^[a-zA-Z0-9\_\-]\+[.][a-zA-Z0-9\_\-]\+' | cut -d ' ' -f1 | sed '/^$/d' >> /tmp/yum_updates
   register: yum_updates_res
-  when: el_ver|int != 7
+  when: el_ver | int != 7
   failed_when: "'rc' in yum_updates_res and yum_updates_res.rc == 1"
   tags:
-  - updatecheck
-  - skip_ansible_lint # E305
+    - updatecheck
+    - skip_ansible_lint # E305
 
 - name: Remove 'Obsoleting' title from file
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /tmp/yum_updates
     line: Obsoleting
     state: absent
 
 - name: Get yum updates file
-  slurp:
+  ansible.builtin.slurp:
     src: /tmp/yum_updates
   register: yum_updates
 
 - name: Get yum updates content
-  set_fact:
+  ansible.builtin.set_fact:
     yum_result: "{{ yum_updates['content'] | b64decode }}"
 
 - name: Delete yum_updates file from host
-  file:
+  ansible.builtin.file:
     path: /tmp/yum_updates
     state: absent
