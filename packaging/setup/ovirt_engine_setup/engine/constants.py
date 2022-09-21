@@ -289,6 +289,12 @@ class FileLocations(object):
         OVIRT_ENGINE_SERVICE_CONFIGD,
         '11-setup-sso.conf',
     )
+    # TODO: Make ovirt-engine-keycloak use
+    # OVIRT_ENGINE_SERVICE_CONFIG_KEYCLOAK from here instead of its own copy.
+    OVIRT_ENGINE_SERVICE_CONFIG_KEYCLOAK = os.path.join(
+        OVIRT_ENGINE_SERVICE_CONFIGD,
+        '12-setup-keycloak.conf'
+    )
 
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIGD = (
         '%s.d' % OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG
