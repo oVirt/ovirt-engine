@@ -9,8 +9,6 @@
 
   pre_tasks:
     - include_vars: ovirt_host_upgrade_vars.yml
-      tags:
-      - skip_ansible_lint # E502
 
     - include: ovirt-host-yum-conf.yml
 
