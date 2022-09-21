@@ -35,5 +35,6 @@
   ansible.builtin.file:
     path: "{{ target_directory }}/{{ ova_name }}.tmp"
     state: touch
+    mode: 0660
   register: ova_file
   when: validate_only is not defined

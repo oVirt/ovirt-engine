@@ -10,6 +10,7 @@
     ansible.builtin.copy:
       src: pack_ova.py
       dest: "{{ ova_temp.path }}/pack_ova.py"
+      mode: 0755
 
   - name: Run packing script
     ansible.builtin.command: >
