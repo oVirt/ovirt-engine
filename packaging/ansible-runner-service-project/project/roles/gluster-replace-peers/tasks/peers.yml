@@ -34,7 +34,8 @@
   run_once: true
 
 - name: Get the UUID of the old node
-  ansible.builtin.shell: >
+  ansible.builtin.shell: # noqa risky-shell-pipe
+    >
     gluster peer status |
     grep -A1 {{ gluster_old_node | mandatory }} |
     awk -F: '/uid/ { print $2}'
