@@ -4,6 +4,7 @@
     src: libvirt-guests.j2
     dest: /etc/sysconfig/libvirt-guests
     backup: true
+    mode: 0644
 
 - name: Start libvirt-guests service and ensure its enabled
   ansible.builtin.service:

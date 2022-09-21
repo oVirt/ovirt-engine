@@ -10,6 +10,7 @@
     ansible.builtin.copy:
       src: extract_ova.py
       dest: "{{ ova_temp.path }}/extract_ova.py"
+      mode: 0755
 
   - name: Run extraction script
     ansible.builtin.command: >

@@ -141,6 +141,7 @@
       ansible.builtin.copy:
         src: "{{ peer_tmp_dir }}/"
         dest: "{{ glusterd_libdir }}/peers/"
+        mode: 0755
       delegate_to: "{{ gluster_new_node }}"
 
 

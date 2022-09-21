@@ -84,6 +84,7 @@
   ansible.builtin.file:
     path: "{{ mntpath }}"
     state: directory
+    mode: 0755
 
 - name: Mount the brick
   mount:

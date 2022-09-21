@@ -42,6 +42,7 @@
       state: directory
       owner: 'openvswitch'
       group: 'openvswitch'
+      mode: 0755
 
   - name: Add OVN cacert file
     ansible.builtin.copy:

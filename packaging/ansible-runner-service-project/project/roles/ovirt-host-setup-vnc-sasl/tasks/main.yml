@@ -7,6 +7,7 @@
     block: |
       mech_list: scram-sha-256
       sasldb_path: /etc/sasl2/vnc_passwd.db
+    mode: 0644
 
 - name: Use saslpasswd2 to create file with dummy user
   ansible.builtin.command: saslpasswd2 -a dummy_db -f /etc/sasl2/vnc_passwd.db dummy_user -p
@@ -20,11 +21,13 @@
     owner: 'qemu'
     state: 'file'
     path: '/etc/sasl2/vnc_passwd.db'
+    mode: 0640
 
 - name: Modify qemu config file - enable VNC SASL authentication
   ansible.builtin.lineinfile:
     path: '/etc/libvirt/qemu.conf'
     state: present
     line: 'vnc_sasl=1'
+    mode: 0644
   notify:
     populate service facts and restart libvirtd

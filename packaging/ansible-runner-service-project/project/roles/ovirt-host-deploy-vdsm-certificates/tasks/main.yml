@@ -64,6 +64,7 @@
       state: directory
       owner: 'vdsm'
       group: 'kvm'
+      mode: 0755
     with_items:
       - "{{ ovirt_vdsm_trust_store ~ '/' ~ ovirt_vdsm_ca_file | dirname }}"
       - "{{ ovirt_vdsm_trust_store ~ '/' ~ ovirt_vdsm_key_file | dirname }}"
