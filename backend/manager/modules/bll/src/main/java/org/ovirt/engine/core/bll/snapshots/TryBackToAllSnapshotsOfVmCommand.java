@@ -219,7 +219,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 getCompensationContext(),
                 getCurrentUser(),
                 new VmInterfaceManager(getMacPool()),
-                snapshot.getMemoryDiskId() != null);
+                snapshot.containsMemory());
 
         // custom preview - without leases
         if (!getParameters().isRestoreLease()) {
