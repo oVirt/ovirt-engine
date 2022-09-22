@@ -5,8 +5,6 @@
     - name: Get the list of volumes on the machine
       ansible.builtin.command: ls "{{ glusterd_libdir }}/vols"
       register: dir_list
-      tags:
-        - skip_ansible_lint # E301
 
     - name: Setting Facts for Volume
       ansible.builtin.set_fact:
@@ -21,12 +19,8 @@
         awk -F: '{ print $2 }'
       with_items: "{{ volumes }}"
       register: brick_list
-      tags:
-        - skip_ansible_lint # E301
   delegate_to: "{{ gluster_cluster_node }}"
   connection: ssh
-  tags:
-    - skip_ansible_lint # E301
 
 - name: Run replace-brick commit on the brick
   connection: ssh
@@ -41,5 +35,3 @@
     - "{{ brick_list.results }}"
     - stdout_lines
   delegate_to: "{{ gluster_new_node }}"
-  tags:
-    - skip_ansible_lint # E301
