@@ -7,14 +7,10 @@
         grep -A1 {{ gluster_old_node | mandatory }} |
         awk -F: '/uid/ { print $2}'
       register: uuid
-      tags:
-        - skip_ansible_lint # E301
 
     - name: Get the state from peer file
       ansible.builtin.command: grep state "/var/lib/glusterd/peers/{{ uuid.stdout | trim }}"
       register: grepres1
-      tags:
-        - skip_ansible_lint # E301
 
     - name: Get the state from the peer command
       ansible.builtin.shell: >
@@ -24,8 +20,6 @@
         wc -l
       ignore_errors: true
       register: grepres2
-      tags:
-        - skip_ansible_lint # E301
 
     - name: Fail the play if the previous command did not succeed
       ansible.builtin.fail:
@@ -41,8 +35,6 @@
     awk -F: '/uid/ { print $2}'
   register: old_node_uuid
   run_once: true
-  tags:
-    - skip_ansible_lint # E301
 
 - name: Fail if parsed hostname is different from the back-end FQDN
   ansible.builtin.fail: msg="Hostname mentioned in inventory should be same with back-end gluster FQDN"
@@ -83,8 +75,6 @@
         awk -F= '/UUID/ { print $2}'
       register: current_node_uuid
       run_once: true
-      tags:
-        - skip_ansible_lint # E301
 
     - name: Fail if current node UUID is empty
       ansible.builtin.fail: msg="Execute this playbook on the active host"
