@@ -20,8 +20,6 @@
   ansible.builtin.yum:
     name: ovirt-hosted-engine-setup
     state: present
-  tags:
-    - skip_ansible_lint # E403
 
 - name: Store hosted engine configuration
   ansible.builtin.copy:

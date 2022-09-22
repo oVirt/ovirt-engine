@@ -8,8 +8,6 @@
       ansible.builtin.yum:
         name: vdsm-gluster
         state: present
-      tags:
-        - skip_ansible_lint # E403
 
     - name: Restart gluster
       ansible.builtin.service:
