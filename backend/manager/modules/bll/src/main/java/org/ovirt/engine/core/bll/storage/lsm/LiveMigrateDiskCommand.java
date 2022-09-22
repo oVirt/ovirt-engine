@@ -83,6 +83,7 @@ import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
@@ -292,7 +293,8 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             // at the end of CreateSnapshotForVm command called from the executeCommand() method.
             // Here the lock is acquired again and will be released when this command (LiveMigrateDisk)
             // finishes.
-            if (!lockManager.acquireLock(getLock()).isAcquired()) {
+            EngineLock removeSnapshotLock = createEngineLockForSnapshotRemove();
+            if (!lockManager.acquireLock(removeSnapshotLock).isAcquired()) {
                 log.info("Failed to acquire VM lock, will retry on the next polling cycle");
                 return true;
             }
@@ -362,6 +364,17 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         imageDao.updateStatusOfImagesByImageGroupId(getParameters().getImageGroupID(), ImageStatus.OK);
     }
 
+    private void releaseSnapshotLock() {
+        EngineLock removeSnapshotLock = createEngineLockForSnapshotRemove();
+        lockManager.releaseLock(removeSnapshotLock);
+    }
+
+    private EngineLock createEngineLockForSnapshotRemove() {
+        return new EngineLock(
+                getExclusiveLocksForSnapshotRemove(),
+                getSharedLocksForSnapshotRemove());
+    }
+
     private boolean isConsiderSuccessful() {
         return getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.AUTO_GENERATED_SNAPSHOT_REMOVE_END;
     }
@@ -371,6 +384,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         super.endSuccessfully();
         updateImagesInfo();
         unlockDisk();
+        releaseSnapshotLock();
         setSucceeded(true);
     }
 
@@ -740,13 +754,21 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        return Collections.emptyMap();
+    }
+
+    private Map<String, Pair<String, String>> getExclusiveLocksForSnapshotRemove() {
         return Collections.singletonMap(getParameters().getImageGroupID().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
                         getDiskIsBeingMigratedMessage(getDiskImageByDiskId(getParameters().getImageGroupID()))));
     }
 
-    @Override
-    protected Map<String, Pair<String, String>> getSharedLocks() {
+    private Map<String, Pair<String, String>> getSharedLocksForSnapshotRemove() {
         return Collections.singletonMap(getVmId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
