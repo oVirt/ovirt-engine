@@ -8,15 +8,11 @@
     name: ovirt-hosted-engine-setup
     state: present
   when: ansible_architecture == 'x86_64'
-  tags:
-    - skip_ansible_lint # E403
 
 - name: Install ovirt-host package
   ansible.builtin.yum:
     name: ovirt-host
     state: present
-  tags:
-    - skip_ansible_lint # E403
 
 - name: Get packages
   ansible.builtin.package_facts:

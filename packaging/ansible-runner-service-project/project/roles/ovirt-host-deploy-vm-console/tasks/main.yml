@@ -3,8 +3,6 @@
   yansible.builtin.yum:
     name: ovirt-vmconsole-host
     state: present
-  tags:
-    - skip_ansible_lint # E403
 
 - name: Run vm-console-certificates role
   ansible.builtin.include_role:

@@ -24,7 +24,6 @@
     lock_timeout: 300
   tags:
     - updatecheck
-    - skip_ansible_lint # E403
 
 # We need to check for updates after we enable new advanced virt module
 - name: Check for updated packages
@@ -46,13 +45,11 @@
   ignore_errors: true
 
 - name: Upgrade packages
-  ansible.builtin.yum:
+  ansible.builtin.yum: # noqa package-latest
     name: '*'
     state: latest
   register: updated_packages
   when: not node_host | bool
-  tags:
-    - skip_ansible_lint # E403
 
 - name: Populate service facts
   ansible.builtin.service_facts:
@@ -68,7 +65,7 @@
 
 ## Ignoring empty lines and the title "Obsoleting packages"
 - name: Upgrade packages
-  ansible.builtin.yum:
+  ansible.builtin.yum: # noqa package-latest
     name: "{{ item }}"
     state: latest
     lock_timeout: 300
@@ -76,7 +73,6 @@
   loop: "{{ yum_result.split('\n') }}"
   tags:
     - updatecheck
-    - skip_ansible_lint # E403
   register: updated_packages
   when: node_host | bool
 
