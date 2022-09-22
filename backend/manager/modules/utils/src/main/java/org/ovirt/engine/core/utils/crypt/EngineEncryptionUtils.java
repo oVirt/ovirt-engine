@@ -151,7 +151,7 @@ public class EngineEncryptionUtils {
         if (source == null || source.length() == 0) {
             return source;
         } else {
-            Cipher rsa = Cipher.getInstance("RSA");
+            Cipher rsa = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
             rsa.init(Cipher.ENCRYPT_MODE, getCertificate().getPublicKey());
             return new Base64(0).encodeToString(
                 rsa.doFinal(source.getBytes(StandardCharsets.UTF_8))
@@ -170,7 +170,7 @@ public class EngineEncryptionUtils {
         if (source == null || source.length() == 0) {
             return source;
         } else {
-            Cipher rsa = Cipher.getInstance("RSA");
+            Cipher rsa = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
             rsa.init(Cipher.DECRYPT_MODE, getPrivateKeyEntry().getPrivateKey());
             return new String(
                 rsa.doFinal(new Base64().decode(source)),
