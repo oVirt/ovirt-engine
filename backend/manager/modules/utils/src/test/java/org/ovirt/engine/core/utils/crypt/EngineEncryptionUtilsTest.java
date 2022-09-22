@@ -38,6 +38,20 @@ public class EngineEncryptionUtilsTest {
     }
 
     @Test
+    public void testDecryptLegacyPKCS1Padding() throws Exception {
+        String plain = "Test123!32@";
+        String encrypted = "Qqvu8XdQUQpXI4NRElDcgg+kcL9aFuN/ypbLacLNxZvOgBzMumg" +
+                           "yx8WcZZIHHuKBXpBgrIjoNiZ1Xa4NxG5PBtwrWVc1aw5Ax59m3u" +
+                           "AN46O4wtz2hNAQTjIHAPvAiXqxwZAeeX7+FxqNsDso4UofujCoT" +
+                           "X/crOpNZmBTm7Y4TIsQ4oYiM2J2viGgK6GlvnpIfI5L6vKzXA/k" +
+                           "nq3ht5h8bPipNJmDMY7xD3HBf9Dac5SPV/A20ouL62CISmXexyp" +
+                           "YxKhRCur7KPWFk86o2h9L0wKQDYr7VxJ9fEi6ciPWtXZUqxnftu" +
+                           "E/Zb6XqnQK/M+cb2k26mDRhPqBL332rz4Hvg==";
+        String plain2 = EngineEncryptionUtils.decrypt(encrypted);
+        assertEquals(plain, plain2);
+    }
+
+    @Test
     public void testEncryptThreads() throws Exception {
         List<Thread> l = new LinkedList<>();
         final String plain = "Test123!32@";
