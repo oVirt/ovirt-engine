@@ -3250,7 +3250,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs, ModelWithMig
         ValidationCompleteEvent.fire(getEventBus(), this);
     }
 
-    private boolean validateNaming() {
+    public boolean validateNaming() {
         getName().validateEntity(
                 new IValidation[] {
                         new NotEmptyValidation(),
