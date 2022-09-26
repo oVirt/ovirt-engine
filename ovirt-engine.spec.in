@@ -205,56 +205,22 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global spice_version 8.0
 %endif
 
-%if !%{rhv_build}
 Name:		@PACKAGE_NAME@
 Version:	@RPM_VERSION@
 Release:	@RPM_RELEASE@%{?release_suffix}%{?dist}
-%else
-Name:		ovirt-engine
-# start of cheetah processed code
-#end raw
-#import os
-#import zipfile
-#import re
-#for $artifact in $all_artifacts
-   #if $artifact.endswith('-sources.zip')
-     #set $sourcezip = zipfile.ZipFile($artifact)
-     #set $entry = $sourcezip.namelist()[0]
-     #set $source_rootdir = $entry.split('/')[0]
-     #set $versionmak = $sourcezip.open(os.path.join(source_rootdir, 'version.mak')).read().decode()
-     #set $downstream_rpm_release_prefix = re.search('DOWNSTREAM_RPM_RELEASE_PREFIX=(.*)', $versionmak).group(1)
-     #set $pomxmlhead = $sourcezip.open(os.path.join(source_rootdir, 'pom.xml')).read().decode().splitlines()[:20]
-     #set $pomversionline = [ l for l in $pomxmlhead if '<version>' in l ][0]
-     #set $pomversion = re.search('.*>(.*)<.*', $pomversionline).group(1)
-     #set $release_suffix = ''
-     #if 'SNAPSHOT' in $pomversion
-       #set $release_suffix = '.master'
-     #end if
-   #end if
-#end for
-Version:	$version
-Release:	$downstream_rpm_release_prefix$release$release_suffix%{?dist}
-%endif
 Summary:	Management server for Open Virtualization
 Group:		%{ovirt_product_group}
 License:	ASL 2.0
 %if !%{rhv_build}
 URL:		http://www.ovirt.org
-Source0:	http://resources.ovirt.org/pub/ovirt-master-snapshot/src/@PACKAGE_NAME@/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
 %else
 URL:		http://www.redhat.com/products/virtualization
-#
-# Acquire brew/mead pre-built resources.
-#
-#set $i = 0
-#for $artifact in $all_artifacts
-   #set $source = $artifact.split('/')[-1]
-Source$i:   $source
-   #set $i += 1
-#end for
 %endif
 
+Source0:	http://resources.ovirt.org/pub/ovirt-master-snapshot/src/@PACKAGE_NAME@/@PACKAGE_NAME@-@PACKAGE_VERSION@.tar.gz
+
 BuildArch:	noarch
+ExcludeArch:	s390x ppc64le
 
 %if %{rhv_build}
 BuildRequires:  perl
@@ -775,26 +741,7 @@ Requires:	ovirt-imageio-daemon >= 2.0.10-1
 Setup imageio service.
 
 %prep
-%if !%{rhv_build}
 %setup -c -q
-%else
-#
-# Collect brew/mead binary artifacts
-#
-#import zipfile
-#set $i = 0
-#for $artifact in $all_artifacts
-   #if $artifact.endswith('-sources.zip')
-     #set $sourcezip = zipfile.ZipFile($artifact)
-     #set $entry = $sourcezip.namelist()[0]
-     #set $source_rootdir = $entry.split('/')[0]
-%setup -q -T -b $i -n $source_rootdir
-   #end if
-   #set $i += 1
-#end for
-#raw
-# end cheetah processed code
-%endif
 
 %build
 
