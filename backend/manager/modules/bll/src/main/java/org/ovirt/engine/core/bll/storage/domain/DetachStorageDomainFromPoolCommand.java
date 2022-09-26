@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.ManagedBlockStorageHelper;
+import org.ovirt.engine.core.bll.storage.ovfstore.OvfDataUpdater;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -52,6 +53,8 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     private StorageDomainDao storageDomainDao;
     @Inject
     private AuditLogDirector auditLogDirector;
+    @Inject
+    private OvfDataUpdater ovfDataUpdater;
 
     public DetachStorageDomainFromPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -111,6 +114,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
             detachSucceeded = detachNonMasterStorageDomain();
         }
         auditOnExistingLeasesIfExist();
+        ovfDataUpdater.triggerNow();
         log.info("End detach storage domain");
         setSucceeded(detachSucceeded);
     }
