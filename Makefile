@@ -570,6 +570,7 @@ all-dev:
 	$(MAKE) \
 		all \
 		BUILD_DEV=1 \
+		OFFLINE_BUILD=0 \
 		DEV_PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
 		DEV_SETUP_ENV_DIR="$(PREFIX)/etc/ovirt-engine-setup.env.d" \
 		IMAGEIO_SYSCONF_DIR="$(PREFIX)/etc/ovirt-imageio" \
