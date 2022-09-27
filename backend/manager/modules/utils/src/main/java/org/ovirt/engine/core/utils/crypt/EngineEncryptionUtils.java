@@ -199,7 +199,7 @@ public class EngineEncryptionUtils {
         if (newCipher) {
             cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
             // By default Oracle standard security provider uses MFG1 instantiated with SHA-1, SHA-256 is used only
-            // ti has the label, so we need to enforce using SHA-256
+            // for the label, so we need to enforce using SHA-256
             OAEPParameterSpec oaepParameterSpec = new OAEPParameterSpec("SHA-256", "MGF1",
                 MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT);
             cipher.init(mode, key, oaepParameterSpec);
