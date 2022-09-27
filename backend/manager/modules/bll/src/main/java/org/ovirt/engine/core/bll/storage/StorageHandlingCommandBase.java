@@ -24,7 +24,6 @@ import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
-import org.ovirt.engine.core.bll.storage.disk.image.MetadataDiskDescriptionHandler;
 import org.ovirt.engine.core.bll.storage.pool.ActivateDeactivateSingleAsyncOperationFactory;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -50,7 +49,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -71,7 +69,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
-import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
@@ -121,8 +118,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     @Inject
     protected VmNicDao vmNicDao;
     @Inject
-    private  ClusterDao clusterDao;
-    @Inject
     private  StorageDomainOvfInfoDao storageDomainOvfInfoDao;
     @Inject
     private  StorageDomainStaticDao storageDomainStaticDao;
@@ -134,8 +129,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     private VmDao vmDao;
     @Inject
     private OvfUtils ovfUtils;
-    @Inject
-    private MetadataDiskDescriptionHandler metadataDiskDescriptionHandler;
     @Inject
     protected StorageHelperDirector storageHelperDirector;
     @Inject
@@ -304,28 +297,10 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             TransactionSupport.executeInNewTransaction(() -> {
                 for (VM vm : vmsForStorageDomain) {
                     removeEntityLeftOver(vm.getId(), vm.getName(), storageDomainId);
-                    unregisteredOVFDataDao.saveOVFData(new OvfEntityData(
-                            vm.getId(),
-                            vm.getName(),
-                            VmEntityType.VM,
-                            vm.getClusterArch(),
-                            vm.getCompatibilityVersion(),
-                            storageDomainId,
-                            null,
-                            null));
                 }
 
                 for (VmTemplate vmTemplate : vmTemplatesForStorageDomain) {
                     removeEntityLeftOver(vmTemplate.getId(), vmTemplate.getName(), storageDomainId);
-                    unregisteredOVFDataDao.saveOVFData(new OvfEntityData(
-                            vmTemplate.getId(),
-                            vmTemplate.getName(),
-                            VmEntityType.TEMPLATE,
-                            vmTemplate.getClusterArch(),
-                            clusterDao.get(vmTemplate.getClusterId()).getCompatibilityVersion(),
-                            storageDomainId,
-                            null,
-                            null));
                 }
                 storageDomainDao.removeEntitesFromStorageDomain(storageDomainId);
                 return null;
