@@ -16,8 +16,8 @@
     <url>http://jenkins.ovirt.org/</url>
   </ciManagement>
   <issueManagement>
-    <system>bugzilla</system>
-    <url>https://bugzilla.redhat.com/enter_bug.cgi?product=ovirt-engine</url>
+    <system>github</system>
+    <url>https://github.com/oVirt/ovirt-engine/issues</url>
   </issueManagement>
   <scm>
     <url>https://github.com/oVirt/ovirt-engine</url>

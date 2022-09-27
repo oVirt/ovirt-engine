@@ -4,4 +4,4 @@ Longer description using lines' length under 72 chars.
 
 With multiple paragraphs if necessary.
 
-Bug-Url: https://bugzilla.redhat.com/??????
+Bug-Url: https://github.com/oVirt/ovirt-engine/issues/?

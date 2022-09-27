@@ -19,7 +19,7 @@ on the https://ovirt.org/[oVirt] website.
 
 === Found a bug or documentation issue?
 To submit a bug or suggest an enhancement for oVirt Engine please use
-https://bugzilla.redhat.com/enter_bug.cgi?product=ovirt-engine[oVirt Bugzilla for ovirt-engine product].
+https://github.com/oVirt/ovirt-engine/issues[oVirt GitHub issues].
 
 If you find a documentation issue on the oVirt website please navigate and click "Report an issue on GitHub" in the page footer.
 
