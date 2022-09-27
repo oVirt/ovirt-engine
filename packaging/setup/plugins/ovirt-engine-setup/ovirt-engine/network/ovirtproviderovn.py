@@ -409,7 +409,7 @@ class Plugin(plugin.PluginBase):
                 padding.MGF1(hashes.SHA256()), hashes.SHA256(), None
             ),
         )
-        return base64.b64encode(encrypted_password)
+        return b'$' + base64.b64encode(encrypted_password)
 
     def _query_install_ovn(self):
         return dialog.queryBoolean(
