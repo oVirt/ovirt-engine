@@ -53,6 +53,7 @@ public class TokenCleanupService {
         try {
             ssoContext.removeSsoSession(ssoSession.getAccessToken());
             HttpSession existingSession = ssoSession.getHttpSession();
+            String refreshToken = ssoSession.getRefreshToken();
             if (existingSession == null) {
                 log.debug("No existing Session found for token: {}, cannot invalidate session",
                         ssoSession.getAccessToken());
@@ -67,7 +68,7 @@ public class TokenCleanupService {
             if (ssoContext.getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
                 log.debug("Existing Session found for token: {}, invalidating session on external OP",
                         ssoSession.getAccessToken());
-                ExternalOIDCService.logout(ssoContext, ssoSession.getRefreshToken());
+                ExternalOIDCService.logout(ssoContext, refreshToken);
             }
             invokeAuthnLogout(ssoContext, ssoSession);
             SsoService.notifyClientsOfLogoutEvent(ssoContext,
