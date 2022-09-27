@@ -6,13 +6,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.Key;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.spec.MGF1ParameterSpec;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.OAEPParameterSpec;
+import javax.crypto.spec.PSource;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManager;
@@ -33,6 +37,7 @@ public class EngineEncryptionUtils {
     private static final String truststoreType;
     private static final File truststoreFile;
     private static final KeyStore.PasswordProtection truststorePassword;
+
 
     static {
         EngineLocalConfig config = EngineLocalConfig.getInstance();
@@ -152,8 +157,8 @@ public class EngineEncryptionUtils {
             return source;
         } else {
             String encrypted = "$";
-            Cipher rsa = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
-            rsa.init(Cipher.ENCRYPT_MODE, getCertificate().getPublicKey());
+
+            Cipher rsa = getInitializedCipher(true, Cipher.ENCRYPT_MODE, getCertificate().getPublicKey());
             encrypted += new Base64(0).encodeToString(
                 rsa.doFinal(source.getBytes(StandardCharsets.UTF_8))
             );
@@ -172,20 +177,37 @@ public class EngineEncryptionUtils {
         if (source == null || source.length() == 0) {
             return source;
         } else {
-            String cipherString = "RSA";
+            boolean newCipher = false;
 
             if (source.charAt(0) == '$') {
-                cipherString = "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING";
+                newCipher = true;
                 source = source.substring(1);
             }
 
-            Cipher rsa = Cipher.getInstance(cipherString);
-            rsa.init(Cipher.DECRYPT_MODE, getPrivateKeyEntry().getPrivateKey());
             return new String(
-                rsa.doFinal(new Base64().decode(source)),
+                getInitializedCipher(
+                    newCipher,
+                    Cipher.DECRYPT_MODE,
+                    getPrivateKeyEntry().getPrivateKey()).doFinal(new Base64().decode(source)),
                 StandardCharsets.UTF_8
             );
         }
+    }
+
+    private static Cipher getInitializedCipher(boolean newCipher, int mode, Key key) throws GeneralSecurityException {
+        Cipher cipher = null;
+        if (newCipher) {
+            cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
+            // By default Oracle standard security provider uses MFG1 instantiated with SHA-1, SHA-256 is used only
+            // for the label, so we need to enforce using SHA-256
+            OAEPParameterSpec oaepParameterSpec = new OAEPParameterSpec("SHA-256", "MGF1",
+                MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT);
+            cipher.init(mode, key, oaepParameterSpec);
+        } else {
+            cipher = Cipher.getInstance("RSA");
+            cipher.init(mode, key);
+        }
+        return cipher;
     }
 
     /**
