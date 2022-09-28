@@ -7,7 +7,5 @@
   register: ovn_packages
 
 - name: Unconfigure the OVN chassis
-  ansible.builtin.command: vdsm-tool ovn-unconfigure
+  ansible.builtin.command: vdsm-tool ovn-unconfigure # noqa no-handler
   when: not ovn_packages.changed
-  tags:
-    - skip_ansible_lint # E503
