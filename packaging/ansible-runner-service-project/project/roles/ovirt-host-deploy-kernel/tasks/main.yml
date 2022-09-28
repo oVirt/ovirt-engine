@@ -16,11 +16,9 @@
   failed_when: not uuid.stdout
 
 - name: Add boot parameter to kernel parameters
-  ansible.builtin.set_fact:
+  ansible.builtin.set_fact: # noqa no-handler
     host_deploy_kernel_cmdline_new: "boot=UUID={{ uuid.stdout }} {{ host_deploy_kernel_cmdline_new }}"
   when: uuid.changed | bool
-  tags:
-    - skip_ansible_lint # E503
 
 - name: Removing old kernel arguments
   ansible.builtin.command: "grubby --update-kernel=ALL --remove-args '{{ host_deploy_kernel_cmdline_old }}'"
