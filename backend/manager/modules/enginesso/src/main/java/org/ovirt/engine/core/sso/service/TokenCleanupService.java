@@ -58,7 +58,8 @@ public class TokenCleanupService {
                 log.debug("No existing Session found for token: {}, cannot invalidate session",
                         ssoSession.getAccessToken());
             } else {
-                log.debug("Existing Session found for token: {}, invalidating session", ssoSession.getAccessToken());
+                log.debug("Existing Session found for token: {}, refresh_token: {}, invalidating session",
+                        ssoSession.getAccessToken(), refreshToken);
                 try {
                     existingSession.invalidate();
                 } catch (IllegalStateException ex) {
@@ -66,8 +67,8 @@ public class TokenCleanupService {
                 }
             }
             if (ssoContext.getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
-                log.debug("Existing Session found for token: {}, invalidating session on external OP",
-                        ssoSession.getAccessToken());
+                log.debug("Existing Session found for token: {}, refresh_token: {}, invalidating session on external OP",
+                        ssoSession.getAccessToken(), refreshToken);
                 ExternalOIDCService.logout(ssoContext, refreshToken);
             }
             invokeAuthnLogout(ssoContext, ssoSession);

@@ -34,9 +34,10 @@ public class OAuthRevokeServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        log.debug("Entered OAuthRevokeServlet QueryString: {}, Parameters : {}",
+        log.debug("Entered OAuthRevokeServlet QueryString: {}, Parameters : {}, refresh_token: {}",
                 request.getQueryString(),
-                SsoService.getRequestParameters(request));
+                SsoService.getRequestParameters(request),
+                ssoSession.getRefreshToken());
 
         try {
             String token = SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
@@ -55,10 +56,11 @@ public class OAuthRevokeServlet extends HttpServlet {
                     ssoSession.getAssociatedClientIds().remove(clientIdAndSecret[0]);
                 }
                 if (revokeAllScope || ssoSession.getAssociatedClientIds().isEmpty()) {
-                    log.info("User {}@{} with profile [{}] successfully logged out",
+                    log.info("User {}@{} with profile [{}] successfully logged out, refresh_token: {}",
                             SsoService.getUserId(ssoSession.getPrincipalRecord()),
                             ssoContext.getUserAuthzName(ssoSession),
-                            ssoSession.getProfile());
+                            ssoSession.getProfile(),
+                            ssoSession.getRefreshToken());
                     TokenCleanupService.cleanupSsoSession(ssoContext, ssoSession, associatedClientIds);
                 }
             }
