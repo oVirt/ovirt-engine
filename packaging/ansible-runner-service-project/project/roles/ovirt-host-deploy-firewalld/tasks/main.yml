@@ -1,7 +1,7 @@
 ---
 - block:
     - name: Stop iptables service if running
-      ansible.builtin.service:
+      ansible.builtin.service: # noqa ignore-errors
         name: iptables
         state: stopped
         enabled: false
