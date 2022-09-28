@@ -9,7 +9,7 @@
   import_tasks: advanced-virtualization.yml
 
 - name: Remove network-scripts-openvswitch 2.11 package
-  ansible.builtin.yum:
+  ansible.builtin.yum: # noqa ignore-errors
     name: network-scripts-openvswitch2.11
     state: absent
   ignore_errors: true
@@ -43,7 +43,7 @@
     previous_vdsm_package: "{{ ansible_facts.packages['vdsm'] | first }}"
 
 - name: Clean yum cache
-  ansible.builtin.command: yum clean packages
+  ansible.builtin.command: yum clean packages # noqa ignore-errors
   ignore_errors: true
 
 - name: Upgrade packages
