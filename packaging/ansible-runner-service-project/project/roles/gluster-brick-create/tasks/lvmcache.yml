@@ -53,5 +53,3 @@
   register: resp
   failed_when: resp.rc not in [0, 5]
   changed_when: resp.rc == 0
-  tags:
-    - skip_ansible_lint

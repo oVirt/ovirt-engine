@@ -22,14 +22,12 @@
 
     - block:
         # Disabling firewalld to avoid conflict
-        - name: Stop and disable firewalld
+        - name: Stop, disable and mask firewalld
           ansible.builtin.systemd:
             name: firewalld
             enabled: false
             state: stopped
-
-        - name: Mask firewalld
-          ansible.builtin.shell: systemctl mask firewalld
+            masked: true
       when: "'firewalld.service' in ansible_facts.services"
 
     - name: Restart and enable iptables

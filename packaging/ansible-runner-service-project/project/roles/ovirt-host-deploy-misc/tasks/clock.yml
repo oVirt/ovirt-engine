@@ -8,5 +8,3 @@
   ansible.builtin.command: chronyc waitsync 1
   register: chronyc_sync
   failed_when: "'FAILED' in chronyc_sync.stderr"
-  tags:
-    - skip_ansible_lint # E305
