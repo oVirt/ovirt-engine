@@ -14,8 +14,6 @@
   register: uuid
   when: add_boot_param is defined and add_boot_param | bool
   failed_when: not uuid.stdout
-  tags:
-    - skip_ansible_lint # E305
 
 - name: Add boot parameter to kernel parameters
   ansible.builtin.set_fact:
@@ -27,11 +25,7 @@
 - name: Removing old kernel arguments
   ansible.builtin.command: "grubby --update-kernel=ALL --remove-args '{{ host_deploy_kernel_cmdline_old }}'"
   when: host_deploy_kernel_cmdline_old is defined and host_deploy_kernel_cmdline_old
-  tags:
-    - skip_ansible_lint # E305
 
 - name: Adding new kernel arguments
   ansible.builtin.command: "grubby --update-kernel=ALL --args '{{ host_deploy_kernel_cmdline_new }}'"
   when: host_deploy_kernel_cmdline_new is defined and host_deploy_kernel_cmdline_new
-  tags:
-    - skip_ansible_lint # E305

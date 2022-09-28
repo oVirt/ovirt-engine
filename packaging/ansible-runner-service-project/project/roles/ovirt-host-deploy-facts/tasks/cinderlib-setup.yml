@@ -13,8 +13,6 @@
       when: cinderlib_check is failed
       ignore_errors: true
       register: cinderlib_repo_install
-      tags:
-        - skip_ansible_lint # E305
 
     - name: Check for Cinderlib repository configuration error
       ansible.builtin.debug:
@@ -36,8 +34,6 @@
       when: ceph_check is failed
       ignore_errors: true
       register: ceph_repo_install
-      tags:
-        - skip_ansible_lint # E305
 
     - name: Check for Ceph repository configuration error
       ansible.builtin.debug:

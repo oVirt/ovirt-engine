@@ -9,7 +9,9 @@
   import_tasks: advanced-virtualization.yml
 
 - name: Remove network-scripts-openvswitch 2.11 package
-  ansible.builtin.shell: rpm -e --nodeps network-scripts-openvswitch2.11
+  ansible.builtin.yum:
+    name: network-scripts-openvswitch2.11
+    state: absent
   ignore_errors: true
   when:
     - el_ver|int == 8

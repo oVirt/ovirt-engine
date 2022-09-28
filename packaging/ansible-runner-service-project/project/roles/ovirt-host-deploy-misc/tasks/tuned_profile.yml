@@ -12,8 +12,6 @@
 - name: Set tune profile
   ansible.builtin.command: "tuned-adm profile {{ host_deploy_tuned_profile }}"
   register: tune_profile_set
-  tags:
-    - skip_ansible_lint # E305
 
 - name: Enable tune service
   ansible.builtin.service:

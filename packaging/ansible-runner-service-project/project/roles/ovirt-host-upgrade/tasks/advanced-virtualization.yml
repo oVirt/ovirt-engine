@@ -15,8 +15,6 @@
     - block:
         - name: Reset configuration of advanced virtualization module
           ansible.builtin.command: dnf -y module reset virt
-          tags:
-            - skip_ansible_lint # E305
 
         - name: Set virt module version for RHEL 8.6 and newer
           ansible.builtin.set_fact:
@@ -41,8 +39,6 @@
 
         - name: Enable advanced virtualization module for relevant OS version
           ansible.builtin.command: "dnf -y module enable virt:{{ virt_mod_ver }}"
-          tags:
-            - skip_ansible_lint # E305
 
       when:
         - ansible_facts.packages['redhat-release'] is defined
