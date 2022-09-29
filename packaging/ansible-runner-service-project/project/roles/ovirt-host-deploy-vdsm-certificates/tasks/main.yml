@@ -28,7 +28,7 @@
     register: csrs
 
   - name: Copy vdsm and QEMU CSRs
-    ansible.builtin.copy:
+    ansible.builtin.copy: # noqa template-instead-of-copy
       content: "{{ item.stdout }}"
       dest: "{{ ovirt_pki_dir }}/{{ item.item.item.req_dir }}/{{ ovirt_vds_hostname }}.req"
       mode: 0644
@@ -77,7 +77,7 @@
       loop_var: filedest
 
   - name: Add vdsm cacert files
-    ansible.builtin.copy:
+    ansible.builtin.copy: # noqa template-instead-of-copy
       content: "{{ ovirt_ca_cert }}"
       dest: "{{ filedest }}"
       owner: 'root'
@@ -91,7 +91,7 @@
       loop_var: filedest
 
   - name: Add QEMU cacert file
-    ansible.builtin.copy:
+    ansible.builtin.copy: # noqa template-instead-of-copy
       content: "{{ ovirt_qemu_ca_cert }}"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_qemu_ca_file }}"
       owner: 'root'

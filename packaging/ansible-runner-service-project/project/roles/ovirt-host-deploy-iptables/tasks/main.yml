@@ -10,7 +10,7 @@
         state: present
 
     - name: Store iptables
-      ansible.builtin.copy:
+      ansible.builtin.copy: # noqa template-instead-of-copy
         content: "{{ host_deploy_iptables_rules }}"
         dest: "{{ redhat_iptables }}"
         owner: 'root'

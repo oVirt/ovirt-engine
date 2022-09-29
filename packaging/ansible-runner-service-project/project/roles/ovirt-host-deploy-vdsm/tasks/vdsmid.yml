@@ -65,7 +65,7 @@
   when: not vdsm_id
 
 - name: Store vdsm id
-  ansible.builtin.copy:
+  ansible.builtin.copy: # noqa template-instead-of-copy
     content: "{{ vdsm_id }}"
     dest: "{{ vdsm_id_file }}"
     owner: root
@@ -93,7 +93,7 @@
     vdsm_config_prefix: "{{ vdsm_config_prefix }} \n[addresses]\nmanagement_port= {{ host_deploy_vdsm_port }} \n"
 
 - name: Copy vdsm config prefix to vdsm.conf
-  ansible.builtin.copy:
+  ansible.builtin.copy: # noqa template-instead-of-copy
     content: "{{ vdsm_config_prefix }}"
     dest: "{{ vdsm_config_file }}"
     owner: root
