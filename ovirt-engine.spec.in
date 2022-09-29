@@ -42,17 +42,14 @@
 %if 0%{!?ovirt_build_all_user_agents:1}
 %global ovirt_build_all_user_agents 1
 %endif
-# define "rhv_build 1" to perform RHV Manager build
-#if True
-%global rhv_build 1
-#else
+
+# Set "rhv_build 1" to perform RHV Manager build
 %global rhv_build 0
-#end if
+
 #
 # CUSTOMIZATION-END
 #
 
-#raw
 
 # Do not repack .jar files, as it takes a long time and doesn't have a
 # real benefit:
@@ -148,10 +145,8 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %if %{rhv_build}
 %global wildfly_overlay_modules ""
 %define extra_common_opts \\\
-	MVN=true \\\
 	BUILD_ENV_VALIDATION=0 \\\
-	JBOSS_HOME=/opt/rh/eap7/root/usr/share/wildfly \\\
-	MAVEN_OUTPUT_DIR=%{_sourcedir}
+	JBOSS_HOME=/opt/rh/eap7/root/usr/share/wildfly
 %else
 %global wildfly_overlay_modules "/usr/share/ovirt-engine-wildfly-overlay/modules"
 %endif
