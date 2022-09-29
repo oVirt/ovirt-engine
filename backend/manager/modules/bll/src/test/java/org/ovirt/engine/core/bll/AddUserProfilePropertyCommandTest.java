@@ -12,6 +12,8 @@ import static org.ovirt.engine.core.bll.UserProfileTestHelper.checkAssertsForGen
 import static org.ovirt.engine.core.bll.UserProfileTestHelper.checkAssertsForSshProp;
 import static org.ovirt.engine.core.bll.UserProfileTestHelper.createAdmin;
 
+import java.util.function.Predicate;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,6 +32,9 @@ class AddUserProfilePropertyCommandTest extends BaseCommandTest {
 
     @Mock
     protected DbUserDao userDaoMock;
+
+    @Mock
+    private Predicate<DbUser> isSystemSuperUserPredicate;
 
     private UserProfilePropertyParameters parameters = mock(UserProfilePropertyParameters.class);
 
@@ -54,6 +59,7 @@ class AddUserProfilePropertyCommandTest extends BaseCommandTest {
         when(userDaoMock.get(any())).thenReturn(mock(DbUser.class));
 
         when(parameters.getUserProfileProperty()).thenReturn(inputProp);
+        when(isSystemSuperUserPredicate.test(any())).thenReturn(true);
         addCommand.setCurrentUser(createAdmin(Guid.newGuid()));
 
         assertTrue(addCommand.validate(), buildValidationMessage(addCommand.getReturnValue()));

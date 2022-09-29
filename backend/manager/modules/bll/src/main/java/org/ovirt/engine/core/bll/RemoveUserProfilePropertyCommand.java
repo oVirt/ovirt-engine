@@ -29,7 +29,6 @@ public class RemoveUserProfilePropertyCommand<T extends IdParameters> extends Co
     @Inject
     protected DbUserDao userDao;
 
-
     private final UserProfileValidator validator = new UserProfileValidator();
 
     public RemoveUserProfilePropertyCommand(T parameters, CommandContext commandContext) {
@@ -64,8 +63,10 @@ public class RemoveUserProfilePropertyCommand<T extends IdParameters> extends Co
                         .map(UserProfileProperty::getName)
                         .orElse(getParameters().getId().toString()));
         return validate(validator.propertyProvided(currentProp)) &&
-                validate(validator.authorized(getCurrentUser(),
-                        Optional.ofNullable(currentProp).map(UserProfileProperty::getUserId).orElse(null)));
+                validate(validator.authorized(
+                        getCurrentUser(),
+                        Optional.ofNullable(currentProp).map(UserProfileProperty::getUserId).orElse(null),
+                        isSystemSuperUser()));
     }
 
     @Override

@@ -64,7 +64,8 @@ public class UpdateUserProfilePropertyCommand<T extends UserProfilePropertyParam
                 userProfileDao.get(propertyToUpdate.getPropertyId()),
                 getCurrentUser(),
                 this::validate,
-                propertyToUpdate
+                propertyToUpdate,
+                isSystemSuperUser()
         );
     }
 

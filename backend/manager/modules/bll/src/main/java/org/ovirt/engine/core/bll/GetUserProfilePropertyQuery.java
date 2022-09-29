@@ -19,7 +19,7 @@ public class GetUserProfilePropertyQuery<P extends UserProfilePropertyIdQueryPar
     }
 
     private boolean validate(UserProfileProperty prop) {
-        return validate(validator.authorized(getUser(), prop.getUserId()));
+        return validate(validator.authorized(getUser(), prop.getUserId(), getUser() != null && getUser().isAdmin()));
     }
 
     @Override
