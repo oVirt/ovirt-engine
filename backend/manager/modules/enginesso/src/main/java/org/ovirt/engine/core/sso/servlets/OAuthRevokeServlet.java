@@ -34,10 +34,9 @@ public class OAuthRevokeServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        log.debug("Entered OAuthRevokeServlet QueryString: {}, Parameters : {}, refresh_token: {}",
+        log.debug("Entered OAuthRevokeServlet QueryString: {}, Parameters : {}",
                 request.getQueryString(),
-                SsoService.getRequestParameters(request),
-                ssoSession.getRefreshToken());
+                SsoService.getRequestParameters(request));
 
         try {
             String token = SsoService.getRequestParameter(request, SsoConstants.HTTP_PARAM_TOKEN);
@@ -48,6 +47,7 @@ public class OAuthRevokeServlet extends HttpServlet {
 
             SsoSession ssoSession = ssoContext.getSsoSession(token);
             if (ssoSession != null) {
+                log.debug("refresh_token: {}", ssoSession.getRefreshToken());
                 Set<String> associatedClientIds = new TreeSet<>(ssoSession.getAssociatedClientIds());
                 boolean revokeAllScope = SsoService.scopeAsList(scope).contains("ovirt-ext=revoke:revoke-all");
                 if (revokeAllScope) {
