@@ -25,7 +25,7 @@
       register: csr
 
     - name: Copy vmconsole CSR
-      ansible.builtin.copy:
+      ansible.builtin.copy: # noqa template-instead-of-copy
         content: "{{ csr.stdout }}"
         dest: "{{ ovirt_pki_dir }}/requests/{{ ovirt_vds_hostname }}-ssh.req"
         mode: 0644
@@ -51,7 +51,7 @@
       delegate_to: localhost
 
     - name: Add vmconsole cacert files
-      ansible.builtin.copy:
+      ansible.builtin.copy: # noqa template-instead-of-copy
         content: "{{ ovirt_ca_key }}"
         dest: "{{ ovirt_vmconsole_ca_file }}"
         mode: 0644

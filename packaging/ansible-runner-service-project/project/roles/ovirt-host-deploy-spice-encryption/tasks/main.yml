@@ -8,7 +8,7 @@
     group: root
 
 - name: Put cipher string to SPICE config file
-  ansible.builtin.copy:
+  ansible.builtin.copy: # noqa template-instead-of-copy
     dest: '/etc/pki/tls/spice.cnf'
     backup: true
     mode: 0644
