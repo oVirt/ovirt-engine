@@ -40,12 +40,13 @@ public class UserProfileValidator {
                 .when(property == null);
     }
 
-    public ValidationResult authorized(DbUser currentUser, Guid targetUserId) {
+    public ValidationResult authorized(DbUser currentUser, Guid targetUserId, boolean sufficientAdminRights) {
         return ValidationResult
                 .failWith(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION)
                 .when(currentUser == null
                         || currentUser.getId() == null
-                        || !Objects.equals(currentUser.getId(), targetUserId) && !currentUser.isAdmin());
+                        || targetUserId == null
+                        || !Objects.equals(currentUser.getId(), targetUserId) && !sufficientAdminRights);
     }
 
     public ValidationResult validPublicSshKey(UserProfileProperty property) {
@@ -88,8 +89,9 @@ public class UserProfileValidator {
     public boolean validateAdd(UserProfile existingProfile,
             UserProfileProperty newProp,
             DbUser currentUser,
-            Function<ValidationResult, Boolean> validate) {
-        return validate.apply(authorized(currentUser, newProp.getUserId())) &&
+            Function<ValidationResult, Boolean> validate,
+            boolean isSuperUser) {
+        return validate.apply(authorized(currentUser, newProp.getUserId(), isSuperUser)) &&
                 validate.apply(sameOwner(existingProfile.getUserId(), newProp.getUserId())) &&
                 validate.apply(validPublicSshKey(newProp)) &&
                 // /sshpublickeys endpoint is not aware of names so first check by SSH type
@@ -101,10 +103,11 @@ public class UserProfileValidator {
     public boolean validateUpdate(UserProfileProperty currentProp,
             DbUser currentUser,
             Function<ValidationResult, Boolean> validate,
-            UserProfileProperty update) {
+            UserProfileProperty update,
+            boolean isSuperUser) {
         return validate.apply(propertyProvided(currentProp)) &&
                 validate.apply(sameOwner(currentProp.getUserId(), update.getUserId())) &&
-                validate.apply(authorized(currentUser, update.getUserId())) &&
+                validate.apply(authorized(currentUser, update.getUserId(), isSuperUser)) &&
                 validate.apply(validPublicSshKey(update)) &&
                 validate.apply(sameName(currentProp.getName(), update.getName(), currentProp.getPropertyId())) &&
                 validate.apply(sameType(currentProp.getType(), update.getType(), currentProp.getPropertyId()));

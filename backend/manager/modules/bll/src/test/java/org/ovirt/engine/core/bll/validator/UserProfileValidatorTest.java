@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -45,41 +44,41 @@ class UserProfileValidatorTest {
 
     @Test
     void notAuthorizedDueToNullCurrentUser() {
-        assertFalse(validator.authorized(null, Guid.Empty).isValid());
+        assertFalse(validator.authorized(null, Guid.Empty, true).isValid());
     }
 
     @Test
     void notAuthorizedDueToNullCurrentUserId() {
-        assertFalse(validator.authorized(mock(DbUser.class), Guid.Empty).isValid());
+        assertFalse(validator.authorized(mock(DbUser.class), Guid.Empty, true).isValid());
     }
 
     @Test
     void notAuthorizedDueToNullTargetId() {
-        assertFalse(validator.authorized(emptyUser(), null).isValid());
+        assertFalse(validator.authorized(emptyUser(), null, true).isValid());
     }
 
     @Test
     void notAuthorizedDueToDifferentTargetId() {
-        assertFalse(validator.authorized(emptyUser(), Guid.newGuid()).isValid());
+        assertFalse(validator.authorized(emptyUser(), Guid.newGuid(), false).isValid());
     }
 
     @Test
     void authorized() {
-        assertTrue(validator.authorized(emptyUser(), Guid.Empty).isValid());
+        assertTrue(validator.authorized(emptyUser(), Guid.Empty, false).isValid());
     }
 
     @Test
     void authorizedAsAdminForOtherUser() {
         DbUser user = emptyUser();
         user.setAdmin(true);
-        assertTrue(validator.authorized(user, Guid.newGuid()).isValid());
+        assertTrue(validator.authorized(user, Guid.newGuid(), true).isValid());
     }
 
     @Test
     void authorizedAsAdminForHimself() {
         DbUser user = emptyUser();
         user.setAdmin(true);
-        assertTrue(validator.authorized(user, Guid.Empty).isValid());
+        assertTrue(validator.authorized(user, Guid.Empty, true).isValid());
     }
 
     @Test
@@ -131,7 +130,7 @@ class UserProfileValidatorTest {
     @Test
     void noSshKeyYet() {
         UserProfileProperty sshProp = UserProfileProperty.builder().withDefaultSshProp().build();
-        assertThat(validator.firstPublicSshKey(new UserProfile(), sshProp).isValid());
+        assertTrue(validator.firstPublicSshKey(new UserProfile(), sshProp).isValid());
     }
 
     @Test
