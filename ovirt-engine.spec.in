@@ -43,6 +43,9 @@
 %global ovirt_build_all_user_agents 1
 %endif
 
+# Limit GWT resources to pass the build in CBS
+%global ovirt_build_extra_flags_rpm -D gwt.compiler.localWorkers=1
+
 # Set "rhv_build 1" to perform RHV Manager build
 %global rhv_build 0
 
@@ -68,7 +71,7 @@
 # nor modify of variables
 #
 %if %{?_ovirt_build_extra_flags:1}%{?ovirt_build_extra_flags:1}0
-%global EXTRA_BUILD_FLAGS %{?_ovirt_build_extra_flags:%{_ovirt_build_extra_flags}}%{?ovirt_build_extra_flags: %{ovirt_build_extra_flags}}
+%global EXTRA_BUILD_FLAGS %{ovirt_build_extra_flags_rpm} %{?_ovirt_build_extra_flags:%{_ovirt_build_extra_flags}}%{?ovirt_build_extra_flags: %{ovirt_build_extra_flags}}
 %endif
 
 #
