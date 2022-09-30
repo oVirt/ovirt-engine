@@ -1324,9 +1324,15 @@ public class VmHandler implements BackendService {
     }
 
     public void updateCpuAndNumaPinning(VM vm, Guid vdsId) {
-        if (vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA && vm.getCurrentCpuPinning() == null) {
+        if (vm.getCpuPinningPolicy() == CpuPinningPolicy.RESIZE_AND_PIN_NUMA) {
             VdsDynamic host = vdsDynamicDao.get(vdsId);
-            NumaPinningHelper.applyAutoPinningPolicy(vm, host, vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId()));
+            List<VdsNumaNode> hostNumaNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(host.getId());
+
+            if (vm.getCurrentCpuPinning() == null) {
+                NumaPinningHelper.applyAutoPinningPolicy(vm, host, hostNumaNodes);
+            } else {
+                vm.setCurrentCpuPinning(NumaPinningHelper.getSapHanaCpuPinning(vm, host, hostNumaNodes));
+            }
         }
     }
 
