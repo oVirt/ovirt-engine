@@ -151,17 +151,16 @@ public class StartVmBackupCommand<T extends VmBackupParameters> extends VmComman
         if (vmBackup.getFromCheckpointId() != null) {
             if (!FeatureSupported.isIncrementalBackupSupported(getCluster().getCompatibilityVersion())) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_INCREMENTAL_BACKUP_NOT_SUPPORTED);
+            } else {
+              log.info("The fromCheckpoint entity is null");
             }
 
             VmCheckpoint fromCheckpoint = vmCheckpointDao.get(vmBackup.getFromCheckpointId());
-            if (fromCheckpoint == null) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CHECKPOINT_NOT_EXIST,
-                        String.format("$checkpointId %s", vmBackup.getFromCheckpointId()));
-            }
-
-            if (fromCheckpoint.getState().equals(VmCheckpointState.INVALID)) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_CHECKPOINT_INVALID,
-                        String.format("$checkpointId %s", vmBackup.getFromCheckpointId()));
+            if (fromCheckpoint != null) {
+                if (fromCheckpoint.getState().equals(VmCheckpointState.INVALID)) {
+                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_CHECKPOINT_INVALID,
+                            String.format("$checkpointId %s", vmBackup.getFromCheckpointId()));
+                }
             }
 
             if (!FeatureSupported.isBackupModeAndBitmapsOperationsSupported(getCluster().getCompatibilityVersion())) {

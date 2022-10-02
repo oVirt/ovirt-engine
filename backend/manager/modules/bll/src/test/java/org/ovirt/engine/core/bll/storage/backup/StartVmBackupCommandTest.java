@@ -228,18 +228,6 @@ public class StartVmBackupCommandTest extends BaseCommandTest {
 
     @Test
     @MockedConfig("mockConfigIsIncrementalBackupSupported")
-    public void validateFailedMissingCheckpoint() {
-        mockVm(VMStatus.Up);
-        mockVds(true, true);
-        mockVmDevice(true);
-        when(vmBackupDao.getAllForVm(vmId)).thenReturn(List.of(mockVmBackup()));
-        when(vmCheckpointDao.get(fromCheckpointId)).thenReturn(null);
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_CHECKPOINT_NOT_EXIST);
-    }
-
-    @Test
-    @MockedConfig("mockConfigIsIncrementalBackupSupported")
     public void validateFailedInvalidCheckpoint() {
         mockVm(VMStatus.Up);
         mockVds(true, true);
