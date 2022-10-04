@@ -148,7 +148,6 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %if %{rhv_build}
 %global wildfly_overlay_modules ""
 %define extra_common_opts \\\
-	BUILD_ENV_VALIDATION=0 \\\
 	JBOSS_HOME=/opt/rh/eap7/root/usr/share/wildfly
 %else
 %global wildfly_overlay_modules "/usr/share/ovirt-engine-wildfly-overlay/modules"
@@ -161,6 +160,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	BUILD_LOCALES=%{ovirt_build_locales} \\\
 	BUILD_UT=%{ovirt_build_ut} \\\
 	BUILD_VALIDATION=0 \\\
+	BUILD_ENV_VALIDATION=0 \\\
 	PACKAGE_NAME=%{name} \\\
 	RPM_VERSION=%{version} \\\
 	RPM_RELEASE=%{release} \\\
