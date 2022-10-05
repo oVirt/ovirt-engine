@@ -44,7 +44,7 @@
 %endif
 
 # Limit GWT resources to pass the build in CBS
-%global ovirt_build_extra_flags_rpm -Dgwt.compiler.localWorkers=1
+%global ovirt_build_extra_flags_rpm -Dgwt.compiler.localWorkers=2
 
 # Set "rhv_build 1" to perform RHV Manager build
 %global rhv_build 0
