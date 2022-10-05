@@ -53,6 +53,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String NonOperationalReason___KUBEVIRT_NOT_SCHEDULABLE();
 
+    String NonOperationalReason___LIBVIRT_SECRETS_REGISTRATION_FAILURE();
+
+    String NonOperationalReason___HE_HOST_IN_NON_HE_CLUSTER();
+
+    String NonOperationalReason___FIPS_INCOMPATIBLE_WITH_CLUSTER();
+
     String UsbPolicy___ENABLED_NATIVE();
 
     String UsbPolicy___DISABLED();
