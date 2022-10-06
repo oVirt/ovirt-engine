@@ -190,6 +190,8 @@ public class VmManagementParametersBase extends VmOperationParameterBase
         setRngDevice(baseParams.getRngDevice());
         setUpdateWatchdog(baseParams.isUpdateWatchdog());
         setWatchdog(baseParams.getWatchdog());
+        setTpmEnabled(baseParams.isTpmEnabled());
+        setVmExternalData(baseParams.getVmExternalData());
         setAffinityGroups(baseParams.getAffinityGroups());
         setAffinityLabels(baseParams.getAffinityLabels());
 
