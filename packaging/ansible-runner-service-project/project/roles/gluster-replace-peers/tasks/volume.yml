@@ -3,7 +3,10 @@
 - name: Fetch the directory and volume details
   block:
     - name: Get the list of volumes on the machine
-      ansible.builtin.command: ls "{{ glusterd_libdir }}/vols"
+      ansible.builtin.command:
+        argv:
+          - ls
+          - "{{ glusterd_libdir }}/vols"
       register: dir_list
 
     - name: Setting Facts for Volume

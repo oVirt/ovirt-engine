@@ -9,7 +9,11 @@
       register: uuid
 
     - name: Get the state from peer file
-      ansible.builtin.command: grep state "/var/lib/glusterd/peers/{{ uuid.stdout | trim }}"
+      ansible.builtin.command:
+        argv:
+          - grep
+          - state
+          - "/var/lib/glusterd/peers/{{ uuid.stdout | trim }}"
       register: grepres1
 
     - name: Get the state from the peer command

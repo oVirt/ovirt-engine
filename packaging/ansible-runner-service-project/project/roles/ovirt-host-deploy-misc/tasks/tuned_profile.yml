@@ -10,7 +10,11 @@
     state: started
 
 - name: Set tune profile
-  ansible.builtin.command: "tuned-adm profile {{ host_deploy_tuned_profile }}"
+  ansible.builtin.command:
+    argv:
+      - tuned-adm
+      - profile
+      - "{{ host_deploy_tuned_profile }}"
   register: tune_profile_set
 
 - name: Enable tune service
