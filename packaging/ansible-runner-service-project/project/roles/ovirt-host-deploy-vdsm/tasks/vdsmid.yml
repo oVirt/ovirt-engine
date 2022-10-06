@@ -10,7 +10,10 @@
 
 - block:
     - name: Get vdsm id
-      ansible.builtin.command: cat "{{ vdsm_id_file }}"
+      ansible.builtin.command:
+        argv:
+          - cat
+          - "{{ vdsm_id_file }}"
       register: vdsm_id_file_content
 
     - name: Set vdsm id
@@ -47,7 +50,10 @@
       register: stat_results
 
     - name: Detect vdsm id for ppc or ppc64
-      ansible.builtin.command: cat "{{ ppc_system_id }}"
+      ansible.builtin.command:
+        argv:
+          - cat
+          - "{{ ppc_system_id }}"
       register: vdsm_id_res
       when: stat_results.stat.exists
 

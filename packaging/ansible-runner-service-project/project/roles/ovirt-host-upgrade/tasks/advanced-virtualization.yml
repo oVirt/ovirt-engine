@@ -38,7 +38,13 @@
             - latest_rh_rel is version('8.3', '<=')
 
         - name: Enable advanced virtualization module for relevant OS version
-          ansible.builtin.command: "dnf -y module enable virt:{{ virt_mod_ver }}"
+          ansible.builtin.command:
+            argv:
+              - dnf
+              - -y
+              - module
+              - enable
+              - "virt:{{ virt_mod_ver }}"
 
       when:
         - ansible_facts.packages['redhat-release'] is defined

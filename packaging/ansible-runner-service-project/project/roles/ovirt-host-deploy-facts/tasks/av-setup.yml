@@ -25,7 +25,13 @@
         - ansible_distribution_version is version('8.3', '<=')
 
     - name: Enable advanced virtualization module
-      ansible.builtin.command: "dnf -y module enable virt:{{ virt_mod_ver }}"
+      ansible.builtin.command:
+        argv:
+          - dnf
+          - -y
+          - module
+          - enable
+          - "virt:{{ virt_mod_ver }}"
 
   when:
     - host_deploy_origin_type != ovirt_origin_type
