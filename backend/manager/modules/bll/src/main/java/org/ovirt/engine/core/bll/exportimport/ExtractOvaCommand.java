@@ -238,11 +238,11 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
                 .filter(s -> !StringUtils.isEmpty(s)).map(s -> s.split("=", 2))
                 .collect(Collectors.toMap(part -> part[0], part -> new SecretValue<String>(part[1])));
         SecretValue<String> tpmData = externalData.get("tpm");
-        if (!StringUtils.isEmpty(tpmData.getValue())) {
+        if (tpmData != null && !StringUtils.isEmpty(tpmData.getValue())) {
             vmDao.updateTpmData(getVmId(), tpmData, null);
         }
         SecretValue<String> nvramData = externalData.get("nvram");
-        if (!StringUtils.isEmpty(nvramData.getValue())) {
+        if (nvramData != null && !StringUtils.isEmpty(nvramData.getValue())) {
             vmDao.updateNvramData(getVmId(), nvramData, null);
         }
     }
