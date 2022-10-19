@@ -56,7 +56,7 @@
     # Workaround for Gluster Bug doesn't copy the peer file in rejected state
     - name: Workaround for the bug to copy peer file of reject node
       connection: ssh
-      synchronize:
+      ansible.posix.synchronize:
         src: "{{ glusterd_libdir }}/peers/{{ old_node_uuid.stdout | trim }}"
         dest: "{{ glusterd_libdir }}/peers/"
         mode: pull
@@ -93,7 +93,7 @@
 
     - name: Collect all the peer files from cluster_node
       connection: ssh
-      synchronize:
+      ansible.posix.synchronize:
         src: "{{ glusterd_libdir }}/peers/"
         dest: "{{ peer_tmp_dir }}/"
         mode: pull

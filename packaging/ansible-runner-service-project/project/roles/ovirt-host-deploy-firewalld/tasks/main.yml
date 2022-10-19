@@ -26,7 +26,7 @@
         state: enabled
 
     - name: Apply default firewalld rules
-      include_tasks: firewalld.yml
+      ansible.builtin.include_tasks: firewalld.yml
       vars:
         firewald_rules_file: firewalld_rules_{{ outer_item.0 }}.yml
 
@@ -38,7 +38,7 @@
         loop_var: outer_item
 
     - name: Apply cluster specific firewalld rules
-      include_tasks: firewalld.yml
+      ansible.builtin.include_tasks: firewalld.yml
       vars:
         firewald_rules_file: firewalld_rules_{{ outer_item.0 }}_{{ host_deploy_cluster_version }}.yml
 
