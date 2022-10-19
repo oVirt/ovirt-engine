@@ -1,6 +1,6 @@
 ---
 - name: Install ovirt-vmconsole-host package
-  yansible.builtin.yum:
+  ansible.builtin.yum:
     name: ovirt-vmconsole-host
     state: present
 

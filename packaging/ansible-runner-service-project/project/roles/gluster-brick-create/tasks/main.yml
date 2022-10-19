@@ -68,7 +68,7 @@
   failed_when: resp.rc not in [0, 5]
   changed_when: resp.rc == 0
 
-- include_tasks: lvmcache.yml
+- ansible.builtin.include_tasks: lvmcache.yml
   when: ssd is defined and ssd
 
 # rc 1 = Filesystem already exists
@@ -87,7 +87,7 @@
     mode: 0755
 
 - name: Mount the brick
-  mount:
+  ansible.posix.mount:
     name: "{{ mntpath }}"
     src: "/dev/{{ vgname }}/{{ lvname }}"
     fstype: "{{ fstype }}"

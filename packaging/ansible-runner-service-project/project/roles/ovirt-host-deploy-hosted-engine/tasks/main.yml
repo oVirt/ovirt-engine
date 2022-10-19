@@ -1,8 +1,8 @@
 ---
 - name: Include remove hosted engine tasks
-  include_tasks: remove.yml
+  ansible.builtin.include_tasks: remove.yml
   when: hosted_engine_deploy_action == 'undeploy'
 
 - name: Include deploy hosted engine tasks
-  include_tasks: deploy.yml
+  ansible.builtin.include_tasks: deploy.yml
   when: hosted_engine_deploy_action == 'deploy'

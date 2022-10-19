@@ -1,10 +1,10 @@
 ---
 - name: Import the configure ovn-provider-ovn file
-  import_tasks: configure.yml
+  ansible.builtin.import_tasks: configure.yml
   when:
     - ovn_state == "configured"
 
 - name: Import the unconfigure ovn-provider-ovn file
-  import_tasks: unconfigure.yml
+  ansible.builtin.import_tasks: unconfigure.yml
   when:
     - ovn_state == "unconfigured"
