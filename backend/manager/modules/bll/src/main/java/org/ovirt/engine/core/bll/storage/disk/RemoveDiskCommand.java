@@ -12,10 +12,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -28,6 +30,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
@@ -117,6 +120,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private UnregisteredDisksDao unregisteredDisksDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
+    @Inject
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public RemoveDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -398,7 +403,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     protected void executeCommand() {
-        switch (getDisk().getDiskStorageType()) {
+        switch (getDiskStorageType()) {
             case IMAGE:
                 if (getDisk().getContentType() == DiskContentType.MEMORY_DUMP_VOLUME ||
                         getDisk().getContentType() == DiskContentType.MEMORY_METADATA_VOLUME) {
@@ -448,6 +453,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         if (getParameters().isUnregisteredDisk()) {
             unregisteredDisksDao.removeUnregisteredDisk(getParameters().getDiskId(), getParameters().getStorageDomainId());
         }
+        persistCommandIfNeeded();
     }
 
     private void removeManagedBlockStorageDisk() {
@@ -727,5 +733,17 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+    }
+
+    private DiskStorageType getDiskStorageType() {
+        if (getParameters().getDiskStorageType() == null) {
+            getParameters().setDiskStorageType(getDisk().getDiskStorageType());
+        }
+        return getParameters().getDiskStorageType();
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return getDiskStorageType() == DiskStorageType.IMAGE ? callbackProvider.get() :  null;
     }
 }
