@@ -1,11 +1,9 @@
 ---
 - name: Check for system updates (remove empty lines) on EL7
-  ansible.builtin.shell: >
-    set -o pipefail && \
+  ansible.builtin.shell: # noqa risky-shell-pipe
+    >
     yum check-update -q --exclude=ansible | grep '^[a-zA-Z0-9\_\-]\+[.][a-zA-Z0-9\_\-]\+' | cut -d ' ' -f1 |
     sed '/^$/d' >> /tmp/yum_updates
-  args:
-    executable: /bin/bash
   register: yum_updates_res
   when: el_ver | int == 7
   failed_when: "'rc' in yum_updates_res and yum_updates_res.rc == 1"
@@ -18,11 +16,9 @@
 # For example, Packages that will be found: redhat-virtualization-host-image-update.noarch, tar-1.32-6.fc33.x86_64
 # NetworkManager.x86_64, cockpit.x86_64
 - name: Check for system updates (remove empty lines)
-  ansible.builtin.shell: >
-    set -o pipefail && \
+  ansible.builtin.shell: # noqa risky-shell-pipe
+    >
     yum check-update -q | grep '^[a-zA-Z0-9\_\-]\+[.][a-zA-Z0-9\_\-]\+' | cut -d ' ' -f1 | sed '/^$/d' >> /tmp/yum_updates
-  args:
-    executable: /bin/bash
   register: yum_updates_res
   when: el_ver | int != 7
   failed_when: "'rc' in yum_updates_res and yum_updates_res.rc == 1"
