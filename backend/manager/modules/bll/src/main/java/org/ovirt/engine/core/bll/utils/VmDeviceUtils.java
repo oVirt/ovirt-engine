@@ -1494,6 +1494,7 @@ public class VmDeviceUtils {
         params.setSoundDeviceEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.SOUND));
         params.setConsoleEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONSOLE));
         params.setVirtioScsiEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI));
+        params.setTpmEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.TPM));
 
         updateVmGraphicDevicesInParameters(params, devices);
         updateWatchdogInParameters(params, devices);
