@@ -7,7 +7,7 @@ public class RemoveDiskParameters extends ActionParametersBase {
     private static final long serialVersionUID = -3691440035048144457L;
     private Guid diskId;
     private Guid storageDomainId;
-    private DiskStorageType diskStorageType = null;
+    private DiskStorageType diskStorageType;
     private boolean forceDelete;
     private boolean suppressContentTypeCheck;
     private boolean unregisteredDisk;
