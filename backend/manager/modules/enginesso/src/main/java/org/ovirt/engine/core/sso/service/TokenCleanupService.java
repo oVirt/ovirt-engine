@@ -66,9 +66,10 @@ public class TokenCleanupService {
                 }
             }
             if (ssoContext.getSsoLocalConfig().getBoolean("ENGINE_SSO_ENABLE_EXTERNAL_SSO")) {
-                log.debug("Existing Session found for token: {}, invalidating session on external OP",
-                        ssoSession.getAccessToken());
-                ExternalOIDCService.logout(ssoContext, refreshToken);
+                if (refreshToken != null) {
+                    log.debug("invalidating session on external OIDC, refreshToken: {}", refreshToken);
+                    ExternalOIDCService.logout(ssoContext, refreshToken);
+                }
             }
             invokeAuthnLogout(ssoContext, ssoSession);
             SsoService.notifyClientsOfLogoutEvent(ssoContext,

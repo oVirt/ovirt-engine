@@ -1,10 +1,10 @@
 - name: Make sure authorized_keys file is present
-  stat:
+  ansible.builtin.stat:
     path: "/root/.ssh/authorized_keys"
   register: authkey
 
 - name: Copy the authorized_keys from the active host to the new host
-  synchronize:
+  ansible.posix.synchronize:
     src: "/root/.ssh/authorized_keys"
     dest: "/root/.ssh/authorized_keys"
     mode: pull

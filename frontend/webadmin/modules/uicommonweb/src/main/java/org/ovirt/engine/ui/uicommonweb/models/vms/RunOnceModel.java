@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -606,37 +607,37 @@ public abstract class RunOnceModel extends Model {
         this.commandTarget = commandTarget;
 
         // Boot Options tab
-        setAttachFloppy(new EntityModel<Boolean>());
+        setAttachFloppy(new EntityModel<>());
         getAttachFloppy().getEntityChangedEvent().addListener(this);
-        setFloppyImage(new ListModel<String>());
+        setFloppyImage(new ListModel<>());
         getFloppyImage().getSelectedItemChangedEvent().addListener(this);
-        setAttachIso(new EntityModel<Boolean>());
+        setAttachIso(new EntityModel<>());
         getAttachIso().getEntityChangedEvent().addListener(this);
-        setIsoImage(new SortedListModel(new LexoNumericNameableComparator<Nameable>()));
+        setIsoImage(new SortedListModel<>(new LexoNumericNameableComparator<Nameable>()));
         getIsoImage().getSelectedItemChangedEvent().addListener(this);
-        setAttachWgt(new EntityModel<Boolean>());
-        setAttachSysprep(new EntityModel<Boolean>());
+        setAttachWgt(new EntityModel<>());
+        setAttachSysprep(new EntityModel<>());
         getAttachSysprep().getEntityChangedEvent().addListener(this);
-        setDisplayProtocol(new ListModel<EntityModel<DisplayType>>());
+        setDisplayProtocol(new ListModel<>());
         setBootSequence(new BootSequenceModel());
 
         // Linux Boot Options tab
-        setKernel_parameters(new EntityModel<String>());
-        setKernelImage(new ListModel<String>());
-        setInitrdImage(new ListModel<String>());
+        setKernel_parameters(new EntityModel<>());
+        setKernelImage(new ListModel<>());
+        setInitrdImage(new ListModel<>());
 
         // Initial Boot tab - Sysprep
         setIsCloudInitEnabled(new EntityModel<>(false));
 
-        setSysPrepDomainName(new ListModel<String>());
-        setSysPrepSelectedDomainName(new EntityModel<String>());
+        setSysPrepDomainName(new ListModel<>());
+        setSysPrepSelectedDomainName(new EntityModel<>());
 
         setSysPrepUserName(new EntityModel<String>().setIsChangeable(false));
         setSysPrepPassword(new EntityModel<String>().setIsChangeable(false));
         setSysPrepPasswordVerification(new EntityModel<String>().setIsChangeable(false));
 
         setIsSysprepEnabled(new EntityModel<>(false));
-        setIsSysprepPossible(new EntityModel<Boolean>());
+        setIsSysprepPossible(new EntityModel<>());
 
         setIsVmFirstRun(new EntityModel<>(false));
         getIsVmFirstRun().getEntityChangedEvent().addListener(this);
@@ -644,7 +645,7 @@ public abstract class RunOnceModel extends Model {
         getUseAlternateCredentials().getEntityChangedEvent().addListener(this);
 
         // Initial Boot tab - Cloud-Init
-        setIsCloudInitPossible(new EntityModel<Boolean>());
+        setIsCloudInitPossible(new EntityModel<>());
 
         setVmInitModel(new VmInitModel());
 
@@ -657,40 +658,40 @@ public abstract class RunOnceModel extends Model {
         setRunAsStateless(new EntityModel<>(false));
 
         // Display Protocol tab
-        setRunOnceHeadlessModeIsSelected(new EntityModel<Boolean>());
+        setRunOnceHeadlessModeIsSelected(new EntityModel<>());
         getRunOnceHeadlessModeIsSelected().getEntityChangedEvent().addListener(this);
-        setDisplayConsole_Spice_IsSelected(new EntityModel<Boolean>());
+        setDisplayConsole_Spice_IsSelected(new EntityModel<>());
         getDisplayConsole_Spice_IsSelected().getEntityChangedEvent().addListener(this);
-        setDisplayConsole_Vnc_IsSelected(new EntityModel<Boolean>());
+        setDisplayConsole_Vnc_IsSelected(new EntityModel<>());
         getDisplayConsole_Vnc_IsSelected().getEntityChangedEvent().addListener(this);
 
-        setVncKeyboardLayout(new ListModel<String>());
+        setVncKeyboardLayout(new ListModel<>());
         getVncKeyboardLayout().getSelectedItemChangedEvent().addListener(this);
         initVncKeyboardLayout();
         getVncKeyboardLayout().setSelectedItem(vm.getDefaultVncKeyboardLayout());
 
-        setSpiceFileTransferEnabled(new EntityModel<Boolean>());
+        setSpiceFileTransferEnabled(new EntityModel<>());
         getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
         getSpiceFileTransferEnabled().setIsChangeable(true);
         getSpiceFileTransferEnabled().setIsAvailable(true);
 
-        setSpiceCopyPasteEnabled(new EntityModel<Boolean>());
+        setSpiceCopyPasteEnabled(new EntityModel<>());
         getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
         getSpiceCopyPasteEnabled().setIsChangeable(true);
         getSpiceCopyPasteEnabled().setIsAvailable(true);
 
         // System tab
-        setEmulatedMachine(new ListModel<String>());
+        setEmulatedMachine(new ListModel<>());
         getEmulatedMachine().setSelectedItem(vm.getCustomEmulatedMachine());
         setClusterEmulatedMachine(new EntityModel<>());
-        setCustomCpu(new ListModel<String>());
+        setCustomCpu(new ListModel<>());
         getCustomCpu().setSelectedItem(vm.getCustomCpuName());
 
         // Host tab
-        setDefaultHost(new ListModel<VDS>());
+        setDefaultHost(new ListModel<>());
         getDefaultHost().getSelectedItemChangedEvent().addListener(this);
 
-        setIsAutoAssign(new EntityModel<Boolean>());
+        setIsAutoAssign(new EntityModel<>());
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
 
         // availability/visibility
@@ -779,7 +780,7 @@ public abstract class RunOnceModel extends Model {
         if (hasSpiceSupport) {
             getDisplayProtocol().setItems(Arrays.asList(vncProtocol, qxlProtocol));
         } else {
-            getDisplayProtocol().setItems(Arrays.asList(vncProtocol));
+            getDisplayProtocol().setItems(Collections.singletonList(vncProtocol));
             getDisplayConsole_Spice_IsSelected().setIsAvailable(false);
         }
 
@@ -1105,7 +1106,7 @@ public abstract class RunOnceModel extends Model {
 
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
             if (sender == getIsoImage()) {
-                IsoImage_SelectedItemChanged();
+                isoImage_SelectedItemChanged();
             } else if (sender == getFloppyImage()) {
                 floppyImage_SelectedItemChanged();
             }
@@ -1140,7 +1141,7 @@ public abstract class RunOnceModel extends Model {
                 getSpiceFileTransferEnabled().setIsChangeable(false);
                 getSpiceCopyPasteEnabled().setIsChangeable(false);
             } else if (sender == getIsAutoAssign()) {
-                isAutoAssign_EntityChanged(sender, args);
+                isAutoAssign_EntityChanged();
             }
         }
     }
@@ -1180,15 +1181,11 @@ public abstract class RunOnceModel extends Model {
         updateInitialRunFields();
     }
 
-    private void sysprepImage_SelectedItemChanged() {
+    private void isoImage_SelectedItemChanged() {
         updateInitialRunFields();
     }
 
-    private void IsoImage_SelectedItemChanged() {
-        updateInitialRunFields();
-    }
-
-    private void isAutoAssign_EntityChanged(Object sender, EventArgs args) {
+    private void isAutoAssign_EntityChanged() {
         if (!getIsAutoAssign().getEntity()) {
             getDefaultHost().setIsChangeable(true);
         }

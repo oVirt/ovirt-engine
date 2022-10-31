@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.ovirt.engine.core.manager</groupId>
     <artifactId>dependencies</artifactId>
-    <version>4.5.3.1-SNAPSHOT</version>
+    <version>4.5.4-SNAPSHOT</version>
   </parent>
 
   <artifactId>common-dependencies</artifactId>
@@ -28,11 +28,6 @@
     <dependency>
       <groupId>org.ovirt.java-client-kubevirt</groupId>
       <artifactId>java-client-kubevirt</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-jxpath</groupId>
-      <artifactId>commons-jxpath</artifactId>
     </dependency>
 
     <dependency>
@@ -232,12 +227,6 @@
                 <groupId>org.ovirt.java-client-kubevirt</groupId>
                 <artifactId>java-client-kubevirt</artifactId>
                 <moduleName>org.ovirt.java-client-kubevirt</moduleName>
-              </module>
-
-              <module>
-                <groupId>commons-jxpath</groupId>
-                <artifactId>commons-jxpath</artifactId>
-                <moduleName>org.apache.commons.jxpath</moduleName>
               </module>
 
               <module>

@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
@@ -68,7 +69,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
     @TransientField
     private BiosType clusterBiosType;
 
-    private Map<VmExternalDataKind, String> vmExternalData;
+    private Map<VmExternalDataKind, SecretValue<String>> vmExternalData;
 
     public VmTemplate() {
         setNiceLevel(0);
@@ -425,11 +426,11 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         this.clusterBiosType = clusterBiosType;
     }
 
-    public Map<VmExternalDataKind, String> getVmExternalData() {
+    public Map<VmExternalDataKind, SecretValue<String>> getVmExternalData() {
         return vmExternalData;
     }
 
-    public void setVmExternalData(Map<VmExternalDataKind, String> vmExternalData) {
+    public void setVmExternalData(Map<VmExternalDataKind, SecretValue<String>> vmExternalData) {
         this.vmExternalData = vmExternalData;
     }
 

@@ -1,6 +1,6 @@
 ---
 - name: Create SPICE config file with the right permissions
-  file:
+  ansible.builtin.file:
     dest: '/etc/pki/tls/spice.cnf'
     state: touch
     mode: 0644
@@ -8,9 +8,9 @@
     group: root
 
 - name: Put cipher string to SPICE config file
-  copy:
+  ansible.builtin.copy: # noqa template-instead-of-copy
     dest: '/etc/pki/tls/spice.cnf'
-    backup: yes
+    backup: true
     mode: 0644
     content: |
       CipherString = {{ host_deploy_spice_cipher_string }}

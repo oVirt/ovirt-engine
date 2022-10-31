@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.di.interceptor.InvocationLogger;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -410,28 +411,28 @@ public class VmDaoImpl extends BaseDao implements VmDao {
                 getCustomMapSqlParameterSource().addValue("iso_disk_id", isoDiskId));
     }
 
-    private Pair<String, String> getExternalData(Guid vmId, String functionName) {
-        List<Pair<String, String>> resultRows = getCallsHandler().executeReadList(functionName,
-                (rs, i) -> new Pair<>(new String(rs.getString("data")), rs.getString("hash")),
+    private Pair<SecretValue<String>, String> getExternalData(Guid vmId, String functionName) {
+        List<Pair<SecretValue<String>, String>> resultRows = getCallsHandler().executeReadList(functionName,
+                (rs, i) -> new Pair<>(new SecretValue<String>(new String(rs.getString("data"))), rs.getString("hash")),
                 getCustomMapSqlParameterSource().addValue("vm_id", vmId));
         if (resultRows.isEmpty()) {
-            return new Pair<String, String>();
+            return new Pair<SecretValue<String>, String>();
         } else {
             return resultRows.get(0);
         }
     }
 
     @Override
-    public Pair<String, String> getTpmData(Guid vmId) {
+    public Pair<SecretValue<String>, String> getTpmData(Guid vmId) {
         return getExternalData(vmId, "GetTpmData");
     }
 
     @Override
-    public void updateTpmData(Guid vmId, String tpmData, String tpmDataHash) {
+    public void updateTpmData(Guid vmId, SecretValue<String> tpmData, String tpmDataHash) {
         getCallsHandler().executeModification("UpdateTpmData",
                 getCustomMapSqlParameterSource()
                         .addValue("vm_id", vmId)
-                        .addValue("tpm_data", tpmData)
+                        .addValue("tpm_data", tpmData.getValue())
                         .addValue("tpm_hash", tpmDataHash));
     }
 
@@ -451,16 +452,16 @@ public class VmDaoImpl extends BaseDao implements VmDao {
     }
 
     @Override
-    public Pair<String, String> getNvramData(Guid vmId) {
+    public Pair<SecretValue<String>, String> getNvramData(Guid vmId) {
         return getExternalData(vmId, "GetNvramData");
     }
 
     @Override
-    public void updateNvramData(Guid vmId, String nvramData, String nvramDataHash) {
+    public void updateNvramData(Guid vmId, SecretValue<String> nvramData, String nvramDataHash) {
         getCallsHandler().executeModification("UpdateNvramData",
                 getCustomMapSqlParameterSource()
                         .addValue("vm_id", vmId)
-                        .addValue("nvram_data", nvramData)
+                        .addValue("nvram_data", nvramData.getValue())
                         .addValue("nvram_hash", nvramDataHash));
     }
 

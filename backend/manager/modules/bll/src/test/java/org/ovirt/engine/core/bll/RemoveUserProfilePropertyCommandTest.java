@@ -11,12 +11,15 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.UserProfileTestHelper.buildValidationMessage;
 import static org.ovirt.engine.core.bll.UserProfileTestHelper.createWithId;
 
+import java.util.function.Predicate;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfileProperty;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbUserDao;
 import org.ovirt.engine.core.dao.UserProfileDao;
@@ -27,6 +30,9 @@ class RemoveUserProfilePropertyCommandTest extends BaseCommandTest {
 
     @Mock
     private DbUserDao userDaoMock;
+
+    @Mock
+    private Predicate<DbUser> isSystemSuperUserPredicate;
 
     private IdParameters parameters = mock(IdParameters.class);
 

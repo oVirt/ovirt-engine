@@ -1,23 +1,20 @@
 ---
 - name: Install ovirt-vmconsole-host package
-  yum:
+  ansible.builtin.yum:
     name: ovirt-vmconsole-host
     state: present
-  tags:
-    - skip_ansible_lint # E403
 
 - name: Run vm-console-certificates role
-  include_role:
+  ansible.builtin.include_role:
     name: ovirt-host-deploy-vm-console-certificates
-    public: yes
+    public: true
 
 - name: Populate service facts
-  service_facts:
+  ansible.builtin.service_facts:
 
 - name: Start ovirt-vmconsole-host-sshd
-  service:
+  ansible.builtin.service:
     name: ovirt-vmconsole-host-sshd
     state: restarted
-    enabled: yes
+    enabled: true
   when: "'ovirt-vmconsole-host-sshd.service' in ansible_facts.services"
-

@@ -93,7 +93,7 @@ import org.slf4j.LoggerFactory;
  * Also note that there should not be any call to VDSM from this class. If the generated XML
  * needs to contain information that the engine does not know about then either this information
  * should be added to the hosts/VMs monitoring or to GetCapabilities, or to represent the data
- * using place-holders that are replaced by VDSM (see {@link #writeLease(XmlTextWriter, VM)}).
+ * using place-holders that are replaced by VDSM (see {@link #writeLease(String, String, String, String)}).
  */
 public class LibvirtVmXmlBuilder {
 
@@ -250,15 +250,15 @@ public class LibvirtVmXmlBuilder {
             hostNumaNodesSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.getVdsNumaNodes(hostId));
             hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.vgpuPlacement(hostId));
             VdsDynamic vds = vmInfoBuildUtils.getVdsDynamic(hostId);
-            tscFrequencySupplier = new MemoizingSupplier<>(() -> vds.getTscFrequency());
-            cpuFlagsSupplier = new MemoizingSupplier<>(() -> vds.getCpuFlags());
-            cpuModelSupplier = new MemoizingSupplier<>(() -> vds.getCpuModel());
-            incrementalBackupSupplier = new MemoizingSupplier<>(() -> vds.isBackupEnabled());
+            tscFrequencySupplier = new MemoizingSupplier<>(vds::getTscFrequency);
+            cpuFlagsSupplier = new MemoizingSupplier<>(vds::getCpuFlags);
+            cpuModelSupplier = new MemoizingSupplier<>(vds::getCpuModel);
+            incrementalBackupSupplier = new MemoizingSupplier<>(vds::isBackupEnabled);
             kernelFipsModeSupplier = new MemoizingSupplier<>(() -> vmInfoBuildUtils.isKernelFipsMode(vds));
         } else {
-            hostDevicesSupplier = new MemoizingSupplier<>(() -> Collections.emptyMap());
+            hostDevicesSupplier = new MemoizingSupplier<>(Collections::emptyMap);
             hostStatisticsSupplier = new MemoizingSupplier<>(() -> null);
-            hostNumaNodesSupplier = new MemoizingSupplier<>(() -> Collections.emptyList());
+            hostNumaNodesSupplier = new MemoizingSupplier<>(Collections::emptyList);
             hostVgpuPlacementSupplier = new MemoizingSupplier<>(() -> null);
             tscFrequencySupplier = new MemoizingSupplier<>(() -> null);
             cpuFlagsSupplier = new MemoizingSupplier<>(() -> "");
@@ -882,7 +882,7 @@ public class LibvirtVmXmlBuilder {
 
     private void writeMemoryBacking() {
         Optional<Integer> hugepageSizeOpt = HugePageUtils.getHugePageSize(vm.getStaticData());
-        if (!hugepageSizeOpt.isPresent()) {
+        if (hugepageSizeOpt.isEmpty()) {
             return;
         }
 
@@ -1007,7 +1007,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement(OVIRT_VM_URI, "device");
             writer.writeAttributeString("devtype", "hostdev");
             writer.writeAttributeString("uuid", address);
-            data.forEach((key, value) -> writer.writeElement(OVIRT_VM_URI, key, value.toString()));
+            data.forEach((key, value) -> writer.writeElement(OVIRT_VM_URI, key, value));
             writer.writeEndElement();
         });
     }
@@ -1036,7 +1036,7 @@ public class LibvirtVmXmlBuilder {
     private void writeClusterVersionMetadata() {
         writer.writeStartElement(OVIRT_VM_URI, "clusterVersion");
         Version version = vm.getCompatibilityVersion();
-        writer.writeRaw(String.valueOf(version.getMajor()) + "." + String.valueOf(version.getMinor()));
+        writer.writeRaw(version.getMajor() + "." + version.getMinor());
         writer.writeEndElement();
     }
 
@@ -1323,7 +1323,7 @@ public class LibvirtVmXmlBuilder {
     }
 
     @SafeVarargs
-    private final void updateBootOrder(List<VmDevice> ... bootableDevices) {
+    private void updateBootOrder(List<VmDevice> ... bootableDevices) {
         List<VmDevice> managedAndPluggedBootableDevices = Arrays.stream(bootableDevices)
                 .flatMap(Collection::stream)
                 .filter(VmDevice::isManaged)
@@ -1872,7 +1872,6 @@ public class LibvirtVmXmlBuilder {
 
     private void writeNvdimmHostDevice(VmHostDevice device, HostDevice hostDevice) {
         Map<String, Object> specParams = hostDevice.getSpecParams();
-        String mode = (String)specParams.get(VdsProperties.MODE);
         String numaNode = (String)specParams.get(VdsProperties.NUMA_NODE);
         String targetNode = vmInfoBuildUtils.getMatchingNumaNode(getNumaTuneSetting(), vmNumaNodesSupplier, numaNode);
         if (targetNode == null) {
@@ -1884,7 +1883,7 @@ public class LibvirtVmXmlBuilder {
             // If we didn't specify alignsize, libvirt would select one based on memory page size.
             // Better to set it ourselves, to the memory block size.
             // See also VmInfoBuildUtils::getNvdimmAlignedSize().
-            alignSize = new Long(vm.getClusterArch().getHotplugMemorySizeFactorMb() * 1024 * 1024);
+            alignSize = (long) vm.getClusterArch().getHotplugMemorySizeFactorMb() * 1024 * 1024;
         }
         Long size = vmInfoBuildUtils.getNvdimmAlignedSize(vm, hostDevice);
         if (size == null) {

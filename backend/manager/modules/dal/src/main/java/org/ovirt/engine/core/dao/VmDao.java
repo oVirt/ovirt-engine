@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -397,7 +398,7 @@ public interface VmDao extends Dao {
      *
      * @return Pair of data and its hash; any of the pair values can be null if not available
      */
-    Pair<String, String> getTpmData(Guid vmId);
+    Pair<SecretValue<String>, String> getTpmData(Guid vmId);
 
     /**
      * Stores the specified TPM data for the given VM.
@@ -406,7 +407,7 @@ public interface VmDao extends Dao {
      * @param tpmData the data
      * @param tpmDataHash hash of the data as obtained from the VDS
      */
-    void updateTpmData(Guid vmId, String tpmData, String tpmDataHash);
+    void updateTpmData(Guid vmId, SecretValue<String> tpmData, String tpmDataHash);
 
     /**
      * Deletes the TPM data for the given VM.
@@ -430,7 +431,7 @@ public interface VmDao extends Dao {
      *
      * @return Pair of data and its hash; any of the pair values can be null if not available
      */
-    Pair<String, String> getNvramData(Guid vmId);
+    Pair<SecretValue<String>, String> getNvramData(Guid vmId);
 
     /**
      * Stores the specified secure boot NVRAM data for the given VM.
@@ -439,7 +440,7 @@ public interface VmDao extends Dao {
      * @param nvramData the data
      * @param nvramDataHash hash of the data as obtained from the VDS
      */
-    void updateNvramData(Guid vmId, String nvramData, String nvramDataHash);
+    void updateNvramData(Guid vmId, SecretValue<String> nvramData, String nvramDataHash);
 
     /**
      * Deletes the NVRAM data for the given VM.

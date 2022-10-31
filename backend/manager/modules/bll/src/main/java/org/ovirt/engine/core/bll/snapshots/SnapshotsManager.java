@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.FullEntityOvfData;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -344,16 +345,16 @@ public class SnapshotsManager {
         }
     }
 
-    private void addVmExternalData(Map<VmExternalDataKind, String> vmExternalData, VM vm) {
+    private void addVmExternalData(Map<VmExternalDataKind, SecretValue<String>> vmExternalData, VM vm) {
         if (VmDeviceCommonUtils.isVmDeviceExists(vm.getStaticData().getManagedDeviceMap(), VmDeviceType.TPM)) {
-            String tpmData = vmDao.getTpmData(vm.getId()).getFirst();
-            if (tpmData != null && !tpmData.equals("")) {
+            SecretValue<String> tpmData = vmDao.getTpmData(vm.getId()).getFirst();
+            if (!SecretValue.isNull(tpmData) && !tpmData.getValue().equals("")) {
                 vmExternalData.put(VmExternalDataKind.TPM, tpmData);
             }
         }
         if (vm.getBiosType() == BiosType.Q35_SECURE_BOOT) {
-            String nvramData = vmDao.getNvramData(vm.getId()).getFirst();
-            if (nvramData != null && !nvramData.equals("")) {
+            SecretValue<String> nvramData = vmDao.getNvramData(vm.getId()).getFirst();
+            if (!SecretValue.isNull(nvramData) && !nvramData.getValue().equals("")) {
                 vmExternalData.put(VmExternalDataKind.NVRAM, nvramData);
             }
         }

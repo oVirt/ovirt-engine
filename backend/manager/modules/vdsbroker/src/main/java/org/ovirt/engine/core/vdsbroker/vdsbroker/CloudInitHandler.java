@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -41,6 +43,7 @@ public class CloudInitHandler {
     private Map<String, Object> networkData;
 
     private final String passwordKey = "password";
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("(password: *)'.*'");
 
     public List<EngineMessage> validate(VmInit vmInit) {
         // validate only if 'Initial Run' parameters were specified
@@ -117,6 +120,10 @@ public class CloudInitHandler {
             String oldStr = String.format("\"%s\" : \"%s\"", passwordKey, vmInit.getRootPassword());
             String newStr = String.format("\"%s\" : ***", passwordKey);
             metaDataStr = metaDataStr.replace(oldStr, newStr);
+        }
+        if (userDataStr.contains(passwordKey)) {
+            Matcher matcher = PASSWORD_PATTERN.matcher(userDataStr);
+            userDataStr = matcher.replaceAll("$1'***'");
         }
         log.debug("cloud-init meta-data:\n{}", metaDataStr);
         log.debug("cloud-init user-data:\n{}", userDataStr);

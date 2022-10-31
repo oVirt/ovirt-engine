@@ -1,11 +1,11 @@
 ---
 - name: Include sync. clock tasks
-  include_tasks: clock.yml
+  ansible.builtin.include_tasks: clock.yml
 
 - name: Include gluster tasks
-  include_tasks: gluster.yml
+  ansible.builtin.include_tasks: gluster.yml
   when: host_deploy_gluster_supported|bool
 
 - name: Include tuned profile tasks
-  include_tasks: tuned_profile.yml
+  ansible.builtin.include_tasks: tuned_profile.yml
   when: not (host_deploy_tuned_profile == 'null' and not host_deploy_virt_enabled|bool)

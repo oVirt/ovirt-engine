@@ -14,6 +14,8 @@ import static org.ovirt.engine.core.bll.UserProfileTestHelper.checkAssertsForGen
 import static org.ovirt.engine.core.bll.UserProfileTestHelper.checkAssertsForSshProp;
 import static org.ovirt.engine.core.bll.UserProfileTestHelper.createWithId;
 
+import java.util.function.Predicate;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,6 +33,9 @@ class UpdateUserProfilePropertyCommandTest extends BaseCommandTest {
 
     @Mock
     private DbUserDao userDaoMock;
+
+    @Mock
+    private Predicate<DbUser> isSystemSuperUserPredicate;
 
     private UserProfilePropertyParameters parameters = mock(UserProfilePropertyParameters.class);
 

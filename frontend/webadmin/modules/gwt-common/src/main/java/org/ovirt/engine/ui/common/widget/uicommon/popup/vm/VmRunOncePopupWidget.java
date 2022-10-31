@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Container;
+import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -452,7 +453,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
         sysPrepDomainNameComboBox = new ComboBox<>(sysPrepDomainNameListBoxEditor, sysPrepDomainNameTextBoxEditor);
 
-        defaultHostEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
+        defaultHostEditor = new ListModelListBoxEditor<>(new NameRenderer<>());
 
         emulatedMachine = new ListModelTypeAheadChangeableListBoxEditor(
                 new ListModelTypeAheadChangeableListBoxEditor.NullSafeSuggestBoxRenderer() {
@@ -500,9 +501,8 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         runOnceModel = object;
 
         emulatedMachine.setNullReplacementString(getDefaultEmulatedMachineLabel());
-        object.getClusterEmulatedMachine().getEntityChangedEvent().addListener((ev, sender, args) -> {
-            emulatedMachine.setNullReplacementString(getDefaultEmulatedMachineLabel());
-        });
+        object.getClusterEmulatedMachine().getEntityChangedEvent().addListener((ev, sender, args) ->
+                emulatedMachine.setNullReplacementString(getDefaultEmulatedMachineLabel()));
 
         // Update Linux options panel
         final EntityModel<Boolean> isLinuxOptionsAvailable = object.getIsLinuxOptionsAvailable();
@@ -677,7 +677,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         bootSequenceBox.setVisibleItemCount(bootSequenceModel.getItems().size());
 
         // Set items
-        for (EntityModel bootItem : bootSequenceModel.getItems()) {
+        for (EntityModel<BootSequence> bootItem : bootSequenceModel.getItems()) {
             bootSequenceBox.addItem(bootItem.getTitle());
             updateItemAvailability(bootItem.getTitle(), bootItem.getIsChangable());
         }

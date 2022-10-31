@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.snapshots;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +33,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.ImageDao;
-import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -53,8 +51,6 @@ public class CreateSnapshotCommand<T extends CreateSnapshotParameters> extends B
     private DiskImageDao diskImageDao;
     @Inject
     private VmDao vmDao;
-    @Inject
-    private StorageDomainDao storageDomainDao;
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
     @Inject
@@ -99,7 +95,7 @@ public class CreateSnapshotCommand<T extends CreateSnapshotParameters> extends B
                 Guid.newGuid() : getParameters().getDestinationImageId());
         persistCommandIfNeeded();
         newDiskImage = cloneDiskImage(getDestinationImageId());
-        newDiskImage.setStorageIds(new ArrayList<>(Arrays.asList(getDestinationStorageDomainId())));
+        newDiskImage.setStorageIds(new ArrayList<>(Collections.singletonList(getDestinationStorageDomainId())));
         getParameters().setStorageDomainId(getDestinationStorageDomainId());
         getParameters().setImageId(getDestinationImageId());
         getParameters().setImageGroupID(getImageGroupId());

@@ -1,8 +1,8 @@
 # libvirtd may not be started automatically on hosts >= 4.4 if not
 # already running.  Let's restart it, all dependent services will follow
-- name: restart libvirtd
-  service:
+- name: Restart libvirtd
+  ansible.builtin.service:
     name: libvirtd
     state: restarted
-  when: host_deploy_vnc_restart_services|bool
+  when: host_deploy_vnc_restart_services | bool
   listen: "restart libvirtd"

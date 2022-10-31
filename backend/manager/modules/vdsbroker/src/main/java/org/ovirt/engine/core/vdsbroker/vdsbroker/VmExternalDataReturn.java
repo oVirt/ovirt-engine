@@ -2,6 +2,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.common.utils.SecretValue;
+
 @SuppressWarnings("unchecked")
 public class VmExternalDataReturn {
 
@@ -11,17 +13,18 @@ public class VmExternalDataReturn {
     private static final String HASH = "hash";
 
     public final Status status;
-    public final String data;
+    public final SecretValue<String> data;
     public final String hash;
 
     public VmExternalDataReturn(Map<String, Object> innerMap) {
         status = new Status((Map<String, Object>) innerMap.get(STATUS));
         final Map<String, String> result = (Map<String, String>) innerMap.get(INFO);
         if (status.code == 0) {
-            data = result.getOrDefault(DATA, null);
+            data = new SecretValue<>(result.getOrDefault(DATA, null));
             hash = result.get(HASH);
         } else {
-            data = hash = "";
+            data = new SecretValue<>("");
+            hash = "";
         }
     }
 }

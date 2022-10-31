@@ -43,6 +43,9 @@
 %global ovirt_build_all_user_agents 1
 %endif
 
+# Limit GWT resources to pass the build in CBS
+%global ovirt_build_extra_flags_rpm -Dgwt.compiler.localWorkers=2
+
 # Set "rhv_build 1" to perform RHV Manager build
 %global rhv_build 0
 
@@ -67,8 +70,8 @@
 # rpm does not support override
 # nor modify of variables
 #
-%if %{?_ovirt_build_extra_flags:1}%{?ovirt_build_extra_flags:1}0
-%global EXTRA_BUILD_FLAGS %{?_ovirt_build_extra_flags:%{_ovirt_build_extra_flags}}%{?ovirt_build_extra_flags: %{ovirt_build_extra_flags}}
+%if %{?ovirt_build_extra_flags_rpm:1}%{?_ovirt_build_extra_flags:1}%{?ovirt_build_extra_flags:1}0
+%global EXTRA_BUILD_FLAGS %{ovirt_build_extra_flags_rpm} %{?_ovirt_build_extra_flags:%{_ovirt_build_extra_flags}}%{?ovirt_build_extra_flags: %{ovirt_build_extra_flags}}
 %endif
 
 #
@@ -145,7 +148,6 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %if %{rhv_build}
 %global wildfly_overlay_modules ""
 %define extra_common_opts \\\
-	BUILD_ENV_VALIDATION=0 \\\
 	JBOSS_HOME=/opt/rh/eap7/root/usr/share/wildfly
 %else
 %global wildfly_overlay_modules "/usr/share/ovirt-engine-wildfly-overlay/modules"
@@ -158,6 +160,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	BUILD_LOCALES=%{ovirt_build_locales} \\\
 	BUILD_UT=%{ovirt_build_ut} \\\
 	BUILD_VALIDATION=0 \\\
+	BUILD_ENV_VALIDATION=0 \\\
 	PACKAGE_NAME=%{name} \\\
 	RPM_VERSION=%{version} \\\
 	RPM_RELEASE=%{release} \\\
@@ -275,7 +278,6 @@ Obsoletes:	python3-ansible-runner < 2.0.0
 %endif
 
 Requires:	apache-commons-compress
-Requires:	apache-commons-jxpath
 Requires:	java-11-openjdk-headless >= %{openjdk_version}
 Requires:	javapackages-tools
 Requires:	ovirt-imageio-daemon >= 2.0.10-1
@@ -856,7 +858,6 @@ common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/r
 common/net/i2p/crypto/eddsa/main/eddsa.jar
 common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
-common/org/apache/commons/jxpath/main/commons-jxpath.jar
 common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 common/org/apache/sshd/main/sshd-common.jar apache-sshd/sshd-common.jar
 common/org/apache/ws/commons/main/ws-commons-util.jar
@@ -1359,6 +1360,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Fri Sep 30 2022 Martin Perina <mperina@redhat.com> - 4.5.3.1
+- Bump version to 4.5.3.1
+
 * Thu Sep 15 2022 Martin Perina <mperina@redhat.com> - 4.5.3
 - Bump version to 4.5.3
 

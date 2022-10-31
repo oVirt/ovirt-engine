@@ -1,12 +1,12 @@
 - block:
   - name: Create OVN key temporary files
-    tempfile:
+    ansible.builtin.tempfile:
       state: file
       suffix: ovn
     register: ovnkey
 
   - name: Generate OVN CSR
-    command: |
+    ansible.builtin.command: |
       '/usr/bin/openssl'
       'req'
       '-new'
@@ -20,14 +20,14 @@
     register: csr
 
   - name: Copy OVN CSR
-    copy:
+    ansible.builtin.copy: # noqa template-instead-of-copy
       content: "{{ csr.stdout }}"
       dest: "{{ ovirt_pki_dir }}/requests/{{ ovirt_vds_hostname }}-ovn.req"
       mode: 0644
     delegate_to: localhost
 
   - name: Run PKI enroll request for OVN
-    command: |
+    ansible.builtin.command: |
        "{{ ovirt_engine_usr }}/bin/pki-enroll-request.sh"
        "--name={{ ovirt_vds_hostname }}-ovn"
        "--subject=/O={{ ovirt_organizationname }}/CN={{ ovirt_vds_hostname }}"
@@ -37,14 +37,15 @@
     delegate_to: localhost
 
   - name: Prepare directory for OVN certificate files
-    file:
+    ansible.builtin.file:
       dest: "{{ ovirt_vdsm_trust_store ~ '/' ~ ovirt_ovn_cert_file | dirname }}"
       state: directory
       owner: 'openvswitch'
       group: 'openvswitch'
+      mode: 0755
 
   - name: Add OVN cacert file
-    copy:
+    ansible.builtin.copy: # noqa template-instead-of-copy
       content: "{{ ovirt_ca_cert }}"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_ovn_ca_file }}"
       owner: 'openvswitch'
@@ -52,28 +53,28 @@
       mode: 0644
 
   - name: Add OVN cert file
-    copy:
+    ansible.builtin.copy:
       src: "{{ ovirt_pki_dir }}/certs/{{ ovirt_vds_hostname }}-ovn.cer"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_ovn_cert_file }}"
       owner: 'openvswitch'
       group: 'openvswitch'
-      remote_src: no
+      remote_src: false
       mode: preserve
 
   - name: Add OVN key file
-    copy:
+    ansible.builtin.copy:
       src: "{{ ovnkey.path }}"
       dest: "{{ ovirt_vdsm_trust_store }}/{{ ovirt_ovn_key_file }}"
       owner: 'openvswitch'
       group: 'openvswitch'
       mode: 0440
-      remote_src: yes
+      remote_src: true
 
   - name: Populate service facts
-    service_facts:
+    ansible.builtin.service_facts:
 
   - name: Restart OVN services
-    service:
+    ansible.builtin.service:
       name: "{{ item }}"
       state: restarted
     loop:
@@ -84,6 +85,6 @@
 
   always:
     - name: Remove temp file
-      file:
+      ansible.builtin.file:
         state: absent
         path: "{{ ovnkey.path }}"

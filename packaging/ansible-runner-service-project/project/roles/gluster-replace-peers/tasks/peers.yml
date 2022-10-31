@@ -2,49 +2,46 @@
 - name: Validating the state of the old host
   block:
     - name: Fetch the UUID of the old node
-      shell: >
+      ansible.builtin.shell: >
         gluster peer status |
         grep -A1 {{ gluster_old_node | mandatory }} |
         awk -F: '/uid/ { print $2}'
       register: uuid
-      tags:
-        - skip_ansible_lint # E301
 
     - name: Get the state from peer file
-      shell: grep state "/var/lib/glusterd/peers/{{ uuid.stdout | trim }}"
+      ansible.builtin.command:
+        argv:
+          - grep
+          - state
+          - "/var/lib/glusterd/peers/{{ uuid.stdout | trim }}"
       register: grepres1
-      tags:
-        - skip_ansible_lint # E301
 
     - name: Get the state from the peer command
-      shell: >
+      ansible.builtin.shell: >
         gluster peer status |
         grep -A1 {{ uuid.stdout | trim }} |
         grep Connected |
         wc -l
       ignore_errors: true
       register: grepres2
-      tags:
-        - skip_ansible_lint # E301
 
     - name: Fail the play if the previous command did not succeed
-      fail:
+      ansible.builtin.fail:
         msg: "{{ gluster_old_node }} is already in connected state"
       when: grepres1.stdout == "state=3" and grepres2.stdout == "1"
   run_once: true
 
 - name: Get the UUID of the old node
-  shell: >
+  ansible.builtin.shell: # noqa risky-shell-pipe
+    >
     gluster peer status |
     grep -A1 {{ gluster_old_node | mandatory }} |
     awk -F: '/uid/ { print $2}'
   register: old_node_uuid
   run_once: true
-  tags:
-    - skip_ansible_lint # E301
 
 - name: Fail if parsed hostname is different from the back-end FQDN
-  fail: msg="Hostname mentioned in inventory should be same with back-end gluster FQDN"
+  ansible.builtin.fail: msg="Hostname mentioned in inventory should be same with back-end gluster FQDN"
   when: old_node_uuid.stdout | bool
   tags:
     - skip_ansible_lint # E602
@@ -54,12 +51,12 @@
   block:
     # probe the new host, if new host is not the same old host
     - name: Peer probe the new host
-      command: "gluster peer probe {{ gluster_new_node }}"
+      ansible.builtin.command: "gluster peer probe {{ gluster_new_node }}"
 
     # Workaround for Gluster Bug doesn't copy the peer file in rejected state
     - name: Workaround for the bug to copy peer file of reject node
       connection: ssh
-      synchronize:
+      ansible.posix.synchronize:
         src: "{{ glusterd_libdir }}/peers/{{ old_node_uuid.stdout | trim }}"
         dest: "{{ glusterd_libdir }}/peers/"
         mode: pull
@@ -67,7 +64,7 @@
 
     - name: Restart glusterd on the new node
       connection: ssh
-      service:
+      ansible.builtin.service:
         name: glusterd
         state: restarted
       delegate_to: "{{ gluster_new_node }}"
@@ -77,28 +74,26 @@
 - name: Peer restoration in the case of replacing with same FQDN
   block:
     - name: Get the UUID of the current node
-      shell: >
+      ansible.builtin.shell: >
         cat "{{ glusterd_libdir }}"/glusterd.info |
         awk -F= '/UUID/ { print $2}'
       register: current_node_uuid
       run_once: true
-      tags:
-        - skip_ansible_lint # E301
 
     - name: Fail if current node UUID is empty
-      fail: msg="Execute this playbook on the active host"
+      ansible.builtin.fail: msg="Execute this playbook on the active host"
       when: current_node_uuid.stdout | bool
       tags:
         - skip_ansible_lint # E602
 
     - name: Store the UUID
-      set_fact:
+      ansible.builtin.set_fact:
         old_uuid: "{{ old_node_uuid.stdout | trim }}"
         current_uuid: "{{ current_node_uuid.stdout | trim }}"
 
     - name: Collect all the peer files from cluster_node
       connection: ssh
-      synchronize:
+      ansible.posix.synchronize:
         src: "{{ glusterd_libdir }}/peers/"
         dest: "{{ peer_tmp_dir }}/"
         mode: pull
@@ -106,47 +101,48 @@
 
     - name: Check whether peer file of cluster_node is available
       connection: ssh
-      stat:
+      ansible.builtin.stat:
         path: "{{ glusterd_libdir }}/peers/{{ current_uuid }}"
       register: peerfileres
       delegate_to: "{{ gluster_cluster_node_2 | mandatory }}"
 
     - name: Fetch the peer file of the current node
       connection: ssh
-      fetch:
+      ansible.builtin.fetch:
         src: "{{ glusterd_libdir }}/peers/{{ current_uuid }}"
         dest: "{{ peer_tmp_dir }}/"
-        flat: yes
+        flat: true
       delegate_to: "{{ gluster_cluster_node_2 | mandatory }}"
       when: peerfileres.stat.isreg is defined
 
     - name: Fetch the peer file of the current node
       connection: ssh
-      fetch:
+      ansible.builtin.fetch:
         src: "{{ glusterd_libdir }}/peers/{{ current_uuid }}"
         dest: "{{ peer_tmp_dir }}/"
-        flat: yes
+        flat: true
       delegate_to: "{{ gluster_cluster_node | mandatory }}"
       when: peerfileres.stat.isreg is not defined
 
     - name: Remove the old node uuid from the extracted peer details
       connection: ssh
-      file:
+      ansible.builtin.file:
         path: "{{ peer_tmp_dir }}/{{ old_uuid }}"
         state: absent
       delegate_to: "{{ gluster_cluster_node }}"
 
     - name: Copy all the peer files to the new host
       connection: ssh
-      copy:
+      ansible.builtin.copy:
         src: "{{ peer_tmp_dir }}/"
         dest: "{{ glusterd_libdir }}/peers/"
+        mode: 0755
       delegate_to: "{{ gluster_new_node }}"
 
 
     - name: Edit the new node's glusterd.info
       connection: ssh
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: "{{ glusterd_libdir }}/glusterd.info"
         regexp: '^UUID='
         line: "UUID={{ old_uuid }}"
@@ -154,12 +150,12 @@
 
     - name: Restart glusterd
       connection: ssh
-      service:
+      ansible.builtin.service:
         name: glusterd
         state: restarted
       delegate_to: "{{ gluster_new_node | mandatory }}"
 
     - name: Pausing for 5 seconds
-      pause: seconds=5
+      ansible.builtin.pause: seconds=5
 
   when: gluster_old_node == gluster_new_node

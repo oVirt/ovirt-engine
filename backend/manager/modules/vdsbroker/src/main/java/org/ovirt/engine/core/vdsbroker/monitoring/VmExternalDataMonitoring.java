@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.qualifiers.VmDeleted;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -82,7 +83,7 @@ public class VmExternalDataMonitoring {
     }
 
     private void saveExternalData(Guid vmId, Guid vdsId, ExternalDataHashes externalDataHashes,
-            VmExternalDataKind dataKind, String newDataHash, BiConsumer<String, String> storeFunction) {
+            VmExternalDataKind dataKind, String newDataHash, BiConsumer<SecretValue<String>, String> storeFunction) {
         if (newDataHash != null) {
             synchronized (externalDataHashes) {
                 if (newDataHash.equals(externalDataHashes.getDataHash(dataKind))) {
@@ -100,8 +101,8 @@ public class VmExternalDataMonitoring {
             }
             if (retVal.getSucceeded()) {
                 VmExternalDataReturn externalDataReturn = (VmExternalDataReturn) retVal.getReturnValue();
-                String data = externalDataReturn.data;
-                if (data != null && !data.equals("")) {
+                SecretValue<String> data = externalDataReturn.data;
+                if (!SecretValue.isNull(data) && !data.getValue().equals("")) {
                     synchronized (externalDataHashes) {
                         try {
                             storeFunction.accept(data, externalDataReturn.hash);

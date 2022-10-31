@@ -1,30 +1,28 @@
 ---
 - name: Verify platform is suitable for hosted engine
-  fail:
+  ansible.builtin.fail:
     msg: "Hosted Engine support requested on unsupported machine: {{ ansible_facts.architecture }}. Disabling"
   when: ansible_facts.architecture != 'x86_64'
 
-- name: populate service facts
-  service_facts:
+- name: Populate service facts
+  ansible.builtin.service_facts:
 
 - name: Stop services
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: stopped
   loop:
-  - ovirt-ha-agent.service
-  - ovirt-ha-broker.service
+    - ovirt-ha-agent.service
+    - ovirt-ha-broker.service
   when: "item in ansible_facts.services"
 
 - name: Install ovirt-hosted-engine-setup package
-  yum:
+  ansible.builtin.yum:
     name: ovirt-hosted-engine-setup
     state: present
-  tags:
-    - skip_ansible_lint # E403
 
 - name: Store hosted engine configuration
-  copy:
+  ansible.builtin.copy:
     src: "{{ hosted_engine_tmp_cfg_file }}"
     dest: "{{ hosted_engine_conf }}"
     owner: 'vdsm'
@@ -32,13 +30,13 @@
     mode: 0440
 
 - name: Update host ID in hosted engine configuration
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: "{{ hosted_engine_conf }}"
     regex: "^host_id="
     line: "host_id={{ hosted_engine_host_id }}"
 
 - name: Start ovirt-ha-agent service
-  service:
+  ansible.builtin.service:
     name: ovirt-ha-agent
-    enabled: yes
+    enabled: true
     state: restarted

@@ -1,4 +1,5 @@
 package org.ovirt.engine.core.common.action;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveDiskParameters extends ActionParametersBase {
@@ -6,6 +7,7 @@ public class RemoveDiskParameters extends ActionParametersBase {
     private static final long serialVersionUID = -3691440035048144457L;
     private Guid diskId;
     private Guid storageDomainId;
+    private DiskStorageType diskStorageType;
     private boolean forceDelete;
     private boolean suppressContentTypeCheck;
     private boolean unregisteredDisk;
@@ -60,5 +62,13 @@ public class RemoveDiskParameters extends ActionParametersBase {
 
     public void setUnregisteredDisk(boolean unregisteredDisk) {
         this.unregisteredDisk = unregisteredDisk;
+    }
+
+    public DiskStorageType getDiskStorageType() {
+        return diskStorageType;
+    }
+
+    public void setDiskStorageType(DiskStorageType diskStorageType) {
+        this.diskStorageType = diskStorageType;
     }
 }

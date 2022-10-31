@@ -1,12 +1,10 @@
 ---
 - name: Start chrony daemon
-  service:
+  ansible.builtin.service:
     name: chronyd
     state: started
 
 - name: Wait for chronyd to synchronise
-  shell: chronyc waitsync 1
+  ansible.builtin.command: chronyc waitsync 1
   register: chronyc_sync
   failed_when: "'FAILED' in chronyc_sync.stderr"
-  tags:
-    - skip_ansible_lint # E305

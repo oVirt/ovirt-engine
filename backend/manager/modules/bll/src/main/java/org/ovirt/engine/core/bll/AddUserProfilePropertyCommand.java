@@ -46,7 +46,8 @@ public class AddUserProfilePropertyCommand<T extends UserProfilePropertyParamete
                 userProfileDao.getProfile(newProp.getUserId()),
                 newProp,
                 getCurrentUser(),
-                this::validate);
+                this::validate,
+                isSystemSuperUser());
     }
 
     public static String buildUserName(DbUserDao userDao, Guid userId) {

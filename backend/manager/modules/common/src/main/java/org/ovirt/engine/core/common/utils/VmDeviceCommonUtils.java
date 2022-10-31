@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,14 +31,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmDeviceCommonUtils {
 
-    static final String NETWORK_CHAR = "N";
-    static final String CDROM_CHAR = "D";
-    static final String DRIVE_CHAR = "C";
-
     /** Expected unit: MiB */
     public static final String SPEC_PARAM_SIZE = "size";
     public static final String SPEC_PARAM_NODE = "node";
-    public static final String VIDEO_HEADS = "heads";
 
     public static boolean isNetwork(VmDevice device) {
         return device.getType() == VmDeviceGeneralType.INTERFACE;
@@ -87,7 +81,7 @@ public class VmDeviceCommonUtils {
                 VmDeviceGeneralType.CONTROLLER,
                 VmDeviceType.VIRTIOSERIAL.getName(),
                 "",
-                new HashMap<String, Object>(),
+                new HashMap<>(),
                 true,
                 true,
                 false,
@@ -210,7 +204,7 @@ public class VmDeviceCommonUtils {
             deviceIdToIfaceName.put(iface.getId(), iface.getName());
         }
 
-        Collections.sort(pluggedInterfaces, Comparator.comparing(d -> deviceIdToIfaceName.get(d.getId().getDeviceId())));
+        pluggedInterfaces.sort(Comparator.comparing(d -> deviceIdToIfaceName.get(d.getId().getDeviceId())));
 
         return pluggedInterfaces;
     }
@@ -284,7 +278,7 @@ public class VmDeviceCommonUtils {
     public static boolean isInWhiteList(VmDeviceGeneralType type, String device) {
         String expr = getDeviceTypeSearchExpr(type, device);
         String whiteList = Config.getValue(ConfigValues.ManagedDevicesWhiteList);
-        return whiteList.indexOf(expr) >= 0;
+        return whiteList.contains(expr);
     }
 
     private static String getDeviceTypeSearchExpr(VmDeviceGeneralType type, String device) {

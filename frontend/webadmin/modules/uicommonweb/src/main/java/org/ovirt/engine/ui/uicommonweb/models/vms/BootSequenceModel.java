@@ -39,20 +39,20 @@ public class BootSequenceModel extends ListModel<EntityModel<BootSequence>> {
         super.setItems(value);
     }
 
-    public EntityModel getHardDiskOption() {
+    public EntityModel<BootSequence> getHardDiskOption() {
         return getBootSequenceOption(BootSequence.C);
     }
 
-    public EntityModel getNetworkOption() {
+    public EntityModel<BootSequence> getNetworkOption() {
         return getBootSequenceOption(BootSequence.N);
     }
 
-    public EntityModel getCdromOption() {
+    public EntityModel<BootSequence> getCdromOption() {
         return getBootSequenceOption(BootSequence.D);
     }
 
-    private EntityModel getBootSequenceOption(BootSequence bootSequenceOption) {
-        for (EntityModel a : getItems()) {
+    private EntityModel<BootSequence> getBootSequenceOption(BootSequence bootSequenceOption) {
+        for (EntityModel<BootSequence> a : getItems()) {
             if (a.getEntity() == bootSequenceOption) {
                 return a;
             }
@@ -63,9 +63,9 @@ public class BootSequenceModel extends ListModel<EntityModel<BootSequence>> {
 
     public BootSequence getSequence() {
         StringBuilder str = new StringBuilder();
-        for (EntityModel a : getItems()) {
+        for (EntityModel<BootSequence> a : getItems()) {
             if (a.getIsChangable()) {
-                BootSequence bs = (BootSequence) a.getEntity();
+                BootSequence bs = a.getEntity();
                 str.append(bs.toString());
             }
         }

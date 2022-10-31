@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.utils.SecretValue;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandConfig;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
@@ -233,16 +234,15 @@ public class ExtractOvaCommand<T extends ConvertOvaParameters> extends VmCommand
     }
 
     private void storeExternalData(String stdout) {
-        Map<String, String> externalData = Arrays.stream(stdout.trim().split(";"))
-                .filter(s -> !StringUtils.isEmpty(s))
-                .map(s -> s.split("=", 2))
-                .collect(Collectors.toMap(part -> part[0], part -> part[1]));
-        String tpmData = externalData.get("tpm");
-        if (!StringUtils.isEmpty(tpmData)) {
+        Map<String, SecretValue<String>> externalData = Arrays.stream(stdout.trim().split(";"))
+                .filter(s -> !StringUtils.isEmpty(s)).map(s -> s.split("=", 2))
+                .collect(Collectors.toMap(part -> part[0], part -> new SecretValue<String>(part[1])));
+        SecretValue<String> tpmData = externalData.get("tpm");
+        if (tpmData != null && !StringUtils.isEmpty(tpmData.getValue())) {
             vmDao.updateTpmData(getVmId(), tpmData, null);
         }
-        String nvramData = externalData.get("nvram");
-        if (!StringUtils.isEmpty(nvramData)) {
+        SecretValue<String> nvramData = externalData.get("nvram");
+        if (nvramData != null && !StringUtils.isEmpty(nvramData.getValue())) {
             vmDao.updateNvramData(getVmId(), nvramData, null);
         }
     }

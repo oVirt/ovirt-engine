@@ -1,36 +1,36 @@
 ---
 - block:
     - name: Stop iptables service if running
-      service:
+      ansible.builtin.service: # noqa ignore-errors
         name: iptables
         state: stopped
-        enabled: no
-      ignore_errors: yes
+        enabled: false
+      ignore_errors: true
 
     - name: Check if firewalld is installed
-      package:
+      ansible.builtin.package:
         name: firewalld
         state: present
 
     - name: Check if firewalld is runnning
-      service:
+      ansible.builtin.service:
         name: firewalld
         state: started
-        enabled: yes
+        enabled: true
 
     - name: Enable SSH port
-      firewalld:
+      ansible.builtin.firewalld:
         port: "{{ ansible_port }}/tcp"
-        permanent: yes
-        immediate: yes
+        permanent: true
+        immediate: true
         state: enabled
 
     - name: Apply default firewalld rules
-      include_tasks: firewalld.yml
+      ansible.builtin.include_tasks: firewalld.yml
       vars:
         firewald_rules_file: firewalld_rules_{{ outer_item.0 }}.yml
 
-      when: outer_item.1|bool
+      when: outer_item.1 | bool
       with_together:
         - ["common", "virt", "gluster"]
         - [true, "{{ host_deploy_virt_enabled }}", "{{ host_deploy_gluster_enabled }}"]
@@ -38,16 +38,16 @@
         loop_var: outer_item
 
     - name: Apply cluster specific firewalld rules
-      include_tasks: firewalld.yml
+      ansible.builtin.include_tasks: firewalld.yml
       vars:
         firewald_rules_file: firewalld_rules_{{ outer_item.0 }}_{{ host_deploy_cluster_version }}.yml
 
-      when: outer_item.1|bool
+      when: outer_item.1 | bool
       with_together:
         - ["common", "virt", "gluster"]
         - [true, "{{ host_deploy_virt_enabled }}", "{{ host_deploy_gluster_enabled }}"]
       loop_control:
         loop_var: outer_item
   when:
-    - host_deploy_override_firewall|bool
+    - host_deploy_override_firewall | bool
     - host_deploy_firewall_type == 'FIREWALLD'

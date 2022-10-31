@@ -1,26 +1,27 @@
 ---
 - name: Create systemd overrides directory for glusterd
-  file:
+  ansible.builtin.file:
     path: /etc/systemd/system/glusterd.service.d/
     state: directory
+    mode: 0755
 
 - name: Create glusterd cgroups CPU configuration file
-  copy:
+  ansible.builtin.copy:
     src: 99-cpu.conf
     dest: /etc/systemd/system/glusterd.service.d/99-cpu.conf
-    mode: preserve
+    mode: 0644
   notify:
     - Restart glusterd
 
 - name: Set CPU quota
-  template:
+  ansible.builtin.template:
     src: glusterfs.slice.j2
     dest: /etc/systemd/system/glusterfs.slice
+    mode: 0644
   vars:
-    gluster_cgroup_cpu_quota : "{{ [(ansible_processor_vcpus/3)|int,1]|max * 100 }}"
+    gluster_cgroup_cpu_quota: "{{ [(ansible_processor_vcpus / 3) | int, 1] | max * 100 }}"
   notify:
     - Restart glusterd
 
 - name: Disable unrelated gluster hooks
-  script: disable-gluster-hooks.sh
-
+  ansible.builtin.script: disable-gluster-hooks.sh
