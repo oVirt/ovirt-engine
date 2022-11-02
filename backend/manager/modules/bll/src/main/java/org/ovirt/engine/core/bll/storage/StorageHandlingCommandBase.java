@@ -60,6 +60,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
@@ -431,16 +432,22 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             ovfDisks = new ArrayList<>();
 
             // Get all unregistered disks.
-            List<DiskImage> disksFromStorage = backend.runInternalQuery(QueryType.GetUnregisteredDisks,
+            QueryReturnValue queryReturnValue = backend.runInternalQuery(QueryType.GetUnregisteredDisks,
                     new GetUnregisteredDisksQueryParameters(storageDomainId,
-                            storagePoolId)).getReturnValue();
-            if (disksFromStorage == null) {
+                            storagePoolId));
+            if (!queryReturnValue.getSucceeded()) {
                 log.error("An error occurred while fetching unregistered disks from Storage Domain id '{}'",
                         storageDomainId);
+                throw new RuntimeException("Failed to retrieve unregistered disks");
+            }
+
+            List<DiskImage> disksFromStorage = queryReturnValue.getReturnValue();
+            if (disksFromStorage == null) {
                 return ovfDisks;
             } else {
                 castDiskImagesToUnregisteredDisks(disksFromStorage, storageDomainId);
             }
+
             for (Disk disk : disksFromStorage) {
                 DiskImage ovfStoreDisk = (DiskImage) disk;
                 String diskDescription = ovfStoreDisk.getDescription();

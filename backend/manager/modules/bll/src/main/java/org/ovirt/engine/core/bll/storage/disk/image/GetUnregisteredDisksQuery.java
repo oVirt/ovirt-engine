@@ -81,6 +81,7 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
                 log.debug("Could not get populated disk: {}", unregQueryReturn.getExceptionString());
             }
         }
+        getQueryReturnValue().setSucceeded(true);
         getQueryReturnValue().setReturnValue(unregisteredDisks);
     }
 
