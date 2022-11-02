@@ -7,9 +7,11 @@ jobs:
   get-pr:
     runs-on: ubuntu-latest
     outputs:
-      pr_url: ${{ steps[0].outputs.pr_url }}
+      pr_url: ${{ steps.pr_url.outputs.pr_url }}
     steps:
-    - run: echo "::set-output name=pr_url::$(curl -sS https://api.github.com/repos/oVirt/ovirt-engine/commits/${{github.event.after}}/pulls | jq -r .[0].url)"
+    - id: pr_url
+      run: |
+        echo "pr_url=$(curl -sS https://api.github.com/repos/oVirt/ovirt-engine/commits/${{github.event.after}}/pulls | jq -r .[0].url)" >> $GITHUB_OUTPUT
     
   rhv-build-and-ost:
     needs: get-pr
