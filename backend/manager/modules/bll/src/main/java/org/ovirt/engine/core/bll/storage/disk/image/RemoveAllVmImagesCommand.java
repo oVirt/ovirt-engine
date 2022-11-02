@@ -9,12 +9,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
@@ -47,6 +50,8 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
     private DiskImageDao diskImageDao;
     @Inject
     private ImageDao imageDao;
+    @Inject
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     public RemoveAllVmImagesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -141,5 +146,9 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         } else {
             super.endVmCommand();
         }
+    }
+
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
     }
 }

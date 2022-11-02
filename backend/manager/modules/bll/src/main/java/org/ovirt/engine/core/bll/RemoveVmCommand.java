@@ -526,6 +526,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     public CommandCallback getCallback() {
-        return getParameters().isUseCinderCommandCallback() ? callbackProvider.get() : null;
+        return callbackProvider.get();
     }
 }
