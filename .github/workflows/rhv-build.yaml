@@ -2,7 +2,6 @@ name: RHV build
 on:
   push:
     branches: [ovirt-engine-4.5.3.z]
-  workflow_dispatch:
 
 jobs:
   get-pr:
