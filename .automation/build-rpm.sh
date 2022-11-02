@@ -3,7 +3,7 @@
 source $(dirname "$(readlink -f "$0")")/build-srpm.sh
 
 # Install build dependencies
-dnf builddep -y rpmbuild/SRPMS/*src.rpm
+$([ "$EUID" -eq 0 ] || echo /usr/bin/sudo) dnf builddep -y rpmbuild/SRPMS/*src.rpm
 
 # Perform reasonable quick build with unit tests execution
 BUILD_UT=1
