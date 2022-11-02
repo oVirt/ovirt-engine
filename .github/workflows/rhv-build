@@ -9,4 +9,4 @@ jobs:
     uses: oVirt/ovirt-system-tests/.github/workflows/ost.yaml@master
     with:
       comment: "/ost rhv-build rhel8"
-      pr_url: "${{ github.event.push.head_commit.url }}"
+      pr_url: "https://api.github.com/repos/oVirt/ovirt-engine/commits/${{ github.event.push.head_commit.id }}/pulls"
