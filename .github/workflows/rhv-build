@@ -1,0 +1,12 @@
+name: RHV build
+on:
+  push:
+    branches: [ovirt-engine-4.5.3.z]
+  workflow_dispatch:
+
+jobs:
+  rhv-build-and-ost:
+    uses: oVirt/ovirt-system-tests/.github/workflows/ost.yaml@master
+    with:
+      comment: "/ost rhv-build rhel8"
+      pr_url: "${{ github.event.push.head_commit.url }}"
