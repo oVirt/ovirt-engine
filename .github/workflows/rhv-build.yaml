@@ -1,0 +1,21 @@
+name: RHV build
+on:
+  push:
+    branches: [ovirt-engine-4.5.3.z]
+
+jobs:
+  get-pr:
+    runs-on: ubuntu-latest
+    outputs:
+      pr_url: ${{ steps.pr_url.outputs.pr_url }}
+    steps:
+    - id: pr_url
+      run: |
+        echo "pr_url=$(curl -sS https://api.github.com/repos/oVirt/ovirt-engine/commits/${{github.event.after}}/pulls | jq -r .[0].url)" >> $GITHUB_OUTPUT
+    
+  rhv-build-and-ost:
+    needs: get-pr
+    uses: oVirt/ovirt-system-tests/.github/workflows/ost.yaml@master
+    with:
+      comment: "/ost rhv-build rhel8"
+      pr_url: "${{ needs.get-pr.outputs.pr_url }}"
