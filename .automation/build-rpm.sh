@@ -14,7 +14,7 @@ BUILD_LOCALES=0
 rpmbuild \
     -D "_topmdir rpmbuild" \
     -D "_rpmdir rpmbuild" \
-    ${RELEASE:+-D "release_suffix ${RELEASE}"} \
+    ${SUFFIX:+-D "release_suffix ${SUFFIX}"} \
     -D "ovirt_build_ut ${BUILD_UT}" \
     -D "ovirt_build_all_user_agents ${BUILD_ALL_USER_AGENTS}" \
     -D "ovirt_build_locales ${BUILD_LOCALES}" \
