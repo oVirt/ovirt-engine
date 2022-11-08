@@ -78,8 +78,7 @@ OFFLINE_BUILD_MAVEN_SETTINGS=$(shell pwd)/build/offline-build-maven-settings.xml
 
 include version.mak
 # major, minor, seq
-ENGINE_VERSION:=$(shell cat pom.xml | head -n 20 | grep '<version>' | head -n 1 | sed -e 's/.*>\(.*\)<.*/\1/' -e 's/-SNAPSHOT//')
-PACKAGE_VERSION=$(ENGINE_VERSION)$(if $(MILESTONE),_$(MILESTONE))
+PACKAGE_VERSION=$(RPM_VERSION)$(if $(MILESTONE),_$(MILESTONE))
 DISPLAY_VERSION=$(PACKAGE_VERSION)
 
 DEV_BUILD_FLAGS:=-P brand-source-maps
@@ -172,7 +171,7 @@ BUILD_TARGET=install
 	-e "s|@SETUP_VAR@|$(PKG_STATE_DIR)|g" \
 	-e "s|@DEV_PYTHON_DIR@|$(DEV_PYTHON_DIR)|g" \
 	-e "s|@DEV_SETUP_ENV_DIR@|$(DEV_SETUP_ENV_DIR)|g" \
-	-e "s|@RPM_VERSION@|$(ENGINE_VERSION)|g" \
+	-e "s|@RPM_VERSION@|$(RPM_VERSION)|g" \
 	-e "s|@RPM_RELEASE@|$(RPM_RELEASE)|g" \
 	-e "s|@MILESTONE@|$(MILESTONE)|g" \
 	-e "s|@PACKAGE_NAME@|$(PACKAGE_NAME)|g" \
