@@ -41,8 +41,8 @@ public class GetVmFromOvaQuery<T extends GetVmFromOvaQueryParameters> extends Ge
             vm = getVmInfoFromOvaFile();
         }
 
-        if (originOvirt && vm != null) {
-            vm.setOrigin(OriginType.OVIRT);
+        if (vm != null) {
+            vm.setOrigin(originOvirt ? OriginType.OVIRT : OriginType.VMWARE);
         }
 
         return vm;
