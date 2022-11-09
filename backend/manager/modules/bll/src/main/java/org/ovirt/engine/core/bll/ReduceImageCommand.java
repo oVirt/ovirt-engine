@@ -269,8 +269,16 @@ public class ReduceImageCommand<T extends ImagesActionsParametersBase> extends B
     @Override
     public AuditLogType getAuditLogTypeValue() {
         addAuditLogCustomValues();
-        return getSucceeded() ?
-                AuditLogType.USER_REDUCE_DISK_FINISHED_SUCCESS : AuditLogType.USER_REDUCE_DISK_FINISHED_FAILURE;
+        switch (getActionState()) {
+        case EXECUTE:
+            return getSucceeded() ?
+                    AuditLogType.UNASSIGNED
+                    : AuditLogType.USER_REDUCE_DISK_FINISHED_FAILURE;
+        default:
+            return getSucceeded() ?
+                    AuditLogType.USER_REDUCE_DISK_FINISHED_SUCCESS
+                    : AuditLogType.USER_REDUCE_DISK_FINISHED_FAILURE;
+        }
     }
 
     private void addAuditLogCustomValues() {
