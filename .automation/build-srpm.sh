@@ -2,7 +2,7 @@
 
 # git hash of current commit passed from GitHub or HEAD
 GIT_HASH=$(git rev-parse --short ${GITHUB_SHA:-HEAD})
-SUFFIX=$(grep -E "<version"  pom.xml | head -n1 | awk -F '[<>]' '/version/{print $3}' | grep -q -- -SNAPSHOT && echo .git${GIT_HASH})
+SUFFIX=$(grep -E "<version"  pom.xml | head -n1 | awk -F '[<>]' '/version/{print $3}' | grep -q -- -SNAPSHOT && echo .git${GIT_HASH} || :)
 
 # Directory, where build artifacts will be stored, should be passed as the 1st parameter
 ARTIFACTS_DIR=${1:-exported-artifacts}
