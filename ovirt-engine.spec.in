@@ -234,7 +234,7 @@ BuildRequires:	systemd
 BuildRequires:	unzip
 BuildRequires:	javapackages-local
 
-BuildRequires:	ovirt-engine-build-dependencies >= 4.5.3
+BuildRequires:	ovirt-engine-build-dependencies < 4.5.4
 
 Requires(pre):	shadow-utils
 
