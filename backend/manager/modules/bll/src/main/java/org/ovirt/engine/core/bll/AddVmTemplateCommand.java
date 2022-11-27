@@ -1003,10 +1003,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         vmTemplateDao.save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());
-        // Load Vm Init from DB and set it to the template
-        vmHandler.updateVmInitFromDB(getParameters().getMasterVm(), false);
         getVmTemplate().setVmInit(getParameters().getMasterVm().getVmInit());
-        vmHandler.addVmInitToDB(getVmTemplate().getVmInit());
+        if (getVmTemplate().getVmInit() != null) {
+            vmHandler.addVmInitToDB(getVmTemplate().getVmInit());
+        }
     }
 
     private void updateVmIcons() {
