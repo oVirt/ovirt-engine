@@ -1339,24 +1339,29 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     private void postNameUniqueCheck() {
         UnitVmModel model = (UnitVmModel) getWindow();
         VM vm = getSelectedItem();
+        // populating VMInit
+        AsyncQuery<VM> getVmInitQuery = new AsyncQuery<>(completeVm -> {
+            VM newVm = buildVmOnNewTemplate(model, completeVm);
 
-        VM newVm = buildVmOnNewTemplate(model, vm);
+            AddVmTemplateParameters addVmTemplateParameters =
+                    new AddVmTemplateParameters(newVm,
+                            model.getName().getEntity(),
+                            model.getDescription().getEntity());
+            BuilderExecutor.build(model, addVmTemplateParameters, new UnitToAddVmTemplateParametersBuilder());
+            model.startProgress();
+            Frontend.getInstance().runAction(ActionType.AddVmTemplate, addVmTemplateParameters,
+                    result -> {
+                        getWindow().stopProgress();
+                        ActionReturnValue returnValueBase = result.getReturnValue();
+                        if (returnValueBase != null && returnValueBase.getSucceeded()) {
+                            cancel();
+                        }
 
-        AddVmTemplateParameters addVmTemplateParameters =
-                new AddVmTemplateParameters(newVm,
-                        model.getName().getEntity(),
-                        model.getDescription().getEntity());
-        BuilderExecutor.build(model, addVmTemplateParameters, new UnitToAddVmTemplateParametersBuilder());
-        model.startProgress();
-        Frontend.getInstance().runAction(ActionType.AddVmTemplate, addVmTemplateParameters,
-                result -> {
-                    getWindow().stopProgress();
-                    ActionReturnValue returnValueBase = result.getReturnValue();
-                    if (returnValueBase != null && returnValueBase.getSucceeded()) {
-                        cancel();
-                    }
-
-                }, this);
+                    }, this);
+        });
+        // TODO: if we ever support creation of templates from a running vm,
+        // we would need to take into account next-run configuration here
+        AsyncDataProvider.getInstance().getVmById(getVmInitQuery, vm.getId());
     }
 
     protected static VM buildVmOnNewTemplate(UnitVmModel model, VM vm) {
@@ -1364,6 +1369,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         resultVm.setId(vm.getId());
         BuilderExecutor.build(model, resultVm.getStaticData(), new CommonUnitToVmBaseBuilder());
         BuilderExecutor.build(vm.getStaticData(), resultVm.getStaticData(), new VmBaseToVmBaseForTemplateCompositeBaseBuilder());
+        resultVm.setVmInit(vm.getVmInit());
         return resultVm;
     }
 
