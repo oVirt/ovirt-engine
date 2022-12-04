@@ -138,12 +138,14 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 if (e.getErrorCode() == EngineError.ImageDoesNotExistInDomainError) {
                     log.info("Disk '{}' doesn't exist on storage domain '{}', rolling forward",
                             getDiskImage().getId(), getStorageDomainId());
+                    endSuccessfully();
                 } else if (e.getErrorCode() == EngineError.ImageDeleteError && isImageRemovedFromStorage()) {
                     // VDSM renames the image before deleting it, so technically the image doesn't exist after renaming,
                     // but the actual delete can still fail with ImageDeleteError.
                     // In this case, Engine has to check whether image still exists on the storage or not.
-                    log.info("Disk '{}' was deleted from storage domain '{}'", getDiskImage().getId(),
-                            getStorageDomainId());
+                    log.info("Failed to delete Disk '{}' from storage domain '{}', changing to illegal",
+                            getDiskImage().getId(), getStorageDomainId());
+                    endWithFailure();
                 } else {
                     throw e;
                 }
