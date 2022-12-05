@@ -192,9 +192,6 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         return template;
     }
 
-    @Override public int getMaxNameLength() {
-        return UnitVmModel.VM_TEMPLATE_AND_INSTANCE_TYPE_NAME_MAX_LIMIT;
-    }
 
     private void toggleAutoSetVmHostname() {
         // always switch off auto setting of hostname for a template
