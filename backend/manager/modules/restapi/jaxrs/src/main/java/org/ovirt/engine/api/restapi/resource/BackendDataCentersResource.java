@@ -29,7 +29,7 @@ public class BackendDataCentersResource extends
     public DataCenters list() {
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllStoragePools,
-                    new QueryParametersBase()));
+                    new QueryParametersBase(), SearchType.StoragePool));
         } else {
             return mapCollection(getBackendCollection(SearchType.StoragePool));
         }

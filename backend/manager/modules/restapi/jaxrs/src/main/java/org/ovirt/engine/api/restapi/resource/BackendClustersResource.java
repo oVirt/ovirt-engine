@@ -50,7 +50,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
     private Clusters listVirtOnly() {
         if (isFiltered()) {
             return mapVirtOnlyCollection(getBackendCollection(QueryType.GetAllClusters,
-                    new QueryParametersBase()));
+                    new QueryParametersBase(), SearchType.Cluster));
         } else {
             return mapVirtOnlyCollection(getBackendCollection(SearchType.Cluster));
         }
@@ -59,7 +59,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
     private Clusters listAll() {
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllClusters,
-                    new QueryParametersBase()));
+                    new QueryParametersBase(), SearchType.Cluster));
         } else {
             return mapCollection(getBackendCollection(SearchType.Cluster));
         }
