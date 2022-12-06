@@ -130,10 +130,11 @@ public class AnsibleRunnerClient {
 
                 String taskName = "";
                 JsonNode eventNode = currentNode.get("event_data");
-
-                JsonNode taskNode = eventNode.get("task");
-                if (taskNode != null) {
-                    taskName = taskNode.textValue();
+                if (eventNode != null) {
+                    JsonNode taskNode = eventNode.get("task");
+                    if (taskNode != null) {
+                        taskName = taskNode.textValue();
+                    }
                 }
 
                 if (RunnerJsonNode.isEventStart(currentNode) || RunnerJsonNode.playbookStats(currentNode)) {
