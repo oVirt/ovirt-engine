@@ -438,6 +438,8 @@ select fn_db_add_config_value('ServerCPUList',
         || '28:Intel Skylake Client IBRS SSBD Family:vmx,nx,spec_ctrl,ssbd,model_Skylake-Client:Skylake-Client,+spec-ctrl,+ssbd:x86_64; '
         || '29:Intel Skylake Server Family:vmx,nx,model_Skylake-Server:Skylake-Server:x86_64; '
         || '31:Intel Skylake Server IBRS SSBD Family:vmx,nx,spec_ctrl,ssbd,model_Skylake-Server:Skylake-Server,+spec-ctrl,+ssbd:x86_64; '
+	|| '32:Intel Skylake-Server-noTSX-IBRS Family:vmx,ssbd,md_clear,model_Skylake-Server-noTSX-IBRS:Skylake-Server-noTSX-IBRS,-hle,+md-clear,+ssbd:x86_64; '
+	|| '33:Intel Cascadelake-Server-noTSX Family:vmx,model_Cascadelake-Server-noTSX:Cascadelake-Server-noTSX,-hle,+md-clear,+mds-no,+arch-capabilities:x86_64; '
         || '5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; '
         || '6:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; '
         || '7:AMD EPYC:svm,nx,model_EPYC:EPYC:x86_64; '
