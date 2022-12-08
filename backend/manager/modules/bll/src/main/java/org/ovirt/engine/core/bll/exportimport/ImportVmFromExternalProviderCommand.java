@@ -372,7 +372,8 @@ implements SerialChildExecutingCommand, QuotaStorageDependent {
         // can be larger then the actual size.
         // Separately, setting the Volume Type to Preallocated avoids Sparseness when the
         // Destination is a Block SD
-        if (getVm().getOrigin() == OriginType.KVM
+        // Allow this workaround for Vms that do not have origin set
+        if ((getVm().getOrigin() == null || getVm().getOrigin() == OriginType.KVM)
                 && getActionState() == CommandActionState.EXECUTE
                 && getStorageDomain() != null
                 && getStorageDomain().getStorageType().isBlockDomain()) {
