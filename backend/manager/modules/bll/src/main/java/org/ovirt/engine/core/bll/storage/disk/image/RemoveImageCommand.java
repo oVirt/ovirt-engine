@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,7 +16,6 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -88,10 +85,6 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     @Inject
     private VmDao vmDao;
 
-    @Inject
-    @Typed(RemoveImageCommandCallback.class)
-    private Instance<RemoveImageCommandCallback> callbackProvider;
-
 
     public RemoveImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -136,7 +129,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 VDSReturnValue vdsReturnValue = performDeleteImageVdsmOperation();
                 Guid vdsmTaskId = createTask(taskId,
                         vdsReturnValue.getCreationInfo(),
-                        getParameters().getParentCommand(),
+                        ActionType.RemoveImage,
                         VdcObjectType.Storage,
                         getStorageDomainId());
                 getTaskIdList().add(vdsmTaskId);
@@ -145,12 +138,14 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 if (e.getErrorCode() == EngineError.ImageDoesNotExistInDomainError) {
                     log.info("Disk '{}' doesn't exist on storage domain '{}', rolling forward",
                             getDiskImage().getId(), getStorageDomainId());
+                    endSuccessfully();
                 } else if (e.getErrorCode() == EngineError.ImageDeleteError && isImageRemovedFromStorage()) {
                     // VDSM renames the image before deleting it, so technically the image doesn't exist after renaming,
                     // but the actual delete can still fail with ImageDeleteError.
                     // In this case, Engine has to check whether image still exists on the storage or not.
-                    log.info("Disk '{}' was deleted from storage domain '{}'", getDiskImage().getId(),
-                            getStorageDomainId());
+                    log.info("Failed to delete Disk '{}' from storage domain '{}', changing to illegal",
+                            getDiskImage().getId(), getStorageDomainId());
+                    endWithFailure();
                 } else {
                     throw e;
                 }
@@ -286,11 +281,21 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
     @Override
     protected void endSuccessfully() {
+        performImageDbOperations();
         setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
+        List<Guid> snapshotIds = diskImageDao
+                .getAllSnapshotsForImageGroup(getImageGroupId()).stream()
+                .map(DiskImage::getImageId)
+                .collect(Collectors.toList());
+        addCustomValue("DiskId", getImageGroupId().toString());
+        addCustomValue("VolumeIds", StringUtils.join(snapshotIds, ','));
+        auditLog(this, AuditLogType.DELETE_IMAGE_GROUP_TASK_FAILED);
+
+        imageDao.updateStatusOfImagesByImageGroupId(getImageGroupId(), ImageStatus.ILLEGAL);
         setSucceeded(true);
     }
 
@@ -336,34 +341,5 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                                 getStorageDomainId(), getDiskImage().getId(),
                                 getDiskImage().isWipeAfterDelete(), getStorageDomain().getDiscardAfterDelete(),
                                 getParameters().isForceDelete())));
-    }
-
-    @Override
-    public CommandCallback getCallback() {
-        return callbackProvider.get();
-    }
-
-    public void onSucceeded() {
-        performImageDbOperations();
-    }
-
-    public void onFailed() {
-        if (getParameters().getAsyncTaskErrorMessage() != null) {
-            Guid diskId = getParameters().getDiskImage().getId();
-            List<Guid> snapshotIds = diskImageDao
-                    .getAllSnapshotsForImageGroup(diskId).stream()
-                    .map(DiskImage::getImageId)
-                    .collect(Collectors.toList());
-            addCustomValue("DiskId", diskId.toString());
-            addCustomValue("VolumeIds", StringUtils.join(snapshotIds, ','));
-            addCustomValue("ErrorMessage", getParameters().getAsyncTaskErrorMessage());
-            auditLog(this, AuditLogType.DELETE_IMAGE_GROUP_TASK_FAILED);
-        }
-        imageDao.updateStatusOfImagesByImageGroupId(getImageGroupId(), ImageStatus.ILLEGAL);
-    }
-
-    @Override
-    protected void setSucceeded(boolean value) {
-        super.setSucceeded(value);
     }
 }
