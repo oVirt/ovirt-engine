@@ -107,6 +107,9 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                         getParameters().getStorageDomainId(),
                         getParameters().getDestinationStorageDomainId()));
 
+        if (targetFormat == VolumeFormat.COW) {
+            newImage.setBackup(getDiskImage().getBackup());
+        }
         newImage.setId(destinationImageGroupID);
         newImage.setDiskDescription(getParameters().getDescription() != null ?
                 getParameters().getDescription() : getDiskImage().getDiskDescription());
