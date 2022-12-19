@@ -47,8 +47,10 @@ public class AnsibleRunnerCleanUpService implements BackendService {
     }
 
     private void checkExecutionTimeStamp() {
+        log.debug("Started AnsibleRunnerCleanUp Service");
         int artifactsLifeTime = Config.<Integer> getValue(ConfigValues.AnsibleRunnerArtifactsLifetimeInDays);
         Stream.of(new File(AnsibleConstants.ANSIBLE_RUNNER_PATH.toString()).listFiles()).forEach(file -> {
+            log.debug("Evaluating if '{}' should be removed", file.getAbsolutePath());
             long creationInDays;
             try {
                 creationInDays = Files.readAttributes(file.toPath(), BasicFileAttributes.class)
@@ -61,6 +63,7 @@ public class AnsibleRunnerCleanUpService implements BackendService {
             }
             long todayInDays = FileTime.fromMillis(new Date().getTime()).to(TimeUnit.DAYS);
             if (todayInDays - creationInDays > artifactsLifeTime) {
+                log.debug("Deleting directory '{}'", file.getAbsolutePath());
                 try {
                     Files.walk(Paths.get(file.getAbsolutePath()))
                             .sorted(Comparator.reverseOrder())
@@ -72,5 +75,6 @@ public class AnsibleRunnerCleanUpService implements BackendService {
                 }
             }
         });
+        log.debug("Finished AnsibleRunnerCleanUp Service");
     }
 }
