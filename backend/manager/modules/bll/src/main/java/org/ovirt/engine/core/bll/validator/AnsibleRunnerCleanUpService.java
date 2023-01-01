@@ -40,7 +40,8 @@ public class AnsibleRunnerCleanUpService implements BackendService {
         final int HOURS_TO_MINUTES = 60;
         long intervalInMinutes = Math.round(interval * HOURS_TO_MINUTES);
 
-        executor.schedule(this::checkExecutionTimeStamp,
+        executor.scheduleWithFixedDelay(this::checkExecutionTimeStamp,
+                10,
                 intervalInMinutes,
                 TimeUnit.MINUTES);
     }
