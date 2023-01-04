@@ -2,6 +2,7 @@ package org.ovirt.engine.core.config.entity;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -42,7 +43,13 @@ public class ConfigKeyFactory {
         if (StringUtils.isBlank(type)) {
             type = "String";
         }
-        String[] validValues = node.findValuesAsText("validValues").toArray(new String[0]);
+
+        String[] validValues = null;
+        List<String> parsedValue = node.findValuesAsText("validValues");
+        if (!parsedValue.isEmpty()) {
+            // not all existing options have validValues defined
+            validValues = parsedValue.get(0).split(",");
+        }
 
         // Description containing the list delimiter *will* be broken into an array, so rejoin it using that delimiter.
         // We pad the separator because the strings in the array are trimmed automatically.
