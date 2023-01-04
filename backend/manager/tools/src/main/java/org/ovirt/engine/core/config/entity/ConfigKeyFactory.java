@@ -42,8 +42,8 @@ public class ConfigKeyFactory {
         if (StringUtils.isBlank(type)) {
             type = "String";
         }
-        String[] validValues = node.findValuesAsText("validValues").toArray(new String[0]);
 
+        String[] validValues = node.findValuesAsText("validValues").get(0).split(",");
         // Description containing the list delimiter *will* be broken into an array, so rejoin it using that delimiter.
         // We pad the separator because the strings in the array are trimmed automatically.
         String description = node.get("description").asText();
