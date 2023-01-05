@@ -1,5 +1,8 @@
 #!/bin/bash -xe
 
+# Mark current directory as safe for git to be able to parse git hash
+git config --global --add safe.directory $(pwd)
+
 # git hash of current commit passed from GitHub or HEAD
 GIT_HASH=$(git rev-parse --short ${GITHUB_SHA:-HEAD})
 SUFFIX=$(grep -E "<version"  pom.xml | head -n1 | awk -F '[<>]' '/version/{print $3}' | grep -q -- -SNAPSHOT && echo .git${GIT_HASH} || :)
