@@ -15,8 +15,6 @@ jobs:
         include:
           - name: centos-stream-8
             container-name: el8stream
-          - name: centos-stream-9
-            container-name: el9stream
 
     name: ${{ matrix.name }}
 
