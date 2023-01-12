@@ -1,18 +1,18 @@
 - block:
-  - name: Create custom libvirt preset
-    ansible.builtin.copy:
-      dest: /usr/lib/systemd/system-preset/88-ovirt-monolithic-libvirt.preset
-      content: |
-        # this is oVirt internal configuration and should not be updated manually
-        disable virtqemud.service
-        disable virtqemud.socket
-        disable virtinterfaced.socket
-        disable virtnetworkd.socket
-        disable virtnodedevd.socket
-        disable virtnwfilterd.socket
-        disable virtsecretd.socket
-        disable virtstoraged.socket
-        disable virtproxyd.socket
-        enable libvirtd.service
-      mode: 0644
+    - name: Create custom libvirt preset
+      ansible.builtin.copy:
+        dest: /usr/lib/systemd/system-preset/88-ovirt-monolithic-libvirt.preset
+        content: |
+          # this is oVirt internal configuration and should not be updated manually
+          disable virtqemud.service
+          disable virtqemud.socket
+          disable virtinterfaced.socket
+          disable virtnetworkd.socket
+          disable virtnodedevd.socket
+          disable virtnwfilterd.socket
+          disable virtsecretd.socket
+          disable virtstoraged.socket
+          disable virtproxyd.socket
+          enable libvirtd.service
+        mode: 0644
   when: el_ver | int >= 9

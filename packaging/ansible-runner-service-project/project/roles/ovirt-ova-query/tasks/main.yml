@@ -1,27 +1,27 @@
 ---
 - block:
-  - name: Create temporary directory
-    ansible.builtin.tempfile:
-      state: directory
-      suffix: ova
-    register: ova_temp
+    - name: Create temporary directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: ova
+      register: ova_temp
 
-  - name: Copy query_ova.py to temp directory
-    ansible.builtin.copy:
-      src: query_ova.py
-      dest: "{{ ova_temp.path }}/query_ova.py"
-      mode: 0755
+    - name: Copy query_ova.py to temp directory
+      ansible.builtin.copy:
+        src: query_ova.py
+        dest: "{{ ova_temp.path }}/query_ova.py"
+        mode: 0755
 
-  - name: Run query script
-    ansible.builtin.command: >
-      "{{ ansible_python_interpreter }}"
-      "{{ ova_temp.path }}/query_ova.py"
-      "{{ entity_type }}"
-      "{{ ovirt_query_ova_path }}"
-      "{{ list_directory }}"
-    async: "{{ ansible_timeout }}"
-    poll: 15
-    register: extraction_result
+    - name: Run query script
+      ansible.builtin.command: >
+        "{{ ansible_python_interpreter }}"
+        "{{ ova_temp.path }}/query_ova.py"
+        "{{ entity_type }}"
+        "{{ ovirt_query_ova_path }}"
+        "{{ list_directory }}"
+      async: "{{ ansible_timeout }}"
+      poll: 15
+      register: extraction_result
   always:
     - name: Remove temp directory
       ansible.builtin.file:
