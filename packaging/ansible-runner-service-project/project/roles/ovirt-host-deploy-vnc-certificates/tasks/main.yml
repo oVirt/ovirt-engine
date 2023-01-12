@@ -1,57 +1,57 @@
 ---
 - block:
-  - name: Create cert dir
-    ansible.builtin.file:
-      path: "{{ host_deploy_vnc_tls_x509_cert_dir }}"
-      state: directory
-      owner: vdsm
-      group: kvm
-      mode: 0755
+    - name: Create cert dir
+      ansible.builtin.file:
+        path: "{{ host_deploy_vnc_tls_x509_cert_dir }}"
+        state: directory
+        owner: vdsm
+        group: kvm
+        mode: 0755
 
-  - name: Setup VNC PKI
-    ansible.builtin.copy:
-      src: "{{ host_deploy_spice_tls_x509_cert_dir }}/{{ item }}"
-      dest: "{{ host_deploy_vnc_tls_x509_cert_dir }}/{{ item }}"
-      group: kvm
-      owner: root
-      remote_src: true
-      mode: preserve
-    with_items:
-      - "ca-cert.pem"
-      - "server-cert.pem"
-      - "server-key.pem"
+    - name: Setup VNC PKI
+      ansible.builtin.copy:
+        src: "{{ host_deploy_spice_tls_x509_cert_dir }}/{{ item }}"
+        dest: "{{ host_deploy_vnc_tls_x509_cert_dir }}/{{ item }}"
+        group: kvm
+        owner: root
+        remote_src: true
+        mode: preserve
+      with_items:
+        - "ca-cert.pem"
+        - "server-cert.pem"
+        - "server-key.pem"
 
-  - name: Set server-key permissions
-    ansible.builtin.file:
-      path: "{{ host_deploy_vnc_tls_x509_cert_dir }}/server-key.pem"
-      owner: vdsm
-      group: kvm
-      mode: 0440
+    - name: Set server-key permissions
+      ansible.builtin.file:
+        path: "{{ host_deploy_vnc_tls_x509_cert_dir }}/server-key.pem"
+        owner: vdsm
+        group: kvm
+        mode: 0440
 
-  - name: Modify qemu config file - enable TLS
-    ansible.builtin.blockinfile:
-      path: '/etc/libvirt/qemu.conf'
-      state: present
-      marker: '## {mark} of configuration section for VNC encryption'
-      marker_begin: 'beginning'
-      marker_end: 'end'
-      block: |
-        vnc_tls=1
-        vnc_tls_x509_cert_dir="{{ host_deploy_vnc_tls_x509_cert_dir }}"
-    when: host_deploy_vnc_tls | bool
-    notify:
-      restart libvirtd
+    - name: Modify qemu config file - enable TLS
+      ansible.builtin.blockinfile:
+        path: '/etc/libvirt/qemu.conf'
+        state: present
+        marker: '## {mark} of configuration section for VNC encryption'
+        marker_begin: 'beginning'
+        marker_end: 'end'
+        block: |
+          vnc_tls=1
+          vnc_tls_x509_cert_dir="{{ host_deploy_vnc_tls_x509_cert_dir }}"
+      when: host_deploy_vnc_tls | bool
+      notify:
+        restart libvirtd
 
-  - name: Modify qemu config file - disable TLS
-    ansible.builtin.blockinfile:
-      path: '/etc/libvirt/qemu.conf'
-      state: absent
-      marker: '## {mark} of configuration section for VNC encryption'
-      marker_begin: 'beginning'
-      marker_end: 'end'
-      block: |
-        vnc_tls=1
-        vnc_tls_x509_cert_dir="{{ host_deploy_vnc_tls_x509_cert_dir }}"
-    when: not host_deploy_vnc_tls | bool
-    notify:
-      restart libvirtd
+    - name: Modify qemu config file - disable TLS
+      ansible.builtin.blockinfile:
+        path: '/etc/libvirt/qemu.conf'
+        state: absent
+        marker: '## {mark} of configuration section for VNC encryption'
+        marker_begin: 'beginning'
+        marker_end: 'end'
+        block: |
+          vnc_tls=1
+          vnc_tls_x509_cert_dir="{{ host_deploy_vnc_tls_x509_cert_dir }}"
+      when: not host_deploy_vnc_tls | bool
+      notify:
+        restart libvirtd

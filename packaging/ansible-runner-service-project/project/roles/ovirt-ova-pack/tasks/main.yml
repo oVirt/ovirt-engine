@@ -1,33 +1,33 @@
 ---
 - block:
-  - name: Create temporary directory
-    ansible.builtin.tempfile:
-      state: directory
-      suffix: ova
-    register: ova_temp
+    - name: Create temporary directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: ova
+      register: ova_temp
 
-  - name: Copy pack_ova.py to temp directory
-    ansible.builtin.copy:
-      src: pack_ova.py
-      dest: "{{ ova_temp.path }}/pack_ova.py"
-      mode: 0755
+    - name: Copy pack_ova.py to temp directory
+      ansible.builtin.copy:
+        src: pack_ova.py
+        dest: "{{ ova_temp.path }}/pack_ova.py"
+        mode: 0755
 
-  - name: Run packing script
-    ansible.builtin.command: >
-      "{{ ansible_python_interpreter }}"
-      "{{ ova_temp.path }}/pack_ova.py"
-      "{{ entity_type }}"
-      "{{ ova_file.dest }}"
-      "{{ ovirt_ova_pack_ovf }}"
-      "{{ ovirt_ova_pack_disks }}"
-      "{{ ovirt_ova_pack_tpm }}"
-      "{{ ovirt_ova_pack_nvram }}"
-      "{{ ovirt_ova_pack_padding }}"
-    register: packing_result
-    ignore_errors: true
-    async: "{{ ansible_timeout }}"
-    poll: 15
-    when: ova_file is defined and ova_file.dest is defined
+    - name: Run packing script
+      ansible.builtin.command: >
+        "{{ ansible_python_interpreter }}"
+        "{{ ova_temp.path }}/pack_ova.py"
+        "{{ entity_type }}"
+        "{{ ova_file.dest }}"
+        "{{ ovirt_ova_pack_ovf }}"
+        "{{ ovirt_ova_pack_disks }}"
+        "{{ ovirt_ova_pack_tpm }}"
+        "{{ ovirt_ova_pack_nvram }}"
+        "{{ ovirt_ova_pack_padding }}"
+      register: packing_result
+      ignore_errors: true
+      async: "{{ ansible_timeout }}"
+      poll: 15
+      when: ova_file is defined and ova_file.dest is defined
   always:
     - name: Remove temp directory
       ansible.builtin.file:

@@ -12,47 +12,47 @@
 # the local devices as FC storage in engine.
 
 - block:
-  - name: Mask libvirt modular daemon units
-    ansible.builtin.systemd:
-      name: "{{ item }}"
-      state: stopped
-      enabled: false
-      masked: true
-    with_items:
-      - virtqemud.service
-      - virtqemud.socket
-      - virtinterfaced.socket
-      - virtnetworkd.socket
-      - virtnodedevd.socket
-      - virtnwfilterd.socket
-      - virtsecretd.socket
-      - virtstoraged.socket
-      - virtproxyd.socket
+    - name: Mask libvirt modular daemon units
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+        masked: true
+      with_items:
+        - virtqemud.service
+        - virtqemud.socket
+        - virtinterfaced.socket
+        - virtnetworkd.socket
+        - virtnodedevd.socket
+        - virtnwfilterd.socket
+        - virtsecretd.socket
+        - virtstoraged.socket
+        - virtproxyd.socket
 
-  - name: Stop libvirtd
-    ansible.builtin.systemd:
-      name: "{{ item }}"
-      state: stopped
-    with_items:
-      - libvirtd.service
-      - libvirtd.socket
+    - name: Stop libvirtd
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: stopped
+      with_items:
+        - libvirtd.service
+        - libvirtd.socket
 
-  - name: Remove modular sockets
-    ansible.builtin.shell: for i in virt{qemu,interface,network,nodedev,nwfilter,secret,storage,proxy}d libvirt; do rm -f /run/libvirt/${i}-*sock*; done;
+    - name: Remove modular sockets
+      ansible.builtin.shell: for i in virt{qemu,interface,network,nodedev,nwfilter,secret,storage,proxy}d libvirt; do rm -f /run/libvirt/${i}-*sock*; done;
 
-  - name: Enable libvirtd monolithic daemon unit
-    ansible.builtin.systemd:
-      name: "{{ item }}"
-      enabled: true
-      state: started
-    with_items:
-      - libvirtd.service
-      - libvirtd.socket
+    - name: Enable libvirtd monolithic daemon unit
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      with_items:
+        - libvirtd.service
+        - libvirtd.socket
 
-  # workaround for BZ 2054323
-  - name: Change the openvswitch_t to permissive
-    ansible.builtin.command: semanage permissive -a openvswitch_t
-    changed_when: true
+    # workaround for BZ 2054323
+    - name: Change the openvswitch_t to permissive
+      ansible.builtin.command: semanage permissive -a openvswitch_t
+      changed_when: true
 
   when: el_ver | int >= 9
 
