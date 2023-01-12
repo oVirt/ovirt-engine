@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends QueriesCommandBase<P> {
     @Inject
@@ -23,6 +24,9 @@ public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends Que
     @Inject
     private VmDeviceUtils vmDeviceUtils;
 
+    @Inject
+    private ResourceManager resourceManager;
+
     public GetVmOvfByVmIdQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
@@ -35,9 +39,15 @@ public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends Que
             return;
         }
 
+        // We want to lock the devices to make sure no other thread modifies them during the ovf export.
+        // Otherwise we end up without ovf in the export
+        resourceManager.getVmManager(getParameters().getId()).getVmDevicesLock().lock();
+
         vm.setSnapshots(snapshotDao.getAllWithConfiguration(vm.getId()));
         vmDeviceUtils.setVmDevices(vm.getStaticData());
         String ovfData = generateOvfConfig(vm, getParameters().isAsOva());
+
+        resourceManager.getVmManager(getParameters().getId()).getVmDevicesLock().unlock();
 
         if (ovfData == null) {
             return;
