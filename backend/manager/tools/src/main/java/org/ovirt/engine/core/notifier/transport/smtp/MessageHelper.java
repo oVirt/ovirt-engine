@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.notifier.transport.smtp;
 
+import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.notifier.filter.AuditLogEventType;
 
@@ -19,7 +21,7 @@ public class MessageHelper {
         StringBuilder sb = new StringBuilder();
 
         sb.append(String.format("Time:%s%nMessage:%s%nSeverity:%s%n",
-                messageBody.getLogTime(),
+                getLogTime(messageBody),
                 messageBody.getMessage(),
                 messageBody.getSeverity()));
 
@@ -77,7 +79,7 @@ public class MessageHelper {
         StringBuilder sb = new StringBuilder();
 
         sb.append(String.format("<b>Time:</b> %s<br><b>Message:</b> %s<br><b>Severity:</b> %s<p>",
-                messageBody.getLogTime(),
+                getLogTime(messageBody),
                 messageBody.getMessage(),
                 messageBody.getSeverity()));
 
@@ -106,5 +108,10 @@ public class MessageHelper {
             sb.append(String.format(HTML_STORAGE_DOMAIN_INFO, messageBody.getStorageDomainInfo()));
         }
         return sb.toString();
+    }
+
+    private static String getLogTime(MessageBody messageBody) {
+        Date logTime = messageBody.getLogTime();
+        return logTime == null ? "" : logTime.toString();
     }
 }

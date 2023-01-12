@@ -209,6 +209,20 @@ MAIL_SEND_INTERVAL=1
 # Amount of times to attempt sending an email before failing.
 MAIL_RETRIES=4
 
+# Comma-separated list of log type names that could be merged.
+# example:
+# MAIL_MERGE_LOG_TYPES=ENGINE_BACKUP_STARTED,ENGINE_BACKUP_FAILED,ENGINE_BACKUP_COMPLETED
+MAIL_MERGE_LOG_TYPES=
+
+# Maximum allowed log time difference (milliseconds) for two events to be merged. If two events have difference in log
+# time greater than specified by the parameter then the events will not be merged.
+MAIL_MERGE_MAX_TIME_DIFFERENCE=5000
+
+# Locale to be used to create e-mail message subject and body. If not specified then all messages will be in english
+# example:
+# MAIL_LOCALE=cs-CZ
+MAIL_LOCALE=
+
 #-------------------------#
 # SNMP_TRAP Notifications #
 #-------------------------#
