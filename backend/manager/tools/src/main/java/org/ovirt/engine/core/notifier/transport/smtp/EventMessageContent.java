@@ -1,24 +1,35 @@
 package org.ovirt.engine.core.notifier.transport.smtp;
 
-import java.util.Date;
+import java.util.Locale;
 
 import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
 
 /**
- * Creates a simple message subject and body using helper class {@linkplain MessageHelper} to determine <br>
- * the structure of the message subject and body
+ * Creates a simple message subject and body using helper class {@linkplain MessageHelper} or
+ * {@linkplain LocalizedMessageHelper} to determine the structure of the message subject and body
  */
 public class EventMessageContent {
     private String subject;
     private String body;
 
+    public EventMessageContent() {
+    }
+
     private void prepareMessageSubject(String hostName,
-                                       AuditLogEvent event) {
-        subject = MessageHelper.prepareMessageSubject(event.getType(), hostName, event.getMessage());
+                                       AuditLogEvent event,
+                                       Locale locale) {
+        subject = (locale == null) ? MessageHelper.prepareMessageSubject(event.getType(), hostName, event.getMessage()) :
+                LocalizedMessageHelper.prepareMessageSubject(event.getType(), hostName, event.getMessage(), locale);
+    }
+
+    public EventMessageContent(String subject, String body) {
+        this.subject = subject;
+        this.body = body;
     }
 
     private void prepareMessageBody(AuditLogEvent event,
-                                    boolean isBodyHtml) {
+                                    boolean isBodyHtml,
+                                    Locale locale) {
         MessageBody messageBody = new MessageBody();
         messageBody.setUserInfo(event.getUserName());
         messageBody.setVmInfo(event.getVmName());
@@ -26,15 +37,16 @@ public class EventMessageContent {
         messageBody.setTemplateInfo(event.getVmTemplateName());
         messageBody.setDatacenterInfo(event.getStoragePoolName());
         messageBody.setStorageDomainInfo(event.getStorageDomainName());
-        final Date logTime = event.getLogTime();
-        messageBody.setLogTime(logTime != null ? logTime.toString() : "");
-        messageBody.setSeverity(String.valueOf(event.getSeverity()));
+        messageBody.setLogTime(event.getLogTime());
+        messageBody.setSeverity(event.getSeverity());
         messageBody.setMessage(event.getMessage());
 
         if (isBodyHtml) {
-            this.body = MessageHelper.prepareHTMLMessageBody(messageBody);
+            this.body = (locale == null) ? MessageHelper.prepareHTMLMessageBody(messageBody) :
+                    LocalizedMessageHelper.prepareHTMLMessageBody(messageBody, locale);
         } else {
-            this.body = MessageHelper.prepareMessageBody(messageBody);
+            this.body = (locale == null) ? MessageHelper.prepareMessageBody(messageBody) :
+                    LocalizedMessageHelper.prepareMessageBody(messageBody, locale);
         }
     }
 
@@ -63,11 +75,12 @@ public class EventMessageContent {
      * @param hostName   the host name on which the subject will refer to
      * @param event      associated event which the message will be created by
      * @param isBodyHtml defines the format of message body
+     * @param locale     locale for the message content
      */
     public void prepareMessage(String hostName, AuditLogEvent event,
-                               boolean isBodyHtml) {
-        prepareMessageSubject(hostName, event);
-        prepareMessageBody(event, isBodyHtml);
+                               boolean isBodyHtml, Locale locale) {
+        prepareMessageSubject(hostName, event, locale);
+        prepareMessageBody(event, isBodyHtml, locale);
     }
 
 }

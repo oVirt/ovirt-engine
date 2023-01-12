@@ -3,8 +3,11 @@ package org.ovirt.engine.core.notifier.transport.smtp;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -19,8 +22,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.EventNotificationMethod;
-import org.ovirt.engine.core.notifier.dao.DispatchResult;
 import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
 import org.ovirt.engine.core.notifier.transport.Transport;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
@@ -60,6 +61,7 @@ public class Smtp extends Transport {
     private static final String MAIL_SMTP_ENCRYPTION_TLS = "tls";
     private static final String MAIL_SEND_INTERVAL = "MAIL_SEND_INTERVAL";
     private static final String MAIL_RETRIES = "MAIL_RETRIES";
+    private static final String MAIL_LOCALE = "MAIL_LOCALE";
 
     private static final Logger log = LoggerFactory.getLogger(Smtp.class);
     private int retries;
@@ -71,6 +73,8 @@ public class Smtp extends Transport {
     private Session session = null;
     private InternetAddress from = null;
     private InternetAddress replyTo = null;
+    private SmtpMessageMerger messageMerger;
+    private Locale locale;
     private boolean active = false;
 
     public Smtp(NotificationProperties props) {
@@ -136,6 +140,12 @@ public class Smtp extends Transport {
         } else {
             session = Session.getInstance(mailSessionProps);
         }
+
+        messageMerger = new SmtpMessageMerger(props);
+        String lc = props.getProperty(MAIL_LOCALE, true);
+        if (StringUtils.isNotBlank(lc)) {
+            locale = Locale.forLanguageTag(lc);
+        }
     }
 
     @Override
@@ -162,12 +172,14 @@ public class Smtp extends Transport {
         if (lastSendInterval++ >= sendIntervals) {
             lastSendInterval = 0;
 
+            messageMerger.mergeSimilarEvents(sendQueue);
+
             Iterator<DispatchAttempt> iterator = sendQueue.iterator();
             while (iterator.hasNext()) {
                 DispatchAttempt attempt = iterator.next();
                 try {
-                    EventMessageContent message = new EventMessageContent();
-                    message.prepareMessage(hostName, attempt.event, isBodyHtml);
+                    EventMessageContent message = messageMerger.prepareEMailMessageContent(
+                            hostName, attempt, isBodyHtml, locale);
 
                     log.info("Sending e-mail subject='{}' to='{}'",
                             message.getMessageSubject(),
@@ -179,15 +191,12 @@ public class Smtp extends Transport {
                         message.getMessageSubject(),
                         attempt.address
                     );
-                    notifyObservers(DispatchResult.success(attempt.event, attempt.address, EventNotificationMethod.SMTP));
+                    messageMerger.notifyAboutSuccess(this, attempt);
                     iterator.remove();
                 } catch (Exception ex) {
                     attempt.retries++;
                     if (attempt.retries >= retries) {
-                        notifyObservers(DispatchResult.failure(attempt.event,
-                                attempt.address,
-                                EventNotificationMethod.SMTP,
-                                ex.getMessage()));
+                        messageMerger.notifyAboutFailure(this, attempt, ex.getMessage());
                         iterator.remove();
                     }
                 }
@@ -258,14 +267,16 @@ public class Smtp extends Transport {
         }
     }
 
-    private static class DispatchAttempt {
-         public final AuditLogEvent event;
-         public final String address;
-         public int retries = 0;
-         private DispatchAttempt(AuditLogEvent event, String address) {
-             this.event = event;
-             this.address = address;
-         }
-     }
+    static class DispatchAttempt {
+        public final AuditLogEvent event;
+        public final String address;
+        public final List<AuditLogEvent> merged = new ArrayList<>();
+        public int retries = 0;
+
+        DispatchAttempt(AuditLogEvent event, String address) {
+            this.event = event;
+            this.address = address;
+        }
+    }
 }
 

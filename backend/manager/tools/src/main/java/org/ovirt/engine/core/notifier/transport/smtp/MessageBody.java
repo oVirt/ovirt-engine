@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.notifier.transport.smtp;
 
+import java.util.Date;
+
+import org.ovirt.engine.core.common.AuditLogSeverity;
+
 /**
  * Describes a message content
  */
@@ -10,9 +14,9 @@ public class MessageBody{
     private String templateInfo;
     private String datacenterInfo;
     private String storageDomainInfo;
-    private String logTime;
+    private Date logTime;
     private String message;
-    private String severity;
+    private AuditLogSeverity severity;
 
     public String getUserInfo() {
         return userInfo;
@@ -53,19 +57,19 @@ public class MessageBody{
         this.storageDomainInfo = storageDomainInfo;
     }
 
-    public String getLogTime() {
+    public Date getLogTime() {
         return logTime;
     }
 
-    public void setLogTime(String logTime) {
+    public void setLogTime(Date logTime) {
         this.logTime = logTime;
     }
 
-    public String getSeverity() {
+    public AuditLogSeverity getSeverity() {
         return severity;
     }
 
-    public void setSeverity(String severity) {
+    public void setSeverity(AuditLogSeverity severity) {
         this.severity = severity;
     }
 
