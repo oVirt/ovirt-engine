@@ -72,9 +72,8 @@ class Plugin(plugin.PluginBase):
 
     CONNECTION_TCP = 'tcp'
     CONNECTION_SSL = 'ssl'
-    SSL_PROTOCOLS = 'TLSv1.2'
-    ALLOWED_CIPHERS = 'kRSA:-aDSS:-3DES:!DES:!RC4:!RC2:!IDEA:-SEED:!eNULL:' \
-                      '!aNULL:!MD5:-SHA384:-CAMELLIA:-ARIA:-AESCCM8'
+    SSL_PROTOCOLS = ''
+    ALLOWED_CIPHERS = ''
 
     PROVIDER_NAME = 'ovirt-provider-ovn'
 
