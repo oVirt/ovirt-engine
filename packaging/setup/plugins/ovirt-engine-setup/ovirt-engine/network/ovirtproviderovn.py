@@ -60,8 +60,6 @@ OvnDbConfig = namedtuple(
         'command',
         'key_file',
         'cert_file',
-        'ssl_protocol',
-        'ciphers'
     ]
 )
 
@@ -72,9 +70,6 @@ class Plugin(plugin.PluginBase):
 
     CONNECTION_TCP = 'tcp'
     CONNECTION_SSL = 'ssl'
-    SSL_PROTOCOLS = 'TLSv1.2'
-    ALLOWED_CIPHERS = 'kRSA:-aDSS:-3DES:!DES:!RC4:!RC2:!IDEA:-SEED:!eNULL:' \
-                      '!aNULL:!MD5:-SHA384:-CAMELLIA:-ARIA:-AESCCM8'
 
     PROVIDER_NAME = 'ovirt-provider-ovn'
 
@@ -85,8 +80,6 @@ class Plugin(plugin.PluginBase):
         'ovn-nbctl',
         oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_NDB_KEY,
         oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_NDB_CERT,
-        None,
-        None
     )
 
     OVN_SOUTH_DB_CONFIG = OvnDbConfig(
@@ -96,8 +89,6 @@ class Plugin(plugin.PluginBase):
         'ovn-sbctl',
         oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_SDB_KEY,
         oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_SDB_CERT,
-        SSL_PROTOCOLS,
-        ALLOWED_CIPHERS,
     )
 
     def __init__(self, context):
@@ -593,8 +584,6 @@ class Plugin(plugin.PluginBase):
                     ovn_db_config.key_file,
                     ovn_db_config.cert_file,
                     oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-                    ovn_db_config.ssl_protocol or 'TLSv1.2',
-                    ovn_db_config.ciphers or 'HIGH',
                 ),
                 _(
                     'Failed to configure {name} with SSL'
