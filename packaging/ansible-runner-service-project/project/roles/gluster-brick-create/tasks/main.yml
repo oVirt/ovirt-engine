@@ -55,8 +55,8 @@
 # rc 5 = Logical Volume 'name' already exists in volume group.
 - name: Create a LV thinpool
   ansible.builtin.command: >
-    "lvcreate -l 100%FREE --chunksize {{ lv_chunksize }} --poolmetadatasize {{ pool_metadatasize }} --zero n
-    --type thin-pool --thinpool {{ lvname }}_pool {{ vgname }}"
+    lvcreate -l 100%FREE --chunksize {{ lv_chunksize }} --poolmetadatasize {{ pool_metadatasize }} --zero n
+    --type thin-pool --thinpool {{ lvname }}_pool {{ vgname }}
   register: resp
   failed_when: resp.rc not in [0, 5]
   changed_when: resp.rc == 0
@@ -74,8 +74,9 @@
 # rc 1 = Filesystem already exists
 - name: Create an xfs filesystem
   ansible.builtin.command: >
-    "mkfs.xfs -f -K -i size=512 -n size=8192 {% if 'raid' in disktype %} -d sw={{ diskcount }},su={{ stripesize }}k
-    {% endif %} /dev/{{ vgname }}/{{ lvname }}"
+    mkfs.xfs -f -K -i size=512 -n size=8192
+    {% if 'raid' in disktype %} -d sw={{ diskcount }},su={{ stripesize }}k {% endif %}
+     /dev/{{ vgname }}/{{ lvname }}
   register: resp
   failed_when: resp.rc not in [0, 1]
   changed_when: resp.rc == 0
