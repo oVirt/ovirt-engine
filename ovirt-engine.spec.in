@@ -544,7 +544,12 @@ Conflicts:	%{name} < 4.4.0
 Requires:	ovirt-vmconsole >= 1.0.7
 
 # OVS/OVN stuff, for firewalld service files
+%if 0%{?rhel} >= 9
+# OVS 2.17 and OVN 2022 are the lowest supported versions on EL9
+Requires:	ovirt-openvswitch-ovn-central >= 2.17
+%else
 Requires:	ovirt-openvswitch-ovn-central >= 2.15
+%endif
 Requires:	ovirt-provider-ovn >= 1.2.35
 
 %description setup-plugin-ovirt-engine
