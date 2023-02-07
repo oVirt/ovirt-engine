@@ -62,6 +62,12 @@ public class AnsibleRunnerCleanUpService implements BackendService {
                 return;
             }
             long todayInDays = FileTime.fromMillis(new Date().getTime()).to(TimeUnit.DAYS);
+            log.debug(
+                    "'{}' creation time in days: {}. Current date in days: {}. Artifacts life time is set to: {}",
+                    file.getAbsolutePath(),
+                    creationInDays,
+                    todayInDays,
+                    artifactsLifeTime);
             if (todayInDays - creationInDays > artifactsLifeTime) {
                 log.debug("Deleting directory '{}'", file.getAbsolutePath());
                 try {
