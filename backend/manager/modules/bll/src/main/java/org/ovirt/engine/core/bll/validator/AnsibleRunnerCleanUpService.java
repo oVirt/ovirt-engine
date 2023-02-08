@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,7 +55,7 @@ public class AnsibleRunnerCleanUpService implements BackendService {
                 creationInDays = Files.readAttributes(file.toPath(), BasicFileAttributes.class)
                         .creationTime()
                         .to(TimeUnit.DAYS);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.error("Failed to read file '{}' attributes: {}", file.getAbsolutePath(), e.getMessage());
                 log.debug("Exception: ", e);
                 return;
@@ -75,7 +74,7 @@ public class AnsibleRunnerCleanUpService implements BackendService {
                             .sorted(Comparator.reverseOrder())
                             .map(Path::toFile)
                             .forEach(File::delete);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     log.error("Failed to delete dir '{}' content: {}", file.getAbsolutePath(), e.getMessage());
                     log.debug("Exception: ", e);
                 }
