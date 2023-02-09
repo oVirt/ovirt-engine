@@ -5,7 +5,7 @@
     <parent>
         <artifactId>manager-modules</artifactId>
         <groupId>org.ovirt.engine.core</groupId>
-        <version>4.5.3.7</version>
+        <version>4.5.3.8-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

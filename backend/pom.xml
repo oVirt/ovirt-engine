@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.ovirt.engine</groupId>
     <artifactId>root</artifactId>
-    <version>4.5.3.7</version>
+    <version>4.5.3.8-SNAPSHOT</version>
   </parent>
 
   <artifactId>backend</artifactId>
