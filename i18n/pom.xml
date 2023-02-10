@@ -14,7 +14,7 @@
     <maven.compiler.target>11</maven.compiler.target>
     <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
     <slf4j.version>1.7.22</slf4j.version>
-    <snakeyaml.version>1.17</snakeyaml.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
 
     <working-zanata-directory>target/zanata</working-zanata-directory>
   </properties>
