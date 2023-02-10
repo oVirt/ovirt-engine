@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: oVirt Mailing Lists
+    url: https://lists.ovirt.org/archives/
+    about: Join us on the mailing list for more conversations and community support
+  - name: oVirt User Documentation
+    url: https://ovirt.org/documentation/
+    about: Documentation for oVirt users
+  - name: oVirt Developer Documentation
+    url: https://ovirt.org/develop/devdocs.html
+    about: Documentation for oVirt developers
