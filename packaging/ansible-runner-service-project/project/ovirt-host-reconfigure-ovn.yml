@@ -38,4 +38,3 @@
     - ovirt_openvswitch_pre.version is version('2.11', '==')
     - ovirt_openvswitch_post.version is version('2.15', '>=')
     - ovn_central is defined
-    - ovn_central | ipaddr

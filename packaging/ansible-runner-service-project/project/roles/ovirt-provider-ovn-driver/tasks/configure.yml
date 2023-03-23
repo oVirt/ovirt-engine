@@ -12,7 +12,7 @@
         enabled: true
 
   when:
-    - cluster_switch == "ovs" or (ovn_central is defined and ovn_central | ipaddr)
+    - cluster_switch == "ovs" or (ovn_central is defined)
 
 - block:
     - name: Install ovirt-provider-ovn-driver
@@ -46,4 +46,3 @@
 
   when:
     - ovn_central is defined
-    - ovn_central | ipaddr

@@ -611,7 +611,6 @@ Requires:	ovirt-engine-metrics >= 1.3.4.1
 Requires:	java-11-openjdk-headless >= %{openjdk_version}
 Requires:	logrotate
 Requires:	python3-dateutil
-Requires:	python3-netaddr
 Requires:	python3-psycopg2
 Requires:	python3-six
 Requires(pre):		shadow-utils
