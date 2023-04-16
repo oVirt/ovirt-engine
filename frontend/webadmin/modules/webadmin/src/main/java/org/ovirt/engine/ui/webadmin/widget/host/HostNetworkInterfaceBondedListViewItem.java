@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.host;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -165,7 +166,7 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
         TextColumn<HostInterface> dropRate = new TextColumn<HostInterface>() {
             @Override
             public String getValue(HostInterface hostInterface) {
-                return String.valueOf(hostInterface.getRxDrop().add(hostInterface.getTxDrop()));
+                return dropRenderer.render(new BigInteger[]{hostInterface.getRxDrop(), hostInterface.getTxDrop()});
             }
         };
         slavesTable.addColumn(dropRate, templates.sub(constants.dropsInterface(), constants.pkts()));

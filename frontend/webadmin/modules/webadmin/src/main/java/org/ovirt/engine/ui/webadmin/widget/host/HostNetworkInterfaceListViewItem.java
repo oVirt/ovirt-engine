@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.common.CellTablePopupTableResources;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.widget.listgroup.ExpandableListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
+import org.ovirt.engine.ui.common.widget.renderer.RxTxDropRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxTotalRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractIconTypeColumn;
@@ -57,6 +58,7 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
 
     protected static final RxTxRateRenderer rateRenderer = new RxTxRateRenderer();
     protected static final RxTxTotalRenderer totalRenderer = new RxTxTotalRenderer();
+    protected static final RxTxDropRenderer dropRenderer = new RxTxDropRenderer();
     private static final int MAX_LOGICAL_NETWORKS = 1000;
     private static final String ICON_COLOR = "#363636"; // $NON-NLS-1$
     private static final String EXPANSION_CONTAINER = "expansion-container"; // $NON-NLS-1$
