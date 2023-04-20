@@ -537,6 +537,7 @@ Requires:	ovirt-engine-keycloak-setup
 %endif
 Requires:	ovirt-engine-extension-aaa-jdbc >= 1.2.0
 Requires:	openssh
+Requires:	glibc-langpack-en
 Requires:       postgresql-server >= 12.0
 Requires:       postgresql-contrib >= 12.0
 Conflicts:	%{name} < 4.4.0
