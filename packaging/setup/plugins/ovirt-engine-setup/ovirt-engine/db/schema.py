@@ -323,7 +323,7 @@ class Plugin(plugin.PluginBase):
                     nsp.nspname not in ('information_schema', 'pg_catalog') and
                     nsp.nspname not like 'pg_%%' and
                     cls.relname not like 'pg_%%' and
-                    rol.rolname != %(user)s
+                    not pg_catalog.pg_has_role(%(user)s, rol.rolname, 'usage')
                 order by
                     nsp.nspname,
                     cls.relname
