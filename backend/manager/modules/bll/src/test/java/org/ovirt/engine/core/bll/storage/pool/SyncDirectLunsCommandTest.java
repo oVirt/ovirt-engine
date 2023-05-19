@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -27,12 +28,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -62,11 +66,15 @@ public class SyncDirectLunsCommandTest {
     @Mock
     private StorageServerConnectionDao serverConnectionDao;
 
+    @Mock
+    private AuditLogDirector auditLogDirector;
+
     private LUNs lun1;
     private LUNs lun2;
     private LUNs lun3;
     private DiskLunMap disk1Lun1Map;
     private Map<Boolean, List<VM>> lunsPerHost;
+    private Map<Boolean, List<VM>> emptyLunsPerHost;
 
     @Spy
     @InjectMocks
@@ -120,6 +128,19 @@ public class SyncDirectLunsCommandTest {
     }
 
     @Test
+    public void testSyncDirectLunsWithoutPluggedVms() {
+        command.getParameters().setDeviceList(Arrays.asList(lun1));
+        mockLunToDiskIdsOfDirectLunsAttachedToVmsInPool(lun1);
+        command.getParameters().setDirectLunIds(Collections.singleton(lun1.getDiskId()));
+        when(diskLunMapDao.getDiskLunMapByDiskId(lun1.getDiskId())).thenReturn(disk1Lun1Map);
+        when(vmDao.getForDisk(lun1.getDiskId(), false)).thenReturn(emptyLunsPerHost);
+        doReturn(true).when(command).validateVds();
+        doNothing().when(auditLogDirector).log(any(AuditLogable.class), any(AuditLogType.class));
+        command.executeCommand();
+        assertTrue(command.getReturnValue().getSucceeded(), "SyncDirectLuns without plugged VMs failed");
+    }
+
+    @Test
     public void validateWithDirectLunIdAndInvalidVds() {
         command.getParameters().setDirectLunIds(Collections.singleton(lun1.getDiskId()));
         when(vmDao.getForDisk(lun1.getDiskId(), false)).thenReturn(lunsPerHost);
@@ -155,6 +176,7 @@ public class SyncDirectLunsCommandTest {
 
     private void mockVmDao() {
         lunsPerHost = new HashMap<>();
+        emptyLunsPerHost = new HashMap<>();
         List<VM> vms = new ArrayList<>();
         VM vm = new VM();
         vm.setRunOnVds(Guid.newGuid());
