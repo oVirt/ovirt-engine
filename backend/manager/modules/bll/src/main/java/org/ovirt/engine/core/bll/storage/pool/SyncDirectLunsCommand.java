@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -218,7 +219,12 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
     }
 
     private List<VM> getPluggedVms(Guid diskId) {
-        return vmDao.getForDisk(diskId, false).get(Boolean.TRUE);
+        List<VM> result = vmDao.getForDisk(diskId, false).get(Boolean.TRUE);
+        // Return an empty list if no plugged VMs found
+        if (result == null) {
+             result = new ArrayList<>();
+        }
+        return result;
     }
 
     private Stream<Guid> getIdsOfDirectLunsToSync() {
