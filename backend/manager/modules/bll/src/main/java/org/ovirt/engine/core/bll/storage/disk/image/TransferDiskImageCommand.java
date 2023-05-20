@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
 import org.ovirt.engine.core.common.businessentities.VmBackupPhase;
@@ -1136,12 +1135,17 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     @Override
     protected VDS checkForActiveVds() {
-        Guid hostForExecution = vdsCommandsHelper.getHostForExecution(getStoragePoolId(), host ->
-                resourceManager.getVdsManager(host.getId()).getDomains()
-                        .stream()
+        Guid hostForExecution = vdsCommandsHelper.getHostForExecution(getStoragePoolId(), host -> {
+                var domainsData = resourceManager.getVdsManager(host.getId()).getDomains();
+                if (domainsData == null) {
+                    return false;
+                }
+                var domainData = domainsData.stream()
                         .filter(vdsDomainsData -> vdsDomainsData.getDomainId().equals(getStorageDomainId()))
-                        .allMatch(VDSDomainsData::isValid)
-        );
+                        .findFirst()
+                        .orElse(null);
+                return domainData != null ? domainData.isValid() : false;
+        });
 
         if (hostForExecution == null) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
