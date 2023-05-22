@@ -9,4 +9,4 @@ if ! command -v ansible-lint > /dev/null 2>&1; then
 fi
 
 # Run ansible-lint
-#ansible-lint -c ${ANSIBLE_LINT_CONF} packaging/ansible-runner-service-project/project/roles/*
+ansible-lint -c ${ANSIBLE_LINT_CONF} packaging/ansible-runner-service-project/project/roles/*
