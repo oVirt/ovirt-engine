@@ -30,7 +30,7 @@ jobs:
 
     steps:
     - name: Install required PyPI packages
-      run: ${{ matrix.pip-command }} install "ansible-lint>=6.0.0,<6.8.3"
+      run: ${{ matrix.pip-command }} install "ansible-lint>=6.0.0,<7.0.0"
 
     - name: Checkout sources
       uses: ovirt/checkout-action@main
