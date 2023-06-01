@@ -27,9 +27,49 @@ public class DisplayMapper {
     public static GraphicsType map(DisplayType displayType, GraphicsType graphicsType) {
         switch (displayType) {
             case SPICE:
+            case QXL:
                 return GraphicsType.SPICE;
             case VNC:
+            case CIRRUS:
+            case VGA:
+            case BOCHS:
                 return GraphicsType.VNC;
+            default:
+                return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.DisplayType.class, to = DisplayType.class)
+    public static DisplayType mapDisplay(org.ovirt.engine.core.common.businessentities.DisplayType displayType, DisplayType disType) {
+        switch (displayType) {
+            case cirrus:
+                return DisplayType.CIRRUS;
+            case qxl:
+                return DisplayType.QXL;
+            case vga:
+                return DisplayType.VGA;
+            case bochs:
+                return DisplayType.BOCHS;
+            case none:
+                return DisplayType.NONE;
+            default:
+                return null;
+        }
+    }
+
+    @Mapping(from = DisplayType.class, to = org.ovirt.engine.core.common.businessentities.DisplayType.class)
+    public static org.ovirt.engine.core.common.businessentities.DisplayType mapDisplay(DisplayType displayType, org.ovirt.engine.core.common.businessentities.DisplayType disType) {
+        switch (displayType) {
+            case CIRRUS:
+                return org.ovirt.engine.core.common.businessentities.DisplayType.cirrus;
+            case QXL:
+                return org.ovirt.engine.core.common.businessentities.DisplayType.qxl;
+            case VGA:
+                return org.ovirt.engine.core.common.businessentities.DisplayType.vga;
+            case BOCHS:
+                return org.ovirt.engine.core.common.businessentities.DisplayType.bochs;
+            case NONE:
+                return org.ovirt.engine.core.common.businessentities.DisplayType.none;
             default:
                 return null;
         }
@@ -74,34 +114,21 @@ public class DisplayMapper {
         if (vm.isSetDisplay() && vm.getDisplay().isSetType()) {
             DisplayType displayType = vm.getDisplay().getType();
             if (displayType != null) {
-                org.ovirt.engine.core.common.businessentities.DisplayType display = mapDisplayType(displayType, null);
-                if (display != null) {
-                    Set<GraphicsType> graphics = new HashSet<>();
-                    switch (display) {
-                        case qxl:
-                            graphics.add(GraphicsType.SPICE);
-                            break;
-                        case vga:
-                        case cirrus:
-                        case bochs:
-                            graphics.add(GraphicsType.VNC);
-                            break;
-                    }
-                    params.setRunOnceGraphics(graphics);
+                Set<GraphicsType> graphics = new HashSet<>();
+                switch (displayType) {
+                    case SPICE:
+                    case QXL:
+                        graphics.add(GraphicsType.SPICE);
+                        break;
+                    case VNC:
+                    case VGA:
+                    case CIRRUS:
+                    case BOCHS:
+                        graphics.add(GraphicsType.VNC);
+                        break;
                 }
+                params.setRunOnceGraphics(graphics);
             }
-        }
-    }
-
-    @Mapping(from = DisplayType.class, to = org.ovirt.engine.core.common.businessentities.DisplayType.class)
-    public static org.ovirt.engine.core.common.businessentities.DisplayType mapDisplayType(DisplayType type, org.ovirt.engine.core.common.businessentities.DisplayType incoming) {
-        switch (type) {
-            case VNC:
-                return org.ovirt.engine.core.common.businessentities.DisplayType.vga;
-            case SPICE:
-                return org.ovirt.engine.core.common.businessentities.DisplayType.qxl;
-            default:
-                return null;
         }
     }
 }

@@ -98,7 +98,7 @@ public class DisplayHelper {
     /**
      * Sets static display info (derived from graphics device) to the Template.
      * Serves for BC purposes as VM can have more graphics devices, but old restapi allows us to set only one.
-     * If there are multiple graphics, SPICE is preferred.
+     * If there are multiple graphics, VNC is preferred.
      */
     public static void adjustDisplayData(BackendResource res, Template template) {
         adjustDisplayDataInternal(res, template, null, false);
@@ -107,7 +107,7 @@ public class DisplayHelper {
     /**
      * Sets static display info (derived from graphics device) to the VM.
      * Serves for BC purposes as VM can have more graphics devices, but old restapi allows us to set only one.
-     * If there are multiple graphics, SPICE is preferred.
+     * If there are multiple graphics, VNC is preferred.
      */
     public static void adjustDisplayData(BackendResource res, Vm vm, boolean nextRun) {
         adjustDisplayData(res, vm, null, nextRun);
@@ -126,10 +126,10 @@ public class DisplayHelper {
             List<GraphicsType> graphicsTypes = getGraphicsTypesForEntity(backendResource,
                     new Guid(res.getId()), vmsGraphicsDevices, nextRun);
 
-            if (graphicsTypes.contains(GraphicsType.SPICE)) {
-                display.setType(DisplayType.SPICE);
-            } else if (graphicsTypes.contains(GraphicsType.VNC)) {
+            if (graphicsTypes.contains(GraphicsType.VNC)) {
                 display.setType(DisplayType.VNC);
+            } else if (graphicsTypes.contains(GraphicsType.SPICE)) {
+                display.setType(DisplayType.SPICE);
             } else {
                 resetDisplay(res);
             }
