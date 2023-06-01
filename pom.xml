@@ -78,6 +78,7 @@
     <infinispan.version>9.4.18.Final</infinispan.version>
     <istack-commons-runtime.version>3.0.10</istack-commons-runtime.version>
     <jackson2.version>2.12.7</jackson2.version>
+    <jackson2-databind.version>2.12.7.1</jackson2-databind.version>
     <jakarta-el.version>3.0.3</jakarta-el.version>
     <javacc.version>2.6</javacc.version>
     <javassist.version>3.23.1-GA</javassist.version>
@@ -515,7 +516,7 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>${jackson2.version}</version>
+        <version>${jackson2-databind.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
