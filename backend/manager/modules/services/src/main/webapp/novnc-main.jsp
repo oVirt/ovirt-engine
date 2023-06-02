@@ -58,23 +58,6 @@
 
     </style>
 
-    <!-- Promise polyfill for IE11 -->
-    <script src="files/novnc/vendor/promise.js"></script>
-
-    <!-- ES2015/ES6 modules polyfill -->
-    <script type="module">
-        window._noVNC_has_module_support = true;
-    </script>
-    <script>
-        window.addEventListener("load", function() {
-            if (window._noVNC_has_module_support) return;
-            const loader = document.createElement("script");
-            loader.src = "files/novnc/vendor/browser-es-module-loader/dist/" +
-                "browser-es-module-loader.js";
-            document.head.appendChild(loader);
-        });
-    </script>
-
     <!-- actual script modules -->
     <script type="module" crossorigin="anonymous">
         // RFB holds the API to connect and communicate with a VNC server
