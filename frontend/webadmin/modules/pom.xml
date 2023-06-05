@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.ovirt.engine.ui</groupId>
     <artifactId>webadmin-all</artifactId>
-    <version>4.5.3.8-SNAPSHOT</version>
+    <version>4.5.3.8</version>
   </parent>
   <artifactId>webadmin-modules</artifactId>
   <packaging>pom</packaging>
