@@ -39,6 +39,6 @@ jobs:
         createrepo_c $ARTIFACTS_DIR
 
     - name: Upload artifacts
-      uses: ovirt/upload-rpms-action@v2
+      uses: ovirt/upload-rpms-action@main
       with:
         directory: ${{ env.ARTIFACTS_DIR }}
