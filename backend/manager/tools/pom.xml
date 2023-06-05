@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.ovirt.engine.core</groupId>
     <artifactId>manager</artifactId>
-    <version>4.5.3.8</version>
+    <version>4.5.3.9-SNAPSHOT</version>
   </parent>
 
   <artifactId>tools</artifactId>
