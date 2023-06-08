@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.ovirt.engine.core.common.businessentities.LeaseStatus;
@@ -25,6 +26,8 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.Qcow2BitmapInfo;
+import org.ovirt.engine.core.common.businessentities.storage.Qcow2BitmapInfoFlags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 
@@ -480,5 +483,27 @@ public class VdsBrokerObjectsBuilderTest {
         struct.put(VdsProperties.cpu_topology,
                 new Object[] { cpuCapability1, cpuCapability2, cpuCapability3, cpuCapability4 });
         return struct;
+    }
+
+    @Test
+    private static Map<String, Object> getBitmapAsMap(String name, Long granularity, List<Qcow2BitmapInfoFlags> flags) {
+        Map<String, Object> bitmap = new HashMap<>();
+        bitmap.put("name", name);
+        bitmap.put("granularity", granularity);
+        flags.stream().map(flag -> flag.getValue()).collect(Collectors.toList()).toArray();
+        return bitmap;
+    }
+
+    public void testBitmapList() {
+        Object[] bitmaps = new Object[2];
+        bitmaps[0] = getBitmapAsMap("old-bitmap", 65536L, Arrays.asList(Qcow2BitmapInfoFlags.AUTO));
+        bitmaps[1] = getBitmapAsMap("new-bitmap", 65536L, Arrays.asList(Qcow2BitmapInfoFlags.AUTO));
+        List<Qcow2BitmapInfo> info = getBitmapInfo(bitmaps);
+        assertEquals("old-bitmap", info.get(0).getName());
+        assertEquals("new-bitmap", info.get(1).getName());
+    }
+
+    private List<Qcow2BitmapInfo> getBitmapInfo(Object[] bitmaps) {
+        return vdsBrokerObjectsBuilder.buildQcow2Bitmaps(bitmaps);
     }
 }
