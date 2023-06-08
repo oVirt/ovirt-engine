@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.backup;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -15,6 +16,9 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.DeleteAllVmCheckpointsParameters;
 import org.ovirt.engine.core.common.action.VmBackupParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmBackup;
@@ -25,10 +29,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VmBackupVDSParameters;
-import org.ovirt.engine.core.common.vdscommands.VmCheckpointsVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmCheckpointDao;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmCheckpointIds;
 
 @NonTransactiveCommandAttribute
@@ -220,20 +222,21 @@ public class RedefineVmCheckpointCommand<T extends VmBackupParameters> extends V
     }
 
     private void removeCheckpointChain(List<Guid> definedCheckpointsIds) {
-        for (Guid checkpointId : definedCheckpointsIds) {
-            // Best effort to remove all checkpoints in the chain from libvirt,
-            // starting from the oldest checkpoint to the leaf.
-            VmCheckpoint vmCheckpoint = new VmCheckpoint();
-            vmCheckpoint.setId(checkpointId);
-            performVmCheckpointsOperation(VDSCommandType.DeleteVmCheckpoints,
-                    new VmCheckpointsVDSParameters(getVdsId(), getVmId(), List.of(vmCheckpoint)));
-        }
+        // Collect all the images that were part of a backup.
+        List<DiskImage> imagesWithCheckpoints = definedCheckpointsIds.stream()
+                .map(vmCheckpoint -> vmCheckpointDao.getDisksByCheckpointId(vmCheckpoint))
+                .flatMap(List::stream)
+                .distinct()
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        // Removing all the checkpoints from the Engine database
-        TransactionSupport.executeInNewTransaction(() -> {
-            vmCheckpointDao.removeAllCheckpointsByVmId(getVmId());
-            return null;
-        });
+        DeleteAllVmCheckpointsParameters deleteAllVmCheckpointsParameters =
+        new DeleteAllVmCheckpointsParameters(getVmId(), imagesWithCheckpoints);
+        deleteAllVmCheckpointsParameters.setParentCommand(getActionType());
+        deleteAllVmCheckpointsParameters.setParentParameters(getParameters());
+        deleteAllVmCheckpointsParameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        deleteAllVmCheckpointsParameters.setForce(true);
+
+        runInternalAction(ActionType.DeleteAllVmCheckpoints, deleteAllVmCheckpointsParameters);
     }
 
     @Override
