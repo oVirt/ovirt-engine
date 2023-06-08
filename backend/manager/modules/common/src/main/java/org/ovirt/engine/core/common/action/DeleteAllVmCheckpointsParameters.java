@@ -16,6 +16,7 @@ public class DeleteAllVmCheckpointsParameters extends VmOperationParameterBase {
     @NotNull
     private List<DiskImage> diskImages;
     private int completedDisksCount;
+    private boolean force;
 
     public DeleteAllVmCheckpointsParameters() {
     }
@@ -24,6 +25,7 @@ public class DeleteAllVmCheckpointsParameters extends VmOperationParameterBase {
         super(vmId);
         this.diskImages = diskImages;
         completedDisksCount = 0;
+        force = false;
     }
 
     public List<DiskImage> getDiskImages() {
@@ -40,5 +42,12 @@ public class DeleteAllVmCheckpointsParameters extends VmOperationParameterBase {
 
     public void setCompletedDisksCount(int completedDisksCount) {
         this.completedDisksCount = completedDisksCount;
+    }
+    public boolean isForce() {
+        return force;
+    }
+
+    public void setForce(boolean force) {
+        this.force = force;
     }
 }
