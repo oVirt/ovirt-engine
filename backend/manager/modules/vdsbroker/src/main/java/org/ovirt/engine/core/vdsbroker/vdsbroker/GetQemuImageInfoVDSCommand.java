@@ -2,6 +2,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
 import org.ovirt.engine.core.common.businessentities.storage.QemuVolumeFormat;
@@ -9,6 +11,9 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetVolumeInfoVDSCommandParameters;
 
 public class GetQemuImageInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters> extends VdsBrokerCommand<P> {
+    @Inject
+    private VdsBrokerObjectsBuilder vdsBrokerObjectsBuilder;
+
     private QemuImageInfoReturn result;
 
     public GetQemuImageInfoVDSCommand(P parameters) {
@@ -60,6 +65,10 @@ public class GetQemuImageInfoVDSCommand<P extends GetVolumeInfoVDSCommandParamet
             }
             if (struct.containsKey("clustersize")) {
                 qemuImageInfo.setClusterSize(Long.parseLong(struct.get("clustersize").toString()));
+            }
+            if (struct.containsKey("bitmaps") && struct.get("bitmaps") != null) {
+                Object[] bitmaps = (Object[]) struct.get("bitmaps");
+                qemuImageInfo.setQcow2bitmaps(vdsBrokerObjectsBuilder.buildQcow2Bitmaps(bitmaps));
             }
         } catch (RuntimeException ex) {
             log.error("Failed building Qemu image: {}", ex.getMessage());
