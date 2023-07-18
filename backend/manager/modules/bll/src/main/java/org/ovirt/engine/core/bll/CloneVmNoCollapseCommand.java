@@ -234,8 +234,7 @@ public class CloneVmNoCollapseCommand<T extends CloneVmParameters> extends Clone
                         oldToNewDiskImageMap
                                 .keySet()
                                 .stream()
-                                .collect(Collectors.toMap(d -> d.getImageId(),
-                                        d -> oldToNewDiskImageMap.get(d))));
+                                .collect(Collectors.toMap(DiskImage::getImageId, oldToNewDiskImageMap::get)));
         List<DiskImage> newChain = new ArrayList(oldToNewDiskImageMap.values());
         ImagesHandler.sortImageList(newChain);
 

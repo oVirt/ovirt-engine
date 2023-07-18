@@ -188,6 +188,7 @@ public class CloneImageGroupVolumesStructureCommand<T extends CloneImageGroupVol
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setJobWeight(getParameters().getOperationsJobWeight().get(image.getImageId().toString()));
+        parameters.setBackup(image.getBackup());
         runInternalActionWithTasksContext(ActionType.CreateVolumeContainer, parameters);
     }
 
