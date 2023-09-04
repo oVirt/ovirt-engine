@@ -6,7 +6,7 @@
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-parent</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.9-SNAPSHOT</version>
+      <version>4.5.3.9</version>
       <path>/usr/share/maven-poms/ovirt-engine/restapi-parent.pom</path>
       <uuid>1873cd84-9d8e-40b4-87cd-b5144759993c</uuid>
       <properties>
@@ -17,7 +17,7 @@
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>interface</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.9-SNAPSHOT</version>
+      <version>4.5.3.9</version>
       <path>/usr/share/maven-poms/ovirt-engine/interface.pom</path>
       <uuid>032abd7d-a43c-4ca6-ba73-4636d9b6f508</uuid>
       <properties>
@@ -28,7 +28,7 @@
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>common-parent</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.9-SNAPSHOT</version>
+      <version>4.5.3.9</version>
       <path>/usr/share/maven-poms/ovirt-engine/common-parent.pom</path>
       <uuid>4e59210e-7f1d-4369-9a07-232e90252bfb</uuid>
       <properties>
@@ -39,7 +39,7 @@
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>interface-common-jaxrs</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.9-SNAPSHOT</version>
+      <version>4.5.3.9</version>
       <path>/usr/share/maven-poms/ovirt-engine/interface-common-jaxrs.pom</path>
       <uuid>e820ae2c-fe03-45d2-9fbe-f2c677612220</uuid>
       <properties>
@@ -49,7 +49,7 @@
     <artifact>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>interface-common-jaxrs</artifactId>
-      <version>4.5.3.9-SNAPSHOT</version>
+      <version>4.5.3.9</version>
       <path>/usr/share/java/ovirt-engine/interface-common-jaxrs.jar</path>
       <uuid>aba9ea8e-1cc2-4e06-a56e-6fab46fe2737</uuid>
       <properties>
@@ -60,7 +60,7 @@
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-definition</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.9-SNAPSHOT</version>
+      <version>4.5.3.9</version>
       <path>/usr/share/maven-poms/ovirt-engine/restapi-definition.pom</path>
       <uuid>86757ce5-e13d-4089-b144-78f3780e8fa2</uuid>
       <properties>
@@ -70,7 +70,7 @@
     <artifact>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-definition</artifactId>
-      <version>4.5.3.9-SNAPSHOT</version>
+      <version>4.5.3.9</version>
       <path>/usr/share/java/ovirt-engine/restapi-definition.jar</path>
       <uuid>0618b155-9008-47ea-a65a-cd48c83356a5</uuid>
       <properties>
@@ -81,7 +81,7 @@
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-jaxrs</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.9-SNAPSHOT</version>
+      <version>4.5.3.9</version>
       <path>/usr/share/maven-poms/ovirt-engine/restapi-jaxrs.pom</path>
       <uuid>5ff65b6e-081d-43bb-be2f-c9325943145c</uuid>
       <properties>
@@ -91,7 +91,7 @@
     <artifact>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-jaxrs</artifactId>
-      <version>4.5.3.9-SNAPSHOT</version>
+      <version>4.5.3.9</version>
       <path>/usr/share/java/ovirt-engine/restapi-jaxrs.jar</path>
       <uuid>836b115a-b35c-4060-b8c4-a1babe2833a1</uuid>
       <properties>
@@ -102,7 +102,7 @@
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-types</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.9-SNAPSHOT</version>
+      <version>4.5.3.9</version>
       <path>/usr/share/maven-poms/ovirt-engine/restapi-types.pom</path>
       <uuid>aa1324d7-c3ea-4c41-9564-a526dabbe2f7</uuid>
       <properties>
@@ -112,7 +112,7 @@
     <artifact>
       <groupId>org.ovirt.engine.api</groupId>
       <artifactId>restapi-types</artifactId>
-      <version>4.5.3.9-SNAPSHOT</version>
+      <version>4.5.3.9</version>
       <path>/usr/share/java/ovirt-engine/restapi-types.jar</path>
       <uuid>93652da3-8331-43fc-be78-31769c650c86</uuid>
       <properties>
