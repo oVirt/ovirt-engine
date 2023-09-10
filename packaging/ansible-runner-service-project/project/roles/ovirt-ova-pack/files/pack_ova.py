@@ -43,11 +43,12 @@ def pad_to_block_size(file):
 
 def write_ovf(entity, ova_file, ovf):
     print("writing ovf: %s" % ovf)
-    tar_info = create_tar_info(entity + ".ovf", len(ovf))
+    encoded_ovf = ovf if python2 else ovf.encode()
+    tar_info = create_tar_info(entity + ".ovf", len(encoded_ovf))
     buf = (tar_info.tobuf() if python2 else
            tar_info.tobuf(format=tarfile.GNU_FORMAT))
     ova_file.write(buf)
-    ova_file.write(ovf if python2 else ovf.encode())
+    ova_file.write(encoded_ovf)
     pad_to_block_size(ova_file)
 
 
