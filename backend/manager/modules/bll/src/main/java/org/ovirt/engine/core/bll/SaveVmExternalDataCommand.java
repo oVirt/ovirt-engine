@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ExternalDataStatus;
 import org.ovirt.engine.core.common.action.SaveVmExternalDataParameters;
 import org.ovirt.engine.core.common.action.VmExternalDataKind;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -47,8 +46,8 @@ public class SaveVmExternalDataCommand<T extends SaveVmExternalDataParameters> e
         return !vmDeviceDao.getVmDeviceByVmIdAndType(getParameters().getVmId(), VmDeviceGeneralType.TPM).isEmpty();
     }
 
-    private boolean hasSecureBoot() {
-        return getVm().getBiosType() == BiosType.Q35_SECURE_BOOT
+    private boolean isUEFI() {
+        return getVm().getBiosType().isOvmf()
                 && FeatureSupported.isNvramPersistenceSupported(getVm().getCompatibilityVersion());
     }
 
@@ -80,7 +79,7 @@ public class SaveVmExternalDataCommand<T extends SaveVmExternalDataParameters> e
         if (hasTpmDevice()) {
             dataToRetrieve.add(VmExternalDataKind.TPM);
         }
-        if (hasSecureBoot()) {
+        if (isUEFI()) {
             dataToRetrieve.add(VmExternalDataKind.NVRAM);
         }
 
