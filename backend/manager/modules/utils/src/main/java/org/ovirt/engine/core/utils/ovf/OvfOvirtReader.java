@@ -260,10 +260,10 @@ public abstract class OvfOvirtReader extends OvfReader {
     protected void readDisk(XmlNode node, DiskImage image) {
         super.readDisk(node, image);
 
-        if (!StringUtils.isEmpty(node.attributes.get("ovf:size").getValue())) {
+        if (node.attributes.get("ovf:size") != null && !StringUtils.isEmpty(node.attributes.get("ovf:size").getValue())) {
             image.setSize(convertGigabyteToBytes(Long.parseLong(node.attributes.get("ovf:size").getValue())));
         }
-        if (!StringUtils.isEmpty(node.attributes.get("ovf:actual_size").getValue())) {
+        if (node.attributes.get("ovf:actual_size") != null && !StringUtils.isEmpty(node.attributes.get("ovf:actual_size").getValue())) {
             image.setActualSizeInBytes(
                     convertGigabyteToBytes(Long.parseLong(node.attributes.get("ovf:actual_size").getValue())));
         }
