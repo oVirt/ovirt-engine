@@ -129,7 +129,7 @@ done
 common_set_conf_vars
 
 LOCK="${PKIDIR}/${CA_FILE}".pem
-df -l "${LOCK}" 2> /dev/null | grep -q "File" || die "${LOCK} is not on a local filesystem"
+LC_ALL=C df -l "${LOCK}" 2> /dev/null | grep -q "File" || die "${LOCK} is not on a local filesystem"
 
 # Wait for lock on fd 9
 (
