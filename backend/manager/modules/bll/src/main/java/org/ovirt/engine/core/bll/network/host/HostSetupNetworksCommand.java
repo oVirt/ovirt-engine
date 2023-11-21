@@ -340,28 +340,37 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
         try (EngineLock monitoringLock = acquireMonitorLock("Host setup networks")) {
             int timeout = getSetupNetworksTimeout();
-            FutureVDSCall<VDSReturnValue> setupNetworksTask = invokeSetupNetworksCommand(timeout);
 
             try {
-                VDSReturnValue retVal = setupNetworksTask.get(timeout, TimeUnit.SECONDS);
-                if (retVal != null) {
-                    if (!retVal.getSucceeded() && retVal.getVdsError() == null && getParameters().rollbackOnFailure()) {
-                        throw new EngineException(EngineError.SETUP_NETWORKS_ROLLBACK, retVal.getExceptionString());
+                boolean succeeded = true;
+
+                if (hasNetworkChanges()) {
+                    succeeded = false;
+                    // Update networks configuration on the host
+                    FutureVDSCall<VDSReturnValue> setupNetworksTask = invokeSetupNetworksCommand(timeout);
+                    VDSReturnValue retVal = setupNetworksTask.get(timeout, TimeUnit.SECONDS);
+                    if (retVal != null) {
+                        if (!retVal.getSucceeded() && retVal.getVdsError() == null && getParameters().rollbackOnFailure()) {
+                            throw new EngineException(EngineError.SETUP_NETWORKS_ROLLBACK, retVal.getExceptionString());
+                        }
+
+                        VdsHandler.handleVdsResult(retVal);
+
+                        succeeded = retVal.getSucceeded();
                     }
-
-                    VdsHandler.handleVdsResult(retVal);
-
-                    if (retVal.getSucceeded()) {
-
-                        VDSReturnValue returnValue =
-                                runVdsCommand(VDSCommandType.GetCapabilities,
-                                        new VdsIdAndVdsVDSCommandParametersBase(getVds()));
-                        VDS updatedHost = (VDS) returnValue.getReturnValue();
-                        persistNetworkChanges(updatedHost);
-                    }
-
-                    setSucceeded(true);
                 }
+
+                if (succeeded) {
+                    // If host networks were updated successfully (or there were no host network changes, just changes
+                    // in labels) then update networks configuration in the engine DB.
+                    VDSReturnValue returnValue =
+                            runVdsCommand(VDSCommandType.GetCapabilities,
+                                    new VdsIdAndVdsVDSCommandParametersBase(getVds()));
+                    VDS updatedHost = (VDS) returnValue.getReturnValue();
+                    persistNetworkChanges(updatedHost);
+                }
+
+                setSucceeded(succeeded);
             } catch (TimeoutException e) {
                 log.debug("Host Setup networks command timed out for {} seconds", timeout);
             }
@@ -535,6 +544,10 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private boolean noChangesDetected() {
         return getParameters().isEmptyRequest();
+    }
+
+    private boolean hasNetworkChanges() {
+        return getParameters().hasNetworkChanges();
     }
 
     private List<VdsNetworkInterface> getRemovedBonds() {

@@ -84,6 +84,14 @@ public class HostSetupNetworksParameters extends VdsActionParameters {
             removedLabels.isEmpty();
     }
 
+    public boolean hasNetworkChanges() {
+        return !networkAttachments.isEmpty() ||
+            !removedNetworkAttachments.isEmpty() ||
+            !createOrUpdateBonds.isEmpty() ||
+            !removedBonds.isEmpty() ||
+            !removedUnmanagedNetworks.isEmpty();
+    }
+
     public boolean rollbackOnFailure() {
         return rollbackOnFailure;
     }
