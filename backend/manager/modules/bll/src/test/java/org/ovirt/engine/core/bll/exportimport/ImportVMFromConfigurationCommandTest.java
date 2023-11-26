@@ -95,8 +95,10 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
     private final Guid storagePoolId = Guid.newGuid();
     private final Guid clusterId = Guid.newGuid();
     private static final String VM_OVF_XML_DATA = "src/test/resources/vmOvfData.xml";
+    private static final String VM_OVF_XML_DATA2 = "src/test/resources/vmOvfData2.xml";
     private static final String OVF_URI = "http://schemas.dmtf.org/ovf/envelope/1/";
     private String xmlOvfData;
+    private String xmlOvfData2;
     private Cluster cluster;
     private StoragePool storagePool;
 
@@ -206,10 +208,15 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
         doReturn(null).when(labelDao).getByName(any());
 
         setXmlOvfData();
+        setXmlOvfData2();
     }
 
     private void setXmlOvfData() throws IOException {
         xmlOvfData = new String(Files.readAllBytes(Paths.get(VM_OVF_XML_DATA)), StandardCharsets.UTF_8);
+    }
+
+    private void setXmlOvfData2() throws IOException {
+        xmlOvfData2 = new String(Files.readAllBytes(Paths.get(VM_OVF_XML_DATA2)), StandardCharsets.UTF_8);
     }
 
     private void appendBiosTypeTag(XmlDocument document, int biosTypeId, Boolean custom) {
@@ -233,6 +240,20 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
     @Test
     public void testPositiveImportVmFromConfiguration() {
         initCommand(getOvfEntityData());
+        doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(any());
+        doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(any());
+        when(validator.validateUnregisteredEntity(any())) .thenReturn(ValidationResult.VALID);
+        when(validator.validateStorageExistForUnregisteredEntity(anyList(), anyBoolean(), any(), any()))
+                .thenReturn(ValidationResult.VALID);
+        doReturn(ValidationResult.VALID).when(validator)
+                .validateStorageExistsForMemoryDisks(anyList(), anyBoolean(), anyMap());
+
+        ValidateTestUtils.runAndAssertValidateSuccess(cmd);
+    }
+
+    @Test
+    public void testPositiveImportVmFromConfiguration2() {
+        initCommand(getOvfEntityData2());
         doReturn(Boolean.TRUE).when(cmd).validateAfterCloneVm(any());
         doReturn(Boolean.TRUE).when(cmd).validateBeforeCloneVm(any());
         when(validator.validateUnregisteredEntity(any())) .thenReturn(ValidationResult.VALID);
@@ -412,6 +433,14 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest implem
         ovfEntity.setEntityId(vmId);
         ovfEntity.setEntityName("Some VM");
         ovfEntity.setOvfData(xmlOvfData);
+        return ovfEntity;
+    }
+
+    private OvfEntityData getOvfEntityData2() {
+        OvfEntityData ovfEntity = new OvfEntityData();
+        ovfEntity.setEntityId(vmId);
+        ovfEntity.setEntityName("Some VM");
+        ovfEntity.setOvfData(xmlOvfData2);
         return ovfEntity;
     }
 
