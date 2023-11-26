@@ -78,7 +78,14 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
             if (unregQueryReturn.getSucceeded()) {
                 unregisteredDisks.add(unregQueryReturn.getReturnValue());
             } else {
-                log.debug("Could not get populated disk: {}", unregQueryReturn.getExceptionString());
+                DiskImage returnValue = unregQueryReturn.getReturnValue();
+                if (returnValue.isDiskSnapshot() &&
+                        String.format("snapshot-%s", unregisteredDiskId).equals(returnValue.getDescription())) {
+                    continue;
+                }
+
+                log.error("Could not get populated disk: {}", unregQueryReturn.getExceptionString());
+                getQueryReturnValue().setSucceeded(false);
             }
         }
         getQueryReturnValue().setReturnValue(unregisteredDisks);
