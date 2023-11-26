@@ -83,6 +83,13 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         // image. If there are multiple volumes, skip the image and move on to the next.
         if (volumesList.size() != 1) {
             getQueryReturnValue().setSucceeded(false);
+            log.info("Skipping a disk with snapshots: {}", diskId);
+
+            // Add context for why the query did not succeed. Not great, but it is what it is
+            DiskImage diskImage = new DiskImage();
+            diskImage.setDiskSnapshot(true);
+            diskImage.setDescription(String.format("snapshot-%s", diskId));
+            getQueryReturnValue().setReturnValue(diskImage);
             return;
         }
 
