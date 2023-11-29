@@ -1383,6 +1383,9 @@ fi
 %{engine_data}/setup/bin/ovirt-engine-health
 
 %changelog
+* Wed Nov 29 2023 Sandro Bonazzola <sandro.bonazzola@gmail.com> - 4.5.5
+- Bump version to 4.5.5
+
 * Wed Nov 30 2022 Martin Perina <mperina@redhat.com> - 4.5.4
 - Bump version to 4.5.4
 
