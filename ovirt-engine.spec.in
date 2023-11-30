@@ -49,6 +49,11 @@
 # Set "rhv_build 1" to perform RHV Manager build
 %global rhv_build 0
 
+# Workaround for build issues on CBS due to https://bugzilla.redhat.com/2128991
+%if 0%{!?block_maven_38:1}
+%global block_maven_38 0
+%endif
+
 #
 # CUSTOMIZATION-END
 #
@@ -233,6 +238,24 @@ BuildRequires:	python3-distro
 BuildRequires:	systemd
 BuildRequires:	unzip
 BuildRequires:	javapackages-local
+
+
+%if %{block_maven_38}
+# Block packages from maven:3.8 to pass CBS build due to https://bugzilla.redhat.com/2128991
+BuildRequires: maven < 1:3.8.0
+BuildRequires: maven-lib < 1:3.8.0
+BuildRequires: maven-resolver < 1:1.7.0
+BuildRequires: maven-shared-utils < 3.3.4-3
+BuildRequires: maven-wagon < 3.5.0
+BuildRequires: plexus-cipher < 1.8
+BuildRequires: plexus-classworlds < 2.6.0-11
+BuildRequires: plexus-containers-component-annotations < 2.1.1
+BuildRequires: plexus-interpolation < 1.26-11
+BuildRequires: plexus-sec-dispatcher < 1.5
+BuildRequires: plexus-utils < 3.3.0-10
+BuildRequires: sisu < 1:0.3.5
+%endif
+
 
 BuildRequires:	ovirt-engine-build-dependencies >= 4.5.3
 
