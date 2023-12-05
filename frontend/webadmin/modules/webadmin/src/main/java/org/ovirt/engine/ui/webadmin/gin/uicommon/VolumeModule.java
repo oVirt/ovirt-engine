@@ -109,6 +109,11 @@ public class VolumeModule extends AbstractGinModule {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
+
+            @Override
+            public String csvExportFilenameBase() {
+                return "volumes"; //$NON-NLS-1$
+            }
         };
         result.setModelProvider(modelProvider);
         return result;

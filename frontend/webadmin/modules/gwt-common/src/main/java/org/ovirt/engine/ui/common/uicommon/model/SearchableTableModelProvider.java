@@ -12,4 +12,11 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
  *            List model type.
  */
 public interface SearchableTableModelProvider<T, M extends SearchableListModel> extends SearchableModelProvider<T, M>, ActionTableDataProvider<T> {
+    /**
+     * Returns base file name for exported CSV content. Or <code>null</code> if CSV export is not supported by the table
+     * @return base file name or <code>null</code>
+     */
+    default String csvExportFilenameBase() {
+        return null;
+    }
 }

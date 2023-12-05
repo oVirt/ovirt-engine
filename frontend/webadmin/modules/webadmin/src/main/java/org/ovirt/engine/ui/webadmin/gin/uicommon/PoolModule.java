@@ -75,6 +75,11 @@ public class PoolModule extends AbstractGinModule {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
                         }
                     }
+
+                    @Override
+                    public String csvExportFilenameBase() {
+                        return "pools"; //$NON-NLS-1$
+                    }
                 };
         result.setModelProvider(modelProvider);
         return result;

@@ -16,6 +16,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String emailUser();
 
+    String exportCsv();
+
     @DefaultStringValue("") // Use annotation and not a properties key to leave it out of translations
     String empty();
 

@@ -106,6 +106,10 @@ public class NetworkModule extends AbstractGinModule {
                         }
                     }
 
+                    @Override
+                    public String csvExportFilenameBase() {
+                        return "networks"; //$NON-NLS-1$
+                    }
                 };
         result.setModelProvider(modelProvider);
         return result;

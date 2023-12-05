@@ -41,6 +41,11 @@ public class EventModule extends AbstractGinModule {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
+
+            @Override
+            public String csvExportFilenameBase() {
+                return "events"; //$NON-NLS-1$
+            }
         };
         result.setModelProvider(modelProvider);
         return result;
