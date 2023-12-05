@@ -85,11 +85,11 @@ public class SimpleActionTable<E, T> extends AbstractActionTable<E, T> {
             setLoadingState(LoadingState.LOADING);
         });
 
-        createActionKebab();
+        createActionKebab(dataProvider);
         showActionKebab();
     }
 
-    private void createActionKebab() {
+    private void createActionKebab(SearchableTableModelProvider<T, ?> dataProvider) {
         ActionButton changeBtn = new ActionAnchorListItem(constants.changeColumnsVisibilityOrder());
         changeBtn.addClickHandler(event -> showColumnModificationDialog(event));
         actionKebab.addMenuItem(changeBtn);
@@ -97,6 +97,13 @@ public class SimpleActionTable<E, T> extends AbstractActionTable<E, T> {
         ActionButton resetBtn = new ActionAnchorListItem(constants.resetGridSettings());
         resetBtn.addClickHandler(event -> resetGridSettings());
         actionKebab.addMenuItem(resetBtn);
+
+        String csvFilenameBase = dataProvider.csvExportFilenameBase();
+        if (csvFilenameBase != null) {
+            ActionButton csvExportBtn = new ActionAnchorListItem(constants.exportCsv());
+            csvExportBtn.addClickHandler(event -> exportCsv(csvFilenameBase));
+            actionKebab.addMenuItem(csvExportBtn);
+        }
     }
 
     private void showColumnModificationDialog(ClickEvent event) {
@@ -106,6 +113,11 @@ public class SimpleActionTable<E, T> extends AbstractActionTable<E, T> {
 
     private void resetGridSettings() {
         table.resetGridSettings();
+    }
+
+    private void exportCsv(String filenameBase) {
+        TableCsvExporter<T> csvExporter = new TableCsvExporter<>(filenameBase, getDataProvider(), table);
+        csvExporter.generateCsv();
     }
 
     public void showActionKebab() {
