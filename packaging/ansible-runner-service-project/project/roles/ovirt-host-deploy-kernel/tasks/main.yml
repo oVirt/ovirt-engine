@@ -26,7 +26,7 @@
       - grubby
       - --update-kernel=ALL
       - --remove-args
-      - "'{{ host_deploy_kernel_cmdline_old }}'"
+      - "{{ host_deploy_kernel_cmdline_old }}"
   when: host_deploy_kernel_cmdline_old is defined and host_deploy_kernel_cmdline_old
 
 - name: Adding new kernel arguments
@@ -35,5 +35,5 @@
       - grubby
       - --update-kernel=ALL
       - --args
-      - "'{{ host_deploy_kernel_cmdline_new }}'"
+      - "{{ host_deploy_kernel_cmdline_new }}"
   when: host_deploy_kernel_cmdline_new is defined and host_deploy_kernel_cmdline_new
