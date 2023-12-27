@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.VmInterfacesModifyParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -785,6 +786,28 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             AsyncDataProvider.getInstance().getVmById(getVmInitQuery, vm.getId());
         }
 
+    }
+
+    private void confirmChangedBiosType() {
+        if (getSelectedItem() == null || ((UnitVmModel) getWindow()).getIsNew()) {
+            preSave();
+        } else {
+            VM vm = getSelectedItem();
+            UnitVmModel model = (UnitVmModel) getWindow();
+            BiosType afterBiosType = model.getBiosType().getSelectedItem();
+            BiosType beforeBiosType = vm.getBiosType();
+            if ((beforeBiosType.equals(BiosType.Q35_SECURE_BOOT) && !afterBiosType.equals(BiosType.Q35_SECURE_BOOT)) ||
+                    (beforeBiosType.equals(BiosType.Q35_OVMF) && afterBiosType.getValue() < BiosType.Q35_OVMF.getValue())) {
+                ConfirmationModel confirmModel = new ConfirmationModel();
+                confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmChangedBiosTypeConfirmTitle());
+                confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmChangedBiosTypeConfirmMessage());
+                confirmModel.getCommands().add(UICommand.createDefaultOkUiCommand("PreSave", VmListModel.this)); //$NON-NLS-1$
+                confirmModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", VmListModel.this)); //$NON-NLS-1$
+                setConfirmWindow(confirmModel);
+            } else {
+                preSave();
+            }
+        }
     }
 
     private void vmInitLoaded(VM vm) {
@@ -2128,6 +2151,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
+            confirmChangedBiosType();
+        } else if ("PreSave".equals(command.getName())) {
             preSave();
         } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();

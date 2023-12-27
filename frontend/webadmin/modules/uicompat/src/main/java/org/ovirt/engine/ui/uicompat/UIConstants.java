@@ -2258,4 +2258,8 @@ public interface UIConstants extends Constants {
     String homePageCustom();
 
     String statelessVmFieldDisabledReason();
+
+    String vmChangedBiosTypeConfirmTitle();
+
+    String vmChangedBiosTypeConfirmMessage();
 }
