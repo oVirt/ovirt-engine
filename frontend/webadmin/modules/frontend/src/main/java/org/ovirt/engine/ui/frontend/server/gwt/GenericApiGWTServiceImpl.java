@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.constants.SessionConstants;
+import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -149,12 +151,21 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
             ArrayList<ActionParametersBase> multipleParams, boolean isRunOnlyIfAllValidationPass, boolean isWaitForResult) {
         log.debug("Server: RunMultipleAction invoked! [amount of actions: {}]", multipleParams.size()); //$NON-NLS-1$
 
+        // CreateUserSession should never be invoked from GWT code
+        if (actionType == ActionType.CreateUserSession) {
+            ActionReturnValue error = new ActionReturnValue();
+            error.setSucceeded(false);
+            error.setFault(new EngineFault(new RuntimeException("Command cannot be executed from client"))); //$NON-NLS-1$
+            return Arrays.asList(error);
+        }
+
         String correlationId = CorrelationIdTracker.getCorrelationId();
         for (ActionParametersBase params : multipleParams) {
             params.setSessionId(getEngineSessionId());
             if (params.getCorrelationId() == null) {
                 params.setCorrelationId(correlationId);
             }
+
         }
 
         List<ActionReturnValue> returnValues =
@@ -168,6 +179,15 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
             ActionParametersBase params) {
         log.debug("Server: RunAction invoked!"); //$NON-NLS-1$
         debugAction(actionType, params);
+
+        // CreateUserSession should never be invoked from GWT code
+        if (actionType == ActionType.CreateUserSession) {
+            ActionReturnValue error = new ActionReturnValue();
+            error.setSucceeded(false);
+            error.setFault(new EngineFault(new RuntimeException("Command cannot be executed from client"))); //$NON-NLS-1$
+            return error;
+        }
+
         params.setSessionId(getEngineSessionId());
         if (params.getCorrelationId() == null) {
             params.setCorrelationId(CorrelationIdTracker.getCorrelationId());
