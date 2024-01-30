@@ -1703,7 +1703,8 @@ restoreSQLiteDB() {
 		chmod 0750 "${db_dir}" 2>> "${LOG}" || logdie "chmod failed"
 		chown "${dir_owner}" "${db_dir}" 2>> "${LOG}" || output "Warning: ${dir_owner} user or group missing"
 	fi
-	cp -a "${backupfile}" "${db_file}" 2>> "${LOG}" || "cp failed"
+	cp -a "${backupfile}" "${db_file}" 2>> "${LOG}" || logdie "cp failed"
+	restorecon "${db_file}" || log "Restoring selinux context failed"
 }
 
 verifyEngineDb() {
