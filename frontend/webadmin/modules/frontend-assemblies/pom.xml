@@ -4,7 +4,7 @@
   <parent>
     <artifactId>webadmin-modules</artifactId>
     <groupId>org.ovirt.engine.ui</groupId>
-    <version>4.5.3.10-SNAPSHOT</version>
+    <version>4.5.3.10</version>
   </parent>
   <artifactId>frontend-assemblies</artifactId>
   <packaging>jar</packaging>
