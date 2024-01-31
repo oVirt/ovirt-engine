@@ -14,7 +14,7 @@ SPDX-License-Identifier: Apache-2.0
 
   <groupId>org.ovirt.engine</groupId>
   <artifactId>ovirt-findbugs-filters</artifactId>
-  <version>4.5.3.10-SNAPSHOT</version>
+  <version>4.5.3.10</version>
   <packaging>jar</packaging>
 
   <name>oVirt Findbugs Filters</name>
