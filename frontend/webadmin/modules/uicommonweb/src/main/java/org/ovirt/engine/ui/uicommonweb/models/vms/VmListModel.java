@@ -788,19 +788,19 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     }
 
-    private void confirmChangedBiosType() {
-        if (getSelectedItem() == null || ((UnitVmModel) getWindow()).getIsNew()) {
+    private void confirmBiosTypeUpdate(){
+        VM vm = getSelectedItem();
+        UnitVmModel model = (UnitVmModel) getWindow();
+        if (getSelectedItem() == null || ((UnitVmModel)getWindow()).getIsNew()) {
             preSave();
         } else {
-            VM vm = getSelectedItem();
-            UnitVmModel model = (UnitVmModel) getWindow();
-            BiosType afterBiosType = model.getBiosType().getSelectedItem();
-            BiosType beforeBiosType = vm.getBiosType();
-            if ((beforeBiosType.equals(BiosType.Q35_SECURE_BOOT) && !afterBiosType.equals(BiosType.Q35_SECURE_BOOT)) ||
-                    (beforeBiosType.equals(BiosType.Q35_OVMF) && afterBiosType.getValue() < BiosType.Q35_OVMF.getValue())) {
+            BiosType newBiosType = model.getBiosType().getSelectedItem();
+            BiosType oldBiosType =  vm.getBiosType();
+            if ((oldBiosType.equals(BiosType.Q35_SECURE_BOOT) && !newBiosType.equals(BiosType.Q35_SECURE_BOOT)) ||
+                    (oldBiosType.equals(BiosType.Q35_OVMF) && newBiosType.getValue() < BiosType.Q35_OVMF.getValue())){
                 ConfirmationModel confirmModel = new ConfirmationModel();
-                confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmChangedBiosTypeConfirmTitle());
-                confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmChangedBiosTypeConfirmMessage());
+                confirmModel.setTitle(ConstantsManager.getInstance().getConstants().confirmBiosUpdateTitle());
+                confirmModel.setMessage(ConstantsManager.getInstance().getConstants().confirmBiosUpdateMessage());
                 confirmModel.getCommands().add(UICommand.createDefaultOkUiCommand("PreSave", VmListModel.this)); //$NON-NLS-1$
                 confirmModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", VmListModel.this)); //$NON-NLS-1$
                 setConfirmWindow(confirmModel);
@@ -2151,7 +2151,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         } else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
         } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
-            confirmChangedBiosType();
+            confirmBiosTypeUpdate();
         } else if ("PreSave".equals(command.getName())) {
             preSave();
         } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
