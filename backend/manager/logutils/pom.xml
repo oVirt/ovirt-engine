@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.ovirt.engine.core</groupId>
     <artifactId>manager</artifactId>
-    <version>4.5.6</version>
+    <version>4.5.7-SNAPSHOT</version>
   </parent>
 
   <artifactId>logutils</artifactId>
