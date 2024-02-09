@@ -2259,7 +2259,7 @@ public interface UIConstants extends Constants {
 
     String statelessVmFieldDisabledReason();
 
-    String vmChangedBiosTypeConfirmTitle();
+    String confirmBiosUpdateTitle();
 
-    String vmChangedBiosTypeConfirmMessage();
+    String confirmBiosUpdateMessage();
 }
