@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -21,6 +22,9 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -30,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
@@ -169,11 +174,30 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
                     getDataCenter().setIsChangeable(isChangeable);
                     if (!isChangeable) {
-                        // Set the selected item on the storage domains list.
-                        AsyncDataProvider.getInstance().getStorageDomainById(
-                                new AsyncQuery<>(storageDomain -> {
-                                    getStorageDomain().setItems(Collections.singletonList(storageDomain));
-                                }), limitToStorageDomainId);
+                        // Set the selected item on the storage domains and data centers lists.
+                        Frontend.getInstance().runQuery(
+                                QueryType.GetStorageDomainListById,
+                                new IdQueryParameters(limitToStorageDomainId),
+                                new AsyncQuery<QueryReturnValue>(returnValue -> {
+                            ArrayList<StorageDomain> domains = returnValue.getReturnValue();
+                            if (!domains.isEmpty()) {
+                                StorageDomain storageDomain = domains.get(0);
+                                // Set the selected item on the storage domains list.
+                                List<StorageDomain> availableDomains = new ArrayList<>();
+                                availableDomains.add(storageDomain);
+                                getStorageDomain().setItems(availableDomains);
+                                Guid dcId = storageDomain.getStoragePoolId();
+                                if (!Guid.isNullOrEmpty(dcId)) {
+                                    // Set selected data center if the list of data centers is populated.
+                                    if (!selectDataCenter(dcId)) {
+                                        // If the data center is not there then need to listen to the data centers list
+                                        // change to update the selected data center.
+                                        getDataCenter().getItemsChangedEvent()
+                                                .addListener((ev, sender, args) -> selectDataCenter(dcId));
+                                    }
+                                }
+                            }
+                        }));
                     }
                     getStorageDomain().setIsChangeable(isChangeable);
                     getStorageType().setIsChangeable(false);
@@ -195,6 +219,23 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 @Override
                 protected boolean performUpdateHosts() {
                     return true;
+                }
+
+                private boolean selectDataCenter(Guid dcId) {
+                    ListModel<StoragePool> dcList = getDataCenter();
+                    // Find a data center with the desired Id
+                    Optional<StoragePool> dataCenter = dcList.getItems()
+                            .stream()
+                            .filter(dc -> dcId.equals(dc.getId()))
+                            .findFirst();
+                    if (dataCenter.isPresent()) {
+                        // Activate this data center in the data center dropdown list
+                        dcList.setSelectedItem(dataCenter.get());
+                        return true;
+                    }
+                    // Since we populate data centers asynchronously, we may have a situation when the needed
+                    // data center is still not there. So, need to wait...
+                    return false;
                 }
             });
         } else {
