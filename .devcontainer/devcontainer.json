@@ -1,0 +1,29 @@
+/*
+This file contains the configuration options for the development container.
+
+- The ulimit is needed because of https://pagure.io/python-daemon/issue/40
+- The postCreateCommand is needed because the ovirt-engine because pki folder is mounted as root, but needs to be owned by the build user for the make script to work
+
+Ports (https://www.ovirt.org/documentation/installing_ovirt_as_a_standalone_manager_with_remote_databases/):
+- 8080:8080 - HTTP
+- 8443:8443 - HTTPS
+- 8787:8787 - Debug
+- 54323:54323 - VDSM
+- 9696:9696 - External network provider for OVN
+- 6642:6642 - Open Virtual Network (OVN) database
+- 35357:35357 - OVN (OpenStack Identity API)
+- 2222:2222 - VDSM SSH
+- 6100:6100 - noVNC
+- 7410:7410 - Kdump
+*/
+
+{
+  "name": "oVirt",
+  "build": {
+    "dockerfile": "../Dockerfile"
+  },
+  "runArgs": ["--network=ovirt", "--ulimit=nofile=2048:2048"],
+  "mounts": ["source=ovirt-pki,target=/home/build/ovirt/etc/pki/ovirt-engine,type=volume"],
+  "postCreateCommand": "sudo chown -R build:build /home/build/ovirt",
+  "appPort": [ "8080:8080", "8443:8443", "8787:8787", "54323:54323", "9696:9696", "6642:6642", "35357:35357", "2222:2222", "6100:6100", "7410:7410"]
+}

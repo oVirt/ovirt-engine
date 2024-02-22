@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  ovirt-postgres:
+    image: postgres:13.14
+    container_name: ovirt-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ${PWD}/.automation/ovirt-postgres.conf:/etc/postgresql/postgresql.conf
+      - ${PWD}/.automation/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    environment:
+      POSTGRES_PASSWORD: "ovirt"
+    command:
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql/postgresql.conf"
+networks:
+  default:
+    name: ovirt
+    driver: bridge

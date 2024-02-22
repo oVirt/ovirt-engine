@@ -1,0 +1,6 @@
+[allowlist]
+description = "Global Allowlist"
+
+regexes = [
+  '''PASSWORD 'ovirt'''',
+]
