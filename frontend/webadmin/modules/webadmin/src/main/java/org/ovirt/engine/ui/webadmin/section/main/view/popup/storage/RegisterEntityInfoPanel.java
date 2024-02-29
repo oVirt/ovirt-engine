@@ -312,8 +312,13 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         AbstractTextColumn<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
             @Override
             protected Double[] getRawValue(VmNetworkInterface object) {
-                Double receiveDrops = object != null ? object.getStatistics().getReceiveDrops().doubleValue() : null;
-                Double transmitDrops = object != null ? object.getStatistics().getTransmitDrops().doubleValue() : null;
+                Double receiveDrops = (object != null && object.getStatistics() != null
+                    && object.getStatistics().getReceiveDrops() != null)
+                    ? object.getStatistics().getReceiveDrops().doubleValue() : 0.0;
+                Double transmitDrops = (object != null && object.getStatistics() != null
+                    && object.getStatistics().getTransmitDrops() != null)
+                    ? object.getStatistics().getTransmitDrops().doubleValue() : 0.0;
+
                 return new Double[] { receiveDrops, transmitDrops };
             }
         };
