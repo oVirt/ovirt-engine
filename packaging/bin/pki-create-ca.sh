@@ -76,17 +76,17 @@ enroll() {
 		-pkeyopt rsa_keygen_bits:2048 \
 		-out "${PKIDIR}/private/${CA_FILE}.pem" \
 		|| die "Cannot generate CA key"
-	openssl req \
-		-batch \
-		-config "${PKIDIR}/${CACERT_CONF}" \
-		-new \
-		-key "${PKIDIR}/private/${CA_FILE}.pem" \
-		-out "${PKIDIR}/requests/${CA_FILE}.csr" \
-		-subj "/" \
-		|| die "Cannot generate CA request"
 
 	(
 		cd "${PKIDIR}"
+		openssl req \
+			-batch \
+			-config "${PKIDIR}/${CACERT_CONF}" \
+			-new \
+			-key "${PKIDIR}/private/${CA_FILE}.pem" \
+			-out "${PKIDIR}/requests/${CA_FILE}.csr" \
+			-subj "/" \
+			|| die "Cannot generate CA request"
 		openssl ca \
 			-batch \
 			-config openssl.conf \
@@ -100,8 +100,9 @@ enroll() {
 			-subj "${subject}" \
 			-utf8 \
 			-days "${CA_DAYS}" \
-			-startdate "$(date --utc --date "now -1 days" +"%y%m%d%H%M%SZ")"
-	) || die "Cannot enroll CA certificate"
+			-startdate "$(date --utc --date "now -1 days" +"%y%m%d%H%M%SZ")" \
+			|| die "Cannot enroll CA certificate"
+	)
 
 	return 0
 }
