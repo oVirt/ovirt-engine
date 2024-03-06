@@ -877,11 +877,12 @@ class Plugin(plugin.PluginBase):
                 'pass': truststore_password,
             },
         )
-        self._set_file_permissions(
-            truststore,
-            True,
-            stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH,
-        )
+        if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+            self._set_file_permissions(
+                truststore,
+                True,
+                stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH,
+            )
 
     def _is_provider_installed(self):
         # TODO: we currently only check against installations done by
