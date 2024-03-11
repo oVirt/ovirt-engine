@@ -89,7 +89,7 @@ public class VmBaseMapper {
         }
         if (model.isSetDisplay()) {
             if (model.getDisplay().isSetType()) {
-                entity.setDefaultDisplayType(null); // let backend decide which video device to use
+                entity.setDefaultDisplayType(DisplayMapper.mapDisplay(model.getDisplay().getType(), null));
             }
             if (model.getDisplay().isSetMonitors()) {
                 entity.setNumOfMonitors(model.getDisplay().getMonitors());
