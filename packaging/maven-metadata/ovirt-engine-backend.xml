@@ -6,7 +6,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>backend</artifactId>
       <extension>pom</extension>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/backend.pom</path>
       <uuid>a752936b-96a7-43de-b781-16f61421e474</uuid>
       <properties>
@@ -17,7 +17,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>manager</artifactId>
       <extension>pom</extension>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/manager.pom</path>
       <uuid>23934570-0597-456f-a6bf-5a9c34e81a34</uuid>
       <properties>
@@ -28,7 +28,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>manager-modules</artifactId>
       <extension>pom</extension>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/manager-modules.pom</path>
       <uuid>e5aa3211-c4b2-4d02-b1dd-b0b14324e492</uuid>
       <properties>
@@ -39,7 +39,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>aaa</artifactId>
       <extension>pom</extension>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/aaa.pom</path>
       <uuid>36aae21b-209a-4d3d-8747-830301b5c2d5</uuid>
       <properties>
@@ -49,7 +49,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>aaa</artifactId>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/aaa.jar</path>
       <uuid>81d07ed7-2f14-4411-9b87-d13814e092ee</uuid>
       <properties>
@@ -60,7 +60,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>bll</artifactId>
       <extension>pom</extension>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/bll.pom</path>
       <uuid>3236d7da-e561-4b12-8286-3c95b75420b7</uuid>
       <properties>
@@ -70,7 +70,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>bll</artifactId>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/bll.jar</path>
       <uuid>44c5a1ee-9f2c-4096-b3f4-297a1f3a80c8</uuid>
       <properties>
@@ -81,7 +81,7 @@
       <groupId>org.ovirt.engine.extension.aaa</groupId>
       <artifactId>builtin</artifactId>
       <extension>pom</extension>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/builtin.pom</path>
       <uuid>6bfbf119-53ec-4dae-9b04-108c8ec5b137</uuid>
       <properties>
@@ -91,7 +91,7 @@
     <artifact>
       <groupId>org.ovirt.engine.extension.aaa</groupId>
       <artifactId>builtin</artifactId>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/builtin.jar</path>
       <uuid>989fa834-776f-4c08-94c8-5602b7b81b2c</uuid>
       <properties>
@@ -102,7 +102,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>dal</artifactId>
       <extension>pom</extension>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/dal.pom</path>
       <uuid>0f4773fb-ea45-4ec4-947a-03ded4a94e56</uuid>
       <properties>
@@ -112,7 +112,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>dal</artifactId>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/dal.jar</path>
       <uuid>a86fc793-2599-4685-9f9d-000c8d2aa8f1</uuid>
       <properties>
@@ -123,7 +123,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>scheduler</artifactId>
       <extension>pom</extension>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/scheduler.pom</path>
       <uuid>e335a998-4048-429a-94fa-9021e47b2bd6</uuid>
       <properties>
@@ -133,7 +133,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>scheduler</artifactId>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/scheduler.jar</path>
       <uuid>b1edfa78-a9ff-4786-bf64-0650a2320ef6</uuid>
       <properties>
@@ -144,7 +144,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>searchbackend</artifactId>
       <extension>pom</extension>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/searchbackend.pom</path>
       <uuid>7a8cb971-7a2d-4279-860f-054a2426f628</uuid>
       <properties>
@@ -154,7 +154,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>searchbackend</artifactId>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/searchbackend.jar</path>
       <uuid>9f48e1a7-4e14-401d-be5e-761a9989f7f8</uuid>
       <properties>
@@ -165,7 +165,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>vdsbroker</artifactId>
       <extension>pom</extension>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/vdsbroker.pom</path>
       <uuid>d62e6b05-ba18-4370-bf14-f83589904da3</uuid>
       <properties>
@@ -175,7 +175,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>vdsbroker</artifactId>
-      <version>4.5.6-SNAPSHOT</version>
+      <version>4.5.7-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/vdsbroker.jar</path>
       <uuid>e1cb5d8d-f9fa-4130-909e-4687460ae9de</uuid>
       <properties>
