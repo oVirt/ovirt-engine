@@ -1408,6 +1408,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String totalSpaceStorage();
 
+    String allocatedSpaceStorage();
+
     String attachDataStorage();
 
     String attachIsoStorage();
