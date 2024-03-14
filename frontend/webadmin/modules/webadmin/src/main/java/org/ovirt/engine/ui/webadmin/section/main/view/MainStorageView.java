@@ -160,6 +160,15 @@ public class MainStorageView extends AbstractMainWithDetailsTableView<StorageDom
         };
         getTable().addColumn(confirmedFreeSpaceColumn, constants.confirmedFreeSpaceStorage(), "180px"); //$NON-NLS-1$
 
+        AbstractStorageSizeColumn<StorageDomain> allocatedSpaceColumn = new AbstractStorageSizeColumn<StorageDomain>() {
+            @Override
+            public Long getRawValue(StorageDomain object) {
+                Integer allocatedSpace = object.getCommittedDiskSize();
+                return allocatedSpace == null ? null : Long.valueOf(allocatedSpace);
+            }
+        };
+        getTable().addColumn(allocatedSpaceColumn, constants.allocatedSpaceStorage(), "130px"); //$NON-NLS-1$
+
         AbstractTextColumn<StorageDomain> descriptionColumn = new AbstractTextColumn<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
