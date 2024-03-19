@@ -19,6 +19,7 @@ PACKAGE_NAME="@PACKAGE_NAME@"
 PACKAGE_VERSION="@PACKAGE_VERSION@"
 DISPLAY_VERSION="@DISPLAY_VERSION@"
 ENGINE_USR="@ENGINE_USR@"
+DEV_PREFIX="@PREFIX@"
 
 die() {
 	local m="$1"
@@ -39,7 +40,7 @@ load_config() {
 
 source_d() {
 	local stage="$1"
-	local my_cfg_dir="/etc/ovirt-engine-backup/engine-backup-${stage}.d"
+	local my_cfg_dir="${DEV_PREFIX}/etc/ovirt-engine-backup/engine-backup-${stage}.d"
 	for f in \
 		$([ -d "${my_cfg_dir}" ] && find "${my_cfg_dir}" -name '*.sh' | sort) \
 		; do
@@ -52,7 +53,7 @@ source_d init
 my_load_config() {
 	load_config
 
-	DWH_CONFIG=/etc/ovirt-engine-dwh/ovirt-engine-dwhd.conf
+	DWH_CONFIG=${DEV_PREFIX}/etc/ovirt-engine-dwh/ovirt-engine-dwhd.conf
 	for f in "${DWH_CONFIG}" "${DWH_CONFIG}".d/*.conf; do
 		[ -e "${f}" ] && . "${f}"
 	done
@@ -116,7 +117,7 @@ engine_setup_service_enabled() {
 	otopi-config-query match \
 		--key "$1" \
 		--value bool:True \
-		--file /etc/ovirt-engine-setup.conf
+		--file ${DEV_PREFIX}/etc/ovirt-engine-setup.conf
 }
 
 engine_enabled() {
@@ -151,14 +152,14 @@ load_branding() {
 }
 
 # Globals
-BACKUP_PATHS="/etc/ovirt-engine
-/etc/ovirt-engine-dwh
-/etc/ovirt-provider-ovn/conf.d
-/etc/ovirt-provider-ovn/logger.conf
-/etc/ovirt-vmconsole
-/etc/pki/ovirt-engine
-/etc/pki/ovirt-vmconsole
-/etc/ovirt-engine-setup.conf.d
+BACKUP_PATHS="${DEV_PREFIX}/etc/ovirt-engine
+${DEV_PREFIX}/etc/ovirt-engine-dwh
+${DEV_PREFIX}/etc/ovirt-provider-ovn/conf.d
+${DEV_PREFIX}/etc/ovirt-provider-ovn/logger.conf
+${DEV_PREFIX}/etc/ovirt-vmconsole
+${DEV_PREFIX}/etc/pki/ovirt-engine
+${DEV_PREFIX}/etc/pki/ovirt-vmconsole
+${DEV_PREFIX}/etc/ovirt-engine-setup.conf.d
 /etc/httpd/conf.d/internalsso-openidc.conf
 /etc/httpd/conf.d/ovirt-engine-grafana-proxy.conf
 /etc/httpd/conf.d/ovirt-engine-root-redirect.conf
@@ -1413,10 +1414,11 @@ __EOF__
 		output "- Grafana database '"${GRAFANA_DB_FILENAME}"'"
 		restoreSQLiteDB "${TEMP_FOLDER}/db/${GRAFANA_BACKUP_FILE_NAME}" "${GRAFANA_DB_FILENAME}" "grafana:grafana"
 	fi
+
 	[ -n "${CHANGE_DB_CREDENTIALS}" ] && changeEngineDBConf
-	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" -a "${DWH_DB_USER}" ] && changeDwhDBConf
-	[ -n "${CHANGE_CINDERLIB_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" -a "${CINDERLIB_DB_USER}" ] && changeCinderlibDBConf
-	[ -n "${CHANGE_KEYCLOAK_DB_CREDENTIALS}" -o -n "${CHANGE_DB_CREDENTIALS}" -a "${KEYCLOAK_DB_USER}" ] && changeKeycloakDBConf
+	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" -a -n "${CHANGE_DB_CREDENTIALS}" -a "${DWH_DB_USER}" ] && changeDwhDBConf
+	[ -n "${CHANGE_CINDERLIB_DB_CREDENTIALS}" -a -n "${CHANGE_DB_CREDENTIALS}" -a "${CINDERLIB_DB_USER}" ] && changeCinderlibDBConf
+	[ -n "${CHANGE_KEYCLOAK_DB_CREDENTIALS}" -a -n "${CHANGE_DB_CREDENTIALS}" -a "${KEYCLOAK_DB_USER}" ] && changeKeycloakDBConf
 	source_d dorestore
 	output "You should now run engine-setup."
 }
@@ -1876,7 +1878,7 @@ restoreFiles() {
 		# In previous versions we didn't keep this inside the backup
 		os_at_backup="Unknown"
 	fi
-	local POSTINSTALL="/etc/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf"
+	local POSTINSTALL="${DEV_PREFIX}/etc/ovirt-engine-setup.conf.d/20-setup-ovirt-post.conf"
 	local APACHE_CONFIGURED_LINE="OVESETUP_APACHE/configured=bool:True"
 
 	# Extract files to temp dir
