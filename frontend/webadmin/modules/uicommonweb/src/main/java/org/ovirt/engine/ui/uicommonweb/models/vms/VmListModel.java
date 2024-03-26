@@ -791,7 +791,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     private void confirmBiosTypeUpdate(){
         VM vm = getSelectedItem();
         UnitVmModel model = (UnitVmModel) getWindow();
-        if (getSelectedItem() == null || ((UnitVmModel)getWindow()).getIsNew()) {
+        if (vm == null || model.getIsNew()) {
             preSave();
         } else {
             BiosType newBiosType = model.getBiosType().getSelectedItem();
