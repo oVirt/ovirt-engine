@@ -796,8 +796,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         } else {
             BiosType newBiosType = model.getBiosType().getSelectedItem();
             BiosType oldBiosType =  vm.getBiosType();
-            if ((oldBiosType.equals(BiosType.Q35_SECURE_BOOT) && !newBiosType.equals(BiosType.Q35_SECURE_BOOT)) ||
-                    (oldBiosType.equals(BiosType.Q35_OVMF) && newBiosType.getValue() < BiosType.Q35_OVMF.getValue())){
+            if (oldBiosType.equals(BiosType.Q35_SECURE_BOOT) && !newBiosType.equals(BiosType.Q35_SECURE_BOOT) ||
+                oldBiosType.equals(BiosType.Q35_OVMF) && newBiosType.getValue() < BiosType.Q35_OVMF.getValue()) {
                 ConfirmationModel confirmModel = new ConfirmationModel();
                 confirmModel.setTitle(ConstantsManager.getInstance().getConstants().confirmBiosUpdateTitle());
                 confirmModel.setMessage(ConstantsManager.getInstance().getConstants().confirmBiosUpdateMessage());
@@ -2152,7 +2152,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             cancel();
         } else if ("OnSave".equals(command.getName())) { //$NON-NLS-1$
             confirmBiosTypeUpdate();
-        } else if ("PreSave".equals(command.getName())) {
+        } else if ("PreSave".equals(command.getName())) { //$NON-NLS-1$
             preSave();
         } else if ("OnRemove".equals(command.getName())) { //$NON-NLS-1$
             onRemove();
