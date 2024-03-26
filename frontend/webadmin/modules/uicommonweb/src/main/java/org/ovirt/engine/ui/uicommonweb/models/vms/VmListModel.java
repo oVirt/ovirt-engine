@@ -797,7 +797,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             BiosType newBiosType = model.getBiosType().getSelectedItem();
             BiosType oldBiosType =  vm.getBiosType();
             if (oldBiosType.equals(BiosType.Q35_SECURE_BOOT) && !newBiosType.equals(BiosType.Q35_SECURE_BOOT) ||
-                oldBiosType.equals(BiosType.Q35_OVMF) && newBiosType.getValue() < BiosType.Q35_OVMF.getValue()) {
+                oldBiosType.isOvmf() && !newBiosType.isOvmf()) {
                 ConfirmationModel confirmModel = new ConfirmationModel();
                 confirmModel.setTitle(ConstantsManager.getInstance().getConstants().confirmBiosUpdateTitle());
                 confirmModel.setMessage(ConstantsManager.getInstance().getConstants().confirmBiosUpdateMessage());
