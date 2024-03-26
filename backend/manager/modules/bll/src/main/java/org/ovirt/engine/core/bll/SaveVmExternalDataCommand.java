@@ -46,7 +46,7 @@ public class SaveVmExternalDataCommand<T extends SaveVmExternalDataParameters> e
         return !vmDeviceDao.getVmDeviceByVmIdAndType(getParameters().getVmId(), VmDeviceGeneralType.TPM).isEmpty();
     }
 
-    private boolean isUEFI() {
+    private boolean isUefi() {
         return getVm().getBiosType().isOvmf()
                 && FeatureSupported.isNvramPersistenceSupported(getVm().getCompatibilityVersion());
     }
@@ -79,7 +79,7 @@ public class SaveVmExternalDataCommand<T extends SaveVmExternalDataParameters> e
         if (hasTpmDevice()) {
             dataToRetrieve.add(VmExternalDataKind.TPM);
         }
-        if (isUEFI()) {
+        if (isUefi()) {
             dataToRetrieve.add(VmExternalDataKind.NVRAM);
         }
 
