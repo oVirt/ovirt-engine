@@ -1071,8 +1071,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 disk.setActive(false);
                 setDiskStorageDomainInfo(disk);
                 saveImage(disk);
-                snapshotId = disk.getVmSnapshotId();
-                saveSnapshotIfNotExists(snapshotId, disk);
+                if (!disk.isShareable()) {
+                    snapshotId = disk.getVmSnapshotId();
+                    saveSnapshotIfNotExists(snapshotId, disk);
+                }
                 saveDiskImageDynamic(disk);
             }
 
