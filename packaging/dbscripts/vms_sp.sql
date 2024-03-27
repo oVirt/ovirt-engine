@@ -2503,7 +2503,7 @@ IF EXISTS remove_nvram_data_on_update
 CREATE OR REPLACE FUNCTION remove_nvram_data ()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF OLD.bios_type = 4 AND NEW.bios_type != 4 THEN
+    IF (OLD.bios_type = 4 AND NEW.bios_type != 4) OR (OLD.bios_type = 3 AND NEW.bios_type < 3) THEN
         DELETE FROM vm_nvram_data
         WHERE vm_id = OLD.vm_guid;
     END IF;

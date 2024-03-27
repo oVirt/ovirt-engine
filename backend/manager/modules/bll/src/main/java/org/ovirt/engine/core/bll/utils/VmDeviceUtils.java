@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmExternalDataKind;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ConsoleTargetType;
@@ -2287,7 +2286,7 @@ public class VmDeviceUtils {
         if (hasTpmDevice(targetVmId)) {
             vmDao.copyTpmData(sourceVmId, targetVmId);
         }
-        if (getVmBase(targetVmId).getBiosType() == BiosType.Q35_SECURE_BOOT) {
+        if (getVmBase(targetVmId).getBiosType().isOvmf()) {
             vmDao.copyNvramData(sourceVmId, targetVmId);
         }
     }

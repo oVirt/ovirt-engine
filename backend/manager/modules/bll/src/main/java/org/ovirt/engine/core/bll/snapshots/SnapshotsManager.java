@@ -31,7 +31,6 @@ import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmExternalDataKind;
-import org.ovirt.engine.core.common.businessentities.BiosType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -352,7 +351,7 @@ public class SnapshotsManager {
                 vmExternalData.put(VmExternalDataKind.TPM, tpmData);
             }
         }
-        if (vm.getBiosType() == BiosType.Q35_SECURE_BOOT) {
+        if (vm.getBiosType().isOvmf()) {
             SecretValue<String> nvramData = vmDao.getNvramData(vm.getId()).getFirst();
             if (!SecretValue.isNull(nvramData) && !nvramData.getValue().equals("")) {
                 vmExternalData.put(VmExternalDataKind.NVRAM, nvramData);
