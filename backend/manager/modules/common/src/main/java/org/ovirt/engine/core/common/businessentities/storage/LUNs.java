@@ -269,6 +269,10 @@ public class LUNs implements BusinessEntity<String> {
         return getPathsDictionary() == null ? 0 : getPathsDictionary().size();
     }
 
+    public int getAvailablePathCount() {
+        return getPathsDictionary() == null ? 0 : (int) getPathsDictionary().values().stream().filter(o -> o).count();
+    }
+
     public Map<String, Boolean> getPathsDictionary() {
         return pathsDictionary;
     }

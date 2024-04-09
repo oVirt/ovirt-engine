@@ -58,6 +58,7 @@ public class StorageLogicalUnitMapper {
             model.setTarget(lunConnection.getIqn());
         }
 
+        model.setAvailablePaths(entity.getAvailablePathCount());
         model.setPaths(entity.getPathCount());
         return model;
     }
