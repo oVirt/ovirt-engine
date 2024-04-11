@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -200,8 +201,14 @@ public class ExternalOIDCService {
     }
 
     private static Collection<ExtMap> buildPrincipalRecordGroups(Map<String, Object> response) {
+        List<String> groupNames;
+        if (response.containsKey("groups")) {
+            groupNames = (List<String>) response.get("groups");
+        } else {
+            return Collections.emptyList();
+        }
+
         LinkedList<ExtMap> groups = new LinkedList<>();
-        List<String> groupNames = (List<String>) response.get("groups");
         for (String groupName : groupNames) {
             groupName = groupName.replaceFirst("^/", "");
             ExtMap group = new ExtMap();
