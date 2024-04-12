@@ -340,16 +340,6 @@ _dbfunc_common_run_post_upgrade() {
 	_dbfunc_common_schema_refresh_create
 	#Running post-upgrade scripts
 	_dbfunc_common_psql_statements_in_dir 'post_upgrade'
-	#run custom materialized views if exists
-	custom_materialized_views_file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/post_upgrade/custom/create_materialized_views.sql"
-	if [ -f "${custom_materialized_views_file}" ]; then
-		dbfunc_output "running custom materialized views from '${custom_materialized_views_file}'..."
-		if ! dbfunc_psql_v --file="${custom_materialized_views_file}"; then
-			#drop all custom views
-			dbfunc_psql_v --command="select DropAllCustomMaterializedViews();" > /dev/null
-			dbfunc_output "Illegal syntax in custom Materialized Views, Custom Materialized Views were dropped."
-		fi
-	fi
 }
 
 # Runs all the SQL scripts in directory upgrade/$1/

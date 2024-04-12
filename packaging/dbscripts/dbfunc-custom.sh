@@ -38,8 +38,6 @@ dbfunc_common_hook_views_refresh() {
 	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_dwh_views.sql" > /dev/null
 }
 
-# Materilized views functions, override with empty implementation on DBs that not supporting that
-
 dbfunc_common_hook_sequence_numbers_update() {
 	dbfunc_psql_die_v --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/update_sequence_numbers.sql" > /dev/null
 }
