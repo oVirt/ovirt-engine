@@ -973,6 +973,8 @@ select fn_db_add_config_value_for_versions_up_to('ParallelMigrationsSupported', 
 select fn_db_add_config_value_for_versions_up_to('ParallelMigrationsSupported', 'true', '4.8');
 select fn_db_add_config_value_for_versions_up_to('IsDedicatedSupported', 'false', '4.6');
 select fn_db_add_config_value_for_versions_up_to('IsDedicatedSupported', 'true', '4.8');
+select fn_db_add_config_value_for_versions_up_to('EnableQemuDiscardNoUnref', 'false', '4.7');
+select fn_db_add_config_value_for_versions_up_to('EnableQemuDiscardNoUnref', 'true', '4.8');
 
 -- Incremental backup
 select fn_db_add_config_value_for_versions_up_to('IsIncrementalBackupSupported', 'false', '4.4');
