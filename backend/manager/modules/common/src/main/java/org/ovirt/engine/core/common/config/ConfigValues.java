@@ -1631,6 +1631,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     IsDedicatedSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    EnableQemuDiscardNoUnref,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;
