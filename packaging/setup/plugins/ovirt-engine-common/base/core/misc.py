@@ -95,7 +95,7 @@ class Plugin(plugin.PluginBase):
         )
         self.environment.setdefault(
             osetupcons.CoreEnv.UPGRADE_SUPPORTED_VERSIONS,
-            '4.2,4.3,4.4,4.5,4.6,4.7'
+            '4.2,4.3,4.4,4.5,4.6,4.7,4.8'
         )
 
         self.logger.debug(
