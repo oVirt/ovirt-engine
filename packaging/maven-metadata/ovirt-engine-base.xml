@@ -6,7 +6,7 @@
       <groupId>org.ovirt.engine</groupId>
       <artifactId>root</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/root.pom</path>
       <uuid>501ca98b-3dd1-497e-ae22-8c568826fda7</uuid>
       <properties>
@@ -17,7 +17,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>branding</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/branding.pom</path>
       <uuid>955fface-1484-4a3e-af53-0d4c489eb3e9</uuid>
       <properties>
@@ -27,7 +27,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>branding</artifactId>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/branding.jar</path>
       <uuid>3329e6a2-d65c-464a-b92e-fe52f15600bb</uuid>
       <properties>
@@ -38,7 +38,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>common</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/common.pom</path>
       <uuid>81050c78-7c2c-48ab-a6ca-959cae632d33</uuid>
       <properties>
@@ -48,7 +48,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>common</artifactId>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/common.jar</path>
       <uuid>c57ead47-37db-4e20-b86c-17a72fbbddf6</uuid>
       <properties>
@@ -59,7 +59,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>compat</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/compat.pom</path>
       <uuid>20a2a54f-99d7-42ba-bd1c-106ebcbf4e68</uuid>
       <properties>
@@ -69,7 +69,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>compat</artifactId>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/compat.jar</path>
       <uuid>c5c73b8f-e401-4bc0-8a08-ff4f7c6f110f</uuid>
       <properties>
@@ -80,7 +80,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>extensions-manager</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/extensions-manager.pom</path>
       <uuid>53c4db92-bf1d-4b99-b51e-b317775be5b7</uuid>
       <properties>
@@ -90,7 +90,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>extensions-manager</artifactId>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/extensions-manager.jar</path>
       <uuid>83de497f-d10d-47ec-a40f-3692dd86fe3e</uuid>
       <properties>
@@ -101,7 +101,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>logutils</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/logutils.pom</path>
       <uuid>d96e512c-8ed8-46be-a50a-2f4f0b38dd89</uuid>
       <properties>
@@ -111,7 +111,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>logutils</artifactId>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/logutils.jar</path>
       <uuid>5f8adc19-f5e3-418d-acc7-2b6ba12e8375</uuid>
       <properties>
@@ -122,7 +122,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>utils</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/utils.pom</path>
       <uuid>0c8078e0-3610-4ab5-b3f0-965500872525</uuid>
       <properties>
@@ -132,7 +132,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>utils</artifactId>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/utils.jar</path>
       <uuid>07784467-a306-405f-9252-73e4503e4a44</uuid>
       <properties>
@@ -143,7 +143,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>uutils</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/uutils.pom</path>
       <uuid>3476cdcc-d606-4db3-9be3-4040ebc8d5ed</uuid>
       <properties>
@@ -153,7 +153,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>uutils</artifactId>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/uutils.jar</path>
       <uuid>c6622557-4b13-4ab1-9bad-33aeb0209398</uuid>
       <properties>
