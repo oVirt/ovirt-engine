@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.ovirt.engine.ui</groupId>
     <artifactId>brands-all</artifactId>
-    <version>4.5.3.11-SNAPSHOT</version>
+    <version>4.5.3.11</version>
   </parent>
 
   <artifactId>ovirt-brand</artifactId>
