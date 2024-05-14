@@ -6,7 +6,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>extensions-tool</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/extensions-tool.pom</path>
       <uuid>d02d36be-98e7-471a-b19f-09105b499a30</uuid>
       <properties>
@@ -16,7 +16,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>extensions-tool</artifactId>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/extensions-tool.jar</path>
       <uuid>a3fba187-16dc-4512-81fb-95d04c28b60c</uuid>
       <properties>
@@ -27,7 +27,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>sso-client-registration-tool</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/sso-client-registration-tool.pom</path>
       <uuid>8b362c89-b5c6-479e-8a64-4c8a28ce4542</uuid>
       <properties>
@@ -37,7 +37,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>sso-client-registration-tool</artifactId>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/sso-client-registration-tool.jar</path>
       <uuid>572652e0-132e-4ea0-9817-28eb16e4793d</uuid>
       <properties>
@@ -48,7 +48,7 @@
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>tools</artifactId>
       <extension>pom</extension>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/maven-poms/ovirt-engine/tools.pom</path>
       <uuid>d355ec0a-1b6d-47f8-b4cb-0e5ab33e549f</uuid>
       <properties>
@@ -58,7 +58,7 @@
     <artifact>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>tools</artifactId>
-      <version>4.5.3.11</version>
+      <version>4.5.3.12-SNAPSHOT</version>
       <path>/usr/share/java/ovirt-engine/tools.jar</path>
       <uuid>9af4634c-6792-4438-b6ec-d74eb971469d</uuid>
       <properties>
