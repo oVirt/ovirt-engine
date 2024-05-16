@@ -87,6 +87,7 @@ select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.1.0,pc-q35
 select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.3.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.3.0,s390-ccw-virtio-2.12','4.5');
 select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.4.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.4.0,s390-ccw-virtio-2.12','4.6');
 select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel8.6.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.4.0,s390-ccw-virtio-2.12','4.7');
+select fn_db_add_config_value('ClusterEmulatedMachines','pc-q35-rhel9.4.0,pc-q35-4.1,pc-i440fx-rhel7.6.0,pc-i440fx-2.12,pseries-rhel8.4.0,s390-ccw-virtio-2.12','4.8');
 select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
 --Handling Data directory for ENGINE
 select fn_db_add_config_value('DataDir','/usr/share/engine','general');
