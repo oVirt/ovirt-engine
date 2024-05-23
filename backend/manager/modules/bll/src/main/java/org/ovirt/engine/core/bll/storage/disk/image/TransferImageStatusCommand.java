@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -104,15 +105,16 @@ public class TransferImageStatusCommand<T extends TransferImageStatusParameters>
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        Guid objectId = getStorageDomainId();
-        if (objectId == null) {
-            objectId = getParameters().getStorageDomainId();
-            if (objectId != null) {
-                setStorageDomainId(objectId);
-            } else {
-                objectId = MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID;
-            }
+        // Set storage domain id for audit logs.
+        if (getStorageDomainId() == null && getParameters().getStorageDomainId() != null) {
+            setStorageDomainId(getParameters().getStorageDomainId());
         }
+
+        Guid objectId = ObjectUtils.firstNonNull(
+                getParameters().getDiskId(),
+                getParameters().getStorageDomainId(),
+                MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID
+        );
 
         // Only check generic permissions because the command and/or ImageUpload entity may be missing
         return Collections.singletonList(new PermissionSubject(
