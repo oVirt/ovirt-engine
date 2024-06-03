@@ -13,9 +13,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: centos-stream-8
-            container-name: el8stream
-            pip-command: pip3.9
           - name: centos-stream-9
             container-name: el9stream
             pip-command: pip3
