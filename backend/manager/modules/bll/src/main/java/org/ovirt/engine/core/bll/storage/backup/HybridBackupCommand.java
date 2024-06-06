@@ -345,7 +345,7 @@ public class HybridBackupCommand<T extends VmBackupParameters> extends StartVmBa
         VmBackup vmBackup = getParameters().getVmBackup();
         vmBackup.setSnapshotId(snapshotId);
         getParameters().setVmBackup(vmBackup);
-        vmBackupDao.save(vmBackup);
+        vmBackupDao.update(vmBackup);
         persistCommandIfNeeded();
     }
 }
