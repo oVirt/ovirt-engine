@@ -1,0 +1,75 @@
+# oVirt Engine - Dev Container setup & building
+
+Before starting, ensure that https://www.docker.com/[Docker] is installed on the machine that the Dev Container will be running on. This could be your local device or on a https://code.visualstudio.com/docs/devcontainers/containers#_open-a-folder-on-a-remote-ssh-host-in-a-container[remote machine].
+
+### Setup the PostgreSQL database
+
+To begin, navigate to the project directory. If working remotely, SSH into your remote environment and locate your source files. To fully set up your PostgreSQL container with testing credentials, execute the Docker Compose file by running:
+
+```
+docker compose up -d
+```
+
+The `-d` flag runs the container in detached mode. 
+
+> It's crucial to run the compose file prior to creating the development container; otherwise, Docker networking problems may arise.
+
+### Connect to your Dev Container and build the application
+
+#### Open folder in a Dev Container
+
+When you are running the container on your own device, open the project directory in Visual Studio Code, and use `Dev Containers: Reopen in Container` command from the Command Palette (F1). 
+
+For remote connections, follow the same steps, but start by connecting to your remote environment first. Utilize the Remote Explorer feature in VSC to SSH into a remote server. You'll find this in the 'Remote Explorer' tab. Just make sure you've installed the "Remote - SSH" and "Remote Explorer" extensions from Microsoft for this to work.
+
+More information on Dev Containers can be found https://code.visualstudio.com/docs/devcontainers/containers[here].
+
+### Building the application
+
+You can set up the development environment by executing the following command:
+
+```
+make install-dev PREFIX=/home/build/ovirt/
+```
+
+Running this command will initiate the application's build process. You can skip tests by prepending the `SKIP_CHECKS=1` environmental variable to the previous command. Additionally, you can specify the installation directory using the `PREFIX` flag.
+
+### Run the oVirt Engine setup
+
+If all the previous steps have been done correctly, it is time to setup your oVirt Engine. You can do this by running the following command:
+
+```
+/home/build/ovirt/bin/engine-setup --offline --config=answers.config.in
+```
+
+This command will utilize the values from the `answers.config.in` file. If you prefer manual configuration, you can omit the `--config` parameter, but ensure you input the same database connection details as those in the answers file.
+
+### Running the engine itself
+
+To launch the engine, execute the `ovirt-engine.py` file with the `start` argument.
+
+```
+/home/build/ovirt/share/ovirt-engine/services/ovirt-engine/ovirt-engine.py start
+```
+
+### Uploading images via `ovirt-imageio`
+
+To enable image uploading and downloading through the administration portal, you must run the ovirt-imageio daemon. Execute the following command to do so:
+
+```
+ovirt-imageio --conf-dir /home/build/ovirt/etc/ovirt-imageio
+```
+
+> If encountering a certificate error during connection testing, you'll need to accept the certificate in your browser. You can either locate the URL by accessing your browser's network console, clicking the 'Test Connection' button, and visiting the URL showing the error, OR simply navigate to `https://HOSTNAME:54323/info/` and accept the certificate. Alternatively you can install the oVirt generated CA as a trusted CA in your browser.
+
+### Connecting via console to your VM instance
+
+To establish a connection to the VM console via noVNC, you'll need to initiate the websocket service:
+
+```
+/home/build/ovirt/share/ovirt-engine/services/ovirt-websocket-proxy/ovirt-websocket-proxy.py start
+```
+
+Afterward, head to your newly created VM and select the 'v' arrow adjacent to the 'Console' button. Proceed to 'Console Options' and set 'Console Invocation' to 'noVNC'. Save these settings and click on the 'Console' button.
+
+Upon encountering the error message "Something went wrong, connection is closed," please note that this is expected behavior. To proceed, you must accept the SSL certificate in your browser. Access your browser's development console, copy the `wss://XXXXX` URL, and paste it into your browser's URL bar. Replace `wss` with `https` and navigate to the URL. Here, you can accept the certificate. You can reopen the console via the oVirt administrator panel.
