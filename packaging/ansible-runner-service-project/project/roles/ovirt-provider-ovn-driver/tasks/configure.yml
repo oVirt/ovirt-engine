@@ -45,4 +45,4 @@
           vdsm-tool ovn-config {{ ovn_central }} {{ ovn_tunneling_interface }} {{ ovn_host_fqdn }}
 
   when:
-    - ovn_central is defined
+    - ovn_central is defined and ovn_central != None and ovn_central | length != 0
