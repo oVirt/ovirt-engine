@@ -2507,6 +2507,10 @@ BEGIN
         DELETE FROM vm_nvram_data
         WHERE vm_id = OLD.vm_guid;
     END IF;
+    IF OLD.bios_type = 3 AND NEW.bios_type = 4 THEN
+	DELETE FROM vm_nvram_data
+	WHERE vm_id = OLD.vm_guid;
+    END IF;
     RETURN NEW;
 END;$$
 LANGUAGE plpgsql;
