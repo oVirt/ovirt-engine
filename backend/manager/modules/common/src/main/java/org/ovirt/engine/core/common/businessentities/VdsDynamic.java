@@ -241,6 +241,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private String vdsmCpusAffinity;
 
+    private boolean qemuImageInfoBitmaps;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -1028,6 +1030,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         return vdsmCpusAffinity;
     }
 
+    public boolean isQemuImageInfoBitmaps() {
+        return qemuImageInfoBitmaps;
+    }
+
+    public void setQemuImageInfoBitmaps(boolean qemuImageInfoBitmaps) {
+        this.qemuImageInfoBitmaps = qemuImageInfoBitmaps;
+    }
+
 
     @Override
     public int hashCode() {
@@ -1113,7 +1123,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 cdChangePdiv,
                 ovnConfigured,
                 cpuTopology,
-                vdsmCpusAffinity
+                vdsmCpusAffinity,
+                qemuImageInfoBitmaps
         );
     }
 
@@ -1209,6 +1220,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && cdChangePdiv == other.cdChangePdiv
                 && ovnConfigured == other.ovnConfigured
                 && Objects.equals(cpuTopology, other.cpuTopology)
-                && Objects.equals(vdsmCpusAffinity, other.vdsmCpusAffinity);
+                && Objects.equals(vdsmCpusAffinity, other.vdsmCpusAffinity)
+                && qemuImageInfoBitmaps == other.qemuImageInfoBitmaps;
     }
 }
