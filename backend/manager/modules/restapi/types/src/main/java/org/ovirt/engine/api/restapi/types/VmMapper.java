@@ -385,7 +385,9 @@ public class VmMapper extends VmBaseMapper {
             model.setRunOnce(entity.isRunOnce());
             org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType = deriveGraphicsType(entity.getGraphicsInfos());
             if (graphicsType != null) {
-                model.getDisplay().setType(DisplayMapper.map(graphicsType, null));
+                if (!model.getDisplay().isSetType()) {
+                    model.getDisplay().setType(DisplayMapper.map(graphicsType, null));
+                }
 
                 GraphicsInfo graphicsInfo = entity.getGraphicsInfos().get(graphicsType);
                 model.getDisplay().setAddress(graphicsInfo == null ? null : graphicsInfo.getIp());
