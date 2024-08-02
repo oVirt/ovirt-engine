@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class SecretValue<T> {
+public class SecretValue<T> implements Serializable {
+    private static final long serialVersionUID = -7894728002078425194L;
+
     private T value;
 
     public T getValue() {
