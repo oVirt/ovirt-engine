@@ -40,6 +40,7 @@
     }
 
     .panelStyle {
+      table-layout: fixed;
       background: #e5ecff;
       border-top: 2px solid white;
       width: 100%;

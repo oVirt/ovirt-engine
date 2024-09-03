@@ -10,6 +10,11 @@
             padding-right: 25px;
         }
 
+        .buttonSelected {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .fullWidth {
             width: 100%!important;
         }
@@ -17,16 +22,16 @@
         .scrollableMenu {
             height: auto;
             max-height: 130px;
-            overflow-x: hidden;
-            width: auto;
+            overflow-x: auto;
+            width: 100%;
             min-width: 100%;
+            max-width: 100%;
         }
 
         .selected {
             background-color: #0099d3!important;
             border-color: #0076b7!important;
             color: #fff!important;
-            padding-right: 40px!important;
         }
 
         .selectedValue {
@@ -41,6 +46,7 @@
 
         .liPosition {
             position: relative;
+            width: 100%;
         }
 
         .inlineBlock {

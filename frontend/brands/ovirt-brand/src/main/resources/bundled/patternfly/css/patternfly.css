@@ -9457,7 +9457,7 @@ fieldset[disabled] .btn-primary.active {
   top: auto;
 }
 .open .dropdown-submenu.active > .dropdown-menu {
-  display: block;
+  display: grid;
 }
 .dropdown-kebab-pf.btn-group > .btn:first-child,
 .dropdown-kebab-pf .btn-link {
