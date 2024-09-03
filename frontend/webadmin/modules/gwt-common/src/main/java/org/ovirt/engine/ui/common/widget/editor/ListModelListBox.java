@@ -81,6 +81,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         String label();
         String selectedValue();
         String button();
+        String buttonSelected();
     }
 
     interface ListItemTemplate extends SafeHtmlTemplates {
@@ -169,6 +170,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
         button.getElement().setAttribute(DATA_TOGGLE, Styles.DROPDOWN);
         selectedValue = Document.get().createSpanElement();
         selectedValue.addClassName(FILTER_OPTION);
+        selectedValue.addClassName(style.buttonSelected());
         selectedValue.addClassName(Styles.PULL_LEFT); //$NON-NLS-1$
         selectedValue.setInnerHTML(NBSP);
         return button;
@@ -387,7 +389,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
                 if (child instanceof ListModelListBox.ListItem) {
                     final ListItem item = (ListModelListBox<T>.ListItem) child;
                     if (item.isSelected()) {
-                        Scheduler.get().scheduleDeferred(() -> item.getElement().scrollIntoView());
+                         Scheduler.get().scheduleDeferred(() -> scrollIntoView(item.getElement()));
                     }
                 }
             }
@@ -447,6 +449,10 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
             getClickHandlers().clear();
             getElement().removeAllChildren();
         }
+
+        private native void scrollIntoView(Element element) /*-{
+            element.scrollIntoView({block: "nearest", inline: "nearest"});
+        }-*/;
     }
 
     protected class ListItem extends ComplexPanel {
