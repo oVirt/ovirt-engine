@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.businessentities.storage.TransferClientType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -377,6 +378,14 @@ public class UploadImageModel extends Model implements ICommandTarget {
                     diskImage.getVolumeFormat(),
                     getDiskModel().getStorageDomain().getSelectedItem().getStorageType(), null, null));
             diskImage.setContentType(getImageInfoModel().getContentType());
+            if (diskImage.getVolumeFormat() != VolumeFormat.COW && getImageInfoModel().getContentType() == DiskContentType.ISO) {
+                // RAW+ThinProvision is not supported by a block storage. So, if you later try to move such ISO disk to
+                // a block storage the system will convert it automatically into COW+ThinProvision. But this corrupts
+                // bootable ISO disks.
+                // Since there is no much sense to upload ISO images as ThinProvision we can upload them as Preallocated
+                // and this would address the issue explained above.
+                diskImage.setVolumeType(VolumeType.Preallocated);
+            }
             return true;
         } else {
             setIsValid(false);
