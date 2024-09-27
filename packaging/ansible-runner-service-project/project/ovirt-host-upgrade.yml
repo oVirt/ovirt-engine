@@ -10,7 +10,7 @@
   pre_tasks:
     - include_vars: ovirt_host_upgrade_vars.yml
 
-    - include: ovirt-host-yum-conf.yml
+    - import_tasks: ovirt-host-yum-conf.yml
 
     - block:
       # Check if certificates need re-enrollment:
@@ -74,5 +74,5 @@
     - name: ovirt-host-deploy-vnc-certificates
 
   post_tasks:
-    - include: ovirt-host-remove-yum-conf.yml
-    - include: ovirt-host-reconfigure-ovn.yml
+    - import_tasks: ovirt-host-remove-yum-conf.yml
+    - import_tasks: ovirt-host-reconfigure-ovn.yml
