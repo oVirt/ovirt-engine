@@ -1,7 +1,7 @@
-version: '3.8'
+
 services:
   ovirt-postgres:
-    image: postgres:13.14
+    image: postgres:13.16
     container_name: ovirt-postgres
     ports:
       - "5432:5432"
