@@ -29,6 +29,7 @@ import com.google.inject.Provider;
 public class UserPermissionListModel extends PermissionListModel<DbUser> {
 
     private UICommand addRoleToUserCommand;
+    private UICommand removeDirectRolesFromUserCommand;
 
     @Inject
     public UserPermissionListModel(Provider<AdElementListModel> adElementListModelProvider) {
@@ -39,6 +40,11 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
 
         setAddRoleToUserCommand(new UICommand("AddRoleToUser", this)); // $NON-NLS-1$
         getCommands().add(getAddRoleToUserCommand());
+
+        setRemoveDirectRolesFromUserCommand(new UICommand("RemoveDirectRolesFromUser", this)); // $NON-NLS-1$
+        getCommands().add(getRemoveDirectRolesFromUserCommand());
+        getItemsChangedEvent().addListener((ev, sender, args) -> updateRemoveDirectPermissionActionAvailability());
+
         updateActionAvailability();
     }
 
@@ -84,6 +90,41 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
 
     private void setAddRoleToUserCommand(UICommand value) {
         addRoleToUserCommand = value;
+    }
+
+    public UICommand getRemoveDirectRolesFromUserCommand() {
+        return removeDirectRolesFromUserCommand;
+    }
+
+    public void setRemoveDirectRolesFromUserCommand(UICommand removeDirectRolesFromUserCommand) {
+        this.removeDirectRolesFromUserCommand = removeDirectRolesFromUserCommand;
+    }
+
+    public void removeAllDirect() {
+        List<Permission> elementsToRemove = getDirectPermissions();
+
+        // Correctly set permissions to delete into the selected items.
+        if (!elementsToRemove.isEmpty()) {
+            setSelectedItem(elementsToRemove.get(0));
+        }
+        setSelectedItems(elementsToRemove);
+
+        remove();
+    }
+
+    private List<Permission> getDirectPermissions() {
+        List<Permission> directPermissions = new ArrayList<>();
+        if (getItems() == null || getItems().isEmpty()) {
+            return directPermissions;
+        }
+        for (Permission item : getItems()) {
+            if (item.getAdElementId() != null &&
+                    getEntity() != null &&
+                    item.getAdElementId().equals(getEntity().getId())) {
+                directPermissions.add(item);
+            }
+        }
+        return directPermissions;
     }
 
     public void remove() {
@@ -167,10 +208,18 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
         getAddCommand().setIsAvailable(false);
     }
 
+    private void updateRemoveDirectPermissionActionAvailability() {
+        getRemoveDirectRolesFromUserCommand()
+                .setIsExecutionAllowed(!getDirectPermissions().isEmpty());
+    }
+
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
+        if (command == getRemoveDirectRolesFromUserCommand()) {
+            removeAllDirect();
+        }
         if (command == getRemoveCommand()) {
             remove();
         } else if (command == getAddRoleToUserCommand()) {
