@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.lsm;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +25,6 @@ import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.bll.tasks.CommandHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -682,16 +680,6 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         }
 
         return true;
-    }
-
-    @Override
-    protected MultipleStorageDomainsValidator createMultipleStorageDomainsValidator() {
-        List<Guid> sdsToValidate = new ArrayList<>();
-
-        sdsToValidate.add(getParameters().getSourceDomainId());
-        sdsToValidate.add(getParameters().getDestDomainId());
-
-        return new MultipleStorageDomainsValidator(getStoragePoolId(), sdsToValidate);
     }
 
     private DiskImage getDiskImageByImageId(Guid imageId) {
