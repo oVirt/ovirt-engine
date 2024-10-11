@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -96,17 +97,19 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
         return removeDirectRolesFromUserCommand;
     }
 
-    public void setRemoveDirectRolesFromUserCommand(UICommand removeDirectRolesFromUserCommand) {
+    private void setRemoveDirectRolesFromUserCommand(UICommand removeDirectRolesFromUserCommand) {
         this.removeDirectRolesFromUserCommand = removeDirectRolesFromUserCommand;
     }
 
-    public void removeAllDirect() {
+    private void removeAllDirect() {
         List<Permission> elementsToRemove = getDirectPermissions();
 
-        // Correctly set permissions to delete into the selected items.
-        if (!elementsToRemove.isEmpty()) {
-            setSelectedItem(elementsToRemove.get(0));
+        if (elementsToRemove.isEmpty()) {
+            return;
         }
+
+        // Correctly set permissions to delete into the selected items.
+        setSelectedItem(elementsToRemove.get(0));
         setSelectedItems(elementsToRemove);
 
         remove();
@@ -114,9 +117,11 @@ public class UserPermissionListModel extends PermissionListModel<DbUser> {
 
     private List<Permission> getDirectPermissions() {
         List<Permission> directPermissions = new ArrayList<>();
-        if (getItems() == null || getItems().isEmpty()) {
+
+        if (ObjectUtils.isEmpty(getItems())) {
             return directPermissions;
         }
+
         for (Permission item : getItems()) {
             if (item.getAdElementId() != null &&
                     getEntity() != null &&
