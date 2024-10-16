@@ -137,7 +137,7 @@ public class UserModule extends AbstractGinModule {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UserPermissionListModel source,
                             UICommand lastExecutedCommand) {
-                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand() || lastExecutedCommand == getModel().getRemoveDirectRolesFromUserCommand()) {
                             return removeConfirmPopupProvider.get();
                         } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);

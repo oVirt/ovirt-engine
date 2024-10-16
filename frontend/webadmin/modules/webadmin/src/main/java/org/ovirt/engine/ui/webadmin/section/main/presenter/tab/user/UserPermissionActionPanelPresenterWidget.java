@@ -34,6 +34,12 @@ public class UserPermissionActionPanelPresenterWidget extends DetailPermissionAc
                 return getDetailModel().getAddRoleToUserCommand();
             }
         });
+        addActionButton(new UiCommandButtonDefinition<DbUser, Permission>(getSharedEventBus(), constants.removeDirectSystemPermissionsButtonLabel()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getRemoveDirectRolesFromUserCommand();
+            }
+        });
         super.initializeButtons();
     }
 }
