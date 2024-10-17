@@ -648,7 +648,9 @@ public class ProviderModel extends Model {
         provider.setRequiringAuthentication(authenticationRequired);
         if (authenticationRequired) {
             provider.setUsername(getUsername().getEntity());
+            if(!getPassword().getEntity().equals("********")) { //$NON-NLS-1$
             provider.setPassword(getPassword().getEntity());
+            }
             if (getTenantName().getIsAvailable()) {
                 OpenStackProviderProperties properties = getOpenStackProviderProperties();
                 properties.setTenantName(getTenantName().getEntity());
