@@ -64,8 +64,7 @@ class Plugin(plugin.PluginBase):
     )
     def _customization(self):
         if self.environment[oenginecons.CoreEnv.ENABLE] is None:
-            self.environment[oenginecons.CoreEnv.ENABLE] = (
-                dialog.queryBoolean(
+            enabled = dialog.queryBoolean(
                     dialog=self.dialog,
                     name='OVESETUP_ENGINE_ENABLE',
                     note=_(
@@ -73,15 +72,28 @@ class Plugin(plugin.PluginBase):
                         '(@VALUES@) [@DEFAULT@]: '
                     ),
                     prompt=True,
-                    default=True,
-                ) if self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]
-                else (
-                    self._engine_fqdn is not None and
-                    self.environment[
-                        osetupcons.ConfigEnv.FQDN
-                    ] == self._engine_fqdn
-                )
             )
+            if enabled is None:
+                self.environment[oenginecons.CoreEnv.ENABLE] = (
+                    dialog.queryBoolean(
+                        dialog=self.dialog,
+                        name='OVESETUP_ENGINE_ENABLE',
+                        note=_(
+                            'Configure Engine on this host '
+                            '(@VALUES@) [@DEFAULT@]: '
+                        ),
+                        prompt=True,
+                        default=True,
+                    ) if self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]
+                    else (
+                        self._engine_fqdn is not None and
+                        self.environment[
+                            osetupcons.ConfigEnv.FQDN
+                        ] == self._engine_fqdn
+                    )
+                )
+            else:
+                self.environment[oenginecons.CoreEnv.ENABLE] = enabled
         if self.environment[oenginecons.CoreEnv.ENABLE]:
             self.environment[oengcommcons.ApacheEnv.ENABLE] = True
             self.environment[
