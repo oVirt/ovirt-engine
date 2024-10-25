@@ -35,6 +35,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authz;
@@ -924,5 +925,35 @@ public class SsoService {
             }
         }
         return membershipIds;
+    }
+
+    /**
+     * Convert principal record names from ISO_8859_1 to UTF-8 in case when the "External SSO provider" configured
+     * Apache (httpd) encodes all names using ISO_8859_1 but ovirt-engine tries to work with the data using UTF-8.
+     * This causes names (like first name, last name, e-mail address) corruption if non-ascii characters are used in
+     * these names. This routine converts the names to avoid the corruption.
+     * @param principalRecord Principal Record content to update
+     * @param externalSso Flag that signals if the "External SSO provider" (Keycloak) configured for the system.
+     *                    If the flag is 'false' then no any changes performed.
+     * @return Updated Principal Record content with fixed names (first name, last name, e-mail address)
+     */
+    public static ExtMap fixExternalNames(ExtMap principalRecord, boolean externalSso) {
+        if (externalSso && principalRecord != null) {
+            //If the principal record came from external system, this means it was passed via the mod_auth_openidc
+            //plugin of the Apache service. This plugin sends all claims using the ISO_8859_1 encoding. This corrupts
+            //non-ascii characters in names. We need to fix the names:
+            fixExternalName(principalRecord, Authz.PrincipalRecord.FIRST_NAME);
+            fixExternalName(principalRecord, Authz.PrincipalRecord.LAST_NAME);
+            fixExternalName(principalRecord, Authz.PrincipalRecord.EMAIL);
+        }
+        return principalRecord;
+    }
+
+    private static void fixExternalName(ExtMap principalRecord, ExtKey key) {
+        String value = principalRecord.get(key);
+        if (value != null) {
+            String valueFixed = new String(value.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+            principalRecord.put(key, valueFixed);
+        }
     }
 }
